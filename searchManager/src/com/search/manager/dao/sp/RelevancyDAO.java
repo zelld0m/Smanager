@@ -311,9 +311,9 @@ public class RelevancyDAO {
 	
 	private class DeleteRelevancyKeywordStoredProcedure extends StoredProcedure {
 	    public DeleteRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY_FIELD);
+	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY_KEYWORD);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 	        compile();
 	    }
 	}
