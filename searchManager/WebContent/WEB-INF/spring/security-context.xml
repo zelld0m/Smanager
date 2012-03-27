@@ -243,8 +243,7 @@
 	<beans:bean name="relevancyService" class="com.search.manager.service.RelevancyService" scope="prototype">
 		<beans:property name="daoService" ref="daoService"/>
 	</beans:bean>
-	<beans:bean name="schemaService" class="com.search.manager.service.SchemaService" scope="prototype">
-	</beans:bean>
+
 	<beans:bean name="statisticService" class="com.search.manager.service.StatisticService" scope="prototype">
 		<beans:property name="daoService" ref="daoService"/>
 	</beans:bean>
