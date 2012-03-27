@@ -1,0 +1,23 @@
+.bannerContent ul			{ list-style: none;}
+
+/*tile view */
+ul.sortableTile							{ list-style: none }
+ul.sortableTile	li						{ float:left; display: inline; width:360px; min-height: 100px; }
+
+.cssReset .sortableTile .sortableBox { background:#fafafa; border:2px solid #f5f5f5; padding:5px; margin:10px 10px; text-align:center; font-size:12px;  } 
+.cssReset .sortableTile #sortableBox div.sortableHighlights { background:#ffffe0 !important;}
+.cssReset .sortableHighlights, .sortableHighlights  { background:#ffffe0 !important;}
+
+.cssReset .sortableTile .sortableBox .bannerName { float:left; width:300px; text-align: left; margin-left:4px }
+.bannerContent .listalpha				{ width: 250px !important; text-align:left !important }
+
+ul.sortableTile .ui-datepicker-trigger	{ margin-bottom:-4px; margin-left:3px; }
+
+.sortableTile .textInfo					{ font-size:11px; color:#666; margin-top:3px; }
+.sortableTile .listInfo 				{ margin-top:10px; text-align: left; }
+.sortableTile .listTitle				{ overflow:hidden; height:45px }
+.sortableTile .listalpha				{ width:140px; float:left; font-size:11px; padding-top:5px }				
+.sortableTile .listbeta					{ width:140px; float:left; font-size:11px; padding-top:5px }
+.sortableTile .manfcName				{ font-weight:bold; font-size:14; color:#000; margin-top:10px }
+
+.sortableTile  .elavateItemImg			{ min-height: 95px; z-index:-1 }	

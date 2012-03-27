@@ -1,0 +1,30 @@
+/* iphoneStyle slider */
+.firerift-style {		
+	display: block;
+	width: 72px;
+	height: 24px;
+	background: url(../../../images/sponsor/check-circle4.png) no-repeat;
+	cursor: pointer;
+}
+	
+.on {
+	background-position: 0% 100%;
+}
+	
+.off {
+	background-position: 100% 0%;
+}
+
+label {
+	display: block;
+	float: right;
+	width: 30em;
+}
+
+.cleaner {
+	clear: both;
+}
+	
+.hidden {
+	display: none;
+}

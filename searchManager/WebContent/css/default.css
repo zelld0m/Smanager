@@ -1,0 +1,293 @@
+/** default css common */
+body 							{ margin: 0px; }
+.cssReset .companyLogo			{ width:160px; height:55px;  margin:7px auto 0 auto; }
+
+.cssReser .wAuto				{ width: auto }
+.cssReset .w15, .w15			{ width: 15px }
+.cssReset .w30, .w30			{ width: 30px }
+.cssReset .w45, .w45			{ width: 45px } 
+.cssReset .w55					{ width: 55px !important } 
+.cssReset .w60, .w60			{ width: 60px !important }  
+.cssReset .w65, .w65			{width: 65px}
+.cssReset .w67, .w67			{width: 67px}
+.cssReset .w70, .w70			{width: 70px}
+.cssReset .w72, .w72			{width: 72px !important}
+.cssReset .w80					{width: 80px}
+.cssReset .w85					{width: 85px}
+.cssReset .w90, .w90			{width:90px}
+.cssReset .w95, .w95			{width:95px}
+.cssReset .w100, .w100			{width:100px}
+.cssReset .w110, .w110			{width:110px}
+.cssReset .w120, .w120			{width:120px !important}
+.cssReset .w125, .w125			{width:125px !important}
+.cssReset .w135, .w135			{width:135px !important}
+.cssReset .w145, .w145			{width:145px}
+.cssReset .w150, .w150			{width:150px}
+.cssReset .w155, .w155			{width:155px !important}
+.cssReset .w160, .w160			{width:160px !important}
+.cssReset .w163, .w163			{width:163px !important}
+.cssReset .w165, .w165			{width:165px !important}
+.cssReset .w168, .w168			{width:168px}
+.cssReset .w170, .w170			{width:170px}
+.cssReset .w175, .w175			{width:175px}
+.cssReset .w180, .w180			{width:180px}
+.cssReset .w185, .w185			{width:185px}
+.cssReset .w190, .w190			{width:190px !important}
+.cssReset .w200, .w200			{width:200px !important}
+.cssReset .w205, .w205			{width:205px !important}
+.cssReset .w203					{width:203px}
+.cssReset .w210, .w210			{width:210px}
+.cssReset .w212					{width:212px}
+.cssReset .w215, .w215			{width:215px}
+.cssReset .w220, .w220			{width:220px !important}
+.cssReset .w225					{width:225px}
+.cssReset .w230, .w230			{width:230px !important}
+.cssReset .w233, .w233			{width:233px !important}
+.cssReset .w235, .w235			{width:235px !important}
+.cssReset .w238					{width:238px}
+.cssReset .w240, .w240			{width:240px}
+.cssReset .w245, .w245			{width:245px}
+.cssReset .w278, .w278			{width:278px}
+.cssReset .w282, .w282			{width:282px}
+.cssReset .w300, .w300			{width:300px}
+.cssReset .w330, .w330			{width:330px}
+.cssReset .w340					{width:340px}
+.cssReset .w350, .w350			{width:350px}
+.cssReset .w360					{width:360px}
+.cssReset .w355					{width:355px}
+.cssReset .w400, .w400			{width:400px}
+.cssReset .w405, .w405			{width:405px}
+.cssReset .w460, .w460			{width:460px}
+.cssReset .w480, .w480			{width:480px}
+.cssReset .w512, .w512          {width:512px}
+.cssReset .w535, .w535          {width:535px}
+.cssReset .w550, .w550          {width:550px}
+.cssReset .w555, .w555          {width:555px}
+.cssReset .w580, .w580          {width:580px}
+.cssReset .w600					{width:600px}
+.cssReset .w620					{width:620px}
+.cssReset .w675					{width:675px}
+.cssReset .w700					{width:700px}
+.cssReset .w720, .w720			{width:720px}
+.cssReset .w730					{width:730px}
+.cssReset .w980, .w980			{width:980px !important}
+.cssReser .w50p, .w50p			{ width:50% }
+.cssReser .w45p, .w45p			{ width:45% }
+.cssReser .w45p83p, .w45p83		{ width:45.83% }
+.cssReser .w46p, .w46p			{ width:46% }
+.cssReser .w47p, .w47p			{ width:47% }
+
+.cssReset .pad0, .pad0			{ padding:0px !important }
+.cssReset .pad3, .pad3			{ padding:3px }
+.cssReset .pad5, .pad5			{ padding:5px }
+.cssReset .pad8, .pad8			{ padding:8px }
+.cssReset .pad10, .pad10		{ padding:10px }
+.cssReset .pad30				{ padding:30px }
+.cssReset .padT0, .padT0		{padding-top:0px}
+.cssReset .padT1				{padding-top:1px}
+.cssReset .padT3, .padT3		{padding-top:3px}
+.cssReset .padT5, .padT5		{padding-top:5px}
+.cssReset .padT7, .padT7		{padding-top:7px}
+.cssReset .padT8, .padT8		{padding-top:8px}
+.cssReset .padT10, .padT10		{padding-top:10px !important}
+.cssReset .padT15, .padT15		{padding-top:15px !important}
+.cssReset .padT20, .padT20		{padding-top:20px}
+.cssReset .padTB2				{padding:2px 0}
+.cssReset .padTB4				{padding:4px 0}
+.cssReset .padTB5				{padding:5px 0}
+.cssReset .padTB7				{padding:7px 0}
+.cssReset .padTB10				{padding:10px 0}
+.cssReset .padL5, .padL5		{padding-left:5px !important}
+.cssReset .padL7				{padding-left:7px}
+.cssReset .padL10				{padding-left:10px}
+.cssReset .padL15				{padding-left:15px}
+.cssReset .padL55				{padding-left:55px}
+.cssReset .padL100, .padL100	{padding-left:100px !important}
+.cssReset .padL212, .padL212	{padding-left:212px !important}
+.cssReset .padR5, .padR5		{ padding-right:5px !important; }
+.cssReset .padR8, .padR8		{ padding-right:8px !important; }
+.cssReset .padR10, .padR10		{ padding-right:10px !important; }
+.cssReset .padR15, .padR15		{ padding-right:15px !important; }
+.cssReset .padR50, .padR50		{ padding-right:50px !important; }
+.cssReset .padB3, .padB3		{padding-bottom:3px}
+.cssReset .padB4, .padB4		{padding-bottom:4px}
+.cssReset .padB5, .padB5		{padding-bottom:5px}
+.cssReset .padB10, .padB10		{padding-bottom:10px}
+.cssReset .padB25, .padB25		{padding-bottom:25px}
+.cssReset .padLR3, .padLR3		{ padding-left:3px; padding-right:3px; }
+.cssReset .padLR8, .padLR8		{ padding-left:8px; padding-right:8px; }
+
+.cssReset .mar0, .mar0			{margin:0 auto;}
+.cssReset .mar3, .mar3			{margin:3px;}
+.cssReset .mar10, .mar10		{margin:10px;}
+.cssReset .mar20, .mar20		{margin:20px;}
+.cssReset .marT0, .marT0		{margin-top:0px !important}
+.cssReset .marT1, .marT1		{margin-top:1px !important}
+.cssReset .marT2, .marT2		{margin-top:2px !important}
+.cssReset .marT3, .marT3		{margin-top:3px !important}
+.cssReset .marT5, .marT5		{margin-top:5px !important}
+.cssReset .marT6, .marT6		{margin-top:6px !important}
+.cssReset .marT8, .marT8		{margin-top:8px !important}
+.cssReset .marT10, .marT10		{margin-top:10px !important}
+.cssReset .marT15, .marT15		{margin-top:15px !important}
+.cssReset .marT20, .marT20		{margin-top:20px !important}
+.cssReset .marT27, .marT27		{margin-top:27px !important}
+.cssReset .marT30, .marT30		{margin-top:30px !important}
+.cssReset .marT40, .marT40		{margin-top:40px !important}
+.cssReset .marR3, .marR3		{margin-right:3px}
+.cssReset .marR5, .marR5		{margin-right:5px}
+.cssReset .marR8, .marR8		{margin-right:8px}
+.cssReset .marR10, .marR10		{margin-right:10px}
+.cssReset .marR12, .marR12		{margin-right:12px}
+.cssReset .marR15, .marR15		{margin-right:15px}
+.cssReset .marR70, .marR70		{ padding-right:70px !important; }
+.cssReset .marL3, .marL3		{margin-left:3px !important}
+.cssReset .marL4, .marL4		{margin-left:4px}
+.cssReset .marL5, .marL5		{margin-left:5px}
+.cssReset .marL6, .marL6		{margin-left:6px}
+.cssReset .marL8, .marL8		{margin-left:8px}
+.cssReset .marL10, .marL10		{margin-left:10px}
+.cssReset .marL13, .marL13		{margin-left:13px}
+.cssReset .marL15, .marL15		{margin-left:15px}
+.cssReset .marL20, .marL20		{margin-left:20px}
+.cssReset .marL22				{margin-left:22px}
+.cssReset .marL30, .marL30		{margin-left:30px}
+.cssReset .marL70, .marL70		{margin-left:70px}
+.cssReset .marRL3 				{margin-left:3px; margin-right:3px }
+.cssReset .marRL5 				{margin-left:5px; margin-right:5px }
+.cssReset .marRL20, .marRL20	{margin-left:20px; margin-right:20px }
+.cssReset .marB4, .marB4		{margin-bottom:4px}
+.cssReset .marB8, .marB8		{margin-bottom:8px}
+.cssReset .marB10, .marB10		{margin-bottom:10px}
+.cssReset .marB20, .marB20		{margin-bottom:20px}
+.cssReset .marTB10, .marTB10	{margin-top:10px !important; margin-bottom:10px !important}
+
+.cssReset .marTn1, .marTn1		{margin-top:-1px}
+.cssReset .marTn2, .marTn2		{margin-top:-2px}
+.cssReset .marTn3, .marTn3		{margin-top:-3px}
+.cssReset .marTn4, .marTn4		{margin-top:-4px}
+.cssReset .marTn5, .marTn5		{margin-top:-5px}
+.cssReset .marTn8, .marTn8		{margin-top:-8px}
+.cssReset .marBn3, .marBn3		{margin-bottom:-3px}
+.cssReset .marBn4, .marBn4		{margin-bottom:-4px}
+.cssReset .marBn6, .marBn6		{margin-bottom:-6px}
+.cssReset .marBn9, .marBn9		{margin-bottom:-9px}
+.cssReset .marLn2, .marLn2		{ margin-left:-2px !important }
+.cssReset .marLn4, .marLn4		{ margin-left:-4px !important }
+
+.cssReset .minHeight32			{ min-height:32px; }
+.cssReset .minHeight120,
+.minHeight120					{ min-height:120px; }
+.cssReset .minHeight200,
+.minHeight200					{ min-height:200px; }
+.cssReset .minHeight245,
+.minHeight245					{ min-height:245px; }
+.cssReset .minHeight300, 
+.minHeight300	  				{ min-height:300px; }
+
+.cssReset .height15				{ height:15px }
+.cssReset .height24, .height24	{ height:24px }
+.cssReset .h35					{ height:35px }
+
+.cssReset .minW240				{ min-width:240px !important; }
+
+.cssReset .top1, .top1			{ top:1px; }
+.cssReset .top6					{ top:6px; }
+.cssReset .right4				{ right:4px }
+
+/* font size */
+.cssReset .fsize8 				{ font-size:8px }
+.cssReset .fsize9 				{ font-size:9px }
+.cssReset .fsize10 				{ font-size:10px }
+.cssReset .fsize11 				{ font-size:11px }
+.cssReset .fsize12, .fsize12 	{ font-size:12px }
+.cssReset .fsize13 				{ font-size:13px }
+.cssReset .fsize14, .fsize14 	{ font-size:14px }
+.cssReset .fsize15 				{ font-size:15px }
+.cssReset .fsize16 				{ font-size:16px }
+.cssReset .fsize17 				{ font-size:17px }
+.cssReset .fsize18 				{ font-size:18px }
+.cssReset .fsize19 				{ font-size:19px }
+.cssReset .fsize20 				{ font-size:20px }
+.cssReset .fsize21 				{ font-size:21px }
+.cssReset .fsize22     			{ font-size:22px }
+.cssReset .fsize23 				{ font-size:23px }
+.cssReset .fsize24 				{ font-size:24px }
+.cssReset .fsize25 				{ font-size:25px }
+.cssReset .fsize26 				{ font-size:26px }
+.cssReset .fsize27				{ font-size:27px }
+.cssReset .fsize28 				{ font-size:28px }
+.cssReset .fsize29 				{ font-size:29px }
+.cssReset .fsize30 				{ font-size:30px }
+
+/* GLOBAL CSS */
+.wordwrap						{ word-wrap:break-word; white-space:normal; }
+.pointer						{ cursor:pointer }
+
+.displayInline					{ display:inline }
+
+.cssReset td.vtop, .vtop		{ vertical-align:top }
+.cssReset .txtLineThru			{ text-decoration:line-through}
+
+.resizeNone						{ resize: none; }
+.clearfix:after 				{ content: ".";	display: block;	clear: both; visibility: hidden; line-height: 0; height: 0; }
+.clearfix 						{ display: inline-block; }
+.cssReset .clearB, .clearB		{ clear:both }
+
+.cssReset .floatL, .floatL 		{ float:left }
+.cssReset .floatR, .floatR		{ float:right }
+
+.cssReset .txtAL, .txtAL 		{ text-align:left }
+.cssReset .txtAR, .txtAR		{ text-align:right !important }
+.cssReset .txtAC, .txtAC 		{ text-align:center !important }
+
+.valignTop						{ vertical-align: top; }
+.valignMid						{ vertical-align: middle; }
+
+.cssReset .fbold, .fbold 		{ font-weight:bold }
+.cssReset .fnormal, .fnormal 	{ font-weight:normal }
+
+.cssReset a.funderline, 
+.funderline 					{ text-decoration:underline; }
+.cssReset a.fdecoNone, 
+.fdecoNone,
+.cssReset .fdecoNone a:hover	{ text-decoration:none; }
+
+.cssReset .txtCapitalize, .txtCapitalize					{ text-transform: uppercase; }
+
+.cssReset .posRel, .posRel		{ position:relative }
+.cssReset .posAbs, .posAbs		{ position:absolute }
+
+.cssReset .farial, .farial 		{ font-family:Arial, Helvetica, sans-serif }
+.cssReset .faNarrow, 
+.faNarrow  						{ font-family: 'Arial Narrow', sans-serif !important; }
+
+.cssReset .borderLR 			{ border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5; width:755px }
+.cssReset .borderNoneR			{ border-right:none !important }
+
+.cssReset .overflowIt { 
+		/*white-space: pre-wrap;  /* css-3 */
+		white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+		white-space: -pre-wrap; /* Opera 4-6 */
+		white-space: -o-pre-wrap; /* Opera 7 */
+		word-wrap: break-word; /* Internet Explorer 5.5+ */
+		margin:0px;
+		padding:0px;
+}
+
+.cssReset .cursorP 				{ cursor:pointer }
+
+/* color */
+.cssReset .fblack 				{ color:#000 }
+.cssReset .fDGray 				{ color:#333 }
+.cssReset .fgray 				{ color:#666 }
+.cssReset .fLgray 				{ color:#999 }
+.cssReset .fLgray2 				{ color:#cbcbcb }
+.cssReset .fLblue, .fLblue		{ color:#3B79C2 }
+.cssReset .fLblue2, .fLblue2	{ color:#0065b2 }
+.cssReset .fLAblue, 
+.cssReset .fLAblue a			{ color:#60c3e0 }
+.cssReset .fDblue 				{ color:#00589b }
+.cssReset .fred 				{ color:#C00 }
+.cssReset .fwhite 				{ color:#fff }
+.cssReset .fgreen, .fgreen		{ color:#2d6b00 }

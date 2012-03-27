@@ -1,0 +1,43 @@
+/*.tblcontContainer				{ width: 90%; height: 320px; margin: 0 auto; }*/
+
+.tblcontContainer td.topLink a 			{ text-decoration:none; color:#0065a6}
+
+.tblContent						{  border-collapse: collapse; font-size:12px; color:#282828  }
+.tblContent th					{ border:1px solid #cccccc; background: #ebebeb; padding:3px 5px; font-size:12px; text-align:center  }
+.tblContent td					{ font-size:12px; text-align:left; color:#282828; padding:2px  }
+.tblContent td.top				{ padding:2px 0; }
+.tblContent td.include,
+.tblContent td.exclude			{ text-align:center }
+.tblContent td.values			{ padding-left:7px  }
+.tblContent td span.count,
+span.count						{ font-size:11px !important; color:#808080 }
+
+
+.topExclude						{ background:url(../../images/top_exclude.png) no-repeat; height:23px; width:50px; position:relative; bottom:-6px}
+.topInclude						{ background:url(../../images/top_include.png) no-repeat; height:23px; width:50px; position:relative; bottom:-6px}
+
+.tblContent td.txtAR			{ text-align:right }
+.fsize11						{ font-size:11px }
+
+
+/* pop-up additional box */
+#dialog-confirm h2.confirmTitle,h2.confirmTitle 				{ background:url(../../images/icon_alert.png) 10px center no-repeat #f8f2da; border:1px solid #ecdcb3; font-size:14px; margin:5px; padding:9px 10px 9px 37px;  }
+
+.listStyleNone					{ list-style:none; }
+.listStyleNone li				{ margin:5px 0 10px 0 }
+
+.listProd						{ list-style:none; margin-left:0; padding-left:10px }
+.listProd li span				{ padding-top:3px; position:relative; top:4px}
+.listProd li label	 			{ margin:5px 0}
+.listProd li label.title 		{ width:70px; float:left; display:inline; }
+.listProd li input[type=text]	{ font-size:11px; color:#282828}
+.listProd li img.ui-datepicker-trigger			{ margin-bottom:-4px; margin-left:5px }
+
+
+.sideBar						{ list-style: none; font-size:12px; width: 98%; margin-right:6px }
+.sideBar li						{ background: url(../../images/dashBorder.jpg) bottom left repeat-x #fff; display:inline; float:left; font:normal 12px arial; padding:4px 3px; width: 97%;  }
+.sideBar div.textArea			{ width: 71%; padding:8px 0 5px 6px; float:left }
+.sideBar div.graphArea			{ width: 22%; padding-right:4px;  float:left }
+
+
+

@@ -1,0 +1,65 @@
+body {
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.cssReset .pcmallhdlogo{background:url(../images/homepagepmlogo.png); width:160px; height:70px; margin-top:7px}
+.cssReset .fgreen{color:#417522}
+.cssReset .txtLineThru{ text-decoration:line-through}
+.cssReset .bgTopHeader {width:100%; height:86px; background:url(../images/bgTopHeader.jpg)}
+.cssReset .bgTopHeaderMnu {width:100%; height:34px; background:url(../images/bgTopHeaderMnu.jpg)}
+.bgTopHeaderMnu .mnuHeader{display:inline; list-style-type:none; }
+.cssReset .bgFooter{background:url(../images/bgFooter.jpg) repeat-x;padding-top:25px}
+.cssReset .h35{height:35px}
+.cssReset .w180{width:180px}
+.cssReset .w200{width:200px}
+.cssReset .w220{width:220px}
+.cssReset .w225{width:225px}
+.cssReset .w230{width:230px}
+.cssReset .w240{width:240px}
+.cssReset .w300{width:300px}
+.cssReset .w350{width:350px}
+.cssReset .w600{width:600px}
+.cssReset .w730{width:730px}
+.cssReset .w980{width:980px}
+.cssReset .padT5{padding-top:5px}
+.cssReset .padT10{padding-top:10px}
+.cssReset .padT20{padding-top:20px}
+.cssReset .padTB5{padding:5px 0}
+.cssReset .padTB4{padding:4px 0}
+.cssReset .padTB7{padding:7px 0}
+.cssReset .padTB10{padding:10px 0}
+.cssReset .padL10{padding-left:10px}
+.cssReset .padR10{padding-right:10px}
+.cssReset .padB10{padding-bottom:10px}
+.cssReset .padLR3{padding-left:3px;padding-right:3px;}
+.cssReset .mar0{margin:0 auto}
+.cssReset .marT5{margin-top:5px}
+.cssReset .marT10{margin-top:10px}
+.cssReset .marL10{margin-left:10px}
+.cssReset .borderB{border-bottom:1px solid #ccc}
+.cssReset .border{border:1px solid #ccc}
+
+.cssReset .lnk a:link{color:#333; text-decoration:none}
+.cssReset .lnk a:visited{color:#333; text-decoration:none}
+.cssReset .lnk a:hover{color:#666; text-decoration:none}
+
+.cssReset .scorelink a:link{color:#888; text-decoration:none}
+.cssReset .scorelink a:visited{color:#888; text-decoration:none}
+.cssReset .scorelink a:hover{color:#666; text-decoration:none}
+
+.mnuHeader li{float:left; color:#fff; padding-left:10px; padding-right:10px; padding-top:10px; height:24px; background:url(../images/mnu-div.jpg) no-repeat; background-position:right}
+.mnuHeader li a:link{color:#fff; text-decoration:none}
+.mnuHeader li a:visited{color:#fff; text-decoration:none}
+.mnuHeader li a:hover{color:#dedede; text-decoration:none}
+.mnuHeader .active{background:#FFF; color:#0061ac}
+.mnuHeader .active a:link{background-color:#FFF; color:#0061ac}
+.mnuHeader .active a:visited{background-color:#FFF; color:#0061ac}
+.mnuHeader .active a:hover{background-color:#FFF; color:#0061ac}
+
+.cssReset .pagination{display:inline; list-style-type:none; }
+.pagination li{float:left; padding-left:3px; padding-right:3px}
+.pagination li a:link{text-decoration:none}
+.pagination li a:visited{ ext-decoration:none}
+.pagination li a:hover{text-decoration:none}

@@ -1,0 +1,49 @@
+body{margin:0 auto; background:url(../images/bg-gray.jpg) repeat-x}
+
+.clearB{clear:both}
+.floatR{float:right}
+
+.posRel{position:relative}
+.posAbs{position:absolute}
+.txtAC{text-align:center}
+.farial{font-family:Arial, Helvetica, sans-serif}
+
+.fsize12{font-size:12px}
+.fsize16{font-size:16px}
+.fblue{color:#005B9C}
+.fred{color:#cc0000}
+
+.mar0{margin:0 auto}
+.marRn5		{ margin-right:-5px }
+.padT10{padding-top:10px}
+.padR20{padding-right:20px}
+
+
+.w100p{width:100%}
+.w635{width:635px}
+.h353{height:353px}
+
+.top100{top:100px}
+.bottom30{bottom:30px}
+.bottom80{bottom:80px}
+.right70{right:70px}
+
+.labelTxt			{ font: normal 16px arial; color:#005B9C; width: 95px; float:left; margin-top:5px; text-align: left }
+.labelTxtBox		{ width: 200px; float:left; margin-top:5px }
+
+.formContainer		{ margin-left:270px; width:300px; float:left; padding-top:175px }
+
+.bgsrclogo			{background:url(../images/bg-srclogo-noBorder.png) no-repeat}
+.txtbox				{background:url(../images/txtbox.png) no-repeat; border:none; width:203px; height:20px; padding:0 5px; color:#fff; font:Arial, Helvetica, sans-serif; font-size:12px}
+.ie7 .txtbox,
+.ie8 .txtbox		{background:url(../images/txtbox.png) no-repeat; border:none; width:203px; height:18px; padding:3px 5px 0 5px; color:#fff; font:Arial, Helvetica, sans-serif; font-size:12px}
+.btnSignin{background:url(../images/btn-signin.png) no-repeat; border:none; cursor:pointer; width:111px; height:33px}
+.btnSignin:hover{background:url(../images/btn-signin-over.png) no-repeat; border:none; cursor:pointer; width:111px; height:33px}
+
+.logAlert		{ top:-20px; background: #eee1e1; border:1px solid #db2929; padding:4px }
+
+/* form */
+input[type="text"], input[type="password"] { outline: none; }
+
+
+.clearboth		{ clear:both }

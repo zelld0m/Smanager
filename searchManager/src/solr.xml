@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<solr-config>
+  <store name="PCMall">
+    <core>pcmall</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxpcmallrelevancy</qt>
+    <facet-name>PcMall</facet-name>
+    
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    
+    <solr-param-value name="fq">
+    	<param-value>PcMall_StoreFlag:true</param-value>
+    </solr-param-value>    
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+  </store>
+  
+  <store name="MacMall">
+    <core>macmall</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxmacmallrelevancy</qt>
+    <facet-name>MacMall</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    
+    <solr-param-value name="fq">
+    	<param-value>MacMall_StoreFlag:true</param-value>
+    </solr-param-value>
+    <dateformat>MM/dd/yyyy</dateformat>    
+  </store>
+  
+  <server name='vtorschstg01'>
+    <url>http://vtorschstg01:8080/solr14/(store)/</url> 
+  </server>
+  <server name='vtorschstg02'>
+    <url>http://vtorschstg02:8080/solr14/(store)/</url>
+  </server>
+  <server name='vtorschstg03'>
+    <url>http://vtorschstg03:8080/solr14/(store)/</url>
+  </server>
+  <server name='afs-pl-schpd07.afservice.org'>
+    <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
+  </server>
+  
+  <big-bets>
+    <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath</fields>
+    <query>json.nl=map%amp;wt=json%amp;fl=%amp;fq=(facet)_StoreFlag=true%amp;start=0</query>
+  </big-bets>
+</solr-config>

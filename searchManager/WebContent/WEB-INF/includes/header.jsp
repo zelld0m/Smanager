@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Search Manager</title>
+
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
+  <!--  theme -->
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/theme/default/style.css" />">
+
+  <!-- cross-browser css compatibility util -->
+  <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
+   
+  <!-- jQuery dependencies -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.datepicker.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.sortable.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.widget.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
+  
+  <!-- jQuery custom plugin -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
+  
+  <!--  tabber -->
+  <script type="text/javascript"  src="<spring:url value="/js/tabber.js" />"></script>  
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/jquery-ui.css" />" />
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/ui.theme.css" />" />
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/qTip/jquery.qtip.css" />" />  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/checkbox/checkbox.custom.css" />" />  
+
+   <!-- Tooltip -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.common.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.cookie-1.0.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.validation.js" />" ></script>
+  <!--[if lt IE 9]><script type="text/javascript" src="<spring:url value="/js/jquery/canvas/excanvas.js" />"></script><![endif]-->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/canvas/jquery.tagcanvas-1.13.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/checkbox/jquery.checkbox.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
+
+  <!-- DWR dependencies -->
+  <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/engine.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/AuditServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/CommentServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/UtilityServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/StoreKeywordServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcludeServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ElevateServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RelevancyServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/SchemaServiceJS.js"/>"></script>
+ 
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/microgallery/jquery.microgallery.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
+
+ <!-- jQuery highcharts, licensed graph -->
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/highcharts.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/canvas-tools.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/exporting.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-blue.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-green.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/gray.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/grid.js" />" ></script> --%>
+<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/skies.js" />" ></script> --%>
+  
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
+  
+  <script type="text/javascript">
+		dwr.engine.setTextHtmlHandler(function() {
+			window.alert("Your session has expired, please login again.");
+			document.location.href = document.location.href;
+		});
+	
+		dwr.engine.setErrorHandler(function(msg, exc) {
+			var errMessage = "Error Message: " + msg;
+			var errInfo = "Error Details: " + dwr.util.toDescriptiveString(exc, 3);
+			alert(errMessage + '\n' + errInfo);
+		});
+   </script>
+</head>
+
+<body>
+
+<div class="cssReset">
+ 
+ <!--PC Mall Header-->
+ <div class="clearB floatL bgTopHeader">
+    <div class="mar0 w980">
+      <table width="980" border="0" cellspacing="0" cellpadding="0" align="center">
+        <tr>
+          <td align="left" class="padTB5">
+          	<div class="clearB floatL farial fsize12 fLgray2">
+	          	<img src="<spring:url value="/js/ajaxsolr/images/user.png" />" style="margin-bottom:-3px"> Hi <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span> 
+			    <span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
+			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
+		    </div>
+          </td>
+          <td align="right" class="padTB5">	          
+         	  <div class="clearB"></div>
+         	  <div id="menuTop">
+         	  <ul class="topNavMenu topmenu">
+         	  	<li class="submenu first"><a href="/"><img src="<spring:url value="/images/world.png" />" class="marBn3 marR3">MacMall</a>
+         	  		<ul>
+         	  			<li><a href="javascript:void(0);">PCMall</a></li>
+         	  			<li><a href="javascript:void(0);">OnSale</a></li>
+         	  			<li><a href="javascript:void(0);">eCost</a></li>
+         	  			<li><a href="javascript:void(0);">SBN</a></li>
+         	  		</ul>
+         	  	</li>
+         	  	<li class="divider"></li>
+         	  	<li class="submenu last"><a href="/"><img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"></img>Stage01</a>
+         	  		<ul>
+         	  			<li><a href="javascript:void(0);">Stage02</a></li>
+         	  			<li><a href="javascript:void(0);">Stage03</a></li>
+         	  			<li><a href="javascript:void(0);">Stage04</a></li>
+         	  			<li><a href="javascript:void(0);">Stage05</a></li>
+         	  		</ul>
+         	  	</li>
+         	  </ul>
+         	  </div>
+	      </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  
+  <div class="clearB"></div>

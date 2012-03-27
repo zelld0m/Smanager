@@ -1,0 +1,110 @@
+/* tile view */
+ul.sortableTile							{ list-style: none }
+ul.sortableTile	li						{ float:left; display: inline; width:240px; } 	
+
+.cssReset .sortableTile .sortableBox { background:#fafafa; border:2px solid #f5f5f5; padding:5px 0 0 0; margin:10px 10px; text-align:center; font-size:12px; min-height: 270px; } 
+.cssReset .sortableTile #sortableBox div.sortableHighlights { background:#ffffe0 !important;}
+.cssReset .sortableHighlights, .sortableHighlights  { background:#ffffe0 !important;}
+
+
+ul.sortableTile .ui-datepicker-trigger	{ margin-bottom:-4px; margin-left:3px}
+
+.sortableTile .textInfo					{ font-size:11px; color:#666; margin:3px 5px 0 5px; }
+.sortableTile .listInfo 				{ margin-top:10px; text-align: left; width: 100%; float:left; }
+.sortableTile .listTitle				{ overflow:hidden; height:45px; margin:0 5px }
+.sortableTile .listalpha				{ width: 100%; float:left; font-size:11px; padding-top:5px }				
+.sortableTile .listbeta					{ width:140px; float:left; font-size:11px; padding-top:5px; height: 22px }
+.sortableTile .manfcName				{ font-weight:bold; font-size:14; color:#000; margin-top:10px }
+
+.sortableTile  .elavateItemImg			{ min-height: 95px; z-index:-1 }	
+
+/* list view */
+
+ul.sortableList							{ list-style: none }
+ul.sortableList	li						{ float:left; display: inline; width: 100% } 	
+
+.cssReset .sortableList .sortableBox 	{ background:#fafafa; border:2px solid #f5f5f5; padding:5px; margin:10px 10px; text-align:center; font-size:12px; } 
+.cssReset .sortableList .sortableHighlights { background:#ffffe0;}
+.sortableHighlights { background:#ffffe0;}
+
+
+ul.sortableList .ui-datepicker-trigger	{ margin-bottom:-4px; margin-left:3px}
+
+.sortableList .textInfo					{ font-size:11px; color:#666; margin-top:0; width: 50%; float:left; display: inline }
+.sortableList .listInfo 				{ margin-top:10px; text-align: left; width: 69%; float:left; margin-left:15px }
+.sortableList .listTitle				{ overflow:hidden; height:28px; margin-bottom:4px }
+.sortableList .listalpha				{ width: 45%; float:left; font-size:11px; padding-top:5px }				
+.sortableList .listbeta					{ width: 34%; float:left; font-size:11px; padding-top:5px; margin-left:10px }
+
+.sortableList .manfcName				{ font-weight:bold; font-size:14; color:#000; margin-top:0px; width: 170px; }
+.sortableList .elevateItemImg			{ float:left; width: 170px !important; text-align: center; padding-left:10px; margin-right:15px; z-index:-1 }
+
+
+
+/* feature page */
+.itemContainer							{ height: 300px; padding-top:20px }
+.itemContainer label.text				{ width:100px; float:left; padding-top:7px }
+.itemContainer label.info				{ padding-left:0; width:130px; float:left; text-align:left; padding-top:7px }
+label.text60							{ width:60px; float:left; padding-top:7px }
+
+.itemInfo								{ width: 420px; font-size:12px; left:20px; position:relative}
+.itemInfo label							{ font-size:12px;}
+.itemInfo label.text					{ width: 120px !important; float:left; margin-left:10px}
+.itemInfo label.info					{ width: 250px !important; float:left; word-spacing: normal; word-wrap: break-word; }
+
+
+/* Tiny Carousel */
+#slider1 								{ height: 1%; overflow:hidden; padding: 0 0 10px; margin:30px 0 0 15px;  }
+#slider1 .viewport 						{ float: left; width: 630px; height: 160px; overflow: hidden; position: relative;}
+#slider1 .buttons 						{ background:url("../../images/arrowButtons.png") no-repeat scroll 0 0 transparent; display: block; margin: 30px 10px 0 0; text-indent: -999em; float: left; width: 16px; height: 41px;  }
+#slider1 .prev							{ background-position: 0 0;  margin-right:15px }
+#slider1 .prev:hover					{ background-position: 0 -42px; }
+#slider1 .next 							{ background-position: 0 -87px }
+#slider1 .next:hover					{ background-position: 0 -129px }
+#slider1 .disable						{ visibility: hidden; }
+#slider1 .overview 						{ list-style: none; position: absolute; padding: 0; margin: 0; width: 120px; left: 0 top: 0; }
+#slider1 .overview li					{ float: left; margin: 0 15px; padding: 1px;  height: 121px; width: 125px; text-align:center}
+#slider1 .overview li img				{ }
+#slider1 .overview li img.noborder		{ border:none; }
+#slider1 .overview li p.shortDesc		{ font-size:11px !important ; padding-left:0; padding-right:0}
+#slider1 .overview li p.txtAL			{ text-align:left }
+#slider1 .overview li div.iconDel		{ z-index:5; float:right; position:relative; left:-15px }
+/*#slider1 .overview li div.item			{  padding-left:0; padding-right:0}*/
+#slider1 .overview li div.img	{ margin-left:10px; border:1px solid #c4c4c4; width:100px; height: 95px; position:relative; }
+
+
+
+
+/*********************** SCROLLERS ***********************/
+.root 					{ position:relative; height: 280px; width: 350px; margin: 0px 0px 8px 7px;}
+.root p 				{ margin: 10px 10px 5px 10px; }
+.thumb 					{ position:	absolute; height: 9px; width: 15px; left: 10px; }
+.up, .dn 				{ position: absolute; left: 50px; }
+.up a, .up a img,
+ .dn a, .dn a img,
+  .thumb a , 
+  .thumb a img			{ border: 0; }
+  
+.scrollContainer 		{ position: absolute; left: 2px; top: 19px; width: 390px !important; height: 280px; clip: rect(0 467 200 0);
+						  overflow: auto; background: none; padding:0 }
+.scrollContent 			{ position: absolute; left: 0px; top: 0px; width: 390px !important; }
+
+.altBg					{ background: #ededed }
+
+
+/*   */
+.bigbetsShade					{ background: #f0f3f8; /* Old browsers */
+/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YwZjNmOCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjOWQ0ZTYiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+background: -moz-linear-gradient(top,  #f0f3f8 0%, #c9d4e6 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f0f3f8), color-stop(100%,#c9d4e6)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f0f3f8 0%,#c9d4e6 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f0f3f8 0%,#c9d4e6 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f0f3f8 0%,#c9d4e6 100%); /* IE10+ */
+background: linear-gradient(top,  #f0f3f8 0%,#c9d4e6 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f3f8', endColorstr='#c9d4e6',GradientType=0 ); /* IE6-8 */
+ }
+
+				
+
+

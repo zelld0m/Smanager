@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!--
+		TODO: consider putting this in another config file. So that in case of
+		config update, application won't have to reload this also
+	-->
+	<!--
+		TODO: how to define if a function changes its limitation in a
+		different solr version
+	-->
+<relevancy>
+	<!--
+		list of field names in schema.xml that will be ignored by relevancy
+		rules (ex. spell, which is used solely by spellchecker)
+	-->
+	<ignore-schema-fields>spell, payload</ignore-schema-fields>
+	<!--  list of mathematical functions allowed for qf, bf fields -->
+	<functions>
+		<!--
+			newline character: &#xA;
+			tab character: &#x9;
+		-->
+		<!--
+			<function name="">
+				<display></display>
+				<description></description>
+				<min-arg></min-arg>
+				<max-arg></max-arg>
+				<constraints>
+					<arg position="">
+						<type>NumericConstant/Date</type>
+					</arg>
+				<constraints>
+			</function>
+		-->
+		<function name="sum">
+			<display>Addition</display>
+			<description>sum(x,y,z...) Add x, y, z, etc.</description>
+			<min-arg>1</min-arg>
+			<max-arg />
+		</function>
+		<function name="sub">
+			<display>Subtraction</display>
+			<description>sub(x,y) Subtract x from y</description>
+			<min-arg>2</min-arg>
+			<max-arg>2</max-arg>
+		</function>
+		<function name="product">
+			<display>Multiplication</display>
+			<description>product(x,y,z...) Multiply x, y, z, etc.</description>
+			<min-arg>2</min-arg>
+			<max-arg />
+		</function>
+		<function name="div">
+			<display>Division</display>
+			<description>div(x,y) Divide x by y</description>
+			<min-arg>2</min-arg>
+			<max-arg>2</max-arg>
+		</function>
+		<function name="pow">
+			<display>Exponentiation</display>
+			<description>pow(x,y) Raise x to the power of y</description>
+			<min-arg>2</min-arg>
+			<max-arg>2</max-arg>
+		</function>
+		<function name="abs">
+			<display>Absolute Value</display>
+			<description>abs(x) Get the absolute value of x</description>
+			<min-arg>1</min-arg>
+			<max-arg>1</max-arg>
+		</function>
+		<function name="log">
+			<display>Logarithm</display>
+			<description>log(x) Get the logarithm base 10 of x</description>
+			<min-arg>1</min-arg>
+			<max-arg>1</max-arg>
+		</function>
+		<function name="sqrt">
+			<display>Square Root</display>
+			<description>sqrt(x) Get the square root of x</description>
+			<min-arg>1</min-arg>
+			<max-arg>1</max-arg>
+		</function>
+		<function name="map">
+			<display>Mapping Function</display>
+			<description>map(x,min,max,target,altarg) Maps any values of the function
+				x that fall within min and max inclusive to the specified target
+				value.
+				Those not within the range will either default to altarg, if
+				it set; or
+				the value returned by x, if not.</description>
+			<min-arg>4</min-arg>
+			<max-arg>5</max-arg>
+			<constraints>
+				<arg position="2,3,4,5">
+					<type>NumericConstant</type>
+				</arg>
+			</constraints>
+		</function>
+		<function name="max">
+			<display>Max</display>
+			<description>max(x,c) Returns the max of x and a constant</description>
+			<min-arg>2</min-arg>
+			<max-arg>2</max-arg>
+			<constraints>
+				<arg position="2">
+					<type>NumericConstant</type>
+				</arg>
+			</constraints>
+		</function>
+		<function name="scale">
+			<display>Scale</display>
+			<description>scale(x,min,max) Scales values of the function x such that
+				they fall between minTarget and maxTarget inclusive.</description>
+			<min-arg>3</min-arg>
+			<max-arg>3</max-arg>
+			<constraints>
+				<arg position="2,3">
+					<type>NumericConstant</type>
+				</arg>
+			</constraints>
+		</function>
+		<function name="linear">
+			<display>Linear function</display>
+			<description>linear(x,m,c) Returns m*x+c.
+			</description>
+			<min-arg>3</min-arg>
+			<max-arg>3</max-arg>
+			<constraints>
+				<arg position="2,3">
+					<type>NumericConstant</type>
+				</arg>
+			</constraints>
+		</function>
+		<function name="recip">
+			<display>Reciprocal Function</display>
+			<description> recip(x,m,a,b) Returns a/(m*x+b).
+			</description>
+			<min-arg>4</min-arg>
+			<max-arg>4</max-arg>
+			<constraints>
+				<arg position="2,3,4">
+					<type>NumericConstant</type>
+				</arg>
+			</constraints>
+		</function>
+		<!--  ord/rord can cause excess memory use. query is too complex to present in the GUI  -->		
+<!--
+		<function name="ord">
+			<display>Order</display>
+			<description>ord(field) field must be indexed, array position of field in sorted list of values.
+			Warning can cause excess memory use</description> 
+			<min-arg>1</min-arg>
+			<max-arg>1</max-arg>
+		</function>
+		<function name="rord">
+			<display>Reverse Order</display>
+			<description>> rord(field) -> field must be indexed, same as rord but in reverse order. Warning can cause excess
+			memory use</description>
+			<min-arg></min-arg>
+			<max-arg></max-arg>
+		</function>
+		<function name="query">
+			<display>Query</display>
+			<description>query(subquery, default) Returns score for given subquery or default value for documents not matching the query</description>
+			<min-arg>2</min-arg>
+			<max-arg>2</max-arg>
+		</function>
+-->
+		<function name="ms">
+			<display>Millisecond</display>
+			<description> ms() Returns number of ms from current time since epoch
+				&#xA;ms(a) Returns number of ms from a since epoch.
+				&#xA;ms(a,b) Returns number of ms between a and b
+			</description>
+			<min-arg>0</min-arg>
+			<max-arg>2</max-arg>
+			<constraints>
+				<arg position="1">
+					<type>Date</type>
+				</arg>
+				<arg position="2">
+					<type>Date</type>
+				</arg>
+			</constraints>
+		</function>
+	</functions>
+
+	<!--  for now the most important tokenizer/filter to note is lowercase, which affects how results are matched; synonym filter; and stopword filters; -->
+	<tokenizers>
+		<tokenizer name="Standard Tokenizer" class="StandardTokenizerFactory">
+			<description>This tokenizer splits the text field into tokens, treating whitespace and punctuation as delimiters, most of which are discarded.</description>
+		</tokenizer>
+		<tokenizer name="Classic Tokenizer" class="classicTokenizerFactory">
+			<description>Similar to Standard Tokenizer but does not follow unicode boundary rules. This tokenizer splits the text field into tokens, treating whitespace and punctuation as delimiters, most of which are discarded.</description>
+		</tokenizer>
+		<tokenizer name="Keyword Tokenizer" class="KeywordTokenizerFactory">
+			<description>This tokenizer treats the entire text field as a single token.</description>
+		</tokenizer>
+		<tokenizer name="Letter Tokenizer" class="LetterTokenizerFactory">
+			<description>This tokenizer creates tokens from strings of contiguous letters, discarding all non-letter characters.</description>
+		</tokenizer>
+		<tokenizer name="Trie Tokenizer" class="TrieTokenizerFactory">
+			<description>Tokenizer for trie fields. It uses NumericTokenStream to create multiple trie encoded string per number.</description>
+		</tokenizer>
+		
+		<!--  lower case -->
+		<tokenizer name="Lower Case Tokenizer" class="LowerCaseTokenizerFactory">
+			<description>Tokenizes the input stream by delimiting at non-letters and then converting all letters to lowercase.</description>
+		</tokenizer>
+		
+		<!--  n-grams -->
+		<tokenizer name="N-Gram Tokenizer" class="NGramTokenizerFactory">
+			<description>Reads the field text and generates n-gram tokens of sizes in the given range.</description>
+		</tokenizer>
+		<tokenizer name="Edge N-Gram Tokenizer" class="EdgeNGramTokenizerFactory">
+			<description>Reads the field text and generates edge n-gram tokens of sizes in the given range.</description>
+		</tokenizer>
+		
+		<!--  ICU  -->
+		<tokenizer name="ICU Tokenizer" class="ICUTokenizerFactory">
+			<description>This tokenizer processes multilingual text and tokenizes it appropriately based on its script attribute. </description>
+		</tokenizer>
+		<tokenizer name="Path Hierarchy Tokenizer" class="PathHierarchyTokenizerFactory">
+			<description>This tokenizer creates synonyms from file path hierarchies.</description>
+		</tokenizer>
+		
+		<!--  regexp -->
+		<tokenizer name="Regular Expression Pattern Tokenizer"
+			class="PatternTokenizerFactory">
+			<description>This tokenizer uses a Java regular expression to break the input text stream into tokens.</description>
+		</tokenizer>
+		
+		<tokenizer name="UAX29 URL Email Tokenizer" class="UAX29URLEmailTokenizerFactory">
+			<description>Recognizes top-level Internet domain names; email addresses; urls; IPv4 and IPv6 addresses; and preserves them as a single token.</description>
+		</tokenizer>
+		<tokenizer name="White Space Tokenizer" class="WhitespaceTokenizerFactory">
+			<description>Simple tokenizer that splits the text stream on whitespace</description>
+		</tokenizer>
+	</tokenizers>
+	
+	<filters>
+		<filter name="ASCII Folding Filter" class="ASCIIFilterFactory">
+			<description>This filter converts Unicode characters to their ASCII equivalents, if one exists.</description>
+		</filter>
+		<filter name="Classic Filter" class="ClassicFilterFactory">
+			<description>This filter takes the output of the Classic Tokenizer and strips periods from acronyms and "'s" from possessives.</description>
+		</filter>
+		<filter name="Common Grams Filter" class="CommonGramsFilterFactory">
+			<description>This filter creates word shingles by combining common
+				tokens such as stop words with regular tokens.
+				This is useful for
+				creating phrase queries containing common words, such
+				as "the cat."
+				Solr normally ignores stop words in queried phrases, so searching
+				for
+				"the cat" would return all matches for the word "cat."
+			</description>
+		</filter>
+		<filter name="Collation Key Filter" class="CollationKeyFilterFactory ">
+			<description />
+
+		</filter>
+		<filter name="Edge N-Gram Filter" class="EdgeNGramFilterFactory">
+			<description>This filter generates edge n-gram tokens of sizes within
+				the given range.
+  			</description>
+		</filter>
+		<filter name="English Minimal Stem Filter" class="EnglishMinimalStemFilterFactory">
+			<description>This filter stems plural English words to their singular
+				form.
+  			</description>
+		</filter>
+		<filter name="Hunspell Stem Filter" class="HunspellStemFilterFactory">
+			<description>The Hunspell Stem Filter provides support for several
+				languages.
+				You must provide the dictionary (.dic) and rules (.aff)
+				files for each
+				language you wish to use with the Hunspell Stem
+				Filter.
+				You can download those language files here.
+				Be aware that your
+				results will vary widely based on the quality of
+				the provided
+				dictionary and rules files.
+				For example, some languages have only a
+				minimal word list with no
+				morphological information.
+				On the other
+				hand, for languages that have no stemmer but do have an
+				extensive
+				dictionary file, the Hunspell stemmer may be a good
+				choice.
+			</description>
+		</filter>
+		<filter name="Hyphenated Words Filter" class="HyphenatedWordsFilterFactory">
+			<description>This filter reconstructs hyphenated words that have been
+				tokenized as two tokens because of a line break
+				or other intervening
+				whitespace in the field test.
+				If a token ends with a hyphen, it is
+				joined with the following token
+				and the hyphen is discarded.
+				Note that
+				for this filter to work properly, the upstream tokenizer must
+				not
+				remove trailing hyphen characters.
+				This filter is generally only
+				useful at index time.
+  			</description>
+		</filter>
+		<filter name="ICU Folding Filter" class="ICUFoldingFilterFactory">
+			<description>This filter is a custom Unicode normalization form that
+				applies the foldings specified in Unicode Technical Report 30
+				in
+				addition to the NFKC_Casefold normalization form as described in
+				ICU
+				Normalizer 2 Filter.
+				This filter is a better substitute for the
+				combined behavior of the
+				ASCII Folding Filter, Lower Case Filter, and
+				ICU Normalizer 2
+				Filter.
+  			</description>
+		</filter>
+		<filter name="ICU Normalizer 2 Filter" class="ICUNormalizer2FilterFactory">
+			<description>This filter factory normalizes text according to one of
+				five Unicode Normalization Forms as described in Unicode Standard
+				Annex #15:
+				NFC: (name="nfc" mode="compose") Normalization Form C,
+				canonical
+				decomposition
+				NFD: (name="nfc" mode="decompose")
+				Normalization Form D, canonical
+				decomposition, followed by canonical
+				composition
+				NFKC: (name="nfkc" mode="compose") Normalization Form KC,
+				compatibility
+				decomposition
+				NFKD: (name="nfkc" mode="decompose")
+				Normalization Form KD, compatibility
+				decomposition, followed by
+				canonical composition
+				NFKC_Casefold: (name="nfkc_cf" mode="compose")
+				Normalization Form KC, with
+				additional Unicode case folding. Using
+				the ICU Normalizer 2 Filter
+				is a better-performing substitution for
+				the Lower Case Filter and
+				NFKC normalization.
+  			
+  			</description>
+		</filter>
+		<filter name="ICU Transform Filter" class="ICUTransformFilterFactory">
+			<description>This filter applies ICU Tranforms to text. This filter
+				supports only ICU System Transforms.
+				Custom rule sets are not
+				supported.
+  			</description>
+		</filter>
+		<filter name="Keep Words Filter" class="KeepWordFilterFactory">
+			<description>This filter discards all tokens except those that are
+				listed in the given word list.
+				This is the inverse of the Stop Words
+				Filter. This filter can be useful
+				for building specialized indices
+				for a constrained set of terms.
+			</description>
+		</filter>
+		<filter name="KStem Filter" class="KStemFilterFactory">
+			<description>KStem is an alternative to the Porter Stem Filter for
+				developers looking for a less aggressive stemmer.
+				KStem was written
+				by Bob Krovetz, ported to Lucene by Sergio Guzman-Lara
+				(UMASS
+				Amherst).
+				This stemmer is only appropriate for English language text.
+			</description>
+		</filter>
+		<filter name="Length Filter" class="LengthFilterFactory">
+			<description>This filter passes tokens whose length falls within the
+				min/max limit specified.
+				All other tokens are discarded.
+			</description>
+		</filter>
+		<filter name="Lower Case Filter" class="LowerCaseFilterFactory">
+			<description>Converts any uppercase letters in a token to the
+				equivalent lowercase token.
+				All other characters are left unchanged.
+			</description>
+		</filter>
+		<filter name="N-Gram Filter" class="NGramFilterFactory">
+			<description>Generates n-gram tokens of sizes in the given range.
+			</description>
+		</filter>
+		<filter name="Numeric Payload Token Filter" class="WhitespaceTokenizerFactory">
+			<description>This filter adds a numeric floating point payload value
+				to tokens that match a given type.
+				Refer to the Javadoc for the
+				org.apache.lucene.analysis.Token class for
+				more information about
+				token types and payloads.
+  			</description>
+		</filter>
+		<filter name="Pattern Replace Filter" class="PatternReplaceFilter">
+			<description>This filter applies a regular expression to each token
+				and, for those that match, substitutes the given replacement string
+				in place of the matched pattern.
+				Tokens which do not match are passed
+				though unchanged.
+  			</description>
+		</filter>
+		<filter name="Phonetic Filter" class="PhoneticFilterFactory">
+			<description>This filter creates tokens using one of the phonetic
+				encoding algorithms in the org.apache.commons.codec.language
+				package.
+  			</description>
+		</filter>
+		<filter name="Porter Stem Filter" class="PorterStemFilterFactory">
+			<description>This filter applies the Porter Stemming Algorithm for
+				English. The results are similar to using the Snowball Porter
+				Stemmer with the language="English" argument. But this stemmer is
+				coded directly in Java and is not based on Snowball. Nor does it
+				accept a list of protected words. This stemmer is only appropriate
+				for English language text.
+  			</description>
+		</filter>
+		<filter name="Position Filter Factory" class="PositionIncrementFilterFactory">
+			<description>This filter sets the position increment values of all
+				tokens in a token stream except the first, which retains its
+				original position increment value.
+  			</description>
+		</filter>
+		<filter name="Remove Duplicates Token Filter" class="RemoveDuplicatesTokenFilterFactory">
+			<description>The filter removes duplicate tokens in the stream.
+				Tokens are considered to be duplicates if they have the same text
+				and position values.
+  			</description>
+		</filter>
+		<filter name="Reversed Wildcard Filter" class="ReveresedWildcardFilterFactory">
+			<description>This filter reverses tokens to provide faster leading
+				wildcard and prefix queries. Tokens without wildcards are not
+				reversed.
+  			</description>
+		</filter>
+		<filter name="Shingle Filter" class="ShingleFilterFactory">
+			<description>This filter constructs shingles, which are token
+				n-grams, from the token stream. It combines runs of tokens into a
+				single token.
+  			</description>
+		</filter>
+		<filter name="Snowball Porter Stemmer Filter" class="SnowballPorterFilterFactory">
+			<description>This filter factory instantiates a language-specific
+				stemmer generated by Snowball. Snowball is a software package that
+				generates pattern-based word stemmers. This type of stemmer is not
+				as accurate as a table-based stemmer, but is faster and less
+				complex. Table-driven stemmers are labor intensive to create and
+				maintain and so are typically commercial products.
+				This release of
+				Solr contains Snowball stemmers for Armenian, Basque,
+				Catalan,
+				Danish, Dutch, English, Finnish, French, German, Hungarian,
+				Italian,
+				Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish
+				and
+				Turkish. For more information on Snowball, visit
+				http://snowball.tartarus.org/.
+  			</description>
+		</filter>
+		<filter name="Standard Filter" class="StandardFilterFactory">
+			<description>This filter removes dots from acronyms and the substring
+				"'s" from the end of tokens. This filter depends on the tokens being
+				tagged with the appropriate term-type to recognize acronyms and
+				words with apostrophes.
+  			</description>
+		</filter>
+		<filter name="Stop Filter" class="StopFilterFactory">
+			<description>This filter discards, or stops analysis of, tokens that
+				are on the given stop words list. A standard stop words list is
+				included in the Solr config directory, named stopwords.txt, which is
+				appropriate for typical English language text.
+  			</description>
+		</filter>
+		<filter name="Synonym Filter" class="SynonymFilterFactory">
+			<description>This filter does synonym mapping. Each token is looked
+				up in the list of synonyms and if a match is found, then the synonym
+				is emitted in place of the token. The position value of the new
+				tokens are set such they all occur at the same position as the
+				original token.
+  			</description>
+		</filter>
+		<filter name="Trim Filter" class="TrimFilterFactory">
+			<description>This filter trims leading and/or trailing whitespace from tokens.</description>
+		</filter>
+		<filter name="Word Delimiter Filter" class="WordDelimiterFilterFactory">
+			<description>This filter splits tokens at word delimiters.</description>
+		</filter>
+		
+		<!--  payloads -->
+		<filter name="Token Offset Payload Filter" class="TokenOffsetPayloadTokenFilterFactory">
+			<description>This filter adds the numeric character offsets of the token as a payload value for that token.
+  			</description>
+		</filter>
+		<filter name="Type As Payload Filter" class="TypeAsPayloadTokenFilterFactory">
+			<description>This filter adds the token's type, as an encoded byte sequence, as its payload.</description>
+		</filter>
+		
+	</filters>
+	
+	
+	<!-- used in relevancy's bq -->
+	<expressions>
+		<expression name="and">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>%lvalue% AND %rvalue%</text>
+			<regexp>(.*) AND (.*)</regexp>
+			<priority>3</priority>
+		</expression>
+		<expression name="or">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>%lvalue% OR %rvalue%</text>
+			<regexp>(.*) OR (.*)</regexp>
+			<priority>4</priority>
+		</expression>
+		<expression name="not">
+			<lvalue>true</lvalue>
+			<rvalue>false</rvalue>
+			<text>*:* AND NOT %lvalue%</text>
+			<regexp>\*:\* AND NOT (.*)</regexp>
+			<priority>2</priority>
+		</expression>
+		<expression name="group">
+			<lvalue>true</lvalue>
+			<rvalue>false</rvalue>
+			<text>(%lvalue%)</text>
+			<regexp>\((.*)\)</regexp>
+			<priority>1</priority>
+		</expression>
+	</expressions>
+	
+	<!-- used in relevancy's bq -->
+	<filter_expressions>
+		<filter_expression name="range inclusive">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>[%lvalue% TO %rvalue%]</text>
+			<regexp>\[(\S*) TO (\S*)\]</regexp>
+			<priority>6</priority>
+		</filter_expression>
+		<filter_expression name="range exclusive">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>{%lvalue% TO %rvalue%}</text>
+			<regexp>\{(\S) TO (\S)\}</regexp>
+			<priority>6</priority>
+		</filter_expression>
+	<!-- 	 
+		<filter_expression name="value">
+			<lvalue>true</lvalue>
+			<rvalue>false</rvalue>
+			<text>%lvalue%</text>
+			<regexp>(.*)</regexp>
+		</filter_expression>
+	-->	
+		<filter_expression name="fuzziness">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>%lvalue%~%rvalue%</text>
+			<regexp>(.*)~(.*)</regexp>
+			<priority>7</priority>
+		</filter_expression>
+		<filter_expression name="contains">
+			<lvalue>true</lvalue>
+			<rvalue>false</rvalue>
+			<text>*%lvalue%*</text>
+			<regexp>\*(.*)\*</regexp>
+			<priority>5</priority>
+		</filter_expression>
+		<filter_expression name="term proximity">
+			<lvalue>true</lvalue>
+			<rvalue>true</rvalue>
+			<text>"%lvalue%"~%rvalue%%</text>
+			<regexp>\"(.*)\"~(.*)%</regexp>
+			<priority>6</priority>
+		</filter_expression>
+		<filter_expression name="exists">
+			<lvalue>false</lvalue>
+			<rvalue>false</rvalue>
+			<text>[* TO *]</text>
+			<regexp>\[\* TO \*\]</regexp>
+			<priority>5</priority>
+		</filter_expression>
+		<!-- can just use escape space character-->
+		<!-- 	
+		<filter_expression name="phrase">
+			<lvalue>true</lvalue>
+			<rvalue>false</rvalue>
+			<text>"%lvalue%"</text>
+		</filter_expression>
+		-->
+	</filter_expressions>
+</relevancy>

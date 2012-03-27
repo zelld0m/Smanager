@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Sample namespace-based configuration
+  -
+  -->
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+        				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+
+    <global-method-security pre-post-annotations="enabled">
+        <!-- AspectJ pointcut expression that locates our "post" method and applies security that way
+        <protect-pointcut expression="execution(* bigbank.*Service.post*(..))" access="ROLE_TELLER"/>
+        -->
+    </global-method-security>
+
+    <http use-expressions="true">
+    
+		<!--
+		Configure the login and logout pages.
+		-->
+		<form-login login-page="/login.jsp" authentication-failure-url="/login.jsp?login_error=1" />
+		<intercept-url pattern="/login.jsp" access="permitAll" />
+		
+		<!-- The default url after logout is '/' --> 
+        <logout logout-url="/logout" />
+
+
+		<!--
+		Configure the main security for URIs here.
+		
+		NOTE: the role names match the names of the enumeration WebManagerRole.
+		-->
+		<!-- 
+		Comment or uncomment out this next section to enable or disable login security.
+		-->
+		<!--
+     	-->
+     	<intercept-url pattern="/" access="isAuthenticated()"/>
+    	<intercept-url pattern="/browse/**" access="isAuthenticated()" />
+     	<intercept-url pattern="/relevancy/**" access="isAuthenticated()" />
+     	<intercept-url pattern="/keyword/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/elevate/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/exclude/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/campaign/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/redirect/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/redirect2/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/catalog/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/feature/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/migrator/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/synonym/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/stopword/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/protword/**" access="isAuthenticated()" />
+    	<intercept-url pattern="/setting/**" access="isAuthenticated()" />
+     	<intercept-url pattern="/dwr/**" access="isAuthenticated()" />
+     	
+        <!--
+        Make CSS and image resources to unsecured.
+        -->
+        <intercept-url pattern="/css/**" access="permitAll" />
+        <intercept-url pattern="/images/**" access="permitAll" />
+
+        <!--
+        Exclude web service from authentication
+        -->
+        <intercept-url pattern="/search/**" access="permitAll" />
+    </http>
+
+    <!--
+    Usernames/Passwords are
+        rod/koala
+        dianne/emu
+        scott/wombat
+        peter/opal
+    -->
+    <authentication-manager>
+    
+    	<!--
+    	This reference from the other file 
+    	-->
+        <authentication-provider  user-service-ref='searchManagerAuthenticationProvider' >
+        
+        	<!-- 
+            <password-encoder hash="md5"/>
+            <user-service>
+                <user name="rod" password="a564de63c2d0da68cf47586ee05984d7" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER, COUNTDOWN" />
+                <user name="dianne" password="65d15fe9156f9c4bbffd98085992a44e" authorities="ROLE_USER,ROLE_TELLER" />
+                <user name="scott" password="2b58af6dddbd072ed27ffc86725d7d3a" authorities="ROLE_USER" />
+                <user name="peter" password="22b5c9accc6e1ba628cedc63a72d57f8" authorities="ROLE_USER" />
+            </user-service>
+             -->
+             
+        </authentication-provider>
+    </authentication-manager>
+	
+	<aop:aspectj-autoproxy/>
+	<beans:bean id="pointcutMgr" name="pointcutMgr" class="com.search.manager.aop.SystemArchitecture"></beans:bean>
+    <beans:bean id="serviceInterceptor" name="serviceInterceptor" class="com.search.manager.aop.ServiceInterceptor">
+		<beans:property name="auditTrailDAO" ref="auditTrailDao"/>
+    </beans:bean>	
+	
+	<beans:bean id="searchManagerAuthenticationProvider" class="com.search.manager.authentication.dao.SearchManagerAuthenticationProvider" >
+	</beans:bean>
+	
+	<!--
+	Data source stuff DUPLICATED here, can't figure out how to merge spring files at runtime, spring security
+	only wants to be loaded from a context provider in its own file :/
+	-->
+	
+	<!--
+	<beans:bean id="dataSource_search_manager" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<beans:property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
+		<beans:property name="url" value="${search_url}" />
+		<beans:property name="username" value="${search_user}" />
+		<beans:property name="password" value="${search_pass}" />
+		<beans:property name="poolPreparedStatements" value="true" />
+        <beans:property name="initialSize" value="20" />
+        <beans:property name="maxActive" value="20" />
+        <beans:property name="maxIdle" value="10" />
+		<beans:property name="validationQuery" value="select 1"/>
+  		<beans:property name="testOnBorrow" value="true"/>
+  		<beans:property name="testOnReturn" value="false"/>
+	</beans:bean> 
+	
+	-->
+	<beans:bean id="dataSource_search_manager" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<beans:property name="driverClassName" value="${db.driver}" /> 
+		<beans:property name="url" value="${db.url}" />
+		<beans:property name="username" value="${db.user}" />
+		<beans:property name="password" value="${db.password}" />
+	</beans:bean> 
+	
+	
+	<beans:bean id="transactionManager2" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
+		<beans:constructor-arg ref="dataSource_search_manager" />
+	</beans:bean> 
+	
+	<beans:bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
+			<beans:property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
+			<beans:property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" />
+			<beans:property name="username" value="ED_SOLR_USER" />
+			<beans:property name="password" value="s0lRd3V!" />
+			<beans:property name="validationQuery" value="select 1"/>
+            <beans:property name="testOnBorrow" value="true"/>
+            <beans:property name="testOnReturn" value="false"/>
+	</beans:bean>
+
+	<!--  dao services -->	
+	<beans:bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
+		<beans:constructor-arg ref="dataSource_solr" />
+	</beans:bean>
+	<beans:bean name="elevateDao" id="elevateDAO" class="com.search.manager.dao.sp.ElevateDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="keywordDao" id="keywordDAO" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="storeKeywordDao" id="storeKeywordDAO" class="com.search.manager.dao.sp.StoreKeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="excludeDao" id="excludeDAO" class="com.search.manager.dao.sp.ExcludeDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="auditTrailDao" id="auditTrailDAO" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="bannerDao" id="bannerDAO" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="campaignDao" id="campaignDAO" class="com.search.manager.dao.sp.CampaignDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="relevancyDao" id="relevancyDAO" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="categoryDao" id="categoryDAO" class="com.search.manager.dao.sp.CategoryDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	
+	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
+		<beans:property name="elevateDAO" ref="elevateDAO"/>
+		<beans:property name="keywordDAO" ref="keywordDAO"/>
+		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>
+		<beans:property name="excludeDAO" ref="excludeDAO"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAO"/>
+		<beans:property name="bannerDAO" ref="bannerDAO"/>
+		<beans:property name="campaignDAO" ref="campaignDAO"/>		
+		<beans:property name="relevancyDAO" ref="relevancyDAO"/>		
+		<beans:property name="categoryDAO" ref="categoryDAO"/>		
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>		
+    </beans:bean>
+ 
+	<beans:bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
+		<beans:constructor-arg ref="dataSource_solr" />
+	</beans:bean>
+	
+	<!-- DWR Service Definition:
+		 All classes with @RemoteProxy should be declared to resolve dwr issue
+		 Bean Property should have @Autowired and getter setter
+	 -->
+	 
+	<beans:bean name="auditService" class="com.search.manager.service.AuditService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean> 
+	<beans:bean name="bannerService" class="com.search.manager.service.BannerService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="campaignService" class="com.search.manager.service.CampaignService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="catalogService" class="com.search.manager.service.CatalogService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="categoryService" class="com.search.manager.service.CategoryService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="commentService" class="com.search.manager.service.CommentService" scope="prototype">
+	</beans:bean>
+	<beans:bean name="elevateService" class="com.search.manager.service.ElevateService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="excludeService" class="com.search.manager.service.ExcludeService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="featureService" class="com.search.manager.service.FeatureService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="migratorService" class="com.search.manager.service.MigratorService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="redirectService" class="com.search.manager.service.RedirectService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="redirectUtility" ref="redirectUtility"/>
+	</beans:bean>
+	<beans:bean name="relevancyService" class="com.search.manager.service.RelevancyService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="schemaService" class="com.search.manager.service.SchemaService" scope="prototype">
+	</beans:bean>
+	<beans:bean name="statisticService" class="com.search.manager.service.StatisticService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="synonymService" class="com.search.manager.service.SynonymService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="storeKeywordService" class="com.search.manager.service.StoreKeywordService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="redirectUtility" class="com.search.manager.utility.RedirectUtility" scope="singleton">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="utilityService" class="com.search.manager.service.UtilityService" scope="prototype">
+	</beans:bean>
+	
+	<beans:bean name="cacheService" class="com.search.manager.cache.CacheService" scope="prototype">
+	</beans:bean>
+	
+</beans:beans>

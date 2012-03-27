@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	
+	<!--
+	Specify that messages.properties is loaded to load resource bundles.  This means that
+	we can apply overrides to binding messages which aren't very nice. 
+	-->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" scope="singleton" >
+		<!-- Custom conversion error messages. -->
+		<property name="basenames" >
+			<list>
+				<value>messages</value>
+				<value>build-versions</value>
+			</list>
+		</property>
+	</bean>	
+	
+	<bean id="propertyPlaceholderConfigurer"  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+		<!-- <property name="locations" value="classpath:database.properties"/>
+		 <property name="locations" value="classpath:friggin_dev_database.properties"/>-->
+	</bean>  
+	
+	<!-- ============  Start Controller config =============== -->
+	
+	<!--
+	Registering this class makes Spring look for beans that have the
+	name attribute set to the URL path, eg name="/countdown/newOffer"
+	-->
+	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" scope="singleton" />
+
+	<!--
+	Resolve logical view names to .jsp resources in the /WEB-INF/views directory.
+	Note that this is the last view resolver because it will attempt to match
+	any requested resource not already matched.
+	-->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" scope="singleton" >
+		<property name="order" value="2" />
+		<property name="prefix" value="/WEB-INF/views/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+		
+	<!-- 
+	Scans within the base package of the application for @Components to configure as beans,
+	@Controller, @Service, @Configuration, etc.
+	-->
+	<context:component-scan base-package="com.search.manager" />
+
+	<!-- Enables the Spring MVC @Controller programming model. -->
+	<mvc:annotation-driven />
+	
+	<!-- Loads DWR-related configuration -->     
+	<import resource="dwr-context.xml" />
+			
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	Top Level Exception Handling
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->	
+
+	<!--
+	This bean implements the HandlerExceptionResolver interface which makes
+	spring use it as the top level error handler.
+	-->
+	<bean name="/errors/" id="topLevelLoggingExceptionHandler" class="com.search.manager.exception.controller.TopLevelLoggingExceptionHandler" scope="prototype" >
+	</bean>
+		
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	User Management Controllers and Validators
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--  unused START
+	<bean name="/user/listAllUsersByRole" id="allUsersByRoleController" class="com.search.manager.user.controller.AllUsersByRoleController" scope="prototype" >
+		<constructor-arg ref="authenticationDao" />
+	</bean>
+		
+	<bean name="/user/newUser" id="newUserController" class="com.search.manager.user.controller.NewUserController" scope="prototype" >
+		<constructor-arg ref="authenticationDao" />
+		<constructor-arg ref="userValidator" />
+	</bean>
+
+	<bean id="userValidator" class="com.search.manager.user.form.UserValidator" scope="prototype" >
+	</bean>
+
+	<bean name="/user/editUser" id="editUserController" class="com.search.manager.user.controller.EditUserController" scope="prototype" >
+		<constructor-arg ref="authenticationDao" />
+		<constructor-arg ref="userValidator" />
+	</bean>
+	
+	<bean name="/user/listAllUsers" id="allUsersController" class="com.search.manager.user.controller.AllUsersController" scope="prototype" >
+		<constructor-arg ref="authenticationDao" />
+	</bean>
+unused END -->
+	<!-- ============  End Controller config =============== -->
+
+
+	<!-- ============  Start Data Access Object configuration. =============== -->
+	<!-- 
+	We use a reference to wire a data source from the appropriate database to
+	each data access object.
+	-->
+	
+	
+	<!-- ============  End Data Access Object configuration =============== -->
+		
+
+	<!-- ============  Start JDBC config =============== -->
+	<!-- ============  End JDBC config =============== -->	
+	
+
+
+	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+	   <property name="attributes">
+	      <map>
+	         <entry key="daoService"><ref bean="daoService"/></entry>
+	      </map>
+	   </property>
+	</bean>
+
+</beans>

@@ -1,0 +1,169 @@
+.microGallery{
+    position:relative;
+    margin:30px 10px 10px 10px;
+    float:left;
+    font-family: Verdana;
+    font-style: normal;
+    font-weight: normal;
+}
+.microGallery img{
+    margin-left:auto;
+    margin-right:auto;
+    border:none;
+    -moz-box-shadow:0px 2px 4px #777;
+    -webkit-box-shadow:0px 2px 4px #777;
+    box-shadow:0px 2px 4px #777;
+    display:none;
+}
+.description{
+    background-color:#0084c4;
+    border:1px solid #0084c4;
+    height:40px;
+    bottom:0px;
+    left:5px;
+    padding:3px;
+    margin-left:15px !important
+}
+.description div{
+    margin:0 5px 5px 5px;
+    color:#fff;
+    font-size: 11px;
+}
+.nav{
+    background: #8e8e8e; /* Old browsers */
+	background: -moz-linear-gradient(top, #8e8e8e 0%, #5d5d5d 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#8e8e8e), color-stop(100%,#5d5d5d)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #8e8e8e 0%,#5d5d5d 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #8e8e8e 0%,#5d5d5d 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #8e8e8e 0%,#5d5d5d 100%); /* IE10+ */
+	background: linear-gradient(top, #8e8e8e 0%,#5d5d5d 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8e8e8e', endColorstr='#5d5d5d',GradientType=0 ); /* IE6-9 */
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+    border:1px solid #fff;
+    height:25px;
+    left:5px;*/
+    padding:3px;
+    margin-bottom:0;
+    color:#fff;
+    margin-left:15px !important;
+    margin-top:20px !important
+}
+.smallGallery .nav,.smallGallery .description{
+    width:105px;
+}
+.mediumGallery .nav,.mediumGallery .description{
+    width:165px;
+}
+.largeGallery .nav,.largeGallery .description{
+    width:222px;
+}
+a.thumbview{
+    opacity:0.6;
+    width:20px;
+    height:21px;
+    float:left;
+    cursor:pointer;
+}
+a.slideshow{
+    opacity:0.6;
+    width:20px;
+    height:21px;
+    float:right;
+    cursor:pointer;
+}
+a.play{
+	background:transparent url(../images/icon_play.png) no-repeat center center;
+}
+a.pause{
+	background:transparent url(../images/icon_playPause.png) no-repeat center center;
+}
+a.grid{
+    background:transparent url(../images/thumbs.png) no-repeat top left;
+}
+a.single{
+    background:transparent url(../images/single.png) no-repeat top left;
+}
+a.thumbview:hover,a.slideshow:hover{
+    opacity:1.0;
+}
+button.prev,button.next{
+    float:right;
+    width:16px;
+    height:16px;
+    cursor:pointer;
+    opacity:0.6;
+    outline:none;
+    border:none;
+    margin-top:2px
+}
+button::-moz-focus-inner { border: 0; }
+button.prev:hover,button.next:hover{
+    opacity:1.0;
+}
+.nav button.disabled{
+    opacity:0.2;
+}
+.nav button.disabled:hover{
+    opacity:0.2;
+}
+button.next{
+    background:transparent url(../images/arrows.png) no-repeat top left;
+}
+button.prev{
+    background:transparent url(../images/arrows.png) no-repeat 0px -16px;
+}
+.images div{
+    display:table-cell;
+    vertical-align:middle;
+    text-align:center;
+    position:relative;
+}
+.smallGallery .images,
+.mediumGallery .images,
+.largeGallery .images{
+    padding:10px;
+    background-color:#f9f9f9;
+    border:1px solid #0084c4;
+    position:relative;
+    margin-left:15px;
+}
+.smallGallery .images,
+.smallGallery .singleImg div{
+    width:102px;
+    height:102px;
+}
+.mediumGallery .images,
+.mediumGallery .singleImg div{
+    width:162px;
+    height:162px;
+}
+.largeGallery .images,
+.largeGallery .singleImg div{
+    width:200px;
+    height:222px;
+}
+.smallGallery .thumbs div,
+.mediumGallery .thumbs div,
+.largeGallery .thumbs div{
+    float:left;
+    margin:2px;
+    cursor:pointer;
+}
+.smallGallery .thumbs div{
+    width:30px;
+    height:30px;
+}
+.mediumGallery .thumbs div{
+    width:50px;
+    height:50px;
+}
+.largeGallery .thumbs div{
+    width:95px;
+    height:70px;
+}
+
+.largeGallery .thumbs div img { width: 90px; height:65px; margin:0 auto }
+
+.btnAdd				{ background:url(../images/icon_add.png) no-repeat; height: 16px; width:16px; border:0 }
+.btnAdd:hover		{ background-position: 0 -16px; }
