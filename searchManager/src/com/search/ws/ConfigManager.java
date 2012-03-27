@@ -59,6 +59,14 @@ public class ConfigManager {
     	return (xmlConfig.getString("/server[@name='" + server + "']/" +param));
     }
     
+    public String getParameterByStore(String storeName, String param) {
+    	return (xmlConfig.getString("/store[@name='" + storeName + "']/" + param));
+    }
+    
+    public String getParameterByCore(String coreName, String param) {
+    	return (xmlConfig.getString("/store[core='" + StringUtils.lowerCase(coreName) + "']/" + param));
+    }
+    
     @SuppressWarnings("unchecked")
 	public List<NameValuePair> getDefaultSolrParameters(String core) {
     	List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
