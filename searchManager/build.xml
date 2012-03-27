@@ -28,7 +28,7 @@
     <fileset dir="${tomcat.home}/lib">
       <include name="*.jar"/>
     </fileset>
-    <fileset dir="${spring.lib}">
+    <fileset dir="${basedir}/WebContent/WEB-INF/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
