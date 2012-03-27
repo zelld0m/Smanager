@@ -1,8 +1,10 @@
 package com.search.manager.schema.model.bq;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -378,6 +380,7 @@ public class BoostQueryModel implements VerifiableModel {
 		return (expression == null) ? "" : expression.toString();
 	}
 	
+	//TODO: Workaround methods for simple UI
 	public boolean getIsManufacturerOnly(){
 		if (CollectionUtils.isEmpty(expression)) return false;
 		
@@ -408,6 +411,24 @@ public class BoostQueryModel implements VerifiableModel {
 		}
 		
 		return true;
+	}
+	
+	public List<String> getSelectedFacetValues(){
+		Set<String> selectedFacetValues = new HashSet<String>();
+		
+		for (BoostQuery boostQuery:expression){
+			try {
+				Expression<SubQuery, SubQuery> expression = boostQuery.getExpression();
+				SubQuery sq = expression.getLValue();
+				String value = (String) sq.getExpression().getLValue();
+				if (StringUtils.isNotBlank(value))
+					selectedFacetValues.add(value);
+			} catch (Exception e) {
+				return new ArrayList<String>(new HashSet<String>());
+			}
+		}
+		
+		return new ArrayList<String>(selectedFacetValues);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -458,58 +479,59 @@ public class BoostQueryModel implements VerifiableModel {
 		
 		Schema schema = SolrSchemaUtility.getSchema();
 		String[] bqs =  {
-			"Manufacturer:Apple^10",
-			"(Manufacturer:Apple)^10",
-			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20",
-			"Manufacturer:(Apple AND Lenovo)^10",
-			"(Manufacturer:(Apple AND Lenovo))^10",
-			"Manufacturer:(*:* AND NOT Lenovo)^10",
-			"Manufacturer:(*Lenovo*)^10",
-			"Manufacturer:([* TO *])^10",
-			"Manufacturer:(*:* AND NOT [* TO *])^10",
-			"Manufacturer:([A TO B])^10",
-			"Manufacturer:({A TO B})^10",
-			"Manufacturer:(A~10)^10",
-			"Manufacturer:*A*^10",  // *A* treated as search term
-			"Manufacturer:A~10^10", // A~10 treated as search term
-			"Manufacturer:(*A*)^10",
-			"Manufacturer:(*A* AND B)^10",
-			"Manufacturer:(\"A B\"~10)^10",
-
-			//ok
-			"Manufacturer:IBM^10 Manufacturer:Apple^10",
-			"Manufacturer:Belkin^10 Manufacturer:(IBM AND Lenovo)^10 (Manufacturer:(Apple AND AppleCare))^10",
-			"(Manufacturer:(Apple AND AppleCare AND \"Belkin Systems\") AND Manufacturer:(IBM AND Lenovo) AND Manufacturer:HP)^10",
-			"*:* AND NOT (Category:Computers)^10",
-			"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 *:* AND NOT (Category:Computers)^10",
+//			"Manufacturer:Apple^10",
+//			"(Manufacturer:Apple)^10",
+			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20"
+//			"Manufacturer:(Apple AND Lenovo)^10",
+//			"(Manufacturer:(Apple AND Lenovo))^10",
+//			"Manufacturer:(*:* AND NOT Lenovo)^10",
+//			"Manufacturer:(*Lenovo*)^10",
+//			"Manufacturer:([* TO *])^10",
+//			"Manufacturer:(*:* AND NOT [* TO *])^10",
+//			"Manufacturer:([A TO B])^10",
+//			"Manufacturer:({A TO B})^10",
+//			"Manufacturer:(A~10)^10",
+//			"Manufacturer:*A*^10",  // *A* treated as search term
+//			"Manufacturer:A~10^10", // A~10 treated as search term
+//			"Manufacturer:(*A*)^10",
+//			"Manufacturer:(*A* AND B)^10",
+//			"Manufacturer:(\"A B\"~10)^10",
+//
+//			//ok
+//			"Manufacturer:IBM^10 Manufacturer:Apple^10",
+//			"Manufacturer:Belkin^10 Manufacturer:(IBM AND Lenovo)^10 (Manufacturer:(Apple AND AppleCare))^10",
+//			"(Manufacturer:(Apple AND AppleCare AND \"Belkin Systems\") AND Manufacturer:(IBM AND Lenovo) AND Manufacturer:HP)^10",
+//			"*:* AND NOT (Category:Computers)^10",
+//			"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 *:* AND NOT (Category:Computers)^10",
 		};
 		
 		String[] errorbqs =  {
-				"Manufacturer:Apple AND Lenovo^10", // error: no grouping defined
-				"Manufacturer:Apple OR Lenovo^10", // error: no grouping defined
-				"Manufacturer:*:* AND NOT Lenovo^10", // error: no grouping defined
-				"Manufacturer:[* TO *]^10", // error: no grouping defined
-				"Manufacturer:[A TO B]^10", // error: no grouping defined
-				"Manufacturer:([FROM A TO B])^10", // error: value cannot be multiple words unless space is escaped by backslash
-				"Manufacturer:([A TO B B])^10", // error: value cannot be multiple words unless space is escaped by backslash
-				"Manufacturer:{A TO B}^10", // error: no grouping defined
-				"Manufacturer:\"A B\"~10^10", // error: no grouping defined
-
-				"(Manufacturer:Apple)", // error: no boost factor
-				"((Manufacturer:Apple)^10", // error: mismatched parentheses
-				"(Manufacturer:Apple)^10 (Manufacturer:Belkin))^20", // error: mismatched parentheses
-				"(Manufacturer:Apple)^10 AND Manufacturer:Belkin^20", // error: cannot have AND between boost queries
-				"Manufacturer:IBM Manufacturer:Apple^10", // error: no boost factor declared
-				"Manufacturer:IBM (Manufacturer:Apple)^10", // error: no boost factor declared
-				"Manufacturer:IBM (Manufacturer:Apple)^10 Manufacturer:Belkin^20", // error: no boost factor declared
-				"(Manufacturer:Apple Belkin)^10", // error: no field declared or value is not single
-				"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 AND *:* AND NOT (Category:Computers)^10" // TODO error: cannot have AND between boost queries
+//				"Manufacturer:Apple AND Lenovo^10", // error: no grouping defined
+//				"Manufacturer:Apple OR Lenovo^10", // error: no grouping defined
+//				"Manufacturer:*:* AND NOT Lenovo^10", // error: no grouping defined
+//				"Manufacturer:[* TO *]^10", // error: no grouping defined
+//				"Manufacturer:[A TO B]^10", // error: no grouping defined
+//				"Manufacturer:([FROM A TO B])^10", // error: value cannot be multiple words unless space is escaped by backslash
+//				"Manufacturer:([A TO B B])^10", // error: value cannot be multiple words unless space is escaped by backslash
+//				"Manufacturer:{A TO B}^10", // error: no grouping defined
+//				"Manufacturer:\"A B\"~10^10", // error: no grouping defined
+//
+//				"(Manufacturer:Apple)", // error: no boost factor
+//				"((Manufacturer:Apple)^10", // error: mismatched parentheses
+//				"(Manufacturer:Apple)^10 (Manufacturer:Belkin))^20", // error: mismatched parentheses
+//				"(Manufacturer:Apple)^10 AND Manufacturer:Belkin^20", // error: cannot have AND between boost queries
+//				"Manufacturer:IBM Manufacturer:Apple^10", // error: no boost factor declared
+//				"Manufacturer:IBM (Manufacturer:Apple)^10", // error: no boost factor declared
+//				"Manufacturer:IBM (Manufacturer:Apple)^10 Manufacturer:Belkin^20", // error: no boost factor declared
+//				"(Manufacturer:Apple Belkin)^10", // error: no field declared or value is not single
+//				"((Manufacturer:(Apple AND AppleCare) AND Manufacturer:Lenovo))^10 AND *:* AND NOT (Category:Computers)^10" // TODO error: cannot have AND between boost queries
 			};
 		
 		for (String bq: bqs) {
 			try {
 				BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
 				logger.info(model.toString() + " is valid.");
+				logger.error(model.getSelectedFacetValues());
 			} catch (Exception e) {
 				logger.error(bq + " is invalid: " + e.getMessage(), e);
 			}
