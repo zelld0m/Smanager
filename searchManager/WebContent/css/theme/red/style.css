@@ -54,7 +54,13 @@
 
 
 /* pagination */
-.cssReset .txtDisplay			{ color:#6f6f6f }
+
+.cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
+.cssReset .styleA				{ color:#818181 !important; }
+.cssReset .styleA input[type='text'],
+.cssReset .styleB input[type='text'] { padding:1px; color:#818181 }
+.cssReset .styleB				{ color:#3B79C2;}
+
 .cssReset .pagination			{ display:inline; list-style-type:none; font-size:11px; color:#939393; float:right; margin-right:0; padding-right:0}
 .pagination li					{ float:left; padding-left:3px; padding-right:3px; color:#939393}
 .cssReset .pagination li a		{ color:#939393 }
@@ -64,6 +70,11 @@
 .pagination li a:link			{text-decoration:none; }
 .pagination li a:visited		{text-decoration:none; }
 .pagination li a:hover			{text-decoration:none; }
+
+/* qtip pagination */
+.txtDisplay 					{ margin-top:-5px }
+.pagingArrow					{ margin-right:-50px }
+
 
 div.facetHeader					{ background:url(images/bgLeftMenu.jpg) no-repeat; width:230px; height:27px !important; vertical-align:middle; display:block }
 #docHolder						{ width: auto !important }
@@ -469,9 +480,4 @@ ul#tagList a.fColorFour			{ color:#0073a7 }
 
 .sideFooter						{ margin-top:-10px !important; padding-top:0; background: #eee !important;}
 
-/* qtip pagination */
-.txtDisplay 					{ margin-top:-5px }
-.pagingArrow					{ margin-right:-50px }
 
-.borderR3						{ -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;  }
-.borderTW						{ border-top:1px solid #fff }

@@ -109,30 +109,38 @@
 		};
 
 		getShortPaging = function(itemStart, itemEnd){
-			var shortPaging = '<div class="txtDisplay floatL farial fsize11 fDblue padT10 marL10" >';
+			
+			
+			if (opts.shortPagingStyle == "leftStyle"){
+				
+			var shortPaging = '<div class="txtDisplay styleB" >';
 			shortPaging += opts.callbackText(itemStart, itemEnd, opts.totalItem);
 			shortPaging += '</div>';
 			
-			if (opts.shortPagingStyle == "leftStyle"){
-				shortPaging += '<div class="pagingArrow floatR w160 txtAR padTB5 marT0">';
+				shortPaging += '<div class="pagingArrow styleB floatR w160 txtAR padTB5 marT0">';
 				shortPaging += '<a id="firstPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueFirst marT3"></div></a>';
 			    shortPaging += '<a id="prevPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBluePrev mar3"></div></a>';
-			    shortPaging += '<span class="fDblue padLR3 fsize11 floatL marT3">Page </span>';
-			    shortPaging += '<span class="fDblue padLR3 fsize11 floatL marT3"><input id="currentPage" type="text" class="w30 fsize11 txtAR floatL marR3 posRel" style="height:15px; top:-3px" value="' + opts.currentPage + '"> of ' + opts.totalPages + '</span>';
+			    shortPaging += '<span class="padLR3 fsize11 floatL marT3">Page </span>';
+			    shortPaging += '<span class="padLR3 fsize11 floatL marT3"><input id="currentPage" type="text" class="w30 fsize11 txtAR floatL marR3 posRel" style="height:15px; top:-3px" value="' + opts.currentPage + '"> of ' + opts.totalPages + '</span>';
 			    shortPaging += '<a id="nextPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueNext mar3"></div></a>';
 			    shortPaging += '<a id="lastPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueLast marT3"></div></a>';
 				shortPaging += "</div>";
 			}
 			
 			if (opts.shortPagingStyle == "contentStyle"){
-				shortPaging += '<div class="pagingArrow floatR w160 txtAR padTB5 marT0">';
-				shortPaging += '<a id="firstPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueFirst marT3"></div></a>';
-			    shortPaging += '<a id="prevPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBluePrev mar3"></div></a>';
-			    shortPaging += '<span class="fDblue padLR3 fsize11 floatL marT3">Page JJJJ </span>';
-			    shortPaging += '<span class="fDblue padLR3 fsize11 floatL marT3"><input id="currentPage" type="text" class="w30 fsize11 txtAR floatL marR3 posRel" style="height:15px; top:-3px" value="' + opts.currentPage + '"> of ' + opts.totalPages + '</span>';
-			    shortPaging += '<a id="nextPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueNext mar3"></div></a>';
-			    shortPaging += '<a id="lastPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL btnBlueLast marT3"></div></a>';
-				shortPaging += "</div>";
+			
+			var shortPaging = '<div class="txtDisplay styleB" >';
+			shortPaging += opts.callbackText(itemStart, itemEnd, opts.totalItem);
+			shortPaging += '</div>';
+				
+				shortPaging += '<div class="pagingArrow styleA floatR w160 txtAR padTB5 marT0 marR5">';
+				shortPaging += '<a id="firstPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleAFirst marT3"></div></a>';
+			    shortPaging += '<a id="prevPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleAPrev mar3"></div></a>';
+			    shortPaging += '<span class="padLR3 fsize11 floatL marT3">Page </span>';
+			    shortPaging += '<span class="padLR3 fsize11 floatL marT3"><input id="currentPage" type="text" class="w30 fsize11 txtAR floatL marR3 posRel" style="height:15px; top:-3px" value="' + opts.currentPage + '"> of ' + opts.totalPages + '</span>';
+			    shortPaging += '<a id="nextPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleANext mar3"></div></a>';
+			    shortPaging += '<a id="lastPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleALast marT3"></div></a>';
+				shortPaging += '</div>';
 			}
 			
 			$shortPaging = $(shortPaging);
