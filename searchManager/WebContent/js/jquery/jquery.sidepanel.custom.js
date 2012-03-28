@@ -118,10 +118,11 @@
 
 		base.addPaging = function(keyword, page, total){
 			base.$el.find("#sideBottomPaging").paginate({
+				type: 'short',
+				pageStyle: base.options.pageStyle,
 				currentPage:page, 
 				pageSize:base.options.pageSize,
 				totalItem:total,
-				type: 'short',
 				callbackText: function(itemStart, itemEnd, itemTotal){
 					return itemStart + "-" + itemEnd + " of " + itemTotal;
 				},
@@ -205,6 +206,7 @@
 			page:1,
 			region: "left",
 			pageSize: 10,
+			pageStyle: "style1",
 			headerText: "",
 			searchText: "",
 			searchLabel: "",

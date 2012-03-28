@@ -165,7 +165,9 @@ public class SearchHelper {
 			if (StringUtils.isEmpty(qt)) {
 				qt = "standard";
 			}
-			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?");
+			
+			String coreName = configManager.getParameterByStore(storeId, "core");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", coreName).concat("select?");
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q.alt", "*:*"));
