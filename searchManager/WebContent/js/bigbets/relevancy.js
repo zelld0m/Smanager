@@ -65,7 +65,7 @@
 
 						$("ul#multiRule > li").not("#multiRulePattern").remove();
 
-						SchemaServiceJS.getMinShouldMatch(currVal, {
+						RelevancyServiceJS.getMinShouldMatch(currVal, {
 							callback: function(data){
 								if (data!=null){
 									if(data.isSingleRule){
@@ -272,7 +272,7 @@
 			},
 
 			populateSchemaFields = function(content, page){
-				SchemaServiceJS.getIndexedFields(page, schemaFieldsPageSize, sfSearchKeyword, sfExcFields, {
+				RelevancyServiceJS.getIndexedFields(page, schemaFieldsPageSize, sfSearchKeyword, sfExcFields, {
 					callback:function(data){
 						var list = data.list;
 						schemaFieldsTotal = data.totalSize;
@@ -326,7 +326,7 @@
 
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
 
-						SchemaServiceJS.getQueryFields(currVal, {
+						RelevancyServiceJS.getQueryFields(currVal, {
 							callback:function(data){
 								var qfList = data.list;
 
