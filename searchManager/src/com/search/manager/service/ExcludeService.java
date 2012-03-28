@@ -180,7 +180,7 @@ public class ExcludeService {
 			String store = UtilityService.getStoreName();
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, new Date(),  page, itemsPerPage);
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
 			return daoService.getExcludedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredExcludedProducts()",e);
