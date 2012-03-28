@@ -1,6 +1,7 @@
 (function($){
 	var catCode = "";
 	var ruleId = "";
+	var ruleName = "";
 	var searchTerm = "";
 	var rules;
 	var ruleFq = "";
@@ -23,7 +24,7 @@
 	});
 	};
 
-	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId,searchTerm, ruleFq, storeId, active, priority, {
+	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleFq, storeId, active, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
@@ -35,7 +36,7 @@
 	});
 	};
 	
-	var deleteRule = function() { RedirectServiceJS.removeRedirectRule(ruleId,{
+	var deleteRule = function() { RedirectServiceJS.removeRedirectRule(ruleId, ruleName, {
 		callback: function(data){
 			if (data > 0) {
 				ruleId = "";
@@ -312,7 +313,8 @@
 	    		var res=confirm("Delete rule " + $("#ruleName").val() + "?");
 	    		if (res==true) {
 	    			ruleId = $("#ruleId").val();
-	    			deleteRule(ruleId);
+	    			ruleName = $("#ruleName").val();
+	    			deleteRule(ruleId, ruleName);
 	    			clearValues();
 	    			ruleId="";
 	    			initPage();
@@ -322,6 +324,7 @@
 
 	    $("#save").click(function() {
 	    	ruleId = $("#ruleId").val();
+	    	ruleName = $("#ruleName").val();
     		searchTerm = "";
     		ruleFq = "";
     		$("#searchTermList option").each(function() {
@@ -339,10 +342,10 @@
         		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf("||"));
 	    		
     	    	if (ruleId == 0) {
-    	    		addRule($("#ruleName").val(), searchTerm, ruleFq, storeId, active, priority);
+    	    		addRule(ruleName, searchTerm, ruleFq, storeId, active, priority);
     	    		$("#delete").text("Delete");
     	    	} else {
-    	    		updateRule(ruleId, searchTerm, ruleFq, storeId, active, priority);
+    	    		updateRule(ruleId, ruleName, searchTerm, ruleFq, storeId, active, priority);
     	    	}
     		}
 	    });

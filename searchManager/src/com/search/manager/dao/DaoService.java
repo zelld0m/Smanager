@@ -52,7 +52,7 @@ public interface DaoService {
 	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
-	public int removeRedirectRule(Integer ruleId, String ruleName) throws DaoException;
+	public int removeRedirectRule(RedirectRule rule) throws DaoException;
 	
 	/* Redirect - Keyword mapping */
 	public int updateRedirectMapping(String redirectId, List<String> keywords) throws DaoException;

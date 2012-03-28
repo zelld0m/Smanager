@@ -20,8 +20,8 @@ public class RedirectUtility {
 	}
 	private static HashMap<String, String> fqMap; 
 	private static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
-	private static final String DBL_PIPE_DELIM = "||";
-	private static final String OR = ") OR (";
+	public static final String DBL_PIPE_DELIM = "||";
+	public static final String OR = ") OR (";
 
 	private static Logger logger = Logger.getLogger(RedirectUtility.class);
 
@@ -37,23 +37,15 @@ public class RedirectUtility {
 			logger.error(e.getMessage());
 		}
 		List<RedirectRule> ruleList = rRuleSet.getList();
-		for (RedirectRule rule : ruleList) {
-			String[] searchTerms = rule.getSearchTerm().split(DBL_ESC_PIPE_DELIM);
-			for (String searchTerm : searchTerms) {
-				fqMap.put((rule.getStoreId()+searchTerm).toLowerCase(), rule.getCondition());
+		if (ruleList != null) {
+			for (RedirectRule rule : ruleList) {
+				String[] searchTerms = rule.getSearchTerm().split(DBL_ESC_PIPE_DELIM);
+				for (String searchTerm : searchTerms) {
+					fqMap.put((rule.getStoreId()+searchTerm).toLowerCase(), rule.getCondition());
+				}
 			}
 		}
 	}
-
-//	private String addQuoteToManufacturer(String condition) {
-//		StringBuilder sb = new StringBuilder(condition);
-//		int pos = condition.indexOf("Manufacturer:"); 
-//		if ( pos > -1) {
-//			sb.insert(pos+13, "\"").append("\"");
-//			
-//		}
-//		return sb.toString();
-//	}
 
 	public String getRedirectFQ(String keyword) {
 		StringBuilder fq = new StringBuilder();

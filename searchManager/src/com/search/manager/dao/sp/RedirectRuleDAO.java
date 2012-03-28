@@ -13,10 +13,12 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
-import com.search.manager.service.UtilityService;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 public class RedirectRuleDAO {
 
@@ -106,10 +108,11 @@ public class RedirectRuleDAO {
 	    }
 	}
 	
-    public int deleteRedirectRule(Integer ruleId, String ruleName) {
+    @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
+    public int deleteRedirectRule(RedirectRule rule) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
-        inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
-		inputs.put(DAOConstants.PARAM_RULE_NAME, ruleName);
+		inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+		inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
         return DAOUtils.getUpdateCount(deleteRedirectRuleStoredProcedure.execute(inputs));
     }	
 
@@ -127,6 +130,7 @@ public class RedirectRuleDAO {
 		}
     }	
 
+    @Audit(entity = Entity.queryCleaning, operation = Operation.add)
     public int addRedirectRule(RedirectRule rule) throws DaoException {
     	int result = -1;
 		try {
@@ -146,6 +150,7 @@ public class RedirectRuleDAO {
     	return result;
     }
 
+    @Audit(entity = Entity.queryCleaning, operation = Operation.update)
     public int updateRedirectRule(RedirectRule rule) throws DaoException {
     	int result = -1;
 		try {

@@ -13,8 +13,10 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.RedirectUtility;
 
 @Aspect
 public class ServiceInterceptor {
@@ -71,6 +73,9 @@ public class ServiceInterceptor {
 				break;
 			case exclude:
 				logExclude(jp, auditable, auditTrail);
+				break;
+			case queryCleaning:
+				logQueryCleaning(jp, auditable, auditTrail);
 				break;
 			case keyword:
 				// TODO: update DAO signature
@@ -179,6 +184,30 @@ public class ServiceInterceptor {
 			case add:
 				auditTrail.setDetails(String.format("Adding Keyword[%1$s] to Store[%2$s].",
 						auditTrail.getReferenceId(), sk.getKeywordId(), sk.getStoreId()));
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+
+	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
+		auditTrail.setStoreId(rule.getStoreId());
+		auditTrail.setKeyword(rule.getSearchTerm().replace(RedirectUtility.DBL_PIPE_DELIM,","));
+		auditTrail.setReferenceId(rule.getRuleName());
+		switch (auditable.operation()) {
+			case add:
+				auditTrail.setDetails(String.format("Added Rule[%1$s] for search terms[%2$s], apply condition [%3$s].",
+						auditTrail.getReferenceId(), rule.getSearchTerm().replace(RedirectUtility.DBL_PIPE_DELIM,","),rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR)));
+				break;
+			case update:
+				auditTrail.setDetails(String.format("Updated Rule[%1$s] for search terms[%2$s], apply condition [%3$s]. ",
+						auditTrail.getReferenceId(), auditTrail.getKeyword(),rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR)));
+				break;
+			case delete:
+				auditTrail.setDetails(String.format("Removed Rule[%1$s]",
+						auditTrail.getReferenceId()));
 				break;
 			default:
 				return;

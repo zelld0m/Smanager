@@ -722,8 +722,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeRedirectRule(Integer ruleId, String ruleName) throws DaoException {
-		return redirectRuleDAO.deleteRedirectRule(ruleId, ruleName);
+	public int removeRedirectRule(RedirectRule rule) throws DaoException {
+		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
 }
