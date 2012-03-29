@@ -221,9 +221,9 @@
 	<div id="setupFieldValueS3" style="display:none">
 		<div style="width:610px;">
 		<div class="marB8"><h3 class="fsize14">Select Field: 
-			<select>
-				<option>Manufacturer</option>
-				<option>Category</option>
+			<select id="facetName">
+				<option value="Manufacturer">Manufacturer</option>
+				<option value="Category">Category</option>
 			</select>
 			</h3>
 		</div>

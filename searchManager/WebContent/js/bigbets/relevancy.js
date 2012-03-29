@@ -1,4 +1,5 @@
 (function($){
+	// TODO: Some codes should be converted to plugins
 	var keywordPageSize = 5;
 	var selectedRelevancy = null;
 	var currentRelevancyPage = 1;
@@ -11,8 +12,11 @@
 	var sfExcFields = new Array();
 	var sfSearchKeyword = "";
 	var reloadRate = 500;
+	
+	var bqExcFields = new Array();
 	var bqSearchKeyword = "";
 	var bqFacetValuesPageSize = 5;
+	var bqSearchText = "Enter Field Value";
 
 	$(document).ready(function() { 
 
@@ -39,41 +43,107 @@
 		/** BELOW: BQ */
 		setupFieldS3 = function(field){
 
-			var addFieldValuesPaging = function(content, page, totalItem){
-				content.find("div#fieldsBottomPaging").paginate({
-					currentPage:page, 
-					pageSize:schemaFieldsPageSize,
-					totalItem:totalItem,
-					type: 'short',
-					pageStyle: 'style2',
-					callbackText: function(itemStart, itemEnd, itemTotal){
-						return itemStart + "-" + itemEnd + " of " + itemTotal;
-					},
-					pageLinkCallback: function(e){},
-					nextLinkCallback: function(e){},
-					prevLinkCallback: function(e){},
-					firstLinkCallback: function(e){},
-					lastLinkCallback: function(e){}
-				});
+			var updateFacetValueBarLength = function(content, fieldValue, fieldBoost){
+
+				var $field = content.find('#fieldSelected' + $.formatAsId(fieldValue) + ' input[type="text"]');
+
+				if ($field.val() > relFieldMaxValue){
+					$field.val(relFieldMaxValue);
+				}
+
+				var perBar = ($field.val()/relFieldMaxValue)*100; 
+				content.find('#fieldSelected' + $.formatAsId(fieldValue) + ' div.bargraph').attr("style", "background:#9d79b2; width:" + perBar + "%");
 			};
 
-			var populateFieldValues = function(content, keyword, facetField, page, excList){
-				
-				RelevancyServiceJS.getFieldValues(keyword, page, bqFacetValuesPageSize, facetField, excList, {
+			var removeSelectedFacetValue = function(content, fieldValue){
+				if (confirm("Remove " + fieldValue + " from selection?")){
+					content.find('tr#fieldSelected' + $.formatAsId(fieldValue)).remove();
+					var idx = bqExcFields.indexOf(fieldValue);
+					if (idx!=-1) bqExcFields.splice(idx,1);
+					populateFieldValues(content, 1);
+					content.find('tr.fieldSelectedItem').removeClass("alt");
+					content.find('tr.fieldSelectedItem:even').addClass("alt");
+				}
+			};
+
+			var populateSelectedFacetValue = function(content, fieldValue, boost){
+				content.find("tr#fieldSelectedPattern").clone().prependTo("tbody#fieldSelectedBody").attr("id","fieldSelected"+$.formatAsId(fieldValue)).attr("style","display:float");
+				content.find("tr#fieldSelected" + $.formatAsId(fieldValue) + " .txtHolder").html(fieldValue);
+				content.find('tr#fieldSelected' + $.formatAsId(fieldValue)+ ' input[type="text"]').val(boost);
+				updateFacetValueBarLength(content, fieldValue, boost);
+
+				content.find('tr#fieldSelected' + $.formatAsId(fieldValue) + ' input[type="text"]').on({
+					blur:function(e){
+						updateFacetValueBarLength(content, fieldValue, $(e.target).val());
+					},
+
+					keypress:function(e){
+						var charCode = (e.which) ? e.which : e.keyCode;
+						if (charCode > 57 || (charCode > 31 && charCode < 46 || 
+								charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
+							return false;
+						if (charCode == 13){ updateFacetValueBarLength(content, fieldValue, $(e.target).val());}
+					}
+
+				}, { name:fieldValue} );
+
+				content.find('tr#fieldSelected' + $.formatAsId(fieldValue) + ' a.removeSelected').on({ click:function(e){removeSelectedFacetValue(content, fieldValue);}});
+				content.find('tr.fieldSelectedItem').removeClass("alt");
+				content.find('tr.fieldSelectedItem:even').addClass("alt");
+			};
+
+			var addFieldValuesPaging = function(content, page, totalItem){
+				if(totalItem==0){
+					content.find("div#fieldsBottomPaging").empty();
+				}else{
+					content.find("div#fieldsBottomPaging").paginate({
+						currentPage: page, 
+						pageSize: bqFacetValuesPageSize,
+						totalItem: totalItem,
+						type: 'short',
+						pageStyle: 'style2',
+						callbackText: function(itemStart, itemEnd, itemTotal){
+							return itemStart + "-" + itemEnd + " of " + itemTotal;
+						},
+						pageLinkCallback: function(e){ populateFieldValues(content, e.data.page); },
+						nextLinkCallback: function(e){ populateFieldValues(content, e.data.page+1);},
+						prevLinkCallback: function(e){ populateFieldValues(content, e.data.page-1);},
+						firstLinkCallback: function(e){populateFieldValues(content, 1);},
+						lastLinkCallback: function(e){ populateFieldValues(content, e.data.totalPages);}
+					});
+				}
+
+			};
+
+			var populateFieldValues = function(content, page){
+
+				var facetField = content.find("select#facetName option:selected").val();
+
+				RelevancyServiceJS.getValuesByField(bqSearchKeyword, page, bqFacetValuesPageSize, facetField, bqExcFields, {
 					callback: function(data){
 						var list = data.list;
-
+						content.find("ul#fieldListing > li").filter(":not(#fieldListingPattern)").remove();
 						for (var i=0; i < data.totalSize ; i++){
 							if ($.isNotBlank(list[i])){
 								content.find("ul#fieldListing > li#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing" + $.formatAsId(list[i])).show();
 								content.find("li#fieldListing" + $.formatAsId(list[i]) + " > span").html(list[i]);
+								//TODO:
+								content.find('#fieldListing' + $.formatAsId(list[i]) + ' a').on({click: function(e){
+									var element = e.data.name;
+
+									if($.pushIfNotExist(bqExcFields, element, function(el){ return el === element; })){
+										populateSelectedFacetValue(content,element,0);
+										populateFieldValues(content, 1);
+									}
+
+								}},{name:list[i]});
 							}
 						}
 
-						addFieldValuesPaging(content, 1, data.totalSize);
+						addFieldValuesPaging(content, page, data.totalSize);
 					},
 					preHook:function(){
-						content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+						content.find("ul#fieldListing > li").filter(":not(#fieldListingPattern)").remove();
 						content.find("div#fieldListing div#preloader").show();					
 						content.find("div#fieldListing div#content").hide();					
 					},
@@ -90,10 +160,79 @@
 				events: { 
 					render: function(e, api){
 						var $content = $("div", api.elements.content).html($("#setupFieldValueS3").html());
+						
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
+						
+						//TODO: initialize selected
+						RelevancyServiceJS.getValuesByString(currVal,{
+							callback: function(data){
 
-						populateFieldValues($content, "", "Manufacturer", 1, null);
+								// set to selected
+								if (data!==null){
+									if (data.isCategoryOnly){
+										$content.find('select[id="facetName"]').val("Manufacturer");
+									}
+								}
 
+								$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+								$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+								bqSearchKeyword = "";
+
+								populateFieldValues($content, 1);
+
+								$content.find('a#clearBtn').on({
+									click: function(e){
+										$content.find('.fieldSelectedItem input[type="text"]').val(0);
+										$content.find('.fieldSelectedItem .bargraph').attr("style","width:0%");
+									}
+								});
+
+								$content.find('a#applyBtn').on({
+									click: function(e){
+										var finalVal = "";
+
+										$content.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
+											//TODO: apply
+											var val = $.trim($(value).find(".txtHolder").html()); 
+											if(val.indexOf(" ") >= 0)
+												val = '"' + val + '"';  
+
+											if (index > 0) finalVal += " ";
+											finalVal += $("select#facetName").val();
+											finalVal += ":(";
+
+											finalVal += val;
+											finalVal += ")";
+											finalVal += '^';
+											finalVal += $(value).find('input[type="text"]').val();
+										});
+
+										api.hide();
+
+										$('div[id="' + field.id + '"] input[type="text"]').val(finalVal);
+									}
+								});
+
+								$content.find('input[id="searchBoxField"]').val(bqSearchText).on({
+									blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(bqSearchText);},
+									focus: function(e){if ($.trim($(e.target).val()) == bqSearchText) $(e.target).val("");},
+									keyup: function(e){ 
+										setTimeout(function(){ 
+											bqSearchKeyword = $(e.target).val();
+											populateFieldValues($content, 1);
+										}, reloadRate);  	
+									}
+								});
+
+								$content.find('select[id="facetName"]').on({
+									change: function(e){
+										$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+										populateFieldValues($content, 1);
+									}
+								});
+
+							}
+						});
 					},
 					hide: function (e, api){
 						api.destroy();
@@ -328,14 +467,14 @@
 						var list = data.list;
 						schemaFieldsTotal = data.totalSize;
 
-						$("ul#fieldListing > li").not("#fieldListingPattern").remove();
+						content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
 
 						for (var i=0; i< data.totalSize; i++){
 							if(list[i]!=null){
-								$("#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing_"+i).attr("style","display:float");
-								$('#fieldListing_' + i + ' span').html(list[i].name);
+								content.find("#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing_"+i).attr("style","display:float");
+								content.find('#fieldListing_' + i + ' span').html(list[i].name);
 
-								$('#fieldListing_' + i + ' a').on({click: function(e){
+								content.find('#fieldListing_' + i + ' a').on({click: function(e){
 									var element = e.data.name;
 
 									if($.pushIfNotExist(sfExcFields, element, function(el){ return el === element; })){
