@@ -14,6 +14,7 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.paginate.defaultOptions, options);
+			if($.isBlank(base.options.currentPage)) base.options.currentPage = 1;
 			
 			var itemStart = (((base.options.currentPage-1)*base.options.pageSize)+1);
 			var itemEnd = (((base.options.currentPage*base.options.pageSize) > base.options.totalItem) ? base.options.totalItem : (base.options.currentPage*base.options.pageSize));
@@ -62,42 +63,33 @@
 			}
 
 			$shortPaging = $(shortPaging);
+			
+			base.$el.append($shortPaging);
 
-			var $firstPage = $shortPaging.find("a#firstPage");
-			var $prevPage  = $shortPaging.find("a#prevPage");
-			var $nextPage  = $shortPaging.find("a#nextPage");
-			var $lastPage  = $shortPaging.find("a#lastPage");
-			var $currPage  = $shortPaging.find("input#currentPage");
-
-			if (base.options.totalPages == base.options.currentPage){
-				$nextPage.off();
-				$lastPage.off();
-			}else{
-				$nextPage.on({click:base.options.nextLinkCallback}, { page:base.options.currentPage});
-				$lastPage.on({click:base.options.lastLinkCallback}, { page:base.options.currentPage, totalPages:base.options.totalPages});
+			if (base.options.totalPages != base.options.currentPage){
+				base.$el.find("#nextPage").on({click:  base.options.nextLinkCallback}, { page:base.options.currentPage});
+				base.$el.find("#lastPage").on({click: base.options.lastLinkCallback}, { page:base.options.currentPage, totalPages:base.options.totalPages});
 			}
 
-			if (base.options.currentPage == 1){
-				$firstPage.off();
-				$prevPage.off();
-			}else{
-				$firstPage.on({click:base.options.firstLinkCallback}, { page:base.options.currentPage});
-				$prevPage.on({click:base.options.prevLinkCallback}, { page:base.options.currentPage});
+			if (base.options.currentPage != 1){
+				base.$el.find("#firstPage").on({click: base.options.firstLinkCallback}, { page:base.options.currentPage});
+				base.$el.find("#prevPage").on({click: base.options.prevLinkCallback}, { page:base.options.currentPage});
 			}
 
-			$currPage.on(
-					{	keypress:base.jumpToPage,
+			base.$el.find("input#currentPage").on(
+					{	
+						keypress:base.jumpToPage,
 						focus: function(e){
 							$(e.target).val("");
 						},
 						blur: function(e){
 							$(e.target).val(base.options.currentPage);
 						}},
-						{	currentPage:base.options.currentPage, 
-							totalPages:base.options.totalPages }
+						{	
+							currentPage:base.options.currentPage, 
+							totalPages:base.options.totalPages 
+						}
 			);
-
-			return base.$el.append($shortPaging);
 		};
 
 		base.useLongPaging = function(itemStart, itemEnd){
@@ -155,6 +147,7 @@
 			longPaging += '</div>';
 
 			var $longPaging = $(longPaging);
+			base.$el.append($longPaging);
 
 			var links = [];
 			var prev = null;
@@ -181,10 +174,8 @@
 			}
 
 			for (var i = 0, l = links.length; i < l; i++) {
-				$longPaging.find("ul.pagination").append(links[i]);
-			}
-
-			return base.$el.append($longPaging);
+				base.$el.find("ul.pagination").append(links[i]);
+			} 
 		};
 		
 		base.jumpToPage = function(e){
@@ -213,7 +204,7 @@
 
 	$.paginate.defaultOptions = {
 			type: "long",
-			currentPage:1,
+			currentPage: 1,
 			pageSize: 10, 
 			totalItem: 10,
 			totalPages: 0,
