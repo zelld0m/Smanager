@@ -11,6 +11,8 @@
 	var sfExcFields = new Array();
 	var sfSearchKeyword = "";
 	var reloadRate = 500;
+	var bqSearchKeyword = "";
+	var bqFacetValuesPageSize = 5;
 
 	$(document).ready(function() { 
 
@@ -36,13 +38,61 @@
 
 		/** BELOW: BQ */
 		setupFieldS3 = function(field){
+
+			var addFieldValuesPaging = function(content, page, totalItem){
+				content.find("div#fieldsBottomPaging").paginate({
+					currentPage:page, 
+					pageSize:schemaFieldsPageSize,
+					totalItem:totalItem,
+					type: 'short',
+					pageStyle: 'style2',
+					callbackText: function(itemStart, itemEnd, itemTotal){
+						return itemStart + "-" + itemEnd + " of " + itemTotal;
+					},
+					pageLinkCallback: function(e){},
+					nextLinkCallback: function(e){},
+					prevLinkCallback: function(e){},
+					firstLinkCallback: function(e){},
+					lastLinkCallback: function(e){}
+				});
+			};
+
+			var populateFieldValues = function(content, keyword, facetField, page, excList){
+				
+				RelevancyServiceJS.getFieldValues(keyword, page, bqFacetValuesPageSize, facetField, excList, {
+					callback: function(data){
+						var list = data.list;
+
+						for (var i=0; i < data.totalSize ; i++){
+							if ($.isNotBlank(list[i])){
+								content.find("ul#fieldListing > li#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing" + $.formatAsId(list[i])).show();
+								content.find("li#fieldListing" + $.formatAsId(list[i]) + " > span").html(list[i]);
+							}
+						}
+
+						addFieldValuesPaging(content, 1, data.totalSize);
+					},
+					preHook:function(){
+						content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+						content.find("div#fieldListing div#preloader").show();					
+						content.find("div#fieldListing div#content").hide();					
+					},
+					postHook:function(){
+						content.find("div#fieldListing div#preloader").hide();	
+						content.find("div#fieldListing div#content").show();						
+					}
+				});
+			};
+
 			$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
 				content: { text: $('<div>'), title: { text: "Edit " + field.label, button: true }},
 				show: {modal:true},
 				events: { 
 					render: function(e, api){
-						var $contentHolder = $("div", api.elements.content).html($("#setupFieldValueS3").html());
+						var $content = $("div", api.elements.content).html($("#setupFieldValueS3").html());
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
+
+						populateFieldValues($content, "", "Manufacturer", 1, null);
 
 					},
 					hide: function (e, api){
@@ -208,6 +258,7 @@
 						pageSize:schemaFieldsPageSize,
 						totalItem:schemaFieldsTotal,
 						type: 'short',
+						pageStyle: 'style2',
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return itemStart + "-" + itemEnd + " of " + itemTotal;
 						},
@@ -302,13 +353,13 @@
 						addSchemaFieldsPaging(content, page);
 					},
 					preHook:function(){
-						$("ul#fieldListing > li").not("#fieldListingPattern").remove();
-						$("div#fieldListing div#preloader").show();					
-						$("div#fieldListing div#content").hide();					
+						content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+						content.find("div#fieldListing div#preloader").show();					
+						content.find("div#fieldListing div#content").hide();					
 					},
 					postHook:function(){
-						$("div#fieldListing div#preloader").hide();	
-						$("div#fieldListing div#content").show();						
+						content.find("div#fieldListing div#preloader").hide();	
+						content.find("div#fieldListing div#content").show();						
 					}
 				});
 			};
@@ -445,7 +496,7 @@
 				pageChangeCallback: function(n){ }
 			});
 		};
-		
+
 		refreshKeywordInRuleList = function(page){
 			$("#keywordInRulePanel").empty();
 			$("#keywordInRulePanel").sidepanel({
@@ -453,6 +504,7 @@
 				region: "content",
 				type: 'keyword',
 				module: 'elevate',
+				pageStyle: "style2",
 				pageSize: keywordInRulePageSize,
 				headerText : "Using This Rule",
 				searchText : "Enter Keyword",
@@ -574,17 +626,17 @@
 			$("div#keywordInRuleContent ul > li:not(#keywordInRulePattern)").remove();
 			$("div#keywordInRuleContent > div#keywordInRulePagingBottom").hide();
 		};
-		
+
 		populateKeywordInRule = function(page){
 			RelevancyServiceJS.getKeywordInRule(selectedRelevancy.relevancyId, page, keywordInRulePageSize, {
 				callback: function(data){
 					var list = data.list;
-					
+
 					for (var i=0; i<data.totalSize ; i++){
 						var keyword = list[i].keyword.keyword;
 						$('li#keywordInRulePattern').clone().appendTo('div#keywordInRuleContent ul').attr("id","keywordInRule" + $.formatAsId(keyword)).show();
 						$('li#keywordInRule' + $.formatAsId(keyword) + ' > label').html(keyword);
-						
+
 						$('li#keywordInRule' + $.formatAsId(keyword) + ' > a.deleteKeywordInRuleBtn').on({
 							click: function(e){
 								RelevancyServiceJS.deleteKeywordInRule(selectedRelevancy.relevancyId, keyword, {
@@ -598,22 +650,6 @@
 							}
 						}, {keyword: keyword});			
 					}
-					
-					$("#keywordInRulePagingBottom").paginate({
-						page: 1,
-						type: "short",
-						shortPagingStyle: "contentStyle",
-						totalItem: data.totalSize,
-						callbackText: function(itemStart, itemEnd, itemTotal){
-							return itemStart + ' to ' + itemEnd + ' of ' + itemTotal;
-						},
-						pageLinkCallback: function(e){ populateKeywordInRule(e.data.page); },
-						nextLinkCallback: function(e){ populateKeywordInRule(e.data.page + 1); },
-						prevLinkCallback: function(e){ populateKeywordInRule(e.data.page - 1); },
-						firstLinkCallback: function(e){ populateKeywordInRule(1); },
-						lastLinkCallback: function(e){ populateKeywordInRule(e.data.totalPages); }
-					});
-					
 				},
 				preHook:function(){
 					prepareKeywordInRule();
@@ -625,7 +661,7 @@
 			});
 		};
 		//End
-		
+
 		setRelevancyFields = function(){
 			var relevancy = selectedRelevancy;
 
