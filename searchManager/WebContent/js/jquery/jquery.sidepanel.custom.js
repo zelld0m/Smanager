@@ -186,13 +186,11 @@
 		};
 
 		base.addItemIcon = function(id, name, relId){
-			var icon  = '<a id="link" href="javascript:void(0);"><img src="../images/icon_link.png"></a>';
-			icon += '<a id="clone" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';            	
+			var icon  = '<a id="clone" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';            	
 			icon += '<a id="edit" href="javascript:void(0);"><img src="../images/page_edit.png"></a>';
 
 			base.$el.find('#itemPattern' + id + ' div.itemLink').html(icon);
 			base.$el.find('#itemPattern' + id + ' div.itemText a').on({click: base.options.itemNameCallback},{name:name,id:relId});
-			base.$el.find('#itemPattern' + id + ' div.itemLink a#link').on({click: base.options.iconLinkCallback},{name:name,id:relId});
 			base.$el.find('#itemPattern' + id + ' div.itemLink a#clone').on({click: base.options.iconCloneCallback},{name:name,id:relId});
 			base.$el.find('#itemPattern' + id + ' div.itemLink a#edit').on({click: base.options.iconEditCallback},{name:name,id:relId});
 		};
@@ -214,7 +212,6 @@
 			itemCountCallback: function(e){},
 			itemNameCallback: function(e){},
 			itemAddCallback: function(e){},
-			iconLinkCallback: function(e){},
 			iconCloneCallback: function(e){},
 			iconEditCallback: function(e){},
 			pageChangeCallback: function(e){},
