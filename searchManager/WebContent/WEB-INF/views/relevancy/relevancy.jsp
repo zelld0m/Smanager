@@ -221,9 +221,9 @@
 	<div id="setupFieldValueS3" style="display:none">
 		<div style="width:610px;">
 		<div class="marB8"><h3 class="fsize14">Select Field: 
-			<select>
-				<option>Manufacturer</option>
-				<option>Lipsum dolor</option>
+			<select id="facetName">
+				<option value="Manufacturer">Manufacturer</option>
+				<option value="Category">Category</option>
 			</select>
 			</h3>
 		</div>
@@ -238,7 +238,7 @@
 				<div id="preloader" class="marT30 txtAC"><img src="../images/preloader30x30Trans.gif"></div>
 				
 				<div id="content">
-					<ul id="" class="menuFields">
+					<ul id="fieldListing" class="menuFields">
 						<li id="fieldListingPattern" class="fieldListingItem" style="display:none">
 							<a href="javascript:void(0);"><img src="../images/icon_addField.png" style="margin-bottom:-3px"></a>
 							<span></span>

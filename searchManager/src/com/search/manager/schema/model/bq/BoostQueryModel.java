@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.schema.RelevancyConfig;
 import com.search.manager.schema.SchemaException;
@@ -21,6 +23,7 @@ import com.search.manager.schema.model.Schema;
 import com.search.manager.schema.model.VerifiableModel;
 import com.search.ws.ConfigManager;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class BoostQueryModel implements VerifiableModel {
 
 	private static final Logger logger = Logger.getLogger(BoostQueryModel.class);
@@ -414,22 +417,8 @@ public class BoostQueryModel implements VerifiableModel {
 		return true;
 	}
 	
-	public List<String> getSelectedFacetValues(){
-		Set<String> selectedFacetValues = new HashSet<String>();
-		
-		for (BoostQuery boostQuery:expression){
-			try {
-				Expression<SubQuery, SubQuery> expression = boostQuery.getExpression();
-				SubQuery sq = expression.getLValue();
-				String value = (String) sq.getExpression().getLValue();
-				if (StringUtils.isNotBlank(value))
-					selectedFacetValues.add(value);
-			} catch (Exception e) {
-				return new ArrayList<String>(new HashSet<String>());
-			}
-		}
-		
-		return new ArrayList<String>(selectedFacetValues);
+	public List<BoostQuery> getBoostQuery(){
+		return expression;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -481,6 +470,7 @@ public class BoostQueryModel implements VerifiableModel {
 		
 		Schema schema = SolrSchemaUtility.getSchema();
 		String[] bqs =  {
+			"Manufacturer:(\"2Point Communications\")^1 Manufacturer:(\"1 Step Technology\")^2",
 //			"Manufacturer:Apple^10",
 //			"(Manufacturer:Apple)^10",
 //			"(Manufacturer:Apple Bee)^10 Manufacturer:Belkin Beer^20",
@@ -534,7 +524,6 @@ public class BoostQueryModel implements VerifiableModel {
 			try {
 				BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
 				logger.info(model.toString() + " is valid.");
-				logger.info(model.getSelectedFacetValues());
 			} catch (Exception e) {
 				logger.error(bq + " is invalid: " + e.getMessage(), e);
 			}
@@ -548,7 +537,6 @@ public class BoostQueryModel implements VerifiableModel {
 				logger.info(bq + " is invalid: " + e.getMessage());
 			}
 		}
-
 	}
 	
 }

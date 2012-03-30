@@ -85,10 +85,7 @@
 		  <!-- DidYouMean Widget 
 		  <div class="clearB floatL farial fsize12 marT10 w730">Did you mean: <a href="#" class="fDblue fbold">Apple</a></div>-->
 		   
-		  <div>
-			  <div id="pager-header" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10"><div class="txtAR"><ul id="pager" class="pagination"></ul></div></div>
-		  </div>
+		 
 		
 		  <!-- Sorting-->
 		  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine"> 
@@ -107,6 +104,11 @@
 	        	</div>
 	        	<div id="sortResult" class="floatR marL8 marR3 marTn2"></div>	
 	        </div>		
+		  </div>
+		   
+		  <div>
+			  <div id="pager-header" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10"><div class="txtAR"><ul id="pager" class="pagination"></ul></div></div>
 		  </div>
 		  
 		  <div class="w740 txtAR padT20">

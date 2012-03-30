@@ -1,11 +1,13 @@
 package com.search.manager.schema.model.bq;
 
 import org.apache.commons.lang.StringUtils;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.model.VerifiableModel;
 
-
+@DataTransferObject(converter = BeanConverter.class)
 public class Expression<X,Y> implements VerifiableModel {
 	
 	private static final long serialVersionUID = 1L;

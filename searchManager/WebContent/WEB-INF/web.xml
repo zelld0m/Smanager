@@ -186,6 +186,7 @@
 				com.search.manager.schema.model.bq.BoostQuery,
 				com.search.manager.schema.model.bq.SubQuery,
 				com.search.manager.schema.model.bq.Expression,
+				com.search.manager.schema.model.bq.LogicalOperator,
 				com.search.manager.schema.analyzer.model.AnalyzerComponent,
 				com.search.manager.schema.analyzer.model.AnalyzerComponent$AnalyzerComponentType,
 				com.search.manager.schema.model.qf.QueryField,
