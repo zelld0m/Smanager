@@ -164,6 +164,7 @@
 						$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
 						$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
 						bqSearchKeyword = ""; 
+						bqExcFields = new Array();
 
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
 						
@@ -180,7 +181,7 @@
 									for (var boostQuery in data){
 										var boost = data[boostQuery].boost.boost;
 										var fieldName = data[boostQuery].expression.LValue.expression.LValue;
-												
+										$.pushIfNotExist(bqExcFields, $.stripSlashes(fieldName), function(el){ return el === $.stripSlashes(fieldName); })		
 										populateSelectedFacetValue($content, $.stripSlashes(fieldName), boost);
 									}
 								}
