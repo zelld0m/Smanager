@@ -24,6 +24,8 @@ public class SolrConstants {
 	/* customized parameters */
 	public final static String SOLR_PARAM_RELEVANCY_ID = "relevancyId";
 	
+	public final static String REDIRECT_URL = "redirectUrl";
+
 	public final static String TAG_RESPONSE = "response";
 	public final static String TAG_LIST = "lst";
 	

@@ -351,6 +351,10 @@ public class SearchServlet extends HttpServlet {
 
 			// redirect 
 			//TODO change to storename
+			String redirectUrl = redirectUtility.getRedirectURL("macmall" + keyword);
+			nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
+			nameValuePairs.add(nvp);
+			
 			String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
 			if (!StringUtils.isBlank(redirectFQ)) {
 				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
