@@ -65,7 +65,7 @@
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
 		<div id="relevancy" class="relevancy fsize12">		
-			<div class="landingCont w45p83 floatL">	
+			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Rule Info</div>		
 				
 					<label class="floatL w70 marT5 padT3">Name</label>
@@ -80,7 +80,7 @@
 					<label><textarea id="description" rows="4" class="marT8" style="width:240px"></textarea> </label>
 			</div>
 			
-			<div class="landingCont w45p83 floatL marL13">
+			<div class="landingCont w45p83 minHeight185 floatL marL13">
 				<div id="keywordInRulePanel"></div>
 			</div>
 
@@ -244,7 +244,8 @@
 							<span></span>
 						</li>
 					</ul>
-					<div id="fieldsBottomPaging"></div>			
+					<div id="fieldsBottomPaging"></div>
+					<div class="clearB"></div>			
 				</div>
 			</div>
 			<!--  end menu fields -->
