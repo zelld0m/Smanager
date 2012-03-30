@@ -171,16 +171,17 @@
 						//TODO: initialize selected
 						RelevancyServiceJS.getValuesByString(currVal,{
 							callback: function(data){
-
+								var list = data.boostQuery;
+								
 								// set to selected
-								if (data!=null){
+								if (data!=null && list!=null){
 									if (data.isCategoryOnly){
-										$content.find('select[id="facetName"]').val("Manufacturer");
+										$content.find('select[id="facetName"]').val("Category");
 									}
 									
-									for (var boostQuery in data){
-										var boost = data[boostQuery].boost.boost;
-										var fieldName = data[boostQuery].expression.LValue.expression.LValue;
+									for (var boostQuery in list){
+										var boost = list[boostQuery].boost.boost;
+										var fieldName = list[boostQuery].expression.LValue.expression.LValue;
 										$.pushIfNotExist(bqExcFields, $.stripSlashes(fieldName), function(el){ return el === $.stripSlashes(fieldName); })		
 										populateSelectedFacetValue($content, $.stripSlashes(fieldName), boost);
 									}
@@ -203,7 +204,7 @@
 											
 											var val = $.addSlashes($.trim($(value).find(".txtHolder").html())); 
 											if (index >0) finalVal += " ";											
-											finalVal += $("select#facetName").val();
+											finalVal += $content.find("select#facetName").val();
 											finalVal += ":(";
 
 											finalVal += val;

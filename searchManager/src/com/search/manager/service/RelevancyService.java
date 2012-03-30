@@ -171,20 +171,18 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public List<BoostQuery> getValuesByString(String bq) {
+	public BoostQueryModel getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
 		Schema schema = SolrSchemaUtility.getSchema();
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
-		List<BoostQuery> boostQueryList = new LinkedList<BoostQuery>();
-
+		
 		try {
 			boostQueryModel = BoostQueryModel.toModel(schema, bq, true);
-			if (boostQueryModel!=null) boostQueryList = boostQueryModel.getBoostQuery();
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
 
-		return boostQueryList;
+		return boostQueryModel;
 	}
 
 	@RemoteMethod
