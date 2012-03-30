@@ -282,7 +282,8 @@
 			var currentPosition = 0;
 			var expiredDateSelected = false;
 			var idSuffix = "_" + doc.EDP;
-
+			var noExpiryDateText = "Indefinite";
+			
 			return function () {
 				prepareElevateResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
@@ -303,14 +304,25 @@
 									contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
 									contentHolder.find("#listItemsPattern" + id + " > div > img").attr("src", list[i].imagePath);
 
-									if (list[i].isExpired) contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).toggle();
 									if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
 									if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html(list[i].formattedExpiryDate);
+									var expiryDate = list[i].formattedExpiryDate;
+									
+									if (list[i].isExpired){
+										contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html('<img id="stampExpired' + id + '" src="../images/expired_stamp50x16.png">');
+										//contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).show();
+									}else{
+										contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html("Validity:");
+										//contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).hide();
+									}
+										
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
+								
+									
 
 									contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).error(function(){
 										$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg'));
@@ -345,19 +357,22 @@
 							postHook: function() {
 								var updatedPosition = parseInt($.trim(contentHolder.find("li#elevatePosition_" + doc.EDP).html()));
 								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + doc.EDP).html());
-								var stampVisible = contentHolder.find("#stampExpired_" + doc.EDP).is(":visible");
+								var stampVisible = contentHolder.find("img#stampExpired_" + doc.EDP).is(":visible");
 
 								if(updatedPosition != "" && updatedPosition > 0){
 									contentHolder.find("#aElevatePosition_"+doc.EDP).val(updatedPosition);
 									contentHolder.find("a#removeBtn").attr("style","display:float");
 								}
-
+								
 								if(updatedExpiryDate != "")
-									contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate);
+									contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate("mm/dd/yy", updatedExpiryDate) ? updatedExpiryDate : "");
 
-								contentHolder.find("#aStampExpired_"+doc.EDP).attr("style",stampVisible? "display:float" : "display:none");
-							},
-							errorHandler: function(message){ alert(message); }
+								if (stampVisible){
+									contentHolder.find("#aStampExpired_" + doc.EDP).show();
+								}else{
+									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								}
+							}
 						});
 				//	}
 				};

@@ -306,7 +306,7 @@
 		var output  = '<div class="elevateProduct">';
 		output += '<div id="dialog-confirm" title="' + headerTitle + '" class="farial" style="float:left; width:225px">';
 		output += '	<div class="marB10"><span>' + confirmMessage + '</span></div>';
-		output += '	<div id="aStampExpired' + idSuffix + '" ><div class="posAbs" style="top:80px; left:80px"><img src="../images/expired_stamp90x40.png"></div></div>';
+		//output += '	<div id="aStampExpired' + idSuffix + '" ><div class="posAbs" style="top:80px; left:80px"><img src="../images/expired_stamp90x40.png"></div></div>';
 		output += '	<div><center><img id="aProductImage' + idSuffix + '" src="' + doc.ImagePath + '" class="border" style="width:116px; height:100px"></center></div>';
 		output += '	<div><center><span class="fbold">' + doc.Manufacturer + '</span></div>';
 		output += ' <div style="position:absolute; float:right; top:50px; left:224px"><a href="javascript:void(0);" id="toggleCurrent"><img src="../images/btnTonggleShow.png"></a></div>';
@@ -315,7 +315,7 @@
 		output += '			<li><label class="fbold title">Part#: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
 		output += '			<li><label class="fbold title">Elevate: </label><input type="text" id="aElevatePosition' + idSuffix + '" style="width:30px"></li>';
 		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
-		output += '			<li><label class="fbold title">Comments:</label><textarea id="aComment' + idSuffix + '"></textarea></li>';
+		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
 		output += '		</ul>';
 		output += '	</div>';
 		output += '<div id="btnHolder' + idSuffix + '" class="marB10 txtAC">';
@@ -331,13 +331,15 @@
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 
 		output += '				<div class="handle">';
 		output += ' 				<div class="floatR posRel padR10" style="z-index:1; top:-8px"><a id="deleteIcon" class="deleteIcon" href="javascript:void(0);"><img src="../images/iconDelete.png"></a></div>';
-		output += '					<img id="productImage" src="' + doc.ImagePath + '" class="border floatL" width="60px" > <div id="stampExpired" class="posAbs" style="top:30px; display:none"><img src="../images/expired_stamp60x28.png" class="noborder"></div>';	
+		output += '					<img id="productImage" src="' + doc.ImagePath + '" class="border floatL" width="60px" >';
+		//output += '					<div id="stampExpired"><img src="../images/expired_stamp50x16.png"></div>';	
+		//output += '				<div id="stampExpired" class="posAbs" style="top:30px; display:none"><img src="../images/expired_stamp60x28.png" class="noborder"></div>';	
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
 		output += '						<li class="label">Elevation:</li><li class="value" id="elevatePosition">1</li>';
 		output += '						<li class="label">PcMall Part#:</li><li class="value" id="partNo">846896</li>'; 
 		output += '						<li class="label">Mfr#:</li><li class="value" id="mfrNo">ERgt129</label>';
-		output += '						<li class="label">Validity:</li><li class="value" id="expiryDate">02/21/2010</li>';
+		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
 		output += '				  	</ul>';
 		output += '					</div>';
 		output += '				</div>';
