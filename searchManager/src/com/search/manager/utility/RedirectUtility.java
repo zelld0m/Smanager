@@ -72,16 +72,4 @@ public class RedirectUtility {
 		return fq.toString();
 	}
 
-	public static void main(String[] args) {
-		RedirectUtility r = new RedirectUtility();
-		fqMap = new HashMap<String, String>();
-		redirectMap = new HashMap<String, String>();
-		fqMap.put("macmalldesktop", "A");
-		fqMap.put("macmalldesktop computer", "C");
-		fqMap.put("macmalldesktop computers", "D");
-		fqMap.put("macmalldesktops", "B");
-		System.err.println(fqMap.get("macmalldesktop"));
-		System.err.println(fqMap.get("macmalldesktop computer"));
-		System.err.println(fqMap.get("macmalldesktops"));
-	}
 }
