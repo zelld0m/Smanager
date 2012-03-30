@@ -56,7 +56,7 @@
 /* pagination */
 
 .cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
-.cssReset .styleA				{ color:#818181 !important; }
+.cssReset .styleA				{ color:#818181 !important; min-height:20px !important; }
 .cssReset .styleA input[type='text'],
 .cssReset .styleB input[type='text'] { padding:1px; color:#818181 }
 .cssReset .styleB				{ color:#3B79C2;}
@@ -72,8 +72,8 @@
 .pagination li a:hover			{text-decoration:none; }
 
 /* qtip pagination */
-.txtDisplay 					{ margin-top:-5px }
-.pagingArrow					{ margin-right:-50px }
+.qtip .txtDisplay 					{ margin-top:-5px; width: 25%; float:left; min-height: 22px; padding-top:9px }
+.pagingArrow					{  }
 
 .borderR3						{ -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;  }
 .borderTW						{ border-top:1px solid #fff }

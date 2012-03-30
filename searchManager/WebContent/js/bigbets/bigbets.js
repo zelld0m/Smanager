@@ -162,6 +162,7 @@
 						pageSize: auditPageSize,
 						totalItem: totalItems,
 						type: "short",
+						pageStyle: "style2",
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
 						},
