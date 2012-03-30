@@ -88,9 +88,8 @@ public class BoostQueryModel implements VerifiableModel {
 		}
 		if (value == null) {
 			if (containsNonEscapedOrNonQuotedSpaces(subExpression)) {
-				throw new SchemaException("Value contains non-escaped/non-quoted spaces: " + subExpression);
+				subExpression = subExpression.replaceAll("\\ ", "\\\\ ");
 			}
-			// TODO: check that there are no spaces here
 			value = subExpression;
 		}
 		return value;
@@ -164,10 +163,10 @@ public class BoostQueryModel implements VerifiableModel {
 					}
 					else {
 						if (containsNonEscapedOrNonQuotedSpaces(filter)) {
-							throw new SchemaException("Value contains non-escaped/non-quoted spaces: " + filter);
+							filter = filter.replaceAll("\\ ", "\\\\ ");
 						}
-						filterExpression = new Expression(RelevancyConfig.getInstance().getLogicalOperator("group"), fieldValue);
-						logger.debug("filter for field[" + field + "] is " + filterExpression);
+						filterExpression = new Expression(RelevancyConfig.getInstance().getLogicalOperator("group"), filter);
+						logger.debug("filter for field[" + field + "] is " + filter);
 					}
 					value = new SubQuery(field, filterExpression);
 				}
@@ -324,13 +323,15 @@ public class BoostQueryModel implements VerifiableModel {
 										break;
 									}
 								}
-								throw new SchemaException("Invalid filter: " + fieldValue);
 							}
 							
 						}
 						Expression ex = getExpression(fieldValue, expressionList);
 						// TODO: what happens if we remove this
 						if (ex == null) {
+							if (containsNonEscapedOrNonQuotedSpaces(fieldValue)) {
+								fieldValue = fieldValue.replaceAll("\\ ", "\\\\ ");
+							}
 							ex = new Expression(RelevancyConfig.getInstance().getLogicalOperator("group"), fieldValue);
 						}
 						subQuery = new SubQuery(field, ex);
@@ -446,6 +447,7 @@ public class BoostQueryModel implements VerifiableModel {
 //			logger.debug("contains non-escaped space");
 //		}
 
+//		System.out.println("apple bee".replaceAll("\\ ", "\\\\ "));
 //		if (true) {
 //			return;
 //		}
@@ -481,8 +483,9 @@ public class BoostQueryModel implements VerifiableModel {
 		String[] bqs =  {
 //			"Manufacturer:Apple^10",
 //			"(Manufacturer:Apple)^10",
-			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20"
-//			"Manufacturer:(Apple AND Lenovo)^10",
+//			"(Manufacturer:Apple Bee)^10 Manufacturer:Belkin Beer^20",
+//			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20",
+			"Manufacturer:(Apple Bee AND Lenovo)^10",
 //			"(Manufacturer:(Apple AND Lenovo))^10",
 //			"Manufacturer:(*:* AND NOT Lenovo)^10",
 //			"Manufacturer:(*Lenovo*)^10",
@@ -531,7 +534,7 @@ public class BoostQueryModel implements VerifiableModel {
 			try {
 				BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
 				logger.info(model.toString() + " is valid.");
-				logger.error(model.getSelectedFacetValues());
+				logger.info(model.getSelectedFacetValues());
 			} catch (Exception e) {
 				logger.error(bq + " is invalid: " + e.getMessage(), e);
 			}
