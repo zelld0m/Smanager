@@ -180,6 +180,8 @@ body 							{ margin: 0px; }
 .cssReset .minHeight32			{ min-height:32px; }
 .cssReset .minHeight120,
 .minHeight120	
+.cssReset .minHeight185,
+.minHeight185					{ min-height:185px; }
 .cssReset .minHeight190,
 .minHeight190					{ min-height:190px; }
 .cssReset .minHeight196,

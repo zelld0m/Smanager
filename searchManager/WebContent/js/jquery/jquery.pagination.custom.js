@@ -48,11 +48,11 @@
 			}
 
 			if (style === "style2"){
-				shortPaging += '<div class="txtDisplay styleB" >';
+				shortPaging += '<div class="txtDisplay styleA" >';
 				shortPaging += base.options.callbackText(itemStart, itemEnd, base.options.totalItem);
 				shortPaging += '</div>';
 
-				shortPaging += '<div class="pagingArrow styleA floatR w160 txtAR padTB5 marT0 marR5">';
+				shortPaging += '<div class="pagingArrow styleA floatR txtAR padTB5 marT0">';
 				shortPaging += '<a id="firstPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleAFirst marT3"></div></a>';
 				shortPaging += '<a id="prevPage" href="javascript:void(0)" class="btnGraph"><div class="btnGraph floatL styleAPrev mar3"></div></a>';
 				shortPaging += '<span class="padLR3 fsize11 floatL marT3">Page </span>';
