@@ -189,7 +189,7 @@ public class RelevancyService {
 
 	@RemoteMethod
 	public RecordSet<String> getValuesByField(String keyword, int page, int itemsPerPage, String facetField, String[] excludeList) {
-		logger.info(String.format("%s %d %d %s", keyword, page, itemsPerPage, facetField));
+		logger.info(String.format("%s %d %d %s %s", keyword, page, itemsPerPage, facetField, Arrays.toString(excludeList)));
 
 		String server = UtilityService.getServerName();
 		String store = UtilityService.getStoreLabel();
