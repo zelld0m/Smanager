@@ -52,73 +52,70 @@
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
         <div class="w535 padT10 padL10 floatL fsize20 fnormal">Query Cleaning Rule : <span id="headerRuleName" class="fLblue fnormal">Rule Name</span></div>
-        <div class="floatL w180 txtAR padT7"><input id="addRuleName" type="text" class="farial fsize12 fgray  padLR3 padTB4 marL10 w110 " maxlength="30" value=""><a href="javascript:void(0);" id="add" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
+        <div class="floatL w180 txtAR padT7"><input id="addRuleName" type="text" class="farial fsize12 fgray  padLR3 padTB4 border marL10 w110 " maxlength="30" value=""><a href="javascript:void(0);" id="add" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
 	</div>
      
 	<div class="clearB"></div>
 	
     <!-- content tabs -->
-    <div class="tabber mar0" style="margin-top:20px; width:98%">
-		<div class="tabbertab">
-        <h2 class="tabMenu"><span>Query Cleaning Configuration</span></h2>
+    <div class="titleBlue borderB marRL5">Configuration</div>
 			<table class="fsize12 mar10 tblCatalog">
 				<tr>
 					<td width="250px"><input id="ruleId" type="hidden" value="">
 						<input id="ruleName" type="hidden" value="Rule Name">
-						<p/><input id="searchTerm" type="text" value="Add Search Term" class="farial fsize12 padLR3 padTB4 marL10 w220">
+						<p/><input id="searchTerm" type="text" value="Add Search Term" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220">
 					</td>
-					<td width="25px" class="padT9">
+					<td width="25px">
 						<!-- a href="#" class="buttons btnGray clearfix"><div id="editSearchTerm" class="buttons fontBold"><<</div></a><br /--> 
-						<a href="#" class="buttons btnGray clearfix"><div id="addSearchTerm" class="buttons fontBold" style="">>></div></a></td>
+						<a href="#" class="buttons btnGray clearfix"><div id="addSearchTerm" class="buttons fontBold">>></div></a></td>
 					<td>
-						<select id="searchTermList" class="farial fsize12 padLR3 padTB4 marL10 w220" size="7"/>
+						<select id="searchTermList" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220" size="7"/>
 					</td>
 				</tr>
 			</table>
-
-			<div class="round3 marB10" style="padding:1px; background:#c7c7c7" >
-         	<div class="contentTitle round3 fsize12 fbold pad5">Select Category / Manufacturer</div>
-        </div>
+    <div class="tabber mar0" style="margin-top:20px; width:98%" id="maintab">
+		<div class="tabbertab">
+        <h2 class="tabMenu"><span>Category/Manufacturer</span></h2>
 			<table class="fsize12 mar10 tblCatalog">
 				<tr>
 					<td>
 						<table class="fsize12 mar10 tblCatalog">
 							<tr>
 								<td width="100px">CatCode</td>
-								<td width="250px"><input id="catcodetext" type="text" value="" class="farial fsize12 padLR3 padTB4 marL10" size="10" maxlength="4"></td>
+								<td width="250px"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4 border marL10" size="10" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td width="100px">Category</td>
 								<td width="250px"><select name="select" id="categoryList"
-									class="farial fsize12 padLR3 padTB4 marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
 										<option>All Categories</option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Sub-Category</td>
 								<td><select name="select" id="subCategoryList"
-									class="farial fsize12 padLR3 padTB4 marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Class</td>
 								<td><select name="select" id="classList"
-									class="farial fsize12 padLR3 padTB4 marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Minor</td>
 								<td><select name="select" id="minorList"
-									class="farial fsize12 padLR3 padTB4 marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Manufacturer List</td>
 								<td><select name="select" id="manufacturerList"
-									class="farial fsize12 padLR3 padTB4 marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
 										<option>All Manufacturers</option>
 								</select></td>
 							</tr>
@@ -126,19 +123,35 @@
 					</td>
 					<td><a href="#" class="buttons btnGray clearfix"><div
 								class="buttons fontBold" id="addRule">>></div></a><br />
-						 <!-- a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="editRule"><<</div></a></td-->
 					<td>
-						<select id="ruleList" class="farial fsize12 padLR3 padTB4 marL10 w220" size="10">
+						<select id="ruleList" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220" size="10">
 						</select>
 					</td>
 				</tr>
 			</table>
-			<div align="right" class="padR5">
+		</div>
+		<!--Redirect to page commented out-->
+		<!-- div class="tabbertab">
+			<h2>Redirect to Page</h2>
+
+
+			<div>
+				<table width="98%" class="fsize12 tblCatalog">
+					<tr>
+						<td width="50px">URL:</td>
+						<td><input id="url" type="text" value="http://"
+							class="farial fsize12 fgray padLR3 padTB4 border marL10 w400" /></td>
+					</tr>
+				</table>
+			</div>
+
+
+		</div-->
+		<input id="url" type="hidden"/>
+		<div align="right" class="padR5">
 			    <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="save">&nbsp;Save&nbsp;</div></a>
 				<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="delete">Delete</div></a>
 			</div>
-
-		</div>
    
 	</div>
     <!-- end content tabs -->
