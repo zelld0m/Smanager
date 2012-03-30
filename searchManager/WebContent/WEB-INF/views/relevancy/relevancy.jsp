@@ -87,7 +87,7 @@
 			<c:forEach items="${longFields}" var="field">
 				<div id="${field.key}" class="AlphaCont marB10 floatL txtAC" style="width:98%">
 					<label class="marT5 txtAL w120"><span id="fieldLabel" class="fbold fsize13">${field.value}</span></label>
-					<label class="marT5"><input type="text" class="w460" readonly="readonly"/></label> 
+					<label class="marT5"><input type="text" class="w460" ${field.key ne "bf" ? 'readonly="readonly"' : ''}/></label> 
 					<label class="marT6">
 						<span class="preloader" style="display:none"><img src="../images/ajax-loader-rect.gif"></span>
 						<span class="crudIcon">

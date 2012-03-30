@@ -31,6 +31,7 @@ import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
 import com.search.manager.schema.model.Schema;
+import com.search.manager.schema.model.bf.BoostFunctionModel;
 import com.search.manager.schema.model.bq.BoostQuery;
 import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
@@ -77,10 +78,18 @@ public class RelevancyService {
 			if (StringUtils.equalsIgnoreCase("bq", fieldName)){
 				try {
 					Schema schema = SolrSchemaUtility.getSchema();
-					BoostQueryModel boostQueryModel;
-
-					boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
+					BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
 					fieldValue = boostQueryModel.toString();
+				} catch (SchemaException e) {
+					throw e;
+				}
+			}
+			
+			//bf post-processing
+			if (StringUtils.equalsIgnoreCase("bf", fieldName)){
+				try {
+					Schema schema = SolrSchemaUtility.getSchema();
+					BoostFunctionModel.toModel(schema, fieldValue, true);
 				} catch (SchemaException e) {
 					throw e;
 				}
