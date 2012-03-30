@@ -1,9 +1,13 @@
 package com.search.manager.schema.model.bq;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.model.BoostFactor;
 import com.search.manager.schema.model.VerifiableModel;
 
+@DataTransferObject(converter = BeanConverter.class)
 public class BoostQuery implements VerifiableModel {
 
 	private static final long serialVersionUID = 1L;

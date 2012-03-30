@@ -1,11 +1,13 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -29,6 +31,7 @@ import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
 import com.search.manager.schema.model.Schema;
+import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
@@ -150,20 +153,55 @@ public class RelevancyService {
 		}
 		return 0;
 	}
+	
+	@RemoteMethod
+	public BoostQueryModel getValuesByString(String bq) {
+		logger.info(String.format("%s", bq));
+		Schema schema = SolrSchemaUtility.getSchema();
+		BoostQueryModel boostQueryModel = new BoostQueryModel();
+		
+		try {
+			boostQueryModel = BoostQueryModel.toModel(schema, bq, true);
+		} catch (SchemaException e) {
+			e.printStackTrace();
+		}
+		
+		return boostQueryModel;
+	}
 
 	@RemoteMethod
-	public RecordSet<String> getValuesByField(String field, int page, int itemsPerPage) {
-		logger.info(String.format("%s %d %d", field, page, itemsPerPage));
+	public RecordSet<String> getValuesByField(String keyword, int page, int itemsPerPage, String facetField, String[] excludeList) {
+		logger.info(String.format("%s %d %d %s", keyword, page, itemsPerPage, facetField));
 
 		String server = UtilityService.getServerName();
 		String store = UtilityService.getStoreLabel();
 
-		List<String> values = SearchHelper.getFacetValues(server, store, field);
-		
-		int maxIndex = values.size()- 1;
+		List<String> facetValues = SearchHelper.getFacetValues(server, store, facetField);
+
+		if (ArrayUtils.isNotEmpty(excludeList)){	
+			facetValues.remove("");
+			facetValues.remove(" ");
+			facetValues.removeAll(Arrays.asList(excludeList));
+		}
+
+
+		List<String> searchList = new ArrayList<String>();
+
+		for(String value: facetValues){
+			if (StringUtils.isNotBlank(keyword) && StringUtils.containsIgnoreCase(value, keyword))
+				searchList.add(value);
+		}
+
 		int fromIndex = (page-1)*itemsPerPage;
 		int toIndex = (page*itemsPerPage)-1;
-		return new RecordSet<String>(values.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), values.size());
+
+		if (StringUtils.isNotEmpty(keyword)){
+			int maxIndex = searchList.size()- 1;
+			return new RecordSet<String>(searchList.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), searchList.size());
+		}else{
+			int maxIndex = facetValues.size()- 1;
+			return new RecordSet<String>(facetValues.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), facetValues.size());
+		}
 	}
 
 	@RemoteMethod
@@ -177,12 +215,12 @@ public class RelevancyService {
 			rk.setRelevancy(r);
 			rk.setKeyword(new Keyword(""));
 			SearchCriteria<RelevancyKeyword> criteria = new SearchCriteria<RelevancyKeyword>(rk, null, null, 0, 0);
-			
+
 			RecordSet<RelevancyKeyword> rs = daoService.searchRelevancyKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR);
 			List<RelevancyKeyword> list = new LinkedList<RelevancyKeyword>();
 			list = rs.getList();
 			List<RelevancyKeyword> matchedList = new LinkedList<RelevancyKeyword>();
-			
+
 			Iterator<RelevancyKeyword> iterator = list.iterator();
 			while (iterator.hasNext()) {
 				RelevancyKeyword relKey = (RelevancyKeyword) iterator.next();
@@ -235,7 +273,7 @@ public class RelevancyService {
 		}
 		return 0;
 	}
-	
+
 	@RemoteMethod
 	public MinimumToMatchModel getMinShouldMatch(String fieldValue) {
 		MinimumToMatchModel minToMatchModel = null;
@@ -245,10 +283,10 @@ public class RelevancyService {
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
-		
+
 		return minToMatchModel;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<QueryField> getQueryFields(String fieldValue) {
 		List<QueryField> qFieldList = new ArrayList<QueryField>();
@@ -260,30 +298,30 @@ public class RelevancyService {
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
-		
+
 		return new RecordSet<QueryField>(qFieldList,qFieldList.size());
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String keyword, String[] excludedFields) {
 		Schema schema = SolrSchemaUtility.getSchema();
-		
+
 		List<Field> excludeFieldList = new ArrayList<Field>();
-		
+
 		for (String string: excludedFields) {
 			Field field = schema.getField(string);
 			List<Field> relatedFields = field.getRelatedFields();
 			excludeFieldList.add(field);
 			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
 		}
-		
+
 		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(keyword, excludeFieldList));
 		int maxIndex = fields.size()- 1;
 		int fromIndex = (page-1)*itemsPerPage;
-	    int toIndex = (page*itemsPerPage)-1;
+		int toIndex = (page*itemsPerPage)-1;
 		return new RecordSet<Field>(fields.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), fields.size());
 	}
-	
+
 	public DaoService getDaoService() {
 		return daoService;
 	} 

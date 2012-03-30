@@ -12,7 +12,7 @@ public class AuditTrailConstants {
 		storeKeyword,
 		campaign,
 		banner,
-		redirect
+		queryCleaning
 	}
 	
 	public enum Operation {
@@ -71,6 +71,11 @@ public class AuditTrailConstants {
 		Operation.delete,
 		Operation.updateComment };
 
+	public static Operation[] queryCleaningOperations = {
+		Operation.add,
+		Operation.update,
+		Operation.delete };
+
 	public static Map<Entity, Operation[]> entityOperationMap;
 	
 	static {
@@ -81,6 +86,7 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.storeKeyword, storeKeywordOperations);
 		entityOperationMap.put(Entity.campaign, campaignOperations);
 		entityOperationMap.put(Entity.banner, bannerOperations);
+		entityOperationMap.put(Entity.queryCleaning, queryCleaningOperations);
 	}
 	
 }

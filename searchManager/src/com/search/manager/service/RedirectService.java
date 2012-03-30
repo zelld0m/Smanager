@@ -1,6 +1,5 @@
 package com.search.manager.service;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -60,12 +59,13 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int updateRedirectRule(Integer ruleId, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
+	public int updateRedirectRule(Integer ruleId, String ruleName, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
 		int result = -1;
 		try {
 			
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
+			rule.setRuleName(ruleName);
 			rule.setSearchTerm(searchTerm);
 			rule.setCondition(condition);
 			rule.setStoreId(storeId);
@@ -84,7 +84,13 @@ public class RedirectService {
 	public int removeRedirectRule(Integer ruleId, String ruleName) {
 		int result = -1;
 		try {
-			result = daoService.removeRedirectRule(ruleId, StringUtils.isBlank(ruleName)?null:ruleName);
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setRuleName(ruleName);
+			rule.setSearchTerm("");
+			rule.setCondition("");
+			rule.setStoreId(UtilityService.getStoreName());
+			result = daoService.removeRedirectRule(rule);
 			redirectUtility.updateRuleMap();
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectRule()",e);
