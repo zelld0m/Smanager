@@ -126,8 +126,8 @@
 						for (var i=0; i < data.totalSize ; i++){
 							if ($.isNotBlank(list[i])){
 								content.find("ul#fieldListing > li#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing" + $.formatAsId(list[i])).show();
-								content.find("li#fieldListing" + $.formatAsId(list[i]) + " > span").html(list[i]);
-								//TODO:
+								content.find("li#fieldListing" + $.formatAsId(list[i]) + " > span").text(list[i]);
+								
 								content.find('#fieldListing' + $.formatAsId(list[i]) + ' a').on({click: function(e){
 									var element = e.data.name;
 
@@ -161,6 +161,10 @@
 					render: function(e, api){
 						var $content = $("div", api.elements.content).html($("#setupFieldValueS3").html());
 						
+						$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
+						$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
+						bqSearchKeyword = ""; 
+
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
 						
 						//TODO: initialize selected
@@ -168,16 +172,19 @@
 							callback: function(data){
 
 								// set to selected
-								if (data!==null){
+								if (data!=null){
 									if (data.isCategoryOnly){
 										$content.find('select[id="facetName"]').val("Manufacturer");
 									}
+									
+									for (var boostQuery in data){
+										var boost = data[boostQuery].boost.boost;
+										var fieldName = data[boostQuery].expression.LValue.expression.LValue;
+												
+										populateSelectedFacetValue($content, $.stripSlashes(fieldName), boost);
+									}
 								}
-
-								$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
-								$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
-								bqSearchKeyword = "";
-
+								
 								populateFieldValues($content, 1);
 
 								$content.find('a#clearBtn').on({
@@ -192,12 +199,9 @@
 										var finalVal = "";
 
 										$content.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
-											//TODO: apply
-											var val = $.trim($(value).find(".txtHolder").html()); 
-											if(val.indexOf(" ") >= 0)
-												val = '"' + val + '"';  
-
-											if (index > 0) finalVal += " ";
+											
+											var val = $.addSlashes($.trim($(value).find(".txtHolder").html())); 
+																						
 											finalVal += $("select#facetName").val();
 											finalVal += ":(";
 
@@ -209,7 +213,7 @@
 
 										api.hide();
 
-										$('div[id="' + field.id + '"] input[type="text"]').val(finalVal);
+										$('div[id="' + field.id + '"] input[type="text"]').val($.stripSlashes(finalVal));
 									}
 								});
 

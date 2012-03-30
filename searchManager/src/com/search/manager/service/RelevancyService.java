@@ -31,6 +31,7 @@ import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
 import com.search.manager.schema.model.Schema;
+import com.search.manager.schema.model.bq.BoostQuery;
 import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
@@ -155,18 +156,20 @@ public class RelevancyService {
 	}
 	
 	@RemoteMethod
-	public BoostQueryModel getValuesByString(String bq) {
+	public List<BoostQuery> getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
 		Schema schema = SolrSchemaUtility.getSchema();
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
+		List<BoostQuery> boostQueryList = new LinkedList<BoostQuery>();
 		
 		try {
 			boostQueryModel = BoostQueryModel.toModel(schema, bq, true);
+			if (boostQueryModel!=null) boostQueryList = boostQueryModel.getBoostQuery();
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
 		
-		return boostQueryModel;
+		return boostQueryList;
 	}
 
 	@RemoteMethod
@@ -179,8 +182,8 @@ public class RelevancyService {
 		List<String> facetValues = SearchHelper.getFacetValues(server, store, facetField);
 
 		if (ArrayUtils.isNotEmpty(excludeList)){	
-			facetValues.remove("");
 			facetValues.remove(" ");
+			facetValues.remove(StringUtils.EMPTY);
 			facetValues.removeAll(Arrays.asList(excludeList));
 		}
 

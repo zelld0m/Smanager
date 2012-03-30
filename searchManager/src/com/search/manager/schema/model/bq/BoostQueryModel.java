@@ -416,25 +416,6 @@ public class BoostQueryModel implements VerifiableModel {
 		return true;
 	}
 	
-	public List<String> getSelectedFacetValues(){
-		Set<String> selectedFacetValues = new HashSet<String>();
-		
-		for (BoostQuery boostQuery:expression){
-			try { 
-				Expression<SubQuery, SubQuery> expression = boostQuery.getExpression();
-				SubQuery sq = expression.getLValue();
-				System.out.println(expression.getRValue());
-				String value = (String) sq.getExpression().getLValue();
-				if (StringUtils.isNotBlank(value))
-					selectedFacetValues.add(value);
-			} catch (Exception e) {
-				return new ArrayList<String>(new HashSet<String>());
-			}
-		}
-		
-		return new ArrayList<String>(selectedFacetValues);
-	}
-	
 	public List<BoostQuery> getBoostQuery(){
 		return expression;
 	}
@@ -487,7 +468,7 @@ public class BoostQueryModel implements VerifiableModel {
 		
 		Schema schema = SolrSchemaUtility.getSchema();
 		String[] bqs =  {
-			"Manufacturer:(\"Apple Care\")^10",
+			"Manufacturer:(\"2Point Communications\")^1 Manufacturer:(\"1 Step Technology\")^2",
 //			"Manufacturer:Apple^10",
 //			"(Manufacturer:Apple)^10",
 //			"(Manufacturer:Apple)^10 Manufacturer:Belkin^20"
@@ -540,7 +521,6 @@ public class BoostQueryModel implements VerifiableModel {
 			try {
 				BoostQueryModel model = BoostQueryModel.toModel(schema, bq, true);
 				logger.info(model.toString() + " is valid.");
-				logger.error(model.getSelectedFacetValues());
 			} catch (Exception e) {
 				logger.error(bq + " is invalid: " + e.getMessage(), e);
 			}
@@ -554,7 +534,6 @@ public class BoostQueryModel implements VerifiableModel {
 				logger.info(bq + " is invalid: " + e.getMessage());
 			}
 		}
-
 	}
 	
 }
