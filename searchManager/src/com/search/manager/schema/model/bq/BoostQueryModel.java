@@ -381,7 +381,17 @@ public class BoostQueryModel implements VerifiableModel {
 	
 	@Override
 	public String toString() {
-		return (expression == null) ? "" : expression.toString();
+		if (expression == null || expression.isEmpty()) {
+			return "";
+		}
+		StringBuilder builder = new StringBuilder();
+		for (BoostQuery bq: expression) {
+			builder.append(" ");
+			builder.append(bq.toString());
+		}
+		
+		builder.deleteCharAt(0);
+		return builder.toString();
 	}
 	
 	//TODO: Workaround methods for simple UI

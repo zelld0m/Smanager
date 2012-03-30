@@ -63,7 +63,7 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public int addOrUpdateRelevancyField(String relevancyId, String fieldName, String fieldValue){
+	public int addOrUpdateRelevancyField(String relevancyId, String fieldName, String fieldValue) throws Exception{
 		try {
 			logger.info(String.format("%s %s %s", relevancyId, fieldName, fieldValue));
 			Relevancy relevancy = new Relevancy();
@@ -72,6 +72,20 @@ public class RelevancyService {
 			relevancy.setLastModifiedBy(UtilityService.getUsername());
 
 			RelevancyField relevancyField = new RelevancyField();
+
+			//bq post-processing
+			if (StringUtils.equalsIgnoreCase("bq", fieldName)){
+				try {
+					Schema schema = SolrSchemaUtility.getSchema();
+					BoostQueryModel boostQueryModel;
+
+					boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
+					fieldValue = boostQueryModel.toString();
+				} catch (SchemaException e) {
+					throw e;
+				}
+			}
+
 			relevancyField.setFieldName(fieldName);
 			relevancyField.setFieldValue(fieldValue);
 			relevancyField.setRelevancy(relevancy);
@@ -80,6 +94,7 @@ public class RelevancyService {
 		} catch (DaoException e) {
 			logger.error("Failed during addOrUpdateRelevancyField()",e);
 		}
+		
 		return 0;
 	}
 
@@ -154,27 +169,25 @@ public class RelevancyService {
 		}
 		return 0;
 	}
-	
+
 	@RemoteMethod
-	public List<BoostQuery> getValuesByString(String bq) {
+	public BoostQueryModel getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
 		Schema schema = SolrSchemaUtility.getSchema();
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
-		List<BoostQuery> boostQueryList = new LinkedList<BoostQuery>();
 		
 		try {
 			boostQueryModel = BoostQueryModel.toModel(schema, bq, true);
-			if (boostQueryModel!=null) boostQueryList = boostQueryModel.getBoostQuery();
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
-		
-		return boostQueryList;
+
+		return boostQueryModel;
 	}
 
 	@RemoteMethod
 	public RecordSet<String> getValuesByField(String keyword, int page, int itemsPerPage, String facetField, String[] excludeList) {
-		logger.info(String.format("%s %d %d %s", keyword, page, itemsPerPage, facetField));
+		logger.info(String.format("%s %d %d %s %s", keyword, page, itemsPerPage, facetField, Arrays.toString(excludeList)));
 
 		String server = UtilityService.getServerName();
 		String store = UtilityService.getStoreLabel();
