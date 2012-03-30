@@ -89,6 +89,7 @@ body 							{ margin: 0px; }
 .cssReset .padT5, .padT5		{padding-top:5px}
 .cssReset .padT7, .padT7		{padding-top:7px}
 .cssReset .padT8, .padT8		{padding-top:8px}
+.cssReset .padT9, .padT9		{padding-top:9px !important}
 .cssReset .padT10, .padT10		{padding-top:10px !important}
 .cssReset .padT15, .padT15		{padding-top:15px !important}
 .cssReset .padT20, .padT20		{padding-top:20px}

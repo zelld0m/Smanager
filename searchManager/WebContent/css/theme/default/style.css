@@ -431,7 +431,9 @@ select 							{ font: normal 12px arial; margin-left:10px; padding: 2px; border:
 /*input[type=text]				{ background:#fff; border-top: 1px solid #c1c1c1; border-left:1px solid #c1c1c1; border-bottom: 1px solid #d4d4d4; border-right: 1px solid #d4d4d4 }*/			
 input[type="text"], 
 input[type="password"] 			{ outline: none; }
-input[type=text] 				{ border-top:1px solid #c1c1c1; border-left:1px solid #c1c1c1; border-right:1px solid #d9d9d9; border-bottom:1px solid #d9d9d9; padding:2px}
+input[type=text], 
+select, textarea				{ border-top:1px solid #9c9c9c; border-left:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; padding:2px; color:#787878 !important }
+							
 
 
 /* for file upload */
