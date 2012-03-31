@@ -139,6 +139,7 @@
 							if (totalItems > 0){
 								contentHolder.find("#auditPagingTop, #auditPagingBottom").paginate({
 									type: 'short',
+									pageStyle: 'style2',
 									currentPage: auditPage, 
 									pageSize: auditPageSize,
 									totalItem: totalItems,
@@ -283,6 +284,8 @@
 			var expiredDateSelected = false;
 			var idSuffix = "_" + doc.EDP;
 			var noExpiryDateText = "Indefinite";
+			var expDateMinDate = -2;
+			var expDateMaxDate = "+1Y";
 			
 			return function () {
 				prepareElevateResult = function (contentHolder){
@@ -397,10 +400,7 @@
 							var contentHolder = $('div', api.elements.content);
 
 							contentHolder.html(content);
-
-							var expDateMinDate = -2;
-							var expDateMaxDate = "+1Y";
-
+							
 							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
 								showOn: "both",
 								minDate: expDateMinDate,
@@ -574,6 +574,8 @@
 			var self = this;
 			var needRefresh = false;
 			var idSuffix = "_" + doc.EDP;
+			var expDateMinDate = -2;
+			var expDateMaxDate = "+1Y";
 
 			return function () {
 				var selector  = "#resultItem_" + doc.EDP + " div#excludeHolder";
@@ -606,7 +608,7 @@
 							contentHolder.find("a#toggleCurrent").remove();
 							contentHolder.find("div#current").remove();
 							contentHolder.find("#aElevatePosition" + idSuffix).parent("li").remove();
-							contentHolder.find("#aExpiryDate" + idSuffix).parent("li").remove();
+							//contentHolder.find("#aExpiryDate" + idSuffix).parent("li").remove();
 							contentHolder.find("#removeBtn > div").html("Exclude");
 							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
 
@@ -614,8 +616,24 @@
 								$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image.jpg'));
 							});
 
+							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
+								showOn: "both",
+								minDate: expDateMinDate,
+								maxDate: expDateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								onSelect: function(dateText, inst) {
+									var today = new Date();
+									var selDate = Date.parse(dateText);
+									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
+									expiredDateSelected = (selDate < today)? true : false;
+								}
+							});
+							
 							contentHolder.find("#removeBtn").click(function(){
-								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), {
+								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
+								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, {
 									callback : function(data) {
 										needRefresh = true;
 										api.hide();
