@@ -315,7 +315,7 @@
 		output += '			<li><label class="fbold title">Part#: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
 		output += '			<li><label class="fbold title">Elevate: </label><input type="text" id="aElevatePosition' + idSuffix + '" style="width:30px"></li>';
 		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
-		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
+		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
 		output += '		</ul>';
 		output += '	</div>';
 		output += '<div id="btnHolder' + idSuffix + '" class="marB10 txtAC">';
@@ -355,8 +355,7 @@
 			$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image.jpg'));
 		});
 
-		if (doc.Expired == undefined)
-			secObj.find("#aStampExpired" + idSuffix).attr("style","display:none");
+		//if (doc.Expired == undefined) secObj.find("#aStampExpired" + idSuffix).attr("style","display:none");
 
 		return secObj;
 	};
