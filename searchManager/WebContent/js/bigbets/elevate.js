@@ -299,8 +299,7 @@
 					$('#sortableDisplayOptions').attr("style",(sortableTotalItems == 0 && $.isBlank(getSelectedKeyword())) ? "display:none" : "display:block");
 				},
 				preHook: function(){ prepareSortableList(); },
-				postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
-				errorHandler: function(message){ alert(message); }
+				postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
 			});
 
 		},
@@ -434,8 +433,7 @@
 							contentHolder.find("#newComment" + id).val("");
 							contentHolder.find("#commentHolder" + id).html(commentItems);
 							contentHolder.find("#commentHolder" + id + "> div:nth-child(even)").addClass("alt");
-						},
-						errorHandler: function(message){ alert(message); }
+						}
 					});
 				}
 			});
@@ -469,8 +467,7 @@
 									postHook: function(){ 
 										contentHolder.find("#newComment" + id).val(""); 
 										updateCommentList(contentHolder, edp);
-									},
-									errorHandler: function(message){ alert(message); }
+									}
 								});			 						
 
 						});
@@ -500,7 +497,7 @@
 			$("#filterDisplay").val(value);
 			updateSortableList(getSelectedKeyword(), 1);
 		};
-		/*-- END comment and audit list display --*/
+		/*-- END filter display --*/
 
 		//Case: Download icon is clicked
 		$("#downloadIcon").off("click").on("click",{
