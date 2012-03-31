@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -58,7 +57,7 @@ public class ExcludeService {
 	}
 	
 	@RemoteMethod
-	public int addExclude(String keyword, String edp) {
+	public int addExclude(String keyword, String edp, String expiryDate) {
 		try {
 			logger.info(String.format("%s %s", keyword, edp));
 
@@ -67,6 +66,7 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(edp);
+			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.addExcludeResult(e);
 		} catch (DaoException e) {
