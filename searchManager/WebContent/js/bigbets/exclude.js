@@ -395,6 +395,7 @@
 
 					contentHolder.find("#auditPagingTop" + idSuffix + ", #auditPagingBottom" + idSuffix).paginate({
 						type: "short",
+						pageStyle: "style2",
 						currentPage: auditPage, 
 						pageSize: auditPageSize,
 						totalItem: totalItems,
@@ -403,7 +404,9 @@
 						},
 						pageLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page, auditPageSize);},
 						nextLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page+1, auditPageSize); },
-						prevLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page-1, auditPageSize); }
+						prevLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page-1, auditPageSize); },
+						firstLinkCallback: function(e){ updateAuditList(contentHolder, edp, 1, auditPageSize); },
+						lastLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.totalPages, auditPageSize); }
 					});
 
 					contentHolder.find("#auditHolder" + idSuffix).html(auditItems);
@@ -421,6 +424,10 @@
 				content: {
 					text: $('<div/>'),
 					title: { text: 'Audit Log', button: true }
+				},
+				position: {
+					at: 'bottom right', 
+					my: 'top left'
 				},
 				events: {
 					render: function(e, api) {
