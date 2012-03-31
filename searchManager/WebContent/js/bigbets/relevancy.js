@@ -12,7 +12,7 @@
 	var sfExcFields = new Array();
 	var sfSearchKeyword = "";
 	var reloadRate = 500;
-	
+
 	var bqExcFields = new Array();
 	var bqSearchKeyword = "";
 	var bqFacetValuesPageSize = 5;
@@ -38,7 +38,6 @@
 
 			}).click(function(e) { e.preventDefault(); });
 		},
-
 
 		/** BELOW: BQ */
 		setupFieldS3 = function(field){
@@ -127,7 +126,7 @@
 							if ($.isNotBlank(list[i])){
 								content.find("ul#fieldListing > li#fieldListingPattern").clone().appendTo("ul#fieldListing").attr("id","fieldListing" + $.formatAsId(list[i])).show();
 								content.find("li#fieldListing" + $.formatAsId(list[i]) + " > span").text(list[i]);
-								
+
 								content.find('#fieldListing' + $.formatAsId(list[i]) + ' a').on({click: function(e){
 									var element = e.data.name;
 
@@ -160,25 +159,25 @@
 				events: { 
 					render: function(e, api){
 						var $content = $("div", api.elements.content).html($("#setupFieldValueS3").html());
-						
+
 						$content.find("ul#fieldListing > li").not("#fieldListingPattern").remove();
 						$content.find("tbody#fieldSelectedBody > tr").not("#fieldSelectedPattern").remove();
 						bqSearchKeyword = ""; 
 						bqExcFields = new Array();
 
 						var currVal = $('div[id="' + field.id + '"] input[type="text"]').val();
-						
+
 						//TODO: initialize selected
 						RelevancyServiceJS.getValuesByString(currVal,{
 							callback: function(data){
 								var list = data.boostQuery;
-								
+
 								// set to selected
 								if (data!=null && list!=null){
 									if (data.isCategoryOnly){
 										$content.find('select[id="facetName"]').val("Category");
 									}
-									
+
 									for (var boostQuery in list){
 										var boost = list[boostQuery].boost.boost;
 										var fieldName = list[boostQuery].expression.LValue.expression.LValue;
@@ -186,7 +185,7 @@
 										populateSelectedFacetValue($content, $.stripSlashes(fieldName), boost);
 									}
 								}
-								
+
 								populateFieldValues($content, 1);
 
 								$content.find('a#clearBtn').on({
@@ -201,7 +200,7 @@
 										var finalVal = "";
 
 										$content.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
-											
+
 											var val = $.addSlashes($.trim($(value).find(".txtHolder").html())); 
 											if (index >0) finalVal += " ";											
 											finalVal += $content.find("select#facetName").val();
@@ -593,6 +592,8 @@
 		refreshRelevancyList = function(page){
 			$("#relevancySidePanel").empty();
 			$("#relevancySidePanel").sidepanel({
+				fieldId: "relevancyId",
+				fieldName: "relevancyName",
 				page: page,
 				type: 'relevancy',
 				pageSize: relevancyPageSize,
@@ -607,11 +608,96 @@
 						preHook: function(){ base.prepareList(); }
 					});
 				},
+
+				itemOptionCallback: function(base, id, name){
+					var icon = "";
+					var suffixId = $.escapeQuotes($.formatAsId(id));
+
+					icon = '<a id="clone' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';
+					icon += '<a id="edit' + suffixId + '" href="javascript:void(0);"><img src="../images/page_edit.png"></a>';
+
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
+
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#clone' + suffixId).qtip({
+						content: {
+							text: $('<div/>'),
+							title: { text: 'Clone Relevancy', button: true }
+						},
+						show: { modal: true },
+						events: { 
+							render: function(rEvt, api){
+								var $contentHolder = $("div", api.elements.content).html($("#addRelevancyTemplate").html());
+
+								$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
+
+								if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val("Copy of " + name);
+
+								$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
+								$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
+
+								var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
+									defaultDate: "+1w",
+									showOn: "both",
+									buttonImage: "../images/icon_calendar.png",
+									buttonImageOnly: true,
+									onSelect: function(selectedDate) {
+										var option = this.id == "popStartDate" ? "minDate" : "maxDate",
+												instance = $(this).data("datepicker"),
+												date = $.datepicker.parseDate( instance.settings.dateFormat ||
+														$.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+										popDates.not(this).datepicker("option", option, date);
+									}
+								});
+
+								$contentHolder.find('a#addButton').on({
+									click: function(e){
+										var popName = $.trim($contentHolder.find('input[id="popName"]').val());
+										var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
+										var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
+										var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
+
+										if ($.isBlank(popName)){
+											alert("Relevancy name is required");
+											return;
+										}
+
+										var addedId = "";
+
+										RelevancyServiceJS.addRelevancyByCloning(id, popName, popStartDate, popEndDate, popDescription, {
+											callback:function(relevancyId){
+												api.hide();
+												getRelevancy(relevancyId, popName);
+												refreshRelevancyList(1);
+												addedId = relevancyId;
+											},
+											postHook:function(e){
+												addUpdateField(addedId, "q.alt", "*:*");
+											}
+										});
+
+
+									}
+								});
+
+								$contentHolder.find('a#clearButton').on({
+									click: function(e){
+										$contentHolder.find('input[type="text"], textarea').val("");
+									}
+								});
+							}
+						}
+					});
+
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).on({
+						click: function(e){
+							getRelevancy(id, name);
+						}
+					},{});
+
+				},
+
 				itemAddCallback: function(base, name){ addRelevancy(name); },
-				iconLinkCallback: function(e){ },
-				iconCloneCallback: function(e){ },
 				itemNameCallback: function(e){ getRelevancy(e.data.id, e.data.name); },
-				iconEditCallback: function(e){ getRelevancy(e.data.id, e.data.name); },
 				pageChangeCallback: function(n){ currentRelevancyPage = n; }
 			});
 		};
@@ -619,14 +705,14 @@
 		refreshKeywordList = function(page){
 			$("#keywordSidePanel").empty();
 			$("#keywordSidePanel").sidepanel({
+				fieldId: "keywordId",
+				fieldName: "keyword",
 				page: page,
-				type: 'keyword',
-				module: 'elevate',
 				pageSize: keywordPageSize,
 				headerText : "Keyword",
 				searchText : "Enter Keyword",
 				itemDataCallback: function(base, keyword, page){
-					StoreKeywordServiceJS.getAllByKeyword(keyword, page, base.options.pageSize,{
+					StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
 						callback: function(data){
 							base.populateList(data);
 							base.addPaging(keyword, page, data.totalSize);
@@ -635,9 +721,20 @@
 					});
 				},
 				itemAddCallback: function(base, name){ },
-				iconLinkCallback: function(e){ },
-				iconCloneCallback: function(e){ },
-				iconEditCallback: function(e){ },
+				itemOptionCallback: function(base, id, name){
+					var suffixId = $.escapeQuotes($.formatAsId(id));
+					
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).qtip({
+						content: {
+							text: $('<div/>'),
+							title: { text: 'Modify', button: true }
+						},
+						show: { modal: true },
+						events: { 
+							render: function(rEvt, api){}
+						}
+					});
+				},
 				pageChangeCallback: function(n){ }
 			});
 		};
@@ -645,10 +742,10 @@
 		refreshKeywordInRuleList = function(page){
 			$("#keywordInRulePanel").empty();
 			$("#keywordInRulePanel").sidepanel({
+				fieldId: "keywordId",
+				fieldName: "keyword",
 				page: page,
 				region: "content",
-				type: 'keyword',
-				module: 'elevate',
 				pageStyle: "style2",
 				pageSize: keywordInRulePageSize,
 				headerText : "Using This Rule",
@@ -662,11 +759,31 @@
 						preHook: function(){ base.prepareList(); }
 					});
 				},
+				itemOptionCallback: function(base, id, name){
+					var icon = "";
+					var suffixId = $.escapeQuotes($.formatAsId(id));
+
+					icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
+					
+					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
+						click: function(e){
+							if (confirm('Remove "' + name + '" in ' + selectedRelevancy.relevancyName  + '?'))
+							RelevancyServiceJS.deleteKeywordInRule(selectedRelevancy.relevancyId, name,{
+								callback:function(data){
+									refreshKeywordInRuleList(1);
+								},
+								preHook: function(){ base.prepareList(); }
+							});
+						}
+					});
+				},
 				itemAddCallback: function(base, keyword){
 					RelevancyServiceJS.addKeywordToRule(selectedRelevancy.relevancyId, keyword, {
 						callback: function(data){
 							alert(keyword + " added successfully");
 							refreshKeywordInRuleList(1);
+							refreshKeywordList(1);
 						},
 						preHook: function(){ base.prepareList(); }
 					});

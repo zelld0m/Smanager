@@ -39,7 +39,7 @@
 		handlerSetFieldEmpty = function(e){if ($.trim($(this).val()) == e.data.defaultText) $(this).val("");};
 
 		navigateKeywords = function(page){
-			showKeywordList("#keywordList", "Keyword", "Search Keyword", "keyword", "Exclude", page, keywordPageSize);
+			showKeywordList("#keywordList", "Keyword", "Search Keyword", "Exclude", page, keywordPageSize);
 		};
 
 		removeSortableItem = function(item){

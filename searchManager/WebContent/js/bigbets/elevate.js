@@ -69,7 +69,7 @@
 		},
 
 		navigateKeywords = function(page){
-			showKeywordList("#keywordList", "Keyword", "Search Keyword", "keyword", "Elevate", page, keywordPageSize);
+			showKeywordList("#keywordList", "Keyword", "Search Keyword", "Elevate", page, keywordPageSize);
 		};
 
 		removeSortableItem = function(item){
