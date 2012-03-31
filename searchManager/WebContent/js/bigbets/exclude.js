@@ -86,7 +86,7 @@
 		initPage = function() {
 			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
-			$.cookie('elevate.filter', "all",{expires: 1});
+			setItemFilter("all");
 			$("#titleText").html("Exclude List");
 			navigateKeywords(1);
 			setItemDisplay();
@@ -162,7 +162,7 @@
 
 			/* Case: Put back elevate position when focus leave the field*/
 			$('#sItemPosition' + id).blur(function(e){
-				$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
+				//$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
 			});
 
 			if (sortableItem.isExpired)
