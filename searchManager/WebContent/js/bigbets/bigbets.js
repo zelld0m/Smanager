@@ -120,6 +120,13 @@
 					text: $('<div/>'),
 					title: { text: 'Audit Log', button: true }
 				},
+				position: {
+					at: 'bottom right', 
+					my: 'top left',
+					viewport: $(window), // Keep the tooltip on-screen at all times
+					adjust: { screen: true },
+					effect: false // Disable positioning animation
+				},
 				events: {
 					render: function(e, api) {
 						var auditPage=1;
@@ -158,11 +165,11 @@
 					}
 					
 					contentHolder.find("#auditPagingTop" + idSuffix + ", #auditPagingBottom" + idSuffix).paginate({
+						type: "short",
+						pageStyle: "style2",
 						currentPage: auditPage, 
 						pageSize: auditPageSize,
 						totalItem: totalItems,
-						type: "short",
-						pageStyle: "style2",
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
 						},
