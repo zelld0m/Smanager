@@ -670,6 +670,16 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException {
+		if (storeKeyword == null || StringUtils.isEmpty(storeKeyword.getStoreId()) || StringUtils.isEmpty(storeKeyword.getKeywordId())) {
+			return 0;
+		}
+		return relevancyDAO.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+				new RelevancyKeyword(storeKeyword.getKeyword(), new Relevancy("", "")), null, null, null, null),
+				MatchType.LIKE_NAME, ExactMatch.MATCH).getTotalSize();
+	}
+	
+	@Override
 	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria,
 			MatchType relevancyMatchType, ExactMatch keywordExactMatch) throws DaoException {
 		return relevancyDAO.searchRelevancyKeywords(criteria, relevancyMatchType, keywordExactMatch);

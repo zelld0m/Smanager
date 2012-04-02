@@ -162,6 +162,7 @@ public interface DaoService {
 	public RelevancyKeyword getRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException;
 	public RecordSet<RelevancyKeyword> getRelevancyKeywords(Relevancy relevancy) throws DaoException;
 	public int getRelevancyKeywordCount(Relevancy relevancy) throws DaoException;
+	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException;
 	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria, MatchType relevancyMatchType,
 				ExactMatch keywordExactMatch) throws DaoException;
 	
