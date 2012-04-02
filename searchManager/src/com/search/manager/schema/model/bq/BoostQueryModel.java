@@ -386,8 +386,11 @@ public class BoostQueryModel implements VerifiableModel {
 		}
 		StringBuilder builder = new StringBuilder();
 		for (BoostQuery bq: expression) {
+			builder.append(" ");
 			builder.append(bq.toString());
 		}
+		
+		builder.deleteCharAt(0);
 		return builder.toString();
 	}
 	

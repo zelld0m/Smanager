@@ -69,7 +69,7 @@
 		},
 
 		navigateKeywords = function(page){
-			showKeywordList("#keywordList", "Keyword", "Search Keyword", "keyword", "Elevate", page, keywordPageSize);
+			showKeywordList("#keywordList", "Keyword", "Search Keyword", "Elevate", page, keywordPageSize);
 		};
 
 		removeSortableItem = function(item){
@@ -97,7 +97,7 @@
 		//update the position in textbox
 		updatePositionBox = function(){
 			var index = ((sortablePage-1)*sortablePageSize) + 1;
-			$("#sortable-bigbets li input.sItemPosition").each(function(){ $(this).val(index++); });
+			//$("#sortable-bigbets li input.sItemPosition").each(function(){ $(this).val(index++); });
 		};
 
 		// Case: Search SKU
@@ -118,11 +118,10 @@
 		},{text:sortableAddDefaultSearchText}
 		);
 
-
 		initPage = function() {
 			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
-			$.cookie('elevate.filter', "all",{expires: 1});
+			setItemFilter("all");
 			$("#titleText").html("Elevate List");
 			navigateKeywords(1);
 			setItemDisplay();
@@ -179,6 +178,8 @@
 			$("#sortableBox" + id).html($("#sortableBox" + id).html().replace("%%store%%",storeLabel));
 
 			$('#sItemDelete' + id).click(function(e){removeSortableItem(sortableItem);});
+			$("#sItemPosition" + id).val(sortableItem.location);
+
 			$('#sItemPosition' + id).keydown(function(e){
 				var currentIndex = $.trim(($(this).parent("li").index()+1) + ((sortablePage-1)*sortablePageSize));
 
@@ -196,9 +197,11 @@
 				}
 			});
 
+			
+			
 			/* Case: Put back elevate position when focus leave the field*/
 			$('#sItemPosition' + id).blur(function(e){
-				$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
+				//$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
 			});
 
 			if (sortableItem.isExpired)
@@ -293,14 +296,13 @@
 						sortableCache[id] = sortableItem;
 					};
 
-					updatePositionBox();
+					//updatePositionBox();
 
 					var pagingText = sortableTotalItems == 0   ? "" : showPaging(sortablePage,sortablePageSize,sortableTotalItems,keyword); 				    
 					$('#sortableDisplayOptions').attr("style",(sortableTotalItems == 0 && $.isBlank(getSelectedKeyword())) ? "display:none" : "display:block");
 				},
 				preHook: function(){ prepareSortableList(); },
-				postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
-				errorHandler: function(message){ alert(message); }
+				postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
 			});
 
 		},
@@ -434,8 +436,7 @@
 							contentHolder.find("#newComment" + id).val("");
 							contentHolder.find("#commentHolder" + id).html(commentItems);
 							contentHolder.find("#commentHolder" + id + "> div:nth-child(even)").addClass("alt");
-						},
-						errorHandler: function(message){ alert(message); }
+						}
 					});
 				}
 			});
@@ -469,8 +470,7 @@
 									postHook: function(){ 
 										contentHolder.find("#newComment" + id).val(""); 
 										updateCommentList(contentHolder, edp);
-									},
-									errorHandler: function(message){ alert(message); }
+									}
 								});			 						
 
 						});
@@ -499,8 +499,9 @@
 			$.cookie('elevate.filter', value ,{expires: 1});
 			$("#filterDisplay").val(value);
 			updateSortableList(getSelectedKeyword(), 1);
+			$("#sortable-bigbets").sortable("option", "disabled", value=="all" ? true: true );
 		};
-		/*-- END comment and audit list display --*/
+		/*-- END filter display --*/
 
 		//Case: Download icon is clicked
 		$("#downloadIcon").off("click").on("click",{

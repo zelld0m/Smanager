@@ -19,6 +19,7 @@ public class RedirectUtility {
 		this.daoService = daoService;
 	}
 	private static HashMap<String, String> fqMap; 
+	private static HashMap<String, String> redirectMap; 
 	private static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
 	public static final String DBL_PIPE_DELIM = "||";
 	public static final String OR = ") OR (";
@@ -30,6 +31,7 @@ public class RedirectUtility {
 
 	public void updateRuleMap() {
 		fqMap = new HashMap<String, String>();
+		redirectMap = new HashMap<String, String>();
 		RecordSet<RedirectRule> rRuleSet = null;
 		try {
 			rRuleSet = daoService.getRedirectRule(null, null, null, null, null);
@@ -41,18 +43,25 @@ public class RedirectUtility {
 			for (RedirectRule rule : ruleList) {
 				String[] searchTerms = rule.getSearchTerm().split(DBL_ESC_PIPE_DELIM);
 				for (String searchTerm : searchTerms) {
-					fqMap.put((rule.getStoreId()+searchTerm).toLowerCase(), rule.getCondition());
+					if (rule.getCondition().startsWith("http://")) {
+						redirectMap.put((rule.getStoreId()+searchTerm).toLowerCase(), rule.getCondition());
+					} else {
+						fqMap.put((rule.getStoreId()+searchTerm).trim().toLowerCase(), rule.getCondition());
+					}
 				}
 			}
 		}
 	}
 
-	public String getRedirectFQ(String keyword) {
-		StringBuilder fq = new StringBuilder();
-		if (fqMap==null) {
-			fqMap = new HashMap<String, String>();
+	public String getRedirectURL(String keyword) {
+		if (redirectMap==null) {
 			updateRuleMap();
 		}
+		return redirectMap.get(keyword.toLowerCase());
+	}
+
+	public String getRedirectFQ(String keyword) {
+		StringBuilder fq = new StringBuilder();
 		String condition = fqMap.get(keyword.toLowerCase());
 		if (condition!=null) {
 			fq = fq.append(condition.replace(DBL_PIPE_DELIM, OR));

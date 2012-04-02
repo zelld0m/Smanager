@@ -46,6 +46,20 @@ jQuery.extend(
 
 				formatAsId: function(id) {
 					return "_".concat(id.replace(/ /g,"_").toLowerCase());
+				},
+				
+				isDate: function(format, text){
+				    var isValid = true;
+
+				    try{
+				        $.datepicker.parseDate(format, text, null);
+				    }
+				    catch(error){
+				    	alert(error);
+				        isValid = false;
+				    }
+
+				    return isValid;
 				}
 			};  
 		}(jQuery))  

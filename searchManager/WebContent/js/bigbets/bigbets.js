@@ -26,33 +26,58 @@
 		};
 		
 		/** Enumerate all keywords */
-		showKeywordList = function(selector, headerText, searchText, type, moduleType, itemPage, itemPageSize){
+		showKeywordList = function(selector, headerText, searchText, moduleType, itemPage, itemPageSize){
 			
-			showItem = function(keyword){
+			showItem = function(e){
 				$("#titleText").html("" + moduleType + " List for ");
-				$("#keywordHeader").html(keyword);
+				$("#keywordHeader").html(e.data.name);
 				$("div#addSortableHolder").show();
-				updateSortableList(keyword, 1);
+				updateSortableList(e.data.name, 1);
 			};
 			
 			$(selector).sidepanel({
-				type: type,
-				module: moduleType,
+				fieldId: "keywordId",
+				fieldName: "keyword",
 				headerText : headerText,
 				searchText : searchText,
 				page: itemPage,
 				pageSize: itemPageSize,
 
-				itemNameCallback: function(e){ showItem(e.data.name);},
-				itemCountCallback: function(e){ showItem(e.data.name);},
-
+				itemNameCallback: showItem,
 				itemDataCallback: function(base, keyword, page){
-					StoreKeywordServiceJS.getAllByKeyword(keyword, page, base.options.pageSize,{
+					StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
 						callback: function(data){
 							base.populateList(data);
 							base.addPaging(keyword, page, data.totalSize);
 						},
 						preHook: function(){ base.prepareList(); }
+					});
+				},
+				
+				itemOptionCallback: function(base, id, name){
+					
+					if ($.trim(moduleType).toLowerCase()==="elevate")
+					ElevateServiceJS.getElevatedProductCount(name,{
+						callback: function(count){
+							var totalText = (count == 0) ? "-" :(count == 1) ? "1 Item" : count + " Items"; 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({click:showItem},{name:name});
+						},
+						preHook: function(){ 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						}
+					});
+					
+					if ($.trim(moduleType).toLowerCase()==="exclude")
+					ExcludeServiceJS.getExcludedProductCount(name,{
+						callback: function(count){
+							var totalText = (count == 0) ? "-" :(count == 1) ? "1 Item" : count + " Items"; 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({click:showItem},{name:name});
+						},
+						preHook: function(){ 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						}
 					});
 				},
 				
@@ -120,6 +145,13 @@
 					text: $('<div/>'),
 					title: { text: 'Audit Log', button: true }
 				},
+				position: {
+					at: 'bottom right', 
+					my: 'top left',
+					viewport: $(window), // Keep the tooltip on-screen at all times
+					adjust: { screen: true },
+					effect: false // Disable positioning animation
+				},
 				events: {
 					render: function(e, api) {
 						var auditPage=1;
@@ -158,11 +190,11 @@
 					}
 					
 					contentHolder.find("#auditPagingTop" + idSuffix + ", #auditPagingBottom" + idSuffix).paginate({
+						type: "short",
+						pageStyle: "style2",
 						currentPage: auditPage, 
 						pageSize: auditPageSize,
 						totalItem: totalItems,
-						type: "short",
-						pageStyle: "style2",
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
 						},

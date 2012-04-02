@@ -97,23 +97,22 @@
 			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
 
 			// populate list
+			dwr.engine.beginBatch(); 
 			for (var i = 0; i < data.list.length; i++) {
-				var isRelevancy = $.trim(base.options.type).toLowerCase()==="relevancy";
-				var isKeyword = $.trim(base.options.type).toLowerCase()==="keyword";
+				var id = list[i][base.options.fieldId];
+				var name = list[i][base.options.fieldName];
+				var suffixId = $.formatAsId(id);
 
-				var recId = isRelevancy ? list[i].relevancyId: ( isKeyword ? list[i].keyword.keyword : "");
-				var name = isRelevancy ? list[i].relevancyName: ( isKeyword ? list[i].keyword.keyword : "");
-				var id = $.formatAsId(recId);
-
-				base.$el.find("tr#itemPattern").clone().appendTo("tbody#itemListing").attr("id","itemPattern"+id);
-
-				id = $.escapeQuotes(id);
-				if (isKeyword) base.addItemCount(id, name);
-				if (isRelevancy) base.addItemIcon(id, name, list[i].relevancyId);
-
-				base.$el.find('#itemPattern' + id + ' div.itemText a').html(name);
-				base.$el.find('#itemPattern' + id).show();
+				base.$el.find("tr#itemPattern").clone().appendTo("tbody#itemListing").attr("id","itemPattern" + suffixId);
+				suffixId = $.escapeQuotes(suffixId);
+				
+				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').html(name);
+				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id});
+				base.$el.find('#itemPattern' + suffixId).show();
+				
+				base.options.itemOptionCallback(base, id, name);
 			}
+			dwr.engine.endBatch();
 		};
 
 		base.addPaging = function(keyword, page, total){
@@ -151,58 +150,11 @@
 			base.$el.find("#sideBottomPaging").attr("style", total > 0 ? "display:float" : "display:none");
 		};
 
-		base.addItemCount = function(id, name){
-			dwr.engine.beginBatch(); //TODO: Optimize
-
-			if ($.trim(base.options.module).toLowerCase()==="elevate")
-
-				ElevateServiceJS.getElevatedProductCount(name,{
-					callback: function(count){
-						var totalText = (count == 0) ? "-" :(count == 1) ? "1 Item" : count + " Items"; 
-						base.$el.find('#itemPattern' + id + ' div.itemLink a').html(totalText);
-					},
-					preHook: function(){ 
-						base.$el.find('#itemPattern' + id + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-					}
-				});
-
-			if ($.trim(base.options.module).toLowerCase()==="exclude")
-
-				ExcludeServiceJS.getExcludedProductCount(name,{
-					callback: function(count){
-						var totalText = (count == 0) ? "-" :(count == 1) ? "1 Item" : count + " Items"; 
-						base.$el.find('#itemPattern' + id + ' div.itemLink a').html(totalText);
-					},
-					preHook: function(){ 
-						base.$el.find('#itemPattern' + id + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-					}
-				});
-
-			dwr.engine.endBatch();
-
-			base.$el.find('#itemPattern' + id + ' div.itemLink a').on({click:base.options.itemCountCallback},{name:name});
-			base.$el.find('#itemPattern' + id + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name});
-
-		};
-
-		base.addItemIcon = function(id, name, relId){
-			var icon  = '<a id="link" href="javascript:void(0);"><img src="../images/icon_link.png"></a>';
-			icon += '<a id="clone" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';            	
-			icon += '<a id="edit" href="javascript:void(0);"><img src="../images/page_edit.png"></a>';
-
-			base.$el.find('#itemPattern' + id + ' div.itemLink').html(icon);
-			base.$el.find('#itemPattern' + id + ' div.itemText a').on({click: base.options.itemNameCallback},{name:name,id:relId});
-			base.$el.find('#itemPattern' + id + ' div.itemLink a#link').on({click: base.options.iconLinkCallback},{name:name,id:relId});
-			base.$el.find('#itemPattern' + id + ' div.itemLink a#clone').on({click: base.options.iconCloneCallback},{name:name,id:relId});
-			base.$el.find('#itemPattern' + id + ' div.itemLink a#edit').on({click: base.options.iconEditCallback},{name:name,id:relId});
-		};
-		
 		// Run initializer
 		base.init();
 	};
 
 	$.sidepanel.defaultOptions = {
-			module: "elevate",
 			page:1,
 			region: "left",
 			pageSize: 10,
@@ -211,12 +163,9 @@
 			searchText: "",
 			searchLabel: "",
 			itemDataCallback: function(e){},
-			itemCountCallback: function(e){},
+			itemOptionCallback: function(e){},
 			itemNameCallback: function(e){},
 			itemAddCallback: function(e){},
-			iconLinkCallback: function(e){},
-			iconCloneCallback: function(e){},
-			iconEditCallback: function(e){},
 			pageChangeCallback: function(e){},
 			reloadRate: 250
 	};

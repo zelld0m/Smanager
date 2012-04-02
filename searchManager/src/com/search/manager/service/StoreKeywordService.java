@@ -1,5 +1,8 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.StoreKeyword;
 
@@ -25,13 +29,39 @@ public class StoreKeywordService {
 	@Autowired private DaoService daoService;
 	
 	@RemoteMethod
-	public RecordSet<StoreKeyword> getAllByKeyword(String keyword, int page,int itemsPerPage) {
+	public RecordSet<StoreKeyword> getAllByKeyword(String keyword, int page,int itemsPerPage) throws Exception {
 		try {
 			logger.info(String.format("%d %d %s", page, itemsPerPage, keyword));
 			return daoService.getAllKeywordsMatching(UtilityService.getStoreName(), keyword, page, itemsPerPage);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByKeyword()",e);
+			throw e;
+		} catch (Exception e){
+			logger.error("Failed during getAllByKeyword()",e);
+			throw e;
 		}
+	}
+	
+	@RemoteMethod
+	public RecordSet<Keyword> getAllKeyword(String keyword, int page,int itemsPerPage) throws Exception {
+		try {
+			logger.info(String.format("%d %d %s", page, itemsPerPage, keyword));
+			RecordSet<StoreKeyword> storeKeyword =  getAllByKeyword(keyword, page, itemsPerPage);
+			List<StoreKeyword> storeKeywordList =  new ArrayList<StoreKeyword>();
+			List<Keyword> keywordList = new ArrayList<Keyword>();
+			
+			if (storeKeyword!=null) storeKeywordList = storeKeyword.getList();
+			
+			for (StoreKeyword sk: storeKeywordList){
+				keywordList.add(sk.getKeyword());
+			}
+			
+			return new RecordSet<Keyword>(keywordList, storeKeyword.getTotalSize());
+			
+		} catch (DaoException e) {
+			logger.error("Failed during getAllByKeyword()",e);
+		}
+		
 		return null;
 	}
 	

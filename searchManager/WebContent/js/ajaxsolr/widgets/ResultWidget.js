@@ -139,6 +139,7 @@
 							if (totalItems > 0){
 								contentHolder.find("#auditPagingTop, #auditPagingBottom").paginate({
 									type: 'short',
+									pageStyle: 'style2',
 									currentPage: auditPage, 
 									pageSize: auditPageSize,
 									totalItem: totalItems,
@@ -282,7 +283,10 @@
 			var currentPosition = 0;
 			var expiredDateSelected = false;
 			var idSuffix = "_" + doc.EDP;
-
+			var noExpiryDateText = "Indefinite";
+			var expDateMinDate = -2;
+			var expDateMaxDate = "+1Y";
+			
 			return function () {
 				prepareElevateResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
@@ -303,14 +307,25 @@
 									contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
 									contentHolder.find("#listItemsPattern" + id + " > div > img").attr("src", list[i].imagePath);
 
-									if (list[i].isExpired) contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).toggle();
 									if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
 									if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html(list[i].formattedExpiryDate);
+									var expiryDate = list[i].formattedExpiryDate;
+									
+									if (list[i].isExpired){
+										contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html('<img id="stampExpired' + id + '" src="../images/expired_stamp50x16.png">');
+										//contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).show();
+									}else{
+										contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html("Validity:");
+										//contentHolder.find("#listItemsPattern" + id + " > div > div#stampExpired" + id).hide();
+									}
+										
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
+								
+									
 
 									contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).error(function(){
 										$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg'));
@@ -345,19 +360,22 @@
 							postHook: function() {
 								var updatedPosition = parseInt($.trim(contentHolder.find("li#elevatePosition_" + doc.EDP).html()));
 								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + doc.EDP).html());
-								var stampVisible = contentHolder.find("#stampExpired_" + doc.EDP).is(":visible");
+								var stampVisible = contentHolder.find("img#stampExpired_" + doc.EDP).is(":visible");
 
 								if(updatedPosition != "" && updatedPosition > 0){
 									contentHolder.find("#aElevatePosition_"+doc.EDP).val(updatedPosition);
 									contentHolder.find("a#removeBtn").attr("style","display:float");
 								}
-
+								
 								if(updatedExpiryDate != "")
-									contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate);
+									contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate("mm/dd/yy", updatedExpiryDate) ? updatedExpiryDate : "");
 
-								contentHolder.find("#aStampExpired_"+doc.EDP).attr("style",stampVisible? "display:float" : "display:none");
-							},
-							errorHandler: function(message){ alert(message); }
+								if (stampVisible){
+									contentHolder.find("#aStampExpired_" + doc.EDP).show();
+								}else{
+									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								}
+							}
 						});
 				//	}
 				};
@@ -382,10 +400,7 @@
 							var contentHolder = $('div', api.elements.content);
 
 							contentHolder.html(content);
-
-							var expDateMinDate = -2;
-							var expDateMaxDate = "+1Y";
-
+							
 							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
 								showOn: "both",
 								minDate: expDateMinDate,
@@ -559,6 +574,8 @@
 			var self = this;
 			var needRefresh = false;
 			var idSuffix = "_" + doc.EDP;
+			var expDateMinDate = -2;
+			var expDateMaxDate = "+1Y";
 
 			return function () {
 				var selector  = "#resultItem_" + doc.EDP + " div#excludeHolder";
@@ -591,7 +608,7 @@
 							contentHolder.find("a#toggleCurrent").remove();
 							contentHolder.find("div#current").remove();
 							contentHolder.find("#aElevatePosition" + idSuffix).parent("li").remove();
-							contentHolder.find("#aExpiryDate" + idSuffix).parent("li").remove();
+							//contentHolder.find("#aExpiryDate" + idSuffix).parent("li").remove();
 							contentHolder.find("#removeBtn > div").html("Exclude");
 							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
 
@@ -599,8 +616,24 @@
 								$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image.jpg'));
 							});
 
+							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
+								showOn: "both",
+								minDate: expDateMinDate,
+								maxDate: expDateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								onSelect: function(dateText, inst) {
+									var today = new Date();
+									var selDate = Date.parse(dateText);
+									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
+									expiredDateSelected = (selDate < today)? true : false;
+								}
+							});
+							
 							contentHolder.find("#removeBtn").click(function(){
-								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), {
+								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
+								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, {
 									callback : function(data) {
 										needRefresh = true;
 										api.hide();

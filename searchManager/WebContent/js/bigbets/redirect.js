@@ -4,15 +4,16 @@
 	var ruleName = "";
 	var searchTerm = "";
 	var rules;
-	var ruleFq = "";
+	var ruleCondition = "";
 	var startRow = 0;
-	var endRow = 10;
+	var endRow = 100;
 	var storeId = "macmall";
 	var active = 1;
 	var priority = 1;
 	var ruleCnt = 0;
+	var redirectFlag= false;
 	
-	var addRule = function() { RedirectServiceJS.addRedirectRule(ruleName,searchTerm, ruleFq, storeId, active, priority, {
+	var addRule = function() { RedirectServiceJS.addRedirectRule(ruleName,searchTerm, ruleCondition, storeId, active, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
@@ -24,7 +25,7 @@
 	});
 	};
 
-	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleFq, storeId, active, priority, {
+	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, active, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
@@ -38,14 +39,20 @@
 	
 	var deleteRule = function() { RedirectServiceJS.removeRedirectRule(ruleId, ruleName, {
 		callback: function(data){
-			if (data > 0) {
-				ruleId = "";
-				clearValues();
-				dwr.util.removeAllRows("#keywordBody", { filter:function(tr) {
-					return (tr.id != "kDispPattern");
-					}}); 
-				initPage();
-			}
+//			if (data > 0) {
+//				alert($('#kDispPattern' + ruleId).length > 0);
+//				$('#kDispPattern' + ruleId).remove();
+//				ruleId = "";
+//				clearValues();
+//				initPage();
+//			}
+		},
+		postHook: function(){
+//			alert($('#kDispPattern' + ruleId).length > 0);
+			$('#kDispPattern' + ruleId).remove();
+			ruleId = "";
+			clearValues();
+			initPage();
 		},
 		errorHandler: function(message){ alert(message); }
 	});
@@ -61,14 +68,19 @@
 		$("#activeFlag").text(rule.activeFlag);
 
 		var searchTerms = rule.searchTerm.split("||");
-		var conditions = rule.condition.split("||");
 		
 		for (var i = 0; i < searchTerms.length; i++) {
 			$("#searchTermList").append($("<option>", { value : searchTerms[i] }).text(searchTerms[i])); 
 		}				
-		for (var i = 0; i < conditions.length; i++) {
-			$("#ruleList").append($("<option>", { value : conditions[i] }).text(conditions[i])); 
-		}				
+		if (rule.condition.indexOf("http://") > -1) {
+			redirectFlag = true;
+			$("#url").val(rule.condition);
+		} else {
+			var conditions = rule.condition.split("||");
+			for (var i = 0; i < conditions.length; i++) {
+				$("#ruleList").append($("<option>", { value : conditions[i] }).text(conditions[i])); 
+			}				
+		}
 	}
 	
 	function clearValues() {
@@ -79,6 +91,8 @@
 		$("#ruleList option").remove();
 		$("#searchTermList option").remove();
 		$("#searchTerm").val("Add Search Term");
+		$("#url").val("http://");
+		redirectFlag = false;
 		catCode = "";
 		searchTerm = "";
 	}
@@ -211,7 +225,15 @@
 			getCategories(catCode);
 	    });
 
+//	    $(".tabbernav").click(function() {
+//	    	alert("click tab");
+//	    });
+	    
 	    $("#addRule").click(function() {
+	    	if ($("#url").val() != "http://") {
+	    		$("#url").val("http://");
+	    		redirectFlag = false;
+	    	}
 	    	category = $("#categoryList option:selected").val();
 	    	subCategory = $("#subCategoryList option:selected").val();
 	    	clazz = $("#classList option:selected").val();
@@ -262,6 +284,15 @@
 	    		$(this).val('');
 	    	}
 	    });
+	    
+	    $("#url").focus(function(){
+	    	$("#ruleList option").remove();
+	    });
+	    
+	    $("#url").keydown(function(e) {
+	    	redirectFlag = true;
+	    });
+
 	    
 	    $("#addSearchTerm").click(function() {
 	    	searchTerm = $("#searchTerm").val();
@@ -315,9 +346,6 @@
 	    			ruleId = $("#ruleId").val();
 	    			ruleName = $("#ruleName").val();
 	    			deleteRule(ruleId, ruleName);
-	    			clearValues();
-	    			ruleId="";
-	    			initPage();
 	    		}
 	    	}
 	    });
@@ -326,26 +354,34 @@
 	    	ruleId = $("#ruleId").val();
 	    	ruleName = $("#ruleName").val();
     		searchTerm = "";
-    		ruleFq = "";
+    		ruleCondition = "";
     		$("#searchTermList option").each(function() {
     	    	searchTerm += $(this).val() + "||";
     	    });
-    		$("#ruleList option").each(function() {
-    			ruleFq += $(this).val() + "||";
-    	    });
+    		if (redirectFlag) {
+    			ruleCondition = $("#url").val();
+    		} else {
+        		$("#ruleList option").each(function() {
+        			ruleCondition += $(this).val() + "||";
+        	    });
+    		}
     		if (searchTerm.length == 0) {
     			alert("Please add at least one Search Term.");
-    		} else if (ruleFq.length == 0) {
-    			alert("Please add at least one Search Term.");
+    		} else if (ruleCondition.length == 0) {
+    			alert("Please add at least one Category/Manufacturer or Redirect to Page rule.");
+    		} else if (redirectFlag && ruleCondition.indexOf("http://", 0) == -1) {
+    			alert("URL should start with http://");
     		} else {
-        		ruleFq = ruleFq.substring(0, ruleFq.lastIndexOf("||"));
+    			if (!redirectFlag) {
+            		ruleCondition = ruleCondition.substring(0, ruleCondition.lastIndexOf("||"));
+    			}
         		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf("||"));
 	    		
     	    	if (ruleId == 0) {
-    	    		addRule(ruleName, searchTerm, ruleFq, storeId, active, priority);
+    	    		addRule(ruleName, searchTerm, ruleCondition, storeId, active, priority);
     	    		$("#delete").text("Delete");
     	    	} else {
-    	    		updateRule(ruleId, ruleName, searchTerm, ruleFq, storeId, active, priority);
+    	    		updateRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, active, priority);
     	    	}
     		}
 	    });

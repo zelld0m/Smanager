@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -24,14 +25,14 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
 import com.search.manager.schema.model.Schema;
-import com.search.manager.schema.model.bq.BoostQuery;
+import com.search.manager.schema.model.bf.BoostFunctionModel;
 import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
@@ -77,10 +78,18 @@ public class RelevancyService {
 			if (StringUtils.equalsIgnoreCase("bq", fieldName)){
 				try {
 					Schema schema = SolrSchemaUtility.getSchema();
-					BoostQueryModel boostQueryModel;
-
-					boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
+					BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
 					fieldValue = boostQueryModel.toString();
+				} catch (SchemaException e) {
+					throw e;
+				}
+			}
+			
+			//bf post-processing
+			if (StringUtils.equalsIgnoreCase("bf", fieldName)){
+				try {
+					Schema schema = SolrSchemaUtility.getSchema();
+					BoostFunctionModel.toModel(schema, fieldValue, true);
 				} catch (SchemaException e) {
 					throw e;
 				}
@@ -136,6 +145,44 @@ public class RelevancyService {
 		}
 		return StringUtils.EMPTY;
 	}
+	
+	@RemoteMethod
+	public String addRelevancyByCloning(String relevancyId, String name, String startDate, String endDate, String description) throws Exception{
+		String clonedId = StringUtils.EMPTY;
+		Relevancy clonedRelevancy = new Relevancy();
+		
+		try {
+		String store = UtilityService.getStoreName();
+		Relevancy relevancy = new Relevancy();
+		relevancy.setStore(new Store(store));
+		relevancy.setRelevancyName(name);
+		relevancy.setDescription(description);
+		relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
+		relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
+		relevancy.setCreatedBy(UtilityService.getUsername());
+		
+		clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
+		
+		Relevancy hostRelevancy = getById(relevancyId);
+		clonedRelevancy = getById(clonedId);
+		
+		Map<String, String> fields = hostRelevancy.getParameters();
+		
+		for (String key: fields.keySet()){
+			try {
+				addOrUpdateRelevancyField(clonedId, key, fields.get(key));
+			} catch (Exception e) {
+				daoService.deleteRelevancy(clonedRelevancy);
+				throw e;
+			}
+		}
+		
+		} catch (DaoException e) {
+			logger.error("Failed during addRelevancy()",e);
+		}
+		
+		return clonedId;
+	}
 
 	@RemoteMethod
 	public int updateRelevancy(String id, String name, String description , String startDate, String endDate){
@@ -171,25 +218,23 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public List<BoostQuery> getValuesByString(String bq) {
+	public BoostQueryModel getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
 		Schema schema = SolrSchemaUtility.getSchema();
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
-		List<BoostQuery> boostQueryList = new LinkedList<BoostQuery>();
-
+		
 		try {
 			boostQueryModel = BoostQueryModel.toModel(schema, bq, true);
-			if (boostQueryModel!=null) boostQueryList = boostQueryModel.getBoostQuery();
 		} catch (SchemaException e) {
 			e.printStackTrace();
 		}
 
-		return boostQueryList;
+		return boostQueryModel;
 	}
 
 	@RemoteMethod
 	public RecordSet<String> getValuesByField(String keyword, int page, int itemsPerPage, String facetField, String[] excludeList) {
-		logger.info(String.format("%s %d %d %s", keyword, page, itemsPerPage, facetField));
+		logger.info(String.format("%s %d %d %s %s", keyword, page, itemsPerPage, facetField, Arrays.toString(excludeList)));
 
 		String server = UtilityService.getServerName();
 		String store = UtilityService.getStoreLabel();
@@ -223,7 +268,7 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RelevancyKeyword> getKeywordInRule(String relevancyId, String keyword, int page, int itemsPerPage) {
+	public RecordSet<Keyword> getKeywordInRule(String relevancyId, String keyword, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", relevancyId, page, itemsPerPage));
 		try{
 			RelevancyKeyword rk = new RelevancyKeyword();
@@ -252,13 +297,25 @@ public class RelevancyService {
 			int fromIndex = (page-1)*itemsPerPage;
 			int toIndex = (page*itemsPerPage)-1;
 
+			
+			RecordSet<RelevancyKeyword> relkeyRS = null;
+			
 			if (StringUtils.isNotBlank(keyword)){
 				maxIndex = matchedList.size()- 1;
-				return new RecordSet<RelevancyKeyword>(matchedList.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), matchedList.size());
+				relkeyRS = new RecordSet<RelevancyKeyword>(matchedList.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), matchedList.size());
 			}else{
 				maxIndex = list.size()- 1;
-				return new RecordSet<RelevancyKeyword>(list.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), list.size());
+				relkeyRS = new RecordSet<RelevancyKeyword>(list.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), list.size());
 			}
+			
+			List<Keyword> keywordList = new ArrayList<Keyword>();
+			
+			for(RelevancyKeyword relKey : relkeyRS.getList()){
+				keywordList.add(relKey.getKeyword());
+			}
+			
+			return new RecordSet<Keyword>(keywordList, relkeyRS.getTotalSize());
+			
 		} catch (DaoException e) {
 			logger.error("Failed during getKeyword()",e);
 		}
@@ -339,7 +396,13 @@ public class RelevancyService {
 		int toIndex = (page*itemsPerPage)-1;
 		return new RecordSet<Field>(fields.subList(fromIndex, toIndex>maxIndex ? maxIndex+1 : toIndex+1), fields.size());
 	}
-
+	
+	@RemoteMethod
+	public int getRelevancyCount(String keyword){
+		
+		return 0;
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	} 

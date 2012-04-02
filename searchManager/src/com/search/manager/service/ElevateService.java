@@ -41,7 +41,7 @@ public class ElevateService{
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(edp);
 			e.setLocation(sequence);
-			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? new Date() : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			daoService.addKeyword(store, keyword); // TODO: What if keyword is not added?

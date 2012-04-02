@@ -39,7 +39,7 @@
 		handlerSetFieldEmpty = function(e){if ($.trim($(this).val()) == e.data.defaultText) $(this).val("");};
 
 		navigateKeywords = function(page){
-			showKeywordList("#keywordList", "Keyword", "Search Keyword", "keyword", "Exclude", page, keywordPageSize);
+			showKeywordList("#keywordList", "Keyword", "Search Keyword", "Exclude", page, keywordPageSize);
 		};
 
 		removeSortableItem = function(item){
@@ -86,7 +86,7 @@
 		initPage = function() {
 			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
-			$.cookie('elevate.filter', "all",{expires: 1});
+			setItemFilter("all");
 			$("#titleText").html("Exclude List");
 			navigateKeywords(1);
 			setItemDisplay();
@@ -162,7 +162,7 @@
 
 			/* Case: Put back elevate position when focus leave the field*/
 			$('#sItemPosition' + id).blur(function(e){
-				$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
+				//$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
 			});
 
 			if (sortableItem.isExpired)
@@ -395,6 +395,7 @@
 
 					contentHolder.find("#auditPagingTop" + idSuffix + ", #auditPagingBottom" + idSuffix).paginate({
 						type: "short",
+						pageStyle: "style2",
 						currentPage: auditPage, 
 						pageSize: auditPageSize,
 						totalItem: totalItems,
@@ -403,7 +404,9 @@
 						},
 						pageLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page, auditPageSize);},
 						nextLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page+1, auditPageSize); },
-						prevLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page-1, auditPageSize); }
+						prevLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page-1, auditPageSize); },
+						firstLinkCallback: function(e){ updateAuditList(contentHolder, edp, 1, auditPageSize); },
+						lastLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.totalPages, auditPageSize); }
 					});
 
 					contentHolder.find("#auditHolder" + idSuffix).html(auditItems);
@@ -421,6 +424,10 @@
 				content: {
 					text: $('<div/>'),
 					title: { text: 'Audit Log', button: true }
+				},
+				position: {
+					at: 'bottom right', 
+					my: 'top left'
 				},
 				events: {
 					render: function(e, api) {
