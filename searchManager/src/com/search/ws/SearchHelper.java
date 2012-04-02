@@ -15,6 +15,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -149,8 +150,12 @@ public class SearchHelper {
 	}
 
 	
-	@SuppressWarnings("unchecked")
 	public static List<String> getFacetValues(String server, String storeId, String field) {
+		return getFacetValues(server, storeId, field, null);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
 		List<String> list = new ArrayList<String>();
 		if (StringUtils.isEmpty(field)) {
 			return list;
@@ -180,6 +185,13 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.field", field));
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
+			nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
+			
+			if (CollectionUtils.isNotEmpty(filters)) {
+				for (String filter: filters) {
+					nameValuePairs.add(new BasicNameValuePair("fq", filter));					
+				}
+			}
 			
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
@@ -208,7 +220,8 @@ public class SearchHelper {
     			for (String value: (Set<String>)facets.keySet()) {
     				list.add(value);
     			}
-    			//sort the list
+    			// TODO: add facet sorting rule here
+    			// sort the list
     			Collections.sort(list, new Comparator<String>() {
 					@Override
 					public int compare(String s1, String s2) {
