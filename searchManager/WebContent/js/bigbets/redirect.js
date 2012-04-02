@@ -137,9 +137,9 @@
 			$("#manufacturerList option").remove();
 			$("#manufacturerList").append($("<option>", { value : "" }).text("All Manufacturers")); 
 			$.each(manufacturers, function(key, element) {
-			     $("#manufacturerList")
-		          .append($("<option>", { value : element })
-		          .text(element)); 
+				if (element.length > 0) {
+					$("#manufacturerList").append($("<option>", { value : element }).text(element)); 
+				}
 			});
 		},
 		errorHandler: function(message){ alert(message); }

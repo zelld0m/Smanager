@@ -3,6 +3,7 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.model.Category;
 import com.search.manager.model.CategoryList;
+import com.search.manager.service.UtilityService;
+import com.search.ws.SearchHelper;
 
 public class CategoryDAO {
 
@@ -25,6 +28,9 @@ public class CategoryDAO {
 	}
 	
 	private Logger logger = Logger.getLogger(CategoryDAO.class);
+	private final static String MANUFACTURER = "Manufacturer"; 
+	private final static String CAT_CODE = "CatCode:";
+	private final static String STAR = "*";
 	
 	private GetCategoriesStoredProcedure getCategoriesStoredProcedure;
 	
@@ -59,7 +65,9 @@ public class CategoryDAO {
         CategoryList categoryList = null;
         if (result != null) {
         	List<Category> categories = (List<Category>) result.get(DAOConstants.RESULT_SET_1);
-        	List<String> manufacturers = (List<String>) result.get(DAOConstants.RESULT_SET_2);
+        	List<String> filters = new ArrayList<String>();
+        	filters.add(CAT_CODE + categoryCode + STAR);
+        	List<String> manufacturers = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), MANUFACTURER, filters);
         	categoryList = new CategoryList(categories, manufacturers);
         }
         return categoryList;
