@@ -285,7 +285,7 @@
 			<ul id="rankingRuleListing" class="listItems">
 				<li id="rankingRulePattern" class="rankingRuleItem" style="display: none">
 					<div class="handle">
-						<span id="rankingRuleName"></span>
+						<span class="rankingRuleName"></span>
 					</div>
 				</li>	
 			</ul>	
