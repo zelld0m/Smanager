@@ -71,6 +71,7 @@ body 							{ margin: 0px; }
 .cssReset .w720, .w720			{width:720px}
 .cssReset .w730					{width:730px}
 .cssReset .w980, .w980			{width:980px !important}
+.cssReset .w100p, .w100p		{width:100% }
 .cssReser .w50p, .w50p			{ width:50% }
 .cssReser .w45p, .w45p			{ width:45% }
 .cssReser .w45p83p, .w45p83		{ width:45.83% }
@@ -201,7 +202,7 @@ body 							{ margin: 0px; }
 .cssReset .height15				{ height:15px }
 .cssReset .height24, .height24	{ height:24px }
 .cssReset .h35					{ height:35px }
-
+		
 .cssReset .minW240				{ min-width:240px !important; }
 
 .cssReset .top1, .top1			{ top:1px; }
