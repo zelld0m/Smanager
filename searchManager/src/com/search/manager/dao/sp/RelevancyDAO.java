@@ -302,8 +302,8 @@ public class RelevancyDAO {
 	    public UpdateRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY_KEYWORD);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 	        compile();
 	    }
@@ -326,7 +326,7 @@ public class RelevancyDAO {
 	            {
 	            	return new RelevancyKeyword(
 	            			new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD)),
-	                		new Relevancy(rs.getString(DAOConstants.COLUMN_RELEVANCY_ID)),
+	                		new Relevancy(rs.getString(DAOConstants.COLUMN_RELEVANCY_ID), rs.getString(DAOConstants.COLUMN_RELEVANCY_NAME)),
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),

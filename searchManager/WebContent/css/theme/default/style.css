@@ -23,7 +23,7 @@
 .cssReset .txtcopyright			{ color:#3B79C2  }
 
 .cssReset .borderT, .borderT	{border-top:1px solid #ccc}
-.cssReset .borderB				{border-bottom:1px solid #ccc}
+.cssReset .borderB, .borderB	{border-bottom:1px solid #ccc}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 
@@ -323,7 +323,8 @@ ul.topmenu li.submenu:hover ul li:hover { }
 
 .cssReset .searchBox			{ height:18px; padding:3px; }
 .cssReset .searchBox2			{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; padding-right:12px; width: 75px; margin-top:-10px; margin-right:3px; padding-top:3px; padding-bottom:2px }
-.cssReset .searchBoxIconBg		{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; }
+.cssReset .searchBoxIconBg, 
+.searchBoxIconBg				{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; }
 .cssReset .searchBoxIconLBg,
 .searchBoxIconLBg				{ background:url(images/icon-search.png) center right no-repeat #fff; }
 

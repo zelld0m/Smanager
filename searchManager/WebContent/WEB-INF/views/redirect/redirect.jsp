@@ -22,7 +22,7 @@
 
 <!--Left Menu-->
     <div class="clearB floatL sideMenuArea">
-    <div class="pcmallhdlogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
       <!-- Keyword -->
       <div class="clearB floatL w240">
         <div class="sideHeader">Query Cleaning Rules</div>
@@ -52,7 +52,7 @@
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
         <div class="w535 padT10 padL10 floatL fsize20 fnormal">Query Cleaning Rule : <span id="headerRuleName" class="fLblue fnormal">Rule Name</span></div>
-        <div class="floatL w180 txtAR padT7"><input id="addRuleName" type="text" class="farial fsize12 fgray  padLR3 padTB4 border marL10 w110 " maxlength="30" value=""><a href="javascript:void(0);" id="add" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
+        <div class="floatL w180 txtAR padT7"><input id="addRuleName" type="text" class="farial fsize12 fgray  padLR3 padTB4 marL10 w110 " maxlength="30" value=""><a href="javascript:void(0);" id="add" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
 	</div>
      
 	<div class="clearB"></div>
@@ -63,13 +63,13 @@
 				<tr>
 					<td width="250px"><input id="ruleId" type="hidden" value="">
 						<input id="ruleName" type="hidden" value="Rule Name">
-						<p/><input id="searchTerm" type="text" value="Add Search Term" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220">
+						<p/><input id="searchTerm" type="text" value="Add Search Term" class="farial fsize12  fgray padLR3 padTB4 marL10 w220">
 					</td>
 					<td width="25px">
 						<!-- a href="#" class="buttons btnGray clearfix"><div id="editSearchTerm" class="buttons fontBold"><<</div></a><br /--> 
 						<a href="#" class="buttons btnGray clearfix"><div id="addSearchTerm" class="buttons fontBold">>></div></a></td>
 					<td>
-						<select id="searchTermList" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220" size="7"/>
+						<select id="searchTermList" class="farial fsize12  fgray padLR3 padTB4 marL10 w220" size="7"/>
 					</td>
 				</tr>
 			</table>
@@ -82,40 +82,40 @@
 						<table class="fsize12 mar10 tblCatalog">
 							<tr>
 								<td width="100px">CatCode</td>
-								<td width="250px"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4 border marL10" size="10" maxlength="4"></td>
+								<td width="250px"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4 marL10" size="10" maxlength="4"></td>
 							</tr>
 							<tr>
 								<td width="100px">Category</td>
 								<td width="250px"><select name="select" id="categoryList"
-									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
 										<option>All Categories</option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Sub-Category</td>
 								<td><select name="select" id="subCategoryList"
-									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Class</td>
 								<td><select name="select" id="classList"
-									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Minor</td>
 								<td><select name="select" id="minorList"
-									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
 										<option></option>
 								</select></td>
 							</tr>
 							<tr>
 								<td>Manufacturer List</td>
 								<td><select name="select" id="manufacturerList"
-									class="farial fsize12 fgray padLR3 padTB4 border marL10 w230">
+									class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
 										<option>All Manufacturers</option>
 								</select></td>
 							</tr>
@@ -124,7 +124,7 @@
 					<td><a href="#" class="buttons btnGray clearfix"><div
 								class="buttons fontBold" id="addRule">>></div></a><br />
 					<td>
-						<select id="ruleList" class="farial fsize12  fgray padLR3 padTB4 border marL10 w220" size="10">
+						<select id="ruleList" class="farial fsize12  fgray padLR3 padTB4 marL10 w220" size="10">
 						</select>
 					</td>
 				</tr>

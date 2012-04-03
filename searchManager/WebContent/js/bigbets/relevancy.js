@@ -724,16 +724,86 @@
 				itemOptionCallback: function(base, id, name){
 					var suffixId = $.escapeQuotes($.formatAsId(id));
 					
-					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).qtip({
-						content: {
-							text: $('<div/>'),
-							title: { text: 'Modify', button: true }
+					RelevancyServiceJS.getRelevancyCount(name, {
+						callback: function(data){
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').html((data == 0) ? "-" :(data == 1) ? "1 Item" : data + " Items");
+						
+							if (data > 0)
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
+								content: {
+									text: $('<div/>'),
+									title: { text: 'Ranking Rule', button: true }
+								},
+								show: { modal: true },
+								events: { 
+									render: function(rEvt, api){
+										var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
+										RelevancyServiceJS.getRelevancy(name, {
+											callback: function(data){
+												var list = data.list;
+												
+												for(var i=0; i<data.totalSize; i++){
+													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
+													$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
+													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").html(list[i].relevancy.relevancyName);
+													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").attr("id", list[i].relevancy.relevancyId)
+												}
+												
+												$content.find("ul#rankingRuleListing > li").removeClass("alt");
+												$content.find("ul#rankingRuleListing > li:nth-child(even)").addClass("alt");
+												
+												$content.find("ul#rankingRuleListing").sortable({ 
+													handle : '.handle',
+													cursor : 'move',
+													start: function(e, ui) {
+														ui.item.data('start_pos', ui.item.index());
+													},     
+													change: function(e, ui) {
+														var index = ui.placeholder.index();
+														if (ui.item.data('start_pos') < index ) {
+															$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
+														} else {
+															$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
+														}		    
+													},
+													update: function(e, ui) {
+														$(this).find('li div').removeClass('highlight');
+														$(this).find('li').removeClass("alt");
+														$(this).find('li:nth-child(even)').addClass("alt");
+													},
+													stop: function(e, ui) {
+														var sourceIndex = (ui.item.data('start_pos'));
+														var destinationIndex = (ui.item.index());
+														
+														//TODO: move processing to SP
+														var relIds = new Array();
+														
+														$(this).find('li:visible span.rankingRuleName').each(function(index, value){
+															relIds.push($(value).attr("id"));
+															alert($(value).attr("id"));
+														});
+														
+														RelevancyServiceJS.updateRelevancyKeyword(relIds, name, {
+															callback: function(data){
+																
+															}
+														});
+													}
+												});
+											},
+											preHook: function(){
+												
+											}
+										});
+									}
+								}
+							});
 						},
-						show: { modal: true },
-						events: { 
-							render: function(rEvt, api){}
+						preHook: function(){ 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 						}
 					});
+					
 				},
 				pageChangeCallback: function(n){ }
 			});

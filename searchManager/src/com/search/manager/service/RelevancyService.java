@@ -28,6 +28,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
@@ -399,7 +400,41 @@ public class RelevancyService {
 	
 	@RemoteMethod
 	public int getRelevancyCount(String keyword){
-		
+		try {
+			StoreKeyword storeKeyword = new StoreKeyword(new Store(UtilityService.getStoreName()), new Keyword(keyword));
+			return daoService.getRelevancyKeywordCount(storeKeyword);
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	@RemoteMethod
+	public RecordSet<RelevancyKeyword> getRelevancy(String keyword){
+		try {
+			return daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+					new RelevancyKeyword(new Keyword(keyword), new Relevancy("", "")), null, null, 0, 0),
+					MatchType.LIKE_NAME, ExactMatch.MATCH);
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public int updateRelevancyKeyword(String[] relevancyIds, String keyword){
+		try {
+			
+			for(int i=0; i< ArrayUtils.getLength(relevancyIds); i++){
+				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), new Relevancy(relevancyIds[i]));
+				RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
+				rk.setPriority(i+1);
+				daoService.updateRelevancyKeyword(rk);
+			}
+			return 1;
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
 	

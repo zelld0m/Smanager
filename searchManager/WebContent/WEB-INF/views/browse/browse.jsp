@@ -76,8 +76,8 @@
         	<div class="floatL w460 txtAR padT7"> 
         	    <a id="statisticIcon" href="javascript:void(0);"><img align="absmiddle" class="marR3 marT5 floatR  posRel" src="<spring:url value="/images/icon_statistics.png"/>"></a>
 	        	<a id="searchbutton" href="javascript:void(0)"><img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="<spring:url value="/js/ajaxsolr/images/btn_GO.png"/>"></a> 
-				<a id="searchOptionsIcon" href="javascript:void(0)"><div class="btnGraph btnSearchOption floatR  posRel"></div></a>
-				<input type="text" class="farial fsize12 fgray searchBox borderNoneR w175 floatR" id="query" name="query">
+				<!-- a id="searchOptionsIcon" href="javascript:void(0)"><div class="btnGraph btnSearchOption floatR  posRel"></div></a -->
+				<input type="text" class="farial fsize12 fgray searchBoxIconBg w175 floatR pad3 marT1 marR8" id="query" name="query">
 				<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none"><input id="keepRefinement" name="keepRefinement" type="checkbox"><span class="fsize11">Keep Refinements</span></div>    	 
 			</div>
 		   </div>
@@ -92,28 +92,39 @@
 	        <div id="searchResultOption"  class="clearfix pad5 txtAL w720" style="background:#e8e8e8">
 	        	<!-- span class="fsize14 alert" style="color:#a90400">This is redirected</span -->
 	        	<div class="floatL" >
-		        	<label class="marT6 floatL w100 valignMid">Select Relevancy:</label>
+		        	<label class="marT3 floatL w100 valignMid padL5">Select Relevancy:</label>
 		        	<select id="relevancy">
 		        		<option value="" id="norelevancy">&nbsp;</option>
 		        	</select>
 			  	</div>   
-	        	<div id="searchAttributeIconHolder" class="floatL displayInline w50p" style="display: none" >
-		        	<img src="<spring:url value="/images/icon_catalog.png" />" class="marR3">
-		        	<img src="<spring:url value="/images/icon_relevancy.png" />" class="marR3">
-		        	<img src="<spring:url value="/images/icon_redirect.png" />" >
+			  	
+	        	<div class="floatR marL8 marTn2 marR3 padT2"> Select Catalog: 
+		        	<select>	
+		        		<option>choose one</option>
+		        		<option>ipsum dolor sit</option>
+		        	</select>
 	        	</div>
-	        	<div id="sortResult" class="floatR marL8 marR3 marTn2"></div>	
+	        		
 	        </div>		
 		  </div>
 		   
 		  <div>
+		  	  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
+			  	  <div id="searchAttributeIconHolder" class="floatL displayInline w50p marT8">
+			        	<img src="<spring:url value="/images/icon_catalog.png" />" class="marR3">
+			        	<img src="<spring:url value="/images/icon_relevancy.png" />" class="marR3">
+			        	<img src="<spring:url value="/images/icon_redirect.png" />" >
+		          </div>
+			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
+			  	  <div class="clearB"></div>
+			  </div>
 			  <div id="pager-header" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
 			  <div class="floatR farial fsize11 fgray txtAR padT10"><div class="txtAR"><ul id="pager" class="pagination"></ul></div></div>
 		  </div>
 		  
 		  <div class="w740 txtAR padT20">
 		  	    <div class="clearB"></div>
-			    <div id="canvasContainer" class="w460 txtAR marT40">
+			    <div id="canvasContainer" class="w460 txtAR">
 			    	<canvas width="740" height="500" id="tagCanvas">
 						<p>In Internet Explorer versions up to 8, things inside the canvas are inaccessible!</p>
 					</canvas>
