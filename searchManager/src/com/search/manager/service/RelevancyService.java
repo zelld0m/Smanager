@@ -409,6 +409,19 @@ public class RelevancyService {
 		return 0;
 	}
 	
+	@RemoteMethod
+	public RecordSet<RelevancyKeyword> getRelevancy(String keyword){
+		try {
+			return daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+					new RelevancyKeyword(new Keyword(keyword), new Relevancy("", "")), null, null, 0, 0),
+					MatchType.LIKE_NAME, ExactMatch.MATCH);
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 	public DaoService getDaoService() {
 		return daoService;
 	} 

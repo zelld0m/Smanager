@@ -732,11 +732,53 @@
 							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
 								content: {
 									text: $('<div/>'),
-									title: { text: 'Prioritize Ranking Rule', button: true }
+									title: { text: 'Ranking Rule', button: true }
 								},
 								show: { modal: true },
 								events: { 
-									render: function(rEvt, api){}
+									render: function(rEvt, api){
+										var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
+										RelevancyServiceJS.getRelevancy(name, {
+											callback: function(data){
+												var list = data.list;
+												
+												for(var i=0; i<data.totalSize; i++){
+													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
+													$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
+													$content.find("li#rankingRule" + suffixId + " span#rankingRuleName").html(list[i].relevancy.relevancyName);
+												}
+												
+												$content.find("ul#rankingRuleListing > li").removeClass("alt");
+												$content.find("ul#rankingRuleListing > li:nth-child(even)").addClass("alt");
+												
+												$content.find("ul#rankingRuleListing").sortable({ 
+													handle : '.handle',
+													cursor : 'move',
+													start: function(e, ui) {
+														ui.item.data('start_pos', ui.item.index());
+													},     
+													change: function(e, ui) {
+														var index = ui.placeholder.index();
+														if (ui.item.data('start_pos') < index ) {
+															$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
+														} else {
+															$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
+														}		    
+													},
+													update: function(e, ui) {
+														$(this).find('li div').removeClass('highlight');
+													},
+													stop: function(e, ui) {
+														var sourceIndex = (ui.item.data('start_pos')+1);
+														var destinationIndex = (ui.item.index()+1);
+													}
+												});
+											},
+											preHook: function(){
+												
+											}
+										});
+									}
 								}
 							});
 						},

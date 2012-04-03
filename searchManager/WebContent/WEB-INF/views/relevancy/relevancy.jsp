@@ -280,29 +280,14 @@
 
 	</div>
 	
-	
-	<div id="addKeywordToRuleTemplate" style="display:none">
-		<div class="marB4">Search
-					<input id="searchKeywordInRuleTextbox" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w205 marT1 marL10" maxlength="10" value=""> 
-					<a href="javascript:void(0);" id="addKeywordToRuleBtn" class="btnGraph">
-						<div class="btnGraph btnAddGrayL floatR marT1 posRel" style="right:10px"></div>
-					</a>
+	<div id="sortRankingPriorityTemplate" style="display:none">
+		<ul id="rankingRuleListing">
+			<li id="rankingRulePattern" class="rankingRuleItem" style="display: none">
+				<div class="handle">
+				<span id="rankingRuleName"></span>
 				</div>
-				
-				<div id="keywordNotInRule">
-					<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-					<div id="keywordNotInRuleContent">
-						<div id="keywordNotInRulePagingTop"></div>	
-						<ul>
-							<li id="keywordNotInRulePattern" style="display:none">
-								<a class="keywordNotInRuleBtn" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marBn3"></a>
-								<label></label>
-							</li>
-						</ul>
-						<div id="keywordNotInRulePagingBottom"></div>
-					</div>	
-				</div>
-				
+			</li>	
+		</ul>			
 	</div>
 
 	</div>
