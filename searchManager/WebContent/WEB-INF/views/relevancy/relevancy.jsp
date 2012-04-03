@@ -280,16 +280,18 @@
 
 	</div>
 	
-	<div id="sortRankingPriorityTemplate" style="display:none">
-		<ul id="rankingRuleListing">
-			<li id="rankingRulePattern" class="rankingRuleItem" style="display: none">
-				<div class="handle">
-				<span id="rankingRuleName"></span>
-				</div>
-			</li>	
-		</ul>			
+	<div id="sortRankingPriorityTemplate"  class="pad0" style="display:none;">
+		<div class="listRankingRule">
+			<ul id="rankingRuleListing" class="listItems">
+				<li id="rankingRulePattern" class="rankingRuleItem" style="display: none">
+					<div class="handle">
+						<span id="rankingRuleName"></span>
+					</div>
+				</li>	
+			</ul>	
+		</div>		
 	</div>
-
+	
 	</div>
 	</div><!-- end landing page -->
 	
