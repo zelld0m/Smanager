@@ -124,7 +124,7 @@
 		  
 		  <div class="w740 txtAR padT20">
 		  	    <div class="clearB"></div>
-			    <div id="canvasContainer" class="w460 txtAR marT40">
+			    <div id="canvasContainer" class="w460 txtAR">
 			    	<canvas width="740" height="500" id="tagCanvas">
 						<p>In Internet Explorer versions up to 8, things inside the canvas are inaccessible!</p>
 					</canvas>
