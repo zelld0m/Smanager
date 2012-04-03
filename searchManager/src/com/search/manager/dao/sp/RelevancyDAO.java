@@ -326,7 +326,7 @@ public class RelevancyDAO {
 	            {
 	            	return new RelevancyKeyword(
 	            			new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD)),
-	                		new Relevancy(rs.getString(DAOConstants.COLUMN_RELEVANCY_ID)),
+	                		new Relevancy(rs.getString(DAOConstants.COLUMN_RELEVANCY_ID), rs.getString(DAOConstants.COLUMN_RELEVANCY_NAME)),
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),

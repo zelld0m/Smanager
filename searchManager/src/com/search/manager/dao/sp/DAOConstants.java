@@ -176,6 +176,7 @@ public class DAOConstants {
 	public static final String COLUMN_IMAGE_URL   					= "image_url";
 	public static final String COLUMN_LINK_URL   					= "link_url";
 	public static final String COLUMN_RELEVANCY_ID 					= "relevancy_id";
+	public static final String COLUMN_RELEVANCY_NAME 				= "relevancy_name";
 	public static final String COLUMN_DESCRIPTION 					= "description";
 	public static final String COLUMN_FIELD_NAME 					= "field_name";
 	public static final String COLUMN_FIELD_VALUE 					= "field_value";
