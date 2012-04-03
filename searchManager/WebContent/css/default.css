@@ -85,6 +85,7 @@ body 							{ margin: 0px; }
 .cssReset .pad30				{ padding:30px }
 .cssReset .padT0, .padT0		{padding-top:0px}
 .cssReset .padT1				{padding-top:1px}
+.cssReset .padT2, .padT2		{padding-top:2px}
 .cssReset .padT3, .padT3		{padding-top:3px}
 .cssReset .padT5, .padT5		{padding-top:5px}
 .cssReset .padT7, .padT7		{padding-top:7px}
@@ -105,6 +106,7 @@ body 							{ margin: 0px; }
 .cssReset .padL55				{padding-left:55px}
 .cssReset .padL100, .padL100	{padding-left:100px !important}
 .cssReset .padL212, .padL212	{padding-left:212px !important}
+.cssReset .padR0, .padR0		{ padding-right:0px !important; }
 .cssReset .padR5, .padR5		{ padding-right:5px !important; }
 .cssReset .padR8, .padR8		{ padding-right:8px !important; }
 .cssReset .padR10, .padR10		{ padding-right:10px !important; }
@@ -116,6 +118,7 @@ body 							{ margin: 0px; }
 .cssReset .padB10, .padB10		{padding-bottom:10px}
 .cssReset .padB25, .padB25		{padding-bottom:25px}
 .cssReset .padLR3, .padLR3		{ padding-left:3px; padding-right:3px; }
+.cssReset .padLR5, .padLR5		{ padding-left:5px; padding-right:5px; }
 .cssReset .padLR8, .padLR8		{ padding-left:8px; padding-right:8px; }
 
 .cssReset .mar0, .mar0			{margin:0 auto;}
@@ -126,6 +129,7 @@ body 							{ margin: 0px; }
 .cssReset .marT1, .marT1		{margin-top:1px !important}
 .cssReset .marT2, .marT2		{margin-top:2px !important}
 .cssReset .marT3, .marT3		{margin-top:3px !important}
+.cssReset .marT4, .marT4		{margin-top:4px !important}
 .cssReset .marT5, .marT5		{margin-top:5px !important}
 .cssReset .marT6, .marT6		{margin-top:6px !important}
 .cssReset .marT8, .marT8		{margin-top:8px !important}
@@ -135,6 +139,7 @@ body 							{ margin: 0px; }
 .cssReset .marT27, .marT27		{margin-top:27px !important}
 .cssReset .marT30, .marT30		{margin-top:30px !important}
 .cssReset .marT40, .marT40		{margin-top:40px !important}
+.cssReset .marR0, .marR0		{margin-right:0px !important;}
 .cssReset .marR3, .marR3		{margin-right:3px}
 .cssReset .marR5, .marR5		{margin-right:5px}
 .cssReset .marR8, .marR8		{margin-right:8px}

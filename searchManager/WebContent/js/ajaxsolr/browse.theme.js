@@ -211,7 +211,7 @@
 		output += '<td>';
 		output += ' <table cellspacing="0" cellpadding="0" width="360px" class="marT10">';
 		output += '<tr>';
-		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
+		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField" class="searchBoxIconBg"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
 		output += '</tr>';
 		output += '<tr><td colspan="2"> &nbsp; </td></tr>'
 		output += '<tr>';

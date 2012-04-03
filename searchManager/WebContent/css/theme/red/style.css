@@ -23,7 +23,7 @@
 .cssReset .txtcopyright			{ color:#666666 }
 
 .cssReset .borderT, .borderT	{border-top:1px solid #ccc}
-.cssReset .borderB				{border-bottom:1px solid #ccc}
+.cssReset .borderB, .borderB	{border-bottom:1px solid #ccc}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 
@@ -56,7 +56,7 @@
 /* pagination */
 
 .cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
-.cssReset .styleA				{ color:#818181 !important; }
+.cssReset .styleA				{ color:#818181 !important; min-height:20px !important;}
 .cssReset .styleA input[type='text'],
 .cssReset .styleB input[type='text'] { padding:1px; color:#818181 }
 .cssReset .styleB				{ color:#3B79C2;}
@@ -72,9 +72,11 @@
 .pagination li a:hover			{text-decoration:none; }
 
 /* qtip pagination */
-.txtDisplay 					{ margin-top:-5px }
-.pagingArrow					{ margin-right:-50px }
+.qtip .txtDisplay 					{ margin-top:-5px; width: 25%; float:left; min-height: 22px; padding-top:9px }
+.pagingArrow					{  }
 
+.borderR3						{ -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px;  }
+.borderTW						{ border-top:1px solid #fff }
 
 div.facetHeader					{ background:url(images/bgLeftMenu.jpg) no-repeat; width:230px; height:27px !important; vertical-align:middle; display:block }
 #docHolder						{ width: auto !important }
@@ -103,8 +105,8 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.buttons,
 .qtip a.buttons					{ text-decoration: none; }
 
-.cssReset .btnGraph				{ background: url(images/btn_graphics.png) no-repeat; }
-.cssReset a.btnGraph			{ text-decoration: none;}
+.cssReset .btnGraph, .btnGraph	{ background: url(images/btn_graphics.png) no-repeat; }
+.cssReset a.btnGraph, a.btnGraph{ text-decoration: none;}
 
 .cssReset a.btnGray,
 .qtip a.btnGray		 		  	{ background-position: 0 0; color:#fff; width:auto; height:25px; padding:0 4px; cursor:pointer; }
@@ -160,6 +162,21 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnBlueLast:hover, .btnBlueLast:hover, a.active div.btnBlueLast,
 .cssReset a.active div.btnBlueLast	{ background-position: -17px -481px;}
 
+.cssReset a div.styleAPrev, .styleAPrev		{ background-position: -32px -444px; width: 13px; height: 14px; }  
+.cssReset a div.styleAPrev:hover, a div.styleAPrev:hover, a.active div.styleAPrev,
+.cssReset a.active div.styleAPrev	{ background-position: -48px -444px; }
+
+.cssReset a div.styleANext, .styleANext { background-position: -32px -461px; width: 13px; height: 14px; }  
+.cssReset a div.styleANext:hover, .styleANext:hover, a.active div.styleANext,
+.cssReset a.active div.styleANext	{ background-position: -48px -461px; }
+
+.cssReset a div.styleAFirst, .styleAFirst		{ background-position: -32px -479px; width: 13px; height: 14px; }  
+.cssReset a div.styleAFirst:hover, .styleAFirst:hover, a.active div.styleAFirst,
+.cssReset a.active div.styleAFirst	{ background-position: -48px -479px; }
+
+.cssReset a div.styleALast, .styleALast	{ background-position: -32px -497px; width: 13px; height: 14px; }  
+.cssReset a div.styleALast:hover, .styleALast:hover, a.active div.styleALast,
+.cssReset a.active div.styleALast	{ background-position: -48px -497px;}
 .btn-refresh					{ float:right; display:inline; width:50px; position:relative; bottom:-6px; margin-right:-5px }
 
 .cssReset .fgreen				{ color:#417522}
@@ -174,7 +191,8 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset .tblRules td 			{ font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; }
 .cssReset .tblRules td.vtop 	{ vertical-align:top; }
 
-.cssReset .leftSearch			{ margin-top:10px; margin-bottom:8px;  }
+.cssReset .leftSearch,
+.leftSearch						{ margin-top:10px; margin-bottom:8px;  }
 .cssReset .leftStatus			{ margin-top:10px; margin-bottom:8px; font:bold 12px Arial, Helvetica, sans-serif; background:#feffeb; padding:5px; left:-5px; position:relative}
 
 .contentTitle					{ background:#f5f5f5; }
@@ -210,8 +228,10 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 
 /*.cssReset .bluebgTitle			{ background:url(images/bgLeftMenu.jpg); width:230px; height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }*/
 .cssReset .leftStatus			{ margin-left:7px }
-.cssReset .leftSearch			{ background:url(images/icon-search.png) 153px center no-repeat #fff; width:150px; height:18px; padding:3px 22px 3px 3px; margin:0}
-.chrome .cssReset .leftSearch	{ background:url(images/icon-search.png) 154px center no-repeat #fff; width:172px; height:18px; padding:3px; margin:0;}
+.cssReset .leftSearch, 
+.leftSearch						{ background:url(images/icon-search.png) 153px center no-repeat #fff; width:150px; height:18px; padding:3px 22px 3px 3px; margin:0}
+.chrome .cssReset .leftSearch,
+.chrome .leftSearch				{ background:url(images/icon-search.png) 154px center no-repeat #fff; width:172px; height:18px; padding:3px; margin:0;}
 
 .cssReset .topNavMenu			{ list-style:none; float:right }
 .cssReset .topNavMenu li		{ display:inline; float:left; margin:2px 5px; font-size:12px; color:#c2c2c2}
@@ -304,8 +324,10 @@ ul.topmenu li.submenu:hover ul li:hover { }
 
 .cssReset .searchBox			{ height:18px; padding:3px; }
 .cssReset .searchBox2			{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; padding-right:12px; width: 75px; margin-top:-10px; margin-right:3px; padding-top:3px; padding-bottom:2px }
-.cssReset .searchBoxIconBg		{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; }
-.cssReset .searchBoxIconLBg		{ background:url(images/icon-search.png) center right no-repeat #fff; }
+.cssReset .searchBoxIconBg, 
+.searchBoxIconBg				{ background:url(images/icon_magniGlass13.png) center right no-repeat #fff; }
+.cssReset .searchBoxIconLBg,
+.searchBoxIconLBg				{ background:url(images/icon-search.png) center right no-repeat #fff; }
 
 .cssReset .advanceSearchtxt		{ background:#fff; padding:1px; height: 22px; float:left; border-top:1px solid #c1c1c1; border-left:1px solid #c1c1c1; border-right:1px solid #d4d4d4; border-bottom:1px solid #d4d4d4  }
 .cssReset .advanceSearchtxtBox 	{ border:#fff; float:left; margin-left:-21px !ie7; margin-top:2px;  input:focus; outline: none;}	
@@ -480,5 +502,9 @@ ul#tagList a.fColorFour			{ color:#0073a7 }
 .ui-sortable li					{ width: 100% }
 
 .sideFooter						{ margin-top:-10px !important; padding-top:0; background: #eee !important;}
+
+.listpopup						{ list-style: none; margin:0; padding:8px; }
+.listpopup li					{ padding:5px; margin:0; }
+.listpopup li.alt				{ background: #ecebeb }
 
 
