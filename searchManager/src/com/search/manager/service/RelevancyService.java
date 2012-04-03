@@ -421,6 +421,22 @@ public class RelevancyService {
 		return null;
 	}
 	
+	@RemoteMethod
+	public int updateRelevancyKeyword(String[] relevancyIds, String keyword){
+		try {
+			
+			for(int i=0; i< ArrayUtils.getLength(relevancyIds); i++){
+				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), new Relevancy(relevancyIds[i]));
+				RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
+				rk.setPriority(i+1);
+				daoService.updateRelevancyKeyword(rk);
+			}
+			return 1;
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 	
 	public DaoService getDaoService() {
 		return daoService;

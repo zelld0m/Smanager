@@ -745,7 +745,8 @@
 												for(var i=0; i<data.totalSize; i++){
 													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
 													$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
-													$content.find("li#rankingRule" + suffixId + " span#rankingRuleName").html(list[i].relevancy.relevancyName);
+													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").html(list[i].relevancy.relevancyName);
+													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").attr("id", list[i].relevancy.relevancyId)
 												}
 												
 												$content.find("ul#rankingRuleListing > li").removeClass("alt");
@@ -767,10 +768,26 @@
 													},
 													update: function(e, ui) {
 														$(this).find('li div').removeClass('highlight');
+														$(this).find('li').removeClass("alt");
+														$(this).find('li:nth-child(even)').addClass("alt");
 													},
 													stop: function(e, ui) {
-														var sourceIndex = (ui.item.data('start_pos')+1);
-														var destinationIndex = (ui.item.index()+1);
+														var sourceIndex = (ui.item.data('start_pos'));
+														var destinationIndex = (ui.item.index());
+														
+														//TODO: move processing to SP
+														var relIds = new Array();
+														
+														$(this).find('li:visible span.rankingRuleName').each(function(index, value){
+															relIds.push($(value).attr("id"));
+															alert($(value).attr("id"));
+														});
+														
+														RelevancyServiceJS.updateRelevancyKeyword(relIds, name, {
+															callback: function(data){
+																
+															}
+														});
 													}
 												});
 											},
