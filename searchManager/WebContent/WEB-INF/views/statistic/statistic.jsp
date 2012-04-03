@@ -21,7 +21,30 @@
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
-    &nbsp;
+    
+	<div class="clearB floatL w240">
+    	<div class="sideHeader">Site Updates</div>
+        <div class="clearB floatL w230 padL5">
+			<ul class="listSU fsize11 marT10">
+				<li><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li class="alt"><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li class="alt"><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li class="alt"><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
+				<a href="#">20 minutes ago</a></p></li>
+				<li class="textAR"><a href="#">see all updates  &raquo;</a></li>
+			</ul>
+    	</div> 
+	</div>
+	
 </div>
 <!--  end left side -->
 
@@ -31,77 +54,110 @@
 <!--  start bf page -->
 	<div class="floatL w730 titlePlacer">
 		<h1 class="padT7 padL15 fsize20 fnormal">
-			Relevancy
+			Dashboard
 		</h1>
 	</div>
 	<div class="clearB"></div>
-	<div style="width:95%" class="marT20 mar0">
-
+	<div style="width:95%" class="dashboard marT20 mar0">
+		
+		<div class="buttonHolder marB20">
+			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Refresh</div></a>
+			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select All</div></a>
+			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select None</div></a>
+			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">To Prod</div></a>
+		</div>
+		
+		<h2 class="fDGray">Elevate</h2>
+		<table class="tblItems w100p">
+			<tr>
+				<th width="13%">Select</th>
+				<th>Resource</th>
+				<th width="13%">In Stage</th>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>prodPage</td>
+				<td class="txtAC"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicesOverview</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicePlans</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+		</table>
+		
+		
+		<h2 class="fDGray marT20">Exclude</h2>
+		<table class="tblItems w100p">
+			<tr>
+				<th width="13%">Select</th>
+				<th>Resource</th>
+				<th width="13%">In Stage</th>
+			</tr>			
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicesOverview</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicePlans</td>
+				<td class="txtAC"></td>
+			</tr>
+		</table>
+		
+		<h2 class="fDGray marT20">Query Cleaning</h2>
+		<table class="tblItems w100p">
+			<tr>
+				<th width="13%">Select</th>
+				<th>Resource</th>
+				<th width="13%">In Stage</th>
+			</tr>			
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicesOverview</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicePlans</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+		</table>
+		
+		
+		<h2 class="fDGray marT20">Ranking Rule</h2>
+		<table class="tblItems w100p">
+			<tr>
+				<th width="13%">Select</th>
+				<th>Resource</th>
+				<th width="13%">In Stage</th>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>prodPage</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicesOverview</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>servicePlans</td>
+				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+			</tr>
+		</table>
+		
+		
+		
 	
-	<div class="relevancy fsize12">	
-		<div id="wrapper" class="wrapper floatL" style="width:100%;">
-		<div class="rfield floatL" style="width:32%">
-			<div class="field titleAplha marB8">Field</div>	
-			<ul>
-				<li class="rfieldchild">lorem ipsum dolor sit amet</li> 
-				<li class="rfieldchild">amet lorem</li> 
-				<li class="rfieldchild">lorem</li> 
-			</ul>
-		</div>
-		
-		<div class="rnumber marR10 marL10 floatL" style="width:32%">
-			<div class="number titleAplha marB8">Number</div>
-			<ul>
-				<li class="rnumberchild"><input type="text"></li> 
-			</ul>
-		</div>
-		
-		<div class="rfunction floatL" style="width:32%">
-			<div class="function titleAplha marB8">Function</div>
-			<ul>
-				<li class="rfunctionchild">lorem ipsum dolor sit</li> 
-				<li class="rfunctionchild">amet lorem</li> 
-				<li class="rfunctionchild">lorem</li> 
-			</ul>
-		</div>
-		
-		<div class="floatL clearfix containerHolder" style="width:49%;">
-	   		<p class="txtAC"> lorem ipsum dolor sit amet </p>   
-	   		<ul>   		 	
-	   			<li class="posRel">
-	   				<div class="posAbs floatR right4"><a href="#"><img src="<spring:url value="/images/iconDeleteBlack.png" />"></a></div>
-	   				<span>Function 1 Name</span><ul class="container"> <div class="clearB"></div></ul>
-	   			</li>     
-		    </ul>		    
-	    </div>
-	    <div class="floatL clearfix containerHolder" style="width:49%;">	    
-		    <p class="txtAC"> lorem ipsum dolor sit amet </p>   
-		    <ul>
-	   		 	<li class="posRel">
-	   		 		<div class="posAbs floatR right4"><a href="#"><img src="<spring:url value="/images/iconDeleteBlack.png" />"></a></div>
-	   		 		<span>Function 1 Name</span><ul class="container"></ul>
-	   		 	</li> 	        
-		    </ul>
-	    </div>
-	    <div class="floatL clearfix containerHolder" style="width:49%">	    
-		    <p class="txtAC"> lorem ipsum dolor sit amet </p>   
-		    <ul>
-	   		 	<li class="posRel"><div class="posAbs floatR right4"><a href="#"><img src="<spring:url value="/images/iconDeleteBlack.png" />"></a></div>
-	   		 		<span>Function 1 Name</span><ul class="container"></ul>
-	   		 	</li>        
-		    </ul >		   
-	    </div>
-	    <div class="floatL clearfix containerHolder" style="width:49%">	
-	    	<p class="txtAC"> lorem ipsum dolor sit amet </p>   
-		    <ul>
-	   		 	<li class="posRel"><div class="posAbs floatR right4"><a href="#"><img src="<spring:url value="/images/iconDeleteBlack.png" />"></a></div>
-	   		 		<span>Function 1 Name</span><ul class="container"></ul>
-	   		 	</li>        
-		    </ul>		   
-		</div>
-			
-		</div>		
-	</div>
 	<div class="clearB"></div>
 </div><!--  end bf page -->
 

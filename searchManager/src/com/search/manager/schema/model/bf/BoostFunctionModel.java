@@ -37,13 +37,18 @@ public class BoostFunctionModel implements FunctionModelComponent {
 
 	public static BoostFunctionModel toModel(Schema schema, String bf, boolean validate) throws SchemaException {
 		
+		BoostFunctionModel boost = new BoostFunctionModel();
+		
+		if (StringUtils.isEmpty(bf)) {
+			return boost;
+		}
+		
 		bf = StringUtils.remove(bf, " ");
 		Matcher m = Pattern.compile("(\\w*\\(.*\\))\\^([\\d\\.]*)").matcher(bf);
 		if (!m.matches() || m.groupCount() != 2) {
 			throw new SchemaException("Invalid format.");
 		}
 		
-		BoostFunctionModel boost = new BoostFunctionModel();
 		boost.boostFactor = new BoostFactor(m.group(2));
 		
 		StringTokenizer tokenizer = new StringTokenizer(m.group(1), "(),", true);

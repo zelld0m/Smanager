@@ -81,6 +81,8 @@
 div.facetHeader					{ background:url(images/bgLeftMenu.jpg) no-repeat; width:230px; height:27px !important; vertical-align:middle; display:block }
 #docHolder						{ width: auto !important }
 
+.qtip .expiredStamp				{ float:right; width:50px; height:16px; position:relative; top:2px }
+
 /* buttons */
 .btnShade						{ background:url(images/btn_shadeColors.png) no-repeat;}
 a.btnShade						{ background:url(images/btn_shadeColors.png) no-repeat; text-decoration: none; }
@@ -105,21 +107,21 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.buttons,
 .qtip a.buttons					{ text-decoration: none; }
 
-.cssReset .btnGraph, .btnGraph	{ background: url(images/btn_graphics.png) no-repeat; }
-.cssReset a.btnGraph, a.btnGraph{ text-decoration: none;}
-
-.cssReset a.btnGray,
-.qtip a.btnGray		 		  	{ background-position: 0 0; color:#fff; width:auto; height:25px; padding:0 4px; cursor:pointer; }
-.cssReset a.btnGray div,
-.qtip a.btnGray div   		    { background-position: right -25px; height:10px !important; padding:5px 8px 9px 4px; position:relative; top:0; font-family:'arial'; font-size:12px; cursor:pointer; font-weight:bold }
-
 .cssReset a.btnLGray 		  	{ background-position: 0 -51px; color:#737474; width:auto; height:25px; padding:0 4px; cursor:pointer; }
 .cssReset a.btnLGray div        { background-position: right -76px; height:10px !important; padding:5px 8px 9px 4px; position:relative; top:0; font-family:'arial'; font-size:12px; cursor:pointer; font-weight:bold }
 
-.cssReset a.btnGray:hover, 
-.cssReset a.btnGray:active		{ background-position: 0 0; color:#fff}
-.cssReset a.btnGray div:hover,
-.cssReset a.btnGray div:active  { background-position: right -25px; color:#fff}
+.cssReset a.btnLGray:hover, 
+.cssReset a.btnLGray:active		{ background-position: 0 0; color:#fff}
+.cssReset a.btnLGray div:hover,
+.cssReset a.btnLGray div:active  { background-position: right -25px; color:#fff}
+
+.cssReset a.btnLStyA 		  	{ background-position: 0 -102px; color:#fff; width:auto; height:25px; padding:0 4px; cursor:pointer; }
+.cssReset a.btnLStyA div        { background-position: right -127px; height:10px !important; padding:5px 8px 9px 4px; position:relative; top:0; font-family:'arial'; font-size:12px; cursor:pointer; font-weight:bold }
+
+.cssReset a.btnLStyA:hover, 
+.cssReset a.btnLStyA:active		{ background-position: 0 0; color:#fff}
+.cssReset a.btnLStyA div:hover,
+.cssReset a.btnLStyA div:active  { background-position: right -25px; color:#fff}
 
 .cssReset a.btnAddGreen			{ background-position: -3px -3px; height: 12px; width: 0 !important; flaot:right; padding:7px 16px; cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnAddGreen:hover	{ background-position: -3px -32px;  }
@@ -388,7 +390,7 @@ ul.topmenu li.submenu:hover ul li:hover { }
 .listItems li					{ border-bottom:1px solid #eee; padding:15px 0 5px 3px; font-size:11px !important; position:relative }
 .listItems li.sortableHighlights{background:#ffffe0 !important;}
 
-.listItems li.selected			{ background:url(images/bgCurrentElev.gif) repeat-x; color:#eaeaea }
+.listItems li.selected			{ background:url(images/bgCurrentElev.gif) repeat-x #3e3e3e; color:#eaeaea }
 .listItems li.selected ul.listItemInfo li.label { color:#d4d4d4 }
 
 
@@ -507,4 +509,21 @@ ul#tagList a.fColorFour			{ color:#0073a7 }
 .listpopup li					{ padding:5px; margin:0; }
 .listpopup li.alt				{ background: #ecebeb }
 
+/* dashboard */
+.tblItems						{ border:1px solid #cfcfcf; border-collapse: collapse; margin:15px; }
+.tblItems th					{ border:1px solid #cfcfcf; padding:8px; color:#464646; font:bold 12px arial; text-align:center; 
+background: #f2f1f1; /* Old browsers */
+background: -moz-linear-gradient(top,  #f2f1f1 0%, #d6d6d6 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f1f1), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* IE10+ */
+background: linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */
+}
+
+.tblItems td 					{ border:1px solid #cfcfcf; border-collapse: collapse; padding:6px 8px; color:#464646; font:normal 12px arial; }
+.tblItems td.txtAC				{ text-align:center }
+
+.buttonHolder					{ text-align:right }
 
