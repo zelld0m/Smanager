@@ -28,6 +28,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.schema.SchemaException;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Field;
@@ -399,7 +400,12 @@ public class RelevancyService {
 	
 	@RemoteMethod
 	public int getRelevancyCount(String keyword){
-		
+		try {
+			StoreKeyword storeKeyword = new StoreKeyword(new Store(UtilityService.getStoreName()), new Keyword(keyword));
+			return daoService.getRelevancyKeywordCount(storeKeyword);
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
 		return 0;
 	}
 	
