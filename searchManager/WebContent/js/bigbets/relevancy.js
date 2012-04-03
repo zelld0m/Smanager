@@ -724,16 +724,27 @@
 				itemOptionCallback: function(base, id, name){
 					var suffixId = $.escapeQuotes($.formatAsId(id));
 					
-					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).qtip({
-						content: {
-							text: $('<div/>'),
-							title: { text: 'Modify', button: true }
+					RelevancyServiceJS.getRelevancyCount(name, {
+						callback: function(data){
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').html((data == 0) ? "-" :(data == 1) ? "1 Item" : data + " Items");
+						
+							if (data > 0)
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
+								content: {
+									text: $('<div/>'),
+									title: { text: 'Prioritize Ranking Rule', button: true }
+								},
+								show: { modal: true },
+								events: { 
+									render: function(rEvt, api){}
+								}
+							});
 						},
-						show: { modal: true },
-						events: { 
-							render: function(rEvt, api){}
+						preHook: function(){ 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 						}
 					});
+					
 				},
 				pageChangeCallback: function(n){ }
 			});

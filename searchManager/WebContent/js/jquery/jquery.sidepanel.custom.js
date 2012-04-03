@@ -97,7 +97,7 @@
 			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
 
 			// populate list
-			dwr.engine.beginBatch(); 
+			//dwr.engine.beginBatch(); 
 			for (var i = 0; i < data.list.length; i++) {
 				var id = list[i][base.options.fieldId];
 				var name = list[i][base.options.fieldName];
@@ -112,7 +112,7 @@
 				
 				base.options.itemOptionCallback(base, id, name);
 			}
-			dwr.engine.endBatch();
+			//dwr.engine.endBatch();
 		};
 
 		base.addPaging = function(keyword, page, total){
