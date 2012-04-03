@@ -51,115 +51,12 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27 txtAL">
 
-<!--  start bf page -->
 	<div class="floatL w730 titlePlacer">
 		<h1 class="padT7 padL15 fsize20 fnormal">
-			Dashboard
+			Statistics
 		</h1>
 	</div>
 	<div class="clearB"></div>
-	<div style="width:95%" class="dashboard marT20 mar0">
-		
-		<div class="buttonHolder marB20">
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Refresh</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select All</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select None</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">To Prod</div></a>
-		</div>
-		
-		<h2 class="fDGray">Elevate</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>prodPage</td>
-				<td class="txtAC"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-		</table>
-		
-		
-		<h2 class="fDGray marT20">Exclude</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>			
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"></td>
-			</tr>
-		</table>
-		
-		<h2 class="fDGray marT20">Query Cleaning</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>			
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-		</table>
-		
-		
-		<h2 class="fDGray marT20">Ranking Rule</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>prodPage</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-		</table>
-		
-		
-		
 	
-	<div class="clearB"></div>
-</div><!--  end bf page -->
-
 </div> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

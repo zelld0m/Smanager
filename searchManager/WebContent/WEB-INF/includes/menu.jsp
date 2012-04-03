@@ -4,16 +4,16 @@
     <div class="mar0" style="padding-left:280px; width: 700px" >
       <ul class="mnuHeader farial fsize12 fbold" >
               <li ${topmenu eq 'home'? 'class="active"': ''}><span><a href="<spring:url value="/" />">Home</a></span></li>
-              <li ${topmenu eq 'browse'? 'class="active"': ''}><span><a href="<spring:url value="/browse/macmall" />">Search</a></span></li>
+              <li ${topmenu eq 'browse'? 'class="active"': ''}><span><a href="<spring:url value="/browse/macmall" />">Simulator</a></span></li>
               <!-- 
               <li ${topmenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/macmall"/>">Relevancy</a></li>
               <li ${topmenu eq 'synonyms'? 'class="active"': ''}><a href="<spring:url value="/synonyms/macmall"/>">Synonyms</a></li>
                -->
-              <li ${topmenu eq 'bigbets'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/macmall"/>">Big Bets</a></span></li>
+              <li ${topmenu eq 'bigbets'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/macmall"/>">Search Rule</a></span></li>
               <li ${topmenu eq 'advertise'? 'class="active"': ''}><span><a href="<spring:url value="/campaign/macmall"/>">Search Ads</a></span></li>
               <li ${topmenu eq 'catalog'? 'class="active"': ''}><span><a href="<spring:url value="/catalog/macmall"/>">Catalog</a></span></li>            
               <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/statistic/macmall"/>">Statistic</a></span></li>
-              <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/macmall"/>">Lexicon</a></span></li>
+              <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/macmall"/>">Linguistic</a></span></li>
               <li ${topmenu eq 'setting'? 'class="active"': ''}><span><a href="<spring:url value="/setting/macmall"/>">Setting</a></span></li>
               <!-- li ${topmenu eq 'migrator'? 'class="active"': ''}><a href="<spring:url value="/migrator/macmall"/>">Migrator</a></li -->
       </ul>
@@ -60,6 +60,7 @@
 		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/macmall" />">User Setting</a></li>	      		
 		      		<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/macmall" />">Security</a></li>	      		
 		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/macmall" />">Sponsor</a></li>	      		
+		      		<li ${submenu eq 'deployment'? 'class="active"': ''}><a href="<spring:url value="/deployment/macmall" />">Deployment</a></li>	      		
 		       </ul>
 	      </c:if>
 	          
