@@ -46,3 +46,13 @@
 .relevancyShade					{ -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; padding:0 8px; margin:5px 0; background:#ebf1f5; border:1px solid #c9d6de; }
 .relevancyShade h3				{ margin:5px; }
 
+
+ /* rangking rule */
+.listRankingRule ul.listItems	 			{ list-style: none; margin:0; padding:0; position:relative; width:210px; max-height:180px; overflow-y:scroll; overflow-x:hidden; padding:3px 0 8px 0; margin:0 }
+.listRankingRule ul.listItems li  			{ padding:8px !important; margin-left:0 }
+
+.lefleflef .ui-tooltip-content 		{ padding:0 !important; margin:0 !important }
+
+
+
+
