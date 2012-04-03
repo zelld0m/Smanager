@@ -736,4 +736,10 @@ public class DaoServiceImpl implements DaoService {
 		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
+	@Override
+	public RecordSet<RedirectRule> getRedirectRule(
+			SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
+		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
+	}
+
 }

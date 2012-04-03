@@ -11,13 +11,13 @@ public class RedirectRule implements Serializable {
 
 	private static final long serialVersionUID = 4608433178597830827L;
 
-	private int ruleId;
+	private Integer ruleId;
 	private String ruleName;
 	private String storeId;
-	private int priority;
+	private Integer priority;
 	private String searchTerm;
 	private String condition;
-	private int activeFlag;
+	private Integer activeFlag;
 	private String createdBy;
 	private String modifiedBy;
 	private Date dateCreated;
@@ -27,8 +27,8 @@ public class RedirectRule implements Serializable {
 		super();
 	}
 	
-	public RedirectRule(int ruleId, String ruleName, String storeId,
-			int priority, String searchTerm, String condition, int activeFlag,
+	public RedirectRule(Integer ruleId, String ruleName, String storeId,
+			Integer priority, String searchTerm, String condition, Integer activeFlag,
 			String createdBy, String modifiedBy, Date dateCreated,
 			Date dateModified) {
 		super();
@@ -45,10 +45,10 @@ public class RedirectRule implements Serializable {
 		this.dateModified = dateModified;
 	}
 	
-	public int getRuleId() {
+	public Integer getRuleId() {
 		return ruleId;
 	}
-	public void setRuleId(int ruleId) {
+	public void setRuleId(Integer ruleId) {
 		this.ruleId = ruleId;
 	}
 	public String getRuleName() {
@@ -63,10 +63,10 @@ public class RedirectRule implements Serializable {
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
-	public int getPriority() {
+	public Integer getPriority() {
 		return priority;
 	}
-	public void setPriority(int priority) {
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 	}
 	public String getSearchTerm() {
@@ -81,10 +81,10 @@ public class RedirectRule implements Serializable {
 	public void setCondition(String condition) {
 		this.condition = condition;
 	}
-	public int getActiveFlag() {
+	public Integer getActiveFlag() {
 		return activeFlag;
 	}
-	public void setActiveFlag(int activeFlag) {
+	public void setActiveFlag(Integer activeFlag) {
 		this.activeFlag = activeFlag;
 	}
 	public String getCreatedBy() {

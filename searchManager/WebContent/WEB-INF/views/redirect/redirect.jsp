@@ -23,27 +23,12 @@
 <!--Left Menu-->
     <div class="clearB floatL sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
-      <!-- Keyword -->
-      <div class="clearB floatL w240">
-        <div class="sideHeader">Query Cleaning Rules</div>
-        <div class="clearB floatL w230 padL10">
-          
-          <!--Start Keyword Listing-->
-          <table>
-     		<tbody id="keywordBody">
-     			<tr id="kDispPattern" style="display:none;"><td>
-		          <div class="keywordHolder farial fsize12 fDGray w220 borderB padTB4 clearfix">
-		          	<div class="keywordText floatL lnk w160"><a href="javascript:void(0);"></a></div>
-		          </div>     			
-     			</td></tr>
-     		</tbody>
-          </table>
-          <!--Start Keyword Listing-->
-          
-        </div>
+    
+    <div class="clearB floatL w240">
+    	<div id="redirectSidePanel"></div>
         <div class="clearB"></div>
-        <div id="keywordPagingResult" class="keywordPagingResult marT10"></div>
-      </div>
+    </div>
+
     </div>
     <!--Left Menu-->
 
@@ -52,8 +37,7 @@
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
         <div class="w535 padT10 padL10 floatL fsize20 fnormal">Query Cleaning Rule : <span id="headerRuleName" class="fLblue fnormal">Rule Name</span></div>
-        <div class="floatL w180 txtAR padT7"><input id="addRuleName" type="text" class="farial fsize12 fgray  padLR3 padTB4 marL10 w110 " maxlength="30" value=""><a href="javascript:void(0);" id="add" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
-	</div>
+   </div>
      
 	<div class="clearB"></div>
 	

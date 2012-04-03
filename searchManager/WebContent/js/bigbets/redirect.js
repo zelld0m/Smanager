@@ -2,26 +2,27 @@
 	var catCode = "";
 	var ruleId = "";
 	var ruleName = "";
-	var searchTerm = "";
 	var rules;
 	var ruleCondition = "";
-	var startRow = 0;
-	var endRow = 100;
 	var storeId = "macmall";
 	var active = 1;
 	var priority = 1;
 	var ruleCnt = 0;
 	var redirectFlag= false;
+	var ruleKeyword = "";
+	var rulePage = 1;
+	var rulePageSize = 5;
 	
-	var addRule = function() { RedirectServiceJS.addRedirectRule(ruleName,searchTerm, ruleCondition, storeId, active, priority, {
+	var addRule = function() { 
+		
+		RedirectServiceJS.addRedirectRule(ruleName,searchTerm, ruleCondition, storeId, active, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
 				ruleId = "";
 				initPage();
 			}
-		},
-		errorHandler: function(message){ alert(message); }
+		}
 	});
 	};
 
@@ -146,43 +147,48 @@
 	});
 	};
 
-	var getRedirectRuleList = function() { RedirectServiceJS.getRedirectRule(searchTerm, ruleId, storeId, startRow, endRow, {
-		callback: function(data){
-			rules = data.list;
-			ruleCnt = data.totalSize;
-			for (var i = 0; i < rules.length; i++) {
-				rule = rules[i];
-				dwr.util.cloneNode("kDispPattern", { idSuffix:rule.ruleId});
-				$("#kDispPattern" + rule.ruleId + " div.keywordText a").html(rule.ruleName);
-				$("#kDispPattern" + rule.ruleId).attr("style", "display:block"); 	
-				$("#kDispPattern" + rule.ruleId + " div.keywordText a").bind('click', function(e) {
-					ruleId = this.parentNode.parentNode.parentNode.parentNode.id.replace("kDispPattern","");
-					if ($("#ruleId").val() == 0) {
-						
-					} else if (ruleId != $("#ruleId").val()) {
-						clearValues();
-						$("#ruleId").val(ruleId);
-						getRedirectRuleList(searchTerm, ruleId, storeId, startRow, endRow);
-					}
+	var getRedirectRuleList = function(ruleId, page) { 
+
+		$("#redirectSidePanel").sidepanel({
+			fieldId: "ruleName",
+			fieldName: "ruleName",
+			page: page,
+			pageSize: 5,
+			headerText : "Redirect Rule",
+			searchText : "Enter Name",
+			itemDataCallback: function(base, keyword, page){
+				
+				RedirectServiceJS.getRedirectRule(keyword, ruleId, page, rulePageSize, {
+					callback: function(data){
+						base.populateList(data);
+						base.addPaging(ruleKeyword, page, data.totalSize);
+					},
+					preHook: function(){ base.prepareList(); }
 				});
-				if ($("#ruleId").val() == rule.ruleId) {
-					$("#searchTerm").val("Add Search Term");
-					setRuleForEdit(rule);
-				}
-			}				
-		},
-		preHook: function(){ 
-			dwr.util.removeAllRows("#keywordBody", { filter:function(tr) {
-				return (tr.id != "kDispPattern");
-			}});
-		},
-		postHook: function(){
-			if (ruleId == "") {
-				setRuleForEdit(rules[0]);
+				
+			},
+
+			itemAddCallback: function(base, name){
+			    	var ruleName = $.trim($("#searchTextbox").val());
+			    	
+			    	if (ruleName == "") {
+			    		alert("Rule Name cannot be blank!");
+			    	} else if ($("#ruleId").val() == "0") {
+			    		alert("You are currently in add mode!");
+			    	} else {
+			    		clearValues();
+			    		$("#ruleId").val("0");
+			    		$("#headerRuleName").text(ruleName);
+			    		$("#ruleName").val(ruleName);
+			    		$("#delete").text("Cancel");
+			    	}
+			},
+
+			itemNameCallback: function(e){
+				setRuleForEdit(e.data.model);
 			}
-		},
-		errorHandler: function(message){ alert(message); }
-	});
+		});
+		
 	};
 
 	$(document).ready(function() { 
@@ -316,21 +322,6 @@
 	    	}
 	    });
 	    
-	    $("#add").click(function() {
-	    	ruleName = $("#addRuleName").val().trim();
-	    	if (ruleName == "") {
-	    		alert("Rule Name cannot be blank!");
-	    	} else if ($("#ruleId").val() == "0") {
-	    		alert("You are currently in add mode!");
-	    	} else {
-	    		clearValues();
-	    		$("#ruleId").val("0");
-	    		$("#headerRuleName").text(ruleName);
-	    		$("#ruleName").val(ruleName);
-	    		$("#delete").text("Cancel");
-	    	}
-	    });
-
 	    $("#delete").click(function() {
 	    	if ($("#delete").text() == "Cancel") {
 	    		var res=confirm("Cancel changes?");
@@ -388,7 +379,7 @@
 
 		initPage = function() {
 			getCategories(catCode);
-			getRedirectRuleList(searchTerm,ruleId, storeId, startRow, endRow);
+			getRedirectRuleList(ruleId, rulePage);
 		};
 		
 		initPage();

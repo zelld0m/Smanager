@@ -49,6 +49,7 @@ public interface DaoService {
 	public Redirect updateRedirect(String redirectId, String xml) throws DaoException;
 	public void deleteRedirect(String redirectId) throws DaoException;
 	
+	public RecordSet<RedirectRule> getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;

@@ -1,5 +1,6 @@
 package com.search.manager.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -11,6 +12,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.utility.RedirectUtility;
 
 @RemoteProxy(
@@ -99,9 +101,15 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) {
+	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, int page, int itemsPerPage) {
 		try {
-			return daoService.getRedirectRule(searchTerm, ruleId, storeId, startRow, endRow);
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setSearchTerm(searchTerm);
+			redirectRule.setRuleId(ruleId);
+			redirectRule.setStoreId(UtilityService.getStoreName());
+			
+			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
+			return daoService.getRedirectRule(searchCriteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllRedirectRule()",e);
 		}
