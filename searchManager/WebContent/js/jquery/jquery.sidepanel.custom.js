@@ -107,7 +107,7 @@
 				suffixId = $.escapeQuotes(suffixId);
 				
 				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').html(name);
-				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id});
+				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id, model:list[i]});
 				base.$el.find('#itemPattern' + suffixId).show();
 				
 				base.options.itemOptionCallback(base, id, name);
