@@ -490,7 +490,7 @@
 								}},{name:list[i].name});
 							}	
 						}
-
+						
 						content.find('span#sfCount').html(schemaFieldsTotal + " Record" + (schemaFieldsTotal > 1 ? "s":""));
 						var selectedCount = content.find('tr.fieldSelectedItem:not(#fieldSelectedPattern)').length;
 						content.find('span#sfSelectedCount').html(selectedCount + " Record" + (selectedCount > 1 ? "s":""));
@@ -1059,7 +1059,42 @@
 			$('div.AlphaCont input[type="text"]').off('focus').on({focus:showGraph });
 			$('div#relevancy a#deleteButton').off('click').on({click:deleteRelevancy});
 			$('div#relevancy a#saveButton').off('click').on({click:saveRelevancy});
-
+			
+			//TODO: Message Resource
+			$('a.infoIcon').qtip({
+				content: { 
+					text: $('<div>')
+				},
+				show:{ modal:true },
+				style:{
+					width:'150px'
+				},
+				events: {
+					render:function(rEvt, api){
+						var $content = $("div", api.elements.content);
+						$content.html("");
+					},
+					
+					show:function(rEvt, api){
+						var $content = $("div", api.elements.content);
+						var field =	api.elements.target.parents('div.AlphaCont').attr("id");
+						var text = "";
+						
+						if (field==="qf") text = 'List of fields and the "boosts" to associate with each of them';
+						if (field==="bf") text = 'Functions that will be included in the user\'s query to influence the score';
+						if (field==="pf") text = 'Used as a boost in cases where the score of documents matched appear in close proximity';
+						if (field==="bq") text = 'A raw query string that will be included with the user\'s query to influence the score';
+						if (field==="mm") text = 'The minimum number of words specified in the keyword phrase that should match';
+						if (field==="qs") text = 'Amount of slop on phrase queries explicitly included in the user\'s query string (affects matching)';
+						if (field==="ps") text = 'Amount of slop (distance between words) on phrase queries built for "pf" fields (affects boosting)';
+						if (field==="tie") text = 'in case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
+						
+						$content.html(text);
+						
+					}
+				}
+			});
+			
 			// add field restrictions
 			$('div[id="q.alt"] input[type="text"]').attr("readonly", "readonly").on({
 				focus: function(e){alert("Contact administrator to modify this field");}
