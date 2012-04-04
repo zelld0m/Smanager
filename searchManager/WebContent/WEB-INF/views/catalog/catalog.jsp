@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="catalog"/>
+<c:set var="topmenu" value="bigbets"/> 
+<c:set var="submenu" value="catalog"/> 
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- tabber -->
