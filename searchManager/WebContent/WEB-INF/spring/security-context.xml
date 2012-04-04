@@ -142,7 +142,13 @@
 	
 	<beans:bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
 			<beans:property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
-			<beans:property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" />
+<!-- 	 		
+				dev
+				<beans:property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
+				staging
+				<beans:property name="url" value="jdbc:jtds:sqlserver://AFS-DW-SQQABD1/ED_SOLR" />
+-->
+			<beans:property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
 			<beans:property name="username" value="ED_SOLR_USER" />
 			<beans:property name="password" value="s0lRd3V!" />
 			<beans:property name="validationQuery" value="select 1"/>
