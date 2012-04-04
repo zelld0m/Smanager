@@ -31,7 +31,7 @@
 			base.$el.find('a#addButton').on({
 				click: function(e){
 					var name = $.trim(base.$el.find('input[type="text"]').val());
-					base.options.itemAddCallback(base, $.isNotBlank(name) && name != base.options.searchText? name : "");
+					if ($.isNotBlank(name) && name != base.options.searchText) base.options.itemAddCallback(base, name);
 				}
 			});
 		};
