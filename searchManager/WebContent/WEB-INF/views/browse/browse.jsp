@@ -91,8 +91,9 @@
 		  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine"> 
 	        <div id="searchResultOption"  class="clearfix pad5 txtAL w720" style="background:#e8e8e8">
 	        	<!-- span class="fsize14 alert" style="color:#a90400">This is redirected</span -->
-	        	<div class="floatL" >
-		        	<label class="marT3 floatL w100 valignMid padL5">Select Relevancy:</label>
+	        	<div class="floatL" style="width:60%" >
+	        	Select Ranking Rule:
+		        	<!-- label class="marT3 floatL valignMid padL5">Select Relevancy:</label -->
 		        	<select id="relevancy">
 		        		<option value="" id="norelevancy">&nbsp;</option>
 		        	</select>

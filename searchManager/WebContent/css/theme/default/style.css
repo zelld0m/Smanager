@@ -12,7 +12,7 @@
 .bgTopHeaderMnu .mnuHeader		{ display:inline; list-style-type:none; z-index:10 }
 
 .cssReset .subMenuHolder	 	{ background:url(images/bgSubNav.gif) repeat-x;  width:100%; height: 30px }
-.cssReset .subMenu				{ list-style:none; width: 440px; margin-top:4px; padding-left:260px}
+.cssReset .subMenu				{ list-style:none; width: 670px; margin-top:4px; position:relative; left:266px }
 .cssReset .subMenu li			{ float:left; display:inline; margin-left:10px; margin-right:10px; font-size: 12px; font-weight: bold; color:#222222}
 .cssReset .subMenu li a			{ color:#222222 }
 .cssReset .subMenu li.active a	{ color:#0087c7 }
