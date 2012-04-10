@@ -77,7 +77,7 @@ public final class DateAndTimeUtils {
 	public static String formatMMddyyyy(Date date) {
 		if (date==null)
 			return "";
-		
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_STRING_MM_DD_YYYY);
 		String dateString = dateFormat.format(date);
 
@@ -125,7 +125,7 @@ public final class DateAndTimeUtils {
 
 	public static String formatDateUsingConfig(String store, Date date){
 		if(StringUtils.isBlank(store) || date==null) return "";
-		
+
 		ConfigManager configManager = ConfigManager.getInstance();
 		String dateFormat = configManager.getStoreParameter(store, "dateformat");
 
@@ -139,7 +139,7 @@ public final class DateAndTimeUtils {
 			return formatMMddyyyy(date);
 		}
 	}
-	
+
 	public static String formatDateTimeUsingConfig(String store, Date date){
 		ConfigManager configManager = ConfigManager.getInstance();
 		String dateFormat = configManager.getStoreParameter(store, "datetimeformat");
@@ -182,16 +182,16 @@ public final class DateAndTimeUtils {
 
 	public static Date getDate(String store, Date date) {
 		if (StringUtils.isBlank(store) || date == null) return null;
-		
+
 		DateFormat formatter = new SimpleDateFormat(ConfigManager.getInstance().getStoreParameter(store, "dateformat"));
-		
+
 		try {
 			return formatter.parse(formatter.format(date));
 		} catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Check if string is a valid ISO 8601 Formatted Date
 	 * YYYY-MM-DDThh:mm:ss[.nnnnnnn][{+|-}hh:mm] or YYYY-MM-DDThh:mm:ss[.nnnnnnn]Z (UTC, Coordinated Universal Time)
@@ -222,13 +222,48 @@ public final class DateAndTimeUtils {
 		}
 		return valid;
 	}
-	
+
 	public static Date getDateYesterday() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DATE, -1);
 		return calendar.getTime();
 	}
-	
+
+	public static String getElapsedTime(Date start, Date end){
+		StringBuilder sb = new StringBuilder();
+
+		long l1 = start.getTime();
+		long l2 = end.getTime();
+		long diff = l2 - l1;
+
+		long secondInMillis = 1000;
+		long minuteInMillis = secondInMillis * 60;
+		long hourInMillis = minuteInMillis * 60;
+		long dayInMillis = hourInMillis * 24;
+		long yearInMillis = dayInMillis * 365;
+
+		long elapsedYears = diff / yearInMillis;
+		diff = diff % yearInMillis;
+		if (elapsedYears>0) sb.append(elapsedYears + " yr" + (elapsedYears>1 ? "s ":" "));
+
+		long elapsedDays = diff / dayInMillis;
+		diff = diff % dayInMillis;
+		if (elapsedDays>0) sb.append(elapsedDays + " day" + (elapsedDays>1 ? "s ":" "));
+
+		long elapsedHours = diff / hourInMillis;
+		diff = diff % hourInMillis;
+		if (elapsedHours>0) sb.append(elapsedHours + " hr" + (elapsedHours>1 ? "s ":" "));
+
+		long elapsedMinutes = diff / minuteInMillis;
+		diff = diff % minuteInMillis;
+		if (elapsedMinutes>0) sb.append(elapsedMinutes + " min" + (elapsedMinutes>1 ? "s ":" "));
+
+		long elapsedSeconds = diff / secondInMillis;
+		if (elapsedSeconds>0) sb.append(elapsedSeconds + " sec" + (elapsedSeconds>1 ? "s ":" "));
+
+		return sb.append("ago").toString();
+	}
+
 	public static void main(String[] args) {
 		try {
 			// acceptable iso date 8601 formats
