@@ -27,6 +27,7 @@
 			content+= base.options.headerText;
 			content+= '<img src="../images/corner_bl.png" class="curveBL"/>';
 			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
+			content+= '</div>';
 			
 			content+= '<div id="auditPanelContent" class="sideContent">';
 			content+= '<ul class="listSU fsize11 marT10">';
