@@ -84,8 +84,17 @@
 				itemAddCallback: function(base, keyword){
 					StoreKeywordServiceJS.addKeyword(keyword,{
 						callback : function(data){
-							base.getList(keyword, 1);
-							alert(headerText + ' "' + keyword + '" added successfully.');
+							switch (data){
+								case -1: 
+									alert("Duplicate entry for '" + keyword + "'.");
+									break;
+								case 0: 
+									alert("Error encountered while adding '" + keyword + "'.");
+									break;
+								default: 
+									base.getList(keyword, 1);
+									alert(headerText + ' "' + keyword + '" added successfully.');
+							};
 						},
 						errorHandler: function(message){ alert(message); }
 					});
