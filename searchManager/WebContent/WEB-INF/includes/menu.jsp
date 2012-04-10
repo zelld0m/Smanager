@@ -59,7 +59,7 @@
 		      		<li ${submenu eq 'audit'? 'class="active"': ''}><a href="<spring:url value="/audit/macmall" />">Audit Trail</a></li>
 		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/macmall" />">User Setting</a></li>	      		
 		      		<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/macmall" />">Security</a></li>	      		
-		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/macmall" />">Sponsor</a></li>	      		
+		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/macmall" />">Partners</a></li>	      		
 		      		<li ${submenu eq 'deployment'? 'class="active"': ''}><a href="<spring:url value="/deployment/macmall" />">Deployment</a></li>	      		
 		       </ul>
 	      </c:if>
