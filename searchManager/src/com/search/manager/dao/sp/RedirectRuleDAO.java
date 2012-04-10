@@ -32,6 +32,7 @@ public class RedirectRuleDAO {
 	private DeleteRedirectRuleStoredProcedure deleteRedirectRuleStoredProcedure;
 	private UpdateRedirectRuleStoredProcedure updateRedirectRuleStoredProcedure;
 	private static int maxId = 0;
+	private final static String SQL_MAX_ID = "select max(rule_id) from redirect_rule";
 	
 	public RedirectRuleDAO(JdbcTemplate jdbcTemplate) {
 		addRedirectRuleStoredProcedure = new AddRedirectRuleStoredProcedure(jdbcTemplate);
@@ -43,7 +44,7 @@ public class RedirectRuleDAO {
 
 	private class MaxId extends JdbcDaoSupport {
 		public MaxId(JdbcTemplate jdbcTemplate){
-			maxId = jdbcTemplate.queryForInt("select max(rule_id) from redirect_rule");
+			maxId = jdbcTemplate.queryForInt(SQL_MAX_ID);
 		}
 	}
 	
@@ -84,7 +85,7 @@ public class RedirectRuleDAO {
 	private class AddRedirectRuleStoredProcedure extends StoredProcedure {
 	    public AddRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_REDIRECT);
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.BIGINT));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
@@ -146,8 +147,9 @@ public class RedirectRuleDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			synchronized (this) {
-				inputs.put(DAOConstants.PARAM_RULE_ID, ++maxId);
+				rule.setRuleId(++maxId);
 			}
+			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());

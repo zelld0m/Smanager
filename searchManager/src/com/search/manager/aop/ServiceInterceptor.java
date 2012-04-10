@@ -193,34 +193,30 @@ public class ServiceInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
+		String[] searchTerms = rule.getSearchTerm().split(RedirectUtility.DBL_ESC_PIPE_DELIM);
+		String condition = rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR); 
 		auditTrail.setStoreId(rule.getStoreId());
-		auditTrail.setKeyword(rule.getSearchTerm().replace(RedirectUtility.DBL_PIPE_DELIM,","));
-		auditTrail.setReferenceId(rule.getRuleName());
-		switch (auditable.operation()) {
-			case add:
-				auditTrail.setDetails(String.format("Added Rule[%1$s] for search terms[%2$s], apply condition [%3$s].",
-						auditTrail.getReferenceId(), rule.getSearchTerm().replace(RedirectUtility.DBL_PIPE_DELIM,","),rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR)));
-				break;
-			case update:
-				auditTrail.setDetails(String.format("Updated Rule[%1$s] for search terms[%2$s], apply condition [%3$s]. ",
-						auditTrail.getReferenceId(), auditTrail.getKeyword(),rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR)));
-				break;
-			case delete:
-				auditTrail.setDetails(String.format("Removed Rule[%1$s]", auditTrail.getReferenceId()));
-				break;
-			default:
-				return;
+		String refId = String.valueOf(rule.getRuleId());
+		for (String searchTerm : searchTerms) {
+			auditTrail.setKeyword(searchTerm);
+			auditTrail.setReferenceId(refId);
+			switch (auditable.operation()) {
+				case add:
+						auditTrail.setDetails(String.format("Added Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
+					break;
+				case update:
+						auditTrail.setDetails(String.format("Updated Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
+					break;
+				case delete:
+						auditTrail.setDetails(String.format("Removed Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
+					break;
+				default:
+					return;
+			}
+			logAuditTrail(auditTrail);
 		}
-		logAuditTrail(auditTrail);
 	}
 
-	private void saveQCAudit(RedirectRule rule, AuditTrail auditTrail) {
-		String[] searchTerms = rule.getSearchTerm().split(RedirectUtility.DBL_ESC_PIPE_DELIM);
-		for (String string : searchTerms) {
-			
-		}
-	}
-	
 	private void logAuditTrail(AuditTrail auditTrail) {
 		auditTrailDAO.addAuditTrail(auditTrail);
 	}
@@ -228,6 +224,5 @@ public class ServiceInterceptor {
 	public void setAuditTrailDAO(AuditTrailDAO auditTrailDAO) {
 		this.auditTrailDAO = auditTrailDAO;
 	}
-	
 	
 }
