@@ -206,8 +206,7 @@ public class ServiceInterceptor {
 						auditTrail.getReferenceId(), auditTrail.getKeyword(),rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR)));
 				break;
 			case delete:
-				auditTrail.setDetails(String.format("Removed Rule[%1$s]",
-						auditTrail.getReferenceId()));
+				auditTrail.setDetails(String.format("Removed Rule[%1$s]", auditTrail.getReferenceId()));
 				break;
 			default:
 				return;
@@ -215,6 +214,13 @@ public class ServiceInterceptor {
 		logAuditTrail(auditTrail);
 	}
 
+	private void saveQCAudit(RedirectRule rule, AuditTrail auditTrail) {
+		String[] searchTerms = rule.getSearchTerm().split(RedirectUtility.DBL_ESC_PIPE_DELIM);
+		for (String string : searchTerms) {
+			
+		}
+	}
+	
 	private void logAuditTrail(AuditTrail auditTrail) {
 		auditTrailDAO.addAuditTrail(auditTrail);
 	}

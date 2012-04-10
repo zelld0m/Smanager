@@ -20,7 +20,7 @@ public class RedirectUtility {
 	}
 	private static HashMap<String, String> fqMap; 
 	private static HashMap<String, String> redirectMap; 
-	private static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
+	public static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
 	public static final String DBL_PIPE_DELIM = "||";
 	public static final String OR = ") OR (";
 
