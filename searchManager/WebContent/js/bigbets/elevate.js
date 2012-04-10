@@ -345,6 +345,8 @@
 				render: function(e, api){
 					var contentHolder = $("div", api.elements.content);
 					contentHolder.html(getHTMLTemplate("#addItemTemplate"));
+					contentHolder.find("#tabs").tabs();
+					
 					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
 					contentHolder.find("#addItemDPNo").val($.isNumeric($.trim($("#addSortable").val()))? $.trim($("#addSortable").val()) :sortablePopupAddDefaultText);
 					contentHolder.find("#addItemDPNo").bind('blur', function(e) {if ($.trim($(this).val()).length == 0) $(this).val(sortablePopupAddDefaultText);});
