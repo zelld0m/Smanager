@@ -41,6 +41,21 @@ public class AuditService {
 		}
 	}
 	
+	public RecordSet<AuditTrail> getActivityTrail(Entity entity, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreName();
+			
+			logger.info(String.format("%d %d", page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(entity.toString());
+			auditTrail.setStoreId(store);
+			
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+	
 	@RemoteMethod
 	public RecordSet<AuditTrail> getItemTrail(String productId, int page,int itemsPerPage) {
 		try {
@@ -65,6 +80,16 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getExcludeItemTrail(String keyword, String productId, int page,int itemsPerPage) {
 		return getProductTrail(Entity.exclude, keyword, productId, page, itemsPerPage);
+	}
+	
+	@RemoteMethod
+	public RecordSet<AuditTrail> getElevateActivity(int page,int itemsPerPage) {
+		return getActivityTrail(Entity.elevate, page, itemsPerPage);
+	}
+	
+	@RemoteMethod
+	public RecordSet<AuditTrail> getExcludeActivity(int page,int itemsPerPage) {
+		return getActivityTrail(Entity.exclude, page, itemsPerPage);
 	}
 	
 	public DaoService getDaoService() {

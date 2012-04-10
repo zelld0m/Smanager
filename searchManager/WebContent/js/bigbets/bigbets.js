@@ -25,6 +25,34 @@
 				$(this).val("");
 		};
 		
+		/** Enumerate all audit for current page*/
+		showPageAuditList = function(selector, headerText, moduleType, itemPage, itemPageSize){
+			$(selector).auditpanel({
+				headerText : headerText,
+				page: itemPage,
+				pageSize: itemPageSize,
+				itemDataCallback: function(base, page){
+					if ($.trim(moduleType).toLowerCase()==="elevate")
+					AuditServiceJS.getElevateActivity(page, base.options.pageSize, {
+						callback: function(data){
+							base.populateList(data);
+							base.addPaging(page, data.totalSize);
+						},
+						preHook: function(){ base.prepareList(); }
+					});
+					
+					if ($.trim(moduleType).toLowerCase()==="exclude")
+						AuditServiceJS.getExcludeActivity(page, base.options.pageSize, {
+							callback: function(data){
+								base.populateList(data);
+								base.addPaging(page, data.totalSize);
+							},
+							preHook: function(){ base.prepareList(); }
+						});
+				}
+			});
+		};
+		
 		/** Enumerate all keywords */
 		showKeywordList = function(selector, headerText, searchText, moduleType, itemPage, itemPageSize){
 			

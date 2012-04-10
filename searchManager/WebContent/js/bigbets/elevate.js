@@ -1,5 +1,5 @@
 (function($){
-	var keywordPageSize = 15;
+	var keywordPageSize = 10;
 	var keywordDefaultSearchText = "Enter Keyword";
 
 	var sortableCache = { };
@@ -123,6 +123,7 @@
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
 			setItemFilter("all");
 			$("#titleText").html("Elevate List");
+			showPageAuditList("#auditPanel", "Page Activity", "Elevate", 1, keywordPageSize);
 			navigateKeywords(1);
 			setItemDisplay();
 		},

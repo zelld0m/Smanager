@@ -42,6 +42,10 @@ function initFileUploads() {
 	<!--Left Menu-->
     <div class="clearB floatL sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+      <!-- Audit -->
+      <div class="clearB floatL w240">
+       	<div id="auditPanel"></div>
+      </div>
       <!-- Keyword -->
       <div class="clearB floatL w240">
        	<div id="keywordList"></div>
