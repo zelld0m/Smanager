@@ -154,7 +154,7 @@
 			fieldName: "ruleName",
 			page: page,
 			pageSize: 5,
-			headerText : "Redirect Rule",
+			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
 			itemDataCallback: function(base, keyword, page){
 				
