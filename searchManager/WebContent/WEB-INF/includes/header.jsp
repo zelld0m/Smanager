@@ -23,21 +23,21 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
   
   <!-- jQuery custom plugin -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
   
-  <!--  tabber -->
-  <script type="text/javascript"  src="<spring:url value="/js/tabber.js" />"></script>  
+  <!--  /TinyMCE -->
+  <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/jquery-ui.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/ui.theme.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/qTip/jquery.qtip.css" />" />  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/checkbox/checkbox.custom.css" />" />  
 
-   <!-- Tooltip -->
+   <!-- /Qtip2 -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.common.js" />" ></script>
@@ -76,19 +76,9 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
-  
-  <script type="text/javascript">
-		dwr.engine.setTextHtmlHandler(function() {
-			window.alert("Your session has expired, please login again.");
-			document.location.href = document.location.href;
-		});
-	
-		dwr.engine.setErrorHandler(function(msg, exc) {
-			var errMessage = "Error Message: " + msg;
-			var errInfo = "Error Details: " + dwr.util.toDescriptiveString(exc, 3);
-			alert(errMessage + '\n' + errInfo);
-		});
-   </script>
+
+  <!-- /Init -->	  
+  <script type="text/javascript" src="<spring:url value="/js/init.js" />" ></script>
 </head>
 
 <body>
