@@ -12,7 +12,8 @@ body 							{ margin: 0px; }
 .cssReset .w67, .w67			{width: 67px}
 .cssReset .w70, .w70			{width: 70px}
 .cssReset .w72, .w72			{width: 72px !important}
-.cssReset .w80					{width: 80px}
+.cssReset .w80, .w80			{width: 80px}
+.cssReset .w83, .w83			{width: 83px}
 .cssReset .w85					{width: 85px}
 .cssReset .w90, .w90			{width:90px}
 .cssReset .w95, .w95			{width:95px}
@@ -167,6 +168,7 @@ body 							{ margin: 0px; }
 .cssReset .marB8, .marB8		{margin-bottom:8px}
 .cssReset .marB10, .marB10		{margin-bottom:10px}
 .cssReset .marB20, .marB20		{margin-bottom:20px}
+.cssReset .marTB5, .marTB5		{margin-top:5px !important; margin-bottom:5px !important}
 .cssReset .marTB10, .marTB10	{margin-top:10px !important; margin-bottom:10px !important}
 
 .cssReset .marTn1, .marTn1		{margin-top:-1px}
@@ -183,7 +185,8 @@ body 							{ margin: 0px; }
 .cssReset .marLn2, .marLn2		{ margin-left:-2px !important }
 .cssReset .marLn4, .marLn4		{ margin-left:-4px !important }
 
-.cssReset .minHeight32			{ min-height:32px; }
+.cssReset .minHeight32, 
+.minHeight32					{ min-height:32px; }
 .cssReset .minHeight120,
 .minHeight120	
 .cssReset .minHeight185,
