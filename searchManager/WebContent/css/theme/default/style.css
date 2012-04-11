@@ -535,6 +535,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 
 .buttonHolder					{ text-align:right }
 
+/* notification */
+.notification span.user			{ font-weight: bold; }
+.notification span.changedesc	{ color:#282828; font-weight: normal }	
+.notification span.elapsedtime	{ color:#3b79c2 }
+
 /*native tabs */
 .qtip .ui-tabs-nav				{ background: none; border:none !important }
 .qtip .ui-tabs-nav li a			{ padding:5px !important; font-size:12px;}
