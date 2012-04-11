@@ -11,13 +11,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.model.AuditTrail;
+import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 
@@ -26,8 +29,20 @@ public class AuditTrailDAO {
 	public AuditTrailDAO() {
 	}
 
+	private final static String REFERENCE_SQL = "select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL " +
+			"UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL " +
+			"UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL " +
+			"UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL ORDER BY VALUE";
+
 	private AddAuditTrailStoredProcedure addSP;
 	private GetAuditTrailStoredProcedure getSP;
+	private DropdownValues ddval;
+	
+	private class DropdownValues extends JdbcDaoSupport {
+		public DropdownValues(JdbcTemplate jdbcTemplate){
+			setJdbcTemplate(jdbcTemplate);
+		}
+	}
 
 	private class AddAuditTrailStoredProcedure extends StoredProcedure {
 	    public AddAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -85,6 +100,7 @@ public class AuditTrailDAO {
 	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddAuditTrailStoredProcedure(jdbcTemplate);
     	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
+    	ddval = new DropdownValues(jdbcTemplate);
     }
 
     public int addAuditTrail(AuditTrail auditTrail) throws DataAccessException {
@@ -123,9 +139,8 @@ public class AuditTrailDAO {
 		}
      */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DataAccessException {
-    	List<AuditTrail> auditList = new ArrayList<AuditTrail>();
-    	int size = 0;
-		Map<String, Object> inputs = new HashMap<String, Object>();
+
+    	Map<String, Object> inputs = new HashMap<String, Object>();
 		AuditTrail auditTrail = auditDetail.getModel();
         inputs.put(DAOConstants.PARAM_USER_NAME, auditTrail.getUsername());
         inputs.put(DAOConstants.PARAM_OPERATION, auditTrail.getOperation());
@@ -135,36 +150,14 @@ public class AuditTrailDAO {
         inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
         inputs.put(DAOConstants.PARAM_START_DATE, auditDetail.getStartDate());
         inputs.put(DAOConstants.PARAM_END_DATE, auditDetail.getEndDate());
-        
-        // TODO: temp fix for sorting of audit trail, while SP not fixed yet
-        
-        // get total size
-        inputs.put(DAOConstants.PARAM_START_ROW, null);
-        inputs.put(DAOConstants.PARAM_END_ROW, null);
-        Map<String,Object> result = getSP.execute(inputs);
-        int totalSize = 0;
-        if (result != null) {
-        	totalSize = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
-        }
-        
-        // adjust start row and end row accordingly
-        int startRow = totalSize - auditDetail.getEndRow() + 1;
-        int endRow = totalSize - auditDetail.getStartRow() + 1;
-        
-        inputs.put(DAOConstants.PARAM_START_ROW, startRow);
-        inputs.put(DAOConstants.PARAM_END_ROW, endRow);
-        result = getSP.execute(inputs);
-        if (result != null) {
-        	auditList.addAll((List<AuditTrail>)result.get(DAOConstants.RESULT_SET_1));
-        	size = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
-        	Collections.sort(auditList, new Comparator<AuditTrail>() {
-				@Override
-				public int compare(AuditTrail paramT1, AuditTrail paramT2) {
-					return paramT1.getDate().before(paramT2.getDate()) ? 1 : -1;
-				}
-        	});
-        }
-    	return new RecordSet<AuditTrail>(auditList, size);
+        inputs.put(DAOConstants.PARAM_START_ROW, auditDetail.getStartRow());
+        inputs.put(DAOConstants.PARAM_END_ROW, auditDetail.getEndRow());
+
+        return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
+	public List<NameValue> getDropdownValues() {
+		return ddval.getJdbcTemplate().query(REFERENCE_SQL, new BeanPropertyRowMapper(NameValue.class));
+	}
+
  }

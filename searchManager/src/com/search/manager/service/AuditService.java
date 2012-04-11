@@ -1,5 +1,9 @@
 package com.search.manager.service;
 
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -10,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.AuditTrail;
+import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @RemoteProxy(
 		name = "AuditServiceJS",
@@ -90,6 +96,42 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getExcludeActivity(int page,int itemsPerPage) {
 		return getActivityTrail(Entity.exclude, page, itemsPerPage);
+	}
+	
+	@RemoteMethod
+	public RecordSet<AuditTrail> getAuditTrail(String userName, String operation, String entity, String keyword, String referenceId, String startDate, String endDate, int page,int itemsPerPage) {
+		String store = UtilityService.getStoreName();
+		AuditTrail auditTrail = new AuditTrail();
+		auditTrail.setUsername(StringUtils.isBlank(userName)?null:userName);
+		auditTrail.setOperation(StringUtils.isBlank(operation)?null:operation);
+		auditTrail.setEntity(StringUtils.isBlank(entity)?null:entity);
+		auditTrail.setStoreId(store);
+		auditTrail.setReferenceId(StringUtils.isBlank(referenceId)?null:referenceId);
+		RecordSet<AuditTrail> rSet = null;
+		Date startDt = null;
+		Date endDt = null;
+		if (!StringUtils.isBlank(startDate)) {
+			startDt = DateAndTimeUtils.toSQLDate(store, startDate);
+		}
+		if (!StringUtils.isBlank(endDate)) {
+			endDt = DateAndTimeUtils.toSQLDate(store, endDate);
+		}
+		try {
+			rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage));
+		} catch (DaoException e) {
+			logger.error("Error getting audit trail. " + e.getMessage());
+		}
+		return rSet;
+	}
+	
+	@RemoteMethod
+	public List<NameValue> getDropdownValues() {
+		try {
+			return daoService.getDropdownValues();
+		} catch (DaoException e) {
+			logger.error("Error getting dropdown values" + e.getMessage());
+		}
+		return null;
 	}
 	
 	public DaoService getDaoService() {
