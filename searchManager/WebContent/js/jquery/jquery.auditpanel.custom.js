@@ -16,6 +16,9 @@
 			base.options = $.extend({},$.auditpanel.defaultOptions, options);
 			base.populateTemplate();
 			base.getList(1);
+		    setInterval(function() {
+		    	base.getList(base.options.page);
+		    }, base.options.refreshRate);
 		};
 
 		base.populateTemplate = function(){
@@ -42,7 +45,7 @@
 			content+= '</div>'; 
 			
 			content+= '<div id="auditPanelFooter" class="sideFooter" >';
-			content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
+			//content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
 			content+= '</div>';
 
 			base.$el.append(content);
@@ -53,9 +56,9 @@
 		};
 
 		base.prepareList = function(){
-			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
-			base.$el.find("ul#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
-			base.$el.find("#auditPanelBottomPaging").hide();
+//			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
+//			base.$el.find("ul#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
+//			base.$el.find("#auditPanelBottomPaging").hide();
 		};
 
 		base.populateList = function(data){
@@ -69,7 +72,7 @@
 				var clonedId = "item" + $.formatAsId(i+1); 
 				base.$el.find("li#itemPattern").clone().appendTo("ul#itemListing").show().attr("id",clonedId);
 				base.$el.find("li#" + clonedId + " span.user").text(list[i]["username"]);
-				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["details"]);
+				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["keyword"] + " " + list[i]["details"]);
 				base.$el.find("li#" + clonedId + " span.elapsedtime").text(list[i]["elapsedTime"]);
 			}
 			
@@ -118,7 +121,8 @@
 			pageStyle: "style1",
 			headerText: "",
 			itemDataCallback: function(e){},
-			reloadRate: 250
+			itemDifferentialCallback: function(e){},
+			refreshRate: 10000
 	};
 
 	$.fn.auditpanel = function(options){

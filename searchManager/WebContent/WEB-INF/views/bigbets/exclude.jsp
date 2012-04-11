@@ -99,7 +99,7 @@ function initFileUploads() {
 		      	<h3></h3>
 				<div class="floatL w170"> 
 			        <label class="floatL w60 marL5 padT5">%%store%%:</label>
-					<label><input id="addItemDPNo" type="text" class="w83 fgray fsize11" value="Part #"></label> 
+					<label><input id="addItemDPNo" type="text" class="w83 fgray fsize11" value="SKU #"></label> 
 			    </div>
 				<div class="clearB"></div>
 				<div class="floatL w155 marT5"> 
@@ -214,7 +214,7 @@ function initFileUploads() {
 		         	
 		         	<div class="listInfo">
 			         	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
-			         	<p class="textInfo"><span class="fgreen">%%store%% Part #: </span><span id="sItemDPNo"></span></p>
+			         	<p class="textInfo"><span class="fgreen">%%store%% SKU #: </span><span id="sItemDPNo"></span></p>
 			         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 		
 			         	<div class="borderT clearB"></div> 
