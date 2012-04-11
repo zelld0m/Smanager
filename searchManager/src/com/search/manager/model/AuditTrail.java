@@ -105,5 +105,8 @@ public class AuditTrail implements Serializable {
 	public String getFormatDateTimeUsingConfig(){
 		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getDate());
 	}
-
+	
+	public String getElapsedTime(){
+		return DateAndTimeUtils.getElapsedTime(getDate(), new Date());
+	}
 }

@@ -16,6 +16,9 @@
 			base.options = $.extend({},$.auditpanel.defaultOptions, options);
 			base.populateTemplate();
 			base.getList(1);
+		    setInterval(function() {
+		    	base.getList(base.options.page);
+		    }, base.options.refreshRate);
 		};
 
 		base.populateTemplate = function(){
@@ -30,35 +33,19 @@
 			content+= '</div>';
 			
 			content+= '<div id="auditPanelContent" class="sideContent">';
-			content+= '<ul class="listSU fsize11 marT10">';
-			content+= '<li>';
-			content+= '<p class="notification">';
-			content+= '<strong>lorem 2 items</strong> Etiam dui justo, consect<br>';
-			content+= '<a href="#">20 minutes ago</a>';
-			content+= '</p>';
-			content+= '</li>';
-			content+= '<li class="alt">';
-			content+= '<p class="notification">';
-			content+= '<strong>lorem 2 items</strong> Etiam dui justo, consect<br>';
-			content+= '<a href="#">20 minutes ago</a>';
-			content+= '</p>';
-			content+= '</li>';
-			content+= '<li>';
-			content+= '<p class="notification">';
-			content+= '<strong>lorem 2 items</strong> Etiam dui justo, consect<br>';
-			content+= '<a href="#">20 minutes ago</a>';
-			content+= '</p>';
-			content+= '</li>';
-			content+= '<li class="alt">';
-			content+= '<p class="notification">';
-			content+= '<strong>lorem 2 items</strong> Etiam dui justo, consect<br>';
-			content+= '<a href="#">20 minutes ago</a>';
-			content+= '</p>';
+			content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
+			content+= '<li id="itemPattern" class="items" style="display:none">';
+			content+= '	<p class="notification">';
+			content+= '		<span class="user"></span>';
+			content+= '		<span class="changedesc"></span><br/>';
+			content+= '		<span class="elapsedtime"></span>';
+			content+= '	</p>';
 			content+= '</li>';
 			content+= '</ul>';
 			content+= '</div>'; 
+			
 			content+= '<div id="auditPanelFooter" class="sideFooter" >';
-			content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
+			//content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
 			content+= '</div>';
 
 			base.$el.append(content);
@@ -69,19 +56,27 @@
 		};
 
 		base.prepareList = function(){
-			
+//			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
+//			base.$el.find("ul#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
+//			base.$el.find("#auditPanelBottomPaging").hide();
 		};
 
 		base.populateList = function(data){
 			var list = data.list;
 
 			// Delete all the rows except for the "pattern" row
-			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
+			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
 
 			// populate list
-			for (var i = 0; i < data.list.length; i++) {
-				
+			for (var i = 0; i < list.length; i++) {
+				var clonedId = "item" + $.formatAsId(i+1); 
+				base.$el.find("li#itemPattern").clone().appendTo("ul#itemListing").show().attr("id",clonedId);
+				base.$el.find("li#" + clonedId + " span.user").text(list[i]["username"]);
+				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["keyword"] + " " + list[i]["details"]);
+				base.$el.find("li#" + clonedId + " span.elapsedtime").text(list[i]["elapsedTime"]);
 			}
+			
+			base.$el.find("li.items:nth-child(even)").addClass("alt");
 		};
 
 		base.addPaging = function(page, total){
@@ -126,7 +121,8 @@
 			pageStyle: "style1",
 			headerText: "",
 			itemDataCallback: function(e){},
-			reloadRate: 250
+			itemDifferentialCallback: function(e){},
+			refreshRate: 10000
 	};
 
 	$.fn.auditpanel = function(options){

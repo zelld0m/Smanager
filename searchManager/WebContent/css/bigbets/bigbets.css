@@ -106,7 +106,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f3f8', end
  }
  
  
+/* elevate qtip */
 
+.qtip .ddate img.ui-datepicker-trigger { margin-bottom:-3px; margin-left:3px }
 
 				
 

@@ -8,8 +8,8 @@
 	var sortableTotalPages = 0;
 	var sortablePage = 1;
 	var sortablePageSize = 6;
-	var sortableAddDefaultSearchText = "Enter Part #";
-	var sortablePopupAddDefaultText = "Part #";
+	var sortableAddDefaultSearchText = "Enter SKU #";
+	var sortablePopupAddDefaultText = "SKU #";
 	var sortableConfirmDeleteText = "Proceed with delete?";
 	var isDelete = 0;
 	var expDateMinDate = -2;
@@ -20,7 +20,7 @@
 	var selectedKeyword= "";
 	var defaultItemDisplay = "sortableList";
 	var defaultFilterDisplay = "all";
-	var errmsg_skunumeric ="Part # should be numeric";
+	var errmsg_skunumeric ="SKU # should be numeric";
 
 	var searchActivated = false;
 	var oldSearch = "";

@@ -709,7 +709,7 @@
 				fieldName: "keyword",
 				page: page,
 				pageSize: keywordPageSize,
-				headerText : "Keyword",
+				headerText : "Ranking Rule Keyword",
 				searchText : "Enter Keyword",
 				itemDataCallback: function(base, keyword, page){
 					StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
@@ -720,7 +720,6 @@
 						preHook: function(){ base.prepareList(); }
 					});
 				},
-				itemAddCallback: function(base, name){ },
 				itemOptionCallback: function(base, id, name){
 					var suffixId = $.escapeQuotes($.formatAsId(id));
 					
@@ -732,7 +731,7 @@
 							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
 								content: {
 									text: $('<div/>'),
-									title: { text: 'Ranking Rule', button: true }
+									title: { text: 'Ranking Rule for ' + name, button: true }
 								},
 								show: { modal: true },
 								events: { 
@@ -741,6 +740,8 @@
 										RelevancyServiceJS.getRelevancy(name, {
 											callback: function(data){
 												var list = data.list;
+												
+												$content.find("ul#rankingRuleListing > li:not(#rankingRulePattern)").remove();
 												
 												for(var i=0; i<data.totalSize; i++){
 													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
