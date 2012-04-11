@@ -543,3 +543,4 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 .qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
 .qtip .ui-widget-content label	{ vertical-align: middle; }
 
+.qtip textarea 					{ resize: vertical; }
