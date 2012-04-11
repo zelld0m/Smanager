@@ -579,10 +579,10 @@ height:37px; position:fixed; bottom:0; width: 100%; z-index:400; color:#282828; 
 .footerFix li.basket:hover 		{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
 
 .footerFix .infoContainer		{ width:245px; height:300px; position: absolute; bottom:37px; background: #3a3a3a; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
-.footerFix #ffBasket			{ right:-85px; }
-.footerFix #ffOnline			{ right:-125px; }
-.footerFix #ffNotifications		{ right:-165px; }
-.footerFix #alertsFF			{ right:-205px; }
+.footerFix #ffBasket			{ right:120px; }
+.footerFix #ffOnline			{ right:80px; }
+.footerFix #ffNotifications		{ right:40px; }
+.footerFix #alertsFF			{ right:0; }
 
 
 
