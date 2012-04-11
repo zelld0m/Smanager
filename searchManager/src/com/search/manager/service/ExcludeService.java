@@ -8,8 +8,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ExcludeResult;
@@ -27,9 +26,9 @@ import com.search.manager.utility.DateAndTimeUtils;
 public class ExcludeService {
 	private static final Logger logger = Logger.getLogger(ExcludeService.class);
 
-	@Autowired private DaoService daoService;
+	private DaoService daoService;
+	private DaoCacheService daoCacheService;
 
-	
 	@RemoteMethod
 	public int addExcludeByPartNumber(String keyword, String partNumber, int sequence, String expiryDate, String comment) {
 		try {
@@ -47,7 +46,9 @@ public class ExcludeService {
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			if (StringUtils.isNotBlank(edp)){
-				return daoService.addExcludeResult(e);
+				int ret = daoService.addExcludeResult(e);
+				daoCacheService.updateExcludeResultList(e);
+				return ret;	
 			}
 			return 0;
 		} catch (DaoException e) {
@@ -68,7 +69,9 @@ public class ExcludeService {
 			e.setEdp(edp);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.addExcludeResult(e);
+			int ret = daoService.addExcludeResult(e);
+			daoCacheService.updateExcludeResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during addExclude()",e);
 		}
@@ -85,7 +88,9 @@ public class ExcludeService {
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteExcludeResult(e);
+			int ret = daoService.deleteExcludeResult(e);
+			daoCacheService.updateExcludeResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during removeExclude()",e);
 		}
@@ -102,8 +107,8 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getExcludedProducts(server, criteria, store);
+		} catch (Exception e) {
 			logger.error("Failed during getExcludedProducts()",e);
 		}
 		return null;
@@ -117,8 +122,8 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null, null, null);
-			return daoService.getExcludeResultCount(criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getExcludeResultCount(criteria,store);
+		} catch (Exception e) {
 			logger.error("Failed during getExcludedProductCount",e);
 		}
 		return null;
@@ -149,8 +154,8 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getExcludedProducts(server, criteria, store);
+		} catch (Exception e) {
 			logger.error("Failed during getAllExcludedProducts()",e);
 		}
 		return null;
@@ -165,8 +170,8 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, new Date(), null, page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getExcludedProducts(server, criteria, store);
+		} catch (Exception e) {
 			logger.error("Failed during getActiveExcludedProducts()",e);
 		}
 		return null;
@@ -198,7 +203,9 @@ public class ExcludeService {
 			e.setEdp(productId);
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateExcludeResultExpiryDate(e);
+			int ret = daoService.updateExcludeResultExpiryDate(e);
+			daoCacheService.updateExcludeResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
 		}
@@ -249,11 +256,11 @@ public class ExcludeService {
 		return -1;
 	}
 
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
+	}
+
+	public void setDaoCacheService(DaoCacheService daoCacheService) {
+		this.daoCacheService = daoCacheService;
 	}
 }

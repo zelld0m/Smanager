@@ -23,12 +23,7 @@
 			</list>
 		</property>
 	</bean>	
-	
-	<bean id="propertyPlaceholderConfigurer"  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
-		<!-- <property name="locations" value="classpath:database.properties"/>
-		 <property name="locations" value="classpath:friggin_dev_database.properties"/>-->
-	</bean>  
-	
+
 	<!-- ============  Start Controller config =============== -->
 	
 	<!--

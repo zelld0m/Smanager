@@ -21,7 +21,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
@@ -30,6 +29,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -49,6 +49,8 @@ public class SearchServlet extends HttpServlet {
 
 	@Autowired
 	DaoService daoService;
+	@Autowired
+	DaoCacheService daoCacheService;
 	@Autowired
 	RedirectUtility redirectUtility;
 
@@ -269,8 +271,10 @@ public class SearchServlet extends HttpServlet {
 			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
 
 			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-				List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
+				//elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
+				elevatedList = daoCacheService.getElevateResultList(elevateCriteria,storeName);
+				
+				List<ElevateResult> expiredList = daoCacheService.getElevateResultList(expiredElevateCriteria,storeName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Expired List: ");
 				}
@@ -285,7 +289,7 @@ public class SearchServlet extends HttpServlet {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoService.getExcludeResultList(excludeCriteria).getList() : null;
+			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(excludeCriteria,storeName) : null;
 
 			/* First Request */
 			// get expected resultformat
@@ -350,12 +354,10 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.add(nvp);
 
 			// redirect 
-			//TODO change to storename
-			String redirectUrl = redirectUtility.getRedirectURL("macmall" + keyword);
-			nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
-			nameValuePairs.add(nvp);
-			
-			String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
+			String redirectFQ = "";
+			if(keyword != null && !"".equals(keyword.trim()))			
+				redirectFQ = redirectUtility.getRedirectFQ(storeName + keyword);
+
 			if (!StringUtils.isBlank(redirectFQ)) {
 				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
 				nameValuePairs.add(nvp);

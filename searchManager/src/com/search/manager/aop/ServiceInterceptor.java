@@ -16,6 +16,7 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.Constants;
 import com.search.manager.utility.RedirectUtility;
 
 @Aspect
@@ -193,8 +194,8 @@ public class ServiceInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
-		String[] searchTerms = rule.getSearchTerm().split(RedirectUtility.DBL_ESC_PIPE_DELIM);
-		String condition = rule.getCondition().replace(RedirectUtility.DBL_PIPE_DELIM, RedirectUtility.OR); 
+		String[] searchTerms = rule.getSearchTerm().split(Constants.DBL_ESC_PIPE_DELIM);
+		String condition = rule.getCondition().replace(Constants.DBL_PIPE_DELIM, Constants.OR); 
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		for (String searchTerm : searchTerms) {
