@@ -1,0 +1,10 @@
+<beans>
+  <service xmlns="http://xfire.codehaus.org/config/1.0">
+    <name>SearchGuiService</name>
+    <namespace>http://ws.search.com/client</namespace>
+    <serviceClass>com.search.webservice.SearchGuiService</serviceClass>
+    <implementationClass>com.search.webservice.SearchGuiServiceImpl</implementationClass>
+  </service>
+</beans>
+
+
