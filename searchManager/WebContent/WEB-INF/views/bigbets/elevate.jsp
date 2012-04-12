@@ -46,10 +46,6 @@ function initFileUploads() {
       <div class="clearB floatL w240">
        	<div id="keywordList"></div>
       </div>
-       <!-- Audit -->
-      <div class="clearB floatL w240">
-       	<div id="auditPanel"></div>
-      </div>
     </div>
     <!--Left Menu-->
         
