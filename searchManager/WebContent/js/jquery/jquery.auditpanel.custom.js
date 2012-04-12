@@ -17,7 +17,7 @@
 			base.populateTemplate();
 			base.getList(1);
 		    setInterval(function() {
-		    	base.getList(base.options.page);
+		    	if (base.$el.is(":visible")) base.getList(base.options.page);
 		    }, base.options.refreshRate);
 		};
 
