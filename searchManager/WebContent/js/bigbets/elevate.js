@@ -123,7 +123,7 @@
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
 			setItemFilter("all");
 			$("#titleText").html("Elevate List");
-			showPageAuditList("#auditPanel", "Page Activity", "Elevate", 1, activityPageSize);
+			showPageAuditList("#notificationList", "Page Activity", "Elevate", 1, activityPageSize);
 			navigateKeywords(1);
 			setItemDisplay();
 		},
