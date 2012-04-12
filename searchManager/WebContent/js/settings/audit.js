@@ -1,30 +1,65 @@
 (function($){
 	var pageSize = 10;
 	var curPage = 1;
-	var keyword = "";
+	var username = "";
 	var action = "";
 	var entity = "";
+	var keyword = "";
 	var refId = "";
-	var startDate = null;
-	var endDate = null;
-	var username = "";
-	var totalSize;
+	var	startDate = "";
+	var	endDate = "";
+	var xlsUrl = window.location.pathname + "/xls";
+	var totalSize = 0;
+	
+	var getAuditTrail = function(curPage) {
+		username = $("#userList option:selected").val();
+		action = $("#actionList option:selected").val();
+		entity = $("#typeList option:selected").val();
+		keyword = $("#keyword").val();
+		refId = $("#refList option:selected").val();
+		startDate = $("#startDate").val();
+		endDate = $("#endDate").val();
+		AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
+			callback: function(data){
+				totalSize = data.totalSize;
+				var audits = data.list;
+				$("#resultsBody").find("tr:gt(0)").remove();
 
-	var auditTrail = AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
-		callback: function(data){
-			totalSize = data.totalSize;
-			var audits = data.list;
-			$("#resultsBody").find("tr:gt(0)").remove();
+				for (var i = 0; i < audits.length; i++) {
+					audit = audits[i];
+					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\">' + audit.referenceId + '</td><td class=\"txtAC\">' + audit.username + '</td>' +
+							'<td class=\"txtAC\">' + audit.entity + '</td><td class=\"txtAC\">' + audit.operation + '</td><td class=\"txtAC\">' + audit.keyword + '</td><td class=\"txtAC\">' + audit.details + '</td></tr>');
+				}
+				addFieldValuesPaging(curPage, totalSize);
+			},
+			errorHandler: function(message){ alert(message); }
+		});		
+		
+	};
+	
+	var addFieldValuesPaging = function(curPage, totalItem){
+		if(totalItem==0){
+			$("div#resultsPaging").empty();
+		}else{
+			$("#resultsPaging").paginate({
+				currentPage: curPage, 
+				pageSize: pageSize,
+				totalItem: totalItem,
+				type: 'short',
+				pageStyle: 'style2',
+				callbackText: function(itemStart, itemEnd, itemTotal){
+					return itemStart + "-" + itemEnd + " of " + itemTotal;
+				},
+				pageLinkCallback: function(e){ getAuditTrail(e.data.page); },
+				nextLinkCallback: function(e){ getAuditTrail(e.data.page+1);},
+				prevLinkCallback: function(e){ getAuditTrail(e.data.page-1);},
+				firstLinkCallback: function(e){getAuditTrail(1);},
+				lastLinkCallback: function(e){ getAuditTrail(e.data.totalPages);}
+			});
+		}
 
-			for (var i = 0; i < audits.length; i++) {
-				audit = audits[i];
-				$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\">' + audit.referenceId + '</td><td class=\"txtAC\">' + audit.username + '</td>' +
-						'<td class=\"txtAC\">' + audit.entity + '</td><td class=\"txtAC\">' + audit.operation + '</td><td class=\"txtAC\">' + audit.keyword + '</td><td class=\"txtAC\">' + audit.details + '</td></tr>');
-			}
+	};
 
-		},
-		errorHandler: function(message){ alert(message); }
-	});		
 	
 	$(document).ready(function() { 
 		
@@ -60,36 +95,36 @@
 				dates.not(this).datepicker("option", option, date);
 			}
 		});
-		
+
 		$("#goBtn").click(function() {
-			username = $("#userList option:selected").val();
-			action = $("#actionList option:selected").val();
-			entity = $("#typeList option:selected").val();
-			keyword = $("#keyword").val();
-			refId = $("#refList option:selected").val();
-			if ($("#startDate").val().length > 0) {
-				startDate = $("#startDate").val();
-			}
-			if ($("#endDate").val().length > 0) {
-				endDate = $("#endDate").val();
-			}
-			AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
-				callback: function(data){
-					totalSize = data.totalSize;
-					var audits = data.list;
-					$("#resultsBody").find("tr:gt(0)").remove();
-
-					for (var i = 0; i < audits.length; i++) {
-						audit = audits[i];
-						$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\">' + audit.referenceId + '</td><td class=\"txtAC\">' + audit.username + '</td>' +
-								'<td class=\"txtAC\">' + audit.entity + '</td><td class=\"txtAC\">' + audit.operation + '</td><td class=\"txtAC\">' + audit.keyword + '</td><td class=\"txtAC\">' + audit.details + '</td></tr>');
-					}
-
-				},
-				errorHandler: function(message){ alert(message); }
-			});		
-
+			getAuditTrail(1);
 		});
+
+		$("#resetBtn").click(function() {
+			$("#userList").val("option:first");
+			$("#actionList").val("option:first");
+			$("#typeList").val("option:first");
+			$("#keyword").val("");
+			$("#refList").val("option:first");
+			$("#startDate").val("");
+			$("#endDate").val("");
+		});
+
+		$("#exportBtn").click(function() {
+//			$.ajax({
+//				  type: "GET",
+//				  url: xlsUrl,
+//				  contentType: "application/vnd.ms-excel",
+//				  dataType: "text",
+//				  data: "type=excel&username=" + username + "&operation" + action + "&entity" + entity + "&keyword" + keyword + "&referenceId" + refId + "&startDate" + startDate + "&endDate" + endDate + "&page" + curPage + "&itemperpage" + pageSize,
+//				  success: function(data) {
+//					  window.location='data:application/vnd.ms-excel;charset=utf8,' + encodeURIComponent(data);
+//		          }
+//				});
+			document.location.href = xlsUrl + '?' + "type=excel&username=" + username + "&operation=" + action + "&entity=" + entity + "&keyword=" + keyword + "&referenceId=" + refId + "&startDate=" + startDate + "&endDate=" + endDate + "&totalSize=" + totalSize;
+		});
+		
+		getAuditTrail(1);
 
 	});	
 })(jQuery);	

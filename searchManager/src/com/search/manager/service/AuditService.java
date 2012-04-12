@@ -106,6 +106,7 @@ public class AuditService {
 		auditTrail.setOperation(StringUtils.isBlank(operation)?null:operation);
 		auditTrail.setEntity(StringUtils.isBlank(entity)?null:entity);
 		auditTrail.setStoreId(store);
+		auditTrail.setKeyword(StringUtils.isBlank(keyword)?null:keyword);
 		auditTrail.setReferenceId(StringUtils.isBlank(referenceId)?null:referenceId);
 		RecordSet<AuditTrail> rSet = null;
 		Date startDt = null;
