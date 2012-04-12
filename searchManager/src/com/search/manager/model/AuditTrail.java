@@ -9,7 +9,7 @@ import org.directwebremoting.convert.BeanConverter;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class AuditTrail implements Serializable {
+public class AuditTrail extends ModelBean implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
