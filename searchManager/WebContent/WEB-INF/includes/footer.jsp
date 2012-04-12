@@ -23,17 +23,16 @@
   				<li class="alertsFF"><a href="" class="active"></a></li>
   			</ul>
   			<!-- basket -->
-  			<div class="infoContainer" id="ffBasket" style="display:none"></div>
+  			<div class="infoContainer" id="dockBasket" style="display:none"></div>
   			
   			<!-- online -->
-  			<div class="infoContainer" id="ffOnline" style="display:none"></div>
+  			<div class="infoContainer" id="dockOnline" style="display:none"></div>
   			
   			<!-- notifications -->
-  			<div class="infoContainer" id="ffNotifications" style="display:none"></div>
+  			<div class="infoContainer" id="dockNotification" style="display:none"></div>
   			
   			<!-- alertsFF -->
-  			<div class="infoContainer" id="alertsFF" style=""></div>
-  			
+  			<div class="infoContainer" id="dockAlert" style=""></div>
   			
   			
   		</div>
