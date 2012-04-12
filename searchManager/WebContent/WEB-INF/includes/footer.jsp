@@ -16,11 +16,11 @@
   		<div class="floatR w45p posRel" >
   			
   			<ul>
-  				<li class="basket"> <div style="position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
--moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 "> 134</div></li>
-  				<li class="online"></li>
-  				<li class="notifications"></li>
-  				<li class="alertsFF"></li>
+  				<li class="basket"> <a href=""><div style="position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
+-moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 "> 134</div> </a></li>
+  				<li class="online"><a href=""></a></li>
+  				<li class="notifications"><a href=""></a></li>
+  				<li class="alertsFF"><a href="" class="active"></a></li>
   			</ul>
   			<!-- basket -->
   			<div class="infoContainer" id="ffBasket" style="display:none"></div>

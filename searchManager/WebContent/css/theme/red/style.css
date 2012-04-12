@@ -561,15 +561,24 @@ height:37px; position:fixed; bottom:0; width: 100%; z-index:400; color:#282828; 
 }
 
 .footerFix ul					{ list-style:none; float:right; display: inline; }
-.footerFix li					{ height: 38px; padding:0 20px; margin:-6px 0 0 0; float:left; display:inline }
-.footerFix li.online			{ background:url(../../../images/icon_online25.png) center center no-repeat; } 
-.footerFix li.online:hover		{ background: url(../../../images/icon_online25_active.png) center center no-repeat #3d3d3d }
-.footerFix li.notifications		{ background:url(../../../images/icon_globe25.png) center center no-repeat; } 
-.footerFix li.notifications:hover { background: url(../../../images/icon_globe25_active.png) center center no-repeat #3d3d3d }
-.footerFix li.alertsFF			{ background:url(../../../images/icon_alert25.png) center center no-repeat; } 
-.footerFix li.alertsFF:hover 		{ background: url(../../../images/icon_alert25_active.png) center center no-repeat #3d3d3d }
-.footerFix li.basket			{ background:url(../../../images/icon_basket25.png) center center no-repeat; } 
-.footerFix li.basket:hover 		{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
+.footerFix li					{ height: 38px; margin:-6px 0 0 0; float:left; display:inline }
+.footerFix li a					{ height: 38px; padding:0 20px; float:left; display:inline }
+
+.footerFix li.online a			{ background:url(../../../images/icon_online25.png) center center no-repeat; } 
+.footerFix li.online a:hover	{ background: url(../../../images/icon_online25_active.png) center center no-repeat #515151 }
+.footerFix li.online a.active 	{ background: url(../../../images/icon_online25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.notifications a		{ background:url(../../../images/icon_globe25.png) center center no-repeat; } 
+.footerFix li.notifications a:hover { background: url(../../../images/icon_globe25_active.png) center center no-repeat #515151 }
+.footerFix li.notifications a.active { background: url(../../../images/icon_globe25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.alertsFF a		{ background:url(../../../images/icon_alert25.png) center center no-repeat; } 
+.footerFix li.alertsFF a:hover	{ background: url(../../../images/icon_alert25_active.png) center center no-repeat #515151 }
+.footerFix li.alertsFF a.active	{ background: url(../../../images/icon_alert25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.basket a			{ background:url(../../../images/icon_basket25.png) center center no-repeat; } 
+.footerFix li.basket a:hover 		{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #515151 }
+.footerFix li.basket a.active	{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
 
 .footerFix .infoContainer		{ width:245px; height:300px; position: absolute; bottom:37px; background: #3a3a3a; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
 .footerFix #ffBasket			{ right:120px; }
