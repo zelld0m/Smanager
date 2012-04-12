@@ -49,5 +49,25 @@ dwr.engine.setErrorHandler(function(msg, exc) {
 				staffid : "991234"
 			}
 		});
+		
+		var COOKIE_NAME_DOCK = "dock.active";
+		
+		var refreshDock = function(){
+			var dockActive = $.trim($.cookie(COOKIE_NAME_DOCK));
+
+			if ($.isNotBlank(dockActive)){
+				$("ul#dockIcon > li > a").removeClass("active");
+				$('ul#dockIcon > li#' + dockActive + " > a").addClass("active");
+				$('div#dockItem > div').hide();
+				$('div#dockItem > div#dock' + dockActive).show();
+			}
+		};
+		
+		$("ul#dockIcon > li").on("click",function(evt){
+			$.cookie(COOKIE_NAME_DOCK, $(this).attr("id"),{expires: 1});
+			refreshDock();
+		});
+		
+		refreshDock();
 	});
 })(jQuery);	

@@ -15,25 +15,24 @@
   		<div class="floatL w45p fsize12 padT7"><img src="<spring:url value="/js/ajaxsolr/images/user.png" />" class="marBn3 marR3"> Welcome <sec:authentication property="principal.username" /></span></div>
   		<div class="floatR w45p posRel" >
   			
-  			<ul>
-  				<li class="basket"> <a href=""><div style="position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
--moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 "> 134</div> </a></li>
-  				<li class="online"><a href=""></a></li>
-  				<li class="notifications"><a href=""></a></li>
-  				<li class="alertsFF"><a href="" class="active"></a></li>
+  			<ul id="dockIcon">
+  				<li id="Basket" class="basket">
+  				<a href="javascript:void(0);">
+  				<div style="position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
+-moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 ">134</div> 
+				</a>
+				</li>
+  				<li id="Online" class="online"><a href="javascript:void(0);"></a></li>
+  				<li id="Notification" class="notifications"><a href="javascript:void(0);"></a></li>
+  				<li id="Alert" class="alertsFF"><a href="javascript:void(0);"></a></li>
   			</ul>
-  			<!-- basket -->
-  			<div class="infoContainer" id="dockBasket" style="display:none"></div>
   			
-  			<!-- online -->
-  			<div class="infoContainer" id="dockOnline" style="display:none"></div>
-  			
-  			<!-- notifications -->
-  			<div class="infoContainer" id="dockNotification" style="display:none"></div>
-  			
-  			<!-- alertsFF -->
-  			<div class="infoContainer" id="dockAlert" style=""></div>
-  			
+  			<div id="dockItem">
+	  			<div class="infoContainer" id="dockBasket" style="display:none"></div>
+	  			<div class="infoContainer" id="dockOnline" style="display:none"></div>
+	  			<div class="infoContainer" id="dockNotification" style="display:none"></div>
+	  			<div class="infoContainer" id="dockAlert" style="display:none"></div>
+  			</div>
   			
   		</div>
   	</div>
