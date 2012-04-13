@@ -48,6 +48,10 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/checkbox/jquery.checkbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
 
+  <!--  scroller 
+  <script type="text/javascript" src="/js/scroller/ypSimpleScrollC.js"></script>
+  <script type="text/javascript" src="/js/scroller/scroller.js"></script> -->
+
   <!-- DWR dependencies -->
   <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/engine.js"/>"></script>

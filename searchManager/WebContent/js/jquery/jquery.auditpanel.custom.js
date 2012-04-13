@@ -25,14 +25,13 @@
 			
 			var content ='<div id="auditPanelHeader" class="sideHeader posRel">';
 
-			content+= '<img src="../images/corner_tl.png" class="curveTL"/>';
-			content+= '<img src="../images/corner_tr.png" class="curveTR"/>';
-			content+= base.options.headerText;
-			content+= '<img src="../images/corner_bl.png" class="curveBL"/>';
-			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
+			content+= '<h2 class="dockTitle">' + base.options.headerText+' </h2>';
 			content+= '</div>';
 			
-			content+= '<div id="auditPanelContent" class="sideContent">';
+			content+= '<div class="root" id="root0">';
+			content+= '<div class="scrollContainer" id="scroll0Container">';
+			content+= '<div class="scrollContent" id="scroll0Content">';
+			content+= '<div id="auditPanelContent" class="dockContent">';
 			content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
 			content+= '<li id="itemPattern" class="items" style="display:none">';
 			content+= '	<p class="notification">';
@@ -42,7 +41,10 @@
 			content+= '	</p>';
 			content+= '</li>';
 			content+= '</ul>';
-			content+= '</div>'; 
+			content+= '</div>';
+			content+= '</div>';
+			content+= '</div>';
+			content+= '</div>';
 			
 			content+= '<div id="auditPanelFooter" class="sideFooter" >';
 			//content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
