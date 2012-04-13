@@ -74,24 +74,6 @@ label.text60							{ width:60px; float:left; padding-top:7px }
 
 
 
-
-/*********************** SCROLLERS ***********************/
-.root 					{ position:relative; height: 280px; width: 350px; margin: 0px 0px 8px 7px;}
-.root p 				{ margin: 10px 10px 5px 10px; }
-.thumb 					{ position:	absolute; height: 9px; width: 15px; left: 10px; }
-.up, .dn 				{ position: absolute; left: 50px; }
-.up a, .up a img,
- .dn a, .dn a img,
-  .thumb a , 
-  .thumb a img			{ border: 0; }
-  
-.scrollContainer 		{ position: absolute; left: 2px; top: 19px; width: 390px !important; height: 280px; clip: rect(0 467 200 0);
-						  overflow: auto; background: none; padding:0 }
-.scrollContent 			{ position: absolute; left: 0px; top: 0px; width: 390px !important; }
-
-.altBg					{ background: #ededed }
-
-
 /*   */
 .bigbetsShade					{ background: #f0f3f8; /* Old browsers */
 /* IE9 SVG, needs conditional override of 'filter' to 'none' */
