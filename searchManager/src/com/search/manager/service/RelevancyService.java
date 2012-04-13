@@ -16,6 +16,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -41,6 +42,7 @@ import com.search.manager.schema.model.qf.QueryFieldsModel;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.ws.SearchHelper;
 
+@Service(value = "relevancyService")
 @RemoteProxy(
 		name = "RelevancyServiceJS",
 		creator = SpringCreator.class,

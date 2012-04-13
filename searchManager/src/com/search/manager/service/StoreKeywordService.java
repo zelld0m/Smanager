@@ -10,6 +10,7 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.annotations.ScriptScope;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -17,6 +18,7 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.StoreKeyword;
 
+@Service(value = "storeKeywordService")
 @RemoteProxy(
 		name = "StoreKeywordServiceJS",
 	    creator = SpringCreator.class,

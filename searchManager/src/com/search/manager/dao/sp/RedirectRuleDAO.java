@@ -7,12 +7,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -21,12 +23,21 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Repository(value="redirectRuleDAO")
 public class RedirectRuleDAO {
 
 	// needed by spring AOP
-	public RedirectRuleDAO(){
-	}
+	public RedirectRuleDAO(){}
 	
+	@Autowired
+	public RedirectRuleDAO(JdbcTemplate jdbcTemplate) {
+		addRedirectRuleStoredProcedure = new AddRedirectRuleStoredProcedure(jdbcTemplate);
+		getRedirectRuleStoredProcedure = new GetRedirectRuleStoredProcedure(jdbcTemplate);
+		deleteRedirectRuleStoredProcedure = new DeleteRedirectRuleStoredProcedure(jdbcTemplate);
+		updateRedirectRuleStoredProcedure = new UpdateRedirectRuleStoredProcedure(jdbcTemplate);
+		new MaxId(jdbcTemplate);
+	}
+
 	private GetRedirectRuleStoredProcedure getRedirectRuleStoredProcedure;
 	private AddRedirectRuleStoredProcedure addRedirectRuleStoredProcedure;
 	private DeleteRedirectRuleStoredProcedure deleteRedirectRuleStoredProcedure;
@@ -34,13 +45,6 @@ public class RedirectRuleDAO {
 	private static int maxId = 0;
 	private final static String SQL_MAX_ID = "select max(rule_id) from redirect_rule";
 	
-	public RedirectRuleDAO(JdbcTemplate jdbcTemplate) {
-		addRedirectRuleStoredProcedure = new AddRedirectRuleStoredProcedure(jdbcTemplate);
-		getRedirectRuleStoredProcedure = new GetRedirectRuleStoredProcedure(jdbcTemplate);
-		deleteRedirectRuleStoredProcedure = new DeleteRedirectRuleStoredProcedure(jdbcTemplate);
-		updateRedirectRuleStoredProcedure = new UpdateRedirectRuleStoredProcedure(jdbcTemplate);
-		new MaxId(jdbcTemplate);
-    }
 
 	private class MaxId extends JdbcDaoSupport {
 		public MaxId(JdbcTemplate jdbcTemplate){

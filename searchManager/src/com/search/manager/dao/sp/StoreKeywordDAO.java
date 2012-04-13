@@ -10,12 +10,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.model.Keyword;
@@ -25,12 +27,18 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Repository(value="storeKeywordDAO")
 public class StoreKeywordDAO {
 	
-	public StoreKeywordDAO() {
-	}
-	
 	private Logger logger = Logger.getLogger(this.getClass());
+
+	public StoreKeywordDAO() {}
+
+	@Autowired
+	public StoreKeywordDAO(JdbcTemplate jdbcTemplate) {
+    	addSp = new AddStoreKeywordStoredProcedure(jdbcTemplate);
+    	getSp = new GetStoreKeywordStoredProcedure(jdbcTemplate);
+    }
 
 	private AddStoreKeywordStoredProcedure addSp;
 	private GetStoreKeywordStoredProcedure getSp;
@@ -72,11 +80,6 @@ public class StoreKeywordDAO {
 	    }
 	}
 	
-	public StoreKeywordDAO(JdbcTemplate jdbcTemplate) {
-    	addSp = new AddStoreKeywordStoredProcedure(jdbcTemplate);
-    	getSp = new GetStoreKeywordStoredProcedure(jdbcTemplate);
-    }
-
 	@Audit(entity = Entity.storeKeyword, operation = Operation.add)
     public int addStoreKeyword(String storeId, String keyword) throws DataAccessException {
     	int i = -1;

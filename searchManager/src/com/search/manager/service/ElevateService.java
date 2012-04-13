@@ -9,6 +9,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -19,6 +20,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 
+@Service(value = "elevateService")
 @RemoteProxy(
 		name = "ElevateServiceJS",
 		creator = SpringCreator.class,
@@ -29,7 +31,6 @@ public class ElevateService{
 	private static final Logger logger = Logger.getLogger(ElevateService.class);
 
 	@Autowired private DaoService daoService;
-
 
 	@RemoteMethod
 	public int addElevate(String keyword, String edp, int sequence, String expiryDate, String comment) {
@@ -268,7 +269,6 @@ public class ElevateService{
 		
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
-
 	
 	public DaoService getDaoService() {
 		return daoService;
@@ -277,5 +277,4 @@ public class ElevateService{
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
-
 }

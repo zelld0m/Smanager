@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,16 +16,24 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 
+@Repository(value="auditTrailDAO")
 public class AuditTrailDAO {
 	
-	public AuditTrailDAO() {
-	}
+	public AuditTrailDAO() {}
+	
+	@Autowired
+	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
+    	addSP = new AddAuditTrailStoredProcedure(jdbcTemplate);
+    	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
+    	ddval = new DropdownValues(jdbcTemplate);
+    }
 
 	private final static String REFERENCE_SQL = "select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL " +
 			"UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL " +
@@ -94,12 +103,6 @@ public class AuditTrailDAO {
 	    }
 	}
 
-	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
-    	addSP = new AddAuditTrailStoredProcedure(jdbcTemplate);
-    	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
-    	ddval = new DropdownValues(jdbcTemplate);
-    }
-
     public int addAuditTrail(AuditTrail auditTrail) throws DataAccessException {
     	int i = -1;
     	if (auditTrail != null) {
@@ -121,7 +124,6 @@ public class AuditTrailDAO {
     	return i;
     }
     
-    @SuppressWarnings("unchecked")
     /**
      * Sample:
      	AuditTrail auditTest = new AuditTrail();
@@ -153,8 +155,8 @@ public class AuditTrailDAO {
         return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<NameValue> getDropdownValues() {
 		return ddval.getJdbcTemplate().query(REFERENCE_SQL, new BeanPropertyRowMapper(NameValue.class));
 	}
-
  }

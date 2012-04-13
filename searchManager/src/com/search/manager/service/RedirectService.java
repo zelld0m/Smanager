@@ -6,6 +6,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -14,6 +15,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.utility.RedirectUtility;
 
+@Service(value = "redirectService")
 @RemoteProxy(
 		name = "RedirectServiceJS",
 	    creator = SpringCreator.class,

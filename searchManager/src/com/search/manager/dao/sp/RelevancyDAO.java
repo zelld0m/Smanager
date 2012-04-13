@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Keyword;
@@ -25,10 +27,32 @@ import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 
+@Repository(value="relevancyDAO")
 public class RelevancyDAO {
 
 	// for AOP use
-	public RelevancyDAO(){
+	public RelevancyDAO(){}
+	
+	@Autowired
+	public RelevancyDAO(JdbcTemplate jdbcTemplate) {
+		addSP = new AddRelevancyStoredProcedure(jdbcTemplate);
+		updateSP = new UpdateRelevancyStoredProcedure(jdbcTemplate) ;
+		deleteSP = new DeleteRelevancyStoredProcedure(jdbcTemplate);
+		getSP = new GetRelevancyStoredProcedure(jdbcTemplate);
+		searchSP = new SearchRelevancyStoredProcedure(jdbcTemplate);
+		updateCommentSP = new UpdateRelevancyCommentStoredProcedure(jdbcTemplate);
+		appendCommentSP = new AppendRelevancyCommentStoredProcedure(jdbcTemplate);
+		
+		addRelevancyFieldSP = new AddRelevancyFieldStoredProcedure(jdbcTemplate);
+		getRelevancyFieldSP = new GetRelevancyFieldStoredProcedure(jdbcTemplate);
+		updateRelevancyFieldSP = new UpdateRelevancyFieldStoredProcedure(jdbcTemplate);
+		deleteRelevancyFieldSP = new DeleteRelevancyFieldStoredProcedure(jdbcTemplate);
+		
+		addRelevancyKeywordSP = new AddRelevancyKeywordStoredProcedure(jdbcTemplate);
+		getRelevancyKeywordSP = new GetRelevancyKeywordStoredProcedure(jdbcTemplate);
+		updateRelevancyKeywordSP = new UpdateRelevancyKeywordStoredProcedure(jdbcTemplate);
+		deleteRelevancyKeywordSP = new DeleteRelevancyKeywordStoredProcedure(jdbcTemplate);
+		searchRelevancyKeywordSP = new SearchRelevancyKeywordStoredProcedure(jdbcTemplate);
 	}
 	
 	private AddRelevancyStoredProcedure addSP;
@@ -49,27 +73,6 @@ public class RelevancyDAO {
 	private UpdateRelevancyKeywordStoredProcedure updateRelevancyKeywordSP;
 	private DeleteRelevancyKeywordStoredProcedure deleteRelevancyKeywordSP;
 	private SearchRelevancyKeywordStoredProcedure searchRelevancyKeywordSP;
-	
-	public RelevancyDAO(JdbcTemplate jdbcTemplate) {
-    	addSP = new AddRelevancyStoredProcedure(jdbcTemplate);
-    	updateSP = new UpdateRelevancyStoredProcedure(jdbcTemplate) ;
-    	deleteSP = new DeleteRelevancyStoredProcedure(jdbcTemplate);
-    	getSP = new GetRelevancyStoredProcedure(jdbcTemplate);
-    	searchSP = new SearchRelevancyStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateRelevancyCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendRelevancyCommentStoredProcedure(jdbcTemplate);
-    	
-    	addRelevancyFieldSP = new AddRelevancyFieldStoredProcedure(jdbcTemplate);
-    	getRelevancyFieldSP = new GetRelevancyFieldStoredProcedure(jdbcTemplate);
-    	updateRelevancyFieldSP = new UpdateRelevancyFieldStoredProcedure(jdbcTemplate);
-    	deleteRelevancyFieldSP = new DeleteRelevancyFieldStoredProcedure(jdbcTemplate);
-    	
-    	addRelevancyKeywordSP = new AddRelevancyKeywordStoredProcedure(jdbcTemplate);
-    	getRelevancyKeywordSP = new GetRelevancyKeywordStoredProcedure(jdbcTemplate);
-    	updateRelevancyKeywordSP = new UpdateRelevancyKeywordStoredProcedure(jdbcTemplate);
-    	deleteRelevancyKeywordSP = new DeleteRelevancyKeywordStoredProcedure(jdbcTemplate);
-    	searchRelevancyKeywordSP = new SearchRelevancyKeywordStoredProcedure(jdbcTemplate);
-    }
 	
 	private class AddRelevancyStoredProcedure extends StoredProcedure {
 	    public AddRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -729,5 +732,4 @@ public class RelevancyDAO {
     		throw new DaoException("Failed during searchRelevancyKeywords(): " + e.getMessage(), e);
     	}
 	}
-	
 }

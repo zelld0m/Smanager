@@ -5,12 +5,14 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.RecordSet;
 
+@Service(value = "campaignService")
 @RemoteProxy(
 		name = "CampaignServiceJS",
 	    creator = SpringCreator.class,

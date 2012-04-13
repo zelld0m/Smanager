@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -25,10 +27,22 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Repository(value="excludeDAO")
 public class ExcludeDAO {
 
-	public ExcludeDAO() {
-	}
+	public ExcludeDAO() {}
+	
+	@Autowired
+	public ExcludeDAO(JdbcTemplate jdbcTemplate) {
+    	addSP = new AddExcludeStoredProcedure(jdbcTemplate);
+    	getSP = new GetExcludeStoredProcedure(jdbcTemplate);
+    	getItemSP = new GetExcludeItemStoredProcedure(jdbcTemplate);
+    	updateSP = new UpdateExcludeStoredProcedure(jdbcTemplate);
+    	deleteSP = new DeleteExcludeStoredProcedure(jdbcTemplate);
+    	updateExpiryDateSP = new UpdateExcludeExpiryDateStoredProcedure(jdbcTemplate);
+    	updateCommentSP = new UpdateExcludeCommentStoredProcedure(jdbcTemplate);
+    	appendCommentSP = new AppendExcludeCommentStoredProcedure(jdbcTemplate);
+    }
 	
 	private AddExcludeStoredProcedure addSP;
 	private GetExcludeStoredProcedure getSP;
@@ -169,17 +183,6 @@ public class ExcludeDAO {
 	    }
 	}
 	
-	public ExcludeDAO(JdbcTemplate jdbcTemplate) {
-    	addSP = new AddExcludeStoredProcedure(jdbcTemplate);
-    	getSP = new GetExcludeStoredProcedure(jdbcTemplate);
-    	getItemSP = new GetExcludeItemStoredProcedure(jdbcTemplate);
-    	updateSP = new UpdateExcludeStoredProcedure(jdbcTemplate);
-    	deleteSP = new DeleteExcludeStoredProcedure(jdbcTemplate);
-    	updateExpiryDateSP = new UpdateExcludeExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateExcludeCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendExcludeCommentStoredProcedure(jdbcTemplate);
-    }
-
 	@Audit(entity = Entity.exclude, operation = Operation.add)
     public int addExclude(ExcludeResult exclude) throws DaoException {
 		try {
@@ -313,4 +316,3 @@ public class ExcludeDAO {
     	}
     }
 }
-

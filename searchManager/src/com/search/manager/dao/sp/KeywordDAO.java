@@ -3,28 +3,29 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.model.Keyword;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Repository(value="keywordDAO")
 public class KeywordDAO {
 
-	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger logger = Logger.getLogger(getClass());
 	
 	private AddKeywordStoredProcedure addKeywordStoredProcedure;
 	private GetKeywordStoredProcedure getKeywordStoredProcedure;
@@ -33,8 +34,13 @@ public class KeywordDAO {
 //	private UpdateKeywordStoredProcedure updateKeywordStoredProcedure;
 //	private DeleteKeywordStoredProcedure deleteKeywordStoredProcedure;
 
-	public KeywordDAO() {
-	}
+	public KeywordDAO() {}
+	
+	@Autowired
+	public KeywordDAO(JdbcTemplate jdbcTemplate) {
+    	addKeywordStoredProcedure = new AddKeywordStoredProcedure(jdbcTemplate);
+    	getKeywordStoredProcedure = new GetKeywordStoredProcedure(jdbcTemplate);
+    }
 	
 	private class AddKeywordStoredProcedure extends StoredProcedure {
 	    public AddKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -60,11 +66,6 @@ public class KeywordDAO {
 	        compile();
 	    }
 	}
-
-	public KeywordDAO(JdbcTemplate jdbcTemplate) {
-    	addKeywordStoredProcedure = new AddKeywordStoredProcedure(jdbcTemplate);
-    	getKeywordStoredProcedure = new GetKeywordStoredProcedure(jdbcTemplate);
-    }
 	
 	@Audit(entity = Entity.keyword, operation = Operation.add)
     public int addKeyword(String keyword) {
@@ -100,5 +101,4 @@ public class KeywordDAO {
         inputs.put(DAOConstants.PARAM_EXACT_MATCH, 1);
         return DAOUtils.getItem(getKeywordStoredProcedure.execute(inputs));
     }
-    
 }

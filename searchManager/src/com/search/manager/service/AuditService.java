@@ -10,6 +10,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -20,6 +21,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.utility.DateAndTimeUtils;
 
+@Service(value = "auditService")
 @RemoteProxy(
 		name = "AuditServiceJS",
 	    creator = SpringCreator.class,

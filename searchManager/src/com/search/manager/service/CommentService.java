@@ -10,11 +10,13 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.utility.DateAndTimeUtils;
 
+@Service(value = "commentService")
 @RemoteProxy(
 		name = "CommentServiceJS",
 	    creator = SpringCreator.class,

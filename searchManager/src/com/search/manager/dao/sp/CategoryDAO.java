@@ -15,12 +15,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.model.Category;
 import com.search.manager.model.CategoryList;
 import com.search.manager.service.UtilityService;
 import com.search.ws.SearchHelper;
 
+@Repository(value="categoryDAO")
 public class CategoryDAO {
 
 	// needed by spring AOP

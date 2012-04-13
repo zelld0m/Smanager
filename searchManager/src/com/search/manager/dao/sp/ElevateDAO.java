@@ -8,11 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -25,11 +27,24 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
+@Repository(value="elevateDAO")
 public class ElevateDAO {
 
 	// needed by spring AOP
-	public ElevateDAO(){
-	}
+	public ElevateDAO(){}
+	
+	@Autowired
+	public ElevateDAO(JdbcTemplate jdbcTemplate) {
+    	addSP = new AddElevateStoredProcedure(jdbcTemplate);
+    	getSP = new GetElevateStoredProcedure(jdbcTemplate);
+    	getItemSP = new GetElevateItemStoredProcedure(jdbcTemplate);
+    	getNoExpirySP = new GetNoExpiryElevateStoredProcedure(jdbcTemplate);
+    	updateSP = new UpdateElevateStoredProcedure(jdbcTemplate);
+    	updateExpiryDateSP = new UpdateElevateExpiryDateStoredProcedure(jdbcTemplate);
+    	updateCommentSP = new UpdateElevateCommentStoredProcedure(jdbcTemplate);
+    	appendCommentSP = new AppendElevateCommentStoredProcedure(jdbcTemplate);
+    	deleteSP = new DeleteElevateStoredProcedure(jdbcTemplate);
+    }
 	
 	private AddElevateStoredProcedure addSP;
 	private GetElevateStoredProcedure getSP;
@@ -206,18 +221,6 @@ public class ElevateDAO {
 	    }
 	}
 	
-	public ElevateDAO(JdbcTemplate jdbcTemplate) {
-    	addSP = new AddElevateStoredProcedure(jdbcTemplate);
-    	getSP = new GetElevateStoredProcedure(jdbcTemplate);
-    	getItemSP = new GetElevateItemStoredProcedure(jdbcTemplate);
-    	getNoExpirySP = new GetNoExpiryElevateStoredProcedure(jdbcTemplate);
-    	updateSP = new UpdateElevateStoredProcedure(jdbcTemplate);
-    	updateExpiryDateSP = new UpdateElevateExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateElevateCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendElevateCommentStoredProcedure(jdbcTemplate);
-    	deleteSP = new DeleteElevateStoredProcedure(jdbcTemplate);
-    }
-
 	@Audit(entity = Entity.elevate, operation = Operation.add)
     public int addElevate(ElevateResult elevate) throws DaoException {
 		try {
@@ -366,5 +369,4 @@ public class ElevateDAO {
 			throw new DaoException("Failed during removeElevate()", e);
 		}
     }
-
 }

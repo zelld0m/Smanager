@@ -4,16 +4,15 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="
-        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation=" http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        				 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        				 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+						 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 	
-	<!--
-	Specify that messages.properties is loaded to load resource bundles.  This means that
-	we can apply overrides to binding messages which aren't very nice. 
-	-->
+	<!-- Specify that messages.properties is loaded to load resource bundles.  This means that
+		 we can apply overrides to binding messages which aren't very nice -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource" scope="singleton" >
 		<!-- Custom conversion error messages. -->
 		<property name="basenames" >
@@ -28,98 +27,54 @@
 		<!-- <property name="locations" value="classpath:database.properties"/>
 		 <property name="locations" value="classpath:friggin_dev_database.properties"/>-->
 	</bean>  
-	
-	<!-- ============  Start Controller config =============== -->
-	
-	<!--
-	Registering this class makes Spring look for beans that have the
-	name attribute set to the URL path, eg name="/countdown/newOffer"
-	-->
-	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" scope="singleton" />
-
-	<!--
-	Resolve logical view names to .jsp resources in the /WEB-INF/views directory.
-	Note that this is the last view resolver because it will attempt to match
-	any requested resource not already matched.
-	-->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" scope="singleton" >
-		<property name="order" value="2" />
-		<property name="prefix" value="/WEB-INF/views/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
 		
-	<!-- 
-	Scans within the base package of the application for @Components to configure as beans,
-	@Controller, @Service, @Configuration, etc.
-	-->
+	<!-- Scans within the base package of the application for @Components to configure as beans,
+		 @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager" />
 
 	<!-- Enables the Spring MVC @Controller programming model. -->
 	<mvc:annotation-driven />
 	
-	<!-- Loads DWR-related configuration -->     
-	<import resource="dwr-context.xml" />
-			
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	Top Level Exception Handling
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->	
-
-	<!--
-	This bean implements the HandlerExceptionResolver interface which makes
-	spring use it as the top level error handler.
-	-->
-	<bean name="/errors/" id="topLevelLoggingExceptionHandler" class="com.search.manager.exception.controller.TopLevelLoggingExceptionHandler" scope="prototype" >
-	</bean>
-		
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	User Management Controllers and Validators
-	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!--  unused START
-	<bean name="/user/listAllUsersByRole" id="allUsersByRoleController" class="com.search.manager.user.controller.AllUsersByRoleController" scope="prototype" >
-		<constructor-arg ref="authenticationDao" />
-	</bean>
-		
-	<bean name="/user/newUser" id="newUserController" class="com.search.manager.user.controller.NewUserController" scope="prototype" >
-		<constructor-arg ref="authenticationDao" />
-		<constructor-arg ref="userValidator" />
-	</bean>
-
-	<bean id="userValidator" class="com.search.manager.user.form.UserValidator" scope="prototype" >
-	</bean>
-
-	<bean name="/user/editUser" id="editUserController" class="com.search.manager.user.controller.EditUserController" scope="prototype" >
-		<constructor-arg ref="authenticationDao" />
-		<constructor-arg ref="userValidator" />
+	<!-- Enables AOP -->
+	<aop:aspectj-autoproxy/>
+	<bean id="pointcutMgr" name="pointcutMgr" class="com.search.manager.aop.SystemArchitecture"></bean>
+	
+	<!-- Audit Interceptor -->
+    <bean id="auditInterceptor" name="auditInterceptor" class="com.search.manager.aop.AuditInterceptor"/>
+    
+    <!-- Login Interceptor -->
+	<bean id="loginInterceptor" name="loginInterceptor" class="com.search.manager.aop.LoginInterceptor"/>
+    
+	<!-- Loads DWR-related configuration      
+	<import resource="dwr-context.xml" /-->
+	
+	<bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
+			<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
+<!-- 	 		
+				dev
+				<property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
+				staging
+				<property name="url" value="jdbc:jtds:sqlserver://AFS-DW-SQQABD1/ED_SOLR" />
+-->
+			<property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
+			<property name="username" value="ED_SOLR_USER" />
+			<property name="password" value="s0lRd3V!" />
+			<property name="validationQuery" value="select 1"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
 	</bean>
 	
-	<bean name="/user/listAllUsers" id="allUsersController" class="com.search.manager.user.controller.AllUsersController" scope="prototype" >
-		<constructor-arg ref="authenticationDao" />
+	<!--  DAO Services -->	
+	<bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
+		<constructor-arg ref="dataSource_solr" />
 	</bean>
-unused END -->
-	<!-- ============  End Controller config =============== -->
-
-
-	<!-- ============  Start Data Access Object configuration. =============== -->
-	<!-- 
-	We use a reference to wire a data source from the appropriate database to
-	each data access object.
-	-->
-	
-	
-	<!-- ============  End Data Access Object configuration =============== -->
-		
-
-	<!-- ============  Start JDBC config =============== -->
-	<!-- ============  End JDBC config =============== -->	
-	
-
-
-	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
-	   <property name="attributes">
-	      <map>
-	         <entry key="daoService"><ref bean="daoService"/></entry>
-	      </map>
-	   </property>
+ 
+	<bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
+		<constructor-arg ref="dataSource_solr" />
 	</bean>
-
+	
+	<!-- Utility Beans -->
+	<bean name="redirectUtility" class="com.search.manager.utility.RedirectUtility" scope="singleton">
+		<property name="daoService" ref="daoService"/>
+	</bean>
 </beans>
