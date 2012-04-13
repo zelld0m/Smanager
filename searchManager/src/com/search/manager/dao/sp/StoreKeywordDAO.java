@@ -86,10 +86,7 @@ public class StoreKeywordDAO {
 	    	Map<String, String> inputs = new HashMap<String, String>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 	        inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
-	        Map<String,Object> result = addSp.execute(inputs);
-	        if (result != null) {
-	        	i = Integer.parseInt(String.valueOf(result.get(DAOConstants.UPDATE_COUNT_1)));
-	        }
+            return DAOUtils.getUpdateCount(addSp.execute(inputs));
     	}
     	return i;
     }

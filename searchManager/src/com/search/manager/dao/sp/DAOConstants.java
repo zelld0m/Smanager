@@ -4,10 +4,8 @@ public class DAOConstants {
 
 	/* Result Set identifier */
 	public static final String RESULT_SET_1 						= "#result-set-1";
-	public static final String RESULT_SET_2 						= "#result-set-";
+	public static final String RESULT_SET_2 						= "#result-set-2";
 	public static final String RESULT_SET_3 						= "#result-set-3";
-	/* Indicates number of records updated */
-	public static final String UPDATE_COUNT_1 						= "#update-count-1";
 	
 	/* Stored Procedure Names */
 	// KEYWORD
@@ -192,6 +190,9 @@ public class DAOConstants {
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
+	
+	// ADD/UPDATE/DELETE* SPs total size
+	public static final String COLUMN_RESULT 						= "RESULT";
 	
 	// will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
 	public static final String MEMBER_TYPE_PART 					= "PART_NUMBER";

@@ -41,7 +41,7 @@ public class ElevateDAO {
 	private AppendElevateCommentStoredProcedure appendCommentSP;
 	private DeleteElevateStoredProcedure deleteSP;
 
-	private class AddElevateStoredProcedure extends StoredProcedure {
+	private class AddElevateStoredProcedure extends CUDStoredProcedure {
 	    public AddElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_ELEVATE);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
@@ -140,7 +140,7 @@ public class ElevateDAO {
 	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
 	        	}
 	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
@@ -148,7 +148,7 @@ public class ElevateDAO {
 	    }
 	}
 	
-	private class UpdateElevateStoredProcedure extends StoredProcedure {
+	private class UpdateElevateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -160,7 +160,7 @@ public class ElevateDAO {
 	    }
 	}
 	
-	private class UpdateElevateExpiryDateStoredProcedure extends StoredProcedure {
+	private class UpdateElevateExpiryDateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_EXPIRY_DATE);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -172,7 +172,7 @@ public class ElevateDAO {
 	    }
 	}
 	
-	private class UpdateElevateCommentStoredProcedure extends StoredProcedure {
+	private class UpdateElevateCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_COMMENT);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -184,7 +184,7 @@ public class ElevateDAO {
 	    }
 	}
 
-	private class AppendElevateCommentStoredProcedure extends StoredProcedure {
+	private class AppendElevateCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_ELEVATE_COMMENT);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -196,7 +196,7 @@ public class ElevateDAO {
 	    }
 	}
 	
-	private class DeleteElevateStoredProcedure extends StoredProcedure {
+	private class DeleteElevateStoredProcedure extends CUDStoredProcedure {
 	    public DeleteElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_ELEVATE);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));

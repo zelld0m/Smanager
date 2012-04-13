@@ -3,11 +3,9 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
@@ -29,7 +27,7 @@ public class AuditTrailDAO {
 	private AddAuditTrailStoredProcedure addSP;
 	private GetAuditTrailStoredProcedure getSP;
 
-	private class AddAuditTrailStoredProcedure extends StoredProcedure {
+	private class AddAuditTrailStoredProcedure extends CUDStoredProcedure {
 	    public AddAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_AUDIT_TRAIL);
 			declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAME, Types.VARCHAR));
@@ -67,7 +65,7 @@ public class AuditTrailDAO {
 	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
 	        	}
 	        }));
-			
+	        
 			declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_OPERATION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ENTITY, Types.VARCHAR));
@@ -100,10 +98,7 @@ public class AuditTrailDAO {
             inputs.put(DAOConstants.PARAM_DATE, auditTrail.getDate());
             inputs.put(DAOConstants.PARAM_DETAILS, auditTrail.getDetails());
             			
-            Map<String,Object> result = addSP.execute(inputs);
-            if (result != null) {
-            	i = DAOUtils.getResult(result.get(DAOConstants.UPDATE_COUNT_1));
-            }
+           	i = DAOUtils.getUpdateCount(addSP.execute(inputs));
     	}
     	return i;
     }
@@ -123,8 +118,6 @@ public class AuditTrailDAO {
 		}
      */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DataAccessException {
-    	List<AuditTrail> auditList = new ArrayList<AuditTrail>();
-    	int size = 0;
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		AuditTrail auditTrail = auditDetail.getModel();
         inputs.put(DAOConstants.PARAM_USER_NAME, auditTrail.getUsername());
@@ -141,10 +134,11 @@ public class AuditTrailDAO {
         // get total size
         inputs.put(DAOConstants.PARAM_START_ROW, null);
         inputs.put(DAOConstants.PARAM_END_ROW, null);
-        Map<String,Object> result = getSP.execute(inputs);
         int totalSize = 0;
-        if (result != null) {
-        	totalSize = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
+        
+        RecordSet<AuditTrail> recordSet = DAOUtils.getRecordSet(getSP.execute(inputs));        
+        if (recordSet != null) {
+        	totalSize = recordSet.getTotalSize();
         }
         
         // adjust start row and end row accordingly
@@ -153,18 +147,17 @@ public class AuditTrailDAO {
         
         inputs.put(DAOConstants.PARAM_START_ROW, startRow);
         inputs.put(DAOConstants.PARAM_END_ROW, endRow);
-        result = getSP.execute(inputs);
-        if (result != null) {
-        	auditList.addAll((List<AuditTrail>)result.get(DAOConstants.RESULT_SET_1));
-        	size = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
-        	Collections.sort(auditList, new Comparator<AuditTrail>() {
+        
+        recordSet = DAOUtils.getRecordSet(getSP.execute(inputs));
+        if (recordSet != null) {
+        	Collections.sort(recordSet.getList(), new Comparator<AuditTrail>() {
 				@Override
 				public int compare(AuditTrail paramT1, AuditTrail paramT2) {
 					return paramT1.getDate().before(paramT2.getDate()) ? 1 : -1;
 				}
         	});
         }
-    	return new RecordSet<AuditTrail>(auditList, size);
+    	return recordSet;
     }
     
  }

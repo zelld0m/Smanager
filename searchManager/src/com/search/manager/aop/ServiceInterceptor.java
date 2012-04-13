@@ -41,21 +41,28 @@ public class ServiceInterceptor {
 			"&& target(bean) " +
 			"&& @annotation(com.search.manager.aop.Audit)" +
 			"&& @annotation(auditable)",
-			argNames="bean,auditable")
-	public void performDaoAudit(JoinPoint jp, Object bean, Audit auditable) {
-		// TODO: need to check if return value is greater than o before logging
-		logger.info("****************************************************");
-		logger.info(String.format("Audit Level: %s",auditable.auditLevel()));
-		logger.info(String.format("Audit Message: %s",auditable.message()));
-		logger.info(String.format("Bean Called: %s", bean.getClass().getName()));
-		logger.info(String.format("Method Called: %s", jp.getSignature().getName()));
-		for (Object obj: jp.getArgs()) {
-			if (obj != null)
-			logger.info(obj.getClass() + " : " + obj);
-			else
-		logger.info(null);
+			returning = "returnValue", 
+			argNames="bean,auditable,returnValue")
+	public void performDaoAudit(JoinPoint jp, Object bean, Audit auditable, Object returnValue) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("****************************************************");
+			logger.trace(String.format("Audit Level: %s",auditable.auditLevel()));
+			logger.trace(String.format("Audit Message: %s",auditable.message()));
+			logger.trace(String.format("Bean Called: %s", bean.getClass().getName()));
+			logger.trace(String.format("Method Called: %s", jp.getSignature().getName()));
+			logger.trace(String.format("Return value: %s", returnValue));
+			for (Object obj: jp.getArgs()) {
+				if (obj != null)
+					logger.trace(obj.getClass() + " : " + obj);
+				else
+					logger.trace(null);
+			}
+			logger.trace("****************************************************");			
 		}
-		logger.info("****************************************************");
+		
+		if (!(returnValue instanceof Integer && (Integer)returnValue > 0)) {
+			return;
+		}
 		
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setEntity(auditable.entity().toString());
@@ -86,10 +93,6 @@ public class ServiceInterceptor {
 				//logStoreKeyword(jp, auditable, auditTrail);
 				break;
 		}
-	}
-	
-	private String getStringValue(Object obj) {
-		return obj == null ? null : String.valueOf(obj);
 	}
 	
 	private void logElevate(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
