@@ -16,20 +16,22 @@
 			base.options = $.extend({},$.auditpanel.defaultOptions, options);
 			base.populateTemplate();
 			base.getList(1);
+		    setInterval(function() {
+		    	if (base.$el.is(":visible")) base.getList(base.options.page);
+		    }, base.options.refreshRate);
 		};
 
 		base.populateTemplate = function(){
 			
 			var content ='<div id="auditPanelHeader" class="sideHeader posRel">';
 
-			content+= '<img src="../images/corner_tl.png" class="curveTL"/>';
-			content+= '<img src="../images/corner_tr.png" class="curveTR"/>';
-			content+= base.options.headerText;
-			content+= '<img src="../images/corner_bl.png" class="curveBL"/>';
-			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
+			content+= '<h2 class="dockTitle">' + base.options.headerText+' </h2>';
 			content+= '</div>';
 			
-			content+= '<div id="auditPanelContent" class="sideContent">';
+			content+= '<div class="root" id="root0">';
+			content+= '<div class="scrollContainer" id="scroll0Container">';
+			content+= '<div class="scrollContent" id="scroll0Content">';
+			content+= '<div id="auditPanelContent" class="dockContent">';
 			content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
 			content+= '<li id="itemPattern" class="items" style="display:none">';
 			content+= '	<p class="notification">';
@@ -39,10 +41,13 @@
 			content+= '	</p>';
 			content+= '</li>';
 			content+= '</ul>';
-			content+= '</div>'; 
+			content+= '</div>';
+			content+= '</div>';
+			content+= '</div>';
+			content+= '</div>';
 			
 			content+= '<div id="auditPanelFooter" class="sideFooter" >';
-			content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
+			//content+= '<div id="auditPanelBottomPaging" class="sideBottomPaging"></div>';
 			content+= '</div>';
 
 			base.$el.append(content);
@@ -53,9 +58,9 @@
 		};
 
 		base.prepareList = function(){
-			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
-			base.$el.find("ul#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
-			base.$el.find("#auditPanelBottomPaging").hide();
+//			base.$el.find("ul#itemListing").children().not("#itemPattern").remove();
+//			base.$el.find("ul#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
+//			base.$el.find("#auditPanelBottomPaging").hide();
 		};
 
 		base.populateList = function(data){
@@ -69,7 +74,7 @@
 				var clonedId = "item" + $.formatAsId(i+1); 
 				base.$el.find("li#itemPattern").clone().appendTo("ul#itemListing").show().attr("id",clonedId);
 				base.$el.find("li#" + clonedId + " span.user").text(list[i]["username"]);
-				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["details"]);
+				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["keyword"] + " " + list[i]["details"]);
 				base.$el.find("li#" + clonedId + " span.elapsedtime").text(list[i]["elapsedTime"]);
 			}
 			
@@ -118,7 +123,8 @@
 			pageStyle: "style1",
 			headerText: "",
 			itemDataCallback: function(e){},
-			reloadRate: 250
+			itemDifferentialCallback: function(e){},
+			refreshRate: 10000
 	};
 
 	$.fn.auditpanel = function(options){

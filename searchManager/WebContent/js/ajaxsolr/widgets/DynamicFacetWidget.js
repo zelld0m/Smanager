@@ -186,12 +186,17 @@
 					events: {
 						render: function(event, api) {
 							contentHolder = $('div', api.elements.content);
-
+							
+							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
+							
 							$.getJSON(
 									self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
-									function (json) { 
+									function (json, textStatus) { 
+										if (textStatus!=="success"){
+											api.destroy();
+										}
+										
 										handleResponse(contentHolder, json); 
-
 										// If there is existing filter to this facet field
 										var indices = self.manager.store.find('fq', new RegExp('^-?' + facetField + ':'));
 

@@ -11,6 +11,7 @@ import com.search.manager.model.CategoryList;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Redirect;
@@ -173,6 +174,6 @@ public interface DaoService {
     /* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
-
+    public List<NameValue> getDropdownValues() throws DaoException;
 	
 }

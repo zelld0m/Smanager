@@ -120,7 +120,7 @@
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
 		output += '       			<td width="60"><span class="fgreen"><div><div id="debugHolder" class="floatL"></div></div></td>';
-		output += '       			<td width="60"><span class="fgreen">Part #: </span>' + doc.DPNo + '</td>';
+		output += '       			<td width="60"><span class="fgreen">SKU #: </span>' + doc.DPNo + '</td>';
 		output += '       			<td width="130"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
 		output += '      		</table>';
@@ -312,7 +312,7 @@
 		output += ' <div style="position:absolute; float:right; top:50px; left:224px"><a href="javascript:void(0);" id="toggleCurrent"><img src="../images/btnTonggleShow.png"></a></div>';
 		output += '	<div>';
 		output += '		<ul class="listProd">';
-		output += '			<li><label class="fbold title">Part#: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
+		output += '			<li><label class="fbold title">SKU #: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
 		output += '			<li><label class="fbold title">Elevate: </label><input type="text" id="aElevatePosition' + idSuffix + '" style="width:30px"></li>';
 		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
 		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
@@ -337,8 +337,8 @@
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
 		output += '						<li class="label">Elevation:</li><li class="value" id="elevatePosition">1</li>';
-		output += '						<li class="label">PcMall Part#:</li><li class="value" id="partNo">846896</li>'; 
-		output += '						<li class="label">Mfr#:</li><li class="value" id="mfrNo">ERgt129</label>';
+		output += '						<li class="label">SKU #:</li><li class="value" id="partNo">846896</li>'; 
+		output += '						<li class="label">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
 		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
 		output += '				  	</ul>';
 		output += '					</div>';

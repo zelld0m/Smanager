@@ -101,8 +101,7 @@
 			  	
 	        	<div class="floatR marL8 marTn2 marR3 padT2"> Select Catalog: 
 		        	<select>	
-		        		<option>choose one</option>
-		        		<option>ipsum dolor sit</option>
+		        		<option>DEFAULT</option>
 		        	</select>
 	        	</div>
 	        		

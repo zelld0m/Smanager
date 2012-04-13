@@ -536,9 +536,94 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 .buttonHolder					{ text-align:right }
 
 
- 
+
+/*native tabs */
+.qtip .ui-tabs-nav				{ background: none; border:none !important }
+.qtip .ui-tabs-nav li a			{ padding:5px !important; font-size:12px;}
+.qtip .ui-widget-content		{ border:none; margin-top:-18px !important; }	
+.qtip .ui-tabs-panel			{ padding:0 !important;  }
+.qtip .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
+.qtip .ui-widget-content label	{ vertical-align: middle; }
+
+.qtip textarea 					{ resize: vertical; }
+
+/*fix footer */
+.dockFooter						{ position:fixed; bottom:0; width: 100%; z-index:400;  }
+.footerFix						{ background: #ebebeb; /* Old browsers */
+/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ViZWJlYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNiNWI1YjUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+background: -moz-linear-gradient(top,  #ebebeb 0%, #b5b5b5 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ebebeb), color-stop(100%,#b5b5b5)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* IE10+ */
+background: linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#b5b5b5',GradientType=0 ); /* IE6-8 */
+
+height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
+}
+
+.footerFix ul#dockIcon			{ list-style:none; float:right; display: inline; }
+.footerFix ul#dockIcon li					{ height: 38px; margin:-6px 0 0 0; float:left; display:inline }
+.footerFix ul#dockIcon li a					{ height: 38px; padding:0 20px; float:left; display:inline }
+
+.footerFix li.online a			{ background:url(../../../images/icon_online25.png) center center no-repeat; } 
+.footerFix li.online a:hover	{ background: url(../../../images/icon_online25_active.png) center center no-repeat #515151 }
+.footerFix li.online a.active 	{ background: url(../../../images/icon_online25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.notifications a		{ background:url(../../../images/icon_globe25.png) center center no-repeat; } 
+.footerFix li.notifications a:hover { background: url(../../../images/icon_globe25_active.png) center center no-repeat #515151 }
+.footerFix li.notifications a.active { background: url(../../../images/icon_globe25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.alertsFF a		{ background:url(../../../images/icon_alert25.png) center center no-repeat; } 
+.footerFix li.alertsFF a:hover	{ background: url(../../../images/icon_alert25_active.png) center center no-repeat #515151 }
+.footerFix li.alertsFF a.active	{ background: url(../../../images/icon_alert25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix li.basket a			{ background:url(../../../images/icon_basket25.png) center center no-repeat; } 
+.footerFix li.basket a:hover 		{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #515151 }
+.footerFix li.basket a.active	{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
+
+.footerFix .infoContainer		{ width:245px;  position: absolute; bottom:37px; background: #3a3a3a; z-index:9999; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
+.footerFix #dockBasket			{ right:120px; height:280px; }
+.footerFix #dockOnline			{ right:80px; height:280px; }
+.footerFix #dockNotification	{ right:40px; }
+.footerFix #dockAlert			{ right:0; height:280px; }
 
 
+/* notification */
+.footerFix h2.dockTitle						{ color:#3b79c2; font-weight:bold; margin:10px 10px 16px 10px; border-bottom:1px solid #454545; padding-bottom:4px }
+.footerFix  .listSU							{ list-style:none; margin-left:0; }
+.footerFix  .listSU li						{ color:#050505; padding:4px 4px 4px 0; }
+.footerFix  .listSU li.alt					{ background: none !important }
+.footerFix  .listSU li.all					{ }
+.footerFix  .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; height: auto }
+.listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px !important; }
+.footerFix .listSU li a 					{ color:#007cbf; text-decoration: none;  }
+
+.dockContent								{ height:280px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px; }
+
+p.notification								{ width:190px; word-wrap: break-word; }
+.notification span.user						{ font-weight: bold; color:#f3f3f3; }
+.notification span.changedesc				{ color:#aaaaaa; font-weight: normal }	
+.notification span.elapsedtime				{ color:#3b79c2 }
+
+
+/*********************** SCROLLERS ***********************/
+.footerFix .root 							{ position:relative; height: 274px; width: 260px; margin: 0px 0px 8px 0;}
+.footerFix .root p 							{ margin: 0 0 5px 0; }
+.footerFix .thumb 							{ position:	absolute; height: 9px; width: 15px; margin-left:-41px; margin-top:0 }
+.footerFix .up, .footerFix .dn 				{ position: absolute; left:-20px ; }
+.footerFix .up a, .footerFix .up a img,
+.footerFix .dn a, .footerFix .dn a img		{ border:0; display:none; }
+.footerFix .thumb a , 
+.footerFix .thumb a img						{ border: 0; }
+  
+.footerFix .scrollContainer 				{ position: absolute; left: 2px; top:-5px; width: 220px !important; height: 260px; clip: rect(0 467 200 0); overflow-y: scroll; overflow-x:hidden; background: none; padding:0 0 10px 0 }
+.footerFix .scrollContent 					{ position: absolute; left: 0px; top: 0px; width: 220px !important; }
+
+.footerFix .altBg							{ background: #ededed }
 
 
 

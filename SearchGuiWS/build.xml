@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<project name="Search Gui" basedir="." default="compile">
+  <!-- Define the properties used by the build -->
+  <property file="build.properties"/>
+  <property name="project" value="."/>
+	
+  <!-- Define the CLASSPATH -->
+  <path id="compile.classpath">
+    <fileset dir="${lib.home}">
+      <include name="*.jar"/>
+    </fileset>
+  	<fileset dir="${tomcat.lib}">
+  	  <include name="*.jar"/>
+  	</fileset>
+  </path>
+
+  <target name="compile" description="Compile Java sources and copy to WEB-INF/classes dir">
+	    <javac srcdir="${src.home}" destdir="${project}/build/classes">
+	        <classpath refid="compile.classpath"/>
+	    </javac>
+	    <copy todir="${deploy.path}/WEB-INF/classes">
+	      <fileset dir="${project}/build/classes" excludes="**/*.java"/>
+	    </copy>
+  		<copy toDir="${conf.home}">
+  	  		<fileset dir="${project}/config" />
+  	  	</copy>
+  </target>
+	
+  <target name="warFile">
+		<echo message=" Creating war ..."></echo>
+		<mkdir dir="${project}/war" />	
+		<delete dir="${webAppDir}/WEB-INF/classes/com" />
+
+		<war destfile="${project}/war/searchguiws.war">
+			<fileset dir="${deploy.path}">
+				<patternset>
+					<exclude name="**/*.class"/> 	
+				</patternset>
+			</fileset>
+		</war>
+  </target>
+	
+</project> 

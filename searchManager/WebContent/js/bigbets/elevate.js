@@ -1,14 +1,14 @@
 (function($){
 	var keywordPageSize = 10;
 	var keywordDefaultSearchText = "Enter Keyword";
-
+	var activityPageSize = 5;
 	var sortableCache = { };
 	var sortableTotalItems = 0;
 	var sortableTotalPages = 0;
 	var sortablePage = 1;
 	var sortablePageSize = 6;
-	var sortableAddDefaultSearchText = "Enter Part #";
-	var sortablePopupAddDefaultText = "Part #";
+	var sortableAddDefaultSearchText = "Enter SKU #";
+	var sortablePopupAddDefaultText = "SKU #";
 	var sortableConfirmDeleteText = "Proceed with delete?";
 	var isDelete = 0;
 	var expDateMinDate = -2;
@@ -19,7 +19,7 @@
 
 	var defaultItemDisplay = "sortableList";
 	var defaultFilterDisplay = "all";
-	var errmsg_skunumeric ="Part # should be numeric";
+	var errmsg_skunumeric ="SKU # should be numeric";
 
 	var searchActivated = false;
 	var oldSearch = "";
@@ -123,7 +123,7 @@
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
 			setItemFilter("all");
 			$("#titleText").html("Elevate List");
-			showPageAuditList("#auditPanel", "Page Activity", "Elevate", 1, keywordPageSize);
+			showPageAuditList("#notificationList", "Page Activity", "Elevate", 1, activityPageSize);
 			navigateKeywords(1);
 			setItemDisplay();
 		},

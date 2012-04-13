@@ -15,7 +15,7 @@ function instantiateScroller(count, id, left, top, width, height, speed){
 }
 
 function createDragger(count, handler, root, thumb, minX, maxX, minY, maxY){
-		var buttons = '<div class="up" id="up'+count+'"><a href="#" onmouseover="theScroll['+count+'].scrollNorth(\''+count+'\')" onmouseout="theScroll['+count+'].endScroll()" onclick="return false;"><img src="../images/up.png" width="15" height="10"></a></div><div class="dn"  id="dn'+count+'""><a href="#" onmouseover="theScroll['+count+'].scrollSouth(\''+count+'\')" onmouseout="theScroll['+count+'].endScroll()" onclick="return false;"><img src="../images/dn.png" width="15" height="10"></a></div><div class="thumb" id="'+thumb+'" style="left: 135px; top: 15px;"><img src="../images/thumb.png" width="15" height="15"></div>';
+		var buttons = '<div class="up" id="up'+count+'"><a href="#" onmouseover="theScroll['+count+'].scrollNorth(\''+count+'\')" onmouseout="theScroll['+count+'].endScroll()" onclick="return false;"><img src="../images/up.png" width="15" height="10"></a></div><div class="dn"  id="dn'+count+'""><a href="#" onmouseover="theScroll['+count+'].scrollSouth(\''+count+'\')" onmouseout="theScroll['+count+'].endScroll()" onclick="return false;"><img src="../images/dn.png" width="15" height="10"></a></div><div class="thumb" id="'+thumb+'" style="top: 0px;"><img src="../images/docScrollThumb.png" width="7" height="37"></div>';
 		document.getElementById(root).innerHTML = buttons + document.getElementById(root).innerHTML;
 
 		theRoot[count]   = document.getElementById(root);
@@ -65,7 +65,7 @@ function addLoadEvent(fn) {
 addLoadEvent(function(){
 		if(theScroll.length>0) {
 		for(var i=0;i<theScroll.length;i++){
-			createDragger(i, "handle"+i, "root"+i, "thumb"+i, theScroll[i].clipW, theScroll[i].clipW, 15, theScroll[i].clipH-30);
+			createDragger(i, "handle"+i, "root"+i, "thumb"+i, theScroll[i].clipW, theScroll[i].clipW, 3, theScroll[i].clipH-20);
 		}
 	}
 }) 

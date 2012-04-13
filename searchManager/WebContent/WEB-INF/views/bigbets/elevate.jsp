@@ -42,10 +42,6 @@ function initFileUploads() {
 	<!--Left Menu-->
     <div class="clearB floatL sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
-      <!-- Audit -->
-      <div class="clearB floatL w240">
-       	<div id="auditPanel"></div>
-      </div>
       <!-- Keyword -->
       <div class="clearB floatL w240">
        	<div id="keywordList"></div>
@@ -88,43 +84,49 @@ function initFileUploads() {
      
      <!--Add Item Content--> 
      <div id="addItemTemplate" style="display: none">
-      	<div class="elevateItemPW" style="width:257px">
-		    <h3 style="width:244px; background:#e6e6e6; padding:5px 8px">Lorem ipsum</h3>
-			<div class="floatL w170"> 
-		        <label class="w70 text">%%store%%:</label>
-				<label><input id="addItemDPNo" type="text" class="w70 fgray fsize11" value="Part #"></label> 
-		    </div>
-			<div class="clearB"></div>
-			<div class="floatL w170 marT5"> 
-		    	<label class="w70 text">Valid Until:</label>
-				<label><input id="addItemDate" type="text" class="w70"></label>
-		    </div>
-			<div class="floatL marT5" style="width:86px">
-		    	<label class="text marL5" style="width:50px">Elevation:</label> 
-				<label><input id="addItemPosition" type="text" class="w25"></label>
-		    </div>
-			<div class="floatL w300 marT5"> 
-		    	<label class="w70 text">Comment: </label> 
-				<label><textarea id="addItemComment" style="width:180px; float:left; margin-bottom:7px"></textarea></label>
-		    </div>
-			<div align="right"><a id="addItemBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div></a></div>
+      	<div id="tabs" style="width:257px">
+      		<ul>
+		        <li><a href="#singleAdd"><span>Single Add</span></a></li>
+		        <li><a href="#multiAdd"><span>Multiple Add</span></a></li>
+		    </ul>
+      		
+      		<!--  tab -->
+		    <div id="singleAdd" class="mar0 borderT">
+		      	<h3></h3>
+				<div class="floatL w170"> 
+			        <label class="floatL w60 marL5 padT5">%%store%%:</label>
+					<label><input id="addItemDPNo" type="text" class="w83 fgray fsize11" value="SKU #"></label> 
+			    </div>
+				<div class="clearB"></div>
+				<div class="floatL w155 marT5"> 
+			    	<label class="floatL w60 marL5 padT5">Valid Until:</label>
+					<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>
+			    </div>
+			   
+				<div class="floatL marT5" style="width:97px">
+			    	<label class="floatL marL5 padT5" style="width:55px">Elevation:</label> 
+					<label><input id="addItemPosition" type="text" class="w25"></label>
+			    </div>
+			    
+			    <div class="clearB"></div>
+				<div class="floatL marT5 marL5"> 
+			    	<label class="w60 floatL padT5">Comment: </label> 
+					<label><textarea id="addItemComment" style="width:180px; float:left; margin-bottom:7px"></textarea></label>
+			    </div>
+				<div align="right"><a id="addItemBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div></a></div>		        
+			    <div class="clearB"></div>
+		   </div>
+		        
+	       <div id="multiAdd">
+	       		<h3></h3>
+	        	<div class="alert mar0"> This will overwrite existing elevation. </div>
+	        	<div align="right" class="marTB5 marR3 txtAL">Enter comma separated SKU #<a class="infoIcon" href="javascript:void(0);"><img src="<spring:url value="/images/icon_info.png" />" class="floatR"></a></div>
+				<textarea class="w245"></textarea>
 				
-			<h3 style="width:244px; background:#e6e6e6; padding:5px 8px">Upload File</h3>
-			<div class="floatL"> 
-		    	<label class="w67 text padL5">Browse:</label>
-				<label>								 
-					<div class="fileinputs">
-						<input type="file" class="file">
-							<div class="fakefile">
-						<input />
-							<img src="../images/img_uploadfile.jpg" style="floa:left; position:absolute; top:0; left:0" />
-							</div>
-					</div>
-					<div class="floatL w55"><a id="addItemBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Upload</div></a></div>				
-		        </label>
-		    </div>
-			<div class="clearB"></div>
-			<div class="padB10 fsize10 marL70">[ <a href="/">Download Link</a> ]</div>
+				<div align="right" class="marT5 marR3"><a id="addItemBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div></a></div>
+	       </div>
+
+		    <!-- end tab -->
 		</div>
 	  </div>
 		       
@@ -208,7 +210,7 @@ function initFileUploads() {
 		         	
 		         	<div class="listInfo">
 			         	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
-			         	<p class="textInfo"><span class="fgreen">%%store%% Part #: </span><span id="sItemDPNo"></span></p>
+			         	<p class="textInfo"><span class="fgreen">%%store%% SKU #: </span><span id="sItemDPNo"></span></p>
 			         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 		
 			         	<div class="borderT clearB"></div> 

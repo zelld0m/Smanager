@@ -23,21 +23,21 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
   
   <!-- jQuery custom plugin -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
   
-  <!--  tabber -->
-  <script type="text/javascript"  src="<spring:url value="/js/tabber.js" />"></script>  
+  <!--  /TinyMCE -->
+  <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/jquery-ui.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ext/smoothness/ui.theme.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/qTip/jquery.qtip.css" />" />  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/checkbox/checkbox.custom.css" />" />  
 
-   <!-- Tooltip -->
+   <!-- /Qtip2 -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.common.js" />" ></script>
@@ -47,6 +47,10 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/canvas/jquery.tagcanvas-1.13.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/checkbox/jquery.checkbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
+
+  <!--  scroller 
+  <script type="text/javascript" src="/js/scroller/ypSimpleScrollC.js"></script>
+  <script type="text/javascript" src="/js/scroller/scroller.js"></script> -->
 
   <!-- DWR dependencies -->
   <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
@@ -76,19 +80,9 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
-  
-  <script type="text/javascript">
-		dwr.engine.setTextHtmlHandler(function() {
-			window.alert("Your session has expired, please login again.");
-			document.location.href = document.location.href;
-		});
-	
-		dwr.engine.setErrorHandler(function(msg, exc) {
-			var errMessage = "Error Message: " + msg;
-			var errInfo = "Error Details: " + dwr.util.toDescriptiveString(exc, 3);
-			alert(errMessage + '\n' + errInfo);
-		});
-   </script>
+
+  <!-- /Init -->	  
+  <script type="text/javascript" src="<spring:url value="/js/init.js" />" ></script>
 </head>
 
 <body>
@@ -102,7 +96,7 @@
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">
-	          	<img src="<spring:url value="/js/ajaxsolr/images/user.png" />" style="margin-bottom:-3px"> Hi <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span> 
+	          	<img src="<spring:url value="/js/ajaxsolr/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span> 
 			    <span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
 			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
 		    </div>

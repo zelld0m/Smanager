@@ -28,6 +28,7 @@ import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
+import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Redirect;
@@ -115,6 +116,11 @@ public class DaoServiceImpl implements DaoService {
     	return auditTrailDAO.addAuditTrail(auditTrail);
     }
     
+	@Override
+	public List<NameValue> getDropdownValues() throws DaoException {
+		return auditTrailDAO.getDropdownValues();
+	}
+
 	/* Big Bets */
 	/* retrieve data from both Solr and DB */
 	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{
@@ -741,5 +747,6 @@ public class DaoServiceImpl implements DaoService {
 			SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
 		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
 	}
+
 
 }
