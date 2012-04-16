@@ -303,6 +303,8 @@
 			events: { 
 				render: function(e, api){
 					var contentHolder = $("div", api.elements.content);
+					contentHolder.find("#tabs").tabs();
+					
 					contentHolder.html(getHTMLTemplate("#addItemTemplate"));
 					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
 					contentHolder.find("#addItemDPNo").val($.isNumeric($.trim($("#addSortable").val()))? $.trim($("#addSortable").val()) :sortablePopupAddDefaultText);
