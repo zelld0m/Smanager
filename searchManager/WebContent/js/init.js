@@ -52,6 +52,14 @@ dwr.engine.setErrorHandler(function(msg, exc) {
 			});
 		};
 
+		var useTabs = function(){
+			$(".tabs").tabs({ 
+				event: "mouseover",
+				cookie: { expires: 30},
+				spinner: 'Retrieving data...'
+				});
+		};
+		
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
@@ -76,6 +84,7 @@ dwr.engine.setErrorHandler(function(msg, exc) {
 			refreshDock();
 		});
 
+		useTabs();
 		useTinyMCE();
 		refreshDock();
 	});
