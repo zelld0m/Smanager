@@ -62,7 +62,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int updateRedirectRule(Integer ruleId, String ruleName, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
+	public int updateRedirectRule(String ruleId, String ruleName, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
 		int result = -1;
 		try {
 			
@@ -84,7 +84,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectRule(Integer ruleId, String ruleName) {
+	public int removeRedirectRule(String ruleId, String ruleName) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -102,7 +102,7 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, int page, int itemsPerPage) {
+	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, int page, int itemsPerPage) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setSearchTerm(searchTerm);

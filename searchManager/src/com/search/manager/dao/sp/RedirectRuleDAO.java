@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
@@ -35,22 +34,12 @@ public class RedirectRuleDAO {
 		getRedirectRuleStoredProcedure = new GetRedirectRuleStoredProcedure(jdbcTemplate);
 		deleteRedirectRuleStoredProcedure = new DeleteRedirectRuleStoredProcedure(jdbcTemplate);
 		updateRedirectRuleStoredProcedure = new UpdateRedirectRuleStoredProcedure(jdbcTemplate);
-		new MaxId(jdbcTemplate);
 	}
 
 	private GetRedirectRuleStoredProcedure getRedirectRuleStoredProcedure;
 	private AddRedirectRuleStoredProcedure addRedirectRuleStoredProcedure;
 	private DeleteRedirectRuleStoredProcedure deleteRedirectRuleStoredProcedure;
 	private UpdateRedirectRuleStoredProcedure updateRedirectRuleStoredProcedure;
-	private static int maxId = 0;
-	private final static String SQL_MAX_ID = "select max(rule_id) from redirect_rule";
-	
-
-	private class MaxId extends JdbcDaoSupport {
-		public MaxId(JdbcTemplate jdbcTemplate){
-			maxId = jdbcTemplate.queryForInt(SQL_MAX_ID);
-		}
-	}
 	
 	private class GetRedirectRuleStoredProcedure extends StoredProcedure {
 	    public GetRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -58,7 +47,7 @@ public class RedirectRuleDAO {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
 	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new RedirectRule(
-	                		rs.getInt(DAOConstants.COLUMN_RULE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_NAME), 
 	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY), 
@@ -77,7 +66,7 @@ public class RedirectRuleDAO {
 	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
 	        	}
 	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
@@ -89,7 +78,7 @@ public class RedirectRuleDAO {
 	private class AddRedirectRuleStoredProcedure extends StoredProcedure {
 	    public AddRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_REDIRECT);
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
@@ -104,7 +93,7 @@ public class RedirectRuleDAO {
 	private class UpdateRedirectRuleStoredProcedure extends StoredProcedure {
 	    public UpdateRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_REDIRECT);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
@@ -118,7 +107,7 @@ public class RedirectRuleDAO {
 	private class DeleteRedirectRuleStoredProcedure extends StoredProcedure {
 	    public DeleteRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_REDIRECT);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 	        compile();
 	    }
 	}
@@ -131,10 +120,10 @@ public class RedirectRuleDAO {
         return DAOUtils.getUpdateCount(deleteRedirectRuleStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<RedirectRule> getRedirectrule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
+    public RecordSet<RedirectRule> getRedirectrule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.isNotBlank(ruleId)?ruleId:null);
 			inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.isNotBlank(searchTerm)?searchTerm:null);
 			inputs.put(DAOConstants.PARAM_START_ROW, startRow);
@@ -150,9 +139,7 @@ public class RedirectRuleDAO {
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			synchronized (this) {
-				rule.setRuleId(++maxId);
-			}
+			rule.setRuleId(DAOUtils.generateUniqueId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());

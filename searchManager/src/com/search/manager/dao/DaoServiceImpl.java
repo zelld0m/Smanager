@@ -726,7 +726,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
+	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
 		return redirectRuleDAO.getRedirectrule(searchTerm, ruleId, storeId, startRow, endRow);
 	}
 

@@ -51,7 +51,7 @@ public interface DaoService {
 	public void deleteRedirect(String redirectId) throws DaoException;
 	
 	public RecordSet<RedirectRule> getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, Integer ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException;
+	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
 	public int removeRedirectRule(RedirectRule rule) throws DaoException;
