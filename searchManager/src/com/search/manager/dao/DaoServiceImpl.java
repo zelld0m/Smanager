@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
@@ -43,20 +45,21 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.ws.SearchHelper;
 
+@Repository(value="daoService")
 public class DaoServiceImpl implements DaoService {
 
 	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
 
-	private KeywordDAO 		keywordDAO;
-	private StoreKeywordDAO storeKeywordDAO;
-	private ElevateDAO 		elevateDAO;
-	private ExcludeDAO 		excludeDAO;
-	private AuditTrailDAO 	auditTrailDAO;
-	private BannerDAO 		bannerDAO;
-	private CampaignDAO 	campaignDAO;
-	private RelevancyDAO	relevancyDAO;
-	private CategoryDAO		categoryDAO;
-	private RedirectRuleDAO	redirectRuleDAO;
+	@Autowired private KeywordDAO 		keywordDAO;
+	@Autowired private StoreKeywordDAO storeKeywordDAO;
+	@Autowired private ElevateDAO 		elevateDAO;
+	@Autowired private ExcludeDAO 		excludeDAO;
+	@Autowired private AuditTrailDAO 	auditTrailDAO;
+	@Autowired private BannerDAO 		bannerDAO;
+	@Autowired private CampaignDAO 	campaignDAO;
+	@Autowired private RelevancyDAO	relevancyDAO;
+	@Autowired private CategoryDAO		categoryDAO;
+	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 
 	DaoServiceImpl instance;
 	public DaoServiceImpl() {
@@ -748,5 +751,43 @@ public class DaoServiceImpl implements DaoService {
 		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
 	}
 
+	public KeywordDAO getKeywordDAO() {
+		return keywordDAO;
+	}
 
+	public StoreKeywordDAO getStoreKeywordDAO() {
+		return storeKeywordDAO;
+	}
+
+	public ElevateDAO getElevateDAO() {
+		return elevateDAO;
+	}
+
+	public ExcludeDAO getExcludeDAO() {
+		return excludeDAO;
+	}
+
+	public AuditTrailDAO getAuditTrailDAO() {
+		return auditTrailDAO;
+	}
+
+	public BannerDAO getBannerDAO() {
+		return bannerDAO;
+	}
+
+	public CampaignDAO getCampaignDAO() {
+		return campaignDAO;
+	}
+
+	public RelevancyDAO getRelevancyDAO() {
+		return relevancyDAO;
+	}
+
+	public CategoryDAO getCategoryDAO() {
+		return categoryDAO;
+	}
+
+	public RedirectRuleDAO getRedirectRuleDAO() {
+		return redirectRuleDAO;
+	}
 }
