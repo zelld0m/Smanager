@@ -64,7 +64,7 @@ public class ExcludeService {
 			logger.info(String.format("%s %s", keyword, edp));
 
 			String store = UtilityService.getStoreName();
-			daoService.addKeyword(store, keyword);
+			daoService.addKeyword(new StoreKeyword(store, keyword));
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(edp);

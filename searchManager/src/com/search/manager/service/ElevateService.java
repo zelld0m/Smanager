@@ -45,7 +45,7 @@ public class ElevateService{
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
-			daoService.addKeyword(store, keyword); // TODO: What if keyword is not added?
+			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			return daoService.addElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during addElevate()",e);

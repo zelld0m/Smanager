@@ -11,7 +11,7 @@ public class RedirectRule implements Serializable {
 
 	private static final long serialVersionUID = 4608433178597830827L;
 
-	private Integer ruleId;
+	private String ruleId;
 	private String ruleName;
 	private String storeId;
 	private Integer priority;
@@ -27,7 +27,7 @@ public class RedirectRule implements Serializable {
 		super();
 	}
 	
-	public RedirectRule(Integer ruleId, String ruleName, String storeId,
+	public RedirectRule(String ruleId, String ruleName, String storeId,
 			Integer priority, String searchTerm, String condition, Integer activeFlag,
 			String createdBy, String modifiedBy, Date dateCreated,
 			Date dateModified) {
@@ -45,10 +45,10 @@ public class RedirectRule implements Serializable {
 		this.dateModified = dateModified;
 	}
 	
-	public Integer getRuleId() {
+	public String getRuleId() {
 		return ruleId;
 	}
-	public void setRuleId(Integer ruleId) {
+	public void setRuleId(String ruleId) {
 		this.ruleId = ruleId;
 	}
 	public String getRuleName() {
