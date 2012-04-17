@@ -490,7 +490,7 @@
 								}},{name:list[i].name});
 							}	
 						}
-						
+
 						content.find('span#sfCount').html(schemaFieldsTotal + " Record" + (schemaFieldsTotal > 1 ? "s":""));
 						var selectedCount = content.find('tr.fieldSelectedItem:not(#fieldSelectedPattern)').length;
 						content.find('span#sfSelectedCount').html(selectedCount + " Record" + (selectedCount > 1 ? "s":""));
@@ -722,89 +722,90 @@
 				},
 				itemOptionCallback: function(base, id, name){
 					var suffixId = $.escapeQuotes($.formatAsId(id));
-					
+
 					RelevancyServiceJS.getRelevancyCount(name, {
 						callback: function(data){
 							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').html((data == 0) ? "-" :(data == 1) ? "1 Item" : data + " Items");
-						
+
 							if (data > 0)
-							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
-								content: {
-									text: $('<div/>'),
-									title: { text: 'Ranking Rule for ' + name, button: true }
-								},
-								show: { modal: true },
-								events: { 
-									render: function(rEvt, api){
-										var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
-										RelevancyServiceJS.getRelevancy(name, {
-											callback: function(data){
-												var list = data.list;
-												
-												$content.find("ul#rankingRuleListing > li:not(#rankingRulePattern)").remove();
-												
-												for(var i=0; i<data.totalSize; i++){
-													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
-													$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
-													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").html(list[i].relevancy.relevancyName);
-													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").attr("id", list[i].relevancy.relevancyId)
-												}
-												
-												$content.find("ul#rankingRuleListing > li").removeClass("alt");
-												$content.find("ul#rankingRuleListing > li:nth-child(even)").addClass("alt");
-												
-												$content.find("ul#rankingRuleListing").sortable({ 
-													handle : '.handle',
-													cursor : 'move',
-													start: function(e, ui) {
-														ui.item.data('start_pos', ui.item.index());
-													},     
-													change: function(e, ui) {
-														var index = ui.placeholder.index();
-														if (ui.item.data('start_pos') < index ) {
-															$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
-														} else {
-															$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
-														}		    
-													},
-													update: function(e, ui) {
-														$(this).find('li div').removeClass('highlight');
-														$(this).find('li').removeClass("alt");
-														$(this).find('li:nth-child(even)').addClass("alt");
-													},
-													stop: function(e, ui) {
-														var sourceIndex = (ui.item.data('start_pos'));
-														var destinationIndex = (ui.item.index());
-														
-														//TODO: move processing to SP
-														var relIds = new Array();
-														
-														$(this).find('li:visible span.rankingRuleName').each(function(index, value){
-															relIds.push($(value).attr("id"));
-															alert($(value).attr("id"));
-														});
-														
-														RelevancyServiceJS.updateRelevancyKeyword(relIds, name, {
-															callback: function(data){
-																
-															}
-														});
+								base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
+									content: {
+										text: $('<div/>'),
+										title: { text: 'Ranking Rule for ' + name, button: true }
+									},
+									show: { modal: true },
+									events: { 
+										render: function(rEvt, api){
+											var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
+										
+
+											RelevancyServiceJS.getRelevancy(name, {
+												callback: function(data){
+													var list = data.list;
+
+													$content.find("ul#rankingRuleListing > li:not(#rankingRulePattern)").remove();
+
+													for(var i=0; i<data.totalSize; i++){
+														var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
+														$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
+														$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").html(list[i].relevancy.relevancyName);
+														$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").attr("id", list[i].relevancy.relevancyId);
 													}
-												});
-											},
-											preHook: function(){
-												
-											}
-										});
+
+													$content.find("ul#rankingRuleListing > li").removeClass("alt");
+													$content.find("ul#rankingRuleListing > li:nth-child(even)").addClass("alt");
+
+													$content.find("ul#rankingRuleListing").sortable({ 
+														handle : '.handle',
+														cursor : 'move',
+														start: function(e, ui) {
+															ui.item.data('start_pos', ui.item.index());
+														},     
+														change: function(e, ui) {
+															var index = ui.placeholder.index();
+															if (ui.item.data('start_pos') < index ) {
+																$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
+															} else {
+																$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
+															}		    
+														},
+														update: function(e, ui) {
+															$(this).find('li div').removeClass('highlight');
+															$(this).find('li').removeClass("alt");
+															$(this).find('li:nth-child(even)').addClass("alt");
+														},
+														stop: function(e, ui) {
+															var sourceIndex = (ui.item.data('start_pos'));
+															var destinationIndex = (ui.item.index());
+
+															//TODO: move processing to SP
+															var relIds = new Array();
+
+															$(this).find('li:visible span.rankingRuleName').each(function(index, value){
+																relIds.push($(value).attr("id"));
+															});
+
+															RelevancyServiceJS.updateRelevancyKeyword(relIds, name, {
+																callback: function(data){
+
+																}
+															});
+														}
+													});
+												},
+												preHook: function(){
+
+												}
+											});
+										}
 									}
-								}
-							});
+								});
 						},
 						preHook: function(){ 
 							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 						}
 					});
-					
+
 				},
 				pageChangeCallback: function(n){ }
 			});
@@ -836,16 +837,16 @@
 
 					icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
 					base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
-					
+
 					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 						click: function(e){
 							if (confirm('Remove "' + name + '" in ' + selectedRelevancy.relevancyName  + '?'))
-							RelevancyServiceJS.deleteKeywordInRule(selectedRelevancy.relevancyId, name,{
-								callback:function(data){
-									refreshKeywordInRuleList(1);
-								},
-								preHook: function(){ base.prepareList(); }
-							});
+								RelevancyServiceJS.deleteKeywordInRule(selectedRelevancy.relevancyId, name,{
+									callback:function(data){
+										refreshKeywordInRuleList(1);
+									},
+									preHook: function(){ base.prepareList(); }
+								});
 						}
 					});
 				},
@@ -1060,7 +1061,7 @@
 			$('div.AlphaCont input[type="text"]').off('focus').on({focus:showGraph });
 			$('div#relevancy a#deleteButton').off('click').on({click:deleteRelevancy});
 			$('div#relevancy a#saveButton').off('click').on({click:saveRelevancy});
-			
+
 			//TODO: Message Resource
 			$('a.infoIcon').qtip({
 				content: { 
@@ -1075,12 +1076,12 @@
 						var $content = $("div", api.elements.content);
 						$content.html("");
 					},
-					
+
 					show:function(rEvt, api){
 						var $content = $("div", api.elements.content);
 						var field =	api.elements.target.parents('div.AlphaCont').attr("id");
 						var text = "";
-						
+
 						if (field==="qf") text = 'List of fields and the "boosts" to associate with each of them';
 						if (field==="bf") text = 'Functions that will be included in the user\'s query to influence the score';
 						if (field==="pf") text = 'Used as a boost in cases where the score of documents matched appear in close proximity';
@@ -1089,13 +1090,13 @@
 						if (field==="qs") text = 'Amount of slop on phrase queries explicitly included in the user\'s query string (affects matching)';
 						if (field==="ps") text = 'Amount of slop (distance between words) on phrase queries built for "pf" fields (affects boosting)';
 						if (field==="tie") text = 'in case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
-						
+
 						$content.html(text);
-						
+
 					}
 				}
 			});
-			
+
 			// add field restrictions
 			$('div[id="q.alt"] input[type="text"]').attr("readonly", "readonly").on({
 				focus: function(e){alert("Contact administrator to modify this field");}
