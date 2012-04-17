@@ -47,16 +47,16 @@
 			their sessions http://static.springsource.org/spring-security/site/docs/3.1.x/reference/session-mgmt.html#list-authenticated-principals -->
 		<security:custom-filter ref="authenticationFilter" position="FORM_LOGIN_FILTER" />
 		<security:custom-filter ref="concurrencyFilter" position="CONCURRENT_SESSION_FILTER" />
-		<security:session-management session-authentication-strategy-ref="sas" />
+		<security:session-management session-authentication-strategy-ref="sas"/>
 	</security:http>
 
 	<bean id="authenticationFilter"
-		class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter"
+		class="com.search.manager.authentication.session.ClusterAwareUsernamePasswordAuthentication"
 		p:sessionAuthenticationStrategy-ref="sas" 
 		p:authenticationManager-ref="authenticationManager"
 		p:authenticationFailureHandler-ref="customAuthenticationFailureHandler"
 		p:authenticationSuccessHandler-ref="customAuthenticationSuccessHandler" />
-
+              
 	<!-- We just actually need to set the default failure url here -->
 	<bean id="customAuthenticationFailureHandler"
 		  class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler"
@@ -83,13 +83,11 @@
 		</security:authentication-provider>
 	</security:authentication-manager>
 
-	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the 
-		database -->
+	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
 	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
 
 	<!-- An in-memory list of users. No need to access an external database 
-		layer. See Spring Security 3.1 Reference 5.2.1 In-Memory Authentication -->
-	<!-- john's password is admin, while jane;s password is user -->
+		layer. See Spring Security 3.1 Reference 5.2.1 In-Memory Authentication  
 	<security:user-service id="userDetailsService">
 		<security:user name="admin" password="21232f297a57a5a743894a0e4a801fc3" authorities="ROLE_USER, ROLE_ADMIN" />
 		<security:user name="user" password="ee11cbb19052e40b07aac0ca060c23ee" authorities="ROLE_USER" />
@@ -97,8 +95,8 @@
 		<security:user name="DanD" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
 		<security:user name="MattClark" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
 		<security:user name="BongR" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
-	</security:user-service>
-
+	</security:user-service-->
+	
 	<!-- Filter required by concurrent session handling package The ConcurrentSessionFilter 
 		requires two properties, sessionRegistry, which generally points to an instance 
 		of SessionRegistryImpl, and expiredUrl, which points to the page to display 
@@ -106,7 +104,7 @@
 	<bean id="concurrencyFilter"
 		  class="org.springframework.security.web.session.ConcurrentSessionFilter"
 		  p:sessionRegistry-ref="sessionRegistry" 
-		  p:expiredUrl="/login.jsp" />
+		  p:expiredUrl="/login.jsp?login_error=expiredsession" />
 
 	<!-- Defines a concrete concurrent control strategy Checks whether the user 
 		in question should be allowed to proceed, by comparing the number of sessions 
@@ -114,11 +112,11 @@
 		is used as the source of data on authenticated users and session data. See: 
 		http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/web/authentication/session/ConcurrentSessionControlStrategy.html -->
 	<bean id="sas"
-		  class="org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy"
+		  class="com.search.manager.authentication.session.ConcurrentSessionControlStrategyImpl"
 		  p:maximumSessions="1">
 		  <constructor-arg name="sessionRegistry" ref="sessionRegistry" />
 	</bean>
 
 	<!-- Maintains a registry of SessionInformation instances See: http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/core/session/SessionRegistry.html -->
-	<bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl" />
+	<bean id="sessionRegistry" class="com.search.manager.authentication.session.ClusterAwareSessionRegistryImpl" scope="singleton"/>
 </beans>

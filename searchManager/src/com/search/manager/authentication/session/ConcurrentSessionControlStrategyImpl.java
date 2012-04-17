@@ -22,42 +22,35 @@ public class ConcurrentSessionControlStrategyImpl extends ConcurrentSessionContr
 	}
 	
 	@Override
-	public void onAuthentication(Authentication auth,
-			HttpServletRequest request, HttpServletResponse response) {
+	public void onAuthentication(Authentication auth, HttpServletRequest request, HttpServletResponse response) {
 		Assert.notNull(request, "Authentication request cannot be null (violation of interface contract)");
 		
-		Object principal = SessionRegistryUtils.obtainPrincipalFromAuthentication(auth);
-		String sessionId = SessionRegistryUtils.obtainSessionIdFromAuthentication(auth);
+		Object principal = SessionRegistryUtils.getPrincipal(auth);
+		String sessionId = SessionRegistryUtils.getSessionId(auth);
 
 		List<SessionInformation> sessions = getSessionRegistry().getAllSessions(principal, false);
 
 		int sessionCount = 0;
 
-		if (CollectionUtils.isNotEmpty(sessions))
-		{
+		if (CollectionUtils.isNotEmpty(sessions)){
 			sessionCount = CollectionUtils.size(sessions);
 		}
 
 		int allowableSessions = getMaximumSessionsForThisUser(auth);
 		Assert.isTrue(allowableSessions != 0, "getMaximumSessionsForThisUser() must return either -1 to allow unlimited logins, or a positive integer to specify a maximum");
 
-		if (sessionCount < allowableSessions)
-		{
+		if (sessionCount < allowableSessions){
 			// They haven't got too many login sessions running at present
 			return;
 		}
-		else if (allowableSessions == -1)
-		{
+		else if (allowableSessions == -1){
 			// We permit unlimited logins
 			return;
 		}
-		else if (sessionCount == allowableSessions)
-		{
+		else if (sessionCount == allowableSessions){
 			// Only permit it though if this request is associated with one of the sessions
-			for (int i = 0; i < sessionCount; i++)
-			{
-				if (sessions.get(i).getSessionId().equals(sessionId))
-				{
+			for (int i = 0; i < sessionCount; i++){
+				if (sessions.get(i).getSessionId().equals(sessionId)){
 					return;
 				}
 			}
@@ -66,22 +59,19 @@ public class ConcurrentSessionControlStrategyImpl extends ConcurrentSessionContr
 		allowableSessionsExceeded(sessionId, sessions, allowableSessions, getSessionRegistry(), auth.getDetails());
 	}
 
-	protected void allowableSessionsExceeded(String sessionId, List<SessionInformation> sessions, int allowableSessions,
-			SessionRegistry registry, Object authenticationDetail)
-	{
+	protected void allowableSessionsExceeded(String sessionId, List<SessionInformation> sessions, int allowableSessions, SessionRegistry registry, Object authenticationDetail){
 		boolean exceptionIfMaximumExceeded = true;
 		
-//		if (authenticationDetail instanceof MYWebAuthenticationDetails)
+//		if (authenticationDetail instanceof CustomAuthenticationDetailsSource)
 //		{
-//			MYWebAuthenticationDetails authDetails = (MYWebAuthenticationDetails) authenticationDetail;
+//			CustomAuthenticationDetailsSource authDetails = (CustomAuthenticationDetailsSource) authenticationDetail;
 //			exceptionIfMaximumExceeded = authDetails.isExceptionIfMaximumSessionsExceeded();
 //		}
 //
 //		if (exceptionIfMaximumExceeded || (sessions == null))
 //		{
 //			throw new ConcurrentLoginException(messages.getMessage("ConcurrentSessionControllerImpl.exceededAllowed",
-//					new Object[]
-//					           { new Integer(allowableSessions) }, "Maximum sessions of {0} for this principal exceeded"));
+//					new Object[] { new Integer(allowableSessions) }, "Maximum sessions of {0} for this principal exceeded"));
 //		}
 
 		// Determine least recently used session, and mark it for invalidation

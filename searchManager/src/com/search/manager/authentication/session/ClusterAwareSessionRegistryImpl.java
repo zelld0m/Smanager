@@ -5,14 +5,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 
-public class ClusterAwareSessionRegistryImpl implements SessionRegistry {
+public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 
 	private static final Logger logger = Logger.getLogger(ClusterAwareSessionRegistryImpl.class);
 	
 	@Override
 	public List<Object> getAllPrincipals() {
+				
 		List<Object> principals = new ArrayList<Object>();
 		
 		return principals;
