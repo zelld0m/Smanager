@@ -92,7 +92,7 @@
     		</tbody>
     	</table>    	
 	</div>
-	<div align="right" class="padR5">
+	<div align="right" class="padR15 padT10">
 		<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="exportBtn">Export to Excel</div></a>
 	</div>
 	<div class="clearB"></div>

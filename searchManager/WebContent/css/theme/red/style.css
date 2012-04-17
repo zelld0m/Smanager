@@ -206,7 +206,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset .tblAlpha 			{ border:1px solid #a6a6a6; border-collapse:collapse; margin:3px auto; }
 .cssReset .tblAlpha th 			{ border:1px solid #a6a6a6; background:url(images/bg_th.gif) repeat-x #535353; font:bold 12px Arial, Helvetica, sans-serif; color:#fff; padding:12px 3px; }
 .cssReset .tblAlpha th.hl 		{ background:url(images/bg_thBlue.gif) repeat-x #0560a6; }
-.cssReset .tblAlpha td 			{ border:1px solid #a6a6a6; font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; color:#444444 }
+.cssReset .tblAlpha td 			{ border:1px solid #a6a6a6; font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; color:#444444; vertical-align:top }
 .cssReset .tblAlpha td.alt, 
 .cssReset .alt, .alt			{ background:#ebebeb }
 .cssReset .tblAlpha td.hl		{ background:#e0f1fb }
@@ -553,12 +553,11 @@ background: -ms-linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* IE10+ */
 background: linear-gradient(top,  #ebebeb 0%,#b5b5b5 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebebeb', endColorstr='#b5b5b5',GradientType=0 ); /* IE6-8 */
 
-height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
-}
+height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0;  }
 
 .footerFix ul#dockIcon			{ list-style:none; float:right; display: inline; }
-.footerFix ul#dockIcon li					{ height: 38px; margin:-6px 0 0 0; float:left; display:inline }
-.footerFix ul#dockIcon li a					{ height: 38px; padding:0 20px; float:left; display:inline }
+.footerFix ul#dockIcon li		{ height: 38px; margin:-6px 0 0 0; float:left; display:inline }
+.footerFix ul#dockIcon li a		{ height: 38px; padding:0 20px; float:left; display:inline }
 
 .footerFix li.online a			{ background:url(../../../images/icon_online25.png) center center no-repeat; } 
 .footerFix li.online a:hover	{ background: url(../../../images/icon_online25_active.png) center center no-repeat #515151 }
@@ -577,8 +576,8 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .footerFix li.basket a.active	{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
 
 .footerFix .infoContainer		{ width:245px;  position: absolute; bottom:37px; background: #3a3a3a; z-index:9999; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
-.footerFix #dockBasket			{ right:120px; height:280px; }
-.footerFix #dockOnline			{ right:80px; height:280px; }
+.footerFix #dockBasket			{ right:120px; }
+.footerFix #dockOnline			{ right:80px; }
 .footerFix #dockNotification	{ right:40px; }
 .footerFix #dockAlert			{ right:0; height:280px; }
 
@@ -586,17 +585,18 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 /* notification */
 .footerFix h2.dockTitle						{ color:#3b79c2; font-weight:bold; margin:10px 10px 16px 10px; border-bottom:1px solid #454545; padding-bottom:4px }
 .footerFix  .listSU							{ list-style:none; margin-left:0; }
-.footerFix  .listSU li						{ color:#050505; padding:4px 4px 4px 0; }
+.footerFix  .listSU li						{ color:#050505; padding:4px 4px 4px 0;  word-wrap: break-word; }
 .footerFix  .listSU li.alt					{ background: none !important }
 .footerFix  .listSU li.all					{ }
 .footerFix  .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; height: auto }
 .listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px !important; }
-.footerFix .listSU li a 					{ color:#007cbf; text-decoration: none;  }
+.footerFix .listSU li a 					{ color:#007cbf; text-decoration: none; }
 
 .dockContent								{ height:280px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px; }
 
 p.notification								{ width:190px; word-wrap: break-word; }
-.notification span.user						{ font-weight: bold; color:#f3f3f3; }
+.notification span.user, 
+.infoContainer span.user						{ font-weight: bold; color:#f3f3f3; }
 .notification span.changedesc				{ color:#aaaaaa; font-weight: normal }	
 .notification span.elapsedtime				{ color:#3b79c2 }
 

@@ -14,7 +14,7 @@ body 							{ margin: 0px; }
 .cssReset .w72, .w72			{width: 72px !important}
 .cssReset .w80, .w80			{width: 80px}
 .cssReset .w83, .w83			{width: 83px}
-.cssReset .w85					{width: 85px}
+.cssReset .w85, .w85			{width: 85px}
 .cssReset .w90, .w90			{width:90px}
 .cssReset .w95, .w95			{width:95px}
 .cssReset .w100, .w100			{width:100px}
@@ -291,6 +291,8 @@ body 							{ margin: 0px; }
 		margin:0px;
 		padding:0px;
 }
+
+.cssReset .breakWord, .breakWord { word-wrap: break-word; /* Internet Explorer 5.5+ */ }
 
 .cssReset .cursorP 				{ cursor:pointer }
 

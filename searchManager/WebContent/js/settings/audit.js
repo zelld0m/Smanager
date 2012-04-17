@@ -27,8 +27,8 @@
 
 				for (var i = 0; i < audits.length; i++) {
 					audit = audits[i];
-					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\">' + audit.referenceId + '</td><td class=\"txtAC\">' + audit.username + '</td>' +
-							'<td class=\"txtAC\">' + audit.entity + '</td><td class=\"txtAC\">' + audit.operation + '</td><td class=\"txtAC\">' + audit.keyword + '</td><td class=\"txtAC\">' + audit.details + '</td></tr>');
+					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\"><p class="breakWord w100">' + audit.referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
+							'<td class=\"txtAC\"><p class="breakWord w80">' + audit.entity + '</p></td><td class=\"txtAC\"><p class="breakWord w90">' + audit.operation + '</p></td><td class=\"txtAC\">' + audit.keyword + '</td><td><p class="breakWord w135">' + audit.details + '</p></td></tr>');
 				}
 				addFieldValuesPaging(curPage, totalSize);
 			},
