@@ -28,6 +28,8 @@
 		 <property name="locations" value="classpath:friggin_dev_database.properties"/>-->
 	</bean>  
 		
+	<context:annotation-config />	
+
 	<!-- Scans within the base package of the application for @Components to configure as beans,
 		 @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager" />
@@ -37,6 +39,7 @@
 	
 	<!-- Enables AOP -->
 	<aop:aspectj-autoproxy/>
+
 	<bean id="pointcutMgr" name="pointcutMgr" class="com.search.manager.aop.SystemArchitecture"></bean>
 	
 	<!-- Audit Interceptor -->
@@ -45,9 +48,18 @@
     <!-- Login Interceptor -->
 	<bean id="loginInterceptor" name="loginInterceptor" class="com.search.manager.aop.LoginInterceptor"/>
     
-	<!-- Loads DWR-related configuration      
-	<import resource="dwr-context.xml" /-->
+	<!-- Loads DWR-related configuration -->      
+	<import resource="dwr-context.xml" />
 	
+	<!-- Loads Spring Security -->      
+	<import resource="spring-security.xml" />
+	
+	<!-- Enables our custom @ActiveUser annotation. -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	    <property name="customArgumentResolver" ref="activeUserResolver" />
+	</bean>
+	<bean id="activeUserResolver" class="com.search.manager.authentication.session.ActiveUserWebArgumentResolver" />
+		
 	<bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
 			<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
 <!-- 	 		
@@ -71,10 +83,5 @@
  
 	<bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
 		<constructor-arg ref="dataSource_solr" />
-	</bean>
-	
-	<!-- Utility Beans -->
-	<bean name="redirectUtility" class="com.search.manager.utility.RedirectUtility" scope="singleton">
-		<property name="daoService" ref="daoService"/>
 	</bean>
 </beans>

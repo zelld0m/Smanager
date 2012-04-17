@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -19,11 +20,13 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 		creatorParams = @Param(name = "beanName", value = "utilityService")
 )
 public class UtilityService {
-
+	
+	private static final Logger logger = Logger.getLogger(UtilityService.class);
+	
 	@RemoteMethod
 	public static String getUsername(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
+		
 		if (principal==null || !(principal instanceof UserDetailsImpl)) return "";
 
 		return ((UserDetailsImpl) principal).getUsername();

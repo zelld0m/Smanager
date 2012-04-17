@@ -38,7 +38,7 @@
 	Set most 3rd party open source code to run at info warn.
 	-->
 	<logger name="org" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="consoleAppender" />
 		<appender-ref ref="fileAppender" />
 	</logger>
