@@ -11,13 +11,18 @@ import org.springframework.jdbc.object.StoredProcedure;
 /**
  * Base class for Create, Update, Delete StoredProcedure classes
  */
-public class CUDStoredProcedure extends StoredProcedure {
+public abstract class CUDStoredProcedure extends StoredProcedure {
 	public CUDStoredProcedure(JdbcTemplate jdbcTemplate, String storeProcedureName) {
         super(jdbcTemplate, storeProcedureName);
-        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Integer>() {
+        declareParameters();
+        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_RESULT, new RowMapper<Integer>() {
         	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
                 return rs.getInt(DAOConstants.COLUMN_RESULT);
         	}
         }));
+        compile();
 	}
+	
+	protected abstract void declareParameters();
+	
 }

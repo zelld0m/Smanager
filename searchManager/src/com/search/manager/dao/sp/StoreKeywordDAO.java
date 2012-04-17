@@ -3,23 +3,20 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.aop.Audit;
+import com.search.manager.dao.DaoException;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
@@ -30,8 +27,6 @@ public class StoreKeywordDAO {
 	public StoreKeywordDAO() {
 	}
 	
-	private Logger logger = Logger.getLogger(this.getClass());
-
 	private AddStoreKeywordStoredProcedure addSp;
 	private GetStoreKeywordStoredProcedure getSp;
 	
@@ -39,18 +34,34 @@ public class StoreKeywordDAO {
 	// update
 	// delete
 	
-	private class AddStoreKeywordStoredProcedure extends StoredProcedure {
+	private class AddStoreKeywordStoredProcedure extends CUDStoredProcedure {
 	    public AddStoreKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_STORE_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class GetStoreKeywordStoredProcedure extends StoredProcedure {
+	private class GetStoreKeywordStoredProcedure extends GetStoredProcedure {
 	    public GetStoreKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_STORE_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXACT_MATCH, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<StoreKeyword>() {
 	        	public StoreKeyword mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new StoreKeyword(
@@ -58,18 +69,7 @@ public class StoreKeywordDAO {
 	                		new Keyword(rs.getString(DAOConstants.COLUMN_PROD_KEYWORD_ID),rs.getString(DAOConstants.COLUMN_KEYWORD)));
 	        	}
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXACT_MATCH, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
 	public StoreKeywordDAO(JdbcTemplate jdbcTemplate) {
@@ -78,53 +78,34 @@ public class StoreKeywordDAO {
     }
 
 	@Audit(entity = Entity.storeKeyword, operation = Operation.add)
-    public int addStoreKeyword(String storeId, String keyword) throws DataAccessException {
-    	int i = -1;
-		if (!StringUtils.isEmpty(keyword)) {
-			storeId= storeId.toLowerCase().trim();
-			keyword = keyword.toLowerCase().trim();
+    public int addStoreKeyword(StoreKeyword storeKeyword) throws DaoException {
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
 	    	Map<String, String> inputs = new HashMap<String, String>();
-	        inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-	        inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
-            return DAOUtils.getUpdateCount(addSp.execute(inputs));
+	        inputs.put(DAOConstants.PARAM_STORE_ID, storeKeyword.getStoreId());
+	        inputs.put(DAOConstants.PARAM_KEYWORD, storeKeyword.getKeywordId());
+	        return DAOUtils.getUpdateCount(addSp.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during addStoreKeyword()", e);
     	}
-    	return i;
     }
     
-    @SuppressWarnings("unchecked")
-    public RecordSet<StoreKeyword> getStoreKeywords(String storeId, String keyword, Integer startRow, Integer numRows) throws DataAccessException {
-    	List<StoreKeyword> keywords = new ArrayList<StoreKeyword>();
-    	int size = 0;
-    	if (keyword == null) {
-			keyword = "";
-		}
-		storeId = storeId.toLowerCase().trim();
-		keyword = keyword.toLowerCase().trim();
-
-		if (startRow == null) {
-			startRow = 0;
-		}
-		if (numRows == null) {
-			numRows = 0;
-		}
-		
-		Map<String, Object> inputs = new HashMap<String, Object>();
-        inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-        inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
-        inputs.put(DAOConstants.PARAM_START_ROW, startRow);
-        inputs.put(DAOConstants.PARAM_END_ROW, numRows);
-        inputs.put(DAOConstants.PARAM_EXACT_MATCH, 0);
-        Map<String,Object> result = getSp.execute(inputs);
-        if (result != null) {
-        	keywords.addAll((List<StoreKeyword>)result.get(DAOConstants.RESULT_SET_1));
-        	size = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
-        }
-    	return new RecordSet<StoreKeyword>(keywords, size);
+    public RecordSet<StoreKeyword> getStoreKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException {
+		try {
+			StoreKeyword sk = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(sk));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, StringUtils.trimToEmpty(DAOUtils.getKeywordId(sk)));
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_EXACT_MATCH, 0);
+	        return DAOUtils.getRecordSet(getSp.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during getStoreKeywords()", e);
+    	}
     }
 
-    @SuppressWarnings("unchecked")
-    public StoreKeyword getStoreKeyword(String storeId, String keyword) throws DataAccessException {
-    	StoreKeyword sk = null;
+    public StoreKeyword getStoreKeyword(String storeId, String keyword) throws DaoException {
 		if (keyword == null) {
 			keyword = "";
 		}
@@ -136,14 +117,7 @@ public class StoreKeywordDAO {
         inputs.put(DAOConstants.PARAM_START_ROW, 0);
         inputs.put(DAOConstants.PARAM_END_ROW, 0);
         inputs.put(DAOConstants.PARAM_EXACT_MATCH, 1);
-        Map<String,Object> result = getSp.execute(inputs);
-        if (result != null) {
-        	List<StoreKeyword> list = (List<StoreKeyword>)result.get(DAOConstants.RESULT_SET_1);
-        	if (list != null && !list.isEmpty()) {
-            	sk = list.get(0);
-        	}
-        }
-    	return sk;
+        return DAOUtils.getItem(getSp.execute(inputs));
     }
     
 }

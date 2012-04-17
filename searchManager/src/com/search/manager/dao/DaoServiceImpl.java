@@ -222,17 +222,13 @@ public class DaoServiceImpl implements DaoService {
 
 	/* Keywords */
 	@Override
-	public int addKeyword(String storeId, String keyword) {
-		if (StringUtils.isEmpty(keyword)) {
-			return -1;
-		}
-		if (getKeyword(storeId, keyword) == null) {
-			keyword = keyword.toLowerCase().trim();
-			Keyword k = keywordDAO.getKeyword(keyword);
+	public int addKeyword(StoreKeyword storeKeyword) throws DaoException {
+		if (StringUtils.isNotEmpty(DAOUtils.getKeywordId(storeKeyword)) && StringUtils.isNotEmpty(DAOUtils.getStoreId(storeKeyword))) {
+			Keyword k = keywordDAO.getKeyword(storeKeyword.getKeyword());
 			if (k == null) {
-				keywordDAO.addKeyword(keyword);
+				keywordDAO.addKeyword(storeKeyword.getKeyword());
 			}
-		    return storeKeywordDAO.addStoreKeyword(storeId, keyword);
+		    return storeKeywordDAO.addStoreKeyword(storeKeyword);
 		}
 		return -1;
 	}
@@ -248,28 +244,32 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public StoreKeyword getKeyword(String storeId, String keyword) {
+	public StoreKeyword getKeyword(String storeId, String keyword) throws DaoException {
 		return storeKeywordDAO.getStoreKeyword(storeId, keyword);
 	}
 
 	@Override
-	public RecordSet<StoreKeyword> getAllKeywords(String storeId) {
-		return storeKeywordDAO.getStoreKeywords(storeId, "", 0, 0);
+	public RecordSet<StoreKeyword> getAllKeywords(String storeId) throws DaoException {
+		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, ""), null, null, 0, 0);
+		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
 	@Override
-	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) {
-		return storeKeywordDAO.getStoreKeywords(storeId, "", (page - 1) * itemsPerPage + 1, page * itemsPerPage);
+	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException {
+		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, ""), null, null, page, itemsPerPage);
+		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
 	@Override
-	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword) {
-		return storeKeywordDAO.getStoreKeywords(storeId, keyword, 0, 0);
+	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword) throws DaoException {
+		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, keyword), null, null, 0, 0);
+		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
 	@Override
-	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) {
-		return storeKeywordDAO.getStoreKeywords(storeId, keyword, (page - 1) * itemsPerPage + 1, page * itemsPerPage);
+	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) throws DaoException {
+		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, keyword), null, null, page, itemsPerPage);
+		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 	
 	/* Elevate */
@@ -309,6 +309,11 @@ public class DaoServiceImpl implements DaoService {
 		return elevateDAO.removeElevate(elevate);
 	}
 
+	@Override
+	public int clearElevateResult(StoreKeyword keyword) throws DaoException {
+		return elevateDAO.clearElevate(keyword);
+	}
+	
 	@Override
 	public int updateElevateResult(ElevateResult elevate) throws DaoException {
 		return elevateDAO.updateElevate(elevate);
@@ -352,6 +357,11 @@ public class DaoServiceImpl implements DaoService {
 		return excludeDAO.removeExclude(exclude);
 	}
 
+	@Override
+	public int clearExcludeResult(StoreKeyword keyword) throws DaoException {
+		return excludeDAO.clearExclude(keyword);
+	}
+	
 	@Override
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.getExcludeItem(exclude);
@@ -747,6 +757,5 @@ public class DaoServiceImpl implements DaoService {
 			SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
 		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
 	}
-
 
 }

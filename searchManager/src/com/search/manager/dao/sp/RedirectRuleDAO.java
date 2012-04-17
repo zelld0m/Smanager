@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
@@ -48,9 +47,22 @@ public class RedirectRuleDAO {
 		}
 	}
 	
-	private class GetRedirectRuleStoredProcedure extends StoredProcedure {
+	private class GetRedirectRuleStoredProcedure extends GetStoredProcedure {
 	    public GetRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
 	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new RedirectRule(
@@ -68,23 +80,16 @@ public class RedirectRuleDAO {
 	                		);
 	        	}
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 
-	private class AddRedirectRuleStoredProcedure extends StoredProcedure {
+	private class AddRedirectRuleStoredProcedure extends CUDStoredProcedure {
 	    public AddRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_REDIRECT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -93,13 +98,16 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.TINYINT));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateRedirectRuleStoredProcedure extends StoredProcedure {
+	private class UpdateRedirectRuleStoredProcedure extends CUDStoredProcedure {
 	    public UpdateRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_REDIRECT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
@@ -107,16 +115,18 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.TINYINT));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class DeleteRedirectRuleStoredProcedure extends StoredProcedure {
+	private class DeleteRedirectRuleStoredProcedure extends CUDStoredProcedure {
 	    public DeleteRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_REDIRECT);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
-	        compile();
 	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.INTEGER));
+		}
 	}
 	
     @Audit(entity = Entity.queryCleaning, operation = Operation.delete)

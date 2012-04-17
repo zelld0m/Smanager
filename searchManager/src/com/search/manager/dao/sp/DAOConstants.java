@@ -6,6 +6,8 @@ public class DAOConstants {
 	public static final String RESULT_SET_1 						= "#result-set-1";
 	public static final String RESULT_SET_2 						= "#result-set-2";
 	public static final String RESULT_SET_3 						= "#result-set-3";
+	public static final String RESULT_SET_TOTAL 					= "#result-set-total";
+	public static final String RESULT_SET_RESULT					= "#result-set-result";
 	
 	/* Stored Procedure Names */
 	// KEYWORD

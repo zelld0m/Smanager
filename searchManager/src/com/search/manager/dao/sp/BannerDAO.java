@@ -3,7 +3,6 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Banner;
@@ -45,9 +43,13 @@ public class BannerDAO {
     	appendCommentSP = new AppendBannerCommentStoredProcedure(jdbcTemplate);
     }
 
-	private class AddBannerStoredProcedure extends StoredProcedure {
+	private class AddBannerStoredProcedure extends CUDStoredProcedure {
 	    public AddBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_BANNER);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -55,13 +57,24 @@ public class BannerDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LINK_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class GetBannerStoredProcedure extends StoredProcedure {
+	private class GetBannerStoredProcedure extends GetStoredProcedure {
 	    public GetBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_BANNER);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Banner>() {
 	            public Banner mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -77,63 +90,78 @@ public class BannerDAO {
                 		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
             			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
-	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+	        }));			
+		}
 	}
 	
-	private class UpdateBannerStoredProcedure extends StoredProcedure {
+	private class UpdateBannerStoredProcedure extends CUDStoredProcedure {
 	    public UpdateBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IMAGE_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_LINK_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class DeleteBannerStoredProcedure extends StoredProcedure {
+	private class DeleteBannerStoredProcedure extends CUDStoredProcedure {
 	    public DeleteBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_BANNER);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
-	        compile();
 	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
+		}
 	}
 	
-	private class UpdateBannerCommentStoredProcedure extends StoredProcedure {
+	private class UpdateBannerCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateBannerCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_BANNER_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class AppendBannerCommentStoredProcedure extends StoredProcedure {
+	private class AppendBannerCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendBannerCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_BANNER_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class SearchBannerStoredProcedure extends StoredProcedure {
+	private class SearchBannerStoredProcedure extends GetStoredProcedure {
 	    public SearchBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_SEARCH_BANNER);
+	   }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_BANNER, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Banner>() {
 	            public Banner mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -150,17 +178,6 @@ public class BannerDAO {
             			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_BANNER, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
 	   }
 	}
 	
@@ -168,7 +185,11 @@ public class BannerDAO {
 	public int addBanner(Banner banner) throws DaoException {
     	try {
         	Map<String, Object> inputs = new HashMap<String, Object>();
-            inputs.put(DAOConstants.PARAM_BANNER_ID, DAOUtils.generateUniqueId());
+        	String bannerId = banner.getBannerId();
+        	if (StringUtils.isEmpty(bannerId)) {
+        		bannerId = DAOUtils.generateUniqueId();
+        	}
+            inputs.put(DAOConstants.PARAM_BANNER_ID, bannerId);
             inputs.put(DAOConstants.PARAM_BANNER_NAME, StringUtils.trimToEmpty(banner.getBannerName()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(banner.getStore()));
             inputs.put(DAOConstants.PARAM_IMAGE_URL, StringUtils.trimToEmpty(banner.getImagePath()));

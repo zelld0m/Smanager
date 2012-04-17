@@ -1,6 +1,5 @@
 package com.search.manager.model;
 
-import java.awt.datatransfer.StringSelection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

@@ -44,6 +44,10 @@ public class ElevateDAO {
 	private class AddElevateStoredProcedure extends CUDStoredProcedure {
 	    public AddElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_ELEVATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
@@ -52,13 +56,26 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class GetElevateStoredProcedure extends StoredProcedure {
+	private class GetElevateStoredProcedure extends GetStoredProcedure {
 	    public GetElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ElevateResult>() {
 	            public ElevateResult mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -75,19 +92,7 @@ public class ElevateDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 
 	private class GetElevateItemStoredProcedure extends StoredProcedure {
@@ -116,9 +121,21 @@ public class ElevateDAO {
 	    }
 	}
 	
-	private class GetNoExpiryElevateStoredProcedure extends StoredProcedure {
+	private class GetNoExpiryElevateStoredProcedure extends GetStoredProcedure {
 	    public GetNoExpiryElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ElevateResult>() {
 	            public ElevateResult mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -135,75 +152,80 @@ public class ElevateDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
 	private class UpdateElevateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
 	private class UpdateElevateExpiryDateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_EXPIRY_DATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));	
+		}
 	}
 	
 	private class UpdateElevateCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
 	private class AppendElevateCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_ELEVATE_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
 	private class DeleteElevateStoredProcedure extends CUDStoredProcedure {
 	    public DeleteElevateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_ELEVATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
 	public ElevateDAO(JdbcTemplate jdbcTemplate) {
@@ -221,6 +243,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.add)
     public int addElevate(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
     		String keyword = DAOUtils.getKeywordId(elevate.getStoreKeyword());
 	    	if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = StringUtils.lowerCase(StringUtils.trim(elevate.getStoreKeyword().getStoreId()));
@@ -297,6 +320,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.update)
     public int updateElevate(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
@@ -312,6 +336,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.updateExpiryDate)
     public int updateElevateExpiryDate(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
@@ -327,6 +352,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.updateComment)
     public int updateElevateComment(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
@@ -342,6 +368,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.appendComment)
     public int appendElevateComment(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
@@ -357,6 +384,7 @@ public class ElevateDAO {
 	@Audit(entity = Entity.elevate, operation = Operation.delete)
     public int removeElevate(ElevateResult elevate) throws DaoException {
 		try {
+    		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
@@ -367,4 +395,18 @@ public class ElevateDAO {
 		}
     }
 
+	@Audit(entity = Entity.elevate, operation = Operation.clear)
+    public int clearElevate(StoreKeyword storeKeyword) throws DaoException {
+		try {
+    		DAOValidation.checkStoreKeywordPK(storeKeyword);
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(storeKeyword));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(storeKeyword));
+	        inputs.put(DAOConstants.PARAM_VALUE, null);
+            return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during clearElevate()", e);
+		}
+    }
+	
 }

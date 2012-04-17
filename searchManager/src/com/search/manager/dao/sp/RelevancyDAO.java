@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 
+import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -24,6 +24,8 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 public class RelevancyDAO {
 
@@ -71,9 +73,13 @@ public class RelevancyDAO {
     	searchRelevancyKeywordSP = new SearchRelevancyKeywordStoredProcedure(jdbcTemplate);
     }
 	
-	private class AddRelevancyStoredProcedure extends StoredProcedure {
+	private class AddRelevancyStoredProcedure extends CUDStoredProcedure {
 	    public AddRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_RELEVANCY);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, Types.VARCHAR));
@@ -82,89 +88,26 @@ public class RelevancyDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class GetRelevancyStoredProcedure extends StoredProcedure {
+	private class GetRelevancyStoredProcedure extends GetStoredProcedure {
 	    public GetRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_RELEVANCY);
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Relevancy>() {
-	            public Relevancy mapRow(ResultSet rs, int rowNum) throws SQLException
-	            {
-	            	return new Relevancy(
-	                		rs.getString(DAOConstants.COLUMN_RELEVANCY_ID),
-	                		rs.getString(DAOConstants.COLUMN_NAME),
-	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
-	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
-	                		rs.getString(DAOConstants.COLUMN_COMMENT),
-	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
-	            }
-	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
-	}
-	
-	private class UpdateRelevancyStoredProcedure extends StoredProcedure {
-	    public UpdateRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
-	}
-	
-	private class DeleteRelevancyStoredProcedure extends StoredProcedure {
-	    public DeleteRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-	        compile();
-	    }
-	}
-	
-	private class UpdateRelevancyCommentStoredProcedure extends StoredProcedure {
-	    public UpdateRelevancyCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY_COMMENT);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
-	}
-	
-	private class AppendRelevancyCommentStoredProcedure extends StoredProcedure {
-	    public AppendRelevancyCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_APPEND_RELEVANCY_COMMENT);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
-	}
+		}
 
-	private class SearchRelevancyStoredProcedure extends StoredProcedure {
-	    public SearchRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_SEARCH_RELEVANCY);
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Relevancy>() {
 	            public Relevancy mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -182,11 +125,69 @@ public class RelevancyDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
+		}
+	}
+	
+	private class UpdateRelevancyStoredProcedure extends CUDStoredProcedure {
+	    public UpdateRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+		}
+	}
+	
+	private class DeleteRelevancyStoredProcedure extends CUDStoredProcedure {
+	    public DeleteRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+		}
+	}
+	
+	private class UpdateRelevancyCommentStoredProcedure extends CUDStoredProcedure {
+	    public UpdateRelevancyCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+		}
+	}
+	
+	private class AppendRelevancyCommentStoredProcedure extends CUDStoredProcedure {
+	    public AppendRelevancyCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_APPEND_RELEVANCY_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+		}
+	}
+
+	private class SearchRelevancyStoredProcedure extends GetStoredProcedure {
+	    public SearchRelevancyStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_SEARCH_RELEVANCY);
+	    }
+
+		@Override
+		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, Types.INTEGER));
@@ -194,24 +195,59 @@ public class RelevancyDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Relevancy>() {
+	            public Relevancy mapRow(ResultSet rs, int rowNum) throws SQLException
+	            {
+	            	return new Relevancy(
+	                		rs.getString(DAOConstants.COLUMN_RELEVANCY_ID),
+	                		rs.getString(DAOConstants.COLUMN_NAME),
+	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
+	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
+	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
+	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
+	                		rs.getString(DAOConstants.COLUMN_COMMENT),
+	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
+	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
+                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	            }
+	        }));
+		}
 	}
 
-	private class AddRelevancyFieldStoredProcedure extends StoredProcedure {
+	private class AddRelevancyFieldStoredProcedure extends CUDStoredProcedure {
 	    public AddRelevancyFieldStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_RELEVANCY_FIELD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class GetRelevancyFieldStoredProcedure extends StoredProcedure {
+	private class GetRelevancyFieldStoredProcedure extends GetStoredProcedure {
 	    public GetRelevancyFieldStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_RELEVANCY_FIELD);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RelevancyField>() {
 	            public RelevancyField mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -225,53 +261,64 @@ public class RelevancyDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateRelevancyFieldStoredProcedure extends StoredProcedure {
+	private class UpdateRelevancyFieldStoredProcedure extends CUDStoredProcedure {
 	    public UpdateRelevancyFieldStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY_FIELD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class DeleteRelevancyFieldStoredProcedure extends StoredProcedure {
+	private class DeleteRelevancyFieldStoredProcedure extends CUDStoredProcedure {
 	    public DeleteRelevancyFieldStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY_FIELD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FIELD_NAME, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class AddRelevancyKeywordStoredProcedure extends StoredProcedure {
+	private class AddRelevancyKeywordStoredProcedure extends CUDStoredProcedure {
 	    public AddRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_RELEVANCY_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class GetRelevancyKeywordStoredProcedure extends StoredProcedure {
+	private class GetRelevancyKeywordStoredProcedure extends GetStoredProcedure {
 	    public GetRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_RELEVANCY_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RelevancyKeyword>() {
 	            public RelevancyKeyword mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -285,42 +332,55 @@ public class RelevancyDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateRelevancyKeywordStoredProcedure extends StoredProcedure {
+	private class UpdateRelevancyKeywordStoredProcedure extends CUDStoredProcedure {
 	    public UpdateRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RELEVANCY_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class DeleteRelevancyKeywordStoredProcedure extends StoredProcedure {
+	private class DeleteRelevancyKeywordStoredProcedure extends CUDStoredProcedure {
 	    public DeleteRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_RELEVANCY_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class SearchRelevancyKeywordStoredProcedure extends StoredProcedure {
+	private class SearchRelevancyKeywordStoredProcedure extends GetStoredProcedure {
 	    public SearchRelevancyKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_SEARCH_RELEVANCY_KEYWORD);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EXACT_MATCH, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RelevancyKeyword>() {
 	            public RelevancyKeyword mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -334,22 +394,7 @@ public class RelevancyDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_EXACT_MATCH, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 
     public int saveRelevancy(Relevancy relevancy) throws DaoException {
@@ -358,33 +403,24 @@ public class RelevancyDAO {
     	// TODO: save parameters??
     }
 
+	@Audit(entity = Entity.relevancy, operation = Operation.add)
 	public String addRelevancyAndGetId(Relevancy relevancy) throws DaoException {
-    	try {
-    		DAOValidation.checkStoreId(relevancy.getStore());
-        	Map<String, Object> inputs = new HashMap<String, Object>();
-        	String id = DAOUtils.generateUniqueId();
-            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, id);
-            inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
-            inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
-            inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(relevancy.getStore()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDate());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDate());
-            inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
-            inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancy.getCreatedBy()));
-            addSP.execute(inputs);
-            return id;
-    	}
-    	catch (Exception e) {
-    		throw new DaoException("Failed during addAndGetRelevancy(): " + e.getMessage(), e);
-    	}
+		String id = DAOUtils.generateUniqueId();
+		relevancy.setRelevancyId(id);
+		return (addRelevancy(relevancy) > 0) ?  id : null;
     }
 	
+	@Audit(entity = Entity.relevancy, operation = Operation.add)
 	public int addRelevancy(Relevancy relevancy) throws DaoException {
     	try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancy(relevancy);
     		DAOValidation.checkStoreId(relevancy.getStore());
         	Map<String, Object> inputs = new HashMap<String, Object>();
-            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, DAOUtils.generateUniqueId());
+        	String relevancyId = relevancy.getRelevancyId();
+        	if (StringUtils.isEmpty(relevancyId)) {
+        		relevancyId = DAOUtils.generateUniqueId();
+        	}
+            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancyId);
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(relevancy.getStore()));
@@ -399,9 +435,10 @@ public class RelevancyDAO {
     	}
     }
 	
+	@Audit(entity = Entity.relevancy, operation = Operation.update)
 	public int updateRelevancy(Relevancy relevancy) throws DaoException {
     	try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancyPK(relevancy);
         	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
@@ -416,9 +453,10 @@ public class RelevancyDAO {
     	}
     }
 
+	@Audit(entity = Entity.relevancy, operation = Operation.delete)
     public int deleteRelevancy(Relevancy relevancy) throws DaoException {
 		try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
         	return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
@@ -481,7 +519,7 @@ public class RelevancyDAO {
 	
 	public Relevancy getRelevancyDetails(Relevancy relevancy) throws DaoException {
 		try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_STORE_ID, null);
@@ -521,9 +559,10 @@ public class RelevancyDAO {
     	}
 	}
 	
+	@Audit(entity = Entity.relevancy, operation = Operation.updateComment)
     public int updateRelevancyComment(Relevancy relevancy) throws DaoException {
 		try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
@@ -534,9 +573,10 @@ public class RelevancyDAO {
     	}
     }
     
+	@Audit(entity = Entity.relevancy, operation = Operation.appendComment)
     public int appendRelevancyComment(Relevancy relevancy) throws DaoException {
 		try {
-    		DAOValidation.checkRelevancyId(relevancy);
+    		DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
@@ -547,11 +587,14 @@ public class RelevancyDAO {
     	}
     }
 	
+	// For some reason, only the first method called is being monitored by AOP
+	@Audit(entity = Entity.relevancy, operation = Operation.saveRelevancyField)
     public int saveRelevancyField(RelevancyField relevancyField) throws DaoException {
     	return (getRelevancyField(relevancyField) == null) ? addRelevancyField(relevancyField)
     			: updateRelevancyField(relevancyField);
     }
     
+	@Audit(entity = Entity.relevancy, operation = Operation.addRelevancyField)
 	public int addRelevancyField(RelevancyField relevancyField) throws DaoException {
     	try {
     		DAOValidation.checkRelevancyFieldPK(relevancyField);
@@ -559,7 +602,7 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancyField.getRelevancy().getRelevancyId());
             inputs.put(DAOConstants.PARAM_FIELD_NAME, relevancyField.getFieldName());
             inputs.put(DAOConstants.PARAM_FIELD_VALUE, relevancyField.getFieldValue());
-            inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancyField.getCreatedBy()));
+            inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancyField.getCreatedBy()));            
             return DAOUtils.getUpdateCount(addRelevancyFieldSP.execute(inputs));
     	}
     	catch (Exception e) {
@@ -567,6 +610,7 @@ public class RelevancyDAO {
     	}
     }
 	
+	@Audit(entity = Entity.relevancy, operation = Operation.updateRelevancyField)
 	public int updateRelevancyField(RelevancyField relevancyField) throws DaoException {
     	try {
     		DAOValidation.checkRelevancyFieldPK(relevancyField);
@@ -582,6 +626,7 @@ public class RelevancyDAO {
     	}
     }
 
+	@Audit(entity = Entity.relevancy, operation = Operation.deleteRelevancyField)
     public int deleteRelevancyField(RelevancyField relevancyField) throws DaoException {
 		try {
 			DAOValidation.checkRelevancyFieldPK(relevancyField);
@@ -610,7 +655,7 @@ public class RelevancyDAO {
 	
 	public RecordSet<RelevancyField> getRelevancyFields(Relevancy relevancy) throws DaoException {
 		try {
-			DAOValidation.checkRelevancyId(relevancy);
+			DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_FIELD_NAME, null);
@@ -622,11 +667,13 @@ public class RelevancyDAO {
     	}
 	}
 
+	@Audit(entity = Entity.relevancy, operation = Operation.saveKeywordMapping)
     public int saveRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
     	return (getRelevancyKeyword(relevancyKeyword) == null) ? addRelevancyKeyword(relevancyKeyword)
-    			: saveRelevancyKeyword(relevancyKeyword);
+    			: updateRelevancyKeyword(relevancyKeyword);
     }
     
+	@Audit(entity = Entity.relevancy, operation = Operation.mapKeyword)
 	public int addRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
     	try {
     		DAOValidation.checkRelevancyKeywordPK(relevancyKeyword);
@@ -642,6 +689,7 @@ public class RelevancyDAO {
     	}
     }
 	
+	@Audit(entity = Entity.relevancy, operation = Operation.updateKeywordMapping)
 	public int updateRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
     	try {
     		DAOValidation.checkRelevancyKeywordPK(relevancyKeyword);
@@ -657,6 +705,7 @@ public class RelevancyDAO {
     	}
     }
 
+	@Audit(entity = Entity.relevancy, operation = Operation.unmapKeyword)
     public int deleteRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
 		try {
     		DAOValidation.checkRelevancyKeywordPK(relevancyKeyword);
@@ -685,7 +734,7 @@ public class RelevancyDAO {
 	
 	public RecordSet<RelevancyKeyword> getRelevancyKeywords(Relevancy relevancy) throws DaoException {
 		try {
-			DAOValidation.checkRelevancyId(relevancy);
+			DAOValidation.checkRelevancyPK(relevancy);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_KEYWORD, null);

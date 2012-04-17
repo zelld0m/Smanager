@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
-import org.springframework.jdbc.object.StoredProcedure;
 
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.NameValue;
@@ -44,6 +43,10 @@ public class AuditTrailDAO {
 	private class AddAuditTrailStoredProcedure extends CUDStoredProcedure {
 	    public AddAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_AUDIT_TRAIL);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_OPERATION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ENTITY, Types.VARCHAR));
@@ -52,34 +55,16 @@ public class AuditTrailDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DETAILS, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class GetAuditTrailStoredProcedure extends StoredProcedure {
+	private class GetAuditTrailStoredProcedure extends GetStoredProcedure {
 	    public GetAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_AUDIT_TRAIL);
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<AuditTrail>() {
-	            public AuditTrail mapRow(ResultSet rs, int rowNum) throws SQLException
-	            {
-	                return new AuditTrail(
-	                		rs.getString(DAOConstants.COLUMN_USER_NAME),
-	                		rs.getString(DAOConstants.COLUMN_ENTITY),
-	                		rs.getString(DAOConstants.COLUMN_OPERATION),
-	                		rs.getString(DAOConstants.COLUMN_STORE),
-	                		rs.getString(DAOConstants.COLUMN_KEYWORD),
-	                		rs.getString(DAOConstants.COLUMN_REFERENCE),
-	                		rs.getTimestamp(DAOConstants.COLUMN_DATE),
-	                		rs.getString(DAOConstants.COLUMN_DETAILS)
-	                		);
-	            }
-	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_OPERATION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ENTITY, Types.VARCHAR));
@@ -90,8 +75,26 @@ public class AuditTrailDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			 declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<AuditTrail>() {
+		            public AuditTrail mapRow(ResultSet rs, int rowNum) throws SQLException
+		            {
+		                return new AuditTrail(
+		                		rs.getString(DAOConstants.COLUMN_USER_NAME),
+		                		rs.getString(DAOConstants.COLUMN_ENTITY),
+		                		rs.getString(DAOConstants.COLUMN_OPERATION),
+		                		rs.getString(DAOConstants.COLUMN_STORE),
+		                		rs.getString(DAOConstants.COLUMN_KEYWORD),
+		                		rs.getString(DAOConstants.COLUMN_REFERENCE),
+		                		rs.getTimestamp(DAOConstants.COLUMN_DATE),
+		                		rs.getString(DAOConstants.COLUMN_DETAILS)
+		                		);
+		            }
+		        }));
+		}
 	}
 
 	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
@@ -118,7 +121,6 @@ public class AuditTrailDAO {
     	return i;
     }
     
-    @SuppressWarnings("unchecked")
     /**
      * Sample:
      	AuditTrail auditTest = new AuditTrail();
@@ -149,6 +151,7 @@ public class AuditTrailDAO {
         return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
+    @SuppressWarnings("unchecked")
 	public List<NameValue> getDropdownValues() {
 		return ddval.getJdbcTemplate().query(REFERENCE_SQL, new BeanPropertyRowMapper(NameValue.class));
 	}

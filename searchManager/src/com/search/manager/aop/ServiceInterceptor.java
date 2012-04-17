@@ -2,6 +2,8 @@ package com.search.manager.aop;
 
 import java.util.Date;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -9,12 +11,17 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.Relevancy;
+import com.search.manager.model.RelevancyField;
+import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.RedirectUtility;
 
@@ -84,13 +91,22 @@ public class ServiceInterceptor {
 			case queryCleaning:
 				logQueryCleaning(jp, auditable, auditTrail);
 				break;
+			case relevancy:
+				if (ArrayUtils.contains(AuditTrailConstants.relevancyOperations, auditable.operation())) {
+					logRelevancy(jp, auditable, auditTrail);					
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.relevancyFieldOperations, auditable.operation())) {
+					logRelevancyField(jp, auditable, auditTrail);
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.relevancyKeywordOperations, auditable.operation())) {
+					logRelevancyKeyword(jp, auditable, auditTrail);					
+				}
+				break;
 			case keyword:
-				// TODO: update DAO signature
-				//logKeyword(jp, auditable, auditTrail);
+				logKeyword(jp, auditable, auditTrail);
 				break;
 			case storeKeyword:
-				// TODO: update DAO signature
-				//logStoreKeyword(jp, auditable, auditTrail);
+				logStoreKeyword(jp, auditable, auditTrail);
 				break;
 		}
 	}
@@ -113,17 +129,20 @@ public class ServiceInterceptor {
 				auditTrail.setDetails(String.format("Removed elevated entry EDP[%1$s]",
 						auditTrail.getReferenceId()));
 				break;
-			case updateComment:
+			case appendComment:
 				auditTrail.setDetails(String.format("Appending comment [%2$s] for elevated entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getComment()));
 				break;
-			case appendComment:
+			case updateComment:
 				auditTrail.setDetails(String.format("Setting comment [%2$s] for elevated entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getComment()));
 				break;
 			case updateExpiryDate:
 				auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for elevated entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getExpiryDate()));
+				break;
+			case clear:
+				auditTrail.setDetails(String.format("Removed all elevated entries"));				
 				break;
 			default:
 				return;
@@ -145,11 +164,11 @@ public class ServiceInterceptor {
 				auditTrail.setDetails(String.format("Removed excluded entry EDP[%1$s]",
 						auditTrail.getReferenceId()));
 				break;
-			case updateComment:
+			case appendComment:
 				auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getComment()));
 				break;
-			case appendComment:
+			case updateComment:
 				auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getComment()));
 				break;
@@ -157,6 +176,8 @@ public class ServiceInterceptor {
 				auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry EDP[%1$s]",
 						auditTrail.getReferenceId(), e.getExpiryDate()));
 				break;
+			case clear:
+				auditTrail.setDetails(String.format("Removed all elevated entries"));				
 			default:
 				return;
 		}
@@ -170,7 +191,7 @@ public class ServiceInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Adding Keyword[%1$s].",
-						auditTrail.getReferenceId(),k.getKeywordId()));
+						auditTrail.getReferenceId()));
 				break;
 			default:
 				return;
@@ -186,7 +207,7 @@ public class ServiceInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Adding Keyword[%1$s] to Store[%2$s].",
-						auditTrail.getReferenceId(), sk.getKeywordId(), sk.getStoreId()));
+						sk.getKeywordId(), sk.getStoreId()));
 				break;
 			default:
 				return;
@@ -228,4 +249,112 @@ public class ServiceInterceptor {
 		this.auditTrailDAO = auditTrailDAO;
 	}
 	
+	private void logRelevancy(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		Relevancy relevancy = (Relevancy)jp.getArgs()[0];
+		auditTrail.setStoreId(DAOUtils.getStoreId(relevancy.getStore()));
+		auditTrail.setReferenceId(relevancy.getRelevancyId());
+		StringBuilder message = null;
+		switch (auditable.operation()) {
+			case add:
+				message = new StringBuilder("Adding relevancy[%1$s] with name[%2$s] and description[%3$s] to store[%4$s]");
+				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
+					message.append(" with schedule");
+					if (relevancy.getStartDate() != null) {
+						message.append(" from [%5$s]");						
+					}
+					if (relevancy.getEndDate() != null) {
+						message.append(" to [%6$s]");
+					}
+				}
+				auditTrail.setDetails(String.format(message.toString(),
+						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
+						DAOUtils.getStoreId(relevancy.getStore()), relevancy.getStartDate(), relevancy.getEndDate()));
+				break;
+			case update:
+				message = new StringBuilder("Updating relevancy[%1$s] with name[%2$s] and description[%3$s] ");
+				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
+					message.append(" with schedule");
+					if (relevancy.getStartDate() != null) {
+						message.append(" from [%4$s]");						
+					}
+					if (relevancy.getEndDate() != null) {
+						message.append(" to [%5$s]");
+					}					
+				}
+				auditTrail.setDetails(String.format(message.toString(),
+						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
+						relevancy.getStartDate(), relevancy.getEndDate()));
+				break;
+			case delete:
+				message = new StringBuilder("Deleting relevancy[%1$s]");
+				auditTrail.setDetails(String.format(message.toString(), relevancy.getRelevancyId()));
+				break;
+			case updateComment:
+				auditTrail.setDetails(String.format("Setting comment [%2$s] for relevancy[%1$s]",
+						auditTrail.getReferenceId(), relevancy.getComment()));
+				break;
+			case appendComment:
+				auditTrail.setDetails(String.format("Appending comment [%2$s] for relevancy[%1$s]",
+						auditTrail.getReferenceId(), relevancy.getComment()));
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+	
+	private void logRelevancyField(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RelevancyField relevancyField = (RelevancyField)jp.getArgs()[0];
+		auditTrail.setStoreId(DAOUtils.getStoreId(relevancyField.getRelevancy().getStore()));
+		auditTrail.setReferenceId(relevancyField.getRelevancy().getRelevancyId());
+		switch (auditable.operation()) {
+			case addRelevancyField:
+				auditTrail.setDetails(String.format("Adding new relevancy field[%2$s] for relevancy[%1$s] with value[%3$s]",
+						auditTrail.getReferenceId(), relevancyField.getFieldName(), relevancyField.getFieldValue()));				
+				break;
+			case updateRelevancyField:
+				auditTrail.setDetails(String.format("Updating relevancy field[%2$s] for relevancy[%1$s] with value[%3$s]",
+						auditTrail.getReferenceId(), relevancyField.getFieldName(), relevancyField.getFieldValue()));				
+				break;
+			case saveRelevancyField:
+				auditTrail.setDetails(String.format("Saving relevancy field[%2$s] for relevancy[%1$s] with value[%3$s]",
+						auditTrail.getReferenceId(), relevancyField.getFieldName(), relevancyField.getFieldValue()));				
+				break;
+			case deleteRelevancyField:
+				auditTrail.setDetails(String.format("Deleting relevancy field[%2$s] for relevancy[%1$s]",
+						auditTrail.getReferenceId(), relevancyField.getFieldName()));				
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+
+	private void logRelevancyKeyword(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RelevancyKeyword relevancyKeyword = (RelevancyKeyword)jp.getArgs()[0];
+		auditTrail.setStoreId(DAOUtils.getStoreId(relevancyKeyword.getRelevancy().getStore()));
+		auditTrail.setKeyword(DAOUtils.getKeywordId(relevancyKeyword.getKeyword()));
+		auditTrail.setReferenceId(relevancyKeyword.getRelevancy().getRelevancyId());
+		switch (auditable.operation()) {
+			case mapKeyword:
+				auditTrail.setDetails(String.format("Mapping keyword[%2$s] to relevancy[%1$s] with priority[%3$s]",
+						auditTrail.getReferenceId(), auditTrail.getKeyword(), relevancyKeyword.getPriority()));				
+				break;
+			case unmapKeyword:
+				auditTrail.setDetails(String.format("Unmapping keyword[%2$s] from relevancy[%1$s]",
+						auditTrail.getReferenceId(), auditTrail.getKeyword()));				
+				break;
+			case saveKeywordMapping:
+				auditTrail.setDetails(String.format("Saving priority[%3$s] of relevancy[%2$s] for keyword[%1$s]",
+						auditTrail.getReferenceId(), auditTrail.getKeyword(), relevancyKeyword.getPriority()));				
+				break;
+			case updateKeywordMapping:
+				auditTrail.setDetails(String.format("Setting priority[%3$s] of relevancy[%2$s] for keyword[%1$s]",
+						auditTrail.getReferenceId(), auditTrail.getKeyword(), relevancyKeyword.getPriority()));				
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
 }

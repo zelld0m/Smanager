@@ -3,6 +3,8 @@ package com.search.manager.dao.sp;
 import org.apache.commons.lang.StringUtils;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.model.ElevateResult;
+import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -22,6 +24,10 @@ public class DAOValidation {
     public final static String ERROR_MESSAGE_NO_KEYWORD_ID 				= "No keyword id provided";
     // STORE KEYWORD
     public final static String ERROR_MESSAGE_NO_STORE_KEYWORD			= "No store keyword provided";
+    // ELEVATE
+    public final static String ERROR_MESSAGE_NO_ELEVATE_VALUE			= "No elevate value provided";
+    // ELEVATE
+    public final static String ERROR_MESSAGE_NO_EXCLUDE_VALUE			= "No exclude value provided";    
     // RELEVANCY
     public final static String ERROR_MESSAGE_NO_RELEVANCY 				= "No relevancy provided";
     public final static String ERROR_MESSAGE_NO_RELEVANCY_ID			= "No relevancy id provided";
@@ -63,7 +69,23 @@ public class DAOValidation {
     	checkKeywordId(storeKeyword.getKeyword());
     }
     
-    public static void checkRelevancyId(Relevancy relevancy) throws DaoException {
+    public static void checkElevatePK(ElevateResult elevate) throws DaoException {
+    	checkObjectNotNull(elevate, ERROR_MESSAGE_NO_ELEVATE_VALUE);
+    	checkStoreKeywordPK(elevate.getStoreKeyword());    	
+		checkStringNotEmpty(elevate.getEdp(), ERROR_MESSAGE_NO_ELEVATE_VALUE);
+    }
+
+    public static void checkExcludePK(ExcludeResult exclude) throws DaoException {
+    	checkObjectNotNull(exclude, ERROR_MESSAGE_NO_EXCLUDE_VALUE);
+    	checkStoreKeywordPK(exclude.getStoreKeyword());    	
+		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
+    }
+
+    public static void checkRelevancy(Relevancy relevancy) throws DaoException {
+		checkObjectNotNull(relevancy, ERROR_MESSAGE_NO_RELEVANCY);
+    }
+    
+    public static void checkRelevancyPK(Relevancy relevancy) throws DaoException {
 		checkObjectNotNull(relevancy, ERROR_MESSAGE_NO_RELEVANCY);
 		checkStringNotEmpty(relevancy.getRelevancyId(), ERROR_MESSAGE_NO_RELEVANCY_ID);
     }
@@ -71,7 +93,7 @@ public class DAOValidation {
     public static void checkRelevancyFieldPK(RelevancyField relevancyField) throws DaoException {
 		checkObjectNotNull(relevancyField, ERROR_MESSAGE_NO_RELEVANCY_FIELD);
 		checkStringNotEmpty(relevancyField.getFieldName(), ERROR_MESSAGE_NO_RELEVANCY_FIELD_NAME);
-    	checkRelevancyId(relevancyField.getRelevancy());
+    	checkRelevancyPK(relevancyField.getRelevancy());
     }
     
     public static void checkRelevancyFieldName(String fieldName) throws DaoException {
@@ -80,7 +102,7 @@ public class DAOValidation {
     
     public static void checkRelevancyKeywordPK(RelevancyKeyword relevancyKeyword) throws DaoException {
 		DAOValidation.checkObjectNotNull(relevancyKeyword, DAOValidation.ERROR_MESSAGE_NO_RELEVANCY_KEYWORD);
-		DAOValidation.checkRelevancyId(relevancyKeyword.getRelevancy());
+		DAOValidation.checkRelevancyPK(relevancyKeyword.getRelevancy());
 		DAOValidation.checkKeywordId(relevancyKeyword.getKeyword());
     }
     
