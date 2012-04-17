@@ -81,7 +81,7 @@ public class StoreKeywordService {
 	public int addKeyword(String keyword) {
 		try {
 			logger.info(String.format("%s",keyword));
-			return daoService.addKeyword(UtilityService.getStoreName(), keyword);
+			return daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		} catch (DaoException e) {
 			logger.error("Failed during addKeyword()",e);
 		}

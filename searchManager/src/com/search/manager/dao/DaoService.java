@@ -34,7 +34,7 @@ public interface DaoService {
 	public void deleteStore(String storeId) throws DaoException;
 	
 	/* Keywords */
-	public int addKeyword(String storeId, String keyword) throws DaoException;
+	public int addKeyword(StoreKeyword storeKeyword) throws DaoException;
 	public StoreKeyword getKeyword(String storeId, String keyword) throws DaoException;
 	public StoreKeyword updateKeyword(String storeId, String oldKeyword, String newKeyword) throws DaoException;
 	public int deleteKeyword(String storeId, String keyword) throws DaoException;
@@ -94,6 +94,7 @@ public interface DaoService {
 	public int updateElevateResultComment(ElevateResult elevate) throws DaoException;
 	public int appendElevateResultComment(ElevateResult elevate) throws DaoException;
 	public int deleteElevateResult(ElevateResult elevate) throws DaoException;
+	public int clearElevateResult(StoreKeyword keyword) throws DaoException;
 	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateResult> getNoExpireElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException;
@@ -106,6 +107,7 @@ public interface DaoService {
 	public int appendExcludeResultComment(ExcludeResult exclude) throws DaoException;
 	public int updateExcludeResultExpiryDate(ExcludeResult exclude) throws DaoException;
 	public int deleteExcludeResult(ExcludeResult exclude) throws DaoException;
+	public int clearExcludeResult(StoreKeyword keyword) throws DaoException;
 	public int getExcludeResultCount(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException;
