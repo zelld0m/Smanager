@@ -5,12 +5,8 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/**
- * 
- */
 public class UserDetailsImpl implements UserDetails {
 
-	/**  */
 	private static final long serialVersionUID = -2502976220060750855L;
 
 	private Collection<GrantedAuthority> authorities;
@@ -29,14 +25,8 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean enabled;
 
-	/**
-	 * Default 
-	 */
-	public UserDetailsImpl() { 
-		// default
-	}
+	public UserDetailsImpl() {}
 	
-	/**  */
 	public UserDetailsImpl(Collection<GrantedAuthority> authorities, String password, String username, String fullName, boolean accountNonExpired,
 			boolean accountNonLocked, boolean credentialsNonExpired, boolean enabled) {
 		this.authorities = authorities;
@@ -116,6 +106,4 @@ public class UserDetailsImpl implements UserDetails {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}		
-	
-	
 }

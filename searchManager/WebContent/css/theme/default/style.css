@@ -599,6 +599,7 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .footerFix .listSU li.alt					{ background: none !important }
 .footerFix .listSU li.all					{ }
 .footerFix .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; }
+.footerFix .listSU li p.dockAlert			{ background: url(images/icon_alert.png) left 2px no-repeat; padding-left:18px; }
 .listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px; }
 .footerFix .listSU li a 					{ color:#007cbf; text-decoration: none;  }
 

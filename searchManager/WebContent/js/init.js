@@ -1,3 +1,6 @@
+/**
+ * Global DWR Handler
+ */
 dwr.engine.setTextHtmlHandler(function() {
 	window.alert("Your session has expired, please login again.");
 	document.location.href = document.location.href;
@@ -9,6 +12,15 @@ dwr.engine.setErrorHandler(function(msg, exc) {
 	alert(errMessage + '\n' + errInfo);
 });
 
+dwr.engine.setWarningHandler(function(msg, wrn) {
+	var wrnMessage = "Warning Message: " + msg;
+	var wrnInfo = "Warning Details: " + dwr.util.toDescriptiveString(wrn, 3);
+	alert(wrnMessage + '\n' + wrnInfo);
+});
+
+/**
+ * Global initialization of jQuery 
+ */
 (function($){
 	$(document).ready(function() {
 		var useTinyMCE = function(){

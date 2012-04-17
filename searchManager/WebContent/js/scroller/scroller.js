@@ -65,7 +65,7 @@ function addLoadEvent(fn) {
 addLoadEvent(function(){
 		if(theScroll.length>0) {
 		for(var i=0;i<theScroll.length;i++){
-			createDragger(i, "handle"+i, "root"+i, "thumb"+i, theScroll[i].clipW, theScroll[i].clipW, 3, theScroll[i].clipH-20);
+			createDragger(i, "handle"+i, "root"+i, "thumb"+i, theScroll[i].clipW, theScroll[i].clipW, 12, theScroll[i].clipH-30);
 		}
 	}
 }) 

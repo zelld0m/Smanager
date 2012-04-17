@@ -54,6 +54,22 @@ ul.tabbernav li a
  
 }
 
+.qtip ul.tabbernav li a
+{
+ padding: 2xp 8px;
+ margin-left: 3px;
+ border-top: 1px solid #bdbdbd;
+ border-left: 1px solid #bdbdbd;
+ border-right: 1px solid #bdbdbd;
+ border-bottom: none;
+ background:#f2f2f2;
+ text-decoration: none;
+ height:40px;
+ min-width:100px;
+ color:#696969
+ 
+}
+
 ul.tabbernav li a span
 {
  background-position:right 0;
@@ -97,8 +113,6 @@ ul.tabbernav li.tabberactive a:hover
  padding:5px;
  border:1px solid #bdbdbd;
  border-top:0;
- 
-
  /* If you don't want the tab size changing whenever a tab is changed
     you can set a fixed height */
 
@@ -109,6 +123,7 @@ ul.tabbernav li.tabberactive a:hover
 
  /* overflow:auto; */
 }
+
 
 /* If desired, hide the heading since a heading is provided by the tab */
 .tabberlive .tabbertab h2 {

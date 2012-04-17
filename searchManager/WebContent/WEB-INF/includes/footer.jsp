@@ -3,7 +3,7 @@
 <script type="text/javascript" src="<spring:url value="/js/scroller/ypSimpleScrollC.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/scroller/scroller.js" />"></script>
 <script type="text/javascript">
-instantiateScroller(0, "scroll0", 7, 0, 260, 250, 250);
+instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
 </script>
 
 	<!--Footer-->
@@ -35,12 +35,81 @@ instantiateScroller(0, "scroll0", 7, 0, 260, 250, 250);
   				<li id="Alert" class="alertsFF"><a href="javascript:void(0);"></a></li>
   			</ul>
 	  		<div id="dockItem">
-				<div class="infoContainer" id="dockBasket" style="display:none"></div>
-				<div class="infoContainer" id="dockOnline" style="display:none"></div>
+				<div class="infoContainer" id="dockBasket" style="display:none">
+					<!-- basket 
+						<div id="" class="sideHeader posRel">
+							<h2 class="dockTitle">Basket </h2>
+						</div>
+						<div class="root" id="root0">
+						<div class="scrollContainer" id="scroll0Container">
+						<div class="scrollContent" id="scroll0Content">
+						<div>
+							<ul class="listSU fsize11">
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+								<li class="clearfix marT8"><img src="<spring:url value="/images/productItems/item.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px">afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							</ul>
+						</div>
+						</div>
+						</div>
+						</div> 					
+					end basket -->
+				</div>
+				
+				<div class="infoContainer" id="dockOnline" style="display:none">			
+				<!-- online 
+					<div class="sideHeader posRel">
+						<h2 class="dockTitle">Online </h2>
+					</div>
+					<div class="root" id="root0">
+					<div class="scrollContainer" id="scroll0Container">
+					<div class="scrollContent" id="scroll0Content">
+					<div>
+						<ul class="listSU fsize11">
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
+						</ul>
+					</div>
+					</div>
+					</div>
+					</div> 							
+				 end online -->	
+							
+				</div>
+				
 				<div class="infoContainer" id="dockNotification" style="display:none">
 					<div id="notificationList"></div>
 				</div>
-				<div class="infoContainer" id="dockAlert" style="display:none"></div>
+				<div class="infoContainer" id="dockAlert" style="display:none">
+				<!-- alerts -->
+					<div class="sideHeader posRel">
+						<h2 class="dockTitle">Alerts </h2>
+					</div>
+					<div class="root" id="root0">
+					<div class="scrollContainer" id="scroll0Container">
+					<div class="scrollContent" id="scroll0Content">
+					<div>
+						<ul class="listSU fsize11">
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+						</ul>
+					</div>
+					</div>
+					</div>
+					</div> 							
+				<!-- end alerts -->	
+				</div>
 	  		</div>
 	  		</div>
   	</div>
