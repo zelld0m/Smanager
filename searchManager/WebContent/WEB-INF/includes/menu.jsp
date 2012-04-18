@@ -36,6 +36,7 @@
 		      		<li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/macmall" />">Query Cleaning</a></li>		      		
 		      		<li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/macmall" />">Ranking Rule</a></li>
 		      		<li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/macmall"/>">Catalog</a></li>  		      		
+		      		<li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facet/macmall"/>">Facet Order</a></li>  		      		
 		       </ul>
 	      </c:if>
 	      
