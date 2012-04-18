@@ -30,6 +30,9 @@
 					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\"><p class="breakWord w100">' + audit.referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
 							'<td class=\"txtAC\"><p class="breakWord w80">' + audit.entity + '</p></td><td class=\"txtAC\"><p class="breakWord w90">' + audit.operation + '</p></td><td class=\"txtAC\">' + audit.keyword + '</td><td><p class="breakWord w135">' + audit.details + '</p></td></tr>');
 				}
+				
+				$("#resultsBody > tr:even").addClass("alt");
+				
 				addFieldValuesPaging(curPage, totalSize);
 			},
 			errorHandler: function(message){ alert(message); }
