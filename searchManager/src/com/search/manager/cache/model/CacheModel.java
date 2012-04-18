@@ -8,8 +8,17 @@ public class CacheModel<E> implements Serializable {
 
 	private static final long serialVersionUID = 5653921520358579530L;
 	
+	private E obj;
 	private List<E> list;
 	private Map<String,E> map;
+
+	public E getObj() {
+		return obj;
+	}
+
+	public void setObj(E obj) {
+		this.obj = obj;
+	}
 
 	public List<E> getList() {
 		return list;
