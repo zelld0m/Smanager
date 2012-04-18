@@ -520,7 +520,7 @@ ul#tagList a.fColorFour			{ color:#0073a7 }
 
 /* dashboard */
 .tblItems						{ border:1px solid #cfcfcf; border-collapse: collapse; margin:15px; }
-.tblItems th					{ border:1px solid #cfcfcf; padding:8px; color:#464646; font:bold 12px arial; text-align:center; 
+.tblItems th					{ border:1px solid #cfcfcf; border-collapse: collapse; padding:8px; color:#464646; font:bold 12px arial; text-align:center; 
 background: #f2f1f1; /* Old browsers */
 background: -moz-linear-gradient(top,  #f2f1f1 0%, #d6d6d6 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f1f1), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
