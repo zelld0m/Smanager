@@ -92,11 +92,24 @@ function initFileUploads() {
 		};
 
 		var useTabs = function(){
-			$(".tabs").tabs({ 
-				event: "mouseover",
-				cookie: { expires: 30},
-				spinner: 'Retrieving data...'
-				});
+			$(".tabs").each(function() {
+			    var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
+			    if (tabid == undefined || tabid == null || tabid == "") {
+			        $(this).tabs({
+			            cookie: {
+			                expires: 30
+			            }
+			        });
+			    }
+			    else {
+			        $(this).tabs({
+			            cookie: {
+			                expires: 30,
+			                name: tabid
+			            }
+			        });
+			    }
+			});
 		};
 		
 		var COOKIE_NAME_DOCK = "dock.active";
