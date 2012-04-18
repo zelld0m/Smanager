@@ -61,104 +61,95 @@
 	<div class="clearB"></div>
 	<div style="width:95%" class="dashboard marT20 mar0">
 		
-		<div class="buttonHolder marB20">
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Refresh</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select All</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">Select None</div></a>
-			<a id="" href="javascript:void(0);" class="buttons btnLStyA clearfix"><div class="buttons fontBold">To Prod</div></a>
+		<!-- tabs -->
+		<div class="tabs">
+      		<ul>
+		        <li><a href="#Approval"><span>Approval</span></a></li>
+		        <li><a href="#PushtoProduction"><span>Push to Production</span></a></li>
+		    </ul>
+		   
+		<!--  approval tab -->
+		<div id="Approval">
+		<h2 class="fDGray marT20">Approval</h2>
+		<table class="tblItems w100p marT5">
+			<tr>
+				<th width="5%"><input type="checkbox"></th>
+				<th class="txtAL">Rule ID </th>
+				<th width="17%"> Approve Status  </th>
+				<th width="15%"> Status </th>
+				<th width="14%"> Comment </th>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Lenovo</td>
+				<td class="txtAC">Approve</td>
+				<td class="txtAC">Updated</td>
+				<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Apple</td>
+				<td class="txtAC">Reject</td>
+				<td class="txtAC">Updated</td>
+				<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>HP</td>
+				<td class="txtAC">Approve</td>
+				<td class="txtAC">Updated</td>
+				<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
+			</tr>
+		</table>
+		<!--  end table inside tab -->
 		</div>
 		
-		<h2 class="fDGray">Elevate</h2>
-		<table class="tblItems w100p">
+		<!--  push tab -->
+		<div id="PushtoProduction" class="mar0 borderT">
+		<h2 class="fDGray marT20">Push to Production</h2>
+		<table class="tblItems w100p marT5">
 			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
+				<th width="5%"><input type="checkbox"></th>
+				<th class="txtAL">Rule ID </th>
+				<th width="19%"> Production Status </th>
+				<th width="15%"> Last Publish </th>
+				<th width="15%"> Staging Action </th>
 			</tr>
 			<tr>
 				<td class="txtAC"><input type="checkbox"></td>
-				<td>prodPage</td>
-				<td class="txtAC"></td>
+				<td>Lenovo</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
 			</tr>
 			<tr>
 				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+				<td>Apple</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_conflict.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">new</td>
 			</tr>
 			<tr>
 				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
+				<td>Lenovo</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
 			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Lenovo</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
+			</tr>
+			
 		</table>
+		<!--  end table inside tab -->
+		</div>
 		
+		</div><!--  end tabs -->
 		
-		<h2 class="fDGray marT20">Exclude</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>			
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"></td>
-			</tr>
-		</table>
-		
-		<h2 class="fDGray marT20">Query Cleaning</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>			
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-		</table>
-		
-		
-		<h2 class="fDGray marT20">Ranking Rule</h2>
-		<table class="tblItems w100p">
-			<tr>
-				<th width="13%">Select</th>
-				<th>Resource</th>
-				<th width="13%">In Stage</th>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>prodPage</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicesOverview</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-			<tr>
-				<td class="txtAC"><input type="checkbox"></td>
-				<td>servicePlans</td>
-				<td class="txtAC"><img src="<spring:url value="/images/icon_check.png" />"></td>
-			</tr>
-		</table>
-		
-		
-		
-	
 	<div class="clearB"></div>
 </div><!--  end bf page -->
 

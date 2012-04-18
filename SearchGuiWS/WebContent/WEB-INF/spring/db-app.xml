@@ -13,16 +13,26 @@
     </beans:bean>
     
     <beans:bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
-       <beans:property name="driverClassName" value="${driverClassName}"/>
-       <beans:property name="url" value="${url}"/>
-       <beans:property name="username" value="${username}"/>
-       <beans:property name="password" value="${password}"/>
+       <beans:property name="driverClassName" value="${driverClassName.prod}"/>
+       <beans:property name="url" value="${url.prod}"/>
+       <beans:property name="username" value="${username.prod}"/>
+       <beans:property name="password" value="${password.prod}"/>
+       <beans:property name="validationQuery" value="select 1"/>
+  	   <beans:property name="testOnBorrow" value="true"/>
+  	   <beans:property name="testOnReturn" value="false"/>
+    </beans:bean>
+    
+     <beans:bean id="dataSource_solr_stg" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+       <beans:property name="driverClassName" value="${driverClassName.stg}"/>
+       <beans:property name="url" value="${url.stg}"/>
+       <beans:property name="username" value="${username.stg}"/>
+       <beans:property name="password" value="${password.stg}"/>
        <beans:property name="validationQuery" value="select 1"/>
   	   <beans:property name="testOnBorrow" value="true"/>
   	   <beans:property name="testOnReturn" value="false"/>
     </beans:bean>
 	
-	<!--  dao services -->	
+	<!--  dao services prod-->	
 	<beans:bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
 		<beans:constructor-arg ref="dataSource_solr" />
 	</beans:bean>
@@ -38,11 +48,44 @@
 	<beans:bean name="storeKeywordDao" id="storeKeywordDAO" class="com.search.manager.dao.sp.StoreKeywordDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
+	<beans:bean name="relevancyDao" id="relevancyDAO" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
 	
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
 		<beans:property name="excludeDAO" ref="excludeDAO"/>
 		<beans:property name="keywordDAO" ref="keywordDAO"/>
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>	
+		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
     </beans:bean>
+    
+    <!--  dao services stg-->	
+    <beans:bean name="jdbcTemplateStg" id="jdbcTemplateStg" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
+		<beans:constructor-arg ref="dataSource_solr_stg" />
+	</beans:bean>
+	<beans:bean name="elevateDaoStg" id="elevateDAOStg" class="com.search.manager.dao.sp.ElevateDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="excludeDaoStg" id="excludeDAOStg" class="com.search.manager.dao.sp.ExcludeDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="keywordDaoStg" id="keywordDAOStg" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="storeKeywordDaoStg" id="storeKeywordDAOStg" class="com.search.manager.dao.sp.StoreKeywordDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="relevancyDaoStg" id="relevancyDAOStg" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	
+	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
+		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
+		<beans:property name="excludeDAO" ref="excludeDAOStg"/>
+		<beans:property name="keywordDAO" ref="keywordDAOStg"/>
+		<beans:property name="storeKeywordDAO" ref="storeKeywordDAOStg"/>	
+		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
+    </beans:bean>
+    
 </beans:beans>

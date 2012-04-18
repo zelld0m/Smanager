@@ -11,6 +11,7 @@
 	<beans:bean name="daoCacheService" id="daoCacheService" class="com.search.manager.cache.dao.DaoCacheServiceImpl" scope="singleton">
  		<beans:property name="daoService" ref="daoService"/>
  		<beans:property name="cacheService" ref="cacheService"/>
+ 		<beans:property name="localCacheService" ref="localCacheService"/>
     </beans:bean>
     
     <beans:bean name="cacheService" class="com.search.manager.cache.service.CacheService" scope="singleton">
@@ -21,5 +22,7 @@
 	
 	<beans:bean id="searchGuiService" name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
 		<beans:property name="daoCacheService" ref="daoCacheService"/>
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
 	</beans:bean>
 </beans:beans>

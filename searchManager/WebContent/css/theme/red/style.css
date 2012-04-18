@@ -527,6 +527,16 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 
 .buttonHolder					{ text-align:right }
 
+/* general tabs */
+.dashboard .tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
+.dashboard .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
+.dashboard .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+.dashboard .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
+.dashboard .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
+.dashboard .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.dashboard .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.dashboard .tabs .ui-widget-content label	{ vertical-align: middle; }
+
 
 /*native tabs */
 .qtip .ui-tabs-nav				{ background: none; border:none !important }
@@ -611,7 +621,7 @@ p.notification								{ width:190px; word-wrap: break-word; }
 .footerFix .thumb a , 
 .footerFix .thumb a img						{ border: 0; }
   
-.footerFix .scrollContainer 				{ position: absolute; left: 2px; top:-5px; width: 220px !important; height: 260px; clip: rect(0 467 200 0); overflow-y: scroll; overflow-x:hidden; background: none; padding:0 0 10px 0 }
+.footerFix .scrollContainer 				{ position: absolute; left: 2px; top:-5px; width: 220px !important; height: 200px; clip: rect(0 467 200 0); overflow-y: scroll; overflow-x:hidden; background: none; padding:0 0 10px 0 }
 .footerFix .scrollContent 					{ position: absolute; left: 0px; top: 0px; width: 220px !important; }
 
 .footerFix .altBg							{ background: #ededed }
