@@ -228,7 +228,9 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
-				relevancy = daoService.getRelevancyDetails(relevancy);
+				//relevancy = daoService.getRelevancyDetails(relevancy);
+				relevancy = daoCacheService.getRelevancyDetails(relevancy,storeName);
+
 				if (relevancy != null) {
 					nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
 					Map<String, String> parameters = relevancy.getParameters();
