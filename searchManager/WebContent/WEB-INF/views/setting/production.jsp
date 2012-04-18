@@ -34,16 +34,49 @@
 		    </ul>
 		
 		<!--  push tab -->
-		<div id="elevateTab">
+		<div class="minHeight400" id="elevateTab">
 		<h2 class="fDGray marT20">Push to Production</h2>
+		<div>
 		<table class="tblItems w100p marT5">
 			<tr>
-				<th width="5%"><input type="checkbox"></th>
-				<th class="txtAL">Rule ID </th>
-				<th width="19%"> Production Status </th>
-				<th width="15%"> Last Publish </th>
-				<th width="15%"> Staging Action </th>
+				<th width="24px"><input type="checkbox"></th>
+				<th width="268px" class="txtAL">Rule ID </th>
+				<th width="110px"> Production Status </th>
+				<th width="85px"> Last Publish </th>
+				<th> Staging Action </th>
 			</tr>
+		</table>
+		</div>
+		<div style="max-height:360px; overflow-y:scroll">
+		<table class="tblItems w100p">
+			<tr>
+				<td width="24px" class="txtAC"><input type="checkbox"></td>
+				<td width="268px">Lenovo</td>
+				<td width="110px" class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td width="85px" class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Apple</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_conflict.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">new</td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Lenovo</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
+			</tr>
+			<tr>
+				<td class="txtAC"><input type="checkbox"></td>
+				<td>Lenovo</td>
+				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
+				<td class="txtAC">04/23/2012</td>
+				<td class="txtAC">deleted</td>
+			</tr>			
 			<tr>
 				<td class="txtAC"><input type="checkbox"></td>
 				<td>Lenovo</td>
@@ -71,15 +104,15 @@
 				<td class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
 				<td class="txtAC">04/23/2012</td>
 				<td class="txtAC">deleted</td>
-			</tr>
-			
+			</tr>			
 		</table>
+		</div>
 		<!--  end table inside tab -->
 		</div>
 		
-		<div id="excludeTab"></div>
-		<div id="queryCleaningTab"></div>
-		<div id="rankingRuleTab"></div>
+		<div class="minHeight400" id="excludeTab"></div>
+		<div class="minHeight400" id="queryCleaningTab"></div>
+		<div class="minHeight400" id="rankingRuleTab"></div>
 		
 		</div><!--  end tabs -->
 		

@@ -34,21 +34,26 @@
 		    </ul>
 		   
 		<!--  approval tab -->
-		<div id="elevateTab">
-			<h2 class="fDGray marT20">Approval</h2>
+		<div class="minHeight400" id="elevateTab">
+			<h2 class="fDGray marT20">Approval</h2>			
+			<div>
 			<table class="tblItems w100p marT5">
 				<tr>
-					<th width="5%"><input type="checkbox"></th>
-					<th class="txtAL">Rule ID </th>
-					<th width="17%"> Approve Status  </th>
-					<th width="15%"> Status </th>
-					<th width="14%"> Comment </th>
+					<th width="24px"><input type="checkbox"></th>
+					<th width="268px" class="txtAL">Rule ID </th>
+					<th width="110px"> Approve Status  </th>
+					<th width="85px"> Status </th>
+					<th> Comment </th>
 				</tr>
+			</table>
+			</div>
+			<div style="max-height:360px; overflow-y:scroll">
+			<table class="tblItems w100p">
 				<tr>
-					<td class="txtAC"><input type="checkbox"></td>
-					<td>Lenovo</td>
-					<td class="txtAC">Approve</td>
-					<td class="txtAC">Updated</td>
+					<td width="24px" class="txtAC"><input type="checkbox"></td>
+					<td width="268px" >Lenovo</td>
+					<td width="110px" class="txtAC">Approve</td>
+					<td width="85px" class="txtAC">Updated</td>
 					<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
 				</tr>
 				<tr>
@@ -66,12 +71,13 @@
 					<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
 				</tr>
 			</table>
+			</div>
 			<!--  end table inside tab -->
 		</div>
 		
-		<div id="excludeTab"></div>
-		<div id="queryCleaningTab"></div>
-		<div id="rankingRuleTab"></div>
+		<div class="minHeight400" id="excludeTab"></div>
+		<div class="minHeight400" id="queryCleaningTab"></div>
+		<div class="minHeight400" id="rankingRuleTab"></div>
 				
 		</div><!--  end tabs -->
 		

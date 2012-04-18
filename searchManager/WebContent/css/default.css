@@ -204,6 +204,8 @@ body 							{ margin: 0px; }
 .minHeight245					{ min-height:245px; }
 .cssReset .minHeight300, 
 .minHeight300	  				{ min-height:300px; }
+.cssReset .minHeight400, 
+.minHeight400	  				{ min-height:400px; }
 
 .cssReset .height15				{ height:15px }
 .cssReset .height24, .height24	{ height:24px }
