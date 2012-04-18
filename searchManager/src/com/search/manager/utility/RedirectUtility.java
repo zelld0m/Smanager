@@ -5,28 +5,25 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 
-@Repository(value="redirectUtility")
+@Component("redirectUtility")
 public class RedirectUtility {
 	
+	private static Logger logger = Logger.getLogger(RedirectUtility.class);
+	public RedirectUtility(){}
+
 	@Autowired private DaoService daoService;
-	
 	private static HashMap<String, String> fqMap; 
 	private static HashMap<String, String> redirectMap; 
 	public static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
 	public static final String DBL_PIPE_DELIM = "||";
 	public static final String OR = ") OR (";
-
-	private static Logger logger = Logger.getLogger(RedirectUtility.class);
-
-	public RedirectUtility() {
-	}
 
 	public void updateRuleMap() {
 		fqMap = new HashMap<String, String>();
