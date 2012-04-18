@@ -26,6 +26,7 @@
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery-store-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
