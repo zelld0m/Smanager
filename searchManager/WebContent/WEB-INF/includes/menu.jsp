@@ -35,7 +35,7 @@
 		      		<li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/macmall" />">Feature</a></li>
 		      		<li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/macmall" />">Query Cleaning</a></li>		      		
 		      		<li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/macmall" />">Ranking Rule</a></li>
-		      		<li ${submenu eq 'catalog'? 'class="active"': ''}><span><a href="<spring:url value="/catalog/macmall"/>">Catalog</a></span></li>  		      		
+		      		<li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/macmall"/>">Catalog</a></li>  		      		
 		       </ul>
 	      </c:if>
 	      
@@ -60,7 +60,8 @@
 		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/macmall" />">User Setting</a></li>	      		
 		      		<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/macmall" />">Security</a></li>	      		
 		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/macmall" />">Partners</a></li>	      		
-		      		<li ${submenu eq 'deployment'? 'class="active"': ''}><a href="<spring:url value="/deployment/macmall" />">Deployment</a></li>	      		
+		      		<li ${submenu eq 'approval'? 'class="active"': ''}><a href="<spring:url value="/approval/macmall" />">Pending Approval</a></li>	      		
+		      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/macmall" />">Push to Prod</a></li>	      		
 		       </ul>
 	      </c:if>
 	          
