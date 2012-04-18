@@ -8,7 +8,6 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
-
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -18,9 +17,6 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
-import com.search.manager.utility.PropsUtils;
-import com.search.ws.client.SearchGuiClientService;
-import com.search.ws.client.SearchGuiClientServiceImpl;
 
 @RemoteProxy(
 		name = "ElevateServiceJS",

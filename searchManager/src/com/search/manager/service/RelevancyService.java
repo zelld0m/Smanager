@@ -17,6 +17,7 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.Keyword;
@@ -50,6 +51,7 @@ public class RelevancyService {
 	private static final Logger logger = Logger.getLogger(RelevancyService.class);
 
 	@Autowired private DaoService daoService;
+	private DaoCacheService daoCacheService;
 
 	@RemoteMethod
 	public Relevancy getById(String relevancyId){
@@ -57,7 +59,7 @@ public class RelevancyService {
 			Relevancy relevancy = new Relevancy();
 			relevancy.setRelevancyId(relevancyId);
 			relevancy.setStore(new Store(UtilityService.getStoreName()));
-			return daoService.getRelevancyDetails(relevancy);
+			return daoCacheService.getRelevancyDetails(relevancy, UtilityService.getStoreName());
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
 		}
@@ -116,8 +118,9 @@ public class RelevancyService {
 			relevancy.setStore(new Store(UtilityService.getStoreName()));
 			relevancy.setRelevancyName(name);
 			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, page, itemsPerPage);
-			return daoService.searchRelevancy(criteria, MatchType.LIKE_NAME);
-		} catch (DaoException e) {
+			List<Relevancy> list = daoCacheService.searchRelevancy(criteria, MatchType.LIKE_NAME);
+			return new RecordSet<Relevancy>(list, list.size());
+		} catch (Exception e) {
 			logger.error("Failed during getAllByName()",e);
 		}
 		return null;
@@ -427,7 +430,7 @@ public class RelevancyService {
 			
 			for(int i=0; i< ArrayUtils.getLength(relevancyIds); i++){
 				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), new Relevancy(relevancyIds[i]));
-				RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
+				RelevancyKeyword rk = daoCacheService.getRelevancyKeyword(tmpRelKey,UtilityService.getStoreName());
 				rk.setPriority(i+1);
 				daoService.updateRelevancyKeyword(rk);
 			}
@@ -444,5 +447,9 @@ public class RelevancyService {
 
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
+	}
+	
+	public void setDaoCacheService(DaoCacheService daoCacheService) {
+		this.daoCacheService = daoCacheService;
 	}
 }
