@@ -34,7 +34,7 @@
 		    </ul>
 		
 		<!--  push tab -->
-		<div id="elevateTab" class="mar0 borderT">
+		<div id="elevateTab">
 		<h2 class="fDGray marT20">Push to Production</h2>
 		<table class="tblItems w100p marT5">
 			<tr>
@@ -77,9 +77,9 @@
 		<!--  end table inside tab -->
 		</div>
 		
-		<div id="excludeTab" class="mar0 borderT"></div>
-		<div id="queryCleaningTab" class="mar0 borderT"></div>
-		<div id="rankingRuleTab" class="mar0 borderT"></div>
+		<div id="excludeTab"></div>
+		<div id="queryCleaningTab"></div>
+		<div id="rankingRuleTab"></div>
 		
 		</div><!--  end tabs -->
 		

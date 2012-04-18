@@ -55,7 +55,8 @@
 
 /* pagination */
 
-.cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
+.cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px;}
+.cssReset .sideMenuArea .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
 .cssReset .styleA				{ color:#818181 !important; min-height:20px !important; }
 .cssReset .styleA input[type='text'],
 .cssReset .styleB input[type='text'] { padding:1px; color:#818181 }
@@ -536,14 +537,14 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 .buttonHolder					{ text-align:right }
 
 /* general tabs */
-.dashboard .tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
-.dashboard .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
-.dashboard .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
-.dashboard .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
-.dashboard .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
-.dashboard .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
-.dashboard .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
-.dashboard .tabs .ui-widget-content label	{ vertical-align: middle; }
+.tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
+.tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
+.tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+body .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
+.tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
+.tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.tabs .ui-widget-content label	{ vertical-align: middle; }
 
 
 /*native tabs */

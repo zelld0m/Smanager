@@ -149,6 +149,7 @@ body 							{ margin: 0px; }
 .cssReset .marR12, .marR12		{margin-right:12px}
 .cssReset .marR15, .marR15		{margin-right:15px}
 .cssReset .marR70, .marR70		{ padding-right:70px !important; }
+.cssReset .marL0, .marL0		{margin-left:0px !important}
 .cssReset .marL3, .marL3		{margin-left:3px !important}
 .cssReset .marL4, .marL4		{margin-left:4px}
 .cssReset .marL5, .marL5		{margin-left:5px}
