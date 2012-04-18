@@ -39,16 +39,14 @@
 	
 	var addFieldValuesPaging = function(curPage, totalItem){
 		if(totalItem==0){
-			$("div#resultsPaging").empty();
+			$("div#resultsTopPaging, div#resultsBottomPaging").empty();
 		}else{
-			$("#resultsPaging").paginate({
+			$("#resultsTopPaging, #resultsBottomPaging").paginate({
 				currentPage: curPage, 
 				pageSize: pageSize,
 				totalItem: totalItem,
-				type: 'short',
-				pageStyle: 'style2',
 				callbackText: function(itemStart, itemEnd, itemTotal){
-					return itemStart + "-" + itemEnd + " of " + itemTotal;
+					return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 				},
 				pageLinkCallback: function(e){ getAuditTrail(e.data.page); },
 				nextLinkCallback: function(e){ getAuditTrail(e.data.page+1);},

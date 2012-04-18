@@ -75,8 +75,13 @@
     <!--  end info -->
     
       <div class="mar0">
-        <div id="resultsPaging"></div>	
+        <div id="resultsTopPaging" class="floatL"></div>	
       </div>
+      
+      <div class="padR15 padT10">
+        <a href="javascript:void(0);" id="exportBtn"><div class="btnGraph btnDownload marT1" ></div></a>
+	  </div>
+       
       <!--Pagination-->
     	<table width="100%" class="fsize12 tblAlpha">
     		<tbody id="resultsBody">
@@ -90,10 +95,10 @@
     			<th width="30%">Description</th>
     		</tr>
     		</tbody>
-    	</table>    	
-	</div>
-	<div align="right" class="padR15 padT10">
-		<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="exportBtn">Export to Excel</div></a>
+    	</table>  
+    	 <div class="mar0">
+        <div id="resultsBottomPaging"></div>	
+      </div>  	
 	</div>
 	<div class="clearB"></div>
 	
