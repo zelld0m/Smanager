@@ -535,6 +535,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 
 .buttonHolder					{ text-align:right }
 
+/* general tabs */
+.dashboard .tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
+.dashboard .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
+.dashboard .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+.dashboard .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
+.dashboard .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
+.dashboard .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.dashboard .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.dashboard .tabs .ui-widget-content label	{ vertical-align: middle; }
 
 
 /*native tabs */
@@ -586,10 +595,10 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .footerFix li.basket a.active	{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
 
 .footerFix .infoContainer		{ width:245px;  position: absolute; bottom:37px; background: #3a3a3a; z-index:9999; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
-.footerFix #dockBasket			{ right:120px; height:280px; }
-.footerFix #dockOnline			{ right:80px; height:280px; }
+.footerFix #dockBasket			{ right:120px; }
+.footerFix #dockOnline			{ right:80px; }
 .footerFix #dockNotification	{ right:40px; }
-.footerFix #dockAlert			{ right:0; height:280px; }
+.footerFix #dockAlert			{ right:0; }
 
 
 /* notification */
@@ -599,7 +608,7 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .footerFix .listSU li.alt					{ background: none !important }
 .footerFix .listSU li.all					{ }
 .footerFix .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; }
-.footerFix .listSU li p.dockAlert			{ background: url(images/icon_alert.png) left 2px no-repeat; padding-left:18px; }
+.footerFix .listSU li p.dAlert				{ background: url(images/icon_alert.png) left 2px no-repeat; padding-left:18px; }
 .listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px; }
 .footerFix .listSU li a 					{ color:#007cbf; text-decoration: none;  }
 

@@ -36,7 +36,7 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
   			</ul>
 	  		<div id="dockItem">
 				<div class="infoContainer" id="dockBasket" style="display:none">
-					<!-- basket 
+					<!-- basket
 						<div id="" class="sideHeader posRel">
 							<h2 class="dockTitle">Basket </h2>
 						</div>
@@ -80,7 +80,7 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
 					</div>
 					</div>
 					</div> 							
-				 end online -->	
+				  end online -->	
 							
 				</div>
 				
@@ -88,7 +88,7 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
 					<div id="notificationList"></div>
 				</div>
 				<div class="infoContainer" id="dockAlert" style="display:none">
-				<!-- alerts -->
+				<!-- alerts --
 					<div class="sideHeader posRel">
 						<h2 class="dockTitle">Alerts </h2>
 					</div>
@@ -97,18 +97,18 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
 					<div class="scrollContent" id="scroll0Content">
 					<div>
 						<ul class="listSU fsize11">
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
-							<li><p class="dockAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
+							<li><p class="dAlert"><span class="user">admin</span> afasfsffasfasdfasdffasfsfsdfsdfdf</p></li>
 						</ul>
 					</div>
 					</div>
 					</div>
 					</div> 							
-				<!-- end alerts -->	
+				 end alerts -->	
 				</div>
 	  		</div>
 	  		</div>
