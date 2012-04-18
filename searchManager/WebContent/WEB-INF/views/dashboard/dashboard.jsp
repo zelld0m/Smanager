@@ -102,7 +102,7 @@
 
 <div class="tabber mar0" style="margin-top:20px; width:98%">
 
-  	<div class="tabs">
+  	<div id="insights" class="tabs">
       		<ul>
 		        <li><a href="#sevenDays"><span>7 Days</span></a></li>
 		        <li><a href="#oneMonth"><span>1 Month</span></a></li>
