@@ -35,9 +35,20 @@ public class ForceCacheServlet extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		try {	
-			searchGuiService.loadElevateList(store, token);
-			searchGuiService.loadExcludeList(store, token);
+		try {
+			synchronized (this) {	
+				logger.info("########### Start loading to cache");
+				
+				if(searchGuiService.loadElevateList(store, token)){
+					if(searchGuiService.loadExcludeList(store, token)){
+						if(searchGuiService.loadRelevancyList(store, token)){
+							searchGuiService.loadRelevancyDetails(store, token);
+						}
+					}
+				}
+
+				logger.info("########### Done loading to cache");
+			}
 		}catch (Exception e) {
 			logger.error(e);
 		}
