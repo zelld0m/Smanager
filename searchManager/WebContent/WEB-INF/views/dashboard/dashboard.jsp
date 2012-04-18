@@ -110,10 +110,10 @@
 		    </ul>
       		
         <div id="sevenDays">
-       		<div class="floatL w340 marL10 marR12">
+       		<div class="floatL w325 marL20 marR12">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
-			<div class="floatL w340" style="margin-right:1px;">
+			<div class="floatL w325" style="margin-right:1px;">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=RISING&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
 			<div class="clearB"></div>
@@ -123,10 +123,10 @@
 		</div>
 
 		<div id="oneMonth">
-		    <div class="floatL w340 marL10 marR12">
+		    <div class="floatL w325 marL20 marR12">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=1-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
-			<div class="floatL w340" style="margin-right:1px;">
+			<div class="floatL w325" style="margin-right:1px;">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=RISING&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=1-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
 			<div class="clearB"></div>
@@ -137,10 +137,10 @@
 		
 		<div id="oneYear">
 		    <h2>1 Year</h2>
-		    <div class="floatL w340 marL10 marR12">
+		    <div class="floatL w325 marL10 marR12">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=12-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
-			<div class="floatL w340" style="margin-right:1px;">
+			<div class="floatL w325" style="margin-right:1px;">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=RISING&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=12-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
 			<div class="clearB"></div>

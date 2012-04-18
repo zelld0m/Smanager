@@ -53,7 +53,7 @@
 		<span id="keywordHeader" class="fLblue fnormal"></span>
 	  </div>
 	  <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
-		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w85 marT1" maxlength="10" value="">
+		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="">
 		<a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
 	  </div>
 	</div>
@@ -68,7 +68,7 @@
 				</a>
 				</li>
 			</ul>
-
+			
 			<!--  tab -->
 			<div id="singleAdd" class="mar0 borderT">
 				<h3></h3>
@@ -110,9 +110,9 @@
 				<div class="clearB"></div>
 			</div>
 
-			<div id="multiAdd" class="clearB">
-				
-				<div class="alert mar0">This will overwrite existing
+			<div id="multiAdd" class="mar0 borderT">
+				<h3></h3>
+				<div class="alert">This will overwrite existing
 					elevation.</div>
 				
 				<div class="marTB10">
