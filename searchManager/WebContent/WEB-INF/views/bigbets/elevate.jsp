@@ -110,9 +110,18 @@
 				<div class="clearB"></div>
 			</div>
 
-			<div id="multiAdd">
+			<div id="multiAdd" class="clearB">
+				
 				<div class="alert mar0">This will overwrite existing
 					elevation.</div>
+				
+				<div class="marTB10">
+					<label >Valid Until:</label>
+					<label class="ddate">
+						<input id="addItemDate" type="text" class="w65">
+					</label>
+				</div>	
+				
 				<div align="right" class="marTB5 marR3 txtAL">
 					Enter comma separated SKU #<a class="infoIcon"
 						href="javascript:void(0);"><img
@@ -121,13 +130,7 @@
 				</div>
 				<textarea class="w245"></textarea>
 				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL w60 marL5 padT5">Comment</label>
-					<div class="floatR w60 padT5">
-						<label >Valid Until:</label>
-						<label class="ddate">
-							<input id="addItemDate" type="text" class="w65">
-						</label>
-					</div>
+					<label class="floatL w60 marL5 padT5">Comment</label>					
 				</div>
 				<textarea class="w245"></textarea>
 
