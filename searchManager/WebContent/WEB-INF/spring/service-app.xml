@@ -25,6 +25,7 @@
  	<beans:bean name="daoCacheService" id="daoCacheService" class="com.search.manager.cache.dao.DaoCacheServiceImpl" scope="singleton">
  		<beans:property name="cacheService" ref="cacheService"/>
  		<beans:property name="daoService" ref="daoService"/>
+ 		<beans:property name="localCacheService" ref="localCacheService"/>
     </beans:bean>
     
 	<beans:bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
@@ -73,6 +74,7 @@
 	</beans:bean>
 	<beans:bean name="relevancyService" class="com.search.manager.service.RelevancyService" scope="prototype">
 		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
 	</beans:bean>
 
 	<beans:bean name="statisticService" class="com.search.manager.service.StatisticService" scope="prototype">
