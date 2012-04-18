@@ -320,7 +320,7 @@
 					errorHandler: function(message){ alert(message);}
 				});
 			}else{
-				alert("Part Number is required and must be numeric");
+				alert("SKU # is required and must be numeric");
 			}
 		};
 
