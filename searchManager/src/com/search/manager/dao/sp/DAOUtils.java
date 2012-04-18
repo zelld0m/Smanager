@@ -67,6 +67,7 @@ public class DAOUtils {
 		return index;
 	}
 	
+	@SuppressWarnings("unused")
 	private static int decodeString(String s) {
 		int r = 0;
 		if (StringUtils.isNotBlank(s)) {
@@ -94,19 +95,18 @@ public class DAOUtils {
 		return builder.toString();
 	}
 	
-	public static int getResult(Object obj) {
+	@SuppressWarnings("unchecked")
+	public static int getUpdateCount(Map<String,Object> result) {
 		int i = -1;
-    	if (obj != null) {
+    	if (result != null) {
     		try {
-        		i = Integer.parseInt(String.valueOf(obj));
+        		i = ((List<Integer>)result.get(DAOConstants.RESULT_SET_RESULT)).get(0);
     		}
-    		catch (Exception e) {}
+    		catch (Exception e) {
+    			logger.error("failed to get update count" , e);
+    		}
     	}
 		return i;
-	}
-
-	public static int getUpdateCount(Map<String,Object> result) {
-	    return getResult(result.get(DAOConstants.UPDATE_COUNT_1));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -115,7 +115,7 @@ public class DAOUtils {
 	    int size = 0;
 	    if (result != null) {
 	    	list.addAll((List<T>)result.get(DAOConstants.RESULT_SET_1));
-	    	size = ((List<Integer>)result.get(DAOConstants.RESULT_SET_2)).get(0);
+	    	size = ((List<Integer>)result.get(DAOConstants.RESULT_SET_TOTAL)).get(0);
 	    }
 		return new RecordSet<T>(list, size);
 	}

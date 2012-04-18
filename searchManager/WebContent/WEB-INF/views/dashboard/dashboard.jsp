@@ -3,9 +3,6 @@
 <c:set var="topmenu" value="home"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<!-- tabber -->
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/tabber.css" />">
-
 <!-- page specific dependencies -->
 <script src="<spring:url value="/js/dashboard/dashboard.js" />" type="text/javascript"></script>  
 <link href="<spring:url value="/css/dashboard/dashboard.css" />" rel="stylesheet" type="text/css">
@@ -104,23 +101,28 @@
 <div class="clearB"></div>
 
 <div class="tabber mar0" style="margin-top:20px; width:98%">
-        <div class="tabbertab">
-        <h2 class="tabMenu"><span>7 Days</span></h2>
 
-		<div class="floatL w340 marL10 marR12">
-			<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
-		</div>
-		<div class="floatL w340" style="margin-right:1px;">
-			<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=RISING&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
-		</div>
-		<div class="clearB"></div>
-		<div class="mar10">
-		   <script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_interestovertime_searchterms.xml&amp;up__property=empty&amp;up__search_terms=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__compare_to_category=false&amp;synd=open&amp;w=675&amp;h=300&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>         
-		</div>
+  	<div class="tabs">
+      		<ul>
+		        <li><a href="#sevenDays"><span>7 Days</span></a></li>
+		        <li><a href="#oneMonth"><span>1 Month</span></a></li>
+		        <li><a href="#oneYear"><span>1 Year</span></a></li>
+		    </ul>
+      		
+        <div id="sevenDays">
+       		<div class="floatL w340 marL10 marR12">
+				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
+			</div>
+			<div class="floatL w340" style="margin-right:1px;">
+				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=RISING&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
+			</div>
+			<div class="clearB"></div>
+			<div class="mar10">
+			   <script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_interestovertime_searchterms.xml&amp;up__property=empty&amp;up__search_terms=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=7-d&amp;up__compare_to_category=false&amp;synd=open&amp;w=675&amp;h=300&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>         
+			</div>
 		</div>
 
-		<div class="tabbertab">
-		    <h2 class="tabMenu"><span>1 Month</span></h2>
+		<div id="oneMonth">
 		    <div class="floatL w340 marL10 marR12">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=1-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
 			</div>
@@ -133,7 +135,7 @@
 			</div>
 		</div>
 		
-		<div class="tabbertab">
+		<div id="oneYear">
 		    <h2>1 Year</h2>
 		    <div class="floatL w340 marL10 marR12">
 				<script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_relatedsearches.xml&amp;up__results_type=TOP&amp;up__property=empty&amp;up__search_term=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=12-m&amp;up__max_results=10&amp;synd=open&amp;w=320&amp;h=350&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>
@@ -146,7 +148,7 @@
 			   <script type="text/javascript" src="http://www.gmodules.com/ig/ifr?url=http%3A%2F%2Fwww.google.com%2Fig%2Fmodules%2Fgoogle_insightsforsearch_interestovertime_searchterms.xml&amp;up__property=empty&amp;up__search_terms=${keyword}&amp;up__location=US&amp;up__category=0&amp;up__time_range=11-m&amp;up__compare_to_category=false&amp;synd=open&amp;w=675&amp;h=300&amp;lang=en-US&amp;title=Google+Insights+for+Search&amp;border=%23ffffff%7C3px%2C1px+solid+%23999999&amp;output=js"></script>         
 			</div>
 	   </div>
-
+	</div>
 </div><!--  end tab -->
 </div>
 

@@ -4,20 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 
+@Repository(value="redirectUtility")
 public class RedirectUtility {
-
 	
-	private DaoService daoService;
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
+	@Autowired private DaoService daoService;
+	
 	private static HashMap<String, String> fqMap; 
 	private static HashMap<String, String> redirectMap; 
 	public static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
@@ -71,5 +70,12 @@ public class RedirectUtility {
 		}
 		return fq.toString();
 	}
+	
+	public DaoService getDaoService() {
+		return daoService;
+	}
 
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
 }

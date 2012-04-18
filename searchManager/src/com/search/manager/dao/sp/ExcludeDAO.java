@@ -53,9 +53,13 @@ public class ExcludeDAO {
 	private AppendExcludeCommentStoredProcedure appendCommentSP;
 	private UpdateExcludeExpiryDateStoredProcedure updateExpiryDateSP;
 
-	private class AddExcludeStoredProcedure extends StoredProcedure {
+	private class AddExcludeStoredProcedure extends CUDStoredProcedure {
 	    public AddExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_EXCLUDE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
@@ -63,13 +67,26 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class GetExcludeStoredProcedure extends StoredProcedure {
+	private class GetExcludeStoredProcedure extends GetStoredProcedure {
 	    public GetExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_EXCLUDE);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ExcludeResult>() {
 	            public ExcludeResult mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -85,18 +102,6 @@ public class ExcludeDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
 	    }
 	}
 
@@ -125,67 +130,84 @@ public class ExcludeDAO {
 	    }
 	}
 	
-	private class UpdateExcludeStoredProcedure extends StoredProcedure {
+	private class UpdateExcludeStoredProcedure extends CUDStoredProcedure {
 	    public UpdateExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class DeleteExcludeStoredProcedure extends StoredProcedure {
+	private class DeleteExcludeStoredProcedure extends CUDStoredProcedure {
 	    public DeleteExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_EXCLUDE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateExcludeCommentStoredProcedure extends StoredProcedure {
+	private class UpdateExcludeCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateExcludeCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class AppendExcludeCommentStoredProcedure extends StoredProcedure {
+	private class AppendExcludeCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendExcludeCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_EXCLUDE_COMMENT);
+	        compile();
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateExcludeExpiryDateStoredProcedure extends StoredProcedure {
+	private class UpdateExcludeExpiryDateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateExcludeExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE_EXPIRY_DATE);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
 	@Audit(entity = Entity.exclude, operation = Operation.add)
     public int addExclude(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
     		String keyword = DAOUtils.getKeywordId(exclude.getStoreKeyword());
 	    	if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = DAOUtils.getStoreId(exclude.getStoreKeyword());
@@ -246,6 +268,7 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.update)
     public int updateExclude(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
@@ -261,6 +284,7 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.updateComment)
     public int updateExcludeComment(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
@@ -276,6 +300,7 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.appendComment)
     public int appendExcludeComment(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
@@ -291,19 +316,36 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.delete)
     public int removeExclude(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
             return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 		} catch (Exception e) {
-			throw new DaoException("Failed during removeElevate()", e);
+			throw new DaoException("Failed during removeExclude()", e);
 		}
     }
 
+	
+	@Audit(entity = Entity.exclude, operation = Operation.clear)
+    public int clearExclude(StoreKeyword storeKeyword) throws DaoException {
+		try {
+    		DAOValidation.checkStoreKeywordPK(storeKeyword);
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(storeKeyword));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(storeKeyword));
+	        inputs.put(DAOConstants.PARAM_VALUE, null);
+            return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during clearExclude()", e);
+		}
+    }
+	
 	@Audit(entity = Entity.exclude, operation = Operation.updateExpiryDate)
     public int updateExcludeExpiryDate(ExcludeResult exclude) throws DaoException {
 		try {
+			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));

@@ -27,8 +27,8 @@
 
 				for (var i = 0; i < audits.length; i++) {
 					audit = audits[i];
-					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\">' + audit.referenceId + '</td><td class=\"txtAC\">' + audit.username + '</td>' +
-							'<td class=\"txtAC\">' + audit.entity + '</td><td class=\"txtAC\">' + audit.operation + '</td><td class=\"txtAC\">' + audit.keyword + '</td><td class=\"txtAC\">' + audit.details + '</td></tr>');
+					$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\"><p class="breakWord w100">' + audit.referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
+							'<td class=\"txtAC\"><p class="breakWord w80">' + audit.entity + '</p></td><td class=\"txtAC\"><p class="breakWord w90">' + audit.operation + '</p></td><td class=\"txtAC\">' + audit.keyword + '</td><td><p class="breakWord w135">' + audit.details + '</p></td></tr>');
 				}
 				addFieldValuesPaging(curPage, totalSize);
 			},
@@ -39,16 +39,14 @@
 	
 	var addFieldValuesPaging = function(curPage, totalItem){
 		if(totalItem==0){
-			$("div#resultsPaging").empty();
+			$("div#resultsTopPaging, div#resultsBottomPaging").empty();
 		}else{
-			$("#resultsPaging").paginate({
+			$("#resultsTopPaging, #resultsBottomPaging").paginate({
 				currentPage: curPage, 
 				pageSize: pageSize,
 				totalItem: totalItem,
-				type: 'short',
-				pageStyle: 'style2',
 				callbackText: function(itemStart, itemEnd, itemTotal){
-					return itemStart + "-" + itemEnd + " of " + itemTotal;
+					return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 				},
 				pageLinkCallback: function(e){ getAuditTrail(e.data.page); },
 				nextLinkCallback: function(e){ getAuditTrail(e.data.page+1);},

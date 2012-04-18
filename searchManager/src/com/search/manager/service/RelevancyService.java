@@ -330,7 +330,8 @@ public class RelevancyService {
 		logger.info(String.format("%s %s", relevancyId, keywordId));
 		try{
 			Relevancy relevancy = new Relevancy(relevancyId);
-			daoService.addKeyword(UtilityService.getStoreName(), keywordId);
+			relevancy.setStore(new Store(UtilityService.getStoreName()));
+			daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keywordId));
 			Keyword keyword =  new Keyword(keywordId);
 			daoService.addRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
 		} catch (DaoException e) {
@@ -344,6 +345,7 @@ public class RelevancyService {
 		logger.info(String.format("%s %s", relevancyId, keywordId));
 		try{
 			Relevancy relevancy = new Relevancy(relevancyId);
+			relevancy.setStore(new Store(UtilityService.getStoreName()));
 			Keyword keyword =  new Keyword(keywordId);
 			daoService.deleteRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
 		} catch (DaoException e) {

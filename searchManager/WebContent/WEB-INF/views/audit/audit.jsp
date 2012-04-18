@@ -73,11 +73,16 @@
 		</div>
     </div>
     <!--  end info -->
-    
-      <div class="mar0">
-        <div id="resultsPaging"></div>	
-      </div>
-      <!--Pagination-->
+         
+        	
+      <!-- Pagination-->     
+      <div class="floatR padT10">
+        <a href="javascript:void(0);" id="exportBtn"><div class="btnGraph btnDownload"></div></a>
+	  </div>
+	  <div id="resultsTopPaging" class="marTn2"></div>
+       <div class="clearB"></div>
+      <!--end Pagination-->
+      
     	<table width="100%" class="fsize12 tblAlpha">
     		<tbody id="resultsBody">
     		<tr>
@@ -90,10 +95,10 @@
     			<th width="30%">Description</th>
     		</tr>
     		</tbody>
-    	</table>    	
-	</div>
-	<div align="right" class="padR5">
-		<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="exportBtn">Export to Excel</div></a>
+    	</table>  
+    	 <div class="mar0">
+        <div id="resultsBottomPaging"></div>	
+      </div>  	
 	</div>
 	<div class="clearB"></div>
 	

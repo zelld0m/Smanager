@@ -55,7 +55,8 @@
 
 /* pagination */
 
-.cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
+.cssReset .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px;}
+.cssReset .sideMenuArea .txtDisplay			{ float:left; font-family:arial; font-size:11px;  padding-top:10px; margin-left:15px;}
 .cssReset .styleA				{ color:#818181 !important; min-height:20px !important; }
 .cssReset .styleA input[type='text'],
 .cssReset .styleB input[type='text'] { padding:1px; color:#818181 }
@@ -214,7 +215,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset .tblAlpha 			{ border:1px solid #a6a6a6; border-collapse:collapse; margin:3px auto; }
 .cssReset .tblAlpha th 			{ border:1px solid #a6a6a6; background:url(images/bg_th.gif) repeat-x #535353; font:bold 12px Arial, Helvetica, sans-serif; color:#fff; padding:12px 3px; }
 .cssReset .tblAlpha th.hl 		{ background:url(images/bg_thBlue.gif) repeat-x #0560a6; }
-.cssReset .tblAlpha td 			{ border:1px solid #a6a6a6; font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; color:#444444 }
+.cssReset .tblAlpha td 			{ border:1px solid #a6a6a6; font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; color:#44444; vertical-align:top}
 .cssReset .tblAlpha td.alt, 
 .cssReset .alt, .alt			{ background:#ebebeb }
 .cssReset .tblAlpha td.hl		{ background:#e0f1fb }
@@ -535,6 +536,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 
 .buttonHolder					{ text-align:right }
 
+/* general tabs */
+.tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
+.tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
+.tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+body .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
+.tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
+.tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.tabs .ui-widget-content label	{ vertical-align: middle; }
 
 
 /*native tabs */
@@ -586,42 +596,44 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .footerFix li.basket a.active	{ background: url(../../../images/icon_basket25_active.png) center center no-repeat #3d3d3d }
 
 .footerFix .infoContainer		{ width:245px;  position: absolute; bottom:37px; background: #3a3a3a; z-index:9999; opacity:0.98; filter:alpha(opacity=98); /* For IE8 and earlier */  }
-.footerFix #dockBasket			{ right:120px; height:280px; }
-.footerFix #dockOnline			{ right:80px; height:280px; }
+.footerFix #dockBasket			{ right:120px; }
+.footerFix #dockOnline			{ right:80px; }
 .footerFix #dockNotification	{ right:40px; }
-.footerFix #dockAlert			{ right:0; height:280px; }
+.footerFix #dockAlert			{ right:0; }
 
 
 /* notification */
 .footerFix h2.dockTitle						{ color:#3b79c2; font-weight:bold; margin:10px 10px 16px 10px; border-bottom:1px solid #454545; padding-bottom:4px }
-.footerFix  .listSU							{ list-style:none; margin-left:0; }
-.footerFix  .listSU li						{ color:#050505; padding:4px 4px 4px 0; }
-.footerFix  .listSU li.alt					{ background: none !important }
-.footerFix  .listSU li.all					{ }
-.footerFix  .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; height: auto }
-.listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px !important; }
+.footerFix .listSU							{ list-style:none; margin-left:0; }
+.footerFix .listSU li						{ color:#aaaaaa; padding:4px 4px 4px 0; }
+.footerFix .listSU li.alt					{ background: none !important }
+.footerFix .listSU li.all					{ }
+.footerFix .listSU li p.notification		{ background: url(images/icon_notification.png) left 2px no-repeat; padding-left:18px; }
+.footerFix .listSU li p.dAlert				{ background: url(images/icon_alert.png) left 2px no-repeat; padding-left:18px; }
+.listSU li p.alert, .alert					{ background: url(images/icon_alert.png) left top no-repeat; padding-left:18px; }
 .footerFix .listSU li a 					{ color:#007cbf; text-decoration: none;  }
 
-.dockContent								{ height:280px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px; }
+.dockContent								{ /*height:270px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px;*/}
 
-p.notification								{ width:190px; word-wrap: break-word; }
+p.notification								{  }
 .notification span.user						{ font-weight: bold; color:#f3f3f3; }
 .notification span.changedesc				{ color:#aaaaaa; font-weight: normal }	
 .notification span.elapsedtime				{ color:#3b79c2 }
 
 
 /*********************** SCROLLERS ***********************/
-.footerFix .root 							{ position:relative; height: 274px; width: 260px; margin: 0px 0px 8px 0;}
+.footerFix .root 							{ position:relative; height:274px; width: 230px; margin: 0px 0px 8px 0; }
 .footerFix .root p 							{ margin: 0 0 5px 0; }
-.footerFix .thumb 							{ position:	absolute; height: 9px; width: 15px; margin-left:-41px; margin-top:0 }
-.footerFix .up, .footerFix .dn 				{ position: absolute; left:-20px ; }
+.footerFix .thumb 							{ position:	absolute; height: 37px; width: 7px; }
+.footerFix .up, .footerFix .dn 				{ position: absolute; left:0 ; }
 .footerFix .up a, .footerFix .up a img,
-.footerFix .dn a, .footerFix .dn a img		{ border:0; display:none; }
+.footerFix .dn a, .footerFix .dn a img		{ border:0; display:none}
 .footerFix .thumb a , 
 .footerFix .thumb a img						{ border: 0; }
   
-.footerFix .scrollContainer 				{ position: absolute; left: 2px; top:-5px; width: 220px !important; height: 260px; clip: rect(0 467 200 0); overflow-y: scroll; overflow-x:hidden; background: none; padding:0 0 10px 0 }
-.footerFix .scrollContent 					{ position: absolute; left: 0px; top: 0px; width: 220px !important; }
+.footerFix .scrollContainer 				{ position: absolute; left: 2px; top:0; width: 200px; height: 200px; clip: rect(0 467 200 0); overflow-y: scroll; overflow-x:hidden; background: none; padding:0 }
+.footerFix .scrollContent 					{ position: absolute; left: 0px; top:0; width: 200px; }
+
 
 .footerFix .altBg							{ background: #ededed }
 

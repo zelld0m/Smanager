@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
@@ -28,6 +29,11 @@ public class CategoryDAO {
 	// needed by spring AOP
 	public CategoryDAO(){
 	}
+	
+	@Autowired
+	public CategoryDAO(JdbcTemplate jdbcTemplate) {
+		getCategoriesStoredProcedure = new GetCategoriesStoredProcedure(jdbcTemplate);
+    }
 	
 	private Logger logger = Logger.getLogger(CategoryDAO.class);
 	private final static String MANUFACTURER = "Manufacturer"; 
@@ -54,10 +60,6 @@ public class CategoryDAO {
 	    }
 	}
 
-	public CategoryDAO(JdbcTemplate jdbcTemplate) {
-		getCategoriesStoredProcedure = new GetCategoriesStoredProcedure(jdbcTemplate);
-    }
-	
     public CategoryList getCategories(String categoryCode) {
     	logger.info("Category code is " + categoryCode);
     	categoryCode = StringUtils.upperCase(StringUtils.trimToEmpty(categoryCode));

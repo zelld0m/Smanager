@@ -71,9 +71,13 @@ public class CampaignDAO {
     	searchBannerKeywordSP = new SearchCampaignBannerKeywordsStoredProcedure(jdbcTemplate);
     }
 
-	private class AddCampaignStoredProcedure extends StoredProcedure {
+	private class AddCampaignStoredProcedure extends CUDStoredProcedure {
 	    public AddCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_CAMPAIGN);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -81,13 +85,26 @@ public class CampaignDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class GetCampaignStoredProcedure extends StoredProcedure {
+	private class GetCampaignStoredProcedure extends GetStoredProcedure {
 	    public GetCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_CAMPAIGN);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Campaign>() {
 	            public Campaign mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -104,64 +121,79 @@ public class CampaignDAO {
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
-	private class UpdateCampaignStoredProcedure extends StoredProcedure {
+	private class UpdateCampaignStoredProcedure extends CUDStoredProcedure {
 	    public UpdateCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_CAMPAIGN);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class DeleteCampaignStoredProcedure extends StoredProcedure {
+	private class DeleteCampaignStoredProcedure extends CUDStoredProcedure {
 	    public DeleteCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_CAMPAIGN);
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
-	        compile();
 	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
+		}
 	}
 	
-	private class UpdateCampaignCommentStoredProcedure extends StoredProcedure {
+	private class UpdateCampaignCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateCampaignCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_CAMPAIGN_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 	
-	private class AppendCampaignCommentStoredProcedure extends StoredProcedure {
+	private class AppendCampaignCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendCampaignCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_CAMPAIGN_COMMENT);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
-	private class SearchCampaignStoredProcedure extends StoredProcedure {
+	private class SearchCampaignStoredProcedure extends GetStoredProcedure {
 	    public SearchCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_SEARCH_CAMPAIGN);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Campaign>() {
 	            public Campaign mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -178,32 +210,22 @@ public class CampaignDAO {
             			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
 	            }
 	        }));
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_2, new RowMapper<Integer>() {
-	        	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
-	        	}
-	        }));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE_CAMPAIGN, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        compile();
-	    }
+		}
 	}
 	
-	private class AddBannerToCampaignStoredProcedure extends StoredProcedure {
+	private class AddBannerToCampaignStoredProcedure extends CUDStoredProcedure {
 	    private AddBannerToCampaignStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_CAMPAIGN_BANNER);
+	    }
+
+		@Override
+		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CAMPAIGN_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_BANNER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
-	        compile();
-	    }
+		}
 	}
 
 	public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
@@ -538,16 +560,13 @@ public class CampaignDAO {
     	}
 	}
 	
-	// banner keywords
-//	private  getBannerSP;
-//	private  searchBannerSP;
-//	private  getBannerKeywordSP;
-//	private SearchCampaignBannerKeywordsStoredProcedure searchBannerKeywordSP;
-
-	
 	public int addCampaign(Campaign campaign) throws DaoException {
     	try {
         	Map<String, Object> inputs = new HashMap<String, Object>();
+        	String campaignId = campaign.getCampaignId();
+        	if (StringUtils.isEmpty(campaignId)) {
+        		campaignId = DAOUtils.generateUniqueId();
+        	}
             inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, DAOUtils.generateUniqueId());
             inputs.put(DAOConstants.PARAM_CAMPAIGN_NAME, StringUtils.trimToEmpty(campaign.getCampaignName()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(campaign.getStore()));

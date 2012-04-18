@@ -14,6 +14,7 @@ public class LoginInterceptor {
 		if (authLog.isInfoEnabled()) {  
 			authLog.info("auth=pass;user=" + userName);  
 		}  
+		
 	}  
 
 	private void logAuthFail (String userName)  
@@ -49,7 +50,7 @@ public class LoginInterceptor {
 		}  
 
 		if (result != null) { /*[3c]*/  
-			logAuthPass(user);  
+			logAuthPass(user); 
 		}  
 
 		return result;  
