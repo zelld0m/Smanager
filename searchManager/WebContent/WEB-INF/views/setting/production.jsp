@@ -25,7 +25,7 @@
 	<div style="width:95%" class="dashboard marT20 mar0">
 		
 		<!-- tabs -->
-		<div class="tabs">
+		<div id="production" class="tabs">
       		<ul>
 		        <li><a href="#elevateTab"><span>Elevate</span></a></li>
 		        <li><a href="#excludeTab"><span>Exclude</span></a></li>
