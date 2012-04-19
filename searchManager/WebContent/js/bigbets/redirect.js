@@ -68,11 +68,14 @@
 		$("#priority").text(rule.priority);
 		$("#activeFlag").text(rule.activeFlag);
 
-		var searchTerms = rule.searchTerm.split("||");
-		
-		for (var i = 0; i < searchTerms.length; i++) {
-			$("#searchTermList").append($("<option>", { value : searchTerms[i] }).text(searchTerms[i])); 
-		}				
+		RedirectServiceJS.getRedirectRule("", ruleId, 1, 30, {
+			callback: function(data){
+				rules = data.list;
+				for (var i = 0; i < rules.length; i++) {
+					$("#searchTermList").append($("<option>", { value : rules[i].searchTerm }).text(rules[i].searchTerm)); 
+				}				
+			}
+		});
 		if (rule.condition.indexOf("http://") > -1) {
 			redirectFlag = true;
 			$("#url").val(rule.condition);
@@ -197,6 +200,7 @@
 			},
 
 			itemNameCallback: function(e){
+				
 				setRuleForEdit(e.data.model);
 			}
 		});
