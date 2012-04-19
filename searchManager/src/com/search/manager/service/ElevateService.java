@@ -11,16 +11,18 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 
-@Service(value = "elevateService")
+@Service("elevateService")
 @RemoteProxy(
 		name = "ElevateServiceJS",
 		creator = SpringCreator.class,
@@ -31,6 +33,7 @@ public class ElevateService{
 	private static final Logger logger = Logger.getLogger(ElevateService.class);
 
 	@Autowired private DaoService daoService;
+	@Autowired private DaoCacheService daoCacheService;
 
 	@RemoteMethod
 	public int addElevate(String keyword, String edp, int sequence, String expiryDate, String comment) {
@@ -72,7 +75,9 @@ public class ElevateService{
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			if (StringUtils.isNotBlank(edp)){
-				return daoService.addElevateResult(e);
+				int ret = daoService.addElevateResult(e);
+				daoCacheService.updateElevateResultList(e);
+				return ret;
 			}
 			return 0;
 		} catch (DaoException e) {
@@ -91,7 +96,9 @@ public class ElevateService{
 			e.setEdp(productId);
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateElevateResultExpiryDate(e);
+			int ret = daoService.updateElevateResultExpiryDate(e);		
+			daoCacheService.updateElevateResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
 		}
@@ -125,8 +132,10 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
-			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteElevateResult(e);
+			e.setLastModifiedBy(UtilityService.getUsername());	
+			int ret = daoService.deleteElevateResult(e);
+			daoCacheService.updateElevateResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during removeElevate()",e);
 		}
@@ -143,7 +152,9 @@ public class ElevateService{
 			e.setEdp(productId);
 			e.setLocation(sequence);
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateElevateResult(e);
+			int ret = daoService.updateElevateResult(e);
+			daoCacheService.updateElevateResultList(e);
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during updateElevate()",e);
 		}
@@ -175,8 +186,8 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
-			return daoService.getElevatedProducts(server, criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getElevatedProducts(server, criteria, store);
+		} catch (Exception e) {
 			logger.error("Failed during getAllElevatedProducts()",e);
 		}
 		return null;
@@ -191,8 +202,8 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
-			return daoService.getElevatedProducts(server, criteria);
-		} catch (DaoException e) {
+			return daoCacheService.getElevatedProducts(server, criteria, store);
+		} catch (Exception e) {
 			logger.error("Failed during getActiveElevatedProducts()",e);
 		}
 		return null;
@@ -235,11 +246,13 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s", keyword));
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, null, null);
-			return daoService.getElevateResultCount(criteria);
-		} catch (DaoException e) {
+			ElevateResult elevateFilter = new ElevateResult();
+			StoreKeyword sk = new StoreKeyword(store, keyword);
+			elevateFilter.setStoreKeyword(sk);
+			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
+			
+			return daoCacheService.getElevateResultCount(elevateCriteria,store);
+		} catch (Exception e) {
 			logger.error("Failed during getElevatedProductCount()",e);
 		}
 		return null;
@@ -269,12 +282,12 @@ public class ElevateService{
 		
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
-	
-	public DaoService getDaoService() {
-		return daoService;
-	}
 
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
+	}
+
+	public void setDaoCacheService(DaoCacheService daoCacheService) {
+		this.daoCacheService = daoCacheService;
 	}
 }

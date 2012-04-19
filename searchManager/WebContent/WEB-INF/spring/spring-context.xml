@@ -23,10 +23,14 @@
 		</property>
 	</bean>	
 	
-	<bean id="propertyPlaceholderConfigurer"  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
-		<!-- <property name="locations" value="classpath:database.properties"/>
-		 <property name="locations" value="classpath:friggin_dev_database.properties"/>-->
-	</bean>  
+	
+	<bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" init-method="run" lazy-init="false">
+	     	<property name="localCacheService" ref="localCacheService" />
+	</bean>
+	
+	<bean id="propsUtils" class="com.search.manager.utility.PropsUtils">
+	     	<property name="localCacheService" ref="localCacheService" />
+	</bean>
 		
 	<context:annotation-config />	
 

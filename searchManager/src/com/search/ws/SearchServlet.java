@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -44,8 +45,6 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.utility.DateAndTimeUtils;
-import com.search.ws.client.SearchGuiClientService;
-import com.search.ws.client.SearchGuiClientServiceImpl;
 
 public class SearchServlet extends HttpServlet {
 
@@ -293,7 +292,7 @@ public class SearchServlet extends HttpServlet {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoService.getExcludeResultList(excludeCriteria).getList() : null;
+			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(excludeCriteria,storeName) : null;
 
 			/* First Request */
 			// get expected resultformat

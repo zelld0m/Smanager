@@ -41,10 +41,10 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -291,7 +291,8 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
-		return elevateDAO.getElevate(criteria);
+		RecordSet<ElevateResult> list = elevateDAO.getElevate(criteria);
+		return list;
 	}
 
 	@Override

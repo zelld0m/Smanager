@@ -1,39 +1,12 @@
-package com.search.manager.cache;
-
-/**
- * Property of OSRP
- * 
- * @author M ILAGAN JR
- * @version 1.0
- * Date Created: July 03, 2009
- * Description:
- * 		<P> This is the interface class for all cache strategy types to implement. </P>
- * 
- * History:
- * 
- *   DATE    MODIFIED BY  DESCRIPTION OF CHANGE
- * -------- ------------- ---------------------------------------------------------------------
- * YYYYMMDD
- * 
- * 
- * For code changes/enhancements, please enclose codes:
- * 	// ENHANCEMENT START [Bug Number] - [YYYYMMDD] - [Author Initials]
- * 	// old code
- *  // old code
- *  	...	
- *  	New Code
- *  	...
- *  // ENHANCEMENT END [Bug Number]
- * 
- */
+package com.search.manager.cache.ehcache;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
 import com.search.manager.cache.ehcache.EhCachEDistributedClient;
+import com.search.manager.cache.utility.CacheResourceUtil;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.exception.DataException;
-import com.search.manager.utility.CacheResourceUtil;
 
 public class CacheClient {
 	
@@ -48,22 +21,21 @@ public class CacheClient {
 	private String cacheSvrInstance              = "";
 	private static Logger logger = Logger.getLogger(CacheClient.class);
 	
-	
-	private CacheClient() {
-		this.initializeCacheClient();
-	}
-	
 	public static CacheClient getInstance() {
 		return new CacheClient();
 	}
 	
-	private void initializeCacheClient() {
+	public CacheClient(){
+		initializeCacheClient();
+	}
+	
+	public void initializeCacheClient() {
 		this.resetParameterMatrix();
 		this.classSimpleName = this.getClass().getSimpleName();
 		
 		String cStrat;
 		try {
-			cStrat = CacheResourceUtil.getCacheStratgy();
+			cStrat = CacheResourceUtil.getInstance().getCacheStratgy();
 			this.strategyUsed = Integer.parseInt(cStrat);
 			switch (this.strategyUsed) {
 				case 0 :
