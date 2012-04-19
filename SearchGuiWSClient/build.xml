@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<project name="Search Gui" basedir="." default="compile">
+  <!-- Define the properties used by the build -->
+  <property file="build.properties"/>
+  <property name="project" value="."/>
+	
+  <!-- Define the CLASSPATH -->
+  <path id="compile.classpath">
+    <fileset dir="${lib.home}">
+      <include name="*.jar"/>
+    </fileset>
+  	<fileset dir="${tomcat.lib}">
+  	  <include name="*.jar"/>
+  	</fileset>
+  </path>
+
+  <target name="compile" description="Compile Java sources">
+	    <javac srcdir="${src.home}" destdir="${project}/build">
+	        <classpath refid="compile.classpath"/>
+	    </javac>
+	    
+  		<mkdir  dir="${jar.home}"/>
+  	  	
+  	  	<jar destfile="${jar.home}/searchManager.jar">
+  	  			<fileset dir="${project}/build">
+  	  					<include name="**/*.class"/> 
+  	  			</fileset>
+  	  	</jar>	
+  </target>
+</project> 
