@@ -13,7 +13,6 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.utility.RedirectUtility;
 
 @Service(value = "redirectService")
 @RemoteProxy(
@@ -26,12 +25,7 @@ public class RedirectService {
 	private static final Logger logger = Logger.getLogger(RedirectService.class);
 	
 	@Autowired private DaoService daoService;
-	@Autowired private RedirectUtility redirectUtility;
 	
-	public void setRedirectUtility(RedirectUtility redirectUtility) {
-		this.redirectUtility = redirectUtility;
-	}
-
 	public DaoService getDaoService() {
 		return daoService;
 	}
@@ -54,7 +48,6 @@ public class RedirectService {
 			rule.setPriority(priority);
 			rule.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addRedirectRule(rule);
-			redirectUtility.updateRuleMap();
 		} catch (DaoException e) {
 			logger.error("Failed during addRedirectRule()",e);
 		}
@@ -76,7 +69,6 @@ public class RedirectService {
 			rule.setPriority(priority);
 			rule.setModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
-			redirectUtility.updateRuleMap();
 		} catch (DaoException e) {
 			logger.error("Failed during updateRedirectRule()",e);
 		}
@@ -94,7 +86,6 @@ public class RedirectService {
 			rule.setCondition("");
 			rule.setStoreId(UtilityService.getStoreName());
 			result = daoService.removeRedirectRule(rule);
-			redirectUtility.updateRuleMap();
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectRule()",e);
 		}
@@ -104,13 +95,14 @@ public class RedirectService {
 	@RemoteMethod
 	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, int page, int itemsPerPage) {
 		try {
+			logger.info(searchTerm + " " + ruleId + " " + page + " " + itemsPerPage);
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setSearchTerm(searchTerm);
 			redirectRule.setRuleId(ruleId);
 			redirectRule.setStoreId(UtilityService.getStoreName());
 			
 			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
-			return daoService.getRedirectRule(searchCriteria);
+			return daoService.getRedirectRules(searchCriteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllRedirectRule()",e);
 		}

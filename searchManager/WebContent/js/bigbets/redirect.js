@@ -68,7 +68,7 @@
 		$("#priority").text(rule.priority);
 		$("#activeFlag").text(rule.activeFlag);
 
-		var searchTerms = rule.searchTerm.split("||");
+		var searchTerms = "";//rule.searchTerm.split("||");
 		
 		for (var i = 0; i < searchTerms.length; i++) {
 			$("#searchTermList").append($("<option>", { value : searchTerms[i] }).text(searchTerms[i])); 

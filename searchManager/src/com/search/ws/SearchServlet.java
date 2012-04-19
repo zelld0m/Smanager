@@ -35,6 +35,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
@@ -43,14 +44,13 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.utility.DateAndTimeUtils;
-import com.search.manager.utility.RedirectUtility;
+import com.search.ws.client.SearchGuiClientService;
+import com.search.ws.client.SearchGuiClientServiceImpl;
 
 public class SearchServlet extends HttpServlet {
 
-	@Autowired
-	DaoService daoService;
-	@Autowired
-	RedirectUtility redirectUtility;
+	@Autowired DaoService daoService;
+	@Autowired DaoCacheService daoCacheService;
 
 	private static final long serialVersionUID = 1L;
 
@@ -68,6 +68,10 @@ public class SearchServlet extends HttpServlet {
 
 	public final ExecutorService execService = Executors.newCachedThreadPool();
 
+	public void setDaoCacheService(DaoCacheService daoCacheService) {
+		this.daoCacheService = daoCacheService;
+	}
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
@@ -226,7 +230,9 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
-				relevancy = daoService.getRelevancyDetails(relevancy);
+				//relevancy = daoService.getRelevancyDetails(relevancy);
+				relevancy = daoCacheService.getRelevancyDetails(relevancy,storeName);
+
 				if (relevancy != null) {
 					nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
 					Map<String, String> parameters = relevancy.getParameters();
@@ -267,10 +273,12 @@ public class SearchServlet extends HttpServlet {
 			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
 			SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
 			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
-
+	
 			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-				List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
+				//elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
+				elevatedList = daoCacheService.getElevateResultList(elevateCriteria,storeName);
+				
+				List<ElevateResult> expiredList = daoCacheService.getElevateResultList(expiredElevateCriteria,storeName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Expired List: ");
 				}
@@ -351,15 +359,20 @@ public class SearchServlet extends HttpServlet {
 
 			// redirect 
 			//TODO change to storename
-			String redirectUrl = redirectUtility.getRedirectURL("macmall" + keyword);
-			nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
-			nameValuePairs.add(nvp);
+			// TODO: fix
+			RedirectRule redirect = daoService.getRedirectRule(new SearchCriteria<RedirectRule>(new RedirectRule(sk.getStoreId(), sk.getKeywordId()), null, null, 0, 0));
 			
-			String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
-			if (!StringUtils.isBlank(redirectFQ)) {
-				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
-				nameValuePairs.add(nvp);
-				nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+			if (redirect != null) {
+				// TODO: implement
+//				nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
+//				nameValuePairs.add(nvp);
+//				
+//				String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
+//				if (!StringUtils.isBlank(redirectFQ)) {
+//					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
+//					nameValuePairs.add(nvp);
+//					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+//				}				
 			}
 
 			BasicNameValuePair elevateNvp = null;

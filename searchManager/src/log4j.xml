@@ -43,6 +43,12 @@
         </layout>  
     </appender> 
     
+    <logger name="com.search.manager" additivity="false">
+		<level value="INFO, DEBUG" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	
 	<logger name="com.search.manager.authentication.session" additivity="false">
 		<level value="INFO, DEBUG" />
 		<appender-ref ref="consoleAppender" />

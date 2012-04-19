@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
@@ -47,7 +47,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.ws.SearchHelper;
 
-@Repository(value="daoService")
+@Service("daoService")
 public class DaoServiceImpl implements DaoService {
 
 	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
@@ -743,11 +743,6 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
-		return redirectRuleDAO.getRedirectrule(searchTerm, ruleId, storeId, startRow, endRow);
-	}
-
-	@Override
 	public int addRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.addRedirectRule(rule);
 	}
@@ -763,11 +758,15 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RedirectRule> getRedirectRule(
-			SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
-		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
+	public RedirectRule getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
+		return redirectRuleDAO.getRedirectRule(searchCriteria);
 	}
 
+	@Override
+	public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
+		return redirectRuleDAO.getRedirectRules(searchCriteria);
+	}
+	
 	public KeywordDAO getKeywordDAO() {
 		return keywordDAO;
 	}
