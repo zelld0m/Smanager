@@ -1,5 +1,6 @@
 package com.search.manager.exception;
 
+
 /**
  * Property of OSRP
  * 

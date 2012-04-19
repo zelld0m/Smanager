@@ -1,7 +1,6 @@
 package com.search.webservice;
 
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
@@ -178,8 +177,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
 							ElevateResult delEl = new ElevateResult();
 							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							delEl.setEdp(null);
-							daoService.deleteElevateResult(delEl); //prod
+							daoService.clearElevateResult(new StoreKeyword(list.getStore(), key)); // prod
 							
 							// retrieve staging data then push to prod
 							StoreKeyword sk = new StoreKeyword(list.getStore(), key);
@@ -221,8 +219,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
 							ExcludeResult delEl = new ExcludeResult();
 							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							delEl.setEdp(null);
-							daoService.deleteExcludeResult(delEl); // prod
+							daoService.clearExcludeResult(new StoreKeyword(list.getStore(), key)); // prod
 							
 							// retrieve staging data then push to prod
 							StoreKeyword sk = new StoreKeyword(list.getStore(), key);

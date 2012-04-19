@@ -1,32 +1,5 @@
 package com.search.manager.cache.ehcache;
 
-/**
- * Property of OSRP
- * 
- * @author M ILAGAN JR
- * @version 1.0
- * Date Created: July 01, 2009
- * Description:
- * 		<P> This class is responsible for utilizing the distributed cache server. </P>
- * 
- * History:
- * 
- *   DATE    MODIFIED BY  DESCRIPTION OF CHANGE
- * -------- ------------- ---------------------------------------------------------------------
- * YYYYMMDD
- * 
- * 
- * For code changes/enhancements, please enclose codes:
- * 	// ENHANCEMENT START [Bug Number] - [YYYYMMDD] - [Author Initials]
- * 	// old code
- *  // old code
- *  	...	
- *  	New Code
- *  	...
- *  // ENHANCEMENT END [Bug Number]
- * 
- */
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -41,11 +14,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
-import com.search.manager.cache.CacheClientInterface;
+import com.search.manager.cache.utility.CacheResourceUtil;
+import com.search.manager.cache.utility.EHcacHEResourceUtil;
 import com.search.manager.exception.DataConfigException;
 import com.search.manager.exception.DataException;
-import com.search.manager.utility.CacheResourceUtil;
-import com.search.manager.utility.EHcacHEResourceUtil;
 
 public class EhCachEDistributedClient implements CacheClientInterface {
 	
@@ -83,15 +55,15 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	private String utilClassName							= null;		
 	private static Logger logger = Logger.getLogger(EhCachEDistributedClient.class);
 	
-	private EhCachEDistributedClient() {
-		this.initializeCacheClient();
+	public EhCachEDistributedClient(){
+		initializeCacheClient();
 	}
 	
 	public void initialize() {
 		totalNumberOfCacheServers=-1;
 		initializeCacheClient(); 
 	}
-	private void initializeCacheClient() {
+	public void initializeCacheClient() {
 		this.utilClassName = this.getClass().getSimpleName();		
 		eRsrcUtil = EHcacHEResourceUtil.newInstance();
 		this.initializeCacheClientParams();

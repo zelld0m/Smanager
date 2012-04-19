@@ -3,6 +3,8 @@
 <c:set var="topmenu" value="setting"/>
 <c:set var="submenu" value="approval"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
+
+<script type="text/javascript" src="<spring:url value="/js/settings/approval.js" />"></script> 
      
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -33,53 +35,52 @@
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
 		    </ul>
 		   
-		<!--  approval tab -->
-		<div class="minHeight400" id="elevateTab">
-			<h2 class="fDGray marT20">Approval</h2>			
+			<!--  approval tab -->
+			<div class="minHeight400" id="elevateTab">
+				
+				<!--  end table inside tab -->
+			</div>
+			
+			<div class="minHeight400" id="excludeTab">
+			
+			</div>
+			
+			<div class="minHeight400" id="queryCleaningTab">
+			
+			</div>
+			<div class="minHeight400" id="rankingRuleTab">
+			
+			</div>
+		</div><!--  end tabs -->
+		
+		<div id="tabContentTemplate" style="display: none">
 			<div>
-			<table class="tblItems w100p marT5">
-				<tr>
-					<th width="24px"><input type="checkbox"></th>
-					<th width="268px" class="txtAL">Rule ID </th>
-					<th width="110px"> Approve Status  </th>
-					<th width="85px"> Status </th>
-					<th> Comment </th>
-				</tr>
-			</table>
+				<table class="tblItems w100p marT5">
+					<tbody>
+						<tr>
+							<th width="24px"><input type="checkbox"></th>
+							<th width="268px" class="txtAL">Rule ID</th>
+							<th width="85px">Status</th>
+							<th width="110px">Approve Status</th>
+							<th>Comment</th>
+						</tr>
+					<tbody>
+				</table>
 			</div>
 			<div style="max-height:360px; overflow-y:scroll">
-			<table class="tblItems w100p">
-				<tr>
-					<td width="24px" class="txtAC"><input type="checkbox"></td>
-					<td width="268px" >Lenovo</td>
-					<td width="110px" class="txtAC">Approve</td>
-					<td width="85px" class="txtAC">Updated</td>
-					<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
-				</tr>
-				<tr>
-					<td class="txtAC"><input type="checkbox"></td>
-					<td>Apple</td>
-					<td class="txtAC">Reject</td>
-					<td class="txtAC">Updated</td>
-					<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
-				</tr>
-				<tr>
-					<td class="txtAC"><input type="checkbox"></td>
-					<td>HP</td>
-					<td class="txtAC">Approve</td>
-					<td class="txtAC">Updated</td>
-					<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
-				</tr>
-			</table>
+				<table id="rule" class="tblItems w100p">
+					<tbody>
+						<tr id="ruleItemPattern" class="ruleItem">
+							<td width="24px" class="txtAC"><input type="checkbox"></td>
+							<td width="268px" id="ruleRefId"></td>
+							<td width="85px" class="txtAC" id="updateStatus"></td>
+							<td width="110px" class="txtAC" id="approvalStatus"></td>
+							<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
-			<!--  end table inside tab -->
 		</div>
-		
-		<div class="minHeight400" id="excludeTab"></div>
-		<div class="minHeight400" id="queryCleaningTab"></div>
-		<div class="minHeight400" id="rankingRuleTab"></div>
-				
-		</div><!--  end tabs -->
 		
 	<div class="clearB"></div>
 </div>

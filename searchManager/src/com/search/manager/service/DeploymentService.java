@@ -39,11 +39,12 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String entity, Boolean includeApprovedFlag) {
 		List<RuleStatus> list = new ArrayList<RuleStatus>();
-		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "P", "add", "U", new Date(), "test comment", entity, entity, null, null);
+		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "Pending", "New", "U", new Date(), "test comment", entity, entity, null, null);
 		list.add(r);
-		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "P", "update", "U", new Date(), "sample comment", entity, entity, null, null);
+		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "Approved", "Update", "U", new Date(), "sample comment", entity, entity, null, null);
 		list.add(r);
-		return new RecordSet<RuleStatus>(list, 2);
+		if (entity.equals("elevate")) return new RecordSet<RuleStatus>(list, 2);
+		return new RecordSet<RuleStatus>(new ArrayList<RuleStatus>(), 0);
 	}
 
 	@RemoteMethod

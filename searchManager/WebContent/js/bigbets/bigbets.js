@@ -2,6 +2,7 @@
  * Common functions for bigbets tab
  */
 (function($){
+	var pageAuditPageSize = 5;
 	var gStoreLabel = "";
 	
 	$(document).ready(function() { 
@@ -26,11 +27,11 @@
 		};
 		
 		/** Enumerate all audit for current page*/
-		showPageAuditList = function(selector, headerText, moduleType, itemPage, itemPageSize){
+		showPageAuditList = function(selector, headerText, moduleType, itemPage){
 			$(selector).auditpanel({
 				headerText : headerText,
 				page: itemPage,
-				pageSize: itemPageSize,
+				pageSize: pageAuditPageSize,
 				itemDataCallback: function(base, page){
 					if ($.trim(moduleType).toLowerCase()==="elevate")
 					AuditServiceJS.getElevateActivity(page, base.options.pageSize, {

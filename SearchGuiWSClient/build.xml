@@ -22,7 +22,7 @@
 	    
   		<mkdir  dir="${jar.home}"/>
   	  	
-  	  	<jar destfile="${jar.home}/searchManager.jar">
+  	  	<jar destfile="${jar.home}/srcguiwsclient.jar">
   	  			<fileset dir="${project}/build">
   	  					<include name="**/*.class"/> 
   	  			</fileset>
