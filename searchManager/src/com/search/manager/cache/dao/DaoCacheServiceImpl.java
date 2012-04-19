@@ -3,7 +3,6 @@ package com.search.manager.cache.dao;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -19,24 +18,20 @@ import com.search.manager.cache.service.LocalCacheService;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.exception.DataException;
-import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SearchCriteria.ExactMatch;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.SearchCriteria.ExactMatch;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.utility.Constants;
 import com.search.manager.utility.DateAndTimeUtils;
-import com.search.ws.SearchHelper;
 
 @Service(value="daoCacheService")
 public class DaoCacheServiceImpl implements DaoCacheService {
@@ -306,30 +301,6 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 	
 	@Override
-	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria, String storeName){
-		List<ElevateResult> list = getElevateResultList(criteria, storeName);
-		LinkedHashMap<String, ElevateProduct> map = new LinkedHashMap<String, ElevateProduct>();
-		StoreKeyword sk = criteria.getModel().getStoreKeyword();
-		String storeId = DAOUtils.getStoreId(sk);
-		String keyword = DAOUtils.getKeywordId(sk);
-		for (ElevateResult e: list) {
-			ElevateProduct ep = new ElevateProduct();
-			ep.setEdp(e.getEdp());
-			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
-			ep.setComment(e.getComment());
-			ep.setLastModifiedBy(e.getLastModifiedBy());
-			ep.setCreatedBy(e.getCreatedBy());
-			ep.setStore(storeId);
-			map.put(e.getEdp(), ep);
-		}
-		SearchHelper.getProducts(map, storeId, serverName, keyword);
-		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),list.size());
-	}
-	
-	@Override
 	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria, String storeName){
 		return getElevateResultList(criteria, storeName).size();
 	}
@@ -381,29 +352,6 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		return Collections.EMPTY_LIST;
 	}
 	
-	@Override
-	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria, String storeName){
-		
-		List<ExcludeResult> list = getExcludeResultList(criteria, storeName);
-		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
-		StoreKeyword sk = criteria.getModel().getStoreKeyword();
-		String storeId = DAOUtils.getStoreId(sk);
-		String keyword = DAOUtils.getKeywordId(sk);
-		for (ExcludeResult e: list) {
-			Product ep = new Product();
-			ep.setEdp(e.getEdp());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
-			ep.setComment(e.getComment());
-			ep.setLastModifiedBy(e.getLastModifiedBy());
-			ep.setCreatedBy(e.getCreatedBy());
-			ep.setStore(storeId);
-			map.put(e.getEdp(), ep);
-		}
-		SearchHelper.getProducts(map, storeId, serverName, keyword);
-		return new RecordSet<Product>(new ArrayList<Product>(map.values()),list.size());
-	}
 	
 	@Override
 	public int getExcludeResultCount(SearchCriteria<ExcludeResult> criteria, String storeName){
@@ -451,7 +399,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		Map<String,String> fqRule = null;
 
 		try {	
-			RecordSet<RedirectRule> rRuleSet = daoService.getRedirectRule(null, null, null, null, null);
+			RecordSet<RedirectRule> rRuleSet = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(null, null, null, 0, 0));
 			
 			if(rRuleSet != null && rRuleSet.getTotalSize() > 0){
 				fqRule = new HashMap<String, String>();
