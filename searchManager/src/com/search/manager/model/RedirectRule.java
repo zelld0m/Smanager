@@ -13,6 +13,7 @@ public class RedirectRule implements Serializable {
 
 	private String ruleId;
 	private String ruleName;
+	private String redirectTypeId;
 	private String storeId;
 	private Integer priority;
 	private String searchTerm;
@@ -27,12 +28,13 @@ public class RedirectRule implements Serializable {
 		super();
 	}
 	
-	public RedirectRule(String ruleId, String ruleName, String storeId,
+	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String storeId,
 			Integer priority, String searchTerm, String condition, Integer activeFlag,
 			String createdBy, String modifiedBy, Date dateCreated,
 			Date dateModified) {
 		super();
 		this.ruleId = ruleId;
+		this.redirectTypeId = redirectTypeId;
 		this.ruleName = ruleName;
 		this.storeId = storeId;
 		this.priority = priority;
@@ -110,6 +112,14 @@ public class RedirectRule implements Serializable {
 	}
 	public void setDateModified(Date dateModified) {
 		this.dateModified = dateModified;
+	}
+
+	public String getRedirectTypeId() {
+		return redirectTypeId;
+	}
+
+	public void setRedirectTypeId(String redirectTypeId) {
+		this.redirectTypeId = redirectTypeId;
 	}
 	
 }

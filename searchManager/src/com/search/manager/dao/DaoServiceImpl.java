@@ -21,6 +21,7 @@ import com.search.manager.dao.sp.ExcludeDAO;
 import com.search.manager.dao.sp.KeywordDAO;
 import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
+import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
@@ -38,6 +39,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -60,6 +62,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RelevancyDAO	relevancyDAO;
 	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
+	@Autowired private RuleStatusDAO	ruleStatusDAO;
 
 	DaoServiceImpl instance;
 	public DaoServiceImpl() {
@@ -108,6 +111,10 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setRedirectRuleDAO(RedirectRuleDAO redirectRuleDAO) {
 		this.redirectRuleDAO = redirectRuleDAO;
+	}
+
+	public void setRuleStatusDAO(RuleStatusDAO ruleStatusDAO) {
+		this.ruleStatusDAO = ruleStatusDAO;
 	}
 
 	/* Audit Trail */
@@ -799,5 +806,33 @@ public class DaoServiceImpl implements DaoService {
 
 	public RedirectRuleDAO getRedirectRuleDAO() {
 		return redirectRuleDAO;
+	}
+
+	public RuleStatusDAO getRuleStatusDAO() {
+		return ruleStatusDAO;
+	}
+
+	@Override
+	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int addRuleStatus(RuleStatus rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateRuleStatus(RuleStatus rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeRuleStatus(RuleStatus rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

@@ -51,6 +51,7 @@ body 							{ margin: 0px; }
 .cssReset .w278, .w278			{width:278px}
 .cssReset .w282, .w282			{width:282px}
 .cssReset .w300, .w300			{width:300px}
+.cssReset .w325, .w325			{width:325px}
 .cssReset .w330, .w330			{width:330px}
 .cssReset .w340					{width:340px}
 .cssReset .w350, .w350			{width:350px}
@@ -58,6 +59,7 @@ body 							{ margin: 0px; }
 .cssReset .w355					{width:355px}
 .cssReset .w400, .w400			{width:400px}
 .cssReset .w405, .w405			{width:405px}
+.cssReset .w450, .w450			{width:450px}
 .cssReset .w460, .w460			{width:460px}
 .cssReset .w480, .w480			{width:480px}
 .cssReset .w512, .w512          {width:512px}
@@ -149,6 +151,7 @@ body 							{ margin: 0px; }
 .cssReset .marR12, .marR12		{margin-right:12px}
 .cssReset .marR15, .marR15		{margin-right:15px}
 .cssReset .marR70, .marR70		{ padding-right:70px !important; }
+.cssReset .marL0, .marL0		{margin-left:0px !important}
 .cssReset .marL3, .marL3		{margin-left:3px !important}
 .cssReset .marL4, .marL4		{margin-left:4px}
 .cssReset .marL5, .marL5		{margin-left:5px}
@@ -201,6 +204,8 @@ body 							{ margin: 0px; }
 .minHeight245					{ min-height:245px; }
 .cssReset .minHeight300, 
 .minHeight300	  				{ min-height:300px; }
+.cssReset .minHeight400, 
+.minHeight400	  				{ min-height:400px; }
 
 .cssReset .height15				{ height:15px }
 .cssReset .height24, .height24	{ height:24px }

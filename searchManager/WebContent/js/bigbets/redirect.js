@@ -12,15 +12,16 @@
 	var ruleKeyword = "";
 	var rulePage = 1;
 	var rulePageSize = 5;
+	var ruleType;
 	
 	var addRule = function() { 
 		
-		RedirectServiceJS.addRedirectRule(ruleName,searchTerm, ruleCondition, storeId, active, priority, {
+		RedirectServiceJS.addRedirectRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, active, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
 				ruleId = "";
-				initPage();
+				getRedirectRuleList(ruleId, rulePage);
 			}
 		}
 	});
@@ -38,7 +39,7 @@
 	});
 	};
 	
-	var deleteRule = function() { RedirectServiceJS.removeRedirectRule(ruleId, ruleName, {
+	var deleteRule = function() { RedirectServiceJS.removeRedirectRule(ruleId, ruleName, searchTerm, {
 		callback: function(data){
 //			if (data > 0) {
 //				alert($('#kDispPattern' + ruleId).length > 0);
@@ -49,7 +50,6 @@
 //			}
 		},
 		postHook: function(){
-//			alert($('#kDispPattern' + ruleId).length > 0);
 			$('#kDispPattern' + ruleId).remove();
 			ruleId = "";
 			clearValues();
@@ -147,6 +147,18 @@
 	});
 	};
 
+	var checkIfExist = function() { 
+		
+		RedirectServiceJS.getRedirectRule(keyword, ruleId, page, rulePageSize, {
+			callback: function(data){
+				if (data.totalSize > 0) {
+					rules = data.list;
+					alert("Search term " + keyword + " is already defined in " + rules[0].ruleName);
+					$("#searchTermList option:last").remove();
+				}
+			}
+		});
+	};
 	var getRedirectRuleList = function(ruleId, page) { 
 
 		$("#redirectSidePanel").sidepanel({
@@ -303,14 +315,17 @@
 	    $("#addSearchTerm").click(function() {
 	    	searchTerm = $("#searchTerm").val();
 	    	if (searchTerm.length>0 && searchTerm != "Add Search Term") {
-//	    		if ($('#searchTermList option[value=' + searchTerm + ']').length < 1) {
-			    	$("#searchTermList")
-			          .append($("<option>", { value : searchTerm })
-			          .text(searchTerm)); 
-			    	$("#searchTerm").val("Add Search Term");
-//	    		} else {
-//	    			alert("Search term already exists!");
-//	    		}
+	    		RedirectServiceJS.getRedirectRule(searchTerm, ruleId, 1, rulePageSize, {
+	    			callback: function(data){
+	    				if (data.totalSize > 0) {
+	    					rules = data.list;
+	    					alert("Search term " + searchTerm + " is already defined in Rule " + rules[0].ruleName);
+	    					$("#searchTermList option:last").remove();
+	    				}
+	    			}
+	    		});
+		    	$("#searchTermList").append($("<option>", { value : searchTerm }).text(searchTerm)); 
+			    $("#searchTerm").val("Add Search Term");
 	    	}
 	    });
 
@@ -334,9 +349,14 @@
 	    	} else {
 	    		var res=confirm("Delete rule " + $("#ruleName").val() + "?");
 	    		if (res==true) {
+	    			searchTerm = "";
+	        		$("#searchTermList option").each(function() {
+	        	    	searchTerm += $(this).val() + ",";
+	        	    });
+	        		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf(","));
 	    			ruleId = $("#ruleId").val();
 	    			ruleName = $("#ruleName").val();
-	    			deleteRule(ruleId, ruleName);
+	    			deleteRule(ruleId, ruleName, searchTerm);
 	    		}
 	    	}
 	    });
@@ -347,14 +367,16 @@
     		searchTerm = "";
     		ruleCondition = "";
     		$("#searchTermList option").each(function() {
-    	    	searchTerm += $(this).val() + "||";
+    	    	searchTerm += $(this).val() + ",";
     	    });
     		if (redirectFlag) {
     			ruleCondition = $("#url").val();
+    			ruleType =2;
     		} else {
         		$("#ruleList option").each(function() {
         			ruleCondition += $(this).val() + "||";
         	    });
+    			ruleType =1;
     		}
     		if (searchTerm.length == 0) {
     			alert("Please add at least one Search Term.");
@@ -366,10 +388,10 @@
     			if (!redirectFlag) {
             		ruleCondition = ruleCondition.substring(0, ruleCondition.lastIndexOf("||"));
     			}
-        		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf("||"));
+        		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf(","));
 	    		
     	    	if (ruleId == 0) {
-    	    		addRule(ruleName, searchTerm, ruleCondition, storeId, active, priority);
+    	    		addRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, active, priority);
     	    		$("#delete").text("Delete");
     	    	} else {
     	    		updateRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, active, priority);

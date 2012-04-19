@@ -7,7 +7,7 @@ import org.springframework.util.Assert;
 
 public class SessionRegistryUtils {
 
-	public static Object obtainPrincipalFromAuthentication(Authentication auth){
+	public static Object getPrincipal(Authentication auth){
 		Assert.notNull(auth, "Authentication required");
 		Assert.notNull(auth.getPrincipal(), "Authentication.getPrincipal() required");
 
@@ -18,7 +18,7 @@ public class SessionRegistryUtils {
 		}
 	}
 
-	public static String obtainSessionIdFromAuthentication(Authentication auth){
+	public static String getSessionId(Authentication auth){
 		Assert.notNull(auth, "Authentication required");
 		Assert.notNull(auth.getDetails(), "Authentication.getDetails() required");
 		Assert.isInstanceOf(SessionIdentifierAware.class, auth.getDetails());

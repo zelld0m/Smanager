@@ -25,13 +25,13 @@
 			
 			var content ='<div id="auditPanelHeader" class="sideHeader posRel">';
 
-			content+= '<h2 class="dockTitle">' + base.options.headerText+' </h2>';
+			content+= '<h2 class="dockTitle">' + base.options.headerText + '</h2>';
 			content+= '</div>';
 			
 			content+= '<div class="root" id="root0">';
 			content+= '<div class="scrollContainer" id="scroll0Container">';
 			content+= '<div class="scrollContent" id="scroll0Content">';
-			content+= '<div id="auditPanelContent" class="dockContent">';
+			content+= '<div id="auditPanelContent">';
 			content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
 			content+= '<li id="itemPattern" class="items" style="display:none">';
 			content+= '	<p class="notification">';

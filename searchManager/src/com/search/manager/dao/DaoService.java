@@ -19,6 +19,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -177,5 +178,11 @@ public interface DaoService {
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
     public List<NameValue> getDropdownValues() throws DaoException;
+	
+    /* Rule Status */
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
+	public int addRuleStatus(RuleStatus rule) throws DaoException;
+	public int updateRuleStatus(RuleStatus rule) throws DaoException;
+	public int removeRuleStatus(RuleStatus rule) throws DaoException;
 	
 }

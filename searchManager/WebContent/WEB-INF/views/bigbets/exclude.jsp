@@ -83,7 +83,7 @@ function initFileUploads() {
 			<span id="titleText"></span>
         	<span id="keywordHeader" class="fLblue fnormal"></span>
 		</div>
-        <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none"><input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w85 marT1" maxlength="10" value="Esdsd"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
+        <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none"><input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="Esdsd"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
       </div>
      
     <!--Add Item Content--> 

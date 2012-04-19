@@ -1,0 +1,26 @@
+#Wed Apr 18 14:32:39 CST 2012
+eclipse.preferences.version=1
+encoding//src/com/search/webservice/model/ElevatedList.java=UTF-8
+encoding//src/com/search/webservice/model/ExcludedList.java=UTF-8
+encoding//src/com/search/webservice/model/TransportList.java=UTF-8
+encoding//src/com/search/ws/client/AnyType2AnyTypeMapEntry.java=UTF-8
+encoding//src/com/search/ws/client/LoadElevateList.java=UTF-8
+encoding//src/com/search/ws/client/LoadElevateListResponse.java=UTF-8
+encoding//src/com/search/ws/client/LoadExcludeList.java=UTF-8
+encoding//src/com/search/ws/client/LoadExcludeListResponse.java=UTF-8
+encoding//src/com/search/ws/client/LoadRelevancyDetails.java=UTF-8
+encoding//src/com/search/ws/client/LoadRelevancyDetailsResponse.java=UTF-8
+encoding//src/com/search/ws/client/LoadRelevancyList.java=UTF-8
+encoding//src/com/search/ws/client/LoadRelevancyListResponse.java=UTF-8
+encoding//src/com/search/ws/client/PushElevateList.java=UTF-8
+encoding//src/com/search/ws/client/PushElevateList1.java=UTF-8
+encoding//src/com/search/ws/client/PushElevateList1Response.java=UTF-8
+encoding//src/com/search/ws/client/PushElevateListResponse.java=UTF-8
+encoding//src/com/search/ws/client/PushExcludeList.java=UTF-8
+encoding//src/com/search/ws/client/PushExcludeList1.java=UTF-8
+encoding//src/com/search/ws/client/PushExcludeList1Response.java=UTF-8
+encoding//src/com/search/ws/client/PushExcludeListResponse.java=UTF-8
+encoding//src/com/search/ws/client/SearchGuiService.java=UTF-8
+encoding//src/com/search/ws/client/SearchGuiServiceHttpBindingStub.java=UTF-8
+encoding//src/com/search/ws/client/SearchGuiServiceLocator.java=UTF-8
+encoding//src/com/search/ws/client/SearchGuiServicePortType.java=UTF-8
