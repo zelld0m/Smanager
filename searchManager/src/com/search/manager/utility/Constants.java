@@ -13,4 +13,10 @@ public class Constants {
 	/** The name of the first update count in a result set. */
 	public static final String UPDATE_COUNT_1 = "#update-count-1";	
 	
+	/** Redirect Ruling */
+	public static final String DBL_ESC_PIPE_DELIM = "\\|\\|";
+	public static final String DBL_PIPE_DELIM = "||";
+	public static final String OR = ") OR (";
+	
+	public static final String GLOBAL_INIT = "GLOBAL_INIT_PROPERTIES";
 }

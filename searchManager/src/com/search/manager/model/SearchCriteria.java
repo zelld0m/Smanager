@@ -100,5 +100,12 @@ public class SearchCriteria<T> implements Serializable {
 	public Integer getItemsPerPage() {
 		return itemsPerPage;
 	}
-	
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 }

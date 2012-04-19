@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
@@ -41,13 +41,13 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.ws.SearchHelper;
 
-@Repository(value="daoService")
+@Service("daoService")
 public class DaoServiceImpl implements DaoService {
 
 	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
@@ -291,7 +291,8 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
-		return elevateDAO.getElevate(criteria);
+		RecordSet<ElevateResult> list = elevateDAO.getElevate(criteria);
+		return list;
 	}
 
 	@Override

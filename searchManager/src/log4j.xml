@@ -49,6 +49,12 @@
 		<appender-ref ref="fileAppender" />
 	</logger>
 	
+	<logger name="org" additivity="false">
+		<level value="INFO, DEBUG" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	
     <logger name="com.search.manager.aop.LoginInterceptor" additivity="false">
 		<level value="INFO, DEBUG" />
 		<appender-ref ref="consoleAppender"/>
