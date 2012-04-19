@@ -28,8 +28,10 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -38,19 +40,20 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.RedirectUtility;
+import com.search.ws.client.SearchGuiClientService;
+import com.search.ws.client.SearchGuiClientServiceImpl;
 
 public class SearchServlet extends HttpServlet {
 
-	@Autowired
-	DaoService daoService;
-	@Autowired
-	RedirectUtility redirectUtility;
+	@Autowired DaoService daoService;
+	@Autowired DaoCacheService daoCacheService;
+	@Autowired RedirectUtility redirectUtility;
 
 	private static final long serialVersionUID = 1L;
 
@@ -68,6 +71,10 @@ public class SearchServlet extends HttpServlet {
 
 	public final ExecutorService execService = Executors.newCachedThreadPool();
 
+	public void setDaoCacheService(DaoCacheService daoCacheService) {
+		this.daoCacheService = daoCacheService;
+	}
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
@@ -226,7 +233,9 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
-				relevancy = daoService.getRelevancyDetails(relevancy);
+				//relevancy = daoService.getRelevancyDetails(relevancy);
+				relevancy = daoCacheService.getRelevancyDetails(relevancy,storeName);
+
 				if (relevancy != null) {
 					nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
 					Map<String, String> parameters = relevancy.getParameters();
@@ -267,10 +276,12 @@ public class SearchServlet extends HttpServlet {
 			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
 			SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
 			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
-
+	
 			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-				List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
+				//elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
+				elevatedList = daoCacheService.getElevateResultList(elevateCriteria,storeName);
+				
+				List<ElevateResult> expiredList = daoCacheService.getElevateResultList(expiredElevateCriteria,storeName);
 				if (logger.isDebugEnabled()) {
 					logger.debug("Expired List: ");
 				}
@@ -285,7 +296,7 @@ public class SearchServlet extends HttpServlet {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoService.getExcludeResultList(excludeCriteria).getList() : null;
+			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(excludeCriteria,storeName) : null;
 
 			/* First Request */
 			// get expected resultformat
@@ -350,12 +361,10 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.add(nvp);
 
 			// redirect 
-			//TODO change to storename
-			String redirectUrl = redirectUtility.getRedirectURL("macmall" + keyword);
-			nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
-			nameValuePairs.add(nvp);
-			
-			String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
+			String redirectFQ = "";
+			if(keyword != null && !"".equals(keyword.trim()))			
+				redirectFQ = redirectUtility.getRedirectFQ(storeName + keyword);
+
 			if (!StringUtils.isBlank(redirectFQ)) {
 				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
 				nameValuePairs.add(nvp);

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+
+		
+	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
+		<beans:property name="elevateDAO" ref="elevateDAO"/>
+		<beans:property name="keywordDAO" ref="keywordDAO"/>
+		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>
+		<beans:property name="excludeDAO" ref="excludeDAO"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAO"/>
+		<beans:property name="bannerDAO" ref="bannerDAO"/>
+		<beans:property name="campaignDAO" ref="campaignDAO"/>		
+		<beans:property name="relevancyDAO" ref="relevancyDAO"/>		
+		<beans:property name="categoryDAO" ref="categoryDAO"/>		
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>		
+    </beans:bean>
+ 
+ 	<beans:bean name="daoCacheService" id="daoCacheService" class="com.search.manager.cache.dao.DaoCacheServiceImpl" scope="singleton">
+ 		<beans:property name="cacheService" ref="cacheService"/>
+ 		<beans:property name="daoService" ref="daoService"/>
+ 		<beans:property name="localCacheService" ref="localCacheService"/>
+    </beans:bean>
+    
+	<beans:bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
+		<beans:constructor-arg ref="dataSource_solr" />
+	</beans:bean>
+	
+	<!-- DWR Service Definition:
+		 All classes with @RemoteProxy should be declared to resolve dwr issue
+		 Bean Property should have @Autowired and getter setter
+	 -->
+	 
+	<beans:bean name="auditService" class="com.search.manager.service.AuditService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean> 
+	<beans:bean name="bannerService" class="com.search.manager.service.BannerService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="campaignService" class="com.search.manager.service.CampaignService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="catalogService" class="com.search.manager.service.CatalogService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="categoryService" class="com.search.manager.service.CategoryService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="commentService" class="com.search.manager.service.CommentService" scope="prototype">
+	</beans:bean>
+	<beans:bean name="elevateService" class="com.search.manager.service.ElevateService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
+	</beans:bean>
+	<beans:bean name="excludeService" class="com.search.manager.service.ExcludeService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
+	</beans:bean>
+	<beans:bean name="featureService" class="com.search.manager.service.FeatureService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="migratorService" class="com.search.manager.service.MigratorService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="redirectService" class="com.search.manager.service.RedirectService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="redirectUtility" ref="redirectUtility"/>
+	</beans:bean>
+	<beans:bean name="relevancyService" class="com.search.manager.service.RelevancyService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
+	</beans:bean>
+
+	<beans:bean name="statisticService" class="com.search.manager.service.StatisticService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="synonymService" class="com.search.manager.service.SynonymService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="storeKeywordService" class="com.search.manager.service.StoreKeywordService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="redirectUtility" class="com.search.manager.utility.RedirectUtility" scope="singleton">
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
+	</beans:bean>
+	<beans:bean name="utilityService" class="com.search.manager.service.UtilityService" scope="prototype">
+	</beans:bean>
+	
+	<beans:bean name="cacheService" class="com.search.manager.cache.service.CacheService" scope="prototype">
+	</beans:bean>
+	
+	<beans:bean name="localCacheService" class="com.search.manager.cache.service.LocalCacheService" scope="singleton">
+	</beans:bean>
+	
+</beans:beans>
