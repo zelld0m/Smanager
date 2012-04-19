@@ -39,9 +39,9 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String entity, Boolean includeApprovedFlag) {
 		List<RuleStatus> list = new ArrayList<RuleStatus>();
-		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "P", "add", "U", new Date(), "test comment");
+		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "P", "add", "U", new Date(), "test comment", entity, entity, null, null);
 		list.add(r);
-		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "P", "update", "U", new Date(), "sample comment");
+		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "P", "update", "U", new Date(), "sample comment", entity, entity, null, null);
 		list.add(r);
 		return new RecordSet<RuleStatus>(list, 2);
 	}
@@ -82,9 +82,9 @@ public class DeploymentService {
 	@RemoteMethod
 	public RecordSet<RuleStatus> getDeployedRules(String entity) {
 		List<RuleStatus> list = new ArrayList<RuleStatus>();
-		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "A", "add", "U", new Date(), "test comment");
+		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "A", "add", "U", new Date(), "test comment", entity, entity, null, null);
 		list.add(r);
-		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "A", "update", "P", new Date(), "sample comment");
+		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "A", "update", "P", new Date(), "sample comment", entity, entity, null, null);
 		list.add(r);
 		return new RecordSet<RuleStatus>(list, 2);
 	}
