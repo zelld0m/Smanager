@@ -143,6 +143,16 @@ public class DAOConstants {
 	public static final String PARAM_RULE_PRIORITY	 	 			= "rule_priority";
 	public static final String PARAM_SEARCH_TERM	 	 			= "search_term";
 	public static final String PARAM_ACTIVE_FLAG		 			= "active_flag";
+	public static final String PARAM_REDIRECT_TYPE_ID	 			= "redirect_type_id";
+	
+	public static final String PARAM_RULE_STATUS_ID		 			= "rule_status_id";
+	public static final String PARAM_RULE_TYPE_ID		 			= "rule_type_id";
+	public static final String PARAM_COMMENT_ID		 				= "comment_id";
+	public static final String PARAM_REFERENCE_ID		 			= "reference_id";
+	public static final String PARAM_PUBLISHED_STATUS	 			= "p_status";
+	public static final String PARAM_APPROVED_STATUS	 			= "a_status";
+	public static final String PARAM_UPDATE_STATUS		 			= "status";
+	public static final String PARAM_DESCRIPTION 					= "description";
 	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
@@ -189,6 +199,16 @@ public class DAOConstants {
 	public static final String COLUMN_SEARCH_TERM	 	 			= "search_term";
 	public static final String COLUMN_CONDITION						= "condition";
 	public static final String COLUMN_ACTIVE_FLAG		 			= "active_flag";
+	public static final String COLUMN_REDIRECT_TYPE_ID	 			= "redirect_type_id";
+
+	public static final String COLUMN_RULE_STATUS_ID		 		= "rule_status_id";
+	public static final String COLUMN_RULE_TYPE_ID		 			= "rule_type_id";
+	public static final String COLUMN_REFERENCE_ID		 			= "reference_id";
+	public static final String COLUMN_COMMENT_ID		 			= "comment_id";
+	public static final String COLUMN_PUBLISHED_STATUS	 			= "published_status";
+	public static final String COLUMN_APPROVED_STATUS	 			= "approved_status";
+	public static final String COLUMN_UPDATE_STATUS	 				= "update_status";
+	public static final String COLUMN_LAST_PUBLISHED_DATE			= "last_published_date";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

@@ -60,6 +60,7 @@ public class RedirectRuleDAO {
 	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new RedirectRule(
 	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_REDIRECT_TYPE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_NAME), 
 	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY), 
@@ -84,6 +85,7 @@ public class RedirectRuleDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
@@ -102,6 +104,7 @@ public class RedirectRuleDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
@@ -151,6 +154,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			rule.setRuleId(DAOUtils.generateUniqueId());
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
@@ -172,6 +176,7 @@ public class RedirectRuleDAO {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
