@@ -7,7 +7,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class RuleStatus implements Serializable {
+public class RuleStatus extends ModelBean implements Serializable {
 
 	private static final long serialVersionUID = 4608433178597830827L;
 
@@ -17,7 +17,7 @@ public class RuleStatus implements Serializable {
 	private String description;
 	private String approvalStatus;
 	private String updateStatus;
-	private String productionStatus;
+	private String publishedStatus;
 	private Date lastPublishedDate;
 	private String comment;
 	
@@ -27,7 +27,9 @@ public class RuleStatus implements Serializable {
 
 	public RuleStatus(String ruleStatusId, String entity, String ruleRefId,
 			String description, String approvalStatus, String updateStatus,
-			String productionStatus, Date lastPublishedDate, String comment) {
+			String publishedStatus, Date lastPublishedDate, String comment,
+			String createdBy, String modifiedBy, Date dateCreated,
+			Date dateModified) {
 		super();
 		this.ruleStatusId = ruleStatusId;
 		this.entity = entity;
@@ -35,9 +37,13 @@ public class RuleStatus implements Serializable {
 		this.description = description;
 		this.approvalStatus = approvalStatus;
 		this.updateStatus = updateStatus;
-		this.productionStatus = productionStatus;
+		this.publishedStatus = publishedStatus;
 		this.lastPublishedDate = lastPublishedDate;
 		this.comment = comment;
+		setCreatedBy(createdBy);
+		setLastModifiedBy(modifiedBy);
+		setCreatedDate(dateCreated);
+		setLastModifiedDate(dateModified);
 	}
 
 	public String getRuleStatusId() {
@@ -88,14 +94,6 @@ public class RuleStatus implements Serializable {
 		this.updateStatus = updateStatus;
 	}
 
-	public String getProductionStatus() {
-		return productionStatus;
-	}
-
-	public void setProductionStatus(String productionStatus) {
-		this.productionStatus = productionStatus;
-	}
-
 	public Date getLastPublishedDate() {
 		return lastPublishedDate;
 	}
@@ -110,6 +108,14 @@ public class RuleStatus implements Serializable {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getPublishedStatus() {
+		return publishedStatus;
+	}
+
+	public void setPublishedStatus(String publishedStatus) {
+		this.publishedStatus = publishedStatus;
 	}
 	
 }

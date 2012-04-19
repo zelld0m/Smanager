@@ -41,7 +41,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addRedirectRule(String ruleName, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
+	public int addRedirectRule(String ruleName, String redirectType, String searchTerm, String condition, String storeId, Integer activeFlag, Integer priority) {
 		int result = -1;
 		try {
 
@@ -84,13 +84,13 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectRule(String ruleId, String ruleName) {
+	public int removeRedirectRule(String ruleId, String ruleName, String searchTerm) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setRuleName(ruleName);
-			rule.setSearchTerm("");
+			rule.setSearchTerm(searchTerm);
 			rule.setCondition("");
 			rule.setStoreId(UtilityService.getStoreName());
 			result = daoService.removeRedirectRule(rule);
