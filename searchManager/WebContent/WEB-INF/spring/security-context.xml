@@ -189,6 +189,9 @@
 	<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
+	<beans:bean name="ruleStatusDAO" id="ruleStatusDAO" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
 	
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
@@ -201,6 +204,7 @@
 		<beans:property name="relevancyDAO" ref="relevancyDAO"/>		
 		<beans:property name="categoryDAO" ref="categoryDAO"/>		
 		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>		
+		<beans:property name="ruleStatusDAO" ref="ruleStatusDAO"/>		
     </beans:bean>
  
 	<beans:bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
@@ -246,6 +250,9 @@
 		<beans:property name="redirectUtility" ref="redirectUtility"/>
 	</beans:bean>
 	<beans:bean name="relevancyService" class="com.search.manager.service.RelevancyService" scope="prototype">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	<beans:bean name="deploymentService" class="com.search.manager.service.DeploymentService" scope="prototype">
 		<beans:property name="daoService" ref="daoService"/>
 	</beans:bean>
 
