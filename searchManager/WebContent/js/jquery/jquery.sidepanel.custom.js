@@ -18,12 +18,14 @@
 			base.populateTemplate();
 			base.getList("", base.options.page);
 
+			base.timeout = "";
+			
 			base.$el.find('input[id="searchTextbox"]').on({
 				blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(base.options.searchText);},
 				focus: function(e){if ($.trim($(e.target).val()) == base.options.searchText) $(e.target).val("");},
 				keyup: function(e){
-					setTimeout(function(){
-						base.getList($.trim($(e.target).val()), 1);
+					base.timeout = setTimeout(function(){
+							base.getList($.trim($(e.target).val()), 1);
 					}, base.options.reloadRate);  
 				}
 			});
@@ -38,10 +40,6 @@
 
 		base.populateTemplate = function(){
 
-			if (base.options.region="left"){}
-			if (base.options.region="content"){}
-			
-			
 			var content ='<div id="sideHeader" class="sideHeader posRel">';
 
 			content+= '<img src="../images/corner_tl.png" class="curveTL"/>';
@@ -156,7 +154,6 @@
 
 	$.sidepanel.defaultOptions = {
 			page:1,
-			region: "left",
 			pageSize: 10,
 			pageStyle: "style1",
 			headerText: "",
@@ -167,7 +164,7 @@
 			itemNameCallback: function(e){},
 			itemAddCallback: function(e){},
 			pageChangeCallback: function(e){},
-			reloadRate: 250
+			reloadRate: 2000
 	};
 
 	$.fn.sidepanel = function(options){

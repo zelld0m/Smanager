@@ -88,6 +88,7 @@
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
 			setItemFilter("all");
 			$("#titleText").html("Exclude List");
+			showPageAuditList("#notificationList", "Exclude Activities", "Exclude", 1);
 			navigateKeywords(1);
 			setItemDisplay();
 		},
