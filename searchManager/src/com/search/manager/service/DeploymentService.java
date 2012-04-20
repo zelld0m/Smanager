@@ -65,8 +65,6 @@ public class DeploymentService {
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
 		ruleRefIdList = new ArrayList<String>();
-		ruleRefIdList.add("test_rule");
-		ruleRefIdList.add("Rule2");
 		
 		int result = -1;
 		try {
