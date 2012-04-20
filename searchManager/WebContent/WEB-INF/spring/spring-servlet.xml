@@ -9,20 +9,24 @@
         				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         				 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 	
-	<!-- Registering this class makes Spring look for beans that have the
-		 name attribute set to the URL path -->
-	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping" scope="singleton" />
+	<!-- Registering this class makes Spring look for beans that have the name attribute set to the URL path -->
+	<bean id="beanNameUrlHandlerMapping" name="beanNameUrlHandlerMapping"
+		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"
+		scope="singleton" />
 
 	<!-- Resolve logical view names to .jsp resources in the /WEB-INF/views directory.
 		 Note that this is the last view resolver because it will attempt to match
 		 any requested resource not already matched -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" scope="singleton" >
+	<bean id="internalResourceViewResolver" name="internalResourceViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		scope="singleton">
 		<property name="order" value="2" />
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-	
-	<bean class="org.springframework.web.context.support.ServletContextAttributeExporter">
+
+	<bean id="servletContextAttributeExporter" name="servletContextAttributeExporter"
+		class="org.springframework.web.context.support.ServletContextAttributeExporter">
 	   <property name="attributes">
 	      <map>
 	         <entry key="daoService"><ref bean="daoService"/></entry>

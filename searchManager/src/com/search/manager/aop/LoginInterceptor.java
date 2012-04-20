@@ -4,8 +4,10 @@ import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
 
 @Aspect
+@Component("loginInterceptor")
 public class LoginInterceptor {
 	private static final Logger authLog = Logger.getLogger(LoginInterceptor.class);
 

@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.model.AuditTrail;
@@ -20,6 +21,7 @@ import com.search.manager.service.UtilityService;
 import com.search.manager.utility.Constants;
 
 @Aspect
+@Component("auditInterceptor")
 public class AuditInterceptor {
 	
 	private static final Logger logger = Logger.getLogger(AuditInterceptor.class);
