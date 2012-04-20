@@ -64,10 +64,6 @@ public class DeploymentService {
 	}
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
-		ruleRefIdList = new ArrayList<String>();
-		ruleRefIdList.add("test_rule");
-		ruleRefIdList.add("Rule2");
-		
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "APPROVED");
@@ -144,34 +140,36 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int AddComment(String ruleStatusId) {
+	public int AddComment(String ruleStatusId, String comment) {
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			daoService.addComment(ruleStatusId, comment, UtilityService.getUsername());
+		} catch (DaoException e) {
+			logger.error("Failed during updateRedirectRule()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public int removeComment(String commentId) {
+	public int removeComment(Integer commentId) {
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			daoService.removeComment(commentId);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRedirectRule()",e);
+		}
 		return result;
 	}
 
 	private List<RuleStatus> generateApprovalList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
+		String userName = UtilityService.getUsername();
 		for (String ruleRefId : ruleRefIdList) {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setApprovalStatus(status);
+			ruleStatus.setCreatedBy(userName);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;
@@ -179,11 +177,13 @@ public class DeploymentService {
 
 	private List<RuleStatus> generateForPublishingList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
+		String userName = UtilityService.getUsername();
 		for (String ruleRefId : ruleRefIdList) {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setPublishedStatus(status);
+			ruleStatus.setCreatedBy(userName);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;

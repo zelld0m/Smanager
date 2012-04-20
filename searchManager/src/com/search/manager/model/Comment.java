@@ -1,6 +1,7 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -15,17 +16,18 @@ private static final long serialVersionUID = 1L;
 	private String comment;
 	private String commentId;
 	private String referenceId;
+	private Date createdDate;
 	
 	public Comment() {
 	}
 
-	public Comment(String commentId, String referenceId, String comment, String username, String date) {
+	public Comment(String commentId, String referenceId, String comment, String username, Date createdDate) {
 		super();
-		this.username = username;
-		this.date = date;
-		this.comment = comment;
 		this.commentId = commentId;
 		this.referenceId = referenceId;
+		this.comment = comment;
+		this.username = username;
+		this.createdDate = createdDate;
 	}
 
 	public void setUsername(String username) {
@@ -66,6 +68,14 @@ private static final long serialVersionUID = 1L;
 
 	public String getUsername() {
 		return username;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
 
 }
