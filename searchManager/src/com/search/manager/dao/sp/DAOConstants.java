@@ -94,6 +94,11 @@ public class DAOConstants {
 	public static final String SP_UPDATE_RULE_STATUS				= "Usp_Update_Rule_Status";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
+	//COMMENT
+	public static final String SP_ADD_COMMENT						= "Usp_Add_Comment_Status";
+	public static final String SP_UPDATE_COMMENT					= "Usp_Update_Comment_Status";
+	public static final String SP_DELETE_COMMENT					= "usp_Delete_Comment_Status";
+	public static final String SP_GET_COMMENT						= "usp_Get_Comment_Status";
 	
 	//CATEGORY
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";

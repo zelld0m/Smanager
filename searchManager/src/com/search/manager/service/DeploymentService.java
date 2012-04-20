@@ -108,7 +108,6 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
-
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
@@ -121,9 +120,6 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
-		ruleRefIdList = new ArrayList<String>();
-		ruleRefIdList.add("test_rule");
-		ruleRefIdList.add("Rule2");
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
@@ -140,7 +136,7 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int AddComment(String ruleStatusId, String comment) {
+	public int addComment(String ruleStatusId, String comment) {
 		int result = -1;
 		try {
 			daoService.addComment(ruleStatusId, comment, UtilityService.getUsername());

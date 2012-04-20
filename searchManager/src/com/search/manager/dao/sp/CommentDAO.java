@@ -42,7 +42,7 @@ public class CommentDAO {
 	
 	private class GetCommentStoredProcedure extends GetStoredProcedure {
 	    public GetCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_RULE_STATUS);
+	        super(jdbcTemplate, DAOConstants.SP_GET_COMMENT);
 	    }
 
 		@Override
@@ -69,7 +69,7 @@ public class CommentDAO {
 
 	private class AddCommentStoredProcedure extends CUDStoredProcedure {
 	    public AddCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_ADD_RULE_STATUS);
+	        super(jdbcTemplate, DAOConstants.SP_ADD_COMMENT);
 	    }
 
 		@Override
@@ -82,7 +82,7 @@ public class CommentDAO {
 	
 	private class UpdateCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_RULE_STATUS);
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_COMMENT);
 	    }
 
 		@Override
@@ -94,7 +94,7 @@ public class CommentDAO {
 
 	private class DeleteCommentStoredProcedure extends CUDStoredProcedure {
 	    public DeleteCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_DELETE_RULE_STATUS);
+	        super(jdbcTemplate, DAOConstants.SP_DELETE_COMMENT);
 	    }
 
 		@Override
@@ -106,7 +106,7 @@ public class CommentDAO {
     @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
     public int deleteComment(Integer commentId) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
-		inputs.put(DAOConstants.PARAM_RULE_STATUS_ID, commentId);
+		inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
