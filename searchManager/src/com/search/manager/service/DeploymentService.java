@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -38,8 +39,9 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getApprovalList(Integer ruleTypeId, Boolean includeApprovedFlag) {
+	public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
 		RecordSet<RuleStatus> rSet = null;
+		int ruleTypeId = RuleEntity.getId(ruleType);
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
@@ -56,14 +58,14 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int approveRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+	public int approveRule(String ruleType, List<String> ruleRefIdList) {
 		ruleRefIdList = new ArrayList<String>();
 		ruleRefIdList.add("test_rule");
 		ruleRefIdList.add("Rule2");
 		
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, ruleTypeId, "APPROVED");
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "APPROVED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
@@ -72,11 +74,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int unapproveRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
 			//REJECTED?
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, ruleTypeId, "PENDING");
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "PENDING");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
@@ -85,11 +87,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getDeployedRules(Integer ruleTypeId) {
+	public RecordSet<RuleStatus> getDeployedRules(String ruleType) {
 		RecordSet<RuleStatus> rSet = null;
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
-			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setApprovalStatus("APPROVED");
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
@@ -100,11 +102,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int publishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+	public int publishRule(String ruleType, List<String> ruleRefIdList) {
 
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, ruleTypeId, "PUBLISHED");
+			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
@@ -113,13 +115,13 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int unpublishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		ruleRefIdList = new ArrayList<String>();
 		ruleRefIdList.add("test_rule");
 		ruleRefIdList.add("Rule2");
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, ruleTypeId, "UNPUBLISHED");
+			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
@@ -128,8 +130,8 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int recallRule(List<String> ruleRefIdList, Integer ruleTypeId) {
-		return unpublishRule(ruleRefIdList, ruleTypeId);
+	public int recallRule(String ruleType, List<String> ruleRefIdList) {
+		return unpublishRule(ruleType, ruleRefIdList);
 	}
 
 	@RemoteMethod
