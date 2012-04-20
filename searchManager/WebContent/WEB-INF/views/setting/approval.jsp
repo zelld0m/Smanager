@@ -35,22 +35,10 @@
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
 		    </ul>
 		   
-			<!--  approval tab -->
-			<div class="minHeight400" id="elevateTab">
-				
-				<!--  end table inside tab -->
-			</div>
-			
-			<div class="minHeight400" id="excludeTab">
-			
-			</div>
-			
-			<div class="minHeight400" id="queryCleaningTab">
-			
-			</div>
-			<div class="minHeight400" id="rankingRuleTab">
-			
-			</div>
+			<div class="minHeight400" id="elevateTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
+			<div class="minHeight400" id="excludeTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
+			<div class="minHeight400" id="queryCleaningTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
+			<div class="minHeight400" id="rankingRuleTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
@@ -58,7 +46,7 @@
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="24px"><input type="checkbox"></th>
+							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="268px" class="txtAL">Rule ID</th>
 							<th width="85px">Status</th>
 							<th width="110px">Approve Status</th>
@@ -71,7 +59,7 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem">
-							<td width="24px" class="txtAC"><input type="checkbox"></td>
+							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="268px" id="ruleRefId"></td>
 							<td width="85px" class="txtAC" id="updateStatus"></td>
 							<td width="110px" class="txtAC" id="approvalStatus"></td>
@@ -79,6 +67,14 @@
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div id="actionBtn" class="floatR marT10" style="display:none">
+				<a id="approveBtn" href="javascript:void(0);"
+					class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+				</a>
+				<a id="rejectBtn" href="javascript:void(0);"
+					class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+				</a>
 			</div>
 		</div>
 		

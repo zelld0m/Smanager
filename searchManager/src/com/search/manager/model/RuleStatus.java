@@ -12,7 +12,7 @@ public class RuleStatus extends ModelBean implements Serializable {
 	private static final long serialVersionUID = 4608433178597830827L;
 
 	private String ruleStatusId;
-	private String entity;
+	private Integer ruleTypeId;
 	private String ruleRefId;
 	private String description;
 	private String approvalStatus;
@@ -25,14 +25,14 @@ public class RuleStatus extends ModelBean implements Serializable {
 		super();
 	}
 
-	public RuleStatus(String ruleStatusId, String entity, String ruleRefId,
+	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId,
 			String description, String approvalStatus, String updateStatus,
 			String publishedStatus, Date lastPublishedDate, String comment,
 			String createdBy, String modifiedBy, Date dateCreated,
 			Date dateModified) {
 		super();
 		this.ruleStatusId = ruleStatusId;
-		this.entity = entity;
+		this.ruleTypeId = ruleTypeId;
 		this.ruleRefId = ruleRefId;
 		this.description = description;
 		this.approvalStatus = approvalStatus;
@@ -52,14 +52,6 @@ public class RuleStatus extends ModelBean implements Serializable {
 
 	public void setRuleStatusId(String ruleStatusId) {
 		this.ruleStatusId = ruleStatusId;
-	}
-
-	public String getEntity() {
-		return entity;
-	}
-
-	public void setEntity(String entity) {
-		this.entity = entity;
 	}
 
 	public String getRuleRefId() {
@@ -116,6 +108,14 @@ public class RuleStatus extends ModelBean implements Serializable {
 
 	public void setPublishedStatus(String publishedStatus) {
 		this.publishedStatus = publishedStatus;
+	}
+
+	public Integer getRuleTypeId() {
+		return ruleTypeId;
+	}
+
+	public void setRuleTypeId(Integer ruleTypeId) {
+		this.ruleTypeId = ruleTypeId;
 	}
 	
 }

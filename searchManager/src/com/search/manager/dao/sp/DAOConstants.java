@@ -89,6 +89,11 @@ public class DAOConstants {
 	public static final String SP_UPDATE_REDIRECT					= "Usp_Update_Redirect_Rule";
 	public static final String SP_DELETE_REDIRECT					= "usp_Delete_Redirect_Rule";
 	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
+	//RULE STATUS
+	public static final String SP_ADD_RULE_STATUS					= "Usp_Add_Rule_Status";
+	public static final String SP_UPDATE_RULE_STATUS				= "Usp_Update_Rule_Status";
+	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
+	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	
 	//CATEGORY
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
