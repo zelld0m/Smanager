@@ -44,9 +44,9 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			if (!includeApprovedFlag) {
-				ruleStatus.setApprovalStatus("P");
+				ruleStatus.setApprovalStatus("PENDING");
 			}
-			ruleStatus.setPublishedStatus("U");
+			ruleStatus.setPublishedStatus("UNPUBLISHED");
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
 		} catch (DaoException e) {
@@ -90,7 +90,7 @@ public class DeploymentService {
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
-			ruleStatus.setApprovalStatus("A");
+			ruleStatus.setApprovalStatus("APPROVED");
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
 		} catch (DaoException e) {
@@ -101,9 +101,6 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int publishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
-//		ruleRefIdList = new ArrayList<String>();
-//		ruleRefIdList.add("test_rule");
-//		ruleRefIdList.add("Rule2");
 
 		int result = -1;
 		try {
@@ -117,6 +114,9 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int unpublishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+		ruleRefIdList = new ArrayList<String>();
+		ruleRefIdList.add("test_rule");
+		ruleRefIdList.add("Rule2");
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, ruleTypeId, "UNPUBLISHED");
