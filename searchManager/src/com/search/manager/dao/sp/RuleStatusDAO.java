@@ -77,11 +77,10 @@ public class RuleStatusDAO {
 	                		rs.getString(DAOConstants.COLUMN_UPDATE_STATUS),
 	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
 	                		rs.getDate(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
-	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-	                		rs.getDate(DAOConstants.COLUMN_CREATED_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE)	                		
+	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
+	                		rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
 	                		);
 	        	}
 
@@ -147,6 +146,7 @@ public class RuleStatusDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, StringUtils.isNotBlank(ruleStatus.getApprovalStatus())?ruleStatus.getApprovalStatus():null);
+			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, StringUtils.isNotBlank(ruleStatus.getPublishedStatus())?ruleStatus.getPublishedStatus():null);
 			inputs.put(DAOConstants.PARAM_UPDATE_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
 			inputs.put(DAOConstants.PARAM_START_DATE, searchCriteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());

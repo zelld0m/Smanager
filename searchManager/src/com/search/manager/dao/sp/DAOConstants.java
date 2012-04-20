@@ -214,6 +214,8 @@ public class DAOConstants {
 	public static final String COLUMN_APPROVED_STATUS	 			= "approved_status";
 	public static final String COLUMN_UPDATE_STATUS	 				= "update_status";
 	public static final String COLUMN_LAST_PUBLISHED_DATE			= "last_published_date";
+	public static final String COLUMN_CREATED_STAMP					= "created_stamp";
+	public static final String COLUMN_LAST_UPDATED_STAMP			= "last_updated_stamp";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
