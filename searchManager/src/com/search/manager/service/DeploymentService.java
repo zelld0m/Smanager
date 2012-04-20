@@ -169,7 +169,7 @@ public class DeploymentService {
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setApprovalStatus(status);
-			ruleStatus.setCreatedBy(userName);
+			ruleStatus.setLastModifiedBy(userName);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;
@@ -183,7 +183,7 @@ public class DeploymentService {
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setPublishedStatus(status);
-			ruleStatus.setCreatedBy(userName);
+			ruleStatus.setLastModifiedBy(userName);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;
