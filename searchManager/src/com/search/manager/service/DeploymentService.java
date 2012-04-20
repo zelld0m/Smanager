@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -58,6 +59,10 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public int approveRule(String ruleType, String ...ruleRefIdList) {
+		return approveRule(ruleType, Arrays.asList(ruleRefIdList));
+	}
+	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
 		ruleRefIdList = new ArrayList<String>();
 		ruleRefIdList.add("test_rule");
@@ -74,6 +79,10 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public int unapproveRule(String ruleType, String ...ruleRefIdList) {
+		return unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+	}
+	
 	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {

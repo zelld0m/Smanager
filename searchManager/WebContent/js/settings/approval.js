@@ -17,6 +17,8 @@
 				callback:function(data){
 					var list = data.list;
 					
+					$(tabSelected).find("#actionBtn").hide();
+					
 					if (data.totalSize>0){
 						var HTML = $("div#tabContentTemplate").html();
 						$(tabSelected).html(HTML);
@@ -67,13 +69,11 @@
 							click: function(evt){
 								DeploymentServiceJS.approveRule(entityName, getSelectedItems(), {
 									callback:function(data){
-										
+										getApprovalList();
 									},
 									preHook: function(){
+										$(tabSelected).find("div.circlePreloader").show();
 										$(tabSelected).find("#actionBtn").hide();
-									},
-									postHook: function(){
-										$(tabSelected).find("#actionBtn").show();
 									}
 								});
 							}
@@ -81,15 +81,13 @@
 						
 						$(tabSelected).find("#rejectBtn").on({
 							click: function(evt){
-								DeploymentServiceJS.rejectRule(entityName, getSelectedItems(), {
+								DeploymentServiceJS.unapproveRule(entityName, getSelectedItems(), {
 									callback:function(data){
-										
+										getApprovalList();
 									},
 									preHook: function(){
+										$(tabSelected).find("div.circlePreloader").show();
 										$(tabSelected).find("#actionBtn").hide();
-									},
-									postHook: function(){
-										$(tabSelected).find("#actionBtn").show();
 									}
 								});
 							}
@@ -100,7 +98,7 @@
 					$(tabSelected).find("tr:not(#ruleItemPattern)").remove();
 				},
 				postHook:function(){
-					$(tabSelected).find(".circlePreloader").hide();
+					$(tabSelected).find("div.circlePreloader").hide();
 				}				
 			});
 		};
