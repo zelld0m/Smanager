@@ -17,8 +17,6 @@
 				callback:function(data){
 					var list = data.list;
 					
-					$(tabSelected).find("#actionBtn").hide();
-					
 					if (data.totalSize>0){
 						var HTML = $("div#tabContentTemplate").html();
 						$(tabSelected).html(HTML);
@@ -44,7 +42,6 @@
 							click: function(evt){
 								var selectAll = $(this).is(":checked");
 								$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").attr("checked", selectAll);
-								
 								selectAll? $(tabSelected).find("#actionBtn").show() : $(tabSelected).find("#actionBtn").hide();
 							}
 						});
@@ -71,10 +68,12 @@
 									callback:function(data){
 										getApprovalList();
 									},
-									preHook: function(){
-										$(tabSelected).find("div.circlePreloader").show();
-										$(tabSelected).find("#actionBtn").hide();
-									}
+									preHook:function(){ 
+										prepareTabContent(); 
+										},
+									postHook:function(){ 
+										cleanUpTabContent(); 
+									}	
 								});
 							}
 						});
@@ -85,22 +84,32 @@
 									callback:function(data){
 										getApprovalList();
 									},
-									preHook: function(){
-										$(tabSelected).find("div.circlePreloader").show();
-										$(tabSelected).find("#actionBtn").hide();
-									}
+									preHook:function(){ 
+										prepareTabContent(); 
+										},
+									postHook:function(){ 
+										cleanUpTabContent(); 
+									}	
 								});
 							}
 						});
 					}
 				},
-				preHook:function(){
-					$(tabSelected).find("tr:not(#ruleItemPattern)").remove();
-				},
-				postHook:function(){
-					$(tabSelected).find("div.circlePreloader").hide();
-				}				
+				preHook:function(){ 
+					prepareTabContent(); 
+					},
+				postHook:function(){ 
+					cleanUpTabContent(); 
+				}			
 			});
+		};
+		
+		var prepareTabContent = function(){
+			$(tabSelected).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>');
+		};
+		
+		var cleanUpTabContent = function(){
+			$(tabSelected).find('div.circlePreloader').remove();
 		};
 		
 		var init = function(){
