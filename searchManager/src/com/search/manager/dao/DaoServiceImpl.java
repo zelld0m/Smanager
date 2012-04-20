@@ -815,8 +815,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
+		return ruleStatusDAO.getRuleStatus(searchCriteria);
 	}
 
 	@Override

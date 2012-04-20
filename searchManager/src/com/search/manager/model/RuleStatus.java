@@ -19,17 +19,13 @@ public class RuleStatus extends ModelBean implements Serializable {
 	private String updateStatus;
 	private String publishedStatus;
 	private Date lastPublishedDate;
-	private String comment;
 	
 	public RuleStatus() {
 		super();
 	}
 
-	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId,
-			String description, String approvalStatus, String updateStatus,
-			String publishedStatus, Date lastPublishedDate, String comment,
-			String createdBy, String modifiedBy, Date dateCreated,
-			Date dateModified) {
+	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String description, String approvalStatus, String updateStatus,
+			String publishedStatus, Date lastPublishedDate, String createdBy, String modifiedBy, Date dateCreated, Date dateModified) {
 		super();
 		this.ruleStatusId = ruleStatusId;
 		this.ruleTypeId = ruleTypeId;
@@ -39,7 +35,6 @@ public class RuleStatus extends ModelBean implements Serializable {
 		this.updateStatus = updateStatus;
 		this.publishedStatus = publishedStatus;
 		this.lastPublishedDate = lastPublishedDate;
-		this.comment = comment;
 		setCreatedBy(createdBy);
 		setLastModifiedBy(modifiedBy);
 		setCreatedDate(dateCreated);
