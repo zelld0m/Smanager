@@ -1,7 +1,6 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -12,9 +11,11 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
+import com.search.manager.model.SearchCriteria;
 
 @Service(value = "deploymentService")
 @RemoteProxy(
@@ -37,93 +38,102 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getApprovalList(String entity, Boolean includeApprovedFlag) {
-		List<RuleStatus> list = new ArrayList<RuleStatus>();
-		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "P", "add", "U", new Date(), "test comment", entity, entity, null, null);
-		list.add(r);
-		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "P", "update", "U", new Date(), "sample comment", entity, entity, null, null);
-		list.add(r);
-		return new RecordSet<RuleStatus>(list, 2);
+	public RecordSet<RuleStatus> getApprovalList(Integer ruleTypeId, Boolean includeApprovedFlag) {
+		RecordSet<RuleStatus> rSet = null;
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(ruleTypeId);
+			if (!includeApprovedFlag) {
+				ruleStatus.setApprovalStatus("PENDING");
+			}
+			ruleStatus.setPublishedStatus("UNPUBLISHED");
+			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+			rSet = daoService.getRuleStatus(searchCriteria );
+		} catch (DaoException e) {
+			logger.error("Failed during getAllRedirectRule()",e);
+		}
+		return rSet;	
 	}
 
 	@RemoteMethod
-	public int approveRule(List<String> ruleRefId) {
+	public int approveRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+		ruleRefIdList = new ArrayList<String>();
+		ruleRefIdList.add("test_rule");
+		ruleRefIdList.add("Rule2");
+		
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, ruleTypeId, "APPROVED");
+			daoService.updateRuleStatus(ruleStatusList);
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public int approveRule(String ruleRefId, String comment) {
+	public int unapproveRule(List<String> ruleRefIdList, Integer ruleTypeId) {
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			//REJECTED?
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, ruleTypeId, "PENDING");
+			daoService.updateRuleStatus(ruleStatusList);
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public int unapproveRule(List<String> ruleRefId) {
+	public RecordSet<RuleStatus> getDeployedRules(Integer ruleTypeId) {
+		RecordSet<RuleStatus> rSet = null;
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setApprovalStatus("APPROVED");
+			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+			rSet = daoService.getRuleStatus(searchCriteria );
+		} catch (DaoException e) {
+			logger.error("Failed during getAllRedirectRule()",e);
+		}
+		return rSet;	
+	}
+
+	@RemoteMethod
+	public int publishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, ruleTypeId, "PUBLISHED");
+			daoService.updateRuleStatus(ruleStatusList);
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getDeployedRules(String entity) {
-		List<RuleStatus> list = new ArrayList<RuleStatus>();
-		RuleStatus r = new RuleStatus("123", "elevate", "ipad", "Elevate rule for ipod", "A", "add", "U", new Date(), "test comment", entity, entity, null, null);
-		list.add(r);
-		r = new RuleStatus("123", "elevate", "ipod", "Elevate rule for ipad", "A", "update", "P", new Date(), "sample comment", entity, entity, null, null);
-		list.add(r);
-		return new RecordSet<RuleStatus>(list, 2);
-	}
-
-	@RemoteMethod
-	public int publishRule(List<String> ruleRefId) {
+	public int unpublishRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+		ruleRefIdList = new ArrayList<String>();
+		ruleRefIdList.add("test_rule");
+		ruleRefIdList.add("Rule2");
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, ruleTypeId, "UNPUBLISHED");
+			daoService.updateRuleStatus(ruleStatusList);
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public int unpublishRule(List<String> ruleRefId) {
-		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
-		return result;
+	public int recallRule(List<String> ruleRefIdList, Integer ruleTypeId) {
+		return unpublishRule(ruleRefIdList, ruleTypeId);
 	}
 
 	@RemoteMethod
-	public int recallRule(List<String> ruleRefId) {
-		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
-		return result;
-	}
-
-	@RemoteMethod
-	public int AddComment(String ruleRefId) {
+	public int AddComment(String ruleStatusId) {
 		int result = -1;
 //		try {
 //			
@@ -142,6 +152,30 @@ public class DeploymentService {
 //			logger.error("Failed during updateRedirectRule()",e);
 //		}
 		return result;
+	}
+
+	private List<RuleStatus> generateApprovalList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
+		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
+		for (String ruleRefId : ruleRefIdList) {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setRuleRefId(ruleRefId);
+			ruleStatus.setApprovalStatus(status);
+			ruleStatusList.add(ruleStatus);
+		}
+		return ruleStatusList;
+	}
+
+	private List<RuleStatus> generateForPublishingList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
+		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
+		for (String ruleRefId : ruleRefIdList) {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setRuleRefId(ruleRefId);
+			ruleStatus.setPublishedStatus(status);
+			ruleStatusList.add(ruleStatus);
+		}
+		return ruleStatusList;
 	}
 
 }

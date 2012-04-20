@@ -180,9 +180,10 @@ public interface DaoService {
     public List<NameValue> getDropdownValues() throws DaoException;
 	
     /* Rule Status */
-    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
-	public int addRuleStatus(RuleStatus rule) throws DaoException;
-	public int updateRuleStatus(RuleStatus rule) throws DaoException;
-	public int removeRuleStatus(RuleStatus rule) throws DaoException;
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
+	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
+	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	
 }

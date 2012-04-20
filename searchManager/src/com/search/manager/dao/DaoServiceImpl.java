@@ -814,26 +814,28 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
+	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
+		return ruleStatusDAO.getRuleStatus(searchCriteria);
 	}
 
 	@Override
-	public int addRuleStatus(RuleStatus rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.addRuleStatus(ruleStatus);
 	}
 
 	@Override
-	public int updateRuleStatus(RuleStatus rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.updateRuleStatus(ruleStatus);
 	}
 
 	@Override
-	public int removeRuleStatus(RuleStatus rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		// TODO do we delete???
+		return ruleStatusDAO.deleteRuleStatus(ruleStatus);
+	}
+
+	@Override
+	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
+		return ruleStatusDAO.updateRuleStatus(ruleStatusList);
 	}
 }
