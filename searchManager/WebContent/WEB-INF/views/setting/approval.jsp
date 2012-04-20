@@ -35,10 +35,10 @@
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
 		    </ul>
 		   
-			<div class="minHeight400" id="elevateTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
-			<div class="minHeight400" id="excludeTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
-			<div class="minHeight400" id="queryCleaningTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
-			<div class="minHeight400" id="rankingRuleTab"><div class="circlePreloader" style="display: none"><img src="../images/ajax-loader-circ.gif"></div></div>
+			<div class="minHeight400" id="elevateTab"></div>
+			<div class="minHeight400" id="excludeTab"></div>
+			<div class="minHeight400" id="queryCleaningTab"></div>
+			<div class="minHeight400" id="rankingRuleTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
