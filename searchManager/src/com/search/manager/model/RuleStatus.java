@@ -2,6 +2,7 @@ package com.search.manager.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -19,6 +20,7 @@ public class RuleStatus extends ModelBean implements Serializable {
 	private String updateStatus;
 	private String publishedStatus;
 	private Date lastPublishedDate;
+	private List<Comment> commentList;
 	
 	public RuleStatus() {
 		super();
@@ -111,6 +113,14 @@ public class RuleStatus extends ModelBean implements Serializable {
 
 	public void setRuleTypeId(Integer ruleTypeId) {
 		this.ruleTypeId = ruleTypeId;
+	}
+
+	public List<Comment> getCommentList() {
+		return commentList;
+	}
+
+	public void setCommentList(List<Comment> commentList) {
+		this.commentList = commentList;
 	}
 	
 }
