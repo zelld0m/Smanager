@@ -8,6 +8,7 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -185,5 +186,11 @@ public interface DaoService {
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	
+    /* Rule Status */
+    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
+	public int addComment(String refId, String comment, String userName) throws DaoException;
+	public int updateComment(Comment comment) throws DaoException;
+	public int removeComment(Integer commentId) throws DaoException;
 	
 }

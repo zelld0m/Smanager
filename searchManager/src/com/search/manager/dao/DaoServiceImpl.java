@@ -15,6 +15,7 @@ import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
 import com.search.manager.dao.sp.CategoryDAO;
+import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
@@ -27,6 +28,7 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -63,6 +65,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
+	@Autowired private CommentDAO	commentDAO;
 
 	DaoServiceImpl instance;
 	public DaoServiceImpl() {
@@ -115,6 +118,10 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setRuleStatusDAO(RuleStatusDAO ruleStatusDAO) {
 		this.ruleStatusDAO = ruleStatusDAO;
+	}
+
+	public void setCommentDAO(CommentDAO commentDAO) {
+		this.commentDAO = commentDAO;
 	}
 
 	/* Audit Trail */
@@ -813,6 +820,10 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO;
 	}
 
+	public CommentDAO getCommentDAO() {
+		return commentDAO;
+	}
+
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
 		return ruleStatusDAO.getRuleStatus(searchCriteria);
@@ -837,5 +848,27 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
 		return ruleStatusDAO.updateRuleStatus(ruleStatusList);
+	}
+
+	@Override
+	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int addComment(String refId, String comment, String userName) throws DaoException {
+		return commentDAO.addComment(refId, comment, userName);
+	}
+
+	@Override
+	public int updateComment(Comment comment) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeComment(Integer commentId) throws DaoException {
+		return commentDAO.deleteComment(commentId);
 	}
 }

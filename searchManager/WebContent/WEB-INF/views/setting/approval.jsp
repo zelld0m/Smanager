@@ -15,7 +15,7 @@
 </div>
 <!-- End Left Side -->
 
-<!-- add contents here -->
+<!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27 txtAL">
 
 	<div class="floatL w730 titlePlacer">
@@ -24,8 +24,8 @@
 	
 	<div class="clearB"></div>
 	
+	<!-- Start Main Content -->
 	<div style="width:95%" class="dashboard marT20 mar0">
-		
 		<!-- tabs -->
 		<div id="approval" class="tabs">
       		<ul>
@@ -78,8 +78,6 @@
 			</div>
 		</div>
 		
-	<div class="clearB"></div>
-</div>
-
-</div> 
+	</div><!-- End Main Content -->
+</div><!-- End Right Side --> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
