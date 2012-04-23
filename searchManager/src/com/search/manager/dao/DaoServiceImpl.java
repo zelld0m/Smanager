@@ -295,6 +295,7 @@ public class DaoServiceImpl implements DaoService {
 		return elevateDAO.addElevate(elevate);
 	}
 
+	
 	@Override
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		RecordSet<ElevateResult> list = elevateDAO.getElevate(criteria);
@@ -850,10 +851,15 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public String getStatus(RuleStatus ruleStatus) throws DaoException {
-		return ruleStatusDAO.getStatus(ruleStatus);
+	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.getRuleStatus(ruleStatus);
 	}
 
+	@Override
+	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
+		return ruleStatusDAO.processRuleStatus(ruleStatus, isDelete);
+	}
+	
 	@Override
 	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		// TODO Auto-generated method stub

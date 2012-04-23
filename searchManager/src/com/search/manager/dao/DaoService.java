@@ -186,7 +186,8 @@ public interface DaoService {
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public String getStatus(RuleStatus ruleStatus) throws DaoException;
+	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	
     /* Rule Status */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
