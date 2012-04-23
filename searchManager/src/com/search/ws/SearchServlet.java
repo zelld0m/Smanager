@@ -194,6 +194,8 @@ public class SearchServlet extends HttpServlet {
 			String keyword = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 
+			StoreKeyword sk = new StoreKeyword(storeName, keyword);
+
 			// set relevancy filters if any was specified
 			nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
 			if (nvp != null) {
@@ -224,9 +226,7 @@ public class SearchServlet extends HttpServlet {
 						relevancy.setRelevancyId(result.getList().get(0).getRelevancy().getRelevancyId());
 					}
 				}
-				logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
-				//relevancy = daoService.getRelevancyDetails(relevancy);
-				relevancy = daoCacheService.getRelevancyDetails(relevancy,storeName);
+				relevancy = daoCacheService.getRelevancyRule(sk);
 
 				if (relevancy != null) {
 					nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
@@ -258,17 +258,15 @@ public class SearchServlet extends HttpServlet {
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
-
-			StoreKeyword sk = new StoreKeyword(storeName, keyword);
 	
 			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				elevatedList = daoCacheService.getElevateResultList(sk);
+				elevatedList = daoCacheService.getElevateRules(sk);
 			}
 			if (elevatedList == null){
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(sk) : null;
+			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeRules(sk) : null;
 
 			/* First Request */
 			// get expected resultformat

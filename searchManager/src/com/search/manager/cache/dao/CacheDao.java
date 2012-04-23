@@ -91,6 +91,21 @@ public abstract class CacheDao<T> {
 		return cache;
 	}
 	
+	public CacheModel<T> getCachedObject(String key) throws DataException {
+		return cacheService.get(key);
+	}
+	
+	protected boolean cacheObject(String key, CacheModel<T> t) throws DataException {
+		try{
+			cacheService.put(key, t);
+			logger.info("pushed to cache key " + key);
+			return true;
+		} catch (Exception e) {
+			logger.error("Failed to cache key " + key, e);
+			throw new DataException(e);
+		}
+	}
+	
 	/**
 	 * Reload configuration for storeKeyword
 	 * @param storeKeyword

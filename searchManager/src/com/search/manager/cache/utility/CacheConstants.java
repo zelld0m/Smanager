@@ -7,10 +7,7 @@ public class CacheConstants {
 	public static final String ELEVATED_LIST_CACHE_KEY = "EL";
 	public static final String EXCLUDED_LIST_CACHE_KEY = "EXL";
 	public static final String RELEVANCY_LIST_CACHE_KEY = "RL";
-	public static final String RELEVANCY_DETAILS_CACHE_KEY = "RDL";
-	public static final String RELEVANCY_KEYWORD_COUNT_CACHE_KEY = "RKC";
-	public static final String RELEVANCY_KEYWORD_CACHE_KEY = "RK";
-	public static final String RELEVANCY_SEARCH_KEYWORD_LIST_CACHE_KEY = "RSKL";
+	public static final String RELEVANCY_DEFAULT_CACHE_KEY = "RD";
 	public static final String KEYWORDS_CACHE_KEY = "KW";
 	public static final String RULE_REDIRECT_CACHE_KEY = "RR";
 	
@@ -20,21 +17,21 @@ public class CacheConstants {
 		delete
 	}
 	
-	public static String getCacheKey(String storeName, String type,String kw) throws DataException {
-		if("macmall".equalsIgnoreCase(storeName)) {
-			storeName = "mc";
+	public static String getCacheKey(String storeId, String type, String kw) throws DataException {
+		if("macmall".equalsIgnoreCase(storeId)) {
+			storeId = "mc";
 		}
-		else if("pcmall".equalsIgnoreCase(storeName)) {
-			storeName = "pc";			
+		else if("pcmall".equalsIgnoreCase(storeId)) {
+			storeId = "pc";			
 		}
-		else if("onsale".equalsIgnoreCase(storeName)) {
-			storeName = "ol";			
+		else if("onsale".equalsIgnoreCase(storeId)) {
+			storeId = "ol";			
 		}
 		else {
 			throw new DataException("Unrecognized Store");
 		}
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
-						.append(".").append(storeName).append("_")
+						.append(".").append(storeId).append("_")
 						.append(type).append("_").append(kw.replace(" ", "_"));
 		return key.toString();
 	}
