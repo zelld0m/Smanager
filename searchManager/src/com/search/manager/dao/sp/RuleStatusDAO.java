@@ -208,4 +208,20 @@ public class RuleStatusDAO {
 		}
 		return result;
 	}
+	
+	public String getStatus(RuleStatus ruleStatus) throws DaoException {
+		StringBuilder builder = new StringBuilder("Select APPROVED_STATUS FROM RULE_STATUS WHERE RULE_TYPE_ID = ");
+		builder.append(ruleStatus.getRuleTypeId()).append(" AND REFERENCE_ID = '").append(ruleStatus.getRuleRefId()).append("'");
+		List<String> list = addRuleStatusStoredProcedure.getJdbcTemplate().query(builder.toString() , new RowMapper() {
+		      public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+		          return resultSet.getString(1);
+		        }
+		      });
+		String result = "";
+		if (list.size()>0) {
+			result = list.get(0);
+		}
+		return result;
+	}
+
 }
