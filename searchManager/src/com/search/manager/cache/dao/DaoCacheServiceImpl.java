@@ -7,12 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.service.CacheService;
 import com.search.manager.cache.service.LocalCacheService;
@@ -24,6 +23,7 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -34,6 +34,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.Constants;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.ws.SearchHelper;
@@ -613,6 +614,24 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			}
 		} 
 	}
+	
+	private void filterRelevancyKeywordListByCriteria(List<RelevancyKeyword> relevancyKeywordList, SearchCriteria<RelevancyKeyword> criteria){
+
+		ListIterator<RelevancyKeyword>  list = relevancyKeywordList.listIterator();
+		int cnt = 0;
+		
+		while(list.hasNext()) {
+			cnt++;
+	
+			if(criteria.getStartRow() != null && criteria.getEndRow() != null){
+				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
+					// remove all records not in the range
+					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
+						list.remove();
+				}		
+			}
+		} 
+	}
 
 	private boolean isRedirectRuleLoaded(CacheModel<String> cache, String storeName){
 		try{
@@ -768,7 +787,6 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		CacheModel<Relevancy> cache = null;
 		
 		try {		
-					try{
 						cache = (CacheModel<Relevancy>) cacheService.get(getCacheKey(storeName, CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, relevancy.getRelevancyId()));
 
 						if(cache != null){
@@ -782,20 +800,57 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 								return relevancy;
 							}
 						}
-					}catch (Exception e) {
-						logger.error(e);
-						relevancy = daoService.getRelevancyDetails(relevancy);
-						
-						if(relevancy != null){
-							logger.info("Server is utilizing database connection");
-							return relevancy;
-						}
-					}
 		}catch (Exception e) {
 			logger.error(e);
+			relevancy = daoService.getRelevancyDetails(relevancy);
+			
+			if(relevancy != null){
+				logger.info("Server is utilizing database connection");
+				return relevancy;
+			}
+		
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean loadRelevancyKeywordCount(String storeName, String keyword){
+		
+		CacheModel<Integer> cache = null;
+		List<String> kwList = null;
+		int count = 0;
+		
+		try{	
+			if(StringUtils.isEmpty(keyword)){
+				kwList = getAllKeywords(storeName);
+				
+				if(CollectionUtils.isNotEmpty(kwList)){
+					for(String kw : kwList){
+						count = daoService.getRelevancyKeywordCount(new StoreKeyword(new Store(storeName), new Keyword(kw)));
+						cache = new CacheModel<Integer>();
+						cache.setObj(count);
+						cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, kw), cache);
+						logger.info("Relevancy Storekeyword count for \""+kw+"\" has been loaded to cache: Count is "+count);	
+					}
+				}else
+					return false;
+			}else{
+				if(hasExactMatchKey(storeName, keyword)){
+					count = daoService.getRelevancyKeywordCount(new StoreKeyword(new Store(storeName), new Keyword(keyword)));
+					cache = new CacheModel<Integer>();
+					cache.setObj(count);
+					cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, keyword), cache);
+					logger.info("Relevancy Storekeyword count for \""+keyword+"\" has been loaded to cache: Count is "+count);
+				}else
+					return false;
+			}
+			return true;	
+		}catch (Exception e) {
+			logger.error(e);
+		}
+		return false;
+	}
+	
 
 	@Override
 	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException {
@@ -807,37 +862,78 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		int count = 0;
 		
 		try {		
-					try{
-						cache = (CacheModel<Integer>) cacheService.get(getCacheKey(storeKeyword.getStoreName(), CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, storeKeyword.getKeywordId()));
+				if(hasExactMatchKey(storeKeyword.getStoreId(), storeKeyword.getKeywordId())){
+					cache = (CacheModel<Integer>) cacheService.get(getCacheKey(storeKeyword.getStoreName(), CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, storeKeyword.getKeywordId()));
 
-						if(cache != null){
-							count = (int)cache.getObj();
-							return count;
-						}else{
-							count = daoService.getRelevancyKeywordCount(storeKeyword);
-							logger.info("Server is utilizing database connection");
-							return count;
-						}
-					}catch (Exception e) {
-						logger.error(e);
+					if(cache != null){
+						count = (int)cache.getObj();
+						return count;
+					}else{
 						count = daoService.getRelevancyKeywordCount(storeKeyword);
 						logger.info("Server is utilizing database connection");
 						return count;
 					}
+				}		
+		}catch (Exception e) {
+			logger.error(e);
+			count = daoService.getRelevancyKeywordCount(storeKeyword);
+			logger.info("Server is utilizing database connection");
+		}
+		return count;
+	}
+	
+	@Override
+	public boolean loadRelevancyKeywords(String storeName, RelevancyKeyword relevancyKeyword){
+		
+		Relevancy relevancy = new Relevancy();
+		relevancy.setStore(new Store(storeName));
+		relevancy.setRelevancyName("");
+		SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
+		CacheModel<RelevancyKeyword> cache = null;
+		RelevancyKeyword keyword = null;
+
+		try {	
+			if(relevancyKeyword != null && relevancyKeyword.getRelevancy().getRelevancyId() != null){
+				keyword = daoService.getRelevancyKeyword(relevancyKeyword);
+				
+				if(keyword != null){
+					cache = new CacheModel<RelevancyKeyword>();
+					cache.setObj(keyword);
+					cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, relevancyKeyword.getRelevancy().getRelevancyId()+"_"+relevancyKeyword.getKeyword().getKeyword()), cache);
+					logger.info("Relevancy Storekeyword for \""+relevancyKeyword.getKeyword().getKeyword()+"\" has been loaded to cache");
+				}
+			}else{
+				List<Relevancy> relList = searchRelevancy(criteria, MatchType.LIKE_NAME);
+				List<String> kwList = getAllKeywords(storeName);
+		
+				for(Relevancy rel : relList){
+					for(String kw : kwList){
+						RelevancyKeyword relKey = new RelevancyKeyword(new Keyword(kw), new Relevancy(rel.getRelevancyId()));
+						keyword = daoService.getRelevancyKeyword(relKey);
+						
+						if(keyword != null){
+							cache = new CacheModel<RelevancyKeyword>();
+							cache.setObj(keyword);
+							cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, rel.getRelevancyId()+"_"+kw), cache);
+							logger.info("Relevancy Storekeyword for \""+kw+"\" has been loaded to cache");
+						}
+					}	
+				}
+			}
 		}catch (Exception e) {
 			logger.error(e);
 		}
-		return 0;
+		return false;	
 	}
 	
+	@Override
 	public RelevancyKeyword getRelevancyKeyword(RelevancyKeyword relevancyKeyword, String storeName) throws DaoException{
 		
 		CacheModel<RelevancyKeyword> cache = null;
 		RelevancyKeyword keyword = null;
 		
 		try {		
-					try{
-						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(storeName, CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, relevancyKeyword.getRelevancy().getRelevancyId()));
+						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(storeName, CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, relevancyKeyword.getRelevancy().getRelevancyId()+"_"+relevancyKeyword.getKeyword().getKeyword()));
 
 						if(cache != null){
 							keyword = (RelevancyKeyword)cache.getObj();
@@ -850,17 +946,14 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 								return keyword;
 							}
 						}
-					}catch (Exception e) {
-						logger.error(e);
-						keyword = daoService.getRelevancyKeyword(relevancyKeyword);
-						
-						if(keyword != null){
-							logger.info("Server is utilizing database connection");
-							return keyword;
-						}
-					}
 		}catch (Exception e) {
 			logger.error(e);
+			keyword = daoService.getRelevancyKeyword(relevancyKeyword);
+			
+			if(keyword != null){
+				logger.info("Server is utilizing database connection");
+				return keyword;
+			}
 		}
 		return null;
 	}
@@ -874,38 +967,35 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		List<RelevancyKeyword> relevancyKWList = null;
 		CacheModel<RelevancyKeyword> cache = null;
 		
-//		try {	
-//					try{
-//						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(model.getRelevancy().getStore(), CacheConstants.RELEVANCY_SEARCH_KEYWORD_LIST_CACHE_KEY, kw));
-//					
-//						if(cache != null)
-//							relevancyList = cache.getList();
-//						else{
-//							relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
-//							
-//							if(CollectionUtils.isNotEmpty(relevancyList)){
-//								logger.info("Server is utilizing database connection");
-//								return relevancyList;
-//							}
-//						}
-//						
-//						if(CollectionUtils.isNotEmpty(relevancyList)){
-//							filterRelevancyListByCriteria(relevancyList, criteria);
-//							return relevancyList;
-//						}
-//					}catch (Exception e) {
-//						logger.error(e);
-//						relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
-//						
-//						if(CollectionUtils.isNotEmpty(relevancyList)){
-//							logger.info("Server is utilizing database connection");
-//							return relevancyList;
-//						}
-//					}		
-//		}catch (Exception e) {
-//			logger.error(e);
-//		}
-//		return Collections.EMPTY_LIST;
+		RecordSet<RelevancyKeyword> record = null;
+		
+		try {	
+						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(model.getRelevancy().getStore().getStoreId(), CacheConstants.RELEVANCY_SEARCH_KEYWORD_LIST_CACHE_KEY, kw));
+					
+						if(cache != null)
+							relevancyKWList = cache.getList();
+						else{
+							record = daoService.searchRelevancyKeywords(criteria, relevancyMatchType, keywordExactMatch);
+							
+							if(CollectionUtils.isNotEmpty(record.getList())){
+								logger.info("Server is utilizing database connection");
+								return record;
+							}
+						}
+						
+						if(CollectionUtils.isNotEmpty(relevancyKWList)){
+							filterRelevancyKeywordListByCriteria(relevancyKWList, criteria);
+							return new RecordSet<RelevancyKeyword>(relevancyKWList, relevancyKWList.size());
+						}	
+		}catch (Exception e) {
+			logger.error(e);
+			record = daoService.searchRelevancyKeywords(criteria, relevancyMatchType, keywordExactMatch);
+			
+			if(CollectionUtils.isNotEmpty(record.getList())){
+				logger.info("Server is utilizing database connection");
+				return record;
+			}
+		}
 		return null;
 	}
 }

@@ -44,52 +44,22 @@ public class SearchGuiServicePortTypeProxy implements com.search.ws.client.Searc
     return searchGuiServicePortType;
   }
   
-  public boolean pushElevateList1(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
+  public boolean recallRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
     if (searchGuiServicePortType == null)
       _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.pushElevateList1(in0);
+    return searchGuiServicePortType.recallRules(in0);
   }
   
-  public boolean pushExcludeList(com.search.webservice.model.ExcludedList in0) throws java.rmi.RemoteException{
+  public com.search.webservice.model.BackupInfo[] getBackupInfo(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
     if (searchGuiServicePortType == null)
       _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.pushExcludeList(in0);
+    return searchGuiServicePortType.getBackupInfo(in0);
   }
   
-  public boolean loadRelevancyList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException{
+  public boolean deployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
     if (searchGuiServicePortType == null)
       _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.loadRelevancyList(in0, in1);
-  }
-  
-  public boolean loadExcludeList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException{
-    if (searchGuiServicePortType == null)
-      _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.loadExcludeList(in0, in1);
-  }
-  
-  public boolean pushExcludeList1(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
-    if (searchGuiServicePortType == null)
-      _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.pushExcludeList1(in0);
-  }
-  
-  public boolean pushElevateList(com.search.webservice.model.ElevatedList in0) throws java.rmi.RemoteException{
-    if (searchGuiServicePortType == null)
-      _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.pushElevateList(in0);
-  }
-  
-  public boolean loadRelevancyDetails(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException{
-    if (searchGuiServicePortType == null)
-      _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.loadRelevancyDetails(in0, in1);
-  }
-  
-  public boolean loadElevateList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException{
-    if (searchGuiServicePortType == null)
-      _initSearchGuiServicePortTypeProxy();
-    return searchGuiServicePortType.loadElevateList(in0, in1);
+    return searchGuiServicePortType.deployRules(in0);
   }
   
   

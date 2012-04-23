@@ -1,14 +1,11 @@
-/**
- * TransportList.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
-
 package com.search.webservice.model;
+
+import com.search.webservice.model.RuleEntity;
 
 public class TransportList  implements java.io.Serializable {
     private java.lang.String[] list;
+
+    private RuleEntity ruleEntity;
 
     private java.lang.String store;
 
@@ -19,9 +16,11 @@ public class TransportList  implements java.io.Serializable {
 
     public TransportList(
            java.lang.String[] list,
+           RuleEntity ruleEntity,
            java.lang.String store,
            java.lang.String token) {
            this.list = list;
+           this.ruleEntity = ruleEntity;
            this.store = store;
            this.token = token;
     }
@@ -44,6 +43,26 @@ public class TransportList  implements java.io.Serializable {
      */
     public void setList(java.lang.String[] list) {
         this.list = list;
+    }
+
+
+    /**
+     * Gets the ruleEntity value for this TransportList.
+     * 
+     * @return ruleEntity
+     */
+    public RuleEntity getRuleEntity() {
+        return ruleEntity;
+    }
+
+
+    /**
+     * Sets the ruleEntity value for this TransportList.
+     * 
+     * @param ruleEntity
+     */
+    public void setRuleEntity(RuleEntity ruleEntity) {
+        this.ruleEntity = ruleEntity;
     }
 
 
@@ -101,6 +120,9 @@ public class TransportList  implements java.io.Serializable {
             ((this.list==null && other.getList()==null) || 
              (this.list!=null &&
               java.util.Arrays.equals(this.list, other.getList()))) &&
+            ((this.ruleEntity==null && other.getRuleEntity()==null) || 
+             (this.ruleEntity!=null &&
+              this.ruleEntity.equals(other.getRuleEntity()))) &&
             ((this.store==null && other.getStore()==null) || 
              (this.store!=null &&
               this.store.equals(other.getStore()))) &&
@@ -129,6 +151,9 @@ public class TransportList  implements java.io.Serializable {
                 }
             }
         }
+        if (getRuleEntity() != null) {
+            _hashCode += getRuleEntity().hashCode();
+        }
         if (getStore() != null) {
             _hashCode += getStore().hashCode();
         }
@@ -152,6 +177,13 @@ public class TransportList  implements java.io.Serializable {
         elemField.setMinOccurs(0);
         elemField.setNillable(true);
         elemField.setItemQName(new javax.xml.namespace.QName("http://ws.search.com/client", "string"));
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("ruleEntity");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://model.webservice.search.com", "ruleEntity"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://enums.manager.search.com", "RuleEntity"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(true);
         typeDesc.addFieldDesc(elemField);
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("store");

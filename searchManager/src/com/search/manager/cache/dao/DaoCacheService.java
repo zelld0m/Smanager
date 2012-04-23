@@ -17,6 +17,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 
 public interface DaoCacheService {
+	
 	public List<String> getAllKeywords(String storeName) throws DaoException, DataException;
 	public boolean resetAllkeywords(String storeName);
 	public boolean resetElevateResult(String storeName, String kw);
@@ -38,6 +39,8 @@ public interface DaoCacheService {
 	
 	public boolean loadRelevancyResultList(String storeName, MatchType relevancyMatchType) throws DaoException;
 	public boolean loadRelevancyDetails(String storeName) throws DaoException;
+	public boolean loadRelevancyKeywordCount(String storeName, String keyword);
+	public boolean loadRelevancyKeywords(String storeName, RelevancyKeyword relevancyKeyword);
 	public Relevancy getRelevancyDetails(Relevancy relevancy, String storeName) throws DaoException;
 	public List<Relevancy> searchRelevancy(SearchCriteria<Relevancy> criteria, MatchType relevancyMatchType);
 	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException;

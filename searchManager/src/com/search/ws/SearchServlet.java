@@ -46,8 +46,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.RedirectUtility;
-import com.search.ws.client.SearchGuiClientService;
-import com.search.ws.client.SearchGuiClientServiceImpl;
 
 public class SearchServlet extends HttpServlet {
 
