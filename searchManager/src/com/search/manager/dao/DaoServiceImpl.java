@@ -851,6 +851,11 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public String getStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.getStatus(ruleStatus);
+	}
+
+	@Override
 	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		// TODO Auto-generated method stub
 		return null;

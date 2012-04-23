@@ -119,6 +119,20 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public String getRuleStatus(String ruleType, String ruleRefId) {
+		String result = "";
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+			ruleStatus.setRuleRefId(ruleRefId);
+			result = daoService.getStatus(ruleStatus);
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
