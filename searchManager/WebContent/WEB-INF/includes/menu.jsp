@@ -13,7 +13,7 @@
               <li ${topmenu eq 'advertise'? 'class="active"': ''}><span><a href="<spring:url value="/campaign/macmall"/>">Search Ads</a></span></li>
               <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/statistic/macmall"/>">Statistics</a></span></li>
               <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/macmall"/>">Linguistics</a></span></li>
-              <li ${topmenu eq 'setting'? 'class="active"': ''}><span><a href="<spring:url value="/setting/macmall"/>">Settings</a></span></li>
+              <li ${topmenu eq 'setting'? 'class="active"': ''}><span><a href="<spring:url value="/audit/macmall"/>">Settings</a></span></li>
               <!-- li ${topmenu eq 'migrator'? 'class="active"': ''}><a href="<spring:url value="/migrator/macmall"/>">Migrator</a></li -->
       </ul>
       </div>
