@@ -60,7 +60,7 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="268px" id="ruleRefId"></td>
+							<td width="268px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
 							<td width="85px" class="txtAC" id="updateStatus"></td>
 							<td width="110px" class="txtAC" id="approvalStatus"></td>
 							<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
@@ -75,6 +75,55 @@
 				<a id="rejectBtn" href="javascript:void(0);"
 					class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
 				</a>
+			</div>
+		</div>
+		
+		<div id="previewTemplate" style="display: none">
+			<div>
+				<div class="alert">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
+				<div><span>Rule ID:</span><span>xerox</span></div>
+				<div><span>Type:</span><span>New</span></div>
+				<div><span>Status:</span><span>PENDING</span></div>
+				<div><span>Request By:</span><span>admin</span></div>
+				<div><span>Request Date:</span><span>admin</span></div>
+				<div><span>Request Comment</span><span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</span></div>
+				<div>Approval Comment<textarea></textarea></div>
+				<div id="actionBtn">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
+			</div>
+			<div>
+				<table class="tblItems w100p marT5">
+					<tbody>
+						<tr>
+							<th width="10px">#</th>
+							<th width="50px" id="selectAll">Image</th>
+							<th width="85px">Manufacturer</th>
+							<th width="50px" class="txtAL">SKU #</th>
+							<th width="50px" class="txtAL">Name</th>
+							<th width="110px">Validity</th>
+						</tr>
+					<tbody>
+				</table>
+			</div>
+			<div style="max-height:360px; overflow-y:scroll">
+				<table id="item" class="tblItems w100p">
+					<tbody>
+						<tr id="itemPattern" class="itemRow" style="display: none">
+							<td width="10px" id="itemPosition"></td>
+							<td width="50px" id="itemImage"><img src="" width="50"/></td>
+							<td width="85px" class="txtAC" id="itemMan"></td>
+							<td width="50px" class="txtAC" id="itemDPNo"></td>
+							<td width="50px" class="txtAC" id="itemName"></td>
+							<td width="110px" class="txtAC" id="itemValidity"></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 		
