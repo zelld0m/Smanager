@@ -20,9 +20,19 @@
 	<beans:bean name="localCacheService" class="com.search.manager.cache.service.LocalCacheService" scope="singleton">
 	</beans:bean>
 	
-	<beans:bean id="searchGuiService" name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
+	<beans:bean name="fileService" class="com.search.service.FileServiceImpl" scope="singleton">
+		<beans:property name="daoService" ref="daoService"/>
+	</beans:bean>
+	
+	<beans:bean id="deploymentRuleService" name="deploymentRuleService" class="com.search.service.DeploymentRuleServiceImpl" scope="singleton">
 		<beans:property name="daoCacheService" ref="daoCacheService"/>
 		<beans:property name="daoService" ref="daoService"/>
 		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
+		<beans:property name="fileService" ref="fileService"/>
+	</beans:bean>
+	
+	<beans:bean name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
+		<beans:property name="deploymentRuleService" ref="deploymentRuleService"/>
+		<beans:property name="fileService" ref="fileService"/>
 	</beans:bean>
 </beans:beans>

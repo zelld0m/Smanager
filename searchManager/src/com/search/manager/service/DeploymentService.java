@@ -53,7 +53,7 @@ public class DeploymentService {
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
 		} catch (DaoException e) {
-			logger.error("Failed during getAllRedirectRule()",e);
+			logger.error("Failed during getApprovalList()",e);
 		}
 		return rSet;	
 	}
@@ -84,11 +84,10 @@ public class DeploymentService {
 	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			//REJECTED?
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "PENDING");
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "REJECTED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
-			logger.error("Failed during approveRule()",e);
+			logger.error("Failed during unapproveRule()",e);
 		}
 		return result;
 	}
@@ -103,7 +102,7 @@ public class DeploymentService {
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
 		} catch (DaoException e) {
-			logger.error("Failed during getAllRedirectRule()",e);
+			logger.error("Failed during getDeployedRules()",e);
 		}
 		return rSet;	
 	}
@@ -116,22 +115,49 @@ public class DeploymentService {
 			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
-			logger.error("Failed during approveRule()",e);
+			logger.error("Failed during publishRule()",e);
 		}
 		return result;
 	}
 
 	@RemoteMethod
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
-		ruleRefIdList = new ArrayList<String>();
-		ruleRefIdList.add("test_rule");
-		ruleRefIdList.add("Rule2");
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
 			daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
-			logger.error("Failed during approveRule()",e);
+			logger.error("Failed during unpublishRule()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public RuleStatus getRuleStatus(String ruleType, String ruleRefId) {
+
+		RuleStatus result = null;
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+			ruleStatus.setRuleRefId(ruleRefId);
+			result = daoService.getRuleStatus(ruleStatus);
+		} catch (DaoException e) {
+			logger.error("Failed during unpublishRule()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int processRuleStatus(String ruleType, String ruleRefId, Boolean isDelete) {
+
+		int result = -1;
+		try {
+			RuleStatus ruleStatus = createRuleStatus();
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+			ruleStatus.setRuleRefId(ruleRefId);
+			result = daoService.processRuleStatus(ruleStatus, isDelete);
+		} catch (DaoException e) {
+			logger.error("Failed during processRuleStatus()",e);
 		}
 		return result;
 	}
@@ -142,31 +168,31 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int AddComment(String ruleStatusId) {
+	public int addComment(String ruleStatusId, String comment) {
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			daoService.addComment(ruleStatusId, comment, UtilityService.getUsername());
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
 		return result;
 	}
 
 	@RemoteMethod
-	public int removeComment(String commentId) {
+	public int removeComment(Integer commentId) {
 		int result = -1;
-//		try {
-//			
-//		} catch (DaoException e) {
-//			logger.error("Failed during updateRedirectRule()",e);
-//		}
+		try {
+			daoService.removeComment(commentId);
+		} catch (DaoException e) {
+			logger.error("Failed during removeComment()",e);
+		}
 		return result;
 	}
 
 	private List<RuleStatus> generateApprovalList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
 		for (String ruleRefId : ruleRefIdList) {
-			RuleStatus ruleStatus = new RuleStatus();
+			RuleStatus ruleStatus = createRuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setApprovalStatus(status);
@@ -178,13 +204,21 @@ public class DeploymentService {
 	private List<RuleStatus> generateForPublishingList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
 		for (String ruleRefId : ruleRefIdList) {
-			RuleStatus ruleStatus = new RuleStatus();
+			RuleStatus ruleStatus = createRuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setPublishedStatus(status);
 			ruleStatusList.add(ruleStatus);
 		}
 		return ruleStatusList;
+	}
+	
+	private RuleStatus createRuleStatus() {
+		String userName = UtilityService.getUsername();
+		RuleStatus ruleStatus = new RuleStatus();
+		ruleStatus.setCreatedBy(userName);
+		ruleStatus.setLastModifiedBy(userName);
+		return ruleStatus;
 	}
 
 }

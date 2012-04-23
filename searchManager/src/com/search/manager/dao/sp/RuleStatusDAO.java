@@ -29,10 +29,11 @@ public class RuleStatusDAO {
 	// needed by spring AOP
 	public RuleStatusDAO(){}
 	
-	public static final String EXCLUDE  = "exclude";
-	public static final String ELEVATE  = "elevate";
-	public static final String REDIRECT  = "redirect";
-	public static final String RELEVANCY  = "relevancy";
+	public static final String ADD  = "ADD";
+	public static final String UPDATE  = "UPDATE";
+	public static final String DELETE  = "DELETE";
+	public static final String UNPUBLISHED  = "UNPUBLISHED";
+	public static final String PENDING  = "PENDING";
 	
 	@Autowired
 	public RuleStatusDAO(JdbcTemplate jdbcTemplate) {
@@ -100,7 +101,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -117,7 +118,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -209,17 +210,42 @@ public class RuleStatusDAO {
 		return result;
 	}
 	
-	public String getStatus(RuleStatus ruleStatus) throws DaoException {
+	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		RuleStatus result = null;
+		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
+		if (rSet.getList().size() > 0) {
+			result = rSet.getList().get(0);
+		}
+		return result;
+	}
+
+	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
+		int result = -1;
 		StringBuilder builder = new StringBuilder("Select APPROVED_STATUS FROM RULE_STATUS WHERE RULE_TYPE_ID = ");
 		builder.append(ruleStatus.getRuleTypeId()).append(" AND REFERENCE_ID = '").append(ruleStatus.getRuleRefId()).append("'");
-		List<String> list = addRuleStatusStoredProcedure.getJdbcTemplate().query(builder.toString() , new RowMapper() {
-		      public Object mapRow(ResultSet resultSet, int i) throws SQLException {
-		          return resultSet.getString(1);
-		        }
-		      });
-		String result = "";
+		List<String> list = addRuleStatusStoredProcedure.getJdbcTemplate()
+				.query(builder.toString(), new RowMapper() {
+					public Object mapRow(ResultSet resultSet, int i)
+							throws SQLException {
+						return resultSet.getString(1);
+					}
+				});
 		if (list.size()>0) {
-			result = list.get(0);
+			ruleStatus.setApprovalStatus(PENDING);
+			if (isDelete) {
+				ruleStatus.setUpdateStatus(DELETE);
+				ruleStatus.setDescription("Deleted rule " + ruleStatus.getRuleRefId());
+			} else {
+				ruleStatus.setDescription("Updated rule " + ruleStatus.getRuleRefId());
+				ruleStatus.setUpdateStatus(UPDATE);
+			}
+			result = updateRuleStatus(ruleStatus);
+		} else {
+			ruleStatus.setApprovalStatus(PENDING);
+			ruleStatus.setUpdateStatus(ADD);
+			ruleStatus.setPublishedStatus(UNPUBLISHED);
+			ruleStatus.setDescription("Added rule " + ruleStatus.getRuleRefId());
+			result = addRuleStatus(ruleStatus);
 		}
 		return result;
 	}

@@ -1,41 +1,54 @@
 package com.search.main;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import com.search.webservice.model.ElevateResult;
-import com.search.webservice.model.ExcludeResult;
+import com.search.manager.enums.RuleEntity;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
-
 
 public class Main{
 	
 	public static void main(String[] args) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		//System.out.println(service.loadElevateList("macmall"));
-		//System.out.println(service.loadExcludeList("macmall"));
+
+		/** UNIT TESTING STARTS HERE */
 		
-//		Map<String, List<ElevateResult>> map =	new HashMap<String, List<ElevateResult>>();
-//		map.put("apple", new ArrayList<ElevateResult>());
-//
-//		System.out.println(service.pushElevateList("macmall", map));
-//		
-//		Map<String, List<ExcludeResult>> map2 =	new HashMap<String, List<ExcludeResult>>();
-//		map2.put("apple", new ArrayList<ExcludeResult>());
-//		
-//		System.out.println(service.pushExcludeList("macmall", map2));
+		/** ELEVATE RULES */
 		
 		List<String> elevatedKeyList = new ArrayList<String>();
-		elevatedKeyList.add("computer");
+		elevatedKeyList.add("apple");
+		elevatedKeyList.add("ipod");
+	
+		System.out.println(service.deployRules("macmall", elevatedKeyList, RuleEntity.ELEVATE));
+		//System.out.println(service.recallRules("macmall", elevatedKeyList, RuleEntity.ELEVATE));
 		
-		System.out.println(service.pushElevateList("macmall", elevatedKeyList));
+//		List<BackupInfo> list = service.getBackupInfo("macmall", elevatedKeyList, RuleEntity.ELEVATE);
 //		
-//		List<String> excludedKeyList = new ArrayList<String>();
-//		excludedKeyList.add("apple");
-//		
-//		System.out.println(service.pushExcludeList("macmall", excludedKeyList));
+//		for(BackupInfo back : list){
+//			System.out.println(back.getFileSize());
+//			System.out.println(back.getRuleId());
+//			System.out.println(back.isHasBackup());
+//			System.out.println(back.getDateCreated());
+//		}
 		
+		/** EXCLUDE RULES */
+		
+//		List<String> excludeKeyList = new ArrayList<String>();
+//		excludeKeyList.add("apple");
+//		excludeKeyList.add("ipod");
+		
+	//	System.out.println(service.deployRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
+	//	System.out.println(service.recallRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
+		
+//		List<BackupInfo> list = service.getBackupInfo("macmall", excludeKeyList, RuleEntity.EXCLUDE);
+//		
+//		for(BackupInfo back : list){
+//			System.out.println(back.getFileSize());
+//			System.out.println(back.getRuleId());
+//			System.out.println(back.isHasBackup());
+//			System.out.println(back.getDateCreated());
+//		}
+		
+		/** UNIT TESTING ENDS HERE */
 	}
 }
