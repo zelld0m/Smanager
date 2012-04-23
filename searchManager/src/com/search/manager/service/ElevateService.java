@@ -16,7 +16,6 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
-import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
@@ -282,7 +281,20 @@ public class ElevateService{
 		
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
-
+	
+	@RemoteMethod
+	public int clearRule(String keyword) {
+		try {
+			logger.info(String.format("%s", keyword));
+			String store = UtilityService.getStoreName();
+			StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
+			return daoService.clearElevateResult(storeKeyword);
+		} catch (DaoException e) {
+			logger.error("ElevateService.clear()",e);
+		}
+		return 0;
+	}
+	
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}

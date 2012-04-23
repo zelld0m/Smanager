@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -260,6 +259,19 @@ public class ExcludeService {
 			logger.error("Failed during addComment()",e);
 		}
 		return -1;
+	}
+	
+	@RemoteMethod
+	public int clearRule(String keyword) {
+		try {
+			logger.info(String.format("%s", keyword));
+			String store = UtilityService.getStoreName();
+			StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
+			return daoService.clearElevateResult(storeKeyword);
+		} catch (DaoException e) {
+			logger.error("ElevateService.clear()",e);
+		}
+		return 0;
 	}
 
 	public void setDaoService(DaoService daoService) {
