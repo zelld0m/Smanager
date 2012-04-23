@@ -80,6 +80,7 @@ var Manager;
 						'spellcheck': true,
 						'spellcheck.count': 3,
 						'spellcheck.collate': true,
+						'gui': true,
 						'json.nl': 'map'
 				};
 

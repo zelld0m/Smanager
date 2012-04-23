@@ -96,6 +96,7 @@
 							'facet.mincount': 1,
 							'facet.limit': -1,
 							'facet.sort':'HEX',
+							'gui': true,
 							'json.nl':'map'
 					};
 
