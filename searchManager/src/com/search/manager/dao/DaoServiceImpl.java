@@ -46,8 +46,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")

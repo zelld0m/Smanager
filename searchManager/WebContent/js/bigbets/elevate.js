@@ -1,7 +1,7 @@
 (function($){
 	var keywordPageSize = 10;
 	var keywordDefaultSearchText = "Enter Keyword";
-	var activityPageSize = 5;
+	
 	var sortableCache = { };
 	var sortableTotalItems = 0;
 	var sortableTotalPages = 0;
@@ -62,8 +62,7 @@
 						updateSortableList(getSelectedKeyword(), sortablePage);
 					},
 					preHook: function(){ prepareSortableList(); },
-					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
-					errorHandler: function(message){ alert(message);}
+					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
 				});
 			}
 		},
@@ -123,7 +122,7 @@
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
 			setItemFilter("all");
 			$("#titleText").html("Elevate List");
-			showPageAuditList("#notificationList", "Page Activity", "Elevate", 1, activityPageSize);
+			showPageAuditList("#notificationList", "Elevate Activities", "Elevate", 1);
 			navigateKeywords(1);
 			setItemDisplay();
 		},
@@ -316,8 +315,7 @@
 						navigateKeywords(1);
 					},
 					preHook: function(){ prepareSortableList(); },
-					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
-					errorHandler: function(message){ alert(message);}
+					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
 				});
 			}else{
 				alert("SKU # is required and must be numeric");
@@ -332,7 +330,7 @@
 			return ((sortablePage-1)*sortablePageSize)+1;
 		};
 
-		/* START
+		/**
 		 * Case: Adding of new item
 		 */
 		$('#addSortableImg').qtip({
@@ -344,8 +342,15 @@
 			events: { 
 				render: function(e, api){
 					var contentHolder = $("div", api.elements.content);
-					contentHolder.html(getHTMLTemplate("#addItemTemplate"));
-					contentHolder.find("#tabs").tabs();
+					var template = processTemplate($("#addItemTemplate").html());
+					
+					contentHolder.html(template);
+					
+					contentHolder.find("#tabs").tabs({
+						event: "click",
+						cookie: { expires: 30},
+						spinner: 'Retrieving data...'
+					});
 					
 					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
 					contentHolder.find("#addItemDPNo").val($.isNumeric($.trim($("#addSortable").val()))? $.trim($("#addSortable").val()) :sortablePopupAddDefaultText);

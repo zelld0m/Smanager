@@ -5,11 +5,13 @@ import java.lang.annotation.Annotation;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebArgumentResolver;
 import org.springframework.web.context.request.NativeWebRequest;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
 
+@Component("activeUserResolver")
 public class ActiveUserWebArgumentResolver implements WebArgumentResolver {
 	
 	public ActiveUserWebArgumentResolver() {}

@@ -12,12 +12,13 @@
 <!-- DWR dependencies -->
 <script type="text/javascript" src="<spring:url value="/dwr/interface/CategoryServiceJS.js"/>"></script>
 <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
+<script type="text/javascript" src="<spring:url value="/dwr/interface/DeploymentServiceJS.js"/>"></script>
 
 <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ui.combobox.js" />" ></script>
 
-<script type="text/javascript" src="<spring:url value="/js/bigbets/redirect.js" />"></script>   
+<script type="text/javascript" src="<spring:url value="/js/bigbets/redirect2.js" />"></script>   
 
 <!--Left Menu-->
     <div class="clearB floatL sideMenuArea">

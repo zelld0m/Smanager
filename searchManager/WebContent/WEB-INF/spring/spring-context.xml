@@ -43,15 +43,7 @@
 	
 	<!-- Enables AOP -->
 	<aop:aspectj-autoproxy/>
-
-	<bean id="pointcutMgr" name="pointcutMgr" class="com.search.manager.aop.SystemArchitecture"></bean>
-	
-	<!-- Audit Interceptor -->
-    <bean id="auditInterceptor" name="auditInterceptor" class="com.search.manager.aop.AuditInterceptor"/>
-    
-    <!-- Login Interceptor -->
-	<bean id="loginInterceptor" name="loginInterceptor" class="com.search.manager.aop.LoginInterceptor"/>
-    
+	 
 	<!-- Loads DWR-related configuration -->      
 	<import resource="dwr-context.xml" />
 	
@@ -59,10 +51,9 @@
 	<import resource="spring-security.xml" />
 	
 	<!-- Enables our custom @ActiveUser annotation. -->
-	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	<bean id="annotationMethodHandlerAdapter" name="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 	    <property name="customArgumentResolver" ref="activeUserResolver" />
 	</bean>
-	<bean id="activeUserResolver" class="com.search.manager.authentication.session.ActiveUserWebArgumentResolver" />
 		
 	<bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
 			<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 

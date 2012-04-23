@@ -62,11 +62,8 @@
 	<div id="addItemTemplate" style="display: none">
 		<div id="tabs" style="width: 257px">
 			<ul>
-				<li><a href="#singleAdd"><span>Single Add</span></a>
-				</li>
-				<li><a href="#multiAdd"><span>Multiple Add</span>
-				</a>
-				</li>
+				<li><a href="#singleAdd"><span>Single Add</span></a></li>
+				<li><a href="#multiAdd"><span>Multiple Add</span></a></li>
 			</ul>
 			
 			<!--  tab -->
@@ -123,16 +120,17 @@
 				</div>	
 				
 				<div align="right" class="marTB5 marR3 txtAL">
-					Enter comma separated SKU #<a class="infoIcon"
-						href="javascript:void(0);"><img
-						src="<spring:url value="/images/icon_info.png" />" class="floatR">
+					<label class="floatL padT5">Comma separated SKU #</label>
+					<a class="infoIcon" href="javascript:void(0);">
+						<img src="<spring:url value="/images/icon_info.png" />" class="floatR">
 					</a>
 				</div>
-				<textarea class="w245"></textarea>
+				<textarea id="addItemComment" class="w245"></textarea>
+				
 				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL w60 marL5 padT5">Comment</label>					
+					<label class="floatL w60 padT5">Comment</label>					
 				</div>
-				<textarea class="w245"></textarea>
+				<textarea id="addItemComment" class="w245"></textarea>
 
 				<div align="right" class="marT5 marR3">
 					<a id="addItemBtn" href="javascript:void(0);"
