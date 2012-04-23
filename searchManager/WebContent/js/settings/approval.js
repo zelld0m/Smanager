@@ -42,7 +42,6 @@
 							click: function(evt){
 								var selectAll = $(this).is(":checked");
 								$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").attr("checked", selectAll);
-								
 								selectAll? $(tabSelected).find("#actionBtn").show() : $(tabSelected).find("#actionBtn").hide();
 							}
 						});
@@ -67,42 +66,50 @@
 							click: function(evt){
 								DeploymentServiceJS.approveRule(entityName, getSelectedItems(), {
 									callback:function(data){
-										
+										getApprovalList();
 									},
-									preHook: function(){
-										$(tabSelected).find("#actionBtn").hide();
-									},
-									postHook: function(){
-										$(tabSelected).find("#actionBtn").show();
-									}
+									preHook:function(){ 
+										prepareTabContent(); 
+										},
+									postHook:function(){ 
+										cleanUpTabContent(); 
+									}	
 								});
 							}
 						});
 						
 						$(tabSelected).find("#rejectBtn").on({
 							click: function(evt){
-								DeploymentServiceJS.rejectRule(entityName, getSelectedItems(), {
+								DeploymentServiceJS.unapproveRule(entityName, getSelectedItems(), {
 									callback:function(data){
-										
+										getApprovalList();
 									},
-									preHook: function(){
-										$(tabSelected).find("#actionBtn").hide();
-									},
-									postHook: function(){
-										$(tabSelected).find("#actionBtn").show();
-									}
+									preHook:function(){ 
+										prepareTabContent(); 
+										},
+									postHook:function(){ 
+										cleanUpTabContent(); 
+									}	
 								});
 							}
 						});
 					}
 				},
-				preHook:function(){
-					$(tabSelected).find("tr:not(#ruleItemPattern)").remove();
-				},
-				postHook:function(){
-					$(tabSelected).find(".circlePreloader").hide();
-				}				
+				preHook:function(){ 
+					prepareTabContent(); 
+					},
+				postHook:function(){ 
+					cleanUpTabContent(); 
+				}			
 			});
+		};
+		
+		var prepareTabContent = function(){
+			$(tabSelected).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>');
+		};
+		
+		var cleanUpTabContent = function(){
+			$(tabSelected).find('div.circlePreloader').remove();
 		};
 		
 		var init = function(){

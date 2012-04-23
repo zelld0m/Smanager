@@ -749,34 +749,54 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 	
 	@Override
-	public boolean loadRelevancyDetails(String storeName) throws DaoException{
+	public boolean loadRelevancyDetails(String storeName, String ruleId) throws DaoException{
 		
 		CacheModel<Relevancy> cache = null;
 		Relevancy relevancy = new Relevancy();
-		relevancy.setStore(new Store(storeName));
-		relevancy.setRelevancyName("");
-		SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
-
-		List<Relevancy> list = searchRelevancy(criteria, MatchType.LIKE_NAME);
 		
-		if(CollectionUtils.isNotEmpty(list)){
-			for(Relevancy rel : list){
-				relevancy.setRelevancyName(rel.getRelevancyName());
-				relevancy.setRelevancyId(rel.getRelevancyId());
-				rel = daoService.getRelevancyDetails(relevancy);
-				
-				cache = new CacheModel<Relevancy>(); 
-				if(rel != null)
-					cache.setObj(rel);
-				
-				try{
-					cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, rel.getRelevancyId()), cache);
-					logger.info("Relevancy list has been loaded to cache: RelevancyId is "+rel.getRelevancyId());
-				}catch (Exception e) {
-					logger.error(e);
-				}	
+		if(StringUtils.isEmpty(ruleId)){
+			relevancy.setStore(new Store(storeName));
+			relevancy.setRelevancyName("");
+			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
+
+			List<Relevancy> list = searchRelevancy(criteria, MatchType.LIKE_NAME);
+			
+			if(CollectionUtils.isNotEmpty(list)){
+				for(Relevancy rel : list){
+					relevancy.setRelevancyName(rel.getRelevancyName());
+					relevancy.setRelevancyId(rel.getRelevancyId());
+					rel = daoService.getRelevancyDetails(relevancy);
+					
+					cache = new CacheModel<Relevancy>(); 
+					if(rel != null)
+						cache.setObj(rel);
+					
+					try{
+						cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, rel.getRelevancyId()), cache);
+						logger.info("Relevancy list has been loaded to cache: RelevancyId is "+rel.getRelevancyId());
+					}catch (Exception e) {
+						logger.error(e);
+					}	
+				}
+				return true;
 			}
-			return true;
+		}else{
+			relevancy.setRelevancyId(ruleId);
+			relevancy.setStore(new Store(storeName));
+			relevancy = daoService.getRelevancy(relevancy);
+			
+			try{
+				cache = new CacheModel<Relevancy>(); 
+				if(relevancy != null && StringUtils.isNotEmpty(relevancy.getRelevancyId())){
+					cache.setObj(relevancy);
+					cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, relevancy.getRelevancyId()), cache);
+					logger.info("Relevancy list has been loaded to cache: RelevancyId is "+relevancy.getRelevancyId());
+				}else{
+					cacheService.reset(getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, ruleId));
+				}
+			}catch (Exception e) {
+				logger.error(e);
+			}	
 		}
 		return false;
 	}

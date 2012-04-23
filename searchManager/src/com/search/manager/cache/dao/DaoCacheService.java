@@ -38,7 +38,7 @@ public interface DaoCacheService {
 	public String getRedirectRule(String storeName, String keyword);
 	
 	public boolean loadRelevancyResultList(String storeName, MatchType relevancyMatchType) throws DaoException;
-	public boolean loadRelevancyDetails(String storeName) throws DaoException;
+	public boolean loadRelevancyDetails(String storeName, String ruleId) throws DaoException;
 	public boolean loadRelevancyKeywordCount(String storeName, String keyword);
 	public boolean loadRelevancyKeywords(String storeName, RelevancyKeyword relevancyKeyword);
 	public Relevancy getRelevancyDetails(Relevancy relevancy, String storeName) throws DaoException;
