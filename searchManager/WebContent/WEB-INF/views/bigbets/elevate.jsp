@@ -52,11 +52,28 @@
 		<span id="titleText"></span>
 		<span id="keywordHeader" class="fLblue fnormal"></span>
 	  </div>
-	  <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
+	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
 		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="">
 		<a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
 	  </div>
-	</div>
+	 </div>
+	  
+	  <div class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine"> 
+	        <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
+	        	<div class="floatL padT10 padL10" style="width:60%" >
+	        	<label class="floatL wAuto fbold">Status:</label><label class="padL5"> <span>Approved</span> <span class="fsize11 forange padL5">[ 04/12/12  8:00PM ]</span> </label>		        	
+		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
+			  	</div>   			  	
+	        	<div class="floatR marL8 marR3 padT5"> 	        		
+	        		<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	</div>
+	        		
+	        </div>	
+	        <div class="clearB"></div>	
+		</div>
+	    <div class="clearB"></div>	
+	 
+	
  
 	 <!--Add Item Content-->
 	<div id="addItemTemplate" style="display: none">
