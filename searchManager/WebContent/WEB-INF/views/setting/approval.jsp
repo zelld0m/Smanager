@@ -78,49 +78,54 @@
 			</div>
 		</div>
 		
-		<div id="previewTemplate" style="display: none">
-			<div>
-				<div class="alert">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<div><span>Rule ID:</span><span>xerox</span></div>
-				<div><span>Type:</span><span>New</span></div>
-				<div><span>Status:</span><span>PENDING</span></div>
-				<div><span>Request By:</span><span>admin</span></div>
-				<div><span>Request Date:</span><span>admin</span></div>
-				<div><span>Request Comment</span><span>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</span></div>
-				<div>Approval Comment<textarea></textarea></div>
-				<div id="actionBtn">
+		<div id="previewTemplate" style="display: none;">
+			<div class="rulePreview w600">
+				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
+				<label class="w110 floatL fbold">Rule ID:</label><label class="w100 floatL">xerox</label>
+				<label class="w95 floatL marL20 fbold">Type:</label><label class="w100 floatL">New</label>	
+				<label class="w95 floatL fbold">Status:</label><label class="w100 floatL">PENDING</label>
+				<div class="clearB"></div>
+				<label class="w110 floatL marL20 fbold">Request By:</label><label class="w100 floatL">admin</label>
+				<label class="w95 floatL fbold">Request Date:</label><label class="w100 floatL">admin</label>
+				<div class="clearB"></div>
+				<label class="w110 floatL fbold">Request Comment</label><label class="w460 floatL border" style="overflow-y:scroll; height: 40px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</label>
+				<div class="clearB"></div>
+				<label class="w110 floatL fbold">Approval Comment </label><label><textarea rows="1" style="width:320px; height:32px"></textarea></label>
+				<label id="actionBtn" class="floatLR w100 marL20">
 					<a id="approveBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
 					</a>
 					<a id="rejectBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
 					</a>
-				</div>
+				</label>
 			</div>
-			<div>
+			<div class="clearB"></div>
+			
+			<div class="w600 mar0 pad0">
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="10px">#</th>
-							<th width="50px" id="selectAll">Image</th>
-							<th width="85px">Manufacturer</th>
-							<th width="50px" class="txtAL">SKU #</th>
-							<th width="50px" class="txtAL">Name</th>
-							<th width="110px">Validity</th>
+							<th width="20px">#</th>
+							<th width="60px" id="selectAll">Image</th>
+							<th width="94px">Manufacturer</th>
+							<th width="70px" class="txtAL">SKU #</th>
+							<th width="160px" class="txtAL">Name</th>
+							<th width="90px">Validity</th>
 						</tr>
 					<tbody>
 				</table>
 			</div>
-			<div style="max-height:360px; overflow-y:scroll">
+			<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:scroll;">
 				<table id="item" class="tblItems w100p">
 					<tbody>
 						<tr id="itemPattern" class="itemRow" style="display: none">
-							<td width="10px" id="itemPosition"></td>
-							<td width="50px" id="itemImage"><img src="" width="50"/></td>
-							<td width="85px" class="txtAC" id="itemMan"></td>
-							<td width="50px" class="txtAC" id="itemDPNo"></td>
-							<td width="50px" class="txtAC" id="itemName"></td>
-							<td width="110px" class="txtAC" id="itemValidity"></td>
+							<td width="20px" class="txtAC" id="itemPosition"></td>
+							<td width="60px" class="txtAC" id="itemImage"><img src="" width="50"/></td>
+							<td width="94px" class="txtAC" id="itemMan"></td>
+							<td width="70px" class="txtAC" id="itemDPNo"></td>
+							<td width="162px" class="txtAC" id="itemName"></td>
+							<td class="txtAC" id="itemValidity"></td>
 						</tr>
 					</tbody>
 				</table>

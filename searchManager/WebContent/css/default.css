@@ -67,7 +67,7 @@ body 							{ margin: 0px; }
 .cssReset .w550, .w550          {width:550px}
 .cssReset .w555, .w555          {width:555px}
 .cssReset .w580, .w580          {width:580px}
-.cssReset .w600					{width:600px}
+.cssReset .w600, .w600			{width:600px}
 .cssReset .w620					{width:620px}
 .cssReset .w675					{width:675px}
 .cssReset .w700					{width:700px}
@@ -284,6 +284,7 @@ body 							{ margin: 0px; }
 .cssReset .faNarrow, 
 .faNarrow  						{ font-family: 'Arial Narrow', sans-serif !important; }
 
+.cssReset .border				{ border:1px solid #e5e5e5 }
 .cssReset .borderLR 			{ border-left:1px solid #e5e5e5; border-right:1px solid #e5e5e5; width:755px }
 .cssReset .borderNoneR			{ border-right:none !important }
 

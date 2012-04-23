@@ -534,13 +534,28 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', end
 .tblItems td 					{ border:1px solid #cfcfcf; border-collapse: collapse; padding:6px 8px; color:#464646; font:normal 12px arial; }
 .tblItems td.txtAC				{ text-align:center }
 
+.qtip .tblItems						{ border:1px solid #cfcfcf; border-collapse: collapse; margin:0; }
+.qtip .tblItems th					{ border:1px solid #cfcfcf; border-collapse: collapse; padding:8px; color:#464646; font:bold 12px arial; text-align:center; 
+background: #f2f1f1; /* Old browsers */
+background: -moz-linear-gradient(top,  #f2f1f1 0%, #d6d6d6 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f1f1), color-stop(100%,#d6d6d6)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* IE10+ */
+background: linear-gradient(top,  #f2f1f1 0%,#d6d6d6 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f1f1', endColorstr='#d6d6d6',GradientType=0 ); /* IE6-9 */
+}
+
+.qtip .tblItems td 					{ border:1px solid #cfcfcf; border-collapse: collapse; padding:2px 8px; color:#464646; font:normal 11px arial; }
+.qtip .tblItems td.txtAC			{ text-align:center }
+
 .buttonHolder					{ text-align:right }
 
 /* general tabs */
 .tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
 .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
 .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
-body .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; margin-top:1px; padding:15px }	
+body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padding:15px; }	
 .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
 .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
@@ -636,6 +651,10 @@ p.notification								{  }
 
 
 .footerFix .altBg							{ background: #ededed }
+
+/* Elevate Rule Preview */
+.rulePreview								{ padding:0; margin:0 }
+.rulePreview label							{ line-height: 14px; margin:3px 0 }
 
 
 
