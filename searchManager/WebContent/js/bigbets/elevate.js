@@ -1,8 +1,6 @@
 (function($){
-	var keywordPageSize = 10;
 	var keywordDefaultSearchText = "Enter Keyword";
-	
-	var sortableCache = { };
+
 	var sortableTotalItems = 0;
 	var sortableTotalPages = 0;
 	var sortablePage = 1;
@@ -21,54 +19,99 @@
 	var defaultFilterDisplay = "all";
 	var errmsg_skunumeric ="SKU # should be numeric";
 
-	var searchActivated = false;
-	var oldSearch = "";
-	var newSearch = "";
+	var keywordPageSize = 10;
+	var keywordHeaderText = "Keyword";
+	var keywordSearchText = "Search Keyword";
+	var ruleStatus = null;
 
 	$(document).ready(function() { 
 
-		$("#sortable-bigbets").sortable({ 
-			handle : '.handle',
-			cursor : 'move',
-			start: function(e, ui) {
-				ui.item.data('start_pos', ui.item.index());
-			},     
-			change: function(e, ui) {
-				var index = ui.placeholder.index();
-				if (ui.item.data('start_pos') < index ) {
-					$('#sortable-bigbets li:nth-child(' + index + ') div').addClass('sortableHighlights');
-				} else {
-					$('#sortable-bigbets li:eq(' + (index + 1) + ') div').addClass('sortableHighlights');
-				}		    
-			},
-			update: function(e, ui) {
-				$('#sortable-bigbets li div').removeClass('sortableHighlights');
-			},
-			stop: function(e, ui) {
-				var sourceIndex = (ui.item.data('start_pos')+1) + ((sortablePage-1)*sortablePageSize);
-				var destinationIndex = (ui.item.index()+1) + ((sortablePage-1)*sortablePageSize);
-				var edp = formatToEDP(ui.item.attr("id"));
+		populateKeywordList = function(page){
+			$("#keywordList").sidepanel({
+				fieldId: "keywordId",
+				fieldName: "keyword",
+				headerText : keywordHeaderText,
+				searchText : keywordSearchText,
+				page: page,
+				pageSize: keywordPageSize,
 
-				if (sourceIndex != destinationIndex)
-					updateSortableItemPosition(edp,destinationIndex);   	
-			}
-		});
+				itemDataCallback: function(base, keyword, page){
+					StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
+						callback: function(data){
+							base.populateList(data);
+							base.addPaging(keyword, page, data.totalSize);
+						},
+						preHook: function(){ base.prepareList(); }
+					});
+				},
 
-		updateSortableItemPosition = function(edp, destinationIndex) {
-			if (getSelectedKeyword()!=""){
-				ElevateServiceJS.updateElevate(getSelectedKeyword(),edp,destinationIndex, {
-					callback : function(data){
-						updatePositionBox();
-						updateSortableList(getSelectedKeyword(), sortablePage);
-					},
-					preHook: function(){ prepareSortableList(); },
-					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
-				});
-			}
-		},
+				itemOptionCallback: function(base, id, name){
 
-		navigateKeywords = function(page){
-			showKeywordList("#keywordList", "Keyword", "Search Keyword", "Elevate", page, keywordPageSize);
+					DeploymentServiceJS.getRuleStatus("elevate", name, {
+						callback:function(data){
+							var status = (data==null) ? "" : data["approvalStatus"];
+							ElevateServiceJS.getElevatedProductCount(name,{
+								callback: function(count){
+									var totalText = (count == 0) ? "": " (" + count + ")"; 
+									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemText a').append(totalText);
+
+									switch (status){
+									case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html("For Immediate Action"); break;
+									case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html("Awaiting Approval"); break;
+									case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html("Ready For Production"); break;
+									default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html("-"); break;
+									}
+
+									if($.inArray(status,["PENDING","APPROVED"])>=0){
+										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').qtip({
+											content: "<div/>",
+											show:{
+												modal: true
+											},
+											events: {
+												show: function(evt, api){
+													var $content = $("div", api.elements.content);
+													$content.html($("#whyIsLocked").html());
+												}
+											}
+										});
+									}else{
+										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({
+											click: function(e){
+												$("#titleText").html("Elevate List for ");
+												$("#keywordHeader").html(e.data.name);
+												$("div#addSortableHolder").show();
+												updateSortableList(e.data.name, 1);
+												ruleStatus = e.data.status;
+											}},{name:name, status: data});
+									}
+								},
+								preHook: function(){ 
+									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+								}
+							});
+
+						},
+						preHook: function(){ 
+							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						}
+					});
+				},
+
+				itemAddCallback: function(base, keyword){
+					StoreKeywordServiceJS.addKeyword(keyword,{
+						callback : function(data){
+							switch (data){
+							case -1: alert("Duplicate entry for '" + keyword + "'."); break;
+							case 0: alert("Error encountered while adding '" + keyword + "'."); break;
+							default: 
+								base.getList(keyword, 1);
+							alert(headerText + ' "' + keyword + '" added successfully.');
+							};
+						}
+					});
+				}
+			});
 		};
 
 		removeSortableItem = function(item){
@@ -86,7 +129,7 @@
 						$(deleteSelector).parents("li").remove();
 						isDelete = 1;
 						updateSortableList(getSelectedKeyword(),sortablePage==0? 1 : sortablePage);
-						navigateKeywords(1);
+						populateKeywordList(1);
 					}
 				});
 			}
@@ -117,16 +160,7 @@
 		},{text:sortableAddDefaultSearchText}
 		);
 
-		initPage = function() {
-			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
-			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
-			setItemFilter("all");
-			$("#titleText").html("Elevate List");
-			showPageAuditList("#notificationList", "Elevate Activities", "Elevate", 1);
-			navigateKeywords(1);
-			setItemDisplay();
-		},
-
+		
 		formatToId = function(keyword){
 			return "_".concat(keyword.replace(/ /g,"_").toLowerCase());
 		},
@@ -197,8 +231,8 @@
 				}
 			});
 
-			
-			
+
+
 			/* Case: Put back elevate position when focus leave the field*/
 			$('#sItemPosition' + id).blur(function(e){
 				//$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
@@ -206,7 +240,7 @@
 
 			if (sortableItem.isExpired)
 				$("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
-				//$("#sItemStampExp" + id).html('<img src="../images/expired_stamp.png">');
+			//$("#sItemStampExp" + id).html('<img src="../images/expired_stamp.png">');
 
 			$("#sItemImg" + id).error(function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); });
 
@@ -261,7 +295,7 @@
 
 		updateSortableList = function(keyword, page) {
 			sortablePage = page;
-
+			
 			ElevateServiceJS.getProducts(getItemFilter(), keyword, sortablePage, sortablePageSize,{
 				callback: function(data){
 					sortableTotalItems = data.totalSize;
@@ -276,8 +310,16 @@
 					// Create a new set cloned from the pattern row
 					var sortableItem, id;
 
+					$.isNotBlank(getSelectedKeyword())?  $("#submitForApproval").show() : $("#submitForApproval").hide();
+					
+					if(ruleStatus!=null){
+						$("span#status").html(ruleStatus["approvalStatus"]);
+						$("span#statusDate").html(ruleStatus["lastModifiedDate"]);
+					}
+					
 					//TODO: Should be configurable
 					if (sortableTotalItems == 0){
+						$("#clearRule").hide();
 						if ($.isBlank(getSelectedKeyword())){
 							$("#sortable-bigbets-container").prepend('<img id="no-items-img"/>');
 							$("#sortable-bigbets-container img#no-items-img").attr("src", "../images/ElevatePageisBlank.jpg");							
@@ -285,6 +327,8 @@
 						else{
 							//TODO: no results
 						}
+					}else{
+						$("#clearRule").show();
 					}
 
 					for (var i = 0; i < sortableList.length; i++) {
@@ -293,7 +337,6 @@
 						dwr.util.cloneNode("sItemPattern", { idSuffix:id });
 						refreshItemForUpdate(sortableItem);
 						$("#sItemPattern" + id).attr("style", "display:block"); 		
-						sortableCache[id] = sortableItem;
 					};
 
 					//updatePositionBox();
@@ -312,7 +355,7 @@
 				ElevateServiceJS.addElevateByPartNumber(getSelectedKeyword(),partNumber,index, expiry, comments, {
 					callback : function(data){
 						updateSortableList(getSelectedKeyword(),sortablePage==0? 1 : sortablePage);	
-						navigateKeywords(1);
+						populateKeywordList(1);
 					},
 					preHook: function(){ prepareSortableList(); },
 					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
@@ -342,16 +385,16 @@
 			events: { 
 				render: function(e, api){
 					var contentHolder = $("div", api.elements.content);
-					var template = processTemplate($("#addItemTemplate").html());
-					
+					var template = $.processTemplate($("#addItemTemplate").html());
+
 					contentHolder.html(template);
-					
+
 					contentHolder.find("#tabs").tabs({
 						event: "click",
 						cookie: { expires: 30},
 						spinner: 'Retrieving data...'
 					});
-					
+
 					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
 					contentHolder.find("#addItemDPNo").val($.isNumeric($.trim($("#addSortable").val()))? $.trim($("#addSortable").val()) :sortablePopupAddDefaultText);
 					contentHolder.find("#addItemDPNo").bind('blur', function(e) {if ($.trim($(this).val()).length == 0) $(this).val(sortablePopupAddDefaultText);});
@@ -512,7 +555,7 @@
 		/*-- END filter display --*/
 
 		//Case: Download icon is clicked
-		$("#downloadIcon").off("click").on("click",{
+		$("#downloadIcon").on("click",{
 			selector: "#downloadIcon",
 			template: "#downloadTemplate",
 			title: "Download Page",
@@ -522,6 +565,44 @@
 			itemPageSize:sortablePageSize
 		}, showDownloadOption);
 
-		initPage();	
+		var submitForApprovalHandler = function(){
+			$("#submitForApproval").on({
+				click: function(){
+					if(confirm("This elevate rule will be locked for approval. Continue?"))
+					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), false,{
+						callback: function(data){
+							populateKeywordList();
+						}
+					});
+				}
+			});
+		};
+		
+		var clearRuleHandler = function(){
+			$("div#clearRule > #clearRuleBtn").on({
+				click: function(){
+					if(confirm("This will remove all items associated to this rule. Continue?"))
+						ElevateServiceJS.clearRule(getSelectedKeyword(), {
+							callback: function(data){
+								updateSortableList();
+							}
+						});
+				}
+			});
+		};
+		
+		var init = function() {
+			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
+			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);
+			setItemFilter("all");
+			$("#titleText").html("Elevate List");
+			showPageAuditList("#notificationList", "Elevate Activities", "Elevate", 1);
+			populateKeywordList(1);
+			setItemDisplay();
+			submitForApprovalHandler();
+			clearRuleHandler();
+		};
+
+		init();	
 	});	
 })(jQuery);	

@@ -58,23 +58,25 @@
 	  </div>
 	 </div>
 	  
-	  <div class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine"> 
+	 <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
 	        <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
 	        	<div class="floatL padT10 padL10" style="width:60%" >
-	        	<label class="floatL wAuto fbold">Status:</label><label class="padL5"> <span>Approved</span> <span class="fsize11 forange padL5">[ 04/12/12  8:00PM ]</span> </label>		        	
+	        	<label class="floatL wAuto fbold">Status:</label>
+	        	<label class="padL5">
+	        		<span id="status"></span> 
+	        		<span id="statusDate" class="fsize11 forange padL5"></span> 
+	        	</label>		        	
 		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
 			  	</div>   			  	
 	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		<a id="submitForApproval" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
 	        	</div>
-	        		
 	        </div>	
 	        <div class="clearB"></div>	
-		</div>
-	    <div class="clearB"></div>	
+	 </div>
 	 
-	
- 
+	 <div class="clearB"></div>	
+	 
 	 <!--Add Item Content-->
 	<div id="addItemTemplate" style="display: none">
 		<div id="tabs" style="width: 257px">
@@ -279,6 +281,14 @@
   <!--End Displaying Items-->
    <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
   <!--Pagination-->
+  
+  <div id="clearRule" class="txtAR padT10">
+		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
+  </div>
+  
+  <div id="whyIsLocked" style="display:none">
+  	<div>Item is automatically</div>
+  </div>
 </div>
        
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
