@@ -66,8 +66,6 @@ public class DeploymentService {
 	}
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
-		ruleRefIdList = new ArrayList<String>();
-		
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "APPROVED");
