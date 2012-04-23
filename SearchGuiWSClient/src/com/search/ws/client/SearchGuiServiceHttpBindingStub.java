@@ -16,7 +16,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[8];
+        _operations = new org.apache.axis.description.OperationDesc[3];
         _initOperationDesc1();
     }
 
@@ -24,7 +24,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         org.apache.axis.description.OperationDesc oper;
         org.apache.axis.description.ParameterDesc param;
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("pushElevateList1");
+        oper.setName("recallRules");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "TransportList"), com.search.webservice.model.TransportList.class, false, false);
         param.setNillable(true);
         oper.addParameter(param);
@@ -36,49 +36,21 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         _operations[0] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("pushExcludeList");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "ExcludedList"), com.search.webservice.model.ExcludedList.class, false, false);
+        oper.setName("getBackupInfo");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "TransportList"), com.search.webservice.model.TransportList.class, false, false);
         param.setNillable(true);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
+        oper.setReturnType(new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo"));
+        oper.setReturnClass(com.search.manager.model.BackupInfo[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
+        param = oper.getReturnParamDesc();
+        param.setItemQName(new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo"));
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         _operations[1] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("loadRelevancyList");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
-        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[2] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("loadExcludeList");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
-        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[3] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("pushExcludeList1");
+        oper.setName("deployRules");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "TransportList"), com.search.webservice.model.TransportList.class, false, false);
         param.setNillable(true);
         oper.addParameter(param);
@@ -87,49 +59,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[4] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("pushElevateList");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "ElevatedList"), com.search.webservice.model.ElevatedList.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
-        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[5] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("loadRelevancyDetails");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
-        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[6] = oper;
-
-        oper = new org.apache.axis.description.OperationDesc();
-        oper.setName("loadElevateList");
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in1"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setNillable(true);
-        oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
-        oper.setReturnClass(boolean.class);
-        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
-        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
-        oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[7] = oper;
+        _operations[2] = oper;
 
     }
 
@@ -162,69 +92,25 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
             java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;
             java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;
             java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfElevateResult");
+            qName = new javax.xml.namespace.QName("http://enums.manager.search.com", "RuleEntity");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.ElevateResult[].class;
+            cls = com.search.manager.enums.RuleEntity.class;
             cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ElevateResult");
-            qName2 = new javax.xml.namespace.QName("http://model.manager.search.com", "ElevateResult");
+            cachedSerFactories.add(enumsf);
+            cachedDeserFactories.add(enumdf);
+
+            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo");
+            cachedSerQNames.add(qName);
+            cls = com.search.manager.model.BackupInfo[].class;
+            cachedSerClasses.add(cls);
+            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
+            qName2 = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
             cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfExcludeResult");
+            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.ExcludeResult[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ExcludeResult");
-            qName2 = new javax.xml.namespace.QName("http://model.manager.search.com", "ExcludeResult");
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
-
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ElevateResult");
-            cachedSerQNames.add(qName);
-            cls = com.search.manager.model.ElevateResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ExcludeResult");
-            cachedSerQNames.add(qName);
-            cls = com.search.manager.model.ExcludeResult.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "Keyword");
-            cachedSerQNames.add(qName);
-            cls = com.search.manager.model.Keyword.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "Store");
-            cachedSerQNames.add(qName);
-            cls = com.search.manager.model.Store.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.manager.search.com", "StoreKeyword");
-            cachedSerQNames.add(qName);
-            cls = com.search.manager.model.StoreKeyword.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.webservice.search.com", "ElevatedList");
-            cachedSerQNames.add(qName);
-            cls = com.search.webservice.model.ElevatedList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://model.webservice.search.com", "ExcludedList");
-            cachedSerQNames.add(qName);
-            cls = com.search.webservice.model.ExcludedList.class;
+            cls = com.search.manager.model.BackupInfo.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -235,134 +121,6 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">anyType2anyTypeMap>entry");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.AnyType2AnyTypeMapEntry.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadElevateList");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadElevateList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadElevateListResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadElevateListResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadExcludeList");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadExcludeList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadExcludeListResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadExcludeListResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadRelevancyDetails");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadRelevancyDetails.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadRelevancyDetailsResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadRelevancyDetailsResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadRelevancyList");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadRelevancyList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">loadRelevancyListResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.LoadRelevancyListResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushElevateList");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushElevateList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushElevateList1");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushElevateList1.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushElevateList1Response");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushElevateList1Response.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushElevateListResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushElevateListResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushExcludeList");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushExcludeList.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushExcludeList1");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushExcludeList1.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushExcludeList1Response");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushExcludeList1Response.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">pushExcludeListResponse");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.PushExcludeListResponse.class;
-            cachedSerClasses.add(cls);
-            cachedSerFactories.add(beansf);
-            cachedDeserFactories.add(beandf);
-
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", "anyType2anyTypeMap");
-            cachedSerQNames.add(qName);
-            cls = com.search.ws.client.AnyType2AnyTypeMapEntry[].class;
-            cachedSerClasses.add(cls);
-            qName = new javax.xml.namespace.QName("http://ws.search.com/client", ">anyType2anyTypeMap>entry");
-            qName2 = new javax.xml.namespace.QName("http://ws.search.com/client", "entry");
-            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName, qName2));
-            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
 
             qName = new javax.xml.namespace.QName("http://ws.search.com/client", "ArrayOfString");
             cachedSerQNames.add(qName);
@@ -439,7 +197,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
     }
 
-    public boolean pushElevateList1(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
+    public boolean recallRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -451,7 +209,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "pushElevateList1"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "recallRules"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
@@ -473,7 +231,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 }
     }
 
-    public boolean pushExcludeList(com.search.webservice.model.ExcludedList in0) throws java.rmi.RemoteException {
+    public com.search.webservice.model.BackupInfo[] getBackupInfo(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -485,7 +243,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "pushExcludeList"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "getBackupInfo"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
@@ -497,9 +255,9 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         else {
             extractAttachments(_call);
             try {
-                return ((java.lang.Boolean) _resp).booleanValue();
+                return (com.search.webservice.model.BackupInfo[]) _resp;
             } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
+                return (com.search.webservice.model.BackupInfo[]) org.apache.axis.utils.JavaUtils.convert(_resp, com.search.manager.model.BackupInfo[].class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -507,7 +265,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 }
     }
 
-    public boolean loadRelevancyList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
+    public boolean deployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -519,181 +277,11 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "loadRelevancyList"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Boolean) _resp).booleanValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public boolean loadExcludeList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[3]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setEncodingStyle(null);
-        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
-        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "loadExcludeList"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Boolean) _resp).booleanValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public boolean pushExcludeList1(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[4]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setEncodingStyle(null);
-        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
-        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "pushExcludeList1"));
+        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "deployRules"));
 
         setRequestHeaders(_call);
         setAttachments(_call);
  try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Boolean) _resp).booleanValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public boolean pushElevateList(com.search.webservice.model.ElevatedList in0) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[5]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setEncodingStyle(null);
-        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
-        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "pushElevateList"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Boolean) _resp).booleanValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public boolean loadRelevancyDetails(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[6]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setEncodingStyle(null);
-        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
-        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "loadRelevancyDetails"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1});
-
-        if (_resp instanceof java.rmi.RemoteException) {
-            throw (java.rmi.RemoteException)_resp;
-        }
-        else {
-            extractAttachments(_call);
-            try {
-                return ((java.lang.Boolean) _resp).booleanValue();
-            } catch (java.lang.Exception _exception) {
-                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
-            }
-        }
-  } catch (org.apache.axis.AxisFault axisFaultException) {
-  throw axisFaultException;
-}
-    }
-
-    public boolean loadElevateList(java.lang.String in0, java.lang.String in1) throws java.rmi.RemoteException {
-        if (super.cachedEndpoint == null) {
-            throw new org.apache.axis.NoEndPointException();
-        }
-        org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[7]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
-        _call.setEncodingStyle(null);
-        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
-        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
-        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
-        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "loadElevateList"));
-
-        setRequestHeaders(_call);
-        setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0, in1});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

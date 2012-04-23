@@ -288,7 +288,6 @@ public class DaoServiceImpl implements DaoService {
 		return elevateDAO.addElevate(elevate);
 	}
 
-	
 	@Override
 	public RecordSet<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		RecordSet<ElevateResult> list = elevateDAO.getElevate(criteria);

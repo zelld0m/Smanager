@@ -17,6 +17,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 
 public interface DaoCacheService {
+	
 	public List<String> getAllKeywords(String storeName) throws DaoException, DataException;
 	public boolean resetAllkeywords(String storeName);
 	public boolean resetElevateResult(String storeName, String kw);

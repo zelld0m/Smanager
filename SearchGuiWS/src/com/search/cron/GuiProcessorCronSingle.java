@@ -33,13 +33,13 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 			synchronized (this) {	
 				logger.info("########### Start loading to cache");
 				
-				if(searchGuiService.loadElevateList(store, token)){
-					if(searchGuiService.loadExcludeList(store, token)){
-						if(searchGuiService.loadRelevancyList(store, token)){
-							searchGuiService.loadRelevancyDetails(store, token);
-						}
-					}
-				}
+//				if(searchGuiService.loadElevateList(store, token)){
+//					if(searchGuiService.loadExcludeList(store, token)){
+//						if(searchGuiService.loadRelevancyList(store, token)){
+//							searchGuiService.loadRelevancyDetails(store, token);
+//						}
+//					}
+//				}
 
 				logger.info("########### Done loading to cache");
 			}

@@ -1,18 +1,13 @@
 package com.search.webservice;
 
+import java.util.Collections;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import com.search.manager.cache.dao.DaoCacheService;
-import com.search.manager.dao.DaoException;
-import com.search.manager.dao.DaoService;
-import com.search.manager.model.ElevateResult;
-import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.StoreKeyword;
-import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.BackupInfo;
 import com.search.manager.utility.PropsUtils;
-import com.search.webservice.model.ElevatedList;
-import com.search.webservice.model.ExcludedList;
+import com.search.service.DeploymentRuleService;
+import com.search.service.FileService;
 import com.search.webservice.model.TransportList;
 
 public class SearchGuiServiceImpl implements SearchGuiService{
@@ -21,20 +16,15 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 	private static String token;
 	private static final String RESOURCE_MAP = "token";
 	
-	private static DaoCacheService daoCacheService;
-	private static DaoService daoService;
-	private static DaoService daoServiceStg;
+	private static DeploymentRuleService deploymentRuleService;
+	private static FileService fileService;
 	
-	public void setDaoCacheService(DaoCacheService daoCacheService_) {
-		daoCacheService = daoCacheService_;
-	}
-
-	public void setDaoService(DaoService daoService_) {
-		daoService = daoService_;
+	public void setDeploymentRuleService(DeploymentRuleService deploymentRuleService_) {
+		deploymentRuleService = deploymentRuleService_;
 	}
 	
-	public void setDaoServiceStg(DaoService daoServiceStg_) {
-		daoServiceStg = daoServiceStg_;
+	public void setFileService(FileService fileService_) {
+		fileService = fileService_;
 	}
 
 	static{
@@ -44,51 +34,97 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 			ex.printStackTrace(System.err);
 		}
 	}
-	
-	@Override
-	public boolean loadElevateList(String store, String token) {
-		try {
-			if(isValidToken(token))
-				return daoCacheService.loadElevateResultList(store);
-		} catch (DaoException e) {
-			logger.error(e);
-		}
-		return false;
-	}
 
 	@Override
-	public boolean loadExcludeList(String store, String token) {
+	public boolean deployRules(TransportList list) {
+		
 		try {
-			if(isValidToken(token))
-				return daoCacheService.loadExcludeResultList(store);
-		} catch (DaoException e) {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.pushElevateList(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.pushExcludeList(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean loadRelevancyDetails(String store, String token) {
+	public boolean recallRules(TransportList list) {
+		
 		try {
-			if(isValidToken(token))
-				return daoCacheService.loadRelevancyDetails(store);
-		} catch (DaoException e) {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.recallElevateList(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.recallExcludeList(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						break;
+					default:
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
 			logger.error(e);
 		}
 		return false;
 	}
 	
 	@Override
-	public boolean loadRelevancyList(String store, String token) {
+	public List<BackupInfo> getBackupInfo(TransportList list){
+		
 		try {
-			if(isValidToken(token))
-				return daoCacheService.loadRelevancyResultList(store,MatchType.LIKE_NAME);
-		} catch (DaoException e) {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList))
+					return fileService.getBackupInfo(list.getStore(), list.getList(), list.getRuleEntity());
+			}
+		} catch (Exception e) {
 			logger.error(e);
 		}
-		return false;
+		return Collections.EMPTY_LIST;
 	}
-
+	
 	private boolean isValidToken(String token_){	
 		try{	
 			if(token.equals(token_)){
@@ -99,148 +135,6 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error(e);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean pushElevateList(ElevatedList list) {
-		try {
-			if(isValidToken(list.getToken())){
-				if(list != null && list.getMap() != null && list.getMap().size() > 0){
-					
-					for(String key : list.getMap().keySet()){
-						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
-							ElevateResult delEl = new ElevateResult();
-							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							delEl.setEdp(null);
-							daoService.deleteElevateResult(delEl);
-
-							if(list.getMap().get(key) != null){
-								for(Object e : list.getMap().get(key)){
-									daoService.addElevateResult((ElevateResult)e);
-								}	
-							}
-							daoCacheService.updateElevateResultList(delEl);
-						}
-					}
-				}
-				return true;
-			}	
-		} catch (DaoException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean pushExcludeList(ExcludedList list) {
-		try {
-			if(isValidToken(list.getToken())){
-				if(list != null && list.getMap() != null && list.getMap().size() > 0){
-					
-					for(String key : list.getMap().keySet()){
-						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
-							ExcludeResult delEl = new ExcludeResult();
-							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							delEl.setEdp(null);
-							daoService.deleteExcludeResult(delEl);
-
-							if(list.getMap().get(key) != null){
-								for(Object e : list.getMap().get(key)){
-									daoService.addExcludeResult((ExcludeResult) e);
-								}	
-							}
-							daoCacheService.updateExcludeResultList(delEl);
-						}
-					}
-				}
-				return true;
-			}	
-		} catch (DaoException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean pushElevateList(TransportList list) {
-		
-		List<ElevateResult> elevatedList = null;
-		ElevateResult elevateFilter = new ElevateResult();
-		
-		try {
-			if(isValidToken(list.getToken())){
-				if(list != null && list.getList().size() > 0){
-					for(String key : list.getList()){
-						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
-							ElevateResult delEl = new ElevateResult();
-							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							daoService.clearElevateResult(new StoreKeyword(list.getStore(), key)); // prod
-							
-							// retrieve staging data then push to prod
-							StoreKeyword sk = new StoreKeyword(list.getStore(), key);
-							elevateFilter.setStoreKeyword(sk);
-							SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
-							
-							elevatedList = daoServiceStg.getElevateResultList(criteria).getList();
-							
-							if(elevatedList != null && elevatedList.size() > 0){
-								for(ElevateResult e : elevatedList){
-									daoService.addElevateResult((ElevateResult) e);
-								}
-							}
-							
-							// update cache data
-							daoCacheService.updateElevateResultList(delEl); // prod
-						}
-					}
-				}
-				return true;
-			}	
-		} catch (DaoException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-
-	@Override
-	public boolean pushExcludeList(TransportList list) {
-		
-		List<ExcludeResult> excludeList = null;
-		ExcludeResult excludeFilter = new ExcludeResult();
-		
-		try {
-			if(isValidToken(list.getToken())){
-				if(list != null && list.getList().size() > 0){
-					
-					for(String key : list.getList()){
-						if(daoCacheService.hasExactMatchKey(list.getStore(), key)){
-							ExcludeResult delEl = new ExcludeResult();
-							delEl.setStoreKeyword(new StoreKeyword(list.getStore(), key));
-							daoService.clearExcludeResult(new StoreKeyword(list.getStore(), key)); // prod
-							
-							// retrieve staging data then push to prod
-							StoreKeyword sk = new StoreKeyword(list.getStore(), key);
-							excludeFilter.setStoreKeyword(sk);
-							SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-							
-							excludeList = daoServiceStg.getExcludeResultList(criteria).getList();
-							
-							if(excludeList != null && excludeList.size() > 0){
-								for(ExcludeResult e : excludeList){
-									daoService.addExcludeResult((ExcludeResult) e);
-								}
-							}
-							
-							daoCacheService.updateExcludeResultList(delEl); // prod
-						}
-					}
-				}
-				return true;
-			}	
-		} catch (DaoException e) {
 			logger.error(e);
 		}
 		return false;
