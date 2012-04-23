@@ -191,7 +191,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 						Node docNode = children.item(j);
 						if (docNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_DOC)) {
 							String edp = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent();
-							if (expiredElevatedEDPs.contains(edp)) {
+							if (expiredElevatedEDPs != null && expiredElevatedEDPs.contains(edp)) {
 								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_EXPIRED);
 								docNode.appendChild(expiredNode);
 							}

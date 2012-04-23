@@ -15,6 +15,7 @@ import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
 import com.search.manager.dao.sp.CategoryDAO;
+import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
@@ -27,6 +28,7 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -34,13 +36,14 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Redirect;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
@@ -63,6 +66,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
+	@Autowired private CommentDAO	commentDAO;
 
 	DaoServiceImpl instance;
 	public DaoServiceImpl() {
@@ -115,6 +119,10 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setRuleStatusDAO(RuleStatusDAO ruleStatusDAO) {
 		this.ruleStatusDAO = ruleStatusDAO;
+	}
+
+	public void setCommentDAO(CommentDAO commentDAO) {
+		this.commentDAO = commentDAO;
 	}
 
 	/* Audit Trail */
@@ -535,37 +543,6 @@ public class DaoServiceImpl implements DaoService {
 		throw new DaoException("Unsupported operation");
 	}
 
-
-	@Override
-	public Redirect addRedirect(String store) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public void deleteRedirect(String redirectId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public Redirect getRedirect(String redirectId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public RecordSet<Redirect> getRedirects(String store) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public Redirect updateRedirect(String redirectId, String xml) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
 	@Override
 	public int updateRedirectMapping(String redirectId, List<String> keywords) throws DaoException {
 		// TODO Auto-generated method stub
@@ -759,8 +736,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RedirectRule getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
-		return redirectRuleDAO.getRedirectRule(searchCriteria);
+	public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException {
+		return redirectRuleDAO.getRedirectRule(redirectRule);
 	}
 
 	@Override
@@ -812,27 +789,60 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO;
 	}
 
+	public CommentDAO getCommentDAO() {
+		return commentDAO;
+	}
+
 	@Override
-	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException {
+	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
+		return ruleStatusDAO.getRuleStatus(searchCriteria);
+	}
+
+	@Override
+	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.addRuleStatus(ruleStatus);
+	}
+
+	@Override
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.updateRuleStatus(ruleStatus);
+	}
+
+	@Override
+	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException {
+		// TODO do we delete???
+		return ruleStatusDAO.deleteRuleStatus(ruleStatus);
+	}
+
+	@Override
+	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
+		return ruleStatusDAO.updateRuleStatus(ruleStatusList);
+	}
+
+	@Override
+	public String getStatus(RuleStatus ruleStatus) throws DaoException {
+		return ruleStatusDAO.getStatus(ruleStatus);
+	}
+
+	@Override
+	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public int addRuleStatus(RuleStatus rule) throws DaoException {
+	public int addComment(String refId, String comment, String userName) throws DaoException {
+		return commentDAO.addComment(refId, comment, userName);
+	}
+
+	@Override
+	public int updateComment(Comment comment) throws DaoException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int updateRuleStatus(RuleStatus rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int removeRuleStatus(RuleStatus rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int removeComment(Integer commentId) throws DaoException {
+		return commentDAO.deleteComment(commentId);
 	}
 }

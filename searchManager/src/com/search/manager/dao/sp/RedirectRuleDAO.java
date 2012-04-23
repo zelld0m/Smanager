@@ -150,8 +150,8 @@ public class RedirectRuleDAO {
 		}
     }	
 
-    public RedirectRule getRedirectRule(SearchCriteria<RedirectRule> criteria) throws DaoException {
-    	RecordSet<RedirectRule> rules = getRedirectRules(criteria);
+    public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException {
+    	RecordSet<RedirectRule> rules = getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 1, 1));
     	return (rules.getTotalSize() > 0 ? rules.getList().get(0): null);
     }
     

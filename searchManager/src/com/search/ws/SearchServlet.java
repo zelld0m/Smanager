@@ -44,7 +44,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class SearchServlet extends HttpServlet {
 
@@ -93,10 +92,7 @@ public class SearchServlet extends HttpServlet {
 		return added;
 	}
 
-	private static void putNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
-		map.put(paramName, new ArrayList<NameValuePair>());
-		map.get(paramName).add(pair);
-	}
+
 
 	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
@@ -255,8 +251,7 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 
-			List<ElevateResult> elevatedList = null;
-			List<String> expiredElevatedList = new ArrayList<String>();
+			List<ElevateResult> elevatedList = new ArrayList<ElevateResult>();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug(configManager.getStoreParameter(storeName, "sort"));
@@ -264,35 +259,16 @@ public class SearchServlet extends HttpServlet {
 				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 
-			ElevateResult elevateFilter = new ElevateResult();
-			ExcludeResult excludeFilter  = new ExcludeResult();
 			StoreKeyword sk = new StoreKeyword(storeName, keyword);
-			elevateFilter.setStoreKeyword(sk);
-			excludeFilter.setStoreKeyword(sk);
-			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
-			SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
-			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
 	
 			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				//elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-				elevatedList = daoCacheService.getElevateResultList(elevateCriteria,storeName);
-				
-				List<ElevateResult> expiredList = daoCacheService.getElevateResultList(expiredElevateCriteria,storeName);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Expired List: ");
-				}
-				for (ElevateResult expired: expiredList) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("\t" + expired.getEdp());
-					}
-					expiredElevatedList.add(expired.getEdp());
-				}
+				elevatedList = daoCacheService.getElevateResultList(sk);
 			}
 			if (elevatedList == null){
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(excludeCriteria,storeName) : null;
+			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(sk) : null;
 
 			/* First Request */
 			// get expected resultformat
@@ -312,7 +288,6 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setSolrUrl(requestPath);
 			solrHelper.setSolrQueryParameters(paramMap);
 			solrHelper.setElevatedItems(elevatedList);
-			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
 
 			// remove json.wrf parameter as this is not a JSON standard
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION));
@@ -325,7 +300,7 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_START));
 			}
 			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, "0");
-			putNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_START, nvp);
+			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_START, nvp);
 			nameValuePairs.add(nvp);
 
 			// get number of requested rows
@@ -339,7 +314,7 @@ public class SearchServlet extends HttpServlet {
 
 			// set number of requested rows to 0
 			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
-			putNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
+			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
 			nameValuePairs.add(nvp);
 
 			// collate exclude list
@@ -359,19 +334,17 @@ public class SearchServlet extends HttpServlet {
 			// redirect 
 			//TODO change to storename
 			// TODO: fix
-			RedirectRule redirect = daoService.getRedirectRule(new SearchCriteria<RedirectRule>(new RedirectRule(sk.getStoreId(), sk.getKeywordId()), null, null, 0, 0));
-			
+			RedirectRule redirect = daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()));
 			if (redirect != null) {
-				// TODO: implement
-//				nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirectUrl);
-//				nameValuePairs.add(nvp);
-//				
-//				String redirectFQ = redirectUtility.getRedirectFQ("macmall" + keyword);
-//				if (!StringUtils.isBlank(redirectFQ)) {
-//					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
-//					nameValuePairs.add(nvp);
-//					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-//				}				
+				if (redirect.isRedirectToPage()) {
+					nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+					nameValuePairs.add(nvp);					
+				}
+				else if (redirect.isRedirectFilter()) {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
+					nameValuePairs.add(nvp);
+					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+				}
 			}
 
 			BasicNameValuePair elevateNvp = null;

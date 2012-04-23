@@ -113,7 +113,7 @@ public class CacheService<E extends CacheModel<?>>{
 	 * @throws DataException
 	 */
 	@SuppressWarnings("unchecked")
-	public E get(String paramKey) throws DataException {
+	public <E> E get(String paramKey) throws DataException {
 		cacheClient.resetParameterMatrix();
 		cacheClient.addToParameterMatrix(EhCachEDistributedClient.PARAM_MIME_APP_XJAVA_SER);
 		cacheClient.setDualMode(0);

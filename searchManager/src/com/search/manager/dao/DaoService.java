@@ -8,13 +8,13 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Redirect;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -45,13 +45,7 @@ public interface DaoService {
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) throws DaoException;
 
 	/* Redirect */
-	public Redirect addRedirect(String store) throws DaoException;
-	public RecordSet<Redirect> getRedirects(String store) throws DaoException;
-	public Redirect getRedirect(String redirectId) throws DaoException;
-	public Redirect updateRedirect(String redirectId, String xml) throws DaoException;
-	public void deleteRedirect(String redirectId) throws DaoException;
-	
-	public RedirectRule getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
+	public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
@@ -180,9 +174,17 @@ public interface DaoService {
     public List<NameValue> getDropdownValues() throws DaoException;
 	
     /* Rule Status */
-    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
-	public int addRuleStatus(RuleStatus rule) throws DaoException;
-	public int updateRuleStatus(RuleStatus rule) throws DaoException;
-	public int removeRuleStatus(RuleStatus rule) throws DaoException;
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
+	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
+	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public String getStatus(RuleStatus ruleStatus) throws DaoException;
+	
+    /* Rule Status */
+    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
+	public int addComment(String refId, String comment, String userName) throws DaoException;
+	public int updateComment(Comment comment) throws DaoException;
+	public int removeComment(Integer commentId) throws DaoException;
 	
 }

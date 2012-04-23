@@ -202,7 +202,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				
 				JSONObject doc = (JSONObject)docs.get(j);
 				String edp = doc.getString("EDP");
-				if (expiredElevatedEDPs.contains(edp)) {
+				if (expiredElevatedEDPs != null && expiredElevatedEDPs.contains(edp)) {
 					doc.element(SolrConstants.TAG_EXPIRED,"");
 				}
 

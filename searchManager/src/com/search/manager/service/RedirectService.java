@@ -95,7 +95,6 @@ public class RedirectService {
 	@RemoteMethod
 	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, int page, int itemsPerPage) {
 		try {
-			logger.info(searchTerm + " " + ruleId + " " + page + " " + itemsPerPage);
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setSearchTerm(searchTerm);
 			redirectRule.setRuleId(ruleId);

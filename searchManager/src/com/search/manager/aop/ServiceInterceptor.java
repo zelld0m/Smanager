@@ -1,6 +1,7 @@
 package com.search.manager.aop;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -8,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
@@ -23,7 +23,6 @@ import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.Constants;
 
 @Aspect
 public class ServiceInterceptor {
@@ -31,18 +30,18 @@ public class ServiceInterceptor {
 	private static final Logger logger = Logger.getLogger(ServiceInterceptor.class);
 	private AuditTrailDAO auditTrailDAO;
 	
-	@Before(value="com.search.manager.aop.SystemArchitecture.inServiceLayer()" +
-			"&& target(bean) " +
-			"&& @annotation(com.search.manager.aop.Audit)" +
-			"&& @annotation(auditable)",
-			argNames="bean,auditable")
-	public void performAudit(JoinPoint jp, Object bean, Audit auditable) {
-		logger.info(String.format("Audit Level: %s",auditable.auditLevel()));
-		logger.info(String.format("Audit Message: %s",auditable.message()));
-		logger.info(String.format("Bean Called: %s", bean.getClass().getName()));
-		logger.info(String.format("Method Called: %s", jp.getSignature().getName()));
-
-	}
+//	@Before(value="com.search.manager.aop.SystemArchitecture.inServiceLayer()" +
+//			"&& target(bean) " +
+//			"&& @annotation(com.search.manager.aop.Audit)" +
+//			"&& @annotation(auditable)",
+//			argNames="bean,auditable")
+//	public void performAudit(JoinPoint jp, Object bean, Audit auditable) {
+//		logger.info(String.format("Audit Level: %s",auditable.auditLevel()));
+//		logger.info(String.format("Audit Message: %s",auditable.message()));
+//		logger.info(String.format("Bean Called: %s", bean.getClass().getName()));
+//		logger.info(String.format("Method Called: %s", jp.getSignature().getName()));
+//
+//	}
 	
 	@AfterReturning(value="com.search.manager.aop.SystemArchitecture.inDaoLayer()" +
 			"&& target(bean) " +
@@ -217,8 +216,8 @@ public class ServiceInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
-		String[] searchTerms = rule.getSearchTerm().split(Constants.DBL_ESC_PIPE_DELIM);
-		String condition = rule.getCondition().replace(Constants.DBL_PIPE_DELIM, Constants.OR); 
+		List<String> searchTerms = rule.getSearchTerms();
+		String condition = rule.getRedirectFilter(); 
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		for (String searchTerm : searchTerms) {

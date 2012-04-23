@@ -1,6 +1,7 @@
 package com.search.manager.aop;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +11,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
@@ -24,9 +26,9 @@ import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.Constants;
 
 @Aspect
+@Component("auditInterceptor")
 public class AuditInterceptor {
 	
 	private static final Logger logger = Logger.getLogger(AuditInterceptor.class);
@@ -218,8 +220,8 @@ public class AuditInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
-		String[] searchTerms = rule.getSearchTerm().split(Constants.DBL_ESC_PIPE_DELIM);
-		String condition = rule.getCondition().replace(Constants.DBL_PIPE_DELIM, Constants.OR); 
+		List<String> searchTerms = rule.getSearchTerms();
+		String condition = rule.getRedirectFilter(); 
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		for (String searchTerm : searchTerms) {

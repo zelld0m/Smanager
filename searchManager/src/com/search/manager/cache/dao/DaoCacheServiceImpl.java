@@ -2,11 +2,9 @@ package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
+import org.apache.axis.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import com.search.manager.cache.service.LocalCacheService;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -30,15 +29,57 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.utility.Constants;
-import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.service.UtilityService;
 
 @Service(value="daoCacheService")
 public class DaoCacheServiceImpl implements DaoCacheService {
 
 	DaoCacheServiceImpl instance;
 	
+	@Autowired private KeywordCacheDao keywordCacheDao;
+	@Autowired private ElevateCacheDao elevateCacheDao;
+	@Autowired private ExcludeCacheDao excludeCacheDao;
+	@Autowired private RedirectCacheDao redirectCacheDao;
+	@Autowired private RelevancyCacheDao relevancyCacheDao;
+	
 	@Autowired private DaoService daoService;
+	public void setInstance(DaoCacheServiceImpl instance) {
+		this.instance = instance;
+	}
+
+	public void setKeywordCacheDao(KeywordCacheDao keywordCacheDao) {
+		this.keywordCacheDao = keywordCacheDao;
+	}
+
+	public void setElevateCacheDao(ElevateCacheDao elevateCacheDao) {
+		this.elevateCacheDao = elevateCacheDao;
+	}
+
+	public void setExcludeCacheDao(ExcludeCacheDao excludeCacheDao) {
+		this.excludeCacheDao = excludeCacheDao;
+	}
+
+	public void setRedirectCacheDao(RedirectCacheDao redirectCacheDao) {
+		this.redirectCacheDao = redirectCacheDao;
+	}
+
+	public void setRelevancyCacheDao(RelevancyCacheDao relevancyCacheDao) {
+		this.relevancyCacheDao = relevancyCacheDao;
+	}
+
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
+
+	public void setCacheService(CacheService<CacheModel<?>> cacheService) {
+		this.cacheService = cacheService;
+	}
+
+	public void setLocalCacheService(
+			LocalCacheService<CacheModel<?>> localCacheService) {
+		this.localCacheService = localCacheService;
+	}
+
 	@Autowired private CacheService<CacheModel<?>> cacheService;
 	@Autowired private LocalCacheService<CacheModel<?>> localCacheService;
 	
@@ -47,546 +88,193 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public DaoCacheServiceImpl() {
 		instance = this;
 	}
-	
-	public void setCacheService(CacheService<CacheModel<?>> cacheService_) {
-		cacheService = cacheService_;
-	}
-	
-	public void setLocalCacheService(LocalCacheService<CacheModel<?>> localCacheService_) {
-		localCacheService = localCacheService_;
-	}
-	
-	public void setDaoService(DaoService daoService_) {
-		daoService = daoService_;
-	}
 
 	@Override
-	public List<String> getAllKeywords(String storeName) throws DaoException, DataException{
-		
-		List<String> kwList = null;
-		CacheModel<String> cache = null;
-		List<StoreKeyword> keywordList = null;
-		try{
-			cache =	(CacheModel<String>) localCacheService.getLocalCache(getCacheKey(storeName, CacheConstants.KEYWORDS_CACHE_KEY, ""));
-			
-			if(cache != null && cache.getList().size() > 0)
-				return cache.getList();
-		}catch (Exception e) {}
-
-		try {
-			keywordList = daoService.getAllKeywords(storeName).getList();	
-			if(CollectionUtils.isNotEmpty(keywordList)){		
-				kwList = new ArrayList<String>();		
-				for(StoreKeyword key : keywordList){
-					kwList.add(key.getKeywordId());
-				}
-				cache = new CacheModel<String>();
-				cache.setList(kwList);
-				
-				try{
-					localCacheService.putLocalCache(getCacheKey(storeName, CacheConstants.KEYWORDS_CACHE_KEY, ""), cache);
-				}catch (Exception e) {
-					logger.error(e);
-				}
+	public List<String> getAllKeywords(Store store) throws DaoException, DataException{
+		return keywordCacheDao.getAllKeywords(store);
+	}
 	
-				return kwList;
-			}
+	@Override
+	public boolean resetAllkeywords(Store store) {
+		return keywordCacheDao.resetAllKeywords(store.getStoreId());
+	}
+	
+	public boolean resetElevateResult(StoreKeyword storeKeyword){
+		return elevateCacheDao.reset(storeKeyword);
+	}
+	
+	@Override
+	public boolean hasExactMatchKey(StoreKeyword storeKeyword){
+		try {
+			List<String> kwList = getAllKeywords(storeKeyword.getStore());
+			return kwList.contains(storeKeyword.getKeywordId());
 		} catch (DaoException e) {
 			logger.error(e);
-		}
-
-		return Collections.EMPTY_LIST;
-	}
-	
-	public boolean resetAllkeywords(String storeName){
-		try {
-			cacheService.reset(getCacheKey(storeName, CacheConstants.KEYWORDS_CACHE_KEY, ""));
-			return true;
-		} catch (DataException e) {
-			logger.error(e);
-		}
-		return false;	
-	}
-	
-	public boolean resetElevateResult(String storeName, String kw){
-		try {
-			if(kw != null && !"".equals(kw)){	
-				if(hasExactMatchKey(storeName,kw)){
-					cacheService.reset(getCacheKey(storeName, CacheConstants.ELEVATED_LIST_CACHE_KEY, kw));
-					return true;
-				}
-			}
 		} catch (DataException e) {
 			logger.error(e);
 		}
 		return false;
 	}
 	
-	public boolean hasExactMatchKey(String storeName, String kw){
-		try {
-			List<String> kwList = getAllKeywords(storeName);
-			return kwList.contains(kw.trim());
-		} catch (DaoException e) {} catch (DataException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-	
-	private String getCacheKey(String storeName, String type,String kw){
-		
-		if("macmall".equalsIgnoreCase(storeName))
-			storeName = "mc";
-		else if("pcmall".equalsIgnoreCase(storeName))
-			storeName = "pc";
-		else if("onsale".equalsIgnoreCase(storeName))
-			storeName = "ol";
-
-		return CacheConstants.SEARCH_CACHE_KEY+"."+storeName+"_"+type+kw.replace(" ", "_");
+	@Override
+	public boolean loadElevateRules(Store store) throws DaoException, DataException {
+		return elevateCacheDao.reload(store);
 	}
 	
 	@Override
-	public boolean loadElevateResultList(String storeName) throws DaoException {
-		
-		List<ElevateResult> elevatedList = null;
-		CacheModel<ElevateResult> cache = null;
-		ElevateResult elevateFilter = new ElevateResult();
-		
+	public boolean loadExcludeResultList(Store store) throws DaoException, DataException {
+		return excludeCacheDao.reload(store);
+	}
+	
+	@Override
+	public List<ElevateResult> getElevateResultList(StoreKeyword storeKeyword){
 		try {
-			List<String> kwList = getAllKeywords(storeName);
-			
-			for(String kw : kwList){
-				StoreKeyword sk = new StoreKeyword(storeName, kw);
-				elevateFilter.setStoreKeyword(sk);
-				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
-				
-				elevatedList = daoService.getElevateResultList(criteria).getList();	
-				cache = new CacheModel<ElevateResult>();
-				if(CollectionUtils.isNotEmpty(elevatedList))
-					cache.setList(elevatedList);
-				else
-					cache.setList(new ArrayList<ElevateResult>());
-				
-				try{
-					cacheService.put(getCacheKey(storeName, CacheConstants.ELEVATED_LIST_CACHE_KEY, kw), cache);
-					logger.info("ElevatedList has been loaded to cache - Keyword: "+kw+" <==> Size: "+elevatedList.size());
-				}catch (Exception e) {
-					logger.error(e);
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+			if(hasExactMatchKey(storeKeyword)){
+				CacheModel<ElevateResult> cache = elevateCacheDao.getCachedObject(storeKeyword);
+				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+					return cache.getList();					
 				}
-			}
-			
-			return true;
-		} catch (DaoException e) {} 
-		  catch (DataException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean loadExcludeResultList(String storeName) throws DaoException {
-		
-		List<ExcludeResult> excludeList = null;
-		CacheModel<ExcludeResult> cache = null;
-		ExcludeResult excludeFilter = new ExcludeResult();
-		
-		try {
-			List<String> kwList = getAllKeywords(storeName);
-			
-			for(String kw : kwList){
-				StoreKeyword sk = new StoreKeyword(storeName, kw);
-				excludeFilter.setStoreKeyword(sk);
-				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-				
-				excludeList = daoService.getExcludeResultList(criteria).getList();
-				cache = new CacheModel<ExcludeResult>();
-				if(CollectionUtils.isNotEmpty(excludeList))
-					cache.setList(excludeList);
-				else
-					cache.setList(new ArrayList<ExcludeResult>());
-				try{
-					cacheService.put(getCacheKey(storeName, CacheConstants.EXCLUDED_LIST_CACHE_KEY, kw), cache);
-					logger.info("ExcludedList has been loaded to cache - Keyword: "+kw+" <==> Size: "+excludeList.size());
-				}catch (Exception e) {
-					logger.error(e);
-				}
-			}
-			
-			return true;
-		} catch (DaoException e) {} 
-		  catch (DataException e) {
-			logger.error(e);
-		}
-		return false;
-	}
-	
-	@Override
-	public List<ElevateResult> getElevateResultList(SearchCriteria<ElevateResult> criteria, String storeName){
-		
-		String kw = criteria.getModel().getStoreKeyword().getKeywordId();
-		List<ElevateResult> elevatedList = null;
-		CacheModel<ElevateResult> cache = null;
-		
-		try {	
-			if(kw != null && !"".equals(kw)){
-				
-				if(hasExactMatchKey(storeName,kw)){	
-					try{
-						cache = (CacheModel<ElevateResult>) cacheService.get(getCacheKey(storeName, CacheConstants.ELEVATED_LIST_CACHE_KEY, kw));
-					
-						if(cache != null)
-							elevatedList = cache.getList();
-						else{
-							elevatedList = daoService.getElevateResultList(criteria).getList();
-							
-							if(CollectionUtils.isNotEmpty(elevatedList)){
-								logger.info("Server is utilizing database connection");
-								return elevatedList;
-							}
-						}
-						
-						if(CollectionUtils.isNotEmpty(elevatedList)){
-							filterElevatedListByCriteria(elevatedList, criteria);
-							return elevatedList;
-						}
-					}catch (Exception e) {
-						logger.error(e);
-						elevatedList = daoService.getElevateResultList(criteria).getList();
-						
-						if(CollectionUtils.isNotEmpty(elevatedList)){
-							logger.info("Server is utilizing database connection");
-							return elevatedList;
-						}
-					}		
-				}		
 			}
 		}catch (Exception e) {
 			logger.error(e);
 		}
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 	
 	@Override
 	public boolean updateElevateResultList(ElevateResult elevateResult){
-		
-		CacheModel<ElevateResult> cache = null;
-
 		try {	
-			String storeName = elevateResult.getStoreKeyword().getStoreId();
-			String kw = elevateResult.getStoreKeyword().getKeywordId();
-			ElevateResult elevateFilter = new ElevateResult();
-			
-			if(hasExactMatchKey(storeName,kw)){
-				
-				StoreKeyword sk = new StoreKeyword(storeName, kw);
-				elevateFilter.setStoreKeyword(sk);
-				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
-				List<ElevateResult> list = daoService.getElevateResultList(criteria).getList();
-				
-				if(list != null){
-					cache = new CacheModel<ElevateResult>();
-					cache.setList(list);
-					
-					try{
-						cacheService.put(getCacheKey(storeName, CacheConstants.ELEVATED_LIST_CACHE_KEY, kw), cache);
-						return true;
-					}catch(Exception e){
-						logger.error(e);
-					}
-				}
-			}
+			return elevateCacheDao.reload(elevateResult);
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update elevateResult", e);
 		}
 		return false;
 	}
 	
 	@Override
-	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria, String storeName){
-		return getElevateResultList(criteria, storeName).size();
-	}
-	
-	@Override
-	public List<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria, String storeName){
-		
-		String kw = criteria.getModel().getStoreKeyword().getKeywordId();
-		List<ExcludeResult> excludeList = null;
-		CacheModel<ExcludeResult> cache = null;
-		
-		try {	
-			if(kw != null && !"".equals(kw)){
-				
-				if(hasExactMatchKey(storeName,kw)){	
-					
-					try{
-						cache = (CacheModel<ExcludeResult>) cacheService.get(getCacheKey(storeName, CacheConstants.EXCLUDED_LIST_CACHE_KEY, kw));
-
-						if(cache != null)
-							excludeList = cache.getList();
-						else{
-							excludeList = daoService.getExcludeResultList(criteria).getList();
-							
-							if(CollectionUtils.isNotEmpty(excludeList)){
-								logger.info("Server is utilizing database connection");
-								return excludeList;
-							}
-						}
-						
-						if(CollectionUtils.isNotEmpty(excludeList)){
-							filterExcludedListByCriteria(excludeList, criteria);
-							return excludeList;
-						}
-					}catch (Exception e) {
-						logger.error(e);
-						excludeList = daoService.getExcludeResultList(criteria).getList();
-						
-						if(CollectionUtils.isNotEmpty(excludeList)){
-							logger.info("Server is utilizing database connection");
-							return excludeList;
-						}
-					}
+	public List<ExcludeResult> getExcludeResultList(StoreKeyword storeKeyword){
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+			if(hasExactMatchKey(storeKeyword)){
+				CacheModel<ExcludeResult> cache = excludeCacheDao.getCachedObject(storeKeyword);
+				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+					return cache.getList();					
 				}
-			} 
+			}
 		}catch (Exception e) {
 			logger.error(e);
 		}
-		return Collections.EMPTY_LIST;
-	}
-	
-	
-	@Override
-	public int getExcludeResultCount(SearchCriteria<ExcludeResult> criteria, String storeName){
-		return getExcludeResultList(criteria, storeName).size();
+		return Collections.emptyList();		
 	}
 	
 	@Override
 	public boolean updateExcludeResultList(ExcludeResult excludeResult){
-		
-		CacheModel<ExcludeResult> cache = null;
-
 		try {	
-			String storeName = excludeResult.getStoreKeyword().getStoreId();
-			String kw = excludeResult.getStoreKeyword().getKeywordId();
-			ExcludeResult excludeFilter = new ExcludeResult();
-			
-			if(hasExactMatchKey(storeName,kw)){
-				StoreKeyword sk = new StoreKeyword(storeName, kw);
-				excludeFilter.setStoreKeyword(sk);
-				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-
-				List<ExcludeResult> list = daoService.getExcludeResultList(criteria).getList();
-				
-				if(list != null){
-					cache = new CacheModel<ExcludeResult>();
-					cache.setList(list);
-					try{
-						cacheService.put(getCacheKey(storeName, CacheConstants.EXCLUDED_LIST_CACHE_KEY, kw), cache);
-						return true;
-					}catch (Exception e) {
-						logger.error(e);
-					}
-				}	
-			}
+			return excludeCacheDao.reload(excludeResult);
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update excludeResult", e);
 		}
 		return false;
 	}
 	
+	public boolean resetExcludeResult(StoreKeyword storeKeyword){
+		return excludeCacheDao.reset(storeKeyword);
+	}
+	
 	@Override
-	public boolean updateRedirectRule(String storeName){
-		
-		CacheModel<String> cache = null;
-		Map<String,String> fqRule = null;
-
-		try {	
-			RecordSet<RedirectRule> rRuleSet = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(null, null, null, 0, 0));
-			
-			if(rRuleSet != null && rRuleSet.getTotalSize() > 0){
-				fqRule = new HashMap<String, String>();
-				List<RedirectRule> ruleList = rRuleSet.getList();
-				for (RedirectRule rule : ruleList) {
-					String[] searchTerms = rule.getSearchTerm().split(Constants.DBL_ESC_PIPE_DELIM);
-					for (String searchTerm : searchTerms) {
-						fqRule.put((rule.getStoreId()+searchTerm).toLowerCase(), rule.getCondition());
-					}
-				}
-				
-				if(fqRule != null && fqRule.size() > 0){
-					cache = new CacheModel<String>();
-					cache.setMap(fqRule);
-					try{
-						cacheService.put(getCacheKey(storeName, CacheConstants.RULE_REDIRECT_CACHE_KEY, ""), cache);
-						return true;
-					}catch (Exception e) {
-						logger.error(e);
-						localCacheService.putLocalCache(CacheConstants.RULE_REDIRECT_CACHE_KEY, cache);
-						logger.info("Server is utilizing local heap memory");
-						return true;
-					}
+	public boolean updateRedirectRule(RedirectRule redirectRule) {
+		try {
+			if (redirectRule == null || StringUtils.isEmpty(redirectRule.getRuleId())) {
+				return false;
+			}
+			CacheModel<RedirectRule> cache = null;
+			RedirectRule rule = daoService.getRedirectRule(redirectRule);
+			if (rule != null) {
+				cache = new CacheModel<RedirectRule>();
+				cache.setObj(rule);
+				for (String keyword: rule.getSearchTerms()) {
+					cacheService.put(CacheConstants.getCacheKey(rule.getStoreId(), CacheConstants.RULE_REDIRECT_CACHE_KEY, keyword), cache);
 				}
 			}
-		}catch(Exception e){
-			logger.error(e);
+		} catch (Exception e) {
+			logger.error("Failed to load cache for Redirect", e);
 		}
 		return false;
 	}
 	
 	@Override
-	public String getRedirectRule(String storeName, String keyword){
+	public boolean loadRedirectRules(Store store){
+		try {
+			DAOValidation.checkStoreId(store);
+			CacheModel<RedirectRule> cache = null;
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setStoreId(UtilityService.getStoreName());
+			RecordSet<RedirectRule> rules = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0));
+			for (RedirectRule rule: rules.getList()) {
+				cache = new CacheModel<RedirectRule>();
+				cache.setObj(rule);
+				for (String keyword: rule.getSearchTerms()) {
+					cacheService.put(CacheConstants.getCacheKey(store.getStoreId(), CacheConstants.RULE_REDIRECT_CACHE_KEY, keyword), cache);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Failed to load cache for Redirect", e);
+		}
+		return false;
+	}
+	
+	@Override
+	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+		CacheModel<RedirectRule> rule = null;
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+		} catch (Exception e) {
+			// no storeKeyword provided
+			logger.error("No StoreKeyword specified for getRedirectRule()");
+			return null;
+		}
+
+		String storeId = storeKeyword.getStoreId();
+		String keywordId = storeKeyword.getKeywordId();
+		boolean cacheProblem = false;
 		
-		CacheModel<String> cache = new CacheModel<String>();
-
-		try {	
-			if(isRedirectRuleLoaded(cache, storeName)){
-				String rule = cache.getMap().get(keyword.toLowerCase());
-
-				StringBuilder fq = new StringBuilder();
-				if (rule != null) {
-					fq = fq.append(rule.replace(Constants.DBL_PIPE_DELIM, Constants.OR));
-				}
-				if (fq.length()>0) {
-					fq.insert(0,"(").append(")");
-				}
-				return fq.toString();
-			}else{
-				updateRedirectRule(storeName);	
-				if(isRedirectRuleLoaded(cache, storeName)){
-					String rule = cache.getMap().get(keyword.toLowerCase());
-					if(rule == null)
-						return "";
-					
-					StringBuilder fq = new StringBuilder();
+		try {
+			try {
+				if (hasExactMatchKey(storeKeyword)) {
+					// valid keyword. check cache
+					rule = cacheService.get(CacheConstants.getCacheKey(storeId, CacheConstants.RULE_REDIRECT_CACHE_KEY, keywordId));
 					if (rule != null) {
-						fq = fq.append(rule.replace(Constants.DBL_PIPE_DELIM, Constants.OR));
+						return rule.getObj();
 					}
-					if (fq.length()>0) {
-						fq.insert(0,"(").append(")");
+				}
+			} catch (DataException e) {
+				logger.error("Problem with cache server!", e);
+				cacheProblem = true;
+			}
+			// retrive from DAO
+			if (rule != null) {
+				rule = new CacheModel<RedirectRule>();
+				rule.setObj(daoService.getRedirectRule(new RedirectRule(storeId, keywordId)));
+				if (!cacheProblem) {
+					try {
+						cacheService.put(CacheConstants.getCacheKey(storeId, CacheConstants.RULE_REDIRECT_CACHE_KEY, keywordId), rule);					
+					} catch (DataException e) {
+						logger.error("Problem with cache server!", e);
 					}
-					return fq.toString();
-				}else{
-					return "";
 				}
 			}
-		}catch(Exception e){
-			logger.error(e);
+		} catch (Exception e) {
+			logger.error("Problem with Search Manager server!", e);			
 		}
-		return "";
-	}
-	
-	private void filterElevatedListByCriteria(List<ElevateResult> elevatedList, SearchCriteria<ElevateResult> criteria){
-
-		ListIterator<ElevateResult>  list = elevatedList.listIterator();
-		int cnt = 0;
-		
-		while(list.hasNext()) {
-			ElevateResult result = list.next(); 
-			cnt++;
-	
-			if(criteria.getStartDate() != null){
-				// remove all records below starting date : remove element when val is 1 or greater than 0
-				if(DateAndTimeUtils.compare(criteria.getStartDate(), result.getExpiryDate()) > 0){
-					list.remove();
-				}
-				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
-					// remove all records not in the range
-					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
-						list.remove();
-				}	
-			}else if(criteria.getEndDate() != null){
-				// remove all records beyond ending date : remove element when val is -1,0 or less than 1
-				if(DateAndTimeUtils.compare(criteria.getEndDate(), result.getExpiryDate()) < 1){
-					list.remove();
-				}
-				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
-					// remove all records not in the range
-					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
-						list.remove();
-				}	
-			}
-		} 
-	}
-	
-	private void filterExcludedListByCriteria(List<ExcludeResult> excludedList, SearchCriteria<ExcludeResult> criteria){
-
-		ListIterator<ExcludeResult>  list = excludedList.listIterator();
-		int cnt = 0;
-		
-		while(list.hasNext()) {
-			ExcludeResult result = list.next(); 
-			cnt++;
-	
-			if(criteria.getStartDate() != null){
-				// remove all records below starting date : remove element when val is 1 or greater than 0
-				if(DateAndTimeUtils.compare(criteria.getStartDate(), result.getExpiryDate()) > 0){
-					list.remove();
-				}
-				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
-					// remove all records not in the range
-					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
-						list.remove();
-				}	
-			}else if(criteria.getEndDate() != null){
-				// remove all records beyond ending date : remove element when val is -1,0 or less than 1
-				if(DateAndTimeUtils.compare(criteria.getEndDate(), result.getExpiryDate()) < 1){
-					list.remove();
-				}
-				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
-					// remove all records not in the range
-					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
-						list.remove();
-				}	
-			}
-		} 
-	}
-	
-	private void filterRelevancyListByCriteria(List<Relevancy> relevancyList, SearchCriteria<Relevancy> criteria){
-
-		ListIterator<Relevancy>  list = relevancyList.listIterator();
-		int cnt = 0;
-		
-		while(list.hasNext()) {
-			Relevancy result = list.next(); 
-			cnt++;
-	
-			if(criteria.getStartDate() != null && criteria.getEndDate() != null){
-				if(DateAndTimeUtils.compare(criteria.getStartDate(), result.getStartDate()) > 0 && DateAndTimeUtils.compare(criteria.getEndDate(), result.getEndDate()) < 1){
-					list.remove();
-				}
-
-				if(criteria.getStartRow() > 0 && criteria.getEndRow() > 0){
-					// remove all records not in the range
-					if(criteria.getStartRow() > cnt || criteria.getEndRow() < cnt)
-						list.remove();
-				}		
-			}
-		} 
-	}
-
-	private boolean isRedirectRuleLoaded(CacheModel<String> cache, String storeName){
-		try{
-			CacheModel<String> temp = (CacheModel<String>) cacheService.get(getCacheKey(storeName, CacheConstants.RULE_REDIRECT_CACHE_KEY, ""));
-			
-			if(temp != null && temp.getMap() != null && temp.getMap().size() > 0){
-				cache.setMap(temp.getMap());
-				return true;
-			}
-		}catch(Exception e){
-			logger.error(e);
-			localCacheService.getLocalCache(CacheConstants.RULE_REDIRECT_CACHE_KEY);
-			logger.info("Server is utilizing local heap memory");
-		}
-		return false;
+		return (rule == null) ? null : rule.getObj();
 	}
 	
 	private void ObjectByteReader(Object obj){ // Use this method to get Object size
 		java.io.ObjectOutputStream outputStream = null;
-        
         try {
             outputStream = new java.io.ObjectOutputStream(new java.io.FileOutputStream("C:\\Search Manager\\Test Ground\\test.txt"));
-            
             outputStream.writeObject(obj);
-
-            
         } catch (java.io.FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (java.io.IOException ex) {
@@ -614,33 +302,32 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		CacheModel<Relevancy> cache = null;
 		
 		try {	
-					try{
-						cache = (CacheModel<Relevancy>) cacheService.get(getCacheKey(model.getStore().getStoreName(), CacheConstants.RELEVANCY_LIST_CACHE_KEY, kw));
+			try{
+				cache = (CacheModel<Relevancy>) cacheService.get(CacheConstants.getCacheKey(model.getStore().getStoreName(), CacheConstants.RELEVANCY_LIST_CACHE_KEY, kw));
+			
+				if(cache != null)
+					relevancyList = cache.getList();
+				else{
+					relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
 					
-						if(cache != null)
-							relevancyList = cache.getList();
-						else{
-							relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
-							
-							if(CollectionUtils.isNotEmpty(relevancyList)){
-								logger.info("Server is utilizing database connection");
-								return relevancyList;
-							}
-						}
-						
-						if(CollectionUtils.isNotEmpty(relevancyList)){
-							filterRelevancyListByCriteria(relevancyList, criteria);
-							return relevancyList;
-						}
-					}catch (Exception e) {
-						logger.error(e);
-						relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
-						
-						if(CollectionUtils.isNotEmpty(relevancyList)){
-							logger.info("Server is utilizing database connection");
-							return relevancyList;
-						}
-					}		
+					if(CollectionUtils.isNotEmpty(relevancyList)){
+						logger.info("Server is utilizing database connection");
+						return relevancyList;
+					}
+				}
+				
+				if(CollectionUtils.isNotEmpty(relevancyList)){
+					return relevancyList;
+				}
+			}catch (Exception e) {
+				logger.error(e);
+				relevancyList = daoService.searchRelevancy(criteria, relevancyMatchType).getList();
+				
+				if(CollectionUtils.isNotEmpty(relevancyList)){
+					logger.info("Server is utilizing database connection");
+					return relevancyList;
+				}
+			}		
 		}catch (Exception e) {
 			logger.error(e);
 		}
@@ -648,7 +335,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public boolean loadRelevancyResultList(String storeName, MatchType relevancyMatchType) throws DaoException {
+	public boolean loadRelevancyResultList(String storeName, MatchType relevancyMatchType) throws DaoException, DataException {
 		
 		List<Relevancy> relevancyList = null;
 		CacheModel<Relevancy> cache = null;
@@ -667,7 +354,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 				cache.setList(new ArrayList<Relevancy>());
 				
 			try{
-				cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_LIST_CACHE_KEY, ""), cache);
+				cacheService.put(CacheConstants.getCacheKey(storeName,CacheConstants.RELEVANCY_LIST_CACHE_KEY, ""), cache);
 				logger.info("Relevancy list has been loaded to cache <==> Size: "+relevancyList.size());
 			}catch (Exception e) {
 				logger.error(e);
@@ -699,7 +386,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 					cache.setObj(rel);
 				
 				try{
-					cacheService.put(getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, rel.getRelevancyId()), cache);
+					cacheService.put(CacheConstants.getCacheKey(storeName,CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, rel.getRelevancyId()), cache);
 					logger.info("Relevancy list has been loaded to cache: RelevancyId is "+rel.getRelevancyId());
 				}catch (Exception e) {
 					logger.error(e);
@@ -711,13 +398,13 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public Relevancy getRelevancyDetails(Relevancy relevancy, String storeName) throws DaoException {
+	public Relevancy getRelevancyDetails(Relevancy relevancy, String storeName) throws DaoException, DataException {
 		
 		CacheModel<Relevancy> cache = null;
 		
 		try {		
 					try{
-						cache = (CacheModel<Relevancy>) cacheService.get(getCacheKey(storeName, CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, relevancy.getRelevancyId()));
+						cache = (CacheModel<Relevancy>) cacheService.get(CacheConstants.getCacheKey(storeName, CacheConstants.RELEVANCY_DETAILS_CACHE_KEY, relevancy.getRelevancyId()));
 
 						if(cache != null){
 							relevancy = (Relevancy)cache.getObj();
@@ -746,7 +433,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException {
+	public int getRelevancyKeywordCount(StoreKeyword storeKeyword) throws DaoException, DataException {
 
 		if (storeKeyword == null || storeKeyword.getKeywordId() == null) 
 			return 0;
@@ -756,7 +443,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		
 		try {		
 					try{
-						cache = (CacheModel<Integer>) cacheService.get(getCacheKey(storeKeyword.getStoreName(), CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, storeKeyword.getKeywordId()));
+						cache = (CacheModel<Integer>) cacheService.get(CacheConstants.getCacheKey(storeKeyword.getStoreName(), CacheConstants.RELEVANCY_KEYWORD_COUNT_CACHE_KEY, storeKeyword.getKeywordId()));
 
 						if(cache != null){
 							count = (int)cache.getObj();
@@ -785,7 +472,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		
 		try {		
 					try{
-						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(storeName, CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, relevancyKeyword.getRelevancy().getRelevancyId()));
+						cache = (CacheModel<RelevancyKeyword>) cacheService.get(CacheConstants.getCacheKey(storeName, CacheConstants.RELEVANCY_KEYWORD_CACHE_KEY, relevancyKeyword.getRelevancy().getRelevancyId()));
 
 						if(cache != null){
 							keyword = (RelevancyKeyword)cache.getObj();
@@ -814,7 +501,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria,MatchType relevancyMatchType, ExactMatch keywordExactMatch)throws DaoException {
+	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria,MatchType relevancyMatchType, ExactMatch keywordExactMatch)throws DaoException, DataException {
 		
 		RelevancyKeyword model = criteria.getModel();
 		String kw = (relevancyMatchType == null) ? null : (relevancyMatchType.equals(MatchType.MATCH_ID) ? model.getRelevancy().getRelevancyId() : model.getRelevancy().getRelevancyName());
@@ -824,7 +511,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		
 //		try {	
 //					try{
-//						cache = (CacheModel<RelevancyKeyword>) cacheService.get(getCacheKey(model.getRelevancy().getStore(), CacheConstants.RELEVANCY_SEARCH_KEYWORD_LIST_CACHE_KEY, kw));
+//						cache = (CacheModel<RelevancyKeyword>) cacheService.get(CacheConstants.getCacheKey(model.getRelevancy().getStore(), CacheConstants.RELEVANCY_SEARCH_KEYWORD_LIST_CACHE_KEY, kw));
 //					
 //						if(cache != null)
 //							relevancyList = cache.getList();
