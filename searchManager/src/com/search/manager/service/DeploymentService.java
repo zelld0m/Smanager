@@ -18,6 +18,8 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.ws.client.SearchGuiClientService;
+import com.search.ws.client.SearchGuiClientServiceImpl;
 
 @Service(value = "deploymentService")
 @RemoteProxy(
@@ -109,11 +111,15 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
-
+		ruleRefIdList = new ArrayList<String>();
+		ruleRefIdList.add("xerox");
+		ruleRefIdList.add("002l9U6zN0NULuPTG5h5");
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
-			daoService.updateRuleStatus(ruleStatusList);
+			if (publishWS(ruleRefIdList, RuleEntity.find(ruleType))) {
+				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
+				result = daoService.updateRuleStatus(ruleStatusList);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during publishRule()",e);
 		}
@@ -124,8 +130,11 @@ public class DeploymentService {
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
-			daoService.updateRuleStatus(ruleStatusList);
+			if (recallWS(ruleRefIdList, RuleEntity.find(ruleType))) {
+				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
+				result = daoService.updateRuleStatus(ruleStatusList);
+			}
+			
 		} catch (DaoException e) {
 			logger.error("Failed during unpublishRule()",e);
 		}
@@ -221,4 +230,13 @@ public class DeploymentService {
 		return ruleStatus;
 	}
 
+	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
+		SearchGuiClientService service = new SearchGuiClientServiceImpl();
+		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+	}
+
+	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {
+		SearchGuiClientService service = new SearchGuiClientServiceImpl();
+		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
+	}
 }
