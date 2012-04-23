@@ -48,7 +48,7 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="268px" class="txtAL">Rule ID</th>
-							<th width="85px">Status</th>
+							<th width="85px">Type</th>
 							<th width="110px">Approve Status</th>
 							<th>Comment</th>
 						</tr>
@@ -58,7 +58,7 @@
 			<div style="max-height:360px; overflow-y:scroll">
 				<table id="rule" class="tblItems w100p">
 					<tbody>
-						<tr id="ruleItemPattern" class="ruleItem">
+						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="268px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
 							<td width="85px" class="txtAC" id="updateStatus"></td>
