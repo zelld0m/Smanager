@@ -1,14 +1,10 @@
 package com.search.main;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
-
 
 public class Main{
 	
