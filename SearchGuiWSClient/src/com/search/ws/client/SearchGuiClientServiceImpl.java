@@ -16,10 +16,11 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 	private static String TOKEN = PropsUtils.getValue("token");
 	
 	// for testing only: do not use in prod
-	static{
-		WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
-		TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
-	}
+	//static{
+		//WS_CLIENT = "http://10.17.12.67:8080/searchguiws/services/SearchGuiService";	 // staging
+		//WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
+		//TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
+	//}
 	
 	@Override
 	public boolean recallRules(String store, List<String> ruleRefIdList, RuleEntity entity) {
