@@ -2,9 +2,8 @@ package com.search.manager.cache.dao;
 
 import java.util.List;
 
-import jxl.common.Logger;
-
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 

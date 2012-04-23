@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import jxl.common.Logger;
+import org.apache.log4j.Logger;
 
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;

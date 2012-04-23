@@ -3,9 +3,8 @@ package com.search.manager.cache.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import jxl.common.Logger;
-
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;

@@ -2,8 +2,7 @@ package com.search.manager.cache.dao;
 
 import java.util.List;
 
-import jxl.common.Logger;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.cache.model.CacheModel;
