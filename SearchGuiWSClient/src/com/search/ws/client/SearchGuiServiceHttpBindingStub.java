@@ -41,7 +41,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         param.setNillable(true);
         oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo"));
-        oper.setReturnClass(com.search.manager.model.BackupInfo[].class);
+        oper.setReturnClass(com.search.webservice.model.BackupInfo[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
         param = oper.getReturnParamDesc();
         param.setItemQName(new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo"));
@@ -101,7 +101,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.BackupInfo[].class;
+            cls = com.search.webservice.model.BackupInfo[].class;
             cachedSerClasses.add(cls);
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             qName2 = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
@@ -110,7 +110,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.BackupInfo.class;
+            cls = com.search.webservice.model.BackupInfo.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -257,7 +257,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
             try {
                 return (com.search.webservice.model.BackupInfo[]) _resp;
             } catch (java.lang.Exception _exception) {
-                return (com.search.webservice.model.BackupInfo[]) org.apache.axis.utils.JavaUtils.convert(_resp, com.search.manager.model.BackupInfo[].class);
+                return (com.search.webservice.model.BackupInfo[]) org.apache.axis.utils.JavaUtils.convert(_resp, com.search.webservice.model.BackupInfo[].class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {

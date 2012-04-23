@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -18,7 +17,6 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 
 @Repository("elevateCacheDao")
-@Scope("singleton")
 public class ElevateCacheDao extends CacheDao<ElevateResult> {
 
 	private static final Logger logger = Logger.getLogger(ElevateCacheDao.class);

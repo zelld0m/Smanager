@@ -211,6 +211,16 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
+	public Relevancy getDefaultRelevancyRule(Store store) throws DaoException, DataException {
+		CacheModel<Relevancy> cache = relevancyCacheDao.getDefaultRelevancy(store);
+		Relevancy relevancy = null;
+		if (cache != null) {
+			relevancy = cache.getObj();
+		}
+		return relevancy;
+	}
+
+	@Override
 	public boolean loadRelevancyRules(Store store) throws DaoException, DataException {
 		return relevancyCacheDao.reload(store);
 	}
@@ -246,4 +256,5 @@ public class DaoCacheServiceImpl implements DaoCacheService {
             }
         }
 	}
+	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
@@ -19,6 +20,7 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 
+@Repository("relevancyCacheDao")
 public class RelevancyCacheDao extends CacheDao<Relevancy> {
 
 	private static final Logger logger = Logger.getLogger(RelevancyCacheDao.class);

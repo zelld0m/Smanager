@@ -17,6 +17,7 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 	
 	// for testing only: do not use in prod
 	static{
+		//WS_CLIENT = "http://10.17.12.67:8080/searchguiws/services/SearchGuiService";	 // staging
 		WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
 		TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
 	}

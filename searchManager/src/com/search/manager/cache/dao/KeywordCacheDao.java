@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -20,7 +19,6 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 @Repository("keywordCacheDao")
-@Scope("singleton")
 public class KeywordCacheDao {
 	
 	private final static Logger logger = Logger.getLogger(KeywordCacheDao.class);

@@ -60,7 +60,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case QUERY_CLEANING:
 						break;
 					case RANKING_RULE:
-						break;
+						return deploymentRuleService.pushRankingRuleList(list.getStore(), ruleList);
 					default:
 						break;
 					}
@@ -97,7 +97,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case QUERY_CLEANING:
 						break;
 					case RANKING_RULE:
-						break;
+						return deploymentRuleService.recallRankingRuleList(list.getStore(), ruleList);
 					default:
 						break;
 					}

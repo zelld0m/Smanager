@@ -39,7 +39,9 @@ public interface DaoCacheService {
 	/* Relevancy */
 	public boolean loadRelevancyRules(Store store) throws DaoException, DataException;
 	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public Relevancy getDefaultRelevancyRule(Store store) throws DaoException, DataException;
 	public boolean updateRelevancyRule(Relevancy relevancy) throws DaoException, DataException;
 	public boolean resetRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 }
+

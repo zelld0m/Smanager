@@ -3,6 +3,7 @@ package com.search.main;
 import java.util.ArrayList;
 import java.util.List;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BackupInfo;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -15,11 +16,11 @@ public class Main{
 		
 		/** ELEVATE RULES */
 		
-		List<String> elevatedKeyList = new ArrayList<String>();
-		elevatedKeyList.add("apple");
-		elevatedKeyList.add("ipod");
+//		List<String> elevatedKeyList = new ArrayList<String>();
+//		elevatedKeyList.add("apple");
+//		elevatedKeyList.add("ipod");
 	
-		System.out.println(service.deployRules("macmall", elevatedKeyList, RuleEntity.ELEVATE));
+		//System.out.println(service.deployRules("macmall", elevatedKeyList, RuleEntity.ELEVATE));
 		//System.out.println(service.recallRules("macmall", elevatedKeyList, RuleEntity.ELEVATE));
 		
 //		List<BackupInfo> list = service.getBackupInfo("macmall", elevatedKeyList, RuleEntity.ELEVATE);
@@ -36,8 +37,8 @@ public class Main{
 //		List<String> excludeKeyList = new ArrayList<String>();
 //		excludeKeyList.add("apple");
 //		excludeKeyList.add("ipod");
-		
-	//	System.out.println(service.deployRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
+//		
+//		System.out.println(service.deployRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
 	//	System.out.println(service.recallRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
 		
 //		List<BackupInfo> list = service.getBackupInfo("macmall", excludeKeyList, RuleEntity.EXCLUDE);
@@ -48,6 +49,17 @@ public class Main{
 //			System.out.println(back.isHasBackup());
 //			System.out.println(back.getDateCreated());
 //		}
+//		
+		
+		/** RANKING RULES */
+		
+//		List<String> rankingList = new ArrayList<String>();
+//		rankingList.add("545454545454");
+//		rankingList.add("ggggggggggg");
+		
+		//System.out.println(service.deployRules("macmall", rankingList, RuleEntity.RANKING_RULE));
+		//System.out.println(service.recallRules("macmall", rankingList, RuleEntity.RANKING_RULE));
+		
 		
 		/** UNIT TESTING ENDS HERE */
 	}

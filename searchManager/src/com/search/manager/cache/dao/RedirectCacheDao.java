@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.cache.model.CacheModel;
@@ -19,7 +18,6 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
 
 @Repository("redirectCacheDao")
-@Scope("singleton")
 public class RedirectCacheDao extends CacheDao<RedirectRule> {
 
 	private static final Logger logger = Logger.getLogger(RedirectCacheDao.class);
