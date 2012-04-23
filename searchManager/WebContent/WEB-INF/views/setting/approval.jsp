@@ -50,7 +50,7 @@
 							<th width="268px" class="txtAL">Rule ID</th>
 							<th width="85px">Type</th>
 							<th width="110px">Approve Status</th>
-							<th>Comment</th>
+							<th>Requested By</th>
 						</tr>
 					<tbody>
 				</table>
@@ -61,9 +61,9 @@
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="268px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
-							<td width="85px" class="txtAC" id="updateStatus"></td>
+							<td width="85px" class="txtAC" id="type"></td>
 							<td width="110px" class="txtAC" id="approvalStatus"></td>
-							<td class="txtAC"><img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> </td>
+							<td class="txtAC" id="requestedBy"></td>
 						</tr>
 					</tbody>
 				</table>
