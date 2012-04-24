@@ -26,6 +26,20 @@
 
 	$(document).ready(function() { 
 
+		updateSortableItemPosition = function(edp, destinationIndex) {
+			if ($.isNotBlank(getSelectedKeyword())){
+				ElevateServiceJS.updateElevate(getSelectedKeyword(),edp,destinationIndex, {
+					callback : function(data){
+						updatePositionBox();
+						updateSortableList(getSelectedKeyword(), sortablePage);
+					},
+					preHook: function(){ prepareSortableList(); },
+					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
+					errorHandler: function(message){ alert(message);}
+				});
+			}
+		},
+		
 		populateKeywordList = function(page){
 			$("#keywordList").sidepanel({
 				fieldId: "keywordId",
