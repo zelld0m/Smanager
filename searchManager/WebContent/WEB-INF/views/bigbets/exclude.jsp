@@ -86,6 +86,19 @@ function initFileUploads() {
         <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none"><input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="Esdsd"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
       </div>
      
+     <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
+	        <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
+	        	<div class="floatL padT10 padL10" style="width:60%" >
+	        	<label class="floatL wAuto fbold">Status:</label><label class="padL5"> <span>Approved</span> <span class="fsize11 forange padL5">[ 04/12/12  8:00PM ]</span> </label>		        	
+		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
+			  	</div>   			  	
+	        	<div class="floatR marL8 marR3 padT5"> 	        		
+	        		<a id="submitForApproval" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	</div>
+	        </div>	
+	        <div class="clearB"></div>	
+	 </div>
+	 
     <!--Add Item Content--> 
      <div id="addItemTemplate" style="display: none">
       	<div id="tabs" style="width:257px">
@@ -250,6 +263,10 @@ function initFileUploads() {
       <!--End Displaying Items-->
        <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
       <!--Pagination-->
+      
+      <div id="removeItems" class="txtAR padT10">
+		<a id="removeBtn" href="javascript:void;" class="buttons btnGray clearfix"><div class="buttons fontBold">Remove Items</div></a>
+	  </div>
     </div>
        
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
