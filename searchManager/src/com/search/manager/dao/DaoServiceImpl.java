@@ -829,9 +829,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
+	public RecordSet<Comment> getComment(String referenceId) throws DaoException {
+		return commentDAO.getComment(referenceId);
 	}
 
 	@Override
