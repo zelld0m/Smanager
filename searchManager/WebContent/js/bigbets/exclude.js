@@ -238,8 +238,11 @@
 					// Create a new set cloned from the pattern row
 					var sortableItem, id;
 
+					$.isNotBlank(getSelectedKeyword())?  $("#submitForApproval").show() : $("#submitForApproval").hide();
+					
 					//TODO: Should be configurable
 					if (sortableTotalItems == 0){
+						$("#removeItems").hide();
 						if ($.isBlank(getSelectedKeyword())){
 							$("#sortable-bigbets-container").prepend('<img id="no-items-img"/>');
 							$("#sortable-bigbets-container img#no-items-img").attr("src", "../images/ElevatePageisBlank.jpg");							
@@ -247,6 +250,8 @@
 						else{
 							//TODO: no results
 						}
+					}else{
+						$("#removeItems").show();
 					}
 
 					for (var i = 0; i < sortableList.length; i++) {
@@ -551,9 +556,18 @@
 			pageSize:sortablePageSize
 		});
 
-
 		/** END EVENT LISTER */
 
+		$("#submitForApproval").on({
+			click: function(){
+				DeploymentServiceJS.processRuleStatus("Exclude", getSelectedKeyword(), false,{
+					callback: function(data){
+						
+					}
+				});
+			}
+		});
+		
 		initPage();	
 	});	
 })(jQuery);	
