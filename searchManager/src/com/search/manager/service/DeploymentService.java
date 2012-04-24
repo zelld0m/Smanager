@@ -48,10 +48,11 @@ public class DeploymentService {
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
-			if (!includeApprovedFlag) {
-				ruleStatus.setApprovalStatus("PENDING");
+			if (includeApprovedFlag) {
+				ruleStatus.setApprovalStatus("PENDING,APPROVED");
+			} else {
+				ruleStatus.setApprovalStatus("PENDING,APPROVED");
 			}
-			ruleStatus.setPublishedStatus("UNPUBLISHED");
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
 		} catch (DaoException e) {
@@ -109,9 +110,6 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
-		ruleRefIdList = new ArrayList<String>();
-		ruleRefIdList.add("xerox");
-		ruleRefIdList.add("002l9U6zN0NULuPTG5h5");
 		int result = -1;
 		try {
 			if (publishWS(ruleRefIdList, RuleEntity.find(ruleType))) {
@@ -230,11 +228,13 @@ public class DeploymentService {
 
 	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+//		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return true;
 	}
 
 	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
+//		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return true;
 	}
 }

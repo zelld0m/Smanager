@@ -59,7 +59,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.DATE));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
@@ -76,7 +76,7 @@ public class RuleStatusDAO {
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
-	                		rs.getString(DAOConstants.COLUMN_UPDATE_STATUS),
+	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
 	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
 	                		rs.getDate(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
@@ -102,7 +102,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -119,7 +119,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_UPDATE_STATUS, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -150,7 +150,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, StringUtils.isNotBlank(ruleStatus.getApprovalStatus())?ruleStatus.getApprovalStatus():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, StringUtils.isNotBlank(ruleStatus.getPublishedStatus())?ruleStatus.getPublishedStatus():null);
-			inputs.put(DAOConstants.PARAM_UPDATE_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
+			inputs.put(DAOConstants.PARAM_EVENT_STATUS, StringUtils.isNotBlank(ruleStatus.getUpdateStatus())?ruleStatus.getUpdateStatus():null);
 			inputs.put(DAOConstants.PARAM_START_DATE, searchCriteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
@@ -171,7 +171,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleStatus.getDescription());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
-			inputs.put(DAOConstants.PARAM_UPDATE_STATUS, ruleStatus.getUpdateStatus());
+			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
     	}
@@ -191,7 +191,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleStatus.getDescription());
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
-			inputs.put(DAOConstants.PARAM_UPDATE_STATUS, ruleStatus.getUpdateStatus());
+			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getCreatedBy());
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
     	}

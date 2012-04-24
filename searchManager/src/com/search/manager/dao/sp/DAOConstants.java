@@ -161,7 +161,7 @@ public class DAOConstants {
 	public static final String PARAM_REFERENCE_ID		 			= "reference_id";
 	public static final String PARAM_PUBLISHED_STATUS	 			= "p_status";
 	public static final String PARAM_APPROVED_STATUS	 			= "a_status";
-	public static final String PARAM_UPDATE_STATUS		 			= "status";
+	public static final String PARAM_EVENT_STATUS		 			= "e_status";
 	public static final String PARAM_DESCRIPTION 					= "description";
 	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
@@ -217,7 +217,7 @@ public class DAOConstants {
 	public static final String COLUMN_COMMENT_ID		 			= "comment_id";
 	public static final String COLUMN_PUBLISHED_STATUS	 			= "published_status";
 	public static final String COLUMN_APPROVED_STATUS	 			= "approved_status";
-	public static final String COLUMN_UPDATE_STATUS	 				= "update_status";
+	public static final String COLUMN_EVENT_STATUS	 				= "event_status";
 	public static final String COLUMN_LAST_PUBLISHED_DATE			= "last_published_date";
 	public static final String COLUMN_CREATED_STAMP					= "created_stamp";
 	public static final String COLUMN_LAST_UPDATED_STAMP			= "last_updated_stamp";
