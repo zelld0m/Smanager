@@ -51,7 +51,7 @@ public class DeploymentService {
 			if (includeApprovedFlag) {
 				ruleStatus.setApprovalStatus("PENDING,APPROVED");
 			} else {
-				ruleStatus.setApprovalStatus("PENDING,APPROVED");
+				ruleStatus.setApprovalStatus("PENDING");
 			}
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
@@ -100,12 +100,24 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setApprovalStatus("APPROVED");
+			ruleStatus.setPublishedStatus("UNPUBLISHED");
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-			rSet = daoService.getRuleStatus(searchCriteria );
+			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
+			ruleStatus.setApprovalStatus(null);
+			ruleStatus.setPublishedStatus("PUBLISHED");
+			RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
+			rSet = combineRecordSet(approvedRset, publishedRset);
 		} catch (DaoException e) {
 			logger.error("Failed during getDeployedRules()",e);
 		}
 		return rSet;	
+	}
+
+	private RecordSet<RuleStatus> combineRecordSet(RecordSet<RuleStatus> approvedRset, RecordSet<RuleStatus> publishedRset) {
+		List<RuleStatus> list = new ArrayList<RuleStatus>();
+		list.addAll(approvedRset.getList());
+		list.addAll(publishedRset.getList());
+		return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
 	}
 
 	@RemoteMethod
@@ -228,13 +240,11 @@ public class DeploymentService {
 
 	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-//		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
-		return true;
+		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 
 	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-//		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
-		return true;
+		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 }
