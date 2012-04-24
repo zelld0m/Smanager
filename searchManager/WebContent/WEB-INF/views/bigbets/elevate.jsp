@@ -283,7 +283,7 @@
   <!--Pagination-->
   
   <div class="clearB"></div>
-  <div id="clearRule" class="txtAR">
+  <div id="clearRule" class="txtAR marT20">
 		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
   </div>
   
