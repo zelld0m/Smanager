@@ -18,6 +18,7 @@ import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
@@ -127,28 +128,36 @@ public class RedirectRuleDAO {
 	
     @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
     public int deleteRedirectRule(RedirectRule rule) {
+		// TODO: add validation
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 		inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
         return DAOUtils.getUpdateCount(deleteRedirectRuleStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<RedirectRule> getRedirectrule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
+    public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> criteria) throws DaoException {
 		try {
-			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.isNotBlank(ruleId)?ruleId:null);
-			inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-			inputs.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.isNotBlank(searchTerm)?searchTerm:null);
-			inputs.put(DAOConstants.PARAM_START_ROW, startRow);
-			inputs.put(DAOConstants.PARAM_END_ROW, endRow);
-			return DAOUtils.getRecordSet(getRedirectRuleStoredProcedure.execute(inputs));
+			RedirectRule redirectRule = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.trimToNull(redirectRule.getRuleId()));
+	        inputs.put(DAOConstants.PARAM_STORE_ID, redirectRule.getStoreId());
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.trimToNull(redirectRule.getSearchTerm()));	        
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        return DAOUtils.getRecordSet(getRedirectRuleStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRedirectrule()", e);
 		}
     }	
 
+    public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException {
+    	RecordSet<RedirectRule> rules = getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 1, 1));
+    	return (rules.getTotalSize() > 0 ? rules.getList().get(0): null);
+    }
+    
     @Audit(entity = Entity.queryCleaning, operation = Operation.add)
     public int addRedirectRule(RedirectRule rule) throws DaoException {
+		// TODO: add validation
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -172,6 +181,7 @@ public class RedirectRuleDAO {
 
     @Audit(entity = Entity.queryCleaning, operation = Operation.update)
     public int updateRedirectRule(RedirectRule rule) throws DaoException {
+		// TODO: add validation
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();

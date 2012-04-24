@@ -28,7 +28,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.cache.dao.DaoCacheService;
@@ -37,21 +36,20 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SearchCriteria.ExactMatch;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.SearchCriteria.ExactMatch;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.utility.DateAndTimeUtils;
-import com.search.manager.utility.RedirectUtility;
 
 public class SearchServlet extends HttpServlet {
 
 	@Autowired DaoService daoService;
 	@Autowired DaoCacheService daoCacheService;
-	@Autowired RedirectUtility redirectUtility;
 
 	private static final long serialVersionUID = 1L;
 
@@ -95,10 +93,7 @@ public class SearchServlet extends HttpServlet {
 		return added;
 	}
 
-	private static void putNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
-		map.put(paramName, new ArrayList<NameValuePair>());
-		map.get(paramName).add(pair);
-	}
+
 
 	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
@@ -200,54 +195,63 @@ public class SearchServlet extends HttpServlet {
 			String keyword = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 
+			StoreKeyword sk = new StoreKeyword(storeName, keyword);
+
+			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+			
 			// set relevancy filters if any was specified
-			nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
-			if (nvp != null) {
-				// remove qt parameter
-				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
-				// add all relevancy fields
-				Relevancy relevancy = new Relevancy();
-				String relevancyId = nvp.getValue();
-				if (StringUtils.isNotEmpty(StringUtils.trim(relevancyId))) {
-					relevancy.setRelevancyId(nvp.getValue());
+			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
+			Relevancy relevancy = null;
+			if (fromSearchGui) {
+				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
+				logger.debug("Applying relevancy with id: " + relevancy.getRelevancyId());
+			}
+			else {
+				if (StringUtils.isNotBlank(relevancyId)) {
+					relevancy = new Relevancy();
+					relevancy.setRelevancyId(relevancyId);
 				}
-				else {
-					//exec usp_Search_Relevancy_Prod_Keyword_Relationship 'pcmall', 'relevancytest3',2,'apple',1,null,null,0,0;
+				else if (keywordPresent) {
+					// get default
+					relevancy = new Relevancy();
+					relevancy.setRelevancyName("");
+					relevancy.setStore(new Store(coreName));
 					RelevancyKeyword rk = new RelevancyKeyword();
-					Relevancy r = new Relevancy();
-					r.setRelevancyName("");
-					r.setStore(new Store(coreName));
-					if (StringUtils.isNotEmpty(keyword)) {
-						rk.setKeyword(new Keyword(keyword));
-					}
-					SearchCriteria<RelevancyKeyword> criteria = new SearchCriteria<RelevancyKeyword>(rk, new Date(), new Date(), 0, 0);
-					
-					RecordSet<RelevancyKeyword> result = daoService.searchRelevancyKeywords(criteria, MatchType.LIKE_NAME, ExactMatch.MATCH);
-					if (result == null || result.getTotalSize() == 0) {
-						relevancy.setRelevancyId(coreName + "_" + "default");
+					rk.setRelevancy(relevancy);
+					rk.setKeyword(new Keyword(keyword));
+					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(
+							new SearchCriteria<RelevancyKeyword>(rk, new Date(), null, 0, 0)
+							, MatchType.LIKE_NAME, ExactMatch.MATCH);
+					if (relevancyKeywords.getTotalSize() > 0) {
+						relevancy.setRelevancyId(relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId());						
 					}
 					else {
-						relevancy.setRelevancyId(result.getList().get(0).getRelevancy().getRelevancyId());
-					}
-				}
-				logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
-				//relevancy = daoService.getRelevancyDetails(relevancy);
-				relevancy = daoCacheService.getRelevancyDetails(relevancy,storeName);
-
-				if (relevancy != null) {
-					nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
-					Map<String, String> parameters = relevancy.getParameters();
-					for (String paramName: parameters.keySet()) {
-						String paramValue = parameters.get(paramName);
-						logger.debug("adding " + paramName + ": " + paramValue);
-						nvp = new BasicNameValuePair(paramName, paramValue);
-						if (addNameValuePairToMap(paramMap, paramName, nvp)) {
-							nameValuePairs.add(nvp);
-						}
+						relevancy.setRelevancyId(coreName + "_" + "default");
 					}
 				}
 				else {
-					// TODO: get default dismax
+					relevancy = new Relevancy();
+					relevancy.setRelevancyId(coreName + "_" + "default");
+				}
+				
+				if (relevancy != null) {
+					// load relevancy details
+					logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
+					relevancy = daoService.getRelevancyDetails(relevancy);
+				}
+			}
+			
+			if (relevancy != null) {
+				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
+				nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
+				Map<String, String> parameters = relevancy.getParameters();
+				for (String paramName: parameters.keySet()) {
+					String paramValue = parameters.get(paramName);
+					logger.debug("adding " + paramName + ": " + paramValue);
+					nvp = new BasicNameValuePair(paramName, paramValue);
+					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
+						nameValuePairs.add(nvp);
+					}
 				}
 			}
 			
@@ -257,44 +261,55 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 
-			List<ElevateResult> elevatedList = null;
-			List<String> expiredElevatedList = new ArrayList<String>();
-
 			if (logger.isDebugEnabled()) {
 				logger.debug(configManager.getStoreParameter(storeName, "sort"));
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
-
-			ElevateResult elevateFilter = new ElevateResult();
-			ExcludeResult excludeFilter  = new ExcludeResult();
-			StoreKeyword sk = new StoreKeyword(storeName, keyword);
-			elevateFilter.setStoreKeyword(sk);
-			excludeFilter.setStoreKeyword(sk);
-			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
-			SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
-			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
 	
-			if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-				//elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-				elevatedList = daoCacheService.getElevateResultList(elevateCriteria,storeName);
-				
-				List<ElevateResult> expiredList = daoCacheService.getElevateResultList(expiredElevateCriteria,storeName);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Expired List: ");
-				}
-				for (ElevateResult expired: expiredList) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("\t" + expired.getEdp());
+
+			List<ElevateResult> elevatedList = null;
+			List<String> expiredElevatedList = new ArrayList<String>();
+			List<ExcludeResult> excludeList = null;
+			
+			if (keywordPresent) {
+				if (fromSearchGui) {
+					if (configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+						ElevateResult elevateFilter = new ElevateResult();
+						elevateFilter.setStoreKeyword(sk);
+						SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
+						SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
+		
+						if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
+							List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
+							if (logger.isDebugEnabled()) {
+								logger.debug("Expired List: ");
+							}
+							for (ElevateResult expired: expiredList) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("\t" + expired.getEdp());
+								}
+								expiredElevatedList.add(expired.getEdp());
+							}
+						}
 					}
-					expiredElevatedList.add(expired.getEdp());
+					
+					ExcludeResult excludeFilter  = new ExcludeResult();
+					excludeFilter.setStoreKeyword(sk);
+					SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
+					excludeList = daoService.getExcludeResultList(excludeCriteria).getList();
 				}
+				else {
+					elevatedList = daoCacheService.getElevateRules(sk);	
+					excludeList = daoCacheService.getExcludeRules(sk);
+				}			
 			}
-			if (elevatedList == null){
+			
+			if (elevatedList == null) {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			List<ExcludeResult> excludeList = keywordPresent ? daoCacheService.getExcludeResultList(excludeCriteria,storeName) : null;
 
 			/* First Request */
 			// get expected resultformat
@@ -325,9 +340,10 @@ public class SearchServlet extends HttpServlet {
 			if (!StringUtils.isEmpty(tmp)) {
 				startRow = Integer.valueOf(tmp);
 				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_START));
+				paramMap.remove(SolrConstants.SOLR_PARAM_START);
 			}
 			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, "0");
-			putNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_START, nvp);
+			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_START, nvp);
 			nameValuePairs.add(nvp);
 
 			// get number of requested rows
@@ -337,11 +353,12 @@ public class SearchServlet extends HttpServlet {
 				requestedRows = Integer.valueOf(tmp);
 			}
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS));
+			paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
 			solrHelper.setRequestRows(startRow, requestedRows);
 
 			// set number of requested rows to 0
 			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
-			putNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
+			addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
 			nameValuePairs.add(nvp);
 
 			// collate exclude list
@@ -359,14 +376,23 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.add(nvp);
 
 			// redirect 
-			String redirectFQ = "";
-			if(keyword != null && !"".equals(keyword.trim()))			
-				redirectFQ = redirectUtility.getRedirectFQ(storeName + keyword);
-
-			if (!StringUtils.isBlank(redirectFQ)) {
-				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirectFQ);
-				nameValuePairs.add(nvp);
-				nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+			try {
+				// TODO: follow up with dba on errors
+				RedirectRule redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
+												: daoCacheService.getRedirectRule(sk);
+				if (redirect != null) {
+					if (redirect.isRedirectToPage()) {
+						// TODO: fix redirect to page implementation
+						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+						nameValuePairs.add(nvp);					
+					}
+					else if (redirect.isRedirectFilter()) {
+						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
+						nameValuePairs.add(nvp);
+						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+					}
+				}
+			} catch (Exception e) {
 			}
 
 			BasicNameValuePair elevateNvp = null;
@@ -423,7 +449,7 @@ public class SearchServlet extends HttpServlet {
 				Future<Integer> getElevatedItems = null;
 				Future<Integer> getNonElevatedItems = null;
 
-				logger.debug("***************************requestedRows:" + numElevateFound);
+				logger.debug("number of elevated found:" + numElevateFound);
 				nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
 				paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
 				nameValuePairs.remove(nvp);
@@ -447,7 +473,7 @@ public class SearchServlet extends HttpServlet {
 					requestedRows -= (numElevateFound - startRow);
 				}
 
-				logger.debug("***************************requestedRows:" + requestedRows);
+				logger.debug("requested rows:" + requestedRows);
 				if (requestedRows > 0) {
 					/* Third Request */
 					// set filter to not include elevate and exclude list

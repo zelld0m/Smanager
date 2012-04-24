@@ -542,37 +542,6 @@ public class DaoServiceImpl implements DaoService {
 		throw new DaoException("Unsupported operation");
 	}
 
-
-	@Override
-	public Redirect addRedirect(String store) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public void deleteRedirect(String redirectId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public Redirect getRedirect(String redirectId) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public RecordSet<Redirect> getRedirects(String store) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
-	@Override
-	public Redirect updateRedirect(String redirectId, String xml) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
 	@Override
 	public int updateRedirectMapping(String redirectId, List<String> keywords) throws DaoException {
 		// TODO Auto-generated method stub
@@ -751,11 +720,6 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException {
-		return redirectRuleDAO.getRedirectrule(searchTerm, ruleId, storeId, startRow, endRow);
-	}
-
-	@Override
 	public int addRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.addRedirectRule(rule);
 	}
@@ -771,9 +735,13 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<RedirectRule> getRedirectRule(
-			SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
-		return redirectRuleDAO.getRedirectrule(searchCriteria.getModel().getSearchTerm(),searchCriteria.getModel().getRuleId(), searchCriteria.getModel().getStoreId(), searchCriteria.getStartRow(), searchCriteria.getEndRow());
+	public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException {
+		return redirectRuleDAO.getRedirectRule(redirectRule);
+	}
+
+	@Override
+	public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> searchCriteria) throws DaoException {
+		return redirectRuleDAO.getRedirectRules(searchCriteria);
 	}
 
 	public KeywordDAO getKeywordDAO() {

@@ -14,7 +14,7 @@ public class LocalCacheService<E extends CacheModel<?>>{
 	protected String className						= null;
 	protected StringBuilder genKey					= null;
 	
-	public E getLocalCache(String key) {
+	public <E> E getLocalCache(String key) {
 		LocalCache localCache = LocalCache.getInstance();
 		ConcurrentCacheMap<String, Object> cache = localCache.getCache();
 		return (E) cache.get(key);

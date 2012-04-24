@@ -15,7 +15,6 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Redirect;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -46,14 +45,8 @@ public interface DaoService {
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) throws DaoException;
 
 	/* Redirect */
-	public Redirect addRedirect(String store) throws DaoException;
-	public RecordSet<Redirect> getRedirects(String store) throws DaoException;
-	public Redirect getRedirect(String redirectId) throws DaoException;
-	public Redirect updateRedirect(String redirectId, String xml) throws DaoException;
-	public void deleteRedirect(String redirectId) throws DaoException;
-	
-	public RecordSet<RedirectRule> getRedirectRule(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, String storeId, Integer startRow, Integer endRow) throws DaoException;
+	public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException;
+	public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
 	public int removeRedirectRule(RedirectRule rule) throws DaoException;
