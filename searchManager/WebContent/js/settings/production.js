@@ -39,11 +39,11 @@
 		};
 
 		var publishHandler = function(){
-			$(tabSelected).find("#approveBtn").on({
+			$(tabSelected).find("#publishBtn").on({
 				click: function(evt){
 					DeploymentServiceJS.publishRule(entityName, getSelectedItems(), {
 						callback:function(data){
-							getApprovalList();
+							getForProductionList();
 						},
 						preHook:function(){ 
 							prepareTabContent(); 
@@ -57,11 +57,11 @@
 		};
 
 		var unpublishHandler = function(){
-			$(tabSelected).find("#rejectBtn").on({
+			$(tabSelected).find("#unpublishBtn").on({
 				click: function(evt){
 					DeploymentServiceJS.unpublishRule(entityName, getSelectedItems(), {
 						callback:function(data){
-							getApprovalList();
+							getForProductionList();
 						},
 						preHook:function(){ 
 							prepareTabContent(); 
