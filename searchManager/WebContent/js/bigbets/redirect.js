@@ -76,6 +76,7 @@
 				}				
 			}
 		});
+		
 		if (rule.condition.indexOf("http://") > -1) {
 			redirectFlag = true;
 			$("#url").val(rule.condition);
@@ -85,6 +86,9 @@
 				$("#ruleList").append($("<option>", { value : conditions[i] }).text(conditions[i])); 
 			}				
 		}
+		
+		$("#submitForApproval").show();
+		submitForApprovalHandler();
 	}
 	
 	function clearValues() {
@@ -165,7 +169,7 @@
 	var getRedirectRuleList = function(ruleId, page) { 
 
 		$("#redirectSidePanel").sidepanel({
-			fieldId: "ruleName",
+			fieldId: "ruleId",
 			fieldName: "ruleName",
 			page: page,
 			pageSize: 5,
@@ -199,6 +203,20 @@
 			    	}
 			},
 
+			itemOptionCallback: function(base, id, name){
+				DeploymentServiceJS.getRuleStatus("Query Cleaning", id, {
+					callback:function(data){
+						var status = (data==null) ? "" : data["approvalStatus"];
+						
+						switch (status){
+							case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
+							case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
+							case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
+							default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
+						}	
+					}
+				});
+			},
 			itemNameCallback: function(e){
 				
 				setRuleForEdit(e.data.model);
@@ -403,6 +421,19 @@
     		}
 	    });
 
+	    submitForApprovalHandler = function(){
+			$("a#submitForApprovalBtn").on({
+				click: function(){
+					if(confirm("This query cleaning rule will be locked for approval. Continue?"))
+					DeploymentServiceJS.processRuleStatus("Query Cleaning", ruleId, false,{
+						callback: function(data){
+							
+						}
+					});
+				}
+			});
+		};
+		
 		initPage = function() {
 			getCategories(catCode);
 			getRedirectRuleList(ruleId, rulePage);

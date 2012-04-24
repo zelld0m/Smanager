@@ -64,10 +64,19 @@
 
 									if($.inArray(status,["PENDING","APPROVED"])>=0){
 										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').qtip({
-											content: "<div/>",
+											content: {
+												text: $('<div/>'),
+												title: { text: 'Why is this item locked?', button: true
+												}
+											},
+											position:{
+												at: 'right center',
+												my: 'left center'
+											},
 											show:{
 												modal: true
 											},
+											style:{width:'auto'},
 											events: {
 												show: function(evt, api){
 													var $content = $("div", api.elements.content);
@@ -566,12 +575,13 @@
 		}, showDownloadOption);
 
 		var submitForApprovalHandler = function(){
-			$("#submitForApproval").on({
+			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This elevate rule will be locked for approval. Continue?"))
 					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), false,{
 						callback: function(data){
 							populateKeywordList();
+							updateSortableList();
 						}
 					});
 				}

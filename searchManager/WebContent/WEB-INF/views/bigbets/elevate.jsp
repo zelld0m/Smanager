@@ -282,12 +282,13 @@
    <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
   <!--Pagination-->
   
-  <div id="clearRule" class="txtAR padT10">
+  <div class="clearB"></div>
+  <div id="clearRule" class="txtAR">
 		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
   </div>
   
-  <div id="whyIsLocked" style="display:none">
-  	<div>Item is automatically locked when status is either awaiting approval or ready for production.</div>
+  <div id="whyIsLocked" class="w180" style="display:none;">
+  	<div class="w180 alert">Item is automatically locked when status is either awaiting approval or ready for production.</div>
   </div>
 </div>
        

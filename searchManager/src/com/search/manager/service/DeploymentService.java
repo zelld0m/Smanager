@@ -165,13 +165,14 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int processRuleStatus(String ruleType, String ruleRefId, Boolean isDelete) {
+	public int processRuleStatus(String ruleType, String ruleRefId, String description, Boolean isDelete) {
 
 		int result = -1;
 		try {
 			RuleStatus ruleStatus = createRuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
+			ruleStatus.setDescription(description);
 			result = daoService.processRuleStatus(ruleStatus, isDelete);
 		} catch (DaoException e) {
 			logger.error("Failed during processRuleStatus()",e);

@@ -132,6 +132,17 @@
 			</div>
 		</div>
 		
+		<div id="previewRankingRuleTemplate" style="display: none;">
+			<div></div>
+			<div id="rankingRuleSummary" class="tabs">
+				<ul>
+					<li></li>
+					<li></li>
+					<li></li>
+				</ul>
+			</div>
+		</div>
+		
 	</div><!-- End Main Content -->
 </div><!-- End Right Side --> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
