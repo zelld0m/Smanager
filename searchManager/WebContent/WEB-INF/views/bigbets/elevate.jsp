@@ -69,7 +69,7 @@
 		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
 			  	</div>   			  	
 	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApproval" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -287,7 +287,7 @@
   </div>
   
   <div id="whyIsLocked" style="display:none">
-  	<div>Item is automatically</div>
+  	<div>Item is automatically locked when status is either awaiting approval or ready for production.</div>
   </div>
 </div>
        
