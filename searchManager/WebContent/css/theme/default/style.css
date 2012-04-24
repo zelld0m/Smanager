@@ -267,8 +267,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .sideMenuArea .sideSearch			{ margin:0 auto; font-family: arial; fonr-size:12px; border-bottom: 1px solid #CCCCCC; color:#333; padding-top:5px; padding-bottom:5px; width:220px; }
 .sideMenuArea .leftSearch			{ background:url(images/icon-search.png) 153px center no-repeat #fff; width:150px; height:18px; padding:3px 22px 3px 3px; margin:0}
 
-.sideMenuArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:8px; width: 220px;  }
+.sideMenuArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:5px; width: 220px;  }
 .sideMenuArea .itemText				{ float:left; width:155px; padding-left:5px }
+.sideMenuArea .itemSubText			{ float:left; width:155px; padding-left:5px }
 .sideMenuArea .itemLink				{ float:left; text-align:right; width:55px; }
 
 .sideMenuArea .sideBottomPaging		{ margin:5px 0 0 -8px !important; }								

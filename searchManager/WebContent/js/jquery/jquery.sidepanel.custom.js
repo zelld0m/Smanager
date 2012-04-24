@@ -61,8 +61,11 @@
 			content+= '	<tbody id="itemListing">';
 			content+= '		<tr id="itemPattern" style="display:none;">';
 			content+= '			<td class="padR10 padL10">';
-			content+= '				<div class="itemHolder clearfix">';			      
-			content+= '					<div class="itemText lnk"><a href="javascript:void(0);"></a></div>';
+			content+= '				<div class="itemHolder clearfix">';	
+			content+= '					<div style="width:155px; float:left;">';
+			content+= '						<div class="itemText lnk"><a href="javascript:void(0);"></a></div>';
+			content+= '						<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
+			content+= '					</div>';
 			content+= '					<div class="itemLink"><a href="javascript:void(0);"></a></div>';
 			content+= '				</div>';		
 			content+= '			</td>';
