@@ -43,6 +43,14 @@
         </layout>  
     </appender> 
     
+    
+    <!-- Set com.mall code to run at debug level. -->
+	<logger name="com.search" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="fileAppender" />
+	</logger>
+	
 	<logger name="com.search.manager.authentication.session" additivity="false">
 		<level value="INFO, DEBUG" />
 		<appender-ref ref="consoleAppender" />
