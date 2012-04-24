@@ -52,14 +52,14 @@
 							var status = (data==null) ? "" : data["approvalStatus"];
 							ElevateServiceJS.getElevatedProductCount(name,{
 								callback: function(count){
-									var totalText = (count == 0) ? "-": " (" + count + ")"; 
+									var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
 									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
 
 									switch (status){
-										case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("For Immediate Action"); break;
+										case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
 										case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
 										case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
-										default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("New Rule"); break;
+										default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
 									}
 
 									if($.inArray(status,["PENDING","APPROVED"])>=0){
