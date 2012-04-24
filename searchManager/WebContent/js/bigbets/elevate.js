@@ -575,12 +575,13 @@
 		}, showDownloadOption);
 
 		var submitForApprovalHandler = function(){
-			$("#submitForApproval").on({
+			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This elevate rule will be locked for approval. Continue?"))
 					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), false,{
 						callback: function(data){
 							populateKeywordList();
+							updateSortableList();
 						}
 					});
 				}

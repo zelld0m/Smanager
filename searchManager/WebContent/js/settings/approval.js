@@ -201,7 +201,35 @@
 
 				break;
 			case "Ranking Rule": 
+				$content.html($("#previewRankingRuleTemplate").html());
+				RelevancyServiceJS.getById(ruleRefId, {
+					callback: function(data){
+						var list = data.list;
 
+						for (var i = 0; i < data.totalSize; i++) {
+							var $table = $content.find("table#item");
+							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
+							$tr.find("td#itemPosition").html(list[i]["location"]);
+							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+							$tr.find("td#itemName").html(list[i]["name"]);
+							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+							$tr.appendTo($table);
+						};
+
+						// Alternate row style
+						$content.find("tr#itemPattern").hide();
+						$content.find("tr:not(#itemPattern):even").addClass("alt");
+
+					},
+					preHook: function(){
+
+					},
+					postHook: function(){
+
+					}
+				});
 				break;
 			};
 

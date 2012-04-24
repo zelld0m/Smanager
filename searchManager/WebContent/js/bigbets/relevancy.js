@@ -613,91 +613,108 @@
 					var icon = "";
 					var suffixId = $.escapeQuotes($.formatAsId(id));
 
-					icon = '<a id="clone' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';
-					icon += '<a id="edit' + suffixId + '" href="javascript:void(0);"><img src="../images/page_edit.png"></a>';
+					DeploymentServiceJS.getRuleStatus("Ranking Rule", id, {
+						callback:function(data){
+							var status = (data==null) ? "" : data["approvalStatus"];
+							
+							switch (status){
+							case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
+							case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
+							case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
+							default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
+							}
+							
+							
+							
 
-					base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
+							icon = '<a id="clone' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_clone.png" class="marRL3"></a>';
+							icon += '<a id="edit' + suffixId + '" href="javascript:void(0);"><img src="../images/page_edit.png"></a>';
 
-					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#clone' + suffixId).qtip({
-						content: {
-							text: $('<div/>'),
-							title: { text: 'Clone Relevancy', button: true }
-						},
-						show: { modal: true },
-						events: { 
-							render: function(rEvt, api){
-								var $contentHolder = $("div", api.elements.content).html($("#addRelevancyTemplate").html());
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
 
-								$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#clone' + suffixId).qtip({
+								content: {
+									text: $('<div/>'),
+									title: { text: 'Clone Relevancy', button: true }
+								},
+								show: { modal: true },
+								events: { 
+									render: function(rEvt, api){
+										var $contentHolder = $("div", api.elements.content).html($("#addRelevancyTemplate").html());
 
-								if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val("Copy of " + name);
+										$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
 
-								$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
-								$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
+										if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val("Copy of " + name);
 
-								var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-									defaultDate: "+1w",
-									showOn: "both",
-									buttonImage: "../images/icon_calendar.png",
-									buttonImageOnly: true,
-									onSelect: function(selectedDate) {
-										var option = this.id == "popStartDate" ? "minDate" : "maxDate",
-												instance = $(this).data("datepicker"),
-												date = $.datepicker.parseDate( instance.settings.dateFormat ||
-														$.datepicker._defaults.dateFormat, selectedDate, instance.settings);
-										popDates.not(this).datepicker("option", option, date);
-									}
-								});
+										$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
+										$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-								$contentHolder.find('a#addButton').on({
-									click: function(e){
-										var popName = $.trim($contentHolder.find('input[id="popName"]').val());
-										var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
-										var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
-										var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
-
-										if ($.isBlank(popName)){
-											alert("Relevancy name is required");
-											return;
-										}
-
-										var addedId = "";
-
-										RelevancyServiceJS.addRelevancyByCloning(id, popName, popStartDate, popEndDate, popDescription, {
-											callback:function(relevancyId){
-												api.hide();
-												getRelevancy(relevancyId, popName);
-												refreshRelevancyList(1);
-												addedId = relevancyId;
-											},
-											postHook:function(e){
-												addUpdateField(addedId, "q.alt", "*:*");
+										var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
+											defaultDate: "+1w",
+											showOn: "both",
+											buttonImage: "../images/icon_calendar.png",
+											buttonImageOnly: true,
+											onSelect: function(selectedDate) {
+												var option = this.id == "popStartDate" ? "minDate" : "maxDate",
+														instance = $(this).data("datepicker"),
+														date = $.datepicker.parseDate( instance.settings.dateFormat ||
+																$.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+												popDates.not(this).datepicker("option", option, date);
 											}
 										});
 
+										$contentHolder.find('a#addButton').on({
+											click: function(e){
+												var popName = $.trim($contentHolder.find('input[id="popName"]').val());
+												var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
+												var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
+												var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
-									}
-								});
+												if ($.isBlank(popName)){
+													alert("Relevancy name is required");
+													return;
+												}
 
-								$contentHolder.find('a#clearButton').on({
-									click: function(e){
-										$contentHolder.find('input[type="text"], textarea').val("");
+												var addedId = "";
+
+												RelevancyServiceJS.addRelevancyByCloning(id, popName, popStartDate, popEndDate, popDescription, {
+													callback:function(relevancyId){
+														api.hide();
+														getRelevancy(relevancyId, popName);
+														refreshRelevancyList(1);
+														addedId = relevancyId;
+													},
+													postHook:function(e){
+														addUpdateField(addedId, "q.alt", "*:*");
+													}
+												});
+
+
+											}
+										});
+
+										$contentHolder.find('a#clearButton').on({
+											click: function(e){
+												$contentHolder.find('input[type="text"], textarea').val("");
+											}
+										});
 									}
-								});
-							}
+								}
+							});
+
+							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).on({
+								click: function(e){
+									getRelevancy(id, name);
+								}
+							});
+						},
+						preHook: function(){
+							
 						}
 					});
-
-					base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#edit' + suffixId).on({
-						click: function(e){
-							getRelevancy(id, name);
-						}
-					},{});
-
 				},
 
 				itemAddCallback: function(base, name){ addRelevancy(name); },
-				itemNameCallback: function(e){ getRelevancy(e.data.id, e.data.name); },
 				pageChangeCallback: function(n){ currentRelevancyPage = n; }
 			});
 		};
@@ -737,7 +754,7 @@
 									events: { 
 										render: function(rEvt, api){
 											var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
-										
+
 
 											RelevancyServiceJS.getRelevancy(name, {
 												callback: function(data){
@@ -1135,10 +1152,12 @@
 				}
 			});
 
+			submitForApprovalHandler();
 		};
 
 		showRelevancyFields = function(){
 			updateHeaderText();
+			selectedRelevancy!=null ? $("#submitForApproval").show() : $("#submitForApproval").hide();
 			$("#noSelected").attr("style", selectedRelevancy!=null ? "display:none":"display:float");
 			$("#relevancy").attr("style", selectedRelevancy==null ? "display:none":"display:float");
 			$("#preloader").hide();
@@ -1244,6 +1263,19 @@
 			}
 
 			return relevancyFields;
+		};
+
+		var submitForApprovalHandler = function(){
+			$("a#submitForApprovalBtn").on({
+				click: function(){
+					if(confirm("This ranking rule will be locked for approval. Continue?"))
+						DeploymentServiceJS.processRuleStatus("Ranking Rule", selectedRelevancy.relevancyId, false,{
+							callback: function(data){
+
+							}
+						});
+				}
+			});
 		};
 
 		showRelevancyFields();

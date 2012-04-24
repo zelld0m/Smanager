@@ -38,9 +38,26 @@
 	<div class="floatL w730 titlePlacer">
         <div class="w535 padT10 padL10 floatL fsize20 fnormal">Query Cleaning Rule : <span id="headerRuleName" class="fLblue fnormal">Rule Name</span></div>
    </div>
-     
-	<div class="clearB"></div>
+   
+   <div class="clearB"></div>
 	
+	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
+	        <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
+	        	<div class="floatL padT10 padL10" style="width:60%" >
+	        	<label class="floatL wAuto fbold">Status:</label>
+	        	<label class="padL5">
+	        		<span id="status"></span> 
+	        		<span id="statusDate" class="fsize11 forange padL5"></span> 
+	        	</label>		        	
+		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
+			  	</div>   			  	
+	        	<div class="floatR marL8 marR3 padT5"> 	        		
+	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	</div>
+	        </div>	
+	        <div class="clearB"></div>	
+	 </div>
+	 
     <!-- content tabs -->
     <div class="titleBlue borderB marRL5">Configuration</div>
 			<table class="fsize12 mar10 tblCatalog">
@@ -57,9 +74,14 @@
 					</td>
 				</tr>
 			</table>
-    <div class="tabber mar0" style="margin-top:20px; width:98%" id="maintab">
-		<div class="tabbertab">
-        <h2 class="tabMenu"><span>Category/Manufacturer</span></h2>
+    <div class="tabs mar0" style="margin-top:20px; width:98%" id="datasource">
+    
+    	<ul>
+    		<li><a href="#ims"><span>IMS</span></a></li>
+    	</ul>
+   
+		<div id="ims">
+        	<h2 class="tabMenu"><span>Category/Manufacturer</span></h2>
 			<table class="fsize12 mar10 tblCatalog">
 				<tr>
 					<td>
