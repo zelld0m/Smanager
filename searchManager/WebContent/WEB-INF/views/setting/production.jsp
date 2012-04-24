@@ -42,11 +42,11 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div>
-				<table class="tblItems w100p marT5">
+				<table class="tblItems w100p marT5" id="rule">
 					<tr>
 						<th width="24px" id="selectAll"><input type="checkbox"></th>
 						<th width="268px" class="txtAL">Rule ID</th>
-						<th>Status</th>
+						<th>Approval Status</th>
 						<th width="110px">Production Status</th>
 						<th width="85px">Last Publish</th>
 					</tr>
@@ -58,9 +58,9 @@
 						<tr id="ruleItemPattern" class="ruleItem">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="268px" id="ruleRefId"></td>
-							<td class="txtAC" id="updateStatus"></td>
-							<td width="110px" class="txtAC"><img class="pointer" id="" src="<spring:url value="/images/icon_check.png" />" alt="Comment" title="Comment"></td>
-							<td width="85px" class="txtAC">04/23/2012</td>
+							<td class="txtAC" id="approvalStatus"></td>
+							<td class="txtAC" id="productionStatus"></td>
+							<td width="85px" class="txtAC" id="productionDate"></td>
 						</tr>
 					</tbody>
 				</table>
