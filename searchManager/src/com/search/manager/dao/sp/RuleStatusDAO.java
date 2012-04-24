@@ -188,7 +188,7 @@ public class RuleStatusDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, ruleStatus.getRuleTypeId());
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, ruleStatus.getRuleRefId());
-			inputs.put(DAOConstants.PARAM_DESCRIPTION, ruleStatus.getDescription());
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, StringUtils.isNotBlank(ruleStatus.getDescription())?ruleStatus.getDescription():null);
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
@@ -233,20 +233,17 @@ public class RuleStatusDAO {
 					}
 				});
 		if (list.size()>0) {
-			ruleStatus.setApprovalStatus(PENDING);
+			ruleStatus.setApprovalStatus(RuleStatusDAO.PENDING);
 			if (isDelete) {
-				ruleStatus.setUpdateStatus(DELETE);
-				ruleStatus.setDescription("Deleted rule " + ruleStatus.getRuleRefId());
+				ruleStatus.setUpdateStatus(RuleStatusDAO.DELETE);
 			} else {
-				ruleStatus.setDescription("Updated rule " + ruleStatus.getRuleRefId());
-				ruleStatus.setUpdateStatus(UPDATE);
+				ruleStatus.setUpdateStatus(RuleStatusDAO.UPDATE);
 			}
 			result = updateRuleStatus(ruleStatus);
 		} else {
-			ruleStatus.setApprovalStatus(PENDING);
-			ruleStatus.setUpdateStatus(ADD);
-			ruleStatus.setPublishedStatus(UNPUBLISHED);
-			ruleStatus.setDescription("Added rule " + ruleStatus.getRuleRefId());
+			ruleStatus.setApprovalStatus(RuleStatusDAO.PENDING);
+			ruleStatus.setUpdateStatus(RuleStatusDAO.ADD);
+			ruleStatus.setPublishedStatus(RuleStatusDAO.UNPUBLISHED);
 			result = addRuleStatus(ruleStatus);
 		}
 		return result;
