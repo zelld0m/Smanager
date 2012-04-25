@@ -68,7 +68,7 @@
 					</td>
 					<td width="25px">
 						<!-- a href="#" class="buttons btnGray clearfix"><div id="editSearchTerm" class="buttons fontBold"><<</div></a><br /--> 
-						<a href="#" class="buttons btnGray clearfix"><div id="addSearchTerm" class="buttons fontBold">>></div></a></td>
+						<a href="#" class="buttons btnGray clearfix marT5"><div id="addSearchTerm" class="buttons fontBold">>></div></a></td>
 					<td>
 						<select id="searchTermList" class="farial fsize12  fgray padLR3 padTB4 marL10 w220" size="7"/>
 					</td>
@@ -154,7 +154,7 @@
 
 		</div-->
 		<input id="url" type="hidden"/>
-		<div align="right" class="padR5">
+		<div align="right" class="padR5 marT20">
 			    <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="save">&nbsp;Save&nbsp;</div></a>
 				<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="delete">Delete</div></a>
 			</div>
