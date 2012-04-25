@@ -46,6 +46,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
 
@@ -535,6 +536,7 @@ public class SearchServlet extends HttpServlet {
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);
+			SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, keyword);
 		} catch (Throwable t) {
 			logger.error("Failed to send solr request", t);
 			throw new ServletException(t);
