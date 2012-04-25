@@ -55,25 +55,28 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int addElevateByPartNumber(String keyword, String partNumber, int sequence, String expiryDate, String comment) {
+	public int addElevateByPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, partNumber, sequence));
+			logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 
-			String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(edp);
-			e.setLocation(sequence);
-			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			if (StringUtils.isNotBlank(edp)){
-				return daoService.addElevateResult(e);
+			for(String partNumber: partNumbers){
+				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+				ElevateResult e = new ElevateResult();
+				e.setStoreKeyword(new StoreKeyword(store, keyword));
+				e.setEdp(edp);
+				e.setLocation(sequence++);
+				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setCreatedBy(UtilityService.getUsername());
+				e.setComment(UtilityService.formatComment(comment));
+				if (StringUtils.isNotBlank(edp)){
+					daoService.addElevateResult(e);
+				}
 			}
+			
 			return 0;
 		} catch (DaoException e) {
 			logger.error("Failed during addElevateByPartNumber()",e);

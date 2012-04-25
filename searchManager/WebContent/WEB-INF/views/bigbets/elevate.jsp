@@ -79,40 +79,34 @@
 	 
 	 <!--Add Item Content-->
 	<div id="addItemTemplate" style="display: none">
-		<div id="tabs" style="width: 257px">
+		<div id="addOption" style="width: 257px">
 			<ul>
-				<li><a href="#singleAdd"><span>Single Add</span></a></li>
-				<li><a href="#multiAdd"><span>Multiple Add</span></a></li>
+				<li><a href="#addBySKU"><span>By SKU</span></a></li>
 			</ul>
 			
 			<!--  tab -->
-			<div id="singleAdd" class="mar0 borderT">
-				<h3></h3>
-				<div class="floatL w170">
-					<label class="floatL w60 marL5 padT5">%%store%%:</label> <label><input
-						id="addItemDPNo" type="text" class="w83 fgray fsize11"
-						value="SKU #">
-					</label>
-				</div>
+			<div id="addBySKU" class="mar0 borderT">
+				
 				<div class="clearB"></div>
 				<div class="floatL w155 marT5">
-					<label class="floatL w60 marL5 padT5">Valid Until:</label> <label
-						class="ddate"><input id="addItemDate" type="text"
-						class="w65">
-					</label>
+					<label class="floatL w60 marL5 padT5">Valid Until:</label> 
+					<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>
 				</div>
 				
 				<div class="floatL marT5" style="width: 97px">
 					<label class="floatL marL5 padT5" style="width: 55px">Elevation:</label>
-					<label><input id="addItemPosition" type="text" class="w25">
-					</label>
+					<label><input id="addItemPosition" type="text" class="w25"></label>
 				</div>
-
 				<div class="clearB"></div>
 				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">Comment: </label> <label><textarea
-							id="addItemComment"
-							style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					<label class="w60 floatL padT5">SKU #: (comma-delimited)</label> 
+					<label><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					</label>
+				</div>
+				<div class="clearB"></div>
+				<div class="floatL marT5 marL5">
+					<label class="w60 floatL padT5">Comment: </label> 
+					<label><textarea id="addItemComment" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
 					</label>
 				</div>
 				<div align="right">
@@ -125,42 +119,6 @@
 				</div>
 				<div class="clearB"></div>
 			</div>
-
-			<div id="multiAdd" class="mar0 borderT">
-				<h3></h3>
-				<div class="alert">This will overwrite existing
-					elevation.</div>
-				
-				<div class="marTB10">
-					<label >Valid Until:</label>
-					<label class="ddate">
-						<input id="addItemDate" type="text" class="w65">
-					</label>
-				</div>	
-				
-				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL padT5">Comma separated SKU #</label>
-					<a class="infoIcon" href="javascript:void(0);">
-						<img src="<spring:url value="/images/icon_info.png" />" class="floatR">
-					</a>
-				</div>
-				<textarea id="addItemComment" class="w245"></textarea>
-				
-				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL w60 padT5">Comment</label>					
-				</div>
-				<textarea id="addItemComment" class="w245"></textarea>
-
-				<div align="right" class="marT5 marR3">
-					<a id="addItemBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div>
-					</a>
-					<a id="clearBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div>
-					</a>
-				</div>
-			</div>
-
 			<!-- end tab -->
 		</div>
 	</div>

@@ -61,6 +61,7 @@
 
 				itemOptionCallback: function(base, id, name){
 
+					
 					DeploymentServiceJS.getRuleStatus("elevate", name, {
 						callback:function(data){
 							var status = (data==null) ? "" : data["approvalStatus"];
@@ -374,8 +375,9 @@
 		},
 
 		addSortableItem = function(partNumber, index, expiry, comments) {
-			if ($.trim(partNumber).length > 0 && $.isNumeric(partNumber)){
-				ElevateServiceJS.addElevateByPartNumber(getSelectedKeyword(),partNumber,index, expiry, comments, {
+			var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
+			if ($.trim(partNumber).length > 0 && commaDelimitedNumberPattern.test($.trim(partNumber))){
+				ElevateServiceJS.addElevateByPartNumber(getSelectedKeyword(),index, expiry, comments, partNumber.split(','), {
 					callback : function(data){
 						updateSortableList(getSelectedKeyword(),sortablePage==0? 1 : sortablePage);	
 						populateKeywordList(1);
@@ -412,16 +414,16 @@
 
 					contentHolder.html(template);
 
-					contentHolder.find("#tabs").tabs({
-						event: "click",
-						cookie: { expires: 30},
-						spinner: 'Retrieving data...'
+					contentHolder.find("#addOption").tabs({
+						cookie: { 
+							expires: 30,
+							name: "ui-tab-elevate-addoption"
+							}
 					});
 
 					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
-					contentHolder.find("#addItemDPNo").val($.isNumeric($.trim($("#addSortable").val()))? $.trim($("#addSortable").val()) :sortablePopupAddDefaultText);
 					contentHolder.find("#addItemDPNo").bind('blur', function(e) {if ($.trim($(this).val()).length == 0) $(this).val(sortablePopupAddDefaultText);});
-					contentHolder.find("#addItemDPNo").bind('focus',function(e) {$(this).val("");});
+					contentHolder.find("#addItemDPNo").bind('focus',function(e) {if ($.trim($(this).val()) == sortablePopupAddDefaultText) $(this).val("")});
 
 					contentHolder.find("#addItemDate_1").datepicker({
 						showOn: "both",
@@ -433,7 +435,7 @@
 					});
 
 					contentHolder.find("#addItemBtn").click(function(e){
-						var dpNo = $.trim(contentHolder.find("#addItemDPNo").val());
+						var dpNo = $.trim(contentHolder.find("#addItemDPNo").val().replace(/\n\r?/g, '')).replace(/ /g,'');
 						var index = $.trim(contentHolder.find("#addItemPosition").val());
 						var expiry = $.trim(contentHolder.find("#addItemDate_1").val());
 						var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
