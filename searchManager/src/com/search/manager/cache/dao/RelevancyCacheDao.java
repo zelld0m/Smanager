@@ -1,5 +1,6 @@
 package com.search.manager.cache.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,10 +16,10 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 
 @Repository("relevancyCacheDao")
 public class RelevancyCacheDao extends CacheDao<Relevancy> {
@@ -37,19 +38,17 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 
 	@Override
 	protected CacheModel<Relevancy> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException {
-		try {
-			DAOValidation.checkStoreKeywordPK(storeKeyword);
-			RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-					new RelevancyKeyword(storeKeyword.getKeyword(), new Relevancy("", "")), null, null, 0, 0),
-					MatchType.LIKE_NAME, ExactMatch.MATCH);
-			if (rk.getTotalSize() > 0) {
-				Relevancy relevancy = daoService.getRelevancyDetails(rk.getList().get(0).getRelevancy());
-				return new CacheModel<Relevancy>(relevancy);
-			}
-		} catch (Exception e) {
-			logger.error("Failed to get redirect database object for " + storeKeyword, e);
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		Relevancy relevancy = new Relevancy("", "");
+		relevancy.setStore(new Store(storeKeyword.getKeywordId()));
+		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				MatchType.LIKE_NAME, ExactMatch.MATCH);
+		if (rk.getTotalSize() > 0) {
+			relevancy = daoService.getRelevancyDetails(rk.getList().get(0).getRelevancy());
+			return new CacheModel<Relevancy>(relevancy);
 		}
-		return null;
+		return new CacheModel<Relevancy>();
 	}
 	
 	public CacheModel<Relevancy> getDatabaseObject(String ruleId) throws DaoException {

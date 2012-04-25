@@ -54,20 +54,16 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 	}
 
 	public CacheModel<RedirectRule> getDatabaseObject(String ruleId) throws DaoException {
-		try {
-			if (StringUtils.isNotBlank(ruleId)) {
-				RedirectRule redirectRule = new RedirectRule();
-				redirectRule.setRuleId(ruleId);
-				RecordSet<RedirectRule> rules = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0));
-				if (rules.getTotalSize() > 0) {
-					redirectRule = rules.getList().get(0);
-					return new CacheModel<RedirectRule>(redirectRule);
-				}				
+		if (StringUtils.isNotBlank(ruleId)) {
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setRuleId(ruleId);
+			RecordSet<RedirectRule> rules = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0));
+			if (rules.getTotalSize() > 0) {
+				redirectRule = rules.getList().get(0);
+				return new CacheModel<RedirectRule>(redirectRule);
 			}
-		} catch (Exception e) {
-			logger.error("Failed to load cache for redirect rule id " + ruleId, e);
 		}
-		return null;
+		return new CacheModel<RedirectRule>();
 	}
 	
 	@Override

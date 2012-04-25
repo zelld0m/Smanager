@@ -30,6 +30,7 @@ public class CacheDao<T> {
 	}
 
 	private Logger logger = Logger.getLogger(CacheDao.class);
+	
 	/**
 	 * Get the cache key
 	 * @param storeKeyword
@@ -84,13 +85,15 @@ public class CacheDao<T> {
 		if (cache == null) {
 			try {
 				cache = getDatabaseObject(storeKeyword);
-				logger.info("Retrieved rule from database.");
-				if (!cacheError) {
-					try {
-						pushToCache(storeKeyword, cache);
-					} catch (Exception e) {
-						logger.error("Cannot cache object", e);						
-					}					
+				if (cache != null) {
+					logger.info("Retrieved rule from database.");					
+					if (!cacheError) {
+						try {
+							pushToCache(storeKeyword, cache);
+						} catch (Exception e) {
+							logger.error("Cannot cache object", e);						
+						}					
+					}
 				}
 			} catch (Exception e) {
 				logger.error("Cannot retrieve rule from database.", e);
@@ -105,13 +108,17 @@ public class CacheDao<T> {
 	
 	protected boolean cacheObject(String key, CacheModel<T> t) throws DataException {
 		try{
-			cacheService.put(key, t);
-			logger.info("pushed to cache key " + key);
-			return true;
+			if (t != null) {
+				cacheService.put(key, t);
+				logger.info("pushed to cache key " + key);
+				return true;				
+			}
 		} catch (Exception e) {
 			logger.error("Failed to cache key " + key, e);
 			throw new DataException(e);
 		}
+		logger.info("cannot push null object to cache key " + key);
+		return false;
 	}
 	
 	/**
@@ -140,15 +147,14 @@ public class CacheDao<T> {
 	}
 
 	protected boolean pushToCache(StoreKeyword storeKeyword, CacheModel<T> t) throws DataException {
-		String key = "";
 		try{
-			key = getCacheKey(storeKeyword);
-			cacheService.put(getCacheKey(storeKeyword), t);
-			logger.info("pushed to cache key " + key);
-			return true;
+			if (t != null) {
+				return cacheObject(getCacheKey(storeKeyword), t);
+			}
 		} catch (Exception e) {
 			logger.error("Failed to cache key for storeKeyword " + storeKeyword, e);
 			throw new DataException(e);
 		}
+		return false;
 	}
 }
