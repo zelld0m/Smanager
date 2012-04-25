@@ -69,6 +69,8 @@
 				</table>
 			</div>
 			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w650 marR5" style="display:none; background: #f3f3f3;">
+				<h3 style="border:none">sample</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
 				<label class="floatL w100 padL15">Comment: </label>
 				<label class="floatL w510"><textarea id="approvalComment" rows="1" class="w510" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>

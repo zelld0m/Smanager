@@ -56,6 +56,11 @@
 			Statistics
 		</h1>
 	</div>
+	
+	
+	
+	
+	<a href="javascript:void(0);" class="buttons btnDisable clearfix"> <div class="buttons fontBold">Approve</div> 	</a>
 	<div class="clearB"></div>
 	
 </div> 

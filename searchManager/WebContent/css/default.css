@@ -130,6 +130,7 @@ body 							{ margin: 0px; }
 .cssReset .padB5, .padB5		{padding-bottom:5px}
 .cssReset .padB8, .padB8		{padding-bottom:8px}
 .cssReset .padB10, .padB10		{padding-bottom:10px}
+.cssReset .padB15, .padB15		{padding-bottom:15px}
 .cssReset .padB25, .padB25		{padding-bottom:25px}
 .cssReset .padLR3, .padLR3		{ padding-left:3px; padding-right:3px; }
 .cssReset .padLR5, .padLR5		{ padding-left:5px; padding-right:5px; }
