@@ -62,10 +62,10 @@
     	<div class="w32p floatL">
     		<h3 class="fsize14">Select Facet</h3>
     		<div class="colTop topRed" >
-    			<select class="w210 posRel top6">
+    			<select class="w185 posRel top2">
     				<option> sample </option>
     				<option> lorem ipsum </option>
-    			</select>
+    			</select> <a href="#"><img src="<spring:url value="/images/icon_addField2.png" />" class="posRel bottomn7"></a>
     		</div>
     			<ul class="facetList marT10">
 					<li> dddddd <a href="">(100)</a> </li>
@@ -83,12 +83,12 @@
 					<img src="<spring:url value="../css/theme/default/images/redBlue_Arrow.png" />" class="posAbs"> 
 					<h3 class="padL25 fsize14 padT8">Available</h3>
 				</div>
-				<ul class="facetList marT10">
-					<li> dddddd <a href="">(100)</a> </li>
-					<li> adfasfasfasfasfsdf <a href="">(0)</a></li>
-					<li> rrrasfasfasfasdffs <a href="">(20)</a></li>
-					<li> wfrwfsdfsfsd <a href="">(5)</a></li>
-					<li> saffsdf <a href="">(7)</a></li>
+				<ul class="marT10">
+					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> dddddd <a href=""></a> </li>
+					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> adfasfasfasfasfsdf <a href=""></a></li>
+					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> rrrasfasfasfasdffs <a href=""> </a></li>
+					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> wfrwfsdfsfsd <a href=""></a></li>
+					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> saffsdf <a href=""></a></li>
 				</ul>
 				
 			</div>
@@ -97,7 +97,7 @@
 					<img src="<spring:url value="../css/theme/default/images/bluegreen_Arrow.png" />" class="posAbs">
 					<h3 class="padL25 fsize14 padT8">Selected</h3>
 				</div>
-				<div style="overflow-y:scroll; max-height: 128px">
+				<div style="overflow-y:scroll; max-height: 120px">
 				<ul class="marT10">
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> dddddd</li>
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> adfasfasfasfasfsdf</li>
