@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -63,8 +62,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int approveRule(String ruleType, String ...ruleRefIdList) {
-		return approveRule(ruleType, Arrays.asList(ruleRefIdList));
+	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency
+		approveRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return 0;
 	}
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
@@ -187,25 +189,16 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int addComment(String ruleStatusId, String comment) {
+	public int addComment(String comment, String ...ruleStatusId) {
 		int result = -1;
 		try {
-			daoService.addComment(ruleStatusId, comment, UtilityService.getUsername());
+			for(String rsId: ruleStatusId){
+				daoService.addComment(rsId, comment, UtilityService.getUsername());
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
 		}
 		return result;
-	}
-
-	@RemoteMethod
-	public RecordSet<Comment> getComment(String ruleStatusId) {
-		RecordSet<Comment> rSet = null;
-		try {
-			rSet = daoService.getComment(ruleStatusId);
-		} catch (DaoException e) {
-			logger.error("Failed during addComment()",e);
-		}
-		return rSet;
 	}
 
 	@RemoteMethod
