@@ -97,7 +97,7 @@
 					<img src="<spring:url value="../css/theme/default/images/bluegreen_Arrow.png" />" class="posAbs">
 					<h3 class="padL25 fsize14 padT8">Selected</h3>
 				</div>
-				<div style="overflow-y:scroll; max-height: 120px">
+				<div style="overflow-y:scroll; max-height: 123px">
 				<ul class="marT10">
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> dddddd</li>
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> adfasfasfasfasfsdf</li>
