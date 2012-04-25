@@ -75,4 +75,21 @@
 		<appender-ref ref="security-file" />
 	</logger>
 	
+	<!-- Logging for Search -->
+	<appender name="search-file" class="org.apache.log4j.DailyRollingFileAppender">  
+        <param name="File" value="search.log"/>  
+        <param name="Append" value="true"/>  
+        <param name="MaxFileSize" value="200MB"/>  
+        <param name="MaxBackupIndex" value="5"/>  
+        <layout class="org.apache.log4j.PatternLayout">  
+            <param name="ConversionPattern" value="[%d] [%c{1}] %m%n"/>   
+        </layout>  
+    </appender> 
+    
+    <logger name="com.search.manager.utility.SearchLogger" additivity="false">
+		<level value="INFO, DEBUG" />
+		<appender-ref ref="consoleAppender"/>
+		<appender-ref ref="search-file" />
+	</logger>
+	
 </log4j:configuration>
