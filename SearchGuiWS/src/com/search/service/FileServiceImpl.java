@@ -149,10 +149,18 @@ public class FileServiceImpl implements FileService{
 	@Override
 	public boolean removeBackup(String store, String ruleId, RuleEntity ruleEntity) throws Exception {
 		String dir = getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId);
-
+		String path_ = "";
+		
 		if(FileUtil.isDirectoryExist(dir)){
-			FileUtil.deleteDir(dir);
-			return true;
+			path_ = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
+			if(FileUtil.isExist(path_)){
+				FileUtil.deleteFile(path_);
+				
+				if(!FileUtil.isExist(path_))
+					return true;
+				
+			}else
+				return false;
 		}
 		return false;
 	}
@@ -160,13 +168,13 @@ public class FileServiceImpl implements FileService{
 	@Override
 	public boolean removeBackup(String store, List<String> list, RuleEntity ruleEntity) throws Exception {
 		
-		String path = "";
+		String path_ = "";
 		
 		for(String ruleId : list){
-			path = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
-			if(FileUtil.isExist(path))
-				FileUtil.deleteFile(path);
-			else
+			path_ = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
+			if(FileUtil.isExist(path_)){
+				FileUtil.deleteFile(path_);
+			}else
 				return false;
 		}
 		return true;
