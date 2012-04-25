@@ -1,11 +1,6 @@
-/**
- * SearchGuiServiceHttpBindingStub.java
- *
- * This file was auto-generated from WSDL
- * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
- */
-
 package com.search.ws.client;
+
+import com.search.webservice.model.BackupInfo;
 
 public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub implements com.search.ws.client.SearchGuiServicePortType {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
@@ -16,7 +11,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[3];
+        _operations = new org.apache.axis.description.OperationDesc[4];
         _initOperationDesc1();
     }
 
@@ -41,7 +36,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         param.setNillable(true);
         oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo"));
-        oper.setReturnClass(com.search.manager.model.BackupInfo[].class);
+        oper.setReturnClass(BackupInfo[].class);
         oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
         param = oper.getReturnParamDesc();
         param.setItemQName(new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo"));
@@ -60,6 +55,18 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
         _operations[2] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("unDeployRules");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://ws.search.com/client", "in0"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://model.webservice.search.com", "TransportList"), com.search.webservice.model.TransportList.class, false, false);
+        param.setNillable(true);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        oper.setReturnClass(boolean.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("http://ws.search.com/client", "out"));
+        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[3] = oper;
 
     }
 
@@ -101,7 +108,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "ArrayOfBackupInfo");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.BackupInfo[].class;
+            cls = BackupInfo[].class;
             cachedSerClasses.add(cls);
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             qName2 = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
@@ -110,7 +117,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 
             qName = new javax.xml.namespace.QName("http://model.manager.search.com", "BackupInfo");
             cachedSerQNames.add(qName);
-            cls = com.search.manager.model.BackupInfo.class;
+            cls = BackupInfo.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -231,7 +238,7 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
 }
     }
 
-    public com.search.webservice.model.BackupInfo[] getBackupInfo(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
+    public BackupInfo[] getBackupInfo(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -255,9 +262,9 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         else {
             extractAttachments(_call);
             try {
-                return (com.search.webservice.model.BackupInfo[]) _resp;
+                return (BackupInfo[]) _resp;
             } catch (java.lang.Exception _exception) {
-                return (com.search.webservice.model.BackupInfo[]) org.apache.axis.utils.JavaUtils.convert(_resp, com.search.manager.model.BackupInfo[].class);
+                return (BackupInfo[]) org.apache.axis.utils.JavaUtils.convert(_resp, BackupInfo[].class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -278,6 +285,40 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
         _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
         _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "deployRules"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {in0});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return ((java.lang.Boolean) _resp).booleanValue();
+            } catch (java.lang.Exception _exception) {
+                return ((java.lang.Boolean) org.apache.axis.utils.JavaUtils.convert(_resp, boolean.class)).booleanValue();
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public boolean unDeployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[3]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("http://ws.search.com/client", "unDeployRules"));
 
         setRequestHeaders(_call);
         setAttachments(_call);

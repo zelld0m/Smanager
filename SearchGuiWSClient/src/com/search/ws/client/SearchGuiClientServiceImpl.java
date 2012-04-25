@@ -16,10 +16,11 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 	private static String TOKEN = PropsUtils.getValue("token");
 	
 	// for testing only: do not use in prod
-	static{
-		WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
-		TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
-	}
+//	static{
+//		WS_CLIENT = "http://10.17.12.67:8080/searchguiws/services/SearchGuiService";	 // staging
+//		//WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
+//		TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
+//	}
 	
 	@Override
 	public boolean recallRules(String store, List<String> ruleRefIdList, RuleEntity entity) {
@@ -82,6 +83,39 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 
 				list_.setList(entArr);
 				return search.deployRules(list_);
+			}
+		}catch (Exception e) {
+			logger.error(e);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean unDeployRules(String store, List<String> ruleRefIdList, RuleEntity entity) {
+		try{
+			if(ruleRefIdList != null && ruleRefIdList.size() > 0){
+				Stub stub = createStoreProxy();
+				stub._setProperty(javax.xml.rpc.Stub.ENDPOINT_ADDRESS_PROPERTY, WS_CLIENT);
+				SearchGuiServicePortType search = (SearchGuiServicePortType) stub;
+
+				TransportList list_ = new TransportList();
+				list_.setToken(TOKEN);
+				list_.setStore(store);
+				
+				com.search.webservice.model.RuleEntity entity_ = new com.search.webservice.model.RuleEntity(getRuleName(entity.getCode()));
+	
+				list_.setRuleEntity(entity_);
+				
+				String[] entArr = new String[ruleRefIdList.size()];
+				int arrCnt = 0;
+
+				for(String key : ruleRefIdList){
+					entArr[arrCnt] = key;
+					arrCnt++;
+				}	
+
+				list_.setList(entArr);
+				return search.unDeployRules(list_);
 			}
 		}catch (Exception e) {
 			logger.error(e);
