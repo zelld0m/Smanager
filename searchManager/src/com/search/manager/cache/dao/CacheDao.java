@@ -2,8 +2,7 @@ package com.search.manager.cache.dao;
 
 import java.util.List;
 
-import jxl.common.Logger;
-
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.cache.model.CacheModel;
@@ -14,24 +13,33 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
-public abstract class CacheDao<T> {
+public class CacheDao<T> {
 	
 	@Autowired protected DaoService daoService;
 	@Autowired protected KeywordCacheDao keywordCacheDao;
 	@Autowired protected CacheService<CacheModel<?>> cacheService;
 	
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
+	public void setKeywordCacheDao(KeywordCacheDao keywordCacheDao) {
+		this.keywordCacheDao = keywordCacheDao;
+	}
+	public void setCacheService(CacheService<CacheModel<?>> cacheService) {
+		this.cacheService = cacheService;
+	}
+
 	private Logger logger = Logger.getLogger(CacheDao.class);
-	
 	/**
 	 * Get the cache key
 	 * @param storeKeyword
 	 * @return
 	 * @throws DataException
 	 */
-	protected abstract String getCacheKey(StoreKeyword storeKeyword) throws DataException;
-	protected abstract CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException;
-	public abstract boolean reload(T bean) throws DataException, DaoException;
-	public abstract boolean reload(List<T> list) throws DataException, DaoException;
+	protected String getCacheKey(StoreKeyword storeKeyword) throws DataException{return null;};
+	protected CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException{return null;};
+	public boolean reload(T bean) throws DataException, DaoException{return false;};
+	public boolean reload(List<T> list) throws DataException, DaoException{return false;};
 
 	/**
 	 * Reload the entire cache data for store
@@ -143,5 +151,4 @@ public abstract class CacheDao<T> {
 			throw new DataException(e);
 		}
 	}
-
 }

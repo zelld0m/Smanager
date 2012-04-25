@@ -1,6 +1,7 @@
 package com.search.manager.aop;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -24,9 +25,7 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants;
-import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.Constants;
 
 @Aspect
 @Component("auditInterceptor")
@@ -116,22 +115,10 @@ public class AuditInterceptor {
 	}
 	
 	private void logElevate(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		
-		StoreKeyword sk = null;
-		ElevateResult e = null;
-
-		if (auditable.operation() == Operation.clear) {
-			sk = (StoreKeyword)jp.getArgs()[0];
-			auditTrail.setStoreId(sk.getStoreId());
-			auditTrail.setKeyword(sk.getKeywordId());
-		}
-		else {
-			e = (ElevateResult)jp.getArgs()[0];			
-			auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
-			auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
-			auditTrail.setReferenceId(e.getEdp());
-		}
-		
+		ElevateResult e = (ElevateResult)jp.getArgs()[0];
+		auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
+		auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
+		auditTrail.setReferenceId(e.getEdp());
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Adding EDP[%1$s] to position[%2$s] expiring on[%3$tF]. Comment[%4$s]",
@@ -167,22 +154,10 @@ public class AuditInterceptor {
 	}
 
 	private void logExclude(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
-		
-		StoreKeyword sk = null;
-		ExcludeResult e = null;
-
-		if (auditable.operation() == Operation.clear) {
-			sk = (StoreKeyword)jp.getArgs()[0];
-			auditTrail.setStoreId(sk.getStoreId());
-			auditTrail.setKeyword(sk.getKeywordId());
-		}
-		else {
-			e = (ExcludeResult)jp.getArgs()[0];			
-			auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
-			auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
-			auditTrail.setReferenceId(e.getEdp());
-		}
-		
+		ExcludeResult e = (ExcludeResult)jp.getArgs()[0];
+		auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
+		auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
+		auditTrail.setReferenceId(e.getEdp());
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Adding EDP[%1$s]. Comment[%2$s]",
@@ -245,8 +220,8 @@ public class AuditInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
-		String[] searchTerms = rule.getSearchTerm().split(Constants.DBL_ESC_PIPE_DELIM);
-		String condition = rule.getCondition().replace(Constants.DBL_PIPE_DELIM, Constants.OR); 
+		List<String> searchTerms = rule.getSearchTerms();
+		String condition = rule.getRedirectFilter(); 
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		for (String searchTerm : searchTerms) {

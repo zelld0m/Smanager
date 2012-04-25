@@ -25,6 +25,15 @@ public class KeywordCacheDao {
 	
 	@Autowired private DaoService daoService;
 	@Autowired private LocalCacheService<CacheModel<?>> localCacheService;
+	
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
+
+	public void setLocalCacheService(
+			LocalCacheService<CacheModel<?>> localCacheService) {
+		this.localCacheService = localCacheService;
+	}
 
 	private String getCacheKey(Store store) throws DaoException, DataException {
 		try {
