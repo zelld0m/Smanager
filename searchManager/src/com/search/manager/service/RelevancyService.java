@@ -416,8 +416,10 @@ public class RelevancyService {
 	@RemoteMethod
 	public RecordSet<RelevancyKeyword> getRelevancy(String keyword){
 		try {
+			Relevancy relevancy = new Relevancy("", "");
+			relevancy.setStore(new Store(UtilityService.getStoreName()));
 			return daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-					new RelevancyKeyword(new Keyword(keyword), new Relevancy("", "")), null, null, 0, 0),
+					new RelevancyKeyword(new Keyword(keyword), relevancy), null, null, 0, 0),
 					MatchType.LIKE_NAME, ExactMatch.MATCH);
 		} catch (DaoException e) {
 			e.printStackTrace();

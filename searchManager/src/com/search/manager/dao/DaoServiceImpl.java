@@ -36,7 +36,6 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Redirect;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -662,7 +661,7 @@ public class DaoServiceImpl implements DaoService {
 			return 0;
 		}
 		return relevancyDAO.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(null, new Relevancy(relevancy.getRelevancyId())), null, null, null, null),
+				new RelevancyKeyword(null, relevancy), null, null, null, null),
 				MatchType.MATCH_ID, ExactMatch.MATCH).getTotalSize();
 	}
 
@@ -671,8 +670,10 @@ public class DaoServiceImpl implements DaoService {
 		if (storeKeyword == null || StringUtils.isEmpty(storeKeyword.getStoreId()) || StringUtils.isEmpty(storeKeyword.getKeywordId())) {
 			return 0;
 		}
+		Relevancy relevancy = new Relevancy("", "");
+		relevancy.setStore(storeKeyword.getStore());
 		return relevancyDAO.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(storeKeyword.getKeyword(), new Relevancy("", "")), null, null, null, null),
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), null, null, null, null),
 				MatchType.LIKE_NAME, ExactMatch.MATCH).getTotalSize();
 	}
 	
