@@ -9,10 +9,13 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.log4j.Logger;
+
 
 public class FileUtil {
 	
 	public static final String XML_FILE_TYPE = ".xml";
+	private static Logger logger = Logger.getLogger(FileUtil.class);
 
 	public static void createDirectory(String basePath,String directoryName) throws Exception{
 		try{
@@ -103,16 +106,25 @@ public class FileUtil {
 
 	public static void deleteFile(String filepath) throws IOException{
 		File file = new File(filepath);
-		
+
 		if(file.exists()){
 			File dir = file.getParentFile();
 
-			if(!file.delete())
+			if(!file.delete()){
 				file.deleteOnExit();
-			
+			}
+
 			if(dir.isDirectory()){
-				if(dir.delete())
+				if(!dir.delete()){
 					dir.deleteOnExit();
+				}
+			}
+			
+			if(!dir.exists())
+				logger.info("File "+filepath+" has been deleted.");
+			else{
+				String newDir = dir.getPath()+".trash."+new Date().getTime();
+				dir.renameTo(new File(newDir));
 			}
 		}
 	}
