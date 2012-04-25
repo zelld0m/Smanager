@@ -404,8 +404,11 @@
 		$('#addSortableImg').qtip({
 			content: {
 				text: $('<div/>'),
-				title: { text: 'Elevate Item', button: true
+				title: { text: 'Add Elevate Item', button: true
 				}
+			},
+			show:{
+				ready: true
 			},
 			events: { 
 				render: function(e, api){
