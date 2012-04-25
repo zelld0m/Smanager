@@ -61,16 +61,19 @@
     <div class="landingCont bgboxGray marB10 txtAL marT20 w97p fsize12 clearfix padT10">
     	<div class="w32p floatL">
     		<h3 class="fsize14">Select Facet</h3>
-    		<div class="colTop topRed padL10" >
-    			<input type="text" class="w180 posRel top2"> <a href="#"><img src="<spring:url value="/images/icon_addField2.png" />" class="posRel bottomn7"></a>
+    		<div class="colTop topRed" >
+    			<select class="w210 posRel top6">
+    				<option> sample </option>
+    				<option> lorem ipsum </option>
+    			</select>
     		</div>
-    		<ul>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> dddddd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> adfasfasfasfasfsdf</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> rrrasfasfasfasdffs</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> wfrwfsdfsfsd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> saffsdf</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> dddd</li>
+    			<ul class="facetList marT10">
+					<li> dddddd <a href="">(100)</a> </li>
+					<li> adfasfasfasfasfsdf <a href="">(0)</a></li>
+					<li> rrrasfasfasfasdffs <a href="">(20)</a></li>
+					<li> wfrwfsdfsfsd <a href="">(5)</a></li>
+					<li> saffsdf <a href="">(7)</a></li>
+					<li> dddd <a href="">(33)</a></li>
 				</ul>
     	</div>
     	<div class="floatL w68p">
@@ -80,12 +83,12 @@
 					<img src="<spring:url value="../css/theme/default/images/redBlue_Arrow.png" />" class="posAbs"> 
 					<h3 class="padL25 fsize14 padT8">Available</h3>
 				</div>
-				<ul>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> dddddd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> adfasfasfasfasfsdf</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> rrrasfasfasfasdffs</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> wfrwfsdfsfsd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> saffsdf</li>
+				<ul class="facetList marT10">
+					<li> dddddd <a href="">(100)</a> </li>
+					<li> adfasfasfasfasfsdf <a href="">(0)</a></li>
+					<li> rrrasfasfasfasdffs <a href="">(20)</a></li>
+					<li> wfrwfsdfsfsd <a href="">(5)</a></li>
+					<li> saffsdf <a href="">(7)</a></li>
 				</ul>
 				
 			</div>
@@ -94,8 +97,8 @@
 					<img src="<spring:url value="../css/theme/default/images/bluegreen_Arrow.png" />" class="posAbs">
 					<h3 class="padL25 fsize14 padT8">Selected</h3>
 				</div>
-				<div style="overflow-y:scroll; max-height: 140px">
-				<ul>
+				<div style="overflow-y:scroll; max-height: 128px">
+				<ul class="marT10">
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> dddddd</li>
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> adfasfasfasfasfsdf</li>
 					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> rrrasfasfasfasdffs</li>

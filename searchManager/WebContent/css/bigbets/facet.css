@@ -21,3 +21,5 @@
 .cssReset .topRed			{ background: url(../theme/default/images/btTopRed.png) repeat-x; }
 .cssReset .topBlue			{ background: url(../theme/default/images/btTopBlue.png) repeat-x; }
 .cssReset .topGreen			{ background: url(../theme/default/images/btTopGreen.png) repeat-x; }
+
+.facetList li				{ padding:3px 2px 4px 2px !important; color:#282828 }
