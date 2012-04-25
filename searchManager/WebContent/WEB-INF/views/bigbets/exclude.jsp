@@ -264,7 +264,7 @@ function initFileUploads() {
        <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
       <!--Pagination-->
       
-      <div id="removeItems" class="txtAR padT10">
+      <div id="removeItems" class="txtAR marT20">
 		<a id="removeBtn" href="javascript:void;" class="buttons btnGray clearfix"><div class="buttons fontBold">Remove Items</div></a>
 	  </div>
     </div>
