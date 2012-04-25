@@ -19,6 +19,7 @@ public class AppInitLoader implements ApplicationContextAware, ServletContextAwa
 	private static ServletContext CTX_WEB;
 	private static ApplicationContext CTX_APP;
 	
+	public static final String GLOBAL_INIT = "GLOBAL_INIT_PROPERTIES";
 	private static LocalCacheService<CacheModel<?>> localCacheService;
 	
 	public void setLocalCacheService(LocalCacheService<CacheModel<?>> localCacheService_) {
@@ -41,7 +42,7 @@ public class AppInitLoader implements ApplicationContextAware, ServletContextAwa
 	}
 	
 	public void run() throws Exception {
-		String globalInitProp = CTX_WEB.getInitParameter(Constants.GLOBAL_INIT);
+		String globalInitProp = CTX_WEB.getInitParameter(GLOBAL_INIT);
 		String[] props = globalInitProp.split(",");
 		
 		logger.info(">>>> LOADING APP-GLOBAL INIT <<<<");
@@ -69,6 +70,6 @@ public class AppInitLoader implements ApplicationContextAware, ServletContextAwa
 		
 		CacheModel<String> model = new CacheModel<String>();
 		model.setMap(map);
-		localCacheService.putLocalCache(Constants.GLOBAL_INIT, model);
+		localCacheService.putLocalCache(GLOBAL_INIT, model);
 	}
 }
