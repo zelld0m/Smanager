@@ -270,6 +270,17 @@ public class ElevateService{
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
 	
+	@RemoteMethod
+	public int clearRule(String keyword) {
+		try {
+			logger.info(String.format("%s", keyword));
+			return daoService.clearElevateResult(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		} catch (DaoException e) {
+			logger.error("Failed during clearRule()",e);
+		}
+		return -1;
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	}

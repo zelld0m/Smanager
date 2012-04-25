@@ -42,28 +42,39 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div>
-				<table class="tblItems w100p marT5" id="rule">
+				<table class="tblItems w100p marT5" >
 					<tr>
 						<th width="24px" id="selectAll"><input type="checkbox"></th>
 						<th width="268px" class="txtAL">Rule ID</th>
-						<th>Approval Status</th>
+						<th width="100px">Approval Status</th>
 						<th width="110px">Production Status</th>
 						<th width="85px">Last Publish</th>
 					</tr>
 				</table>
 			</div>
 			<div style="max-height:360px; overflow-y:scroll">
-				<table class="tblItems w100p">
+				<table class="tblItems w100p" id="rule">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="268px" id="ruleRefId"></td>
-							<td class="txtAC" id="approvalStatus"></td>
-							<td class="txtAC" id="productionStatus"></td>
-							<td width="85px" class="txtAC" id="productionDate"></td>
+							<td width="268px" id="ruleRefId">
+								<p id="ruleName"></p>
+								<p id="ruleId" class="fsize11"><a href="javascript:void(0);"></a></p>
+							</td>
+							<td width="100px" class="txtAC" id="approvalStatus"></td>
+							<td width="110px" class="txtAC" id="productionStatus"></td>
+							<td class="txtAC" id="productionDate"></td>
 						</tr>
 					</tbody>
 				</table>
+			</div>
+			<div id="actionBtn" class="floatR marT10" style="display:none">
+				<a id="publishBtn" href="javascript:void(0);"
+					class="buttons btnGray clearfix"><div class="buttons fontBold">Publish</div>
+				</a>
+				<a id="unpublishBtn" href="javascript:void(0);"
+					class="buttons btnGray clearfix"><div class="buttons fontBold">Unpublish</div>
+				</a>
 			</div>
 		</div>
 			

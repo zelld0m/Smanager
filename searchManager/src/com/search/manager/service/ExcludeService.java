@@ -251,6 +251,17 @@ public class ExcludeService {
 		return -1;
 	}
 
+	@RemoteMethod
+	public int clearRule(String keyword) {
+		try {
+			logger.info(String.format("%s", keyword));
+			return daoService.clearExcludeResult(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		} catch (DaoException e) {
+			logger.error("Failed during clearRule()",e);
+		}
+		return 0;
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	}

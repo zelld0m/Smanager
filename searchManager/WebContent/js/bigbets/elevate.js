@@ -26,6 +26,20 @@
 
 	$(document).ready(function() { 
 
+		updateSortableItemPosition = function(edp, destinationIndex) {
+			if ($.isNotBlank(getSelectedKeyword())){
+				ElevateServiceJS.updateElevate(getSelectedKeyword(),edp,destinationIndex, {
+					callback : function(data){
+						updatePositionBox();
+						updateSortableList(getSelectedKeyword(), sortablePage);
+					},
+					preHook: function(){ prepareSortableList(); },
+					postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); },
+					errorHandler: function(message){ alert(message);}
+				});
+			}
+		},
+		
 		populateKeywordList = function(page){
 			$("#keywordList").sidepanel({
 				fieldId: "keywordId",
@@ -578,7 +592,7 @@
 			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This elevate rule will be locked for approval. Continue?"))
-					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), false,{
+					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), getSelectedKeyword(), false,{
 						callback: function(data){
 							populateKeywordList();
 							updateSortableList();
