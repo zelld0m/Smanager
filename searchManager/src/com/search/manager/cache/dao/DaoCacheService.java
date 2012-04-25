@@ -2,6 +2,7 @@ package com.search.manager.cache.dao;
 
 import java.util.List;
 
+import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.ElevateResult;
@@ -43,5 +44,11 @@ public interface DaoCacheService {
 	public boolean updateRelevancyRule(Relevancy relevancy) throws DaoException, DataException;
 	public boolean resetRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
+	/* Users */
+	public boolean loginUser(UserDetailsImpl userDetails) throws DaoException, DataException; 
+	public boolean logoutUser(String username) throws DaoException, DataException; 
+	public UserDetailsImpl getUser(String username) throws DaoException, DataException;
+	public boolean setUserCurrentPage(String username, String currentPage) throws DaoException, DataException;
+
 }
 

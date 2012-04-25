@@ -36,6 +36,13 @@ public class RedirectRule implements Serializable {
 		super();
 	}
 
+	public RedirectRule(String ruleId, String ruleName, String searchTerm) {
+		super();
+		this.ruleId = ruleId;
+		this.ruleName = ruleName;
+		this.searchTerm = searchTerm;
+	}
+	
 	public RedirectRule(String storeId, String searchTerm) {
 		super();
 		this.storeId = storeId;

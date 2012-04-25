@@ -542,12 +542,6 @@ public class DaoServiceImpl implements DaoService {
 		throw new DaoException("Unsupported operation");
 	}
 
-	@Override
-	public int updateRedirectMapping(String redirectId, List<String> keywords) throws DaoException {
-		// TODO Auto-generated method stub
-		throw new DaoException("Unsupported operation");
-	}
-
 	/* Relevancy */
 	@Override
 	public int addOrUpdateRelevancy(Relevancy relevancy) throws DaoException {
@@ -744,6 +738,42 @@ public class DaoServiceImpl implements DaoService {
 		return redirectRuleDAO.getRedirectRules(searchCriteria);
 	}
 
+	@Override
+	public int addRedirectKeyword(RedirectRule rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeRedirectKeyword(RedirectRule rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int addRedirectCondition(RedirectRule rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int removeRedirectCondition(RedirectRule rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getRedirectKeywords(RedirectRule rule) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getRedirectKeywords(StoreKeyword storeKeyword) throws DaoException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 	public KeywordDAO getKeywordDAO() {
 		return keywordDAO;
 	}
@@ -829,9 +859,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
+	public RecordSet<Comment> getComment(String referenceId) throws DaoException {
+		return commentDAO.getComment(referenceId);
 	}
 
 	@Override

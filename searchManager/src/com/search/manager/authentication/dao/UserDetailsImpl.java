@@ -1,6 +1,7 @@
 package com.search.manager.authentication.dao;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,10 @@ public class UserDetailsImpl implements UserDetails {
 
 	private boolean enabled;
 
+	private Date loggedInTime;
+	
+	private String currentPage;	
+	
 	public UserDetailsImpl() {}
 	
 	public UserDetailsImpl(Collection<GrantedAuthority> authorities, String password, String username, String fullName, boolean accountNonExpired,
@@ -106,4 +111,21 @@ public class UserDetailsImpl implements UserDetails {
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}		
+	
+	public void setLoggedInTime(Date loggedintime) {
+		this.loggedInTime = loggedintime;
+	}
+
+	public void setCurrentPage(String currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public Date getLoggedIntime() {
+		return loggedInTime;
+	}
+
+	public String getCurrentPage() {
+		return currentPage;
+	}
+	
 }

@@ -154,7 +154,9 @@ public class DAOConstants {
 	public static final String PARAM_SEARCH_TERM	 	 			= "search_term";
 	public static final String PARAM_ACTIVE_FLAG		 			= "active_flag";
 	public static final String PARAM_REDIRECT_TYPE_ID	 			= "redirect_type_id";
-	
+	public static final String PARAM_CHANGE_KEYWORD		 			= "change_keyword";
+	public static final String PARAM_UPDATE_FLAG 					= "updFlag";
+
 	public static final String PARAM_RULE_STATUS_ID		 			= "rule_status_id";
 	public static final String PARAM_RULE_TYPE_ID		 			= "rule_type_id";
 	public static final String PARAM_COMMENT_ID		 				= "comment_id";

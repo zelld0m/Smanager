@@ -3,12 +3,14 @@ package com.search.manager.cache.dao;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.axis.utils.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
@@ -32,6 +34,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Autowired private ExcludeCacheDao excludeCacheDao;
 	@Autowired private RedirectCacheDao redirectCacheDao;
 	@Autowired private RelevancyCacheDao relevancyCacheDao;
+	@Autowired private UserCacheDao userCacheDao;
 	
 	public void setInstance(DaoCacheServiceImpl instance) {
 		this.instance = instance;
@@ -255,6 +258,46 @@ public class DaoCacheServiceImpl implements DaoCacheService {
                 ex.printStackTrace();
             }
         }
+	}
+
+	@Override
+	public boolean loginUser(UserDetailsImpl userDetails) {
+		UserDetailsImpl user = new UserDetailsImpl();
+		user.setFullName(userDetails.getUsername());
+		user.setUsername(userDetails.getFullName());
+		if (userDetails != null && StringUtils.isNotEmpty(userDetails.getUsername())) {
+			return userCacheDao.addUser(userDetails);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean logoutUser(String username) {
+		if (StringUtils.isNotEmpty(username)) {
+			return userCacheDao.deleteUser(username);			
+		}
+		return false;
+	}
+
+	@Override
+	public UserDetailsImpl getUser(String username) throws DaoException, DataException {
+		if (StringUtils.isNotEmpty(username)) {
+			return userCacheDao.getUser(username);			
+		}
+		return null;
+	}
+
+	@Override
+	public boolean setUserCurrentPage(String username, String currentPage) throws DaoException, DataException {
+		if (StringUtils.isNotEmpty(username)) {
+			UserDetailsImpl user = userCacheDao.getUser(username);	
+			if (user != null) {
+				user.setCurrentPage(currentPage);
+				userCacheDao.updateUser(user);
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

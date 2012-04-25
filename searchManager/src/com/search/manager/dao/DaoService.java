@@ -21,10 +21,10 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 
 public interface DaoService {
 	
@@ -51,8 +51,12 @@ public interface DaoService {
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
 	public int removeRedirectRule(RedirectRule rule) throws DaoException;
 	
-	/* Redirect - Keyword mapping */
-	public int updateRedirectMapping(String redirectId, List<String> keywords) throws DaoException;
+	public int addRedirectKeyword(RedirectRule rule) throws DaoException;
+	public int removeRedirectKeyword(RedirectRule rule) throws DaoException;
+	public int addRedirectCondition(RedirectRule rule) throws DaoException;
+	public int removeRedirectCondition(RedirectRule rule) throws DaoException;	
+	public int getRedirectKeywords(RedirectRule rule) throws DaoException;
+	public int getRedirectKeywords(StoreKeyword storeKeyword) throws DaoException;
 	
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
@@ -183,7 +187,7 @@ public interface DaoService {
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	
     /* Rule Status */
-    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
+    public RecordSet<Comment> getComment(String ruleStatusId) throws DaoException;
 	public int addComment(String refId, String comment, String userName) throws DaoException;
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;

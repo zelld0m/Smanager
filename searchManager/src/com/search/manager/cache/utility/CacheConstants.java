@@ -4,12 +4,13 @@ import com.search.manager.exception.DataException;
 
 public class CacheConstants {
 	public static final String SEARCH_CACHE_KEY = "src";
-	public static final String ELEVATED_LIST_CACHE_KEY = "EL";
-	public static final String EXCLUDED_LIST_CACHE_KEY = "EXL";
-	public static final String RELEVANCY_LIST_CACHE_KEY = "RL";
-	public static final String RELEVANCY_DEFAULT_CACHE_KEY = "RD";
-	public static final String KEYWORDS_CACHE_KEY = "KW";
-	public static final String RULE_REDIRECT_CACHE_KEY = "RR";
+	public static final String ELEVATED_LIST_CACHE_KEY 			= "EL";
+	public static final String EXCLUDED_LIST_CACHE_KEY 			= "EXL";
+	public static final String RELEVANCY_LIST_CACHE_KEY 		= "RL";
+	public static final String RELEVANCY_DEFAULT_CACHE_KEY 		= "RD";
+	public static final String KEYWORDS_CACHE_KEY 				= "KW";
+	public static final String RULE_REDIRECT_CACHE_KEY			= "RR";
+	public static final String USER_CACHE_KEY 					= "US";
 	
 	public enum Operation{
 		add,
@@ -36,4 +37,9 @@ public class CacheConstants {
 		return key.toString();
 	}
 	
+	public static String getCacheKey(String type, String kw) throws DataException {
+		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
+						.append(".").append(type).append("_").append(kw.replace(" ", "_"));
+		return key.toString();
+	}
 }
