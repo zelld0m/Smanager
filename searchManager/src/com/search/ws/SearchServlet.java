@@ -44,7 +44,9 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
 
@@ -202,9 +204,9 @@ public class SearchServlet extends HttpServlet {
 			// set relevancy filters if any was specified
 			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
 			Relevancy relevancy = null;
-			if (fromSearchGui) {
+			if (!fromSearchGui) {
 				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
-				logger.debug("Applying relevancy with id: " + relevancy.getRelevancyId());
+				logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
 			}
 			else {
 				if (StringUtils.isNotBlank(relevancyId)) {
@@ -212,20 +214,17 @@ public class SearchServlet extends HttpServlet {
 					relevancy.setRelevancyId(relevancyId);
 				}
 				else if (keywordPresent) {
-					// get default
-					relevancy = new Relevancy();
-					relevancy.setRelevancyName("");
-					relevancy.setStore(new Store(coreName));
-					RelevancyKeyword rk = new RelevancyKeyword();
-					rk.setRelevancy(relevancy);
-					rk.setKeyword(new Keyword(keyword));
-					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(
-							new SearchCriteria<RelevancyKeyword>(rk, new Date(), null, 0, 0)
-							, MatchType.LIKE_NAME, ExactMatch.MATCH);
+					// get relevancy mapped to keyword
+					relevancy = new Relevancy("", "");
+					relevancy.setStore(new Store(UtilityService.getStoreName()));
+					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+							new RelevancyKeyword(new Keyword(keyword), relevancy), null, null, 0, 0),
+							MatchType.LIKE_NAME, ExactMatch.MATCH);
 					if (relevancyKeywords.getTotalSize() > 0) {
 						relevancy.setRelevancyId(relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId());						
 					}
 					else {
+						// apply default relevancy
 						relevancy.setRelevancyId(coreName + "_" + "default");
 					}
 				}
@@ -247,10 +246,12 @@ public class SearchServlet extends HttpServlet {
 				Map<String, String> parameters = relevancy.getParameters();
 				for (String paramName: parameters.keySet()) {
 					String paramValue = parameters.get(paramName);
-					logger.debug("adding " + paramName + ": " + paramValue);
-					nvp = new BasicNameValuePair(paramName, paramValue);
-					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
-						nameValuePairs.add(nvp);
+					if (StringUtils.isNotEmpty(paramValue)) {
+						logger.debug("adding " + paramName + ": " + paramValue);
+						nvp = new BasicNameValuePair(paramName, paramValue);
+						if (addNameValuePairToMap(paramMap, paramName, nvp)) {
+							nameValuePairs.add(nvp);
+						}						
 					}
 				}
 			}
@@ -362,18 +363,20 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.add(nvp);
 
 			// collate exclude list
-			StringBuilder excludeValues = new StringBuilder();
-			generateExcludeList(excludeValues, excludeList);
-			if (excludeValues.length() > 0) {
-				excludeValues.insert(0, "-");
+			if (excludeList != null && !excludeList.isEmpty()) {
+				StringBuilder excludeValues = new StringBuilder();
+				generateExcludeList(excludeValues, excludeList);
+				if (excludeValues.length() > 0) {
+					excludeValues.insert(0, "-");
+				}
+				// set filter to not include exclude list &fq=-EDP:(5400741)
+				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeValues.toString());
+				nameValuePairs.add(nvp);
 			}
+			
 			// collate elevate list
 			StringBuilder elevateValues = new StringBuilder();
 			generateElevateList(elevateValues, elevatedList);
-
-			// set filter to not include exclude list &fq=-EDP:(5400741)
-			nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeValues.toString());
-			nameValuePairs.add(nvp);
 
 			// redirect 
 			try {
@@ -533,6 +536,7 @@ public class SearchServlet extends HttpServlet {
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);
+			SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, keyword);
 		} catch (Throwable t) {
 			logger.error("Failed to send solr request", t);
 			throw new ServletException(t);
