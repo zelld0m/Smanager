@@ -425,7 +425,7 @@
 			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This query cleaning rule will be locked for approval. Continue?"))
-					DeploymentServiceJS.processRuleStatus("Query Cleaning", ruleId, false,{
+					DeploymentServiceJS.processRuleStatus("Query Cleaning", ruleId, ruleName, false,{
 						callback: function(data){
 							
 						}

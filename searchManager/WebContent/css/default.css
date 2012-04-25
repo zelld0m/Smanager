@@ -75,11 +75,15 @@ body 							{ margin: 0px; }
 .cssReset .w730, .w730			{width:730px}
 .cssReset .w980, .w980			{width:980px !important}
 .cssReset .w100p, .w100p		{width:100% }
+.cssReset .w97p, .w97p			{width:97% }
+.cssReser .w68p, .w68p			{ width:68% }
 .cssReser .w50p, .w50p			{ width:50% }
-.cssReser .w45p, .w45p			{ width:45% }
-.cssReser .w45p83p, .w45p83		{ width:45.83% }
+.cssReser .w49p, .w49p			{ width:49% }
 .cssReser .w46p, .w46p			{ width:46% }
 .cssReser .w47p, .w47p			{ width:47% }
+.cssReser .w45p, .w45p			{ width:45% }
+.cssReser .w45p83p, .w45p83		{ width:45.83% }
+.cssReser .w32p, .w32p			{ width:32% }
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
 .cssReset .pad3, .pad3			{ padding:3px }
@@ -107,6 +111,7 @@ body 							{ margin: 0px; }
 .cssReset .padL7				{padding-left:7px}
 .cssReset .padL10				{padding-left:10px}
 .cssReset .padL15				{padding-left:15px}
+.cssReset .padL25				{padding-left:25px}
 .cssReset .padL55				{padding-left:55px}
 .cssReset .padL100, .padL100	{padding-left:100px !important}
 .cssReset .padL212, .padL212	{padding-left:212px !important}
@@ -119,6 +124,7 @@ body 							{ margin: 0px; }
 .cssReset .padB3, .padB3		{padding-bottom:3px}
 .cssReset .padB4, .padB4		{padding-bottom:4px}
 .cssReset .padB5, .padB5		{padding-bottom:5px}
+.cssReset .padB8, .padB8		{padding-bottom:8px}
 .cssReset .padB10, .padB10		{padding-bottom:10px}
 .cssReset .padB25, .padB25		{padding-bottom:25px}
 .cssReset .padLR3, .padLR3		{ padding-left:3px; padding-right:3px; }
@@ -191,7 +197,9 @@ body 							{ margin: 0px; }
 .cssReset .minHeight32, 
 .minHeight32					{ min-height:32px; }
 .cssReset .minHeight120,
-.minHeight120	
+.minHeight120					{ min-height:120px; }
+.cssReset .minHeight155,
+.minHeight155					{ min-height:155px; }
 .cssReset .minHeight185,
 .minHeight185					{ min-height:185px; }
 .cssReset .minHeight190,
@@ -214,8 +222,14 @@ body 							{ margin: 0px; }
 .cssReset .minW240				{ min-width:240px !important; }
 
 .cssReset .top1, .top1			{ top:1px; }
+.cssReset .top2, .top2			{ top:2px; }
+.cssReset .top4, .top4			{ top:4px; }
 .cssReset .top6					{ top:6px; }
+.cssReset .topn4, .topn4		{ top:-4px; }
 .cssReset .right4				{ right:4px }
+.cssReset .bottomn4, .bottomn4		{ bottom:-4px; }
+.cssReset .bottomn7, .bottomn7		{ bottom:-7px; }
+
 
 /* font size */
 .cssReset .fsize8 				{ font-size:8px }

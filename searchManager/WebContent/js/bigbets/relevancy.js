@@ -1269,7 +1269,7 @@
 			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This ranking rule will be locked for approval. Continue?"))
-						DeploymentServiceJS.processRuleStatus("Ranking Rule", selectedRelevancy.relevancyId, false,{
+						DeploymentServiceJS.processRuleStatus("Ranking Rule", selectedRelevancy.relevancyId, selectedRelevancy.relevancyName ,false,{
 							callback: function(data){
 
 							}

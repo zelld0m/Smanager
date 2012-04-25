@@ -48,7 +48,7 @@ public class PropsUtils {
     
     public static String getValue(String propsName){
     	try{
-			CacheModel<String> model = (CacheModel<String>) localCacheService.getLocalCache(Constants.GLOBAL_INIT);
+			CacheModel<String> model = localCacheService.getLocalCache(AppInitLoader.GLOBAL_INIT);
     		return model.getMap().get(propsName);
     	}catch (Exception e) {}
     	return "";

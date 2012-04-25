@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -194,6 +195,17 @@ public class DeploymentService {
 			logger.error("Failed during addComment()",e);
 		}
 		return result;
+	}
+
+	@RemoteMethod
+	public RecordSet<Comment> getComment(String ruleStatusId) {
+		RecordSet<Comment> rSet = null;
+		try {
+			rSet = daoService.getComment(ruleStatusId);
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
+		return rSet;
 	}
 
 	@RemoteMethod

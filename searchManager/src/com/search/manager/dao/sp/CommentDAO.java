@@ -110,11 +110,10 @@ public class CommentDAO {
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
+    public RecordSet<Comment> getComment(String referenceId) throws DaoException {
 		try {
-			Comment comment = searchCriteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_REFERENCE_ID, comment.getReferenceId());
+			inputs.put(DAOConstants.PARAM_REFERENCE_ID, referenceId);
 			return DAOUtils.getRecordSet(getCommentStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getComment()", e);

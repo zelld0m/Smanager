@@ -25,6 +25,19 @@
   		<copy toDir="${conf.home}">
   	  		<fileset dir="${project}/config" />
   	  	</copy>
+  	
+  	
+  		<javac srcdir="${src.home}" destdir="${project}/build">
+  		      <classpath refid="compile.classpath"/>
+  		</javac>
+  		    
+  	  	<mkdir  dir="${jar.home}"/>
+  	  	  	
+  	  	<jar destfile="${jar.home}/srcguiws.jar">
+  	  	  	<fileset dir="${project}/build">
+  	  	  			<include name="**/*.class"/> 
+  	  	  	</fileset>
+  	  	 </jar>	
   </target>
 	
   <target name="warFile">

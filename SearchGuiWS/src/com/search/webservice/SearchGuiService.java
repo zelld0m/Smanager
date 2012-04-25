@@ -7,5 +7,6 @@ import com.search.webservice.model.TransportList;
 public interface SearchGuiService{
 	public boolean deployRules(TransportList list);
 	public boolean recallRules(TransportList list);
+	public boolean unDeployRules(TransportList list);
 	public List<BackupInfo> getBackupInfo(TransportList list);
 }

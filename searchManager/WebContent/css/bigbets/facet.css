@@ -1,0 +1,25 @@
+/* facet list */
+.facetlist 		{ list-style: none;  }
+.facetlist li	{ padding:3px }
+
+
+.cssReset .landingCont		{ padding:6px 10px; margin-top:1px; margin-bottom:20px;  }
+.cssReset .landingCont ul		{ list-style: none; margin:0 }
+.cssReset .landingCont li		{ padding: 2px; margin:0 }
+.cssReset .AlphaCont			{ padding:8px}
+.cssReset .AlphaCont h3			{ font-size: 14px; }
+.cssReset .AlphaCont label		{ float:left; margin-left:10px; margin-top:10px }
+
+.cssReset .AlphaCont ul			{ list-style: none }
+.cssReset .AlphaCont li			{ padding: 2px 3px; }
+.cssReset .AlphaCont .delete, 
+.cssReset .landingCont .iconBtn { position:relative; top:4px; margin-right:5px; }
+
+.cssReset .AlphaCont li input[type=text] { padding:0 !important; font-size:11px !important;}
+
+.cssReset .colTop			{ border-top:1px solid #d2d2d2; border-bottom:1px solid #d2d2d2; height: 36px; }
+.cssReset .topRed			{ background: url(../theme/default/images/btTopRed.png) repeat-x; }
+.cssReset .topBlue			{ background: url(../theme/default/images/btTopBlue.png) repeat-x; }
+.cssReset .topGreen			{ background: url(../theme/default/images/btTopGreen.png) repeat-x; }
+
+.facetList li				{ padding:3px 2px 4px 2px !important; color:#282828 }

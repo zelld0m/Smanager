@@ -46,9 +46,9 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					
 					switch (list.getRuleEntity()) {
 					case ELEVATE:
-						return deploymentRuleService.pushElevateList(list.getStore(), ruleList);
+						return deploymentRuleService.publishElevateRules(list.getStore(), ruleList);
 					case EXCLUDE:
-						return deploymentRuleService.pushExcludeList(list.getStore(), ruleList);
+						return deploymentRuleService.publishExcludeRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -60,7 +60,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case QUERY_CLEANING:
 						break;
 					case RANKING_RULE:
-						break;
+						return deploymentRuleService.publishRankingRules(list.getStore(), ruleList);
 					default:
 						break;
 					}
@@ -83,9 +83,9 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					
 					switch (list.getRuleEntity()) {
 					case ELEVATE:
-						return deploymentRuleService.recallElevateList(list.getStore(), ruleList);
+						return deploymentRuleService.recallElevateRules(list.getStore(), ruleList);
 					case EXCLUDE:
-						return deploymentRuleService.recallExcludeList(list.getStore(), ruleList);
+						return deploymentRuleService.recallExcludeRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -97,7 +97,43 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case QUERY_CLEANING:
 						break;
 					case RANKING_RULE:
+						return deploymentRuleService.recallRankingRules(list.getStore(), ruleList);
+					default:
 						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean unDeployRules(TransportList list) {
+		try {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.unpublishElevateRules(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.unpublishExcludeRules(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						return deploymentRuleService.unpublishRankingRules(list.getStore(), ruleList);
 					default:
 						break;
 					}

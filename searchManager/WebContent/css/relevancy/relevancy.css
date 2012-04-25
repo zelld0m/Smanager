@@ -1,10 +1,10 @@
 
 .relevancy h4					{ border:1px solid #d0d0d0; background:#ededed; padding:6px;  }
 
-.relevancy .landingCont			{ background:#f1f0f0; border:1px solid #e5e4e4; padding:6px 10px; margin-top:1px; margin-bottom:20px;  }
-.relevancy .landingCont ul		{ list-style: none; background: #fafafa; margin:0 }
+.relevancy .landingCont			{ padding:6px 10px; margin-top:1px; margin-bottom:20px;  }
+.relevancy .landingCont ul		{ list-style: none; margin:0 }
 .relevancy .landingCont li		{ padding: 4px; margin:0 }
-.relevancy .AlphaCont			{ background: #ebf1f5; border:1px solid #c9d6de; padding:6px}
+.relevancy .AlphaCont			{ padding:6px}
 .relevancy .AlphaCont label		{ float:left; margin-left:10px; }
 
 

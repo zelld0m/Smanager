@@ -47,9 +47,9 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="268px" class="txtAL">Rule ID</th>
+							<th width="160px" class="txtAL">Rule ID</th>
+							<th width="218px" class="txtAL">Rule Name</th>
 							<th width="85px">Type</th>
-							<th width="110px">Approve Status</th>
 							<th>Requested By</th>
 						</tr>
 					<tbody>
@@ -60,9 +60,9 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="268px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
+							<td width="160px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
+							<td width="218px" id="ruleRefName"></td>
 							<td width="85px" class="txtAC" id="type"></td>
-							<td width="110px" class="txtAC" id="approvalStatus"></td>
 							<td class="txtAC" id="requestedBy"></td>
 						</tr>
 					</tbody>

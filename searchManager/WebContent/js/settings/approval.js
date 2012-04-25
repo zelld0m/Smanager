@@ -91,8 +91,8 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#ruleRefId > a").html(list[i]["ruleRefId"]);
+							$tr.find("td#ruleRefName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
-							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
 							$tr.find("td#requestedBy").html(list[i]["lastModifiedBy"]);
 							$tr.appendTo($table);
 						}
