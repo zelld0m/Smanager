@@ -218,7 +218,7 @@ public class SearchServlet extends HttpServlet {
 					relevancy = new Relevancy("", "");
 					relevancy.setStore(new Store(UtilityService.getStoreName()));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-							new RelevancyKeyword(new Keyword(keyword), relevancy), null, null, 0, 0),
+							new RelevancyKeyword(new Keyword(keyword), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);
 					if (relevancyKeywords.getTotalSize() > 0) {
 						relevancy.setRelevancyId(relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId());						
@@ -235,8 +235,8 @@ public class SearchServlet extends HttpServlet {
 				
 				if (relevancy != null) {
 					// load relevancy details
-					logger.debug("Retrieving relevancy with id: " + relevancy.getRelevancyId());
 					relevancy = daoService.getRelevancyDetails(relevancy);
+					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
 				}
 			}
 			
@@ -384,6 +384,7 @@ public class SearchServlet extends HttpServlet {
 				RedirectRule redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
 												: daoCacheService.getRedirectRule(sk);
 				if (redirect != null) {
+					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
 					if (redirect.isRedirectToPage()) {
 						// TODO: fix redirect to page implementation
 						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
