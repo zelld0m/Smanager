@@ -62,8 +62,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int approveRule(String ruleType, String ...ruleRefIdList) {
-		return approveRule(ruleType, Arrays.asList(ruleRefIdList));
+	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency
+		approveRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return 0;
 	}
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {

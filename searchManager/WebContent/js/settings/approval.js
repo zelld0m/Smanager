@@ -4,29 +4,32 @@
 		var entityName = "";
 		var tabSelected = "";
 		var tabSelectedText = "";
+		var refresh = false;
 
 		var getSelectedItems = function(){
-			var selectedRefIds = [];
+			var selectedItems = [];
 			$(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
-				selectedRefIds[$(this).attr("id")]=$(this).attr("name");
+				selectedItems[$(this).attr("id")]=$(this).attr("name");
 			});
-			return selectedRefIds;
+			return selectedItems;
 		};
 		
 		var getSelectedRefId = function(){
 			var selectedRefIds = [];
-			for (var i in getSelectedItems()){
+			var selectedItems = getSelectedItems();
+			for (var i in selectedItems){
 				selectedRefIds.push(i); 
 			}
 			return selectedRefIds; 
 		};
 
 		var getSelectedStatusId = function(){
-			var getSelectedStatusId = [];
-			for (var i in getSelectedItems()){
-				getSelectedStatusId.push(getSelectedItems()[i]); 
+			var selectedStatusId = [];
+			var selectedItems = getSelectedItems();
+			for (var i in selectedItems){
+				selectedStatusId.push(selectedItems[i]); 
 			}
-			return getSelectedStatusId; 
+			return selectedStatusId; 
 		};
 		
 		var checkSelectAllHandler = function(){
@@ -72,9 +75,8 @@
 
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
-							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(),{
+							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
-									addComment(comment, getSelectedStatusId());
 									getApprovalList();
 								},
 								preHook:function(){ 
@@ -86,9 +88,8 @@
 							});break;
 
 						case "rejectBtn": 
-							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(),{
+							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
-									addComment(comment, getSelectedStatusId());
 									getApprovalList();
 								},
 								preHook:function(){ 
@@ -207,16 +208,16 @@
 
 							switch($(evt.currentTarget).attr("id")){
 							case "approveBtn": 
-								DeploymentServiceJS.approveRule("Elevate", ruleStatus["ruleRefId"], {
+								DeploymentServiceJS.approveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
 									callback: function(data){
-										addComment(ruleStatusId,comment);
+										refresh = true;
 									}
 								});break;
 
 							case "rejectBtn": 
-								DeploymentServiceJS.unapproveRule("Elevate", ruleStatus["ruleRefId"], {
+								DeploymentServiceJS.unapproveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
 									callback: function(data){
-										addComment(ruleStatusId,comment);
+										refresh = true;
 									}
 								});break;
 							}	
@@ -298,6 +299,7 @@
 		};
 
 		var previewRow = function(evt){
+			
 			$(this).qtip({
 				content: {
 					text: $('<div/>'),
@@ -324,6 +326,7 @@
 						populatePreview($content, evt.data.ruleStatus);
 					},
 					hide: function(event, api) {
+						if (refresh) getApprovalList();
 						api.destroy();
 					}
 				}
