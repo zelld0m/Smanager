@@ -6,18 +6,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+@Component("sessionAuthenticationStrategy")
 public class ConcurrentSessionControlStrategyImpl extends ConcurrentSessionControlStrategy {
 
 	private SessionRegistry sessionRegistry;
 
+	@Autowired
 	public ConcurrentSessionControlStrategyImpl(SessionRegistry sessionRegistry) {
 		super(sessionRegistry);
+		setMaximumSessions(1);
 		this.sessionRegistry = sessionRegistry;
 	}
 	

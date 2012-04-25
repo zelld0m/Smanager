@@ -1,12 +1,17 @@
 package com.search.manager.authentication.session;
 
+import groovy.lang.Singleton;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.stereotype.Component;
 
+@Singleton
+@Component("sessionRegistry")
 public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 
 	private static final Logger logger = Logger.getLogger(ClusterAwareSessionRegistryImpl.class);
