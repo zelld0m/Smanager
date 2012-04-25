@@ -68,14 +68,18 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10" style="display:none">
-				<textarea id="approvalComment" rows="1" style="width:320px; height:32px"></textarea>	
-				<a id="approveBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
-				</a>
-				<a id="rejectBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
-				</a>
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w650 marR5" style="display:none; background: #f3f3f3;">
+				<label class="floatL w100 padL15">Comment: </label>
+				<label class="floatL w510"><textarea id="approvalComment" rows="1" class="w510" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
 			</div>
 		</div>
 		
