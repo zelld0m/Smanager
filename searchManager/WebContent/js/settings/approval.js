@@ -6,13 +6,29 @@
 		var tabSelectedText = "";
 
 		var getSelectedItems = function(){
-			var selectedIds = new Array();
+			var selectedRefIds = [];
 			$(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
-				selectedIds.push($(this).attr("id"));
+				selectedRefIds[$(this).attr("id")]=$(this).attr("name");
 			});
-			return selectedIds;
+			return selectedRefIds;
+		};
+		
+		var getSelectedRefId = function(){
+			var selectedRefIds = [];
+			for (var i in getSelectedItems()){
+				selectedRefIds.push(i); 
+			}
+			return selectedRefIds; 
 		};
 
+		var getSelectedStatusId = function(){
+			var getSelectedStatusId = [];
+			for (var i in getSelectedItems()){
+				getSelectedStatusId.push(getSelectedItems()[i]); 
+			}
+			return getSelectedStatusId; 
+		};
+		
 		var checkSelectAllHandler = function(){
 			$(tabSelected).find("th#selectAll > input[type='checkbox']").on({
 				click: function(evt){
@@ -39,38 +55,54 @@
 			});
 		};
 
-		var approveHandler = function(){
-			$(tabSelected).find("#approveBtn").on({
-				click: function(evt){
-					DeploymentServiceJS.approveRule(entityName, getSelectedItems(), {
-						callback:function(data){
-							getApprovalList();
-						},
-						preHook:function(){ 
-							prepareTabContent(); 
-						},
-						postHook:function(){ 
-							cleanUpTabContent(); 
-						}	
-					});
+		var addComment = function(comment, ruleStatusIds){
+			DeploymentServiceJS.addComment(comment, ruleStatusIds,{
+				callback:function(e){
+
 				}
 			});
 		};
-
-		var rejectHandler = function(){
-			$(tabSelected).find("#rejectBtn").on({
+		
+		var approvalHandler = function(){
+			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
-					DeploymentServiceJS.unapproveRule(entityName, getSelectedItems(), {
-						callback:function(data){
-							getApprovalList();
-						},
-						preHook:function(){ 
-							prepareTabContent(); 
-						},
-						postHook:function(){ 
-							cleanUpTabContent(); 
+					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					
+					if ($.isNotBlank(comment)){
+
+						switch($(evt.currentTarget).attr("id")){
+						case "approveBtn": 
+							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(),{
+								callback: function(data){
+									addComment(comment, getSelectedStatusId());
+									getApprovalList();
+								},
+								preHook:function(){ 
+									prepareTabContent(); 
+								},
+								postHook:function(){ 
+									cleanUpTabContent(); 
+								}	
+							});break;
+
+						case "rejectBtn": 
+							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(),{
+								callback: function(data){
+									addComment(comment, getSelectedStatusId());
+									getApprovalList();
+								},
+								preHook:function(){ 
+									prepareTabContent(); 
+								},
+								postHook:function(){ 
+									cleanUpTabContent(); 
+								}	
+							});break;
 						}	
-					});
+					}else{
+						alert("Please add comment.");
+					}
+					
 				}
 			});
 		};
@@ -90,7 +122,8 @@
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
-							$tr.find("td#ruleRefId > a").html(list[i]["ruleRefId"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+							$tr.find("td#ruleRefId > a").html(list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
 							$tr.find("td#ruleRefName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
 							$tr.find("td#requestedBy").html(list[i]["lastModifiedBy"]);
@@ -102,9 +135,7 @@
 
 						checkSelectHandler();
 						checkSelectAllHandler();
-						approveHandler();
-						rejectHandler();
-						previewRow();
+						approvalHandler();
 					}
 				},
 				preHook:function(){ 
@@ -132,12 +163,13 @@
 				getApprovalList();
 			}
 		});
-
-		var populatePreview = function($content, ruleRefId){
+		
+		var populatePreview = function($content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
 				$content.html($("#previewTemplate").html());
-				ElevateServiceJS.getProducts(null, ruleRefId , 0, 0,{
+
+				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
 						var list = data.list;
 
@@ -165,6 +197,35 @@
 
 					}
 				});
+
+				$content.find("a#approveBtn, a#rejectBtn").on({
+					click:function(evt){
+						var ruleStatusId = ruleStatus["ruleStatusId"];
+						var comment = $.trim($content.find("#approvalComment").val());
+
+						if ($.isNotBlank(comment)){
+
+							switch($(evt.currentTarget).attr("id")){
+							case "approveBtn": 
+								DeploymentServiceJS.approveRule("Elevate", ruleStatus["ruleRefId"], {
+									callback: function(data){
+										addComment(ruleStatusId,comment);
+									}
+								});break;
+
+							case "rejectBtn": 
+								DeploymentServiceJS.unapproveRule("Elevate", ruleStatus["ruleRefId"], {
+									callback: function(data){
+										addComment(ruleStatusId,comment);
+									}
+								});break;
+							}	
+						}else{
+							alert("Please add comment.");
+						}
+					}
+				});
+
 				break;
 			case "Exclude": 
 				$content.html($("#previewTemplate").html());
@@ -236,39 +297,35 @@
 			return $content;
 		};
 
-		var previewRow = function(){
-			$(tabSelected).find(".ruleRefId > a").on({
-				click: function(evt){
-					$(this).qtip({
-						content: {
-							text: $('<div/>'),
-							title: { 
-								text: tabSelectedText + " Rule Preview", button:true
-							}
-						},
-						position: {
-							my: 'center',
-							at: 'center',
-							target: $(window)
-						},
-						show: {
-							modal: true,
-							solo: true,
-							ready: true
-						},
-						style: {
-							width: 'auto'
-						},
-						events: {
-							show: function(event, api) {
-								var $content = $("div", api.elements.content);
-								populatePreview($content, $(evt.target).html());
-							},
-							hide: function(event, api) {
-								api.destroy();
-							}
-						}
-					});
+		var previewRow = function(evt){
+			$(this).qtip({
+				content: {
+					text: $('<div/>'),
+					title: { 
+						text: tabSelectedText + " Rule Preview", button:true
+					}
+				},
+				position: {
+					my: 'center',
+					at: 'center',
+					target: $(window)
+				},
+				show: {
+					modal: true,
+					solo: true,
+					ready: true
+				},
+				style: {
+					width: 'auto'
+				},
+				events: {
+					show: function(event, api) {
+						var $content = $("div", api.elements.content);
+						populatePreview($content, evt.data.ruleStatus);
+					},
+					hide: function(event, api) {
+						api.destroy();
+					}
 				}
 			});
 		};
