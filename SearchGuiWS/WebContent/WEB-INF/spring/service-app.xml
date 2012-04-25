@@ -8,18 +8,6 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-	<beans:bean name="daoCacheService" id="daoCacheService" class="com.search.manager.cache.dao.DaoCacheServiceImpl" scope="singleton">
- 		<beans:property name="daoService" ref="daoService"/>
- 		<beans:property name="cacheService" ref="cacheService"/>
- 		<beans:property name="localCacheService" ref="localCacheService"/>
-    </beans:bean>
-    
-    <beans:bean name="cacheService" class="com.search.manager.cache.service.CacheService" scope="singleton">
-	</beans:bean>
-	
-	<beans:bean name="localCacheService" class="com.search.manager.cache.service.LocalCacheService" scope="singleton">
-	</beans:bean>
-	
 	<beans:bean name="fileService" class="com.search.service.FileServiceImpl" scope="singleton">
 		<beans:property name="daoService" ref="daoService"/>
 	</beans:bean>

@@ -5,25 +5,23 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import com.search.manager.utility.PropsUtils;
-import com.search.webservice.SearchGuiService;
-import com.search.webservice.SearchGuiServiceImpl;
+import com.search.service.DeploymentRuleService;
+import com.search.service.DeploymentRuleServiceImpl;
 
 public class GuiProcessorCronSingle extends QuartzJobBean{
 
-	protected final transient Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = Logger.getLogger(GuiProcessorCronSingle.class);
 
-	private static SearchGuiService searchGuiService;
-	
-	private static String token;
+	private static DeploymentRuleService deploymentRuleService;
+
 	private static String store;
 	
 	static{
 		try {
-			token = PropsUtils.getValue("token");
 			store = PropsUtils.getValue("store");
-			searchGuiService = new SearchGuiServiceImpl();
-		} catch (Exception ex) {
-			ex.printStackTrace(System.err);
+			deploymentRuleService = new DeploymentRuleServiceImpl();
+		} catch (Exception e) {
+			logger.error(e);
 		}
 	}
 
@@ -31,20 +29,81 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 			throws JobExecutionException {
 		try {
 			synchronized (this) {	
-				logger.info("########### Start loading to cache");
-				
-//				if(searchGuiService.loadElevateList(store, token)){
-//					if(searchGuiService.loadExcludeList(store, token)){
-//						if(searchGuiService.loadRelevancyList(store, token)){
-//							searchGuiService.loadRelevancyDetails(store, token);
-//						}
-//					}
-//				}
-
-				logger.info("########### Done loading to cache");
+				processElevateRules();
+				processExcludeRules();
+				//processRedirectRules();
+				processRankingRules();
 			}
 		}catch (Exception e) {
 			logger.error(e);
 		}
+	}
+	
+	public Integer processElevateRules(){
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					logger.info("########### Start loading to elevated rules ...");
+					deploymentRuleService.loadElevateRules(store);
+					logger.info("########### Done loading to elevated rules ...");
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}.start();
+		
+		return 0;
+	}
+	
+	public Integer processExcludeRules(){
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					logger.info("########### Start loading to excluded rules ...");
+					deploymentRuleService.loadExcludeRules(store);
+					logger.info("########### Done loading to excluded rules ...");
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}.start();
+		
+		return 0;
+	}
+	
+	public Integer processRedirectRules(){
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					logger.info("########### Start loading to redirect rules ...");
+					deploymentRuleService.loadRedirectRules(store);
+					logger.info("########### Done loading to redirect rules ...");
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}.start();
+		
+		return 0;
+	}
+	
+	public Integer processRankingRules(){
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					logger.info("########### Start loading to ranking rules ...");
+					deploymentRuleService.loadRankingRules(store);
+					logger.info("########### Done loading to ranking rules ...");
+				} catch (Exception e) {
+					logger.error(e);
+				}
+			}
+		}.start();
+		
+		return 0;
 	}
 }
