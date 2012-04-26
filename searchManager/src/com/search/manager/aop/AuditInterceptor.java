@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -22,6 +24,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.service.UtilityService;
@@ -111,6 +114,9 @@ public class AuditInterceptor {
 				break;
 			case storeKeyword:
 				logStoreKeyword(jp, auditable, auditTrail);
+				break;
+			case ruleStatus:
+				logRuleStatus(jp, auditable, auditTrail);
 				break;
 		}
 	}
@@ -371,4 +377,29 @@ public class AuditInterceptor {
 		logAuditTrail(auditTrail);
 	}
 	
+	private void logRuleStatus(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RuleStatus ruleStatus = (RuleStatus)jp.getArgs()[0];
+		auditTrail.setStoreId(UtilityService.getStoreName());
+		auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+		switch (auditable.operation()) {
+			case add:
+				auditTrail.setDetails(String.format("Added reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
+						auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+				break;
+			case update:
+				if (RuleStatusEntity.DELETE.toString().equals(ruleStatus.getUpdateStatus())) {
+					auditTrail.setDetails(String.format("Deleted reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
+							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+				} else {
+					auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
+							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+				}
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+
+
 }
