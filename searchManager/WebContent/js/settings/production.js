@@ -5,11 +5,29 @@
 		var entityName = "";
 		
 		var getSelectedItems = function(){
-			var selectedIds = new Array();
+			var selectedItems = [];
 			$(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
-				selectedIds.push($(this).attr("id"));
+				selectedItems[$(this).attr("id")]=$(this).attr("name");
 			});
-			return selectedIds;
+			return selectedItems;
+		};
+		
+		var getSelectedRefId = function(){
+			var selectedRefIds = [];
+			var selectedItems = getSelectedItems();
+			for (var i in selectedItems){
+				selectedRefIds.push(i); 
+			}
+			return selectedRefIds; 
+		};
+
+		var getSelectedStatusId = function(){
+			var selectedStatusId = [];
+			var selectedItems = getSelectedItems();
+			for (var i in selectedItems){
+				selectedStatusId.push(selectedItems[i]); 
+			}
+			return selectedStatusId; 
 		};
 		
 		var checkSelectAllHandler = function(){
@@ -39,37 +57,43 @@
 		};
 
 		var publishHandler = function(){
-			$(tabSelected).find("#publishBtn").on({
+			$(tabSelected).find("a#publishBtn, a#publishBtn").on({
 				click: function(evt){
-					DeploymentServiceJS.publishRule(entityName, getSelectedItems(), {
-						callback:function(data){
-							getForProductionList();
-						},
-						preHook:function(){ 
-							prepareTabContent(); 
-						},
-						postHook:function(){ 
-							cleanUpTabContent(); 
-						}	
-					});
-				}
-			});
-		};
+					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					
+					if ($.isNotBlank(comment)){
 
-		var unpublishHandler = function(){
-			$(tabSelected).find("#unpublishBtn").on({
-				click: function(evt){
-					DeploymentServiceJS.unpublishRule(entityName, getSelectedItems(), {
-						callback:function(data){
-							getForProductionList();
-						},
-						preHook:function(){ 
-							prepareTabContent(); 
-						},
-						postHook:function(){ 
-							cleanUpTabContent(); 
+						switch($(evt.currentTarget).attr("id")){
+						case "publishBtn": 
+							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+								callback: function(data){
+									getForProductionList();
+								},
+								preHook:function(){ 
+									prepareTabContent(); 
+								},
+								postHook:function(){ 
+									cleanUpTabContent(); 
+								}	
+							});break;
+
+						case "unpublishBtn": 
+							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+								callback: function(data){
+									getForProductionList();
+								},
+								preHook:function(){ 
+									prepareTabContent(); 
+								},
+								postHook:function(){ 
+									cleanUpTabContent(); 
+								}	
+							});break;
 						}	
-					});
+					}else{
+						alert("Please add comment.");
+					}
+					
 				}
 			});
 		};
@@ -86,9 +110,10 @@
 						// Populate table row
 						for(var i=0; i<data.totalSize ; i++){
 							$table = $(tabSelected).find("table#rule");
-							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"]));
+							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
 							$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
@@ -98,13 +123,11 @@
 						}
 						
 						// Alternate row style
-						$(tabSelected).find("tr#ruleItemPattern").hide();
 						$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
 						
 						checkSelectHandler();
 						checkSelectAllHandler();
 						publishHandler();
-						unpublishHandler();
 						
 					}
 				},
@@ -124,6 +147,15 @@
 		var cleanUpTabContent = function(){
 			$(tabSelected).find('div.circlePreloader').remove();
 		};
+		
+		var switchTab = $("ul.ui-tabs-nav > li > a").on({
+			click: function(evt){
+				tabSelected = $(this).attr("href");
+				tabSelectedText = $(this).find("span").html();
+				entityName = tabSelected.substring(1, tabSelected.length-3);
+				getForProductionList();
+			}
+		});
 		
 		var init = function(){
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
