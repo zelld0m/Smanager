@@ -1,11 +1,13 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.springframework.util.StringUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleStatus extends ModelBean implements Serializable {
@@ -123,4 +125,8 @@ public class RuleStatus extends ModelBean implements Serializable {
 		this.commentList = commentList;
 	}
 	
+	public boolean isLocked(){
+		 List<String> locked = Arrays.asList(StringUtils.delimitedListToStringArray("PENDING,APPROVED", ","));
+		 return locked.contains(getApprovalStatus());
+	}
 }

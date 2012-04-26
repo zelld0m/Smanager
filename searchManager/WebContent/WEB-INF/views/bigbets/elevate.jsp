@@ -54,7 +54,7 @@
 	  </div>
 	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
 		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="">
-		<a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+		<a href="javascript:void(0);" id="addSortableBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
 	  </div>
 	 </div>
 	  
@@ -166,7 +166,10 @@
    </div>
    <div class="floatL marT5 w282"> <p>Comment:</p>
    <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
-   <div align="right"><a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a></div>
+   <div align="right">
+   	<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
+   	<a id="clearCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
+   </div>
    </div>
 </div>
 <div id="viewAuditTemplate" style="display: none">
@@ -193,7 +196,7 @@
    </div>
 </div>
       <div id="sortableBox" class="handle sortableBox">
-        <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
+        <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" class="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
         <div class="txtAC posRel">
         <div id="sItemStampExp" class="stampExpired"></div>
        	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px">
@@ -209,8 +212,8 @@
         	<div class="bigbetsShade" style="padding:5px">
         	<strong>Elevate Info:</strong>
         	<div class="txtAR w60 floatR  fgray fsize11">
-        		<img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
-        		<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
+        		<img class="commentIcon pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
+        		<img class="auditIcon pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 		</div>
         	<div class="clearB"></div>
         	<div class="listalpha">
@@ -218,7 +221,7 @@
         	</div>
 
 		<div class="listbeta">
-        			Valid Until<input id="sItemExpDate" type="text" class="txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
+        			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
         	</div>
         	<div class="txtAR w65 floatL fgray fsize11 padT5">
         		<span id="sItemValidityText" class="fDblue"></span>
@@ -236,7 +239,8 @@
     </ul>
   </div>
   <!--End Displaying Items-->
-   <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
+  
+  <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
   <!--Pagination-->
   
   <div class="clearB"></div>
@@ -244,8 +248,8 @@
 		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
   </div>
   
-  <div id="whyIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">Item is automatically locked when status is either awaiting approval or ready for production.</div>
+  <div id="ruleIsLocked" class="w180" style="display:none;">
+  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
   </div>
 </div>
        

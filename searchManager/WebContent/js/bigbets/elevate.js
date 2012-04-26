@@ -7,8 +7,7 @@
 	var sortablePageSize = 6;
 	var sortableAddDefaultSearchText = "Enter SKU #";
 	var sortablePopupAddDefaultText = "SKU #";
-	var sortableConfirmDeleteText = "Proceed with delete?";
-	var isDelete = 0;
+	
 	var expDateMinDate = -2;
 	var expDateMaxDate = "+1Y";
 	var lockedItemText = "This item is locked";
@@ -22,10 +21,13 @@
 	var keywordPageSize = 10;
 	var keywordHeaderText = "Keyword";
 	var keywordSearchText = "Search Keyword";
+	var itemDeleteConfirmText = "This will remove item associated to this rule. Continue?";
+	var ruleClearConfirmText = "This will remove all items associated to this rule. Continue?";
+	var isRuleLocked = false;
 	var ruleStatus = null;
 
 	$(document).ready(function() { 
-
+		
 		updateSortableItemPosition = function(edp, destinationIndex) {
 			if ($.isNotBlank(getSelectedKeyword())){
 				ElevateServiceJS.updateElevate(getSelectedKeyword(),edp,destinationIndex, {
@@ -39,7 +41,7 @@
 				});
 			}
 		},
-		
+
 		populateKeywordList = function(page){
 			$("#keywordList").sidepanel({
 				fieldId: "keywordId",
@@ -60,8 +62,6 @@
 				},
 
 				itemOptionCallback: function(base, id, name){
-
-					
 					DeploymentServiceJS.getRuleStatus("elevate", name, {
 						callback:function(data){
 							var status = (data==null) ? "" : data["approvalStatus"];
@@ -71,44 +71,22 @@
 									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
 
 									switch (status){
-										case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
-										case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
-										case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
-										default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
+									case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
+									case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
+									case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
+									default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
 									}
 
-									if($.inArray(status,["PENDING","APPROVED"])>=0){
-										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').qtip({
-											content: {
-												text: $('<div/>'),
-												title: { text: 'Why is this item locked?', button: true
-												}
-											},
-											position:{
-												at: 'right center',
-												my: 'left center'
-											},
-											show:{
-												modal: true
-											},
-											style:{width:'auto'},
-											events: {
-												show: function(evt, api){
-													var $content = $("div", api.elements.content);
-													$content.html($("#whyIsLocked").html());
-												}
-											}
-										});
-									}else{
-										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({
-											click: function(e){
-												$("#titleText").html("Elevate List for ");
-												$("#keywordHeader").html(e.data.name);
-												$("div#addSortableHolder").show();
-												updateSortableList(e.data.name, 1);
-												ruleStatus = e.data.status;
-											}},{name:name, status: data});
-									}
+									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({
+										click: function(e){
+											$("#titleText").html("Elevate List for ");
+											$("#keywordHeader").html(e.data.name);
+											$("div#addSortableHolder").show();
+											ruleStatus = e.data.status;
+											isRuleLocked = ruleStatus!=null && ruleStatus["locked"];
+											updateSortableList(e.data.name, 1);
+											addEventListener();
+										}},{name:name, status: data});
 								},
 								preHook: function(){ 
 									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
@@ -138,9 +116,10 @@
 			});
 		};
 
-		removeSortableItem = function(item){
-			var deleteSelector = '#sItemDelete' + formatToId(item.edp);
-			if (confirm(sortableConfirmDeleteText)){  
+		var removeItem = function(e){
+			if (!isRuleLocked && confirm(itemDeleteConfirmText)){
+				var item = e.data.item;
+				var deleteSelector = '#sItemDelete' + formatToId(item.edp);
 				var edp = item.edp;
 
 				// adjust active paging, 1 sibling because of hidden pattern used for cloning
@@ -151,13 +130,11 @@
 				ElevateServiceJS.removeElevate(getSelectedKeyword(),edp, {
 					callback : function(data){
 						$(deleteSelector).parents("li").remove();
-						isDelete = 1;
 						updateSortableList(getSelectedKeyword(),sortablePage==0? 1 : sortablePage);
 						populateKeywordList(1);
 					}
 				});
 			}
-			isDelete = 0;
 		};
 
 		//update the position in textbox
@@ -184,7 +161,7 @@
 		},{text:sortableAddDefaultSearchText}
 		);
 
-		
+
 		formatToId = function(keyword){
 			return "_".concat(keyword.replace(/ /g,"_").toLowerCase());
 		},
@@ -235,7 +212,16 @@
 			$("#sItemValidityText" + id).html(sortableItem.validityText);
 			$("#sortableBox" + id).html($("#sortableBox" + id).html().replace("%%store%%",storeLabel));
 
-			$('#sItemDelete' + id).click(function(e){removeSortableItem(sortableItem);});
+			$('#commentIcon' + id).on({
+				click: showComment
+			}, {locked: isRuleLocked, item: sortableItem});
+			
+			$('#sItemDelete' + id).on({
+				click: removeItem,
+				mouseenter:showHoverInfo
+			}, {locked: isRuleLocked, item: sortableItem});
+			
+			
 			$("#sItemPosition" + id).val(sortableItem.location);
 
 			$('#sItemPosition' + id).keydown(function(e){
@@ -255,23 +241,14 @@
 				}
 			});
 
-
-
-			/* Case: Put back elevate position when focus leave the field*/
-			$('#sItemPosition' + id).blur(function(e){
-				//$(this).val($(this).parents("li").index()+1) + ((sortablePage-1)*sortablePageSize);
-			});
-
 			if (sortableItem.isExpired)
 				$("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
-			//$("#sItemStampExp" + id).html('<img src="../images/expired_stamp.png">');
 
-			$("#sItemImg" + id).error(function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); });
-
-			if ($.trim(sortableItem.dpNo).length > 0){
-				showComment(sortableItem.edp);				
-				showAuditList(sortableItem.edp);
-			}
+			$("#sItemImg" + id).on({
+				error:function(e){ 
+					$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
+				}
+			});
 
 			// Product is no longer visible in the setting
 			if ($.trim(sortableItem.dpNo).length == 0){
@@ -294,7 +271,7 @@
 				buttonText: "Expiration Date",
 				buttonImage: "../images/icon_calendar.png",
 				buttonImageOnly: true,
-				disabled: disableCalendar,
+				disabled: disableCalendar || isRuleLocked,
 				onSelect: function(dateText, inst) {	
 					if (sortableItem.formattedExpiryDate != dateText){
 						ElevateServiceJS.updateExpiryDate(getSelectedKeyword(),sortableItem.edp, dateText, {
@@ -309,6 +286,7 @@
 		},
 
 		prepareSortableList = function() {
+			$("#clearRule").hide();
 			$("#sortable-bigbets-container > .circlePreloader").remove();
 			$("#sortable-bigbets-container img#no-items-img").remove();
 			$('#sortable-bigbets li:not(#sItemPattern)').remove();
@@ -317,9 +295,18 @@
 			$("#sortable-bigbets-container").prepend('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>');
 		};
 
+		cleanUpSortableList = function() {
+			$("#sortable-bigbets-container > .circlePreloader").remove();
+
+			if (isRuleLocked){
+				$("input#addSortable").attr("readonly", "readonly");
+				$("input.sItemPosition").attr("readonly", "readonly");
+			}
+		};
+
 		updateSortableList = function(keyword, page) {
 			sortablePage = page;
-			
+
 			ElevateServiceJS.getProducts(getItemFilter(), keyword, sortablePage, sortablePageSize,{
 				callback: function(data){
 					sortableTotalItems = data.totalSize;
@@ -335,12 +322,12 @@
 					var sortableItem, id;
 
 					$.isNotBlank(getSelectedKeyword())?  $("#submitForApproval").show() : $("#submitForApproval").hide();
-					
+
 					if(ruleStatus!=null){
 						$("span#status").html(ruleStatus["approvalStatus"]);
 						$("span#statusDate").html(ruleStatus["lastModifiedDate"]);
 					}
-					
+
 					//TODO: Should be configurable
 					if (sortableTotalItems == 0){
 						$("#clearRule").hide();
@@ -369,7 +356,7 @@
 					$('#sortableDisplayOptions').attr("style",(sortableTotalItems == 0 && $.isBlank(getSelectedKeyword())) ? "display:none" : "display:block");
 				},
 				preHook: function(){ prepareSortableList(); },
-				postHook: function(){ $("#sortable-bigbets-container > .circlePreloader").remove(); }
+				postHook: function(){ cleanUpSortableList(); }
 			});
 
 		},
@@ -398,62 +385,68 @@
 			return ((sortablePage-1)*sortablePageSize)+1;
 		};
 
-		/**
-		 * Case: Adding of new item
-		 */
-		$('#addSortableImg').qtip({
-			content: {
-				text: $('<div/>'),
-				title: { text: 'Add Elevate Item', button: true
-				}
-			},
-			show:{
-				ready: true
-			},
-			events: { 
-				render: function(e, api){
-					var contentHolder = $("div", api.elements.content);
-					var template = $.processTemplate($("#addItemTemplate").html());
+		showAddItemOption = function (e){
+			if (!isRuleLocked){
+				$(e.currentTarget).qtip({
+					content: {
+						text: $('<div/>'),
+						title: { text: 'Add Elevate Item', button: true
+						}
+					},
+					show: {
+						solo: true,
+						ready: true	
+					},
+					style: {width: 'auto'},
+					events: { 
+						show: function(e, api){
+							var contentHolder = $("div", api.elements.content);
+							var template = $.processTemplate($("#addItemTemplate").html());
 
-					contentHolder.html(template);
+							contentHolder.html(template);
 
-					contentHolder.find("#addOption").tabs({
-						cookie: { 
-							expires: 30,
-							name: "ui-tab-elevate-addoption"
-							}
-					});
+							contentHolder.find("#addOption").tabs({
+								cookie: { 
+									expires: 30,
+									name: "ui-tab-elevate-addoption"
+								}
+							});
 
-					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
-					contentHolder.find("#addItemDPNo").bind('blur', function(e) {if ($.trim($(this).val()).length == 0) $(this).val(sortablePopupAddDefaultText);});
-					contentHolder.find("#addItemDPNo").bind('focus',function(e) {if ($.trim($(this).val()) == sortablePopupAddDefaultText) $(this).val("")});
+							contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
+							contentHolder.find("#addItemDPNo").bind('blur', function(e) {if ($.trim($(this).val()).length == 0) $(this).val(sortablePopupAddDefaultText);});
+							contentHolder.find("#addItemDPNo").bind('focus',function(e) {if ($.trim($(this).val()) == sortablePopupAddDefaultText) $(this).val("")});
 
-					contentHolder.find("#addItemDate_1").datepicker({
-						showOn: "both",
-						minDate: expDateMinDate,
-						maxDate: expDateMaxDate,
-						buttonText: "Expiration Date",
-						buttonImage: "../images/icon_calendar.png",
-						buttonImageOnly: true
-					});
+							contentHolder.find("#addItemDate_1").datepicker({
+								showOn: "both",
+								minDate: expDateMinDate,
+								maxDate: expDateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true
+							});
 
-					contentHolder.find("#addItemBtn").click(function(e){
-						var dpNo = $.trim(contentHolder.find("#addItemDPNo").val().replace(/\n\r?/g, '')).replace(/ /g,'');
-						var index = $.trim(contentHolder.find("#addItemPosition").val());
-						var expiry = $.trim(contentHolder.find("#addItemDate_1").val());
-						var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
+							contentHolder.find("#addItemBtn").click(function(e){
+								var dpNo = $.trim(contentHolder.find("#addItemDPNo").val().replace(/\n\r?/g, '')).replace(/ /g,'');
+								var index = $.trim(contentHolder.find("#addItemPosition").val());
+								var expiry = $.trim(contentHolder.find("#addItemDate_1").val());
+								var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
-						//TODO: add field validation
-						addSortableItem(dpNo,index,expiry,comment);
+								//TODO: add field validation
+								addSortableItem(dpNo,index,expiry,comment);
 
-						contentHolder.find("#addItemDPNo").val("");
-						contentHolder.find("#addItemPosition").val("");
-						contentHolder.find("#addItemDate_1").val("");
-						$('div', api.elements.content).find("#addItemComment").val("");
-					});
-				}
+								contentHolder.find("#addItemDPNo").val("");
+								contentHolder.find("#addItemPosition").val("");
+								contentHolder.find("#addItemDate_1").val("");
+								$('div', api.elements.content).find("#addItemComment").val("");
+							});
+						},
+						hide: function(event, api){
+							api.destroy();
+						}
+					}
+				}).click(function(e) { e.preventDefault(); });
 			}
-		}).click(function(e) { e.preventDefault(); });
+		};
 		/*-- END --*/
 
 		/* START
@@ -487,82 +480,6 @@
 		});
 		/*-- END grid/list switching --*/
 
-		prepareCommentList = function(contentHolder, selector){
-			contentHolder.find(selector).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ25x25.gif"></div>');
-		};
-
-		updateCommentList = function(contentHolder, edp){
-			var id = '_' + edp;
-			ElevateServiceJS.getComment(getSelectedKeyword(), edp, {
-				callback: function(comment){
-					var commentItems = "";
-					CommentServiceJS.parseComment(comment, {
-						callback: function(data){
-
-							for(var i = 0 ; i < data.list.length; i++){
-								var commentTemplate = getHTMLTemplate("#commentTemplate" + id); 
-								var item = data.list[i];
-								if (i%0==0) $(commentTemplate).find("div#commentTemplate" + id + " div").addClass("altBg"); 
-								commentTemplate = commentTemplate.replace("%%timestamp%%",item.date);
-								commentTemplate = commentTemplate.replace("%%commentor%%",item.username);
-								commentTemplate = commentTemplate.replace("%%comment%%",item.comment);
-								commentItems += commentTemplate;
-							}
-
-						},
-						preHook: function(){ prepareCommentList(contentHolder, "#commentHolder" + id); },
-						postHook: function(){ 
-							contentHolder.find("#newComment" + id).val("");
-							contentHolder.find("#commentHolder" + id).html(commentItems);
-							contentHolder.find("#commentHolder" + id + "> div:nth-child(even)").addClass("alt");
-						}
-					});
-				}
-			});
-		};
-
-		showComment = function(edp){
-			var id = '_' + edp;
-			var needRefresh = false;
-
-			$('#commentIcon' + id).qtip({
-				content: {
-					text: $('<div/>'),
-					title: { text: 'Comments', button: true }
-				},
-				events: {
-					render: function(e, api) {
-						var contentHolder = $('div', api.elements.content);
-
-						contentHolder.html(getHTMLTemplate("#addCommentTemplate" + id));
-						updateCommentList(contentHolder, edp);
-
-						contentHolder.find("#addCommentBtn" + id).click(function(e){
-
-							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
-							if ($.trim(comment).length>0)
-								ElevateServiceJS.addComment(getSelectedKeyword(), edp, comment,{
-									callback: function(data){
-										needRefresh = true;
-									},
-									preHook: function(){ prepareCommentList(contentHolder, "#commentHolder" + id); },
-									postHook: function(){ 
-										contentHolder.find("#newComment" + id).val(""); 
-										updateCommentList(contentHolder, edp);
-									}
-								});			 						
-
-						});
-					},
-					hide: function (e, api){
-						if(needRefresh)
-							updateSortableList(getSelectedKeyword(), sortablePage);
-					}
-				}
-			}).click(function(e) { e.preventDefault(); });
-		};
-		/*-- END comment and audit list display --*/
-
 		/*-- START filter display --*/
 		$("#filterDisplay").change(function(e){
 			setItemFilter($(this).val());
@@ -581,9 +498,22 @@
 			$("#sortable-bigbets").sortable("option", "disabled", value=="all" ? true: true );
 		};
 		/*-- END filter display --*/
-
-		//Case: Download icon is clicked
-		$("#downloadIcon").on("click",{
+		
+		var submitForApprovalHandler = function(){
+			$("a#submitForApprovalBtn").on({
+				click: function(){
+					if(confirm("This elevate rule will be locked for approval. Continue?"))
+						DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), getSelectedKeyword(), false,{
+							callback: function(data){
+								populateKeywordList();
+								updateSortableList();
+							}
+						});
+				}
+			});
+		};
+		
+		$("a#downloadIcon").on({click:showDownloadOption}, {
 			selector: "#downloadIcon",
 			template: "#downloadTemplate",
 			title: "Download Page",
@@ -591,33 +521,27 @@
 			filter: getItemFilter,
 			itemPage: sortablePage,
 			itemPageSize:sortablePageSize
-		}, showDownloadOption);
+		});
 
-		var submitForApprovalHandler = function(){
-			$("a#submitForApprovalBtn").on({
-				click: function(){
-					if(confirm("This elevate rule will be locked for approval. Continue?"))
-					DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), getSelectedKeyword(), false,{
-						callback: function(data){
-							populateKeywordList();
-							updateSortableList();
-						}
-					});
-				}
-			});
-		};
+		/* START: Event Listener */
 		
-		var clearRuleHandler = function(){
-			$("div#clearRule > #clearRuleBtn").on({
-				click: function(){
-					if(confirm("This will remove all items associated to this rule. Continue?"))
+		var addEventListener = function(){
+			$("a#addSortableBtn").on({
+				click: showAddItemOption, 
+				mouseenter: showHoverInfo
+				},{locked: isRuleLocked});
+			
+			$("a#clearRuleBtn").on({
+				mouseenter: showHoverInfo,
+				click: function(e){
+					if(confirm(ruleClearConfirmText))
 						ElevateServiceJS.clearRule(getSelectedKeyword(), {
 							callback: function(data){
 								updateSortableList();
 							}
 						});
 				}
-			});
+			},{locked: isRuleLocked});
 		};
 		
 		var init = function() {
@@ -629,7 +553,6 @@
 			populateKeywordList(1);
 			setItemDisplay();
 			submitForApprovalHandler();
-			clearRuleHandler();
 		};
 
 		init();	
