@@ -27,6 +27,10 @@
 				$(this).val("");
 		};
 
+		getEDPFromId = function(id){
+			return id.replace(/_/g,"");
+		};
+
 		/** Enumerate all audit for current page*/
 		showPageAuditList = function(selector, headerText, moduleType, itemPage){
 			$(selector).auditpanel({
@@ -96,11 +100,11 @@
 										base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
 
 										switch (status){
-											case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - For Immediate Action"); break;
-											case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - Awaiting Approval"); break;
-											case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - Ready For Production"); break;
+										case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - For Immediate Action"); break;
+										case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - Awaiting Approval"); break;
+										case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').append(" - Ready For Production"); break;
 										}
-										
+
 										if($.inArray(status,["PENDING","APPROVED"])>=0){
 											base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').qtip({
 												content: "<div/>",
@@ -166,16 +170,25 @@
 
 		/** Show download option as qtip2 */
 		showDownloadOption = function(e){
-			$(e.data.selector).qtip({
+			var data = e.data;
+			alert(e.data)
+			$(this).qtip({
 				content: {
 					text: $('<div/>'),
-					title: { text: e.data.title, button: true
+					title: { text: data.title, button: true
 					}
 				},
+				style:{
+					width: 'auto'
+				},
+				show:{
+					solo: true,
+					ready: true
+				},
 				events: {  
-					render: function(rdEvent, api){
+					show: function(event, api){
 						var content = $("div", api.elements.content);
-						content.html(getHTMLTemplate(e.data.template));
+						content.html(getHTMLTemplate(data.template));
 
 						content.find("#downloadBtn").on("click", {}, function(dlEvent){
 							var params = new Array();
@@ -187,10 +200,10 @@
 							params["filename"] = content.find('input[name="filename"]').val().replace(/ /g,"_");
 							params["type"] = content.find('select[name="type"] option:selected').val();
 
-							params["keyword"] = e.data.itemKeyword.call();
-							params["page"] = (page=="current") ? e.data.itemPage : page;
-							params["filter"] = e.data.filter.call();
-							params["itemperpage"] = e.data.itemPageSize;
+							params["keyword"] = data.itemKeyword.call();
+							params["page"] = (page=="current") ? data.itemPage : page;
+							params["filter"] = data.filter.call();
+							params["itemperpage"] = data.itemPageSize;
 
 							for(var key in params){
 								if (count>0) urlParams +='&';
@@ -200,10 +213,11 @@
 
 							document.location.href = url + '?' + urlParams; 				
 						});
-
+					},
+					hide: function(event, api){
+						api.destroy();
 					}
 				}
-
 			});
 		};
 
@@ -236,13 +250,13 @@
 			}).click(function(e) { e.preventDefault(); });	   
 		};
 
-		prepareAuditList = function(contentHolder, idSuffix){
+		var prepareAuditList = function(contentHolder, idSuffix){
 			contentHolder.find("#auditPagingTop" + idSuffix).html("");
 			contentHolder.find("#auditPagingBottom" + idSuffix).html("");
 			contentHolder.find("#auditHolder" + idSuffix).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ25x25.gif"></div>');
 		};
 
-		updateAuditList = function(contentHolder, edp, auditPage, auditPageSize){
+		var updateAuditList = function(contentHolder, edp, auditPage, auditPageSize){
 			var idSuffix = '_' + edp;
 
 			AuditServiceJS.getElevateItemTrail(getSelectedKeyword(), edp, auditPage, auditPageSize, {
@@ -284,6 +298,134 @@
 			});
 		};
 
+		var prepareCommentList = function(contentHolder, selector){
+			contentHolder.find(selector).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ25x25.gif"></div>');
+		};
+
+		var updateCommentList = function(contentHolder, edp){
+			var id = $.formatAsId(edp);
+
+			ElevateServiceJS.getComment(getSelectedKeyword(), edp, {
+				callback: function(comment){
+					var commentItems = "";
+					CommentServiceJS.parseComment(comment, {
+						callback: function(data){
+
+							for(var i = 0 ; i < data.list.length; i++){
+								var commentTemplate = getHTMLTemplate("#commentTemplate" + id); 
+								var item = data.list[i];
+								if (i%0==0) $(commentTemplate).find("div#commentTemplate" + id + " div").addClass("altBg"); 
+								commentTemplate = commentTemplate.replace("%%timestamp%%",item.date);
+								commentTemplate = commentTemplate.replace("%%commentor%%",item.username);
+								commentTemplate = commentTemplate.replace("%%comment%%",item.comment);
+								commentItems += commentTemplate;
+							}
+
+						},
+						preHook: function(){ prepareCommentList(contentHolder, "#commentHolder" + id); },
+						postHook: function(){ 
+							contentHolder.find("#newComment" + id).val("");
+							contentHolder.find("#commentHolder" + id).html(commentItems);
+							contentHolder.find("#commentHolder" + id + "> div:nth-child(even)").addClass("alt");
+						}
+					});
+				}
+			});
+		};
+
+		showComment = function(e){
+			var data = e.data;
+			var edp = data.item.edp;
+			var id = $.formatAsId(edp);
+
+			$(this).qtip({
+				id: "show-comment",
+				content: {
+					text: $('<div/>'),
+					title: { text: 'Item Comments', button: true }
+				},
+				style:{
+					width: 'auto'
+				},
+				show:{
+					solo: true,
+					ready: true
+				},
+				events: {
+					show: function(event, api) {
+						var contentHolder = $('div', api.elements.content);
+						contentHolder.html($("#addCommentTemplate" + id).html());
+						updateCommentList(contentHolder, edp);
+
+						if(data.locked) contentHolder.find("#newComment" + id).attr("readonly","readonly");
+							
+						contentHolder.find("#addCommentBtn" + id).on({click:function(e){
+							if(data.locked) return;
+							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
+							if ($.isNotBlank(comment)){
+								ElevateServiceJS.addComment(getSelectedKeyword(), edp, comment,{
+									callback: function(data){
+
+									},
+									preHook: function(){ 
+										prepareCommentList(contentHolder, "#commentHolder" + id); 
+									},
+									postHook: function(){ 
+										contentHolder.find("#newComment" + id).val(""); 
+										updateCommentList(contentHolder, edp);
+									}
+								});			 			
+							}
+						},
+						mouseenter: showHoverInfo
+						},{locked: data.locked});
+						
+						contentHolder.find("#clearCommentBtn" + id).on({click:function(e){
+							if(data.locked) return;
+							contentHolder.find("#newComment" + id).val("");
+						},
+						mouseenter: showHoverInfo
+						},{locked: data.locked});
+					},
+					hide: function (event, api){
+						api.destroy();
+					}
+				}
+			});
+		};
+
+		showHoverInfo = function(e){
+			if(e.data.locked){
+				$(this).qtip({
+					id: "hover-locked",
+					content: {
+						text: $('<div/>')
+					},
+					position:{
+						at: 'right center',
+						my: 'left center'
+					},
+					show:{
+						event: "mouseenter",
+						solo: false,
+						ready: true
+					},
+					hide:{
+						event: "mouseout"
+					},
+					style:{width:'auto'},
+					events: {
+						show: function(event, api){
+							var $content = $("div", api.elements.content);
+							$content.html($("#ruleIsLocked").html());
+						},
+						hide: function(event, api){
+							api.destroy();
+						}
+					}
+				});
+			}
+		};
 	});
 
 })(jQuery);	

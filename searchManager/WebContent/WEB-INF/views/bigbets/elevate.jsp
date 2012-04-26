@@ -54,7 +54,7 @@
 	  </div>
 	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
 		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="">
-		<a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+		<a href="javascript:void(0);" id="addSortableBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
 	  </div>
 	 </div>
 	  
@@ -79,40 +79,34 @@
 	 
 	 <!--Add Item Content-->
 	<div id="addItemTemplate" style="display: none">
-		<div id="tabs" style="width: 257px">
+		<div id="addOption" style="width: 257px">
 			<ul>
-				<li><a href="#singleAdd"><span>Single Add</span></a></li>
-				<li><a href="#multiAdd"><span>Multiple Add</span></a></li>
+				<li><a href="#addBySKU"><span>By SKU</span></a></li>
 			</ul>
 			
 			<!--  tab -->
-			<div id="singleAdd" class="mar0 borderT">
-				<h3></h3>
-				<div class="floatL w170">
-					<label class="floatL w60 marL5 padT5">%%store%%:</label> <label><input
-						id="addItemDPNo" type="text" class="w83 fgray fsize11"
-						value="SKU #">
-					</label>
-				</div>
+			<div id="addBySKU" class="mar0 borderT">
+				<h3 class="padT10"></h3>
 				<div class="clearB"></div>
 				<div class="floatL w155 marT5">
-					<label class="floatL w60 marL5 padT5">Valid Until:</label> <label
-						class="ddate"><input id="addItemDate" type="text"
-						class="w65">
-					</label>
+					<label class="floatL w60 marL5 padT5">Valid Until:</label> 
+					<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>
 				</div>
 				
 				<div class="floatL marT5" style="width: 97px">
 					<label class="floatL marL5 padT5" style="width: 55px">Elevation:</label>
-					<label><input id="addItemPosition" type="text" class="w25">
-					</label>
+					<label><input id="addItemPosition" type="text" class="w25"></label>
 				</div>
-
 				<div class="clearB"></div>
 				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">Comment: </label> <label><textarea
-							id="addItemComment"
-							style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					<label class="w60 floatL padT5">SKU #: (comma-delimited)</label> 
+					<label><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					</label>
+				</div>
+				<div class="clearB"></div>
+				<div class="floatL marT5 marL5">
+					<label class="w60 floatL padT5">Comment: </label> 
+					<label><textarea id="addItemComment" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
 					</label>
 				</div>
 				<div align="right">
@@ -125,42 +119,6 @@
 				</div>
 				<div class="clearB"></div>
 			</div>
-
-			<div id="multiAdd" class="mar0 borderT">
-				<h3></h3>
-				<div class="alert">This will overwrite existing
-					elevation.</div>
-				
-				<div class="marTB10">
-					<label >Valid Until:</label>
-					<label class="ddate">
-						<input id="addItemDate" type="text" class="w65">
-					</label>
-				</div>	
-				
-				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL padT5">Comma separated SKU #</label>
-					<a class="infoIcon" href="javascript:void(0);">
-						<img src="<spring:url value="/images/icon_info.png" />" class="floatR">
-					</a>
-				</div>
-				<textarea id="addItemComment" class="w245"></textarea>
-				
-				<div align="right" class="marTB5 marR3 txtAL">
-					<label class="floatL w60 padT5">Comment</label>					
-				</div>
-				<textarea id="addItemComment" class="w245"></textarea>
-
-				<div align="right" class="marT5 marR3">
-					<a id="addItemBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div>
-					</a>
-					<a id="clearBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div>
-					</a>
-				</div>
-			</div>
-
 			<!-- end tab -->
 		</div>
 	</div>
@@ -177,7 +135,8 @@
 	</select></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableTile" class="btnGraph" alt="Grid View" title="Grid View"><div class="btnGraph btnViewTile"></div></a></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableList" class="btnGraph" alt="List View" title="List View"><div class="btnGraph btnViewList"></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="clearRuleBtn"><div class="btnGraph btnClearDel marT1" ></div></a></li>
 </ul>
 </div>
 
@@ -209,7 +168,10 @@
    </div>
    <div class="floatL marT5 w282"> <p>Comment:</p>
    <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
-   <div align="right"><a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a></div>
+   <div align="right">
+   	<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
+   	<a id="clearCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
+   </div>
    </div>
 </div>
 <div id="viewAuditTemplate" style="display: none">
@@ -236,7 +198,7 @@
    </div>
 </div>
       <div id="sortableBox" class="handle sortableBox">
-        <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
+        <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" class="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
         <div class="txtAC posRel">
         <div id="sItemStampExp" class="stampExpired"></div>
        	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px">
@@ -252,8 +214,8 @@
         	<div class="bigbetsShade" style="padding:5px">
         	<strong>Elevate Info:</strong>
         	<div class="txtAR w60 floatR  fgray fsize11">
-        		<img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
-        		<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
+        		<img class="commentIcon pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
+        		<img class="auditIcon pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 		</div>
         	<div class="clearB"></div>
         	<div class="listalpha">
@@ -261,7 +223,7 @@
         	</div>
 
 		<div class="listbeta">
-        			Valid Until<input id="sItemExpDate" type="text" class="txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
+        			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
         	</div>
         	<div class="txtAR w65 floatL fgray fsize11 padT5">
         		<span id="sItemValidityText" class="fDblue"></span>
@@ -279,16 +241,14 @@
     </ul>
   </div>
   <!--End Displaying Items-->
-   <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
+  
+  <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
   <!--Pagination-->
   
   <div class="clearB"></div>
-  <div id="clearRule" class="txtAR marT20" style="display: none">
-		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
-  </div>
   
-  <div id="whyIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">Item is automatically locked when status is either awaiting approval or ready for production.</div>
+  <div id="ruleIsLocked" class="w180" style="display:none;">
+  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
   </div>
 </div>
        
