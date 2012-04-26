@@ -1,7 +1,6 @@
 package com.search.manager.aop;
 
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -70,7 +69,9 @@ public class AuditInterceptor {
 			logger.trace("****************************************************");			
 		}
 		
-		if (!(returnValue instanceof Integer && (Integer)returnValue > 0)) {
+		// return value is 1 if operation is successful
+		// but sometimes id of added record is returned. in this case unsuccessful add will return null;
+		if (returnValue instanceof String && StringUtils.isEmpty((String)returnValue) || returnValue instanceof Integer && (Integer)returnValue <= 0) {
 			return;
 		}
 		
@@ -220,28 +221,41 @@ public class AuditInterceptor {
 
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
-		List<String> searchTerms = rule.getSearchTerms();
+		String searchTerm = rule.getSearchTerm();
 		String condition = rule.getRedirectFilter(); 
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
-		for (String searchTerm : searchTerms) {
-			auditTrail.setKeyword(searchTerm);
-			auditTrail.setReferenceId(refId);
-			switch (auditable.operation()) {
-				case add:
-						auditTrail.setDetails(String.format("Added Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
-					break;
-				case update:
-						auditTrail.setDetails(String.format("Updated Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
-					break;
-				case delete:
-						auditTrail.setDetails(String.format("Removed Rule ID[%1$s] : search term = [%2$s], condition = [%3$s].", refId, searchTerm, condition));
-					break;
-				default:
-					return;
-			}
-			logAuditTrail(auditTrail);
+		auditTrail.setKeyword(searchTerm);
+		auditTrail.setReferenceId(refId);
+		// TODO: check if working
+		switch (auditable.operation()) {
+			case add:
+				auditTrail.setDetails(String.format("Added Rule ID[%1$s] : name = [%2$s], search term = [%3$s], condition = [%4$s].", 
+						refId, rule.getRuleName(), searchTerm, condition));
+				break;
+			case update:
+				auditTrail.setDetails(String.format("Added Rule ID[%1$s] : name = [%2$s], search term = [%3$s], condition = [%4$s].", 
+						refId, rule.getRuleName(), searchTerm, condition));
+				break;
+			case delete:
+				auditTrail.setDetails(String.format("Removed Rule ID[%1$s].", refId));
+				break;
+			case mapKeyword:
+				auditTrail.setDetails(String.format("Added Search Term[%1$s] for Rule ID[%2$s].", condition, searchTerm));
+				break;
+			case unmapKeyword:
+				auditTrail.setDetails(String.format("Removed Search Term[%1$s] from Rule ID[%2$s].", condition, searchTerm));
+				break;
+			case addCondition:
+				auditTrail.setDetails(String.format("Added Condition[%1$s] for Rule ID[%2$s].", condition, refId));
+				break;
+			case removeCondition:
+				auditTrail.setDetails(String.format("Removed Condition[%1$s] from Rule ID[%2$s].", condition, refId));
+				break;
+			default:
+				return;
 		}
+		logAuditTrail(auditTrail);
 	}
 
 	private void logAuditTrail(AuditTrail auditTrail) {
@@ -346,10 +360,6 @@ public class AuditInterceptor {
 			case unmapKeyword:
 				auditTrail.setDetails(String.format("Unmapping keyword[%2$s] from relevancy[%1$s]",
 						auditTrail.getReferenceId(), auditTrail.getKeyword()));				
-				break;
-			case saveKeywordMapping:
-				auditTrail.setDetails(String.format("Saving priority[%3$s] of relevancy[%2$s] for keyword[%1$s]",
-						auditTrail.getReferenceId(), auditTrail.getKeyword(), relevancyKeyword.getPriority()));				
 				break;
 			case updateKeywordMapping:
 				auditTrail.setDetails(String.format("Setting priority[%3$s] of relevancy[%2$s] for keyword[%1$s]",

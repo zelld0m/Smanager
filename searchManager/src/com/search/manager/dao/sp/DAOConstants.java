@@ -84,19 +84,26 @@ public class DAOConstants {
 	public static final String SP_UPDATE_RELEVANCY_KEYWORD 			= "usp_Update_Relevancy_Prod_Keyword_Relationship";
 	public static final String SP_SEARCH_RELEVANCY_KEYWORD 			= "usp_Search_Relevancy_Prod_Keyword_Relationship";
 	public static final String SP_DELETE_RELEVANCY_KEYWORD 			= "usp_Delete_Relevancy_Prod_Keyword_Relationship";
-	//REDIRECT RULE
-	public static final String SP_ADD_REDIRECT						= "Usp_Add_Redirect_Rule";
-	public static final String SP_UPDATE_REDIRECT					= "Usp_Update_Redirect_Rule";
-	public static final String SP_DELETE_REDIRECT					= "usp_Delete_Redirect_Rule";
+	//REDIRECT_RULE
+	public static final String SP_ADD_REDIRECT						= "usp_Add_Redirect_Rule_Relationship";
+	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule";
+	public static final String SP_DELETE_REDIRECT					= "usp_Add_Redirect_Rule_Condition_Relationship";
 	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
+	//REDIRECT_RULE_KEYWORD
+	public static final String SP_ADD_REDIRECT_KEYWORD				= "usp_Add_Redirect_Rule_Keyword_Relationship";
+	public static final String SP_DELETE_REDIRECT_KEYWORD			= "usp_Delete_Redirect_Rule_Keyword_Relationship";
+	//REDIRECT_RULE_CONDITION
+	public static final String SP_ADD_REDIRECT_CONDITION			= "usp_Add_Redirect_Rule_Condition_Relationship";
+	public static final String SP_DELETE_REDIRECT_CONDITION			= "usp_Delete_Redirect_Rule_Condition_Relationship";
+
 	//RULE STATUS
-	public static final String SP_ADD_RULE_STATUS					= "Usp_Add_Rule_Status";
-	public static final String SP_UPDATE_RULE_STATUS				= "Usp_Update_Rule_Status";
+	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
+	public static final String SP_UPDATE_RULE_STATUS				= "usp_Update_Rule_Status";
 	public static final String SP_DELETE_RULE_STATUS				= "usp_Delete_Rule_Status";
 	public static final String SP_GET_RULE_STATUS					= "usp_Get_Rule_Status";
 	//COMMENT
-	public static final String SP_ADD_COMMENT						= "Usp_Add_Comment_Status";
-	public static final String SP_UPDATE_COMMENT					= "Usp_Update_Comment_Status";
+	public static final String SP_ADD_COMMENT						= "usp_Add_Comment_Status";
+	public static final String SP_UPDATE_COMMENT					= "usp_Update_Comment_Status";
 	public static final String SP_DELETE_COMMENT					= "usp_Delete_Comment_Status";
 	public static final String SP_GET_COMMENT						= "usp_Get_Comment_Status";
 	
@@ -155,7 +162,7 @@ public class DAOConstants {
 	public static final String PARAM_ACTIVE_FLAG		 			= "active_flag";
 	public static final String PARAM_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String PARAM_CHANGE_KEYWORD		 			= "change_keyword";
-	public static final String PARAM_UPDATE_FLAG 					= "updFlag";
+	public static final String PARAM_RESULT 						= "result";
 
 	public static final String PARAM_RULE_STATUS_ID		 			= "rule_status_id";
 	public static final String PARAM_RULE_TYPE_ID		 			= "rule_type_id";
@@ -209,6 +216,7 @@ public class DAOConstants {
 	
 	public static final String COLUMN_RULE_ID						= "rule_id";
 	public static final String COLUMN_SEARCH_TERM	 	 			= "search_term";
+	public static final String COLUMN_CHANGE_KEYWORD 	 			= "change_keyword";
 	public static final String COLUMN_CONDITION						= "condition";
 	public static final String COLUMN_ACTIVE_FLAG		 			= "active_flag";
 	public static final String COLUMN_REDIRECT_TYPE_ID	 			= "redirect_type_id";
