@@ -63,7 +63,7 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
-		// TODO: add transaction dependency
+		// TODO: add transaction dependency handshake
 		approveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment( comment, ruleStatusIdList);
 		return 0;
@@ -81,8 +81,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int unapproveRule(String ruleType, String ...ruleRefIdList) {
-		return unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+	public int unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment(comment, ruleStatusIdList);
+		return 0;
 	}
 	
 	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
