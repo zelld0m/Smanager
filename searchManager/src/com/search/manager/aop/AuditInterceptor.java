@@ -401,5 +401,4 @@ public class AuditInterceptor {
 		logAuditTrail(auditTrail);
 	}
 
-
 }
