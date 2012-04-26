@@ -44,7 +44,7 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
    * @type String
    * @default "&laquo; previous"
    */
-  prevLabel: '&laquo; Prev',
+  prevLabel: 'Prev',
 
   /**
    * The next page link label.
@@ -54,7 +54,7 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
    * @type String
    * @default "next &raquo;"
    */
-  nextLabel: 'Next &raquo;',
+  nextLabel: 'Next',
 
   /**
    * Separator between pagination links.
