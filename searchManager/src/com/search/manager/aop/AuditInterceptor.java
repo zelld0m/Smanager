@@ -234,17 +234,17 @@ public class AuditInterceptor {
 						refId, rule.getRuleName(), searchTerm, condition));
 				break;
 			case update:
-				auditTrail.setDetails(String.format("Added Rule ID[%1$s] : name = [%2$s], search term = [%3$s], condition = [%4$s].", 
-						refId, rule.getRuleName(), searchTerm, condition));
+				auditTrail.setDetails(String.format("Updated Rule ID[%1$s] : name = [%2$s].", 
+						refId, rule.getRuleName()));
 				break;
 			case delete:
 				auditTrail.setDetails(String.format("Removed Rule ID[%1$s].", refId));
 				break;
 			case mapKeyword:
-				auditTrail.setDetails(String.format("Added Search Term[%1$s] for Rule ID[%2$s].", condition, searchTerm));
+				auditTrail.setDetails(String.format("Added Search Term[%1$s] for Rule ID[%2$s].", searchTerm, refId));
 				break;
 			case unmapKeyword:
-				auditTrail.setDetails(String.format("Removed Search Term[%1$s] from Rule ID[%2$s].", condition, searchTerm));
+				auditTrail.setDetails(String.format("Removed Search Term[%1$s] from Rule ID[%2$s].", searchTerm, refId));
 				break;
 			case addCondition:
 				auditTrail.setDetails(String.format("Added Condition[%1$s] for Rule ID[%2$s].", condition, refId));
