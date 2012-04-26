@@ -135,15 +135,15 @@
 	</select></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableTile" class="btnGraph" alt="Grid View" title="Grid View"><div class="btnGraph btnViewTile"></div></a></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableList" class="btnGraph" alt="List View" title="List View"><div class="btnGraph btnViewList"></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" ></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="clearRuleBtn"><div class="btnGraph btnClearDel marT1" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" alt="Download" title="Download" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="clearRuleBtn"><div class="btnGraph btnClearDel marT1" alt="Remove All" title="Remove All"></div></a></li>
 </ul>
 </div>
 
   <div id="sortablePagingTop" class="floatL txtAL w550"></div>
      
      <!--End Pagination-->
-  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 marT10" style="background:url(../images/bgSort.jpg) repeat-x; padding-top:8px;"></div>
+  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 marT10 padT8"></div>
   <div class="clearB"></div>
    
   <!--Start Displaying Items-->
