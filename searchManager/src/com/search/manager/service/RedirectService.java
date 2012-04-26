@@ -1,5 +1,8 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
@@ -108,7 +112,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectKeyword(String ruleId, String searchTerm) throws DaoException {
+	public int deleteKeywordInRule(String ruleId, String searchTerm) throws DaoException {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -152,14 +156,21 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<StoreKeyword> getKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) throws DaoException {
+	public RecordSet<Keyword> getKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) throws DaoException {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setStoreId(UtilityService.getStoreName());
 			rule.setSearchTerm(keyword);
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  page, itemsPerPage);
-			return daoService.getRedirectKeywords(criteria);
+			RecordSet<StoreKeyword> storeKeyword = daoService.getRedirectKeywords(criteria);
+			List<Keyword> list = new ArrayList<Keyword>();
+			if (storeKeyword.getTotalSize() > 0) {
+				for (StoreKeyword sk: storeKeyword.getList()) {
+					list.add(sk.getKeyword());
+				}
+			}
+			return new RecordSet<Keyword>(list, list.size());
 		} catch (DaoException e) {
 			logger.error("Failed during getElevatedProduct()",e);
 		}

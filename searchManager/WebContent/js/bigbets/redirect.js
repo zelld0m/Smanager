@@ -13,19 +13,59 @@
 	var rulePageSize = 5;
 	var ruleType;
 	
-	var addRule = function() { 
-		
-		RedirectServiceJS.addRedirectRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, priority, {
-		callback: function(data){
-			if (data > 0) {
-				clearValues();
-				ruleId = "";
-				getRedirectRuleList(ruleId, rulePage);
-			}
-		}
-	});
-	};
+	var selectedRule = null;
+	var keywordInRulePageSize = 5;
+	
+	var refreshKeywordInRuleList = function(page){
+		$("#keywordInRulePanel").sidepanel({
+			fieldId: "keywordId",
+			fieldName: "keyword",
+			page: page,
+			region: "content",
+			pageStyle: "style2",
+			pageSize: keywordInRulePageSize,
+			headerText : "Using This Rule",
+			searchText : "Enter Keyword",
+			itemDataCallback: function(base, keyword, page){
+				RedirectServiceJS.getKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
+					callback: function(data){
+						base.populateList(data);
+						base.addPaging(keyword, page, data.totalSize);
+					},
+					preHook: function(){ base.prepareList(); }
+				});
+			},
+			itemOptionCallback: function(base, id, name){
+				var icon = "";
+				var suffixId = $.escapeQuotes($.formatAsId(id));
 
+				icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
+				base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
+
+				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
+					click: function(e){
+						if (confirm('Remove "' + name + '" in ' + selectedRule.ruleName  + '?'))
+							RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
+								callback:function(data){
+									refreshKeywordInRuleList(1);
+								},
+								preHook: function(){ base.prepareList(); }
+							});
+					}
+				});
+			},
+			itemAddCallback: function(base, keyword){
+				RedirectServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
+					callback: function(data){
+						alert(keyword + " added successfully");
+						refreshKeywordInRuleList(1);
+					},
+					preHook: function(){ base.prepareList(); }
+				});
+			}
+		});
+	};
+	
 	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, priority, {
 		callback: function(data){
 			if (data > 0) {
@@ -59,6 +99,7 @@
 	};
 
 	function setRuleForEdit(rule) {
+		selectedRule = rule;
 		clearValues();
 		ruleId = rule.ruleId;
 		$("#ruleId").val(rule.ruleId);
@@ -66,6 +107,8 @@
 		$("#headerRuleName").text(rule.ruleName);
 		$("#priority").text(rule.priority);
 
+		refreshKeywordInRuleList(1);
+		
 		RedirectServiceJS.getRedirectRule("", ruleId, 1, 30, {
 			callback: function(data){
 				rules = data.list;
@@ -186,19 +229,25 @@
 			},
 
 			itemAddCallback: function(base, name){
-			    	var ruleName = $.trim($("#searchTextbox").val());
-			    	
-			    	if (ruleName == "") {
-			    		alert("Rule Name cannot be blank!");
-			    	} else if ($("#ruleId").val() == "0") {
-			    		alert("You are currently in add mode!");
-			    	} else {
-			    		clearValues();
-			    		$("#ruleId").val("0");
-			    		$("#headerRuleName").text(ruleName);
-			    		$("#ruleName").val(ruleName);
-			    		$("#delete").text("Cancel");
-			    	}
+				RedirectServiceJS.addRedirectRule(name, {
+					callback: function(data){
+						base.getList(name, 1);
+					},
+					preHook: function(){ base.prepareList(); }
+				});
+				
+//			    	var ruleName = $.trim($("#searchTextbox").val());
+//			    	if (ruleName == "") {
+//			    		alert("Rule Name cannot be blank!");
+//			    	} else if ($("#ruleId").val() == "0") {
+//			    		alert("You are currently in add mode!");
+//			    	} else {
+//			    		clearValues();
+//			    		$("#ruleId").val("0");
+//			    		$("#headerRuleName").text(ruleName);
+//			    		$("#ruleName").val(ruleName);
+//			    		$("#delete").text("Cancel");
+//			    	}
 			},
 
 			itemOptionCallback: function(base, id, name){
@@ -215,8 +264,8 @@
 					}
 				});
 			},
+			
 			itemNameCallback: function(e){
-				
 				setRuleForEdit(e.data.model);
 			}
 		});
