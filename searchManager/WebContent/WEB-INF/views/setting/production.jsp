@@ -55,7 +55,7 @@
 			<div style="max-height:360px; overflow-y:scroll">
 				<table class="tblItems w100p" id="rule">
 					<tbody>
-						<tr id="ruleItemPattern" class="ruleItem">
+						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="268px" id="ruleRefId">
 								<p id="ruleName"></p>
