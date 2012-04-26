@@ -135,7 +135,8 @@
 	</select></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableTile" class="btnGraph" alt="Grid View" title="Grid View"><div class="btnGraph btnViewTile"></div></a></li>
 	<li class="padT1"><a href="javascript:void(0);" id="sortableList" class="btnGraph" alt="List View" title="List View"><div class="btnGraph btnViewList"></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" ></div></a></li>
+	<li class="padT1"><a href="javascript:void(0);" id="clearRuleBtn"><div class="btnGraph btnClearDel marT1" ></div></a></li>
 </ul>
 </div>
 
@@ -245,9 +246,6 @@
   <!--Pagination-->
   
   <div class="clearB"></div>
-  <div id="clearRule" class="txtAR marT20" style="display: none">
-		<a id="clearRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear Rule</div></a>
-  </div>
   
   <div id="ruleIsLocked" class="w180" style="display:none;">
   	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
