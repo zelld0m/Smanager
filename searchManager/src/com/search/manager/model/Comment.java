@@ -14,14 +14,14 @@ private static final long serialVersionUID = 1L;
 	private String username;
 	private String date;
 	private String comment;
-	private String commentId;
+	private Integer commentId;
 	private String referenceId;
 	private Date createdDate;
 	
 	public Comment() {
 	}
 
-	public Comment(String commentId, String referenceId, String comment, String username, Date createdDate) {
+	public Comment(Integer commentId, String referenceId, String comment, String username, Date createdDate) {
 		super();
 		this.commentId = commentId;
 		this.referenceId = referenceId;
@@ -50,11 +50,11 @@ private static final long serialVersionUID = 1L;
 		this.comment = comment;
 	}
 
-	public String getCommentId() {
+	public Integer getCommentId() {
 		return commentId;
 	}
 
-	public void setCommentId(String commentId) {
+	public void setCommentId(Integer commentId) {
 		this.commentId = commentId;
 	}
 
