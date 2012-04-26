@@ -47,15 +47,13 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int updateRedirectRule(String ruleId, String ruleName, String changeKeyword, Integer priority) {
+	public int updateRedirectRule(String ruleId, String ruleName) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setRuleName(ruleName);
-			rule.setPriority(priority);
-			rule.setChangeKeyword(changeKeyword);
-			rule.setModifiedBy(UtilityService.getUsername());
+			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during updateRedirectRule()",e);
@@ -70,7 +68,7 @@ public class RedirectService {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(searchTerm);
-			rule.setModifiedBy(UtilityService.getUsername());
+			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.removeRedirectRule(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectRule()",e);
@@ -103,7 +101,7 @@ public class RedirectService {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(keyword);
-			rule.setModifiedBy(UtilityService.getUsername());
+			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.addRedirectKeyword(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during addRedirectKeyword()",e);
@@ -118,7 +116,7 @@ public class RedirectService {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(searchTerm);
-			rule.setModifiedBy(UtilityService.getUsername());
+			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.removeRedirectKeyword(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectKeyword()",e);
