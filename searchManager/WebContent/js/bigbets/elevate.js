@@ -224,7 +224,8 @@
 			
 			$("#sItemPosition" + id).val(sortableItem.location);
 
-			$('#sItemPosition' + id).keydown(function(e){
+			$('#sItemPosition' + id).on({
+				keydown:function(e){
 				var currentIndex = $.trim(($(this).parent("li").index()+1) + ((sortablePage-1)*sortablePageSize));
 
 				var code = (e.keyCode ? e.keyCode : e.which);
@@ -239,7 +240,9 @@
 						}
 					}
 				}
-			});
+			},
+			mouseenter:showHoverInfo
+			},{locked: isRuleLocked});
 
 			if (sortableItem.isExpired)
 				$("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
@@ -350,10 +353,8 @@
 						$("#sItemPattern" + id).attr("style", "display:block"); 		
 					};
 
-					//updatePositionBox();
-
 					var pagingText = sortableTotalItems == 0   ? "" : showPaging(sortablePage,sortablePageSize,sortableTotalItems,keyword); 				    
-					$('#sortableDisplayOptions').attr("style",(sortableTotalItems == 0 && $.isBlank(getSelectedKeyword())) ? "display:none" : "display:block");
+					sortableTotalItems == 0 ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
 				},
 				preHook: function(){ prepareSortableList(); },
 				postHook: function(){ cleanUpSortableList(); }
