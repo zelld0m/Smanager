@@ -57,14 +57,6 @@
 				}
 			});
 		};
-
-		var addComment = function(comment, ruleStatusIds){
-			DeploymentServiceJS.addComment(comment, ruleStatusIds,{
-				callback:function(e){
-
-				}
-			});
-		};
 		
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({

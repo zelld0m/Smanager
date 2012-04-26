@@ -1,4 +1,5 @@
 (function($){
+	
 $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
 	position: {
 		at: 'bottom center', // Position the tooltip above the link
@@ -18,4 +19,9 @@ $.fn.qtip.defaults = $.extend(true, {}, $.fn.qtip.defaults, {
 		classes: 'ui-tooltip-wiki ui-tooltip-light ui-tooltip-tipped'
 	}
 });
+
+clearAllQtip = function(){
+	$(".qtip").remove();
+};
+
 })(jQuery);	

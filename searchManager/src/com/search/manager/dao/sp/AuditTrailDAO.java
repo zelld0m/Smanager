@@ -21,6 +21,7 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.service.UtilityService;
 
 @Repository(value="auditTrailDAO")
 public class AuditTrailDAO {
@@ -34,10 +35,11 @@ public class AuditTrailDAO {
     	ddval = new DropdownValues(jdbcTemplate);
     }
 
-	private final static String REFERENCE_SQL = "select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL " +
-			"UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL " +
-			"UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL " +
-			"UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL ORDER BY VALUE";
+	private final static String REFERENCE_SQL = new StringBuilder("select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
+			.append("' UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
+			.append("' UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
+			.append("' UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
+			.append("' ORDER BY VALUE").toString();
 
 	private AddAuditTrailStoredProcedure addSP;
 	private GetAuditTrailStoredProcedure getSP;

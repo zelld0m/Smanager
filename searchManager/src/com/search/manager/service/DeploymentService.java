@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -63,7 +64,7 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
-		// TODO: add transaction dependency
+		// TODO: add transaction dependency handshake
 		approveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment( comment, ruleStatusIdList);
 		return 0;
@@ -81,8 +82,11 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int unapproveRule(String ruleType, String ...ruleRefIdList) {
-		return unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+	public int unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment(comment, ruleStatusIdList);
+		return 0;
 	}
 	
 	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
@@ -123,7 +127,15 @@ public class DeploymentService {
 		return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
 	}
 
+
 	@RemoteMethod
+	public int publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		publishRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return 0;
+	}
+	
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
@@ -138,6 +150,13 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public int unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		unpublishRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment(comment, ruleStatusIdList);
+		return 0;
+	}
+	
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
@@ -202,6 +221,17 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public RecordSet<Comment> getComment(String ruleStatusId, Integer commentId) {
+		RecordSet<Comment> rSet = null;
+		try {
+			rSet = daoService.getComment(ruleStatusId, commentId);
+		} catch (DaoException e) {
+			logger.error("Failed during getComment()",e);
+		}
+		return rSet;
+	}
+
+	@RemoteMethod
 	public int removeComment(Integer commentId) {
 		int result = -1;
 		try {
@@ -246,11 +276,11 @@ public class DeploymentService {
 
 	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return service.deployRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 
 	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return service.recallRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 }

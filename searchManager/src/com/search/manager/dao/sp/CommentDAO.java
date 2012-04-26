@@ -13,13 +13,9 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
-import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.constants.AuditTrailConstants.Entity;
-import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 @Repository(value="commentDAO")
 public class CommentDAO {
@@ -48,6 +44,7 @@ public class CommentDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -55,7 +52,7 @@ public class CommentDAO {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Comment>() {
 	        	public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new Comment(
-	                		rs.getString(DAOConstants.COLUMN_COMMENT_ID), 
+	                		rs.getInt(DAOConstants.COLUMN_COMMENT_ID), 
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
@@ -103,24 +100,23 @@ public class CommentDAO {
 		}
 	}
 	
-    @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
     public int deleteComment(Integer commentId) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<Comment> getComment(String referenceId) throws DaoException {
+    public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, referenceId);
+			inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
 			return DAOUtils.getRecordSet(getCommentStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getComment()", e);
 		}
     }	
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.add)
     public int addComment(String refId, String comment, String userName) throws DaoException {
     	int result = -1;
 		try {
@@ -136,7 +132,6 @@ public class CommentDAO {
     	return result;
     }
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.update)
     public int updateComment(Comment comment) throws DaoException {
     	int result = -1;
 		try {
