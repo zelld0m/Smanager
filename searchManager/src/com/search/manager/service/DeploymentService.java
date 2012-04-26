@@ -127,7 +127,15 @@ public class DeploymentService {
 		return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
 	}
 
+
 	@RemoteMethod
+	public int publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		publishRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return 0;
+	}
+	
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
@@ -142,6 +150,13 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	public int unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		unpublishRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment(comment, ruleStatusIdList);
+		return 0;
+	}
+	
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
