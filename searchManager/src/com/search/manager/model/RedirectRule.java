@@ -1,6 +1,5 @@
 package com.search.manager.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class RedirectRule implements Serializable {
+public class RedirectRule extends ModelBean {
 
 	private static final long serialVersionUID = 4608433178597830827L;
 
@@ -21,16 +20,14 @@ public class RedirectRule implements Serializable {
 
 	private String ruleId;
 	private String ruleName;
+	private String description;
 	private String redirectTypeId;
 	private String storeId;
 	private Integer priority;
 	private String searchTerm;
 	private String condition;
-	private String createdBy;
-	private String modifiedBy;
 	private String changeKeyword;
-	private Date dateCreated;
-	private Date dateModified;
+	
 	
 	public RedirectRule() {
 		super();
@@ -49,7 +46,7 @@ public class RedirectRule implements Serializable {
 		this.searchTerm = searchTerm;
 	}
 	
-	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String storeId,
+	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
 			Date dateCreated, Date dateModified, String changeKeyword) {
 		super();
@@ -57,13 +54,14 @@ public class RedirectRule implements Serializable {
 		this.redirectTypeId = redirectTypeId;
 		this.ruleName = ruleName;
 		this.storeId = storeId;
+		this.description = description;
 		this.priority = priority;
 		this.searchTerm = searchTerm;
 		this.condition = condition;
 		this.createdBy = createdBy;
-		this.modifiedBy = modifiedBy;
-		this.dateCreated = dateCreated;
-		this.dateModified = dateModified;
+		this.lastModifiedBy = modifiedBy;
+		this.createdDate = dateCreated;
+		this.lastModifiedDate = dateModified;
 		this.changeKeyword = changeKeyword;
 	}
 	
@@ -115,38 +113,6 @@ public class RedirectRule implements Serializable {
 		this.condition = condition;
 	}
 	
-	public String getCreatedBy() {
-		return createdBy;
-	}
-	
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-	
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-	
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-	
-	public Date getDateCreated() {
-		return dateCreated;
-	}
-	
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
-	}
-	
-	public Date getDateModified() {
-		return dateModified;
-	}
-	
-	public void setDateModified(Date dateModified) {
-		this.dateModified = dateModified;
-	}
-	
 	public String getRedirectTypeId() {
 		return redirectTypeId;
 	}
@@ -195,5 +161,13 @@ public class RedirectRule implements Serializable {
 
 	public String getChangeKeyword() {
 		return changeKeyword;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 }

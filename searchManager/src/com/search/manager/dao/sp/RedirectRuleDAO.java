@@ -76,6 +76,7 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_TYPE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_NAME), 
+	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION), 
 	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY), 
 	                		rs.getString(DAOConstants.COLUMN_SEARCH_TERM),
@@ -131,6 +132,7 @@ public class RedirectRuleDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
@@ -151,6 +153,7 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.VARCHAR));
@@ -229,7 +232,7 @@ public class RedirectRuleDAO {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 		inputs.put(DAOConstants.PARAM_SEARCH_TERM, null);
-		inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+		inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
         return DAOUtils.getUpdateCount(deleteRedirectRuleStoredProcedure.execute(inputs));
     }	
 
@@ -276,6 +279,7 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, rule.getDescription());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM, rule.getSearchTerm());
@@ -302,10 +306,11 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
+			inputs.put(DAOConstants.PARAM_DESCRIPTION, rule.getDescription());
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_ACTIVE_FLAG, "ENABLED");
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(updateRedirectRuleStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -321,7 +326,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM, rule.getSearchTerm());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(addRedirectRuleKeywordStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -337,7 +342,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM, rule.getSearchTerm());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(deleteRedirectRuleKeywordStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -354,7 +359,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_CONDITION, rule.getCondition());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(addRedirectRuleConditionStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -370,7 +375,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_CONDITION, rule.getCondition());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getModifiedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(deleteRedirectRuleConditionStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
