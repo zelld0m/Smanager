@@ -23,9 +23,9 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
@@ -400,12 +400,6 @@ public class RelevancyDAO {
 		}
 	}
 
-    public int saveRelevancy(Relevancy relevancy) throws DaoException {
-    	return (getRelevancy(relevancy) == null) ? addRelevancy(relevancy)
-    			: updateRelevancy(relevancy);
-    	// TODO: save parameters??
-    }
-
 	@Audit(entity = Entity.relevancy, operation = Operation.add)
 	public String addRelevancyAndGetId(Relevancy relevancy) throws DaoException {
 		String id = DAOUtils.generateUniqueId();
@@ -483,40 +477,6 @@ public class RelevancyDAO {
 	        return DAOUtils.getItem(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getRelevancy()", e);
-    	}
-	}
-
-	public boolean saveRelevancyDetails(Relevancy relevancy) throws DaoException {
-		try {
-			// save relevancy info
-    		saveRelevancy(relevancy);
-    		// save relevancy fields info
-	    	Map<String, Object> inputs = new HashMap<String, Object>();
-			try {
-				Map<String, String> map = relevancy.getParameters();
-	            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
-				for (String fieldName: map.keySet()) {
-					String fieldValue = map.get(fieldName);
-		            inputs.put(DAOConstants.PARAM_FIELD_NAME, fieldName);
-		            inputs.put(DAOConstants.PARAM_FIELD_VALUE, fieldValue);
-		            if (DAOUtils.getItem(getRelevancyFieldSP.execute(inputs)) != null) {
-			            if (StringUtils.isEmpty(fieldValue)) {
-			            	deleteRelevancyFieldSP.execute(inputs);
-			            }
-			            else {
-			            	updateRelevancyFieldSP.execute(inputs);
-			            }
-		            }
-		            else {
-		            	addRelevancyFieldSP.execute(inputs);
-		            }
-				}
-				return true;
-			} catch (Exception e) {
-	    		throw new DaoException("Failed during saveRelevancyDetails(): " + e.getMessage(), e);
-	    	}
-		} catch (Exception e) {
-    		throw new DaoException("Failed during saveRelevancyDetails()", e);
     	}
 	}
 	
@@ -669,12 +629,6 @@ public class RelevancyDAO {
     		throw new DaoException("Failed during getRelevancyFields(): " + e.getMessage(), e);
     	}
 	}
-
-	@Audit(entity = Entity.relevancy, operation = Operation.saveKeywordMapping)
-    public int saveRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
-    	return (getRelevancyKeyword(relevancyKeyword) == null) ? addRelevancyKeyword(relevancyKeyword)
-    			: updateRelevancyKeyword(relevancyKeyword);
-    }
     
 	@Audit(entity = Entity.relevancy, operation = Operation.mapKeyword)
 	public int addRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {

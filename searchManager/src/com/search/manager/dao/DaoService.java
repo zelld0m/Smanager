@@ -50,13 +50,13 @@ public interface DaoService {
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
 	public int removeRedirectRule(RedirectRule rule) throws DaoException;
-	
+			
 	public int addRedirectKeyword(RedirectRule rule) throws DaoException;
 	public int removeRedirectKeyword(RedirectRule rule) throws DaoException;
 	public int addRedirectCondition(RedirectRule rule) throws DaoException;
 	public int removeRedirectCondition(RedirectRule rule) throws DaoException;	
-	public int getRedirectKeywords(RedirectRule rule) throws DaoException;
-	public int getRedirectKeywords(StoreKeyword storeKeyword) throws DaoException;
+	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException;
+	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException;
 	
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
@@ -123,7 +123,6 @@ public interface DaoService {
 	/**
 	 * Save the relevancy. Adds non-existent relevancy but updates existing one.
 	 */
-	public int addOrUpdateRelevancy(Relevancy relevancy) throws DaoException;
 	public int addRelevancy(Relevancy relevancy) throws DaoException;
 	public String addRelevancyAndGetId(Relevancy relevancy) throws DaoException;
 	public int updateRelevancy(Relevancy relevancy) throws DaoException;
@@ -132,10 +131,6 @@ public interface DaoService {
      * Returns relevancy info not including the relevancy fields
      */
 	public Relevancy getRelevancy(Relevancy relevancy) throws DaoException;
-    /**
-     * Save relevancy info including the relevancy fields
-     */
-	public boolean addOrUpdateRelevancyDetails(Relevancy relevancy) throws DaoException;
     /**
      * Returns relevancy info including the relevancy fields
      */
@@ -155,10 +150,6 @@ public interface DaoService {
 	public RelevancyField getRelevancyField(RelevancyField relevancyField) throws DaoException;
 	
     /* Relevancy Keyword */
-	/**
-	 * Save the relevancy keyword. Adds non-existent relevancy keyword but updates existing one.
-	 */
-    public int addOrUpdateRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException;
 	public int addRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException;
 	public int updateRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException;
     public int deleteRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException;

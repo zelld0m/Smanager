@@ -26,9 +26,9 @@ public class RedirectRule implements Serializable {
 	private Integer priority;
 	private String searchTerm;
 	private String condition;
-	private Integer activeFlag;
 	private String createdBy;
 	private String modifiedBy;
+	private String changeKeyword;
 	private Date dateCreated;
 	private Date dateModified;
 	
@@ -36,7 +36,7 @@ public class RedirectRule implements Serializable {
 		super();
 	}
 
-	public RedirectRule(String ruleId, String ruleName, String searchTerm) {
+	public RedirectRule(String ruleId, String storeId, String ruleName, String searchTerm) {
 		super();
 		this.ruleId = ruleId;
 		this.ruleName = ruleName;
@@ -50,9 +50,8 @@ public class RedirectRule implements Serializable {
 	}
 	
 	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String storeId,
-			Integer priority, String searchTerm, String condition, Integer activeFlag,
-			String createdBy, String modifiedBy, Date dateCreated,
-			Date dateModified) {
+			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
+			Date dateCreated, Date dateModified, String changeKeyword) {
 		super();
 		this.ruleId = ruleId;
 		this.redirectTypeId = redirectTypeId;
@@ -61,11 +60,11 @@ public class RedirectRule implements Serializable {
 		this.priority = priority;
 		this.searchTerm = searchTerm;
 		this.condition = condition;
-		this.activeFlag = activeFlag;
 		this.createdBy = createdBy;
 		this.modifiedBy = modifiedBy;
 		this.dateCreated = dateCreated;
 		this.dateModified = dateModified;
+		this.changeKeyword = changeKeyword;
 	}
 	
 	public String getRuleId() {
@@ -114,14 +113,6 @@ public class RedirectRule implements Serializable {
 	
 	public void setCondition(String condition) {
 		this.condition = condition;
-	}
-	
-	public Integer getActiveFlag() {
-		return activeFlag;
-	}
-	
-	public void setActiveFlag(Integer activeFlag) {
-		this.activeFlag = activeFlag;
 	}
 	
 	public String getCreatedBy() {
@@ -196,5 +187,13 @@ public class RedirectRule implements Serializable {
 			CollectionUtils.addAll(terms, searchTerm.split(COMMA));
 		}
 		return terms;
+	}
+
+	public void setChangeKeyword(String changeKeyword) {
+		this.changeKeyword = changeKeyword;
+	}
+
+	public String getChangeKeyword() {
+		return changeKeyword;
 	}
 }

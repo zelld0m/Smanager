@@ -40,11 +40,14 @@ public class AuditTrailConstants {
 		updateRelevancyField,
 		deleteRelevancyField,
 		saveRelevancyField,
-		// for relevancy and banners
+		// for redirect, relevancy and banners
 		mapKeyword,
 		unmapKeyword,
+		// for relevancy only
 		updateKeywordMapping,
-		saveKeywordMapping,		
+		// for redirect only
+		addCondition,
+		removeCondition,		
 	}
 
 	public static Operation[] elevateOperations = {
@@ -93,7 +96,12 @@ public class AuditTrailConstants {
 	public static Operation[] queryCleaningOperations = {
 		Operation.add,
 		Operation.update,
-		Operation.delete };
+		Operation.delete,
+		Operation.mapKeyword,
+		Operation.unmapKeyword,
+		Operation.addCondition,
+		Operation.removeCondition,
+	};
 
 	public static Operation[] relevancyOperations = {
 		Operation.add,
@@ -111,7 +119,6 @@ public class AuditTrailConstants {
 	public static Operation[] relevancyKeywordOperations = {
 		Operation.mapKeyword,
 		Operation.unmapKeyword,
-		Operation.saveKeywordMapping,
 		Operation.updateKeywordMapping };
 
 	public static Map<Entity, Operation[]> entityOperationMap;

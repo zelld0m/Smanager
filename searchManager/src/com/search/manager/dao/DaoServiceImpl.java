@@ -54,19 +54,20 @@ public class DaoServiceImpl implements DaoService {
 	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
 
 	@Autowired private KeywordDAO 		keywordDAO;
-	@Autowired private StoreKeywordDAO storeKeywordDAO;
+	@Autowired private StoreKeywordDAO 	storeKeywordDAO;
 	@Autowired private ElevateDAO 		elevateDAO;
 	@Autowired private ExcludeDAO 		excludeDAO;
 	@Autowired private AuditTrailDAO 	auditTrailDAO;
 	@Autowired private BannerDAO 		bannerDAO;
-	@Autowired private CampaignDAO 	campaignDAO;
-	@Autowired private RelevancyDAO	relevancyDAO;
+	@Autowired private CampaignDAO 		campaignDAO;
+	@Autowired private RelevancyDAO		relevancyDAO;
 	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
-	@Autowired private CommentDAO	commentDAO;
+	@Autowired private CommentDAO		commentDAO;
 
-	DaoServiceImpl instance;
+	private DaoServiceImpl instance;
+	
 	public DaoServiceImpl() {
 		instance = this;
 	}
@@ -543,11 +544,6 @@ public class DaoServiceImpl implements DaoService {
 
 	/* Relevancy */
 	@Override
-	public int addOrUpdateRelevancy(Relevancy relevancy) throws DaoException {
-		return relevancyDAO.saveRelevancy(relevancy);
-	}
-	
-	@Override
 	public int addRelevancy(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.addRelevancy(relevancy);
 	}
@@ -582,11 +578,6 @@ public class DaoServiceImpl implements DaoService {
 		return relevancyDAO.getRelevancy(relevancy);
 	}
 
-	@Override
-	public boolean addOrUpdateRelevancyDetails(Relevancy relevancy) throws DaoException {
-		return relevancyDAO.saveRelevancyDetails(relevancy);
-	}
-	
 	@Override
 	public Relevancy getRelevancyDetails(Relevancy relevancy) throws DaoException {
 		return relevancyDAO.getRelevancyDetails(relevancy);
@@ -625,14 +616,8 @@ public class DaoServiceImpl implements DaoService {
 	
 	/* Relevancy Keyword */
 	@Override
-	public int addOrUpdateRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
-		return relevancyDAO.saveRelevancyKeyword(relevancyKeyword);
-	}
-	
-	@Override
 	public int addRelevancyKeyword(RelevancyKeyword relevancyKeyword) throws DaoException {
 		return relevancyDAO.addRelevancyKeyword(relevancyKeyword);
-
 	}
 
 	@Override
@@ -741,38 +726,32 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int addRedirectKeyword(RedirectRule rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+		return redirectRuleDAO.addRedirectKeyword(rule);
 	}
 
 	@Override
 	public int removeRedirectKeyword(RedirectRule rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+		return redirectRuleDAO.removeRedirectKeyword(rule);
 	}
 
 	@Override
 	public int addRedirectCondition(RedirectRule rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+		return redirectRuleDAO.addRedirectCondition(rule);
 	}
 
 	@Override
 	public int removeRedirectCondition(RedirectRule rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+		return redirectRuleDAO.removeRedirectCondition(rule);
 	}
 
 	@Override
-	public int getRedirectKeywords(RedirectRule rule) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException {
+		return redirectRuleDAO.getRedirectKeywords(criteria);
 	}
 
 	@Override
-	public int getRedirectKeywords(StoreKeyword storeKeyword) throws DaoException {
-		// TODO Auto-generated method stub
-		return 0;
+	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException {
+		return redirectRuleDAO.getRedirectForKeywords(criteria);
 	}
 	
 	public KeywordDAO getKeywordDAO() {

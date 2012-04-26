@@ -5,7 +5,6 @@
 	var rules;
 	var ruleCondition = "";
 	var storeId = "macmall";
-	var active = 1;
 	var priority = 1;
 	var ruleCnt = 0;
 	var redirectFlag= false;
@@ -16,7 +15,7 @@
 	
 	var addRule = function() { 
 		
-		RedirectServiceJS.addRedirectRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, active, priority, {
+		RedirectServiceJS.addRedirectRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
@@ -27,7 +26,7 @@
 	});
 	};
 
-	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, active, priority, {
+	var updateRule = function() { RedirectServiceJS.updateRedirectRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, priority, {
 		callback: function(data){
 			if (data > 0) {
 				clearValues();
@@ -66,7 +65,6 @@
 		$("#ruleName").val(rule.ruleName);
 		$("#headerRuleName").text(rule.ruleName);
 		$("#priority").text(rule.priority);
-		$("#activeFlag").text(rule.activeFlag);
 
 		RedirectServiceJS.getRedirectRule("", ruleId, 1, 30, {
 			callback: function(data){
@@ -413,10 +411,10 @@
         		searchTerm = searchTerm.substring(0, searchTerm.lastIndexOf(","));
 	    		
     	    	if (ruleId == 0) {
-    	    		addRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, active, priority);
+    	    		addRule(ruleName, ruleType, searchTerm, ruleCondition, storeId, priority);
     	    		$("#delete").text("Delete");
     	    	} else {
-    	    		updateRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, active, priority);
+    	    		updateRule(ruleId, ruleName, searchTerm, ruleCondition, storeId, priority);
     	    	}
     		}
 	    });
