@@ -51,8 +51,14 @@
 			content+= '</div>';
 			content+= '<div class="sideSearch">';
 			content+= '<span style="padding-top:7px">';
-			content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
-			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" type="text" value="' + base.options.searchText + '">';
+			
+			if (base.options.showAddButton){
+				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
+				content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" type="text" value="' + base.options.searchText + '">';
+			}
+			else{
+				content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" type="text" value="' + base.options.searchText + '">';
+			}
 			content+= '</span>';
 			content+= '</div>';
 
@@ -162,6 +168,7 @@
 			headerText: "",
 			searchText: "",
 			searchLabel: "",
+			showAddButton: true,
 			itemDataCallback: function(e){},
 			itemOptionCallback: function(e){},
 			itemNameCallback: function(e){},

@@ -728,6 +728,7 @@
 				pageSize: keywordPageSize,
 				headerText : "Ranking Rule Keyword",
 				searchText : "Enter Keyword",
+				showAddButton: false,
 				itemDataCallback: function(base, keyword, page){
 					StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
 						callback: function(data){
