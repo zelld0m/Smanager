@@ -15,11 +15,15 @@
 <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
 
 <script type="text/javascript" src="<spring:url value="/js/bigbets/redirect.js" />"></script>   
-
-<script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
-<script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery.ui.combobox.js" />" ></script>
 
+<style type="text/css">
+   .ui-button { margin-left: -1px; }
+   .ui-button-icon-only .ui-button-text { padding: 0.35em; }
+   .ui-autocomplete-input { margin: 0; padding: 0.48em 0 0.47em 0.45em; }
+   .ui-autocomplete { height: 200px; overflow-y: scroll; overflow-x: hidden;}
+</style>
+	
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
@@ -68,21 +72,102 @@
 	 </div>
 	
 	<div id="redirectContainer" style="width:95%" class="marT20 mar0">
+		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
 		<div id="redirect" class="redirect fsize12">	
 			<div class="landingCont w45p83 minHeight185 floatL">	
-				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Query Cleaning</div>		
+				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Rule Info</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
 					<label><input id="name" type="text" class="w240 marT5"/></label>
 					<div class="clearB"></div>			
 					<label class="floatL w70 marT8 padT3">Description</label>
 					<label><textarea id="description" rows="4" class="marT8" style="width:240px"></textarea></label>
-			</div>
+					<div class="borderT txtAR padT10">
+						<a id="saveButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="deleteButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+					</div>
+				</div>
 			
 			<div class="landingCont w45p83 minHeight185 floatL marL13">
 					<div id="keywordInRulePanel"></div>
 			</div>
+		
+		
+		<div class="clearB"></div>	
+		
+		<div id="redirect-source" class="tabs">
+    		<ul>
+    			<li><a href="#ims"><span>IMS</span></a></li>
+    		</ul>
+    		
+    		<div id="ims">
+	        	<h3>Category/Manufacturer</h3>
+				<table class="fsize12 mar10 tblCatalog">
+					<tr>
+						<td>
+							<table class="fsize12 mar10 tblCatalog">
+								<tr>
+									<td width="100px">CatCode</td>
+									<td width="250px"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4 marL10" size="10" maxlength="4"></td>
+								</tr>
+								<tr>
+									<td width="100px">Category</td>
+									<td width="250px">
+										<select name="select" id="categoryList" class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
+											<option></option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Sub-Category</td>
+									<td>
+										<select name="select" id="subCategoryList" class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
+												<option></option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Class</td>
+									<td>
+										<select name="select" id="classList" class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
+												<option></option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Minor</td>
+									<td>
+										<select name="select" id="minorList" class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
+											<option></option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Manufacturer List</td>
+									<td><select name="select" id="manufacturerList"
+										class="farial fsize12 fgray padLR3 padTB4 marL10 w230">
+											<option></option>
+									</select></td>
+								</tr>
+							</table>
+						</td>
+						<td><a href="#" class="buttons btnGray clearfix"><div
+									class="buttons fontBold" id="addRule">>></div></a><br />
+						<td>
+							<div id="ruleItemPanel"></div>
+						</td>
+					</tr>
+				</table>
+			</div>
+    	</div>
+    	
+		
 		</div>
 	</div> 
+	
+	
+	
+	
 	
 </div>
 <!--End Right Side-->
