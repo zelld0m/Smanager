@@ -143,7 +143,7 @@
   <div id="sortablePagingTop" class="floatL txtAL w550"></div>
      
      <!--End Pagination-->
-  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 marT10" style="background:url(../images/bgSort.jpg) repeat-x; padding-top:8px;"></div>
+  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 marT10 padT8"></div>
   <div class="clearB"></div>
    
   <!--Start Displaying Items-->
