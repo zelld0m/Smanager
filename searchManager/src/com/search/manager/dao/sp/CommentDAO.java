@@ -13,13 +13,9 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
-import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.constants.AuditTrailConstants.Entity;
-import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
 @Repository(value="commentDAO")
 public class CommentDAO {
@@ -103,7 +99,6 @@ public class CommentDAO {
 		}
 	}
 	
-    @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
     public int deleteComment(Integer commentId) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
@@ -120,7 +115,6 @@ public class CommentDAO {
 		}
     }	
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.add)
     public int addComment(String refId, String comment, String userName) throws DaoException {
     	int result = -1;
 		try {
@@ -136,7 +130,6 @@ public class CommentDAO {
     	return result;
     }
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.update)
     public int updateComment(Comment comment) throws DaoException {
     	int result = -1;
 		try {

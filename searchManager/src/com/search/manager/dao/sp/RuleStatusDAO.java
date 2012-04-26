@@ -135,7 +135,6 @@ public class RuleStatusDAO {
 		}
 	}
 	
-    @Audit(entity = Entity.queryCleaning, operation = Operation.delete)
     public int deleteRuleStatus(RuleStatus ruleStatus) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_RULE_STATUS_ID, ruleStatus.getRuleStatusId());
@@ -161,7 +160,6 @@ public class RuleStatusDAO {
 		}
     }	
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.add)
     public int addRuleStatus(RuleStatus ruleStatus) throws DaoException {
     	int result = -1;
 		try {
