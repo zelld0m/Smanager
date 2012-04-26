@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
@@ -52,7 +53,7 @@ public class DeploymentService {
 			if (includeApprovedFlag) {
 				ruleStatus.setApprovalStatus("PENDING,APPROVED");
 			} else {
-				ruleStatus.setApprovalStatus("PENDING");
+				ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			}
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			rSet = daoService.getRuleStatus(searchCriteria );
@@ -65,16 +66,16 @@ public class DeploymentService {
 	@RemoteMethod
 	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		approveRule(ruleType, Arrays.asList(ruleRefIdList));
+		int result = approveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment( comment, ruleStatusIdList);
-		return 0;
+		return result;
 	}
 	
 	public int approveRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "APPROVED");
-			daoService.updateRuleStatus(ruleStatusList);
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			result = daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
@@ -84,16 +85,16 @@ public class DeploymentService {
 	@RemoteMethod
 	public int unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+		int result = unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment(comment, ruleStatusIdList);
-		return 0;
+		return result;
 	}
 	
 	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), "REJECTED");
-			daoService.updateRuleStatus(ruleStatusList);
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
+			result = daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
@@ -106,12 +107,12 @@ public class DeploymentService {
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
-			ruleStatus.setApprovalStatus("APPROVED");
-			ruleStatus.setPublishedStatus("UNPUBLISHED");
+			ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
 			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
 			ruleStatus.setApprovalStatus(null);
-			ruleStatus.setPublishedStatus("PUBLISHED");
+			ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
 			RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
 			rSet = combineRecordSet(approvedRset, publishedRset);
 		} catch (DaoException e) {
@@ -131,16 +132,16 @@ public class DeploymentService {
 	@RemoteMethod
 	public int publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		publishRule(ruleType, Arrays.asList(ruleRefIdList));
+		int result = publishRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment( comment, ruleStatusIdList);
-		return 0;
+		return result;
 	}
 	
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
 			if (publishWS(ruleRefIdList, RuleEntity.find(ruleType))) {
-				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "PUBLISHED");
+				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
 				result = daoService.updateRuleStatus(ruleStatusList);
 			}
 		} catch (DaoException e) {
@@ -152,16 +153,16 @@ public class DeploymentService {
 	@RemoteMethod
 	public int unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		unpublishRule(ruleType, Arrays.asList(ruleRefIdList));
+		int result = unpublishRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment(comment, ruleStatusIdList);
-		return 0;
+		return result;
 	}
 	
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
 			if (recallWS(ruleRefIdList, RuleEntity.find(ruleType))) {
-				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), "UNPUBLISHED");
+				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
 				result = daoService.updateRuleStatus(ruleStatusList);
 			}
 			
