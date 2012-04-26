@@ -34,6 +34,7 @@
     	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/production/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/approval/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
      	<security:intercept-url pattern="/dwr/**" access="isAuthenticated()" />
      	
         <!-- Make CSS and image resources to unsecured -->
