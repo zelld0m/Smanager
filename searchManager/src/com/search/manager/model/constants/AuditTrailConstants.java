@@ -16,7 +16,8 @@ public class AuditTrailConstants {
 		campaign,
 		banner,
 		queryCleaning,
-		relevancy
+		relevancy,
+		ruleStatus
 	}
 	
 	public enum Operation {
@@ -121,6 +122,12 @@ public class AuditTrailConstants {
 		Operation.unmapKeyword,
 		Operation.updateKeywordMapping };
 
+	public static Operation[] ruleStatusOperations = {
+		Operation.add,
+		Operation.update,
+		Operation.delete };
+
+
 	public static Map<Entity, Operation[]> entityOperationMap;
 	
 	static {
@@ -132,6 +139,7 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.campaign, campaignOperations);
 		entityOperationMap.put(Entity.banner, bannerOperations);
 		entityOperationMap.put(Entity.queryCleaning, queryCleaningOperations);
+		entityOperationMap.put(Entity.ruleStatus, ruleStatusOperations);
 		ArrayList<Operation> relevancyOperationList = new ArrayList<Operation>();
 		CollectionUtils.mergeArrayIntoCollection(relevancyOperations, relevancyOperationList);
 		CollectionUtils.mergeArrayIntoCollection(relevancyFieldOperations, relevancyOperationList);

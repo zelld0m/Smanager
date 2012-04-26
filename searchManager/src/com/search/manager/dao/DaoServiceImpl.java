@@ -24,6 +24,7 @@ import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -825,7 +826,11 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
-		return ruleStatusDAO.updateRuleStatus(ruleStatusList);
+		int result = 0;
+		for (RuleStatus ruleStatus : ruleStatusList) {
+			result += updateRuleStatus(ruleStatus);
+		}
+		return result;
 	}
 
 	@Override
@@ -835,7 +840,23 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
-		return ruleStatusDAO.processRuleStatus(ruleStatus, isDelete);
+		int result = -1;
+		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
+		if (rSet.getList().size()>0) {
+			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
+			if (isDelete) {
+				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
+			} else {
+				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());
+			}
+			result = updateRuleStatus(ruleStatus);
+		} else {
+			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
+			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
+			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+			result = addRuleStatus(ruleStatus);
+		}
+		return result;
 	}
 	
 	@Override

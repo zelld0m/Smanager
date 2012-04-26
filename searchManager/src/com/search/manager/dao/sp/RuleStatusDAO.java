@@ -160,6 +160,7 @@ public class RuleStatusDAO {
 		}
     }	
 
+    @Audit(entity = Entity.ruleStatus, operation = Operation.add)
     public int addRuleStatus(RuleStatus ruleStatus) throws DaoException {
     	int result = -1;
 		try {
@@ -179,7 +180,7 @@ public class RuleStatusDAO {
     	return result;
     }
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.update)
+    @Audit(entity = Entity.ruleStatus, operation = Operation.update)
     public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
     	int result = -1;
 		try {
@@ -199,50 +200,11 @@ public class RuleStatusDAO {
     	return result;
     }
 
-	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
-		int result = -1;
-		for (RuleStatus ruleStatus : ruleStatusList) {
-			result = updateRuleStatus(ruleStatus);
-			if (result < 1) {
-				break;
-			}
-		}
-		return result;
-	}
-	
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException {
 		RuleStatus result = null;
 		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
 		if (rSet.getList().size() > 0) {
 			result = rSet.getList().get(0);
-		}
-		return result;
-	}
-
-	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
-		int result = -1;
-		StringBuilder builder = new StringBuilder("Select APPROVED_STATUS FROM RULE_STATUS WHERE RULE_TYPE_ID = ");
-		builder.append(ruleStatus.getRuleTypeId()).append(" AND REFERENCE_ID = '").append(ruleStatus.getRuleRefId()).append("'");
-		List<String> list = addRuleStatusStoredProcedure.getJdbcTemplate()
-				.query(builder.toString(), new RowMapper() {
-					public Object mapRow(ResultSet resultSet, int i)
-							throws SQLException {
-						return resultSet.getString(1);
-					}
-				});
-		if (list.size()>0) {
-			ruleStatus.setApprovalStatus(RuleStatusDAO.PENDING);
-			if (isDelete) {
-				ruleStatus.setUpdateStatus(RuleStatusDAO.DELETE);
-			} else {
-				ruleStatus.setUpdateStatus(RuleStatusDAO.UPDATE);
-			}
-			result = updateRuleStatus(ruleStatus);
-		} else {
-			ruleStatus.setApprovalStatus(RuleStatusDAO.PENDING);
-			ruleStatus.setUpdateStatus(RuleStatusDAO.ADD);
-			ruleStatus.setPublishedStatus(RuleStatusDAO.UNPUBLISHED);
-			result = addRuleStatus(ruleStatus);
 		}
 		return result;
 	}

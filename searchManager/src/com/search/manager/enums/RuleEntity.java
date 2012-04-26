@@ -44,6 +44,17 @@ public enum RuleEntity {
 	    return find(name).code;
 	}
 	
+	public static String getValue(Integer code) {
+		String value = null;
+	    for (RuleEntity entity : RuleEntity.values()) {
+	        if (entity.getCode() == code) {
+	            value = entity.getValues().get(0);
+	            break;
+	        }
+	    }
+		return value;
+	}
+	
 	private static boolean containsIgnoreCase(String str, List<String> list){
 	    for(String i : list){
 	        if(StringUtils.equalsIgnoreCase(str, i) || StringUtils.equalsIgnoreCase(str, StringUtils.deleteWhitespace(i)))
