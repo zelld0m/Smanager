@@ -432,8 +432,11 @@ public class RelevancyService {
 		try {
 			
 			for(int i=0; i< ArrayUtils.getLength(relevancyIds); i++){
-				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), new Relevancy(relevancyIds[i]));
+				Relevancy relevancy = new Relevancy(relevancyIds[i]);
+				relevancy.setStore(new Store(UtilityService.getStoreName()));
+				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), relevancy);
 				RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
+				rk.setRelevancy(relevancy);
 				rk.setPriority(i+1);
 				daoService.updateRelevancyKeyword(rk);
 			}
