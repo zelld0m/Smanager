@@ -59,7 +59,7 @@ public class KeywordCacheDao {
 				return cache.getList();				
 			}
 		} catch (Exception e) {
-			logger.error(e);			
+			logger.error(e,e);			
 		}
 
 		try {
@@ -74,14 +74,46 @@ public class KeywordCacheDao {
 				try{
 					localCacheService.putLocalCache(getCacheKey(store), cache);
 				}catch (Exception e) {
-					logger.error(e);
+					logger.error(e,e);
 				}
 				return kwList;
 			}
 		} catch (DaoException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return kwList;
+	}
+	
+	public boolean reloadAllKeywords(Store store) throws DaoException, DataException{
+		try {
+			DAOValidation.checkStoreId(store);
+		} catch (Exception e) {
+			throw new DataException(e);
+		}
+		List<String> kwList = new ArrayList<String>();
+		CacheModel<String> cache = null;
+		List<StoreKeyword> keywordList = null;
+		
+		try {
+			keywordList = daoService.getAllKeywords(store.getStoreId()).getList();	
+			if(CollectionUtils.isNotEmpty(keywordList)) {
+				for(StoreKeyword key : keywordList){
+					kwList.add(key.getKeywordId());
+				}
+				cache = new CacheModel<String>();
+				cache.setList(kwList);
+				
+				try{
+					localCacheService.putLocalCache(getCacheKey(store), cache);
+				}catch (Exception e) {
+					logger.error(e,e);
+				}
+			}
+			return true;
+		} catch (DaoException e) {
+			logger.error(e,e);
+		}
+		return false;
 	}
 	
 	public boolean resetAllKeywords(String storeId){
@@ -89,7 +121,7 @@ public class KeywordCacheDao {
 			localCacheService.resetLocalCache(CacheConstants.getCacheKey(storeId, CacheConstants.KEYWORDS_CACHE_KEY, ""));
 			return true;
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;	
 	}

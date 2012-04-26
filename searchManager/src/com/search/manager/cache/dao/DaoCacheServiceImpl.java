@@ -73,6 +73,12 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		return keywordCacheDao.resetAllKeywords(store.getStoreId());
 	}
 	
+	public boolean reloadAllKeywords(Store store) throws DaoException, DataException{
+		if(resetAllkeywords(store))
+			return keywordCacheDao.reloadAllKeywords(store);
+		return false;
+	}
+	
 	public boolean resetElevateRule(StoreKeyword storeKeyword){
 		return elevateCacheDao.reset(storeKeyword);
 	}
