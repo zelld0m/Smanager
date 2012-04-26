@@ -44,6 +44,7 @@ public class CommentDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -51,7 +52,7 @@ public class CommentDAO {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Comment>() {
 	        	public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new Comment(
-	                		rs.getString(DAOConstants.COLUMN_COMMENT_ID), 
+	                		rs.getInt(DAOConstants.COLUMN_COMMENT_ID), 
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
@@ -105,10 +106,11 @@ public class CommentDAO {
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<Comment> getComment(String referenceId) throws DaoException {
+    public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_REFERENCE_ID, referenceId);
+			inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
 			return DAOUtils.getRecordSet(getCommentStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getComment()", e);

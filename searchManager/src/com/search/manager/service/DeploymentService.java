@@ -276,11 +276,11 @@ public class DeploymentService {
 
 	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return service.deployRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 
 	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
-		return ((SearchGuiClientServiceImpl) service).recallRules(UtilityService.getStoreName(), ruleList, ruleType);
+		return service.recallRules(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 }
