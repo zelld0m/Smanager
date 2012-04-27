@@ -73,7 +73,7 @@ public class WorkflowController {
 		RecordSet<RuleStatus> ruleStatuses = deploymentService.getApprovalList(ruleType, BooleanUtils.toBoolean("includeApproved"));
 		List<ApprovalRuleStatusReportBean> list = new ArrayList<ApprovalRuleStatusReportBean>();
 		for (RuleStatus ruleStatus: ruleStatuses.getList()) {
-			ruleStatus.setCommentList(deploymentService.getComment(ruleStatus.getRuleStatusId(), null).getList());
+			ruleStatus.setCommentList(deploymentService.getComment(ruleStatus.getRuleStatusId(), 0, 0).getList());
 			list.add(new ApprovalRuleStatusReportBean(ruleStatus));
 		}
 		
@@ -110,7 +110,7 @@ public class WorkflowController {
 		RecordSet<RuleStatus> ruleStatuses = deploymentService.getDeployedRules(ruleType);
 		List<PublishRuleStatusReportBean> list = new ArrayList<PublishRuleStatusReportBean>();
 		for (RuleStatus ruleStatus: ruleStatuses.getList()) {
-			ruleStatus.setCommentList(deploymentService.getComment(ruleStatus.getRuleStatusId(), null).getList());
+			ruleStatus.setCommentList(deploymentService.getComment(ruleStatus.getRuleStatusId(), 0, 0).getList());
 			list.add(new PublishRuleStatusReportBean(ruleStatus));
 		}
 		

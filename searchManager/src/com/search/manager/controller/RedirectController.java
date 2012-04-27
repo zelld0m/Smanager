@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.report.model.KeywordReportBean;
 import com.search.manager.report.model.KeywordReportModel;
 import com.search.manager.report.model.RedirectRuleConditionReportBean;
@@ -75,8 +76,8 @@ public class RedirectController {
 		}
 
 		List<RedirectRuleConditionReportBean> conditions = new ArrayList<RedirectRuleConditionReportBean>();
-		for (String condition: redirectService.getConditionInRule(ruleId, 0, 0).getList()) {
-			conditions.add(new RedirectRuleConditionReportBean(condition));
+		for (RedirectRuleCondition condition: redirectService.getConditionInRule(ruleId, 0, 0).getList()) {
+			conditions.add(new RedirectRuleConditionReportBean(condition.getCondition()));
 		}		
 		
 		List<RedirectRuleReportBean> list = new ArrayList<RedirectRuleReportBean>();
