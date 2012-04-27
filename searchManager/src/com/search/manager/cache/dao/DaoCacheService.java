@@ -18,6 +18,7 @@ public interface DaoCacheService {
 	public List<String> getAllKeywords(Store store) throws DaoException, DataException;
 	public boolean resetAllkeywords(Store store) throws DaoException, DataException;
 	public boolean hasExactMatchKey(StoreKeyword storeKeyword);
+	public boolean reloadAllKeywords(Store store) throws DaoException, DataException;
 
 	/* Elevate */
 	public boolean loadElevateRules(Store store) throws DaoException, DataException, DataException;

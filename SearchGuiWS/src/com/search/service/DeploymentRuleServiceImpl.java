@@ -57,13 +57,13 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.ELEVATE);		
 				
 					for(String key : list){
-						if(daoCacheService.hasExactMatchKey(new StoreKeyword(store, key))){
 							ElevateResult delEl = new ElevateResult();
-							delEl.setStoreKeyword(new StoreKeyword(store, key));
+							StoreKeyword sk = new StoreKeyword(store, key);
+							delEl.setStoreKeyword(sk);
 							daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
 							
 							// retrieve staging data then push to prod
-							StoreKeyword sk = new StoreKeyword(store, key);
+							daoService.addKeyword(sk);
 							elevateFilter.setStoreKeyword(sk);
 							SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
 							
@@ -78,10 +78,12 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 							// update cache data
 							daoCacheService.updateElevateRule(delEl); // prod
 							success = true;
-						}
 					}
+					
+					daoCacheService.reloadAllKeywords(new Store(store));
+					
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e,e);
 				success = false;
 			}
 			return success;
@@ -99,31 +101,32 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.EXCLUDE);	
 				
 					for(String key : list){
-						if(daoCacheService.hasExactMatchKey(new StoreKeyword(store, key))){
-							ExcludeResult delEl = new ExcludeResult();
-							delEl.setStoreKeyword(new StoreKeyword(store, key));
-							daoService.clearExcludeResult(new StoreKeyword(store, key)); // prod
-							
-							// retrieve staging data then push to prod
-							StoreKeyword sk = new StoreKeyword(store, key);
-							excludeFilter.setStoreKeyword(sk);
-							SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-							
-							excludeList = daoServiceStg.getExcludeResultList(criteria).getList();
-							
-							if(excludeList != null && excludeList.size() > 0){
-								for(ExcludeResult e : excludeList){
-									daoService.addExcludeResult((ExcludeResult) e);
-								}
+						ExcludeResult delEl = new ExcludeResult();
+						StoreKeyword sk = new StoreKeyword(store, key);
+						delEl.setStoreKeyword(sk);
+						daoService.clearExcludeResult(sk); // prod
+						
+						// retrieve staging data then push to prod
+						daoService.addKeyword(sk);
+						excludeFilter.setStoreKeyword(sk);
+						SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
+						
+						excludeList = daoServiceStg.getExcludeResultList(criteria).getList();
+						
+						if(excludeList != null && excludeList.size() > 0){
+							for(ExcludeResult e : excludeList){
+								daoService.addExcludeResult((ExcludeResult) e);
 							}
-							
-							daoCacheService.updateExcludeRules(delEl); // prod
-							success = true;
 						}
+						
+						daoCacheService.updateExcludeRules(delEl); // prod
+						success = true;
 					}
-				return true;
+					
+					daoCacheService.reloadAllKeywords(new Store(store));
+					
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e,e);
 				success = false;
 			}
 		return success;
@@ -188,7 +191,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						success = true;
 					}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e,e);
 				success = false;
 			}
 			return success;
@@ -223,7 +226,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 				}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e,e);
 				success = false;
 			}
 			return success;
@@ -257,7 +260,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 				}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error(e,e);
 				success = false;
 			}
 			return success;
@@ -329,7 +332,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 			success = false;
 		}
 		return success;
@@ -400,7 +403,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 			success = false;
 		}
 		return success;
@@ -423,7 +426,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 			success = false;
 		}
 		return success;
@@ -450,7 +453,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 			success = false;
 		}
 		return success;

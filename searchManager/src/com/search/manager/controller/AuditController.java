@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -78,7 +77,7 @@ public class AuditController {
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
 		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-			downloadService.downloadXLS(response, reportModel);
+			downloadService.downloadXLS(response, reportModel, null);
 		}
 	}
 }

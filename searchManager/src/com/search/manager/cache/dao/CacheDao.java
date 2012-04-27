@@ -59,9 +59,9 @@ public class CacheDao<T> {
 			}
 			return true;
 		} catch (DaoException e) {
-			logger.error(e);			
+			logger.error(e,e);			
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;		
 	}

@@ -52,4 +52,5 @@ public class ModelBean implements Serializable {
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
 	}
+	
 }

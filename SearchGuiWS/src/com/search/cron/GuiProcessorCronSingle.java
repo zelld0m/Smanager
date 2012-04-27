@@ -21,7 +21,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 			store = PropsUtils.getValue("store");
 			deploymentRuleService = new DeploymentRuleServiceImpl();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 	}
 
@@ -35,7 +35,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 				processRankingRules();
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 	}
 	
@@ -48,7 +48,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 					deploymentRuleService.loadElevateRules(store);
 					logger.info("########### Done loading to elevated rules ...");
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(e,e);
 				}
 			}
 		}.start();
@@ -65,7 +65,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 					deploymentRuleService.loadExcludeRules(store);
 					logger.info("########### Done loading to excluded rules ...");
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(e,e);
 				}
 			}
 		}.start();
@@ -82,7 +82,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 					deploymentRuleService.loadRedirectRules(store);
 					logger.info("########### Done loading to redirect rules ...");
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(e,e);
 				}
 			}
 		}.start();
@@ -99,7 +99,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 					deploymentRuleService.loadRankingRules(store);
 					logger.info("########### Done loading to ranking rules ...");
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error(e,e);
 				}
 			}
 		}.start();

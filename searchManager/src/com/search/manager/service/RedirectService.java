@@ -87,13 +87,25 @@ public class RedirectService {
 			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
 			return daoService.getRedirectRules(searchCriteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getAllRedirectRule()",e);
+			logger.error("Failed during getRedirectRule()",e);
 		}
 		return null;
 	}
 	
 	@RemoteMethod
-	public int addKeywordToRule(String ruleId, String keyword) throws DaoException {
+	public RedirectRule getRedirectRule(String ruleId) {
+		try {
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setRuleId(ruleId);
+			return daoService.getRedirectRule(redirectRule);
+		} catch (DaoException e) {
+			logger.error("Failed during getRedirectRule()",e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public int addKeywordToRule(String ruleId, String keyword) {
 		int result = -1;
 		try {
 			// add keyword in case it has not been added yet
@@ -110,7 +122,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int deleteKeywordInRule(String ruleId, String searchTerm) throws DaoException {
+	public int deleteKeywordInRule(String ruleId, String searchTerm) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -125,7 +137,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addRedirectCondition(String ruleId, String condition) throws DaoException {
+	public int addRedirectCondition(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -139,7 +151,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectCondition(String ruleId, String condition) throws DaoException {
+	public int removeRedirectCondition(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -154,7 +166,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Keyword> getKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) throws DaoException {
+	public RecordSet<Keyword> getKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
@@ -170,13 +182,27 @@ public class RedirectService {
 			}
 			return new RecordSet<Keyword>(list, list.size());
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProduct()",e);
+			logger.error("Failed during getKeywordInRule()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
-	public int getRedirectKeywordCount(String ruleId) throws DaoException {
+	public RecordSet<String> getConditionInRule(String ruleId, int page,int itemsPerPage) {
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setStoreId(UtilityService.getStoreName());
+			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  page, itemsPerPage);
+			return daoService.getRedirectConditions(criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getKeywordInRule()", e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public int getRedirectKeywordCount(String ruleId) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
@@ -184,7 +210,7 @@ public class RedirectService {
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  null, null);
 			return daoService.getRedirectKeywords(criteria).getTotalSize();
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProduct()",e);
+			logger.error("Failed during getRedirectKeywordCount()", e);
 		}
 		return 0;
 	}
@@ -195,7 +221,7 @@ public class RedirectService {
 			SearchCriteria<StoreKeyword> criteria = new SearchCriteria<StoreKeyword>(new StoreKeyword(UtilityService.getStoreName(), null), null, null,  0, 0);
 			return daoService.getRedirectForKeywords(criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProduct()",e);
+			logger.error("Failed during getRedirectRuleForKeyword()",e);
 		}
 		return null;
 	}

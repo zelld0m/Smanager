@@ -195,7 +195,7 @@ public class FileServiceImpl implements FileService{
 					return list;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -215,7 +215,7 @@ public class FileServiceImpl implements FileService{
 					return list;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -241,7 +241,7 @@ public class FileServiceImpl implements FileService{
 			    return xml;
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		} 
 		return null;	
 	}
@@ -281,7 +281,7 @@ public class FileServiceImpl implements FileService{
 				}
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return bck;
 	}
@@ -317,7 +317,7 @@ public class FileServiceImpl implements FileService{
 			}
 		}catch(DaoException e){}
 		catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		} 
 		return success;	
 	}
@@ -343,7 +343,7 @@ public class FileServiceImpl implements FileService{
 			    return xml;
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		} 
 		return null;	
 	}

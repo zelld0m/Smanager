@@ -15,7 +15,10 @@ public abstract class GetStoredProcedure extends StoredProcedure {
         declareSqlReturnResultSetParameters();
         declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_TOTAL, new RowMapper<Integer>() {
         	public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
+        		// TODO: ask DB to change all column name to "TOTAL_NUMBER";
+                // return rs.getInt(DAOConstants.COLUMN_TOTAL_NUMBER);
+                return rs.getInt(1);
+                //DAOConstants.COLUMN_TOTAL_NUMBER);
         	}
         }));
         compile();
