@@ -10,10 +10,15 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "commentService")
@@ -26,6 +31,16 @@ public class CommentService {
 
 	private static final Logger logger = Logger.getLogger(CommentService.class);
 
+	@Autowired private DaoService daoService;
+
+	public DaoService getDaoService() {
+		return daoService;
+	}
+
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
+	
 	public CommentService() {
 	}
 	
@@ -73,6 +88,49 @@ public class CommentService {
 		}
 		RecordSet<Comment> comments = new RecordSet<Comment>(commentList, commentList.size());
 		return comments;
+	}
+
+	@RemoteMethod
+	public int addComment(String ruleType, String pComment, String[] ruleId) {
+		int result = 0;
+		try {
+			for(String rsId: ruleId){
+				Comment comment = new Comment();
+				comment.setReferenceId(rsId);
+				comment.setRuleTypeId(RuleEntity.getId(ruleType));
+				comment.setUsername(UtilityService.getUsername());
+				comment.setComment(pComment);
+				result = daoService.addComment(comment);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public RecordSet<Comment> getComment(String ruleType, String ruleId, int page, int itemsPerPage) {
+		RecordSet<Comment> rSet = null;
+		try {
+			Comment comment = new Comment();
+			comment.setReferenceId(ruleId);
+			comment.setRuleTypeId(RuleEntity.getId(ruleType));
+			rSet = daoService.getComment(new SearchCriteria<Comment>(comment, null, null, page, itemsPerPage));
+		} catch (DaoException e) {
+			logger.error("Failed during getComment()",e);
+		}
+		return rSet;
+	}
+
+	@RemoteMethod
+	public int removeComment(Integer commentId) {
+		int result = -1;
+		try {
+			result = daoService.removeComment(commentId);
+		} catch (DaoException e) {
+			logger.error("Failed during removeComment()",e);
+		}
+		return result;
 	}
 
 }

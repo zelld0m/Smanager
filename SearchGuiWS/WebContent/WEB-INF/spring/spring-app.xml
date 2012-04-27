@@ -15,5 +15,5 @@
 	<import resource="./db-app.xml"/>
 	<import resource="./cache-app.xml"/>
 	<import resource="./service-app.xml"/>
-	<import resource="file:/home/widgetti/bin/searchGuiWS/ws/config/cron-app.xml"/>
+	<import resource="file:/home/solr/bin/ws/config/cron-app.xml"/>
 </beans>

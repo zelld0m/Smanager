@@ -3,7 +3,7 @@
   <display-name>Search Gui WS</display-name>
   <context-param>
     <param-name>log4jConfigLocation</param-name>
-    <param-value>file:/home/widgetti/bin/searchGuiWS/ws/config/log4j.properties</param-value>
+    <param-value>file:/home/solr/bin/ws/config/log4j.properties</param-value>
   </context-param>
   <listener>
     <listener-class>
@@ -12,7 +12,7 @@
   </listener>
   <context-param>
     <param-name>GLOBAL_INIT_PROPERTIES</param-name>
-    <param-value>/home/widgetti/bin/searchGuiWS/ws/config/globalvar.properties</param-value>
+    <param-value>/home/solr/bin/ws/config/globalvar.properties</param-value>
   </context-param>
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

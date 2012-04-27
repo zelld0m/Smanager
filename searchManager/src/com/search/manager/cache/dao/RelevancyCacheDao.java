@@ -82,14 +82,19 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 				Relevancy relevancy = new Relevancy();
 				relevancy.setRelevancyId(store.getStoreId() + "_default");
 				relevancy = daoService.getRelevancyDetails(relevancy);
-				cache = new CacheModel<Relevancy>(relevancy);
-				logger.info("Retrieved rule from database.");
-				if (!cacheError) {
-					try {
-						cacheObject(key, cache);
-					} catch (Exception e) {
-						logger.error("Cannot cache object", e);						
+				if (relevancy != null) {
+					cache = new CacheModel<Relevancy>(relevancy);
+					logger.info("Retrieved rule from database.");
+					if (!cacheError) {
+						try {
+							cacheObject(key, cache);
+						} catch (Exception e) {
+							logger.error("Cannot cache object", e);						
+						}					
 					}					
+				}
+				else {
+					logger.warn("Cannot find default relevancy for " + store);					
 				}
 			} catch (Exception e) {
 				logger.error("Cannot retrieve rule from database.", e);
