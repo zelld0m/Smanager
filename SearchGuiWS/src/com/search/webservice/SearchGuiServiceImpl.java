@@ -67,7 +67,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -104,7 +104,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -140,7 +140,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -156,7 +156,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					return fileService.getBackupInfo(list.getStore(), list.getList(), list.getRuleEntity());
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return Collections.EMPTY_LIST;
 	}
@@ -171,7 +171,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
