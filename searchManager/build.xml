@@ -1,91 +1,102 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project name="My Project" default="help" basedir=".">
-  <!-- Define the properties used by the build -->
-  <property file="build.properties"/>
-  <property name="project" value="."/>
+<project name="SearchManagerBuilder"  basedir=".">
+
+	<property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<property name="dependencies" value="../Dependencies"/>
 	
-  <target name="help">
-    <echo>You can use the following targets:</echo>
-    <echo> </echo>
-    <echo>  help    : (default) Prints this message </echo>
-    <echo>  all     : Cleans, compiles, and packages application</echo>
-    <echo>  clean   : Deletes work directories</echo>
-    <echo>  compile : Compiles servlets into class files</echo>
-    <echo>  dist    : Packages artifacts into a deployable WAR</echo>
-    <echo>  resource: Copy resources into classpath</echo>
-    <echo></echo>
-    <echo>For example, to clean, compile, and package all at once, run:</echo>
-    <echo>prompt> ant all </echo>
-  </target>
-
-  <!-- Define the CLASSPATH -->
-  <path id="compile.classpath">
-    <fileset dir="${tomcat.home}/bin">
-      <include name="*.jar"/>
-    </fileset>
-    <pathelement location="${tomcat.home}/lib"/>
-    <fileset dir="${tomcat.home}/lib">
-      <include name="*.jar"/>
-    </fileset>
-    <fileset dir="${spring.lib}">
-      <include name="*.jar"/>
-    </fileset>
-  </path>
-
-  <target name="all" depends="clean,compile,dist,config,web" description="Clean work dirs, then compile and create a WAR"/>
-
-  <target name="clean" description="Delete old work and dist directories">
-    <delete dir="${work.home}"/>
-    <delete dir="${dist.home}"/>
-  </target>
-
-  <target name="prepare" depends="clean" description="Create working dirs and copy static files to work dir">
-    <mkdir  dir="${dist.home}"/>
-    <mkdir  dir="${work.home}/WEB-INF/classes"/>
-    <!-- Copy static HTML and JSP files to work dir -->
-    <copy todir="${work.home}">
-      <fileset dir="${web.home}"/>
-    </copy>
-  </target>
-
-  <target name="compile" depends="prepare" description="Compile Java sources and copy to WEB-INF/classes dir">
-    <javac srcdir="${src.home}"
-          destdir="${work.home}/WEB-INF/classes">
-        <classpath refid="compile.classpath"/>
-    </javac>
-    <copy todir="${work.home}/WEB-INF/classes">
-      <fileset dir="${src.home}" excludes="**/*.java"/>
-    </copy>
-  	
-    <mkdir  dir="${jar.home}"/>
-  	
-  	<jar destfile="${jar.home}/searchManager.jar">
-  			<fileset dir="${work.home}/WEB-INF/classes">
-  					<include name="**/*.class"/> 
-  			</fileset>
-  	</jar>	
-  	
-  </target>
-
-  <target name="dist" depends="compile" description="Create WAR file for binary distribution">
-    <jar jarfile="${dist.home}/${app.name}-${app.version}-${app.build}.war" basedir="${work.home}"/>
-    <delete dir="${work.home}"/>
-  </target>
-	
-  <target name="config">
-    <!-- Copy resources needed into classpath -->
-  	<copy toDir="${conf.home}">
-  	  	 <fileset dir="${project}/config" />
-  	 </copy>
- </target>
-	
-<target name="web">
-		<echo message="${deploy.path}"></echo>
-		<copy toDir="${deploy.path}">
-			<fileset dir="${project}/WebContent" casesensitive="no"></fileset>
+	<!-- Define the properties used by the build -->
+	<property name="conf.home" value="C:/home/solr/conf"/>
+		
+	 <!-- Define the CLASSPATH -->
+	 <path id="compile.classpath">
+	    <fileset dir="${dependencies}/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	  	<fileset dir="${dependencies}/tomcat/lib">
+	  	  <include name="*.jar"/>
+	  	</fileset>
+	 	<fileset dir="${dependencies}/wsclient/jar">
+	 	  <include name="*.jar"/>
+	    </fileset>
+	 </path>
+	<!--
+	<target name="jar" description="JAR Java sources">
+		<delete dir="${dependencies}/lib" />
+	  	<delete dir="${dependencies}/searchmanager/jar" />
+	  	<delete dir="${dependencies}/searchmanager/classes" />
+		<mkdir dir="${dependencies}/lib" />
+	  	<mkdir dir="${dependencies}/searchmanager/jar" />
+	  	<mkdir dir="${dependencies}/searchmanager/classes" />
+		<copy todir="${dependencies}/lib">
+		  	 <fileset dir="${basedir}/WebContent/WEB-INF/lib" />
 		</copy>
-</target>	
+		<javac srcdir="${basedir}/src" destdir="${dependencies}/searchmanager/classes">
+		    <classpath refid="compile.classpath"/>
+		</javac>
+	  	<jar destfile="${dependencies}/searchmanager/jar/searchManager.jar">
+	  	  	<fileset dir="${dependencies}/searchmanager/classes">
+	  	  	  	<include name="**/*.class"/> 
+	  	  	</fileset>
+	  	</jar>	
+		<delete dir="${dependencies}/lib" />
+	  	<delete dir="${dependencies}/searchmanager/classes" />
+	</target>	
 	
-
+	-->
+	
+	<target name="jar" description="JAR Java sources">
+			<delete dir="${dependencies}/searchmanager/jar" />
+			<mkdir dir="${dependencies}/searchmanager/jar" />
+		  	<jar destfile="${dependencies}/searchmanager/jar/searchManager.jar">
+		  	  	<fileset dir="${basedir}/bin">
+		  	  	  	<include name="**/*.class"/> 
+		  	  	</fileset>
+		  	</jar>	
+	</target>	
+	
+	<target name="war" description="WAR Java sources">
+			<ant target="jar" />
+	  		<delete dir="${dependencies}/searchmanager/war" />
+	  		<delete dir="${dependencies}/searchmanager/WebContent" />
+	  		<mkdir dir="${dependencies}/searchmanager/war" />
+	  		<mkdir dir="${dependencies}/searchmanager/WebContent" />
+	  		<mkdir dir="${dependencies}/searchmanager/WebContent/WEB-INF/lib" />
+	  	 	<copy todir="${dependencies}/searchmanager/WebContent">
+	  	 		<fileset dir="${basedir}/WebContent" />
+	  	    </copy>
+	  		<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/lib">
+	  	  	 	<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
+	  			<fileset file="${basedir}/WebContent/WEB-INF/lib/x">
+	  			  	<include name="**/*.jar"/> 
+	  			</fileset>
+	  			<fileset file="${dependencies}/wsclient/jar/x">
+	  				<include name="**/*.jar"/> 
+	  			</fileset>
+	  	  	</copy>
+		
+			<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/classes">
+				<fileset file="${basedir}/src/x">
+					<include name="**/*.properties"/> 
+					<include name="**/*.txt"/> 
+					<include name="**/*.xml"/> 
+					<include name="**/*.log"/> 
+				</fileset>
+			</copy>
+		
+			<war destfile="${dependencies}/searchmanager/war/searchManager.war">
+				<fileset dir="${dependencies}/searchmanager/WebContent" />
+			</war>
+	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
+	  </target>
+	
+	  <target name="config" description="Deploy config files">
+	  		<mkdir dir="${conf.home}" />
+	  		<copy todir="${conf.home}">
+	  	  	 	<fileset dir="${basedir}/config" />
+	  	  	</copy>
+	  </target>
 </project> 
