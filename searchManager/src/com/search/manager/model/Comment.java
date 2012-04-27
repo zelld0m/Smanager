@@ -17,17 +17,19 @@ private static final long serialVersionUID = 1L;
 	private Integer commentId;
 	private String referenceId;
 	private Date createdDate;
+	private Integer ruleTypeId;
 	
 	public Comment() {
 	}
 
-	public Comment(Integer commentId, String referenceId, String comment, String username, Date createdDate) {
+	public Comment(Integer commentId, String referenceId, String comment, String username, Date createdDate, Integer ruleTypeId) {
 		super();
 		this.commentId = commentId;
 		this.referenceId = referenceId;
 		this.comment = comment;
 		this.username = username;
 		this.createdDate = createdDate;
+		this.ruleTypeId = ruleTypeId;
 	}
 
 	public void setUsername(String username) {
@@ -76,6 +78,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
+	}
+
+	public Integer getRuleTypeId() {
+		return ruleTypeId;
+	}
+
+	public void setRuleTypeId(Integer ruleTypeId) {
+		this.ruleTypeId = ruleTypeId;
 	}
 
 }

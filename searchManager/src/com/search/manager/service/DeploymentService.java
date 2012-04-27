@@ -209,11 +209,16 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int addComment(String comment, String ...ruleStatusId) {
+	public int addComment(String pComment, String ...ruleStatusId) {
 		int result = -1;
 		try {
 			for(String rsId: ruleStatusId){
-				daoService.addComment(rsId, comment, UtilityService.getUsername());
+				Comment comment = new Comment();
+				comment.setReferenceId("ipad");
+				comment.setRuleTypeId(9);
+				comment.setUsername(UtilityService.getUsername());
+				comment.setComment(pComment);
+				daoService.addComment(comment);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
@@ -222,10 +227,13 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Comment> getComment(String ruleStatusId, Integer commentId) {
+	public RecordSet<Comment> getComment(String ruleStatusId, int page,int itemsPerPage) {
 		RecordSet<Comment> rSet = null;
 		try {
-			rSet = daoService.getComment(ruleStatusId, commentId);
+			Comment comment = new Comment();
+			comment.setReferenceId(ruleStatusId);
+			comment.setRuleTypeId(9);
+			rSet = daoService.getComment(new SearchCriteria<Comment>(comment, null, null, page, itemsPerPage));
 		} catch (DaoException e) {
 			logger.error("Failed during getComment()",e);
 		}

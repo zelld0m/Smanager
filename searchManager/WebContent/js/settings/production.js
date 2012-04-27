@@ -57,7 +57,7 @@
 		};
 
 		var publishHandler = function(){
-			$(tabSelected).find("a#publishBtn, a#publishBtn").on({
+			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 					

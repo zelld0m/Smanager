@@ -1,31 +1,44 @@
 <?xml version="1.0"?>
 
-<project name="Search Gui" basedir="." default="compile">
-  <!-- Define the properties used by the build -->
-  <property file="build.properties"/>
-  <property name="project" value="."/>
+<project name="SearchGuiWSClientBuilder" basedir=".">
+ 
+	<!-- Define the properties used by the build -->
+	<property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<property name="dependencies" value="../Dependencies"/>
+		
+	<property name="ws" value="../SearchGuiWS"/>
 	
-  <!-- Define the CLASSPATH -->
-  <path id="compile.classpath">
-    <fileset dir="${lib.home}">
-      <include name="*.jar"/>
-    </fileset>
-  	<fileset dir="${tomcat.lib}">
-  	  <include name="*.jar"/>
-  	</fileset>
-  </path>
-
-  <target name="compile" description="Compile Java sources">
-	    <javac srcdir="${src.home}" destdir="${project}/build">
-	        <classpath refid="compile.classpath"/>
-	    </javac>
-	    
-  		<mkdir  dir="${jar.home}"/>
-  	  	
-  	  	<jar destfile="${jar.home}/srcguiwsclient.jar">
-  	  			<fileset dir="${project}/build">
-  	  					<include name="**/*.class"/> 
-  	  			</fileset>
-  	  	</jar>	
-  </target>
+	<!-- Define the CLASSPATH -->
+	<path id="compile.classpath">
+	    <fileset dir="${dependencies}/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	  	<fileset dir="${dependencies}/tomcat/lib">
+	  	  <include name="*.jar"/>
+	  	</fileset>
+	</path>
+	
+	<target name="jar" description="JAR Java sources">
+		<delete dir="${dependencies}/lib" />
+		<delete dir="${dependencies}/wsclient/jar" />
+	  	<delete dir="${dependencies}/wsclient/classes" />
+		<mkdir dir="${dependencies}/lib" />
+	  	<mkdir dir="${dependencies}/wsclient/jar" />
+	  	<mkdir dir="${dependencies}/wsclient/classes" />
+		<copy todir="${dependencies}/lib">
+		  	 <fileset dir="${ws}/WebContent/WEB-INF/lib" />
+		</copy>
+		<javac srcdir="${basedir}/src" destdir="${dependencies}/wsclient/classes">
+		     <classpath refid="compile.classpath"/>
+		</javac>
+	  	<jar destfile="${dependencies}/wsclient/jar/searchguiwsclient.jar">
+	  	  	  	<fileset dir="${dependencies}/wsclient/classes">
+	  	  	  			<include name="**/*.class"/> 
+	  	  	  	</fileset>
+	  	</jar>	
+		<delete dir="${dependencies}/lib" />
+	  	<delete dir="${dependencies}/wsclient/classes" />
+	</target>
 </project> 

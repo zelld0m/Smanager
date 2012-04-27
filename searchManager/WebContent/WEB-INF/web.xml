@@ -163,6 +163,7 @@
 				com.search.manager.model.CategoryList,
 				com.search.manager.model.RedirectRule,
 				com.search.manager.model.RuleStatus,
+				com.search.manager.model.RedirectRuleCondition,
 				com.search.manager.model.RelevancyKeyword,
 				com.search.manager.model.StoreKeyword,
 				com.search.manager.model.Comment,

@@ -41,6 +41,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
@@ -751,7 +752,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<String> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
+	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
 		return redirectRuleDAO.getRedirectConditions(criteria);
 	}
 	
@@ -865,13 +866,13 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException {
-		return commentDAO.getComment(referenceId, commentId);
+	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
+		return commentDAO.getComment(searchCriteria);
 	}
 
 	@Override
-	public int addComment(String refId, String comment, String userName) throws DaoException {
-		return commentDAO.addComment(refId, comment, userName);
+	public int addComment(Comment comment) throws DaoException {
+		return commentDAO.addComment(comment);
 	}
 
 	@Override
