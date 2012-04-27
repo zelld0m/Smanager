@@ -57,7 +57,7 @@
 		};
 
 		var publishHandler = function(){
-			$(tabSelected).find("a#publishBtn, a#publishBtn").on({
+			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 					
@@ -112,13 +112,17 @@
 							$table = $(tabSelected).find("table#rule");
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							
+							var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+							var showId = list[i]["ruleRefId"] !== list[i]["description"];
+							
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							if(showId)
+								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
 							$tr.find("td#productionStatus").html(list[i]["publishedStatus"]);
-							$tr.find("td#productionDate").html('<joda:parseDateTime var="parsed" pattern="yy/M/d" value="' + list[i]["lastPublishedDate"] + '" /><joda:format value="${parsed}" style="L-" />');
+							$tr.find("td#productionDate").html(lastPublishedDate);
 							$tr.appendTo($table);
 						}
 						
