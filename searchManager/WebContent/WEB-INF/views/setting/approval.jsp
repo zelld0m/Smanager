@@ -47,10 +47,10 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="160px" class="txtAL">Rule ID</th>
-							<th width="218px" class="txtAL">Rule Name</th>
+							<th width="70px" class="txtAL"></th>
+							<th width="230px" class="txtAL">Rule Info</th>
 							<th width="85px">Type</th>
-							<th>Requested By</th>
+							<th>Request</th>
 						</tr>
 					<tbody>
 				</table>
@@ -60,10 +60,16 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="160px" id="ruleRefId" class="ruleRefId"><a href="javascript:void(0);"></a></td>
-							<td width="218px" id="ruleRefName"></td>
+							<td width="70px" id="ruleRefName"></td>
+							<td width="230px" id="ruleRefId">
+								<p id="ruleName"></p>
+								<p id="ruleId" class="fsize11"></p>
+							</td>
 							<td width="85px" class="txtAC" id="type"></td>
-							<td class="txtAC" id="requestedBy"></td>
+							<td class="txtAL" id="requested">
+								<p id="requestedBy"></p>
+								<p id="requestedDate" class="fsize11"></p>
+							</td>
 						</tr>
 					</tbody>
 				</table>

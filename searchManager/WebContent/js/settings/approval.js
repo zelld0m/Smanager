@@ -113,13 +113,16 @@
 						for(var i=0; i<data.totalSize ; i++){
 							$table = $(tabSelected).find("table#rule");
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
-
+							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
+							var showId = list[i]["ruleRefId"] !== list[i]["description"];
+							
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleRefId > a").html(list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
-							$tr.find("td#ruleRefName").html(list[i]["description"]);
+							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							if(showId) $tr.find("td#ruleRefId > p#ruleId").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
-							$tr.find("td#requestedBy").html(list[i]["lastModifiedBy"]);
+							$tr.find("td#requested > p#requestedBy").html(list[i]["lastModifiedBy"]);
+							$tr.find("td#requested > p#requestedDate").html(requestedDate);
 							$tr.appendTo($table);
 						}
 
