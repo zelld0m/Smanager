@@ -707,12 +707,17 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public String addRedirectRuleAndGetId(RedirectRule rule) throws DaoException {
+		return redirectRuleDAO.addRedirectRuleAndGetId(rule);
+	}
+	
+	@Override
 	public int updateRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.updateRedirectRule(rule);
 	}
 
 	@Override
-	public int removeRedirectRule(RedirectRule rule) throws DaoException {
+	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
@@ -732,7 +737,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeRedirectKeyword(RedirectRule rule) throws DaoException {
+	public int deleteRedirectKeyword(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectKeyword(rule);
 	}
 
@@ -742,7 +747,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeRedirectCondition(RedirectRule rule) throws DaoException {
+	public int deleteRedirectCondition(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectCondition(rule);
 	}
 
