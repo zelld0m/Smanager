@@ -214,7 +214,7 @@ public class DeploymentService {
 		try {
 			for(String rsId: ruleStatusId){
 				Comment comment = new Comment();
-				comment.setReferenceId("ipad");
+				comment.setReferenceId(rsId);
 				comment.setRuleTypeId(9);
 				comment.setUsername(UtilityService.getUsername());
 				comment.setComment(pComment);

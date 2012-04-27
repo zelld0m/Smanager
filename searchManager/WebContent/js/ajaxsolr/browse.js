@@ -11,7 +11,7 @@ var Manager;
 			callback:function(storeName){
 				
 				Manager = new AjaxSolr.Manager({
-					solrUrl: 'http://localhost:8080/searchManager/search/vtorschstg01:8080/solr14/' + storeName + '/'
+					solrUrl: 'http://localhost:8080/searchManager/search/vtorschstg01.pcmall.com:8080/solr14/' + storeName + '/'
 				});
 
 				Manager.addWidget(new AjaxSolr.ResultWidget({
