@@ -32,7 +32,6 @@ public class RedirectService {
 	
 	@Autowired private DaoService daoService;
 
-	@RemoteMethod
 	public int addRedirectRule(String ruleName) {
 		int result = -1;
 		try {
@@ -46,14 +45,33 @@ public class RedirectService {
 		}
 		return result;
 	}
+	
+	public String addRedirectRuleAndGetId(String ruleName) {
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleName(ruleName);
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setCreatedBy(UtilityService.getUsername());
+			return daoService.addRedirectRuleAndGetId(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during addRedirectRule()",e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public RedirectRule addRedirectRuleAndGetModel(String ruleName) {
+		return getRedirectRule(addRedirectRuleAndGetId(ruleName));
+	}
 
 	@RemoteMethod
-	public int updateRedirectRule(String ruleId, String ruleName) {
+	public int updateRedirectRule(String ruleId, String ruleName, String description) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setRuleName(ruleName);
+			rule.setDescription(description);
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
 		} catch (DaoException e) {
@@ -63,14 +81,10 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectRule(String ruleId, String ruleName, String searchTerm) {
+	public int deleteRedirectRule(RedirectRule rule) {
 		int result = -1;
 		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setRuleId(ruleId);
-			rule.setSearchTerm(searchTerm);
-			rule.setLastModifiedBy(UtilityService.getUsername());
-			result = daoService.removeRedirectRule(rule);
+			result = daoService.deleteRedirectRule(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectRule()",e);
 		}
@@ -123,14 +137,14 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeKeywordInRule(String ruleId, String searchTerm) {
+	public int deleteKeywordInRule(String ruleId, String searchTerm) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(searchTerm);
 			rule.setLastModifiedBy(UtilityService.getUsername());
-			result = daoService.removeRedirectKeyword(rule);
+			result = daoService.deleteRedirectKeyword(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectKeyword()",e);
 		}
@@ -138,7 +152,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addRedirectCondition(String ruleId, String condition) {
+	public int addRedirectRuleCondition(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -152,13 +166,13 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeConditionInRule(String ruleId, String condition) {
+	public int deleteConditionInRule(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setCondition(condition);
-			result = daoService.removeRedirectCondition(rule);
+			result = daoService.deleteRedirectCondition(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during removeRedirectCondition()",e);
 		}
