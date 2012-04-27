@@ -121,8 +121,8 @@
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
-							$tr.find("td#productionStatus").html(list[i]["publishedStatus"]);
-							$tr.find("td#productionDate").html(lastPublishedDate);
+							$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
+							$tr.find("td#production > p#productionDate").html(lastPublishedDate);
 							$tr.appendTo($table);
 						}
 						

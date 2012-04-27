@@ -45,10 +45,9 @@
 				<table class="tblItems w100p marT5" >
 					<tr>
 						<th width="24px" id="selectAll"><input type="checkbox"></th>
-						<th width="268px" class="txtAL">Rule ID</th>
-						<th width="100px">Approval Status</th>
-						<th width="110px">Production Status</th>
-						<th width="85px">Last Publish</th>
+						<th width="230px" class="txtAL">Rule Info</th>
+						<th width="110px">Approval Status</th>
+						<th>Production Status</th>
 					</tr>
 				</table>
 			</div>
@@ -57,13 +56,15 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="268px" id="ruleRefId">
+							<td width="230px" id="ruleRefId">
 								<p id="ruleName"></p>
 								<p id="ruleId" class="fsize11"><a href="javascript:void(0);"></a></p>
 							</td>
-							<td width="100px" class="txtAC" id="approvalStatus"></td>
-							<td width="110px" class="txtAC" id="productionStatus"></td>
-							<td class="txtAC" id="productionDate"></td>
+							<td width="110px" class="txtAC" id="approvalStatus"></td>
+							<td class="txtAL" id="production">
+								<p id="productionStatus"></p>
+								<p id="productionDate" class="fsize11"></p>
+							</td>
 						</tr>
 					</tbody>
 				</table>
