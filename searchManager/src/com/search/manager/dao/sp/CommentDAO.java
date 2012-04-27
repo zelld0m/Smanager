@@ -102,6 +102,7 @@ public class CommentDAO {
 
 		@Override
 		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT_ID, Types.INTEGER));
 		}
 	}
@@ -109,6 +110,7 @@ public class CommentDAO {
     public int deleteComment(Integer commentId) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
+		inputs.put(DAOConstants.PARAM_REFERENCE_ID, null);
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
