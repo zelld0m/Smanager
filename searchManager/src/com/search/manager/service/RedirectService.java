@@ -16,6 +16,7 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 
@@ -122,7 +123,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int deleteKeywordInRule(String ruleId, String searchTerm) {
+	public int removeKeywordInRule(String ruleId, String searchTerm) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -151,7 +152,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int removeRedirectCondition(String ruleId, String condition) {
+	public int removeConditionInRule(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -188,7 +189,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<String> getConditionInRule(String ruleId, int page,int itemsPerPage) {
+	public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page,int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
