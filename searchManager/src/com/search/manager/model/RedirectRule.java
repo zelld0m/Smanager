@@ -40,6 +40,10 @@ public class RedirectRule extends ModelBean {
 	public RedirectRule() {
 		super();
 	}
+	
+	public RedirectRule(String ruleId) {
+		this.ruleId = ruleId;
+	}
 
 	public RedirectRule(String ruleId, String storeId, String ruleName, String searchTerm, String condition) {
 		super();
