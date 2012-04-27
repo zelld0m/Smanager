@@ -179,8 +179,8 @@ public interface DaoService {
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	
     /* Rule Status */
-    public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException;
-	public int addComment(String refId, String comment, String userName) throws DaoException;
+    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
+	public int addComment(Comment comment) throws DaoException;
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;
 	

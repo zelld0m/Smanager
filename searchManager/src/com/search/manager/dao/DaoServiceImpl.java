@@ -865,13 +865,13 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException {
-		return commentDAO.getComment(referenceId, commentId);
+	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
+		return commentDAO.getComment(searchCriteria);
 	}
 
 	@Override
-	public int addComment(String refId, String comment, String userName) throws DaoException {
-		return commentDAO.addComment(refId, comment, userName);
+	public int addComment(Comment comment) throws DaoException {
+		return commentDAO.addComment(comment);
 	}
 
 	@Override
