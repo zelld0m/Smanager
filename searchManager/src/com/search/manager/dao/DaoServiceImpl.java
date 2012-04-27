@@ -751,6 +751,11 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public RecordSet<String> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
+		return redirectRuleDAO.getRedirectConditions(criteria);
+	}
+	
+	@Override
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException {
 		return redirectRuleDAO.getRedirectForKeywords(criteria);
 	}

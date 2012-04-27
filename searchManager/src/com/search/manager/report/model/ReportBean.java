@@ -1,8 +1,7 @@
 package com.search.manager.report.model;
 
-import com.search.manager.model.ModelBean;
 
-public class ReportBean <T extends ModelBean> {
+public class ReportBean <T> {
 
 	protected T model;
 	

@@ -1,5 +1,7 @@
 package com.search.manager.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +17,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.model.ModelBean;
 import com.search.manager.report.Writer;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportModel;
@@ -128,55 +129,55 @@ public class DownloadService {
 		return cellStyle;
 	}
 	
-	private static HSSFSheet prepareXls(ReportModel<? extends ReportBean<? extends ModelBean>> model) {
+	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel) {
 		
-		// 1. Create new workbook
-		HSSFWorkbook workbook = new HSSFWorkbook();
-		// 2. Create new worksheet
-		HSSFSheet worksheet = workbook.createSheet("Data");
-
 		// Set column widths
 		for (int i = 0; i < model.getColumnCount(); i++) {
-			worksheet.setColumnWidth(i, model.getColumn(i).size() * 256);
+			int colSize = model.getColumn(i).size() * 256;
+			if (colSize > worksheet.getColumnWidth(i)) {
+				worksheet.setColumnWidth(i, colSize);				
+			}
 		}
 
-		// Create cell style for the report title
-		int rowIndex = 0;
-		HSSFCellStyle cellStyleTitle = createCellStyle(workbook, createFont(workbook, (short)12, true), CellStyle.ALIGN_CENTER,
-				CellStyle.VERTICAL_CENTER, true);
-		// Create report title
-		HSSFRow rowTitle = createRow(worksheet, rowIndex, 25f);
-		createCell(rowTitle, 0, cellStyleTitle, model.getReportHeader().getReportName());
-		// Create merged region for the report title
-		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
+		if (mainModel) {
+			// Create cell style for the report title
+			HSSFCellStyle cellStyleTitle = createCellStyle(workbook, createFont(workbook, (short)12, true), CellStyle.ALIGN_CENTER,
+					CellStyle.VERTICAL_CENTER, true);
+			// Create report title
+			HSSFRow rowTitle = createRow(worksheet, rowIndex, 25f);
+			createCell(rowTitle, 0, cellStyleTitle, model.getReportHeader().getReportName());
+			// Create merged region for the report title
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
 
-		// Create report subtitle
-		cellStyleTitle = createCellStyle(workbook, createFont(workbook, (short)11, true), CellStyle.ALIGN_CENTER,
-				CellStyle.VERTICAL_CENTER, true);
-		HSSFRow rowSubTitle = createRow(worksheet, ++rowIndex, 25f);
-		createCell(rowSubTitle, 0, cellStyleTitle, model.getReportHeader().getSubReportName());
-		// Create merged region for the report subtitle
-		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
+			// Create report subtitle
+			cellStyleTitle = createCellStyle(workbook, createFont(workbook, (short)11, true), CellStyle.ALIGN_CENTER,
+					CellStyle.VERTICAL_CENTER, true);
+			HSSFRow rowSubTitle = createRow(worksheet, ++rowIndex, 25f);
+			createCell(rowSubTitle, 0, cellStyleTitle, model.getReportHeader().getSubReportName());
+			// Create merged region for the report subtitle
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));			
 
-		// empty line
-		createRow(worksheet, ++rowIndex, 10f);
-		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
-		
-		// Request details:
-		HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
-				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-		HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
-				CellStyle.VERTICAL_CENTER, false);
-		
-		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-		createCell(rowHeader, 0, cellStyleHeaderParam, "Requested by:");
-		createCell(rowHeader, 1, cellStyleHeaderValue, UtilityService.getUsername());
-		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
-		rowHeader = createRow(worksheet, ++rowIndex, 25f);
-		createCell(rowHeader, 0, cellStyleHeaderParam, "Generated on:");
-		createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), model.getReportHeader().getDate()));
-		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
-		
+
+			// empty line
+			createRow(worksheet, ++rowIndex, 10f);
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
+			
+			// Request details:
+			HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
+					CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+			HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
+					CellStyle.VERTICAL_CENTER, false);
+			
+			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+			createCell(rowHeader, 0, cellStyleHeaderParam, "Requested by:");
+			createCell(rowHeader, 1, cellStyleHeaderValue, UtilityService.getUsername());
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
+			rowHeader = createRow(worksheet, ++rowIndex, 25f);
+			createCell(rowHeader, 0, cellStyleHeaderParam, "Generated on:");
+			createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), model.getReportHeader().getDate()));
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
+		}
+
 		// empty line
 		createRow(worksheet, ++rowIndex, 10f);
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
@@ -184,7 +185,7 @@ public class DownloadService {
 		/* Column Headers */
 		HSSFCellStyle headerCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
 				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_25_PERCENT.index, CellStyle.FINE_DOTS);
-		rowHeader = createRow(worksheet, ++rowIndex, 25f);
+		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
 		for (int i = 0; i < model.getColumnCount(); i++) {
 			createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
 		}
@@ -199,7 +200,7 @@ public class DownloadService {
 			}
 		}
 		
-		return worksheet;
+		return rowIndex;
 	}
 	
 	/**
@@ -214,11 +215,26 @@ public class DownloadService {
 	 * 7. Write to the output stream
 	 * </pre>
 	 */
-	public void downloadXLS(HttpServletResponse response, ReportModel<? extends ReportBean<? extends ModelBean>> model) throws ClassNotFoundException {
+	public void downloadXLS(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel, 
+			List<ReportModel<? extends ReportBean<?>>> subModels) throws ClassNotFoundException {
 		logger.debug("Downloading Excel report");
-		HSSFSheet worksheet= prepareXls(model);
+		// 1. Create new workbook
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		// 2. Create new worksheet
+		HSSFSheet worksheet = workbook.createSheet("Data");
+		int rowIndex = 0;
+		// 3. prepare worksheet
 		
-		String fileName = model.getReportHeader().getFileName() + ".xls";
+		rowIndex = prepareXls(workbook, worksheet, rowIndex, mainModel, true);
+		String fileName = mainModel.getReportHeader().getFileName() + ".xls";
+		
+		if (subModels != null) {
+			for (ReportModel<? extends ReportBean<?>> model: subModels) {
+				rowIndex++;
+				rowIndex = prepareXls(workbook, worksheet, rowIndex, model, false);
+			}
+		}
+		
 		response.setHeader("Content-Disposition", "inline; filename=" + fileName);
 		// Make sure to set the correct content type
 		response.setContentType("application/vnd.ms-excel");

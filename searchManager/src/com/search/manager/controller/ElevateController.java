@@ -99,7 +99,7 @@ public class ElevateController {
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
 		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
-			downloadService.downloadXLS(response, reportModel);
+			downloadService.downloadXLS(response, reportModel, null);
 		}
 	}
 }

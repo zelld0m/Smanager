@@ -56,8 +56,9 @@ public interface DaoService {
 	public int addRedirectCondition(RedirectRule rule) throws DaoException;
 	public int removeRedirectCondition(RedirectRule rule) throws DaoException;	
 	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException;
+	public RecordSet<String> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException;
-	
+
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
 	public int updateCampaign(Campaign campaign) throws DaoException;
