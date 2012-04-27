@@ -55,7 +55,7 @@ public class CacheService<E extends CacheModel<?>>{
 				loaded = true;
 				break;
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e,e);
 			}
 		}
 		
@@ -82,7 +82,7 @@ public class CacheService<E extends CacheModel<?>>{
 				loaded = true;
 				break;
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e,e);
 			}
 		}
 		
@@ -124,7 +124,7 @@ public class CacheService<E extends CacheModel<?>>{
 				E cacheObj = (E) cacheClient.get(this.generateKey(paramKey).toString());
 				return cacheObj;
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e,e);
 			}
 		}
 

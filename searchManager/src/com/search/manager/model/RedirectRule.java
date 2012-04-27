@@ -27,8 +27,16 @@ public class RedirectRule extends ModelBean {
 	private String searchTerm;
 	private String condition;
 	private String changeKeyword;
+	private String modifiedBy;
 	
-	
+	public String getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(String modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
+
 	public RedirectRule() {
 		super();
 	}

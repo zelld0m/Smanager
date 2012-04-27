@@ -89,9 +89,9 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			List<String> kwList = getAllKeywords(storeKeyword.getStore());
 			return kwList.contains(storeKeyword.getKeywordId());
 		} catch (DaoException e) {
-			logger.error(e);
+			logger.error(e,e);
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -117,7 +117,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 				}
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return Collections.emptyList();
 	}
@@ -143,7 +143,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 				}
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return Collections.emptyList();		
 	}

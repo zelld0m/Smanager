@@ -32,7 +32,7 @@ public class UserCacheDao {
 			localCacheService.putLocalCache(getCacheKey(userDetails.getUsername()), userDetails);
 			return true;
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;	
 	}
@@ -42,7 +42,7 @@ public class UserCacheDao {
 			localCacheService.resetLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, username));
 			return true;
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}		
 		return false;	
 	}
@@ -52,7 +52,7 @@ public class UserCacheDao {
 			localCacheService.putLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, userDetails.getUsername()), userDetails);
 			return true;
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}		
 		return false;
 	}
@@ -61,7 +61,7 @@ public class UserCacheDao {
 		try {
 			return localCacheService.getLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, username));
 		} catch (DataException e) {
-			logger.error(e);
+			logger.error(e,e);
 		}		
 		return null;
 	}
