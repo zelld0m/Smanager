@@ -1,57 +1,80 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 
-<project name="Search Gui" basedir="." default="compile">
-  <!-- Define the properties used by the build -->
-  <property file="build.properties"/>
-  <property name="project" value="."/>
+<project name="SearchGuiWSBuilder" basedir=".">
 	
+  <property environment="env"/>
+  <property name="debuglevel" value="source,lines,vars"/>
+  <property name="target" value="1.6"/>
+  <property name="source" value="1.6"/>
+	
+  <!-- Define the properties used by the build -->
+  <property name="conf.home" value="C:/home/solr/bin/ws/config"/>
+  <property name="deploy.path" value="C:/Search Manager/wspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp3/wtpwebapps/SearchGuiWS"/>	
+
+  <property name="dependencies" value="../Dependencies"/>
+
   <!-- Define the CLASSPATH -->
   <path id="compile.classpath">
-    <fileset dir="${lib.home}">
+    <fileset dir="${dependencies}/lib">
       <include name="*.jar"/>
     </fileset>
-  	<fileset dir="${tomcat.lib}">
+  	<fileset dir="${dependencies}/tomcat/lib">
   	  <include name="*.jar"/>
+  	</fileset>
+  	<fileset dir="${dependencies}/searchmanager/jar">
+  	    <include name="*.jar"/>
   	</fileset>
   </path>
 
-  <target name="compile" description="Compile Java sources and copy to WEB-INF/classes dir">
-	    <javac srcdir="${src.home}" destdir="${project}/build/classes">
+  <target name="jar" description="JAR Java sources">
+  		<delete dir="${dependencies}/lib" />
+  		<delete dir="${dependencies}/ws/jar" />
+  		<delete dir="${dependencies}/ws/classes" />
+  		<mkdir dir="${dependencies}/lib" />
+  		<mkdir dir="${dependencies}/ws/jar" />
+  		<mkdir dir="${dependencies}/ws/classes" />
+  		<copy todir="${dependencies}/lib">
+  	  	 		<fileset dir="${basedir}/WebContent/WEB-INF/lib" />
+  	  	</copy>
+	    <javac srcdir="${basedir}/src" destdir="${dependencies}/ws/classes">
 	        <classpath refid="compile.classpath"/>
 	    </javac>
-	    <copy todir="${deploy.path}/WEB-INF/classes">
-	      <fileset dir="${project}/build/classes" excludes="**/*.java"/>
-	    </copy>
-  		<copy toDir="${conf.home}">
-  	  		<fileset dir="${project}/config" />
-  	  	</copy>
-  	
-  	
-  		<javac srcdir="${src.home}" destdir="${project}/build">
-  		      <classpath refid="compile.classpath"/>
-  		</javac>
-  		    
-  	  	<mkdir  dir="${jar.home}"/>
-  	  	  	
-  	  	<jar destfile="${jar.home}/srcguiws.jar">
-  	  	  	<fileset dir="${project}/build">
+  	  	<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
+  	  	  	<fileset dir="${dependencies}/ws/classes">
   	  	  			<include name="**/*.class"/> 
   	  	  	</fileset>
-  	  	 </jar>	
+  	  	</jar>	
+  		<delete dir="${dependencies}/lib" />
+  		<delete dir="${dependencies}/ws/classes" />
   </target>
 	
-  <target name="warFile">
-		<echo message=" Creating war ..."></echo>
-		<mkdir dir="${project}/war" />	
-		<delete dir="${webAppDir}/WEB-INF/classes/com" />
-
-		<war destfile="${project}/war/searchguiws.war">
-			<fileset dir="${deploy.path}">
-				<patternset>
-					<exclude name="**/*.class"/> 	
-				</patternset>
-			</fileset>
+  <target name="war" description="WAR Java sources">
+		<ant target="jar" />
+  		<delete dir="${dependencies}/ws/war" />
+  		<delete dir="${dependencies}/ws/WebContent" />
+  		<mkdir dir="${dependencies}/ws/war" />
+  		<mkdir dir="${dependencies}/ws/WebContent" />
+  		<mkdir dir="${dependencies}/ws/WebContent/WEB-INF/lib" />
+  	 	<copy todir="${dependencies}/ws/WebContent">
+  	 		<fileset dir="${basedir}/WebContent" />
+  	    </copy>
+  		<copy todir="${dependencies}/ws/WebContent/WEB-INF/lib">
+  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />
+  			<fileset file="${dependencies}/searchmanager/jar/searchmanager.jar" />
+  			<fileset file="${basedir}/WebContent/WEB-INF/lib/x">
+  				<include name="**/*.jar"/> 
+  			</fileset>
+  	  	</copy>
+		<war destfile="${dependencies}/ws/war/searchguiws.war">
+			<fileset dir="${dependencies}/ws/WebContent" />
 		</war>
+  		<delete dir="${dependencies}/ws/WebContent" />	
   </target>
 	
+  <target name="config" description="Deploy config files">
+  		<mkdir dir="${conf.home}" />
+  		<copy todir="${conf.home}">
+  	  	 	<fileset dir="${basedir}/config" />
+  	  	</copy>
+  </target>
 </project> 
