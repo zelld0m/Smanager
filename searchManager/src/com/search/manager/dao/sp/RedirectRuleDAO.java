@@ -20,6 +20,7 @@ import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
@@ -442,7 +443,7 @@ public class RedirectRuleDAO {
 		}
 	}
 
-	public RecordSet<String> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
+	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException {
 		try {
 			RedirectRule redirectRule = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -453,13 +454,13 @@ public class RedirectRuleDAO {
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_RESULT, 2); // return conditions in separate records
 	        RecordSet<RedirectRule> ruleSet = DAOUtils.getRecordSet(getRedirectRuleConditionStoredProcedure.execute(inputs));
-	        List<String> list = new ArrayList<String>();
+	        List<RedirectRuleCondition> list = new ArrayList<RedirectRuleCondition>();
 	        if (ruleSet.getTotalSize() > 0) {
 		        for (RedirectRule rule: ruleSet.getList()) {
-		        	list.add(rule.getCondition());
+		        	list.add(new RedirectRuleCondition(rule.getCondition()));
 		        }
 	        }
-	        return new RecordSet<String>(list, list.size());
+	        return new RecordSet<RedirectRuleCondition>(list, list.size());
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRedirectrule()", e);
 		}
