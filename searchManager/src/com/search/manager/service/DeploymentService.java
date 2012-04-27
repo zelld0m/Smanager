@@ -174,8 +174,8 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public RuleStatus getRuleStatus(String ruleType, String ruleRefId) {
-
 		RuleStatus result = null;
+		
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
@@ -184,7 +184,7 @@ public class DeploymentService {
 		} catch (DaoException e) {
 			logger.error("Failed during unpublishRule()",e);
 		}
-		return result;
+		return result == null? new RuleStatus() : result;
 	}
 
 	@RemoteMethod
@@ -196,6 +196,7 @@ public class DeploymentService {
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
+			ruleStatus.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.processRuleStatus(ruleStatus, isDelete);
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
