@@ -24,7 +24,7 @@
 	</div>
 	
 	<div class="clearB floatL w240">
-		<div id="redirectSidePanel"></div>
+		<div id="redirectRulePanel"></div>
 	    <div class="clearB"></div>
 	</div>
 </div>
@@ -34,8 +34,11 @@
 <!--Start Right Side-->
 <div class="contentArea floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-        <div class="w535 padT10 padL10 floatL fsize20 fnormal">Query Cleaning: <span id="headerRuleName" class="fLblue fnormal">Rule Name</span></div>
-   	</div>
+      <div class="w535 padT10 padL10 floatL fsize20 fnormal">
+		<span id="titleText">Query Cleaning</span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
+	  </div>	
+	</div>
    
    	<div class="clearB"></div>
 	
@@ -77,8 +80,8 @@
 					<label class="floatL w70 marT8 padT3">Description</label>
 					<label><textarea id="description" rows="3" class="marT8" style="width:240px"></textarea></label>
 					<div class="borderT txtAR padT10">
-						<a id="saveButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-						<a id="deleteButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 					</div>
 				</div>
 			
@@ -107,16 +110,15 @@
 								<tr>
 									<td>Category</td>
 									<td>
-										<select name="select" id="categoryList">
+										<select name="select" id="categoryList" class="selectCombo w200" title="Select Category">
 										
-											<option></option>
 										</select>
 									</td>
 								</tr>
 								<tr>
 									<td>Sub-Category</td>
 									<td>
-										<select name="select" id="subCategoryList">
+										<select name="select" id="subCategoryList" class="selectCombo w200" title="Select SubCategory">
 												<option></option>
 										</select>
 									</td>
@@ -124,7 +126,7 @@
 								<tr>
 									<td>Class</td>
 									<td>
-										<select name="select" id="classList">
+										<select name="select" id="classList" class="selectCombo w200" title="Select Class">
 												<option></option>
 										</select>
 									</td>
@@ -132,7 +134,7 @@
 								<tr>
 									<td>Minor</td>
 									<td>
-										<select name="select" id="minorList">
+										<select name="select" id="minorList" class="selectCombo w200" title="Select Minor">
 											<option></option>
 										</select>
 									</td>
@@ -140,16 +142,16 @@
 								<tr>
 									<td>Manufacturer </td>
 									<td>
-									<select name="select" id="manufacturerList" class="w200">
+									<select name="select" id="manufacturerList" class="w200" title="Select Manufacturer">
 											<option></option>
 									</select></td>
 								</tr>
 							</table>
 						</td>
-						<td style="width:60px"><a href="#" class="buttons btnGray clearfix"><div
-									class="buttons fontBold" id="addRule">>></div></a><br />
+						<td style="width:60px"><a href="#" class="buttons btnGray clearfix">
+							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
 						<td class="landingCont bgboxGray" style="vertical-align: top; width: 240px">
-							<div id="ruleItemPanel"></div>
+							<div id="ruleConditionPanel"></div>
 						</td>
 					</tr>
 				</table>
@@ -161,8 +163,9 @@
 	</div> 
 	
 	
-	
-	
+   <div id="ruleIsLocked" class="w180" style="display:none;">
+  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  </div>
 	
 </div>
 <!--End Right Side-->
