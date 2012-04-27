@@ -33,13 +33,13 @@
   </store>
   
   <server name='vtorschstg01'>
-    <url>http://vtorschstg01:8080/solr14/(store)/</url> 
+    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 
   </server>
   <server name='vtorschstg02'>
-    <url>http://vtorschstg02:8080/solr14/(store)/</url>
+    <url>http://vtorschstg02.pcmall.com:8080/solr14/(store)/</url>
   </server>
   <server name='vtorschstg03'>
-    <url>http://vtorschstg03:8080/solr14/(store)/</url>
+    <url>http://vtorschstg03.pcmall.com:8080/solr14/(store)/</url>
   </server>
   <server name='afs-pl-schpd07.afservice.org'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
