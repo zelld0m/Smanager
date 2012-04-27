@@ -17,8 +17,8 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 	
 	// for testing only: do not use in prod
 //	static{
-//		WS_CLIENT = "http://10.17.12.67:8080/searchguiws/services/SearchGuiService";	 // staging
-//		//WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
+//		//WS_CLIENT = "http://10.17.12.67:8080/searchguiws/services/SearchGuiService";	 // staging
+//		WS_CLIENT = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";	
 //		TOKEN = "Hzwviq%2FMwKMpephPCMpavg%3D%3D";
 //	}
 	
@@ -51,7 +51,7 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 				return search.recallRules(list_);
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -85,7 +85,7 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 				return search.deployRules(list_);
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -118,7 +118,7 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 				return search.unDeployRules(list_);
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return false;
 	}
@@ -165,7 +165,7 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 				}
 			}
 		}catch (Exception e) {
-			logger.error(e);
+			logger.error(e,e);
 		}
 		return backupList_;
 	}
