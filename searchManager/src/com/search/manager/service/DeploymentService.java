@@ -188,7 +188,7 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int processRuleStatus(String ruleType, String ruleRefId, String description, Boolean isDelete) {
+	public RuleStatus processRuleStatus(String ruleType, String ruleRefId, String description, Boolean isDelete) {
 
 		int result = -1;
 		try {
@@ -197,10 +197,11 @@ public class DeploymentService {
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
 			result = daoService.processRuleStatus(ruleStatus, isDelete);
+			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
 			logger.error("Failed during processRuleStatus()",e);
 		}
-		return result;
+		return null;
 	}
 
 	@RemoteMethod
@@ -208,13 +209,12 @@ public class DeploymentService {
 		return unpublishRule(ruleType, ruleRefIdList);
 	}
 
-	@RemoteMethod
 	public int addComment(String pComment, String ...ruleStatusId) {
 		int result = -1;
 		try {
 			for(String rsId: ruleStatusId){
 				Comment comment = new Comment();
-				comment.setReferenceId("ipad");
+				comment.setReferenceId(rsId);
 				comment.setRuleTypeId(9);
 				comment.setUsername(UtilityService.getUsername());
 				comment.setComment(pComment);
