@@ -55,21 +55,20 @@
 	    <property name="customArgumentResolver" ref="activeUserResolver" />
 	</bean>
 		
-	<bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton" >
-			<property name="driverClassName" value="net.sourceforge.jtds.jdbc.Driver" /> 
-<!-- 	 		
-				dev
-				<property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
-				staging
-				<property name="url" value="jdbc:jtds:sqlserver://AFS-DW-SQQABD1/ED_SOLR" />
--->
-			<property name="url" value="jdbc:jtds:sqlserver://BTORCAPDEVSQL01/ED_SOLR" /> 
-			<property name="username" value="ED_SOLR_USER" />
-			<property name="password" value="s0lRd3V!" />
-			<property name="validationQuery" value="select 1"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-	</bean>
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+         <property name="location" value="file:/home/solr/conf/database.properties"/>
+    </bean>
+    
+
+    <bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
+       <property name="driverClassName" value="${driverClassName}"/>
+       <property name="url" value="${url}"/>
+       <property name="username" value="${username}"/>
+       <property name="password" value="${password}"/>
+       <property name="validationQuery" value="select 1"/>
+  	   <property name="testOnBorrow" value="true"/>
+  	   <property name="testOnReturn" value="false"/>
+    </bean>
 	
 	<!--  DAO Services -->	
 	<bean name="jdbcTemplate" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" scope="singleton">
