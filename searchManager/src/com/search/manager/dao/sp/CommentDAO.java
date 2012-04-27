@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.SearchCriteria;
 
 @Repository(value="commentDAO")
 public class CommentDAO {
@@ -44,7 +45,10 @@ public class CommentDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT_ID, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 		}
 
 		@Override
@@ -56,7 +60,8 @@ public class CommentDAO {
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP)
+	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
+	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID)
 	                		);
 	        	}
 
@@ -72,6 +77,7 @@ public class CommentDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE_ID, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
@@ -106,24 +112,29 @@ public class CommentDAO {
         return DAOUtils.getUpdateCount(deleteCommentStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<Comment> getComment(String referenceId, Integer commentId) throws DaoException {
+    public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		try {
+			Comment comment = searchCriteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_REFERENCE_ID, referenceId);
-			inputs.put(DAOConstants.PARAM_COMMENT_ID, commentId);
+			inputs.put(DAOConstants.PARAM_REFERENCE_ID, comment.getReferenceId());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, comment.getRuleTypeId());
+			inputs.put(DAOConstants.PARAM_COMMENT_ID, null);
+			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
+			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
 			return DAOUtils.getRecordSet(getCommentStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getComment()", e);
 		}
     }	
 
-    public int addComment(String refId, String comment, String userName) throws DaoException {
+    public int addComment(Comment comment) throws DaoException {
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_REFERENCE_ID, refId);
-			inputs.put(DAOConstants.PARAM_COMMENT, comment);
-			inputs.put(DAOConstants.PARAM_CREATED_BY, userName);
+			inputs.put(DAOConstants.PARAM_REFERENCE_ID, comment.getReferenceId());
+			inputs.put(DAOConstants.PARAM_COMMENT, comment.getComment());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, comment.getRuleTypeId());
+			inputs.put(DAOConstants.PARAM_CREATED_BY, comment.getUsername());
 			result = DAOUtils.getUpdateCount(addCommentStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
