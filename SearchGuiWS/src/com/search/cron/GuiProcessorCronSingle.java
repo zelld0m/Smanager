@@ -31,7 +31,7 @@ public class GuiProcessorCronSingle extends QuartzJobBean{
 			synchronized (this) {	
 				processElevateRules();
 				processExcludeRules();
-				//processRedirectRules();
+				processRedirectRules();
 				processRankingRules();
 			}
 		}catch (Exception e) {
