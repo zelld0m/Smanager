@@ -49,8 +49,8 @@
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="50px" class="txtAL"></th>
 							<th width="230px" class="txtAL">Rule Info</th>
-							<th width="85px">Type</th>
-							<th>Request</th>
+							<th width="85px">Request Type</th>
+							<th>Request Details</th>
 						</tr>
 					<tbody>
 				</table>
@@ -97,25 +97,12 @@
 		<div id="previewTemplate" style="display: none;">
 			<div class="rulePreview w600">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<label class="w110 floatL fbold">Rule ID:</label><label class="w100 floatL">xerox</label>
-				<label class="w95 floatL marL20 fbold">Type:</label><label class="w100 floatL">New</label>	
+				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w100 floatL" id="ruleInfo"></label>
 				<div class="clearB"></div>
-				<label class="w110 floatL marL20 fbold">Request By:</label><label class="w100 floatL">admin</label>
-				<label class="w95 floatL fbold">Request Date:</label><label class="w100 floatL">admin</label>
-				
+				<label class="w95 floatL marL20 fbold">Request Type:</label>
+				<label class="w100 floatL" id="requestType"></label>					
 				<div class="clearB"></div>
-				<label class="w110 floatL fbold">Request Comment</label><label class="w460 floatL border" style="overflow-y:scroll; height: 40px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</label>
-				<div class="clearB"></div>
-<!-- 				<label class="w110 floatL fbold">Approval Comment </label> -->
-<!-- 				<label><textarea id="approvalComment" rows="1" style="width:320px; height:32px"></textarea></label> -->
-<!-- 				<label id="actionBtn" class="floatLR w100 marL20"> -->
-<!-- 					<a id="approveBtn" href="javascript:void(0);" -->
-<!-- 						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div> -->
-<!-- 					</a> -->
-<!-- 					<a id="rejectBtn" href="javascript:void(0);" -->
-<!-- 						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div> -->
-<!-- 					</a> -->
-<!-- 				</label> -->
 			</div>
 			<div class="clearB"></div>
 			
