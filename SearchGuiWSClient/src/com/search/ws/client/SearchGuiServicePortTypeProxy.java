@@ -44,10 +44,22 @@ public class SearchGuiServicePortTypeProxy implements com.search.ws.client.Searc
     return searchGuiServicePortType;
   }
   
+  public com.search.ws.client.AnyType2AnyTypeMapEntry[] recallRulesMap(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
+    if (searchGuiServicePortType == null)
+      _initSearchGuiServicePortTypeProxy();
+    return searchGuiServicePortType.recallRulesMap(in0);
+  }
+  
   public boolean recallRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
     if (searchGuiServicePortType == null)
       _initSearchGuiServicePortTypeProxy();
     return searchGuiServicePortType.recallRules(in0);
+  }
+  
+  public com.search.ws.client.AnyType2AnyTypeMapEntry[] deployRulesMap(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
+    if (searchGuiServicePortType == null)
+      _initSearchGuiServicePortTypeProxy();
+    return searchGuiServicePortType.deployRulesMap(in0);
   }
   
   public com.search.webservice.model.BackupInfo[] getBackupInfo(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
@@ -56,16 +68,22 @@ public class SearchGuiServicePortTypeProxy implements com.search.ws.client.Searc
     return searchGuiServicePortType.getBackupInfo(in0);
   }
   
-  public boolean unDeployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
-	    if (searchGuiServicePortType == null)
-	      _initSearchGuiServicePortTypeProxy();
-	    return searchGuiServicePortType.unDeployRules(in0);
-  }
-  
   public boolean deployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
     if (searchGuiServicePortType == null)
       _initSearchGuiServicePortTypeProxy();
     return searchGuiServicePortType.deployRules(in0);
+  }
+  
+  public boolean unDeployRules(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
+    if (searchGuiServicePortType == null)
+      _initSearchGuiServicePortTypeProxy();
+    return searchGuiServicePortType.unDeployRules(in0);
+  }
+  
+  public com.search.ws.client.AnyType2AnyTypeMapEntry[] unDeployRulesMap(com.search.webservice.model.TransportList in0) throws java.rmi.RemoteException{
+    if (searchGuiServicePortType == null)
+      _initSearchGuiServicePortTypeProxy();
+    return searchGuiServicePortType.unDeployRulesMap(in0);
   }
   
   
