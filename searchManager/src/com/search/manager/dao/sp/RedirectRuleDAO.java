@@ -342,7 +342,7 @@ public class RedirectRuleDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
 			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
-			inputs.put(DAOConstants.PARAM_RULE_NAME, rule.getRuleName());
+			inputs.put(DAOConstants.PARAM_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, rule.getDescription());
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
