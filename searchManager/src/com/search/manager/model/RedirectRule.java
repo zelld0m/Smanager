@@ -168,6 +168,14 @@ public class RedirectRule extends ModelBean {
 		}
 		return terms;
 	}
+	
+	public List<String> getConditions() {
+		ArrayList<String> conditions = new ArrayList<String>();
+		if (StringUtils.isNotEmpty(condition)) {
+			CollectionUtils.addAll(conditions, condition.split(DBL_PIPE_DELIM));
+		}
+		return conditions;		
+	}
 
 	public void setChangeKeyword(String changeKeyword) {
 		this.changeKeyword = changeKeyword;
