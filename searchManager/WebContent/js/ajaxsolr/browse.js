@@ -7,10 +7,13 @@ var Manager;
 	$(function () {	
 		var Manager = null;
 		var solrurl;
+		var isFmGui;
 		
-		UtilityServiceJS.getSolrUrl({
-			callback:function(url){
-				solrurl = url;
+		UtilityServiceJS.getSolrConfig({
+			callback:function(data){	
+				var config = $.parseJSON(data);
+					solrurl = config.solrUrl;
+					isFmGui = config.isFmGui;	
 			}
 		});
 
@@ -18,7 +21,7 @@ var Manager;
 			callback:function(storeName){
 				
 				Manager = new AjaxSolr.Manager({
-					solrUrl: solrurl + storeName + '/'
+					solrUrl: solrurl +'/'+ storeName + '/'
 				});
 
 				Manager.addWidget(new AjaxSolr.ResultWidget({
@@ -85,7 +88,7 @@ var Manager;
 						'spellcheck': true,
 						'spellcheck.count': 3,
 						'spellcheck.collate': true,
-						'gui': true,
+						'gui': isFmGui,
 						'json.nl': 'map'
 				};
 
