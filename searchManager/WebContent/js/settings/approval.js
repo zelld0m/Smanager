@@ -257,12 +257,11 @@
 
 				$content.find('a[href="#ruleField"] >span').html("Rule Condition");
 				
+				$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
+				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
+
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
-
-
-						$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
-						$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
 						var $table = $content.find("div.ruleField table#item");
 
