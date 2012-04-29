@@ -36,31 +36,34 @@
 			$(this.target).find('input').val(keyword);
 			$(this.target).find('input').focus();
 			
-			RelevancyServiceJS.getAll({
+			RelevancyServiceJS.getAllRule({
 				callback:function(data){
 					var list = data.list;
 					var total = data.totalSize;
 					
-					$('select#relevancy > option').not("#norelevancy").remove();
+					$('select#relevancy > option').remove();
 					
+					$('select#relevancy').append($("<option>", { value : "keyword_default", selected: true}).text("[ Auto-Match ]"));
 					for(var i=0; i<total; i++){
-						$("select#relevancy").append('<option value="' + list[i].relevancyId + '">' + list[i].relevancyName + '</option>');
+						$('select#relevancy').append($("<option>", { value : list[i].relevancyId}).text(list[i].relevancyName));
 					}
 					
-					$('select#relevancy > option#norelevancy').attr('selected', 'selected');
-					
 					var relevancyId = $.trim(self.manager.store.values('relevancyId'));
+					
 					if ($.isNotBlank(relevancyId)) {
 						$('select#relevancy > option[value="' + relevancyId + '"]').attr('selected', 'selected');
 					}
 					
-					$("select#relevancy").on("change", function(changeEvt){
-						var key = self.manager.store.values('q');
-						self.manager.store.addByValue('relevancyId', $(changeEvt.target).val());
-						if($.isNotBlank(key)) makeRequest(key);
+					$("select#relevancy").combobox({
+						selected: function(event, ui){
+							var key = self.manager.store.values('q');
+							var selectedVal = $(this).val();
+							self.manager.store.addByValue('relevancyId', selectedVal==="keyword_default"? "":selectedVal);
+							if($.isNotBlank(key)) makeRequest(key);
+						}
 					});
 				}
-			});
+		});
 			
 			$('a#searchOptionsIcon > div').qtip({
 				content: {

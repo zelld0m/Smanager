@@ -123,6 +123,11 @@ public class RelevancyService {
 		}
 		return null;
 	}
+	
+	@RemoteMethod
+	public RecordSet<Relevancy> getAllRule(){
+		return getAllRule("", 0, 0);
+	}
 
 	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
 		try {
