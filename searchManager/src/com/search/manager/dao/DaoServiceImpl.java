@@ -648,8 +648,8 @@ public class DaoServiceImpl implements DaoService {
 			return 0;
 		}
 		return relevancyDAO.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(null, relevancy), null, null, null, null),
-				MatchType.MATCH_ID, ExactMatch.MATCH).getTotalSize();
+				new RelevancyKeyword(new Keyword(""), relevancy), null, null, null, null),
+				MatchType.MATCH_ID, ExactMatch.SIMILAR).getTotalSize();
 	}
 
 	@Override
