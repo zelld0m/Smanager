@@ -275,27 +275,26 @@
 			itemOptionCallback: function(base, id, name, model){
 				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
 				
-				DeploymentServiceJS.getRuleStatus(moduleName, id, {
-					callback:function(data){
-						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(null));	
-					},
-					postHook: function(){
-						RedirectServiceJS.getRedirectKeywordCount(id,{
-							callback: function(count){
+				RedirectServiceJS.getRedirectKeywordCount(id,{
+					callback: function(count){
 
-								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
+						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
+						base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
-									click: function(e){
-										setRedirect(model);
-									}
-								});
-							},
-							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+							click: function(e){
+								setRedirect(model);
 							}
 						});
+					},
+					preHook: function(){ 
+						base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+					}
+				});
+				
+				DeploymentServiceJS.getRuleStatus(moduleName, id, {
+					callback:function(data){
+						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
 					}
 				});
 			}
