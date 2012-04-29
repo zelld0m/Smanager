@@ -173,7 +173,6 @@ public class RedirectRuleDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -266,7 +265,6 @@ public class RedirectRuleDAO {
 		// TODO: add validation
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
-		inputs.put(DAOConstants.PARAM_SEARCH_TERM, null);
 		inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
         return DAOUtils.getUpdateCount(deleteRedirectRuleStoredProcedure.execute(inputs));
     }	
@@ -309,7 +307,10 @@ public class RedirectRuleDAO {
     public String addRedirectRuleAndGetId(RedirectRule rule) throws DaoException {
 		// TODO: add validation
 		try {
-			String id = DAOUtils.generateUniqueId();
+			String id = rule.getRuleId();
+			if (StringUtils.isEmpty(id)) {
+				id = DAOUtils.generateUniqueId();
+			}
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			rule.setRuleId(id);
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
