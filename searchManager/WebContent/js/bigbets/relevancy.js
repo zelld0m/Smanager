@@ -709,7 +709,7 @@
 			return;
 		}
 
-		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
+		RelevancyServiceJS.addRuleFieldValue(field, value, {
 			callback: function(code){
 				showActionResponse(code, "update", field);
 				selectedRule.parameters[field] = value;
@@ -962,7 +962,7 @@
 											if (data!=null){
 												base.getList(name, 1);
 												setRelevancy(data);
-												addRuleFieldValue(selectedRule.ruleId, "q.alt", "*:*");
+												addRuleFieldValue("q.alt", "*:*");
 											}else{
 												setRelevancy(selectedRule);
 											}
