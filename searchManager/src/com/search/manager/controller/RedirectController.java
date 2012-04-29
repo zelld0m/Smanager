@@ -68,10 +68,10 @@ public class RedirectController {
 			filename = "ranking rule";
 		}
 
-		RedirectRule redirectRule = redirectService.getRedirectRule(ruleId);
+		RedirectRule redirectRule = redirectService.getRule(ruleId);
 		
 		List<KeywordReportBean> keywords = new ArrayList<KeywordReportBean>();
-		for (Keyword keyword: redirectService.getKeywordInRule(ruleId, null, 0, 0).getList()) {
+		for (Keyword keyword: redirectService.getAllKeywordInRule(ruleId, null, 0, 0).getList()) {
 			keywords.add(new KeywordReportBean(keyword));
 		}
 

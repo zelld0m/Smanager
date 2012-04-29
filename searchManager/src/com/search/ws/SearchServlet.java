@@ -206,7 +206,12 @@ public class SearchServlet extends HttpServlet {
 			Relevancy relevancy = null;
 			if (!fromSearchGui) {
 				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
-				logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
+				if (relevancy != null) {
+					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());					
+				}
+				else {
+					logger.error("Unable to find default relevancy!");
+				}
 			}
 			else {
 				if (StringUtils.isNotBlank(relevancyId)) {
