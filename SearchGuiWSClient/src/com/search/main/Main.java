@@ -30,8 +30,8 @@ public class Main{
 		//Map<String,Boolean> map = new HashMap<String,Boolean>();
 		//map = service.deployRulesMap("macmall", elevatedKeyList, RuleEntity.ELEVATE);
 		//map = service.recallRulesMap("macmall", elevatedKeyList, RuleEntity.ELEVATE);
-//		map = service.unDeployRulesMap("macmall", elevatedKeyList, RuleEntity.ELEVATE);
-//		
+	//	map = service.unDeployRulesMap("macmall", elevatedKeyList, RuleEntity.ELEVATE);
+		
 //		for(String key : map.keySet()){
 //			System.out.println("key : "+key+" is "+map.get(key));
 //		}
@@ -58,7 +58,7 @@ public class Main{
 	//	System.out.println(service.unDeployRules("macmall", excludeKeyList, RuleEntity.EXCLUDE));
 	
 	
-		//Map<String,Boolean> map = new HashMap<String,Boolean>();
+	//	Map<String,Boolean> map = new HashMap<String,Boolean>();
 		//map = service.deployRulesMap("macmall", excludeKeyList, RuleEntity.EXCLUDE);
 		//map = service.recallRulesMap("macmall", elevatedKeyList, RuleEntity.EXCLUDE);
 		//map = service.unDeployRulesMap("macmall", elevatedKeyList, RuleEntity.EXCLUDE);
@@ -76,7 +76,24 @@ public class Main{
 //			System.out.println(back.getDateCreated());
 //		}
 		
+		/** QUERY CLEANING **/
+		List<String> queryList = new ArrayList<String>();
+		queryList.add("testadd");
 		
+	//	System.out.println(service.deployRules("macmall", queryList, RuleEntity.QUERY_CLEANING));
+	//	System.out.println(service.recallRules("macmall", queryList, RuleEntity.QUERY_CLEANING));
+	//	System.out.println(service.unDeployRules("macmall", queryList, RuleEntity.QUERY_CLEANING));
+		
+		Map<String,Boolean> map = new HashMap<String,Boolean>();
+		//map = service.deployRulesMap("macmall", queryList, RuleEntity.QUERY_CLEANING);
+//		//map = service.recallRulesMap("macmall", queryList, RuleEntity.QUERY_CLEANING);
+		map = service.unDeployRulesMap("macmall", queryList, RuleEntity.QUERY_CLEANING);
+//		
+		for(String key : map.keySet()){
+			System.out.println("key : "+key+" is "+map.get(key));
+		}
+		
+
 		/** RANKING RULES */
 		
 		List<String> rankingList = new ArrayList<String>();
@@ -87,14 +104,14 @@ public class Main{
 //		System.out.println(service.unDeployRules("macmall", rankingList, RuleEntity.RANKING_RULE));
 		
 	
-		Map<String,Boolean> map = new HashMap<String,Boolean>();
+		//Map<String,Boolean> map = new HashMap<String,Boolean>();
 		//map = service.deployRulesMap("macmall", rankingList, RuleEntity.RANKING_RULE);
 		//map = service.recallRulesMap("macmall", rankingList, RuleEntity.RANKING_RULE);
 		//map = service.unDeployRulesMap("macmall", rankingList, RuleEntity.RANKING_RULE);
 				
-		for(String key : map.keySet()){
-			System.out.println("key : "+key+" is "+map.get(key));
-		}
+//		for(String key : map.keySet()){
+//			System.out.println("key : "+key+" is "+map.get(key));
+//		}
 		
 //		List<BackupInfo> list = service.getBackupInfo("macmall", rankingList, RuleEntity.RANKING_RULE);
 		
