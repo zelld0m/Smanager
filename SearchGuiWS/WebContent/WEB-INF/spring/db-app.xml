@@ -53,6 +53,9 @@
 	<beans:bean name="relevancyDao" id="relevancyDAO" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
+		<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
 	
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
@@ -60,6 +63,7 @@
 		<beans:property name="keywordDAO" ref="keywordDAO"/>
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>
     </beans:bean>
     
     <!--  dao services stg-->	
@@ -81,13 +85,17 @@
 	<beans:bean name="relevancyDaoStg" id="relevancyDAOStg" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
-	
+	<beans:bean name="redirectRuleDaoStg" id="redirectRuleDAOStg" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+
 	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
 		<beans:property name="excludeDAO" ref="excludeDAOStg"/>
 		<beans:property name="keywordDAO" ref="keywordDAOStg"/>
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAOStg"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
+		<beans:property name="redirectRuleDAO" ref="redirectRuleDAOStg"/>
     </beans:bean>
     
 </beans:beans>
