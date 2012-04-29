@@ -434,7 +434,10 @@ public class RedirectRuleDAO {
 	        List<StoreKeyword> list = new ArrayList<StoreKeyword>();
 	        if (ruleSet.getTotalSize() > 0) {
 		        for (RedirectRule rule: ruleSet.getList()) {
-		        	list.add(new StoreKeyword(rule.getStoreId(), rule.getSearchTerm()));
+		        	// TODO: temp fix until DBA fixes SP to no return null search terms
+		        	if (StringUtils.isNotBlank(rule.getSearchTerm())) {
+			        	list.add(new StoreKeyword(rule.getStoreId(), rule.getSearchTerm()));		        		
+		        	}
 		        }
 	        }
 	        return new RecordSet<StoreKeyword>(list, list.size());
