@@ -1,11 +1,14 @@
 package com.search.servlet;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
+
 import com.search.manager.utility.PropsUtils;
 import com.search.service.DeploymentRuleService;
 import com.search.service.DeploymentRuleServiceImpl;
@@ -35,10 +38,11 @@ public class ForceCacheServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			synchronized (this) {	
+			synchronized (this) {
+				// TODO: put some checking if parameter will force a reload or perform the reload at once.
 				processElevateRules();
 				processExcludeRules();
-				//processRedirectRules();
+				processRedirectRules();
 				processRankingRules();
 			}
 		}catch (Exception e) {

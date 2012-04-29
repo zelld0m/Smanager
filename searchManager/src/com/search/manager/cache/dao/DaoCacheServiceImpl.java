@@ -305,5 +305,57 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		}
 		return false;
 	}
+
+	public boolean setForceReload(Store store) {
+		boolean result = setForceReloadElevate(store);
+		result &= setForceReloadExclude(store);
+		result &= setForceReloadRedirect(store);
+		result &= setForceReloadRelevancy(store);
+		return result;
+	}
+	
+	public boolean setForceReloadElevate(Store store) {
+		boolean result = elevateCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of elevate rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of elevate rules for : " + store);
+		}
+		return result;
+	}
+	
+	public boolean setForceReloadExclude(Store store) {
+		boolean result = excludeCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of elevate rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of elevate rules for : " + store);
+		}
+		return result;
+	}
+	
+	public boolean setForceReloadRedirect(Store store) {
+		boolean result = redirectCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of elevate rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of elevate rules for : " + store);
+		}
+		return result;
+	}
+	
+	public boolean setForceReloadRelevancy(Store store) {
+		boolean result = relevancyCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of elevate rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of elevate rules for : " + store);
+		}
+		return result;
+	}
 	
 }

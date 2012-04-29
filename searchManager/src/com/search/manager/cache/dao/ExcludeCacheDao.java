@@ -22,6 +22,11 @@ public class ExcludeCacheDao extends CacheDao<ExcludeResult> {
 	private static final Logger logger = Logger.getLogger(ExcludeCacheDao.class);
 	
 	@Override
+	protected String getCacheKeyInitials() throws DataException {
+		return CacheConstants.EXCLUDED_LIST_CACHE_KEY;
+	}
+
+	@Override
 	public String getCacheKey(StoreKeyword storeKeyword) throws DataException {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);

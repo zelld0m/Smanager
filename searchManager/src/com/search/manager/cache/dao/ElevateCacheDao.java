@@ -20,6 +20,11 @@ import com.search.manager.model.StoreKeyword;
 public class ElevateCacheDao extends CacheDao<ElevateResult> {
 
 	private static final Logger logger = Logger.getLogger(ElevateCacheDao.class);
+
+	@Override
+	protected String getCacheKeyInitials() throws DataException {
+		return CacheConstants.ELEVATED_LIST_CACHE_KEY;
+	}
 	
 	@Override
 	public String getCacheKey(StoreKeyword storeKeyword) throws DataException {
