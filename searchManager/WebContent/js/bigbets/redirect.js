@@ -133,6 +133,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
+			showAddButton: !selectedRuleStatus.locked,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -222,13 +223,19 @@
 		});
 	};
 
-	var setRedirect = function(rule, ruleStatus){
+	var setRedirect = function(rule){
 		selectedRule = rule;
-		selectedRuleStatus = ruleStatus;
-		showDeploymentStatusBar(selectedRuleStatus);
-		showRedirect();
-	};
 
+		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
+			callback:function(data){
+				selectedRuleStatus = data;
+				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
+				showDeploymentStatusBar(selectedRuleStatus);
+				showRedirect();
+			}
+		});		
+	};
+	
 	var getRedirectRuleList = function(ruleId, page) { 
 
 		$("#redirectRulePanel").sidepanel({
@@ -240,7 +247,7 @@
 			searchText : "Enter Name",
 
 			itemDataCallback: function(base, keyword, page){
-				RedirectServiceJS.getRedirectRule(keyword, ruleId, page, rulePageSize, {
+				RedirectServiceJS.getAllRedirectRules(keyword, ruleId, page, rulePageSize, {
 					callback: function(data){
 						base.populateList(data);
 						base.addPaging(keyword, page, data.totalSize);
@@ -251,29 +258,26 @@
 
 			itemAddCallback: function(base, name){
 				RedirectServiceJS.addRedirectRuleAndGetModel(name, {
-					callback: function(model){
-						base.getList(name, 1);
-						setRedirect(model, null);
+					callback: function(data){
+						if (data!=null){
+							base.getList(name, 1);
+							setRedirect(data);
+						}else{
+							setRedirect(selectedRule);
+						}
 					},
-					preHook: function(){ base.prepareList(); }
+					preHook: function(){ 
+						base.prepareList(); 
+					}
 				});
 			},
 
 			itemOptionCallback: function(base, id, name, model){
 				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-				var ruleStatus = null;
-
+				
 				DeploymentServiceJS.getRuleStatus(moduleName, id, {
 					callback:function(data){
-						ruleStatus = data;
-						var status = (ruleStatus==null) ? "" : ruleStatus["approvalStatus"];
-
-						switch (status){
-						case "REJECTED": base.$el.find(selector + ' div.itemSubText').html("Action Required"); break;
-						case "PENDING": base.$el.find(selector + ' div.itemSubText').html("Awaiting Approval"); break;
-						case "APPROVED": base.$el.find(selector + ' div.itemSubText').html("Ready For Production"); break;
-						default: base.$el.find(selector + ' div.itemSubText').html("Setup a Rule"); break;
-						}	
+						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(null));	
 					},
 					postHook: function(){
 						RedirectServiceJS.getRedirectKeywordCount(id,{
@@ -284,7 +288,7 @@
 
 								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
 									click: function(e){
-										setRedirect(model, ruleStatus);
+										setRedirect(model);
 									}
 								});
 							},
@@ -294,8 +298,6 @@
 						});
 					}
 				});
-
-
 			}
 		});
 	};
@@ -315,24 +317,33 @@
 	};
 
 	var updateRule = function(e) { 
-		if (e.data.locked) return
+		if (e.data.locked) return;
 		var ruleName = $.trim($("#name").val());  
 		var ruleDescription = $.trim($("#description").val());  
 
 		if (checkIfUpdateAllowed()){
+			var response = 0;
 			RedirectServiceJS.updateRedirectRule(selectedRule, ruleName, ruleDescription, {
 				callback: function(data){
-					alert("Rule info updated successfully");
-					setRedirect(selectedRule);
+					response = data;
+				},
+				postHook: function(){
+					RedirectServiceJS.getRedirectRule(selectedRule.ruleName,{
+						callback: function(data){
+							showActionResponse(response, "update", ruleName);
+							setRedirect(selectedRule);
+						}
+					});
 				}
 			});
+			return;
 		}
-		else{
-			if ($.isBlank(ruleName)){
-				showMessage("#name", "Rule name is required");
-				$("#name").val(selectedRule.ruleName);
-			}
+
+		if ($.isBlank(ruleName)){
+			showMessage("#name", "Rule name is required");
+			$("#name").val(selectedRule.ruleName);
 		}
+
 	};
 
 	var deleteRule = function(e) { 
@@ -385,8 +396,6 @@
 			}
 		});
 	};
-
-
 
 	init = function() {
 		showRedirect();

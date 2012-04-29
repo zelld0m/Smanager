@@ -92,7 +92,7 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RedirectRule> getRedirectRule(String searchTerm, String ruleId, int page, int itemsPerPage) {
+	public RecordSet<RedirectRule> getAllRedirectRules(String searchTerm, String ruleId, int page, int itemsPerPage) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setSearchTerm(searchTerm);

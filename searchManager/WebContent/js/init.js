@@ -18,11 +18,25 @@ dwr.engine.setWarningHandler(function(msg, wrn) {
 	alert(wrnMessage + '\n' + wrnInfo);
 });
 
+getRuleNameSubTextStatus = function(ruleStatus){
+	if (ruleStatus==null) 
+		return "Unknown Status";
+	
+	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
+		return "Setup a Rule";
+	
+	switch (ruleStatus["approvalStatus"]){
+		case "REJECTED": return "Action Required";
+		case "PENDING": return "Awaiting Approval";
+		case "APPROVED": return "Ready For Production";
+	}	
+};
+
 showActionResponse = function(code, action, param){
 	switch(code){
-	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-	case  0: alert("Failed " + action + " request for " + param); break;
-	default: alert("Successfull " + action + " request for " + param); break;
+		case -1: alert("Error encountered while processing " + action + " request for " + param); break;
+		case  0: alert("Failed " + action + " request for " + param); break;
+		default: alert("Successfull " + action + " request for " + param); break;
 	}
 };
 
