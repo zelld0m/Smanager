@@ -21,19 +21,25 @@
 	var deleteRuleConfirmText = "Continue deleting this rule?";
 	var deleteKeywordInRuleConfirmText = "Continue deleting this keyword?";
 
+	var prepareRedirect = function(){
+		$("#preloader").show();
+		$("#submitForApproval").hide();
+		$("#noSelected").hide();
+		$("#relevancy").hide();
+	};
+	
 	var showRedirect = function(){
+		prepareRedirect();
 		$("#preloader").hide();
+		resetInputFields("#redirect");
 
 		if(selectedRule==null){
-			$("#submitForApproval").hide();
 			$("#noSelected").show();
-			$("#redirect").hide();
 			$("#titleText").html(moduleName);
 			return;
 		}
 
 		$("#submitForApproval").show();
-		$("#noSelected").hide();
 		$("#redirect").show();
 
 		$("#titleText").html(moduleName + " for ");
@@ -41,42 +47,41 @@
 		$("#name").val(selectedRule.ruleName);
 		$("#description").val(selectedRule.description);
 
-		refreshKeywordInRuleList(1);
-		refreshRuleConditionList(1);
+		getKeywordInRuleList(1);
+		getRuleConditionInRuleList(1);
 
-		$("#saveBtn").on({
+		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked});
 
-		$("#deleteBtn").on({
+		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked});
 
-		$("#submitForApprovalBtn").on({
+		$("#submitForApprovalBtn").off().on({
 			click: function(e){
 				var ruleStatus = null;
 				var data = e.data;
 
-				if(confirm(e.data.module + " rule will be locked for approval. Continue?")){
+				if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
 					DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
 						callback: function(data){
 							ruleStatus = data;
 						},
 						preHook:function(){
-							$("#preloader").show();
-							$("#redirect").hide();
+							prepareRedirect();
 						},
 						postHook: function(){
-							setRedirect(selectedRule, ruleStatus);
+							setRedirect(selectedRule);
 						}
 					});
 				}
 			}
 		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
 
-		$("#addRuleCondition").on({
+		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
 				category = $("select#categoryList option[value!='all']:selected").val();
@@ -120,7 +125,7 @@
 					RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
 						callback:function(code){
 							showActionResponse(code, "add", rule);
-							refreshRuleConditionList(1);
+							getRuleConditionInRuleList(1);
 						}
 					});
 				}
@@ -128,7 +133,7 @@
 		},{locked: selectedRuleStatus.locked});	
 	};
 
-	var refreshKeywordInRuleList = function(page){
+	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
@@ -157,11 +162,11 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Remove "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
-									refreshKeywordInRuleList(1);
+									getKeywordInRuleList(1);
 								},
 								preHook: function(){ base.prepareList(); }
 							});
@@ -174,7 +179,7 @@
 					RedirectServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
 						callback: function(code){
 							showActionResponse(code, "add", keyword);
-							refreshKeywordInRuleList(1);
+							getKeywordInRuleList(1);
 						},
 						preHook: function(){ base.prepareList(); }
 					});
@@ -183,7 +188,7 @@
 		});
 	};
 
-	var refreshRuleConditionList = function(page){
+	var getRuleConditionInRuleList = function(page){
 		$("#ruleConditionPanel").sidepanel({
 			fieldId: "",
 			fieldName: "condition",
@@ -212,16 +217,17 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (confirm('Remove "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteConditionInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
-									refreshRuleConditionList(1);
+									getRuleConditionInRuleList(1);
 								},
 								preHook: function(){ base.prepareList(); }
 							});
-					}
-				});
+					},
+					mouseenter: showHoverInfo
+				},{locked: selectedRuleStatus.locked});
 			}
 		});
 	};
@@ -306,11 +312,11 @@
 
 	var checkIfUpdateAllowed = function(){
 		var ruleName = $.trim($("#name").val());  
-		var ruleDescription = $.trim($("#description").val());  
+		var description = $.trim($("#description").val());  
 		isDirty = false;
 		console.log(selectedRule);
 		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
-		isDirty = isDirty || (ruleDescription.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
+		isDirty = isDirty || (description.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
 		// Required field
 		isDirty = isDirty && $.isNotBlank(ruleName);
@@ -321,11 +327,11 @@
 	var updateRule = function(e) { 
 		if (e.data.locked) return;
 		var ruleName = $.trim($("#name").val());  
-		var ruleDescription = $.trim($("#description").val());  
+		var description = $.trim($("#description").val());  
 
 		if (checkIfUpdateAllowed()){
 			var response = 0;
-			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, ruleDescription, {
+			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
 				callback: function(data){
 					response = data;
 				},
@@ -351,8 +357,8 @@
 	var deleteRule = function(e) { 
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
 			RedirectServiceJS.deleteRule(selectedRule,{
-				callback: function(data){
-
+				callback: function(code){
+					showActionResponse(code, "delete", selectedRule.ruleName);
 				}
 			});
 		}

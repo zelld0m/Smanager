@@ -54,20 +54,19 @@ public class RelevancyService {
 	@Autowired private DaoService daoService;
 
 	@RemoteMethod
-	public Relevancy getById(String relevancyId){
+	public Relevancy getRule(String ruleId){
 		try {
-			Relevancy relevancy = new Relevancy();
-			relevancy.setRelevancyId(relevancyId);
-			relevancy.setStore(new Store(UtilityService.getStoreName()));
-			return daoService.getRelevancyDetails(relevancy);
+			Relevancy rule = new Relevancy(ruleId);
+			rule.setStore(new Store(UtilityService.getStoreName()));
+			return daoService.getRelevancyDetails(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during getAllByName()",e);
+			logger.error("Failed during getRule()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
-	public int addOrUpdateRelevancyField(String relevancyId, String fieldName, String fieldValue) throws Exception{
+	public int addRuleFieldValue(String relevancyId, String fieldName, String fieldValue) throws Exception{
 		try {
 			logger.info(String.format("%s %s %s", relevancyId, fieldName, fieldValue));
 			Relevancy relevancy = new Relevancy();
@@ -111,7 +110,7 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Relevancy> getAllByName(String name, int page, int itemsPerPage){
+	public RecordSet<Relevancy> getAllRule(String name, int page, int itemsPerPage){
 		try {
 			logger.info(String.format("%s %d %d", name, page, itemsPerPage));
 			Relevancy relevancy = new Relevancy();
@@ -125,32 +124,30 @@ public class RelevancyService {
 		return null;
 	}
 
-	@RemoteMethod
-	public RecordSet<Relevancy> getAll(){
-		return getAllByName("", 0, 0);
-	}
-
-	@RemoteMethod
-	public String addRelevancy(String name, String description , String startDate, String endDate){
+	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
 		try {
-			logger.info(String.format("%s %s %s %s", name, description, startDate, endDate));
 			String store = UtilityService.getStoreName();
-			Relevancy relevancy = new Relevancy();
-			relevancy.setStore(new Store(store));
-			relevancy.setRelevancyName(name);
-			relevancy.setDescription(description);
-			relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
-			relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
-			relevancy.setCreatedBy(UtilityService.getUsername());
-			return StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
+			Relevancy rule = new Relevancy();
+			rule.setStore(new Store(store));
+			rule.setRelevancyName(name);
+			rule.setDescription(description);
+			rule.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
+			rule.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
+			rule.setCreatedBy(UtilityService.getUsername());
+			return StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(rule));
 		} catch (DaoException e) {
-			logger.error("Failed during addRelevancy()",e);
+			logger.error("Failed during addRuleAndGetId()",e);
 		}
 		return StringUtils.EMPTY;
 	}
 	
 	@RemoteMethod
-	public String addRelevancyByCloning(String relevancyId, String name, String startDate, String endDate, String description) throws Exception{
+	public Relevancy addRuleAndGetModel(String name, String description , String startDate, String endDate) {
+		return getRule(addRuleAndGetId(name, description , startDate, endDate));
+	}
+	
+	@RemoteMethod
+	public String addRelevancyByCloning(String ruleId, String name, String startDate, String endDate, String description) throws Exception{
 		String clonedId = StringUtils.EMPTY;
 		Relevancy clonedRelevancy = new Relevancy();
 		
@@ -166,14 +163,14 @@ public class RelevancyService {
 		
 		clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
 		
-		Relevancy hostRelevancy = getById(relevancyId);
-		clonedRelevancy = getById(clonedId);
+		Relevancy hostRelevancy = getRule(ruleId);
+		clonedRelevancy = getRule(clonedId);
 		
 		Map<String, String> fields = hostRelevancy.getParameters();
 		
 		for (String key: fields.keySet()){
 			try {
-				addOrUpdateRelevancyField(clonedId, key, fields.get(key));
+				addRuleFieldValue(clonedId, key, fields.get(key));
 			} catch (Exception e) {
 				daoService.deleteRelevancy(clonedRelevancy);
 				throw e;
@@ -188,19 +185,19 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public int updateRelevancy(String id, String name, String description , String startDate, String endDate){
+	public int updateRule(String id, String name, String description , String startDate, String endDate){
 		try {
 			logger.info(String.format("%s %s %s %s %s", id, name, description, startDate, endDate));
 			String store = UtilityService.getStoreName();
-			Relevancy relevancy = new Relevancy();
-			relevancy.setStore(new Store(store));
-			relevancy.setRelevancyId(id);
-			relevancy.setRelevancyName(name);
-			relevancy.setDescription(description);
-			relevancy.setStartDate(DateAndTimeUtils.toSQLDate(store, startDate));
-			relevancy.setEndDate(DateAndTimeUtils.toSQLDate(store, endDate));
-			relevancy.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateRelevancy(relevancy);
+			Relevancy rule = new Relevancy();
+			rule.setStore(new Store(store));
+			rule.setRuleId(id);
+			rule.setRuleName(name);
+			rule.setDescription(description);
+			rule.setStartDate(DateAndTimeUtils.toSQLDate(store, startDate));
+			rule.setEndDate(DateAndTimeUtils.toSQLDate(store, endDate));
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			return daoService.updateRelevancy(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during addRelevancy()",e);
 		}
@@ -271,13 +268,13 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Keyword> getKeywordInRule(String relevancyId, String keyword, int page, int itemsPerPage) {
-		logger.info(String.format("%s %d %d", relevancyId, page, itemsPerPage));
+	public RecordSet<Keyword> getAllKeywordInRule(String ruleId, String keyword, int page, int itemsPerPage) {
+		logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
 		try{
 			RelevancyKeyword rk = new RelevancyKeyword();
 			Relevancy r = new Relevancy();
-			r.setRelevancyId(relevancyId);
-			//r.setStore(new Store(null)); //TODO: SP Fix
+			r.setRelevancyId(ruleId);
+			r.setStore(new Store(UtilityService.getStoreName()));
 			rk.setRelevancy(r);
 			rk.setKeyword(new Keyword(""));
 			SearchCriteria<RelevancyKeyword> criteria = new SearchCriteria<RelevancyKeyword>(rk, null, null, 0, 0);
@@ -327,31 +324,31 @@ public class RelevancyService {
 
 	@RemoteMethod
 	public int addKeywordToRule(String relevancyId, String keywordId) {
-		logger.info(String.format("%s %s", relevancyId, keywordId));
+		int result = -1;
 		try{
 			Relevancy relevancy = new Relevancy(relevancyId);
 			relevancy.setStore(new Store(UtilityService.getStoreName()));
 			daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keywordId));
 			Keyword keyword =  new Keyword(keywordId);
-			daoService.addRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
+			return daoService.addRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
 		} catch (DaoException e) {
 			logger.error("Failed during addKeywordToRule()",e);
 		}
-		return 0;
+		return result;
 	}
 
 	@RemoteMethod
 	public int deleteKeywordInRule(String relevancyId, String keywordId) {
-		logger.info(String.format("%s %s", relevancyId, keywordId));
+		int result = -1;
 		try{
 			Relevancy relevancy = new Relevancy(relevancyId);
 			relevancy.setStore(new Store(UtilityService.getStoreName()));
 			Keyword keyword =  new Keyword(keywordId);
-			daoService.deleteRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
+			return daoService.deleteRelevancyKeyword(new RelevancyKeyword(keyword, relevancy));
 		} catch (DaoException e) {
 			logger.error("Failed during deleteKeywordInRule()",e);
 		}
-		return 0;
+		return result;
 	}
 
 	@RemoteMethod
@@ -403,7 +400,7 @@ public class RelevancyService {
 	}
 	
 	@RemoteMethod
-	public int getRelevancyCount(String keyword){
+	public int getTotalRuleUsedByKeyword(String keyword){
 		try {
 			StoreKeyword storeKeyword = new StoreKeyword(new Store(UtilityService.getStoreName()), new Keyword(keyword));
 			return daoService.getRelevancyKeywordCount(storeKeyword);
@@ -414,7 +411,7 @@ public class RelevancyService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RelevancyKeyword> getRelevancy(String keyword){
+	public RecordSet<RelevancyKeyword> getAllRuleUsedByKeyword(String keyword){
 		try {
 			Relevancy relevancy = new Relevancy("", "");
 			relevancy.setStore(new Store(UtilityService.getStoreName()));
@@ -443,6 +440,19 @@ public class RelevancyService {
 			return 1;
 		} catch (DaoException e) {
 			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	@RemoteMethod
+	public int getTotalKeywordInRule(String ruleId) {
+		try {
+			Relevancy rule = new Relevancy();
+			rule.setRuleId(ruleId);
+			rule.setStore(new Store(UtilityService.getStoreName()));
+			return daoService.getRelevancyKeywordCount(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during getRedirectKeywordCount()", e);
 		}
 		return 0;
 	}

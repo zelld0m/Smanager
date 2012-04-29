@@ -86,9 +86,9 @@ public class RelevancyController {
 			filename = "ranking rule";
 		}
 
-		Relevancy relevancy = relevancyService.getById(relevancyId);
+		Relevancy relevancy = relevancyService.getRule(relevancyId);
 		List<KeywordReportBean> keywords = new ArrayList<KeywordReportBean>();
-		for (Keyword keyword: relevancyService.getKeywordInRule(relevancyId, null, 0, 0).getList()) {
+		for (Keyword keyword: relevancyService.getAllKeywordInRule(relevancyId, null, 0, 0).getList()) {
 			keywords.add(new KeywordReportBean(keyword));
 		}
 

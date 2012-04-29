@@ -89,6 +89,23 @@ public class Relevancy extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
+	
+	public String getRuleId() {
+		return relevancyId;
+	}
+	
+	public void setRuleId(String ruleId) {
+		this.relevancyId = ruleId;
+	}
+	
+	public String getRuleName() {
+		return relevancyName;
+	}
+	
+	public void setRuleName(String ruleName) {
+		this.relevancyName = ruleName;
+	}
+	
 	public void setRelevancyId(String relevancyId) {
 		this.relevancyId = relevancyId;
 	}

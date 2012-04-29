@@ -41,7 +41,7 @@ public class RedirectService {
 			rule.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addRedirectRule(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during addRedirectRule()",e);
+			logger.error("Failed during addRule()",e);
 		}
 		return result;
 	}
@@ -54,7 +54,7 @@ public class RedirectService {
 			rule.setCreatedBy(UtilityService.getUsername());
 			return daoService.addRedirectRuleAndGetId(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during addRedirectRule()",e);
+			logger.error("Failed during addRuleAndGetId()",e);
 		}
 		return null;
 	}
@@ -75,7 +75,7 @@ public class RedirectService {
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during updateRedirectRule()",e);
+			logger.error("Failed during updateRule()",e);
 		}
 		return result;
 	}
@@ -86,7 +86,7 @@ public class RedirectService {
 		try {
 			result = daoService.deleteRedirectRule(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during removeRedirectRule()",e);
+			logger.error("Failed during deleteRule()",e);
 		}
 		return result;
 	}
@@ -100,7 +100,7 @@ public class RedirectService {
 			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
 			return daoService.getRedirectRules(searchCriteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getRedirectRule()",e);
+			logger.error("Failed during getAllRule()",e);
 		}
 		return null;
 	}
@@ -112,7 +112,7 @@ public class RedirectService {
 			redirectRule.setRuleId(ruleId);
 			return daoService.getRedirectRule(redirectRule);
 		} catch (DaoException e) {
-			logger.error("Failed during getRedirectRule()",e);
+			logger.error("Failed during getRule()",e);
 		}
 		return null;
 	}
@@ -129,7 +129,7 @@ public class RedirectService {
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.addRedirectKeyword(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during addRedirectKeyword()",e);
+			logger.error("Failed during addKeywordToRule()",e);
 		}
 		return result;
 	}
@@ -144,7 +144,7 @@ public class RedirectService {
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.deleteRedirectKeyword(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during removeRedirectKeyword()",e);
+			logger.error("Failed during deleteKeywordInRule()",e);
 		}
 		return result;
 	}
@@ -158,7 +158,7 @@ public class RedirectService {
 			rule.setCondition(condition);
 			result = daoService.addRedirectCondition(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during addRedirectCondition()",e);
+			logger.error("Failed during addRuleCondition()",e);
 		}
 		return result;
 	}
@@ -172,7 +172,7 @@ public class RedirectService {
 			rule.setCondition(condition);
 			result = daoService.deleteRedirectCondition(rule);
 		} catch (DaoException e) {
-			logger.error("Failed during removeRedirectCondition()",e);
+			logger.error("Failed during deleteConditionInRule()",e);
 		}
 		return result;
 
@@ -195,7 +195,7 @@ public class RedirectService {
 			}
 			return new RecordSet<Keyword>(list, list.size());
 		} catch (DaoException e) {
-			logger.error("Failed during getKeywordInRule()",e);
+			logger.error("Failed during getAllKeywordInRule()",e);
 		}
 		return null;
 	}
@@ -209,7 +209,7 @@ public class RedirectService {
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  page, itemsPerPage);
 			return daoService.getRedirectConditions(criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getKeywordInRule()", e);
+			logger.error("Failed during getConditionInRule()", e);
 		}
 		return null;
 	}
@@ -223,7 +223,7 @@ public class RedirectService {
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  null, null);
 			return daoService.getRedirectKeywords(criteria).getTotalSize();
 		} catch (DaoException e) {
-			logger.error("Failed during getRedirectKeywordCount()", e);
+			logger.error("Failed during getTotalKeywordInRule()", e);
 		}
 		return 0;
 	}
@@ -234,7 +234,7 @@ public class RedirectService {
 			SearchCriteria<StoreKeyword> criteria = new SearchCriteria<StoreKeyword>(new StoreKeyword(UtilityService.getStoreName(), null), null, null,  0, 0);
 			return daoService.getRedirectForKeywords(criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getRedirectRuleForKeyword()",e);
+			logger.error("Failed during getAllRuleUsedByKeyword()",e);
 		}
 		return null;
 	}

@@ -18,6 +18,10 @@ dwr.engine.setWarningHandler(function(msg, wrn) {
 	alert(wrnMessage + '\n' + wrnInfo);
 });
 
+resetInputFields = function(selector){
+	$(selector).filter("input,textarea").val("");
+};
+
 getRuleNameSubTextStatus = function(ruleStatus){
 	if (ruleStatus==null) 
 		return "Unknown Status";

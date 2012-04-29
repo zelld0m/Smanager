@@ -39,12 +39,12 @@
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
        
     <div class="clearB floatL w240">
-    	<div id="relevancySidePanel"></div>
-        <div class="clearB"></div>
-    </div>
+		<div id="rulePanel"></div>
+	    <div class="clearB"></div>
+	</div>
     
      <div class="clearB floatL w240">
-    	<div id="keywordSidePanel"></div>
+    	<div id="ruleKeywordPanel"></div>
         <div class="clearB"></div>
     </div>
 
@@ -57,28 +57,38 @@
 	<!--  landing page -->
 	<div class="floatL w730 titlePlacer">
 		<h1 class="padT7 padL15 fsize20 fnormal">
-			Ranking Rule <span id="subTitleText"></span>
+			<span id="titleText"></span>
+			<span id="titleHeader" class="fLblue fnormal"></span>
 		</h1>
 	</div>    
 	<div class="clearB"></div>
 	
 	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	       <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
-	       	<div class="floatL padT10 padL10" style="width:60%" >
-	       	<label class="floatL wAuto fbold">Status:</label>
-	       	<label class="padL5">
-	       		<span id="status"></span> 
-	       		<span id="statusDate" class="fsize11 forange padL5"></span> 
-	       	</label>		        	
-	        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
-		  	</div>   			  	
-	       	<div class="floatR marL8 marR3 padT5"> 	        		
-	       		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
-	       	</div>
-	       </div>	
-	       <div class="clearB"></div>	
+	        <div id="" class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
+	        	<div class="floatL padT10 padL10" style="width:60%" >
+	        		<div id="statusHolder">
+			        	<label class="floatL wAuto">Status:</label>
+			        	<label class="floatL wAuto padL5 fsize11 fLgray">
+			        		<span id="status"></span> 
+			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
+			        	</label>
+			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
+		        	</div>
+		        	<div id="publishHolder">
+			        	<label class="floatL wAuto">Last Published:</label>
+			        	<label class="padL5 fLgray fsize11">
+			        		<span id="statusDate"></span> 
+			        	</label>
+		        	</div>
+			  	</div>   			  	
+	        	<div class="floatR marL8 marR3 padT5"> 	        		
+	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	</div>
+	        </div>	
+	        <div class="clearB"></div>	
 	 </div>
 	 
+	<div class="clearB"></div>	
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
@@ -90,9 +100,9 @@
 					<label><input id="name" type="text" class="w240 marT5"/></label>
 					<div class="clearB"></div>			
 					<label class="floatL w70 marT5 padT3">Schedule</label> 
-					<label><input name="startDate" type="text" class="w70 marT5"></label> 
+					<label><input id="startDate" name="startDate" type="text" class="w70 marT5"></label> 
 					<label class="txtLabel"> - </label> 
-					<label><input name="endDate" type="text" class="w70 marT5"></label>	
+					<label><input id="endDate" name="endDate" type="text" class="w70 marT5"></label>	
 				<div class="clearB"></div>
 					<label class="floatL w70 marT8 padT3">Description</label>
 					<label><textarea id="description" rows="4" class="marT8" style="width:240px"></textarea> </label>
@@ -134,8 +144,8 @@
 			
 			<div class="clearB"></div>
 			<div class="borderT txtAR padT10">
-				<a id="saveButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-				<a id="deleteButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+				<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+				<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 			</div>
 	</div>
 	
@@ -313,5 +323,8 @@
 	</div>
 	</div><!-- end landing page -->
 	
+  <div id="ruleIsLocked" class="w180" style="display:none;">
+  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  </div>	
 </div>  <!--  end content page --> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>
