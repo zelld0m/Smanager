@@ -144,7 +144,7 @@ public class RedirectRule extends ModelBean {
 	}
 	
 	public boolean isRedirectFilter() {
-		return StringUtils.isEmpty(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
+		return StringUtils.isNotBlank(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
 	}
 	
 	/**
