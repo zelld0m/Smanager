@@ -1,6 +1,11 @@
 /**
  * TODO: 
  * 1. Confirmation text should be informative
+ * 2. Persist current page of rule list
+ * 	  a. page refresh
+ *    b. new rule
+ *    c. delete rule
+ * 3. Persist selected rule when page refresh (cookie)    
  */
 (function($){
 	var moduleName="Query Cleaning";
@@ -112,7 +117,7 @@
 				}
 
 				if($.isNotBlank(rule)){
-					RedirectServiceJS.addRedirectRuleCondition(selectedRule.ruleId, rule,{
+					RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
 						callback:function(code){
 							showActionResponse(code, "add", rule);
 							refreshRuleConditionList(1);
@@ -133,8 +138,9 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
+			showAddButton: !selectedRuleStatus.locked,
 			itemDataCallback: function(base, keyword, page){
-				RedirectServiceJS.getKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
+				RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
 						base.populateList(data);
 						base.addPaging(keyword, page, data.totalSize);
@@ -172,8 +178,6 @@
 						},
 						preHook: function(){ base.prepareList(); }
 					});
-				}else{
-					//TODO: Trigger showHoverInfo
 				}
 			}
 		});
@@ -222,25 +226,31 @@
 		});
 	};
 
-	var setRedirect = function(rule, ruleStatus){
+	var setRedirect = function(rule){
 		selectedRule = rule;
-		selectedRuleStatus = ruleStatus;
-		showDeploymentStatusBar(selectedRuleStatus);
-		showRedirect();
+
+		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
+			callback:function(data){
+				selectedRuleStatus = data;
+				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
+				showDeploymentStatusBar(selectedRuleStatus);
+				showRedirect();
+			}
+		});		
 	};
 
-	var getRedirectRuleList = function(ruleId, page) { 
+	var getRedirectRuleList = function(page) { 
 
-		$("#redirectRulePanel").sidepanel({
+		$("#rulePanel").sidepanel({
 			fieldId: "ruleId",
 			fieldName: "ruleName",
 			page: page,
-			pageSize: 5,
+			pageSize: rulePageSize,
 			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
 
 			itemDataCallback: function(base, keyword, page){
-				RedirectServiceJS.getRedirectRule(keyword, ruleId, page, rulePageSize, {
+				RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 					callback: function(data){
 						base.populateList(data);
 						base.addPaging(keyword, page, data.totalSize);
@@ -250,52 +260,46 @@
 			},
 
 			itemAddCallback: function(base, name){
-				RedirectServiceJS.addRedirectRuleAndGetModel(name, {
-					callback: function(model){
-						base.getList(name, 1);
-						setRedirect(model, null);
+				RedirectServiceJS.addRuleAndGetModel(name, {
+					callback: function(data){
+						if (data!=null){
+							base.getList(name, 1);
+							setRedirect(data);
+						}else{
+							setRedirect(selectedRule);
+						}
 					},
-					preHook: function(){ base.prepareList(); }
+					preHook: function(){ 
+						base.prepareList(); 
+					}
 				});
 			},
 
 			itemOptionCallback: function(base, id, name, model){
 				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-				var ruleStatus = null;
 
-				DeploymentServiceJS.getRuleStatus(moduleName, id, {
-					callback:function(data){
-						ruleStatus = data;
-						var status = (ruleStatus==null) ? "" : ruleStatus["approvalStatus"];
+				RedirectServiceJS.getTotalKeywordInRule(id,{
+					callback: function(count){
 
-						switch (status){
-						case "REJECTED": base.$el.find(selector + ' div.itemSubText').html("Action Required"); break;
-						case "PENDING": base.$el.find(selector + ' div.itemSubText').html("Awaiting Approval"); break;
-						case "APPROVED": base.$el.find(selector + ' div.itemSubText').html("Ready For Production"); break;
-						default: base.$el.find(selector + ' div.itemSubText').html("Setup a Rule"); break;
-						}	
-					},
-					postHook: function(){
-						RedirectServiceJS.getRedirectKeywordCount(id,{
-							callback: function(count){
+						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
+						base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
-									click: function(e){
-										setRedirect(model, ruleStatus);
-									}
-								});
-							},
-							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+							click: function(e){
+								setRedirect(model);
 							}
 						});
+					},
+					preHook: function(){ 
+						base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 					}
 				});
 
-
+				DeploymentServiceJS.getRuleStatus(moduleName, id, {
+					callback:function(data){
+						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+					}
+				});
 			}
 		});
 	};
@@ -304,9 +308,9 @@
 		var ruleName = $.trim($("#name").val());  
 		var ruleDescription = $.trim($("#description").val());  
 		isDirty = false;
-
-		isDirty = isDirty || (ruleName.toLowerCase()!==selectedRule.ruleName.toLowerCase());
-		isDirty = isDirty || (ruleDescription.toLowerCase()!==selectedRule.description.toLowerCase());
+		console.log(selectedRule);
+		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
+		isDirty = isDirty || (ruleDescription.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
 		// Required field
 		isDirty = isDirty && $.isNotBlank(ruleName);
@@ -315,29 +319,38 @@
 	};
 
 	var updateRule = function(e) { 
-		if (e.data.locked) return
+		if (e.data.locked) return;
 		var ruleName = $.trim($("#name").val());  
 		var ruleDescription = $.trim($("#description").val());  
 
 		if (checkIfUpdateAllowed()){
-			RedirectServiceJS.updateRedirectRule(selectedRule, ruleName, ruleDescription, {
+			var response = 0;
+			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, ruleDescription, {
 				callback: function(data){
-					alert("Rule info updated successfully");
-					setRedirect(selectedRule);
+					response = data;
+				},
+				postHook: function(){
+					RedirectServiceJS.getRule(selectedRule.ruleId,{
+						callback: function(data){
+							showActionResponse(response, "update", ruleName);
+							setRedirect(selectedRule);
+						}
+					});
 				}
 			});
-		}
-		else{
+		}else{
+
 			if ($.isBlank(ruleName)){
 				showMessage("#name", "Rule name is required");
 				$("#name").val(selectedRule.ruleName);
 			}
 		}
+
 	};
 
 	var deleteRule = function(e) { 
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
-			RedirectServiceJS.deleteRedirectRule(selectedRule,{
+			RedirectServiceJS.deleteRule(selectedRule,{
 				callback: function(data){
 
 				}
@@ -385,8 +398,6 @@
 			}
 		});
 	};
-
-
 
 	init = function() {
 		showRedirect();

@@ -4,18 +4,9 @@
 <c:set var="submenu" value="redirect"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<!-- tabber -->
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/tabber.css" />">
-
 <!-- page specific dependencies -->
 <link href="<spring:url value="/css/redirect/redirect.css" />" rel="stylesheet" type="text/css">
-
-<!-- DWR dependencies -->
-<script type="text/javascript" src="<spring:url value="/dwr/interface/CategoryServiceJS.js"/>"></script>
-<script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
-
 <script type="text/javascript" src="<spring:url value="/js/bigbets/redirect.js" />"></script>   
-<script type="text/javascript" src="<spring:url value="/js/jquery.ui.combobox.js" />" ></script>
 
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
@@ -24,7 +15,7 @@
 	</div>
 	
 	<div class="clearB floatL w240">
-		<div id="redirectRulePanel"></div>
+		<div id="rulePanel"></div>
 	    <div class="clearB"></div>
 	</div>
 </div>
@@ -35,7 +26,7 @@
 <div class="contentArea floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
       <div class="w535 padT10 padL10 floatL fsize20 fnormal">
-		<span id="titleText">Query Cleaning</span>
+		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>	
 	</div>
@@ -81,7 +72,6 @@
 					<label><textarea id="description" rows="3" class="marT8" style="width:240px"></textarea></label>
 					<div class="borderT txtAR padT10">
 						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 					</div>
 				</div>
 			
