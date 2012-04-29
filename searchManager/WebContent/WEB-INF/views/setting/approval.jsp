@@ -94,7 +94,7 @@
 			<div class="clearB"></div>
 		</div>
 		
-		<div id="previewTemplate" style="display: none;">
+		<div id="previewTemplate1" style="display: none;">
 			<div class="rulePreview w600">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
 				<label class="w110 floatL fbold">Rule Info:</label>
@@ -152,7 +152,7 @@
 			</div>
 		</div>
 		
-		<div id="previewRankingRuleTemplate" style="display: none;">
+		<div id="previewTemplate2" style="display: none;">
 			<div class="rulePreview w600">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
 				<label class="w110 floatL fbold">Rule Info:</label>
@@ -172,12 +172,12 @@
 				</ul>
 				<div class="clearB"></div>	
 				
-				<div id="ruleRanking">
+				<div id="ruleRanking" class="ruleRanking">
 					<h3></h3>
 					<ul id="relevancyInfo">
-						<li><label>Start Date:</label><label id="startDate"></label></li>
-						<li><label>End Date:</label><label id="endDate"></label></li>
-						<li><label>Description</label><label id="description"></label></li>
+						<li><label>Start Date:</label><span id="startDate"></span></li>
+						<li><label>End Date:</label><span id="endDate"></span></li>
+						<li><label>Description:</label><span id="description"></span></li>
 					</ul>
 				</div>
 				

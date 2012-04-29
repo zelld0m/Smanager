@@ -161,7 +161,7 @@
 			}
 		});
 
-		var populateItemTable = function(content, ruleStatus, data){
+		var populateItemTable = function(ruleType, content, ruleStatus, data){
 			var $content = content;
 			var list = data.list;
 			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
@@ -191,56 +191,55 @@
 			// Alternate row style
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
+
+			$content.find("a#approveBtn, a#rejectBtn").on({
+				click:function(evt){
+					var ruleStatusId = ruleStatus["ruleStatusId"];
+					var comment = $.trim($content.find("#approvalComment").val());
+
+					if ($.isNotBlank(comment)){
+
+						switch($(evt.currentTarget).attr("id")){
+						case "approveBtn": 
+							DeploymentServiceJS.approveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
+								callback: function(data){
+									refresh = true;
+								}
+							});break;
+
+						case "rejectBtn": 
+							DeploymentServiceJS.unapproveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
+								callback: function(data){
+									refresh = true;
+								}
+							});break;
+						}	
+					}else{
+						alert("Please add comment.");
+					}
+				}
+			});
 		};
 
 		var populatePreview = function($content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
-				$content.html($("#previewTemplate").html());
+				$content.html($("#previewTemplate1").html());
 
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
-						populateItemTable($content, ruleStatus, data);
+						populateItemTable("Elevate", $content, ruleStatus, data);
 					},
 					preHook: function(){
 
 					}
 				});
-
-				$content.find("a#approveBtn, a#rejectBtn").on({
-					click:function(evt){
-						var ruleStatusId = ruleStatus["ruleStatusId"];
-						var comment = $.trim($content.find("#approvalComment").val());
-
-						if ($.isNotBlank(comment)){
-
-							switch($(evt.currentTarget).attr("id")){
-							case "approveBtn": 
-								DeploymentServiceJS.approveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
-									callback: function(data){
-										refresh = true;
-									}
-								});break;
-
-							case "rejectBtn": 
-								DeploymentServiceJS.unapproveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
-									callback: function(data){
-										refresh = true;
-									}
-								});break;
-							}	
-						}else{
-							alert("Please add comment.");
-						}
-					}
-				});
-
 				break;
 			case "Exclude": 
-				$content.html($("#previewTemplate").html());
+				$content.html($("#previewTemplate1").html());
 				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
-						populateItemTable($content, ruleStatus, data);
+						populateItemTable("Exclude",$content, ruleStatus, data);
 					},
 					preHook: function(){
 
@@ -251,17 +250,14 @@
 				});
 				break;
 			case "Query Cleaning": 
+				$content.html($("#previewTemplate2").html());
 
-				break;
-			case "Ranking Rule": 
-				$content.html($("#previewRankingRuleTemplate").html());
-				
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-				
-				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
+
+				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
-					
+
 						var $table = $content.find("div.ruleField table#item");
 
 						for(var field in data.parameters){
@@ -270,34 +266,79 @@
 							$tr.find("td#fieldValue").html(data.parameters[field]);
 							$tr.appendTo($table);
 						}	
-						
+
 						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
-						$ul.find("li#startDate").html(data["formattedStartDate"]);
-						$ul.find("li#endDate").html(data["formattedEndDate"]);
-						$ul.find("li#description").html(data["description"]);
+						$ul.find("li span#startDate").parent("li").remove();
+						$ul.find("li span#endDate").parent("li").remove();
+						$ul.find("li span#description").html(data["description"]);
 					},
 					preHook: function(){
 
 					}
 				});
-				
-				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+
+				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 						var list = data.list;
-						
+
 						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
 
 						for (var i=0; i< data.totalSize; i++){
 							$("<li>").text(list[i]["keyword"]).appendTo($ul);
 						}
-						
 					},
 					preHook: function(){
 
 					}
 				});
-				
-				
+
+
+				break;
+			case "Ranking Rule": 
+				$content.html($("#previewTemplate2").html());
+
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+
+				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+
+						var $table = $content.find("div.ruleField table#item");
+
+						for(var field in data.parameters){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+							$tr.find("td#fieldName").html(field);
+							$tr.find("td#fieldValue").html(data.parameters[field]);
+							$tr.appendTo($table);
+						}	
+
+						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+						$ul.find("li span#startDate").html(data["formattedStartDate"]);
+						$ul.find("li span#endDate").html(data["formattedEndDate"]);
+						$ul.find("li span#description").html(data["description"]);
+					},
+					preHook: function(){
+
+					}
+				});
+
+				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+						var list = data.list;
+
+						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
+
+						for (var i=0; i< data.totalSize; i++){
+							$("<li>").text(list[i]["keyword"]).appendTo($ul);
+						}
+
+					},
+					preHook: function(){
+
+					}
+				});
+
+
 				break;
 			};
 

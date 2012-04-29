@@ -916,6 +916,9 @@
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 					showDeploymentStatusBar(selectedRuleStatus);
 					showRelevancy();
+				},
+				preHook: function(){
+					prepareRelevancy();
 				}
 			});	
 		}else{
