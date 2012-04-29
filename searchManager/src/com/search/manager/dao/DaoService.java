@@ -179,6 +179,7 @@ public interface DaoService {
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
+	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
 	
     /* Rule Status */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;

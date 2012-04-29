@@ -25,7 +25,7 @@
   	    <include name="*.jar"/>
   	</fileset>
   </path>
-
+<!--
   <target name="jar" description="JAR Java sources">
   		<delete dir="${dependencies}/lib" />
   		<delete dir="${dependencies}/ws/jar" />
@@ -47,6 +47,17 @@
   		<delete dir="${dependencies}/lib" />
   		<delete dir="${dependencies}/ws/classes" />
   </target>
+  -->
+	
+  <target name="jar" description="JAR Java sources">
+	  <delete dir="${dependencies}/ws/jar" />
+	  <mkdir dir="${dependencies}/ws/jar" />
+		<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
+			<fileset dir="${basedir}/bin">
+				<include name="**/*.class"/> 
+			</fileset>
+		</jar>	
+  </target>	
 	
   <target name="war" description="WAR Java sources">
 		<ant target="jar" />

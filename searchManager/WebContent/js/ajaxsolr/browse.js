@@ -6,12 +6,19 @@ var Manager;
 
 	$(function () {	
 		var Manager = null;
+		var solrurl;
+		
+		UtilityServiceJS.getSolrUrl({
+			callback:function(url){
+				solrurl = url;
+			}
+		});
 
 		UtilityServiceJS.getStoreName({
 			callback:function(storeName){
 				
 				Manager = new AjaxSolr.Manager({
-					solrUrl: 'http://localhost:8080/searchManager/search/vtorschstg01.pcmall.com:8080/solr14/' + storeName + '/'
+					solrUrl: solrurl + storeName + '/'
 				});
 
 				Manager.addWidget(new AjaxSolr.ResultWidget({
@@ -93,7 +100,7 @@ var Manager;
 			}
 		});
 	});
-
+	
 	$.fn.showIf = function (condition) {
 		if (condition) {
 			return this.show();

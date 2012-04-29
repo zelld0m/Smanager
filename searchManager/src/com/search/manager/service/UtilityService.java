@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.utility.PropsUtils;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -45,6 +46,11 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getStoreLabel(){
 		return "MacMall";
+	}
+	
+	@RemoteMethod
+	public static String getSolrUrl(){
+		return PropsUtils.getValue("browsejssolrurl");
 	}
 
 	public static String formatComment(String comment) {
