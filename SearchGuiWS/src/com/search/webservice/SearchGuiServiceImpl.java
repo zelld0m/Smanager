@@ -1,7 +1,10 @@
 package com.search.webservice;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import com.search.manager.model.BackupInfo;
@@ -143,6 +146,116 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 			logger.error(e,e);
 		}
 		return false;
+	}
+	
+	@Override
+	public Map<String,Boolean> deployRulesMap(TransportList list) {
+
+		try {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.publishElevateRulesMap(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.publishExcludeRulesMap(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						return deploymentRuleService.publishRankingRulesMap(list.getStore(), ruleList);
+					default:
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return Collections.EMPTY_MAP;
+	}
+	
+	@Override
+	public Map<String,Boolean> recallRulesMap(TransportList list) {
+		
+		try {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.recallElevateRulesMap(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.recallExcludeRulesMap(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						return deploymentRuleService.recallRankingRulesMap(list.getStore(), ruleList);
+					default:
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return Collections.EMPTY_MAP;
+	}
+	
+	@Override
+	public Map<String,Boolean> unDeployRulesMap(TransportList list) {
+		try {
+			if(isValidToken(list.getToken())){
+				List<String> ruleList = list.getList();
+				
+				if(CollectionUtils.isNotEmpty(ruleList)){
+					
+					switch (list.getRuleEntity()) {
+					case ELEVATE:
+						return deploymentRuleService.unpublishElevateRulesMap(list.getStore(), ruleList);
+					case EXCLUDE:
+						return deploymentRuleService.unpublishExcludeRulesMap(list.getStore(), ruleList);
+					case KEYWORD: 
+						break;
+					case STORE_KEYWORD: 
+						break;
+					case CAMPAIGN:
+						break;
+					case BANNER:
+						break;
+					case QUERY_CLEANING:
+						break;
+					case RANKING_RULE:
+						return deploymentRuleService.unpublishRankingRulesMap(list.getStore(), ruleList);
+					default:
+						break;
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return Collections.EMPTY_MAP;
 	}
 	
 	@Override
