@@ -61,7 +61,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.publishRedirectRules(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.publishRankingRules(list.getStore(), ruleList);
 					default:
@@ -98,7 +98,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.recallRedirectRules(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.recallRankingRules(list.getStore(), ruleList);
 					default:
@@ -134,7 +134,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.unpublishRedirectRules(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.unpublishRankingRules(list.getStore(), ruleList);
 					default:
@@ -171,7 +171,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.publishRedirectRulesMap(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.publishRankingRulesMap(list.getStore(), ruleList);
 					default:
@@ -208,7 +208,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.recallRedirectRulesMap(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.recallRankingRulesMap(list.getStore(), ruleList);
 					default:
@@ -244,7 +244,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 					case BANNER:
 						break;
 					case QUERY_CLEANING:
-						break;
+						return deploymentRuleService.unpublishRedirectRulesMap(list.getStore(), ruleList);
 					case RANKING_RULE:
 						return deploymentRuleService.unpublishRankingRulesMap(list.getStore(), ruleList);
 					default:
