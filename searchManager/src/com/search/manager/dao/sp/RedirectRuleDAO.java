@@ -460,6 +460,7 @@ public class RedirectRuleDAO {
 	        List<RedirectRuleCondition> list = new ArrayList<RedirectRuleCondition>();
 	        if (ruleSet.getTotalSize() > 0) {
 		        for (RedirectRule rule: ruleSet.getList()) {
+		        	if(StringUtils.isNotBlank(rule.getCondition()))
 		        	list.add(new RedirectRuleCondition(rule.getCondition()));
 		        }
 	        }
