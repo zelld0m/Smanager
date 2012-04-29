@@ -328,10 +328,10 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public boolean setForceReloadExclude(Store store) {
 		boolean result = excludeCacheDao.forceUpdateCache(store);
 		if (result) {
-			logger.info("Forcing reload of elevate rules for : " + store);
+			logger.info("Forcing reload of exclude rules for : " + store);
 		}
 		else {
-			logger.error("Failed to force reload of elevate rules for : " + store);
+			logger.error("Failed to force reload of exclude rules for : " + store);
 		}
 		return result;
 	}
@@ -339,10 +339,10 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public boolean setForceReloadRedirect(Store store) {
 		boolean result = redirectCacheDao.forceUpdateCache(store);
 		if (result) {
-			logger.info("Forcing reload of elevate rules for : " + store);
+			logger.info("Forcing reload of redirect rules for : " + store);
 		}
 		else {
-			logger.error("Failed to force reload of elevate rules for : " + store);
+			logger.error("Failed to force reload of redirect rules for : " + store);
 		}
 		return result;
 	}
@@ -350,10 +350,10 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public boolean setForceReloadRelevancy(Store store) {
 		boolean result = relevancyCacheDao.forceUpdateCache(store);
 		if (result) {
-			logger.info("Forcing reload of elevate rules for : " + store);
+			logger.info("Forcing reload of relevancy rules for : " + store);
 		}
 		else {
-			logger.error("Failed to force reload of elevate rules for : " + store);
+			logger.error("Failed to force reload of relevancy rules for : " + store);
 		}
 		return result;
 	}
