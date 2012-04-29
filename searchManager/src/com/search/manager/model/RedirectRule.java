@@ -15,6 +15,7 @@ public class RedirectRule extends ModelBean {
 	private static final long serialVersionUID = 4608433178597830827L;
 
 	private static final String DBL_PIPE_DELIM = "||";
+	private static final String ESCAPED_DBL_PIPE_DELIM = "\\|\\|";
 	private static final String OR = ") OR (";
 	private static final String COMMA = ",";
 
@@ -143,7 +144,7 @@ public class RedirectRule extends ModelBean {
 	}
 	
 	public boolean isRedirectFilter() {
-		return StringUtils.isEmpty(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
+		return StringUtils.isNotBlank(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
 	}
 	
 	/**
@@ -172,7 +173,7 @@ public class RedirectRule extends ModelBean {
 	public List<String> getConditions() {
 		ArrayList<String> conditions = new ArrayList<String>();
 		if (StringUtils.isNotEmpty(condition)) {
-			CollectionUtils.addAll(conditions, condition.split(DBL_PIPE_DELIM));
+			CollectionUtils.addAll(conditions, condition.split(ESCAPED_DBL_PIPE_DELIM));
 		}
 		return conditions;		
 	}

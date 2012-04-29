@@ -255,15 +255,20 @@
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
+				$content.find('a[href="#ruleField"] >span').html("Rule Condition");
+				
+				$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
+				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
+
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 
 						var $table = $content.find("div.ruleField table#item");
 
-						for(var field in data.parameters){
+						for(var field in data.conditions){
 							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
+							$tr.find("td#fieldName").html(parseInt(field)+1);
+							$tr.find("td#fieldValue").html(data.conditions[field]);
 							$tr.appendTo($table);
 						}	
 

@@ -167,7 +167,7 @@
 			<div id="rankingSummary" class="tabs">
 				<ul>
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
-					<li><a href="#ruleField"><span>Rule Fields</span></a></li>
+					<li><a href="#ruleField"><span>Rule Field</span></a></li>
 					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
 				</ul>
 				<div class="clearB"></div>	
@@ -184,11 +184,11 @@
 				<div id="ruleField" class="ruleField">
 					<h3></h3>
 					<div>
-						<table>
+						<table id="itemHeader">
 							<tbody>
 								<tr>
-									<th>Field Name</th>
-									<th>Field Value</th>
+									<th id="fieldNameHeader">Field Name</th>
+									<th id="fieldValueHeader">Field Value</th>
 								</tr>
 							<tbody>
 						</table>
