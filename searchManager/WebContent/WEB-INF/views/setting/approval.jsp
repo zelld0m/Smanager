@@ -153,13 +153,79 @@
 		</div>
 		
 		<div id="previewRankingRuleTemplate" style="display: none;">
-			<div></div>
-			<div id="rankingRuleSummary" class="tabs">
+			<div class="rulePreview w600">
+				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
+				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w100 floatL" id="ruleInfo"></label>
+				<div class="clearB"></div>
+				<label class="w95 floatL marL20 fbold">Request Type:</label>
+				<label class="w100 floatL" id="requestType"></label>					
+				<div class="clearB"></div>
+			</div>
+			<div class="clearB"></div>	
+			
+			<div id="rankingSummary" class="tabs">
 				<ul>
-					<li></li>
-					<li></li>
-					<li></li>
+					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
+					<li><a href="#ruleField"><span>Rule Fields</span></a></li>
+					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
 				</ul>
+				<div class="clearB"></div>	
+				
+				<div id="ruleRanking">
+					<h3></h3>
+					<ul id="relevancyInfo">
+						<li><label>Start Date:</label><label id="startDate"></label></li>
+						<li><label>End Date:</label><label id="endDate"></label></li>
+						<li><label>Description</label><label id="description"></label></li>
+					</ul>
+				</div>
+				
+				<div id="ruleField" class="ruleField">
+					<h3></h3>
+					<div>
+						<table>
+							<tbody>
+								<tr>
+									<th>Field Name</th>
+									<th>Field Value</th>
+								</tr>
+							<tbody>
+						</table>
+					</div>
+					<div style="max-height:180px; overflow-y:scroll;">
+						<table id="item">
+							<tbody>
+								<tr id="itemPattern" class="itemRow" style="display: none">
+									<td class="txtAC" id="fieldName"></td>
+									<td id="fieldValue"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div id="ruleKeyword"  class="ruleKeyword">
+					<h3></h3>
+					<ul id="keywordInRule"></ul>
+				</div>
+			</div>
+			<div class="clearB"></div>	
+			
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w650 marR5 marB20" style="background: #f3f3f3;">
+				<h3 style="border:none">Approval Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<label class="floatL w100 padL15">Comment: </label>
+				<label class="floatL w510"><textarea id="approvalComment" rows="5" class="w510" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
 			</div>
 		</div>
 		

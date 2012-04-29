@@ -13,7 +13,7 @@
 			});
 			return selectedItems;
 		};
-		
+
 		var getSelectedRefId = function(){
 			var selectedRefIds = [];
 			var selectedItems = getSelectedItems();
@@ -31,7 +31,7 @@
 			}
 			return selectedStatusId; 
 		};
-		
+
 		var checkSelectAllHandler = function(){
 			$(tabSelected).find("th#selectAll > input[type='checkbox']").on({
 				click: function(evt){
@@ -57,12 +57,12 @@
 				}
 			});
 		};
-		
+
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
-					
+
 					if ($.isNotBlank(comment)){
 
 						switch($(evt.currentTarget).attr("id")){
@@ -95,7 +95,7 @@
 					}else{
 						alert("Please add comment.");
 					}
-					
+
 				}
 			});
 		};
@@ -115,7 +115,7 @@
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
 							var showId = list[i]["ruleRefId"] !== list[i]["description"];
-							
+
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
 							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
@@ -160,30 +160,39 @@
 				getApprovalList();
 			}
 		});
-		
+
 		var populateItemTable = function(content, ruleStatus, data){
 			var $content = content;
 			var list = data.list;
 			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 			$content.find("#requestType").text(ruleStatus["updateStatus"]);
-			
-			for (var i = 0; i < data.totalSize; i++) {
-				var $table = $content.find("table#item");
-				var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-				$tr.find("td#itemPosition").html(list[i]["location"]);
-				$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-				$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-				$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-				$tr.find("td#itemName").html(list[i]["name"]);
-				$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+
+			var $table = $content.find("table#item");
+
+			if (data.totalSize==0){
+				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
+				$tr.find("td:not(#itemPosition)").remove();
+				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
-			};
+			}else{
+
+				for (var i = 0; i < data.totalSize; i++) {
+					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
+					$tr.find("td#itemPosition").html(list[i]["location"]);
+					$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+					$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+					$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+					$tr.find("td#itemName").html(list[i]["name"]);
+					$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+					$tr.appendTo($table);
+				};
+			}
 
 			// Alternate row style
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
-		
+
 		var populatePreview = function($content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
@@ -194,9 +203,6 @@
 						populateItemTable($content, ruleStatus, data);
 					},
 					preHook: function(){
-
-					},
-					postHook: function(){
 
 					}
 				});
@@ -249,34 +255,49 @@
 				break;
 			case "Ranking Rule": 
 				$content.html($("#previewRankingRuleTemplate").html());
-				RelevancyServiceJS.getById(ruleRefId, {
+				
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+				
+				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
-						var list = data.list;
+					
+						var $table = $content.find("div.ruleField table#item");
 
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						for(var field in data.parameters){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+							$tr.find("td#fieldName").html(field);
+							$tr.find("td#fieldValue").html(data.parameters[field]);
 							$tr.appendTo($table);
-						};
-
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
-
+						}	
+						
+						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+						$ul.find("li#startDate").html(data["formattedStartDate"]);
+						$ul.find("li#endDate").html(data["formattedEndDate"]);
+						$ul.find("li#description").html(data["description"]);
 					},
 					preHook: function(){
 
+					}
+				});
+				
+				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+						var list = data.list;
+						
+						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
+
+						for (var i=0; i< data.totalSize; i++){
+							$("<li>").text(list[i]["keyword"]).appendTo($ul);
+						}
+						
 					},
-					postHook: function(){
+					preHook: function(){
 
 					}
 				});
+				
+				
 				break;
 			};
 
@@ -284,8 +305,9 @@
 		};
 
 		var previewRow = function(evt){
-			
+
 			$(this).qtip({
+				id: "rule-preview",
 				content: {
 					text: $('<div/>'),
 					title: { 
