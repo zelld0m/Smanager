@@ -129,4 +129,9 @@ public class RuleStatus extends ModelBean implements Serializable {
 		 List<String> locked = Arrays.asList(StringUtils.delimitedListToStringArray("PENDING,APPROVED", ","));
 		 return locked.contains(getApprovalStatus());
 	}
+	
+	@Override
+	public String toString() {
+	    return org.apache.commons.lang.builder.ToStringBuilder.reflectionToString(this);
+	}
 }

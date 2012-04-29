@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -140,10 +141,8 @@ public class DeploymentService {
 	public int publishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			if (publishWS(ruleRefIdList, RuleEntity.find(ruleType))) {
-				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
-				result = daoService.updateRuleStatus(ruleStatusList);
-			}
+			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
+			result = daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during publishRule()",e);
 		}
@@ -161,11 +160,8 @@ public class DeploymentService {
 	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		int result = -1;
 		try {
-			if (recallWS(ruleRefIdList, RuleEntity.find(ruleType))) {
-				List<RuleStatus> ruleStatusList = generateForPublishingList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
-				result = daoService.updateRuleStatus(ruleStatusList);
-			}
-			
+			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
+			result = daoService.updateRuleStatus(ruleStatusList);
 		} catch (DaoException e) {
 			logger.error("Failed during unpublishRule()",e);
 		}
@@ -264,6 +260,20 @@ public class DeploymentService {
 		return ruleStatusList;
 	}
 
+	private List<RuleStatus> getPublishingListFromMap(Map<String, Boolean> ruleRefIdMap, Integer ruleTypeId, String status) {
+		List<RuleStatus> rsList = new ArrayList<RuleStatus>();
+		for (Map.Entry<String, Boolean>  e : ruleRefIdMap.entrySet())  {
+			if (e.getValue()) {
+				RuleStatus ruleStatus = createRuleStatus();
+				ruleStatus.setRuleTypeId(ruleTypeId);
+				ruleStatus.setRuleRefId(e.getKey());
+				ruleStatus.setPublishedStatus(status);
+				rsList.add(ruleStatus);
+			}
+		}
+		return rsList;
+	}
+	
 	private List<RuleStatus> generateForPublishingList(List<String> ruleRefIdList, Integer ruleTypeId, String status) {
 		List<RuleStatus> ruleStatusList = new ArrayList<RuleStatus>();
 		for (String ruleRefId : ruleRefIdList) {
@@ -287,6 +297,11 @@ public class DeploymentService {
 	private boolean publishWS(List<String> ruleList, RuleEntity ruleType) {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
 		return service.deployRules(UtilityService.getStoreName(), ruleList, ruleType);
+	}
+
+	private Map<String, Boolean> publishWSMap(List<String> ruleList, RuleEntity ruleType) {
+		SearchGuiClientService service = new SearchGuiClientServiceImpl();
+		return service.deployRulesMap(UtilityService.getStoreName(), ruleList, ruleType);
 	}
 
 	private boolean recallWS(List<String> ruleList, RuleEntity ruleType) {

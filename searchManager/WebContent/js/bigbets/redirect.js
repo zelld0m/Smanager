@@ -25,7 +25,7 @@
 		$("#preloader").show();
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
-		$("#relevancy").hide();
+		$("#redirect").hide();
 	};
 	
 	var showRedirect = function(){

@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,12 +27,6 @@ public class RuleStatusDAO {
 
 	// needed by spring AOP
 	public RuleStatusDAO(){}
-	
-	public static final String ADD  = "ADD";
-	public static final String UPDATE  = "UPDATE";
-	public static final String DELETE  = "DELETE";
-	public static final String UNPUBLISHED  = "UNPUBLISHED";
-	public static final String PENDING  = "PENDING";
 	
 	@Autowired
 	public RuleStatusDAO(JdbcTemplate jdbcTemplate) {
