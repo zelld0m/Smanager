@@ -119,8 +119,8 @@
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
 							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
-							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleRefId"]);
-							if(showId) $tr.find("td#ruleRefId > p#ruleId").html(list[i]["description"]);
+							$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							if(showId) $tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
 							$tr.find("td#requested > p#requestedBy").html(list[i]["lastModifiedBy"]);
 							$tr.find("td#requested > p#requestedDate").html(requestedDate);
@@ -161,6 +161,29 @@
 			}
 		});
 		
+		var populateItemTable = function(content, ruleStatus, data){
+			var $content = content;
+			var list = data.list;
+			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+			$content.find("#requestType").text(ruleStatus["updateStatus"]);
+			
+			for (var i = 0; i < data.totalSize; i++) {
+				var $table = $content.find("table#item");
+				var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
+				$tr.find("td#itemPosition").html(list[i]["location"]);
+				$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+				$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+				$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+				$tr.find("td#itemName").html(list[i]["name"]);
+				$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+				$tr.appendTo($table);
+			};
+
+			// Alternate row style
+			$content.find("tr#itemPattern").hide();
+			$content.find("tr:not(#itemPattern):even").addClass("alt");
+		};
+		
 		var populatePreview = function($content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
@@ -168,27 +191,7 @@
 
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
-						var list = data.list;
-								
-						$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-						$content.find("#requestType").text(ruleStatus["updateStatus"]);
-						
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-							$tr.appendTo($table);
-						};
-
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
-
+						populateItemTable($content, ruleStatus, data);
 					},
 					preHook: function(){
 
@@ -229,26 +232,9 @@
 				break;
 			case "Exclude": 
 				$content.html($("#previewTemplate").html());
-				ExcludeServiceJS.getProducts(null, ruleRefId , 0, 0,{
+				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
-						var list = data.list;
-
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-							$tr.appendTo($table);
-						};
-
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
-
+						populateItemTable($content, ruleStatus, data);
 					},
 					preHook: function(){
 
