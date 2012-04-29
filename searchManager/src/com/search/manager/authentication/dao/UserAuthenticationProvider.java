@@ -93,4 +93,8 @@ public class UserAuthenticationProvider implements UserDetailsService {
 		
 		return authorities;
 	}
+	
+	public List<String> getUserNames() {
+		return new ArrayList<String>(userMap.keySet());
+	}
 }
