@@ -210,12 +210,13 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public int deleteRelevancy(String relevancyId){
+	public int deleteRule(String ruleId){
 		try {
-			Relevancy relevancy = new Relevancy();
-			relevancy.setRelevancyId(relevancyId);
-			relevancy.setStore(new Store(UtilityService.getStoreName()));
-			return daoService.deleteRelevancy(relevancy);
+			Relevancy rule = new Relevancy();
+			rule.setRuleId(ruleId);
+			rule.setStore(new Store(UtilityService.getStoreName()));
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			return daoService.deleteRelevancy(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
 		}
@@ -273,6 +274,11 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
+	public RecordSet<Keyword> getAllKeywordInRule(String ruleId) {
+		return getAllKeywordInRule(ruleId, "", 0, 0);
+	}
+	
+	@RemoteMethod
 	public RecordSet<Keyword> getAllKeywordInRule(String ruleId, String keyword, int page, int itemsPerPage) {
 		logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
 		try{
@@ -302,6 +308,10 @@ public class RelevancyService {
 			int fromIndex = (page-1)*itemsPerPage;
 			int toIndex = (page*itemsPerPage)-1;
 
+			if(page==0 && itemsPerPage==0){
+				fromIndex = 0;
+				toIndex = rs.getTotalSize()-1;
+			}
 			
 			RecordSet<RelevancyKeyword> relkeyRS = null;
 			

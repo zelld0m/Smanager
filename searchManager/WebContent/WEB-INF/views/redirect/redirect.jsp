@@ -72,6 +72,7 @@
 					<label><textarea id="description" rows="3" class="marT8" style="width:240px"></textarea></label>
 					<div class="borderT txtAR padT10">
 						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a> 
 					</div>
 				</div>
 			

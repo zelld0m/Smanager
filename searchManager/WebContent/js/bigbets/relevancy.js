@@ -5,6 +5,7 @@
 	var rulePageSize = 5;
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
+	var deleteRuleConfirmText = "Delete this ranking rule?";
 	
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -774,14 +775,25 @@
 			RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 				callback: function(data){
 					response = data;
+					showActionResponse(response, "update", ruleName);
+				},
+				preHook: function(){
+					prepareRelevancy();
 				},
 				postHook: function(){
-					RelevancyServiceJS.getRule(selectedRule.ruleId,{
-						callback: function(data){
-							showActionResponse(response, "update", ruleName);
-							setRelevancy(selectedRule);
-						}
-					});
+					if(response==1){
+						RelevancyServiceJS.getRule(selectedRule.ruleId,{
+							callback: function(data){
+								setRelevancy(data);
+							},
+							preHook: function(){
+								prepareRelevancy();
+							}
+						});						
+					}
+					else{
+						setRelevancy(selectedRule);
+					}
 				}
 			});
 		}else{
@@ -800,9 +812,10 @@
 
 	var deleteRule = function(e) { 
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
-			RelevancyServiceJS.deleteRule(selectedRule,{
+			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
 					showActionResponse(code, "delete", selectedRule.ruleName);
+					if(code==1) setRelevancy(null);
 				}
 			});
 		}
@@ -813,6 +826,7 @@
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
+		$("#titleHeader").html("");
 	};
 
 	var showRelevancy = function(){
@@ -820,6 +834,8 @@
 		$("#preloader").hide();
 		resetInputFields("#relevancy");
 
+		getRelevancyRuleList(1);
+		
 		if(selectedRule==null){
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
@@ -893,14 +909,18 @@
 	var setRelevancy = function(rule){
 		selectedRule = rule;
 
-		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-			callback:function(data){
-				selectedRuleStatus = data;
-				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-				showDeploymentStatusBar(selectedRuleStatus);
-				showRelevancy();
-			}
-		});		
+		if (rule!=null){
+			DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
+				callback:function(data){
+					selectedRuleStatus = data;
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
+					showDeploymentStatusBar(selectedRuleStatus);
+					showRelevancy();
+				}
+			});	
+		}else{
+			showRelevancy();
+		}
 	};
 
 	var getRelevancyRuleList = function(page){

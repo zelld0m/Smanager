@@ -26,13 +26,16 @@
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#redirect").hide();
+		$("#titleHeader").html("");
 	};
-	
+
 	var showRedirect = function(){
 		prepareRedirect();
 		$("#preloader").hide();
 		resetInputFields("#redirect");
 
+		getRedirectRuleList(1);
+		
 		if(selectedRule==null){
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
@@ -235,14 +238,18 @@
 	var setRedirect = function(rule){
 		selectedRule = rule;
 
-		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-			callback:function(data){
-				selectedRuleStatus = data;
-				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-				showDeploymentStatusBar(selectedRuleStatus);
-				showRedirect();
-			}
-		});		
+		if (rule!=null){
+			DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
+				callback:function(data){
+					selectedRuleStatus = data;
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
+					showDeploymentStatusBar(selectedRuleStatus);
+					showRedirect();
+				}
+			});		
+		}else{
+			showRedirect();
+		}
 	};
 
 	var getRedirectRuleList = function(page) { 
@@ -359,6 +366,7 @@
 			RedirectServiceJS.deleteRule(selectedRule,{
 				callback: function(code){
 					showActionResponse(code, "delete", selectedRule.ruleName);
+					if(code==1) setRedirect(null);
 				}
 			});
 		}
