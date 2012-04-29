@@ -45,7 +45,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 	protected CacheModel<Relevancy> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException {
 		DAOValidation.checkStoreKeywordPK(storeKeyword);
 		Relevancy relevancy = new Relevancy("", "");
-		relevancy.setStore(new Store(storeKeyword.getKeywordId()));
+		relevancy.setStore(new Store(storeKeyword.getStoreId()));
 		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
 				MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -77,7 +77,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 		try {
 			key = CacheConstants.getCacheKey(store.getStoreId(), CacheConstants.RELEVANCY_DEFAULT_CACHE_KEY, "");
 			cache = getCachedObject(key);
-			if (cache != null) {
+			if (cache != null && isNeedReloadCache(store, cache)) { // obsolete data, force a reload
 				Date date = getforceUpdateCacheDate(store);
 				if (date != null && cache.getUploadedDate().before(date)) { // obsolete data, force a reload
 					cache = null;

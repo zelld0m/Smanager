@@ -15,6 +15,7 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.utility.DateAndTimeUtils;
 
 public abstract class CacheDao<T> {
 	
@@ -82,12 +83,9 @@ public abstract class CacheDao<T> {
 		try {
 			String key = getCacheKey(storeKeyword);
 			cache = cacheService.get(key);
-			if (cache != null) {
-				Date date = getforceUpdateCacheDate(storeKeyword.getStore());
-				if (date != null && cache.getUploadedDate().before(date)) { // obsolete data, force a reload
-					cache = null;
-					reset(storeKeyword);
-				}
+			if (cache != null && isNeedReloadCache(storeKeyword.getStore(), cache)) { // obsolete data, force a reload
+				cache = null;
+				reset(storeKeyword);
 			}
 		} catch (Exception e) {
 			logger.error("Problem accessing cache.", e);
@@ -208,5 +206,11 @@ public abstract class CacheDao<T> {
 		return null;
 	}
 	
+	protected boolean isNeedReloadCache(Store store, CacheModel<T> model) {
+		Date date = getforceUpdateCacheDate(store);
+		Date currentDate = new Date();
+		return (model == null || model.getUploadedDate() == null || date == null || model.getUploadedDate().before(date) || 
+				!DateAndTimeUtils.getDateStringMMDDYYYY(model.getUploadedDate()).equals(DateAndTimeUtils.getDateStringMMDDYYYY(currentDate)));
+	}
 	
 }
