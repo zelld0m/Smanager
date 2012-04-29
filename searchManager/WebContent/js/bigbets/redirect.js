@@ -245,6 +245,9 @@
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 					showDeploymentStatusBar(selectedRuleStatus);
 					showRedirect();
+				},
+				preHook: function(){
+					prepareRedirect();
 				}
 			});		
 		}else{
