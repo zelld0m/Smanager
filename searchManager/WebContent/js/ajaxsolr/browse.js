@@ -65,8 +65,6 @@ var Manager;
 				}));
 
 				Manager.init();
-
-				var defaultRelevancyId = storeName + '_default';
 				
 				var params = {
 						'facet': true,
@@ -76,7 +74,7 @@ var Manager;
 						'rows': sortWidget.perPageInterval,
 						'facet.mincount': 1,
 						'sort':'CatCodeOrder asc, score desc, Popularity desc',
-						'relevancyId': defaultRelevancyId,
+						'relevancyId': '',
 						'spellcheck': true,
 						'spellcheck.count': 3,
 						'spellcheck.collate': true,

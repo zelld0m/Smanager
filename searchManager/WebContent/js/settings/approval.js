@@ -169,7 +169,10 @@
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
 						var list = data.list;
-
+								
+						$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+						$content.find("#requestType").text(ruleStatus["updateStatus"]);
+						
 						for (var i = 0; i < data.totalSize; i++) {
 							var $table = $content.find("table#item");
 							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
