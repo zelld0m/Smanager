@@ -1,5 +1,4 @@
 var Manager;
-var solrurl;
 
 (function ($) {
 
@@ -7,6 +6,7 @@ var solrurl;
 
 	$(function () {	
 		var Manager = null;
+		var solrurl;
 		
 		UtilityServiceJS.getSolrUrl({
 			callback:function(url){
