@@ -850,6 +850,11 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException {
+		return ruleStatusDAO.getCleanList(ruleRefIds, ruleTypeId, pStatus, aStatus);
+	}
+	
+	@Override
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
 		int result = -1;
 		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
