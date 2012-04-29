@@ -123,7 +123,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						}
 					}
 					// clear cache data to force a reload
-					daoCacheService.resetElevateRule(sk); // prod
+					daoCacheService.resetExcludeRule(sk); // prod
 				}
 				
 				Store s = new Store(store);
