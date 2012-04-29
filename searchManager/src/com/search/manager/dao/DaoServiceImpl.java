@@ -766,6 +766,17 @@ public class DaoServiceImpl implements DaoService {
 		return redirectRuleDAO.getRedirectForKeywords(criteria);
 	}
 	
+	@Override
+	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException {
+		return redirectRuleDAO.searchRedirectRules(criteria, redirectMatchType);
+	}
+	
+	@Override
+	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
+			ExactMatch keywordExactMatch) throws DaoException {
+		return redirectRuleDAO.searchRedirectRuleKeywords(criteria, redirectMatchType, keywordExactMatch);
+	}
+	
 	public KeywordDAO getKeywordDAO() {
 		return keywordDAO;
 	}

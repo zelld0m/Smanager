@@ -18,6 +18,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 
 @Service(value = "redirectService")
@@ -243,4 +244,18 @@ public class RedirectService {
 		}
 		return null;
 	}
+	
+	@RemoteMethod
+	public RecordSet<RedirectRule> searchRedirect(String ruleName, int page,int itemsPerPage) throws DaoException {
+		try {
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setRuleName(ruleName);
+			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  page, itemsPerPage);
+			return daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
+		} catch (DaoException e) {
+			logger.error("Failed during searchRedirect()",e);
+		}
+		return null;
+	}
+	
 }

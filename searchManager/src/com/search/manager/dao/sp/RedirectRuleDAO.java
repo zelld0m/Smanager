@@ -22,6 +22,8 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.ExactMatch;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
@@ -44,6 +46,8 @@ public class RedirectRuleDAO {
 		addRedirectRuleConditionStoredProcedure = new AddRedirectRuleConditionStoredProcedure(jdbcTemplate);
 		deleteRedirectRuleConditionStoredProcedure = new DeleteRedirectRuleConditionStoredProcedure(jdbcTemplate);
 		getRedirectRuleConditionStoredProcedure = new GetRedirectRuleConditionStoredProcedure(jdbcTemplate);
+		searchRedirectRuleStoredProcedure = new SearchRedirectRuleStoredProcedure(jdbcTemplate);
+		searchRedirectRuleKeywordStoredProcedure = new SearchRedirectRuleKeywordStoredProcedure(jdbcTemplate);
 	}
 
 	private GetRedirectRuleStoredProcedure getRedirectRuleStoredProcedure;
@@ -56,6 +60,9 @@ public class RedirectRuleDAO {
 	private AddRedirectRuleConditionStoredProcedure addRedirectRuleConditionStoredProcedure;
 	private DeleteRedirectRuleConditionStoredProcedure deleteRedirectRuleConditionStoredProcedure;
 	private GetRedirectRuleConditionStoredProcedure getRedirectRuleConditionStoredProcedure;
+	private SearchRedirectRuleStoredProcedure searchRedirectRuleStoredProcedure;
+	private SearchRedirectRuleKeywordStoredProcedure searchRedirectRuleKeywordStoredProcedure;
+	
 	
 	private class GetRedirectRuleStoredProcedure extends GetStoredProcedure {
 	    public GetRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -257,6 +264,81 @@ public class RedirectRuleDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+		}
+	}
+	
+	private class SearchRedirectRuleStoredProcedure extends GetStoredProcedure {
+	    public SearchRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_SEARCH_REDIRECT);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME_LIKE, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM_LIKE, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
+	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
+	                return new RedirectRule(
+	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_REDIRECT_TYPE_ID),
+	                		rs.getString(DAOConstants.COLUMN_NAME), 
+	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION), 
+	                		rs.getString(DAOConstants.COLUMN_STORE_ID),
+	                		rs.getInt(DAOConstants.COLUMN_PRIORITY), 
+	                		rs.getString(DAOConstants.COLUMN_SEARCH_TERM),
+	                		rs.getString(DAOConstants.COLUMN_CONDITION),
+	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
+	                		rs.getDate(DAOConstants.COLUMN_CREATED_DATE),
+	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD)
+	                		);
+	        	}
+	        }));
+		}
+	}
+	
+	private class SearchRedirectRuleKeywordStoredProcedure extends GetStoredProcedure {
+	    public SearchRedirectRuleKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_SEARCH_REDIRECT);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME_LIKE, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM_LIKE, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RESULT, Types.INTEGER));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
+	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
+	                return new RedirectRule(
+	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_STORE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_NAME), 
+	                		rs.getString(DAOConstants.COLUMN_SEARCH_TERM),
+	                		null
+	                		);
+	        	}
+	        }));
 		}
 	}
 	
@@ -486,5 +568,72 @@ public class RedirectRuleDAO {
 			throw new DaoException("Failed during getRedirectrule()", e);
 		}
 	}
+    
+    public RecordSet<RedirectRule> searchRedirectRules(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException {
+		try {
+			RedirectRule model = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_RULE_ID, null);
+			inputs.put(DAOConstants.PARAM_RULE_NAME, null);
+			inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, null);
+	        inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM, null);	        
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, null);	        
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+			switch (redirectMatchType) {
+				case MATCH_NAME:
+					inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
+					break;
+				case LIKE_NAME:
+					inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, model.getRuleName());
+					break;
+				case MATCH_ID:
+					inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+					break;
+			}
+	        return DAOUtils.getRecordSet(searchRedirectRuleStoredProcedure.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during searchRedirectRules()", e);
+		}
+    }	
+    
+    public RecordSet<RedirectRule> searchRedirectRuleKeywords(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType, ExactMatch keywordExactMatch) throws DaoException {
+		try {
+			RedirectRule model = criteria.getModel();
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_RULE_ID, null);
+			inputs.put(DAOConstants.PARAM_RULE_NAME, null);
+			inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, null);
+	        inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM, null);	        
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, null);	        
+	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_RESULT, 1);
+			switch (redirectMatchType) {
+				case MATCH_NAME:
+					inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
+					break;
+				case LIKE_NAME:
+					inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, model.getRuleName());
+					break;
+				case MATCH_ID:
+					inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+					break;
+			}
+			switch (keywordExactMatch) {
+				case MATCH:
+					inputs.put(DAOConstants.PARAM_SEARCH_TERM, model.getSearchTerm());
+					break;
+				case SIMILAR:
+					inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, model.getSearchTerm());
+					break;
+			}
+	        return DAOUtils.getRecordSet(searchRedirectRuleStoredProcedure.execute(inputs));
+		} catch (Exception e) {
+			throw new DaoException("Failed during searchRedirectRuleKeywords()", e);
+		}
+    }	
     
 }

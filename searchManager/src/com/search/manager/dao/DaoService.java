@@ -60,6 +60,9 @@ public interface DaoService {
 	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException;
+	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;
+	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
+			ExactMatch keywordExactMatch) throws DaoException;
 
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
