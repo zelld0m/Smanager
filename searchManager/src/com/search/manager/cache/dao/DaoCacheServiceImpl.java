@@ -1,6 +1,8 @@
 package com.search.manager.cache.dao;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -9,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.authentication.dao.UserAuthenticationProvider;
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.dao.DaoException;
@@ -28,6 +31,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	
 	DaoCacheServiceImpl instance;
 	
+	@Autowired private UserAuthenticationProvider userDetailsService;
 	@Autowired private KeywordCacheDao keywordCacheDao;
 	@Autowired private ElevateCacheDao elevateCacheDao;
 	@Autowired private ExcludeCacheDao excludeCacheDao;
@@ -269,10 +273,11 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Override
 	public boolean loginUser(UserDetailsImpl userDetails) {
 		UserDetailsImpl user = new UserDetailsImpl();
-		user.setFullName(userDetails.getUsername());
-		user.setUsername(userDetails.getFullName());
-		if (userDetails != null && StringUtils.isNotEmpty(userDetails.getUsername())) {
-			return userCacheDao.addUser(userDetails);
+		user.setUsername(userDetails.getUsername());
+		user.setFullName(userDetails.getFullName());
+		user.setLoggedInTime(new Date());
+		if (user != null && StringUtils.isNotEmpty(user.getUsername())) {
+			return userCacheDao.addUser(user);
 		}
 		return false;
 	}
@@ -280,7 +285,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Override
 	public boolean logoutUser(String username) {
 		if (StringUtils.isNotEmpty(username)) {
-			return userCacheDao.deleteUser(username);			
+			return userCacheDao.deleteUser(username);
 		}
 		return false;
 	}
@@ -358,4 +363,15 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		return result;
 	}
 	
+	public List<UserDetailsImpl> getLoggedInUsers() throws DaoException, DataException {
+		List<UserDetailsImpl> users = new ArrayList<UserDetailsImpl>();
+		for (String username: userDetailsService.getUserNames()) {
+			UserDetailsImpl user = getUser(username);
+			if (user != null) {
+				users.add(user);
+			}
+		}
+		return users;
+	}
+
 }
