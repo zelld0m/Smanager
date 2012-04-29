@@ -93,15 +93,14 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RedirectRule> getAllRule(String searchTerm, int page, int itemsPerPage) {
+	public RecordSet<RedirectRule> getAllRule(String name, int page, int itemsPerPage) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
-			redirectRule.setSearchTerm(searchTerm);
-			redirectRule.setStoreId(UtilityService.getStoreName());
-			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
-			return daoService.getRedirectRules(searchCriteria);
+			redirectRule.setRuleName(name);
+			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  page, itemsPerPage);
+			return daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
 		} catch (DaoException e) {
-			logger.error("Failed during getAllRule()",e);
+			logger.error("Failed during searchRedirect()",e);
 		}
 		return null;
 	}
@@ -244,18 +243,4 @@ public class RedirectService {
 		}
 		return null;
 	}
-	
-	@RemoteMethod
-	public RecordSet<RedirectRule> searchRedirect(String ruleName, int page,int itemsPerPage) throws DaoException {
-		try {
-			RedirectRule redirectRule = new RedirectRule();
-			redirectRule.setRuleName(ruleName);
-			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  page, itemsPerPage);
-			return daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
-		} catch (DaoException e) {
-			logger.error("Failed during searchRedirect()",e);
-		}
-		return null;
-	}
-	
 }
