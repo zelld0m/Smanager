@@ -32,7 +32,7 @@ public class RedirectService {
 	
 	@Autowired private DaoService daoService;
 
-	public int addRedirectRule(String ruleName) {
+	public int addRule(String ruleName) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -46,7 +46,7 @@ public class RedirectService {
 		return result;
 	}
 	
-	public String addRedirectRuleAndGetId(String ruleName) {
+	public String addRuleAndGetId(String ruleName) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleName(ruleName);
@@ -60,12 +60,12 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RedirectRule addRedirectRuleAndGetModel(String ruleName) {
-		return getRedirectRule(addRedirectRuleAndGetId(ruleName));
+	public RedirectRule addRuleAndGetModel(String ruleName) {
+		return getRule(addRuleAndGetId(ruleName));
 	}
 
 	@RemoteMethod
-	public int updateRedirectRule(String ruleId, String ruleName, String description) {
+	public int updateRule(String ruleId, String ruleName, String description) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -81,7 +81,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int deleteRedirectRule(RedirectRule rule) {
+	public int deleteRule(RedirectRule rule) {
 		int result = -1;
 		try {
 			result = daoService.deleteRedirectRule(rule);
@@ -92,13 +92,11 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RedirectRule> getAllRedirectRules(String searchTerm, String ruleId, int page, int itemsPerPage) {
+	public RecordSet<RedirectRule> getAllRule(String searchTerm, int page, int itemsPerPage) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setSearchTerm(searchTerm);
-			redirectRule.setRuleId(ruleId);
 			redirectRule.setStoreId(UtilityService.getStoreName());
-			
 			SearchCriteria<RedirectRule> searchCriteria = new SearchCriteria<RedirectRule>(redirectRule, null, null, page, itemsPerPage);
 			return daoService.getRedirectRules(searchCriteria);
 		} catch (DaoException e) {
@@ -108,7 +106,7 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RedirectRule getRedirectRule(String ruleId) {
+	public RedirectRule getRule(String ruleId) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
 			redirectRule.setRuleId(ruleId);
@@ -152,7 +150,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addRedirectRuleCondition(String ruleId, String condition) {
+	public int addRuleCondition(String ruleId, String condition) {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -181,7 +179,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Keyword> getKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) {
+	public RecordSet<Keyword> getAllKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
@@ -217,7 +215,7 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public int getRedirectKeywordCount(String ruleId) {
+	public int getTotalKeywordInRule(String ruleId) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
@@ -231,7 +229,7 @@ public class RedirectService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<RedirectRule> getRedirectRuleForKeyword(String keyword) throws DaoException {
+	public RecordSet<RedirectRule> getAllRuleUsedByKeyword(String keyword) throws DaoException {
 		try {
 			SearchCriteria<StoreKeyword> criteria = new SearchCriteria<StoreKeyword>(new StoreKeyword(UtilityService.getStoreName(), null), null, null,  0, 0);
 			return daoService.getRedirectForKeywords(criteria);

@@ -15,7 +15,7 @@
 	</div>
 	
 	<div class="clearB floatL w240">
-		<div id="redirectRulePanel"></div>
+		<div id="rulePanel"></div>
 	    <div class="clearB"></div>
 	</div>
 </div>
@@ -26,7 +26,7 @@
 <div class="contentArea floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
       <div class="w535 padT10 padL10 floatL fsize20 fnormal">
-		<span id="titleText">Query Cleaning</span>
+		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>	
 	</div>

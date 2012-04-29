@@ -1,6 +1,11 @@
 /**
  * TODO: 
  * 1. Confirmation text should be informative
+ * 2. Persist current page of rule list
+ * 	  a. page refresh
+ *    b. new rule
+ *    c. delete rule
+ * 3. Persist selected rule when page refresh (cookie)    
  */
 (function($){
 	var moduleName="Query Cleaning";
@@ -112,7 +117,7 @@
 				}
 
 				if($.isNotBlank(rule)){
-					RedirectServiceJS.addRedirectRuleCondition(selectedRule.ruleId, rule,{
+					RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
 						callback:function(code){
 							showActionResponse(code, "add", rule);
 							refreshRuleConditionList(1);
@@ -135,7 +140,7 @@
 			searchText : "Enter Keyword",
 			showAddButton: !selectedRuleStatus.locked,
 			itemDataCallback: function(base, keyword, page){
-				RedirectServiceJS.getKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
+				RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
 						base.populateList(data);
 						base.addPaging(keyword, page, data.totalSize);
@@ -173,8 +178,6 @@
 						},
 						preHook: function(){ base.prepareList(); }
 					});
-				}else{
-					//TODO: Trigger showHoverInfo
 				}
 			}
 		});
@@ -235,19 +238,19 @@
 			}
 		});		
 	};
-	
-	var getRedirectRuleList = function(ruleId, page) { 
 
-		$("#redirectRulePanel").sidepanel({
+	var getRedirectRuleList = function(page) { 
+
+		$("#rulePanel").sidepanel({
 			fieldId: "ruleId",
 			fieldName: "ruleName",
 			page: page,
-			pageSize: 5,
+			pageSize: rulePageSize,
 			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
 
 			itemDataCallback: function(base, keyword, page){
-				RedirectServiceJS.getAllRedirectRules(keyword, ruleId, page, rulePageSize, {
+				RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 					callback: function(data){
 						base.populateList(data);
 						base.addPaging(keyword, page, data.totalSize);
@@ -257,7 +260,7 @@
 			},
 
 			itemAddCallback: function(base, name){
-				RedirectServiceJS.addRedirectRuleAndGetModel(name, {
+				RedirectServiceJS.addRuleAndGetModel(name, {
 					callback: function(data){
 						if (data!=null){
 							base.getList(name, 1);
@@ -274,8 +277,8 @@
 
 			itemOptionCallback: function(base, id, name, model){
 				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-				
-				RedirectServiceJS.getRedirectKeywordCount(id,{
+
+				RedirectServiceJS.getTotalKeywordInRule(id,{
 					callback: function(count){
 
 						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
@@ -291,7 +294,7 @@
 						base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 					}
 				});
-				
+
 				DeploymentServiceJS.getRuleStatus(moduleName, id, {
 					callback:function(data){
 						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
@@ -305,9 +308,9 @@
 		var ruleName = $.trim($("#name").val());  
 		var ruleDescription = $.trim($("#description").val());  
 		isDirty = false;
-
-		isDirty = isDirty || (ruleName.toLowerCase()!==selectedRule.ruleName.toLowerCase());
-		isDirty = isDirty || (ruleDescription.toLowerCase()!==selectedRule.description.toLowerCase());
+		console.log(selectedRule);
+		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
+		isDirty = isDirty || (ruleDescription.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
 		// Required field
 		isDirty = isDirty && $.isNotBlank(ruleName);
@@ -322,12 +325,12 @@
 
 		if (checkIfUpdateAllowed()){
 			var response = 0;
-			RedirectServiceJS.updateRedirectRule(selectedRule, ruleName, ruleDescription, {
+			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, ruleDescription, {
 				callback: function(data){
 					response = data;
 				},
 				postHook: function(){
-					RedirectServiceJS.getRedirectRule(selectedRule.ruleName,{
+					RedirectServiceJS.getRule(selectedRule.ruleId,{
 						callback: function(data){
 							showActionResponse(response, "update", ruleName);
 							setRedirect(selectedRule);
@@ -335,19 +338,19 @@
 					});
 				}
 			});
-			return;
-		}
+		}else{
 
-		if ($.isBlank(ruleName)){
-			showMessage("#name", "Rule name is required");
-			$("#name").val(selectedRule.ruleName);
+			if ($.isBlank(ruleName)){
+				showMessage("#name", "Rule name is required");
+				$("#name").val(selectedRule.ruleName);
+			}
 		}
 
 	};
 
 	var deleteRule = function(e) { 
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
-			RedirectServiceJS.deleteRedirectRule(selectedRule,{
+			RedirectServiceJS.deleteRule(selectedRule,{
 				callback: function(data){
 
 				}

@@ -33,7 +33,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.combobox.custom.js" />" ></script> --%>
   
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
@@ -69,6 +68,8 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ElevateServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RelevancyServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DeploymentServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/CategoryServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
