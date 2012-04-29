@@ -23,13 +23,13 @@ import com.search.manager.model.StoreKeyword;
 @Service(value = "redirectService")
 @RemoteProxy(
 		name = "RedirectServiceJS",
-	    creator = SpringCreator.class,
-	    creatorParams = @Param(name = "beanName", value = "redirectService")
-	)
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "redirectService")
+)
 public class RedirectService {
 
 	private static final Logger logger = Logger.getLogger(RedirectService.class);
-	
+
 	@Autowired private DaoService daoService;
 
 	public int addRule(String ruleName) {
@@ -45,7 +45,7 @@ public class RedirectService {
 		}
 		return result;
 	}
-	
+
 	public String addRuleAndGetId(String ruleName) {
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -58,7 +58,7 @@ public class RedirectService {
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RedirectRule addRuleAndGetModel(String ruleName) {
 		return getRule(addRuleAndGetId(ruleName));
@@ -90,7 +90,7 @@ public class RedirectService {
 		}
 		return result;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<RedirectRule> getAllRule(String searchTerm, int page, int itemsPerPage) {
 		try {
@@ -104,7 +104,7 @@ public class RedirectService {
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RedirectRule getRule(String ruleId) {
 		try {
@@ -116,7 +116,7 @@ public class RedirectService {
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public int addKeywordToRule(String ruleId, String keyword) {
 		int result = -1;
@@ -201,6 +201,11 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
+	public RecordSet<Keyword> getAllKeywordInRule(String ruleId) {
+		return getAllKeywordInRule(ruleId, "", 0, 0);
+	}
+
+	@RemoteMethod
 	public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page,int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();
@@ -213,7 +218,7 @@ public class RedirectService {
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public int getTotalKeywordInRule(String ruleId) {
 		try {
@@ -227,7 +232,7 @@ public class RedirectService {
 		}
 		return 0;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<RedirectRule> getAllRuleUsedByKeyword(String keyword) throws DaoException {
 		try {
