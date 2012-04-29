@@ -35,7 +35,7 @@
 		resetInputFields("#redirect");
 
 		getRedirectRuleList(1);
-		
+
 		if(selectedRule==null){
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
@@ -336,6 +336,7 @@
 
 	var updateRule = function(e) { 
 		if (e.data.locked) return;
+
 		var ruleName = $.trim($("#name").val());  
 		var description = $.trim($("#description").val());  
 
@@ -344,14 +345,26 @@
 			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
 				callback: function(data){
 					response = data;
+					showActionResponse(response, "update", ruleName);
+				},
+				preHook: function(){
+					prepareRedirect();
 				},
 				postHook: function(){
-					RedirectServiceJS.getRule(selectedRule.ruleId,{
-						callback: function(data){
-							showActionResponse(response, "update", ruleName);
-							setRedirect(selectedRule);
-						}
-					});
+					if(response==1){
+						RedirectServiceJS.getRule(selectedRule.ruleId,{
+							callback: function(data){
+								setRedirect(selectedRule);
+							},
+							preHook: function(){
+								prepareRedirect();
+							}
+						});
+					}
+					else{
+						setRedirect(selectedRule);
+					}
+
 				}
 			});
 		}else{
