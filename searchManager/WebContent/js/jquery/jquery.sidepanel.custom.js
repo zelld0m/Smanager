@@ -51,14 +51,15 @@
 			content+= '</div>';
 			content+= '<div class="sideSearch">';
 			content+= '<span style="padding-top:7px">';
+
+			width = "190px";
 			
 			if (base.options.showAddButton){
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
-				content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch w150" type="text" value="' + base.options.searchText + '">';
+				width = "150px";
 			}
-			else{
-				if(base.options.showAddButton) content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch w190" type="text" value="' + base.options.searchText + '">';
-			}
+		
+			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" style="width:' + width +'" type="text" value="' + base.options.searchText + '">';
 			
 			content+= '</span>';
 			content+= '</div>';
