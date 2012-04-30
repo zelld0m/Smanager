@@ -78,14 +78,16 @@ public class StoreKeywordService {
 	}
 	
 	@RemoteMethod
-	public int addKeyword(String keyword) {
+	public Keyword addKeyword(String keyword) {
+		Keyword newKeyword = null;
 		try {
 			logger.info(String.format("%s",keyword));
-			return daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			int result = daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			if (result==1) newKeyword = new Keyword(keyword, keyword);
 		} catch (DaoException e) {
 			logger.error("Failed during addKeyword()",e);
 		}
-		return 0;
+		return newKeyword;
 	}
 
 	public DaoService getDaoService() {

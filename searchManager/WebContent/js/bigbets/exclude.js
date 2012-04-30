@@ -372,11 +372,11 @@
 
 			itemAddCallback: function(base, keyword){
 				StoreKeywordServiceJS.addKeyword(keyword,{
-					callback : function(code){
-						showActionResponse(code, "add", selectedRule.ruleName);
-						if(code==1){
+					callback : function(data){
+						showActionResponse(data==null?0:1, "add", keyword);
+						if(data!=null){
 							base.getList(keyword, 1);
-							setExclude();
+							setExclude(data);
 						}
 					}
 				});
