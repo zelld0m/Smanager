@@ -710,7 +710,7 @@
 			return;
 		}
 
-		RelevancyServiceJS.addRuleFieldValue(field, value, {
+		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
 				showActionResponse(code, "update", field);
 				selectedRule.parameters[field] = value;
