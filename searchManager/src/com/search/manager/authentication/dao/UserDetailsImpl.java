@@ -3,9 +3,14 @@ package com.search.manager.authentication.dao;
 import java.util.Collection;
 import java.util.Date;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.search.manager.utility.DateAndTimeUtils;
+
+@DataTransferObject(converter = BeanConverter.class)
 public class UserDetailsImpl implements UserDetails {
 
 	private static final long serialVersionUID = -2502976220060750855L;
@@ -128,4 +133,7 @@ public class UserDetailsImpl implements UserDetails {
 		return currentPage;
 	}
 	
+	public String getElapsedTime(){
+		return DateAndTimeUtils.getElapsedTime(getLoggedIntime(), new Date());
+	}
 }
