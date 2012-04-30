@@ -70,8 +70,9 @@ body 							{ margin: 0px; }
 .cssReset .w550, .w550          {width:550px}
 .cssReset .w555, .w555          {width:555px}
 .cssReset .w580, .w580          {width:580px}
+.cssReset .w590, .w590          {width:590px}
 .cssReset .w600, .w600			{width:600px}
-.cssReset .w620					{width:620px}
+.cssReset .w620, .w620			{width:620px}
 .cssReset .w650, .w650			{width:650px}
 .cssReset .w675					{width:675px}
 .cssReset .w700					{width:700px}
@@ -149,6 +150,7 @@ body 							{ margin: 0px; }
 .cssReset .marT6, .marT6		{margin-top:6px !important}
 .cssReset .marT8, .marT8		{margin-top:8px !important}
 .cssReset .marT10, .marT10		{margin-top:10px !important}
+.cssReset .marT14, .marT14		{margin-top:14px !important}
 .cssReset .marT15, .marT15		{margin-top:15px !important}
 .cssReset .marT20, .marT20		{margin-top:20px !important}
 .cssReset .marT27, .marT27		{margin-top:27px !important}
@@ -180,7 +182,7 @@ body 							{ margin: 0px; }
 .cssReset .marRL20, .marRL20	{margin-left:20px; margin-right:20px }
 .cssReset .marB4, .marB4		{margin-bottom:4px}
 .cssReset .marB8, .marB8		{margin-bottom:8px}
-.cssReset .marB10, .marB10		{margin-bottom:10px}
+.cssReset .marB10, .marB10		{margin-bottom:10px !important}
 .cssReset .marB20, .marB20		{margin-bottom:20px}
 .cssReset .marTB5, .marTB5		{margin-top:5px !important; margin-bottom:5px !important}
 .cssReset .marTB10, .marTB10	{margin-top:10px !important; margin-bottom:10px !important}
@@ -231,7 +233,9 @@ body 							{ margin: 0px; }
 .cssReset .top1, .top1			{ top:1px; }
 .cssReset .top2, .top2			{ top:2px; }
 .cssReset .top4, .top4			{ top:4px; }
-.cssReset .top6					{ top:6px; }
+.cssReset .top5, .top5			{ top:5px; }
+.cssReset .top6, .top6			{ top:6px; }
+.cssReset .top14, .top14		{ top:14px; }
 .cssReset .topn4, .topn4		{ top:-4px; }
 .cssReset .right4				{ right:4px }
 .cssReset .bottomn4, .bottomn4		{ bottom:-4px; }
@@ -275,7 +279,8 @@ body 							{ margin: 0px; }
 .resizeNone						{ resize: none; }
 .clearfix:after 				{ content: ".";	display: block;	clear: both; visibility: hidden; line-height: 0; height: 0; }
 .clearfix 						{ display: inline-block; }
-.cssReset .clearB, .clearB		{ clear:both }
+.cssReset .clearB, .clearB,
+.qtip .clearB					{ clear:both }
 
 .cssReset .floatL, .floatL 		{ float:left }
 .cssReset .floatR, .floatR		{ float:right }

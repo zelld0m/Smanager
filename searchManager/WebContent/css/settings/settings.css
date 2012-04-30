@@ -3,3 +3,8 @@
 .tabbertab label.text					{ width:200px; float:left; padding:0; font-size:12px; color:#282828; margin-top:10px; margin-left:20px  }
 .tabbertab label.info					{ width:300px; float:left; padding:0; margin-top:10px }
 .tabbertab label.info select			{ margin:0 }
+
+.relevancyInfo ul li					{ list-style: none;}
+.ruleField								{ margin:15px 0; }
+
+

@@ -588,7 +588,7 @@ body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padd
 /*native tabs */
 .qtip .ui-tabs-nav				{ background: none; border:none !important }
 .qtip .ui-tabs-nav li a			{ padding:5px !important; font-size:12px;}
-.qtip .ui-widget-content		{ border:none; margin-top:-18px !important; }	
+.qtip .ui-widget-content		{ border:none; margin-top:-18px; }
 .qtip .ui-tabs-panel			{ padding:0 !important;  }
 .qtip .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
@@ -676,7 +676,7 @@ p.notification								{  }
 .footerFix .altBg							{ background: #ededed }
 
 /* Elevate Rule Preview */
-.rulePreview								{ padding:0; margin:0 }
+.rulePreview								{ padding:0; margin:0; display:block }
 .rulePreview label							{ line-height: 14px; margin:3px 0 }
 
 
