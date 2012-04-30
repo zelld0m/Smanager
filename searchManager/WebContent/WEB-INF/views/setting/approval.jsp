@@ -184,7 +184,7 @@
 				
 				<div class="clearB"></div>	
 				<div id="ruleField" class="ruleField">
-					<div class="w600 mar0 padLR5">
+					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
 								<tr>
@@ -194,7 +194,7 @@
 							<tbody>
 						</table>
 					</div>
-					<div style="max-height:180px; overflow-y:auto;" class="w600 mar0">
+					<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">
 						<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">
 							<tbody>
 								<tr id="itemPattern" class="itemRow" style="display: none">

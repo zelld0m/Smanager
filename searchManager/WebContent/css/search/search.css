@@ -40,6 +40,9 @@ span.count						{ font-size:11px !important; color:#808080 }
 .sideBar div.graphArea			{ width: 22%; padding-right:4px;  float:left }
 
 
+ul.ui-widget-content			{ margin-left:0 !important }
+.ui-widget li.ui-menu-item		{ list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
+
 .ui-button-icon					{ top:4px; }
 
 
