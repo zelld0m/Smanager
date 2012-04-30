@@ -595,7 +595,7 @@ body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padd
 .qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
 .qtip .ui-widget-content label	{ vertical-align: middle; }
 
-.qtip textarea 					{ resize: vertical; }
+textarea, .qtip textarea		{ resize: vertical; }
 
 /*fix footer */
 .dockFooter						{ position:fixed; bottom:0; width: 100%; z-index:400;  }

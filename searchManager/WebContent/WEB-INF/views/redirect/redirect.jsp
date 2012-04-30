@@ -92,7 +92,7 @@
 	        	<h3 class="marT20">Category / Manufacturer</h3>
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
-						<td>
+						<td valign="top">
 							<table class="fsize12 mar10 tblCatalog">
 								<tr>
 									<td width="100px">CatCode</td>
