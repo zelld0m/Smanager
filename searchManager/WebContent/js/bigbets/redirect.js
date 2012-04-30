@@ -21,8 +21,6 @@
 	var deleteRuleConfirmText = "Continue deleting this rule?";
 	var deleteKeywordInRuleConfirmText = "Continue deleting this keyword?";
 
-	var getHTMLTemplate = function(selector){ return $(selector).html();};
-
 	var prepareRedirect = function(){
 		$("#preloader").show();
 		$("#submitForApproval").hide();
@@ -86,26 +84,10 @@
 			}
 		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
 
-		$('#auditIcon').qtip({
-			content: {
-				text: $('<div/>'),
-				title: { text: 'Audit Log', button: true }
-			},
-			position: {
-				at: 'bottom right', 
-				my: 'top left'
-			},
-			events: {
-				render: function(e, api) {
-					var auditPage=1;
-					var auditPageSize=5;
-					var contentHolder = $('div', api.elements.content);
-					contentHolder.html(getHTMLTemplate("#viewAuditTemplate"));
-					updateAuditList(contentHolder, selectedRule.ruleId, auditPage, auditPageSize);
-				}
-			}
-		}).click(function(e) { e.preventDefault(); });
-		
+		$('#auditIcon').on({
+			click: showAuditList
+		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
@@ -459,78 +441,6 @@
 		getCategories();
 	};
 
-	
-	prepareAuditList = function(contentHolder){
-		contentHolder.find("#auditPagingTop").html("");
-		contentHolder.find("#auditPagingBottom").html("");
-		contentHolder.find("#auditHolder").html('<div class="circlePreloader"><img src="../images/ajax-loader-circ25x25.gif"></div>');
-	};
-
-	updateAuditList = function(contentHolder, rule_id, auditPage, auditPageSize){
-		AuditServiceJS.getRedirectTrail(rule_id, auditPage, auditPageSize, {
-			callback: function(data){
-				var totalItems = data.totalSize;
-				var auditItems = "";
-
-				for(var i = 0 ; i <  data.list.length ; i++){
-					var auditTemplate = getHTMLTemplate("#auditTemplate"); 
-					var item = data.list[i];
-
-					auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
-					auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-					auditTemplate = auditTemplate.replace("%%comment%%", item.details);
-					auditItems += auditTemplate;
-				}
-
-				contentHolder.find("#auditPagingTop, #auditPagingBottom").paginate({
-					type: "short",
-					pageStyle: "style2",
-					currentPage: auditPage, 
-					pageSize: auditPageSize,
-					totalItem: totalItems,
-					callbackText: function(itemStart, itemEnd, itemTotal){
-						return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
-					},
-					pageLinkCallback: function(e){ updateAuditList(contentHolder, rule_id, e.data.page, auditPageSize);},
-					nextLinkCallback: function(e){ updateAuditList(contentHolder, rule_id, e.data.page+1, auditPageSize); },
-					prevLinkCallback: function(e){ updateAuditList(contentHolder, rule_id, e.data.page-1, auditPageSize); },
-					firstLinkCallback: function(e){ updateAuditList(contentHolder, rule_id, 1, auditPageSize); },
-					lastLinkCallback: function(e){ updateAuditList(contentHolder, rule_id, e.data.totalPages, auditPageSize); }
-				});
-
-				contentHolder.find("#auditHolder").html(auditItems);
-				contentHolder.find("#auditHolder> div:nth-child(even)").addClass("alt");
-			},
-			preHook: function(){ prepareAuditList(contentHolder); },
-			errorHandler: function(message){ alert(message); }					
-		});
-	};
-	
-	showAudit = function(rule_id){
-		$('#auditIcon').qtip({
-			content: {
-				text: $('<div/>'),
-				title: { text: 'Audit Log', button: true }
-			},
-			position: {
-				at: 'bottom right', 
-				my: 'top left'
-			},
-			events: {
-				render: function(e, api) {
-					var auditPage=1;
-					var auditPageSize=5;
-					var contentHolder = $('div', api.elements.content);
-					contentHolder.html(getHTMLTemplate("#viewAuditTemplate"));
-
-					updateAuditList(contentHolder, rule_id, auditPage, auditPageSize);
-				}
-			}
-		}).click(function(e) { e.preventDefault(); });	   
-	};
-	
-	
-	
 	$(document).ready(function() {
 		$("#categoryList").append($("<option>", { value : "all", selected: "selected"}).text("All Category")).combobox({
 			selected: function(event, ui) {

@@ -906,6 +906,11 @@
 				}
 			}
 		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
+		
+		$('#auditIcon').on({
+			click: showAuditList
+		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+
 	};
 
 	var setRelevancy = function(rule){
