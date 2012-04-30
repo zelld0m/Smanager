@@ -25,22 +25,22 @@ resetInputFields = function(selector){
 getRuleNameSubTextStatus = function(ruleStatus){
 	if (ruleStatus==null) 
 		return "Unknown Status";
-	
+
 	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
 		return "Setup a Rule";
-	
+
 	switch (ruleStatus["approvalStatus"]){
-		case "REJECTED": return "Action Required";
-		case "PENDING": return "Awaiting Approval";
-		case "APPROVED": return "Ready For Production";
+	case "REJECTED": return "Action Required";
+	case "PENDING": return "Awaiting Approval";
+	case "APPROVED": return "Ready For Production";
 	}	
 };
 
 showActionResponse = function(code, action, param){
 	switch(code){
-		case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-		case  0: alert("Failed " + action + " request for " + param); break;
-		default: alert("Successfull " + action + " request for " + param); break;
+	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
+	case  0: alert("Failed " + action + " request for " + param); break;
+	default: alert("Successfull " + action + " request for " + param); break;
 	}
 };
 
@@ -250,6 +250,31 @@ function initFileUploads() {
 
 			$.cookie(COOKIE_NAME_DOCK, cookieVal ,{expires: 1});
 			refreshDock();
+
+		});
+
+		$("#onlineList").auditpanel({
+			fieldName: "username",
+			headerText : "Logged-in User",
+			page: 1,
+			pageSize: 5,
+			type: "online",
+			itemDataCallback: function(base, page){
+				DAOCacheServiceJS.getAllLoggedInUser({
+					callback: function(data){
+						base.populateList(data);
+						base.addPaging(page, data.totalSize);
+					},
+					preHook: function(){ base.prepareList(); }
+				});
+			},
+			itemOptionCallback: function(base, id, name, model){
+				var selector = '#item' + $.escapeQuotes($.formatAsId(id)); 
+				base.$el.find(selector + ' img.avatar').attr("src","../images/noAvatar.jpg");
+				base.$el.find(selector + ' .user').html(model["username"]);
+				base.$el.find(selector + ' .duration').html(model["elapsedTime"]);
+				base.$el.find(selector + ' .page').html(model["currentPage"]);
+			}
 		});
 
 		useTabs();

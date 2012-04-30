@@ -182,7 +182,9 @@
 				com.search.manager.schema.model.qf.QueryField,
 				com.search.manager.schema.model.mm.MinimumToMatchModel,
 				com.search.manager.schema.model.mm.FixedMatch,
-				com.search.manager.schema.model.mm.ConditionalMatch
+				com.search.manager.schema.model.mm.ConditionalMatch,
+				com.search.manager.cache.dao.DaoCacheServiceImpl,
+				com.search.manager.authentication.dao.UserDetailsImpl
 			</param-value>
 		</init-param>
 	</servlet>

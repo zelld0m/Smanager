@@ -15,7 +15,9 @@
 		base.init = function(){
 			base.options = $.extend({},$.auditpanel.defaultOptions, options);
 			base.populateTemplate();
+			
 			base.getList(1);
+			
 		    setInterval(function() {
 		    	if (base.$el.is(":visible")) base.getList(base.options.page);
 		    }, base.options.refreshRate);
@@ -33,15 +35,32 @@
 			content+= '<div class="viewport">';
 			content+= '<div class="overview">';
 			content+= '<div id="auditPanelContent">';
-			content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
-			content+= '<li id="itemPattern" class="items" style="display:none">';
-			content+= '	<p class="notification">';
-			content+= '		<span class="user"></span>';
-			content+= '		<span class="changedesc"></span><br/>';
-			content+= '		<span class="elapsedtime"></span>';
-			content+= '	</p>';
-			content+= '</li>';
-			content+= '</ul>';
+			
+			if (base.options.type==="audit"){
+				content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
+				content+= '<li id="itemPattern" class="items" style="display:none">';
+				content+= '	<p class="notification">';
+				content+= '		<span class="user"></span>';
+				content+= '		<span class="changedesc"></span><br/>';
+				content+= '		<span class="elapsedtime"></span>';
+				content+= '	</p>';
+				content+= '</li>';
+				content+= '</ul>';
+			}
+			
+			if (base.options.type==="online"){
+				content+= '<ul id="itemListing" class="fsize11 marT10">';
+				content+= '<li id="itemPattern" class="clearfix marT8" style="display:none">';
+				content+= '	<img src="" class="avatar floatL marR8 marL5" width="45px">';
+				content+= '	<p class="breakWord floatL" style="width:143px">';
+				content+= '		<span class="user"></span>';
+				content+= '		<span class="page"></span>';
+				content+= '		<span class="duration"></span>';
+				content+= '	</p>';
+				content+= '</li>';
+				content+= '</ul>';
+			}
+
 			content+= '</div>';
 			content+= '</div>';
 			content+= '</div>';
@@ -72,11 +91,12 @@
 
 			// populate list
 			for (var i = 0; i < list.length; i++) {
-				var clonedId = "item" + $.formatAsId(i+1); 
+				var id = list[i][base.options.fieldId]==undefined? i+1 : list[i][base.options.fieldId];
+				var clonedId = "item" + $.formatAsId(id); 
+				
 				base.$el.find("li#itemPattern").clone().appendTo("ul#itemListing").show().attr("id",clonedId);
-				base.$el.find("li#" + clonedId + " span.user").text(list[i]["username"]);
-				base.$el.find("li#" + clonedId + " span.changedesc").text(list[i]["keyword"] + " " + list[i]["details"]);
-				base.$el.find("li#" + clonedId + " span.elapsedtime").text(list[i]["elapsedTime"]);
+				
+				base.options.itemOptionCallback(base, id, name, list[i]);
 			}
 			
 			base.$el.find("li.items:nth-child(even)").addClass("alt");
@@ -119,11 +139,12 @@
 
 	$.auditpanel.defaultOptions = {
 			page:1,
-			region: "left",
 			pageSize: 10,
+			type: "audit",
 			pageStyle: "style1",
 			headerText: "",
 			itemDataCallback: function(e){},
+			itemOptionCallback: function(e){},
 			itemDifferentialCallback: function(e){},
 			refreshRate: 10000
 	};

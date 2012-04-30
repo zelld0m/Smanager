@@ -8,6 +8,10 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.directwebremoting.annotations.Param;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +23,18 @@ import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 @Service(value="daoCacheService")
+@RemoteProxy(
+		name = "DAOCacheServiceJS",
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "daoCacheService")
+)
 public class DaoCacheServiceImpl implements DaoCacheService {
 
 	private static Logger logger = Logger.getLogger(DaoCacheServiceImpl.class);
@@ -372,6 +382,12 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			}
 		}
 		return users;
+	}
+	
+	@RemoteMethod
+	public RecordSet<UserDetailsImpl> getAllLoggedInUser() throws DaoException, DataException {
+		List<UserDetailsImpl> users = getLoggedInUsers();
+		return new RecordSet<UserDetailsImpl>(users, CollectionUtils.size(users));
 	}
 
 }
