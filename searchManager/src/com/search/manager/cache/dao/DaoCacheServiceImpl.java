@@ -124,12 +124,12 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public List<ElevateResult> getElevateRules(StoreKeyword storeKeyword){
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
-			if(hasExactMatchKey(storeKeyword)){
+			//if(hasExactMatchKey(storeKeyword)){
 				CacheModel<ElevateResult> cache = elevateCacheDao.getCachedObject(storeKeyword);
 				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
 					return cache.getList();					
 				}
-			}
+			//}
 		}catch (Exception e) {
 			logger.error(e,e);
 		}
@@ -150,12 +150,12 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword){
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
-			if(hasExactMatchKey(storeKeyword)){
+			//if(hasExactMatchKey(storeKeyword)){ // quick fix temp
 				CacheModel<ExcludeResult> cache = excludeCacheDao.getCachedObject(storeKeyword);
 				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
 					return cache.getList();					
 				}
-			}
+			//}
 		}catch (Exception e) {
 			logger.error(e,e);
 		}
