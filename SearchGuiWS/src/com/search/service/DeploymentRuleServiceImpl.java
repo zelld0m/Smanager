@@ -240,6 +240,9 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 
 					// retrieve staging data then push to prod
 					RedirectRule addRel = daoServiceStg.getRedirectRule(delRel);
+					for (String keyword: addRel.getSearchTerms()) {
+						daoService.addKeyword(new StoreKeyword(store, keyword));
+					}
 					
 					if(addRel != null) {
 						daoService.addRedirectRule(addRel); // prod 
@@ -279,6 +282,9 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					delRel.setRuleId(key);
 					delRel.setStoreId(store);
 					addRel = daoServiceStg.getRedirectRule(delRel);
+					for (String keyword: addRel.getSearchTerms()) {
+						daoService.addKeyword(new StoreKeyword(store, keyword));
+					}
 					
 					if(addRel != null) {
 						daoService.addRedirectRule(addRel); // prod 
@@ -324,6 +330,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 							RecordSet<RelevancyKeyword> relevancyKeywords = daoServiceStg.getRelevancyKeywords(addRel);
 							if (relevancyKeywords.getTotalSize() > 0) {
 								for (RelevancyKeyword rk: relevancyKeywords.getList()) {
+									daoService.addKeyword(new StoreKeyword(store, rk.getKeyword().getKeywordId()));
 									daoService.addRelevancyKeyword(rk);
 								}								
 							}
@@ -385,6 +392,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 							RecordSet<RelevancyKeyword> relevancyKeywords = daoServiceStg.getRelevancyKeywords(addRel);
 							if (relevancyKeywords.getTotalSize() > 0) {
 								for (RelevancyKeyword rk: relevancyKeywords.getList()) {
+									daoService.addKeyword(new StoreKeyword(store, rk.getKeyword().getKeywordId()));
 									daoService.addRelevancyKeyword(rk);
 								}								
 							}
