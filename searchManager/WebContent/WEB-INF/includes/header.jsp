@@ -19,6 +19,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.core.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.autocomplete.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.button.min.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.combobox.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.datepicker.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.sortable.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.tabs.min.js" />" ></script>
@@ -32,7 +33,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.combobox.custom.js" />" ></script>
   
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
@@ -53,9 +53,15 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/checkbox/jquery.checkbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
 
-  <!--  scroller 
-  <script type="text/javascript" src="/js/scroller/ypSimpleScrollC.js"></script>
-  <script type="text/javascript" src="/js/scroller/scroller.js"></script> -->
+  <!--  scroller  -->
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/tinyscrollbar.css" />">
+
+	<script type="text/javascript" src="<spring:url value="/js/tinyscrollbar/jquery.tinyscrollbar.min.js" />"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#scrollbar1').tinyscrollbar();	
+		});
+	</script>	
 
   <!-- DWR dependencies -->
   <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
@@ -68,6 +74,8 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ElevateServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RelevancyServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DeploymentServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/CategoryServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RedirectServiceJS.js"/>"></script>
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
