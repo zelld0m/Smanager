@@ -74,7 +74,6 @@ public class RedirectRuleDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM_LIKE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_RESULT, Types.INTEGER));
 		}
 
 		@Override
@@ -644,7 +643,7 @@ public class RedirectRuleDAO {
 					inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, model.getSearchTerm());
 					break;
 			}
-	        return DAOUtils.getRecordSet(getRedirectRuleStoredProcedure.execute(inputs));
+	        return DAOUtils.getRecordSet(getRedirectRuleKeywordStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during searchRedirectRuleKeywords()", e);
 		}
