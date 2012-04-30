@@ -72,14 +72,18 @@
 			content+= '<div class="sideSearch">';
 			content+= '<span style="padding-top:7px">';
 
-			width = "190px";
+			var textClass="";
+			
+			switch(base.options.region){
+				case "left": textClass = base.options.showAddButton? "w70p": "w88p"; break;
+				case "content": textClass = base.options.showAddButton? "w78p": "w90p"; break;
+			}
 			
 			if (base.options.showAddButton){
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
-				width = "150px";
 			}
-		
-			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" style="width:' + width +'" type="text" value="' + base.options.searchText + '">';
+			
+			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch ' + textClass + '" type="text" value="' + base.options.searchText + '">';
 			
 			content+= '</span>';
 			content+= '</div>';
@@ -187,6 +191,7 @@
 	$.sidepanel.defaultOptions = {
 			page:1,
 			pageSize: 10,
+			region: "left",
 			pageStyle: "style1",
 			headerText: "",
 			searchText: "",

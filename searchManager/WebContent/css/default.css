@@ -81,14 +81,19 @@ body 							{ margin: 0px; }
 .cssReset .w980, .w980			{width:980px !important}
 .cssReset .w100p, .w100p		{width:100% }
 .cssReset .w97p, .w97p			{width:97% }
-.cssReser .w68p, .w68p			{ width:68% }
-.cssReser .w50p, .w50p			{ width:50% }
-.cssReser .w49p, .w49p			{ width:49% }
-.cssReser .w46p, .w46p			{ width:46% }
-.cssReser .w47p, .w47p			{ width:47% }
-.cssReser .w45p, .w45p			{ width:45% }
-.cssReser .w45p83p, .w45p83		{ width:45.83% }
-.cssReser .w32p, .w32p			{ width:32% }
+.cssReset .w68p, .w68p			{ width:68% }
+.cssReset .w50p, .w50p			{ width:50% }
+.cssReset .w49p, .w49p			{ width:49% }
+.cssReset .w46p, .w46p			{ width:46% }
+.cssReset .w47p, .w47p			{ width:47% }
+.cssReset .w45p, .w45p			{ width:45% }
+.cssReset .w45p83p, .w45p83		{ width:45.83% }
+.cssReset .w32p, .w32p			{ width:32% }
+.cssReset .w70p, .w70p			{ width:70% }
+.cssReset .w78p, .w78p			{ width:78% }
+.cssReset .w88p, .w88p			{ width:88% }
+.cssReset .w90p, .w90p			{ width:90% }
+
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
 .cssReset .pad3, .pad3			{ padding:3px }

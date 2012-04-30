@@ -293,7 +293,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 /* content region */
 .contentArea .sideHeader            { border-bottom:1px solid #cccccc; font-size:14px; font-weight: bold; padding-bottom:4px }
 .contentArea .sideSearch			{ margin:0 auto; font-family: arial; fonr-size:12px; border-bottom: 1px solid #CCCCCC; color:#333; padding-top:5px; padding-bottom:5px; width:94%; }
-.contentArea .leftSearch			{ background:url(images/icon-search.png) right center no-repeat #fff; width:78%; height:18px; padding:3px 22px 3px 3px; margin:0}
+.contentArea .leftSearch			{ background:url(images/icon-search.png) right center no-repeat #fff; height:18px; padding:3px 22px 3px 3px; margin:0}
 
 .contentArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:8px; width:99.7%;  }
 .contentArea .itemText				{ float:left; width:70%; padding-left:5px } 
