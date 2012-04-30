@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
@@ -80,6 +81,39 @@ public class AuditService {
 		}
 	}
 	
+	@RemoteMethod
+	public RecordSet<AuditTrail> getRedirectTrail(String ruleId, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreName();
+			
+			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(Entity.queryCleaning.toString());
+			auditTrail.setReferenceId(ruleId);
+			auditTrail.setStoreId(store);
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+
+	@RemoteMethod
+	public RecordSet<AuditTrail> getRelevancyTrail(String ruleId, int page,int itemsPerPage) {
+		try {
+			String store = UtilityService.getStoreName();
+			
+			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
+			AuditTrail auditTrail = new AuditTrail();
+			auditTrail.setEntity(Entity.relevancy.toString());
+			auditTrail.setReferenceId(ruleId);
+			auditTrail.setStoreId(store);
+			
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+		} catch (DaoException e) {
+			return null;
+		}
+	}
+
 	@RemoteMethod
 	public RecordSet<AuditTrail> getElevateItemTrail(String keyword, String productId, int page,int itemsPerPage) {
 		return getProductTrail(Entity.elevate, keyword, productId, page, itemsPerPage);

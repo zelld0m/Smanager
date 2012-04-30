@@ -24,6 +24,7 @@
 
 <script type="text/javascript" src="<spring:url value="/js/jquery/jSlider/jquery.dependClass.js"/>"></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/jSlider/jquery.slider.js"/>"></script>
+<script type="text/javascript" src="<spring:url value="/js/bigbets/bigbets.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/bigbets/relevancy.js" />"></script> 
 
 <style type="text/css" media="screen">
@@ -43,6 +44,10 @@
 	    <div class="clearB"></div>
 	</div>
     
+    <div class="clearB floatL w240">
+	 	<div id="auditList"></div>
+	</div>
+	
      <div class="clearB floatL w240">
     	<div id="ruleKeywordPanel"></div>
         <div class="clearB"></div>
@@ -88,14 +93,38 @@
 	        <div class="clearB"></div>	
 	 </div>
 	 
+ 	<div id="viewAuditTemplate" style="display: none">
+	   <div class="elevateItemPW">
+	   <div class="w265 padB8">
+            <div id="auditTemplate" style="display: none;" >
+		   		<div class="pad8 borderB"> 
+			   		<div class="padR8 floatL wordwrap" style="width:60px">%%timestamp%%</div>
+		            <div class="floatL w175">
+		            	<img src="<spring:url value="/images/user13x13.png" />" class="marBn3 marR3">
+		            	<span class="fDblue">%%commentor%%</span>
+		                <span>%%comment%%</span>
+		            </div>
+	            <div class="clearB"></div>
+	            </div>         
+		    </div>
+		    <div id="auditPagingTop"></div>
+		    	<div class="clearB"></div>	
+            <div id="auditHolder"></div>
+            	<div class="clearB"></div>	
+            <div id="auditPagingBottom" style="margin-top:8px"></div>
+	   </div>
+	   </div>
+	</div>
+			
 	<div class="clearB"></div>	
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
 		<div id="relevancy" class="relevancy fsize12">		
 			<div class="landingCont w45p83 minHeight185 floatL">	
-				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Rule Info</div>		
-				
+				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Rule Info
+					<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
+				</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
 					<label><input id="name" type="text" class="w240 marT5"/></label>
 					<div class="clearB"></div>			
