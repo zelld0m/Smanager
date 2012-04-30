@@ -183,7 +183,7 @@ body 							{ margin: 0px; }
 .cssReset .marL30, .marL30		{margin-left:30px}
 .cssReset .marL70, .marL70		{margin-left:70px}
 .cssReset .marRL3 				{margin-left:3px; margin-right:3px }
-.cssReset .marRL5 				{margin-left:5px; margin-right:5px }
+.cssReset .marRL5, .marRL5		{margin-left:5px; margin-right:5px }
 .cssReset .marRL20, .marRL20	{margin-left:20px; margin-right:20px }
 .cssReset .marB4, .marB4		{margin-bottom:4px}
 .cssReset .marB8, .marB8		{margin-bottom:8px}

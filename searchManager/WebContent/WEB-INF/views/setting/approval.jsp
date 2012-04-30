@@ -176,15 +176,15 @@
 								
 				<div id="ruleRanking" class="ruleRanking">					
 					<ul id="relevancyInfo" class="relevancyInfo">
-						<li><label class="floatL w180">Start Date:</label><span id="startDate"></span></li>
-						<li><label class="floatL w180">End Date:</label><span id="endDate"></span></li>
-						<li><label class="floatL w180">Description:</label><span id="description"></span></li>
+						<li class="clearfix"><label class="floatL w150">Start Date:</label><span id="startDate"></span></li>
+						<li class="clearfix"><label class="floatL w150">End Date:</label><span id="endDate"></span></li>
+						<li class="clearfix"><label class="floatL w150">Description:</label><span id="description"></span></li>
 					</ul>
 				</div>
 				
 				<div class="clearB"></div>	
 				<div id="ruleField" class="ruleField">
-					<div class="w600 mar0 pad0">
+					<div class="w600 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
 								<tr>
@@ -207,8 +207,8 @@
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleKeyword"  class="ruleKeyword">
-					<ul id="keywordInRule"></ul>
+				<div id="ruleKeyword" class="ruleKeyword">
+					<ul id="keywordInRule" class="keywordInRule"></ul>
 				</div>
 				<div class="clearB"></div>
 			</div>
