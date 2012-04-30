@@ -174,6 +174,7 @@
 			<div class="clearB"></div>
 			<div class="borderT txtAR padT10">
 				<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+				<a id="cloneBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clone</div></a> 
 				<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 			</div>
 	</div>

@@ -6,7 +6,7 @@
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this ranking rule?";
-	
+
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
 	var schemaFieldsSearchText = "Enter Field Name";
@@ -389,7 +389,7 @@
 	/** BELOW: QF and PF */
 	var setupFieldS1 = function(field){
 		var sfPage = 1;
-		
+
 		sfExcFields = new Array();
 
 		addSchemaFieldsPaging = function(content, page){
@@ -586,7 +586,7 @@
 
 		});
 	};
-	
+
 	var setRuleFieldValue = function(){
 
 		for (var field in selectedRule.parameters){
@@ -626,7 +626,7 @@
 		$('div.AlphaCont input[type="text"]').on({
 			focus:showGraph 
 		});
-		
+
 		//TODO: Message Resource
 		$('a.infoIcon').qtip({
 			content: { 
@@ -761,9 +761,86 @@
 		return relevancyFields;
 	};
 
+	var cloneRule = function(e){
+		$(this).qtip({
+			content: {
+				text: $('<div/>'),
+				title: { text: 'Clone Relevancy', button: true }
+			},
+			show: { 
+				solo: true,
+				ready:true
+			},
+			style: {width: 'auto'},
+			events: { 
+				show: function(rEvt, api){
+					var $contentHolder = $("div", api.elements.content).html($("#addRelevancyTemplate").html());
+
+					$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
+
+					if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val("Copy of " + name);
+
+					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
+					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
+
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
+						defaultDate: "+1w",
+						showOn: "both",
+						buttonImage: "../images/icon_calendar.png",
+						buttonImageOnly: true,
+						onSelect: function(selectedDate) {
+							var option = this.id == "popStartDate" ? "minDate" : "maxDate",
+									instance = $(this).data("datepicker"),
+									date = $.datepicker.parseDate( instance.settings.dateFormat ||
+											$.datepicker._defaults.dateFormat, selectedDate, instance.settings);
+							popDates.not(this).datepicker("option", option, date);
+						}
+					});
+
+					$contentHolder.find('a#addButton').on({
+						click: function(e){
+							var popName = $.trim($contentHolder.find('input[id="popName"]').val());
+							var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
+							var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
+							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
+
+							if ($.isBlank(popName)){
+								alert("Rule name is required");
+								return;
+							}
+
+							RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
+								callback:function(data){
+									showActionResponse(data==null?0:1, "clone", popName);
+									if(data!=null) {
+										setRelevancy(data);
+									}else{
+										setRelevancy(selectedRule);
+									}
+								},
+								preHook: function(){
+									prepareRelevancy();
+								}
+							});
+						}
+					});
+
+					$contentHolder.find('a#clearButton').on({
+						click: function(e){
+							$contentHolder.find('input[type="text"], textarea').val("");
+						}
+					});
+				},
+				hide: function(hEvt, api){
+					api.destroy();
+				}
+			}
+		});
+	};
+
 	var updateRule = function(e){
 		if (e.data.locked) return;
-		
+
 		var unSaved = getUnSavedRelevancyFields();
 		var ruleName = $.trim($('div#relevancy input[id="name"]').val()); 
 		var description = $.trim($('div#relevancy textarea[id="description"]').val()); 
@@ -822,6 +899,7 @@
 	};
 
 	var prepareRelevancy = function(){
+		clearAllQtip();
 		$("#preloader").show();
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
@@ -833,7 +911,7 @@
 		prepareRelevancy();
 		$("#preloader").hide();
 		resetInputFields("#relevancy");
-		
+
 		getRelevancyRuleList(1);
 		getRelevancyRuleKeywordList(1);
 
@@ -848,13 +926,13 @@
 
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
-		$("#name").val(selectedRule.ruleName);
 
+		$("#name").val(selectedRule.ruleName);
 		$("#description").val(selectedRule.description);
 		$("#startDate").val(selectedRule.formattedStartDate);
 		$("#endDate").val(selectedRule.formattedEndDate);
 		$("#startDate, #endDate").datepicker("destroy");
-		
+
 		var dates = $("#startDate, #endDate").datepicker({
 			defaultDate: "+1w",
 			showOn: "both",
@@ -871,13 +949,17 @@
 				dates.not(this).datepicker("option", option, date);
 			}
 		});
-		
+
 		getKeywordInRuleList(1);
 		setRuleFieldValue();
 
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
+		},{locked:selectedRuleStatus.locked});
+
+		$("#cloneBtn").off().on({
+			click: cloneRule
 		},{locked:selectedRuleStatus.locked});
 
 		$("#deleteBtn").off().on({
@@ -905,7 +987,7 @@
 				}
 			}
 		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
-		
+
 		$('#auditIcon').on({
 			click: showAuditList
 		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
