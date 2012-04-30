@@ -648,11 +648,12 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0;
 
 .dockContent								{ height:280px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px; }
 
-p.notification								{ width:190px; word-wrap: break-word; }
-.notification span.user, 
-.infoContainer span.user						{ font-weight: bold; color:#f3f3f3; }
-.notification span.changedesc				{ color:#aaaaaa; font-weight: normal }	
-.notification span.elapsedtime				{ color:#3b79c2 }
+p.notification								{  }
+.notification span.user, span.user			{ font-weight: bold; color:#f3f3f3; }
+.notification span.changedesc, 
+span.page									{ color:#aaaaaa; font-weight: normal }	
+.notification span.elapsedtime, 				
+span.duration								{ color:#3b79c2 }
 
 
 /*********************** SCROLLERS ***********************/

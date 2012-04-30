@@ -654,10 +654,15 @@ height:37px;  color:#282828; border-top:1px solid #d9d9d9 !important; padding:0
 .dockContent								{ /*height:270px; overflow-y:scroll; overflow-x:hidden; position:relative; bottom:15px;*/}
 
 p.notification								{  }
-.notification span.user						{ font-weight: bold; color:#f3f3f3; }
-.notification span.changedesc				{ color:#aaaaaa; font-weight: normal }	
-.notification span.elapsedtime				{ color:#3b79c2 }
+.notification span.user, span.user			{ font-weight: bold; color:#f3f3f3; }
+.notification span.changedesc, 
+span.page									{ color:#aaaaaa; font-weight: normal }	
+.notification span.elapsedtime, 				
+span.duration								{ color:#3b79c2 }
 
+
+.noticeBox									{ position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px !important; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
+-moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 }
 
 /*********************** SCROLLERS ***********************/
 .footerFix .root 							{ position:relative; height:274px; width: 230px; margin: 0px 0px 8px 0; }

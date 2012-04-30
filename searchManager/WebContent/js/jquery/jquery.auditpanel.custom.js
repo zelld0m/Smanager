@@ -52,9 +52,9 @@
 				content+= '<ul id="itemListing" class="fsize11 marT10">';
 				content+= '<li id="itemPattern" class="clearfix marT8" style="display:none">';
 				content+= '	<img src="" class="avatar floatL marR8 marL5" width="45px">';
-				content+= '	<p class="breakWord floatL fwhite" style="width:143px">';
+				content+= '	<p class="breakWord floatL fgray" style="width:143px">';
 				content+= '		<span class="user"></span>';
-				content+= '		<span class="page"></span>';
+				content+= '		<span class="page"></span> <br>';
 				content+= '		<span class="duration"></span>';
 				content+= '	</p>';
 				content+= '</li>';

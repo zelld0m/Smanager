@@ -27,8 +27,7 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
   			<ul id="dockIcon">
   				<li id="Basket" class="basket">
   				<a href="javascript:void(0);">
-  				<div style="position:absolute; background:#c40000; color:#fff; padding:1px; font-size:10px; font-family: arial; margin:1px; -webkit-border-radius: 2px; 
--moz-border-radius:2px; border-radius: 2px; top:-4px; shadow:1px 3px 3px 1px #333 ">134</div> 
+  				<div class="noticeBox" style=" ">134</div> 
 				</a>
 				</li>
   				<li id="Online" class="online"><a href="javascript:void(0);"></a></li>
