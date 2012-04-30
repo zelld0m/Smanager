@@ -12,7 +12,7 @@
 	var addItemFieldDefaultText = "Enter SKU #";
 	var dateMinDate = -2;
 	var dateMaxDate = "+1Y";
-	var defaultItemDisplay = "sortableGrid";
+	var defaultItemDisplay = "sortableTile";
 	
 	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
@@ -396,7 +396,7 @@
 		showExclude();
 	};
 
-	setItemDisplay = function(){
+	var setItemDisplay = function(){
 
 		$("#sortable-bigbets").removeClass("sortableTile");
 		$("#sortable-bigbets").removeClass("sortableList");
@@ -412,8 +412,10 @@
 
 	var init = function() {
 		setItemDisplay();
+		setItemFilter();
 		showExclude();
 	};
+	
 	$(document).ready(function() { 
 
 		$("#filterDisplay").on({

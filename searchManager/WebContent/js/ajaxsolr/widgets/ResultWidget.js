@@ -328,7 +328,7 @@
 								contentHolder.find("#listItemsPattern" + id + " > div > div > a#deleteIcon" + id).click({edp: list[i].edp},function(e){
 									var edp = e.data.edp;
 									if (confirm("Continue?")){
-										ElevateServiceJS.removeElevate(keyword, edp, {
+										ElevateServiceJS.deleteItemInRule(keyword, edp, {
 											callback : function(data){
 												contentHolder.find("a#removeBtn").attr("style","display:none");
 												contentHolder.find("#aElevatePosition_"+edp).val("");
@@ -420,7 +420,7 @@
 							});
 
 							// Set maximum elevate position
-							ElevateServiceJS.getElevatedProductCount(keyword, {
+							ElevateServiceJS.getTotalProductInRule(keyword, {
 								callback: function(count){
 									switch(count){
 									case 0:

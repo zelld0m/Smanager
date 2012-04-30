@@ -121,7 +121,7 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int removeElevate(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String productId) {
 		try {
 			logger.info(String.format("%s %s", keyword, productId));
 			String store = UtilityService.getStoreName();
