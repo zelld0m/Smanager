@@ -273,7 +273,7 @@
 			mouseenter: showHoverInfo,
 			click: function(e){
 				if(!e.data.locked && confirm(clearRuleConfirmText))
-					ElevateServiceJS.clearRule(selectedRule.ruleName, {
+					ExcludeServiceJS.clearRule(selectedRule.ruleName, {
 						callback: function(data){
 							showExclude();
 						}
