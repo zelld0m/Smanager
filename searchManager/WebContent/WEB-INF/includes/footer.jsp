@@ -1,10 +1,11 @@
-<!--  scroller -->
+<!--  scroller 
 <script type="text/javascript" src="<spring:url value="/js/scroller/dom-drag.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/scroller/ypSimpleScrollC.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/scroller/scroller.js" />"></script>
 <script type="text/javascript">
 instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
-</script>
+</script>-->
+
 
 	<!--Footer-->
     <div class="clearB"></div>
