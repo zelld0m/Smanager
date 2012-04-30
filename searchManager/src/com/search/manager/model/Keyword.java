@@ -42,6 +42,16 @@ public class Keyword implements Serializable {
 		this.keyword = keyword;
 	}
 	
+	@RemoteProperty
+	public String getRuleId(){
+		return getKeywordId();
+	}
+	
+	@RemoteProperty
+	public String getRuleName(){
+		return getKeyword();
+	}
+	
 	@Override
 	public String toString() {
 		return "(Keyword Id: " + keywordId + "\tKeyword: " + keyword + ")";

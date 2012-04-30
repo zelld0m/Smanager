@@ -833,15 +833,17 @@
 		prepareRelevancy();
 		$("#preloader").hide();
 		resetInputFields("#relevancy");
-
-		getRelevancyRuleList(1);
 		
+		getRelevancyRuleList(1);
+		getRelevancyRuleKeywordList(1);
+
 		if(selectedRule==null){
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			return;
 		}
 
+		
 		$("#submitForApproval").show();
 		$("#relevancy").show();
 
@@ -1202,6 +1204,8 @@
 								callback:function(code){
 									showActionResponse(code, "delete", name);
 									getKeywordInRuleList(1);
+									getRelevancyRuleList(1);
+									getRelevancyRuleKeywordList(1);
 								},
 								preHook: function(){ base.prepareList(); }
 							});
@@ -1214,6 +1218,8 @@
 					callback: function(code){
 						showActionResponse(code, "add", keyword);
 						getKeywordInRuleList(1);
+						getRelevancyRuleList(1);
+						getRelevancyRuleKeywordList(1);
 					},
 					preHook: function(){ base.prepareList(); }
 				});

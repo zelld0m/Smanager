@@ -170,6 +170,7 @@
 								callback:function(code){
 									showActionResponse(code, "delete", name);
 									getKeywordInRuleList(1);
+									getRedirectRuleList(1);
 								},
 								preHook: function(){ base.prepareList(); }
 							});
@@ -183,6 +184,7 @@
 						callback: function(code){
 							showActionResponse(code, "add", keyword);
 							getKeywordInRuleList(1);
+							getRedirectRuleList(1);
 						},
 						preHook: function(){ base.prepareList(); }
 					});

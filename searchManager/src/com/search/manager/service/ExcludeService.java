@@ -31,25 +31,26 @@ public class ExcludeService {
 
 	@Autowired private DaoService daoService;
 
-	
+
 	@RemoteMethod
-	public int addExcludeByPartNumber(String keyword, String partNumber, int sequence, String expiryDate, String comment) {
+	public int addItemToRuleUsingPartNumber(String keyword, String expiryDate, String comment, String[] partNumbers) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, partNumber, sequence));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 
-			String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-			ExcludeResult e = new ExcludeResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(edp);
-			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			if (StringUtils.isNotBlank(edp)){
-				return daoService.addExcludeResult(e);
+			for(String partNumber: partNumbers){
+				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+				ExcludeResult e = new ExcludeResult();
+				e.setStoreKeyword(new StoreKeyword(store, keyword));
+				e.setEdp(edp);
+				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setCreatedBy(UtilityService.getUsername());
+				e.setComment(UtilityService.formatComment(comment));
+				if (StringUtils.isNotBlank(edp)){
+					return daoService.addExcludeResult(e);
+				}
 			}
 			return 0;
 		} catch (DaoException e) {
@@ -57,7 +58,7 @@ public class ExcludeService {
 		}
 		return -1;
 	}
-	
+
 	@RemoteMethod
 	public int addExclude(String keyword, String edp, String expiryDate) {
 		try {
@@ -78,7 +79,7 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int removeExclude(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String productId) {
 		try {
 			String store = UtilityService.getStoreName();
 
@@ -112,13 +113,13 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public Integer getExcludedProductCount(String keyword) {
+	public Integer getTotalProductInRule(String ruleId) {
 		try {
-			logger.info(String.format("%s", keyword));
+			logger.info(String.format("%s", ruleId));
 			String store = UtilityService.getStoreName();
-			ExcludeResult e = new ExcludeResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null, null, null);
+			ExcludeResult rule = new ExcludeResult();
+			rule.setStoreKeyword(new StoreKeyword(store, ruleId));
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(rule, null, null, null, null);
 			return daoService.getExcludeResultCount(criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExcludedProductCount",e);
@@ -206,7 +207,7 @@ public class ExcludeService {
 		}
 		return -1;
 	}
-	
+
 	@RemoteMethod
 	public Product getExcludedProduct(String keyword, String productId) {
 		try {
@@ -228,7 +229,7 @@ public class ExcludeService {
 		Product elevatedProduct = getExcludedProduct(keyword, productId);
 		if (elevatedProduct == null)
 			return StringUtils.EMPTY;
-		
+
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
 
@@ -261,7 +262,7 @@ public class ExcludeService {
 		}
 		return 0;
 	}
-	
+
 	public DaoService getDaoService() {
 		return daoService;
 	}

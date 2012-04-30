@@ -374,7 +374,7 @@
 									if(ruleStatus!=null && $.inArray(ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0){
 										contentHolder.find("#removeBtn,#saveBtn, .deleteIcon").hide();
 										contentHolder.find("#listItems_" + doc.EDP).sortable("option", "disabled", true);
-										contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker("option", "disabled", true);
+										contentHolder.find("#aExpiryDate_"+ doc.EDP).datepicker("option", "disabled", true);
 									}
 								}
 							});
@@ -399,7 +399,7 @@
 						modal:  true
 					},
 					events: {
-						render: function(event, api) {
+						show: function(event, api) {
 							var contentHolder = $('div', api.elements.content);
 
 							contentHolder.html(content);

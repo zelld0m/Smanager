@@ -7,7 +7,7 @@
 	var sortablePageSize = 6;
 	var sortableAddDefaultSearchText = "Enter SKU #";
 	var sortablePopupAddDefaultText = "SKU #";
-	
+
 	var expDateMinDate = -2;
 	var expDateMaxDate = "+1Y";
 	var lockedItemText = "This item is locked";
@@ -23,11 +23,12 @@
 	var keywordSearchText = "Search Keyword";
 	var itemDeleteConfirmText = "This will remove item associated to this rule. Continue?";
 	var ruleClearConfirmText = "This will remove all items associated to this rule. Continue?";
+	var dateTimeFormat = "M dd, yy";
 	var isRuleLocked = false;
 	var ruleStatus = null;
 
 	$(document).ready(function() { 
-		
+
 		updateSortableItemPosition = function(edp, destinationIndex) {
 			if ($.isNotBlank(getSelectedKeyword())){
 				ElevateServiceJS.updateElevate(getSelectedKeyword(),edp,destinationIndex, {
@@ -62,40 +63,44 @@
 				},
 
 				itemOptionCallback: function(base, id, name){
+
+					var rStatus = null; 
+					var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
+
 					DeploymentServiceJS.getRuleStatus("elevate", name, {
 						callback:function(data){
+							rStatus = data;
 							var status = (data==null) ? "" : data["approvalStatus"];
+							switch (status){
+							case "REJECTED": base.$el.find(selector + ' div.itemSubText').html("Action Required"); break;
+							case "PENDING": base.$el.find(selector + ' div.itemSubText').html("Awaiting Approval"); break;
+							case "APPROVED": base.$el.find(selector + ' div.itemSubText').html("Ready For Production"); break;
+							default: base.$el.find(selector + ' div.itemSubText').html("Setup a Rule"); break;
+							}
+						},
+						postHook: function(){
 							ElevateServiceJS.getElevatedProductCount(name,{
 								callback: function(count){
+
 									var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
-									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html(totalText);
+									base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-									switch (status){
-									case "REJECTED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Action Required"); break;
-									case "PENDING": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Awaiting Approval"); break;
-									case "APPROVED": base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Ready For Production"); break;
-									default: base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemSubText').html("Setup a Rule"); break;
-									}
-
-									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').on({
+									base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
 										click: function(e){
 											$("#titleText").html("Elevate List for ");
 											$("#keywordHeader").html(e.data.name);
 											$("div#addSortableHolder").show();
+											clearAllQtip();
 											ruleStatus = e.data.status;
 											isRuleLocked = ruleStatus!=null && ruleStatus["locked"];
 											updateSortableList(e.data.name, 1);
 											addEventListener();
-										}},{name:name, status: data});
+										}},{name:name, status: rStatus});
 								},
 								preHook: function(){ 
 									base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 								}
 							});
-
-						},
-						preHook: function(){ 
-							base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
 						}
 					});
 				},
@@ -105,10 +110,9 @@
 						callback : function(data){
 							switch (data){
 							case -1: alert("Duplicate entry for '" + keyword + "'."); break;
-							case 0: alert("Error encountered while adding '" + keyword + "'."); break;
-							default: 
-								base.getList(keyword, 1);
-							alert(headerText + ' "' + keyword + '" added successfully.');
+							case  0: alert("Error encountered while adding '" + keyword + "'."); break;
+							default: base.getList(keyword, 1);
+							alert(keywordHeaderText + ' "' + keyword + '" added successfully.');
 							};
 						}
 					});
@@ -119,7 +123,7 @@
 		var removeItem = function(e){
 			if (!isRuleLocked && confirm(itemDeleteConfirmText)){
 				var item = e.data.item;
-				var deleteSelector = '#sItemDelete' + formatToId(item.edp);
+				var deleteSelector = '#sItemDelete' + $.formatAsId(item.edp);
 				var edp = item.edp;
 
 				// adjust active paging, 1 sibling because of hidden pattern used for cloning
@@ -161,19 +165,6 @@
 		},{text:sortableAddDefaultSearchText}
 		);
 
-
-		formatToId = function(keyword){
-			return "_".concat(keyword.replace(/ /g,"_").toLowerCase());
-		},
-
-		escapeQuotes = function(id) {
-			return id.replace(/\"/g, "\\\"").replace(/\'/g, "\\\'");
-		},
-
-		formatToEDP = function(id){
-			return id.replace(/sItemPattern_/g,"");
-		},
-
 		getKeyword = function(){
 			var keyword = $.trim(dwr.util.getValue("searchFilter"));
 			if (keyword.toLowerCase() == keywordDefaultSearchText.toLowerCase())
@@ -198,7 +189,7 @@
 		},
 
 		refreshItemForUpdate = function(sortableItem){
-			id = formatToId(sortableItem.edp); 
+			id = $.formatAsId(sortableItem.edp); 
 			var disableCalendar = false;
 
 			$("#sItemImg" + id).attr("src",sortableItem.imagePath);
@@ -213,35 +204,38 @@
 			$("#sortableBox" + id).html($("#sortableBox" + id).html().replace("%%store%%",storeLabel));
 
 			$('#commentIcon' + id).on({
-				click: showComment
+				click: showCommentList
 			}, {locked: isRuleLocked, item: sortableItem});
-			
+
+			$('#auditIcon' + id).on({
+				click: showAuditList
+			}, {locked: isRuleLocked, item: sortableItem});
+
 			$('#sItemDelete' + id).on({
 				click: removeItem,
 				mouseenter:showHoverInfo
 			}, {locked: isRuleLocked, item: sortableItem});
-			
-			
+
 			$("#sItemPosition" + id).val(sortableItem.location);
 
 			$('#sItemPosition' + id).on({
 				keydown:function(e){
-				var currentIndex = $.trim(($(this).parent("li").index()+1) + ((sortablePage-1)*sortablePageSize));
+					var currentIndex = $.trim(($(this).parent("li").index()+1) + ((sortablePage-1)*sortablePageSize));
 
-				var code = (e.keyCode ? e.keyCode : e.which);
-				if(code == 13) { 
-					var destinationIndex = $.trim($(this).val());
-					if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
-						if(destinationIndex > sortableTotalItems){
-							alert("Maximum allowed value is " + (sortableTotalItems));
-						}else{
-							updateSortableItemPosition(sortableItem.edp, destinationIndex);
-							updateSortableList(getSelectedKeyword(), sortablePage);
+					var code = (e.keyCode ? e.keyCode : e.which);
+					if(code == 13) { 
+						var destinationIndex = $.trim($(this).val());
+						if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
+							if(destinationIndex > sortableTotalItems){
+								alert("Maximum allowed value is " + (sortableTotalItems));
+							}else{
+								updateSortableItemPosition(sortableItem.edp, destinationIndex);
+								updateSortableList(getSelectedKeyword(), sortablePage);
+							}
 						}
 					}
-				}
-			},
-			mouseenter:showHoverInfo
+				},
+				mouseenter:showHoverInfo
 			},{locked: isRuleLocked});
 
 			if (sortableItem.isExpired)
@@ -300,13 +294,8 @@
 
 		cleanUpSortableList = function() {
 			$("#sortable-bigbets-container > .circlePreloader").remove();
-
-			if (isRuleLocked){
-				$("input#addSortable").attr("readonly", "readonly");
-				$("input.sItemPosition").attr("readonly", "readonly");
-			}
 		};
-
+		
 		updateSortableList = function(keyword, page) {
 			sortablePage = page;
 
@@ -324,13 +313,8 @@
 					// Create a new set cloned from the pattern row
 					var sortableItem, id;
 
-					$.isNotBlank(getSelectedKeyword())?  $("#submitForApproval").show() : $("#submitForApproval").hide();
-
-					if(ruleStatus!=null){
-						$("span#status").html(ruleStatus["approvalStatus"]);
-						$("span#statusDate").html(ruleStatus["lastModifiedDate"]);
-					}
-
+					showDeploymentStatusBar(ruleStatus);
+					
 					//TODO: Should be configurable
 					if (sortableTotalItems == 0){
 						$("#clearRule").hide();
@@ -347,14 +331,14 @@
 
 					for (var i = 0; i < sortableList.length; i++) {
 						sortableItem = sortableList[i];
-						id = formatToId(sortableItem.edp);
+						id = $.formatAsId(sortableItem.edp);
 						dwr.util.cloneNode("sItemPattern", { idSuffix:id });
 						refreshItemForUpdate(sortableItem);
 						$("#sItemPattern" + id).attr("style", "display:block"); 		
 					};
 
 					var pagingText = sortableTotalItems == 0   ? "" : showPaging(sortablePage,sortablePageSize,sortableTotalItems,keyword); 				    
-					sortableTotalItems == 0 ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
+					(sortableTotalItems == 0 && getItemFilter()=="all") ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
 				},
 				preHook: function(){ prepareSortableList(); },
 				postHook: function(){ cleanUpSortableList(); }
@@ -445,7 +429,7 @@
 							api.destroy();
 						}
 					}
-				}).click(function(e) { e.preventDefault(); });
+				});
 			}
 		};
 		/*-- END --*/
@@ -499,21 +483,21 @@
 			$("#sortable-bigbets").sortable("option", "disabled", value=="all" ? true: true );
 		};
 		/*-- END filter display --*/
-		
+
 		var submitForApprovalHandler = function(){
 			$("a#submitForApprovalBtn").on({
 				click: function(){
 					if(confirm("This elevate rule will be locked for approval. Continue?"))
 						DeploymentServiceJS.processRuleStatus("Elevate", getSelectedKeyword(), getSelectedKeyword(), false,{
 							callback: function(data){
-								populateKeywordList();
-								updateSortableList();
+								ruleStatus = data;
+								init
 							}
 						});
 				}
 			});
 		};
-		
+
 		$("a#downloadIcon").on({click:showDownloadOption}, {
 			selector: "#downloadIcon",
 			template: "#downloadTemplate",
@@ -525,17 +509,17 @@
 		});
 
 		/* START: Event Listener */
-		
+
 		var addEventListener = function(){
-			$("a#addSortableBtn").on({
+			$("a#addSortableBtn").off().on({
 				click: showAddItemOption, 
 				mouseenter: showHoverInfo
-				},{locked: isRuleLocked});
-			
-			$("a#clearRuleBtn").on({
+			},{locked: isRuleLocked});
+
+			$("a#clearRuleBtn").off().on({
 				mouseenter: showHoverInfo,
 				click: function(e){
-					if(confirm(ruleClearConfirmText))
+					if(!isRuleLocked && confirm(ruleClearConfirmText))
 						ElevateServiceJS.clearRule(getSelectedKeyword(), {
 							callback: function(data){
 								updateSortableList();
@@ -544,7 +528,7 @@
 				}
 			},{locked: isRuleLocked});
 		};
-		
+
 		var init = function() {
 			dwr.util.setValue("searchFilter",keywordDefaultSearchText);
 			dwr.util.setValue("addSortable",sortableAddDefaultSearchText);

@@ -33,19 +33,4 @@ public class ElevateProduct extends Product {
 	public void setLocation(Integer location) {
 		this.location = location;
 	}
-	
-	//TODO: message should be configurable
-	public String getValidityText() {
-
-		if (getExpiryDate()==null) return "";
-			
-		Date dateNow = new Date();
-
-		long dateNowMS = DateAndTimeUtils.getDate(getStore(), dateNow).getTime();
-		long validityMS = DateAndTimeUtils.getDate(getStore(), getExpiryDate()).getTime();
-		long diff = validityMS - dateNowMS;
-		long diffDays = diff / (24 * 60 * 60 * 1000);
-		
-		return diffDays > 0 ? String.format("%s %s", String.valueOf(diffDays), diffDays==1? "day left" : "days left"): (diffDays == 0 ? "Ending Today" : "");
-	}
 }

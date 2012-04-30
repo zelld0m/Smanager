@@ -35,7 +35,7 @@
 			content+= '<div class="viewport">';
 			content+= '<div class="overview">';
 			content+= '<div id="auditPanelContent">';
-			
+			 
 			if (base.options.type==="audit"){
 				content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
 				content+= '<li id="itemPattern" class="items" style="display:none">';
@@ -52,9 +52,9 @@
 				content+= '<ul id="itemListing" class="fsize11 marT10">';
 				content+= '<li id="itemPattern" class="clearfix marT8" style="display:none">';
 				content+= '	<img src="" class="avatar floatL marR8 marL5" width="45px">';
-				content+= '	<p class="breakWord floatL" style="width:143px">';
-				content+= '		<span class="user"></span>';
-				content+= '		<span class="page"></span>';
+				content+= '	<p class="breakWord floatL fgray" style="width:143px">';
+				content+= '		<span class="user"></span> <br>';
+				content+= '		<img src="../images/icon_page13.png" class="marBn3 border0" /> <span class="page"></span> <br>';
 				content+= '		<span class="duration"></span>';
 				content+= '	</p>';
 				content+= '</li>';
