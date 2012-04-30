@@ -364,7 +364,7 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_RULE_NAME, null);
 			inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, null);
 	        inputs.put(DAOConstants.PARAM_STORE_ID, redirectRule.getStoreId());
-			inputs.put(DAOConstants.PARAM_SEARCH_TERM, StringUtils.trimToNull(redirectRule.getSearchTerm()));	        
+			inputs.put(DAOConstants.PARAM_SEARCH_TERM, redirectRule.getSearchTerm());	        
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, null);	        
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
