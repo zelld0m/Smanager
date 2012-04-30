@@ -3,9 +3,11 @@
 	var selectedRule = null;
 	var selectedRuleStatus = null;
 
+	var selectedRuleItemPage = 1;
 	var selectedRulePage = 1;
-	var rulePageSize = 5;
-	var ruleItemPageSize = 10;
+
+	var rulePageSize = 10;
+	var ruleItemPageSize = 6;
 	
 	var addItemFieldDefaultText = "Enter SKU #";
 	var dateMinDate = -2;
@@ -98,7 +100,7 @@
 
 	var populateItem = function(page){
 		var totalItem = 0; 
-		selectedRulePage = page;
+		selectedRuleItemPage = page;
 		ExcludeServiceJS.getProducts(getItemFilter(), selectedRule.ruleName, page, ruleItemPageSize, {
 			callback: function(data){
 				totalItem = data.totalSize;
@@ -227,6 +229,7 @@
 	};
 
 	var showExclude = function(){
+		getExcludeRuleList();
 		prepareExclude();
 		$("#preloader").hide();
 
@@ -235,8 +238,6 @@
 			$("#titleText").html(moduleName);
 			return;
 		}
-
-		getExcludeRuleList();
 
 		$("#submitForApproval").show();
 		$("#exclude").show();
@@ -264,7 +265,7 @@
 			title: "Download Page",
 			keyword: selectedRule.ruleName,
 			filter: getItemFilter,
-			itemPage: selectedRulePage,
+			itemPage: selectedRuleItemPage,
 			itemPageSize:ruleItemPageSize
 		});
 		
@@ -371,8 +372,8 @@
 
 			itemAddCallback: function(base, keyword){
 				StoreKeywordServiceJS.addKeyword(keyword,{
-					callback : function(data){
-						showActionResponse(code, "delete", selectedRule.ruleName);
+					callback : function(code){
+						showActionResponse(code, "add", selectedRule.ruleName);
 						if(code==1){
 							base.getList(keyword, 1);
 							setExclude();
@@ -412,7 +413,6 @@
 	var init = function() {
 		setItemDisplay();
 		showExclude();
-		getExcludeRuleList();
 	};
 	$(document).ready(function() { 
 

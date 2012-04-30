@@ -11,10 +11,13 @@
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
-<div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
-	<!-- Keyword -->
+	<div class="companyLogo">
+		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+	</div>
+	
 	<div class="clearB floatL w240">
-	 	<div id="keywordList"></div>
+		<div id="rulePanel"></div>
+	    <div class="clearB"></div>
 	</div>
 </div>
 <!--Left Menu-->
@@ -50,7 +53,7 @@
 	<div class="floatL w730 titlePlacer">
 	  <div class="w535 padT10 padL10 floatL fsize20 fnormal">
 		<span id="titleText"></span>
-		<span id="keywordHeader" class="fLblue fnormal"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
 	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
 		<!--  input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value=""-->
@@ -156,6 +159,9 @@
    
   <!--Start Displaying Items-->
   <div id="sortable-bigbets-container" class="clearB floatL w730">
+  <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="elevate">
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">
      	<div id="addCommentTemplate" style="display: none">
@@ -247,6 +253,7 @@
       </div>		        
      </li>
     </ul>
+    </div>
   </div>
   <!--End Displaying Items-->
   
