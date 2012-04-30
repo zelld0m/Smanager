@@ -4,19 +4,21 @@
 	var selectedRuleStatus = null;
 
 	var selectedRuleItemPage = 1;
+	var selectedRuleItemTotal = 0;
 	var selectedRulePage = 1;
 
 	var rulePageSize = 10;
 	var ruleItemPageSize = 6;
-	
+
 	var addItemFieldDefaultText = "Enter SKU #";
 	var dateMinDate = -2;
 	var dateMaxDate = "+1Y";
-	var defaultItemDisplay = "sortableGrid";
+	var defaultItemDisplay = "sortableTile";
 
 	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
+
 
 	var showAddItem = function(e){
 		if (e.data.locked) return;
@@ -99,16 +101,16 @@
 	};
 
 	var populateItem = function(page){
-		var totalItem = 0; 
 		selectedRulePage = page;
+		selectedRuleItemTotal = 0;
 		ElevateServiceJS.getProducts(getItemFilter(), selectedRule.ruleName, page, ruleItemPageSize, {
 			callback: function(data){
-				totalItem = data.totalSize;
+				selectedRuleItemTotal = data.totalSize;
 				var list = data.list;
 				var item, id;
 
 				$('#sortable-bigbets li:not(#sItemPattern)').remove();
-				for (var i = 0; i < totalItem; i++) {
+				for (var i = 0; i < selectedRuleItemTotal; i++) {
 					item = list[i];
 					if(item!=null){
 						id = $.formatAsId(item["edp"]);
@@ -118,8 +120,8 @@
 					}
 				};
 
-				showPaging(page, totalItem);
-				showDisplayOption(totalItem);
+				showPaging(page);
+				showDisplayOption();
 			}
 		});
 	};
@@ -139,6 +141,17 @@
 		}
 	};
 
+	var updateRuleItemPosition = function(edp, destinationIndex) {
+		ElevateServiceJS.updateElevate(selectedRule.ruleName,edp,destinationIndex, {
+			callback : function(data){
+				showElevate();
+			},
+			preHook: function(){
+				prepareElevate();
+			}
+		});
+	};
+
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
 		var disableCalendar = false;
@@ -152,6 +165,7 @@
 		$("#sItemModBy" + id).html(item["lastModifiedBy"]);
 		$("#sItemModDate" + id).html(item["formattedLastModifiedDate"]);
 		$("#sItemValidityText" + id).html(item["validityText"]);
+		$("#sItemPosition" + id).val(item["location"]);
 
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
 
@@ -159,6 +173,45 @@
 			error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
 			}
 		});
+
+		if (selectedRuleStatus.locked)
+			$('#sItemPosition' + id).attr("readonly", "readonly");
+
+		$('#sItemPosition' + id).on({
+			keypress:function(e){
+				if (e.data.locked) return;
+
+				var currentIndex = $.trim(($(this).parent("li").index()+1) + ((selectedRuleItemPage-1)*ruleItemPageSize));
+
+				var code = (e.keyCode ? e.keyCode : e.which);
+
+				if(code == 13) { 
+					var destinationIndex = $.trim($(this).val());
+					if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
+						if(destinationIndex > selectedRuleItemTotal){
+							alert("Maximum allowed value is " + (selectedRuleItemTotal));
+						}else{
+							updateRuleItemPosition(item["edp"], destinationIndex);
+						}
+					}
+					return true;
+				}else{
+					if(code == 8) return true;
+					if(code < 32 || (code > 48 && code < 58)) return true;
+					alert("Should be numeric value");
+					return false;
+				}
+			},
+			focus:function(e){
+				if (e.data.locked) return; 
+				if ($(this).val()==item["location"]) $(this).val("");
+			},
+			blur:function(e){
+				if (e.data.locked) return; 
+				$(this).val(item["location"]);   
+			},	
+			mouseenter: showHoverInfo
+		},{locked: selectedRuleStatus.locked});
 
 		// Product is no longer visible in the setting
 		if ($.isBlank(item["dpNo"])){
@@ -169,6 +222,7 @@
 			$("#sItemDPNo" + id).html("Unavailable");
 			$("#sItemMfrPN" + id).html("Unavailable");
 			$("#sItemName" + id).html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+			$('#sItemPosition' + id).attr("readonly", "readonly");
 		}
 
 		$('#commentIcon' + id).on({
@@ -208,16 +262,16 @@
 
 	}; 
 
-	var showDisplayOption= function(count){
-		count == 0 && getItemFilter==="all" ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
+	var showDisplayOption= function(){
+		(selectedRuleItemTotal == 0 && getItemFilter==="all") ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
 	};
 
-	var showPaging = function(page, totalItem){
-		totalItem > 0 ? $("#sortablePagingTop, #sortablePagingBottom").show() : "";
+	var showPaging = function(page){
+		selectedRuleItemTotal > 0 ? $("#sortablePagingTop, #sortablePagingBottom").show() : "";
 		$("#sortablePagingTop, #sortablePagingBottom").paginate({
 			currentPage:page, 
 			pageSize:ruleItemPageSize,
-			totalItem:totalItem,
+			totalItem:selectedRuleItemTotal,
 			callbackText: function(itemStart, itemEnd, itemTotal){
 				var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
 				return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
@@ -229,7 +283,7 @@
 	};
 
 	var showElevate = function(){
-		getElevateRuleList();
+		getElevateRuleList(1);
 		prepareElevate();
 		$("#preloader").hide();
 
@@ -397,7 +451,7 @@
 		showElevate();
 	};
 
-	setItemDisplay = function(){
+	var setItemDisplay = function(){
 
 		$("#sortable-bigbets").removeClass("sortableTile");
 		$("#sortable-bigbets").removeClass("sortableList");
@@ -413,11 +467,11 @@
 
 	var init = function() {
 		setItemDisplay();
+		setItemFilter();
 		showElevate();
 	};
-	
-	$(document).ready(function() { 
 
+	$(document).ready(function() { 
 		$("#filterDisplay").on({
 			change: function(e){
 				setItemFilter($(this).val());
