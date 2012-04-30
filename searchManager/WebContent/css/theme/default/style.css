@@ -197,13 +197,13 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.styleANext:hover, .styleANext:hover, a.active div.styleANext,
 .cssReset a.active div.styleANext	{ background-position: -48px -461px; }
 
-.cssReset a div.styleAFirst, .styleAFirst		{ background-position: -32px -479px; width: 13px; height: 14px; }  
+.cssReset a div.styleAFirst, .styleAFirst		{ background-position: -32px -497px; width: 13px; height: 14px; }  
 .cssReset a div.styleAFirst:hover, .styleAFirst:hover, a.active div.styleAFirst,
-.cssReset a.active div.styleAFirst	{ background-position: -48px -479px; }
+.cssReset a.active div.styleAFirst	{ background-position: -48px -497px; }
 
-.cssReset a div.styleALast, .styleALast	{ background-position: -32px -497px; width: 13px; height: 14px; }  
+.cssReset a div.styleALast, .styleALast	{ background-position: -32px -479px; width: 13px; height: 14px; }  
 .cssReset a div.styleALast:hover, .styleALast:hover, a.active div.styleALast,
-.cssReset a.active div.styleALast	{ background-position: -48px -497px;}
+.cssReset a.active div.styleALast	{ background-position: -48px -479px; }
 
 .btn-refresh					{ float:right; display:inline; width:50px; position:relative; bottom:-6px; margin-right:-5px }
 
