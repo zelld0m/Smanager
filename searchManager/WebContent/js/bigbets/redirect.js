@@ -22,6 +22,7 @@
 	var deleteKeywordInRuleConfirmText = "Continue deleting this keyword?";
 
 	var prepareRedirect = function(){
+		clearAllQtip();
 		$("#preloader").show();
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
@@ -47,6 +48,7 @@
 
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
+		
 		$("#name").val(selectedRule.ruleName);
 		$("#description").val(selectedRule.description);
 
@@ -327,10 +329,10 @@
 	};
 
 	var checkIfUpdateAllowed = function(){
-		var ruleName = $.trim($("#name").val());  
-		var description = $.trim($("#description").val());  
+		var ruleName = $.trim($('div#redirect input[id="name"]').val());  
+		var description = $.trim($('div#redirect textarea[id="description"]').val());  
 		isDirty = false;
-		console.log(selectedRule);
+		
 		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
 		isDirty = isDirty || (description.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
@@ -343,8 +345,8 @@
 	var updateRule = function(e) { 
 		if (e.data.locked) return;
 
-		var ruleName = $.trim($("#name").val());  
-		var description = $.trim($("#description").val());  
+		var ruleName = $.trim($('div#redirect input[id="name"]').val());  
+		var description = $.trim($('div#redirect textarea[id="description"]').val());  
 
 		if (checkIfUpdateAllowed()){
 			var response = 0;
