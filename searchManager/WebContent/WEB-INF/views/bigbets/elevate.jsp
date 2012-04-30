@@ -11,10 +11,13 @@
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
-<div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
-	<!-- Keyword -->
+	<div class="companyLogo">
+		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+	</div>
+	
 	<div class="clearB floatL w240">
-	 	<div id="keywordList"></div>
+		<div id="rulePanel"></div>
+	    <div class="clearB"></div>
 	</div>
 </div>
 <!--Left Menu-->
@@ -50,23 +53,31 @@
 	<div class="floatL w730 titlePlacer">
 	  <div class="w535 padT10 padL10 floatL fsize20 fnormal">
 		<span id="titleText"></span>
-		<span id="keywordHeader" class="fLblue fnormal"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
 	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
-		<input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value="">
+		<!--  input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value=""-->
 		<a href="javascript:void(0);" id="addSortableBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
 	  </div>
 	 </div>
 	  
 	 <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div id="" class="clearfix txtAL w730" style="background:#e8e8e8">	        	
+	        <div id="" class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
 	        	<div class="floatL padT10 padL10" style="width:60%" >
-	        	<label class="floatL wAuto fbold">Status:</label>
-	        	<label class="padL5">
-	        		<span id="status"></span> 
-	        		<span id="statusDate" class="fsize11 forange padL5"></span> 
-	        	</label>		        	
-		        <!--  label class="floatL wAuto fbold">Status Date : </label> <label  class="floatL w100 padL5">04/12/12  8:00PM</label -->
+	        		<div id="statusHolder">
+			        	<label class="floatL wAuto">Status:</label>
+			        	<label class="floatL wAuto padL5 fsize11 fLgray">
+			        		<span id="status"></span> 
+			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
+			        	</label>
+			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
+		        	</div>
+		        	<div id="publishHolder">
+			        	<label class="floatL wAuto">Last Published:</label>
+			        	<label class="padL5 fLgray fsize11">
+			        		<span id="statusDate"></span> 
+			        	</label>
+		        	</div>
 			  	</div>   			  	
 	        	<div class="floatR marL8 marR3 padT5"> 	        		
 	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
@@ -148,6 +159,9 @@
    
   <!--Start Displaying Items-->
   <div id="sortable-bigbets-container" class="clearB floatL w730">
+  <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="elevate">
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">
      	<div id="addCommentTemplate" style="display: none">
@@ -207,7 +221,7 @@
        	
        	<div class="listInfo">
         	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
-        	<p class="textInfo"><span class="fgreen">%%store%% SKU #: </span><span id="sItemDPNo"></span></p>
+        	<p class="textInfo"><span class="fgreen">SKU #: </span><span id="sItemDPNo"></span></p>
         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 
         	<div class="borderT clearB"></div> 
@@ -239,6 +253,7 @@
       </div>		        
      </li>
     </ul>
+    </div>
   </div>
   <!--End Displaying Items-->
   

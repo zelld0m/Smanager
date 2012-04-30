@@ -55,7 +55,7 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int addElevateByPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
+	public int addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
 		try {
 			logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
 			String server = UtilityService.getServerName();
@@ -234,7 +234,7 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public Integer getElevatedProductCount(String keyword) {
+	public Integer getTotalProductInRule(String keyword) {
 		try {
 			logger.info(String.format("%s", keyword));
 			String store = UtilityService.getStoreName();
@@ -243,7 +243,7 @@ public class ElevateService{
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, null, null);
 			return daoService.getElevateResultCount(criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProductCount()",e);
+			logger.error("Failed during getTotalProductInRule()",e);
 		}
 		return null;
 	}

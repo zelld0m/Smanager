@@ -35,7 +35,7 @@
 			content+= '<div class="viewport">';
 			content+= '<div class="overview">';
 			content+= '<div id="auditPanelContent">';
-			
+			 
 			if (base.options.type==="audit"){
 				content+= '<ul id="itemListing" class="listSU fsize11 marT10">';
 				content+= '<li id="itemPattern" class="items" style="display:none">';

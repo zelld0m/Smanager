@@ -229,7 +229,8 @@ public class AuditInterceptor {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
 		String searchTerm = rule.getSearchTerm();
 		String condition = rule.getRedirectFilter(); 
-		auditTrail.setStoreId(rule.getStoreId());
+		//TODO fix this later 
+		auditTrail.setStoreId(UtilityService.getStoreName());
 		String refId = String.valueOf(rule.getRuleId());
 		auditTrail.setKeyword(searchTerm);
 		auditTrail.setReferenceId(refId);
