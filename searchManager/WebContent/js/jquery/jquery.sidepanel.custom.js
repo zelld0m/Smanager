@@ -18,16 +18,36 @@
 			base.populateTemplate();
 			base.getList("", base.options.page);
 
-			base.timeout = "";
+			base.searchActivated = false;
+			base.oldSearch = "";
+			base.newSearch = "";			
+
+			base.timeout = function(event){
+				if (!base.searchActivated) {
+					base.searchActivated = true;
+					base.sendRequest(event);
+				}
+			};
+			
+			base.sendRequest = function(event){
+				setTimeout(function(){
+					base.newSearch = $.trim($(event.target).val());
+					if (base.oldSearch != base.newSearch) {
+						base.getList($.trim($(event.target).val()), 1);
+						base.oldSearch = base.newSearch;
+						base.sendRequest(event);
+						base.newSearch = "";
+					}
+					else {
+					    base.searchActivated = false;
+					}
+				}, base.options.reloadRate);  
+			};
 			
 			base.$el.find('input[id="searchTextbox"]').on({
 				blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(base.options.searchText);},
 				focus: function(e){if ($.trim($(e.target).val()) == base.options.searchText) $(e.target).val("");},
-				keyup: function(e){
-					base.timeout = setTimeout(function(){
-							base.getList($.trim($(e.target).val()), 1);
-					}, base.options.reloadRate);  
-				}
+				keyup: base.timeout
 			});
 
 			base.$el.find('a#addButton').on({
