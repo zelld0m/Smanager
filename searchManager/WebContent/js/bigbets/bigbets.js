@@ -439,7 +439,7 @@
 							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
 							if ($.isNotBlank(comment)){
 								if(data.type==="Elevate"){
-									ElevateServiceJS.addComment(getSelectedKeyword(), edp, comment,{
+									ElevateServiceJS.addComment(data.name, edp, comment,{
 										callback: function(data){
 
 										},

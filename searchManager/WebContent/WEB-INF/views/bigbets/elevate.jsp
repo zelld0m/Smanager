@@ -55,10 +55,10 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-	   <div id="addSortableHolder" class="floatL w180 txtAR padT7" style="display: none">
-		<!--  input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10" value=""-->
-		<a href="javascript:void(0);" id="addSortableBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
-	  </div>
+	  <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
+      	<!--  input id="addItem" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10"-->
+      	<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      </div>
 	 </div>
 	  
 	 <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
@@ -99,6 +99,12 @@
 			<div id="addBySKU" class="mar0 borderT">
 				<h3 class="padT10"></h3>
 				<div class="clearB"></div>
+				
+				<div class="floatL marT5 marL5">
+					<label class="w60 floatL padT5">SKU #: (comma-delimited)</label> 
+					<label><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					</label>
+				</div>
 				<div class="floatL w155 marT5">
 					<label class="floatL w60 marL5 padT5">Valid Until:</label> 
 					<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>
@@ -109,11 +115,6 @@
 					<label><input id="addItemPosition" type="text" class="w25"></label>
 				</div>
 				<div class="clearB"></div>
-				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">SKU #: (comma-delimited)</label> 
-					<label><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
-					</label>
-				</div>
 				<div class="clearB"></div>
 				<div class="floatL marT5 marL5">
 					<label class="w60 floatL padT5">Comment: </label> 
