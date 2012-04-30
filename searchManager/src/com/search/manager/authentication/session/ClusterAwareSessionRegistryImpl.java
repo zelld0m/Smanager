@@ -24,7 +24,7 @@ public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 	
 	@Autowired DaoCacheService daoCacheService;
 	
-	Map<String, String> userMap = new ConcurrentHashMap<String, String>();
+	Map<String, List<String>> userMap = new ConcurrentHashMap<String, List<String>>();
 	Map<String, String> sessionMap = new ConcurrentHashMap<String, String>();
 	
 	@Override
@@ -53,8 +53,14 @@ public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 
 	@Override
 	public synchronized void registerNewSession(String sessionId, Object principal) {
-		userMap.put(principal.toString(), sessionId);
-		userMap.put(sessionId, principal.toString());
+		List<String> sessions = userMap.get(principal);
+		if (sessions == null) {
+			sessions = new ArrayList<String>();
+		}
+		sessions.add(sessionId);
+		userMap.put(principal.toString(), sessions);
+		
+		sessionMap.put(sessionId, principal.toString());
 		UserDetailsImpl user = new UserDetailsImpl();
 		user.setUsername(String.valueOf(principal));
 		try {
@@ -66,15 +72,18 @@ public class ClusterAwareSessionRegistryImpl extends SessionRegistryImpl {
 
 	@Override
 	public synchronized void removeSessionInformation(String sessionId) {
-		String user = sessionMap.remove(sessionId);
-		String sessId = userMap.get(user);
-		if (sessId.equals(sessionId)) {
-			userMap.remove(sessId);
-			try {
-				daoCacheService.logoutUser(user);
-			} catch (Exception e) {
-				logger.error("Failed to remove user from cache: " + user, e);
-			}
+		String principal = sessionMap.remove(sessionId);
+		if (principal != null) {
+			List<String> sessions = userMap.get(principal);
+			sessions.remove(sessionId);
+			if (sessions.isEmpty()) {
+				userMap.remove(principal);
+				try {
+					daoCacheService.logoutUser(principal);
+				} catch (Exception e) {
+					logger.error("Failed to remove user from cache: " + principal, e);
+				}
+			}			
 		}
 	}
 	
