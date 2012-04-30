@@ -702,6 +702,9 @@ span.duration								{ color:#3b79c2 }
 .ui-autocomplete-input { margin: 0; padding: 3px !important; }
 .ui-autocomplete { max-height: 140px; overflow-y: scroll; overflow-x: hidden; width:200px;}
 
+span.ui-button-text	{ display:none; }
+.ui-button-icon		{ position:relative; top:5px; height: 23px }
+
 
 
 

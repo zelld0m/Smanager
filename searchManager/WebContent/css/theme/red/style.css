@@ -681,4 +681,7 @@ span.duration								{ color:#3b79c2 }
    .ui-button-icon-only .ui-button-text { padding: 0.35em; }
    .ui-autocomplete-input { margin: 0; padding: 0.48em 0 0.47em 0.45em; }
    .ui-autocomplete { height: 200px; overflow-y: scroll; overflow-x: hidden;}
+   
+span.ui-button-text	{ display:none; }
+.ui-button-icon		{ position:relative; height: 23px }
 
