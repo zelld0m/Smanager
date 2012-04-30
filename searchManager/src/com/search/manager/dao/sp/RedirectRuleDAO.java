@@ -360,7 +360,7 @@ public class RedirectRuleDAO {
 		try {
 			RedirectRule redirectRule = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.trimToNull(redirectRule.getRuleId()));
+			inputs.put(DAOConstants.PARAM_RULE_ID, redirectRule.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, null);
 			inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, null);
 	        inputs.put(DAOConstants.PARAM_STORE_ID, redirectRule.getStoreId());
