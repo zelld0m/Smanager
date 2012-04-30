@@ -5,9 +5,8 @@
 
 	var selectedRulePage = 1;
 	var rulePageSize = 5;
-	var ruleItemPageSize = 6;
+	var ruleItemPageSize = 10;
 	
-
 	var addItemFieldDefaultText = "Enter SKU #";
 	var dateMinDate = -2;
 	var dateMaxDate = "+1Y";
