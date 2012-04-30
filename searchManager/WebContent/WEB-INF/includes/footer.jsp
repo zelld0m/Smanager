@@ -60,29 +60,8 @@ instantiateScroller(0, "scroll0", 7, 0, 220, 260, 260);
 					end basket -->
 				</div>
 				
-				<div class="infoContainer" id="dockOnline" style="display:none">			
-				<!-- online 
-					<div class="sideHeader posRel">
-						<h2 class="dockTitle">Online </h2>
-					</div>
-					<div class="root" id="root0">
-					<div class="scrollContainer" id="scroll0Container">
-					<div class="scrollContent" id="scroll0Content">
-					<div>
-						<ul class="listSU fsize11">
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-							<li class="clearfix marT5"><img src="<spring:url value="/images/noAvatar.jpg"/>" class="floatL marR8 marL5" width="45px" > <p class="breakWord floatL" style="width:143px"><div class="user">admin</div> online 2 hours </p></li>
-						</ul>
-					</div>
-					</div>
-					</div>
-					</div> 							
-				  end online -->	
-							
+				<div class="infoContainer" id="dockOnline" style="display:none">
+					<div id="onlineList"></div>			
 				</div>
 				
 				<div class="infoContainer" id="dockNotification" style="display:none">
