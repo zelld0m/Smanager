@@ -11,10 +11,10 @@ import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-
 public class FileUtil {
 	
 	public static final String XML_FILE_TYPE = ".xml";
+	public static final String path = PropsUtils.getValue("backuppath");
 	private static Logger logger = Logger.getLogger(FileUtil.class);
 
 	public static void createDirectory(String basePath,String directoryName) throws Exception{
@@ -183,6 +183,28 @@ public class FileUtil {
 
 		}catch(Exception e){}
 		return 0L;
+	}
+	
+	public static String getFilePath(String type ,String file, String xtn){
+		StringBuilder filePath = new StringBuilder(getFileDirectory(type, file)).append(File.separator).append(file+xtn);
+		return filePath.toString();
+	}
+	
+	public static String getFilePath(String type ,String file, String child, String xtn){
+		StringBuilder filePath = new StringBuilder(getFileDirectory(type, file, child)).append(File.separator).append(file+xtn);
+		return filePath.toString();
+	}
+	
+	public static String getFileDirectory(String type ,String file){
+		StringBuilder dir = new StringBuilder();
+		dir.append(path).append(File.separator).append(type).append(File.separator).append(file);
+		return dir.toString();
+	}
+	
+	public static String getFileDirectory(String type ,String file, String child){
+		StringBuilder dir = new StringBuilder();
+		dir.append(path).append(File.separator).append(type).append(File.separator).append(file).append(File.separator).append(child);
+		return dir.toString();
 	}
 	
 	private static Object[] getFileExtentions(){

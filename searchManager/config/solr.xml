@@ -44,7 +44,9 @@
   <server name='afs-pl-schpd07.afservice.org'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
   </server>
-  
+  <server name='search'>
+    <url>http://10.241.3.96:8080/solr14/(store)/</url>
+  </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath</fields>
     <query>json.nl=map%amp;wt=json%amp;fl=%amp;fq=(facet)_StoreFlag=true%amp;start=0</query>

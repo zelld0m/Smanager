@@ -34,7 +34,7 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getServerName(){
-		return "vtorschstg01";
+		return "search";
 	}
 
 	@RemoteMethod
