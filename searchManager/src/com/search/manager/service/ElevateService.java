@@ -73,7 +73,7 @@ public class ElevateService{
 				e.setCreatedBy(UtilityService.getUsername());
 				e.setComment(UtilityService.formatComment(comment));
 				if (StringUtils.isNotBlank(edp)){
-					daoService.addElevateResult(e);
+					return daoService.addElevateResult(e);
 				}
 			}
 			

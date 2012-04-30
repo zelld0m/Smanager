@@ -122,7 +122,7 @@
 					</label>
 				</div>
 				<div align="right">
-					<a id="addItemBtn" href="javascript:void(0);"
+					<a id="addItemToRuleBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div>
 					</a>
 					<a id="clearBtn" href="javascript:void(0);"

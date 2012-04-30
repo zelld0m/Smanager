@@ -64,11 +64,12 @@
 							var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
 
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
+							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
 							if ($.isNotBlank(skus) && commaDelimitedNumberPattern.test(skus)){
-								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
+								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
 										showActionResponse(code, "add", skus);
 										if (code==1) showElevate();
@@ -328,9 +329,9 @@
 			mouseenter: showHoverInfo,
 			click: function(e){
 				if(!e.data.locked && confirm(clearRuleConfirmText))
-					ElevateServiceJS.clearRule(getSelectedKeyword(), {
+					ElevateServiceJS.clearRule(selectedRule.ruleName, {
 						callback: function(data){
-							updateSortableList();
+							showElevate();
 						}
 					});
 			}

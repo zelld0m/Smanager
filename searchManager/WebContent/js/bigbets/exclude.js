@@ -273,9 +273,9 @@
 			mouseenter: showHoverInfo,
 			click: function(e){
 				if(!e.data.locked && confirm(clearRuleConfirmText))
-					ElevateServiceJS.clearRule(getSelectedKeyword(), {
+					ElevateServiceJS.clearRule(selectedRule.ruleName, {
 						callback: function(data){
-							updateSortableList();
+							showExclude();
 						}
 					});
 			}
