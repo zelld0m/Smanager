@@ -255,7 +255,7 @@ function initFileUploads() {
 
 		$("#onlineList").auditpanel({
 			fieldName: "username",
-			headerText : "Logged-in User",
+			headerText : "Online",
 			page: 1,
 			pageSize: 5,
 			type: "online",
