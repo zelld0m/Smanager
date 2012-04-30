@@ -49,16 +49,20 @@ public interface DaoService {
 	public RedirectRule getRedirectRule(RedirectRule redirectRule) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectRules(SearchCriteria<RedirectRule> searchCriteria) throws DaoException;
 	public int addRedirectRule(RedirectRule rule) throws DaoException;
+	public String addRedirectRuleAndGetId(RedirectRule rule) throws DaoException;
 	public int updateRedirectRule(RedirectRule rule) throws DaoException;
-	public int removeRedirectRule(RedirectRule rule) throws DaoException;
+	public int deleteRedirectRule(RedirectRule rule) throws DaoException;
 			
 	public int addRedirectKeyword(RedirectRule rule) throws DaoException;
-	public int removeRedirectKeyword(RedirectRule rule) throws DaoException;
+	public int deleteRedirectKeyword(RedirectRule rule) throws DaoException;
 	public int addRedirectCondition(RedirectRule rule) throws DaoException;
-	public int removeRedirectCondition(RedirectRule rule) throws DaoException;	
+	public int deleteRedirectCondition(RedirectRule rule) throws DaoException;	
 	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException;
+	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;
+	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
+			ExactMatch keywordExactMatch) throws DaoException;
 
 	/* Campaigns */
 	public int addCampaign(Campaign campaign) throws DaoException;
@@ -178,6 +182,7 @@ public interface DaoService {
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
+	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
 	
     /* Rule Status */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;

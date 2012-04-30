@@ -24,12 +24,14 @@ public class UserCacheDao {
 		} catch (Exception e) {
 			throw new DataException(e);
 		}
-		return CacheConstants.getCacheKey(CacheConstants.USER_CACHE_KEY, "");
+		return CacheConstants.getCacheKey(CacheConstants.USER_CACHE_KEY, username);
 	}
 	
 	public boolean addUser(UserDetailsImpl userDetails) {
 		try {
+			logger.debug("adding user: " + userDetails.getUsername());
 			localCacheService.putLocalCache(getCacheKey(userDetails.getUsername()), userDetails);
+logger.debug(getUser(userDetails.getUsername()).getLoggedIntime());							
 			return true;
 		} catch (DataException e) {
 			logger.error(e,e);
@@ -39,30 +41,37 @@ public class UserCacheDao {
 	
 	public boolean deleteUser(String username) {
 		try {
-			localCacheService.resetLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, username));
+			logger.debug("removing user: " + username);
+			localCacheService.resetLocalCache(getCacheKey(username));
 			return true;
 		} catch (DataException e) {
 			logger.error(e,e);
-		}		
+		}
 		return false;	
 	}
 	
 	public boolean updateUser(UserDetailsImpl userDetails) {
 		try {
-			localCacheService.putLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, userDetails.getUsername()), userDetails);
+			logger.debug("updating user: " + userDetails.getUsername());
+			UserDetailsImpl user = getUser(userDetails.getUsername());
+			if (user != null) {
+logger.debug(user.getLoggedIntime());				
+				user.setCurrentPage(userDetails.getCurrentPage());
+			}
+			localCacheService.putLocalCache(getCacheKey(userDetails.getUsername()), user);
 			return true;
 		} catch (DataException e) {
 			logger.error(e,e);
-		}		
+		}
 		return false;
 	}
 	
 	public UserDetailsImpl getUser(String username) {
 		try {
-			return localCacheService.getLocalCache(CacheConstants.getCacheKey(CacheConstants.KEYWORDS_CACHE_KEY, username));
+			return localCacheService.getLocalCache(getCacheKey(username));
 		} catch (DataException e) {
 			logger.error(e,e);
-		}		
+		}
 		return null;
 	}
 

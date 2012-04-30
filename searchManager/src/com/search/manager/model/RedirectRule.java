@@ -15,6 +15,7 @@ public class RedirectRule extends ModelBean {
 	private static final long serialVersionUID = 4608433178597830827L;
 
 	private static final String DBL_PIPE_DELIM = "||";
+	private static final String ESCAPED_DBL_PIPE_DELIM = "\\|\\|";
 	private static final String OR = ") OR (";
 	private static final String COMMA = ",";
 
@@ -39,6 +40,10 @@ public class RedirectRule extends ModelBean {
 
 	public RedirectRule() {
 		super();
+	}
+	
+	public RedirectRule(String ruleId) {
+		this.ruleId = ruleId;
 	}
 
 	public RedirectRule(String ruleId, String storeId, String ruleName, String searchTerm, String condition) {
@@ -139,7 +144,7 @@ public class RedirectRule extends ModelBean {
 	}
 	
 	public boolean isRedirectFilter() {
-		return StringUtils.isEmpty(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
+		return StringUtils.isNotBlank(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
 	}
 	
 	/**
@@ -163,6 +168,14 @@ public class RedirectRule extends ModelBean {
 			CollectionUtils.addAll(terms, searchTerm.split(COMMA));
 		}
 		return terms;
+	}
+	
+	public List<String> getConditions() {
+		ArrayList<String> conditions = new ArrayList<String>();
+		if (StringUtils.isNotEmpty(condition)) {
+			CollectionUtils.addAll(conditions, condition.split(ESCAPED_DBL_PIPE_DELIM));
+		}
+		return conditions;		
 	}
 
 	public void setChangeKeyword(String changeKeyword) {

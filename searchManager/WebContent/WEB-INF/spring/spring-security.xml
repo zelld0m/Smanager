@@ -60,17 +60,8 @@
 		p:authenticationFailureHandler-ref="authenticationFailureHandler"
 		p:authenticationSuccessHandler-ref="authenticationSuccessHandler" />
               
-	<!-- We just actually need to set the default failure url here -->
-<!-- 	<bean id="authenticationFailureHandler" name="authenticationFailureHandler" -->
-<!-- 		  class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler" -->
-<!-- 		  p:defaultFailureUrl="/login.jsp?login_error=1" /> -->
 
-	<!-- We just actually need to set the default target url here -->
-<!-- 	<bean id="authenticationSuccessHandler" name="authenticationSuccessHandler" -->
-<!-- 		  class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler" -->
-<!-- 		  p:defaultTargetUrl="/" /> -->
-
-<!-- Declare an authentication-manager to use a custom userDetailsService -->
+	<!-- Declare an authentication-manager to use a custom userDetailsService -->
 	<!-- It's important to set the alias here because it's used by the authenticationFilter -->
 	<security:authentication-manager alias="authenticationManager">
 		<security:authentication-provider user-service-ref="userDetailsService">
@@ -91,18 +82,6 @@
 
 	<!-- Use a Md5 encoder since the user's passwords are stored as Md5 in the database -->
 	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
-
-	<!-- An in-memory list of users. No need to access an external database 
-		layer. See Spring Security 3.1 Reference 5.2.1 In-Memory Authentication  
-	<security:user-service id="userDetailsService">
-		<security:user name="admin" password="21232f297a57a5a743894a0e4a801fc3" authorities="ROLE_USER, ROLE_ADMIN" />
-		<security:user name="user" password="ee11cbb19052e40b07aac0ca060c23ee" authorities="ROLE_USER" />
-		<security:user name="ChrisS" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
-		<security:user name="DanD" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
-		<security:user name="MattClark" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
-		<security:user name="BongR" password="5f4dcc3b5aa765d61d8327deb882cf99" authorities="ROLE_USER" />
-	</security:user-service-->
-	
 	<!-- Filter required by concurrent session handling package The ConcurrentSessionFilter 
 		requires two properties, sessionRegistry, which generally points to an instance 
 		of SessionRegistryImpl, and expiredUrl, which points to the page to display 
@@ -112,17 +91,4 @@
 		  p:sessionRegistry-ref="sessionRegistry" 
 		  p:expiredUrl="/login.jsp?login_error=expiredsession" />
 
-	<!-- Defines a concrete concurrent control strategy Checks whether the user 
-		in question should be allowed to proceed, by comparing the number of sessions 
-		they already have active with the configured maximumSessions value. The SessionRegistry 
-		is used as the source of data on authenticated users and session data. See: 
-		http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/web/authentication/session/ConcurrentSessionControlStrategy.html -->
-<!-- 	<bean id="sas" -->
-<!-- 		  class="com.search.manager.authentication.session.ConcurrentSessionControlStrategyImpl" -->
-<!-- 		  p:maximumSessions="1"> -->
-<!-- 		  <constructor-arg name="sessionRegistry" ref="sessionRegistry" /> -->
-<!-- 	</bean> -->
-
-	<!-- Maintains a registry of SessionInformation instances See: http://static.springsource.org/spring-security/site/docs/3.0.x/apidocs/org/springframework/security/core/session/SessionRegistry.html -->
-<!-- 	<bean id="sessionRegistry" class="com.search.manager.authentication.session.ClusterAwareSessionRegistryImpl" scope="singleton"/> -->
 </beans>

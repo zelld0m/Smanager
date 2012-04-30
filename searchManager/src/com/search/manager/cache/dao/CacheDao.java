@@ -1,19 +1,23 @@
 package com.search.manager.cache.dao;
 
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.service.CacheService;
+import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.utility.DateAndTimeUtils;
 
-public class CacheDao<T> {
+public abstract class CacheDao<T> {
 	
 	@Autowired protected DaoService daoService;
 	@Autowired protected KeywordCacheDao keywordCacheDao;
@@ -37,10 +41,11 @@ public class CacheDao<T> {
 	 * @return
 	 * @throws DataException
 	 */
-	protected String getCacheKey(StoreKeyword storeKeyword) throws DataException{return null;};
-	protected CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException{return null;};
-	public boolean reload(T bean) throws DataException, DaoException{return false;};
-	public boolean reload(List<T> list) throws DataException, DaoException{return false;};
+	protected abstract String getCacheKey(StoreKeyword storeKeyword) throws DataException;
+	protected abstract String getCacheKeyInitials() throws DataException;
+	protected abstract CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException;
+	public abstract boolean reload(T bean) throws DataException, DaoException;
+	public abstract boolean reload(List<T> list) throws DataException, DaoException;
 
 	/**
 	 * Reload the entire cache data for store
@@ -76,7 +81,12 @@ public class CacheDao<T> {
 		CacheModel<T> cache = null;
 		boolean cacheError = false;
 		try {
-			cache = cacheService.get(getCacheKey(storeKeyword));
+			String key = getCacheKey(storeKeyword);
+			cache = cacheService.get(key);
+			if (cache != null && isNeedReloadCache(storeKeyword.getStore(), cache)) { // obsolete data, force a reload
+				cache = null;
+				reset(storeKeyword);
+			}
 		} catch (Exception e) {
 			logger.error("Problem accessing cache.", e);
 			cacheError = true;
@@ -104,6 +114,16 @@ public class CacheDao<T> {
 	
 	public CacheModel<T> getCachedObject(String key) throws DataException {
 		return cacheService.get(key);
+	}
+	
+	public boolean reset(String key) {
+		try {
+			cacheService.reset(key);
+			return true;
+		} catch (Exception e) {
+			logger.error("Failed to reset " + key, e);
+		}
+		return false;
 	}
 	
 	protected boolean cacheObject(String key, CacheModel<T> t) throws DataException {
@@ -157,4 +177,40 @@ public class CacheDao<T> {
 		}
 		return false;
 	}
+	
+	public boolean forceUpdateCache(Store store) {
+		try{
+			String storeId = store.getStoreId();
+			if (StringUtils.isNotBlank(storeId)) {
+				cacheService.put(CacheConstants.getCacheKey(storeId, CacheConstants.FORCE_UPDATE_CACHE_KEY, getCacheKeyInitials()), new CacheModel<Object>());
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error("Failed to set force update cache date for  " + store, e);
+		}
+		return false;
+	}
+	
+	protected Date getforceUpdateCacheDate(Store store) {
+		try{
+			String storeId = store.getStoreId();
+			if (StringUtils.isNotBlank(storeId)) {
+				CacheModel<Object> cache = cacheService.get(CacheConstants.getCacheKey(storeId, CacheConstants.FORCE_UPDATE_CACHE_KEY, getCacheKeyInitials()));
+				if (cache != null) {
+					return cache.getUploadedDate();
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Failed to get force update cache date for  " + store, e);
+		}
+		return null;
+	}
+	
+	protected boolean isNeedReloadCache(Store store, CacheModel<T> model) {
+		Date date = getforceUpdateCacheDate(store);
+		Date currentDate = new Date();
+		return (model == null || model.getUploadedDate() == null || date == null || model.getUploadedDate().before(date) || 
+				!DateAndTimeUtils.getDateStringMMDDYYYY(model.getUploadedDate()).equals(DateAndTimeUtils.getDateStringMMDDYYYY(currentDate)));
+	}
+	
 }

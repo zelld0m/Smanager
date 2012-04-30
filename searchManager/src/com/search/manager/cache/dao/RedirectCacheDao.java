@@ -23,6 +23,11 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 	private static final Logger logger = Logger.getLogger(RedirectCacheDao.class);
 
 	@Override
+	protected String getCacheKeyInitials() throws DataException {
+		return CacheConstants.RULE_REDIRECT_CACHE_KEY;
+	}
+
+	@Override
 	protected String getCacheKey(StoreKeyword storeKeyword) throws DataException {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
@@ -74,7 +79,7 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 				if (rule.getObj() != null) {
 					redirect = rule.getObj();
 					for (String keyword: redirect.getSearchTerms()) {
-						cacheService.put(getCacheKey(new StoreKeyword(redirect.getStoreId(), keyword)), rule);
+						reload(new StoreKeyword(redirect.getStoreId(), keyword));
 					}
 				}
 			}

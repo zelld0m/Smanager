@@ -51,14 +51,16 @@
 			content+= '</div>';
 			content+= '<div class="sideSearch">';
 			content+= '<span style="padding-top:7px">';
+
+			width = "190px";
 			
 			if (base.options.showAddButton){
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
-				content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch w150" type="text" value="' + base.options.searchText + '">';
+				width = "150px";
 			}
-			else{
-				content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch w190" type="text" value="' + base.options.searchText + '">';
-			}
+		
+			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch" style="width:' + width +'" type="text" value="' + base.options.searchText + '">';
+			
 			content+= '</span>';
 			content+= '</div>';
 
@@ -106,7 +108,7 @@
 			// populate list
 			//dwr.engine.beginBatch(); 
 			for (var i = 0; i < data.list.length; i++) {
-				var id = list[i][base.options.fieldId];
+				var id = list[i][base.options.fieldId]==undefined? i+1 : list[i][base.options.fieldId];
 				var name = list[i][base.options.fieldName];
 				var suffixId = $.formatAsId(id);
 
@@ -117,7 +119,8 @@
 				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id, model:list[i]});
 				base.$el.find('#itemPattern' + suffixId).show();
 				
-				base.options.itemOptionCallback(base, id, name);
+				base.options.itemOptionCallback(base, id, name, list[i]);
+
 			}
 			//dwr.engine.endBatch();
 		};
@@ -169,6 +172,7 @@
 			searchText: "",
 			searchLabel: "",
 			showAddButton: true,
+			showSearch: true,
 			itemDataCallback: function(e){},
 			itemOptionCallback: function(e){},
 			itemNameCallback: function(e){},

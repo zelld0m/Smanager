@@ -13,7 +13,7 @@
 			});
 			return selectedItems;
 		};
-		
+
 		var getSelectedRefId = function(){
 			var selectedRefIds = [];
 			var selectedItems = getSelectedItems();
@@ -31,7 +31,7 @@
 			}
 			return selectedStatusId; 
 		};
-		
+
 		var checkSelectAllHandler = function(){
 			$(tabSelected).find("th#selectAll > input[type='checkbox']").on({
 				click: function(evt){
@@ -57,12 +57,12 @@
 				}
 			});
 		};
-		
+
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
-					
+
 					if ($.isNotBlank(comment)){
 
 						switch($(evt.currentTarget).attr("id")){
@@ -95,7 +95,7 @@
 					}else{
 						alert("Please add comment.");
 					}
-					
+
 				}
 			});
 		};
@@ -115,11 +115,12 @@
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
 							var showId = list[i]["ruleRefId"] !== list[i]["description"];
-							
+
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
-							if(showId) $tr.find("td#ruleRefId > p#ruleId").html(list[i]["description"]);
+							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							if(showId) $tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
 							$tr.find("td#requested > p#requestedBy").html(list[i]["lastModifiedBy"]);
 							$tr.find("td#requested > p#requestedDate").html(requestedDate);
@@ -159,92 +160,86 @@
 				getApprovalList();
 			}
 		});
-		
+
+		var populateItemTable = function(ruleType, content, ruleStatus, data){
+			var $content = content;
+			var list = data.list;
+			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+			$content.find("#requestType").text(ruleStatus["updateStatus"]);
+
+			var $table = $content.find("table#item");
+
+			if (data.totalSize==0){
+				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
+				$tr.find("td:not(#itemPosition)").remove();
+				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
+				$tr.appendTo($table);
+			}else{
+
+				for (var i = 0; i < data.totalSize; i++) {
+					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
+					$tr.find("td#itemPosition").html(list[i]["location"]);
+					$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+					$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+					$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+					$tr.find("td#itemName").html(list[i]["name"]);
+					$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+					$tr.appendTo($table);
+				};
+			}
+
+			// Alternate row style
+			$content.find("tr#itemPattern").hide();
+			$content.find("tr:not(#itemPattern):even").addClass("alt");
+
+			$content.find("a#approveBtn, a#rejectBtn").on({
+				click:function(evt){
+					var ruleStatusId = ruleStatus["ruleStatusId"];
+					var comment = $.trim($content.find("#approvalComment").val());
+
+					if ($.isNotBlank(comment)){
+
+						switch($(evt.currentTarget).attr("id")){
+						case "approveBtn": 
+							DeploymentServiceJS.approveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
+								callback: function(data){
+									refresh = true;
+								}
+							});break;
+
+						case "rejectBtn": 
+							DeploymentServiceJS.unapproveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
+								callback: function(data){
+									refresh = true;
+								}
+							});break;
+						}	
+					}else{
+						alert("Please add comment.");
+					}
+				}
+			});
+		};
+
 		var populatePreview = function($content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
-				$content.html($("#previewTemplate").html());
+				$content.html($("#previewTemplate1").html());
 
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
-						var list = data.list;
-
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-							$tr.appendTo($table);
-						};
-
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
-
+						populateItemTable("Elevate", $content, ruleStatus, data);
 					},
 					preHook: function(){
 
-					},
-					postHook: function(){
-
 					}
 				});
-
-				$content.find("a#approveBtn, a#rejectBtn").on({
-					click:function(evt){
-						var ruleStatusId = ruleStatus["ruleStatusId"];
-						var comment = $.trim($content.find("#approvalComment").val());
-
-						if ($.isNotBlank(comment)){
-
-							switch($(evt.currentTarget).attr("id")){
-							case "approveBtn": 
-								DeploymentServiceJS.approveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
-									callback: function(data){
-										refresh = true;
-									}
-								});break;
-
-							case "rejectBtn": 
-								DeploymentServiceJS.unapproveRule("Elevate", $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
-									callback: function(data){
-										refresh = true;
-									}
-								});break;
-							}	
-						}else{
-							alert("Please add comment.");
-						}
-					}
-				});
-
 				break;
 			case "Exclude": 
-				$content.html($("#previewTemplate").html());
-				ExcludeServiceJS.getProducts(null, ruleRefId , 0, 0,{
+				$content.html($("#previewTemplate1").html());
+				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
-						var list = data.list;
-
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-							$tr.appendTo($table);
-						};
-
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
-
+						populateItemTable("Exclude",$content, ruleStatus, data);
 					},
 					preHook: function(){
 
@@ -255,38 +250,100 @@
 				});
 				break;
 			case "Query Cleaning": 
+				$content.html($("#previewTemplate2").html());
 
-				break;
-			case "Ranking Rule": 
-				$content.html($("#previewRankingRuleTemplate").html());
-				RelevancyServiceJS.getById(ruleRefId, {
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+
+				$content.find('a[href="#ruleField"] >span').html("Rule Condition");
+				
+				$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
+				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
+
+				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+
+						var $table = $content.find("div.ruleField table#item");
+
+						for(var field in data.conditions){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+							$tr.find("td#fieldName").html(parseInt(field)+1);
+							$tr.find("td#fieldValue").html(data.conditions[field]);
+							$tr.appendTo($table);
+						}	
+
+						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+						$ul.find("li span#startDate").parent("li").remove();
+						$ul.find("li span#endDate").parent("li").remove();
+						$ul.find("li span#description").html(data["description"]);
+					},
+					preHook: function(){
+
+					}
+				});
+
+				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 						var list = data.list;
 
-						for (var i = 0; i < data.totalSize; i++) {
-							var $table = $content.find("table#item");
-							var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-							$tr.find("td#itemPosition").html(list[i]["location"]);
-							$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-							$tr.appendTo($table);
-						};
+						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
 
-						// Alternate row style
-						$content.find("tr#itemPattern").hide();
-						$content.find("tr:not(#itemPattern):even").addClass("alt");
+						for (var i=0; i< data.totalSize; i++){
+							$("<li>").text(list[i]["keyword"]).appendTo($ul);
+						}
+					},
+					preHook: function(){
+
+					}
+				});
+
+
+				break;
+			case "Ranking Rule": 
+				$content.html($("#previewTemplate2").html());
+
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+
+				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+
+						var $table = $content.find("div.ruleField table#item");
+
+						for(var field in data.parameters){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+							$tr.find("td#fieldName").html(field);
+							$tr.find("td#fieldValue").html(data.parameters[field]);
+							$tr.appendTo($table);
+						}	
+
+						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+						$ul.find("li span#startDate").html(data["formattedStartDate"]);
+						$ul.find("li span#endDate").html(data["formattedEndDate"]);
+						$ul.find("li span#description").html(data["description"]);
+					},
+					preHook: function(){
+
+					}
+				});
+
+				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+					callback: function(data){
+						var list = data.list;
+
+						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
+
+						for (var i=0; i< data.totalSize; i++){
+							$("<li>").text(list[i]["keyword"]).appendTo($ul);
+						}
 
 					},
 					preHook: function(){
 
-					},
-					postHook: function(){
-
 					}
 				});
+
+
 				break;
 			};
 
@@ -294,8 +351,9 @@
 		};
 
 		var previewRow = function(evt){
-			
+
 			$(this).qtip({
+				id: "rule-preview",
 				content: {
 					text: $('<div/>'),
 					title: { 

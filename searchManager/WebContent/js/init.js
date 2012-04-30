@@ -18,6 +18,122 @@ dwr.engine.setWarningHandler(function(msg, wrn) {
 	alert(wrnMessage + '\n' + wrnInfo);
 });
 
+resetInputFields = function(selector){
+	$(selector).filter("input,textarea").val("");
+};
+
+getRuleNameSubTextStatus = function(ruleStatus){
+	if (ruleStatus==null) 
+		return "Unknown Status";
+	
+	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
+		return "Setup a Rule";
+	
+	switch (ruleStatus["approvalStatus"]){
+		case "REJECTED": return "Action Required";
+		case "PENDING": return "Awaiting Approval";
+		case "APPROVED": return "Ready For Production";
+	}	
+};
+
+showActionResponse = function(code, action, param){
+	switch(code){
+		case -1: alert("Error encountered while processing " + action + " request for " + param); break;
+		case  0: alert("Failed " + action + " request for " + param); break;
+		default: alert("Successfull " + action + " request for " + param); break;
+	}
+};
+
+showDeploymentStatusBar = function(ruleStatus){
+	$("span#status").html("");
+	$("span#statusMode").html("");
+	$("span#statusDate").html("");
+
+	$("#submitForApproval").hide();
+
+	if(ruleStatus!=null){
+		$("#submitForApproval").show();
+
+		$("div#statusHolder").hide();
+		if($.isNotBlank(ruleStatus["approvalStatus"])){
+			$("div#statusHolder").show();
+			$("span#status").html(ruleStatus["approvalStatus"]);
+		}
+
+		$("div#publishHolder").hide();
+		if($.isNotBlank(ruleStatus["lastModifiedDate"])){
+			$("div#publishHolder").show();
+			$("span#statusDate").html(ruleStatus["lastModifiedDate"].toUTCString());
+		}
+
+		$("a#submitForApprovalBtn").show();
+		if(ruleStatus["locked"]){
+			$("span#statusMode").append("[Read-Only]");
+			$("a#submitForApprovalBtn").hide();
+		}
+	}
+};
+
+/**
+ * Style for HTML upload tag
+ */
+showMessage = function(selector, msg){
+	$(selector).qtip({
+		id: "hover-custom",
+		content: {
+			text: $('<div/>')
+		},
+		show:{
+			solo: false,
+			ready: true
+		},
+		hide: 'unfocus, mouseout',
+		style:{width:'auto'},
+		events: {
+			show: function(event, api){
+				var $content = $("div", api.elements.content);
+				$content.html(msg);
+			},
+			hide: function(event, api){
+				api.destroy();
+			}
+		}
+	});
+};
+
+/**
+ * Style for HTML upload tag
+ */
+showHoverInfo = function(e){
+	if(e.data.locked){
+		$(this).qtip({
+			id: "hover-locked",
+			content: {
+				text: $('<div/>')
+			},
+			position:{
+				at: 'right center',
+				my: 'left center'
+			},
+			show:{
+				solo: false,
+				ready: true
+			},
+			hide: 'unfocus, mouseout',
+			style:{width:'auto'},
+			events: {
+				show: function(event, api){
+					var $content = $("div", api.elements.content);
+					$content.html($("#ruleIsLocked").html());
+				},
+				hide: function(event, api){
+					api.destroy();
+				}
+			}
+		});
+	}
+};
+
 /**
  * Style for HTML upload tag
  */
@@ -93,25 +209,25 @@ function initFileUploads() {
 
 		var useTabs = function(){
 			$(".tabs").each(function() {
-			    var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
-			    if (tabid == undefined || tabid == null || tabid == "") {
-			        $(this).tabs({
-			            cookie: {
-			                expires: 30
-			            }
-			        });
-			    }
-			    else {
-			        $(this).tabs({
-			            cookie: {
-			                expires: 30,
-			                name: tabid
-			            }
-			        });
-			    }
+				var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
+				if (tabid == undefined || tabid == null || tabid == "") {
+					$(this).tabs({
+						cookie: {
+							expires: 30
+						}
+					});
+				}
+				else {
+					$(this).tabs({
+						cookie: {
+							expires: 30,
+							name: tabid
+						}
+					});
+				}
 			});
 		};
-		
+
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
@@ -131,7 +247,7 @@ function initFileUploads() {
 			var cookieVal = $this.parent("li").attr("id");
 
 			if($this.hasClass("active")) cookieVal = "";
-			
+
 			$.cookie(COOKIE_NAME_DOCK, cookieVal ,{expires: 1});
 			refreshDock();
 		});

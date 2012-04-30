@@ -2,16 +2,18 @@ package com.search.manager.service;
 
 import java.util.Date;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.json.types.JsonObject;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.utility.PropsUtils;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -20,8 +22,6 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 		creatorParams = @Param(name = "beanName", value = "utilityService")
 )
 public class UtilityService {
-	
-	private static final Logger logger = Logger.getLogger(UtilityService.class);
 	
 	@RemoteMethod
 	public static String getUsername(){
@@ -45,6 +45,14 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getStoreLabel(){
 		return "MacMall";
+	}
+	
+	@RemoteMethod
+	public static String getSolrConfig(){
+		JSONObject json = new JSONObject();
+		json.put("solrUrl", PropsUtils.getValue("browsejssolrurl"));
+		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+		return json.toString();
 	}
 
 	public static String formatComment(String comment) {

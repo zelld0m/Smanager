@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="SearchGuiWSClientBuilder" basedir=".">
+<project name="SearchGuiWSClientBuilder" basedir="." default="jar">
  
 	<!-- Define the properties used by the build -->
 	<property name="debuglevel" value="source,lines,vars"/>
@@ -19,7 +19,7 @@
 	  	  <include name="*.jar"/>
 	  	</fileset>
 	</path>
-	
+	<!--
 	<target name="jar" description="JAR Java sources">
 		<delete dir="${dependencies}/lib" />
 		<delete dir="${dependencies}/wsclient/jar" />
@@ -41,4 +41,15 @@
 		<delete dir="${dependencies}/lib" />
 	  	<delete dir="${dependencies}/wsclient/classes" />
 	</target>
+	-->
+	
+	  <target name="jar" description="JAR Java sources">
+		  <delete dir="${dependencies}/wsclient/jar" />
+		  <mkdir dir="${dependencies}/wsclient/jar" />
+			<jar destfile="${dependencies}/wsclient/jar/searchguiwsclient.jar">
+				<fileset dir="${basedir}/bin">
+					<include name="**/*.class"/> 
+				</fileset>
+			</jar>	
+	  </target>	
 </project> 

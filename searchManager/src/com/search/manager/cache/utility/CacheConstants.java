@@ -11,6 +11,7 @@ public class CacheConstants {
 	public static final String KEYWORDS_CACHE_KEY 				= "KW";
 	public static final String RULE_REDIRECT_CACHE_KEY			= "RR";
 	public static final String USER_CACHE_KEY 					= "US";
+	public static final String FORCE_UPDATE_CACHE_KEY			= "FU";
 	
 	public enum Operation{
 		add,

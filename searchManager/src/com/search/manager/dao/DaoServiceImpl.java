@@ -648,8 +648,8 @@ public class DaoServiceImpl implements DaoService {
 			return 0;
 		}
 		return relevancyDAO.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-				new RelevancyKeyword(null, relevancy), null, null, null, null),
-				MatchType.MATCH_ID, ExactMatch.MATCH).getTotalSize();
+				new RelevancyKeyword(new Keyword(""), relevancy), null, null, null, null),
+				MatchType.MATCH_ID, ExactMatch.SIMILAR).getTotalSize();
 	}
 
 	@Override
@@ -707,12 +707,17 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public String addRedirectRuleAndGetId(RedirectRule rule) throws DaoException {
+		return redirectRuleDAO.addRedirectRuleAndGetId(rule);
+	}
+	
+	@Override
 	public int updateRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.updateRedirectRule(rule);
 	}
 
 	@Override
-	public int removeRedirectRule(RedirectRule rule) throws DaoException {
+	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
@@ -732,7 +737,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeRedirectKeyword(RedirectRule rule) throws DaoException {
+	public int deleteRedirectKeyword(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectKeyword(rule);
 	}
 
@@ -742,7 +747,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeRedirectCondition(RedirectRule rule) throws DaoException {
+	public int deleteRedirectCondition(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectCondition(rule);
 	}
 
@@ -759,6 +764,17 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException {
 		return redirectRuleDAO.getRedirectForKeywords(criteria);
+	}
+	
+	@Override
+	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException {
+		return redirectRuleDAO.searchRedirectRules(criteria, redirectMatchType);
+	}
+	
+	@Override
+	public RecordSet<RedirectRule> searchRedirectRuleKeyword(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType,
+			ExactMatch keywordExactMatch) throws DaoException {
+		return redirectRuleDAO.searchRedirectRuleKeywords(criteria, redirectMatchType, keywordExactMatch);
 	}
 	
 	public KeywordDAO getKeywordDAO() {
@@ -844,6 +860,11 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.getRuleStatus(ruleStatus);
 	}
 
+	@Override
+	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException {
+		return ruleStatusDAO.getCleanList(ruleRefIds, ruleTypeId, pStatus, aStatus);
+	}
+	
 	@Override
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
 		int result = -1;

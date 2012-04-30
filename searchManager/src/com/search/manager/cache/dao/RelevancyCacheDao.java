@@ -27,6 +27,11 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 	private static final Logger logger = Logger.getLogger(RelevancyCacheDao.class);
 
 	@Override
+	protected String getCacheKeyInitials() throws DataException {
+		return CacheConstants.RELEVANCY_LIST_CACHE_KEY;
+	}
+
+	@Override
 	protected String getCacheKey(StoreKeyword storeKeyword) throws DataException {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
@@ -40,7 +45,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 	protected CacheModel<Relevancy> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException {
 		DAOValidation.checkStoreKeywordPK(storeKeyword);
 		Relevancy relevancy = new Relevancy("", "");
-		relevancy.setStore(new Store(storeKeyword.getKeywordId()));
+		relevancy.setStore(new Store(storeKeyword.getStoreId()));
 		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
 				MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -72,6 +77,13 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 		try {
 			key = CacheConstants.getCacheKey(store.getStoreId(), CacheConstants.RELEVANCY_DEFAULT_CACHE_KEY, "");
 			cache = getCachedObject(key);
+			if (cache != null && isNeedReloadCache(store, cache)) { // obsolete data, force a reload
+				Date date = getforceUpdateCacheDate(store);
+				if (date != null && cache.getUploadedDate().before(date)) { // obsolete data, force a reload
+					cache = null;
+					reset(key);
+				}
+			}
 		} catch (Exception e) {
 			logger.error("Problem accessing cache.", e);
 			cacheError = true;
@@ -113,7 +125,7 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 					RecordSet<RelevancyKeyword> relevancyKeywords = daoService.getRelevancyKeywords(relevancy);
 					if (relevancyKeywords.getTotalSize() > 0) {
 						for (RelevancyKeyword rk: relevancyKeywords.getList()) {
-							cacheService.put(getCacheKey(new StoreKeyword(relevancy.getStore().getStoreId(), rk.getKeyword().getKeywordId())), rule);
+							reload(new StoreKeyword(relevancy.getStore().getStoreId(), rk.getKeyword().getKeywordId()));
 						}
 					}
 				}

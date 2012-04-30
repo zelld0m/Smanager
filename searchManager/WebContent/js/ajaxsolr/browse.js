@@ -6,12 +6,22 @@ var Manager;
 
 	$(function () {	
 		var Manager = null;
+		var solrurl;
+		var isFmGui;
+		
+		UtilityServiceJS.getSolrConfig({
+			callback:function(data){	
+				var config = $.parseJSON(data);
+					solrurl = config.solrUrl;
+					isFmGui = config.isFmGui;	
+			}
+		});
 
 		UtilityServiceJS.getStoreName({
 			callback:function(storeName){
 				
 				Manager = new AjaxSolr.Manager({
-					solrUrl: 'http://localhost:8080/searchManager/search/vtorschstg01.pcmall.com:8080/solr14/' + storeName + '/'
+					solrUrl: solrurl +'/'+ storeName + '/'
 				});
 
 				Manager.addWidget(new AjaxSolr.ResultWidget({
@@ -65,8 +75,6 @@ var Manager;
 				}));
 
 				Manager.init();
-
-				var defaultRelevancyId = storeName + '_default';
 				
 				var params = {
 						'facet': true,
@@ -76,11 +84,11 @@ var Manager;
 						'rows': sortWidget.perPageInterval,
 						'facet.mincount': 1,
 						'sort':'CatCodeOrder asc, score desc, Popularity desc',
-						'relevancyId': defaultRelevancyId,
+						'relevancyId': '',
 						'spellcheck': true,
 						'spellcheck.count': 3,
 						'spellcheck.collate': true,
-						'gui': true,
+						'gui': isFmGui,
 						'json.nl': 'map'
 				};
 
@@ -95,7 +103,7 @@ var Manager;
 			}
 		});
 	});
-
+	
 	$.fn.showIf = function (condition) {
 		if (condition) {
 			return this.show();

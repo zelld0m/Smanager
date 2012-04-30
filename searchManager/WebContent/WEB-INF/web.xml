@@ -5,7 +5,7 @@
     
     <context-param>
 		<param-name>GLOBAL_INIT_PROPERTIES</param-name>
-		<param-value>/home/widgetti/conf/globalvar.properties</param-value>
+		<param-value>/home/solr/conf/globalvar.properties</param-value>
 	</context-param>
     
 	<!-- Processes application requests -->
@@ -94,7 +94,7 @@
 		<servlet-class>com.search.ws.ConfigServlet</servlet-class>
 		<init-param>
 			<param-name>config-folder</param-name>
-			<param-value>/home/widgetti/conf</param-value>
+			<param-value>/home/solr/conf</param-value>
 		</init-param>
 		<init-param>
 			<param-name>config-file</param-name>

@@ -50,6 +50,14 @@ public interface DaoCacheService {
 	public boolean logoutUser(String username) throws DaoException, DataException; 
 	public UserDetailsImpl getUser(String username) throws DaoException, DataException;
 	public boolean setUserCurrentPage(String username, String currentPage) throws DaoException, DataException;
-
+	public List<UserDetailsImpl> getLoggedInUsers() throws DaoException, DataException;
+	
+	/* Force reload */
+	public boolean setForceReload(Store store);
+	public boolean setForceReloadElevate(Store store);
+	public boolean setForceReloadExclude(Store store);
+	public boolean setForceReloadRedirect(Store store);
+	public boolean setForceReloadRelevancy(Store store);
+	
 }
 

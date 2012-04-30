@@ -47,10 +47,10 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="70px" class="txtAL"></th>
+							<th width="50px" class="txtAL"></th>
 							<th width="230px" class="txtAL">Rule Info</th>
-							<th width="85px">Type</th>
-							<th>Request</th>
+							<th width="85px">Request Type</th>
+							<th>Request Details</th>
 						</tr>
 					<tbody>
 				</table>
@@ -60,7 +60,9 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
-							<td width="70px" id="ruleRefName"></td>
+							<td class="txtAC" width="50px" id="ruleOption">
+								<img class="previewIcon pointer" src="<spring:url value="/images/icon_preview.png" />" alt="Preview Content" title="Preview Content"> 
+							</td>
 							<td width="230px" id="ruleRefId">
 								<p id="ruleName"></p>
 								<p id="ruleId" class="fsize11"></p>
@@ -92,29 +94,15 @@
 			<div class="clearB"></div>
 		</div>
 		
-		<div id="previewTemplate" style="display: none;">
+		<div id="previewTemplate1" style="display: none;">
 			<div class="rulePreview w600">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<label class="w110 floatL fbold">Rule ID:</label><label class="w100 floatL">xerox</label>
-				<label class="w95 floatL marL20 fbold">Type:</label><label class="w100 floatL">New</label>	
-				<label class="w95 floatL fbold">Status:</label><label class="w100 floatL">PENDING</label>
+				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w100 floatL" id="ruleInfo"></label>
 				<div class="clearB"></div>
-				<label class="w110 floatL marL20 fbold">Request By:</label><label class="w100 floatL">admin</label>
-				<label class="w95 floatL fbold">Request Date:</label><label class="w100 floatL">admin</label>
-				
+				<label class="w95 floatL marL20 fbold">Request Type:</label>
+				<label class="w100 floatL" id="requestType"></label>					
 				<div class="clearB"></div>
-				<label class="w110 floatL fbold">Request Comment</label><label class="w460 floatL border" style="overflow-y:scroll; height: 40px">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</label>
-				<div class="clearB"></div>
-				<label class="w110 floatL fbold">Approval Comment </label>
-				<label><textarea id="approvalComment" rows="1" style="width:320px; height:32px"></textarea></label>
-				<label id="actionBtn" class="floatLR w100 marL20">
-					<a id="approveBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
-					</a>
-					<a id="rejectBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
-					</a>
-				</label>
 			</div>
 			<div class="clearB"></div>
 			
@@ -146,16 +134,98 @@
 					</tbody>
 				</table>
 			</div>
+			
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w650 marR5 marB20" style="background: #f3f3f3;">
+				<h3 style="border:none">Approval Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<label class="floatL w100 padL15">Comment: </label>
+				<label class="floatL w510"><textarea id="approvalComment" rows="5" class="w510" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
+			</div>
 		</div>
 		
-		<div id="previewRankingRuleTemplate" style="display: none;">
-			<div></div>
-			<div id="rankingRuleSummary" class="tabs">
+		<div id="previewTemplate2" style="display: none;">
+			<div class="rulePreview w600">
+				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
+				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w100 floatL" id="ruleInfo"></label>
+				<div class="clearB"></div>
+				<label class="w95 floatL marL20 fbold">Request Type:</label>
+				<label class="w100 floatL" id="requestType"></label>					
+				<div class="clearB"></div>
+			</div>
+			<div class="clearB"></div>	
+			
+			<div id="rankingSummary" class="tabs">
 				<ul>
-					<li></li>
-					<li></li>
-					<li></li>
+					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
+					<li><a href="#ruleField"><span>Rule Field</span></a></li>
+					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
 				</ul>
+				<div class="clearB"></div>	
+				
+				<div id="ruleRanking" class="ruleRanking">
+					<h3></h3>
+					<ul id="relevancyInfo">
+						<li><label>Start Date:</label><span id="startDate"></span></li>
+						<li><label>End Date:</label><span id="endDate"></span></li>
+						<li><label>Description:</label><span id="description"></span></li>
+					</ul>
+				</div>
+				
+				<div id="ruleField" class="ruleField">
+					<h3></h3>
+					<div>
+						<table id="itemHeader">
+							<tbody>
+								<tr>
+									<th id="fieldNameHeader">Field Name</th>
+									<th id="fieldValueHeader">Field Value</th>
+								</tr>
+							<tbody>
+						</table>
+					</div>
+					<div style="max-height:180px; overflow-y:scroll;">
+						<table id="item">
+							<tbody>
+								<tr id="itemPattern" class="itemRow" style="display: none">
+									<td class="txtAC" id="fieldName"></td>
+									<td id="fieldValue"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				
+				<div id="ruleKeyword"  class="ruleKeyword">
+					<h3></h3>
+					<ul id="keywordInRule"></ul>
+				</div>
+			</div>
+			<div class="clearB"></div>	
+			
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w650 marR5 marB20" style="background: #f3f3f3;">
+				<h3 style="border:none">Approval Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<label class="floatL w100 padL15">Comment: </label>
+				<label class="floatL w510"><textarea id="approvalComment" rows="5" class="w510" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
 			</div>
 		</div>
 		

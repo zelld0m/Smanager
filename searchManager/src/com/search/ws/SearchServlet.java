@@ -206,7 +206,12 @@ public class SearchServlet extends HttpServlet {
 			Relevancy relevancy = null;
 			if (!fromSearchGui) {
 				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
-				logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
+				if (relevancy != null) {
+					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());					
+				}
+				else {
+					logger.error("Unable to find default relevancy!");
+				}
 			}
 			else {
 				if (StringUtils.isNotBlank(relevancyId)) {
@@ -236,7 +241,12 @@ public class SearchServlet extends HttpServlet {
 				if (relevancy != null) {
 					// load relevancy details
 					relevancy = daoService.getRelevancyDetails(relevancy);
-					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
+					if (relevancy != null) {
+						logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
+					}
+					else {
+						logger.error("Unable to find default relevancy!");
+					}
 				}
 			}
 			
@@ -253,6 +263,14 @@ public class SearchServlet extends HttpServlet {
 							nameValuePairs.add(nvp);
 						}						
 					}
+				}
+			}
+			else {
+				// remove qt parameter
+				if (StringUtils.isBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
+					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
+					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+
 				}
 			}
 			
@@ -381,22 +399,25 @@ public class SearchServlet extends HttpServlet {
 			// redirect 
 			try {
 				// TODO: follow up with dba on errors
-				RedirectRule redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
-												: daoCacheService.getRedirectRule(sk);
-				if (redirect != null) {
-					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
-					if (redirect.isRedirectToPage()) {
-						// TODO: fix redirect to page implementation
-						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
-						nameValuePairs.add(nvp);					
-					}
-					else if (redirect.isRedirectFilter()) {
-						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
-						nameValuePairs.add(nvp);
-						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-					}
+				if (StringUtils.isNotBlank(sk.getKeywordId())) {
+					RedirectRule redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
+							: daoCacheService.getRedirectRule(sk);
+					if (redirect != null) {
+						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						if (redirect.isRedirectToPage()) {
+							// TODO: fix redirect to page implementation
+							nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+							nameValuePairs.add(nvp);					
+						}
+						else if (redirect.isRedirectFilter()) {
+							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
+							nameValuePairs.add(nvp);
+							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+						}
+					}					
 				}
 			} catch (Exception e) {
+				logger.error("Failed to get redirect for keyword: " + keyword, e);
 			}
 
 			BasicNameValuePair elevateNvp = null;

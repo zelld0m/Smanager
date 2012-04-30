@@ -6,17 +6,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BackupInfo;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
@@ -69,7 +70,7 @@ public class FileServiceImpl implements FileService{
 			case BANNER:
 				break;
 			case QUERY_CLEANING:
-				break;
+				return createBackupForRedirectRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
 			case RANKING_RULE:
 				return createBackupForRankingRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
 			default:
@@ -108,9 +109,15 @@ public class FileServiceImpl implements FileService{
 			case BANNER:
 				break;
 			case QUERY_CLEANING:
+				Object obj = getRedirectRuleResultFromFile(store, ruleId, String.valueOf(ruleEntity.getCode()));
+				if(obj != null){
+					list_ = new ArrayList<Object>();
+					list_.add(obj);
+					map.put(ruleId, list_);
+				}
 				break;
 			case RANKING_RULE:		
-				Object obj = getRankingRuleResultFromFile(store, ruleId, String.valueOf(ruleEntity.getCode()));
+				obj = getRankingRuleResultFromFile(store, ruleId, String.valueOf(ruleEntity.getCode()));
 				if(obj != null){
 					list_ = new ArrayList<Object>();
 					list_.add(obj);
@@ -247,7 +254,7 @@ public class FileServiceImpl implements FileService{
 	}
 	
 	private Object getRankingRuleResultFromFile(String storeName, String ruleId, String ruleType){
-		
+		// TODO: fix
 		Map<String,Object> bck = new HashMap<String,Object>();
 		String file = getFilePath(ruleType, ruleId, FileUtil.XML_FILE_TYPE);
 		String keywords =  getFilePath(ruleType, ruleId, "keywords", FileUtil.XML_FILE_TYPE);
@@ -315,11 +322,62 @@ public class FileServiceImpl implements FileService{
 
 			    success = true;
 			}
-		}catch(DaoException e){}
-		catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e,e);
 		} 
 		return success;	
+	}
+	
+	private Object getRedirectRuleResultFromFile(String storeName, String ruleId, String ruleType){
+		// TODO: fix
+		Map<String,Object> bck = new HashMap<String,Object>();
+		String file = getFilePath(ruleType, ruleId, FileUtil.XML_FILE_TYPE);
+		String keywords = getFilePath(ruleType, ruleId, "keywords", FileUtil.XML_FILE_TYPE);
+		
+		XStream xstream = null;
+		RedirectRule redirectRule = null;
+		
+		try {
+			if(FileUtil.isExist(file)){
+				
+				Object object = FileUtil.fileStream(file);
+				xstream = new XStream();
+				xstream.alias("redirect", RedirectRule.class);
+			
+				redirectRule = (RedirectRule)xstream.fromXML(object.toString());
+				if(redirectRule != null && StringUtils.isNotEmpty(redirectRule.getRuleId())){
+					bck.put("redirect", redirectRule);
+				}
+			}
+		}catch (Exception e) {
+			logger.error(e,e);
+		}
+		return bck;
+	}
+	
+	private boolean createBackupForRedirectRule(String storeName, String ruleId, String ruleType) {
+
+		boolean success = false;
+
+		try {
+			List<RedirectRule> relKWList = null;
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setRuleId(ruleId);
+			redirectRule.setStoreId(storeName);
+			redirectRule = daoService.getRedirectRule(redirectRule);
+
+			if (redirectRule != null) {
+				XStream xstream = new XStream();
+				xstream.alias("redirect", RedirectRule.class);
+				String xml = xstream.toXML(redirectRule);
+				FileUtil.fileStream(xml, getFileDirectory(ruleType, ruleId),
+						ruleId + FileUtil.XML_FILE_TYPE);
+				success = true;
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+		return success;
 	}
 	
 	private Object getXmlObjectForExcludeRule(String storeName, String ruleId){

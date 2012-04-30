@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.report.model.KeywordReportBean;
@@ -33,14 +34,16 @@ import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RelevancyService;
+import com.search.manager.service.UtilityService;
 
 @Controller
 @RequestMapping("/relevancy")
 @Scope(value="prototype")
 public class RelevancyController {
 
-	private static final Logger logger = Logger.getLogger(AuditController.class);
+	private static final Logger logger = Logger.getLogger(RelevancyController.class);
 
+	@Autowired DaoCacheService daoCacheService;
 	@Autowired private RelevancyService relevancyService;
 	@Autowired private DownloadService downloadService;
 
@@ -63,6 +66,13 @@ public class RelevancyController {
 		model.addAttribute("store", store);
 		model.addAttribute("longFields", longFields);
 		model.addAttribute("shortFields", shortFields);
+		
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Ranking Rule");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		
 		return "relevancy/relevancy";
 	}
 	
@@ -86,9 +96,9 @@ public class RelevancyController {
 			filename = "ranking rule";
 		}
 
-		Relevancy relevancy = relevancyService.getById(relevancyId);
+		Relevancy relevancy = relevancyService.getRule(relevancyId);
 		List<KeywordReportBean> keywords = new ArrayList<KeywordReportBean>();
-		for (Keyword keyword: relevancyService.getKeywordInRule(relevancyId, null, 0, 0).getList()) {
+		for (Keyword keyword: relevancyService.getAllKeywordInRule(relevancyId, null, 0, 0).getList()) {
 			keywords.add(new KeywordReportBean(keyword));
 		}
 

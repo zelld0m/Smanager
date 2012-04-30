@@ -3,6 +3,7 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +30,7 @@ public class RuleStatusDAO {
 	// needed by spring AOP
 	public RuleStatusDAO(){}
 	
-	public static final String ADD  = "ADD";
-	public static final String UPDATE  = "UPDATE";
-	public static final String DELETE  = "DELETE";
-	public static final String UNPUBLISHED  = "UNPUBLISHED";
-	public static final String PENDING  = "PENDING";
+	private static final String RS_SQL = "SELECT REFERENCE_ID FROM RULE_STATUS WHERE RULE_TYPE_ID = ";
 	
 	@Autowired
 	public RuleStatusDAO(JdbcTemplate jdbcTemplate) {
@@ -207,6 +204,33 @@ public class RuleStatusDAO {
 			result = rSet.getList().get(0);
 		}
 		return result;
+	}
+	
+	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) {
+		StringBuilder sBuilder = new StringBuilder(RS_SQL);
+		sBuilder.append(ruleTypeId).append(" AND (");
+		int size = ruleRefIds.size();
+		boolean orFlag = size > 1;
+		for (int i = 0; i < ruleRefIds.size(); i++) {
+			String ruleRefId = ruleRefIds.get(i);
+			sBuilder.append("REFERENCE_ID = '").append(ruleRefId).append("'");
+			if (orFlag && i != size-1) {
+				sBuilder.append(" OR ");
+			}
+		}
+		sBuilder.append(") ");
+		if (!StringUtils.isBlank(pStatus)) {
+			sBuilder.append("AND PUBLISHED_STATUS = '").append(pStatus).append("'");
+		}
+		if (!StringUtils.isBlank(aStatus)) {
+			sBuilder.append("AND APPROVED_STATUS = '").append(aStatus).append("'");
+		}
+		
+		return getRuleStatusStoredProcedure.getJdbcTemplate().query(sBuilder.toString(), new RowMapper() {
+		      public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+		          return resultSet.getString(1);
+		        }
+		      });
 	}
 
 }
