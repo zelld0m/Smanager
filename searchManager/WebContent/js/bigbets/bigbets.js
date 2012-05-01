@@ -133,7 +133,7 @@
 				events: {
 					show: function(event, api) {
 						var contentHolder = $('div', api.elements.content);
-						if(e.data.type==="Elevate" || e.data.type==="Exclude") {
+						if(e.data && !e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
 							contentHolder.html(getHTMLTemplate("#viewAuditTemplate" + $.formatAsId(e.data.item["edp"])));
 						}
 						else {
@@ -155,20 +155,55 @@
 		};
 
 		var updateAuditList = function(e, contentHolder, auditPage, auditPageSize){
-			var edp = "";
-			var idSuffix = "";
-			var ruleId = "";
-			
-			if(e.data.type==="Elevate" || e.data.type==="Exclude") {
-				edp = e.data.item["edp"];
-				idSuffix = $.formatAsId(edp);
+
+			if (e.data && !e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
+				var edp = e.data.item["edp"];
+				var idSuffix = $.formatAsId(edp);
 			}
 			else {
-				ruleId = e.data.ruleRefId;
+				var ruleId = e.data.ruleId;
 			}
 			
+			if(e.data.ruleId){
+				CommentServiceJS.getComment(e.data.ruleType, e.data.ruleId, auditPage, auditPageSize, {
+					callback: function(data){
+						var totalItems = data.totalSize;
+						var auditItems = "";
 
-			if(e.data.type==="Elevate"){
+						for(var i = 0 ; i <  data.list.length ; i++){
+							var auditTemplate = getHTMLTemplate("#auditTemplate"); 
+							var item = data.list[i];
+							
+							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
+							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
+							auditTemplate = auditTemplate.replace("%%comment%%", item.comment);
+							auditItems += auditTemplate;
+						}
+
+						contentHolder.find("#auditPagingTop, #auditPagingBottom").paginate({
+							type: "short",
+							pageStyle: "style2",
+							currentPage: auditPage, 
+							pageSize: auditPageSize,
+							totalItem: totalItems,
+							callbackText: function(itemStart, itemEnd, itemTotal){
+								return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
+							},
+							pageLinkCallback: function(evt){ updateAuditList(e,contentHolder, evt.data.page, auditPageSize);},
+							nextLinkCallback: function(evt){ updateAuditList(e,contentHolder, evt.data.page+1, auditPageSize); },
+							prevLinkCallback: function(evt){ updateAuditList(e,contentHolder, evt.data.page-1, auditPageSize); },
+							firstLinkCallback: function(evt){ updateAuditList(e,contentHolder, 1, auditPageSize); },
+							lastLinkCallback: function(evt){ updateAuditList(e,contentHolder, evt.data.totalPages, auditPageSize); }
+						});
+
+						contentHolder.find("#auditHolder").html(auditItems);
+						contentHolder.find("#auditHolder> div:nth-child(even)").addClass("alt");
+					},
+					preHook: function(){ prepareAuditList(contentHolder); }
+				});
+			}
+			
+			else if(e.data.type==="Elevate"){
 				AuditServiceJS.getElevateItemTrail(e.data.name, edp, auditPage, auditPageSize, {
 					callback: function(data){
 						var totalItems = data.totalSize;
@@ -207,7 +242,7 @@
 				});
 			}
 
-			if(e.data.type==="Exclude"){
+			else if(e.data.type==="Exclude"){
 				AuditServiceJS.getExcludeItemTrail(e.data.name, edp, auditPage, auditPageSize, {
 					callback: function(data){
 						var totalItems = data.totalSize;
@@ -246,7 +281,7 @@
 				});
 			}
 			
-			if(e.data.type==="Query Cleaning"){
+			else if(e.data.type==="Query Cleaning"){
 				AuditServiceJS.getRedirectTrail(e.data.ruleRefId, auditPage, auditPageSize, {
 					callback: function(data){
 						var totalItems = data.totalSize;
@@ -285,7 +320,7 @@
 				});
 			}
 
-			if(e.data.type==="Ranking Rule"){
+			else if(e.data.type==="Ranking Rule"){
 				AuditServiceJS.getRelevancyTrail(e.data.ruleRefId, auditPage, auditPageSize, {
 					callback: function(data){
 						var totalItems = data.totalSize;
@@ -330,9 +365,15 @@
 		};
 
 		var updateCommentList = function(contentHolder, e){
-			var edp = e.data.item["edp"];
-			var id = $.formatAsId(edp);
-
+			if(!e.data) {
+				return;
+			}
+			
+			if (!e.data.ruleId) {
+				var edp = e.data.item["edp"];
+				var id = $.formatAsId(edp);				
+			}
+			
 			if (e.data.type==="Elevate"){
 				ElevateServiceJS.getComment(e.data.name, edp, {
 					callback: function(comment){
@@ -362,7 +403,7 @@
 				});
 			}
 
-			if (e.data.type==="Exclude"){
+			else if (e.data.type==="Exclude"){
 				ExcludeServiceJS.getComment(e.data.name, edp, {
 					callback: function(comment){
 						var commentItems = "";
@@ -394,9 +435,12 @@
 
 		showCommentList = function(e){
 			var data = e.data;
-			var edp = data.item.edp;
-			var id = $.formatAsId(edp);
 
+			if(!e.data.ruleId) {
+				var edp = data.item.edp;
+				var id = $.formatAsId(edp);			
+			}
+			
 			$(this).qtip({
 				id: "show-comment",
 				content: {

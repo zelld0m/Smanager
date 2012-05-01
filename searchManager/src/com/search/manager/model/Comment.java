@@ -6,6 +6,9 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.service.UtilityService;
+import com.search.manager.utility.DateAndTimeUtils;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class Comment implements Serializable {
 	
@@ -88,4 +91,8 @@ private static final long serialVersionUID = 1L;
 		this.ruleTypeId = ruleTypeId;
 	}
 
+	public String getFormatDateTimeUsingConfig(){
+		//TODO: fix call to getStoreId()
+		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), createdDate);
+	}
 }

@@ -226,7 +226,7 @@ public class DeploymentService {
 			for(String rsId: ruleStatusId){
 				Comment comment = new Comment();
 				comment.setReferenceId(rsId);
-				comment.setRuleTypeId(9);
+				comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
 				comment.setUsername(UtilityService.getUsername());
 				comment.setComment(pComment);
 				daoService.addComment(comment);
@@ -243,7 +243,7 @@ public class DeploymentService {
 		try {
 			Comment comment = new Comment();
 			comment.setReferenceId(ruleStatusId);
-			comment.setRuleTypeId(9);
+			comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
 			rSet = daoService.getComment(new SearchCriteria<Comment>(comment, null, null, page, itemsPerPage));
 		} catch (DaoException e) {
 			logger.error("Failed during getComment()",e);

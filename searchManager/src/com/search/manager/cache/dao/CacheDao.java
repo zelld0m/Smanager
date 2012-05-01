@@ -209,8 +209,19 @@ public abstract class CacheDao<T> {
 	protected boolean isNeedReloadCache(Store store, CacheModel<T> model) {
 		Date date = getforceUpdateCacheDate(store);
 		Date currentDate = new Date();
-		return (model == null || model.getUploadedDate() == null || date == null || model.getUploadedDate().before(date) || 
+		
+		logger.debug("********************************");
+		logger.debug("force recache: " + date);
+		logger.debug("current date: " + currentDate);
+		if (model != null) {
+			logger.debug("uploaded date: " + model.getUploadedDate());			
+		}
+		
+		boolean isNeeded = (model == null || model.getUploadedDate() == null || date == null || model.getUploadedDate().before(date) || 
 				!DateAndTimeUtils.getDateStringMMDDYYYY(model.getUploadedDate()).equals(DateAndTimeUtils.getDateStringMMDDYYYY(currentDate)));
+		logger.debug("need reload: " + isNeeded);
+		
+		return isNeeded;
 	}
 	
 }

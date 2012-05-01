@@ -42,7 +42,7 @@ showActionResponse = function(code, action, param){
 	}
 };
 
-showDeploymentStatusBar = function(moduleName, ruleStatus){
+showDeploymentStatusBar = function(moduleName, ruleId, ruleStatus){
 	$("span#status").html("");
 	$("span#statusMode").html("");
 	$("span#statusDate").html("");
@@ -69,6 +69,11 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 			$("span#statusMode").append("[Read-Only]");
 			$("a#submitForApprovalBtn").hide();
 		}
+		
+		$("div#commentHolder span#commentIcon").on({
+			click: showAuditList
+		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
+
 	}
 };
 

@@ -4,7 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.EnumConverter;
 
+@DataTransferObject(converter=EnumConverter.class, javascript="RuleEntity")
 public enum RuleEntity {
 	ELEVATE(1, "Elevate"),
 	EXCLUDE(2, "Exclude"),
@@ -13,7 +16,8 @@ public enum RuleEntity {
 	CAMPAIGN(5, "Campaign"),
 	BANNER(6, "Banner"),
 	QUERY_CLEANING(7, "Query Cleaning"),
-	RANKING_RULE(8, "Ranking Rule");
+	RANKING_RULE(8, "Ranking Rule"),
+	RULE_STATUS(9, "Rule Status");
 
 	private final int code;
 	private final List<String> values;
