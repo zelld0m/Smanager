@@ -181,7 +181,7 @@
 		base.jumpToPage = function(e){
 			var charCode = (e.which) ? e.which : e.keyCode;
 
-			if (charCode==48 || charCode==96 || charCode > 31 && (charCode < 48 || charCode > 57)){
+			if (((charCode==48 || charCode==96) && $.isBlank($(e.target).val())) || (charCode > 31 && (charCode < 48 || charCode > 57))){
 				return false;
 			}
 
