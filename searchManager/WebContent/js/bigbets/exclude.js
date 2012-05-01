@@ -141,7 +141,6 @@
 	
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
-		var disableCalendar = false;
 		
 		$("#sItemImg" + id).attr("src",item["imagePath"]);
 		$("#sItemMan" + id).html(item["manufacturer"]);
@@ -162,10 +161,8 @@
 		
 		// Product is no longer visible in the setting
 		if ($.isBlank(item["dpNo"])){
-			disableCalendar = true;			
 			$("#sItemImg" + id).attr("src","../images/padlock_img.jpg"); 
 			$("#sItemMan" + id).html(lockedItemDisplayText);
-			$("#sItemDelete" + id).html("");
 			$("#sItemDPNo" + id).html("Unavailable");
 			$("#sItemMfrPN" + id).html("Unavailable");
 			$("#sItemName" + id).html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
@@ -193,7 +190,7 @@
 			buttonText: "Expiration Date",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: disableCalendar || selectedRuleStatus.locked,
+			disabled: selectedRuleStatus.locked,
 			onSelect: function(dateText, inst) {	
 				if (item["formattedExpiryDate"] != dateText){
 					ExcludeServiceJS.updateExpiryDate(selectedRule.ruleName,item["edp"], dateText, {
