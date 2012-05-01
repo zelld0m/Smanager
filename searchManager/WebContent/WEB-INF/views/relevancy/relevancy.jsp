@@ -124,8 +124,13 @@
 		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
 		<div id="relevancy" class="relevancy fsize12">		
 			<div class="landingCont w45p83 minHeight185 floatL">	
-				<div class="fsize14 txtAL borderB padB4 marB8 fbold">Rule Info
-					<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
+				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
+					<div class="floatL">Rule Info</div>
+					<div class="floatR">
+						<span class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></span>
+						<span class="floatR"><img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History"></span>
+					</div>
+					<div class="clearB"></div>
 				</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
 					<label><input id="name" type="text" class="w240 marT5"/></label>
