@@ -37,18 +37,24 @@
       </div>
 	</div>
     
-     <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div id="" class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:60%" >
+    <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
+	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
+	        	<div class="floatL padT10 padL10" style="width:65%" >
+	        		<div id="commentHolder">
+			        	<label class="floatL wAuto padL5 fsize11 fLgray">
+			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
+			        	</label>
+		        	</div>
 	        		<div id="statusHolder">
+			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
 			        	<label class="floatL wAuto">Status:</label>
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
 			        		<span id="status"></span> 
 			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
 			        	</label>
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
 		        	</div>
 		        	<div id="publishHolder">
+		        		<label class="floatL wAuto marRL5 fLgray2">|</label>
 			        	<label class="floatL wAuto">Last Published:</label>
 			        	<label class="padL5 fLgray fsize11">
 			        		<span id="statusDate"></span> 

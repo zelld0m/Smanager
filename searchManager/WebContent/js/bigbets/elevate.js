@@ -367,7 +367,7 @@
 				callback:function(data){
 					selectedRuleStatus = data;
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(selectedRuleStatus);
+					showDeploymentStatusBar(moduleName, selectedRuleStatus);
 					showElevate();
 				},
 				preHook: function(){
