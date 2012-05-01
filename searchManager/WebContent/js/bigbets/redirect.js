@@ -362,7 +362,7 @@
 					if(response==1){
 						RedirectServiceJS.getRule(selectedRule.ruleId,{
 							callback: function(data){
-								setRedirect(selectedRule);
+								setRedirect(data);
 							},
 							preHook: function(){
 								prepareRedirect();
