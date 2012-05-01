@@ -33,6 +33,38 @@ public class ElevateService{
 	@Autowired private DaoService daoService;
 
 	@RemoteMethod
+	public int updateElevateItem(String keyword, String productId, int position, String comment, String expiryDate){
+		int changes = 0;
+		
+		ElevateResult elevate = new ElevateResult();
+		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		elevate.setEdp(productId);
+		try {
+			elevate = daoService.getElevateItem(elevate);
+		} catch (DaoException e) {
+			elevate = null;
+		}
+
+		if(elevate==null){
+			return changes;
+		}
+		
+		if (position!=elevate.getLocation()){
+			changes += updateElevate(keyword, productId, position);
+		}
+		
+		if (StringUtils.isNotBlank(comment)){
+			changes += addComment(keyword, productId, comment);
+		}
+		
+		if (!StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
+			changes += updateExpiryDate(keyword, productId, expiryDate);
+		}
+		
+		return changes;
+	}
+
+	@RemoteMethod
 	public int addElevate(String keyword, String edp, int sequence, String expiryDate, String comment) {
 		try {
 			logger.info(String.format("%s %s %d %s %s", keyword, edp, sequence, expiryDate, comment));
@@ -76,7 +108,7 @@ public class ElevateService{
 					return daoService.addElevateResult(e);
 				}
 			}
-			
+
 			return 0;
 		} catch (DaoException e) {
 			logger.error("Failed during addElevateByPartNumber()",e);
@@ -155,19 +187,19 @@ public class ElevateService{
 
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getProducts(String filter, String keyword, int page, int itemsPerPage) {
-		
+
 		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter))
 			return getAllElevatedProducts(keyword, page, itemsPerPage);
 
 		if (StringUtils.equalsIgnoreCase("active", filter))
 			return getActiveElevatedProducts(keyword, page, itemsPerPage);
-		
+
 		if (StringUtils.equalsIgnoreCase("expired", filter))
 			return getExpiredElevatedProducts(keyword, page, itemsPerPage);
-		
+
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getAllElevatedProducts(String keyword, int page,int itemsPerPage) {
 		try {
@@ -269,10 +301,10 @@ public class ElevateService{
 		ElevateProduct elevatedProduct = getElevatedProduct(keyword, productId);
 		if (elevatedProduct == null)
 			return StringUtils.EMPTY;
-		
+
 		return StringUtils.trimToEmpty(elevatedProduct.getComment());
 	}
-	
+
 	@RemoteMethod
 	public int clearRule(String keyword) {
 		try {
@@ -283,7 +315,7 @@ public class ElevateService{
 		}
 		return -1;
 	}
-	
+
 	public DaoService getDaoService() {
 		return daoService;
 	}
