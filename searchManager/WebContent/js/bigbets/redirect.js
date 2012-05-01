@@ -244,7 +244,7 @@
 												$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
 
 												for(var i=0; i<data.totalSize; i++){
-													var rule = list[i].relevancy;
+													var rule = list[i];
 													var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
 													$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
 													$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
