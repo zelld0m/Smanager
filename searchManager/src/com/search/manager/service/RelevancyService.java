@@ -180,7 +180,7 @@ public class RelevancyService {
 					throw e;
 				}
 			}
-			
+
 			clonedRelevancy = getRule(clonedId);
 
 		} catch (DaoException e) {
@@ -441,19 +441,15 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
-	public int updateRelevancyKeyword(String[] relevancyIds, String keyword){
+	public int updateRulePriority(String ruleId, String keyword, int priority){
 		try {
-
-			for(int i=0; i< ArrayUtils.getLength(relevancyIds); i++){
-				Relevancy relevancy = new Relevancy(relevancyIds[i]);
-				relevancy.setStore(new Store(UtilityService.getStoreName()));
-				RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), relevancy);
-				RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
-				rk.setRelevancy(relevancy);
-				rk.setPriority(i+1);
-				daoService.updateRelevancyKeyword(rk);
-			}
-			return 1;
+			Relevancy relevancy = new Relevancy(ruleId);
+			relevancy.setStore(new Store(UtilityService.getStoreName()));
+			RelevancyKeyword tmpRelKey = new RelevancyKeyword(new Keyword(keyword), relevancy);
+			RelevancyKeyword rk = daoService.getRelevancyKeyword(tmpRelKey);
+			rk.setRelevancy(relevancy);
+			rk.setPriority(priority);
+			return daoService.updateRelevancyKeyword(rk);
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}

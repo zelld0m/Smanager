@@ -1,6 +1,4 @@
-/**
- * Global DWR Handler
- */
+/** Global DWR Handler */
 dwr.engine.setTextHtmlHandler(function() {
 	window.alert("Your session has expired, please login again.");
 	document.location.href = document.location.href;
@@ -44,7 +42,7 @@ showActionResponse = function(code, action, param){
 	}
 };
 
-showDeploymentStatusBar = function(ruleStatus){
+showDeploymentStatusBar = function(moduleName, ruleStatus){
 	$("span#status").html("");
 	$("span#statusMode").html("");
 	$("span#statusDate").html("");
@@ -74,9 +72,7 @@ showDeploymentStatusBar = function(ruleStatus){
 	}
 };
 
-/**
- * Style for HTML upload tag
- */
+/** Style for HTML upload tag */
 showMessage = function(selector, msg){
 	$(selector).qtip({
 		id: "hover-custom",
@@ -101,9 +97,7 @@ showMessage = function(selector, msg){
 	});
 };
 
-/**
- * Style for HTML upload tag
- */
+/** Style for HTML upload tag */
 showHoverInfo = function(e){
 	if(e.data.locked){
 		$(this).qtip({
@@ -134,9 +128,7 @@ showHoverInfo = function(e){
 	}
 };
 
-/**
- * Style for HTML upload tag
- */
+/** Style for HTML upload tag */
 var W3CDOM = (document.createElement && document.getElementsByTagName);
 
 function initFileUploads() {
@@ -161,9 +153,7 @@ function initFileUploads() {
 	}
 }
 
-/**
- * Global initialization of jQuery 
- */
+/** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
 		var useTinyMCE = function(){

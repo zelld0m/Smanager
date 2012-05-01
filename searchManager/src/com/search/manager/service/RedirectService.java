@@ -80,7 +80,7 @@ public class RedirectService {
 		}
 		return result;
 	}
-
+	
 	@RemoteMethod
 	public int deleteRule(RedirectRule rule) {
 		int result = -1;
@@ -234,10 +234,30 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
+	public int getTotalRuleUsedByKeyword(String keyword){
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setSearchTerm(keyword);
+			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  null, null);
+			RecordSet<RedirectRule> count = daoService.getRedirectRules(criteria);
+			if (count != null) {
+				return count.getTotalSize();
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during getTotalRuleUsedByKeyword()",e);
+		}
+		return 0;
+	}
+	
+	@RemoteMethod
 	public RecordSet<RedirectRule> getAllRuleUsedByKeyword(String keyword) throws DaoException {
 		try {
-			SearchCriteria<StoreKeyword> criteria = new SearchCriteria<StoreKeyword>(new StoreKeyword(UtilityService.getStoreName(), null), null, null,  0, 0);
-			return daoService.getRedirectForKeywords(criteria);
+			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setSearchTerm(keyword);
+			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null, 0, 0);
+			return daoService.getRedirectRules(criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllRuleUsedByKeyword()",e);
 		}

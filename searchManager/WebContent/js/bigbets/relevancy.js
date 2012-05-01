@@ -21,7 +21,7 @@
 	var bqSearchText = "Enter Field Value";
 
 	/** BELOW: BF */
-	setupFieldS4 = function(field){
+	var setupFieldS4 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
 			content: { text: $('<div>'), title: { text: "Edit " + field.label, button: true }},
 			show: {modal:true},
@@ -37,10 +37,10 @@
 			}
 
 		}).click(function(e) { e.preventDefault(); });
-	},
+	};
 
 	/** BELOW: BQ */
-	setupFieldS3 = function(field){
+	var setupFieldS3 = function(field){
 
 		var updateFacetValueBarLength = function(content, fieldValue, fieldBoost){
 
@@ -245,10 +245,10 @@
 			}
 
 		}).click(function(e) { e.preventDefault(); });
-	},
+	};
 
 	/** BELOW: MM */
-	setupFieldS2 = function(field){
+	var setupFieldS2 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
 			content: { text: $('<div>'), title: { text: "Edit " + field.label, button: true }},
 			show: {modal:true},
@@ -1002,7 +1002,7 @@
 				callback:function(data){
 					selectedRuleStatus = data;
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(selectedRuleStatus);
+					showDeploymentStatusBar(moduleName, selectedRuleStatus);
 					showRelevancy();
 				},
 				preHook: function(){
@@ -1147,7 +1147,7 @@
 		});
 	};
 
-	getRelevancyRuleKeywordList = function(page){
+	var getRelevancyRuleKeywordList = function(page){
 		$("#ruleKeywordPanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
@@ -1181,26 +1181,24 @@
 								show: { modal: true },
 								events: { 
 									render: function(rEvt, api){
-										var $content = $("div", api.elements.content).html($("#sortRankingPriorityTemplate").html());
-
+										var $content = $("div", api.elements.content).html($("#sortRulePriorityTemplate").html());
 
 										RelevancyServiceJS.getAllRuleUsedByKeyword(name, {
 											callback: function(data){
 												var list = data.list;
 
-												$content.find("ul#rankingRuleListing > li:not(#rankingRulePattern)").remove();
+												$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
 
-												for(var i=0; i<data.totalSize; i++){
-													var suffixId = $.escapeQuotes($.formatAsId(list[i].relevancy.relevancyId));
-													$content.find("li#rankingRulePattern").clone().appendTo("ul#rankingRuleListing").attr("id", "rankingRule" + suffixId).show();
-													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").html(list[i].relevancy.relevancyName);
-													$content.find("li#rankingRule" + suffixId + " span.rankingRuleName").attr("id", list[i].relevancy.relevancyId);
+												for(var i=0; i < data.totalSize; i++){
+													var rule = list[i].relevancy;
+													var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
+													$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
+													$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
 												}
+							
+												$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
 
-												$content.find("ul#rankingRuleListing > li").removeClass("alt");
-												$content.find("ul#rankingRuleListing > li:nth-child(even)").addClass("alt");
-
-												$content.find("ul#rankingRuleListing").sortable({ 
+												$content.find("ul#ruleListing").sortable({ 
 													handle : '.handle',
 													cursor : 'move',
 													start: function(e, ui) {
@@ -1223,23 +1221,15 @@
 														var sourceIndex = (ui.item.data('start_pos'));
 														var destinationIndex = (ui.item.index());
 
-														//TODO: move processing to SP
-														var relIds = new Array();
-
-														$(this).find('li:visible span.rankingRuleName').each(function(index, value){
-															relIds.push($(value).attr("id"));
-														});
-
-														RelevancyServiceJS.updateRelevancyKeyword(relIds, name, {
+														var relId = ui.item.find("span").attr("id");
+														
+														RelevancyServiceJS.updateRulePriority(relId, name, destinationIndex, {
 															callback: function(data){
 
 															}
 														});
 													}
 												});
-											},
-											preHook: function(){
-
 											}
 										});
 									}
@@ -1251,12 +1241,11 @@
 					}
 				});
 
-			},
-			pageChangeCallback: function(n){ }
+			}
 		});
 	};
 
-	getKeywordInRuleList = function(page){
+	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
