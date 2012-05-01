@@ -117,6 +117,15 @@
 
 		/** Show audit trail inside qtip2 */
 		showAuditList = function(e){
+			if(!e.data) {
+				return;
+			} 
+			
+			var html = getHTMLTemplate("#viewAuditTemplate");
+			if(!e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
+				html = getHTMLTemplate("#viewAuditTemplate" + $.formatAsId(e.data.item["edp"]));
+			}
+			
 			$(this).qtip({
 				id: "show-audit",
 				content: {
@@ -133,12 +142,7 @@
 				events: {
 					show: function(event, api) {
 						var contentHolder = $('div', api.elements.content);
-						if(e.data && !e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
-							contentHolder.html(getHTMLTemplate("#viewAuditTemplate" + $.formatAsId(e.data.item["edp"])));
-						}
-						else {
-							contentHolder.html(getHTMLTemplate("#viewAuditTemplate"));							
-						}
+						contentHolder.html(html);							
 						updateAuditList(e, contentHolder, 1, itemAuditPageSize);
 					},
 					hide: function(event,api){
@@ -156,12 +160,16 @@
 
 		var updateAuditList = function(e, contentHolder, auditPage, auditPageSize){
 
-			if (e.data && !e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
+			if (!e.data) {
+				return;
+			}
+			
+			if (e.data.ruleId) {
+				var ruleId = e.data.ruleId;
+			}
+			else if (e.data.type==="Elevate" || e.data.type==="Exclude") {
 				var edp = e.data.item["edp"];
 				var idSuffix = $.formatAsId(edp);
-			}
-			else {
-				var ruleId = e.data.ruleId;
 			}
 			
 			if(e.data.ruleId){
@@ -436,7 +444,11 @@
 		showCommentList = function(e){
 			var data = e.data;
 
-			if(!e.data.ruleId) {
+			if(!e.data) {
+				return;
+			}
+			
+			if (!e.data.ruleId) {
 				var edp = data.item.edp;
 				var id = $.formatAsId(edp);			
 			}

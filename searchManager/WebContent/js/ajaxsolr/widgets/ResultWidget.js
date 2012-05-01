@@ -359,7 +359,7 @@
 								contentHolder.find("a#removeBtn").attr("style","display:float");
 							}
 
-							if(updatedExpiryDate != "")
+							if(updatedExpiryDate !== "Indefinite")
 								contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate("mm/dd/yy", updatedExpiryDate) ? updatedExpiryDate : "");
 
 							if (stampVisible){
@@ -507,15 +507,16 @@
 									if (elevated){
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
-										dwr.engine.beginBatch();
-										if (position != currentPosition) ElevateServiceJS.updateElevate(keyword,doc.EDP,position,{callback : function(e){}});
-										if (comment.length > 0) ElevateServiceJS.addComment(keyword,doc.EDP,comment,{callback : function(e){}});
-										if (expiryDate != currentExpiryDate) ElevateServiceJS.updateExpiryDate(keyword,doc.EDP,expiryDate,{callback : function(e){}});
-										dwr.engine.endBatch();
-										needRefresh = true;
-										prepareElevateResult(contentHolder);
-										updateElevateResult(contentHolder, doc, keyword);
-
+										if (position != currentPosition || comment.length > 0 || expiryDate !== currentExpiryDate) 
+											ElevateServiceJS.updateElevateItem(keyword, doc.EDP, position, comment, expiryDate, {
+												callback : function(data){
+													if(data>0){
+														needRefresh = true;
+														prepareElevateResult(contentHolder);
+														updateElevateResult(contentHolder, doc, keyword);
+													}
+												}
+											});
 									}else{
 										//add elevation
 										ElevateServiceJS.addElevate(keyword, doc.EDP, position, expiryDate, comment, {
