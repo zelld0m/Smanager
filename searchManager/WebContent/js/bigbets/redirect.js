@@ -50,7 +50,7 @@
 
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
-		
+
 		$("#name").val(selectedRule.ruleName);
 		$("#description").val(selectedRule.description);
 
@@ -67,6 +67,27 @@
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked});
 
+		$('#downloadIcon').click(
+				function(){
+					var url = window.location.pathname + "/xls";
+					var urlParams = "";
+					var count = 0;
+					var params={};
+				
+					params["id"] = selectedRule["ruleId"];
+					params["filename"] = "RR" + $.formatAsId(selectedRule["ruleName"]);
+					params["type"] = 'excel';
+
+					for(var key in params){
+						if (count>0) urlParams +='&';
+						urlParams += (key + '=' + params[key]);
+						count++;
+					};
+
+					document.location.href = url + '?' + urlParams; 
+				}
+		);
+		
 		$("#submitForApprovalBtn").off().on({
 			click: function(e){
 				var ruleStatus = null;
@@ -249,7 +270,7 @@
 													$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
 													$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
 												}
-							
+
 												$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
 											}
 										});
@@ -265,7 +286,7 @@
 			}
 		});
 	};
-	
+
 	var getRuleConditionInRuleList = function(page){
 		$("#ruleConditionPanel").sidepanel({
 			fieldId: "",
@@ -318,7 +339,7 @@
 				callback:function(data){
 					selectedRuleStatus = data;
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(moduleName, selectedRuleStatus);
+					showDeploymentStatusBar(moduleName, selectedRule["ruleId"], selectedRuleStatus);
 					showRedirect();
 				},
 				preHook: function(){
@@ -399,7 +420,7 @@
 		var ruleName = $.trim($('div#redirect input[id="name"]').val());  
 		var description = $.trim($('div#redirect textarea[id="description"]').val());  
 		isDirty = false;
-		
+
 		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
 		isDirty = isDirty || (description.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
