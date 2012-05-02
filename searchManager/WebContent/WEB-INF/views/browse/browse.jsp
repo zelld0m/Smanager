@@ -91,12 +91,13 @@
 		  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine"> 
 	        <div id="searchResultOption"  class="clearfix pad5 txtAL w720" style="background:#e8e8e8">
 	        	<!-- span class="fsize14 alert" style="color:#a90400">This is redirected</span -->
-	        	<div class="floatL" style="width:60%" >
-	        	Select Ranking Rule:
-		        	<!-- label class="marT3 floatL valignMid padL5">Select Relevancy:</label -->
-		        	<select id="relevancy">
-		        		<option value="" id="norelevancy">&nbsp;</option>
+	        	<div class="floatL w60p dropdownArea" >
+	        		<label class="floatL w150">Select Ranking Rule:</label>
+		        	<label class="floatL w200">
+		        	<select id="relevancy" class="w178">
+		        		<option value="" id="norelevancy" >&nbsp;</option>
 		        	</select>
+		        	</label>	        	
 			  	</div>   
 			  	
 	        	<div class="floatR marL8 marTn2 marR3 padT2"> Select Catalog: 

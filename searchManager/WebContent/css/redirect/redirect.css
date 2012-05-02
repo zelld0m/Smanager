@@ -12,7 +12,10 @@ ul.ui-widget-content			{ margin-left:0 !important }
 
 /*.redirect span.ui-button-text	{ display:none; }
 .redirect .ui-button-icon		{ position:relative; top:5px; height: 23px } */
-.ui-button-icon		{ position:relative }
+.ui-button-icon		{ position:relative;}
+.ui-button			{ left:-1px }
+
+.dropdownArea label		{ margin-top:8px }
 
 
 
