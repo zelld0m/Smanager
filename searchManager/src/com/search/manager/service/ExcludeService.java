@@ -1,6 +1,10 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -33,30 +37,53 @@ public class ExcludeService {
 
 
 	@RemoteMethod
-	public int addItemToRuleUsingPartNumber(String keyword, String expiryDate, String comment, String[] partNumbers) {
-		try {
-			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
-			int ret = 0;
+	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, String expiryDate, String comment, String[] partNumbers) {
 
-			for(String partNumber: partNumbers){
-				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
-				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-				ExcludeResult e = new ExcludeResult();
-				e.setStoreKeyword(new StoreKeyword(store, keyword));
-				e.setEdp(edp);
-				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-				e.setCreatedBy(UtilityService.getUsername());
-				e.setComment(UtilityService.formatComment(comment));
-				if (StringUtils.isNotBlank(edp))
-					ret = daoService.addExcludeResult(e);
+		logger.info(String.format("%s %s", keyword, partNumbers));
+
+		HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
+		
+		ArrayList<String> passedList = new ArrayList<String>();
+		ArrayList<String> failedList = new ArrayList<String>();
+
+		resultMap.put("PASSED", passedList);
+		resultMap.put("FAILED", failedList);
+		
+		String server = UtilityService.getServerName();
+		String store = UtilityService.getStoreName();
+		
+		int count = 0;
+		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+		comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+		
+		for(String partNumber: partNumbers){
+			count = 0;
+			try {
+			
+				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
+				if (StringUtils.isNotBlank(edp)) {
+					ExcludeResult e = new ExcludeResult();
+					e.setStoreKeyword(new StoreKeyword(store, keyword));
+					e.setEdp(edp);
+					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+					e.setCreatedBy(UtilityService.getUsername());
+					e.setComment(UtilityService.formatComment(comment));
+					if (StringUtils.isNotBlank(edp)){
+						count = daoService.addExcludeResult(e);
+					}
+				}
+			} catch (DaoException de) {
+				logger.error("Failed during addExcludeByPartNumber()",de);
 			}
-			return ret;
-		} catch (DaoException e) {
-			logger.error("Failed during addExcludeByPartNumber()",e);
-		}
-		return -1;
+			
+			if (count > 0) {
+				passedList.add(StringUtils.trim(partNumber));						
+			}
+			else {
+				failedList.add(StringUtils.trim(partNumber));
+			}
+		}			
+		return resultMap;
 	}
 
 	@RemoteMethod
