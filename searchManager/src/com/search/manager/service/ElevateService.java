@@ -1,6 +1,10 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -87,17 +91,27 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
-		try {
-			logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
-			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
+		
+		logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
+		HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
 
-			int count = 0;
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+		ArrayList<String> passedList = new ArrayList<String>();
+		ArrayList<String> failedList = new ArrayList<String>();
+
+		resultMap.put("PASSED", passedList);
+		resultMap.put("FAILED", failedList);
+		
+		String server = UtilityService.getServerName();
+		String store = UtilityService.getStoreName();
+		
+		int count = 0;
+		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+		comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
 			
-			for(String partNumber: partNumbers){
+		for(String partNumber: partNumbers){
+			count = 0;
+			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
 					ElevateResult e = new ElevateResult();
@@ -107,16 +121,22 @@ public class ElevateService{
 					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 					e.setCreatedBy(UtilityService.getUsername());
 					e.setComment(UtilityService.formatComment(comment));
+					
 					if (StringUtils.isNotBlank(edp)){
-						count += daoService.addElevateResult(e);
-					}					
+						count = daoService.addElevateResult(e);
+					}
 				}
+			} catch (DaoException de) {
+				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
-			return count;
-		} catch (DaoException e) {
-			logger.error("Failed during addElevateByPartNumber()",e);
+			if (count > 0) {
+				passedList.add(StringUtils.trim(partNumber));						
+			}
+			else {
+				failedList.add(StringUtils.trim(partNumber));
+			}
 		}
-		return -1;
+		return resultMap;
 	}
 
 	@RemoteMethod
