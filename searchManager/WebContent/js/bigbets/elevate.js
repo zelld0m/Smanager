@@ -62,7 +62,7 @@
 						click: function(){
 							var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
 
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
+							var skus = $.trim(contentHolder.find("#addItemDPNo").val()).replace(/\s+/g,'');
 							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
@@ -266,7 +266,6 @@
 	};
 
 	var showPaging = function(page){
-		selectedRuleItemTotal > 0 ? $("#sortablePagingTop, #sortablePagingBottom").show() : "";
 		$("#sortablePagingTop, #sortablePagingBottom").paginate({
 			currentPage:page, 
 			pageSize:ruleItemPageSize,

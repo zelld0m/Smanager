@@ -61,7 +61,7 @@
 						click: function(){
 							var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
 
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
+							var skus = $.trim(contentHolder.find("#addItemDPNo").val()).replace(/\s+/g,'');
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
