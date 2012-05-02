@@ -12,8 +12,9 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("paginate", base);
 
+		base.options = $.extend({},$.paginate.defaultOptions, options);
+
 		base.init = function(){
-			base.options = $.extend({},$.paginate.defaultOptions, options);
 			if($.isBlank(base.options.currentPage)) base.options.currentPage = 1;
 			
 			var itemStart = (((base.options.currentPage-1)*base.options.pageSize)+1);
@@ -197,16 +198,15 @@
 			return true;
 		};
 		
-		
 		// Run initializer
-		base.init();
+		if (base.options.totalItem>0) base.init();
 	};
 
 	$.paginate.defaultOptions = {
 			type: "long",
-			currentPage: 1,
+			currentPage: 0,
 			pageSize: 10, 
-			totalItem: 10,
+			totalItem: 0,
 			totalPages: 0,
 			pageStyle: "style1",
 			callbackText: function(itemStart, itemEnd, itemTotal){
