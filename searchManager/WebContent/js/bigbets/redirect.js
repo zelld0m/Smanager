@@ -490,7 +490,6 @@
 				var selectList;
 				categories = data.categories;
 				manufacturers = data.manufacturers;
-
 				switch(catCode.length){
 				case 0: 
 					$("#categoryList, #subCategoryList, #classList, #minorList").filter(":not option[value='all']").remove();
@@ -512,7 +511,7 @@
 
 				for (var i = 0; i < categories.length; i++) {
 					category = categories[i];
-					selectList.append($("<option>", { value : category.catCode }).text(category.catName)); 
+					selectList.append($("<option>", { value : category.catCode }).text(category.catCode + " - " + category.catName)); 
 				}
 
 				$("#manufacturerList :not option[value='all']").remove();
