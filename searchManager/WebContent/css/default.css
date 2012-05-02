@@ -74,6 +74,7 @@ body 							{ margin: 0px; }
 .cssReset .w600, .w600			{width:600px}
 .cssReset .w620, .w620			{width:620px}
 .cssReset .w650, .w650			{width:650px}
+.cssReset .w655, .w655			{width:655px}
 .cssReset .w675					{width:675px}
 .cssReset .w700					{width:700px}
 .cssReset .w720, .w720			{width:720px}
@@ -120,6 +121,7 @@ body 							{ margin: 0px; }
 .cssReset .padL5, .padL5		{padding-left:5px !important}
 .cssReset .padL7				{padding-left:7px}
 .cssReset .padL10				{padding-left:10px}
+.cssReset .padL13, .padL13		{padding-left:13px}
 .cssReset .padL15, .padL15		{padding-left:15px}
 .cssReset .padL25				{padding-left:25px}
 .cssReset .padL55				{padding-left:55px}
