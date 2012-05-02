@@ -42,7 +42,7 @@ showActionResponse = function(code, action, param){
 	}
 };
 
-showDeploymentStatusBar = function(moduleName, ruleId, ruleStatus){
+showDeploymentStatusBar = function(moduleName, ruleStatus){
 	$("span#status").html("");
 	$("span#statusMode").html("");
 	$("span#statusDate").html("");
@@ -72,7 +72,7 @@ showDeploymentStatusBar = function(moduleName, ruleId, ruleStatus){
 		
 		$("div#commentHolder span#commentIcon").on({
 			click: showAuditList
-		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
+		}, {type:moduleName, ruleId:ruleStatus["ruleStatusId"], ruleType:"Rule Status" });
 
 	}
 };
