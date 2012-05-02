@@ -271,7 +271,7 @@
 				if(!e.data.locked && confirm(clearRuleConfirmText))
 					ExcludeServiceJS.clearRule(selectedRule.ruleName, {
 						callback: function(code){
-							showActionResponse(code, "clear", dateText);
+							showActionResponse(code, "clear", selectedRule.ruleName);
 							showExclude();
 						}
 					});
