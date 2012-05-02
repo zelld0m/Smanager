@@ -60,7 +60,7 @@ public class CommentDAO {
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
+	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID)
 	                		);
 	        	}
