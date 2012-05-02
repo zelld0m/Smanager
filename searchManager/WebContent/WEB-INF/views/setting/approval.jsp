@@ -79,10 +79,10 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w580 marR5 marB20" style="display:none; background: #f3f3f3;">
-				<h3 style="border:none">Approval Guidelines</h3>
-				<div class="fgray padL15 padR10 padB15 fsize11">Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
-				<label class="floatL w100">Comment: </label>
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="display:none; background: #f3f3f3;">
+				<h3 class="padL0" style="border:none;">Approval Guidelines</h3>
+				<div class="fgray padL10 padR10 padB15 fsize11">lorem ipsum hey ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<label class="floatL padL13 w100">Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
