@@ -92,6 +92,7 @@ public class ElevateService{
 			logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
+			int ret = 0;
 
 			for(String partNumber: partNumbers){
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
@@ -104,12 +105,11 @@ public class ElevateService{
 				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 				e.setCreatedBy(UtilityService.getUsername());
 				e.setComment(UtilityService.formatComment(comment));
-				if (StringUtils.isNotBlank(edp)){
-					return daoService.addElevateResult(e);
-				}
+				if (StringUtils.isNotBlank(edp))
+					ret = daoService.addElevateResult(e);
 			}
 
-			return 0;
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during addElevateByPartNumber()",e);
 		}

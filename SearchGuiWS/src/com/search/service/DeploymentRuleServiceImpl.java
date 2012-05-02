@@ -698,6 +698,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	@Override
 	public boolean loadElevateRules(String store) {
 		try {
+			daoCacheService.setForceReloadElevate(new Store(store));
 			return daoCacheService.loadElevateRules(new Store(store));
 		} catch (DataException e) {
 			logger.equals(e);
@@ -710,6 +711,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	@Override
 	public boolean loadExcludeRules(String store) {
 		try {
+			daoCacheService.setForceReloadExclude(new Store(store));
 			return daoCacheService.loadExcludeRules(new Store(store));
 		} catch (DataException e) {
 			logger.equals(e);
@@ -722,6 +724,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	@Override
 	public boolean loadRedirectRules(String store) {
 		try {
+			daoCacheService.setForceReloadRedirect(new Store(store));
 			return daoCacheService.loadRedirectRules(new Store(store));
 		} catch (DataException e) {
 			logger.equals(e);
@@ -734,6 +737,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	@Override
 	public boolean loadRankingRules(String store) {
 		try {
+			daoCacheService.setForceReloadRelevancy(new Store(store));
 			return daoCacheService.loadRelevancyRules(new Store(store));
 		} catch (DataException e) {
 			logger.equals(e);
@@ -755,6 +759,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						addEl.setStoreKeyword(sk);
 						daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
 						daoCacheService.resetElevateRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadExclude(new Store(store));
 						success = true;
 				}
 			}
@@ -777,6 +782,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						addEl.setStoreKeyword(sk);
 						daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
 						daoCacheService.resetElevateRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadExclude(new Store(store));
 						map.put(key, true);
 				}
 			}
@@ -798,6 +804,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						addEx.setStoreKeyword(sk);
 						daoService.clearExcludeResult(new StoreKeyword(store, key)); // prod
 						daoCacheService.resetExcludeRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadExclude(new Store(store));
 						success = true;
 				}
 			}
@@ -820,6 +827,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						addEx.setStoreKeyword(sk);
 						daoService.clearExcludeResult(new StoreKeyword(store, key)); // prod
 						daoCacheService.resetExcludeRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadExclude(new Store(store));
 						map.put(key, true);
 				}
 			}

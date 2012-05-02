@@ -37,6 +37,7 @@ public class ExcludeService {
 		try {
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
+			int ret = 0;
 
 			for(String partNumber: partNumbers){
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
@@ -48,11 +49,10 @@ public class ExcludeService {
 				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 				e.setCreatedBy(UtilityService.getUsername());
 				e.setComment(UtilityService.formatComment(comment));
-				if (StringUtils.isNotBlank(edp)){
-					return daoService.addExcludeResult(e);
-				}
+				if (StringUtils.isNotBlank(edp))
+					ret = daoService.addExcludeResult(e);
 			}
-			return 0;
+			return ret;
 		} catch (DaoException e) {
 			logger.error("Failed during addExcludeByPartNumber()",e);
 		}
