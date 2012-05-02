@@ -109,6 +109,7 @@ public class ElevateService{
 		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
 		comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
 			
+		sequence = (sequence==0)? 1: sequence;
 		for(String partNumber: partNumbers){
 			count = 0;
 			try {
