@@ -131,53 +131,36 @@
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
 						<td valign="top">
-							<table class="fsize12 mar10 tblCatalog">
-								<tr>
-									<td width="100px">CatCode</td>
-									<td width="230px"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></td>
-								</tr>
-								<tr>
-									<td>Category</td>
-									<td>
-										<select name="select" id="categoryList" class="selectCombo w200" title="Select Category">
-										
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Sub-Category</td>
-									<td>
-										<select name="select" id="subCategoryList" class="selectCombo w200" title="Select SubCategory">
-												<option></option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Class</td>
-									<td>
-										<select name="select" id="classList" class="selectCombo w200" title="Select Class">
-												<option></option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Minor</td>
-									<td>
-										<select name="select" id="minorList" class="selectCombo w200" title="Select Minor">
+							<div class="fsize12 mar10 dropdownArea">
+								<label class="floatL w100">CatCode</label><label class="floatL w200"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></label>
+								<div class="clearB"></div>
+								<label class="floatL w100">Category</label><label class="floatL w200"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category"></select></label>
+								<div class="clearB"></div>
+								<label class="floatL w100">Sub-Category</label>
+								<label class="floatL w200"><select name="select" id="subCategoryList" class="selectCombo w178" title="Select SubCategory">
+									   		<option></option>
+								</select></label>
+								<div class="clearB"></div>
+								<label class="floatL w100">Class</label>
+								<label class="floatL w200"><select name="select" id="classList" class="selectCombo w178" title="Select Class">
 											<option></option>
-										</select>
-									</td>
-								</tr>
-								<tr>
-									<td>Manufacturer </td>
-									<td>
-									<select name="select" id="manufacturerList" class="w200" title="Select Manufacturer">
-											<option></option>
-									</select></td>
-								</tr>
-							</table>
+								</select></label>
+								<div class="clearB"></div>
+								<label class="floatL w100">Minor</label>
+								<label class="floatL w200"><select name="select" id="minorList" class="selectCombo w178" title="Select Minor">
+									 		<option></option>
+								</select></label>
+								<div class="clearB"></div>
+								<label class="floatL w100">Manufacturer</label>
+								<label class="floatL w200"><select name="select" id="manufacturerList" class="w178" title="Select Manufacturer">
+										<option></option>
+								</select></label>
+								<div class="clearB"></div>							
+							</div>
+							
+							
 						</td>
-						<td style="width:60px"><a href="#" class="buttons btnGray clearfix">
+						<td class="w60"><a href="#" class="buttons btnGray marL15 clearfix">
 							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
 						<td class="landingCont bgboxGray" style="vertical-align: top; width: 240px">
 							<div id="ruleConditionPanel"></div>

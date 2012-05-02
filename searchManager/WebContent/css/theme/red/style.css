@@ -683,5 +683,8 @@ span.duration								{ color:#3b79c2 }
    .ui-autocomplete { height: 200px; overflow-y: scroll; overflow-x: hidden;}
    
 span.ui-button-text	{ display:none; }
-.ui-button-icon		{ position:relative; height: 23px }
+.ui-button-icon		{ position:relative; height: 19px; top:1px }
+
+
+.ui-widget-content .ui-autocomplete-input { background:none !important;  }
 

@@ -45,5 +45,8 @@ ul.ui-widget-content			{ margin-left:0 !important }
 
 .ui-button-icon					{ top:4px; }
 
+.ui-widget-content  { background: #fff !important }
+.ui-button			{ border:1px solid #d3d3d3 !important; top:0; left:-1px }
+
 
 
