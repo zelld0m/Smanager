@@ -15,6 +15,7 @@ ul.ui-widget-content			{ margin-left:0 !important }
 .ui-button-icon		{ position:relative;}
 .ui-button			{ left:-1px }
 
+.redirect span.ui-button-text	{ display:none; }
 .dropdownArea label		{ margin-top:8px }
 
 
