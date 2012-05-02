@@ -69,7 +69,7 @@
 								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
 									callback : function(code){
 										showActionResponse(code, "add", skus);
-										if (code==1) showExclude();
+										showExclude();
 									},
 									preHook: function(){ 
 										prepareExclude();
@@ -130,9 +130,9 @@
 			ExcludeServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
-					if(code==1) showExclude();
+					showExclude();
 				},
-				preHook: function(){
+				preHook: function(){ 
 					prepareExclude();
 				}
 			});
@@ -210,7 +210,6 @@
 	};
 
 	var showPaging = function(page, totalItem){
-		totalItem > 0 ? $("#sortablePagingTop, #sortablePagingBottom").show() : "";
 		$("#sortablePagingTop, #sortablePagingBottom").paginate({
 			currentPage:page, 
 			pageSize:ruleItemPageSize,
@@ -271,7 +270,8 @@
 			click: function(e){
 				if(!e.data.locked && confirm(clearRuleConfirmText))
 					ExcludeServiceJS.clearRule(selectedRule.ruleName, {
-						callback: function(data){
+						callback: function(code){
+							showActionResponse(code, "clear", dateText);
 							showExclude();
 						}
 					});

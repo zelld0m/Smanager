@@ -276,4 +276,4 @@ function initFileUploads() {
 		useTinyMCE();
 		refreshDock();
 	});
-})(jQuery);	
+})(jQuery);

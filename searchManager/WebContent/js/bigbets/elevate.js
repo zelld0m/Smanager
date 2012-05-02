@@ -68,15 +68,17 @@
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
 							if ($.isNotBlank(skus) && commaDelimitedNumberPattern.test(skus)){
+								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
 										showActionResponse(code, "add", skus);
-										if (code==1) showElevate();
+										showElevate();
 									},
 									preHook: function(){ 
 										prepareElevate();
 									}
 								});
+								
 							}
 						}
 					});
@@ -132,7 +134,7 @@
 			ElevateServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
-					if(code==1) showElevate();
+					showElevate();
 				},
 				preHook: function(){
 					prepareElevate();
@@ -143,7 +145,8 @@
 
 	var updateRuleItemPosition = function(edp, destinationIndex) {
 		ElevateServiceJS.updateElevate(selectedRule.ruleName,edp,destinationIndex, {
-			callback : function(data){
+			callback : function(code){
+				showActionResponse(code, "update position", edp);
 				showElevate();
 			},
 			preHook: function(){
@@ -325,7 +328,8 @@
 			click: function(e){
 				if(!e.data.locked && confirm(clearRuleConfirmText))
 					ElevateServiceJS.clearRule(selectedRule.ruleName, {
-						callback: function(data){
+						callback: function(code){
+							showActionResponse(code, "clear", dateText);
 							showElevate();
 						}
 					});
