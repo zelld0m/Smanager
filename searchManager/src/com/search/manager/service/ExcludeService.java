@@ -37,22 +37,27 @@ public class ExcludeService {
 		try {
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
-			int ret = 0;
-
+			
+			int count = 0;
+			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			
 			for(String partNumber: partNumbers){
-				String edp = daoService.getEdpByPartNumber(server, store, keyword, partNumber);
-				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-				ExcludeResult e = new ExcludeResult();
-				e.setStoreKeyword(new StoreKeyword(store, keyword));
-				e.setEdp(edp);
-				e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-				e.setCreatedBy(UtilityService.getUsername());
-				e.setComment(UtilityService.formatComment(comment));
-				if (StringUtils.isNotBlank(edp))
-					ret = daoService.addExcludeResult(e);
+				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
+				if (StringUtils.isNotBlank(edp)) {
+					ExcludeResult e = new ExcludeResult();
+					e.setStoreKeyword(new StoreKeyword(store, keyword));
+					e.setEdp(edp);
+					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+					e.setCreatedBy(UtilityService.getUsername());
+					e.setComment(UtilityService.formatComment(comment));
+					if (StringUtils.isNotBlank(edp)){
+						count += daoService.addExcludeResult(e);
+					}					
+				}
 			}
-			return ret;
+			
+			return count;			
 		} catch (DaoException e) {
 			logger.error("Failed during addExcludeByPartNumber()",e);
 		}
