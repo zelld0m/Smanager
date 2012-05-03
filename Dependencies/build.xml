@@ -96,7 +96,10 @@
 				<fileset dir="${dependencies}/searchmanager/WebContent" />
 			</war>
 	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
-			<scp file="solr@10.17.12.67:${dependencies}/searchmanager" todir="/home/solr/bin/deployment/searchmanager" password="maestros@search_mall" trust="true"/>	
+			
+			<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/searchmanager" password="maestros@search_mall" trust="true">
+			    <fileset dir="${dependencies}/searchmanager"/>
+			</scp>
 	</target>
 	
 	<target name="warWS" description="WAR Java sources">
@@ -119,6 +122,9 @@
 			<fileset dir="${dependencies}/ws/WebContent" />
 		</war>
   		<delete dir="${dependencies}/ws/WebContent" />	
-		<scp file="solr@10.17.12.67:${dependencies}/ws" todir="/home/solr/bin/deployment/webservice" password="maestros@search_mall" trust="true"/>
+		
+		<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/webservice" password="maestros@search_mall" trust="true">
+			<fileset dir="${dependencies}/ws"/>
+		</scp>
     </target>  
 </project> 
