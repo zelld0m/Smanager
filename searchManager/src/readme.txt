@@ -23,11 +23,18 @@ Important:
 copy solr.xml to c:\conf
 
 
-2. Update server.xml of your tomcat server.
+2. Update server.xml of your tomcat server. This is for handling UTF-8 strings
 
 Add the line in red
 
     <Connector connectionTimeout="20000" port="8080" URIEncoding="UTF-8" protocol="HTTP/1.1" redirectPort="8443"/>
 
-    
-    
+
+3. When asking DBA to clear the database, make sure they don't clear the tables listed below.
+   Also if there are records added to these tables, do not forget to replicate the records in all servers (development, staging and production):
+ 		PRODUCT_CATEGORY
+ 		PRODUCT_CATEGORY_TYPE
+		PROD_KEYWORD_MEMBER_TYPE
+ 		PRODUCT_STORE
+ 		REDIRECT_TYPE
+ 		RULE_TYPE
