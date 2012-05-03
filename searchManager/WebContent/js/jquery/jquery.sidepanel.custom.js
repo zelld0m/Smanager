@@ -1,5 +1,4 @@
 (function($){
-
 	$.sidepanel = function(el, options){
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
@@ -53,7 +52,11 @@
 			base.$el.find('a#addButton').on({
 				click: function(e){
 					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if ($.isNotBlank(name) && name != base.options.searchText) base.options.itemAddCallback(base, name);
+					if ($.isAllowedName(name)){
+						if ($.isNotBlank(name) && name != base.options.searchText) base.options.itemAddCallback(base, name);												
+					}else{
+						alert("Field contains invalid character");
+					}
 				}
 			});
 		};
