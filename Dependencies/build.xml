@@ -5,9 +5,9 @@
 	<property name="target" value="1.7"/>
 	<property name="source" value="1.7"/>
 	
-	<property name="searchManager" value="./searchManager"/>
-	<property name="searchGuiWS" value="./SearchGuiWS"/>
-	<property name="dependencies" value="./Dependencies"/>
+	<property name="searchManager" value="../searchManager"/>
+	<property name="searchGuiWS" value="../SearchGuiWS"/>
+	<property name="dependencies" value="${basedir}"/>
 		
 	 <!-- Define the CLASSPATH -->
 	 <path id="compile.classpath">
