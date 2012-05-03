@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"? default="build">
-
-<project name="SearchManagerBuilder"  basedir=".">
+<project name="SearchManagerBuilder"  basedir="." default="build">
 
 	<property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
