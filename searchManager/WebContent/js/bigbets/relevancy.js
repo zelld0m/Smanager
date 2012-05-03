@@ -703,7 +703,8 @@
 
 	var addRuleFieldValue = function(field, value){
 		var $parent = $('div#relevancy div[id="' + field + '"]');
-
+		var label = $parent.find('span[id="fieldLabel"]').html();
+		
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value > 0 && value < 1)){
 			alert("Tie value should be between 0 - 1");
@@ -712,7 +713,7 @@
 
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
-				showActionResponse(code, "update", field);
+				showActionResponse(code, "update", label);
 				selectedRule.parameters[field] = value;
 			},
 			preHook: function(){
