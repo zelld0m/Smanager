@@ -186,12 +186,11 @@
 				return false;
 			}
 
-			if (charCode == 13){
-				e.data.page = $.trim($(e.target).val());
-				if (e.data.page != e.data.currentPage && e.data.page <= e.data.totalPages){
+			var page = $.trim($(e.target).val());
+			if (charCode == 13 && $.isNumeric(page)){
+				if (page != e.data.currentPage && page <= e.data.totalPages){
+					e.data.page = page;
 					base.options.pageLinkCallback(e);
-				}else{
-					if (e.data.currentPage != e.data.page) alert("Page number is not valid");	
 				}
 			}
 
