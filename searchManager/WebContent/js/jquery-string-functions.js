@@ -69,8 +69,8 @@ jQuery.extend(
 				},
 				
 				isAllowedName: function(text){
-					var alphaNumericRegex= /^[a-zA-Z0-9_\s\-]*$/;
-					return $.isXSSSafe(text) && alphaNumericRegex.test(text) && $.isNotBlank();
+					var alphaNumRegex= /^[a-zA-Z0-9_\s\-]*$/;
+					return $.isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
 				}
 			};  
 		}(jQuery))  
