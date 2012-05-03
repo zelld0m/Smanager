@@ -21,7 +21,7 @@
 	 
 	<target name="build" description="Build Search Manager projects">
   		<ant target="warSM" />
-		<ant target="warSM" />
+		<ant target="warWS" />
     </target>
 
 	<target name="jarSM" description="JAR Java sources">
