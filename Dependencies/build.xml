@@ -1,6 +1,127 @@
-<project>
-      <property name="ONE" value="eins"/>
-      <property name="TWO" value="zwei"/>
-      <echo>${ONE}</echo>
-	  <echo>${TWO}</echo>
-    </project> 
+<project name="SearchManagerBuilder"  basedir="." default="build">
+
+	<property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+	<property name="target" value="1.7"/>
+	<property name="source" value="1.7"/>
+	
+	<property name="searchManager" value="../searchManager"/>
+	<property name="searchGuiWS" value="../SearchGuiWS"/>
+	<property name="dependencies" value="${basedir}"/>
+		
+	 <!-- Define the CLASSPATH -->
+	 <path id="compile.classpath">
+	    <fileset dir="${dependencies}/lib">
+	      <include name="*.jar"/>
+	    </fileset>
+	  	<fileset dir="${dependencies}/tomcat/lib">
+	  	  <include name="*.jar"/>
+	  	</fileset>
+	 </path>
+	 
+	<target name="build" description="Build Search Manager projects">
+  		<ant target="warSM" />
+		<ant target="warSM" />
+    </target>
+
+	<target name="jarSM" description="JAR Java sources">
+		<delete dir="${dependencies}/lib" />
+	  	<delete dir="${dependencies}/searchmanager/jar" />
+	  	<delete dir="${dependencies}/searchmanager/classes" />
+		<mkdir dir="${dependencies}/lib" />
+	  	<mkdir dir="${dependencies}/searchmanager/jar" />
+	  	<mkdir dir="${dependencies}/searchmanager/classes" />
+		<copy todir="${dependencies}/lib">
+		  	 <fileset dir="${searchManager}/WebContent/WEB-INF/lib" />
+		</copy>
+		<javac srcdir="${searchManager}/src" destdir="${dependencies}/searchmanager/classes">
+		    <classpath refid="compile.classpath"/>
+		</javac>
+	  	<jar destfile="${dependencies}/searchmanager/jar/searchManager.jar">
+	  	  	<fileset dir="${dependencies}/searchmanager/classes">
+	  	  	  	<include name="**/*.class"/> 
+	  	  	</fileset>
+	  	</jar>	
+		<delete dir="${dependencies}/lib" />
+	  	<delete dir="${dependencies}/searchmanager/classes" />
+	</target>
+
+	<target name="jarWS" description="JAR Java sources">
+  		<delete dir="${dependencies}/lib" />
+  		<delete dir="${dependencies}/ws/jar" />
+  		<delete dir="${dependencies}/ws/classes" />
+  		<mkdir dir="${dependencies}/lib" />
+  		<mkdir dir="${dependencies}/ws/jar" />
+  		<mkdir dir="${dependencies}/ws/classes" />
+  		<copy todir="${dependencies}/lib">
+  	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib" />
+  	  	</copy>
+	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes">
+	        <classpath refid="compile.classpath"/>
+	    </javac>
+  	  	<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
+  	  	  	<fileset dir="${dependencies}/ws/classes">
+  	  	  			<include name="**/*.class"/> 
+  	  	  	</fileset>
+  	  	</jar>	
+  		<delete dir="${dependencies}/lib" />
+  		<delete dir="${dependencies}/ws/classes" />
+    </target>
+	
+	<target name="warSM" description="WAR Java sources">
+			<ant target="jarSM" />
+	  		<delete dir="${dependencies}/searchmanager/war" />
+	  		<delete dir="${dependencies}/searchmanager/WebContent" />
+	  		<mkdir dir="${dependencies}/searchmanager/war" />
+	  		<mkdir dir="${dependencies}/searchmanager/WebContent" />
+	  		<mkdir dir="${dependencies}/searchmanager/WebContent/WEB-INF/lib" />
+	  	 	<copy todir="${dependencies}/searchmanager/WebContent">
+	  	 		<fileset dir="${searchManager}/WebContent" />
+	  	    </copy>
+	  		<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/lib">
+	  	  	 	<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
+	  			<fileset file="${searchManager}/WebContent/WEB-INF/lib/x">
+	  			  	<include name="**/*.jar"/> 
+	  			</fileset>
+	  	  	</copy>
+		
+			<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/classes">
+				<fileset file="${searchManager}/src/x">
+					<include name="**/*.properties"/> 
+					<include name="**/*.txt"/> 
+					<include name="**/*.xml"/> 
+					<include name="**/*.log"/> 
+				</fileset>
+			</copy>
+		
+			<war destfile="${dependencies}/searchmanager/war/searchManager.war">
+				<fileset dir="${dependencies}/searchmanager/WebContent" />
+			</war>
+	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
+			
+			<scp file="solr@10.17.12.67:${dependencies}/searchmanager/*" todir="/home/solr/bin/deployment/searchmanager"/>	
+	</target>
+	
+	<target name="warWS" description="WAR Java sources">
+		<ant target="jarWS" />
+  		<delete dir="${dependencies}/ws/war" />
+  		<delete dir="${dependencies}/ws/WebContent" />
+  		<mkdir dir="${dependencies}/ws/war" />
+  		<mkdir dir="${dependencies}/ws/WebContent" />
+  		<mkdir dir="${dependencies}/ws/WebContent/WEB-INF/lib" />
+  	 	<copy todir="${dependencies}/ws/WebContent">
+  	 		<fileset dir="${searchGuiWS}/WebContent" />
+  	    </copy>
+  		<copy todir="${dependencies}/ws/WebContent/WEB-INF/lib">
+  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />
+  			<fileset file="${searchGuiWS}/WebContent/WEB-INF/lib/x">
+  				<include name="**/*.jar"/> 
+  			</fileset>
+  	  	</copy>
+		<war destfile="${dependencies}/ws/war/searchguiws.war">
+			<fileset dir="${dependencies}/ws/WebContent" />
+		</war>
+  		<delete dir="${dependencies}/ws/WebContent" />	
+		<scp file="solr@10.17.12.67:${dependencies}/ws/*" todir="/home/solr/bin/deployment/webservice"/>
+    </target>  
+</project> 
