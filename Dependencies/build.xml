@@ -42,7 +42,6 @@
 	  	  	  	<include name="**/*.class"/> 
 	  	  	</fileset>
 	  	</jar>	
-		<delete dir="${dependencies}/lib" />
 	  	<delete dir="${dependencies}/searchmanager/classes" />
 	</target>
 
@@ -64,7 +63,6 @@
   	  	  			<include name="**/*.class"/> 
   	  	  	</fileset>
   	  	</jar>	
-  		<delete dir="${dependencies}/lib" />
   		<delete dir="${dependencies}/ws/classes" />
     </target>
 	
@@ -98,7 +96,6 @@
 				<fileset dir="${dependencies}/searchmanager/WebContent" />
 			</war>
 	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
-			
 			<scp file="solr@10.17.12.67:${dependencies}/searchmanager/*" todir="/home/solr/bin/deployment/searchmanager"/>	
 	</target>
 	
