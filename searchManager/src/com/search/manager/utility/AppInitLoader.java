@@ -43,7 +43,7 @@ public class AppInitLoader implements ApplicationContextAware, ServletContextAwa
 	
 	public void run() throws Exception {
 		String globalInitProp = CTX_WEB.getInitParameter(GLOBAL_INIT);
-		String[] props = globalInitProp.split(",");
+		String[] props = globalInitProp.split(","); test
 		
 		logger.info(">>>> LOADING APP-GLOBAL INIT <<<<");
 		
