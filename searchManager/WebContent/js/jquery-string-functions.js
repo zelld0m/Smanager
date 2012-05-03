@@ -70,7 +70,7 @@ jQuery.extend(
 				
 				isAllowedName: function(text){
 					var alphaNumericRegex= /^[a-zA-Z0-9_\s\-]*$/;
-					return $.isXSSSafe && alphaNumericRegex.test(text);
+					return $.isXSSSafe(text) && alphaNumericRegex.test(text) && $.isNotBlank();
 				}
 			};  
 		}(jQuery))  
