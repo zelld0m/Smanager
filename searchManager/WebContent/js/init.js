@@ -34,12 +34,30 @@ getRuleNameSubTextStatus = function(ruleStatus){
 	}	
 };
 
+
 showActionResponse = function(code, action, param){
 	switch(code){
-	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-	case  0: alert("Failed " + action + " request for " + param); break;
-	default: alert("Successfull " + action + " request for " + param); break;
+		case -1: alert("Error encountered while processing " + action + " request for " + param); break;
+		case  0: alert("Failed " + action + " request for " + param); break;
+		default: alert("Successful " + action + " request for " + param); break;		
 	}
+};
+
+showActionResponseFromMap = function(code, action, param, additionalFailMessage){
+	message = "";
+	if (code["PASSED"].length > 0) {
+		message += "Successful " + action + " request for " + code["PASSED"] + ".";
+	}
+	if (message !== "") {
+		message += "\n\n";
+	}
+	if (code["FAILED"].length > 0) {
+		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
+		if (additionalFailMessage) {
+			message += "\n " + additionalFailMessage;
+		}
+	}
+	alert (message); 
 };
 
 showDeploymentStatusBar = function(moduleName, ruleStatus){

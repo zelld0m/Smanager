@@ -60,25 +60,32 @@
 
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(){
-							var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
+							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
 
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val()).replace(/\s+/g,'');
+							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
-							if ($.isNotBlank(skus) && commaDelimitedNumberPattern.test(skus)){
-								
+							if ($.isBlank(skus)) {
+								alert("There are no SKUs specified in the list.");
+							}
+							else if (!commaDelimitedNumberPattern.test(skus)) {
+								alert("List contains an invalid SKU.");
+							}							
+							else if (!$.isBlank(expDate) && !$.isDate("mm/dd/yy", expDate)){
+								alert("Invalid date specified.")
+							}
+							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
-										showActionResponse(code, "add", skus);
+										showActionResponseFromMap(code, "add", skus, "Please check if SKU(s) are actually searchable using the specified keyword.");
 										showElevate();
 									},
 									preHook: function(){ 
 										prepareElevate();
 									}
-								});
-								
+								});								
 							}
 						}
 					});

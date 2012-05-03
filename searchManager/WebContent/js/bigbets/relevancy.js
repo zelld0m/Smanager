@@ -1089,7 +1089,7 @@
 										return;
 									}
 
-									RelevancyServiceJS.addRuleAndGetModel(name, {
+									RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
 										callback: function(data){
 											if (data!=null){
 												base.getList(name, 1);
