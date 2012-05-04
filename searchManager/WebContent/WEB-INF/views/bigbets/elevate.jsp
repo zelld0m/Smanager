@@ -172,7 +172,7 @@
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">
      	<div id="addCommentTemplate" style="display: none">
-   <div class="elevateItemPW">
+   <div class="elevateItemPW w282">
    <div class="borderB padB8 autoScroll height120">
    <div id="commentTemplate" style="display: none">
         <div class="pad5">
@@ -185,7 +185,8 @@
             <div class="clearB"></div>
            </div>
     </div>
-   	<div id="commentHolder"></div> 
+   
+   <div id="commentHolder"></div> 
    </div>
    <div class="floatL marT5 w282"> <p>Comment:</p>
    <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
