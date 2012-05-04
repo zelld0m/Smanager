@@ -644,9 +644,12 @@
 				},
 
 				show:function(rEvt, api){
-					var $content = $("div", api.elements.content);
+					var $content = $("div", api.elements.content);	
 					var field =	api.elements.target.parents('div.AlphaCont').attr("id");
 					var text = "";
+					
+					if(!$content.get(0))						
+						$content = api.elements.content;
 
 					if (field==="qf") text = 'List of fields and the "boosts" to associate with each of them';
 					if (field==="bf") text = 'Functions that will be included in the user\'s query to influence the score';
