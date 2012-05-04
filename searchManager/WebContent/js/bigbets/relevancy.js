@@ -698,7 +698,6 @@
 		});
 
 		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('blur focus keypress').on({
-			blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(selectedRule.parameters[getRelevancyField(e).id]);},
 			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters[getRelevancyField(e).id]) $(e.target).val("");},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
