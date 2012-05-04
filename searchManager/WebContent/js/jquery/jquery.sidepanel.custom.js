@@ -15,7 +15,7 @@
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
 			base.populateTemplate();
-			base.getList("", base.options.page);
+			base.getList(base.options.filterText, base.options.page);
 
 			base.searchActivated = false;
 			base.oldSearch = "";
@@ -31,8 +31,12 @@
 			base.sendRequest = function(event){
 				setTimeout(function(){
 					base.newSearch = $.trim($(event.target).val());
+					if (base.newSearch === base.options.searchText) {
+						base.newSearch = "";
+					};
+					
 					if (base.oldSearch != base.newSearch) {
-						base.getList($.trim($(event.target).val()), 1);
+						base.getList(base.newSearch, 1);
 						base.oldSearch = base.newSearch;
 						base.sendRequest(event);
 						base.newSearch = "";
@@ -43,9 +47,21 @@
 				}, base.options.reloadRate);  
 			};
 			
+			if($.isNotBlank(base.options.filterText))
+				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
+			
 			base.$el.find('input[id="searchTextbox"]').on({
-				blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(base.options.searchText);},
-				focus: function(e){if ($.trim($(e.target).val()) == base.options.searchText) $(e.target).val("");},
+				// TODO: this does not detect when entries are pasted
+				blur: function(e){
+					if ($.trim($(e.target).val()).length == 0) 
+						$(e.target).val(base.options.searchText);
+						base.timeout(e);
+					},
+				focus: function(e){
+					if ($.trim($(e.target).val()) == base.options.searchText)
+						$(e.target).val("");
+						base.timeout(e);
+					},
 				keyup: base.timeout
 			});
 
@@ -199,6 +215,7 @@
 			headerText: "",
 			searchText: "",
 			searchLabel: "",
+			filterText:"",
 			showAddButton: true,
 			showSearch: true,
 			itemDataCallback: function(e){},

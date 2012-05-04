@@ -63,7 +63,7 @@
 	  
 	 <div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
 	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:65%" >
+	        	<div class="floatL padT10 padL10" style="width:70%" >
 	        		<div id="commentHolder">
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
 			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
@@ -172,7 +172,7 @@
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">
      	<div id="addCommentTemplate" style="display: none">
-   <div class="elevateItemPW">
+   <div class="elevateItemPW w282">
    <div class="borderB padB8 autoScroll height120">
    <div id="commentTemplate" style="display: none">
         <div class="pad5">
@@ -185,7 +185,8 @@
             <div class="clearB"></div>
            </div>
     </div>
-   	<div id="commentHolder"></div> 
+   
+   <div id="commentHolder"></div> 
    </div>
    <div class="floatL marT5 w282"> <p>Comment:</p>
    <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>

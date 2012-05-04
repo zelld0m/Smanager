@@ -7,10 +7,14 @@
 	var selectedRuleItemTotal = 0;
 	var selectedRulePage = 1;
 
+	var rulePage = 1;
 	var rulePageSize = 10;
+	var ruleFilterText = "";
+	
 	var ruleItemPageSize = 6;
 
 	var addItemFieldDefaultText = "Enter SKU #";
+	var zeroCountHTMLCode = "&#133;";
 	var dateMinDate = -2;
 	var dateMaxDate = "+1Y";
 	var defaultItemDisplay = "sortableTile";
@@ -60,25 +64,32 @@
 
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(){
-							var commaDelimitedNumberPattern = /^\d+(,\d+)*$/;
+							var commaDelimitedNumberPattern = /^\\s*\\d+\\s*(,\\s*\\d+\\s*)*$/;
 
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val()).replace(/\s+/g,'');
+							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 
-							if ($.isNotBlank(skus) && commaDelimitedNumberPattern.test(skus)){
-								
+							if ($.isBlank(skus)) {
+								alert("There are no SKUs specified in the list.");
+							}
+							else if (!commaDelimitedNumberPattern.test(skus)) {
+								alert("List contains an invalid SKU.");
+							}							
+							else if (!$.isBlank(expDate) && !$.isDate("mm/dd/yy", expDate)){
+								alert("Invalid date specified.")
+							}
+							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
-										showActionResponse(code, "add", skus);
+										showActionResponseFromMap(code, "add", skus, "Please check if SKU(s) are actually searchable using the specified keyword.");
 										showElevate();
 									},
 									preHook: function(){ 
 										prepareElevate();
 									}
-								});
-								
+								});								
 							}
 						}
 					});
@@ -97,6 +108,7 @@
 		$("#noSelected").hide();
 		$("#elevate").hide();
 		$("#addItemHolder").hide();
+		$("#titleText").html(moduleName);
 		$("#titleHeader").html("");
 		$('#sortable-bigbets li:not(#sItemPattern)').remove();
 		$('#sortablePagingTop,#sortablePagingBottom,#sortableDisplayOptions').hide();
@@ -111,6 +123,11 @@
 				var list = data.list;
 				var item, id;
 
+				if(getItemFilter=="all"){
+					var totalText = selectedRuleItemTotal==0? zeroCountHTMLCode:  "(" + selectedRuleItemTotal + ")";
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemLink a').html(totalText);
+				}
+
 				$('#sortable-bigbets li:not(#sItemPattern)').remove();
 				for (var i = 0; i < selectedRuleItemTotal; i++) {
 					item = list[i];
@@ -124,6 +141,15 @@
 
 				showPaging(page);
 				showDisplayOption();
+			},
+			postHook: function(){
+				$("#preloader").hide();
+				$("#submitForApproval").show();
+				$("#elevate").show();
+
+				$("#titleText").html(moduleName + " for ");
+				$("#titleHeader").html(selectedRule.ruleName);
+				$("#addItemHolder").show();
 			}
 		});
 	};
@@ -135,6 +161,7 @@
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
 					showElevate();
+					getElevateRuleList();
 				},
 				preHook: function(){
 					prepareElevate();
@@ -172,7 +199,8 @@
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
 
 		$("#sItemImg" + id).on({
-			error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
+			error:function(){ 
+				$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
 			}
 		});
 
@@ -266,6 +294,7 @@
 	};
 
 	var showPaging = function(page){
+		selectedRuleItemPage = page;
 		$("#sortablePagingTop, #sortablePagingBottom").paginate({
 			currentPage:page, 
 			pageSize:ruleItemPageSize,
@@ -281,112 +310,102 @@
 	};
 
 	var showElevate = function(){
-		getElevateRuleList(1);
-		prepareElevate();
-		$("#preloader").hide();
-
 		if(selectedRule==null){
+			$("#preloader").hide();
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			return;
 		}
 
+		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
+			preHook: function(){ 
+				prepareElevate(); 
+			},
+			callback:function(data){
+				selectedRuleStatus = data;
+				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
+				showDeploymentStatusBar(moduleName, selectedRuleStatus);
 
-		$("#submitForApproval").show();
-		$("#elevate").show();
+				populateItem(1);
 
-		$("#titleText").html(moduleName + " for ");
-		$("#titleHeader").html(selectedRule.ruleName);
-		$("#addItemHolder").show();
+				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
+					blur: setFieldDefaultTextHandler,
+					focus: setFieldEmptyHandler
+				},{text:addItemFieldDefaultText}
+				);
 
-		populateItem(1);
+				$("#addItemBtn").off().on({
+					click: showAddItem,
+					mouseenter: showHoverInfo
+				},{locked: selectedRuleStatus.locked});
 
-		$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
-			blur: setFieldDefaultTextHandler,
-			focus: setFieldEmptyHandler
-		},{text:addItemFieldDefaultText}
-		);
+				$("a#downloadIcon").off().on({click:showDownloadOption}, {
+					selector: "#downloadIcon",
+					template: "#downloadTemplate",
+					title: "Download Page",
+					keyword: selectedRule.ruleName,
+					filter: getItemFilter,
+					itemPage: selectedRulePage,
+					itemPageSize:ruleItemPageSize
+				});
 
-		$("#addItemBtn").off().on({
-			click: showAddItem,
-			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked});
+				$("a#clearRuleBtn").off().on({
+					mouseenter: showHoverInfo,
+					click: function(e){
+						if(!e.data.locked && confirm(clearRuleConfirmText))
+							ElevateServiceJS.clearRule(selectedRule.ruleName, {
+								callback: function(code){
+									showActionResponse(code, "clear", selectedRule.ruleName);
+									showElevate();
+									getElevateRuleList();
+								}
+							});
+					}
+				},{locked: selectedRuleStatus.locked});
 
-		$("a#downloadIcon").off().on({click:showDownloadOption}, {
-			selector: "#downloadIcon",
-			template: "#downloadTemplate",
-			title: "Download Page",
-			keyword: selectedRule.ruleName,
-			filter: getItemFilter,
-			itemPage: selectedRulePage,
-			itemPageSize:ruleItemPageSize
-		});
+				$("#submitForApprovalBtn").off().on({
+					click: function(e){
+						var ruleStatus = null;
+						var data = e.data;
 
-		$("a#clearRuleBtn").off().on({
-			mouseenter: showHoverInfo,
-			click: function(e){
-				if(!e.data.locked && confirm(clearRuleConfirmText))
-					ElevateServiceJS.clearRule(selectedRule.ruleName, {
-						callback: function(code){
-							showActionResponse(code, "clear", selectedRule.ruleName);
-							showElevate();
+						if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
+							DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
+								callback: function(data){
+									ruleStatus = data;
+								},
+								preHook:function(){
+									prepareElevate();
+								},
+								postHook: function(){
+									setElevate(selectedRule);
+								}
+							});
 						}
-					});
+					}
+				}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
 			}
-		},{locked: selectedRuleStatus.locked});
-
-		$("#submitForApprovalBtn").off().on({
-			click: function(e){
-				var ruleStatus = null;
-				var data = e.data;
-
-				if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
-					DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
-						callback: function(data){
-							ruleStatus = data;
-						},
-						preHook:function(){
-							prepareElevate();
-						},
-						postHook: function(){
-							setElevate(selectedRule);
-						}
-					});
-				}
-			}
-		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
+		});	
 	};
 
 	var setElevate = function(rule){
 		selectedRule = rule;
-
-		if (rule!=null){
-			DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-				callback:function(data){
-					selectedRuleStatus = data;
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(moduleName, selectedRuleStatus);
-					showElevate();
-				},
-				preHook: function(){
-					prepareElevate();
-				}
-			});		
-		}else{
-			showElevate();
-		}
+		showElevate();
 	};
 
-	var getElevateRuleList = function(page){
+	var getElevateRuleList = function(){
+
 		$("#rulePanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
 			headerText : "Keyword",
 			searchText : "Enter Search",
-			page: page,
+			page: rulePage,
 			pageSize: rulePageSize,
+			filterText: ruleFilterText,
 
 			itemDataCallback: function(base, keyword, page){
+				ruleFilterText = keyword;
+				rulePage = page;
 				StoreKeywordServiceJS.getAllKeyword(keyword, page, rulePageSize,{
 					callback: function(data){
 						base.populateList(data);
@@ -399,11 +418,11 @@
 			itemOptionCallback: function(base, id, name, model){
 
 				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-
+				dwr.engine.beginBatch();
 				ElevateServiceJS.getTotalProductInRule(id,{
 					callback: function(count){
 
-						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
+						var totalText = (count == 0) ? zeroCountHTMLCode: "(" + count + ")"; 
 						base.$el.find(selector + ' div.itemLink a').html(totalText);
 
 						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
@@ -422,6 +441,7 @@
 						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
 					}
 				});
+				dwr.engine.endBatch();
 			},
 
 			itemAddCallback: function(base, keyword){
@@ -434,6 +454,10 @@
 						}
 					}
 				});
+			},
+
+			pageChangeCallback: function(page){
+				rulePage = page;
 			}
 		});
 	};
@@ -467,6 +491,7 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
+		getElevateRuleList();
 		showElevate();
 	};
 
