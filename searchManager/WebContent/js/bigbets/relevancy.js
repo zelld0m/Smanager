@@ -688,7 +688,7 @@
 				var charCode = (e.which) ? e.which : e.keyCode;
 
 				if(charCode == 46 && ($.trim($(e.target).val()) == 0 || $.isBlank($(e.target).val()))) return true;
-				if(charCode == 8 || ($.inArray(charCode,[48,96])!=-1 && $.isBlank($(e.target).val()))) return true;
+				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
 				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
 
 				alert("Tie value should be between 0 - 1");
@@ -718,7 +718,7 @@
 		var label = $parent.find('span[id="fieldLabel"]').html();
 		
 		//Save validation TODO: field validation
-		if (field=="tie" && !(value > 0 && value < 1)){
+		if (field=="tie" && !(value >= 0 && value <= 1)){
 			alert("Tie value should be between 0 - 1");
 			return;
 		}
