@@ -1106,22 +1106,23 @@
 										return;
 									}
 
-									RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
-										callback: function(data){
-											if (data!=null){
-												base.getList(name, 1);
-												setRelevancy(data);
-												showActionResponse(1, "add", name);
-												addRuleFieldValue("q.alt", "*:*");
-											}else{
-												setRelevancy(selectedRule);
+									if ($.isAllowedName(popName)){
+										RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+											callback: function(data){
+												if (data!=null){
+													base.getList(name, 1);
+													setRelevancy(data);
+													showActionResponse(1, "add", name);
+													addRuleFieldValue("q.alt", "*:*");
+												}else{
+													setRelevancy(selectedRule);
+												}
+											},
+											preHook: function(){ 
+												base.prepareList(); 
+												prepareRelevancy();
 											}
-										},
-										preHook: function(){ 
-											base.prepareList(); 
-											prepareRelevancy();
-										}
-									});
+										});
 									}else{
 										if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
 									}
