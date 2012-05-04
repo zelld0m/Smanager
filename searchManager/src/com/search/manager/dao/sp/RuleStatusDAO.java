@@ -75,7 +75,7 @@ public class RuleStatusDAO {
 	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
 	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
 	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
-	                		rs.getDate(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
+	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
 	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
