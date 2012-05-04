@@ -15,6 +15,7 @@
 		base.options = $.extend({},$.paginate.defaultOptions, options);
 
 		base.init = function(){
+			base.$el.show();
 			if($.isBlank(base.options.currentPage)) base.options.currentPage = 1;
 			
 			var itemStart = (((base.options.currentPage-1)*base.options.pageSize)+1);
@@ -25,7 +26,6 @@
 			
 			if (typeOfPaging === "short") base.useShortPaging(itemStart, itemEnd);
 			if (typeOfPaging === "long") base.useLongPaging(itemStart, itemEnd);
-			
 		};
 
 		base.useShortPaging = function(itemStart, itemEnd){
@@ -186,12 +186,11 @@
 				return false;
 			}
 
-			if (charCode == 13){
-				e.data.page = $.trim($(e.target).val());
-				if (e.data.page != e.data.currentPage && e.data.page <= e.data.totalPages){
+			var page = $.trim($(e.target).val());
+			if (charCode == 13 && $.isNumeric(page)){
+				if (page != e.data.currentPage && page <= e.data.totalPages){
+					e.data.page = page;
 					base.options.pageLinkCallback(e);
-				}else{
-					if (e.data.currentPage != e.data.page) alert("Page number is not valid");	
 				}
 			}
 

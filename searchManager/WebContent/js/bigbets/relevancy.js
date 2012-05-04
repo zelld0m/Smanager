@@ -6,6 +6,7 @@
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this ranking rule?";
+	var ruleNameErrorText = "Please provide a valid relevancy name";
 
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -703,7 +704,8 @@
 
 	var addRuleFieldValue = function(field, value){
 		var $parent = $('div#relevancy div[id="' + field + '"]');
-
+		var label = $parent.find('span[id="fieldLabel"]').html();
+		
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value > 0 && value < 1)){
 			alert("Tie value should be between 0 - 1");
@@ -712,7 +714,7 @@
 
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
-				showActionResponse(code, "update", field);
+				showActionResponse(code, "update", label);
 				selectedRule.parameters[field] = value;
 			},
 			preHook: function(){
@@ -778,7 +780,7 @@
 
 					$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
 
-					if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val("Copy of " + name);
+					if ($.isNotBlank(selectedRule.ruleName)) $contentHolder.find('input[id="popName"]').val("Copy of " + selectedRule.ruleName);
 
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
@@ -804,24 +806,27 @@
 							var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
-							if ($.isBlank(popName)){
-								alert("Rule name is required");
-								return;
-							}
-
-							RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
-								callback:function(data){
-									showActionResponse(data==null?0:1, "clone", popName);
-									if(data!=null) {
-										setRelevancy(data);
-									}else{
-										setRelevancy(selectedRule);
+							if($.isAllowedName(popName) && 
+							   $.isXSSSafe(popStartDate) &&
+							   $.isXSSSafe(popEndDate) && 
+							   $.isXSSSafe(popDescription) ){
+								
+								RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
+									callback:function(data){
+										showActionResponse(data==null?0:1, "clone", popName);
+										if(data!=null) {
+											setRelevancy(data);
+										}else{
+											setRelevancy(selectedRule);
+										}
+									},
+									preHook: function(){
+										prepareRelevancy();
 									}
-								},
-								preHook: function(){
-									prepareRelevancy();
-								}
-							});
+								});
+							}else{
+								if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
+							}
 						}
 					});
 

@@ -59,6 +59,17 @@ jQuery.extend(
 				    }
 
 				    return isValid;
+				},
+				
+				isXSSSafe: function(text){
+					var asciiPrintCharRegex= /^[\040-\0176]*$/;
+					var hasNoXSSRegex= /^((?!(javascript:|<script>)).)*$/;
+					return hasNoXSSRegex.test(text) && asciiPrintCharRegex.test(text);
+				},
+				
+				isAllowedName: function(text){
+					var alphaNumericRegex= /^[a-zA-Z0-9_\s\-]*$/;
+					return $.isXSSSafe(text) && alphaNumericRegex.test(text) && $.isNotBlank();
 				}
 			};  
 		}(jQuery))  

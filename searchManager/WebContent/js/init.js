@@ -73,7 +73,7 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 		$("div#statusHolder").hide();
 		if($.isNotBlank(ruleStatus["approvalStatus"])){
 			$("div#statusHolder").show();
-			$("span#status").html(ruleStatus["approvalStatus"]);
+			$("span#status").html(getRuleNameSubTextStatus(ruleStatus));
 		}
 
 		$("div#publishHolder").hide();
