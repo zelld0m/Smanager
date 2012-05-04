@@ -349,7 +349,7 @@ body 							{ margin: 0px; }
 .cssReset .fLAblue, 
 .cssReset .fLAblue a			{ color:#60c3e0 }
 .cssReset .fDblue 				{ color:#00589b }
-.cssReset .fred 				{ color:#C00 }
+.cssReset .fred, .fred			{ color:#C00 }
 .cssReset .fwhite 				{ color:#fff }
 .cssReset .forange 				{ color:#ea7723 }
 .cssReset .fgreen, .fgreen		{ color:#2d6b00 }
