@@ -330,6 +330,14 @@
 									var match = $contentHolder.find('li#multiRulePattern input#ruleFieldMatch').val();
 									if ($.isNotBlank(condition) && $.isNotBlank(match)){
 										var count = $contentHolder.find('li.multiRuleItem').length;
+										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
+										for ( var i = 1; i < conditionCount; i++) {
+											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
+											if (value == condition) {
+												alert("Rule already exists for " + condition);
+												return;
+											}
+										}
 										$contentHolder.find('li#multiRulePattern').clone().insertAfter($('li#multiRulePattern')).attr("id","multiRule" + count);
 										$contentHolder.find('li#multiRule' + count + ' a#deleteRule').show().on({
 											click: function(dEvt){ $(dEvt.target).parents('li.multiRuleItem').remove(); }
