@@ -64,11 +64,8 @@
 
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(){
-<<<<<<< HEAD
+
 							var commaDelimitedNumberPattern = /^\\s*\\d+\\s*(,\\s*\\d+\\s*)*$/;
-=======
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
->>>>>>> refs/remotes/origin/phase1_qa_user_testing
 
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
