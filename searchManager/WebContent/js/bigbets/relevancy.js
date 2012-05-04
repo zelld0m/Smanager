@@ -330,6 +330,14 @@
 									var match = $contentHolder.find('li#multiRulePattern input#ruleFieldMatch').val();
 									if ($.isNotBlank(condition) && $.isNotBlank(match)){
 										var count = $contentHolder.find('li.multiRuleItem').length;
+										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
+										for ( var i = 1; i < conditionCount; i++) {
+											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
+											if (value == condition) {
+												alert("Rule already exists for " + condition);
+												return;
+											}
+										}
 										$contentHolder.find('li#multiRulePattern').clone().insertAfter($('li#multiRulePattern')).attr("id","multiRule" + count);
 										$contentHolder.find('li#multiRule' + count + ' a#deleteRule').show().on({
 											click: function(dEvt){ $(dEvt.target).parents('li.multiRuleItem').remove(); }
@@ -644,9 +652,12 @@
 				},
 
 				show:function(rEvt, api){
-					var $content = $("div", api.elements.content);
+					var $content = $("div", api.elements.content);	
 					var field =	api.elements.target.parents('div.AlphaCont').attr("id");
 					var text = "";
+					
+					if(!$content.get(0))						
+						$content = api.elements.content;
 
 					if (field==="qf") text = 'List of fields and the "boosts" to associate with each of them';
 					if (field==="bf") text = 'Functions that will be included in the user\'s query to influence the score';
@@ -896,7 +907,9 @@
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
-					showActionResponse(code, "delete", selectedRule.ruleName);
+					if (code > 0) {
+						alert(selectedRule.ruleName + " was successfully deleted.");
+					}
 					if(code==1) setRelevancy(null);
 				}
 			});
