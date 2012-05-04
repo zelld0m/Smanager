@@ -1097,20 +1097,14 @@
 							$contentHolder.find('a#addButton').on({
 								click: function(e){
 									var popName = $.trim($contentHolder.find('input[id="popName"]').val());
-									var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
-									var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
-									var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
-
-									if ($.isBlank(popName)){
-										alert("Ranking rule name is required");
-										return;
-									}
-
+								
+									if ($.isAllowedName(popName)){
 									RelevancyServiceJS.addRuleAndGetModel(name, {
 										callback: function(data){
 											if (data!=null){
 												base.getList(name, 1);
 												setRelevancy(data);
+												showActionResponse(1, "add", name);
 												addRuleFieldValue("q.alt", "*:*");
 											}else{
 												setRelevancy(selectedRule);
@@ -1121,6 +1115,9 @@
 											prepareRelevancy();
 										}
 									});
+									}else{
+										if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
+									}
 								}
 							});
 
