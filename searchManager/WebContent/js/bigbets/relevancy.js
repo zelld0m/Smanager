@@ -896,7 +896,9 @@
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
-					showActionResponse(code, "delete", selectedRule.ruleName);
+					if (code > 0) {
+						alert(selectedRule.ruleName + " was successfully deleted.");
+					}
 					if(code==1) setRelevancy(null);
 				}
 			});
