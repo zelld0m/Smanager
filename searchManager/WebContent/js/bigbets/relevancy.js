@@ -330,6 +330,14 @@
 									var match = $contentHolder.find('li#multiRulePattern input#ruleFieldMatch').val();
 									if ($.isNotBlank(condition) && $.isNotBlank(match)){
 										var count = $contentHolder.find('li.multiRuleItem').length;
+										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
+										for ( var i = 1; i < conditionCount; i++) {
+											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
+											if (value == condition) {
+												alert("Rule already exists for " + condition);
+												return;
+											}
+										}
 										$contentHolder.find('li#multiRulePattern').clone().insertAfter($('li#multiRulePattern')).attr("id","multiRule" + count);
 										$contentHolder.find('li#multiRule' + count + ' a#deleteRule').show().on({
 											click: function(dEvt){ $(dEvt.target).parents('li.multiRuleItem').remove(); }
@@ -644,9 +652,12 @@
 				},
 
 				show:function(rEvt, api){
-					var $content = $("div", api.elements.content);
+					var $content = $("div", api.elements.content);	
 					var field =	api.elements.target.parents('div.AlphaCont').attr("id");
 					var text = "";
+					
+					if(!$content.get(0))						
+						$content = api.elements.content;
 
 					if (field==="qf") text = 'List of fields and the "boosts" to associate with each of them';
 					if (field==="bf") text = 'Functions that will be included in the user\'s query to influence the score';
@@ -677,7 +688,7 @@
 				var charCode = (e.which) ? e.which : e.keyCode;
 
 				if(charCode == 46 && ($.trim($(e.target).val()) == 0 || $.isBlank($(e.target).val()))) return true;
-				if(charCode == 8 || ($.inArray(charCode,[48,96])!=-1 && $.isBlank($(e.target).val()))) return true;
+				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
 				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
 
 				alert("Tie value should be between 0 - 1");
@@ -687,7 +698,6 @@
 		});
 
 		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('blur focus keypress').on({
-			blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(selectedRule.parameters[getRelevancyField(e).id]);},
 			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters[getRelevancyField(e).id]) $(e.target).val("");},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
@@ -707,7 +717,7 @@
 		var label = $parent.find('span[id="fieldLabel"]').html();
 		
 		//Save validation TODO: field validation
-		if (field=="tie" && !(value > 0 && value < 1)){
+		if (field=="tie" && !(value >= 0 && value <= 1)){
 			alert("Tie value should be between 0 - 1");
 			return;
 		}
@@ -896,7 +906,9 @@
 		if (!e.data.locked && confirm(deleteRuleConfirmText)){
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
-					showActionResponse(code, "delete", selectedRule.ruleName);
+					if (code > 0) {
+						alert(selectedRule.ruleName + " was successfully deleted.");
+					}
 					if(code==1) setRelevancy(null);
 				}
 			});
@@ -1099,6 +1111,7 @@
 											if (data!=null){
 												base.getList(name, 1);
 												setRelevancy(data);
+												showActionResponse(1, "add", name);
 												addRuleFieldValue("q.alt", "*:*");
 											}else{
 												setRelevancy(selectedRule);
@@ -1109,6 +1122,9 @@
 											prepareRelevancy();
 										}
 									});
+									}else{
+										if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
+									}
 								}
 							});
 

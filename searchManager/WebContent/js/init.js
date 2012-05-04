@@ -37,9 +37,9 @@ getRuleNameSubTextStatus = function(ruleStatus){
 
 showActionResponse = function(code, action, param){
 	switch(code){
-		case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-		case  0: alert("Failed " + action + " request for " + param); break;
-		default: alert("Successful " + action + " request for " + param); break;		
+	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
+	case  0: alert("Failed " + action + " request for " + param); break;
+	default: alert("Successful " + action + " request for " + param); break;
 	}
 };
 
