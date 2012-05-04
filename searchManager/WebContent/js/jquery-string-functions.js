@@ -55,7 +55,6 @@ jQuery.extend(
 				        $.datepicker.parseDate(format, text, null);
 				    }
 				    catch(error){
-				    	alert(error);
 				        isValid = false;
 				    }
 

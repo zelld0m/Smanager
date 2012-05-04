@@ -35,7 +35,7 @@
 				$ul = $('ul#tagList');
 				$ul.empty();
 
-				StoreKeywordServiceJS.getAll({
+				StoreKeywordServiceJS.getAll(25, {
 					callback: function(data){
 						var list = data.list;
 						var total = data.totalSize;

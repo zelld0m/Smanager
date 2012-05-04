@@ -492,20 +492,48 @@
 				manufacturers = data.manufacturers;
 				switch(catCode.length){
 				case 0: 
-					$("#categoryList, #subCategoryList, #classList, #minorList").filter(":not option[value='all']").remove();
+					$("#categoryList option").remove();
+					$("#subCategoryList option").remove();
+					$("#classList option").remove();
+					$("#minorList option").remove();
 					selectList = $("#categoryList");
+					$("#categoryList").append($("<option>", { value : "all" }).text("All Categories")); 
+					$("#subCategoryList").append($("<option>", { value : "all" }).text("All Subcategories")); 
+					$("#classList").append($("<option>", { value : "all" }).text("All Classes")); 
+					$("#minorList").append($("<option>", { value : "all" }).text("All Minor Classes")); 
+					$("#categoryList").val(1); 
+					$("#subCategoryList").val(1); 
+					$("#classList").val(1);
+					$("#minorList").val(1);
 					break;
 				case 1: 
-					$("#subCategoryList, #classList, #minorList").filter(":not option[value='all']").remove();
+					$("#subCategoryList option").remove();
+					$("#classList option").remove();
+					$("#minorList option").remove();
 					selectList = $("#subCategoryList");
+					$("#subCategoryList").append($("<option>", { value : "all" }).text("All Subcategories")); 
+					$("#classList").append($("<option>", { value : "all" }).text("All Classes")); 
+					$("#minorList").append($("<option>", { value : "all" }).text("All Minor Classes")); 
+					$("#classList").append($("<option>", { value : "" }).text("All Classes")); 
+					$("#minorList").append($("<option>", { value : "" }).text("All Minor Classes")); 
+					$("#subCategoryList").val(1); 
+					$("#classList").val(1); 
+					$("#minorList").val(1);
 					break;
 				case 2: 
-					$("#classList, #minorList").filter(":not option[value='all']").remove();
+					$("#classList option").remove();
+					$("#minorList option").remove();
 					selectList = $("#classList");
+					$("#classList").append($("<option>", { value : "all" }).text("All Classes")); 
+					$("#minorList").append($("<option>", { value : "all" }).text("All Minor Classes")); 
+					$("#classList").val(1); 
+					$("#minorList").val(1);
 					break;
 				case 3: 
-					$("#minorList").filter(":not option[value='all']").remove();
+					$("#minorList option").remove();
 					selectList = $("#minorList");
+					$("#minorList").append($("<option>", { value : "all" }).text("All Minor Classes")); 
+					$("#minorList").val(1);
 					break;
 				}
 
@@ -514,7 +542,8 @@
 					selectList.append($("<option>", { value : category.catCode }).text(category.catCode + " - " + category.catName)); 
 				}
 
-				$("#manufacturerList :not option[value='all']").remove();
+				$("#manufacturerList option").remove();
+				$("#manufacturerList").append($("<option>", { value : "" }).text("All Manufacturers")); 
 				$.each(manufacturers, function(key, element) {
 					if (element.length > 0) {
 						$("#manufacturerList").append($("<option>", { value : element }).text(element)); 
