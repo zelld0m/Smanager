@@ -34,7 +34,7 @@
 		<copy todir="${dependencies}/lib">
 		  	 <fileset dir="${searchManager}/WebContent/WEB-INF/lib" />
 		</copy>
-		<javac srcdir="${searchManager}/src" destdir="${dependencies}/searchmanager/classes">
+		<javac srcdir="${searchManager}/src" destdir="${dependencies}/searchmanager/classes" debug="on">
 		    <classpath refid="compile.classpath"/>
 		</javac>
 	  	<jar destfile="${dependencies}/searchmanager/jar/searchManager.jar">
@@ -55,7 +55,7 @@
   		<copy todir="${dependencies}/lib">
   	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib" />
   	  	</copy>
-	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes">
+	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes" debug="on">
 	        <classpath refid="compile.classpath"/>
 	    </javac>
   	  	<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
