@@ -65,7 +65,7 @@
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(){
 
-							var commaDelimitedNumberPattern = /^\\s*\\d+\\s*(,\\s*\\d+\\s*)*$/;
+							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
 
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
@@ -122,7 +122,7 @@
 				var list = data.list;
 				var item, id;
 
-				if(getItemFilter=="all"){
+				if(getItemFilter()==="all"){
 					var totalText = selectedRuleItemTotal==0? zeroCountHTMLCode:  "(" + selectedRuleItemTotal + ")";
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemLink a').html(totalText);
 				}
@@ -236,7 +236,7 @@
 	}; 
 
 	var showDisplayOption= function(){
-		(selectedRuleItemTotal == 0 && getItemFilter==="all") ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
+		(selectedRuleItemTotal == 0 && getItemFilter()==="all") ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
 	};
 
 	var showPaging = function(page){
@@ -434,7 +434,7 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
-		getElevateRuleList();
+		getExcludeRuleList();
 		showExclude();
 	};
 	
