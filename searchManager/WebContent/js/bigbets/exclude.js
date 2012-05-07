@@ -271,6 +271,7 @@
 				selectedRuleStatus = data;
 				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 				showDeploymentStatusBar(moduleName, selectedRuleStatus);
+				getExcludeRuleList();
 				populateItem(1);
 				
 				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
@@ -434,6 +435,7 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
+		getExcludeRuleList();
 		showExclude();
 	};
 	

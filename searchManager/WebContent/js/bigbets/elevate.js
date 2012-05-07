@@ -490,6 +490,7 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
+		getElevateRuleList();
 		showElevate();
 	};
 
