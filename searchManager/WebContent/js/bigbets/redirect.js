@@ -30,6 +30,29 @@
 		$("#titleHeader").html("");
 	};
 
+	var getSelectedCategory = function() { 
+		rule = "";
+		
+		category = $("select#categoryList option[value!='all']:selected").val();
+		subCategory = $("select#subCategoryList option[value!='all']:selected").val();
+		clazz = $("select#classList option[value!='all']:selected").val();
+		minor = $("select#minorList option[value!='all']:selected").val();
+
+		if ($.isNotBlank(category)){
+			rule=category;
+			if ($.isNotBlank(subCategory)){
+				rule=subCategory;
+				if ($.isNotBlank(clazz)){
+					rule=clazz;
+					if ($.isNotBlank(minor)){
+						rule=minor;
+					}
+				}				
+			}
+		}
+		return rule;
+	};
+	
 	var showRedirect = function(){
 		prepareRedirect();
 		getCategories();
@@ -116,28 +139,18 @@
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
-				category = $("select#categoryList option[value!='all']:selected").val();
-				subCategory = $("select#subCategoryList option[value!='all']:selected").val();
-				clazz = $("select#classList option[value!='all']:selected").val();
-				minor = $("select#minorList option[value!='all']:selected").val();
+				
+				var rule = getSelectedCategory();
 				manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
 
-				var rule = "";
-
-				if ($.isBlank(category) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
+				if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
 					alert("At least one category code, category or manufacturer is expected.");
 					return;
-				} else if ($.isNotBlank($("#catcodetext").val())){
+				}
+				
+				if ($.isNotBlank($("#catcodetext").val())){
 					rule = $("#catcodetext").val();
 					$("#catcodetext").val("");
-				} else if ($.isNotBlank(minor)){
-					rule=minor;
-				} else if ($.isNotBlank(clazz)){
-					rule=clazz;
-				} else if ($.isNotBlank(subCategory)){
-					rule=subCategory;
-				} else if ($.isNotBlank(category)){
-					rule=category;
 				}
 
 				if (rule.length > 0) {
@@ -486,6 +499,7 @@
 
 	var getCategories = function(catCode) { 
 
+		catCode = getSelectedCategory();
 		$("input#minorList").attr("disabled","disabled");
 		$("input#manufacturerList").attr("disabled","disabled");
 		$("input#classList").attr("disabled","disabled");
@@ -494,15 +508,7 @@
 		$("span.ui-combobox a.ui-button").hide();
 		$("img.loadIcon").show();
 		
-		if (catCode === 'all') {
-			catCode = '';
-		}
-		
-		length = 0;
-		if ($.isNotBlank(catCode)) {
-			length = catCode.length;					
-		}
-		
+		length = catCode.length;					
 		if (length <= 3) {
 			$("input#minorList").val($("#minorList option:[value='all']").text());
 			$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
