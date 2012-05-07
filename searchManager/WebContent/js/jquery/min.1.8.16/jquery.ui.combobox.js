@@ -7,6 +7,7 @@
 			theWidth = select.width(),
 			selected = select.children( ":selected" ),
 			theTitle = select.attr("title"),
+			theId = select.attr("id"),
 			value = selected.val() ? selected.text() : "",
 			wrapper = $( "<span>" )
 					.addClass( "ui-combobox" )
@@ -15,6 +16,7 @@
 			input = $( "<input style=\"width:" + theWidth + "px\">" )
 			.appendTo( wrapper )
 			.val( value )
+			.attr('id', theId)
 			.attr('title', '' + theTitle + '')
 			.addClass( "ui-state-default" )
 			.autocomplete({
