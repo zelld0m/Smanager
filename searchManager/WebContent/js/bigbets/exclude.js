@@ -59,7 +59,8 @@
 
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(){
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
+
+							var commaDelimitedNumberPattern = /^\\s*\\d+\\s*(,\\s*\\d+\\s*)*$/;
 
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());

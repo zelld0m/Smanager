@@ -35,14 +35,14 @@
 				$ul = $('ul#tagList');
 				$ul.empty();
 
-				StoreKeywordServiceJS.getAll({
+				StoreKeywordServiceJS.getAll(25, {
 					callback: function(data){
 						var list = data.list;
 						var total = data.totalSize;
 						var colorCSSList= ["fColorOne","fColorTwo","fColorThree","fColorFour"];
 						var sizeCSSList = ["fontxSmall","fontSmall","fontMedium","fontLarge"];
 
-						for (var i=0; i < total; i++){
+						for (var i=0; i < list.length; i++){
 							var randomColor = colorCSSList[Math.floor(Math.random()*colorCSSList.length)];
 							var randomSize = sizeCSSList[Math.floor(Math.random()*sizeCSSList.length)];
 							$ul.append('<li><a class="' + randomColor + ' ' + randomSize + '" href="javascript:void(0)">' + list[i].keyword.keyword + '</a></li>');	

@@ -15,7 +15,7 @@
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
 			base.populateTemplate();
-			base.getList("", base.options.page);
+			base.getList(base.options.filterText, base.options.page);
 
 			base.searchActivated = false;
 			base.oldSearch = "";
@@ -46,6 +46,9 @@
 					}
 				}, base.options.reloadRate);  
 			};
+			
+			if($.isNotBlank(base.options.filterText))
+				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
 			
 			base.$el.find('input[id="searchTextbox"]').on({
 				// TODO: this does not detect when entries are pasted
@@ -212,6 +215,7 @@
 			headerText: "",
 			searchText: "",
 			searchLabel: "",
+			filterText:"",
 			showAddButton: true,
 			showSearch: true,
 			itemDataCallback: function(e){},
