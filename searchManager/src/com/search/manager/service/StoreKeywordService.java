@@ -68,17 +68,6 @@ public class StoreKeywordService {
 	}
 	
 	@RemoteMethod
-	public RecordSet<StoreKeyword> getAll() {
-		try {
-			return daoService.getAllKeywords(UtilityService.getStoreName());
-		} catch (DaoException e) {
-			logger.error("Failed during getStoreKeywords()",e);
-		}
-		return null;
-	}
-	
-	
-	@RemoteMethod
 	public RecordSet<StoreKeyword> getAll(int total) {
 		try {
 			return daoService.getAllKeywords(UtilityService.getStoreName(), 1, total);
