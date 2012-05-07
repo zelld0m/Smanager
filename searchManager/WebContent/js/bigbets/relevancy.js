@@ -815,10 +815,10 @@
 							var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
-							if($.isAllowedName(popName) && 
-							   $.isXSSSafe(popStartDate) &&
-							   $.isXSSSafe(popEndDate) && 
-							   $.isXSSSafe(popDescription) ){
+							if(isAllowedName(popName) && 
+							   isXSSSafe(popStartDate) &&
+							   isXSSSafe(popEndDate) && 
+							   isXSSSafe(popDescription) ){
 								
 								RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
 									callback:function(data){
@@ -834,7 +834,7 @@
 									}
 								});
 							}else{
-								if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
+								if (!isAllowedName(popName)) alert(ruleNameErrorText);
 							}
 						}
 					});
@@ -1105,7 +1105,7 @@
 										return;
 									}
 
-									if ($.isAllowedName(popName)){
+									if (isAllowedName(popName)){
 										RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
 											callback: function(data){
 												if (data!=null){
@@ -1123,7 +1123,7 @@
 											}
 										});
 									}else{
-										if (!$.isAllowedName(popName)) alert(ruleNameErrorText);
+										if (!isAllowedName(popName)) alert(ruleNameErrorText);
 									}
 								}
 							});

@@ -12,6 +12,7 @@
 
   <!-- cross-browser css compatibility util -->
   <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/init-validate.js" />" ></script>
    
   <!-- jQuery dependencies -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
