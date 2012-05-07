@@ -185,7 +185,8 @@
 				com.search.manager.schema.model.mm.FixedMatch,
 				com.search.manager.schema.model.mm.ConditionalMatch,
 				com.search.manager.cache.dao.DaoCacheServiceImpl,
-				com.search.manager.authentication.dao.UserDetailsImpl
+				com.search.manager.authentication.dao.UserDetailsImpl,
+				com.search.manager.model.DeploymentModel
 			</param-value>
 		</init-param>
 	</servlet>
