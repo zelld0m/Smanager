@@ -162,7 +162,6 @@
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
 					showElevate();
-					getElevateRuleList();
 				},
 				preHook: function(){
 					prepareElevate();
@@ -326,7 +325,7 @@
 				selectedRuleStatus = data;
 				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 				showDeploymentStatusBar(moduleName, selectedRuleStatus);
-
+				getElevateRuleList();
 				populateItem(1);
 
 				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
@@ -358,7 +357,6 @@
 								callback: function(code){
 									showActionResponse(code, "clear", selectedRule.ruleName);
 									showElevate();
-									getElevateRuleList();
 								}
 							});
 					}
@@ -492,7 +490,6 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
-		getElevateRuleList();
 		showElevate();
 	};
 

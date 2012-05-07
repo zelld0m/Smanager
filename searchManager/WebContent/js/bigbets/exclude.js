@@ -108,6 +108,7 @@
 		$("#noSelected").hide();
 		$("#exclude").hide();
 		$("#addItemHolder").hide();
+		$("#titleText").html(moduleName);
 		$("#titleHeader").html("");
 		$('#sortable-bigbets li:not(#sItemPattern)').remove();
 		$('#sortablePagingTop,#sortablePagingBottom,#sortableDisplayOptions').hide();
@@ -160,7 +161,6 @@
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
 					showExclude();
-					getExcludeRuleList();
 				},
 				preHook: function(){ 
 					prepareExclude();
@@ -434,7 +434,6 @@
 	var init = function() {
 		setItemDisplay();
 		setItemFilter();
-		getExcludeRuleList();
 		showExclude();
 	};
 	
