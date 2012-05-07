@@ -36,7 +36,7 @@
 			$(this.target).find('input').val(keyword);
 			$(this.target).find('input').focus();
 			
-			RelevancyServiceJS.getAllRule({
+			RelevancyServiceJS.getAllRule("", 0, 0, {
 				callback:function(data){
 					var list = data.list;
 					var total = data.totalSize;
