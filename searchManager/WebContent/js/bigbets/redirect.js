@@ -486,6 +486,18 @@
 
 	var getCategories = function(catCode) { 
 
+		$("input#minorList").attr("disabled","disabled");
+		$("input#manufacturerList").attr("disabled","disabled");
+		$("input#classList").attr("disabled","disabled");
+		$("input#subCategoryList").attr("disabled","disabled");
+		$("input#categoryList").attr("disabled","disabled");
+		$("span.ui-combobox a.ui-button").hide();
+		$("img.loadIcon").show();
+		
+		if (catCode === 'all') {
+			catCode = '';
+		}
+		
 		length = 0;
 		if ($.isNotBlank(catCode)) {
 			length = catCode.length;					
@@ -510,7 +522,6 @@
 				var selectList;
 				categories = data.categories;
 				manufacturers = data.manufacturers;
-				
 				if (length <= 3) {
 					$("select#minorList option").remove();
 					$("select#minorList").append($("<option>", { value : "all", selected: "selected" }).text("All Minor Classes"));
@@ -546,6 +557,14 @@
 					}
 				});
 				
+				$("input#categoryList").removeAttr("disabled");
+				$("input#subCategoryList").removeAttr("disabled");
+				$("input#classList").removeAttr("disabled");
+				$("input#minorList").removeAttr("disabled");
+				$("input#manufacturerList").removeAttr("disabled");
+				$("img.loadIcon").hide();
+				$("span.ui-combobox a.ui-button").show();
+
 			}
 		});
 	};
