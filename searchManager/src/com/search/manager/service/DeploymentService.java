@@ -2,9 +2,9 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -18,6 +18,7 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
+import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -76,7 +77,7 @@ public class DeploymentService {
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList);
+			result = daoService.updateRuleStatus(ruleStatusList).size();
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
@@ -95,7 +96,7 @@ public class DeploymentService {
 		int result = -1;
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList);
+			result = daoService.updateRuleStatus(ruleStatusList).size();
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
@@ -131,55 +132,92 @@ public class DeploymentService {
 
 
 	@RemoteMethod
-	public int publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		//clean list, only approved rules should be published
 		List<String> cleanList = null;
+		List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
 		try {
 			cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
 		} catch (DaoException e) {
 			logger.error("Failed during getCleanList()",e);
 		}
 		// TODO: add transaction dependency handshake
-		int result = publishRule(ruleType, cleanList);
 		addComment( comment, cleanList.toArray(new String[0]));
-		return result;
+		Map<String,Boolean> ruleMap = publishRule(ruleType, cleanList);
+
+			for(String ruleId : ruleRefIdList){	
+				DeploymentModel deploy = new DeploymentModel();
+				deploy.setRuleId(ruleId);
+				deploy.setPublished(0);
+				
+				if(ruleMap != null && ruleMap.size() > 0){
+					if(ruleMap.containsKey(ruleId)){
+						if(ruleMap.get(ruleId))
+							deploy.setPublished(1);
+					}	
+				}
+				deployList.add(deploy);
+			}
+		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
-	public int publishRule(String ruleType, List<String> ruleRefIdList) {
-		int result = -1;
+	public Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
-			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList);
-		} catch (DaoException e) {
+			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
+			
+			if(ruleMap != null && ruleMap.size() > 0)
+				return ruleMap;
+	
+		} catch (Exception e) {
 			logger.error("Failed during publishRule()",e);
 		}
-		return result;
+	
+		return Collections.EMPTY_MAP;
 	}
 
 	@RemoteMethod
-	public int unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+	public RecordSet<DeploymentModel> unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		//clean list, only approved rules should be published
 		List<String> cleanList = null;
+		List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
 		try {
 			cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
 		} catch (DaoException e) {
 			logger.error("Failed during getCleanList()",e);
 		}
-		// TODO: add transaction dependency handshake
-		int result = unpublishRule(ruleType, cleanList);
 		addComment(comment, cleanList.toArray(new String[0]));
-		return result;
+		Map<String,Boolean> ruleMap = unpublishRule(ruleType, cleanList);
+
+		for(String ruleId : ruleRefIdList){	
+			DeploymentModel deploy = new DeploymentModel();
+			deploy.setRuleId(ruleId);
+			deploy.setPublished(0);
+			
+			if(ruleMap != null && ruleMap.size() > 0){
+				if(ruleMap.containsKey(ruleId)){
+					if(ruleMap.get(ruleId))
+						deploy.setPublished(1);
+				}	
+			}
+			deployList.add(deploy);
+		}
+		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
-	public int unpublishRule(String ruleType, List<String> ruleRefIdList) {
-		int result = -1;
+	public Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
-			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList);
-		} catch (DaoException e) {
+			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
+			
+			if(ruleMap != null && ruleMap.size() > 0)
+				return ruleMap;
+	
+		} catch (Exception e) {
 			logger.error("Failed during unpublishRule()",e);
 		}
-		return result;
+	
+		return Collections.EMPTY_MAP;
 	}
 
 	@RemoteMethod
@@ -217,7 +255,8 @@ public class DeploymentService {
 
 	@RemoteMethod
 	public int recallRule(String ruleType, List<String> ruleRefIdList) {
-		return unpublishRule(ruleType, ruleRefIdList);
+		return 0;
+		//return unpublishRule(ruleType, ruleRefIdList);
 	}
 
 	public int addComment(String pComment, String ...ruleStatusId) {

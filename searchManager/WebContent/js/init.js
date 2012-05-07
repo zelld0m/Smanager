@@ -34,12 +34,30 @@ getRuleNameSubTextStatus = function(ruleStatus){
 	}	
 };
 
+
 showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
 	case  0: alert("Failed " + action + " request for " + param); break;
-	default: alert("Successfull " + action + " request for " + param); break;
+	default: alert("Successful " + action + " request for " + param); break;
 	}
+};
+
+showActionResponseFromMap = function(code, action, param, additionalFailMessage){
+	message = "";
+	if (code["PASSED"].length > 0) {
+		message += "Successful " + action + " request for " + code["PASSED"] + ".";
+	}
+	if (message !== "") {
+		message += "\n\n";
+	}
+	if (code["FAILED"].length > 0) {
+		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
+		if (additionalFailMessage) {
+			message += "\n " + additionalFailMessage;
+		}
+	}
+	alert (message); 
 };
 
 showDeploymentStatusBar = function(moduleName, ruleStatus){
@@ -50,12 +68,18 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 	$("#submitForApproval").hide();
 
 	if(ruleStatus!=null){
+		
+		ruleId = ruleStatus["ruleStatusId"];
+		if (ruleId == null) {
+			ruleId = "";
+		}
+	
 		$("#submitForApproval").show();
 
 		$("div#statusHolder").hide();
 		if($.isNotBlank(ruleStatus["approvalStatus"])){
 			$("div#statusHolder").show();
-			$("span#status").html(ruleStatus["approvalStatus"]);
+			$("span#status").html(getRuleNameSubTextStatus(ruleStatus));
 		}
 
 		$("div#publishHolder").hide();
@@ -72,7 +96,7 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 		
 		$("div#commentHolder span#commentIcon").on({
 			click: showAuditList
-		}, {type:moduleName, ruleId:ruleStatus["ruleStatusId"], ruleType:"Rule Status" });
+		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
 
 	}
 };

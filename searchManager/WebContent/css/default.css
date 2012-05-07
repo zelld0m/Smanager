@@ -51,7 +51,7 @@ body 							{ margin: 0px; }
 .cssReset .w240, .w240			{width:240px}
 .cssReset .w245, .w245			{width:245px}
 .cssReset .w278, .w278			{width:278px}
-.cssReset .w282, .w282			{width:282px}
+.cssReset .w282, .w282			{width:282px !important}
 .cssReset .w300, .w300			{width:300px}
 .cssReset .w325, .w325			{width:325px}
 .cssReset .w330, .w330			{width:330px}
@@ -349,7 +349,7 @@ body 							{ margin: 0px; }
 .cssReset .fLAblue, 
 .cssReset .fLAblue a			{ color:#60c3e0 }
 .cssReset .fDblue 				{ color:#00589b }
-.cssReset .fred 				{ color:#C00 }
+.cssReset .fred, .fred			{ color:#C00 }
 .cssReset .fwhite 				{ color:#fff }
 .cssReset .forange 				{ color:#ea7723 }
 .cssReset .fgreen, .fgreen		{ color:#2d6b00 }

@@ -45,7 +45,7 @@ jQuery.extend(
 				},
 
 				formatAsId: function(id) {
-					return "_".concat(("" + id).replace(/ /g,"_").toLowerCase());
+					return "_".concat(("" + id).replace(/\s/g,"_").toLowerCase());
 				},
 				
 				isDate: function(format, text){
@@ -55,11 +55,21 @@ jQuery.extend(
 				        $.datepicker.parseDate(format, text, null);
 				    }
 				    catch(error){
-				    	alert(error);
 				        isValid = false;
 				    }
 
 				    return isValid;
+				},
+				
+				isXSSSafe: function(text){
+					var asciiPrintCharRegex= /^[\\040-\\0176]*$/;
+					var hasNoXSSRegex= /^((?!(javascript:|<script>)).)*$/;
+					return hasNoXSSRegex.test(text) && asciiPrintCharRegex.test(text);
+				},
+				
+				isAllowedName: function(text){
+					var alphaNumRegex= /^[a-zA-Z0-9_\\s\\-]*$/;
+					return $.isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
 				}
 			};  
 		}(jQuery))  

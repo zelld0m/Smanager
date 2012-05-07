@@ -17,8 +17,8 @@
 		entity = $("#typeList option:selected").val();
 		keyword = $("#keyword").val();
 		refId = $("#refList option:selected").val();
-		startDate = $("#startDate").val();
-		endDate = $("#endDate").val();
+		startDate = $.trim($("#startDate").val());
+		endDate = $.trim($("#endDate").val());
 		AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
 			callback: function(data){
 				totalSize = data.totalSize;
@@ -87,7 +87,7 @@
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
 			onSelect: function(selectedDate) {
-				var option = this.id == "startDate" ? "minDate" : "maxDate",
+				var option = (this.id === "startDate") ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),
 						date = $.datepicker.parseDate(
 								instance.settings.dateFormat ||
@@ -98,7 +98,14 @@
 		});
 
 		$("#goBtn").click(function() {
-			getAuditTrail(1);
+			var strDate = $.trim($("#startDate").val());
+			var endDate = $.trim($("#endDate").val());
+			
+			if(($.isNotBlank(strDate) && !$.isDate(strDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
+				alert("Please provide a valid date range");
+			}else{
+				getAuditTrail(1);
+			}
 		});
 
 		$("#resetBtn").click(function() {

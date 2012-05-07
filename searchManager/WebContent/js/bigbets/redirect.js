@@ -10,7 +10,6 @@
 (function($){
 	var moduleName="Query Cleaning";
 
-	var catCode = "";
 	var selectedRule = null;
 	var selectedRuleStatus = null;
 
@@ -31,8 +30,32 @@
 		$("#titleHeader").html("");
 	};
 
+	var getSelectedCategory = function() { 
+		rule = "";
+		
+		category = $("select#categoryList option[value!='all']:selected").val();
+		subCategory = $("select#subCategoryList option[value!='all']:selected").val();
+		clazz = $("select#classList option[value!='all']:selected").val();
+		minor = $("select#minorList option[value!='all']:selected").val();
+
+		if ($.isNotBlank(category)){
+			rule=category;
+			if ($.isNotBlank(subCategory)){
+				rule=subCategory;
+				if ($.isNotBlank(clazz)){
+					rule=clazz;
+					if ($.isNotBlank(minor)){
+						rule=minor;
+					}
+				}				
+			}
+		}
+		return rule;
+	};
+	
 	var showRedirect = function(){
 		prepareRedirect();
+		getCategories();
 		$("#preloader").hide();
 		resetInputFields("#redirect");
 
@@ -116,28 +139,18 @@
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
-				category = $("select#categoryList option[value!='all']:selected").val();
-				subCategory = $("select#subCategoryList option[value!='all']:selected").val();
-				clazz = $("select#classList option[value!='all']:selected").val();
-				minor = $("select#minorList option[value!='all']:selected").val();
+				
+				var rule = getSelectedCategory();
 				manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
 
-				var rule = "";
-
-				if ($.isBlank(category) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
+				if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
 					alert("At least one category code, category or manufacturer is expected.");
 					return;
-				} else if ($.isNotBlank($("#catcodetext").val())){
+				}
+				
+				if ($.isNotBlank($("#catcodetext").val())){
 					rule = $("#catcodetext").val();
 					$("#catcodetext").val("");
-				} else if ($.isNotBlank(minor)){
-					rule=minor;
-				} else if ($.isNotBlank(clazz)){
-					rule=clazz;
-				} else if ($.isNotBlank(subCategory)){
-					rule=subCategory;
-				} else if ($.isNotBlank(category)){
-					rule=category;
 				}
 
 				if (rule.length > 0) {
@@ -484,29 +497,59 @@
 		}
 	};
 
-	var getCategories = function() { 
+	var getCategories = function(catCode) { 
+
+		catCode = getSelectedCategory();
+		$("input#minorList").attr("disabled","disabled");
+		$("input#manufacturerList").attr("disabled","disabled");
+		$("input#classList").attr("disabled","disabled");
+		$("input#subCategoryList").attr("disabled","disabled");
+		$("input#categoryList").attr("disabled","disabled");
+		$("span.ui-combobox a.ui-button").hide();
+		$("img.loadIcon").show();
+		
+		length = catCode.length;					
+		if (length <= 3) {
+			$("input#minorList").val($("#minorList option:[value='all']").text());
+			$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
+		}
+		if (length <= 2) {
+			$("input#classList").val($("#classList option:[value='all']").text());
+		}		
+		if (length <= 1) {
+			$("input#subCategoryList").val($("#subCategoryList option:[value='all']").text());
+		}		
+		if (length <= 0) {
+			$("input#categoryList").val($("#categoryList option:[value='all']").text());
+		}		
+
 		CategoryServiceJS.getCategories(catCode,{
 			callback: function(data){
 				var selectList;
 				categories = data.categories;
 				manufacturers = data.manufacturers;
-				switch(catCode.length){
-				case 0: 
-					$("#categoryList, #subCategoryList, #classList, #minorList").filter(":not option[value='all']").remove();
-					selectList = $("#categoryList");
-					break;
-				case 1: 
-					$("#subCategoryList, #classList, #minorList").filter(":not option[value='all']").remove();
-					selectList = $("#subCategoryList");
-					break;
-				case 2: 
-					$("#classList, #minorList").filter(":not option[value='all']").remove();
-					selectList = $("#classList");
-					break;
-				case 3: 
-					$("#minorList").filter(":not option[value='all']").remove();
-					selectList = $("#minorList");
-					break;
+				if (length <= 3) {
+					$("select#minorList option").remove();
+					$("select#minorList").append($("<option>", { value : "all", selected: "selected" }).text("All Minor Classes"));
+					selectList = $("select#minorList");
+					
+					$("select#manufacturerList option").remove();
+					$("select#manufacturerList").append($("<option>", { value : "all", selected: "selected" }).text("All Manufacturers"));
+									}
+				if (length <= 2) {
+					$("select#classList option").remove();
+					$("select#classList").append($("<option>", { value : "all", selected: "selected" }).text("All Classes")); 
+					selectList = $("select#classList");
+				}
+				if (length <= 1) {
+					$("select#subCategoryList option").remove();
+					$("select#subCategoryList").append($("<option>", { value : "all", selected: "selected" }).text("All Subcategories")); 
+					selectList = $("select#subCategoryList");
+				}
+				if (length <= 0) {
+					$("select#categoryList option").remove();
+					$("select#categoryList").append($("<option>", { value : "all", selected: "selected" }).text("All Categories")); 
+					selectList = $("select#categoryList");					
 				}
 
 				for (var i = 0; i < categories.length; i++) {
@@ -514,65 +557,62 @@
 					selectList.append($("<option>", { value : category.catCode }).text(category.catCode + " - " + category.catName)); 
 				}
 
-				$("#manufacturerList :not option[value='all']").remove();
 				$.each(manufacturers, function(key, element) {
 					if (element.length > 0) {
-						$("#manufacturerList").append($("<option>", { value : element }).text(element)); 
+						$("select#manufacturerList").append($("<option>", { value : element }).text(element)); 
 					}
 				});
+				
+				$("input#categoryList").removeAttr("disabled");
+				$("input#subCategoryList").removeAttr("disabled");
+				$("input#classList").removeAttr("disabled");
+				$("input#minorList").removeAttr("disabled");
+				$("input#manufacturerList").removeAttr("disabled");
+				$("img.loadIcon").hide();
+				$("span.ui-combobox a.ui-button").show();
+
 			}
 		});
 	};
 
 	init = function() {
 		showRedirect();
-		getCategories();
 	};
 
 	$(document).ready(function() {
-		$("#categoryList").append($("<option>", { value : "all", selected: "selected"}).text("All Category")).combobox({
+		$("select#categoryList").append($("<option>", { value : "all", selected: "selected"}).text("All Categories")).combobox({
 			selected: function(event, ui) {
 				catCode = $(this).val();
-				$("input#subCategoryList").val($("#subCategoryList option:[value='all']").text());
-				$("input#classList").val($("#classList option:[value='all']").text());
-				$("input#minorList").val($("#minorList option:[value='all']").text());
-				$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
 				getCategories(catCode);
 			}
 		});
 
-		$("select#subCategoryList").append($("<option>", { value : "all", selected: "selected"}).text("All Subcategory")).combobox({
+		$("select#subCategoryList").append($("<option>", { value : "all", selected: "selected"}).text("All Subcategories")).combobox({
 			selected: function(event, ui) {
 				catCode = $(this).val();
 				if (catCode.length==0) {
 					catCode=$("#categoryList option:selected").val();
 				}
-				$("input#classList").val($("#classList option:[value='all']").text());
-				$("input#minorList").val($("#minorList option:[value='all']").text());
-				$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
 				getCategories(catCode);
 			}
 		});
 
-		$("select#classList").append($("<option>", { value : "all", selected: "selected"}).text("All Class")).combobox({
+		$("select#classList").append($("<option>", { value : "all", selected: "selected"}).text("All Classes")).combobox({
 			selected: function(event, ui) {
 				catCode = $(this).val();
 				if (catCode.length==0) {
 					catCode=$("#subCategoryList option:selected").val();
 				}
-				$("input#minorList").val($("#minorList option:[value='all']").text());
-				$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
 				getCategories(catCode);
 			}
 		});
 
-		$("select#minorList").append($("<option>", { value : "all", selected: "selected"}).text("All Minor")).combobox({
+		$("select#minorList").append($("<option>", { value : "all", selected: "selected"}).text("All Minor Classes")).combobox({
 			selected: function(event, ui) {
 				catCode = $(this).val();
 				if (catCode.length==0) {
 					catCode=$("#classList option:selected").val();
 				}
-				$("input#manufacturerList").val($("#manufacturerList option:[value='all']").text());
 				getCategories(catCode);
 			}
 		});

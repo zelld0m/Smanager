@@ -35,10 +35,14 @@
     <!--  info -->
     <div class="info fsize12 clearfix">
     	<label class="txtLabel">Keyword:</label>
-    	<label class="details marR15"><input type="text" class="w205" id="keyword" />
-    	</label>
+    	<label class="details marR15"><input type="text" class="w205" id="keyword" /></label>
     	<label class="txtLabel">Date Range:</label>
-    	<label class="details"><input type="text" class="w70" id="startDate" />&nbsp;&nbsp;<input type="text" class="w70" id="endDate"/> </label> 
+    	<label>
+	    	<input type="text" class="w70" id="startDate"/>
+	    </label>
+	    <label>
+	    	<input type="text" class="w70" id="endDate"/>
+	    </label>
     	<div class="clearB"></div>
     	
     	<label class="txtLabel">User Name:</label>

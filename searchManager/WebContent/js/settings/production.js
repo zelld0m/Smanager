@@ -55,7 +55,43 @@
 				}
 			});
 		};
+		
+		var postMsg = function(data,pub){
+			var list = data.list;
+			var msg_ = pub?'published':'unpublished'+'.';
 
+			if (data.totalSize>1){			
+				var okmsg = 'Successfully '+msg_;	
+				var flmsg = '\n\nFailed.';
+				var okcnt = 0;
+				var flcnt = 0;
+				for(var i=0; i<data.totalSize; i++){					
+					if(list[i].published == '1'){
+						okcnt++;
+						okmsg += '\n-'+list[i].ruleId;	
+					}
+					else{
+						flcnt++;
+						flmsg += '\n-'+list[i].ruleId;
+					}
+				}
+	
+				if(okcnt < 1){
+					okmsg = '';
+					flmsg = flmsg.replace('\n\n', '');
+				}if(flcnt < 1)
+					flmsg = '';
+					
+				alert(okmsg+flmsg);	
+			}else{			
+				if(list != null && list[0].published == '1')
+					alert(list[0].ruleId+' successfully '+msg_);
+				else
+					alert(list[0].ruleId+' was not '+msg_);
+			}
+		};
+		
+		
 		var publishHandler = function(){
 			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
@@ -66,8 +102,9 @@
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									getForProductionList();
+								callback: function(data){									
+									getForProductionList();	
+									postMsg(data,true);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -81,6 +118,7 @@
 							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									getForProductionList();
+									postMsg(data,false);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -132,7 +170,6 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						publishHandler();
-						
 					}
 				},
 				preHook:function(){ 

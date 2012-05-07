@@ -285,7 +285,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .sideMenuArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:5px; width: 220px;  }
 .sideMenuArea .itemText				{ float:left; width:155px; padding-left:5px }
 .sideMenuArea .itemSubText			{ float:left; width:155px; padding-left:5px }
-.sideMenuArea .itemLink				{ float:left; text-align:right; width:55px; }
+.sideMenuArea .itemLink				{ float:right; text-align:right; width:55px; }
 
 .sideMenuArea .sideBottomPaging		{ margin:5px 0 0 -8px !important; }								
 
@@ -707,6 +707,9 @@ span.ui-button-text	{ display:none; }
 
 
 .ui-widget-content .ui-autocomplete-input { background:none !important;  }
+
+
+.dropdownArea label img.loadIcon { margin-left:4px }
 
 
 

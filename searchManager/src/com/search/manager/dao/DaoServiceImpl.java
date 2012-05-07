@@ -2,6 +2,7 @@ package com.search.manager.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -847,12 +848,12 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {
-		int result = 0;
+	public Map<String,Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {	
+		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
-			result += updateRuleStatus(ruleStatus);
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatus(ruleStatus) > 0?true:false);
 		}
-		return result;
+		return statusMap;
 	}
 
 	@Override

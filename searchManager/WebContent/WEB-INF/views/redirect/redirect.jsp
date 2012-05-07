@@ -38,7 +38,7 @@
 	
 	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
 	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:65%" >
+	        	<div class="floatL padT10 padL10" style="width:70%" >
 	        		<div id="commentHolder">
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
 			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
@@ -134,27 +134,28 @@
 							<div class="fsize12 mar10 dropdownArea">
 								<label class="floatL w100">CatCode</label><label class="floatL w200"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></label>
 								<div class="clearB"></div>
-								<label class="floatL w100">Category</label><label class="floatL w200"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category"></select></label>
+								<label class="floatL w100">Category</label><label class="floatL w200"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category">
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
 								<div class="clearB"></div>
 								<label class="floatL w100">Sub-Category</label>
 								<label class="floatL w200"><select name="select" id="subCategoryList" class="selectCombo w178" title="Select SubCategory">
 									   		<option></option>
-								</select></label>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
 								<div class="clearB"></div>
 								<label class="floatL w100">Class</label>
 								<label class="floatL w200"><select name="select" id="classList" class="selectCombo w178" title="Select Class">
 											<option></option>
-								</select></label>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
 								<div class="clearB"></div>
 								<label class="floatL w100">Minor</label>
 								<label class="floatL w200"><select name="select" id="minorList" class="selectCombo w178" title="Select Minor">
 									 		<option></option>
-								</select></label>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
 								<div class="clearB"></div>
 								<label class="floatL w100">Manufacturer</label>
 								<label class="floatL w200"><select name="select" id="manufacturerList" class="w178" title="Select Manufacturer">
 										<option></option>
-								</select></label>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
 								<div class="clearB"></div>							
 							</div>
 							

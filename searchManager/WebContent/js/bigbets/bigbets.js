@@ -122,7 +122,10 @@
 			} 
 			
 			var html = getHTMLTemplate("#viewAuditTemplate");
-			if(!e.data.ruleId && (e.data.type==="Elevate" || e.data.type==="Exclude")) {
+			if (e.data.ruleType==="Rule Status") {
+				
+			}
+			else if(e.data.type==="Elevate" || e.data.type==="Exclude") {
 				html = getHTMLTemplate("#viewAuditTemplate" + $.formatAsId(e.data.item["edp"]));
 			}
 			
@@ -164,7 +167,7 @@
 				return;
 			}
 			
-			if (e.data.ruleId) {
+			if (e.data.ruleType==="Rule Status") {
 				var ruleId = e.data.ruleId;
 			}
 			else if (e.data.type==="Elevate" || e.data.type==="Exclude") {
@@ -172,7 +175,7 @@
 				var idSuffix = $.formatAsId(edp);
 			}
 			
-			if(e.data.ruleId){
+			if(e.data.ruleType==="Rule Status"){
 				CommentServiceJS.getComment(e.data.ruleType, e.data.ruleId, auditPage, auditPageSize, {
 					callback: function(data){
 						var totalItems = data.totalSize;

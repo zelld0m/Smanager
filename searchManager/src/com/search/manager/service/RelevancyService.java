@@ -83,7 +83,8 @@ public class RelevancyService {
 					BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
 					fieldValue = boostQueryModel.toString();
 				} catch (SchemaException e) {
-					throw e;
+					logger.error("Failed during addRuleFieldValue()",e);
+					return 0;
 				}
 			}
 
@@ -93,7 +94,8 @@ public class RelevancyService {
 					Schema schema = SolrSchemaUtility.getSchema();
 					BoostFunctionModel.toModel(schema, fieldValue, true);
 				} catch (SchemaException e) {
-					throw e;
+					logger.error("Failed during addOrUpdateRelevancyField()",e);
+					return 0;
 				}
 			}
 
@@ -122,11 +124,6 @@ public class RelevancyService {
 			logger.error("Failed during getAllByName()",e);
 		}
 		return null;
-	}
-
-	@RemoteMethod
-	public RecordSet<Relevancy> getAllRule(){
-		return getAllRule("", 0, 0);
 	}
 
 	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
@@ -177,7 +174,7 @@ public class RelevancyService {
 					addRuleFieldValue(clonedId, key, fields.get(key));
 				} catch (Exception e) {
 					daoService.deleteRelevancy(clonedRelevancy);
-					throw e;
+					logger.error("Failed during cloneRule()",e);
 				}
 			}
 
