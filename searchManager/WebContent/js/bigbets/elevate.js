@@ -79,7 +79,7 @@
 								alert("List contains an invalid SKU.");
 							}							
 							else if (!$.isBlank(expDate) && !$.isDate("mm/dd/yy", expDate)){
-								alert("Invalid date specified.")
+								alert("Invalid date specified.");
 							}
 							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
