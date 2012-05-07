@@ -68,6 +68,12 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 	$("#submitForApproval").hide();
 
 	if(ruleStatus!=null){
+		
+		ruleId = ruleStatus["ruleStatusId"];
+		if (ruleId == null) {
+			ruleId = "";
+		}
+	
 		$("#submitForApproval").show();
 
 		$("div#statusHolder").hide();
@@ -90,7 +96,7 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 		
 		$("div#commentHolder span#commentIcon").on({
 			click: showAuditList
-		}, {type:moduleName, ruleId:ruleStatus["ruleStatusId"], ruleType:"Rule Status" });
+		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
 
 	}
 };
