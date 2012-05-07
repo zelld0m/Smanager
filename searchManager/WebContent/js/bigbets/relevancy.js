@@ -682,7 +682,6 @@
 		$('div[id="q.alt"]').hide();
 
 		$('div[id="tie"] input[type="text"]').off('blur focus keypress').on({
-			blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(selectedRule.parameters["tie"]);},
 			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters["tie"]) $(e.target).val("");},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
