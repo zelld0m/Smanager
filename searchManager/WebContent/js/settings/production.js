@@ -55,7 +55,42 @@
 				}
 			});
 		};
+		
+		var postMsg = function(data){
+			var list = data.list;
 
+			if (data.totalSize>1){
+				var okmsg = 'Successfully published.';	
+				var flmsg = '\n\nFailed.';
+				var okcnt = 0;
+				var flcnt = 0;
+				for(var i=0; i<data.totalSize; i++){					
+					if(list[i].published == '1'){
+						okcnt++;
+						okmsg += '\n-'+list[i].ruleId;	
+					}
+					else{
+						flcnt++;
+						flmsg += '\n-'+list[i].ruleId;
+					}
+				}
+	
+				if(okcnt < 1){
+					okmsg = '';
+					flmsg = flmsg.replace('\n\n', '');
+				}if(flcnt < 1)
+					flmsg = '';
+					
+				alert(okmsg+flmsg);	
+			}else{
+				if(list != null && list[0].published == '1')
+					alert(list[0].ruleId+' successfully published.');
+				else
+					alert(list[0].ruleId+' was not published.');
+			}
+		};
+		
+		
 		var publishHandler = function(){
 			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
@@ -66,8 +101,9 @@
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									getForProductionList();
+								callback: function(data){									
+									getForProductionList();	
+									postMsg(data);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -132,7 +168,6 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						publishHandler();
-						
 					}
 				},
 				preHook:function(){ 
