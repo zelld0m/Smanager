@@ -68,8 +68,10 @@
 			base.$el.find('a#addButton').on({
 				click: function(e){
 					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if ($.isAllowedName(name)){
-						if ($.isNotBlank(name) && name != base.options.searchText) base.options.itemAddCallback(base, name);												
+					if ($.isAllowedName(name) && name !== base.options.searchText){
+						base.options.itemAddCallback(base, name); 
+					}else if($.isBlank(name) || name === base.options.searchText){
+						alert("Please specify a valid input");
 					}else{
 						alert("Field contains invalid character");
 					}
