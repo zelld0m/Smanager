@@ -56,11 +56,12 @@
 			});
 		};
 		
-		var postMsg = function(data){
+		var postMsg = function(data,pub){
 			var list = data.list;
+			var msg_ = pub?'published':'unpublished'+'.';
 
-			if (data.totalSize>1){
-				var okmsg = 'Successfully published.';	
+			if (data.totalSize>1){			
+				var okmsg = 'Successfully '+msg_;	
 				var flmsg = '\n\nFailed.';
 				var okcnt = 0;
 				var flcnt = 0;
@@ -82,11 +83,11 @@
 					flmsg = '';
 					
 				alert(okmsg+flmsg);	
-			}else{
+			}else{			
 				if(list != null && list[0].published == '1')
-					alert(list[0].ruleId+' successfully published.');
+					alert(list[0].ruleId+' successfully '+msg_);
 				else
-					alert(list[0].ruleId+' was not published.');
+					alert(list[0].ruleId+' was not '+msg_);
 			}
 		};
 		
@@ -103,7 +104,7 @@
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){									
 									getForProductionList();	
-									postMsg(data);	
+									postMsg(data,true);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -117,6 +118,7 @@
 							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									getForProductionList();
+									postMsg(data,false);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
