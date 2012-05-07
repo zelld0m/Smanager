@@ -2,23 +2,13 @@
 
 	<property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
-	<property name="target" value="1.7"/>
-	<property name="source" value="1.7"/>
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
 	
 	<property name="searchManager" value="../searchManager"/>
 	<property name="searchGuiWS" value="../SearchGuiWS"/>
 	<property name="dependencies" value="${basedir}"/>
 		
-	 <!-- Define the CLASSPATH -->
-	 <path id="compile.classpath">
-	    <fileset dir="${dependencies}/lib">
-	      <include name="*.jar"/>
-	    </fileset>
-	  	<fileset dir="${dependencies}/tomcat/lib">
-	  	  <include name="*.jar"/>
-	  	</fileset>
-	 </path>
-	 
 	<target name="build" description="Build Search Manager projects">
   		<ant target="warSM" />
 		<ant target="warWS" />
@@ -35,7 +25,14 @@
 		  	 <fileset dir="${searchManager}/WebContent/WEB-INF/lib" />
 		</copy>
 		<javac srcdir="${searchManager}/src" destdir="${dependencies}/searchmanager/classes" debug="on">
-		    <classpath refid="compile.classpath"/>
+			<classpath>
+				<fileset dir="${dependencies}/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${dependencies}/tomcat/lib"> 
+					<include name="*.jar"/> 
+				</fileset> 
+			</classpath>
 		</javac>
 	  	<jar destfile="${dependencies}/searchmanager/jar/searchManager.jar">
 	  	  	<fileset dir="${dependencies}/searchmanager/classes">
@@ -56,7 +53,14 @@
   	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib" />
   	  	</copy>
 	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes" debug="on">
-	        <classpath refid="compile.classpath"/>
+	    	<classpath>
+	    		<fileset dir="${dependencies}/lib">
+	    			<include name="*.jar"/>
+	    		</fileset>
+	    		<fileset dir="${dependencies}/tomcat/lib"> 
+	    			<include name="*.jar"/> 
+	    		</fileset> 
+	    	</classpath>
 	    </javac>
   	  	<jar destfile="${dependencies}/ws/jar/searchguiws.jar">
   	  	  	<fileset dir="${dependencies}/ws/classes">
