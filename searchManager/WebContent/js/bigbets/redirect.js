@@ -92,7 +92,6 @@
 
 		$("a#downloadIcon").download({
 			headerText:"Download Query Cleaning",
-			hasPageOption: true,
 			requestCallback:function(e){
 				var params = new Array();
 				var url = document.location.pathname + "/xls";
