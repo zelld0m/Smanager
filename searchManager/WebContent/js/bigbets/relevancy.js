@@ -725,7 +725,18 @@
 			alert("Tie value should be between 0 - 1.");
 			return;
 		}
-
+		
+		// validation for qs and ps
+		if ((field === "qs" || field === "ps") && !$.isBlank(value) &&!isDigit(value)){
+			if (field==="qs") {
+				alert("Query slop should be a positive number.");
+			}
+			else if (field==="ps") {
+				alert("Phrase slop should be a positive number.");
+			}
+			return;
+		}
+		
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
 				if (field !== "q.alt") {
@@ -873,6 +884,14 @@
 			if ($.isBlank(ruleName)){
 				showMessage("#name", "Rule name is required.");
 				$("#name").val(selectedRule.ruleName);
+			}
+			else if (!isAllowedName(ruleName)){
+				showMessage("#name", "Rule name contains invalid character.");
+				$("#name").val(selectedRule.ruleName);
+			}
+			else if (!isXSSSafe(description)){
+				showMessage("#description", "Description contains XSS.");
+				$("#description").val(selectedRule.description);
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range.");
