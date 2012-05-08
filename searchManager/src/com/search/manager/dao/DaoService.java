@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.search.manager.exception.DataException;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -189,5 +190,11 @@ public interface DaoService {
 	public int addComment(Comment comment) throws DaoException;
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;
+	
+	/* Connect to cache */
+	public List<ElevateResult> getProductionElevateRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public List<ExcludeResult> getProductionExcludeRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public Relevancy getProductionRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public RedirectRule getProductionRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 }

@@ -12,12 +12,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
 import com.search.manager.dao.sp.CategoryDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
 import com.search.manager.dao.sp.KeywordDAO;
@@ -26,6 +28,7 @@ import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.exception.DataException;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -39,10 +42,10 @@ import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
-import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
@@ -68,6 +71,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
 	@Autowired private CommentDAO		commentDAO;
+	@Autowired private DaoCacheService 	daoCacheService;
 
 	private DaoServiceImpl instance;
 	
@@ -907,4 +911,41 @@ public class DaoServiceImpl implements DaoService {
 	public int removeComment(Integer commentId) throws DaoException {
 		return commentDAO.deleteComment(commentId);
 	}
+	
+	@Override
+	public List<ElevateResult> getProductionElevateRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		List<ElevateResult> list =  daoCacheService.getElevateRules(storeKeyword);
+		// TODO: comment out after testing. Clear the keyword after obtaining the result.
+		//daoCacheService.resetElevateRule(storeKeyword);
+		return list;
+	}
+	
+	@Override
+	public List<ExcludeResult> getProductionExcludeRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		List<ExcludeResult> list =  daoCacheService.getExcludeRules(storeKeyword);
+		// TODO: comment out after testing. Clear the keyword after obtaining the result.
+		//daoCacheService.resetExcludeRule(storeKeyword);
+		return list;
+	}
+	
+	@Override
+	public Relevancy getProductionRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		Relevancy rule =  daoCacheService.getRelevancyRule(storeKeyword);
+		// TODO: comment out after testing. Clear the keyword after obtaining the result.
+		//daoCacheService.resetRelevancyRule(storeKeyword);
+		return rule;
+	}
+	
+	@Override
+	public RedirectRule getProductionRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		RedirectRule rule =  daoCacheService.getRedirectRule(storeKeyword);
+		// TODO: comment out after testing. Clear the keyword after obtaining the result.
+		//daoCacheService.resetRedirectRule(storeKeyword);
+		return rule;
+	}
+	
 }
