@@ -85,7 +85,7 @@
 				alert(okmsg+flmsg);	
 			}else{			
 				if(list != null && list[0].published == '1')
-					alert(list[0].ruleId+' successfully '+msg_);
+					alert(list[0].ruleId+' was successfully '+msg_);
 				else
 					alert(list[0].ruleId+' was not '+msg_);
 			}
