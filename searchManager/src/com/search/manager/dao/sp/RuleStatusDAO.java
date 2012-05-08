@@ -78,8 +78,8 @@ public class RuleStatusDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-	                		rs.getDate(DAOConstants.COLUMN_CREATED_STAMP),
-	                		rs.getDate(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
+	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
+	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
 	                		);
 	        	}
 
