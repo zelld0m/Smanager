@@ -90,26 +90,27 @@
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked});
 
-		$('#downloadIcon').click(
-				function(){
-					var url = window.location.pathname + "/xls";
-					var urlParams = "";
-					var count = 0;
-					var params={};
-				
-					params["id"] = selectedRule["ruleId"];
-					params["filename"] = "RR" + $.formatAsId(selectedRule["ruleName"]);
-					params["type"] = 'excel';
+		$("a#downloadIcon").download({
+			headerText:"Download Query Cleaning",
+			hasPageOption: true,
+			requestCallback:function(e){
+				var params = new Array();
+				var url = document.location.pathname + "/xls";
+				var urlParams = "";
+				var count = 0;
+				params["id"] = selectedRule["ruleId"];
+				params["filename"] = e.data.filename;
+				params["type"] = e.data.type;
 
-					for(var key in params){
-						if (count>0) urlParams +='&';
-						urlParams += (key + '=' + params[key]);
-						count++;
-					};
+				for(var key in params){
+					if (count>0) urlParams +='&';
+					urlParams += (key + '=' + params[key]);
+					count++;
+				};
 
-					document.location.href = url + '?' + urlParams; 
-				}
-		);
+				document.location.href = url + '?' + urlParams;
+			}
+		});
 		
 		$("#submitForApprovalBtn").off().on({
 			click: function(e){

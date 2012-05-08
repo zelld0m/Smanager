@@ -323,7 +323,7 @@
 					hasPageOption: true,
 					requestCallback:function(e){
 						var params = new Array();
-						var url = window.location.pathname + "/xls";
+						var url = document.location.pathname + "/xls";
 						var urlParams = "";
 						var count = 0;
 						params["filename"] = e.data.filename;
