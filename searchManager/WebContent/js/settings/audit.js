@@ -19,6 +19,11 @@
 		refId = $("#refList option:selected").val();
 		startDate = $.trim($("#startDate").val());
 		endDate = $.trim($("#endDate").val());
+		
+		if (!$.isBlank(keyword) && !isAllowedName(keyword)) {
+			alert("Keyword is an invalid value");
+			return;
+		}
 		AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
 			callback: function(data){
 				totalSize = data.totalSize;
