@@ -331,6 +331,10 @@
 									if ($.isNotBlank(condition) && $.isNotBlank(match)){
 										var count = $contentHolder.find('li.multiRuleItem').length;
 										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
+										if (conditionCount > 5) {
+											alert("Maximum no of rules allowed is 5!");
+											return;
+										}
 										for ( var i = 1; i < conditionCount; i++) {
 											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
 											if (value == condition) {
@@ -702,9 +706,10 @@
 				var charCode = (e.which) ? e.which : e.keyCode;
 
 				if(charCode == 8) return true;
+				if($(e.target).length > 4) 
+					return false;
 				if($.inArray(charCode,[48,96]) != -1 && $.isBlank($(e.target).val())) return false;
 				if(charCode < 32 || (charCode > 47 && charCode < 58)) return true;
-
 				alert(getRelevancyField(e).label + " value should be numeric.");
 				return false;
 			}

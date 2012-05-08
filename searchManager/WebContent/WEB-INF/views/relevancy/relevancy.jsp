@@ -166,7 +166,7 @@
 			<c:forEach items="${shortFields}" var="field" varStatus="i">
 			<div id="${field.key}" class="AlphaCont marB10 w47p floatL ${i.count % 2 == 0? 'marL13': ''}">
 				<label class="marT5 w95"><span id="fieldLabel" class="fbold fsize12">${field.value}</span></label>
-				<label class="marT5"><input type="text" class="w135"/></label> 
+				<label class="marT5"><input type="text" class="w135"  maxlength="4"/></label> 
 				<label class="marT6">
 					<span class="preloader" style="display:none"><img src="../images/ajax-loader-rect.gif"></span>
 					<span class="crudIcon">
@@ -256,7 +256,7 @@
 			
 			<div id="sr" class="MM marT10 clearfix">
 				<label class="marT8 fsize12 fbold w70">Enter Rule:</label>
-				<label><input id="singleRuleFieldMatch" type="text" class="w45"></label>
+				<label><input id="singleRuleFieldMatch" type="text" class="w45" maxlength="4"></label>
 			</div>
 			<div class="clearB"></div>
 			
@@ -264,9 +264,9 @@
 			<ul id="multiRule">
 				<li id="multiRulePattern" class="multiRuleItem">
 					<label id="ruleField" class="marT8 fsize12 fbold w70">Enter Rule:</label>
-					<label><input id="ruleFieldCondition" type="text" class="w45"></label>
+					<label><input id="ruleFieldCondition" type="text" class="w45" maxlength="4"></label>
 					<label><select id="ruleFieldMid"><option value="&lt;">&lt;</option></select></label>
-					<label><input id="ruleFieldMatch" type="text" class="w45"></label>
+					<label><input id="ruleFieldMatch" type="text" class="w45"  maxlength="4"></label>
 					<a id="addRule" href="javascript:void(0);"><img src="../images/icon_addField2.png" class="marT3"></a>
 					<a id="deleteRule" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marL3 marT3"></a>
 				</li>	
