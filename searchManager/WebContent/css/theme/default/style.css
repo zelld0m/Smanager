@@ -12,10 +12,13 @@
 .bgTopHeaderMnu .mnuHeader		{ display:inline; list-style-type:none; z-index:10 }
 
 .cssReset .subMenuHolder	 	{ background:url(images/bgSubNav.gif) repeat-x;  width:100%; height: 30px }
-.cssReset .subMenu				{ list-style:none; width: 670px; margin-top:4px; position:relative; left:266px }
-.cssReset .subMenu li			{ float:left; display:inline; margin-left:10px; margin-right:10px; font-size: 12px; font-weight: bold; color:#222222}
-.cssReset .subMenu li a			{ color:#222222 }
-.cssReset .subMenu li.active a	{ color:#0087c7 }
+.cssReset .subMenu				{ list-style:none; /*width: 670px; */ margin-top:4px; position:relative; left:266px }
+.cssReset .subMenu li, 
+ul.dropdown ul.subMenu li		{ float:left; display:inline; margin-left:10px; margin-right:10px; font-size: 12px; font-weight: bold; color:#222222}
+.cssReset .subMenu li a,
+ul.dropdown ul.subMenu li a		{ color:#222222 }
+.cssReset .subMenu li.active a,
+ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 
 .cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; border-top: 3px solid #009eda; margin-top:-65px; z-index:200 }
 
@@ -283,7 +286,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .sideMenuArea .leftSearch			{ background:url(images/icon-search.png) right center no-repeat #fff; height:18px; padding:3px 22px 3px 3px; margin:0}
 
 .sideMenuArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:5px; width: 220px;  }
-.sideMenuArea .itemText				{ float:left; width:155px; padding-left:5px }
+.sideMenuArea .itemText				{ float:left; width:155px; padding-left:5px; word-wrap: break-word;   }
 .sideMenuArea .itemSubText			{ float:left; width:155px; padding-left:5px }
 .sideMenuArea .itemLink				{ float:right; text-align:right; width:55px; }
 
@@ -296,8 +299,10 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .contentArea .leftSearch			{ background:url(images/icon-search.png) right center no-repeat #fff; height:18px; padding:3px 22px 3px 3px; margin:0}
 
 .contentArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:8px; width:99.7%;  }
-.contentArea .itemText				{ float:left; width:70%; padding-left:5px } 
-.contentArea .itemLink				{ float:left; text-align:right; width:28%; }
+.contentArea .itemText				{ float:left; width:70%; padding-left:5px; } 
+.contentArea .itemLink				{ float:right; text-align:right; width:28%; }
+
+#keywordInRulePanel .itemText 		{ width: 240px; word-wrap: break-word;  }
 
 .contentArea .sideBottomPaging		{ margin:8px 0 0 -8px !important; }	
 
@@ -710,6 +715,30 @@ span.ui-button-text	{ display:none; }
 
 
 .dropdownArea label img.loadIcon { margin-left:4px }
+
+/* LEVEL ONE */
+ul.dropdown                         { position:relative }
+ul.dropdown li                      { position:relative }
+ul.dropdown a:hover		            { }
+ul.dropdown a:active                { }
+ul.dropdown li a                    { }
+ul.dropdown li:last-child a         { } 
+ul.dropdown li.hover,
+ul.dropdown li:hover                { }
+ul.dropdown li.hover a              { }
+
+
+/*  LEVEL TWO  */
+ul.dropdown ul.subMenu				{ width: 670px; visibility: hidden; position: absolute; top: 100%; left: 0;  }
+ul.dropdown ul li 					{ font-weight: normal; float:left; text-shadow:none; padding-left:0; padding-right:0 }
+									  
+                                    /* IE 6 & 7 Needs Inline Block */
+ul.dropdown ul li a					{ color:#222222;  }
+
+
+
+
+
 
 
 
