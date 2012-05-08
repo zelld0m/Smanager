@@ -693,7 +693,12 @@
 				if(charCode == 46 && ($.trim($(e.target).val()) == 0 || $.isBlank($(e.target).val()))) return true;
 				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
 				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
-
+				if(($(e.target).val()==1 || $(e.target).val()==0) && (charCode == 49 || charCode == 48)) {
+					if ($('div[id="tie"] input[type="text"]').length == 1) {
+						$(e.target).val(String.fromCharCode(charCode));
+						return false;
+					}
+				}
 				alert("Tie value should be between 0 - 1.");
 				return false;
 
