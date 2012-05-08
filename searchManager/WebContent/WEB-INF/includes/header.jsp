@@ -34,6 +34,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
   
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  

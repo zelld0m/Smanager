@@ -83,9 +83,9 @@ showDeploymentStatusBar = function(moduleName, ruleStatus){
 		}
 
 		$("div#publishHolder").hide();
-		if($.isNotBlank(ruleStatus["lastModifiedDate"])){
+		if($.isNotBlank(ruleStatus["lastPublishedDate"])){
 			$("div#publishHolder").show();
-			$("span#statusDate").html(ruleStatus["lastModifiedDate"].toUTCString());
+			$("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
 		}
 
 		$("a#submitForApprovalBtn").show();
