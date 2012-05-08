@@ -21,32 +21,7 @@
 	</div>
 </div>
 <!--Left Menu-->
-        
-<div id="downloadTemplate" style="display: none">
-	<div>
-		<form id="downloadForm">
-		 	<label class="text60 marT6">Filename: </label>
-		 	<label class="marT6"><input type="text" name="filename" class="w163"></label>
-			<div class="clearB"></div>
-		 	<label class="text60 marT6">Pages: </label>
-		 	<label class="marT6">
-		 		<select name="page" class="mar0 w168">
-		 			<option value="all">All</option>
-		 			<option value="current" selected="selected">Current</option>
-		 		</select>
-		 	</label>
-			<div class="clearB marT6"></div>
-		 	<label class="text60">Type: </label>
-		 	<label class="marT6">
-		 		<select name="type" disabled="disabled" class="mar0 w168"><option value="excel" selected="selected">Excel</option><option value="pdf">PDF</option><option value="csv">CSV</option></select>
-		 	</label>
-		 	<div class="clearB marT8 txtAR">
-		 		<a id="downloadBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Download</div></a>
-		 	</div>
-		</form>
-	</div>
-</div>
-    
+
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
 	

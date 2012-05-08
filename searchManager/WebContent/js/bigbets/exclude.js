@@ -269,7 +269,6 @@
 			},
 			callback:function(data){
 				selectedRuleStatus = data;
-				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 				showDeploymentStatusBar(moduleName, selectedRuleStatus);
 				getExcludeRuleList();
 				populateItem(1);
@@ -284,16 +283,6 @@
 					click: showAddItem,
 					mouseenter: showHoverInfo
 				},{locked: selectedRuleStatus.locked});
-				
-				$("a#downloadIcon").off().on({click:showDownloadOption}, {
-					selector: "#downloadIcon",
-					template: "#downloadTemplate",
-					title: "Download Page",
-					keyword: selectedRule.ruleName,
-					filter: getItemFilter,
-					itemPage: selectedRuleItemPage,
-					itemPageSize:ruleItemPageSize
-				});
 				
 				$("a#clearRuleBtn").off().on({
 					mouseenter: showHoverInfo,
@@ -328,6 +317,31 @@
 						}
 					}
 				}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
+				
+				$("a#downloadIcon").download({
+					headerText:"Download Exclude",
+					hasPageOption: true,
+					requestCallback:function(e){
+						var params = new Array();
+						var url = window.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["keyword"] = selectedRule.ruleName;
+						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
+						params["filter"] = getItemFilter();
+						params["itemperpage"] = ruleItemPageSize;
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
 			}
 		});		
 	};

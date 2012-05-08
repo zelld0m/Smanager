@@ -61,7 +61,7 @@
 			var msg_ = pub?'published':'unpublished'+'.';
 
 			if (data.totalSize>1){			
-				var okmsg = 'Successfully '+msg_;	
+				var okmsg = 'Following Rules were successfully '+msg_;	
 				var flmsg = '\n\nFailed.';
 				var okcnt = 0;
 				var flcnt = 0;
