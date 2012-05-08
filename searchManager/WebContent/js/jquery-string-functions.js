@@ -48,7 +48,7 @@ jQuery.extend(
 					return "_".concat(("" + id).replace(/\s/g,"_").toLowerCase());
 				},
 				
-				isDate: function(format, text){
+				isDate: function(text, format){
 				    var isValid = true;
 				    var dateFormat = $.isNotBlank(format)?format: "mm/dd/yy";
 				    

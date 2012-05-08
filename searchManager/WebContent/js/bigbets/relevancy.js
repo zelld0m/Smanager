@@ -6,7 +6,7 @@
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this ranking rule?";
-	var ruleNameErrorText = "Please provide a valid relevancy name";
+	var ruleNameErrorText = "Please provide a valid relevancy name.";
 
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -331,10 +331,14 @@
 									if ($.isNotBlank(condition) && $.isNotBlank(match)){
 										var count = $contentHolder.find('li.multiRuleItem').length;
 										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
+										if (conditionCount > 5) {
+											alert("Maximum no of rules allowed is 5!");
+											return;
+										}
 										for ( var i = 1; i < conditionCount; i++) {
 											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
 											if (value == condition) {
-												alert("Rule already exists for " + condition);
+												alert("Rule already exists for " + condition + ".");
 												return;
 											}
 										}
@@ -676,7 +680,7 @@
 
 		// add field restrictions
 		$('div[id="q.alt"] input[type="text"]').attr("readonly", "readonly").on({
-			focus: function(e){alert("Contact administrator to modify this field");}
+			focus: function(e){alert("Contact administrator to modify this field.");}
 		});
 
 		$('div[id="q.alt"]').hide();
@@ -690,7 +694,7 @@
 				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
 				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
 
-				alert("Tie value should be between 0 - 1");
+				alert("Tie value should be between 0 - 1.");
 				return false;
 
 			}
@@ -702,10 +706,11 @@
 				var charCode = (e.which) ? e.which : e.keyCode;
 
 				if(charCode == 8) return true;
+				if($(e.target).length > 4) 
+					return false;
 				if($.inArray(charCode,[48,96]) != -1 && $.isBlank($(e.target).val())) return false;
 				if(charCode < 32 || (charCode > 47 && charCode < 58)) return true;
-
-				alert(getRelevancyField(e).label + " value should be numeric");
+				alert(getRelevancyField(e).label + " value should be numeric.");
 				return false;
 			}
 		});
@@ -717,13 +722,15 @@
 		
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value >= 0 && value <= 1)){
-			alert("Tie value should be between 0 - 1");
+			alert("Tie value should be between 0 - 1.");
 			return;
 		}
 
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
-				showActionResponse(code, "update", label);
+				if (field !== "q.alt") {
+					showActionResponse(code, "update", label);					
+				}
 				selectedRule.parameters[field] = value;
 			},
 			preHook: function(){
@@ -751,7 +758,7 @@
 		isDirty = isDirty || (endDate.toLowerCase()!==$.trim(selectedRule.endDate));
 
 		// Required field
-		isDirty = isDirty && $.isNotBlank(ruleName);
+		isDirty = isDirty;
 
 		return isDirty;
 	};
@@ -863,36 +870,40 @@
 
 		if (checkIfUpdateAllowed()){
 			var response = 0;
-			RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
-				callback: function(data){
-					response = data;
-					showActionResponse(response, "update", ruleName);
-				},
-				preHook: function(){
-					prepareRelevancy();
-				},
-				postHook: function(){
-					if(response==1){
-						RelevancyServiceJS.getRule(selectedRule.ruleId,{
-							callback: function(data){
-								setRelevancy(data);
-							},
-							preHook: function(){
-								prepareRelevancy();
-							}
-						});						
-					}
-					else{
-						setRelevancy(selectedRule);
-					}
-				}
-			});
-		}else{
 			if ($.isBlank(ruleName)){
-				showMessage("#name", "Rule name is required");
+				showMessage("#name", "Rule name is required.");
 				$("#name").val(selectedRule.ruleName);
 			}
-		}	
+			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
+				alert("Please provide a valid date range.");
+			}
+			else {
+				RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
+					callback: function(data){
+						response = data;
+						showActionResponse(response, "update", ruleName);
+					},
+					preHook: function(){
+						prepareRelevancy();
+					},
+					postHook: function(){
+						if(response==1){
+							RelevancyServiceJS.getRule(selectedRule.ruleId,{
+								callback: function(data){
+									setRelevancy(data);
+								},
+								preHook: function(){
+									prepareRelevancy();
+								}
+							});						
+						}
+						else{
+							setRelevancy(selectedRule);
+						}
+					}
+				});				
+			}
+		}
 
 		if (!$.isEmptyObject(unSaved)){
 			$.map(unSaved, function(value, index) {
@@ -1067,6 +1078,12 @@
 						text: $('<div/>'),
 						title: { text: 'New Relevancy', button: true }
 					},
+					position: {
+						target: $("a#addButton")
+					},
+					show: {
+						ready: true
+					},
 					style: {width: 'auto'},
 					events: { 
 						show: function(e, api){
@@ -1102,10 +1119,14 @@
 
 									if ($.isBlank(popName)){
 										alert("Ranking rule name is required");
-										return;
 									}
-
-									if (isAllowedName(popName)){
+									else if (!isAllowedName(popName)) {
+										alert(ruleNameErrorText);
+									}
+									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
+										alert("Please provide a valid date range");
+									}
+									else {
 										RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
 											callback: function(data){
 												if (data!=null){
@@ -1122,8 +1143,6 @@
 												prepareRelevancy();
 											}
 										});
-									}else{
-										if (!isAllowedName(popName)) alert(ruleNameErrorText);
 									}
 								}
 							});
