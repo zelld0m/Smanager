@@ -50,7 +50,10 @@
   		<mkdir dir="${dependencies}/ws/jar" />
   		<mkdir dir="${dependencies}/ws/classes" />
   		<copy todir="${dependencies}/lib">
-  	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib" />
+  	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib">
+  	  	 			<exclude name="searchManager.jar"/>
+  	  	 		</fileset>
+  				<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
   	  	</copy>
 	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes" debug="on">
 	    	<classpath>
@@ -95,12 +98,10 @@
 					<include name="**/*.log"/> 
 				</fileset>
 			</copy>
-		
 			<war destfile="${dependencies}/searchmanager/war/searchManager.war">
 				<fileset dir="${dependencies}/searchmanager/WebContent" />
 			</war>
 	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
-			
 			<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/searchmanager" password="maestros@search_mall" trust="true">
 			    <fileset dir="${dependencies}/searchmanager"/>
 			</scp>
@@ -117,16 +118,16 @@
   	 		<fileset dir="${searchGuiWS}/WebContent" />
   	    </copy>
   		<copy todir="${dependencies}/ws/WebContent/WEB-INF/lib">
-  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />
-  			<fileset file="${searchGuiWS}/WebContent/WEB-INF/lib/x">
-  				<include name="**/*.jar"/> 
+  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />	
+  			<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib">
+  			  	  <exclude name="searchManager.jar"/>
   			</fileset>
+  			<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
   	  	</copy>
 		<war destfile="${dependencies}/ws/war/searchguiws.war">
 			<fileset dir="${dependencies}/ws/WebContent" />
 		</war>
   		<delete dir="${dependencies}/ws/WebContent" />	
-		
 		<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/webservice" password="maestros@search_mall" trust="true">
 			<fileset dir="${dependencies}/ws"/>
 		</scp>
