@@ -61,7 +61,7 @@ public class AuditController {
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		String totalSize = request.getParameter("totalSize");
-		String filename = "audittrail";
+		String filename = request.getParameter("filename");
 		
 		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s %s %s %s", userName, operation, entity, keyword, referenceId, startDate, endDate, totalSize, filename));
 		

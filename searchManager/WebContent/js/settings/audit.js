@@ -33,7 +33,7 @@
 				$("#resultsBody > tr:even").addClass("alt");
 
 				addFieldValuesPaging(curPage, totalSize);
-			},
+			}
 		});		
 
 	};
