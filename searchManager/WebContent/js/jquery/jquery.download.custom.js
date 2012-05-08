@@ -63,7 +63,8 @@
 				},
 				position:{
 					at: 'top center',
-					my: 'bottom center'
+					my: 'bottom center',
+					target: base.$el
 				},
 				style: {
 					width: 'auto'
@@ -89,9 +90,6 @@
 								}
 							}
 						});
-					},
-					hide: function(event, api){
-						api.destroy();
 					}
 				}
 			});

@@ -8,9 +8,8 @@
 	var refId = "";
 	var	startDate = "";
 	var	endDate = "";
-	var xlsUrl = window.location.pathname + "/xls";
 	var totalSize = 0;
-	
+
 	var getAuditTrail = function(curPage) {
 		username = $("#userList option:selected").val();
 		action = $("#actionList option:selected").val();
@@ -45,12 +44,11 @@
 				else {
 					$('#resultsBody').append('<tr><td colspan=7 class=\"txtAC\">No mactching records!</td></tr>');					
 				}
-			},
-			errorHandler: function(message){ alert(message); }
+			}
 		});		
-		
+
 	};
-	
+
 	var addFieldValuesPaging = function(curPage, totalItem){
 		if(totalItem==0){
 			$("div#resultsTopPaging, div#resultsBottomPaging").empty();
@@ -68,13 +66,43 @@
 				firstLinkCallback: function(e){getAuditTrail(1);},
 				lastLinkCallback: function(e){ getAuditTrail(e.data.totalPages);}
 			});
+
+			$("#exportBtn").download({
+				headerText:"Download Audit",
+				requestCallback:function(e){
+					var params = new Array();
+					var url = document.location.pathname + "/xls";
+					var urlParams = "";
+					var count = 0;
+
+					params["filename"] = e.data.filename;
+					params["type"] = e.data.type;
+					params["username"] = username;
+					params["operation"] = action;
+					params["entity"] = entity;
+					params["keyword"] = keyword;
+					params["referenceId"] = refId;
+					params["startDate"] = startDate;
+					params["endDate"] = endDate;
+					params["totalSize"] = totalSize;
+
+					for(var key in params){
+						if (count>0) urlParams +='&';
+						urlParams += (key + '=' + params[key]);
+						count++;
+					};
+
+					document.location.href = url + '?' + urlParams;
+				}
+			});
+
 		}
 
 	};
 
-	
+
 	$(document).ready(function() { 
-		
+
 		AuditServiceJS.getDropdownValues({
 			callback: function(data){ 
 				$.each(data, function(key, element) {
@@ -91,7 +119,7 @@
 			},
 			errorHandler: function(message){ alert(message); }
 		});		
-		
+
 		var dates = $("#startDate, #endDate").datepicker({
 			defaultDate: "+1w",
 			showOn: "both",
@@ -111,7 +139,7 @@
 		$("#goBtn").click(function() {
 			var strDate = $.trim($("#startDate").val());
 			var endDate = $.trim($("#endDate").val());
-			
+
 			if(($.isNotBlank(strDate) && !$.isDate(strDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range");
 			}else{
@@ -129,20 +157,6 @@
 			$("#endDate").val("");
 		});
 
-		$("#exportBtn").click(function() {
-//			$.ajax({
-//				  type: "GET",
-//				  url: xlsUrl,
-//				  contentType: "application/vnd.ms-excel",
-//				  dataType: "text",
-//				  data: "type=excel&username=" + username + "&operation" + action + "&entity" + entity + "&keyword" + keyword + "&referenceId" + refId + "&startDate" + startDate + "&endDate" + endDate + "&page" + curPage + "&itemperpage" + pageSize,
-//				  success: function(data) {
-//					  window.location='data:application/vnd.ms-excel;charset=utf8,' + encodeURIComponent(data);
-//		          }
-//				});
-			document.location.href = xlsUrl + '?' + "type=excel&username=" + username + "&operation=" + action + "&entity=" + entity + "&keyword=" + keyword + "&referenceId=" + refId + "&startDate=" + startDate + "&endDate=" + endDate + "&totalSize=" + totalSize;
-		});
-		
 		getAuditTrail(1);
 
 	});	
