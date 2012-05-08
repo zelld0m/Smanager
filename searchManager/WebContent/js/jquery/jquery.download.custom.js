@@ -65,10 +65,6 @@
 					at: 'top center',
 					my: 'bottom center'
 				},
-				show:{
-					solo: true,
-					ready: true
-				},
 				style: {
 					width: 'auto'
 				},
@@ -77,12 +73,21 @@
 						var $content = $("div", api.elements.content);
 						$content.html(base.getTemplate());
 						
-						$content.find("#downloadBtn").off().on({
-							click: base.options.requestCallback
-						},{
-							filename: $content.find("input#filename").val(),
-							page: $content.find('select#page option:selected').val(),
-							type: $content.find('select#type option:selected').val()
+						$content.find("a#downloadBtn").off().on({
+							click: function(e){
+								e.data = {
+										  filename: $.trim($content.find("input#filename").val()),
+										  page: $content.find('select#page option:selected').val(),
+										  type: $content.find('select#type option:selected').val()
+										};
+								
+								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isXSSSafe(e.data.filename))){
+									e.data.filename = $.formatAsId(e.data.filename);
+									base.options.requestCallback(e);
+								}else{
+									alert("Please provide a valid filename");
+								}
+							}
 						});
 					}
 				}
