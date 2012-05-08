@@ -360,7 +360,7 @@
 							}
 
 							if(updatedExpiryDate !== "Indefinite")
-								contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate("mm/dd/yy", updatedExpiryDate) ? updatedExpiryDate : "");
+								contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
 
 							if (stampVisible){
 								contentHolder.find("#aStampExpired_" + doc.EDP).show();
