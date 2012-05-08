@@ -93,7 +93,10 @@ public class RelevancyService {
 				try {
 					Schema schema = SolrSchemaUtility.getSchema();
 					BoostFunctionModel.toModel(schema, fieldValue, true);
-				} catch (SchemaException e) {
+				}catch (SchemaException e) {
+					logger.error("Failed during addOrUpdateRelevancyField()",e);
+					return 0;
+				}catch (Exception e) {
 					logger.error("Failed during addOrUpdateRelevancyField()",e);
 					return 0;
 				}
