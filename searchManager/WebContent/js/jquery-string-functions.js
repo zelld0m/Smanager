@@ -45,7 +45,7 @@ jQuery.extend(
 				},
 
 				formatAsId: function(id) {
-					return "_".concat(("" + id).replace(/\s/g,"_").toLowerCase());
+					return "_".concat(("" + id).replace(/\s/g,"_"));
 				},
 				
 				isDate: function(text, format){
