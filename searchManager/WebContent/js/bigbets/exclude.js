@@ -77,7 +77,7 @@
 							else if (!commaDelimitedNumberPattern.test(skus)) {
 								alert("List contains an invalid SKU.");
 							}							
-							else if (!$.isBlank(expDate) && !$.isDate("mm/dd/yy", expDate)){
+							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
 							}
 							else {
