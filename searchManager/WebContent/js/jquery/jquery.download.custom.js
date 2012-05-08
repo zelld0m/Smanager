@@ -82,13 +82,16 @@
 										};
 								
 								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isXSSSafe(e.data.filename))){
-									e.data.filename = $.formatAsId(e.data.filename);
+									e.data.filename = $.isBlank(e.data.filename)? $.formatAsId($.trim(base.options.defaultFilename)) : $.formatAsId(e.data.filename);
 									base.options.requestCallback(e);
 								}else{
 									alert("Please provide a valid filename");
 								}
 							}
 						});
+					},
+					hide: function(event, api){
+						api.destroy();
 					}
 				}
 			});
@@ -100,6 +103,7 @@
 	
 	$.download.defaultOptions = {
 			headerText:"Download",
+			defaultFilename:new Date().getTime(),
 			hasPageOption: false,
 			requestCallback: function(e){} 
 	};
