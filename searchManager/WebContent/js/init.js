@@ -108,6 +108,11 @@ showMessage = function(selector, msg){
 		content: {
 			text: $('<div/>')
 		},
+		position: {
+			at: 'right center',
+			my: 'left center',
+			target: $(selector)
+		},
 		show:{
 			solo: false,
 			ready: true
