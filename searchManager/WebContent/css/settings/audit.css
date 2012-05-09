@@ -4,5 +4,5 @@
 .info label.details				{ float:left; width:215px; }
 .info label select				{ margin:0 }
 
-.details img.ui-datepicker-trigger { margin-left:3px; margin-bottom:-4px }
-.details img.ui-datepicker-trigger:hover 	{ cursor: pointer }
+label img.ui-datepicker-trigger { margin-left:3px; float:left; margin-top:3px; margin-left:5px}
+label img.ui-datepicker-trigger:hover 	{ cursor: pointer }
