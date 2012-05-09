@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -66,37 +67,45 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public int approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+	public List<String> approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		int result = approveRule(ruleType, Arrays.asList(ruleRefIdList));
+		List<String> result = approveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment( comment, ruleStatusIdList);
 		return result;
 	}
 	
-	public int approveRule(String ruleType, List<String> ruleRefIdList) {
-		int result = -1;
+	public List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
+		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList).size();
+			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
 		return result;
 	}
 
+	private void getSuccessList(List<String> result, Map<String, Boolean> map) {
+		for (Map.Entry<String, Boolean>  e : map.entrySet())  {
+			if (e.getValue()) {
+				result.add(e.getKey());
+			}
+		}
+	}
+
 	@RemoteMethod
-	public int unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+	public List<String> unapproveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
-		int result = unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
+		List<String> result = unapproveRule(ruleType, Arrays.asList(ruleRefIdList));
 		addComment(comment, ruleStatusIdList);
 		return result;
 	}
 	
-	public int unapproveRule(String ruleType, List<String> ruleRefIdList) {
-		int result = -1;
+	public List<String> unapproveRule(String ruleType, List<String> ruleRefIdList) {
+		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
-			result = daoService.updateRuleStatus(ruleStatusList).size();
+			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
