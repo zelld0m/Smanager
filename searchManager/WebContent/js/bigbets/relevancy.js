@@ -888,15 +888,12 @@
 			var response = 0;
 			if ($.isBlank(ruleName)){
 				showMessage("#name", "Rule name is required.");
-				$("#name").val(selectedRule.ruleName);
 			}
 			else if (!isAllowedName(ruleName)){
 				showMessage("#name", "Rule name contains invalid character.");
-				$("#name").val(selectedRule.ruleName);
 			}
 			else if (!isXSSSafe(description)){
 				showMessage("#description", "Description contains XSS.");
-				$("#description").val(selectedRule.description);
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range.");
