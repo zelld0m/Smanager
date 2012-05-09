@@ -54,7 +54,7 @@ showActionResponseFromMap = function(code, action, param, additionalFailMessage)
 	if (code["FAILED"].length > 0) {
 		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
 		if (additionalFailMessage) {
-			message += "\n " + additionalFailMessage;
+			message += "\n" + additionalFailMessage;
 		}
 	}
 	alert (message); 

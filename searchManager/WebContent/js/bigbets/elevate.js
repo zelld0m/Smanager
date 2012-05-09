@@ -90,7 +90,7 @@
 							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
-										showActionResponseFromMap(code, "add", skus, "Please check if SKU(s) are actually searchable using the specified keyword.");
+										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										showElevate();
 									},
 									preHook: function(){ 
