@@ -104,7 +104,7 @@
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
 			}
 			
-			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch ' + textClass + '" type="text" value="' + base.options.searchText + '">';
+			content+= '<input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray leftSearch ' + textClass + '" type="text" value="' + base.options.searchText + '">';
 			
 			content+= '</span>';
 			content+= '</div>';
@@ -218,6 +218,7 @@
 			searchText: "",
 			searchLabel: "",
 			filterText:"",
+			maxCharacter: 50,
 			showAddButton: true,
 			showSearch: true,
 			itemDataCallback: function(e){},
