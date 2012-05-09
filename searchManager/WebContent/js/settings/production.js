@@ -87,7 +87,7 @@
 			}else{			
 				var rName = $("tr#ruleItem" + $.formatAsId(list[0].ruleId) + " >td#ruleRefId >p#ruleName").html();
 				if(list != null && list[0].published == '1')
-					alert(list[0].ruleId+' was successfully '+msg_);
+					alert(rName+' was successfully '+msg_);
 				else
 					alert(rName+' was not '+msg_);
 			}
