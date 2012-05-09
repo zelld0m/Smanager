@@ -22,31 +22,31 @@
 		
 		base.getTemplate = function(){
 			var template = '<div>';
-			template += '<label class="text60 marT6">Filename: </label>';
-			template += '<label class="marT6"><input type="text" id="filename" name="filename" class="w163"></label>';
-			template += '<div class="clearB"></div>';
+			template += '<div><span class="floatL marT10 marR5" >Filename: </span>';
+			template += '<span><input type="text" id="filename" name="filename" class="w163 marT6 floatR"></span>';
+			template += '<div class="clearB"></div></div>';
 			
 			if(base.options.hasPageOption){
-				template += '<label class="text60 marT6">Pages: </label>';
-				template += '<label class="marT6">';
-				template += '<select id="page" name="page" class="mar0 w168">';
+				template += '<div><span class="floatL marT10 marR5">Pages: </span>';
+				template += '<span>';
+				template += '<select id="page" name="page" class="mar0 w168 floatR marT6">';
 				template += '<option value="all">All</option>';
 				template += '<option value="current" selected="selected">Current</option>';
 				template += '</select>';
-				template += '</label>';
-				template += '<div class="clearB marT6"></div>';
+				template += '</span></div>';
+				template += '<div class="clearB"></div>';
 			}
 			
-			template += '<label class="text60">Type: </label>';
-			template += '<label class="marT6">';
-			template += '<select id="type" name="type" disabled="disabled" class="mar0 w168">';
+			template += '<div><span class="floatL marT10 marR5">Type: </span>';
+			template += '<span>';
+			template += '<select id="type" name="type" disabled="disabled" class="mar0 w168 floatR marT6">';
 			template += '<option value="excel" selected="selected">Excel</option>';
 			template += '<option value="pdf">PDF</option>';
 			template += '<option value="csv">CSV</option>';
 			template += '</select>';
-			template += '</label>';
+			template += '</span></div>';
 			template += '<div class="clearB marT8 txtAR">';
-			template += '<a id="downloadBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Download</div></a>';
+			template += '<a id="downloadBtn" href="javascript:void(0);" class="buttons btnGray clearfix marT8"><div class="buttons fontBold">Download</div></a>';
 			template += '</div>';
 			template += '</div>';
 			return template;
