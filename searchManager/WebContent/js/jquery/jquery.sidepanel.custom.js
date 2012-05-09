@@ -185,12 +185,12 @@
 					base.options.pageChangeCallback(e.data.page); 
 				},
 				nextLinkCallback: function(e){ 
-					base.getList(keyword, e.data.page+1); 
-					base.options.pageChangeCallback(e.data.page+1); 
+					base.getList(keyword, parseInt(e.data.page)+1); 
+					base.options.pageChangeCallback(parseInt(e.data.page)+1); 
 				},
 				prevLinkCallback: function(e){ 
-					base.getList(keyword, e.data.page-1); 
-					base.options.pageChangeCallback(e.data.page-1);
+					base.getList(keyword, parseInt(e.data.page)-1); 
+					base.options.pageChangeCallback(parseInt(e.data.page)-1);
 				},
 				firstLinkCallback: function(e){ 
 					base.getList(keyword, 1); 
