@@ -66,6 +66,25 @@ public class RelevancyService {
 	}
 
 	@RemoteMethod
+	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
+		Relevancy relevancy = new Relevancy();
+		relevancy.setStore(new Store(UtilityService.getStoreName()));
+		relevancy.setRelevancyName(ruleName);
+		SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy, null, null, 0, 0);
+		RecordSet<Relevancy> set = daoService.searchRelevancy(criteria, MatchType.MATCH_NAME);
+		if (set.getTotalSize() > 0) {
+			for (Relevancy r: set.getList()) {
+				if (StringUtils.equals(StringUtils.trim(ruleName), StringUtils.trim(r.getRelevancyName()))) {
+					if (StringUtils.isBlank(ruleId) || !StringUtils.equals(ruleId, r.getRelevancyId())){
+						return true;						
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	@RemoteMethod
 	public int addRuleFieldValue(String relevancyId, String fieldName, String fieldValue) throws Exception{
 		try {
 			logger.info(String.format("%s %s %s", relevancyId, fieldName, fieldValue));
@@ -131,6 +150,11 @@ public class RelevancyService {
 
 	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
 		try {
+			if (!checkForRuleNameDuplicate(null, name)) {
+				
+				
+			}
+			
 			String store = UtilityService.getStoreName();
 			Relevancy rule = new Relevancy();
 			rule.setStore(new Store(store));

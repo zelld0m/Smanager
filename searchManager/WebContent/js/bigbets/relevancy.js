@@ -899,30 +899,38 @@
 				alert("Please provide a valid date range.");
 			}
 			else {
-				RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
+				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 					callback: function(data){
-						response = data;
-						showActionResponse(response, "update", ruleName);
-					},
-					preHook: function(){
-						prepareRelevancy();
-					},
-					postHook: function(){
-						if(response==1){
-							RelevancyServiceJS.getRule(selectedRule.ruleId,{
+						if (data==true){
+							showMessage("#name", "Another ranking rule is already using the name provided.");
+						}else{
+							RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 								callback: function(data){
-									setRelevancy(data);
+									response = data;
+									showActionResponse(response, "update", ruleName);
 								},
 								preHook: function(){
 									prepareRelevancy();
+								},
+								postHook: function(){
+									if(response==1){
+										RelevancyServiceJS.getRule(selectedRule.ruleId,{
+											callback: function(data){
+												setRelevancy(data);
+											},
+											preHook: function(){
+												prepareRelevancy();
+											}
+										});						
+									}
+									else{
+										setRelevancy(selectedRule);
+									}
 								}
-							});						
-						}
-						else{
-							setRelevancy(selectedRule);
+							});
 						}
 					}
-				});				
+				});
 			}
 		}
 
@@ -1151,20 +1159,28 @@
 										alert("Please provide a valid date range");
 									}
 									else {
-										RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 											callback: function(data){
-												if (data!=null){
-													base.getList(name, 1);
-													setRelevancy(data);
-													showActionResponse(1, "add", name);
-													addRuleFieldValue("q.alt", "*:*");
+												if (data==true){
+													alert("Another ranking rule is already using the name provided.");
 												}else{
-													setRelevancy(selectedRule);
+													RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+														callback: function(data){
+															if (data!=null){
+																base.getList(name, 1);
+																setRelevancy(data);
+																showActionResponse(1, "add", name);
+																addRuleFieldValue("q.alt", "*:*");
+															}else{
+																setRelevancy(selectedRule);
+															}
+														},
+														preHook: function(){ 
+															base.prepareList(); 
+															prepareRelevancy();
+														}
+													});
 												}
-											},
-											preHook: function(){ 
-												base.prepareList(); 
-												prepareRelevancy();
 											}
 										});
 									}
