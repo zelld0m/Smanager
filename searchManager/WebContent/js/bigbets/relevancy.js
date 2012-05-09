@@ -6,7 +6,7 @@
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this ranking rule?";
-	var ruleNameErrorText = "Please provide a valid relevancy name.";
+	var ruleNameErrorText = "Please provide a valid ranking rule name.";
 
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -890,10 +890,10 @@
 				showMessage("#name", "Rule name is required.");
 			}
 			else if (!isAllowedName(ruleName)){
-				showMessage("#name", "Rule name contains invalid character.");
+				showMessage("#name", "Rule name contains invalid value.");
 			}
 			else if (!isXSSSafe(description)){
-				showMessage("#description", "Description contains XSS.");
+				showMessage("textarea#description", "Description contains XSS.");
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range.");
@@ -1139,10 +1139,13 @@
 									var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
 									if ($.isBlank(popName)){
-										alert("Ranking rule name is required");
+										alert("Ranking rule name is required.");
 									}
 									else if (!isAllowedName(popName)) {
 										alert(ruleNameErrorText);
+									}
+									else if (!isXSSSafe(popDescription)){
+										alert("Description contains XSS.");
 									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
