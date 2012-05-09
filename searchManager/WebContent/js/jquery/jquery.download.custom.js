@@ -82,7 +82,7 @@
 										  type: $content.find('select#type option:selected').val()
 										};
 								
-								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isXSSSafe(e.data.filename))){
+								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isAllowedName(e.data.filename))){
 									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
 									base.options.requestCallback(e);
 								}else{
