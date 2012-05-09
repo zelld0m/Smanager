@@ -59,16 +59,14 @@
 		};
 
 		var postMsg = function(data,pub){
-			var msg_ = pub?'approved':'rejected'+'.';
+			var msg_ = pub ? 'approved:' : 'rejected:';
 
-			var okmsg = 'Following Rules were successfully '+msg_;	
+			var okmsg = 'Following rules were successfully ' + msg_;	
+			
 			for(var i=0; i<data.length; i++){	
-				var rName = $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();
-				if ($.isBlank(rName)) {
-					rName = $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleId").html();
-				}
-				okmsg += '\n-'+rName;	
+				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
 			}
+			
 			alert(okmsg);
 		};
 		
