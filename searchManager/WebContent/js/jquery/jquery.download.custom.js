@@ -83,7 +83,7 @@
 										};
 								
 								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isXSSSafe(e.data.filename))){
-									e.data.filename = $.isBlank(e.data.filename)? $.formatAsId($.trim(base.options.defaultFilename)) : $.formatAsId(e.data.filename);
+									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
 									base.options.requestCallback(e);
 								}else{
 									alert("Please provide a valid filename");

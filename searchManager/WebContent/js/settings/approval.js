@@ -58,6 +58,20 @@
 			});
 		};
 
+		var postMsg = function(data,pub){
+			var msg_ = pub?'approved':'rejected'+'.';
+
+			var okmsg = 'Following Rules were successfully '+msg_;	
+			for(var i=0; i<data.length; i++){	
+				var rName = $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();
+				if ($.isBlank(rName)) {
+					rName = $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleId").html();
+				}
+				okmsg += '\n-'+rName;	
+			}
+			alert(okmsg);
+		};
+		
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
@@ -69,6 +83,7 @@
 						case "approveBtn": 
 							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
+									postMsg(data,true);	
 									getApprovalList();
 								},
 								preHook:function(){ 
@@ -82,6 +97,7 @@
 						case "rejectBtn": 
 							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
+									postMsg(data,false);	
 									getApprovalList();
 								},
 								preHook:function(){ 
@@ -145,7 +161,9 @@
 		};
 
 		var prepareTabContent = function(){
-			$(tabSelected).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>');
+			if (!$("div.circlePreloader").is(":visible")) $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($(tabSelected));
+			$(tabSelected).find('table.tblItems').hide();
+			$(tabSelected).find('div#actionBtn').hide();
 		};
 
 		var cleanUpTabContent = function(){
