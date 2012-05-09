@@ -61,18 +61,19 @@
 			var msg_ = pub?'published':'unpublished'+'.';
 
 			if (data.totalSize>1){			
-				var okmsg = 'Successfully '+msg_;	
+				var okmsg = 'Following Rules were successfully '+msg_;	
 				var flmsg = '\n\nFailed.';
 				var okcnt = 0;
 				var flcnt = 0;
-				for(var i=0; i<data.totalSize; i++){					
+				for(var i=0; i<data.totalSize; i++){	
+					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").html();
 					if(list[i].published == '1'){
 						okcnt++;
-						okmsg += '\n-'+list[i].ruleId;	
+						okmsg += '\n-'+rName;	
 					}
 					else{
 						flcnt++;
-						flmsg += '\n-'+list[i].ruleId;
+						flmsg += '\n-'+rName;
 					}
 				}
 	
@@ -84,10 +85,11 @@
 					
 				alert(okmsg+flmsg);	
 			}else{			
+				var rName = $("tr#ruleItem" + $.formatAsId(list[0].ruleId) + " >td#ruleRefId >p#ruleName").html();
 				if(list != null && list[0].published == '1')
 					alert(list[0].ruleId+' was successfully '+msg_);
 				else
-					alert(list[0].ruleId+' was not '+msg_);
+					alert(rName+' was not '+msg_);
 			}
 		};
 		
@@ -103,8 +105,8 @@
 						case "publishBtn": 
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){									
-									getForProductionList();	
 									postMsg(data,true);	
+									getForProductionList();	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -117,8 +119,8 @@
 						case "unpublishBtn": 
 							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
-									getForProductionList();
 									postMsg(data,false);	
+									getForProductionList();
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -182,7 +184,9 @@
 		};
 		
 		var prepareTabContent = function(){
-			$(tabSelected).html('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>');
+			if (!$("div.circlePreloader").is(":visible")) $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($(tabSelected));
+			$(tabSelected).find('table.tblItems').hide();
+			$(tabSelected).find('div#actionBtn').hide();
 		};
 		
 		var cleanUpTabContent = function(){

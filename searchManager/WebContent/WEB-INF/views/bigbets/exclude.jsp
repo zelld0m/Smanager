@@ -9,7 +9,6 @@
 <script type="text/javascript" src="<spring:url value="/js/bigbets/bigbets.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/bigbets/exclude.js" />"></script>   
 
-
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
@@ -232,32 +231,9 @@
       
       <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
       
-      <!--Download Popup Template-->
-      <div id="downloadTemplate" style="display: none">
-	 	<div>
-		  	<form id="downloadForm">
-			   	<label class="text60 marT6">Filename: </label>
-			   	<label class="marT6"><input type="text" name="filename" class="w163"></label>
-					<div class="clearB"></div>
-			   	<label class="text60 marT6">Pages: </label>
-			   	<label class="marT6">
-			   		<select name="page" class="mar0 w168"><option value="all">All</option><option value="current" selected="selected">Current</option></select>
-			   	</label>
-					<div class="clearB marT6"></div>
-			   	<label class="text60">Type: </label>
-			   	<label class="marT6">
-			   		<select name="type" disabled="disabled" class="mar0 w168"><option value="excel" selected="selected">Excel</option><option value="pdf">PDF</option><option value="csv">CSV</option></select>
-			   	</label>
-			   	<div class="clearB marT8 txtAR">
-			   		<a id="downloadBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Download</div></a>
-			   	</div>	
-		  	</form>
-	 	</div>
-	</div>
-	
-	<div id="ruleIsLocked" class="w180" style="display:none;">
-  		<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
-  	</div>
+		<div id="ruleIsLocked" class="w180" style="display:none;">
+	  		<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+	  	</div>
 </div><!--End Right Side-->
        
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

@@ -38,10 +38,10 @@
     	<label class="details marR15"><input type="text" class="w205" id="keyword" /></label>
     	<label class="txtLabel">Date Range:</label>
     	<label>
-	    	<input type="text" class="w70" id="startDate"/>
+	    	<input type="text" class="w70 floatL" id="startDate"/>
 	    </label>
 	    <label>
-	    	<input type="text" class="w70" id="endDate"/>
+	    	<input type="text" class="w70 floatL marL5" id="endDate"/>
 	    </label>
     	<div class="clearB"></div>
     	

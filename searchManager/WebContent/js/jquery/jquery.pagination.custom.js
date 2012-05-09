@@ -163,13 +163,13 @@
 			}
 
 			if (base.options.currentPage != base.options.totalPages){
-				var $nextLink = $('<li><a href="javascript:void(0);">Next &raquo;</a></li>');
+				var $nextLink = $('<li><a href="javascript:void(0);">Next</a></li>');
 				$nextLink.find("a").on({click:base.options.nextLinkCallback}, { page:base.options.currentPage });
 				links.push($nextLink);
 			}
 
 			if (base.options.currentPage > 1){
-				var $prevLink = $('<li><a href="javascript:void(0);">Prev &raquo;</a></li>');
+				var $prevLink = $('<li><a href="javascript:void(0);">Prev</a></li>');
 				$prevLink.find("a").on({click:base.options.prevLinkCallback}, { page:base.options.currentPage });
 				links.unshift($prevLink);
 			}

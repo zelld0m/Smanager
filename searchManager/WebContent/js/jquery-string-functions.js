@@ -45,10 +45,10 @@ jQuery.extend(
 				},
 
 				formatAsId: function(id) {
-					return "_".concat(("" + id).replace(/\s/g,"_").toLowerCase());
+					return "_".concat(("" + id).replace(/\s/g,"_"));
 				},
 				
-				isDate: function(format, text){
+				isDate: function(text, format){
 				    var isValid = true;
 				    var dateFormat = $.isNotBlank(format)?format: "mm/dd/yy";
 				    
@@ -60,6 +60,13 @@ jQuery.extend(
 				    }
 
 				    return isValid;
+				},
+				
+				trimToEmpty: function(obj){
+					if ($.isBlank(obj)) {
+						return "";
+					}
+					return obj;
 				}
 			};  
 		}(jQuery))  

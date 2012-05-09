@@ -10,7 +10,7 @@
 	var rulePage = 1;
 	var rulePageSize = 10;
 	var ruleFilterText = "";
-	
+
 	var ruleItemPageSize = 6;
 
 	var addItemFieldDefaultText = "Enter SKU #";
@@ -78,7 +78,7 @@
 							else if (!commaDelimitedNumberPattern.test(skus)) {
 								alert("List contains an invalid SKU.");
 							}							
-							else if (!$.isBlank(expDate) && !$.isDate("mm/dd/yy", expDate)){
+							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
 							}
 							else {								
@@ -323,7 +323,6 @@
 			},
 			callback:function(data){
 				selectedRuleStatus = data;
-				$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 				showDeploymentStatusBar(moduleName, selectedRuleStatus);
 				getElevateRuleList();
 				populateItem(1);
@@ -338,16 +337,6 @@
 					click: showAddItem,
 					mouseenter: showHoverInfo
 				},{locked: selectedRuleStatus.locked});
-
-				$("a#downloadIcon").off().on({click:showDownloadOption}, {
-					selector: "#downloadIcon",
-					template: "#downloadTemplate",
-					title: "Download Page",
-					keyword: selectedRule.ruleName,
-					filter: getItemFilter(),
-					itemPage: selectedRulePage,
-					itemPageSize:ruleItemPageSize
-				});
 
 				$("a#clearRuleBtn").off().on({
 					mouseenter: showHoverInfo,
@@ -382,6 +371,31 @@
 						}
 					}
 				}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
+				
+				$("a#downloadIcon").download({
+					headerText:"Download Elevate",
+					hasPageOption: true,
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["keyword"] = selectedRule.ruleName;
+						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
+						params["filter"] = getItemFilter();
+						params["itemperpage"] = ruleItemPageSize;
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
 			}
 		});	
 	};

@@ -61,60 +61,6 @@
 			});
 		};
 
-		/** Show download option as qtip2 */
-		showDownloadOption = function(e){
-			var data = e.data;
-
-			$(this).qtip({
-				content: {
-					text: $('<div/>'),
-					title: { text: data.title, button: true
-					}
-				},
-				style:{
-					width: 'auto'
-				},
-				show:{
-					solo: true,
-					modal: true,
-					ready: true
-				},
-				events: {  
-					show: function(event, api){
-						var content = $("div", api.elements.content);
-						content.html(getHTMLTemplate(data.template));
-
-						content.find("#downloadBtn").on("click", {}, function(dlEvent){
-							var params = new Array();
-							var page = content.find('select[name="page"] option:selected').val();
-							var url = document.location.href + "/xls";
-							var urlParams = "";
-							var count = 0;
-
-							params["filename"] = content.find('input[name="filename"]').val().replace(/ /g,"_");
-							params["type"] = content.find('select[name="type"] option:selected').val();
-
-							params["keyword"] = data.keyword;
-							params["page"] = (page=="current") ? data.itemPage : page;
-							params["filter"] = data.filter.call();
-							params["itemperpage"] = data.itemPageSize;
-
-							for(var key in params){
-								if (count>0) urlParams +='&';
-								urlParams += (key + '=' + params[key]);
-								count++;
-							};
-
-							document.location.href = url + '?' + urlParams; 				
-						});
-					},
-					hide: function(event, api){
-						api.destroy();
-					}
-				}
-			});
-		};
-
 		/** Show audit trail inside qtip2 */
 		showAuditList = function(e){
 			if(!e.data) {
