@@ -61,9 +61,15 @@
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true
 					});
+					
+					contentHolder.find("#clearBtn").on({
+						click: function(evt){
+							contentHolder.find("input,textarea").val("");
+						}
+					});
 
 					contentHolder.find("#addItemToRuleBtn").on({
-						click: function(){
+						click: function(evt){
 
 							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
 
