@@ -60,6 +60,13 @@ jQuery.extend(
 				    }
 
 				    return isValid;
+				},
+				
+				trimToEmpty: function(obj){
+					if ($.isBlank(obj)) {
+						return "";
+					}
+					return obj;
 				}
 			};  
 		}(jQuery))  
