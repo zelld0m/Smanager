@@ -166,7 +166,8 @@
 				<div class="clearB"></div>					
 			</div>
 			
-			<div id="rankingSummary" class="tabs marB20">
+			<div id="rankingSummary" class="infoTabs marB20">
+			
 				<ul class="posRel top5">
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
 					<li><a href="#ruleField"><span>Rule Field</span></a></li>
@@ -174,7 +175,7 @@
 					<div class="clearB"></div>
 				</ul>
 								
-				<div id="ruleRanking" class="ruleRanking">					
+				<div id="ruleRanking" class="ruleRanking  marT5">					
 					<ul id="relevancyInfo" class="relevancyInfo">
 						<li class="clearfix"><label class="floatL w150">Start Date:</label><span id="startDate"></span></li>
 						<li class="clearfix"><label class="floatL w150">End Date:</label><span id="endDate"></span></li>
@@ -183,7 +184,7 @@
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleField" class="ruleField">
+				<div id="ruleField" class="ruleField  marT5">
 					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
@@ -207,7 +208,7 @@
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleKeyword" class="ruleKeyword">
+				<div id="ruleKeyword" class="ruleKeyword  marT5">
 					<ul id="keywordInRule" class="keywordInRule"></ul>
 				</div>
 				<div class="clearB"></div>

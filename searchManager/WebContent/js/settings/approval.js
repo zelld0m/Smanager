@@ -269,7 +269,7 @@
 				break;
 			case "Query Cleaning": 
 				$content.html($("#previewTemplate2").html());
-
+				$content.find(".infoTabs").tabs({});
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
@@ -320,7 +320,7 @@
 				break;
 			case "Ranking Rule": 
 				$content.html($("#previewTemplate2").html());
-
+				$content.find(".infoTabs").tabs({});
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
@@ -365,7 +365,7 @@
 
 				break;
 			};
-
+			
 			return $content;
 		};
 
