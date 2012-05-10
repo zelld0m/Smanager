@@ -1,5 +1,6 @@
 <project name="SearchManagerBuilder"  basedir="." default="build">
 
+	<!--Development Environment-->
 	<property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
 	<property name="target" value="1.6"/>
@@ -8,10 +9,23 @@
 	<property name="searchManager" value="../searchManager"/>
 	<property name="searchGuiWS" value="../SearchGuiWS"/>
 	<property name="dependencies" value="${basedir}"/>
+	
+	<property name="tomcat.manager.dev" value="http://vtorguischstg01.pcmall.com:8080/manager"/>
+	<property name="tomcat.username.dev" value="admin"/>
+	<property name="tomcat.password.dev" value="qwerty"/>
+	<property name="warname.searchManager.dev" value="searchManager"/>
+	<property name="war.dir.searchManager.dev" value="${dependencies}/searchmanager/war"/>
+	<property name="warname.searchws.dev" value="searchguiws"/>
+	<property name="war.dir.searchws.dev" value="${dependencies}/ws/war"/>
+	
+	<property name="search.server.dev" value="vtorguischstg01.pcmall.com"/>
+	<property name="search.username.dev" value="solr"/>
+	<property name="search.password.dev" value="maestros@search_mall"/>
 		
 	<target name="build" description="Build Search Manager projects">
   		<ant target="warSM" />
 		<ant target="warWS" />
+		<ant target="deploy-dev" />
     </target>
 
 	<target name="jarSM" description="JAR Java sources">
@@ -49,12 +63,14 @@
   		<mkdir dir="${dependencies}/lib" />
   		<mkdir dir="${dependencies}/ws/jar" />
   		<mkdir dir="${dependencies}/ws/classes" />
+		
   		<copy todir="${dependencies}/lib">
   	  	 		<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib">
   	  	 			<exclude name="searchManager.jar"/>
   	  	 		</fileset>
   				<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
   	  	</copy>
+	
 	    <javac srcdir="${searchGuiWS}/src" destdir="${dependencies}/ws/classes" debug="on">
 	    	<classpath>
 	    		<fileset dir="${dependencies}/lib">
@@ -83,11 +99,9 @@
 	  	 	<copy todir="${dependencies}/searchmanager/WebContent">
 	  	 		<fileset dir="${searchManager}/WebContent" />
 	  	    </copy>
+	
 	  		<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/lib">
 	  	  	 	<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
-	  			<fileset file="${searchManager}/WebContent/WEB-INF/lib/x">
-	  			  	<include name="**/*.jar"/> 
-	  			</fileset>
 	  	  	</copy>
 		
 			<copy todir="${dependencies}/searchmanager/WebContent/WEB-INF/classes">
@@ -102,34 +116,90 @@
 				<fileset dir="${dependencies}/searchmanager/WebContent" />
 			</war>
 	  		<delete dir="${dependencies}/searchmanager/WebContent" />	
-			<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/searchmanager" password="maestros@search_mall" trust="true">
-			    <fileset dir="${dependencies}/searchmanager"/>
-			</scp>
 	</target>
 	
 	<target name="warWS" description="WAR Java sources">
 		<ant target="jarWS" />
+
   		<delete dir="${dependencies}/ws/war" />
   		<delete dir="${dependencies}/ws/WebContent" />
   		<mkdir dir="${dependencies}/ws/war" />
   		<mkdir dir="${dependencies}/ws/WebContent" />
   		<mkdir dir="${dependencies}/ws/WebContent/WEB-INF/lib" />
+		
   	 	<copy todir="${dependencies}/ws/WebContent">
-  	 		<fileset dir="${searchGuiWS}/WebContent" />
-  	    </copy>
+  	 		<fileset dir="${searchGuiWS}/WebContent">
+  	 			<exclude name="WEB-INF/lib/searchManager.jar"/>
+  	 		</fileset>
+  	    </copy> 
+		
   		<copy todir="${dependencies}/ws/WebContent/WEB-INF/lib">
-  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />	
-  			<fileset dir="${searchGuiWS}/WebContent/WEB-INF/lib">
-  			  	  <exclude name="searchManager.jar"/>
-  			</fileset>
+  	  	 	<fileset file="${dependencies}/ws/jar/searchguiws.jar" />
   			<fileset file="${dependencies}/searchmanager/jar/searchManager.jar" />
   	  	</copy>
+		
 		<war destfile="${dependencies}/ws/war/searchguiws.war">
 			<fileset dir="${dependencies}/ws/WebContent" />
 		</war>
   		<delete dir="${dependencies}/ws/WebContent" />	
-		<scp todir="solr@10.17.12.67:/home/solr/bin/deployment/webservice" password="maestros@search_mall" trust="true">
-			<fileset dir="${dependencies}/ws"/>
-		</scp>
     </target>  
+	
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask">
+		<classpath>
+			<fileset dir="${dependencies}/tomcat/lib"> 
+				<include name="*.jar"/> 
+			</fileset> 
+		</classpath>
+	</taskdef>
+	
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask">
+		<classpath>
+			<fileset dir="${dependencies}/tomcat/lib"> 
+				<include name="*.jar"/> 
+			</fileset> 
+		</classpath>
+	</taskdef>
+
+	<target name="undeploy-searchManager-dev">    
+		    <undeploy url="${tomcat.manager.dev}"
+		       	 	  username="${tomcat.username.dev}"
+		        	  password="${tomcat.password.dev}"
+		              path="/${warname.searchManager.dev}" />
+	</target>
+
+	<target name="deploy-searchManager-dev">
+		    <deploy url="${tomcat.manager.dev}"
+		        	username="${tomcat.username.dev}"
+		       	 	password="${tomcat.password.dev}"
+		        	path="/${warname.searchManager.dev}"
+		        	update="true"
+		        	war="${war.dir.searchManager.dev}/${warname.searchManager.dev}.war" />
+	</target>
+	
+	<target name="undeploy-searchws-dev">    
+		  <undeploy url="${tomcat.manager.dev}"
+			       	username="${tomcat.username.dev}"
+			        password="${tomcat.password.dev}"
+			        path="/${warname.searchws.dev}" />
+	</target>
+
+	<target name="deploy-searchws-dev">
+			<deploy url="${tomcat.manager.dev}"
+			        username="${tomcat.username.dev}"
+			       	password="${tomcat.password.dev}"
+			        path="/${warname.searchws.dev}"
+			        update="true"
+			        war="${war.dir.searchws.dev}/${warname.searchws.dev}.war" />
+	</target>
+	
+	<target name="deploy-dev">
+				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/searchmanager" password="${search.password.dev}" trust="true">
+					 <fileset dir="${dependencies}/searchmanager"/>
+				</scp>
+				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/webservice" password="${search.password.dev}" trust="true">
+					<fileset dir="${dependencies}/ws"/>
+				</scp>
+				<ant target="deploy-searchManager-dev" />
+				<ant target="deploy-searchws-dev" />	
+	</target>
 </project> 
