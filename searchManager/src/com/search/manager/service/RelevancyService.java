@@ -150,11 +150,6 @@ public class RelevancyService {
 
 	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
 		try {
-			if (!checkForRuleNameDuplicate(null, name)) {
-				
-				
-			}
-			
 			String store = UtilityService.getStoreName();
 			Relevancy rule = new Relevancy();
 			rule.setStore(new Store(store));
