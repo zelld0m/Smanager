@@ -339,7 +339,7 @@ ul.topmenu li.submenu:hover ul li:hover { }
 
 
 .keywordPagingResult			{ background:url(images/paging_bgGray.png) no-repeat; height:22px; width:240px; color:#8a8a8a; font-size: 11px !important; font-weight: normal }
-.cssReset .titlePlacer          { background:url(../../../js/ajaxsolr/images/bgGraySearch.jpg) no-repeat; height:39px }
+.cssReset .titlePlacer          { background:#f1f4f9; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; position:relative;  min-height:39px }
 .cssReset .bGraytitlePlacer     { background:url(images/excludeBgHeader.jpg) no-repeat; width:230px; height:26px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }
 .cssReset .txtBoxSmall			{ height:12px; font-size:11px; padding-left:1px; padding-right:0}
 .cssReset .viewSelect			{ float:right; display: inline; height: 16px; margin-top:3px}

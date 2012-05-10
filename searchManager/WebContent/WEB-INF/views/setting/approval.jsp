@@ -21,7 +21,7 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27 txtAL">
 
-	<div class="floatL w730 titlePlacer">
+	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Pending Approval</h1>
 	</div>
 	
@@ -67,8 +67,8 @@
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_preview.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
 							<td width="230px" id="ruleRefId">
-								<p id="ruleName"></p>
-								<p id="ruleId" class="fsize11"></p>
+								<p class="w230 breakWord" id="ruleName"></p>
+								<p id="ruleId" class="fsize11 w230 breakWord"></p>
 							</td>
 							<td width="85px" class="txtAC" id="type"></td>
 							<td class="txtAL" id="requested">

@@ -49,7 +49,7 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<div class="w460 padT10 padL10 floatL faNarrow fsize20 fnormal">Security</div>
+		<div class="w460 padT10 padL10 floatL faNarrow fsize20 fnormal breakWord">Security</div>
        	<div class="floatL w245 txtAR padT7"> <input type="text" name="query" id="query" class="farial fsize12 fgray searchBox searchBoxIconLBg w175">
 			<a href="javascript:void(0)" id="searchbutton"><img src="<spring:url value="/js/ajaxsolr/images/btn_GO.png" />"  align="absmiddle"></a> 
 		</div>		

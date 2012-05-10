@@ -13,7 +13,7 @@
 <!--Start Right Side-->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<div class="w460 padT10 padL10 floatL fsize20 fnormal">Campaign List</div>
+		<div class="w460 padT10 padL10 floatL fsize20 fnormal breakWord">Campaign List</div>
 		<div class="floatL w245 txtAR padT7"> <!--  input type="text" name="query" id="query" class="farial fsize12 fgray searchBox searchBoxIconLBg w175" -->
 		<div class="w175 advanceSearchtxt floatL marL22"> <input name="query" id="query" class="farial fsize12 fgray w145 advanceSearchtxtBox"><a href="/"><img src="<spring:url value="/images/btnIcon_advanceSearch.png" />" class="floatR"></a></div>
 		<a class="btnGraph" id="addCampaignImg" href="javascript:void(0);"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>

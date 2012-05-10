@@ -25,8 +25,8 @@
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
 	
-	<div class="floatL w730 titlePlacer">
-	  <div class="w535 padT10 padL10 floatL fsize20 fnormal">
+	<div class="floatL w730 titlePlacer">		
+	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>

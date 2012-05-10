@@ -25,7 +25,7 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<h1 class="padT7 padL15 faNarrow fsize20 fnormal">
+		<h1 class="padT7 padL15 faNarrow fsize20 fnormal breakWord">
 			Audit Trail
 		</h1>
 	</div>

@@ -91,7 +91,7 @@
 	  <input type="text" name="query" id="query" class="farial fsize12 fgray searchBox" value="${keyword!=''? keyword:''}">
 	  <a href="javascript:void(0)" id="searchbutton"><img src="<spring:url value="/js/ajaxsolr/images/btn_src.jpg" />" width="79" height="24" align="absmiddle"></a -->
 	  
-	  <div class="w460 padT10 padL10 floatL fsize20 fnormal">Keyword</div>
+	  <div class="w460 padT10 padL10 floatL fsize20 fnormal breakWord">Keyword</div>
       <div class="floatL w245 txtAR padT7"> <input type="text" name="query" id="query" class="farial fsize12 fgray searchBox searchBoxIconLBg w175" value="${keyword!=''? keyword:''}">
 	  <a href="javascript:void(0)" id="searchbutton"><img src="<spring:url value="/js/ajaxsolr/images/btn_GO.png" />"  align="absmiddle"></a> </div> 
 	<input type="hidden" id="keyword" name="keyword">
