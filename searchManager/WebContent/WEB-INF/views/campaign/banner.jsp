@@ -23,7 +23,11 @@
 		
 	  <div class="floatL w730 titlePlacer">
         <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">Banner List</div>
-        <div class="floatL w180 txtAR padT7"><input id="addSortable" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w85 marT1" maxlength="10" value="Esdsd"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> </div>
+        <div class="floatL w180 txtAR padT7">
+        <a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+        <div class="searchBoxHolder w85 marT1 floatR">
+        	<input id="addSortable" type="text" class="farial fsize12 fgray w85" maxlength="10" value="Esdsd"> 	
+        </div>       
       </div>
 
 	<div class="clearB"></div>

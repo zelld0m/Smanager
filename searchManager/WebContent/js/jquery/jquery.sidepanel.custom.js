@@ -104,7 +104,7 @@
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
 			}
 			
-			content+= '<input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray leftSearch ' + textClass + '" type="text" value="' + base.options.searchText + '">';
+			content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
 			
 			content+= '</span>';
 			content+= '</div>';
