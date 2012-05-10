@@ -622,7 +622,7 @@
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 
 		showGraph = function(e){
 			var field = getRelevancyField(e);
@@ -977,7 +977,8 @@
 			return;
 		}
 
-		$("#submitForApproval").show();
+		$.endsWith(selectedRule.ruleId, "_default") ? $("#submitForApproval").hide() : $("#submitForApproval").show();
+
 		$("#relevancy").show();
 
 		$("#titleText").html(moduleName + " for ");
@@ -994,7 +995,7 @@
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked,
+			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default"),
 			onSelect: function(selectedDate) {
 				var option = this.id == "startDate" ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),
@@ -1012,16 +1013,16 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 
 		$("#cloneBtn").off().on({
 			click: cloneRule
-		},{locked:selectedRuleStatus.locked});
+		},{locked:false});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 		
 		$("a#downloadIcon").download({
 			headerText:"Download Ranking Rule",
@@ -1067,7 +1068,7 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: false, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
 	};
 
@@ -1080,6 +1081,7 @@
 					selectedRuleStatus = data;
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 					showDeploymentStatusBar(moduleName, selectedRuleStatus);
+					
 					showRelevancy();
 				},
 				preHook: function(){
@@ -1356,7 +1358,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked,
+			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId, "_default"),
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -1387,7 +1389,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 			},
 			itemAddCallback: function(base, keyword){
 				RelevancyServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {

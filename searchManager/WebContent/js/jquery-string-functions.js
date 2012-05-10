@@ -33,11 +33,11 @@ jQuery.extend(
 				},
 
 				startsWith: function(str, prefix) {
-					return str.indexOf(prefix) === 0;
+					return $.isBlank(prefix) ? false: str.indexOf(prefix) === 0;
 				},
 
 				endsWith: function(str, suffix) {
-					return str.match(suffix+"$")==suffix;
+					return $.isBlank(suffix) ? false: str.match(suffix+"$")==suffix;  
 				},
 
 				escapeQuotes: function(id) {
