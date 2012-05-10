@@ -19,7 +19,7 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27">
     <div class="floatL w730 titlePlacer">
-      <div class="w535 padT10 padL10 floatL fsize20 fnormal">Facet Rule</div>
+      <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">Facet Rule</div>
     </div>
     
     <div class="AlphaCont bgboxAlpha w46p minHeight155 floatL marT20 fsize12">

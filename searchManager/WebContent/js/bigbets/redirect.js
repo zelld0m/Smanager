@@ -385,17 +385,25 @@
 			},
 
 			itemAddCallback: function(base, name){
-				RedirectServiceJS.addRuleAndGetModel(name, {
+				RedirectServiceJS.checkForRuleNameDuplicate("", name, {
 					callback: function(data){
-						if (data!=null){
-							base.getList(name, 1);
-							setRedirect(data);
+						if (data==true){
+							alert("Another query cleaning rule is already using the name provided.");
 						}else{
-							setRedirect(selectedRule);
+							RedirectServiceJS.addRuleAndGetModel(name, {
+								callback: function(data){
+									if (data!=null){
+										base.getList(name, 1);
+										setRedirect(data);
+									}else{
+										setRedirect(selectedRule);
+									}
+								},
+								preHook: function(){ 
+									base.prepareList(); 
+								}
+							});
 						}
-					},
-					preHook: function(){ 
-						base.prepareList(); 
 					}
 				});
 			},
@@ -450,30 +458,38 @@
 		var description = $.trim($('div#redirect textarea[id="description"]').val());  
 
 		if (checkIfUpdateAllowed()){
-			var response = 0;
-			RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
+			RedirectServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 				callback: function(data){
-					response = data;
-					showActionResponse(response, "update", ruleName);
-				},
-				preHook: function(){
-					prepareRedirect();
-				},
-				postHook: function(){
-					if(response==1){
-						RedirectServiceJS.getRule(selectedRule.ruleId,{
+					if (data==true){
+						alert("Another query cleaning rule is already using the name provided.");
+					}else{
+						var response = 0;
+						RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
 							callback: function(data){
-								setRedirect(data);
+								response = data;
+								showActionResponse(response, "update", ruleName);
 							},
 							preHook: function(){
 								prepareRedirect();
+							},
+							postHook: function(){
+								if(response==1){
+									RedirectServiceJS.getRule(selectedRule.ruleId,{
+										callback: function(data){
+											setRedirect(data);
+										},
+										preHook: function(){
+											prepareRedirect();
+										}
+									});
+								}
+								else{
+									setRedirect(selectedRule);
+								}
+
 							}
 						});
 					}
-					else{
-						setRedirect(selectedRule);
-					}
-
 				}
 			});
 		}else{

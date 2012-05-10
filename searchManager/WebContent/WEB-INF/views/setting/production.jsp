@@ -18,7 +18,7 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27 txtAL">
 
-	<div class="floatL w730 titlePlacer">
+	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">Push to Production</h1>
 	</div>
 	
@@ -57,8 +57,8 @@
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td width="230px" id="ruleRefId">
-								<p id="ruleName"></p>
-								<p id="ruleId" class="fsize11"><a href="javascript:void(0);"></a></p>
+								<p id="ruleName" class="w230 breakWord"></p>
+								<p id="ruleId" class="fsize11 w230 breakWord"><a href="javascript:void(0);"></a></p>
 							</td>
 							<td width="110px" class="txtAC" id="approvalStatus"></td>
 							<td class="txtAL" id="production">

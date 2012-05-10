@@ -25,7 +25,7 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<h1 class="padT7 padL15 faNarrow fsize20 fnormal">
+		<h1 class="padT7 padL15 faNarrow fsize20 fnormal breakWord">
 			Audit Trail
 		</h1>
 	</div>
@@ -35,10 +35,10 @@
     <!--  info -->
     <div class="info fsize12 clearfix">
     	<label class="txtLabel">Keyword:</label>
-    	<label class="details marR15"><input type="text" class="w205" id="keyword" /></label>
+    	<label class="details marR15"><input type="text" class="w200" id="keyword" /></label>
     	<label class="txtLabel">Date Range:</label>
     	<label>
-	    	<input type="text" class="w70 floatL" id="startDate"/>
+	    	<input type="text" class="w70 floatL marL3" id="startDate"/>
 	    </label>
 	    <label>
 	    	<input type="text" class="w70 floatL marL5" id="endDate"/>

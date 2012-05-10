@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -105,6 +106,24 @@ public class RedirectService {
 		return null;
 	}
 
+	@RemoteMethod
+	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
+		RedirectRule redirectRule = new RedirectRule();
+		redirectRule.setRuleName(ruleName);
+		SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  0, 0);
+		RecordSet<RedirectRule> set = daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
+		if (set.getTotalSize() > 0) {
+			for (RedirectRule r: set.getList()) {
+				if (StringUtils.equals(StringUtils.trim(ruleName), StringUtils.trim(r.getRuleName()))) {
+					if (StringUtils.isBlank(ruleId) || !StringUtils.equals(ruleId, r.getRuleId())){
+						return true;						
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	@RemoteMethod
 	public RedirectRule getRule(String ruleId) {
 		try {

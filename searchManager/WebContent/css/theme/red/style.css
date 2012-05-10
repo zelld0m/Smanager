@@ -254,7 +254,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 /*.cssReset .bluebgTitle			{ background:url(images/bgLeftMenu.jpg); width:230px; height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }*/
 .cssReset .leftStatus			{ margin-left:7px }
 .cssReset .leftSearch, 
-.leftSearch						{ background:url(images/icon-search.png) center right no-repeat #fff; height:18px; padding:3px 22px 3px 3px; margin:0}
+.leftSearch						{ background:url(images/icon-search.png) center right no-repeat #fff; height:18px; margin:0}
 
 .cssReset .topNavMenu			{ list-style:none; float:right }
 .cssReset .topNavMenu li		{ display:inline; float:left; margin:2px 5px; font-size:12px; color:#c2c2c2}
@@ -278,7 +278,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 									width:230px; min-height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px; color:#fff
 									}
 .sideMenuArea .sideSearch			{ margin:0 auto; font-family: arial; fonr-size:12px; border-bottom: 1px solid #CCCCCC; color:#333; padding-top:5px; padding-bottom:5px; width:220px; }
-.sideMenuArea .leftSearch			{ background:url(images/icon-search.png) 153px center no-repeat #fff; width:150px; height:18px; padding:3px 22px 3px 3px; margin:0}
+.sideMenuArea .leftSearch			{ background:url(images/icon-search.png) 153px center no-repeat #fff; width:150px; height:18px; clear: left; display: inline-block; padding:3px 22px 3px 3px !important; *padding-right:30px;/*IE7 and IE6*/ }
 
 .sideMenuArea .itemHolder			{ border-bottom:1px solid #ccc; font-family:arial; font-size:12px; color:#333; padding-top:5px; width: 220px;  }
 .sideMenuArea .itemText				{ float:left; width:155px; padding-left:5px }
@@ -339,7 +339,7 @@ ul.topmenu li.submenu:hover ul li:hover { }
 
 
 .keywordPagingResult			{ background:url(images/paging_bgGray.png) no-repeat; height:22px; width:240px; color:#8a8a8a; font-size: 11px !important; font-weight: normal }
-.cssReset .titlePlacer          { background:url(../../../js/ajaxsolr/images/bgGraySearch.jpg) no-repeat; height:39px }
+.cssReset .titlePlacer          { background:#f1f4f9; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; position:relative;  min-height:39px }
 .cssReset .bGraytitlePlacer     { background:url(images/excludeBgHeader.jpg) no-repeat; width:230px; height:26px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }
 .cssReset .txtBoxSmall			{ height:12px; font-size:11px; padding-left:1px; padding-right:0}
 .cssReset .viewSelect			{ float:right; display: inline; height: 16px; margin-top:3px}
@@ -689,4 +689,8 @@ span.ui-button-text	{ display:none; }
 .ui-widget-content .ui-autocomplete-input { background:none !important;  }
 
 .dropdownArea label img.loadIcon { margin-left:4px }
+
+
+.cssReset .searchBoxHolder					{ background:url(images/icon-search.png) right center no-repeat #fff !important; border-top:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; border-left:1px solid #9c9c9c; padding-right:25px; padding-bottom:1px; padding-top:1px  }
+.cssReset .searchBoxHolder input[type=text]	{ border:0 !important; }
 

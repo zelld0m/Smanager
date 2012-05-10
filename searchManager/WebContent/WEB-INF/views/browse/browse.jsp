@@ -71,22 +71,20 @@
 		  <!-- Search Widget -->
 		  <div id="search" class="floatL w730 titlePlacer">
 			
-			<div class="w245 padT10 padL10 floatL fsize20 fnormal">Search Product</div>
-        	
+			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>         	
         	<div class="floatL w460 txtAR padT7"> 
         	    <a id="statisticIcon" href="javascript:void(0);"><img align="absmiddle" class="marR3 marT5 floatR  posRel" src="<spring:url value="/images/icon_statistics.png"/>"></a>
 	        	<a id="searchbutton" href="javascript:void(0)"><img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="<spring:url value="/js/ajaxsolr/images/btn_GO.png"/>"></a> 
 				<!-- a id="searchOptionsIcon" href="javascript:void(0)"><div class="btnGraph btnSearchOption floatR  posRel"></div></a -->
-				<input type="text" class="farial fsize12 fgray searchBoxIconBg w175 floatR pad3 marT1 marR8" id="query" name="query">
+				<div class="searchBoxHolder w150 floatR marT1 marR8"><input type="text" class="farial fsize12 fgray pad3 w150" id="query" name="query"></div>
 				<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none"><input id="keepRefinement" name="keepRefinement" type="checkbox"><span class="fsize11">Keep Refinements</span></div>    	 
 			</div>
+			
 		   </div>
-		  
+		 
 		  <!-- DidYouMean Widget 
 		  <div class="clearB floatL farial fsize12 marT10 w730">Did you mean: <a href="#" class="fDblue fbold">Apple</a></div>-->
-		   
-		 
-		
+
 		  <!-- Sorting-->
 		  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine"> 
 	        <div id="searchResultOption"  class="clearfix pad5 txtAL w720" style="background:#e8e8e8">

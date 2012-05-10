@@ -1,6 +1,6 @@
 isXSSSafe = function(text){
 	var asciiPrintCharRegex= /^[\040-\176]*$/;
-	var hasNoXSSRegex= /^((?!(javascript:|<script>)).)*$/;
+	var hasNoXSSRegex= /^((?!(javascript:|<script>)).)*$/i;
 	return hasNoXSSRegex.test(text) && asciiPrintCharRegex.test(text);
 };
 

@@ -6,7 +6,7 @@
 	var ruleKeywordPageSize = 5;
 	var keywordInRulePageSize = 5;
 	var deleteRuleConfirmText = "Delete this ranking rule?";
-	var ruleNameErrorText = "Please provide a valid relevancy name.";
+	var ruleNameErrorText = "Please provide a valid ranking rule name.";
 
 	var schemaFieldsPageSize = 8;
 	var schemaFieldsTotal = 0;
@@ -622,7 +622,7 @@
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 
 		showGraph = function(e){
 			var field = getRelevancyField(e);
@@ -890,39 +890,47 @@
 				showMessage("#name", "Rule name is required.");
 			}
 			else if (!isAllowedName(ruleName)){
-				showMessage("#name", "Rule name contains invalid character.");
+				showMessage("#name", "Rule name contains invalid value.");
 			}
 			else if (!isXSSSafe(description)){
-				showMessage("#description", "Description contains XSS.");
+				showMessage("textarea#description", "Description contains XSS.");
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range.");
 			}
 			else {
-				RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
+				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 					callback: function(data){
-						response = data;
-						showActionResponse(response, "update", ruleName);
-					},
-					preHook: function(){
-						prepareRelevancy();
-					},
-					postHook: function(){
-						if(response==1){
-							RelevancyServiceJS.getRule(selectedRule.ruleId,{
+						if (data==true){
+							showMessage("#name", "Another ranking rule is already using the name provided.");
+						}else{
+							RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 								callback: function(data){
-									setRelevancy(data);
+									response = data;
+									showActionResponse(response, "update", ruleName);
 								},
 								preHook: function(){
 									prepareRelevancy();
+								},
+								postHook: function(){
+									if(response==1){
+										RelevancyServiceJS.getRule(selectedRule.ruleId,{
+											callback: function(data){
+												setRelevancy(data);
+											},
+											preHook: function(){
+												prepareRelevancy();
+											}
+										});						
+									}
+									else{
+										setRelevancy(selectedRule);
+									}
 								}
-							});						
-						}
-						else{
-							setRelevancy(selectedRule);
+							});
 						}
 					}
-				});				
+				});
 			}
 		}
 
@@ -969,7 +977,8 @@
 			return;
 		}
 
-		$("#submitForApproval").show();
+		$.endsWith(selectedRule.ruleId, "_default") ? $("#submitForApproval").hide() : $("#submitForApproval").show();
+
 		$("#relevancy").show();
 
 		$("#titleText").html(moduleName + " for ");
@@ -986,7 +995,7 @@
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked,
+			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default"),
 			onSelect: function(selectedDate) {
 				var option = this.id == "startDate" ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),
@@ -1004,16 +1013,16 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 
 		$("#cloneBtn").off().on({
 			click: cloneRule
-		},{locked:selectedRuleStatus.locked});
+		},{locked:false});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 		
 		$("a#downloadIcon").download({
 			headerText:"Download Ranking Rule",
@@ -1059,7 +1068,7 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: false, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
 	};
 
@@ -1072,6 +1081,7 @@
 					selectedRuleStatus = data;
 					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
 					showDeploymentStatusBar(moduleName, selectedRuleStatus);
+					
 					showRelevancy();
 				},
 				preHook: function(){
@@ -1139,29 +1149,40 @@
 									var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
 									if ($.isBlank(popName)){
-										alert("Ranking rule name is required");
+										alert("Ranking rule name is required.");
 									}
 									else if (!isAllowedName(popName)) {
 										alert(ruleNameErrorText);
+									}
+									else if (!isXSSSafe(popDescription)){
+										alert("Description contains XSS.");
 									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
 									}
 									else {
-										RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 											callback: function(data){
-												if (data!=null){
-													base.getList(name, 1);
-													setRelevancy(data);
-													showActionResponse(1, "add", name);
-													addRuleFieldValue("q.alt", "*:*");
+												if (data==true){
+													alert("Another ranking rule is already using the name provided.");
 												}else{
-													setRelevancy(selectedRule);
+													RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+														callback: function(data){
+															if (data!=null){
+																base.getList(name, 1);
+																setRelevancy(data);
+																showActionResponse(1, "add", name);
+																addRuleFieldValue("q.alt", "*:*");
+															}else{
+																setRelevancy(selectedRule);
+															}
+														},
+														preHook: function(){ 
+															base.prepareList(); 
+															prepareRelevancy();
+														}
+													});
 												}
-											},
-											preHook: function(){ 
-												base.prepareList(); 
-												prepareRelevancy();
 											}
 										});
 									}
@@ -1337,7 +1358,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked,
+			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId, "_default"),
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -1368,7 +1389,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
 			},
 			itemAddCallback: function(base, keyword){
 				RelevancyServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {

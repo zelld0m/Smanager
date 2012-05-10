@@ -49,7 +49,7 @@
 
 <!--Start Right Side-->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
+	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			Edit Catalog
 		</h1>

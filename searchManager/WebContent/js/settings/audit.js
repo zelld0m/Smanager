@@ -40,7 +40,7 @@
 					$("#resultsBody > tr:even").addClass("alt");
 				}
 				else {
-					$('#resultsBody').append('<tr><td colspan=7 class="txtAC" style="font-size:14px" >No matching records found.</td></tr>');
+					$('#resultsBody').append('<tr><td colspan=7 class="txtAC fsize12" >No matching records found.</td></tr>');
 				}
 				addFieldValuesPaging(curPage, totalSize);					
 			}
