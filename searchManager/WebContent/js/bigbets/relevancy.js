@@ -837,27 +837,44 @@
 							var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
 							var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
-
-							if(isAllowedName(popName) && 
-							   isXSSSafe(popStartDate) &&
-							   isXSSSafe(popEndDate) && 
-							   isXSSSafe(popDescription) ){
-								
-								RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
-									callback:function(data){
-										showActionResponse(data==null?0:1, "clone", popName);
-										if(data!=null) {
-											setRelevancy(data);
+							
+							if ($.isBlank(popName)){
+								alert("Rule name is required.");
+							}
+							else if (!isAllowedName(popName)){
+								alert("Rule name contains invalid value.");
+							}
+							else if (!isAscii(popDescription)) {
+								alert("Description contains non-ASCII characters.");										
+							}
+							else if (!isXSSSafe(popDescription)){
+								alert("Description contains XSS.");
+							}
+							else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
+								alert("Please provide a valid date range.");
+							}
+							else {
+								RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
+									callback: function(data){
+										if (data==true){
+											alert("Another ranking rule is already using the name provided.");
 										}else{
-											setRelevancy(selectedRule);
+											RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
+												callback:function(data){
+													showActionResponse(data==null?0:1, "clone", popName);
+													if(data!=null) {
+														setRelevancy(data);
+													}else{
+														setRelevancy(selectedRule);
+													}
+												},
+												preHook: function(){
+													prepareRelevancy();
+												}
+											});
 										}
-									},
-									preHook: function(){
-										prepareRelevancy();
 									}
 								});
-							}else{
-								if (!isAllowedName(popName)) alert(ruleNameErrorText);
 							}
 						}
 					});
@@ -891,6 +908,9 @@
 			}
 			else if (!isAllowedName(ruleName)){
 				showMessage("#name", "Rule name contains invalid value.");
+			}
+			else if (!isAscii(description)) {
+				showMessage("textarea#description", "Description contains non-ASCII characters.");										
 			}
 			else if (!isXSSSafe(description)){
 				showMessage("textarea#description", "Description contains XSS.");
@@ -1153,6 +1173,9 @@
 									}
 									else if (!isAllowedName(popName)) {
 										alert(ruleNameErrorText);
+									}
+									else if (!isAscii(popDescription)) {
+										alert("Description contains non-ASCII characters.");										
 									}
 									else if (!isXSSSafe(popDescription)){
 										alert("Description contains XSS.");
