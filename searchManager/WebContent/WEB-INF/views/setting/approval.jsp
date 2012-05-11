@@ -168,7 +168,7 @@
 			
 			<div id="rankingSummary" class="infoTabs marB20 tabs">
 			
-				<ul class="posRel top6" style="z-index:100">
+				<ul class="posRel top5" style="z-index:100">
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
 					<li><a href="#ruleField"><span>Rule Field</span></a></li>
 					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
