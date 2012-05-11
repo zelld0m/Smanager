@@ -141,7 +141,7 @@
 			<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none">Approval Guidelines</h3>
 				<div class="fgray padL15 padR10 padB15 fsize11">Rule info Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
-				<label class="floatL w100 padL15"><span class="fred">*</span> Comment: </label>
+				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
@@ -166,25 +166,26 @@
 				<div class="clearB"></div>					
 			</div>
 			
-			<div id="rankingSummary" class="infoTabs marB20">
+			<div id="rankingSummary" class="infoTabs marB20 tabs">
 			
-				<ul class="posRel top5" style="z-index:100">
+				<ul class="posRel top6" style="z-index:100">
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
 					<li><a href="#ruleField"><span>Rule Field</span></a></li>
 					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
 					<div class="clearB"></div>
 				</ul>
 								
-				<div id="ruleRanking" class="ruleRanking">					
-					<ul id="relevancyInfo" class="relevancyInfo border marT18p5" style="z-index:50">
+				<div id="ruleRanking" class="ruleRanking marB10">					
+					<ul id="relevancyInfo" class="relevancyInfo">
 						<li class="clearfix"><label class="floatL w150 padT8">Start Date:</label><label class="floatL padT8"><span id="startDate" class="padT8"></span></label></li>
 						<li class="clearfix"><label class="floatL w150 padT8">End Date:</label><label class="floatL padT8"><span id="endDate" class="padT8"></span></label></li>
 						<li class="clearfix"><label class="floatL w150 padT8">Description:</label><label class="floatL padT8"><span id="description" class="padT8"></span></label></li>
 					</ul>
+					<div class="clearB"></div>
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleField" class="ruleField  marT5">
+				<div id="ruleField" class="ruleField">
 					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
@@ -204,20 +205,23 @@
 								</tr>
 							</tbody>
 						</table>
-					</div>					
+					</div>	
+							
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleKeyword" class="ruleKeyword  marT5">
-					<ul id="keywordInRule" class="keywordInRule"></ul>
+				<div id="ruleKeyword" class="ruleKeyword marB10">
+					<div id="noKeyword" class="txtAC fsize11 padT9"></div>				
+					<ul id="keywordInRule" class="keywordInRule"></ul>	
+					<div class="clearB"></div>
 				</div>
-				<div class="clearB"></div>
+				
 			</div>
 				
 			<div class="clearB"></div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w580 marR5 marB20" style="background: #f3f3f3;">
+			<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">
 				<h3 class="padL15" style="border:none">Approval Guidelines</h3>
-				<div class="fgray padL15 padR10 padB15 fsize11">1111 ffff Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<div class="fgray padL15 padR12 padB15 fsize11">1111 ffff Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
 				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>

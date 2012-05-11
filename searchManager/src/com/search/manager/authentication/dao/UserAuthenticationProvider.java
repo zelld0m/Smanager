@@ -35,6 +35,7 @@ public class UserAuthenticationProvider implements UserDetailsService {
 		userMap.put("DanD", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "DanD", "Dan", true, true, true, true));
 		userMap.put("MattClark", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "MattClark", "MattClark", true, true, true, true));
 		userMap.put("BongR", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "BongR", "Bong", true, true, true, true));
+		userMap.put("MarixT", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "MarixT", "Marix Trivino", true, true, true, true));
 	}
 
 	/**
