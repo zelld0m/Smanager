@@ -5,7 +5,7 @@
 .tabbertab label.info select			{ margin:0 }
 
 ul.relevancyInfo li,
-ul.keywordInRule li						{ list-style: none; padding:4px 0; display: block; width:100%}
+ul.keywordInRule li						{ list-style: none; padding:5px 0; display: block; width:100%}
 .ruleField								{ margin:15px 0; }
 
 
