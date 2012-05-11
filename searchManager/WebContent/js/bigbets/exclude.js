@@ -409,12 +409,21 @@
 			},
 
 			itemAddCallback: function(base, keyword){
-				StoreKeywordServiceJS.addKeyword(keyword,{
+				StoreKeywordServiceJS.getKeyword(keyword,{
 					callback : function(data){
-						showActionResponse(data==null?0:1, "add", keyword);
-						if(data!=null){
-							base.getList(keyword, 1);
-							setExclude(data);
+						if(data==null){
+							StoreKeywordServiceJS.addKeyword(keyword,{
+								callback : function(data){
+									showActionResponse(data==null?0:1, "add", keyword);
+									if(data!=null){
+										base.getList(keyword, 1);
+										setExclude(data);
+									}
+								}
+							});
+						}
+						else {
+							alert("The keyword provided already exists.");
 						}
 					}
 				});

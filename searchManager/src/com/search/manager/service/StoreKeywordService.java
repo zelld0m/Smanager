@@ -90,6 +90,17 @@ public class StoreKeywordService {
 		return newKeyword;
 	}
 
+	@RemoteMethod
+	public Keyword getKeyword(String keyword) {
+		StoreKeyword storeKeyword = null;
+		try {
+			storeKeyword = daoService.getKeyword(UtilityService.getStoreName(), keyword);
+		} catch (DaoException e) {
+			logger.error("Failed during getKeyword()",e);
+		}
+		return (storeKeyword == null) ? null: storeKeyword.getKeyword();
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	}
