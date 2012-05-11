@@ -211,8 +211,8 @@
 				
 				<div class="clearB"></div>	
 				<div id="ruleKeyword" class="ruleKeyword marB10">
-					<div id="noKeyword"></div>
-					<ul id="keywordInRule" class="keywordInRule"></ul>
+					<div id="noKeyword" class="txtAC fsize11 padT9"></div>				
+					<ul id="keywordInRule" class="keywordInRule"></ul>	
 					<div class="clearB"></div>
 				</div>
 				
