@@ -408,7 +408,7 @@ public class AuditInterceptor {
 		auditTrail.setStoreId(UtilityService.getStoreName());
 		auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 		//TODO get keywords for query cleaning/ranking rule?
-		if (RuleEntity.ELEVATE.getCode() == ruleStatus.getRuleTypeId()) {
+		if (RuleEntity.ELEVATE.getCode() == ruleStatus.getRuleTypeId() || RuleEntity.EXCLUDE.getCode() == ruleStatus.getRuleTypeId()) {
 			auditTrail.setKeyword(ruleStatus.getRuleRefId());
 		}
 		switch (auditable.operation()) {
