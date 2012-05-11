@@ -168,7 +168,7 @@
 			
 			<div id="rankingSummary" class="infoTabs marB20 tabs">
 			
-				<ul class="posRel top5" style="z-index:100">
+				<ul class="posRel top6" style="z-index:100">
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
 					<li><a href="#ruleField"><span>Rule Field</span></a></li>
 					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
@@ -215,9 +215,9 @@
 			</div>
 				
 			<div class="clearB"></div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad5 w580 marR5 marB20" style="background: #f3f3f3;">
+			<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">
 				<h3 class="padL15" style="border:none">Approval Guidelines</h3>
-				<div class="fgray padL15 padR10 padB15 fsize11">1111 ffff Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<div class="fgray padL15 padR12 padB15 fsize11">1111 ffff Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
 				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
