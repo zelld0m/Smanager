@@ -62,14 +62,14 @@
 			var msg_ = pub ? 'approved:' : 'rejected:';
 
 			var okmsg = 'Following rules were successfully ' + msg_;	
-			
+
 			for(var i=0; i<data.length; i++){	
 				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
 			}
-			
+
 			alert(okmsg);
 		};
-		
+
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
@@ -133,10 +133,10 @@
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
 							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
-							
+
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
-							
+
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
 							$tr.find("td#requested > p#requestedBy").html(list[i]["lastModifiedBy"]);
@@ -275,7 +275,7 @@
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				$content.find('a[href="#ruleField"] >span').html("Rule Condition");
-				
+
 				$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
@@ -288,12 +288,20 @@
 
 						var $table = $content.find("div.ruleField table#item");
 
-						for(var field in data.conditions){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
-							$tr.find("td#fieldName").html(parseInt(field)+1);
-							$tr.find("td#fieldValue").html(data.conditions[field]);
+						if(data.conditions.length==0){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("td#fieldName").html("No condition specified for this rule").attr("colspan","2");
+							$tr.find("td#fieldValue").remove();
 							$tr.appendTo($table);
-						}	
+
+						}else{
+							for(var field in data.conditions){
+								$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+								$tr.find("td#fieldName").html(parseInt(field)+1);
+								$tr.find("td#fieldValue").html(data.conditions[field]);
+								$tr.appendTo($table);
+							}	
+						}
 
 						$ul.find("li span#description").html(data["description"]);
 					},
@@ -308,8 +316,13 @@
 
 						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
 
-						for (var i=0; i< data.totalSize; i++){
-							$("<li>").text(list[i]["keyword"]).appendTo($ul);
+						if (data.totalSize==0){
+							$content.find("#noKeyword").html("No keyword is using this rule");
+						}else{
+							$content.find("#noKeyword").html("");
+							for (var i=0; i< data.totalSize; i++){
+								$("<li>").text(list[i]["keyword"]).appendTo($ul);
+							}
 						}
 					},
 					preHook: function(){
@@ -331,13 +344,13 @@
 						var $table = $content.find("div.ruleField table#item");
 
 						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html(field);
 							$tr.find("td#fieldValue").html(data.parameters[field]);
 							$tr.appendTo($table);
 						}	
-
 						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+
 						$ul.find("li span#startDate").html(data["formattedStartDate"]);
 						$ul.find("li span#endDate").html(data["formattedEndDate"]);
 						$ul.find("li span#description").html(data["description"]);
@@ -353,10 +366,14 @@
 
 						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
 
-						for (var i=0; i< data.totalSize; i++){
-							$("<li>").text(list[i]["keyword"]).appendTo($ul);
-						}
-
+						if (data.totalSize==0){
+							$content.find("#noKeyword").html("No keyword is using this rule");
+						}else{
+							$content.find("#noKeyword").html("");
+							for (var i=0; i< data.totalSize; i++){
+								$("<li>").text(list[i]["keyword"]).appendTo($ul);
+							}
+						}	
 					},
 					preHook: function(){
 
@@ -365,7 +382,7 @@
 
 				break;
 			};
-			
+
 			$content.find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $content.find("#approvalComment").val();
@@ -399,7 +416,7 @@
 					}
 				}
 			});
-			
+
 			return $content;
 		};
 
