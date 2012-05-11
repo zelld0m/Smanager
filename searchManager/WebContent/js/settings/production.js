@@ -58,41 +58,40 @@
 		
 		var postMsg = function(data,pub){
 			var list = data.list;
-			var msg_ = pub?'published':'unpublished'+'.';
+			var msg_ = pub?'published:':'unpublished:';
 
-			if (data.totalSize>1){			
-				var okmsg = 'Following Rules were successfully '+msg_;	
-				var flmsg = '\n\nFailed.';
+			if (data.totalSize>0){			
+				var okmsg = 'Following rules were successfully ' + msg_;	
+				var flmsg = 'Following rules were unsuccessfully ' + msg_;
 				var okcnt = 0;
 				var flcnt = 0;
+				
 				for(var i=0; i<data.totalSize; i++){	
 					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").html();
 					if(list[i].published == '1'){
 						okcnt++;
-						okmsg += '\n-'+rName;	
+						okmsg += '\n-' + rName;	
 					}
 					else{
 						flcnt++;
-						flmsg += '\n-'+rName;
+						flmsg += '\n-' + rName;
 					}
 				}
-	
-				if(okcnt < 1){
-					okmsg = '';
-					flmsg = flmsg.replace('\n\n', '');
-				}if(flcnt < 1)
-					flmsg = '';
-					
-				alert(okmsg+flmsg);	
-			}else{			
-				var rName = $("tr#ruleItem" + $.formatAsId(list[0].ruleId) + " >td#ruleRefId >p#ruleName").html();
-				if(list != null && list[0].published == '1')
-					alert(rName+' was successfully '+msg_);
-				else
-					alert(rName+' was not '+msg_);
+			
+				var cmpltmsg = "";
+				if (okcnt>0){
+					cmpltmsg += okmsg;
+				}
+				if (flcnt>0){
+					cmpltmsg += (okcnt>0? "\n\n":"");
+					cmpltmsg += flmsg;
+				}
+				
+				alert(cmpltmsg);	
+			}else{		
+				alert("No rules were " + msg_);
 			}
 		};
-		
 		
 		var publishHandler = function(){
 			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({

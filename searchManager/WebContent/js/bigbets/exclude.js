@@ -62,8 +62,14 @@
 						buttonImageOnly: true
 					});
 
+					contentHolder.find("#clearBtn").on({
+						click: function(evt){
+							contentHolder.find("input,textarea").val("");
+						}
+					});
+					
 					contentHolder.find("#addItemToRuleBtn").on({
-						click: function(){
+						click: function(evt){
 
 							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
 
@@ -83,7 +89,7 @@
 							else {
 								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
 									callback : function(code){
-										showActionResponseFromMap(code, "add", skus, "Please check if SKU(s) are actually searchable using the specified keyword.");
+										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										showExclude();
 									},
 									preHook: function(){ 

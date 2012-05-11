@@ -149,8 +149,8 @@ public class SolrSchemaUtility {
 			}
 		}
 		
-    	ConfigManager.getInstance("solr.xml");
-		RelevancyConfig.getInstance("relevancy.xml");
+    	ConfigManager.getInstance("/home/solr/conf/solr.xml");
+		RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
 		Schema schema = SolrSchemaUtility.getSchema();
 		for (Field field: schema.getFields()) {
 			logger.debug(field.getName() + " " + field.getGenericType());

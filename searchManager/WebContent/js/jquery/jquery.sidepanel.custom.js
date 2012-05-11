@@ -104,7 +104,7 @@
 				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
 			}
 			
-			content+= '<input id="searchTextbox" class="farial fsize12 fgray leftSearch ' + textClass + '" type="text" value="' + base.options.searchText + '">';
+			content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
 			
 			content+= '</span>';
 			content+= '</div>';
@@ -185,12 +185,12 @@
 					base.options.pageChangeCallback(e.data.page); 
 				},
 				nextLinkCallback: function(e){ 
-					base.getList(keyword, e.data.page+1); 
-					base.options.pageChangeCallback(e.data.page+1); 
+					base.getList(keyword, parseInt(e.data.page)+1); 
+					base.options.pageChangeCallback(parseInt(e.data.page)+1); 
 				},
 				prevLinkCallback: function(e){ 
-					base.getList(keyword, e.data.page-1); 
-					base.options.pageChangeCallback(e.data.page-1);
+					base.getList(keyword, parseInt(e.data.page)-1); 
+					base.options.pageChangeCallback(parseInt(e.data.page)-1);
 				},
 				firstLinkCallback: function(e){ 
 					base.getList(keyword, 1); 
@@ -218,6 +218,7 @@
 			searchText: "",
 			searchLabel: "",
 			filterText:"",
+			maxCharacter: 50,
 			showAddButton: true,
 			showSearch: true,
 			itemDataCallback: function(e){},

@@ -34,7 +34,7 @@
 <div class="floatL w730 marL10 marT27">
 	
 	<div class="floatL w730 titlePlacer">
-	  <div class="w535 padT10 padL10 floatL fsize20 fnormal">
+	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText">Feature List</span>
 		<span id="keywordHeader" class="fLblue fnormal"></span>
 	  </div>

@@ -56,7 +56,7 @@
 <div class="contentArea floatL w730 marL10 marT27">
 
 	<!--  landing page -->
-	<div class="floatL w730 titlePlacer">
+	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			<span id="titleText"></span>
 			<span id="titleHeader" class="fLblue fnormal"></span>
