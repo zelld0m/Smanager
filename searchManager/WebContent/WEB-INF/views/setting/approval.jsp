@@ -175,12 +175,13 @@
 					<div class="clearB"></div>
 				</ul>
 								
-				<div id="ruleRanking" class="ruleRanking">					
+				<div id="ruleRanking" class="ruleRanking marB10">					
 					<ul id="relevancyInfo" class="relevancyInfo">
 						<li class="clearfix"><label class="floatL w150 padT8">Start Date:</label><label class="floatL padT8"><span id="startDate" class="padT8"></span></label></li>
 						<li class="clearfix"><label class="floatL w150 padT8">End Date:</label><label class="floatL padT8"><span id="endDate" class="padT8"></span></label></li>
 						<li class="clearfix"><label class="floatL w150 padT8">Description:</label><label class="floatL padT8"><span id="description" class="padT8"></span></label></li>
 					</ul>
+					<div class="clearB"></div>
 				</div>
 				
 				<div class="clearB"></div>	
@@ -204,14 +205,16 @@
 								</tr>
 							</tbody>
 						</table>
-					</div>					
+					</div>	
+							
 				</div>
 				
 				<div class="clearB"></div>	
-				<div id="ruleKeyword" class="ruleKeyword">
+				<div id="ruleKeyword" class="ruleKeyword marB10">
 					<ul id="keywordInRule" class="keywordInRule"></ul>
+					<div class="clearB"></div>
 				</div>
-				<div class="clearB"></div>
+				
 			</div>
 				
 			<div class="clearB"></div>
