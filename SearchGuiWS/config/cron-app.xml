@@ -10,7 +10,7 @@
 	
 	<beans:bean id="guiCronTriggerSingle" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<beans:property name="jobDetail" ref="guiProcessorCronSingle" />
-		<beans:property name="startDelay" value="900000" />
+		<beans:property name="startDelay" value="5000" />
 		<beans:property name="repeatInterval" value="900000" />
 	</beans:bean>
 	
@@ -18,10 +18,21 @@
 		<beans:property name="jobClass" value="com.search.cron.GuiProcessorCronSingle" />
 	</beans:bean>
 	
+	<beans:bean id="cacheResetCronTriggerSingle" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<beans:property name="jobDetail" ref="cacheResetProcessorCronSingle" />
+		<beans:property name="startDelay" value="5000" />
+		<beans:property name="repeatInterval" value="300000" />
+	</beans:bean>
+	
+	<beans:bean name="cacheResetProcessorCronSingle" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<beans:property name="jobClass" value="com.search.cron.CacheResetProcessorCronSingle" />
+	</beans:bean>
+	
 	<beans:bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<beans:property name="triggers">
 			<beans:list>
 				<beans:ref bean="guiCronTriggerSingle" />
+				<beans:ref bean="cacheResetCronTriggerSingle" />
 			</beans:list>
 		</beans:property>
 	</beans:bean>
