@@ -1,32 +1,5 @@
 package com.search.manager.cache.utility;
 
-/**
- * Property of OSRP
- * 
- * @author M ILAGAN JR
- * @version 1.0
- * Date Created: July 01, 2009
- * Description:
- * 		<P> This class is used to retrieve params and values from the properties file 'resources/ehcacheparams.properties'. </P>
- * 
- * History:
- * 
- *   DATE    MODIFIED BY  DESCRIPTION OF CHANGE
- * -------- ------------- ---------------------------------------------------------------------
- * YYYYMMDD
- * 
- * 
- * For code changes/enhancements, please enclose codes:
- * 	// ENHANCEMENT START [Bug Number] - [YYYYMMDD] - [Author Initials]
- * 	// old code
- *  // old code
- *  	...	
- *  	New Code
- *  	...
- *  // ENHANCEMENT END [Bug Number]
- * 
- */
-
 import java.util.MissingResourceException;
 import java.util.Properties;
 import com.search.manager.exception.DataConfigException;
@@ -42,9 +15,12 @@ public class EHcacHEResourceUtil {
 	// Extended CACHE instance key
 	public static final String EH_EXT_INSTANCES		= "ehcache.ext.instances";
 	
+	public static final String EH_TIMEOUT_CONN		= "timeout.connection";
+	public static final String EH_TIMEOUT_READ		= "timeout.read";
+	
 	private static final String RESOURCE_MAP		= "ehcacheparams";
 	private static Properties dbProps = null;
-
+	
 	public EHcacHEResourceUtil(){
 		try {
 			if(dbProps == null)
@@ -53,7 +29,7 @@ public class EHcacHEResourceUtil {
 			ex.printStackTrace(System.err);
 		}
 	}
-	
+
 	/**
 	 * <P> Returns an instance of the DAOResourceUtil class. </P>
 	 * @return new DAOResourceUtil instance.
@@ -106,5 +82,32 @@ public class EHcacHEResourceUtil {
 	public String getCacheExtendedInstances() throws DataConfigException {
 		
 		return this.getValue(EH_EXT_INSTANCES);
+	}
+	
+	/**
+	 * 
+	 */
+	public Integer getConnectionTimeout() {
+		Integer timeOut = 0;
+		
+		try {
+			timeOut = Integer.valueOf(this.getValue(EH_TIMEOUT_CONN));
+		} catch (Exception ex) {
+			timeOut = 0;
+		}
+		
+		return timeOut;
+	}
+	
+	public Integer getReadTimeOut() {
+		Integer timeOut = 0;
+		
+		try {
+			timeOut = Integer.valueOf(this.getValue(EH_TIMEOUT_READ));
+		} catch (Exception ex) {
+			timeOut = 0;
+		}
+		
+		return timeOut;
 	}
 }

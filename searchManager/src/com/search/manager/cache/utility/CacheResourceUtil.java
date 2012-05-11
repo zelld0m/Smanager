@@ -7,9 +7,9 @@ import com.search.manager.utility.PropsUtils;
 
 public class CacheResourceUtil {
 	private static final String CACHE_STRATEGY			= "cache.strategy";
-	private static final String CACHE_ENABLED           = "cache.enabled";
-	private static final String CACHE_DISABLED_EXEMPTS  = "cache.disabled.exempts";
-	private static final String CACHE_DISABLED_EXEMPT   = "cache.disabled.exempt.";
+	private static final String CACHE_ENABLED			= "cache.enabled";
+	private static final String CACHE_DISABLED_EXEMPTS	= "cache.disabled.exempts";
+	private static final String CACHE_DISABLED_EXEMPT	= "cache.disabled.exempt.";
 	
 	private static final String DIST_Q_CLUSTER_ID		= "distributed.q.cluster.id";
 	private static final String DIST_Q_KEY_ID			= "distributed.q.key.identifier";
@@ -27,16 +27,46 @@ public class CacheResourceUtil {
 	public static final String PRE_LOADED_SVC          	= "preloaded.service.";
 	public static final String PITCH_STRATEGY          	= "pitch.strategy";
 	public static final String AUTH_TOKEN_RESTRAINT     = "auth.token.restraint";
-	
-	public static final String CACHE_CLIENT_STATUS      = "cache.client.status";
-	public static final String HTTP_CLIENT_MAX_CONN_HOST= "http.client.maxConnectionsPerHost";
-	public static final String HTTP_CLIENT_ACTV_CONN    = "http.client.maxActiveConnections";
+	public static final String AUTH_REMOTE_HOST			= "auth.remote.host";
+	public static final String AUTH_ALLOW_REMOTE_HOST	= "auth.allow.remote.host.";
+	public static final String AUTH_ALLOW_REM_HOST_SIZE	= "auth.allow.remote.host.size";
+	public static final String GENERAL_CACHE_EXPIRY		= "general.cache.expiry";
+	public static final String GENERAL_CCH_MAX_DELTA_EXE= "general.cache.delta.max.run";
 	
 	public static final String PITCH_EXT_SIZE			= "pitch.extensions.size";
 	public static final String PITCH_EXTENSIONS			= "pitch.extension.";
 	
+	public static final String PRELOAD_START_IDX		= "preloaded.service.startat.pidx.";
+	public static final String PRELOAD_END_IDX			= "preloaded.service.endat.pidx.";
+	
+	public static final String FORCE_UPD_SAN_PRELOAD	= "preloaded.service.san.load.";
+	public static final String PRELOAD_UPD_CCH_EXPIRY   = "preloaded.service.cached.item.expiry.";
+	
+	public static final String DEFAULT_STORE_ID			= "default.store.id";
+	public static final String DEFAULT_IMG_PREFIX		= "default.imageServerPrefix";
+	public static final String DEFAULT_ORDER_PREFIX		= "default.order.prefix";
+	public static final String DEFAULT_CURRENCY			= "default.currency";
+	public static final String SWITCH_VALUE_MAP			= "switch.value.map";
+	
+	public static final String WORK_FLOW_RULES			= "processflow.rules";
+	public static final String WORK_FLOW_RULE_DETAIL	= "processflow.rule.";
+	public static final String WF_RESTRICT_PAY_TYPES	= "processflow.restrictions.payment";
+	public static final String WF_RESTRICT_PAY_METHOD	= "processflow.restrict.payment.";
+	public static final String WF_SWITCH_PROCESS_FLOW	= "switch.process.flow";
+	public static final String WF_GROUP_SORT_OVERRIDE	= "processflow.sort.group.ids.override";
+	
+	public static final String CUSTOM_EXPIRY			= "custom.expiry.";
+	public static final String CACHE_CLIENT_STATUS      = "cache.client.status";
+	
+	public static final String HTTP_CLIENT_MAX_CONN_HOST= "http.client.maxConnectionsPerHost";
+	public static final String HTTP_CLIENT_ACTV_CONN 	= "http.client.maxActiveConnections";
+	
+	public static final String PROCESSOR_INVENTORY_ID	= "processor.inventory.id";
+	
 	private static final String RESOURCE_MAP		= "cacheparams";
 	private static Properties dbProps				= null;
+	
+	public static final String CATALOG_CATEGORY_BATCH_SIZE   = "preloaded.service.cached.catalog.category.batch.size";
 	
 	public CacheResourceUtil(){
 		 try {
@@ -254,6 +284,73 @@ public class CacheResourceUtil {
 	}
 	
 	/**
+	 * <P> This method returns the flag if remote hosts validation is activated or not. </P>
+	 * @return the flag if remote hosts validation is activated or not. DEFAULT = 1;
+	 */
+	public static Integer getRemoteHostValidationFlag() {
+		Integer allowHosts = null;
+		
+		try {
+			allowHosts = Integer.parseInt(getValue(AUTH_REMOTE_HOST));
+		} catch (NumberFormatException nfex) {
+			allowHosts = 1;
+		} catch (DataConfigException dcex) {
+			allowHosts = 1;
+		}
+		
+		return allowHosts;
+	}
+	
+	/**
+	 * <P> This method returns the number or remote machines allowed to connect to the ESB server. </P>
+	 * @return the flag if remote hosts validation is activated or not. DEFAULT = 0;
+	 */
+	public static Integer allowRemoteHostSize() {
+		Integer remoteHostSize = null;
+		
+		try {
+			remoteHostSize = Integer.parseInt(getValue(AUTH_ALLOW_REM_HOST_SIZE));
+		} catch (NumberFormatException nfex) {
+			remoteHostSize = 1;
+		} catch (DataConfigException dcex) {
+			remoteHostSize = 1;
+		}
+		
+		return remoteHostSize;
+	}
+	
+	/**
+	 * <P>This method returns the allowed host machine connecting to the ESB server.</P>
+	 * @param hostIndex index of the host machine
+	 * @return the allowed host machine connecting to the ESB server.
+	 * @throws DataConfigException
+	 */
+	public static String getRemoteHost(Integer hostIndex) throws DataConfigException {
+		StringBuilder keyParam = new StringBuilder(AUTH_ALLOW_REMOTE_HOST);
+		keyParam.append(hostIndex);
+		
+		return getValue(keyParam.toString());
+	}
+	
+	/**
+	 * <P> This method returns the number of seconds before a cached object is considered as expired. </P>
+	 * @return the number of seconds before a cached object is considered as expired. DEFAULT = 0;
+	 */
+	public static Long getGeneralCacheExpiry() {
+		Long expiresInSeconds = null;
+		
+		try {
+			expiresInSeconds = Long.parseLong(getValue(GENERAL_CACHE_EXPIRY));
+		} catch (NumberFormatException nfex) {
+			expiresInSeconds = 0L;
+		} catch (DataConfigException dcex) {
+			expiresInSeconds = 0L;
+		}
+		
+		return expiresInSeconds;
+	}
+	
+	/**
 	 * <P>This method returns 1 if class is considered a Pitch Extension (pitch utility should be applied); else 0 is returned. </P>
 	 * @param className the complete class name to be evaluated.
 	 * @return 1 if class is considered a Pitch Extension (pitch utility should be applied); else 0 is returned.
@@ -280,105 +377,377 @@ public class CacheResourceUtil {
 	}
 	
 	/**
-   * <P>This method returns the authentication token restraint value.</P>
-   * @return the authentication token restraint value; DEFAULT=1 token will be validated against cache; 0 = no validation will take place.
-   */
-  public static Integer getCacheClientStatusDefaults() {
-    Integer stat = 1;
-    try {
-      stat = Integer.parseInt(getValue(CACHE_CLIENT_STATUS));
-    } catch (NumberFormatException nfex) {
-      stat = 1;
-    } catch (DataConfigException dcex) {
-      stat = 1;
-    }
-    
-    return stat;
-  }
-  
-  /**
-   * <P>The maximum number of connections that will be created for any particular HostConfiguration. Defaults to 2.</P>
-   * @return
-   */
-  public static Integer getHttpClientMaxConnectionsPerHost() {
-    Integer stat = -1;
-    
-      try {
-        stat = Integer.parseInt(getValue(HTTP_CLIENT_MAX_CONN_HOST));
-      } catch (NumberFormatException nfex) {
-        stat = -1;
-      } catch (DataConfigException dcex) {
-        stat = -1;
-      }
-      
-      return stat;
-  }
-  
-  /**
-   * <P>The maximum number of active connections. Defaults to 20.</P>
-   * @return
-   */
-  public static Integer getHttpClientMaxActiveConnections() {
-    Integer stat = -1;
-    
-      try {
-        stat = Integer.parseInt(getValue(HTTP_CLIENT_ACTV_CONN));
-      } catch (NumberFormatException nfex) {
-        stat = -1;
-      } catch (DataConfigException dcex) {
-        stat = -1;
-      }
-      
-      return stat;
-  }
-  
-  /**
-   * <P>This method will return 1 if caching is enabled; else 0 if disabled. 1 = (DEFAULT).</P>
-   * @return 1 if caching is enabled; else 0 if disabled.
-   */
-  public static Integer getCacheEnabled() {
-    Integer stat = 1;
-    
-    try {
-      stat = Integer.parseInt(getValue(CACHE_ENABLED));
-    } catch (NumberFormatException nfex) {  
-      stat = 1;
-    } catch (DataConfigException dcex) {
-      stat = 1;
-    }
-    
-    return stat;
-  }
-  
-  /**
-   * <P>This method will return the number of cache exempted items when caching is disabled.</P>
-   * @return the number of cache exempted items when caching is disabled.
-   */
-  public static Integer getCacheExemptions() {
-    Integer result = 0;
-    
-    try {
-      result = Integer.parseInt(getValue(CACHE_DISABLED_EXEMPTS));
-    } catch (NumberFormatException nfex) {  
-      result = 0;
-    } catch (DataConfigException dcex) {
-      result = 0;
-    }
-    
-    return result;
-  }
-  
-  public static String getExemptedItem(int idx) {
-    String item = "";
-    
-    try {
-      StringBuilder key = new StringBuilder(CACHE_DISABLED_EXEMPT);
-      key.append(String.valueOf(idx));
-      item = getValue(key.toString());
-    } catch (DataConfigException dcex) {
-      item = "";
-    }
-    
-    return item;
-  }
+	 * <P>This method returns the start page index of the preloaded method.</P>
+	 * @return the start index of the preloaded method.
+	 */
+	public static Integer getPreloadStartAtIdx(String svcMethod) {
+		Integer result = null;
+		
+		try {
+			StringBuilder keyParam = new StringBuilder(PRELOAD_START_IDX);
+			keyParam.append(svcMethod);
+			result = Integer.valueOf(getValue(keyParam.toString()));
+		} catch (NumberFormatException nfex) {
+			result = null;
+		} catch (DataConfigException dcex) {
+			result = null;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method returns the ending page index of the preloaded method.</P>
+	 * @return the start index of the preloaded method.
+	 */
+	public static Integer getPreloadEndAtIdx(String svcMethod) {
+		Integer result = null;
+		
+		try {
+			StringBuilder keyParam = new StringBuilder(PRELOAD_END_IDX);
+			keyParam.append(svcMethod);
+			result = Integer.valueOf(getValue(keyParam.toString()));
+		} catch (NumberFormatException nfex) {
+			result = null;
+		} catch (DataConfigException dcex) {
+			result = null;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P> Gets the default store id. </P>
+	 * @return the default store id.
+	 * @throws DataConfigException
+	 */
+	public static String getDefaultStoreID() throws DataConfigException {
+		return getValue(DEFAULT_STORE_ID);
+	}
+	
+	/**
+	 * <P> Gets the switch value of map. </P>
+	 * @return the switch value of map.
+	 * @throws DataConfigException
+	 */
+	public static String getSwitchValueMap() throws DataConfigException {
+		return getValue(SWITCH_VALUE_MAP);
+	}
+	
+	public static Integer forceCacheUpdateSanPreload(String svcMethod) {
+		Integer result = 0;
+		
+		try {
+			StringBuilder keyParam = new StringBuilder(FORCE_UPD_SAN_PRELOAD);
+			keyParam.append(svcMethod);
+			result = Integer.valueOf(getValue(keyParam.toString()));
+		} catch (NumberFormatException nfex) {
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method will maximum number of seconds that the delta load processor will run before stopping and giving other delta updates to run.</P>
+	 * @return maximum number of seconds that the delta load processor will run before stopping and giving other delta updates to run
+	 */
+	public static Long getMaximumDeltaLoadCacheRun() {
+		Long result = 0L;
+		
+		try {
+			result = Long.valueOf(getValue(GENERAL_CCH_MAX_DELTA_EXE));
+		} catch (NumberFormatException nfex) {
+			result = 0L;
+		} catch (DataConfigException dcex) {
+			result = 0L;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method will return the custom expiry in seconds of cached item objects.</P>
+	 * @param serviceKey name of the service key where the expiry value is stored.
+	 * @return
+	 */
+	public static Integer getCacheLoadUpdateExpiry(String serviceKey) {
+		Integer result = 0;
+		
+		try {
+			StringBuilder keyParam = new StringBuilder(PRELOAD_UPD_CCH_EXPIRY);
+			keyParam.append(serviceKey);
+			result = Integer.valueOf(getValue(keyParam.toString()));
+		} catch (NumberFormatException nfex) {
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method returns the number of process rules.</P>
+	 * @return the number of process rules.
+	 */
+	public static Integer getNumberOfProcessRules() {
+		Integer result = 0;
+		
+		try {
+			result = Integer.valueOf(getValue(WORK_FLOW_RULES));
+		} catch (NumberFormatException nfex) {
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P> Gets the rule detail value. </P>
+	 * @param detailNumber sequence detail number.
+	 * @return the rule detail value.
+	 * @throws DataConfigException
+	 */
+	public static String getRuleDetail(Integer detailNumber) throws DataConfigException {
+		StringBuffer paramKey = new StringBuffer(WORK_FLOW_RULE_DETAIL);
+		paramKey.append(detailNumber);
+		
+		return getValue(paramKey.toString());
+	}
+	
+	/**
+	 * <P>This method returns the custom cache expiry value.</P>
+	 * @param serviceKey
+	 * @return the custom cache expiry value.
+	 */
+	public static Long getCacheCustomeExpiry(String serviceKey) {
+		Long result = 0L;
+		
+		try {
+			StringBuilder keyParam = new StringBuilder(CUSTOM_EXPIRY);
+			keyParam.append(serviceKey);
+			result = Long.valueOf(getValue(keyParam.toString()));
+		} catch (NumberFormatException nfex) {
+			result = 0L;
+		} catch (DataConfigException dcex) {
+			result = 0L;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method returns the number of payment method that will be allowed. 0 = all payment types are allowed</P>
+	 * @return the number of payment method that will be allowed.
+	 */
+	public static Integer getNumberOfPaymentMethodRestrictions() {
+		Integer result = 0;
+		
+		try {
+			result = Integer.valueOf(getValue(WF_RESTRICT_PAY_TYPES));
+		} catch (NumberFormatException nfex) {
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method returns the payment method restriction.</P>
+	 * @param detailNumber sequence detail number.
+	 * @return the rule detail value.
+	 * @throws DataConfigException
+	 */
+	public static String getPaymentMethodRestriction(Integer itemNumber) throws DataConfigException {
+		StringBuffer paramKey = new StringBuffer(WF_RESTRICT_PAY_METHOD);
+		paramKey.append(itemNumber);
+		
+		return getValue(paramKey.toString());
+	}
+	
+	/**
+	 * <P>This method returns the process flow switch value.</P>
+	 * @return 1 = ACTIVE; 0 = INACTIVE
+	 * @throws DataConfigException
+	 */
+	public static Integer getProcessFlowSwitch() throws DataConfigException {
+		Integer result = 0;
+		
+		try {
+			result = Integer.valueOf(getValue(WF_SWITCH_PROCESS_FLOW));
+		} catch (NumberFormatException nfex) {
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * <P>This method returns the default image prefix.</P>
+	 * @return the default image prefix
+	 * @throws DataConfigException
+	 */
+	public static String getDefaultImagePrefix() throws DataConfigException {		
+		return getValue(DEFAULT_IMG_PREFIX);
+	}
+	
+	/**
+	 * <P>This method returns the default order prefix.</P>
+	 * @return the default order prefix
+	 * @throws DataConfigException
+	 */
+	public static String getDefaultOrderPrefix() throws DataConfigException {		
+		return getValue(DEFAULT_ORDER_PREFIX);
+	}
+	
+	/***
+	 * <P>This method returns the default currency.</P>
+	 * @return the default currency
+	 * @throws DataConfigException
+	 */
+	public static String getDefaultCurrency() throws DataConfigException {		
+		return getValue(DEFAULT_CURRENCY);
+	}
+	
+	/**
+	 * <P>This method returns the group sort override rule list.</P>
+	 * @return returns the group sort override rule list.
+	 * @throws DataConfigException
+	 */
+	public static String getWFGroupSortOverride() throws DataConfigException {		
+		return getValue(WF_GROUP_SORT_OVERRIDE);
+	}
+	
+	/**
+	   * <P>This method returns the authentication token restraint value.</P>
+	   * @return the authentication token restraint value; DEFAULT=1 token will be validated against cache; 0 = no validation will take place.
+	   */
+	public static Integer getCacheClientStatusDefaults() {
+	    Integer stat = 1;
+	    try {
+	      stat = Integer.parseInt(getValue(CACHE_CLIENT_STATUS));
+	    } catch (NumberFormatException nfex) {
+	      stat = 1;
+	    } catch (DataConfigException dcex) {
+	      stat = 1;
+	    }
+	    
+	    return stat;
+	  }
+	
+	/**
+	 * <P>The maximum number of connections that will be created for any particular HostConfiguration. Defaults to 2.</P>
+	 * @return
+	 */
+	public static Integer getHttpClientMaxConnectionsPerHost() {
+		Integer stat = -1;
+		
+	    try {
+	      stat = Integer.parseInt(getValue(HTTP_CLIENT_MAX_CONN_HOST));
+	    } catch (NumberFormatException nfex) {
+	      stat = -1;
+	    } catch (DataConfigException dcex) {
+	      stat = -1;
+	    }
+	    
+	    return stat;
+	}
+	
+	/**
+	 * <P>The maximum number of active connections. Defaults to 20.</P>
+	 * @return
+	 */
+	public static Integer getHttpClientMaxActiveConnections() {
+		Integer stat = -1;
+		
+	    try {
+	      stat = Integer.parseInt(getValue(HTTP_CLIENT_ACTV_CONN));
+	    } catch (NumberFormatException nfex) {
+	      stat = -1;
+	    } catch (DataConfigException dcex) {
+	      stat = -1;
+	    }
+	    
+	    return stat;
+	}
+	
+	/**
+	 * <P>This method will return 1 if caching is enabled; else 0 if disabled. 1 = (DEFAULT).</P>
+	 * @return 1 if caching is enabled; else 0 if disabled.
+	 */
+	public static Integer getCacheEnabled() {
+		Integer stat = 1;
+		
+		try {
+			stat = Integer.parseInt(getValue(CACHE_ENABLED));
+		} catch (NumberFormatException nfex) {	
+			stat = 1;
+		} catch (DataConfigException dcex) {
+			stat = 1;
+		}
+		
+		return stat;
+	}
+	
+	/**
+	 * <P>This method will return the number of cache exempted items when caching is disabled.</P>
+	 * @return the number of cache exempted items when caching is disabled.
+	 */
+	public static Integer getCacheExemptions() {
+		Integer result = 0;
+		
+		try {
+			result = Integer.parseInt(getValue(CACHE_DISABLED_EXEMPTS));
+		} catch (NumberFormatException nfex) {	
+			result = 0;
+		} catch (DataConfigException dcex) {
+			result = 0;
+		}
+		
+		return result;
+	}
+	
+	public static String getExemptedItem(int idx) {
+		String item = "";
+		
+		try {
+			StringBuilder key = new StringBuilder(CACHE_DISABLED_EXEMPT);
+			key.append(String.valueOf(idx));
+			item = getValue(key.toString());
+		} catch (DataConfigException dcex) {
+			item = "";
+		}
+		
+		return item;
+	}
+	
+	public static String getProcessorInventoryId() throws DataConfigException {
+		try {
+			return getValue(PROCESSOR_INVENTORY_ID);
+		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
+		}
+		
+		return "";
+	}
+	
+	public static int getCatalogManufCategoryBatchSize() throws DataConfigException {
+		Integer result = 0;
+		try {
+			result = Integer.parseInt(getValue(CATALOG_CATEGORY_BATCH_SIZE));
+		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
+		}
+		
+		return result;
+	}
 }
