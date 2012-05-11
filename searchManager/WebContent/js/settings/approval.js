@@ -240,7 +240,7 @@
 			});
 		};
 
-		var populatePreview = function($content, ruleStatus){
+		var populatePreview = function(api, $content, ruleStatus){
 			switch(tabSelectedText){
 			case "Elevate": 
 				$content.html($("#previewTemplate1").html());
@@ -363,9 +363,42 @@
 					}
 				});
 
-
 				break;
 			};
+			
+			$content.find("a#approveBtn, a#rejectBtn").on({
+				click: function(evt){
+					var comment = $content.find("#approvalComment").val();
+
+					if ($.isNotBlank(comment)){
+						switch($(evt.currentTarget).attr("id")){
+						case "approveBtn": 
+							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+								callback: function(data){
+									postMsg(data,true);	
+									getApprovalList();
+								},
+								preHook: function(){
+									api.destroy();
+								}
+							});break;
+
+						case "rejectBtn": 
+							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+								callback: function(data){
+									postMsg(data,false);	
+									getApprovalList();
+								},
+								preHook: function(){
+									api.destroy();
+								}
+							});break;
+						}	
+					}else{
+						alert("Please add comment.");
+					}
+				}
+			});
 			
 			return $content;
 		};
@@ -396,7 +429,7 @@
 				events: {
 					show: function(event, api) {
 						var $content = $("div", api.elements.content);
-						populatePreview($content, evt.data.ruleStatus);
+						populatePreview(api, $content, evt.data.ruleStatus);
 					},
 					hide: function(event, api) {
 						if (refresh) getApprovalList();
