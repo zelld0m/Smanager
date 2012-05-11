@@ -168,18 +168,18 @@
 			
 			<div id="rankingSummary" class="infoTabs marB20">
 			
-				<ul class="posRel top5">
+				<ul class="posRel top5" style="z-index:100">
 					<li><a href="#ruleRanking"><span>Rule Info</span></a></li>
 					<li><a href="#ruleField"><span>Rule Field</span></a></li>
 					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
 					<div class="clearB"></div>
 				</ul>
 								
-				<div id="ruleRanking" class="ruleRanking  marT5">					
-					<ul id="relevancyInfo" class="relevancyInfo">
-						<li class="clearfix"><label class="floatL w150">Start Date:</label><span id="startDate"></span></li>
-						<li class="clearfix"><label class="floatL w150">End Date:</label><span id="endDate"></span></li>
-						<li class="clearfix"><label class="floatL w150">Description:</label><span id="description"></span></li>
+				<div id="ruleRanking" class="ruleRanking">					
+					<ul id="relevancyInfo" class="relevancyInfo border marT18p5" style="z-index:50">
+						<li class="clearfix"><label class="floatL w150 padT8">Start Date:</label><label class="floatL padT8"><span id="startDate" class="padT8"></span></label></li>
+						<li class="clearfix"><label class="floatL w150 padT8">End Date:</label><label class="floatL padT8"><span id="endDate" class="padT8"></span></label></li>
+						<li class="clearfix"><label class="floatL w150 padT8">Description:</label><label class="floatL padT8"><span id="description" class="padT8"></span></label></li>
 					</ul>
 				</div>
 				
