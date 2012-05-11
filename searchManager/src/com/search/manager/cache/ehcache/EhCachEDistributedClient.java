@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
+
 import com.search.manager.cache.utility.CacheResourceUtil;
 import com.search.manager.cache.utility.EHcacHEResourceUtil;
 import com.search.manager.exception.DataConfigException;
@@ -21,6 +23,7 @@ import com.search.manager.exception.DataException;
 
 public class EhCachEDistributedClient implements CacheClientInterface {
 	
+	private static Logger logger = Logger.getLogger(EhCachEDistributedClient.class);
 	public static List<Object> PARAM_MIME_TEXT_PLAIN	= new ArrayList<Object>();
 	public static List<Object> PARAM_MIME_APP_XJAVA_SER	= new ArrayList<Object>();
 	public static List<Object> PARAM_MIME_TEXT_XML		= new ArrayList<Object>();
@@ -43,6 +46,9 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	private static String[] persistentCacheServers      	= null;
 	private static Map<String, String[]> extfodServers 		= null;
 	
+	private static Integer TIMEOUT_READ						= null;
+	private static Integer TIMEOUT_CONN						= null;
+	
 	private EHcacHEResourceUtil eRsrcUtil					= null;
 	private String ehMimeType								= null;
 	private String keyInCache								= null;
@@ -52,18 +58,31 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	private Integer testPrimaryNode							= -999;
 	private String extendedInstance							= "";
 	
-	private String utilClassName							= null;		
-	private static Logger logger = Logger.getLogger(EhCachEDistributedClient.class);
+	private String utilClassName							= null;							
 	
-	public EhCachEDistributedClient(){
-		initializeCacheClient();
+	static {	
+		EHcacHEResourceUtil util = EHcacHEResourceUtil.newInstance();
+		try {
+			TIMEOUT_READ = util.getReadTimeOut();
+		} catch (Exception ex) {
+			TIMEOUT_READ = 0;
+		}
+		try {
+			TIMEOUT_CONN = util.getConnectionTimeout();
+		} catch (Exception ex) {
+			TIMEOUT_CONN = 0;
+		}
+	}
+	
+	private EhCachEDistributedClient() {
+		this.initializeCacheClient();
 	}
 	
 	public void initialize() {
 		totalNumberOfCacheServers=-1;
 		initializeCacheClient(); 
 	}
-	public void initializeCacheClient() {
+	private void initializeCacheClient() {
 		this.utilClassName = this.getClass().getSimpleName();		
 		eRsrcUtil = EHcacHEResourceUtil.newInstance();
 		this.initializeCacheClientParams();
@@ -359,7 +378,7 @@ public class EhCachEDistributedClient implements CacheClientInterface {
                 			runs++;
                 			break;
                 	}
-                	while (idx <=  runs) {
+                	while (idx <=  runs) { 	        	
         		        this.keyInCache = key;
         		        StringBuilder server = new StringBuilder(this.nominateCacheServer(key, idx - 1));
         		        server.append(key);
@@ -413,7 +432,6 @@ public class EhCachEDistributedClient implements CacheClientInterface {
         		        		connection.disconnect();
         		        	} catch (Exception npex) {}
         		        }
-        		       
         		        switch (hasException) {
         		        	case 1 :
         		        		switch (this.testPrimaryNode) {
@@ -529,6 +547,7 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 		        			break;
 		        	}
 		        	while (returnedByCache == null && idx <=  runs) {
+						// log cache stats
 						int result = -1;
 						int theMimeType = ehMimeType.intValue();
 						this.keyInCache = key;
@@ -560,6 +579,7 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 					           }	
 				        } catch (FileNotFoundException fnfex) {
 				        	logger.info(fnfex.getMessage());
+				        	hasException = 1;
 						} catch (Exception ex) {
 							StringBuilder strMsg = new StringBuilder(" Cache Exception");
 				        	strMsg.append(" | ");
@@ -652,6 +672,8 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 				        		break;
 				        }
 			        }
+			        connection.setConnectTimeout(TIMEOUT_CONN);
+			        connection.setReadTimeout(TIMEOUT_READ);
 			        connection.setRequestMethod(operation);
 			        connection.connect();
 	        	} else
@@ -685,12 +707,11 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	    	        		StringBuilder strMsg = new StringBuilder(" Cache Exception");
 	    		        	strMsg.append(" | ");
 	    		        	strMsg.append("All Cache Servers DOWN!!!");
-	    		        	logger.info(strMsg);
+	    		        	logger.info(strMsg);   	
 	    	        	} else  {
 	    	        		StringBuilder strMsg = new StringBuilder(" Cache Exception");
 	    		        	strMsg.append(" | ").append(serverURL);
 	    		        	logger.info(strMsg);
-	    	        		
 	    		        	int serverStatus = cacheServerStatus[scanIndex];
 	    		        	if (serverStatus == 1) {
 	    		        		switch (this.isPersistentCache()) {
@@ -897,10 +918,13 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	 * <P>This will reset the status of all the CACHE Nodes to ACTIVE = 1.</P>
 	 */
 	public void resetAllNodeStatus() {
-		cacheServers = null;
-		cacheServerStatus = null;
-		persistentCacheServers = null;
-		this.InitializeCacheServers();
+		for (int i = 1; i <= totalNumberOfCacheServers; i++) {
+			try {
+				cacheServerStatus[i - 1] = 1;
+			} catch (Exception ex) {
+				logger.info(ex.getMessage());
+			}
+		}
 	}
 	
 	/**
@@ -944,19 +968,31 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 		
 		int size = CacheResourceUtil.getCacheExemptions();
 		for (int i = 1; i <= size; i++) {
-		  try {
-        String item = CacheResourceUtil.getExemptedItem(i);
-        if (key.indexOf(item) >=0 ) {
-          result = 1;
-          break;
-        } else
-          result = 0;
-      } catch (Exception ex) {
-    	  logger.info(ex.getMessage());
-        result = 0;
-      }
+			try {
+				String item = CacheResourceUtil.getExemptedItem(i);
+				if (key.indexOf(item) >=0 ) {
+					result = 1;
+					break;
+				} else
+					result = 0;
+			} catch (Exception ex) {
+				logger.info(ex.getMessage());
+				result = 0;
+			}
 		}
 		
 		return result;
+	}
+	
+	public String getServerStatus() {
+		StringBuilder status = new StringBuilder("");
+		
+		status.append("cacheServersDown=").append(String.valueOf(cacheServersDown)).append(";");
+		for (int i = 1; i <= this.getNumberOfServers(); i++) {
+			status.append(String.valueOf(cacheServerStatus[i - 1])).append("(").append(String.valueOf(i)).append(")");
+			status.append("=").append(this.getServerURL(i)).append(";");
+		}
+		
+		return status.toString();
 	}
 }

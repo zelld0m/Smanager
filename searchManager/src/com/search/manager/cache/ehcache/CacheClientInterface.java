@@ -95,4 +95,5 @@ public interface CacheClientInterface {
 	 * @return the server URL
 	 */
 	public abstract String getServerURL(Integer node);
+	public abstract String getServerStatus();
 }

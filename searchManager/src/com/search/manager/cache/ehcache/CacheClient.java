@@ -198,4 +198,8 @@ public class CacheClient {
 	public String getServerURL(Integer node) {
 		return this.client.getServerURL(node);
 	}
+	
+	public String getServerStatus() {
+		return this.client.getServerStatus();
+	}
 }
