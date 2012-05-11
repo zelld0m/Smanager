@@ -407,6 +407,10 @@ public class AuditInterceptor {
 		RuleStatus ruleStatus = (RuleStatus)jp.getArgs()[0];
 		auditTrail.setStoreId(UtilityService.getStoreName());
 		auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+		//TODO get keywords for query cleaning/ranking rule?
+		if (RuleEntity.ELEVATE.getCode() == ruleStatus.getRuleTypeId()) {
+			auditTrail.setKeyword(ruleStatus.getRuleRefId());
+		}
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Added reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
