@@ -57,7 +57,7 @@ public interface DaoService {
 	public int deleteRedirectKeyword(RedirectRule rule) throws DaoException;
 	public int addRedirectCondition(RedirectRule rule) throws DaoException;
 	public int deleteRedirectCondition(RedirectRule rule) throws DaoException;	
-	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria) throws DaoException;
+	public RecordSet<StoreKeyword> getRedirectKeywords(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType, ExactMatch keywordExactMatch) throws DaoException;
 	public RecordSet<RedirectRuleCondition> getRedirectConditions(SearchCriteria<RedirectRule> criteria) throws DaoException;
 	public RecordSet<RedirectRule> getRedirectForKeywords(SearchCriteria<StoreKeyword> criteria) throws DaoException;
 	public RecordSet<RedirectRule> searchRedirectRule(SearchCriteria<RedirectRule> criteria, MatchType redirectMatchType) throws DaoException;

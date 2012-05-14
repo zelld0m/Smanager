@@ -19,6 +19,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 
@@ -205,7 +206,7 @@ public class RedirectService {
 			rule.setStoreId(UtilityService.getStoreName());
 			rule.setSearchTerm(keyword);
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  page, itemsPerPage);
-			RecordSet<StoreKeyword> storeKeyword = daoService.getRedirectKeywords(criteria);
+			RecordSet<StoreKeyword> storeKeyword = daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR);
 			List<Keyword> list = new ArrayList<Keyword>();
 			if (storeKeyword.getTotalSize() > 0) {
 				for (StoreKeyword sk: storeKeyword.getList()) {
@@ -245,7 +246,7 @@ public class RedirectService {
 			rule.setRuleId(ruleId);
 			rule.setStoreId(UtilityService.getStoreName());
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  null, null);
-			return daoService.getRedirectKeywords(criteria).getTotalSize();
+			return daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR).getTotalSize();
 		} catch (DaoException e) {
 			logger.error("Failed during getTotalKeywordInRule()", e);
 		}
