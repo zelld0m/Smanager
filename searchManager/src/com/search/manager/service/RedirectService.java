@@ -213,7 +213,7 @@ public class RedirectService {
 					list.add(sk.getKeyword());
 				}
 			}
-			return new RecordSet<Keyword>(list, list.size());
+			return new RecordSet<Keyword>(list, storeKeyword.getTotalSize());
 		} catch (DaoException e) {
 			logger.error("Failed during getAllKeywordInRule()",e);
 		}

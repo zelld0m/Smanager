@@ -477,7 +477,7 @@ public class RedirectRuleDAO {
 		        	}
 		        }
 	        }
-	        return new RecordSet<StoreKeyword>(list, list.size());
+	        return new RecordSet<StoreKeyword>(list, ruleSet.getTotalSize());
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRedirectrule()", e);
 		}
@@ -504,7 +504,7 @@ public class RedirectRuleDAO {
 		        	list.add(new RedirectRuleCondition(rule.getCondition()));
 		        }
 	        }
-	        return new RecordSet<RedirectRuleCondition>(list, list.size());
+	        return new RecordSet<RedirectRuleCondition>(list, ruleSet.getTotalSize());
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRedirectrule()", e);
 		}
