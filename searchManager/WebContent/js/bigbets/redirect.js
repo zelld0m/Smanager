@@ -445,9 +445,6 @@
 		isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
 		isDirty = isDirty || (description.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
 
-		// Required field
-		isDirty = isDirty && $.isNotBlank(ruleName);
-
 		return isDirty;
 	};
 
@@ -458,48 +455,55 @@
 		var description = $.trim($('div#redirect textarea[id="description"]').val());  
 
 		if (checkIfUpdateAllowed()){
-			RedirectServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
-				callback: function(data){
-					if (data==true){
-						alert("Another query cleaning rule is already using the name provided.");
-					}else{
-						var response = 0;
-						RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
-							callback: function(data){
-								response = data;
-								showActionResponse(response, "update", ruleName);
-							},
-							preHook: function(){
-								prepareRedirect();
-							},
-							postHook: function(){
-								if(response==1){
-									RedirectServiceJS.getRule(selectedRule.ruleId,{
-										callback: function(data){
-											setRedirect(data);
-										},
-										preHook: function(){
-											prepareRedirect();
-										}
-									});
-								}
-								else{
-									setRedirect(selectedRule);
-								}
-
-							}
-						});
-					}
-				}
-			});
-		}else{
-
 			if ($.isBlank(ruleName)){
-				showMessage("#name", "Rule name is required");
-				$("#name").val(selectedRule.ruleName);
+				alert("Rule name is required.");
+			}
+			else if (!isAllowedName(ruleName)){
+				alert("Rule name contains invalid value.");
+			}
+			else if (!isAscii(description)) {
+				alert("Description contains non-ASCII characters.");										
+			}
+			else if (!isXSSSafe(description)){
+				alert("Description contains XSS.");
+			}
+			else {
+				RedirectServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
+					callback: function(data){
+						if (data==true){
+							alert("Another query cleaning rule is already using the name provided.");
+						}else{
+							var response = 0;
+							RedirectServiceJS.updateRule(selectedRule.ruleId, ruleName, description, {
+								callback: function(data){
+									response = data;
+									showActionResponse(response, "update", ruleName);
+								},
+								preHook: function(){
+									prepareRedirect();
+								},
+								postHook: function(){
+									if(response==1){
+										RedirectServiceJS.getRule(selectedRule.ruleId,{
+											callback: function(data){
+												setRedirect(data);
+											},
+											preHook: function(){
+												prepareRedirect();
+											}
+										});
+									}
+									else{
+										setRedirect(selectedRule);
+									}
+
+								}
+							});
+						}
+					}
+				});
 			}
 		}
-
 	};
 
 	var deleteRule = function(e) { 
