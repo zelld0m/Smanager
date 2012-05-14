@@ -45,6 +45,7 @@ public class UserAuthenticationProvider implements UserDetailsService {
 			xmlConfig.setExpressionEngine(new XPathExpressionEngine());
 			xmlConfig.load("/home/solr/conf/user.xml");
 			xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+			reloadUsers();
 			xmlConfig.addConfigurationListener(new ConfigurationListener() {
 				@Override
 				public void configurationChanged(ConfigurationEvent event) {
@@ -52,7 +53,7 @@ public class UserAuthenticationProvider implements UserDetailsService {
 						reloadUsers();
 					}
 				}
-			});
+			});			
 		} catch (Exception e) {
 			logger.error("Failed to load users", e);
 		}
