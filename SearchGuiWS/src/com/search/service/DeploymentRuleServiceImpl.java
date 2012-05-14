@@ -20,6 +20,8 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.ExactMatch;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
@@ -854,7 +856,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					rule.setRuleId(key);
 					rule.setStoreId(store);
 					SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  0, 0);
-					for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria).getList()) {
+					for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR).getList()) {
 						sks.add(keyword);
 					}
 					daoService.deleteRedirectRule(delRel); // prod
@@ -889,7 +891,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					rule.setRuleId(key);
 					rule.setStoreId(store);
 					SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  0, 0);
-					for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria).getList()) {
+					for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR).getList()) {
 						sks.add(keyword);
 					}
 					daoService.deleteRedirectRule(delRel); // prod
