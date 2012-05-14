@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.event.ConfigurationEvent;
+import org.apache.commons.configuration.event.ConfigurationListener;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.schema.SolrSchemaUtility;
+
 @Service("userDetailsService")
 public class UserAuthenticationProvider implements UserDetailsService {
 
@@ -23,23 +31,52 @@ public class UserAuthenticationProvider implements UserDetailsService {
 
 	private Map<String, UserDetails> userMap = new HashMap<String, UserDetails>();
 
+	private XMLConfiguration xmlConfig = new XMLConfiguration();
+	
 	public UserAuthenticationProvider() {
 		super();
 		initUserAccess();
 	}
 
 	private void initUserAccess() {
-		userMap.put("admin", new UserDetailsImpl(getAuthorities(1), "21232f297a57a5a743894a0e4a801fc3", "admin", "Admin User", true, true, true, true));
-		userMap.put("user", new UserDetailsImpl(getAuthorities(2), "ee11cbb19052e40b07aac0ca060c23ee", "user", "Regular User", true, true, true, true));
-		userMap.put("ChrisS", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "ChrisS", "Chris", true, true, true, true));
-		userMap.put("DanD", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "DanD", "Dan", true, true, true, true));
-		userMap.put("MattClark", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "MattClark", "MattClark", true, true, true, true));
-		userMap.put("BongR", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "BongR", "Bong", true, true, true, true));
-		userMap.put("MarixT", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "MarixT", "Marix Trivino", true, true, true, true));
-		userMap.put("QAuser1", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "QAuser1", "QA Test User 1", true, true, true, true));
-		userMap.put("QAuser2", new UserDetailsImpl(getAuthorities(2), "5f4dcc3b5aa765d61d8327deb882cf99", "QAuser2", "QA Test User 2", true, true, true, true));
+		try {
+			// user config
+			xmlConfig.setDelimiterParsingDisabled(true);
+			xmlConfig.setExpressionEngine(new XPathExpressionEngine());
+			xmlConfig.load("/home/solr/conf/user.xml");
+			xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+			xmlConfig.addConfigurationListener(new ConfigurationListener() {
+				@Override
+				public void configurationChanged(ConfigurationEvent event) {
+					if (!event.isBeforeUpdate()) {
+						reloadUsers();
+					}
+				}
+			});
+		} catch (Exception e) {
+			logger.error("Failed to load users", e);
+		}
 	}
 
+	private void reloadUsers() {
+		synchronized (UserAuthenticationProvider.class) {
+			Map<String, UserDetails> tmpMap = new HashMap<String, UserDetails>();
+	    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/user"));
+	    	for (HierarchicalConfiguration hc: hcList) {
+	    		tmpMap.put(hc.getString("userName"), new UserDetailsImpl(
+    					getAuthorities(hc.getInt("role")),
+    					hc.getString("password"),
+    					hc.getString("userName"),
+    					hc.getString("fullName"),
+    					hc.getBoolean("accountNonExpired"),
+    					hc.getBoolean("accountNonLocked"),
+    					hc.getBoolean("credentialsNonExpired"),
+    					hc.getBoolean("enabled")));
+	    	}
+	    	userMap = tmpMap;
+		}
+	}
+	
 	/**
 	 * Returns a populated {@link UserDetails} object. 
 	 * The username is first retrieved from the database and then mapped to 
@@ -48,7 +85,9 @@ public class UserAuthenticationProvider implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
 		logger.info("UserAuthenticationProvider.loadUserByUsername");
-
+		// check if need to reload
+		xmlConfig.configurationsAt("/user");
+		
 		if (userMap.containsKey(username)) return userMap.get(username);
 
 		return new UserDetailsImpl();
