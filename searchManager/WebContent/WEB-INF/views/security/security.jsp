@@ -67,13 +67,15 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<div class="w460 padT10 padL10 floatL faNarrow fsize20 fnormal breakWord">User List for Administrator</div>
-       	<div class="floatL w245 txtAR padT7">   	
-       		<div class="w175 searchBoxHolder floatL">
-       			<input type="text" name="query" id="query" class="farial fsize12 fgray w99p">
-       		</div>   		
-			<a href="javascript:void(0)" id="searchbutton"><img src="<spring:url value="/js/ajaxsolr/images/btn_GO.png" />"  align="absmiddle"></a> 
-		</div>		
+		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText">User list for</span>
+		<span id="titleHeader" class="fLblue fnormal">Administrator</span>
+	  </div>
+	 <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
+       	<div class="floatL w245 txtAR padT7">   		
+			<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+		</div>
+	</div>		
 	</div>
 	<div class="clearB"></div>
 	<div style="width:95%" class="marT20 mar0">
@@ -106,11 +108,11 @@
     		<c:forEach var="i" begin="1" end="10" step="1">
     		<tr>
     			<td class="txtAC"><a href="#"><img src="<spring:url value="/images/icon_del.png" />"></a></td>
-    			<td>mpedcp</td>
+    			<td><a href="/">mpedcp</a></td>
     			<td class="txtAC">Enabled</td>
     			<td class="txtAC">Yes</td>
     			<td class="txtAC">11/${i}/2011 12:30:00</td>
-    			<td class="txtAC"><a href="#">6 days ago</a></td>
+    			<td class="txtAC">6 days ago</td>
     		</tr>
     		</c:forEach>
     	
