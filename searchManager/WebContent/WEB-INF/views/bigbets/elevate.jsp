@@ -222,7 +222,7 @@
 		<div class="listbeta">
         			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
         	</div>
-        	<div class="txtAR w65 floatL fgray fsize10 padT5">
+        	<div class="txtAR w65 floatL fgray padT5 endingTxt" >
         		<span id="sItemValidityText" class="fDblue"></span>
 			</div>
 		<div class="clearB"></div>
