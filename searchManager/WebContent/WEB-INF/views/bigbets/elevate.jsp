@@ -222,9 +222,9 @@
 		<div class="listbeta">
         			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
         	</div>
-        	<div class="txtAR w65 floatL fgray fsize11 padT5">
+        	<div class="txtAR w65 floatL fgray fsize10 padT5">
         		<span id="sItemValidityText" class="fDblue"></span>
-		</div>
+			</div>
 		<div class="clearB"></div>
         	<p class="fgray padT5 fsize11">
         		<img src="<spring:url value="/images/user_red.png" />" class="marBn4 marR3">
