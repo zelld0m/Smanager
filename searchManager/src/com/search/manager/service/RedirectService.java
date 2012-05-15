@@ -221,11 +221,6 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<Keyword> getAllKeywordInRule(String ruleId) {
-		return getAllKeywordInRule(ruleId, "", 0, 0);
-	}
-
-	@RemoteMethod
 	public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page,int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();

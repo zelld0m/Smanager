@@ -736,8 +736,10 @@ ul.dropdown ul li 					{ font-weight: normal; float:left; text-shadow:none; padd
 ul.dropdown ul li a					{ color:#222222;  }
 
 
-.cssReset .searchBoxHolder					{ background:url(images/icon-search.png) right center no-repeat #fff !important; border-top:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; border-left:1px solid #9c9c9c; padding-right:25px; padding-bottom:1px; padding-top:1px  }
-.cssReset .searchBoxHolder input[type=text]	{ border:0 !important; }
+.cssReset .searchBoxHolder, 
+.searchBoxHolder					{ background:url(images/icon-search.png) right center no-repeat #fff !important; border-top:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; border-left:1px solid #9c9c9c; padding-right:25px; padding-bottom:1px; padding-top:1px  }
+.cssReset .searchBoxHolder input[type=text],
+.searchBoxHolder input[type=text]	{ border:0 !important; }
 
 
 

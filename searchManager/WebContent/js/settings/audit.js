@@ -20,7 +20,13 @@
 		endDate = $.trim($("#endDate").val());
 		
 		if (!$.isBlank(keyword) && !isAllowedName(keyword)) {
-			alert("Keyword is an invalid value");
+			alert("Keyword is an invalid value!");
+			return;
+		} else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
+			alert("Please provide a valid date range!");
+			return;
+		} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
+			alert("End date cannot be earlier than start date!");
 			return;
 		}
 		AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
@@ -149,11 +155,11 @@
 		});
 
 		$("#resetBtn").click(function() {
-			$("#userList").val("option:first");
-			$("#actionList").val("option:first");
-			$("#typeList").val("option:first");
+			$("#userList option:first").attr("selected","selected");
+			$("#actionList option:first").attr("selected","selected");
+			$("#typeList option:first").attr("selected","selected");
 			$("#keyword").val("");
-			$("#refList").val("option:first");
+			$("#refList option:first").attr("selected","selected");
 			$("#startDate").val("");
 			$("#endDate").val("");
 		});

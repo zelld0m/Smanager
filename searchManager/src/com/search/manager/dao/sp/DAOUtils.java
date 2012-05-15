@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -129,15 +130,15 @@ public class DAOUtils {
 		return list;
 	}
 	
-	@SuppressWarnings("unchecked")
 	/**
 	 * Returns the first matching record if present; otherwise, null;
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> T getItem(Map<String,Object> result) {
 		T item = null;
         if (result != null) {
         	List<T> list = (List<T>)result.get(DAOConstants.RESULT_SET_1);
-        	if (!list.isEmpty()) {
+        	if (CollectionUtils.isNotEmpty(list)) {
             	item = list.get(0);
         	}
         }
