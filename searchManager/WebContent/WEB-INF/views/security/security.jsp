@@ -20,10 +20,8 @@
 			<ul class="listRole fsize12 marT10">
 				<li><a href="">Administrator</a></li>
 				<li class="alt"><a href="">Encoder</a></li>
-				<li><a href="">Developer</a></li>
-				<li class="alt"><a href="">Lorem ipsum</a></li>
-				<li><a href="">Dolor sit amet</a></li>
-				<li class="alt"><a href="">Lorem dolor amet</a></li>
+				<li><a href="">Approver</a></li>
+				<li class="alt"><a href="">Publisher</a></li>
 			</ul>
     	</div> 
 
@@ -102,8 +100,8 @@
     			<th width="35%">Username</th>
     			<th width="10%">Status</th>
     			<th width="10%">Expired</th>
-    			<th width="15%">Date Started</th>
-    			<th width="17%">Action</th>
+    			<th width="15%">Member Since</th>
+    			<th width="17%">Last Access</th>
     		</tr>
     		<c:forEach var="i" begin="1" end="10" step="1">
     		<tr>
@@ -112,7 +110,7 @@
     			<td class="txtAC">Enabled</td>
     			<td class="txtAC">Yes</td>
     			<td class="txtAC">11/${i}/2011 12:30:00</td>
-    			<td class="txtAC"><a href="#">Reset Password</a></td>
+    			<td class="txtAC"><a href="#">6 days ago</a></td>
     		</tr>
     		</c:forEach>
     	
