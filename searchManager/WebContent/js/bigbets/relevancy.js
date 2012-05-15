@@ -852,6 +852,8 @@
 							}
 							else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 								alert("Please provide a valid date range.");
+							} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
+								alert("End date cannot be earlier than start date!");
 							}
 							else {
 								RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
@@ -916,7 +918,9 @@
 				showMessage("textarea#description", "Description contains XSS.");
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-				alert("Please provide a valid date range.");
+				alert("Please provide a valid date range!");
+			} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
+				alert("End date cannot be earlier than start date!");
 			}
 			else {
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
@@ -1182,6 +1186,8 @@
 									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
+									} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
+											alert("End date cannot be earlier than start date!");
 									}
 									else {
 										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
