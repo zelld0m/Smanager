@@ -149,11 +149,11 @@
 		});
 
 		$("#resetBtn").click(function() {
-			$("#userList").val("option:first");
-			$("#actionList").val("option:first");
-			$("#typeList").val("option:first");
+			$("#userList option:first").attr("selected","selected");
+			$("#actionList option:first").attr("selected","selected");
+			$("#typeList option:first").attr("selected","selected");
 			$("#keyword").val("");
-			$("#refList").val("option:first");
+			$("#refList option:first").attr("selected","selected");
 			$("#startDate").val("");
 			$("#endDate").val("");
 		});

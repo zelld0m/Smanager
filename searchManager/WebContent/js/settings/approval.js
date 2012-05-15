@@ -310,7 +310,7 @@
 					}
 				});
 
-				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
 					callback: function(data){
 						var list = data.list;
 
@@ -360,7 +360,7 @@
 					}
 				});
 
-				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], {
+				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
 					callback: function(data){
 						var list = data.list;
 
