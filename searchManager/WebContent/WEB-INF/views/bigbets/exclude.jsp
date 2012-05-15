@@ -205,11 +205,11 @@
 			         		<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 						</div>
 			         	<div class="clearB"></div>
-			         	<div class="txtAR w65 floatL fgray padT5 endingTxt">
+			         	<div class="txtAR w65 floatR fgray padT5 endingTxt">
 			         		<span id="sItemValidityText" class="fDblue"></span>
 						</div>
 									        
-						<div class="listbeta padT5 marL3">
+						<div class="listbeta">
 			         			Valid Until<input id="sItemExpDate" type="text" class="txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
 			         	</div>
 			         	<div class="txtAR w65 floatL fgray padT5 endingTxt">
