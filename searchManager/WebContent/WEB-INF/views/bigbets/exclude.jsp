@@ -205,7 +205,7 @@
 			         		<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 						</div>
 			         	<div class="clearB"></div>
-			         	<div class="txtAR w60 floatR fgray fsize11 padT5">
+			         	<div class="txtAR w65 floatL fgray padT5 endingTxt">
 			         		<span id="sItemValidityText" class="fDblue"></span>
 						</div>
 									        
