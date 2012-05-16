@@ -51,9 +51,14 @@
 						for (var i = 0, l = objectedItems.length; i < l; i++) {
 							var facet = objectedItems[i].facet;
 							var count = objectedItems[i].count;
-							AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
-							if (i == l-1 && $.isNotBlank(self.manager.store.values('q')))
-								AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+							
+							if ($.isNotBlank(facet)){
+								AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
+								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
+									AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+								}
+							}
+						
 						}
 					}	
 				}
