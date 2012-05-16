@@ -26,6 +26,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/TextWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/FilterResultByTypeWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
@@ -44,28 +45,8 @@
     <div id="searchWithin" class="leftContainer"></div>
 	<div id="dynamicSelection"></div>
 	<div id="dynamicFacets"></div>
-	
-	<div class="clearB"></div>
-   	<div id="sideHeader" class="sideHeader posRel">
-   		<img src="../images/corner_tl.png" class="curveTL"/>
-   		<img src="../images/corner_tr.png" class="curveTR"/>
-		Type
-		<img src="../images/corner_bl.png" class="curveBL"/>
-		<img src="../images/corner_br.png" class="curveBR"/>
-   	</div>
-    <div class="clearB floatL w230 padL5 fsize12 marT8">
-	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Remove Product Descriptions</label>
-	 	<div class="clearB"></div>
-	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Show Products Available for Shipping <a href="/">(Shipping Definition)</a></label>
-	 	<div class="clearB"></div>
-	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Include Product ImagesInclude Product Images</label>
-	 	<div class="clearB"></div>
-	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Include License Products</label>
-	 	<div class="clearB"></div>
-	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Show Only License Products</label>
-	 </div>
-	
-    </div>
+	<div id="filterByType"></div>
+	</div>
 	<!-- End Left Side -->
 	
     <!-- Start Right Side -->	  

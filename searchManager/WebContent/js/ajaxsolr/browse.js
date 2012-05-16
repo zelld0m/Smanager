@@ -72,6 +72,12 @@ var Manager;
 							target: '#dynamicFacets',
 							limit: 5
 						}));
+						
+						Manager.addWidget(new AjaxSolr.FilterResultByTypeWidget({
+							id: 'filterByType',
+							target: '#filterByType',
+							headerText: 'Type'
+						}));
 
 						Manager.init();
 
