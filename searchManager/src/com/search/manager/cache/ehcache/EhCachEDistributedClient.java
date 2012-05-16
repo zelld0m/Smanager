@@ -412,13 +412,13 @@ public class EhCachEDistributedClient implements CacheClientInterface {
         		        	strMsg.append(" | ");
         		        	strMsg.append(server).append(" | ");
         		        	strMsg.append(npex.getMessage());
-        		        	logger.info(strMsg);
+        		        	logger.error(strMsg,npex);
         		        	hasException = 1;
         		        } catch (Exception ex) {
         		        	StringBuilder strMsg = new StringBuilder(" Cache Exception");
         		        	strMsg.append(" | ");
         		        	strMsg.append(server);
-        		        	logger.info(strMsg);
+        		        	logger.error(strMsg,ex);
         		        	hasException = 1;
         		        } finally {
         		        	try {
@@ -578,13 +578,13 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 					          		break;
 					           }	
 				        } catch (FileNotFoundException fnfex) {
-				        	logger.info(fnfex.getMessage());
-				        	hasException = 1;
+				        	logger.info("Not found in cache: " + fnfex.getMessage());
+				        	//hasException = 1;
 						} catch (Exception ex) {
 							StringBuilder strMsg = new StringBuilder(" Cache Exception");
 				        	strMsg.append(" | ");
 				        	strMsg.append(server);
-				        	logger.info(strMsg);
+				        	logger.error(strMsg, ex);
 				        	hasException = 1;
 						} finally {
 							try {
