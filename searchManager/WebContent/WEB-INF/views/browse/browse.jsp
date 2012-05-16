@@ -45,6 +45,7 @@
     <div id="searchWithin" class="leftContainer"></div>
 	<div id="dynamicSelection"></div>
 	<div id="dynamicFacets"></div>
+	<div class="clearB"></div>
 	<div id="filterByType"></div>
 	</div>
 	<!-- End Left Side -->
