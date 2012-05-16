@@ -84,6 +84,9 @@
 						}
 					});
 
+					if (selectedItems.length == 0) {
+						return "";
+					}
 					return "(" + selectedItems.join(" ") + ")";
 				};
 
@@ -226,7 +229,9 @@
 
 										contentHolder.find('#continueBtn').click(function(e){
 											self.manager.store.removeByValue('fq', new RegExp('^-?' + facetField + ':'));
-											self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));
+											if ($.isNotBlank(getFacetSelected())) {
+												self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));												
+											}
 											self.manager.store.addByValue('relevancyId', $("select#relevancy").val());
 											self.manager.doRequest(0);
 										});
