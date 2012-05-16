@@ -741,6 +741,9 @@ ul.dropdown ul li a					{ color:#222222;  }
 .cssReset .searchBoxHolder input[type=text],
 .searchBoxHolder input[type=text]	{ border:0 !important; }
 
+html.gecko .endingTxt							{ font-size:11px }
+.ie .endingTxt						{ font-size:10px }
+
 
 
 
