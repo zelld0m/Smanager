@@ -78,4 +78,6 @@
 	<bean id="transactionManager3" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" scope="singleton" >
 		<constructor-arg ref="dataSource_solr" />
 	</bean>
+	
+	<import resource="file:/home/solr/conf/cron-app.xml"/>
 </beans>
