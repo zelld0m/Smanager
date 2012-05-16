@@ -9,38 +9,56 @@
 	<div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
 
 	<div class="clearB floatL w240">
-    	<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">Role</div>
+    	<div id="sideHeader" class="sideHeader posRel">
+    		<img src="../images/corner_tl.png" class="curveTL"/>
+    		<img src="../images/corner_tr.png" class="curveTR"/>
+			Role
+			<img src="../images/corner_bl.png" class="curveBL"/>
+			<img src="../images/corner_br.png" class="curveBR"/>
+    	</div>
         <div class="clearB floatL w230 padL5">
 			<ul class="listRole fsize12 marT10">
 				<li><a href="">Administrator</a></li>
 				<li class="alt"><a href="">Encoder</a></li>
-				<li><a href="">Developer</a></li>
-				<li class="alt"><a href="">Lorem ipsum</a></li>
-				<li><a href="">Dolor sit amet</a></li>
-				<li class="alt"><a href="">Lorem dolor amet</a></li>
+				<li><a href="">Approver</a></li>
+				<li class="alt"><a href="">Publisher</a></li>
 			</ul>
     	</div> 
 
     	<div class="clearB"></div>
-    	<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">Site Updates</div>
-        <div class="clearB floatL w230 padL5">
-			<ul class="listSU fsize11 marT10">
-				<li><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li class="alt"><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li class="alt"><p class="notification"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li class="alt"><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li><p class="alert"><strong>lorem 2 items</strong> Etiam dui justo, consect<br>
-				<a href="#">20 minutes ago</a></p></li>
-				<li class="textAR"><a href="#">see all updates  &raquo;</a></li>
-			</ul>
+    	<div id="sideHeader" class="sideHeader posRel">
+    		<img src="../images/corner_tl.png" class="curveTL"/>
+    		<img src="../images/corner_tr.png" class="curveTR"/>
+			Refine Search
+			<img src="../images/corner_bl.png" class="curveBL"/>
+			<img src="../images/corner_br.png" class="curveBR"/>
+    	</div>
+        <div class="clearB floatL w230 padL5 padT10 fsize12">
+        	<div class="w200 searchBoxHolder floatL">
+       			<input type="text" name="query" id="" class="farial fsize12 fgray w99p">
+       		</div>
+       		<div class="clearB"></div>     		
+       		<label class="marT10 floatL w100p">Member</label> 
+       		<label class="marT3 floatL w100p"><input type="text" class="w90"> <input type="text" class="w90"></label>
+       		<label class="marT8 floatL w100p">Status</label> 
+       		<label class="marT3 floatL w100p">
+				<select class="w99p mar0">
+					<option>sample</option>
+					<option>sample 1</option>
+				</select>
+			</label>
+			<label class="marT8 floatL w100p">Expired</label> 
+			<label class="marT3 floatL w100p">
+				<select class="w99p mar0">
+					<option>sample</option>
+					<option>sample 1</option>
+				</select>
+			</label>
+			<div class="clearB"></div>
+			<div align="right" class="txtAR marT10 padT5"> 	        		
+	        	<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Filter</div></a>
+	        </div>
+			
     	</div> 
 	</div>
 </div>
@@ -49,17 +67,19 @@
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
-		<div class="w460 padT10 padL10 floatL faNarrow fsize20 fnormal breakWord">Security</div>
-       	<div class="floatL w245 txtAR padT7">   	
-       		<div class="w175 searchBoxHolder floatL">
-       			<input type="text" name="query" id="query" class="farial fsize12 fgray w99p">
-       		</div>   		
-			<a href="javascript:void(0)" id="searchbutton"><img src="<spring:url value="/js/ajaxsolr/images/btn_GO.png" />"  align="absmiddle"></a> 
-		</div>		
+		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText">User list for</span>
+		<span id="titleHeader" class="fLblue fnormal">Administrator</span>
+	  </div>
+	 <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
+       	<div class="floatL w245 txtAR padT7">   		
+			<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+		</div>
+	</div>		
 	</div>
 	<div class="clearB"></div>
 	<div style="width:95%" class="marT20 mar0">
-    <h2 class="fsize16 fDblue fnormal txtAL borderB"> Administrator <a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>  <div class="floatR" style="margin-left:6px"><a href="#" class="buttons btnLGray clearfix"><div class="buttons fontBold">Modify Permission</div></a></div>  <div class="clearB"></div> </h2>
+   <div class="clearB"></div>
     <!--Pagination-->
       <div class="mar0">
         <div class="clearB floatL farial fsize12 fDblue w300 padT10 marL10">Displaying 1 to 25 of 26901 Products</div>
@@ -80,17 +100,19 @@
     		<tr>
     			<th width="7%"></th>
     			<th width="35%">Username</th>
-    			<th class="hl" width="15%">Status</th>
-    			<th width="20%">Date Started</th>
-    			<th width="17%">Action</th>
+    			<th width="10%">Status</th>
+    			<th width="10%">Expired</th>
+    			<th width="15%">Member Since</th>
+    			<th width="17%">Last Access</th>
     		</tr>
     		<c:forEach var="i" begin="1" end="10" step="1">
     		<tr>
     			<td class="txtAC"><a href="#"><img src="<spring:url value="/images/icon_del.png" />"></a></td>
-    			<td>mpedcp</td>
-    			<td class="txtAC hl">Enabled</td>
+    			<td><a href="/">mpedcp</a></td>
+    			<td class="txtAC">Enabled</td>
+    			<td class="txtAC">Yes</td>
     			<td class="txtAC">11/${i}/2011 12:30:00</td>
-    			<td class="txtAC"><a href="#">Reset Password</a></td>
+    			<td class="txtAC">6 days ago</td>
     		</tr>
     		</c:forEach>
     	

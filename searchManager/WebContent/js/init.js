@@ -7,13 +7,13 @@ dwr.engine.setTextHtmlHandler(function() {
 dwr.engine.setErrorHandler(function(msg, exc) {
 	var errMessage = "Error Message: " + msg;
 	var errInfo = "Error Details: " + dwr.util.toDescriptiveString(exc, 3);
-	alert(errMessage + '\n' + errInfo);
+	//alert(errMessage + '\n' + errInfo);
 });
 
 dwr.engine.setWarningHandler(function(msg, wrn) {
 	var wrnMessage = "Warning Message: " + msg;
 	var wrnInfo = "Warning Details: " + dwr.util.toDescriptiveString(wrn, 3);
-	alert(wrnMessage + '\n' + wrnInfo);
+	//alert(wrnMessage + '\n' + wrnInfo);
 });
 
 resetInputFields = function(selector){
