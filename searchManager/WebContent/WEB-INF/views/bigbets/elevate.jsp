@@ -208,7 +208,7 @@
         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 
         	<div class="borderT clearB"></div> 
-        	<div class="bigbetsShade" style="padding:5px">
+        	<div class="bigbetsShade" style="padding:5px; min-height: 80px">
         	<strong>Elevate Info:</strong>
         	<div class="txtAR w60 floatR  fgray fsize11">
         		<img class="commentIcon pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
