@@ -44,24 +44,26 @@
     <div id="searchWithin" class="leftContainer"></div>
 	<div id="dynamicSelection"></div>
 	<div id="dynamicFacets"></div>
-	&nbsp; 
 	
-	 <!-- div class="clearB floatL w240">
-        <div class="sideHeader">Keyword Trends</div>
-        
-        <div class="sideBar">
-	        <ul>
-	        	<li>
-	        		<div class="textArea"> Keyword 1</div>
-	        		<div class="graphArea txtAL"> <img src="<spring:url value="/images/sampleGraph.jpg" />"></div>
-	        	</li>
-				<li>
-	        		<div class="textArea"> Keyword 2</div>
-	        		<div class="graphArea txtAL"> <img src="<spring:url value="/images/sampleGraph.jpg" />"></div>
-	        	</li>
-	        </ul>
-        </div>
-     </div  -->
+	<div class="clearB"></div>
+   	<div id="sideHeader" class="sideHeader posRel">
+   		<img src="../images/corner_tl.png" class="curveTL"/>
+   		<img src="../images/corner_tr.png" class="curveTR"/>
+		Type
+		<img src="../images/corner_bl.png" class="curveBL"/>
+		<img src="../images/corner_br.png" class="curveBR"/>
+   	</div>
+    <div class="clearB floatL w230 padL5 fsize12 marT8">
+	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Remove Product Descriptions</label>
+	 	<div class="clearB"></div>
+	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Show Products Available for Shipping <a href="/">(Shipping Definition)</a></label>
+	 	<div class="clearB"></div>
+	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Include Product ImagesInclude Product Images</label>
+	 	<div class="clearB"></div>
+	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Include License Products</label>
+	 	<div class="clearB"></div>
+	 	<label class="floatL w30 list"><input type="checkbox"></label> <label class="floatL w170 list padT3">Show Only License Products</label>
+	 </div>
 	
     </div>
 	<!-- End Left Side -->

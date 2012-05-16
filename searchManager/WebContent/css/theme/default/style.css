@@ -428,6 +428,9 @@ ul.topmenu li.submenu:hover ul li:hover { }
 .listItemInfo li.label			{ float:left; padding:0; width:65px; color:#696969; text-align:left}
 .listItemInfo li.value			{ float:left; padding:0; width:60px; text-align:left }
 
+label.list 						{ margin-top:5px; padding:2px 0 }
+
+
 .listProd li					{ text-align:left }
 
 .toggleDiv						{ border:2px solid #3e3e3e }
