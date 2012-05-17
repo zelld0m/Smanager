@@ -784,11 +784,13 @@
 
 		//fields comparison, save if not equal
 		for (var field in selectedRule.parameters){
-			var currentValue = selectedRule.parameters[field];
-			var newValue = $('div[id="' + field + '"] input[type="text"]').val();
+			if(field!=="q.alt"){
+				var currentValue = selectedRule.parameters[field];
+				var newValue = $('div[id="' + field + '"] input[type="text"]').val();
 
-			if ($.trim(currentValue)!=$.trim(newValue)){
-				relevancyFields[field] = $.trim(newValue);
+				if ($.trim(currentValue)!=$.trim(newValue)){
+					relevancyFields[field] = $.trim(newValue);
+				}
 			}
 		}
 
