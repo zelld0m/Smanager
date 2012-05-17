@@ -242,7 +242,7 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				auditTrail.setDetails(String.format("Adding Keyword[%1$s] to Store[%2$s].",
-						auditTrail.getReferenceId(), sk.getKeywordId(), sk.getStoreId()));
+						auditTrail.getReferenceId(), sk.getStoreId()));
 				break;
 			default:
 				return;
