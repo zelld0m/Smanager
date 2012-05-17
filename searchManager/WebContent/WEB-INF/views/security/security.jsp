@@ -139,6 +139,35 @@
       <div id="sortablePagingBottom" class="w550 floatL txtAL"></div>
       <!--Pagination--> 	
 	</div>
+
+	<div class="clearB"></div>
+	
+	<div id="userInfoTemplate" style="display:none">
+		<div class="w300 security fsize11">
+			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/noAvatar.jpg" />" class="border"></div>
+			<div class="w200 floatL">
+			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold">lorem ipsum dolor</label><div class="clearB"></div>
+			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold">lorem ipsum</label>
+			      </div>
+			      <div class="clearB"></div>
+			      <div class="marB10">
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL">dolor sit</label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL">dignissim sit amet tellus</label><div class="clearB"></div>
+			            <div class="clearB marT5"></div>
+			            <label class="floatL w80 marL10"> </label><label><input type="checkbox"> Locked</label>
+			            <label><input type="checkbox"> Expired</label>
+			     </div>
+			                        
+			      <div class="borderT">
+			            <h2 class="padT5"> Change Password </h2>
+			            <label class="floatL" style="width:150px"><input type="text"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
+			            <div class="clearB"></div>
+			      </div>
+			      
+			      <div class="alert">keep blank to auto generate password</div>
+		</div>      
+	</div>
+	
 	<div class="clearB"></div> 
 </div>   
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
