@@ -135,7 +135,7 @@
 		//Add Cart Price
 		secObj.find("div #cartPriceHolder").append('$' + doc.CartPrice);
 
-		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', doc.Name, docHandler));
+		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', doc.MacMall_Name, docHandler));
 
 		//Add Audit Button
 		secObj.find("div #auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
@@ -190,13 +190,13 @@
 	AjaxSolr.theme.prototype.snippet = function (doc) {
 		var output = '';
 
-		if (doc.Description.length > 300) {
-			output += doc.Description.substring(0, 300);
-			output += '<span style="display:none;">' + doc.Description.substring(300);
+		if (doc.MacMall_Description.length > 300) {
+			output += doc.MacMall_Description.substring(0, 300);
+			output += '<span style="display:none;">' + doc.MacMall_Description.substring(300);
 			output += '</span><a href="#" class="more">...more</a>';
 		}
 		else {
-			output += doc.Description;
+			output += doc.MacMall_Description;
 		}
 
 		return output;

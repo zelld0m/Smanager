@@ -542,7 +542,7 @@
 							});
 
 							contentHolder.find("#removeBtn").click(function(){
-								ElevateServiceJS.removeElevate(keyword, doc.EDP,{
+								ElevateServiceJS.deleteItemInRule(keyword, doc.EDP,{
 									callback : function(event){
 										contentHolder.find("a#removeBtn").attr("style","display:none");
 										contentHolder.find("#aElevatePosition_"+doc.EDP).val("");
