@@ -192,10 +192,10 @@ public class SecurityService {
 	}
 	
 	@RemoteMethod
-	public JSONObject deleteUser(String type, String userId){
+	public JSONObject deleteUser(String type, String userId, String username){
 		JSONObject json = new JSONObject();
 		json.put("status", RESPONSE_STATUS_OK);
-		json.put("message", userId+" was deleted successfully");
+		json.put("message", username+" was deleted successfully");
 		return json;	
 	}
 	

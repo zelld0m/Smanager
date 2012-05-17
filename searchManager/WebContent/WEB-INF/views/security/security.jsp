@@ -139,7 +139,6 @@
       <div id="sortablePagingBottom" class="w550 floatL txtAL"></div>
       <!--Pagination--> 	
 	</div>
-	<div class="clearB"></div>
-	
+	<div class="clearB"></div> 
 </div>   
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

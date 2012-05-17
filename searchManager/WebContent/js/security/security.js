@@ -138,7 +138,7 @@
 							var content = '';
 							$('.conTr').remove();
 							for(var i=0; i<list.length; i++){
-								content += '<tr class="conTr"><td class="txtAC"><a href="javascript:sec.delUser(\''+list[i].type+'\',\''+list[i].id+'\');"><img src="../images/icon_del.png"></a></td><td>'+list[i].username+'</td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+' days ago</td></tr>';
+								content += '<tr class="conTr"><td class="txtAC"><a href="javascript:sec.delUser(\''+list[i].type+'\',\''+list[i].id+'\',\''+list[i].username+'\');"><img src="../images/icon_del.png"></a></td><td>'+list[i].username+'</td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+' days ago</td></tr>';
 							}	
 							$('.conTable').append(content);
 							sec.showPaging(pg,id,name,data.totalSize);
@@ -166,13 +166,13 @@
 				sec.getRoleList();
 				sec.getRole('');
 			},
-			delUser : function(type,id){
+			delUser : function(type,id,name){
 		        if (confirm("Are you sure you want to delete this user ?")){                  
-		          	SecurityServiceJS.deleteUser(type,id,{
+		          	SecurityServiceJS.deleteUser(type,id,name,{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
-								sec.getUserList(id,null,null,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);			
+								sec.getUserList(sec.curid,sec.curname,1,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 							}else{
 								alert(data.message);
 							}
