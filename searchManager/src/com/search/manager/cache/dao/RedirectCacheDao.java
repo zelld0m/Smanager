@@ -55,7 +55,7 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 		} catch (Exception e) {
 			logger.error("Failed to get redirect database object for " + storeKeyword, e);
 		}
-		return null;
+		return new CacheModel<RedirectRule>();
 	}
 
 	public CacheModel<RedirectRule> getDatabaseObject(String ruleId) throws DaoException {
