@@ -17,40 +17,19 @@
 	<div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
 
 	<div class="clearB floatL w240">
-    	<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
-	</div>
-</div>
-<!--End Left Side-->
+    	<div id="sideHeader" class="sideHeader posRel">
+    		<img src="../images/corner_tl.png" class="curveTL"/>
+    		<img src="../images/corner_tr.png" class="curveTR"/>
+			Search Refinement
+			<img src="../images/corner_bl.png" class="curveBL"/>
+			<img src="../images/corner_br.png" class="curveBR"/>
+    	</div>
 
-<!-- add contents here -->
-<div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
-		<h1 class="padT7 padL15 faNarrow fsize20 fnormal breakWord">
-			Audit Trail
-		</h1>
-	</div>
-	<div class="clearB"></div>
-	<div style="width:95%" class="marT20 mar0">
-    
-    <!--  info -->
+    	<!--  info -->
     <div class="info fsize12 clearfix">
     	<label class="txtLabel">Keyword:</label>
     	<label class="details marR15"><input type="text" class="w200" id="keyword" /></label>
-    	<label class="txtLabel">Date Range:</label>
-    	<label>
-	    	<input type="text" class="w70 floatL marL3" id="startDate"/>
-	    </label>
-	    <label>
-	    	<input type="text" class="w70 floatL marL5" id="endDate"/>
-	    </label>
-    	<div class="clearB"></div>
-    	
-    	<label class="txtLabel">User Name:</label>
-    	<label class="details marR15">
-	    	<select class="w205" id="userList">
-	    		<option value="">-- Select Name --</option>
-	    	</select>
-    	</label>
+
     	<label class="txtLabel">Type:</label>
     	<label class="details">
 	    	<select class="w205" id="typeList">
@@ -70,14 +49,51 @@
 	    		<option value="">-- Select Action --</option>
 	    	</select>
     	</label>
+    	
+    	<label class="txtLabel">User Name:</label>
+    	<label class="details marR15">
+	    	<select class="w205" id="userList">
+	    		<option value="">-- Select Name --</option>
+	    	</select>
+    	</label>
+    	
+    	<label class="txtLabel">Date Range:</label>
     	<div class="clearB"></div>
-		<div align="right" class="padR5">
+    	<label>
+	    	<input type="text" class="w70 floatL marL3" id="startDate"/>
+	    </label>
+	    <label>
+	    	<input type="text" class="w70 floatL marL5" id="endDate"/>
+	    </label>
+    	<div class="clearB"></div>
+
+    	<div class="clearB"></div>
+		<div align="right" class="padR5 marT10">
 		    <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="goBtn">&nbsp;&nbsp;Go&nbsp;&nbsp;</div></a>
 			<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="resetBtn">Reset</div></a>
 		</div>
     </div>
     <!--  end info -->
-         
+	</div>
+	
+	
+	
+	
+	
+	
+</div>
+<!--End Left Side-->
+
+<!-- add contents here -->
+<div class="floatL w730 marL10 marT27">
+	<div class="floatL w730 titlePlacer">
+		<h1 class="padT7 padL15 faNarrow fsize20 fnormal breakWord">
+			Audit Trail
+		</h1>
+	</div>
+	<div class="clearB"></div>
+	<div style="width:95%" class="marT20 mar0">
+    
         	
       <!-- Pagination-->     
       <div class="floatR padT10">
