@@ -168,6 +168,35 @@
 		</div>      
 	</div>
 	
+	<div id="addUserInfoTemplate" style="display:none">
+		<div class="w300 security fsize11">
+			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/uploadImage.jpg" />" class="border"></div>
+			<div class="w200 floatL">
+			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text"></label><div class="clearB"></div>
+			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text"></label>
+			      </div>
+			      <div class="clearB"></div>
+			      <div class="marB10">
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL"><input type="text" class="w200"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL"><input type="text" class="w200"></label><div class="clearB"></div>
+			            <div class="clearB marT5"></div>
+			            <label class="floatL w80 marL10"> </label><label><input type="checkbox">Locked</label>
+			            <label><input type="checkbox"> Expired</label>
+			     </div>
+			                        
+			      <div class="borderT">
+			            <h2 class="padT5"> Set Password </h2>
+			            <label class="floatL" style="width:150px"><input type="text"></label> <label class="floatL marT0 padT5"><input type="checkbox"> auto generate keyowrd </label>
+			            <div class="clearB"></div>
+			      </div>
+			      
+			      <div class="txtAR">
+			      		<div class="marT4"><a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Add</div></a>
+			      		<a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
+			      </div>
+		</div>      
+	</div>
+	
 	<div class="clearB"></div> 
 </div>   
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
