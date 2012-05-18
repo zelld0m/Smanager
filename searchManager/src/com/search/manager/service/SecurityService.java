@@ -108,6 +108,8 @@ public class SecurityService {
 					user.setRoleId("Role0");
 					user.setExpired("No");
 					user.setLastAccess("1");
+					user.setFullname("Fullname User"+i);
+					user.setIp("IP User"+i);
 					
 					if(show(user, search, member, status, expired))
 						userList.add(user);
@@ -126,6 +128,8 @@ public class SecurityService {
 					user.setRoleId("Role1");
 					user.setExpired("Yes");
 					user.setLastAccess("2");
+					user.setFullname("Fullname User"+i);
+					user.setIp("IP User"+i);
 					
 					if(show(user, search, member, status, expired))
 						userList.add(user);
@@ -144,6 +148,8 @@ public class SecurityService {
 					user.setRoleId("Role2");
 					user.setExpired("No");
 					user.setLastAccess("3");
+					user.setFullname("Fullname User"+i);
+					user.setIp("IP User"+i);
 					
 					if(show(user, search, member, status, expired))
 						userList.add(user);
@@ -162,6 +168,8 @@ public class SecurityService {
 					user.setRoleId("Role3");
 					user.setExpired("No");
 					user.setLastAccess("4");
+					user.setFullname("Fullname User"+i);
+					user.setIp("IP User"+i);
 					
 					if(show(user, search, member, status, expired))
 						userList.add(user);
@@ -180,6 +188,8 @@ public class SecurityService {
 					user.setRoleId("Role4");
 					user.setExpired("Yes");
 					user.setLastAccess("5");
+					user.setFullname("Fullname User"+i);
+					user.setIp("IP User"+i);
 					
 					if(show(user, search, member, status, expired))
 						userList.add(user);
@@ -199,13 +209,26 @@ public class SecurityService {
 		return json;	
 	}
 	
+	@RemoteMethod
+	public JSONObject resetPassword(String roleId, String userId, String username, String lock, String expired, String password){
+		JSONObject json = new JSONObject();
+		json.put("status", RESPONSE_STATUS_OK);
+		json.put("message", username+" password was changed successfully");
+		return json;	
+	}
+	
+	@RemoteMethod
+	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String lastAccess, String ip, String password, String locked, String expire){
+		JSONObject json = new JSONObject();
+		json.put("status", RESPONSE_STATUS_OK);
+		json.put("message", username+" was added successfully.");
+		return json;	
+	}
+
 	/*
 	 * todo
 	 * 
-	 * add addUser method
-	 * add resetPassword method
 	 * add updateUser method
-	 * add pagination
 	 * 
 	 */
 	

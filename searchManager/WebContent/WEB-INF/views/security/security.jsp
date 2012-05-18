@@ -73,9 +73,9 @@
 		<!--<span id="titleText">User list for</span>
 		<span id="titleHeader" class="fLblue fnormal">Administrator</span>-->
 	  </div>
-	 <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
-       	<div class="floatL w245 txtAR padT7">   		
-			<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+	 <div id="addItemHolder" class="floatL w180 txtAR padT7">
+       	<div class="floatL w185 txtAR padT4">   		
+			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
 		</div>
 	</div>		
 	</div>
@@ -146,21 +146,21 @@
 		<div class="w300 security fsize11">
 			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/noAvatar.jpg" />" class="border"></div>
 			<div class="w200 floatL">
-			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold">lorem ipsum dolor</label><div class="clearB"></div>
-			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold">lorem ipsum</label>
+			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold shuser"></label><div class="clearB"></div>
+			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold shfname"></label>
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL">dolor sit</label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL">dignissim sit amet tellus</label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss">dolor sit</label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship">dignissim sit amet tellus</label><div class="clearB"></div>
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10"> </label><label><input type="checkbox"> Locked</label>
-			            <label><input type="checkbox"> Expired</label>
+			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
+			            <label><input type="checkbox" id="shexp"> Expired</label>
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Change Password </h2>
-			            <label class="floatL" style="width:150px"><input type="text"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
+			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
 			            <div class="clearB"></div>
 			      </div>
 			      
@@ -170,29 +170,29 @@
 	
 	<div id="addUserInfoTemplate" style="display:none">
 		<div class="w300 security fsize11">
-			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/uploadImage.jpg" />" class="border"></div>
+			<div class="w80 floatL txtAC"><img src="../images/uploadImage.jpg" /></div>
 			<div class="w200 floatL">
-			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text"></label><div class="clearB"></div>
-			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text"></label>
+			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text" id="aduser"></label><div class="clearB"></div>
+			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text" id="adfull"></label>
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL"><input type="text" class="w200"></label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL"><input type="text" class="w200"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL"><input type="text" class="w200" id="adaccs"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL"><input type="text" class="w200" id="adip"></label><div class="clearB"></div>
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10"> </label><label><input type="checkbox">Locked</label>
-			            <label><input type="checkbox"> Expired</label>
+			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck">Locked</label>
+			            <label><input type="checkbox" id="adexp"> Expired</label>
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
-			            <label class="floatL" style="width:150px"><input type="text"></label> <label class="floatL marT0 padT5"><input type="checkbox"> auto generate keyowrd </label>
+			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
 			            <div class="clearB"></div>
 			      </div>
 			      
 			      <div class="txtAR">
-			      		<div class="marT4"><a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Add</div></a>
-			      		<a id="applyBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
+			      		<div class="marT4"><a id="adaddBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Add</div></a>
+			      		<a id="adclrBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
 			      </div>
 		</div>      
 	</div>

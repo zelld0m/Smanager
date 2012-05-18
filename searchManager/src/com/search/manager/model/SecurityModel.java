@@ -20,6 +20,8 @@ public class SecurityModel implements Serializable{
 	private String roleId;
 	private String expired;
 	private String lastAccess;
+	private String fullname;
+	private String ip;
 	
 	public String getId() {
 		return id;
@@ -80,5 +82,17 @@ public class SecurityModel implements Serializable{
 	}
 	public void setExpired(String expired) {
 		this.expired = expired;
+	}
+	public String getFullname() {
+		return fullname;
+	}
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+	public String getIp() {
+		return ip;
+	}
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 }
