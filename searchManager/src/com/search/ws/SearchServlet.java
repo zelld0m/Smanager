@@ -195,6 +195,17 @@ public class SearchServlet extends HttpServlet {
 			
 			// grab the keyword
 			String keyword = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+			if (StringUtils.isNotBlank(keyword)) {
+				// TODO: workaround for search compare
+				if (keyword.startsWith("DPNo:")) {
+					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+				}
+				nvp = new BasicNameValuePair("fq", keyword);
+				if (addNameValuePairToMap(paramMap, "fq", nvp)) {
+					nameValuePairs.add(nvp);
+				}
+				keyword = "";
+			}
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 
 			StoreKeyword sk = new StoreKeyword(storeName, keyword);
