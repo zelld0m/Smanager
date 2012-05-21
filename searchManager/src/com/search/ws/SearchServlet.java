@@ -148,7 +148,6 @@ public class SearchServlet extends HttpServlet {
 			// get the server name, solr path, core name and do mapping for the store name to use for the search
 			Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
 			String requestPath = "http:/" + request.getPathInfo();
-			logger.debug("Request path: " + requestPath);
 
 			if (StringUtils.isEmpty(requestPath)) {
 				response.sendError(400, "Invalid request");
@@ -160,6 +159,9 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 
+			// TODO: workaround for spellchecker
+			requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");			
+			
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
@@ -177,6 +179,13 @@ public class SearchServlet extends HttpServlet {
 			Set<String> paramNames = request.getParameterMap().keySet();
 
 			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
+			
+			// TODO: workaround for spellchecker
+			nvp = new BasicNameValuePair("echoParams", "explicit");
+			if (addNameValuePairToMap(paramMap, "echoParams", nvp)) {
+				nameValuePairs.add(nvp);
+			}
+
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					nvp = new BasicNameValuePair(paramName, paramValue);
@@ -199,12 +208,12 @@ public class SearchServlet extends HttpServlet {
 				// TODO: workaround for search compare
 				if (keyword.startsWith("DPNo:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+					nvp = new BasicNameValuePair("fq", keyword);
+					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
+						nameValuePairs.add(nvp);
+					}
+					keyword = "";
 				}
-				nvp = new BasicNameValuePair("fq", keyword);
-				if (addNameValuePairToMap(paramMap, "fq", nvp)) {
-					nameValuePairs.add(nvp);
-				}
-				keyword = "";
 			}
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 
