@@ -10,15 +10,15 @@
 	<property name="searchGuiWS" value="../SearchGuiWS"/>
 	<property name="dependencies" value="${basedir}"/>
 	
-	<property name="tomcat.manager.dev" value="http://vtorguischstg01.pcmall.com:8080/manager"/>
+	<property name="tomcat.manager.dev" value="http://10.241.2.206:8080/manager"/>
 	<property name="tomcat.username.dev" value="admin"/>
 	<property name="tomcat.password.dev" value="qwerty"/>
 	<property name="warname.searchManager.dev" value="searchManager"/>
-	<property name="war.dir.searchManager.dev" value="${dependencies}/searchmanager/war"/>
+	<property name="war.dir.searchManager.dev" value="/home/solr/bin/deployment/war/new"/>
 	<property name="warname.searchws.dev" value="searchguiws"/>
-	<property name="war.dir.searchws.dev" value="${dependencies}/ws/war"/>
+	<property name="war.dir.searchws.dev" value="/home/solr/bin/deployment/war/new"/>
 	
-	<property name="search.server.dev" value="vtorguischstg01.pcmall.com"/>
+	<property name="search.server.dev" value="10.241.2.206"/>
 	<property name="search.username.dev" value="solr"/>
 	<property name="search.password.dev" value="maestros@search_mall"/>
 		
@@ -193,10 +193,10 @@
 	</target>
 	
 	<target name="deploy-dev">
-				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/searchmanager" password="${search.password.dev}" trust="true">
+				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/war/new" password="${search.password.dev}" trust="true">
 					 <fileset dir="${dependencies}/searchmanager"/>
 				</scp>
-				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/webservice" password="${search.password.dev}" trust="true">
+				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/war/new" password="${search.password.dev}" trust="true">
 					<fileset dir="${dependencies}/ws"/>
 				</scp>
 				<ant target="deploy-searchManager-dev" />
