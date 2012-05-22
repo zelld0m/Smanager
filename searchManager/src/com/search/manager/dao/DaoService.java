@@ -12,6 +12,7 @@ import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.Group;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -26,6 +27,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.User;
 
 public interface DaoService {
 	
@@ -184,10 +186,20 @@ public interface DaoService {
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
 	
-    /* Rule Status */
+    /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
 	public int addComment(Comment comment) throws DaoException;
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;
 	
+    /* User */
+    public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria) throws DaoException;
+    public User getUsers(String username) throws DaoException;
+	public int addUser(User user) throws DaoException;
+	public int updateUser(User user) throws DaoException;
+	public int removeUser(String username) throws DaoException;
+
+	public List<String> getGroups() throws DaoException;
+	public List<String> getAllPermissions() throws DaoException;
+	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException;
 }

@@ -129,7 +129,7 @@
 		<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
 		<init-param>
 			<param-name>debug</param-name>
-			<param-value>false</param-value>
+			<param-value>true</param-value>
 		</init-param>
 		<init-param>
 			<param-name>classes</param-name>
@@ -151,6 +151,7 @@
 				com.search.manager.service.StoreKeywordService,
 				com.search.manager.service.UtilityService,
 				com.search.manager.service.DeploymentService,
+				com.search.manager.service.UserMgmtService,
 				com.search.manager.service.SecurityService,
 				com.search.manager.model.AuditTrail,
 				com.search.manager.model.Store,
@@ -173,6 +174,8 @@
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.model.SecurityModel,
 				com.search.manager.model.RoleModel,
+				com.search.manager.model.User,
+				com.search.manager.model.Group,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,
 				com.search.manager.schema.model.GenericType,

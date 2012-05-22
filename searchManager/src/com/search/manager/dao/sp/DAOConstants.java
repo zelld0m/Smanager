@@ -110,6 +110,13 @@ public class DAOConstants {
 	//CATEGORY
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
 	
+	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
+	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
+	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
+	public static final String SP_DELETE_USERS						= "usp_Delete_Manager_User";
+
+	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
+
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
 	public static final String PARAM_KEYWORD_ID						= "keyword_id";
@@ -174,7 +181,27 @@ public class DAOConstants {
 	public static final String PARAM_DESCRIPTION 					= "description";
 	public static final String PARAM_RULE_NAME_LIKE					= "rule_name_like";
 	public static final String PARAM_SEARCH_TERM_LIKE	 	 		= "search_term_like";
+
+	public static final String PARAM_SALUTATION			 	 		= "salutation";
+	public static final String PARAM_FULL_NAME			 	 		= "full_name";
+	public static final String PARAM_FIRST_NAME			 	 		= "first_name";
+	public static final String PARAM_MIDDLE_NAME			 	 	= "middle_name";
+	public static final String PARAM_LAST_NAME			 	 		= "last_name";
+	public static final String PARAM_PERSONAL_TITLE			 	 	= "personal_title";
+	public static final String PARAM_PASSWORD_HINT			 	 	= "password_hint";
+	public static final String PARAM_CURRENT_PASSWORD	 	 		= "current_password";
+	public static final String PARAM_EMAIL				 	 		= "email";
+	public static final String PARAM_ACCT_NON_LOCKED	 	 		= "acct_non_locked";
+	public static final String PARAM_REQUIRE_PASSWORD_CHANGE 		= "require_password_change";
+	public static final String PARAM_LAST_ACCESS_DATE	 	 		= "last_access_date";
+	public static final String PARAM_IP					 	 		= "internet_protocol";
+	public static final String PARAM_ACTIVE_USER		 	 		= "active_user";
+	public static final String PARAM_SUCCESSIVE_FAILED_LOGINS 		= "successive_failed_logins";
+	public static final String PARAM_HAS_LOGGED_OUT			 		= "has_logged_out";
 	
+	public static final String PARAM_GROUP_ID			 	 		= "group_id";
+	public static final String PARAM_PERMISSION_ID		 			= "permission_id";
+
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
 	public static final String COLUMN_PROD_KEYWORD_ID   			= "prod_keyword_id";
@@ -234,6 +261,17 @@ public class DAOConstants {
 	public static final String COLUMN_CREATED_STAMP					= "created_stamp";
 	public static final String COLUMN_LAST_UPDATED_STAMP			= "last_updated_stamp";
 
+	public static final String COLUMN_GROUP_ID				 		= "group_id";
+	public static final String COLUMN_PERMISSION_ID		 			= "permission_id";
+	
+	public static final String COLUMN_FULL_NAME			 	 		= "full_name";
+	public static final String COLUMN_CURRENT_PASSWORD	 	 		= "current_password";
+	public static final String COLUMN_EMAIL				 	 		= "email";
+	public static final String COLUMN_ACCT_NON_LOCKED	 	 		= "acct_non_locked";
+	public static final String COLUMN_CRED_NON_EXPIRED	 	 		= "require_password_change";
+	public static final String COLUMN_LAST_ACCESS_DATE	 	 		= "last_access_date";
+	public static final String COLUMN_IP				 	 		= "internet_protocol";
+	
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
 	
