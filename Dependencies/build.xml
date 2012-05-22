@@ -194,10 +194,10 @@
 	
 	<target name="deploy-dev">
 				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/war/new" password="${search.password.dev}" trust="true">
-					 <fileset dir="${dependencies}/searchmanager"/>
+					 <fileset dir="${dependencies}/searchmanager/war"/>
 				</scp>
 				<scp todir="${search.username.dev}@${search.server.dev}:/home/solr/bin/deployment/war/new" password="${search.password.dev}" trust="true">
-					<fileset dir="${dependencies}/ws"/>
+					<fileset dir="${dependencies}/ws/war"/>
 				</scp>
 				<ant target="deploy-searchManager-dev" />
 				<ant target="deploy-searchws-dev" />	
