@@ -14,9 +14,9 @@
 	<property name="tomcat.username.dev" value="admin"/>
 	<property name="tomcat.password.dev" value="qwerty"/>
 	<property name="warname.searchManager.dev" value="searchManager"/>
-	<property name="war.dir.searchManager.dev" value="/home/solr/bin/deployment/war/new"/>
+	<property name="war.dir.searchManager.dev" value="${dependencies}/searchmanager/war"/>
 	<property name="warname.searchws.dev" value="searchguiws"/>
-	<property name="war.dir.searchws.dev" value="/home/solr/bin/deployment/war/new"/>
+	<property name="war.dir.searchws.dev" value="${dependencies}/ws/war"/>
 	
 	<property name="search.server.dev" value="10.241.2.206"/>
 	<property name="search.username.dev" value="solr"/>
