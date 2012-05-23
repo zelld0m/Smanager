@@ -195,12 +195,19 @@ public class DAOConstants {
 	public static final String PARAM_REQUIRE_PASSWORD_CHANGE 		= "require_password_change";
 	public static final String PARAM_LAST_ACCESS_DATE	 	 		= "last_access_date";
 	public static final String PARAM_IP					 	 		= "internet_protocol";
-	public static final String PARAM_ACTIVE_USER		 	 		= "active_user";
+	public static final String PARAM_ACTIVE_USER		 	 		= "Active_User";
 	public static final String PARAM_SUCCESSIVE_FAILED_LOGINS 		= "successive_failed_logins";
 	public static final String PARAM_HAS_LOGGED_OUT			 		= "has_logged_out";
+	public static final String PARAM_THRU_DATE				 		= "thru_date";
+	public static final String PARAM_USER_NAMELIKE					= "User_NameLike";
+	public static final String PARAM_USER_LOCKED					= "User_Locked";
+	public static final String PARAM_START_DATE2 					= "StartDate";
+	public static final String PARAM_END_DATE2 						= "EndDate";
+	public static final String PARAM_START_ROW2 					= "StartRow";
+	public static final String PARAM_END_ROW2 						= "EndRow";
 	
 	public static final String PARAM_GROUP_ID			 	 		= "group_id";
-	public static final String PARAM_PERMISSION_ID		 			= "permission_id";
+	public static final String PARAM_PERMISSION_ID		 			= "Permission_ID";
 
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
@@ -271,6 +278,7 @@ public class DAOConstants {
 	public static final String COLUMN_CRED_NON_EXPIRED	 	 		= "require_password_change";
 	public static final String COLUMN_LAST_ACCESS_DATE	 	 		= "last_access_date";
 	public static final String COLUMN_IP				 	 		= "internet_protocol";
+	public static final String COLUMN_THRU_DATE			 	 		= "thru_date";
 	
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

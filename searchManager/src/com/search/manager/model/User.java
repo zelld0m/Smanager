@@ -6,12 +6,15 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.utility.DateAndTimeUtils;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class User implements Serializable {
 	
 private static final long serialVersionUID = 1L;
 	
 	private String username;
+	private String usernameLike;
 	private String fullName;
 	private String password;
 	private String email;
@@ -24,13 +27,14 @@ private static final long serialVersionUID = 1L;
 	private String lastModifiedBy;
 	private Date createdDate;
 	private Date lastModifiedDate;
+	private Date thruDate;
 
 	public User() {
 	}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
 			boolean credentialsNonExpired, Date lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			Date createdDate, Date lastModifiedDate) {
+			Date createdDate, Date lastModifiedDate, Date thruDate) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -45,6 +49,7 @@ private static final long serialVersionUID = 1L;
 		this.lastModifiedBy = lastModifiedBy;
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
+		this.thruDate = thruDate;
 	}
 
 	public String getUsername() {
@@ -88,11 +93,15 @@ private static final long serialVersionUID = 1L;
 	}
 
 	public boolean isAccountNonExpired() {
-		return accountNonLocked;
+		return DateAndTimeUtils.compare(new Date(), thruDate) < 0;
 	}
 
 	public void setAccountNonExpired(boolean accountNonExpired) {
-		this.accountNonLocked = accountNonExpired;
+		if (accountNonExpired) {
+			this.thruDate = DateAndTimeUtils.addYearToDate(2);
+		} else {
+			this.thruDate = DateAndTimeUtils.getDateYesterday();
+		}
 	}
 
 	public boolean isAccountNonLocked() {
@@ -165,6 +174,22 @@ private static final long serialVersionUID = 1L;
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Date getThruDate() {
+		return thruDate;
+	}
+
+	public void setThruDate(Date thruDate) {
+		this.thruDate = thruDate;
+	}
+
+	public String getUsernameLike() {
+		return usernameLike;
+	}
+
+	public void setUsernameLike(String usernameLike) {
+		this.usernameLike = usernameLike;
 	}
 
 }

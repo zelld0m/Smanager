@@ -8,6 +8,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.search.manager.model.User;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -49,6 +50,16 @@ public class UserDetailsImpl implements UserDetails {
 		this.enabled = enabled;
 	}
 	
+	public UserDetailsImpl(User user) {
+		this.password = user.getPassword();
+		this.username = user.getUsername();
+		this.fullName = user.getFullName();
+		this.accountNonExpired = user.isAccountNonExpired();
+		this.accountNonLocked = user.isAccountNonLocked();
+		this.credentialsNonExpired = user.isCredentialsNonExpired();
+		this.enabled = user.isEnabled();
+	}
+
 	public Collection<GrantedAuthority> getAuthorities() {
 		return authorities;
 	}

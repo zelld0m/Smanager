@@ -47,11 +47,15 @@ public class UsersDAO {
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAME, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAMELIKE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EMAIL, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_USER, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_LOCKED, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.DATE));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.DATE));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW2, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW2, Types.INTEGER));
 		}
 
 		@Override
@@ -71,7 +75,8 @@ public class UsersDAO {
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
-	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP),
+	                		rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE));
 	        	}
 
 	        }));
@@ -84,11 +89,15 @@ public class UsersDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_USER_NAME, user.getUsername());
+			inputs.put(DAOConstants.PARAM_USER_NAMELIKE, user.getUsernameLike());
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
-			inputs.put(DAOConstants.PARAM_STORE_ID, UtilityService.getStoreName());
+			inputs.put(DAOConstants.PARAM_STORE_ID, null);
 			inputs.put(DAOConstants.PARAM_ACTIVE_USER, null);
-			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
-			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
+			inputs.put(DAOConstants.PARAM_USER_LOCKED, null);
+			inputs.put(DAOConstants.PARAM_START_DATE2, searchCriteria.getStartDate());
+			inputs.put(DAOConstants.PARAM_END_DATE2, searchCriteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
+			inputs.put(DAOConstants.PARAM_END_ROW2, searchCriteria.getEndRow());
 			return DAOUtils.getRecordSet(getUserStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getUser()", e);
@@ -117,6 +126,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
 	}
@@ -139,6 +149,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_STORE, UtilityService.getStoreName());
+			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, UtilityService.getUsername());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));
     	}
@@ -172,6 +183,7 @@ public class UsersDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_IP, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_GROUP_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_THRU_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -197,6 +209,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, null);
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
+			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, UtilityService.getUsername());
 			result = DAOUtils.getUpdateCount(updateUserStoredProcedure.execute(inputs));
     	}

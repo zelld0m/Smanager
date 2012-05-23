@@ -60,7 +60,7 @@ public class UserMgmtService {
 		User result = null;
 		
 		try {
-			result = daoService.getUsers(username);
+			result = daoService.getUser(username);
 		} catch (DaoException e) {
 			logger.error("Failed during getUser()",e);
 		}
