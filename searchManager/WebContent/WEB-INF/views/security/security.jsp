@@ -97,7 +97,7 @@
           </div>
         </div>
       </div> -->
-      <div id="sortablePagingTop" class="floatL txtAL w550"></div>
+      <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
       <!--Pagination-->
     	<table width="100%" class="fsize12 tblAlpha conTable">
     		<tr>
@@ -136,7 +136,7 @@
           </div>
         </div>
       </div>-->
-      <div id="sortablePagingBottom" class="w550 floatL txtAL"></div>
+      <div id="sortablePagingBottom" class="w99p floatL txtAL"></div>
       <!--Pagination--> 	
 	</div>
 
@@ -155,7 +155,7 @@
 			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship">dignissim sit amet tellus</label><div class="clearB"></div>
 			            <div class="clearB marT5"></div>
 			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
-			            <label><input type="checkbox" id="shexp"> Expired</label>
+			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
 			     </div>
 			                        
 			      <div class="borderT">
@@ -170,23 +170,23 @@
 	
 	<div id="addUserInfoTemplate" style="display:none">
 		<div class="w300 security fsize11">
-			<div class="w80 floatL txtAC"><img src="../images/uploadImage.jpg" /></div>
+			<div class="w80 floatL txtAC"><img src="../images/uploadImage.jpg" class="border" /></div>
 			<div class="w200 floatL">
 			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text" id="aduser"></label><div class="clearB"></div>
 			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text" id="adfull"></label>
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL"><input type="text" class="w200" id="adaccs"></label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL"><input type="text" class="w200" id="adip"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL fbold">lorem ipsum</label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL fbold">dolor sit amet</label><div class="clearB"></div>
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck">Locked</label>
-			            <label><input type="checkbox" id="adexp"> Expired</label>
+			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label>
+			            <label class="marL10">Expired <label class="ddate"><input type="text" id="shexp" class="w70"></label></label>
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
-			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
+			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label><label><input type="checkbox" class="posRel top4"> Auto-generate password </label>
 			            <div class="clearB"></div>
 			      </div>
 			      

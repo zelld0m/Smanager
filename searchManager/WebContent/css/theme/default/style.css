@@ -589,6 +589,16 @@ body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padd
 .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .tabs .ui-widget-content label	{ vertical-align: middle; }
 
+/* side tabs */
+.tabside .ui-tabs-nav				{ background: none !important; border:none !important;  list-style: none }
+.tabside .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
+.tabside .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+body .tabside .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padding:15px; }	
+.tabside .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
+.tabside .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.tabside .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.tabside .tabs .ui-widget-content label	{ vertical-align: middle; }
+
 
 /*native tabs */
 .qtip .ui-tabs-nav				{ background: none; border:none !important }
