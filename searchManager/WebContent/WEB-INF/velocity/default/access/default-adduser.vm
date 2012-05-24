@@ -1,0 +1,10 @@
+<html>
+<body>
+<h3>Hi ${fullname}, welcome to ${app-name}</h3>
+
+<div>
+   Your username is ${username}
+</div>
+</body>
+
+</html>

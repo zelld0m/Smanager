@@ -15,7 +15,8 @@ public class AccessNotificationMailService {
 	@Autowired private EmailSender emailSender;
 	@Autowired private SimpleMailMessage mailDetails;
 	
-	private final static String SITE_LINK = "";
+	private final static String APP_NAME = "Search Manager";
+	private final static String APP_LINK = "";
 	
 	public void sendAddUser(User user){
 		SimpleMailMessage messageDetails = mailDetails;
@@ -26,8 +27,10 @@ public class AccessNotificationMailService {
 		messageDetails.setTo(user.getEmail());
 		messageDetails.setSubject(subject);
 		
+		model.put("fullName", user.getFullName());
 		model.put("username", user.getUsername());
-		model.put("sitelink", SITE_LINK);
+		model.put("app-name", APP_NAME);
+		model.put("app-link", APP_LINK);
 		
 		emailSender.send(messageDetails, templateLocation, model);
 	}
@@ -41,22 +44,21 @@ public class AccessNotificationMailService {
 		messageDetails.setTo(user.getEmail());
 		messageDetails.setSubject(subject);
 		
+		model.put("fullName", user.getFullName());
 		model.put("username", user.getUsername());
-		model.put("sitelink", SITE_LINK);
+		model.put("app-name", APP_NAME);
+		model.put("app-link", APP_LINK);
 		
 		emailSender.send(messageDetails, templateLocation, model);
 	}
 
-	
 	public EmailSender getEmailSender() {
 		return emailSender;
 	}
 
-
 	public void setEmailSender(EmailSender emailSender) {
 		this.emailSender = emailSender;
 	}
-
 
 	public SimpleMailMessage getMailDetails() {
 		return mailDetails;
