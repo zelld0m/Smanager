@@ -26,8 +26,9 @@
 	</bean>
 
 	<!-- Template message that we can pre-load with default state -->
-	<bean id="templateMessage" class="org.springframework.mail.SimpleMailMessage">
+	<bean id="mailDetails" class="org.springframework.mail.SimpleMailMessage">
 		<property name="from" value="${mail.from}"/>
+		<property name="cc" value="${mail.cc}"/>
 		<property name="bcc" value="${mail.bcc}"/>
 	</bean>
 	
