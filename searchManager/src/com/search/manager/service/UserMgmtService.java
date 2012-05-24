@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -84,9 +85,13 @@ public class UserMgmtService {
 	@RemoteMethod
 	public int addUser(User user) {
 		int result = -1;
+		String password = StringUtils.isBlank(user.getPassword())?generatePassword():user.getPassword();
 		try {
-			user.setPassword(getPasswordHash(user.getPassword()));
+			user.setPassword(getPasswordHash(password));
 			result = daoService.addUser(user);
+			if (result == 1) {
+				//send password
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
 		}
@@ -119,6 +124,24 @@ public class UserMgmtService {
 	}
 	
 	@RemoteMethod
+	public int resetPassword(String username) {
+		int result = -1;
+		try {
+			String password = generatePassword();
+			User user = new User();
+			user.setUsername(username);
+			user.setPassword(getPasswordHash(password));
+			result = daoService.updateUser(user);
+			if (result == 1) {
+				//send email
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
 	public List<String> getAllPermissions() throws DaoException {
 		return daoService.getAllPermissions();
 	}
@@ -149,4 +172,7 @@ public class UserMgmtService {
 		return hashedPass;
 	}
 
+	private String generatePassword() {
+		return RandomStringUtils.randomAlphabetic(8);
+	}
 }
