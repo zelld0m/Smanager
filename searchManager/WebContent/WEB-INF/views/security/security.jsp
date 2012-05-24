@@ -153,9 +153,13 @@
 			      <div class="marB10">
 			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss">dolor sit</label><div class="clearB"></div>
 			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship">dignissim sit amet tellus</label><div class="clearB"></div>
-			            <div class="clearB marT5"></div>
+			            <label class="floatL w80 marL10">Email</label><label><input type="text" class="w200"></label>
+			            <div class="clearB marT10"></div>
 			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
 			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
+			            <div class="txtAR marT8">
+			            	<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">save</div></a>
+			            </div>
 			     </div>
 			                        
 			      <div class="borderT">
@@ -177,8 +181,8 @@
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL fbold">lorem ipsum</label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL fbold">dolor sit amet</label><div class="clearB"></div>
+			            <div class="clearB marT5"></div>
+			            <label class="floatL w80 marL10 marB5">Email :</label><label><input type="text" class="w200"></label>
 			            <div class="clearB marT5"></div>
 			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label>
 			            <label class="marL10">Expired <label class="ddate"><input type="text" id="shexp" class="w70"></label></label>
