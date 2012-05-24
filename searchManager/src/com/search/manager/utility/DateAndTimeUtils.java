@@ -61,7 +61,7 @@ public final class DateAndTimeUtils {
 
 	public static Date addYearToDate(int year) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, year);
+		calendar.add(Calendar.YEAR, year);
 		return new Date(calendar.getTimeInMillis());
 	}
 	
