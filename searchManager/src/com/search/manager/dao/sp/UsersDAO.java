@@ -18,6 +18,7 @@ import com.search.manager.model.User;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @Repository(value="usersDAO")
 public class UsersDAO {
@@ -92,8 +93,8 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_USER_NAMELIKE, user.getUsernameLike());
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
 			inputs.put(DAOConstants.PARAM_STORE_ID, null);
-			inputs.put(DAOConstants.PARAM_ACTIVE_USER, null);
-			inputs.put(DAOConstants.PARAM_USER_LOCKED, null);
+			inputs.put(DAOConstants.PARAM_ACTIVE_USER, user.isAccountNonExpired()==null?null:user.isAccountNonExpired()?'Y':'N');
+			inputs.put(DAOConstants.PARAM_USER_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'Y':'N');
 			inputs.put(DAOConstants.PARAM_START_DATE2, searchCriteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE2, searchCriteria.getEndDate());
 			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
@@ -144,12 +145,12 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
 			inputs.put(DAOConstants.PARAM_CURRENT_PASSWORD, user.getPassword());
 			inputs.put(DAOConstants.PARAM_PASSWORD_HINT, null);
-			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, '0');
-			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, '1');
+			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, user.isCredentialsNonExpired()==null || user.isCredentialsNonExpired()?'0':1);
+			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()==null || user.isAccountNonLocked()?'1':'0');
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_STORE, UtilityService.getStoreName());
-			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
+			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null?DateAndTimeUtils.addYearToDate(5):user.getThruDate());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, UtilityService.getUsername());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));
     	}
@@ -203,14 +204,20 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_CURRENT_PASSWORD, user.getPassword());
 			inputs.put(DAOConstants.PARAM_PASSWORD_HINT, null);
 			inputs.put(DAOConstants.PARAM_HAS_LOGGED_OUT, null);
-			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, user.isCredentialsNonExpired()?'0':1);
-			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()?'1':'0');
+			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, user.isCredentialsNonExpired()==null?null:user.isCredentialsNonExpired()?'0':1);
+			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'1':'0');
 			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, user.getLastAccessDate());
-			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, null);
+			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, user.getSuccessiveFailedLogin());
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, UtilityService.getUsername());
+			String modifiedBy = null;
+			try {
+				modifiedBy = UtilityService.getUsername();
+			} catch (NullPointerException npe) {
+				modifiedBy = "SYSTEM";
+			}
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, modifiedBy);
 			result = DAOUtils.getUpdateCount(updateUserStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {

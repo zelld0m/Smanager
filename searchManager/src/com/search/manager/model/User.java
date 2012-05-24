@@ -19,8 +19,8 @@ private static final long serialVersionUID = 1L;
 	private String password;
 	private String email;
 	private String groupId;
-	private boolean accountNonLocked;
-	private boolean credentialsNonExpired;
+	private Boolean accountNonLocked;
+	private Boolean credentialsNonExpired;
 	private Date lastAccessDate;
 	private String ip;
 	private String createdBy;
@@ -28,6 +28,7 @@ private static final long serialVersionUID = 1L;
 	private Date createdDate;
 	private Date lastModifiedDate;
 	private Date thruDate;
+	private Integer successiveFailedLogin;
 
 	public User() {
 	}
@@ -92,11 +93,11 @@ private static final long serialVersionUID = 1L;
 		this.groupId = groupId;
 	}
 
-	public boolean isAccountNonExpired() {
+	public Boolean isAccountNonExpired() {
 		return DateAndTimeUtils.compare(new Date(), thruDate) < 0;
 	}
 
-	public void setAccountNonExpired(boolean accountNonExpired) {
+	public void setAccountNonExpired(Boolean accountNonExpired) {
 		if (accountNonExpired) {
 			this.thruDate = DateAndTimeUtils.addYearToDate(2);
 		} else {
@@ -104,27 +105,27 @@ private static final long serialVersionUID = 1L;
 		}
 	}
 
-	public boolean isAccountNonLocked() {
+	public Boolean isAccountNonLocked() {
 		return accountNonLocked;
 	}
 
-	public void setAccountNonLocked(boolean accountNonLocked) {
+	public void setAccountNonLocked(Boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
 
-	public boolean isCredentialsNonExpired() {
+	public Boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
 
-	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+	public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 
-	public boolean isEnabled() {
+	public Boolean isEnabled() {
 		return accountNonLocked;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(Boolean enabled) {
 		this.accountNonLocked = enabled;
 	}
 
@@ -190,6 +191,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setUsernameLike(String usernameLike) {
 		this.usernameLike = usernameLike;
+	}
+
+	public Integer getSuccessiveFailedLogin() {
+		return successiveFailedLogin;
+	}
+
+	public void setSuccessiveFailedLogin(Integer successiveFailedLogin) {
+		this.successiveFailedLogin = successiveFailedLogin;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -42,12 +43,25 @@ public class UserMgmtService {
 	}
 
 	@RemoteMethod
-	public RecordSet<User> getUsers(String groupId, int page,int itemsPerPage) {
+	public RecordSet<User> getUsers(String groupId, String username, Date memberSince, String expired, String locked, int page,int itemsPerPage) {
 		RecordSet<User> rSet = null;
 		try {
 			User user = new User();
-			user.setGroupId(groupId);
+			user.setGroupId(StringUtils.isBlank(groupId)?null:groupId);
+			user.setUsernameLike(StringUtils.isBlank(username)?null:username);
+			if ("Y".equalsIgnoreCase(expired)) {
+				user.setAccountNonExpired(false);
+			} else if ("N".equalsIgnoreCase(expired)) {
+				user.setAccountNonExpired(true);
+			}
+			if ("Y".equalsIgnoreCase(locked)) {
+				user.setAccountNonLocked(false);
+			} else if ("N".equalsIgnoreCase(locked)) {
+				user.setAccountNonLocked(true);
+			}
 			SearchCriteria<User> searchCriteria =new SearchCriteria<User>(user,null,null,page,itemsPerPage);
+			searchCriteria.setStartDate(memberSince);
+			searchCriteria.setEndDate(memberSince);
 			rSet = daoService.getUsers(searchCriteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getUsers()",e);
