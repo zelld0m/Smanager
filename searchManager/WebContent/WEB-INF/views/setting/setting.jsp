@@ -4,11 +4,6 @@
 <c:set var="submenu" value="setting"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<!--  tabber side -->
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/tabberSide.css" />">
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
-
-
  <!-- Start content tabs -->
 <div class="clearB floatL minW240 sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
@@ -16,55 +11,33 @@
 </div>
 <!--  end left side -->
 <div class="clearB"></div>
+
+
 <!--  start content tab -->
-<div class="tabber mar0" style="margin-top:20px; width:98%">
-        <div class="tabbertab">
-        <h2 class="tabMenu"><span>Home</span></h2>
-
-		Home 1 content
-		</div>
-
-		<div class="tabbertab">
-		    <h2 class="tabMenu"><span>Search</span></h2>
-		    Search 2 content
-		</div>
+<div class="tabSide mar0" style="margin-top:20px; width:98%"> 
+        <div class="tabs">
+        	<ul>
+		        <li><a href="#home"><span>Home</span><span class="fsize11">Home 1 content</span></a></li>
+		        <li><a href="#search"><span>Search</span><span class="fsize11">Search 2 content</span></a></li>
+		        <li><a href="#bigBets"><span>Big Bets</span><span class="fsize11">Big Bets 3 content</span></a></li>
+		        <li><a href="#searchAds"><span>Search Ads</span><span class="fsize11">Search Ads 2 content</span></a></li>
+		        <li><a href="#catalog"><span>Catalog</span><span class="fsize11">Catalog 3 content</span></a></li>
+		        <li><a href="#statistics"><span>Statistics</span><span class="fsize11">Statistics 2 content</span></a></li>
+		        <li><a href="#lexicon"><span>Lexicon</span><span class="fsize11">Lexicon Ads 2 content</span></a></li>
+		        <li><a href="#settings"><span>Settings</span><span class="fsize11">Settings 3 content</span></a></li>
+		        <li><a href="#dateAndTime"><span>Date and Time</span><spkan class="fsize11"></span></a></li>
+		    </ul>
 		
-		<div class="tabbertab">
-		    <h2>Big Bets</h2>
-		    Big Bets 3 content
-	    </div>
-	    
-	    <div class="tabbertab">
-		    <h2 class="tabMenu"><span>Search Ads</span></h2>
-		    Search Ads 2 content
-		</div>
+		<div id="home">Home</div>
+		<div id="search">Search</div>
+		<div id="bigBets">Big Bets</div>
+		<div id="searchAds">Search Ads</div>
+		<div id="catalog">Catalog</div>
+		<div id="statistics">Statistics</div>
+		<div id="lexicon">Lexicon</div>
+		<div id="settings">Settings</div>
 		
-		<div class="tabbertab">
-		    <h2 class="tabMenu">Catalog</h2>
-		    Catalog 3 content
-	    </div>
-	    
-	    <div class="tabbertab">
-		    <h2 class="tabMenu"><span>Statistics</span></h2>
-		    Statistics 2 content
-		</div>
-		
-		<div class="tabbertab">
-		    <h2 class="tabMenu">Big Bets</h2>
-		    Big Bets 3 content
-	    </div>
-	    
-	    <div class="tabbertab">
-		    <h2 class="tabMenu"><span>Lexicon</span></h2>
-		    Lexicon Ads 2 content
-		</div>
-		
-		<div class="tabbertab">
-		    <h2 class="tabMenu">Settings</h2>
-		    Settings 3 content
-	    </div>
-	    
-	    <div class="tabbertab">
+	    <div id="dateAndTime">
 		    <h2 class="tabMenu">Date and Time</h2>
 		    <h1 class="borderB fnormal pad5">Date and Time</h1>
 		    
@@ -86,9 +59,9 @@
 	    		</div>
 		    </div>
 		    
+	    </div><!--  end page date and time -->
+	    
 	    </div>
-	    
-	    
 
 </div><!--  end content tab -->
  
