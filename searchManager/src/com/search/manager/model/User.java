@@ -94,7 +94,7 @@ private static final long serialVersionUID = 1L;
 	}
 
 	public Boolean isAccountNonExpired() {
-		return DateAndTimeUtils.compare(new Date(), thruDate) < 0;
+		return thruDate==null?true:DateAndTimeUtils.compare(new Date(), thruDate) < 0;
 	}
 
 	public void setAccountNonExpired(Boolean accountNonExpired) {
