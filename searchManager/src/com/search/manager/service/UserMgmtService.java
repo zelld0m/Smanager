@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.mail.AccessNotificationMailService;
 import com.search.manager.model.Group;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -34,6 +35,7 @@ public class UserMgmtService {
 	private static final Logger logger = Logger.getLogger(UserMgmtService.class);
 	
 	@Autowired private DaoService daoService;
+	@Autowired private AccessNotificationMailService  mailService;
 
 	public DaoService getDaoService() {
 		return daoService;
@@ -90,7 +92,8 @@ public class UserMgmtService {
 			user.setPassword(getPasswordHash(password));
 			result = daoService.addUser(user);
 			if (result == 1) {
-				//send password
+				user.setPassword(password);
+				mailService.sendAddUser(user);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
@@ -124,16 +127,18 @@ public class UserMgmtService {
 	}
 	
 	@RemoteMethod
-	public int resetPassword(String username) {
+	public int resetPassword(String username, String newPassword) {
 		int result = -1;
 		try {
-			String password = generatePassword();
+			String password = StringUtils.isBlank(newPassword)?generatePassword():newPassword;
 			User user = new User();
 			user.setUsername(username);
 			user.setPassword(getPasswordHash(password));
 			result = daoService.updateUser(user);
 			if (result == 1) {
-				//send email
+				user = daoService.getUser(username);
+				user.setPassword(password);
+				mailService.sendResetPassword(user);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);

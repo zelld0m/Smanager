@@ -1,9 +1,13 @@
 <html>
 <body>
-<h3>Hi ${fullname}, welcome to ${app-name}</h3>
+<h3>Hi ${fullName}, welcome to ${app-name}</h3>
 
 <div>
-   Your username is ${username}
+ Your login details are as follows:
+<p>
+Username: ${username} 
+<br/>
+Password: ${password}
 </div>
 </body>
 

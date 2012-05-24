@@ -29,6 +29,7 @@ public class AccessNotificationMailService {
 		
 		model.put("fullName", user.getFullName());
 		model.put("username", user.getUsername());
+		model.put("password", user.getPassword());
 		model.put("app-name", APP_NAME);
 		model.put("app-link", APP_LINK);
 		
@@ -46,6 +47,7 @@ public class AccessNotificationMailService {
 		
 		model.put("fullName", user.getFullName());
 		model.put("username", user.getUsername());
+		model.put("password", user.getPassword());
 		model.put("app-name", APP_NAME);
 		model.put("app-link", APP_LINK);
 		
