@@ -159,9 +159,6 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 
-			// TODO: workaround for spellchecker
-			requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");			
-			
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
@@ -349,7 +346,11 @@ public class SearchServlet extends HttpServlet {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-
+			// TODO: workaround for spellchecker
+			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
+				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
+			}
+			
 			/* First Request */
 			// get expected resultformat
 			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_WRITER_TYPE);
