@@ -22,7 +22,16 @@
 				<value>build-versions</value>
 			</list>
 		</property>
-	</bean>	
+	</bean>
+	
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+         <property name="locations">
+         	<list>
+         		<value>file:/home/solr/conf/database.properties</value>
+         		<value>file:/home/solr/conf/mail.properties</value>
+         	</list>
+         </property>
+    </bean>	
 	
 	<bean id="webAppInitLoader" class="com.search.manager.utility.AppInitLoader" init-method="run" lazy-init="false">
 	     	<property name="localCacheService" ref="localCacheService" />
@@ -50,16 +59,19 @@
 	<!-- Loads Spring Security -->      
 	<import resource="spring-security.xml" />
 	
+	<!-- Loads E-Mail Services -->      
+	<import resource="spring-mail.xml" />
+	
+	<!-- Velocity integration for template -->	
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+	  <property name="configLocation" value="file:/home/solr/conf/velocity.properties"/>
+	</bean>
+	
 	<!-- Enables our custom @ActiveUser annotation. -->
 	<bean id="annotationMethodHandlerAdapter" name="annotationMethodHandlerAdapter" class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
 	    <property name="customArgumentResolver" ref="activeUserResolver" />
 	</bean>
-		
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-         <property name="location" value="file:/home/solr/conf/database.properties"/>
-    </bean>
-    
-
+	
     <bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
        <property name="driverClassName" value="${driverClassName}"/>
        <property name="url" value="${url}"/>
