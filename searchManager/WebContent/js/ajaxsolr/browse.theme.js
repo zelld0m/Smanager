@@ -159,7 +159,10 @@
 		//Add Cart Price
 		secObj.find("div #cartPriceHolder").append('$' + doc.CartPrice);
 
-		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', doc.Name, docHandler));
+		//TODO: make this dynamic
+		var name = $.isNotBlank(doc.MacMall_Name)? doc.MacMall_Name : doc.Name;
+		
+		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler));
 
 		//Add Audit Button
 		secObj.find("div #auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
@@ -214,13 +217,16 @@
 	AjaxSolr.theme.prototype.snippet = function (doc) {
 		var output = '';
 
-		if (doc.Description.length > 300) {
-			output += doc.Description.substring(0, 300);
-			output += '<span style="display:none;">' + doc.Description.substring(300);
-			output += '</span><a href="#" class="more">...more</a>';
+		//TODO: make this dynamic
+		var description = $.isNotBlank(doc.MacMall_Description)? doc.MacMall_Description : doc.Description;  
+			
+		if (description && description.length > 300) {
+			output += description.substring(0, 300);
+			output += '<span style="display:none;">' + description.substring(300) + '</span>';
+			output += '<a href="javascript:void(0);" class="more">...more</a>';
 		}
 		else {
-			output += doc.Description;
+			output += description;
 		}
 
 		return output;
@@ -252,13 +258,15 @@
 
 		var i=0;
 		for (var facet in facets){
-			i++;
-			var count = parseInt(facets[facet]);
-			output += '<tr>';
-			output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
-			output += '<td class="values"><span class="value">' + facet + '</span></td>';
-			//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
-			output += '</tr>';				
+			if($.isNotBlank(facet)){ //TODO: should not hide data related issue
+				i++;
+				var count = parseInt(facets[facet]);
+				output += '<tr>';
+				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
+				output += '<td class="values"><span class="value">' + facet + '</span></td>';
+				//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
+				output += '</tr>';		
+			}
 		}
 
 		output += '</table>';

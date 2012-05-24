@@ -429,7 +429,16 @@ public class EhCachEDistributedClient implements CacheClientInterface {
         			        	strMsg.append(connection.getResponseMessage());
         			        	logger.info(strMsg);
         			        	strMsg = null;
-        		        		connection.disconnect();
+        		        	} catch (Exception npex) {}
+        		        	try {
+        		        		if (os != null) {
+        		        			os.close();
+        		        		}
+        		        	} catch (Exception ex) {}
+        		        	try {
+        		        		if (connection != null) {
+        		        			connection.disconnect();
+        		        		}
         		        	} catch (Exception npex) {}
         		        }
         		        switch (hasException) {
@@ -494,11 +503,18 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 			throw new DataException(ex.getMessage(), ex);
 		} finally {
 			try {
-				is.close();
+				if (is != null) {
+					is.close();
+				}
 				System.out.println("reading cache: " + connection.getResponseCode()
 	                    + " " + connection.getResponseMessage());
-				connection.disconnect();
 			} catch (Exception npex) {}
+			try {
+				if (connection != null) {
+					connection.disconnect();									
+				}
+			} catch (Exception ex) {
+			}
 		}
 	}
 	
@@ -588,7 +604,9 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 				        	hasException = 1;
 						} finally {
 							try {
-								is.close();
+								if (is != null) {
+									is.close();
+								}
 								StringBuilder strMsg = new StringBuilder(" Read Entry");
 					        	strMsg.append(" | ");
 					        	strMsg.append(connection.getURL()).append(" | ");
@@ -596,8 +614,13 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 					        	strMsg.append(connection.getResponseMessage());
 					        	logger.info(strMsg);
 					        	strMsg = null;
-								connection.disconnect();
 							} catch (Exception npex) {}
+							try {
+								if (connection != null) {
+									connection.disconnect();
+								}
+							} catch (Exception ex) {
+							}							
 						}
 						switch (hasException) {
 				        	case 1 :
@@ -681,7 +704,9 @@ public class EhCachEDistributedClient implements CacheClientInterface {
 	        } catch (Exception ex) {
 	        	// set connection to null
 	        	try {
-	        		connection.disconnect();
+	        		if (connection != null){
+		        		connection.disconnect();
+	        		}
 	        	} catch (Exception connEx) {
 	        	} finally {
 	        		connection = null;
