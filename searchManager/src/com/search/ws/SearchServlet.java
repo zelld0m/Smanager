@@ -346,11 +346,6 @@ public class SearchServlet extends HttpServlet {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
 
-			// TODO: workaround for spellchecker
-			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
-				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
-			}
-			
 			/* First Request */
 			// get expected resultformat
 			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_WRITER_TYPE);
@@ -434,6 +429,7 @@ public class SearchServlet extends HttpServlet {
 							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
 							nameValuePairs.add(nvp);
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
 						}
 					}					
 				}
@@ -446,6 +442,12 @@ public class SearchServlet extends HttpServlet {
 			Integer numElevateFound = 0;
 
 			// send solr request
+
+			// TODO: workaround for spellchecker
+			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
+				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
+			}
+			
 			// TASK 1A
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {
