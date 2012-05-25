@@ -151,12 +151,12 @@
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss">dolor sit</label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship">dignissim sit amet tellus</label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">Email</label><label><input type="text" class="w200"></label>
+			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship"></label><div class="clearB"></div>
+			            <label class="floatL w80 marL10">Email</label><label><input type="text" class="w200" id="shemail"></label>
 			            <div class="clearB marT10"></div>
 			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
-			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
+			            <label class="marL10">Expired <input type="text" class="shexp" class="w70"> </label>
 			            <div class="txtAR marT8">
 			            	<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">save</div></a>
 			            </div>
@@ -167,8 +167,6 @@
 			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
 			            <div class="clearB"></div>
 			      </div>
-			      
-			      <div class="alert">keep blank to auto generate password</div>
 		</div>      
 	</div>
 	
@@ -182,15 +180,15 @@
 			      <div class="clearB"></div>
 			      <div class="marB10">
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10 marB5">Email :</label><label><input type="text" class="w200"></label>
+			            <label class="floatL w80 marL10 marB5">Email :</label><label><input type="text" class="w200" id="ademail"></label>
 			            <div class="clearB marT5"></div>
 			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label>
-			            <label class="marL10">Expired <label class="ddate"><input type="text" id="shexp" class="w70"></label></label>
+			            <label class="marL10">Expired</label><input type="text" id="adexp" class="w70 adexp">
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
-			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label><label><input type="checkbox" class="posRel top4"> Auto-generate password </label>
+			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
 			            <div class="clearB"></div>
 			      </div>
 			      

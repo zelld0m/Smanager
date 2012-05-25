@@ -14,9 +14,7 @@ public class SecurityModel implements Serializable{
 	private String username;
 	private String status;
 	private String dateStarted;
-	private String action;
 	private String type;
-	private boolean isDefault;
 	private String roleId;
 	private String expired;
 	private String lastAccess;
@@ -47,23 +45,11 @@ public class SecurityModel implements Serializable{
 	public void setDateStarted(String dateStarted) {
 		this.dateStarted = dateStarted;
 	}
-	public String getAction() {
-		return action;
-	}
-	public void setAction(String action) {
-		this.action = action;
-	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
-	}
-	public boolean isDefault() {
-		return isDefault;
-	}
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
 	}
 	public String getRoleId() {
 		return roleId;

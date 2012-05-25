@@ -174,7 +174,6 @@
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.model.SecurityModel,
 				com.search.manager.model.RoleModel,
-				com.search.manager.model.User,
 				com.search.manager.model.Group,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,

@@ -10,44 +10,69 @@
 			curid : '',
 			curname : '',
 			curtot : '0',
-	
+			dateMinDate : -2,
+			dateMaxDate : '+1Y',
+			
+			isEmail : function(s) {
+				var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
+				if(!pattern.test(s))
+					return true;
+				else
+					return false;
+			},
+			validField : function(f,fv,e,d){
+				
+				if($.isBlank(f)){
+					alert(f+' cannot be empty.');
+					return false;
+				}else if(!e && !isAllowedName(fv)){
+					alert(f+" contains invalid value.");
+					return false;
+				}else if(!isAscii(fv)) {
+					alert(f+" contains non-ASCII characters.");		
+					return false;
+				}else if(!isXSSSafe(fv)){
+					alert(f+" contains XSS.");
+					return false;
+				}else if(e && sec.isEmail(fv)){
+					alert(f+" is invalid.");
+					return false;
+				}else if(d && !$.isDate(fv)){
+					alert(f+" is invalid date.");
+					return false;
+				}
+
+				return true;
+			},
 			clrUser : function(e){
 				e.find('#aduser').val('');
 				e.find('#adfull').val('');
-				e.find('#adaccs').val('');
-				e.find('#adip').val('');
+				e.find('#ademail').val('');
+				e.find('#adexp').val('');
 				e.find('#adpass').val('');
-				e.find('#adexp').attr('checked', false);
 				e.find('#adlck').attr('checked', false);
 			},	
 			// todo validate ssl
 			addUser : function(e){
 				var aduser = $.trim(e.find('#aduser').val());
 				var adfull = $.trim(e.find('#adfull').val());
-				var adaccs = $.trim(e.find('#adaccs').val());
-				var adip = $.trim(e.find('#adip').val());
+				var adexp = $.trim(e.find('#adexp').val());
+				var ademail = $.trim(e.find('#ademail').val());
 				var adpass = $.trim(e.find('#adpass').val());
-				var adexp = e.find('#adexp').is(':checked');
 				var adlck = e.find('#adlck').is(':checked');
 				
-				if($.isBlank(aduser)){
-					alert('Username cannot be empty.');
+				if(!sec.validField('Username',aduser))
 					return;
-				}else if($.isBlank(adfull)){
-					alert('Fullname cannot be empty.');
+				else if(!sec.validField('Fullname',adfull))
 					return;
-				}else if($.isBlank(adaccs)){
-					alert('Last Access cannot be empty.');
+				else if(!sec.validField('Email',ademail,true))
 					return;
-				}else if($.isBlank(adip)){
-					alert('IP address cannot be empty.');
+				else if(!sec.validField('Password',adpass))
 					return;
-				}else if($.isBlank(adpass)){
-					alert('Password cannot be empty.');
+				else if(!sec.validField('Expired',adexp,false,true))
 					return;
-				}
 				
-				SecurityServiceJS.addUser(sec.curid,sec.curname,aduser,adfull,adaccs,adip,adpass,adexp,adlck,{
+				SecurityServiceJS.addUser(sec.curid,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,{
 					callback:function(data){
 						if(data.status == '200'){
 							alert(data.message);
@@ -98,6 +123,20 @@
 									sec.clrUser(contentHolder);
 								}
 							});
+							
+							
+							contentHolder.find("#adexp").datepicker({
+								showOn: "both",
+								minDate: sec.dateMinDate,
+								maxDate: sec.dateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								disabled: false,
+								onSelect: function(dateText, inst) {	
+									alert(test);
+								}
+							});	
 						},
 						hide:function(evt, api){
 							api.destroy();
@@ -311,17 +350,21 @@
 				SecurityServiceJS.getUserList(id,pg,src,mem,stat,exp,{
 					callback:function(data){
 						var list = data.list;
+						var content = '';
 						if (list.length>0){
-							var content = '';
 							$('.conTr').remove();
 							for(var i=0; i<list.length; i++){
-								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+' days ago</td></tr>';
+								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+'</td></tr>';
 								$('.conTable').append(content);
 								sec.setUserValues(list[i]);
 							}					
 							sec.showPaging(pg,id,name,data.totalSize);
-						}else
-							alert('No record found.');
+						}else{
+							content = '<tr class="conTr"><td>No record found.</td></tr>';
+							$('.conTable').html(content);
+							$('#sortablePagingTop').hide();
+							$('#sortablePagingBottom').hide();			
+						}		
 					},
 					preHook:function(){ 
 					
