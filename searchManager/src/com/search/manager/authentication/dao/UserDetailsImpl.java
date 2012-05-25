@@ -36,6 +36,8 @@ public class UserDetailsImpl implements UserDetails {
 	
 	private String currentPage;	
 	
+	private String storeId;
+	
 	public UserDetailsImpl() {}
 	
 	public UserDetailsImpl(Collection<GrantedAuthority> authorities, String password, String username, String fullName, boolean accountNonExpired,
@@ -58,6 +60,7 @@ public class UserDetailsImpl implements UserDetails {
 		this.accountNonLocked = user.isAccountNonLocked();
 		this.credentialsNonExpired = user.isCredentialsNonExpired();
 		this.enabled = user.isEnabled();
+		this.storeId = user.getStoreId();
 	}
 
 	public Collection<GrantedAuthority> getAuthorities() {
@@ -146,5 +149,13 @@ public class UserDetailsImpl implements UserDetails {
 	
 	public String getElapsedTime(){
 		return DateAndTimeUtils.getElapsedTime(getLoggedIntime(), new Date());
+	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
 }

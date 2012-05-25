@@ -29,13 +29,14 @@ private static final long serialVersionUID = 1L;
 	private Date lastModifiedDate;
 	private Date thruDate;
 	private Integer successiveFailedLogin;
-
+	private String storeId;
+	
 	public User() {
 	}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
 			boolean credentialsNonExpired, Date lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			Date createdDate, Date lastModifiedDate, Date thruDate) {
+			Date createdDate, Date lastModifiedDate, Date thruDate, String storeId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -51,6 +52,7 @@ private static final long serialVersionUID = 1L;
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
 		this.thruDate = thruDate;
+		this.storeId = storeId;
 	}
 
 	public String getUsername() {
@@ -199,6 +201,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setSuccessiveFailedLogin(Integer successiveFailedLogin) {
 		this.successiveFailedLogin = successiveFailedLogin;
+	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
 
 }

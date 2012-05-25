@@ -6,6 +6,7 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -52,9 +53,9 @@ public class UsersDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EMAIL, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_USER, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_LOCKED, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.DATE));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.DATE));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_LOCKED, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW2, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW2, Types.INTEGER));
 		}
@@ -77,7 +78,8 @@ public class UsersDAO {
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP),
-	                		rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE));
+	                		rs.getTimestamp(DAOConstants.COLUMN_THRU_DATE),
+	                		rs.getString(DAOConstants.COLUMN_STORE_ID));
 	        	}
 
 	        }));
@@ -92,11 +94,11 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_USER_NAME, user.getUsername());
 			inputs.put(DAOConstants.PARAM_USER_NAMELIKE, user.getUsernameLike());
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
-			inputs.put(DAOConstants.PARAM_STORE_ID, null);
+			inputs.put(DAOConstants.PARAM_STORE_ID, StringUtils.isBlank(user.getUsername())?UtilityService.getStoreName():null);
 			inputs.put(DAOConstants.PARAM_ACTIVE_USER, user.isAccountNonExpired()==null?null:user.isAccountNonExpired()?'Y':'N');
-			inputs.put(DAOConstants.PARAM_USER_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'Y':'N');
 			inputs.put(DAOConstants.PARAM_START_DATE2, searchCriteria.getStartDate());
 			inputs.put(DAOConstants.PARAM_END_DATE2, searchCriteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_USER_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'1':'0');
 			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW2, searchCriteria.getEndRow());
 			return DAOUtils.getRecordSet(getUserStoredProcedure.execute(inputs));

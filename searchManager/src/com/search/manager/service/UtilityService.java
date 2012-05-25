@@ -39,7 +39,17 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getStoreName(){
-		return "macmall";
+		Object principal = null;
+		try {
+			principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
+		} catch (NullPointerException npe) {
+			npe.printStackTrace();
+		}
+		
+		
+		if (principal==null || !(principal instanceof UserDetailsImpl)) return "";
+
+		return ((UserDetailsImpl) principal).getStoreId();
 	}
 
 	@RemoteMethod
