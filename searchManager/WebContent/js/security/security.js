@@ -124,8 +124,9 @@
 								}
 							});
 							
+							contentHolder.find("#adexp").attr("id", "adexp_1");
 							
-							contentHolder.find("#adexp").datepicker({
+							contentHolder.find("#adexp_1").datepicker({
 								showOn: "both",
 								minDate: sec.dateMinDate,
 								maxDate: sec.dateMaxDate,
@@ -134,7 +135,7 @@
 								buttonImageOnly: true,
 								disabled: false,
 								onSelect: function(dateText, inst) {	
-									alert(test);
+									alert(dateText);
 								}
 							});	
 						},
