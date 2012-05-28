@@ -426,35 +426,39 @@
 						contentHolder.find("#addCommentBtn" + id).on({click:function(event){
 							if(data.locked) return;
 							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
-							if ($.isNotBlank(comment)){
-								if(data.type==="Elevate"){
-									ElevateServiceJS.addComment(data.name, edp, comment,{
-										callback: function(data){
-
-										},
-										preHook: function(){ 
-											prepareCommentList(contentHolder, "#commentHolder" + id); 
-										},
-										postHook: function(){ 
-											contentHolder.find("#newComment" + id).val(""); 
-											updateCommentList(contentHolder, e);
-										}
-									});
+							if(isXSSSafe(comment)){
+								if ($.isNotBlank(comment)){
+									if(data.type==="Elevate"){
+										ElevateServiceJS.addComment(data.name, edp, comment,{
+											callback: function(data){
+	
+											},
+											preHook: function(){ 
+												prepareCommentList(contentHolder, "#commentHolder" + id); 
+											},
+											postHook: function(){ 
+												contentHolder.find("#newComment" + id).val(""); 
+												updateCommentList(contentHolder, e);
+											}
+										});
+									}
+									if(data.type==="Exclude"){
+										ExcludeServiceJS.addComment(data.name, edp, comment,{
+											callback: function(data){
+	
+											},
+											preHook: function(){ 
+												prepareCommentList(contentHolder, "#commentHolder" + id); 
+											},
+											postHook: function(){ 
+												contentHolder.find("#newComment" + id).val(""); 
+												updateCommentList(contentHolder, e);
+											}
+										});
+									}
 								}
-								if(data.type==="Exclude"){
-									ExcludeServiceJS.addComment(data.name, edp, comment,{
-										callback: function(data){
-
-										},
-										preHook: function(){ 
-											prepareCommentList(contentHolder, "#commentHolder" + id); 
-										},
-										postHook: function(){ 
-											contentHolder.find("#newComment" + id).val(""); 
-											updateCommentList(contentHolder, e);
-										}
-									});
-								}
+							}else{
+								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 						},
 						mouseenter: showHoverInfo
