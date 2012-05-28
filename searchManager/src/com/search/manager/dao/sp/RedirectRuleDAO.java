@@ -27,6 +27,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.service.UtilityService;
 
 @Repository(value="redirectRuleDAO")
 public class RedirectRuleDAO {
@@ -533,7 +534,7 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID, null);
 			inputs.put(DAOConstants.PARAM_RULE_NAME, null);
 			inputs.put(DAOConstants.PARAM_RULE_NAME_LIKE, null);
-	        inputs.put(DAOConstants.PARAM_STORE_ID, model.getStoreId());
+	        inputs.put(DAOConstants.PARAM_STORE_ID, UtilityService.getStoreName());
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM, null);	        
 			inputs.put(DAOConstants.PARAM_SEARCH_TERM_LIKE, null);	        
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
