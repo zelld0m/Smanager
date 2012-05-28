@@ -41,7 +41,7 @@
        		</div>
        		<div class="clearB"></div>     		
        		<label class="marT10 floatL w100p">Member</label> 
-       		<label class="marT3 floatL w100p"><input type="text" class="w90" id="refmem" name="refmem"></label>
+       		<label class="marT3 floatL w55p"><input type="text" class="w90" id="refmem" name="refmem"></label>
        		<label class="marT8 floatL w100p">Status</label> 
        		<label class="marT3 floatL w100p">
 				<select class="w90p mar0" id="refstat" style="cursor:pointer">
@@ -99,8 +99,9 @@
       </div> -->
       <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
       <!--Pagination-->
+     <div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
     	<table width="100%" class="fsize12 tblAlpha conTable">
-    		<tr>
+    		<tr class="conTr1">
     			<th width="7%"></th>
     			<th width="35%">Username</th>
     			<th width="10%">Status</th>
@@ -108,6 +109,8 @@
     			<th width="15%">Member Since</th>
     			<th width="17%">Last Access</th>
     		</tr>
+    		
+    		
     		<!-- 
     		<c:forEach var="i" begin="1" end="10" step="1">
     		<tr>
@@ -156,9 +159,9 @@
 			            <label class="floatL w80 marL10">Email</label><label><input type="text" class="w200" id="shemail"></label>
 			            <div class="clearB marT10"></div>
 			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
-			            <label class="marL10">Expired <input type="text" class="shexp" class="w70"> </label>
+			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
 			            <div class="txtAR marT8">
-			            	<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">save</div></a>
+			            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">save</div></a>
 			            </div>
 			     </div>
 			                        

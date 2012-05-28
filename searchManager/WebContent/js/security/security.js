@@ -12,7 +12,31 @@
 			curtot : '0',
 			dateMinDate : -2,
 			dateMaxDate : '+1Y',
+			expadd : '',
+			expsh : '',
 			
+			updateUser : function(e,api,user){
+				var shexp = sec.expsh;
+				var shemail = $.trim(e.find('#shemail').val());
+				var shlck = e.find('#shlck').is(':checked');
+
+				if(!sec.validField('Email',shemail,true))
+					return;
+				else if(!sec.validField('Expired',shexp,false,true))
+					return;
+				
+				SecurityServiceJS.updateUser(sec.curid,user,shexp,shlck,shemail,{
+					callback:function(data){
+						if(data.status == '200'){
+							alert(data.message);
+							sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							api.destroy();
+						}else{
+							alert(data.message);
+						}
+					}		
+	          	});		
+			},	
 			isEmail : function(s) {
 				var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
 				if(!pattern.test(s))
@@ -22,10 +46,10 @@
 			},
 			validField : function(f,fv,e,d){
 				
-				if($.isBlank(f)){
+				if($.isBlank(fv)){
 					alert(f+' cannot be empty.');
 					return false;
-				}else if(!e && !isAllowedName(fv)){
+				}else if(!e && !d && !isAllowedName(fv)){
 					alert(f+" contains invalid value.");
 					return false;
 				}else if(!isAscii(fv)) {
@@ -48,19 +72,19 @@
 				e.find('#aduser').val('');
 				e.find('#adfull').val('');
 				e.find('#ademail').val('');
-				e.find('#adexp').val('');
+				e.find('#adexp_1').val('');
+				sec.expadd = '';
 				e.find('#adpass').val('');
 				e.find('#adlck').attr('checked', false);
 			},	
-			// todo validate ssl
-			addUser : function(e){
+			addUser : function(e,api){
 				var aduser = $.trim(e.find('#aduser').val());
 				var adfull = $.trim(e.find('#adfull').val());
-				var adexp = $.trim(e.find('#adexp').val());
+				var adexp = sec.expadd;
 				var ademail = $.trim(e.find('#ademail').val());
 				var adpass = $.trim(e.find('#adpass').val());
 				var adlck = e.find('#adlck').is(':checked');
-				
+
 				if(!sec.validField('Username',aduser))
 					return;
 				else if(!sec.validField('Fullname',adfull))
@@ -76,20 +100,16 @@
 					callback:function(data){
 						if(data.status == '200'){
 							alert(data.message);
-							sec.getUserList(sec.curid,sec.curname,1,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							api.destroy();
 						}else{
 							alert(data.message);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
-					}			
+					}					
 	          	});		
 			},	
-			showAdd : function(e){					
+			showAdd : function(e){		
+				sec.adexp = '';
 				$(this).qtip({
 					content: {
 						text: $('<div/>'),
@@ -114,7 +134,7 @@
 						
 							contentHolder.find("#adaddBtn").on({
 								click: function(e){	
-									sec.addUser(contentHolder);
+									sec.addUser(contentHolder,api);
 								}
 							});
 							
@@ -123,9 +143,8 @@
 									sec.clrUser(contentHolder);
 								}
 							});
-							
-							contentHolder.find("#adexp").attr("id", "adexp_1");
-							
+	
+							contentHolder.find("#adexp").attr("id", "adexp_1");		
 							contentHolder.find("#adexp_1").datepicker({
 								showOn: "both",
 								minDate: sec.dateMinDate,
@@ -134,8 +153,8 @@
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true,
 								disabled: false,
-								onSelect: function(dateText, inst) {	
-									alert(dateText);
+								onSelect: function(dateText, inst) {			
+									sec.expadd = contentHolder.find("#adexp_1").val();
 								}
 							});	
 						},
@@ -145,23 +164,16 @@
 					}
 				});
 			},
-			
-			// todo validate ssl
-			resetPass : function(e,data){
+			resetPass : function(e,data,api){
 				if (!$.isBlank($.trim(e.find('#shpass').val()))){
-					SecurityServiceJS.resetPassword(data.type,data.id,data.name,e.find('#shlck').is(':checked'),e.find('#shexp').is(':checked'),$.trim(e.find('#shpass').val()),{
+					SecurityServiceJS.resetPassword(data.type,data.id,e.find('#shpass').val(),{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
+								api.destroy();
 							}else{
 								alert(data.message);
 							}
-						},
-						preHook:function(){ 
-						
-						},
-						postHook:function(){ 
-						
 						}			
 		          	});	
 				}else
@@ -169,6 +181,7 @@
 			},	
 			showUser : function(e){
 				var data = e.data;
+				sec.expsh = data.thruDate;
 				
 				$(this).qtip({
 					content: {
@@ -195,12 +208,36 @@
 							contentHolder.find(".shfname").html(data.fullname);
 							contentHolder.find(".shlacss").html(data.lastaccess);
 							contentHolder.find(".ship").html(data.ip);
-						
+							contentHolder.find("#shemail").val(data.email);	
+							contentHolder.find("#shlck").attr('checked', data.locked);	
+							
 							contentHolder.find("#resetBtn").on({
 								click: function(e){	
-									sec.resetPass(contentHolder,data);
+									sec.resetPass(contentHolder,data,api);
 								}
 							});
+
+							contentHolder.find("#shexp").attr("id", "shexp_1");	
+							contentHolder.find("#shexp_1").val(data.thruDate);
+							
+							contentHolder.find("#shexp_1").datepicker({
+								showOn: "both",
+								minDate: sec.dateMinDate,
+								maxDate: sec.dateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								disabled: false,
+								onSelect: function(dateText, inst) {			
+									sec.expsh = contentHolder.find("#shexp_1").val();
+								}
+							});	
+							
+							contentHolder.find("#shsv").on({
+								click: function(e){	
+									sec.updateUser(contentHolder,api,data.name);
+								}
+							});	
 						},
 						hide:function(evt, api){
 							api.destroy();
@@ -230,12 +267,6 @@
 							}	
 							$('#refexp').html(content);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -251,12 +282,6 @@
 							}	
 							$('#refstat').html(content);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -298,12 +323,6 @@
 							sec.curname	= data.rolename;
 							sec.getUserList(data.id,data.rolename,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -324,13 +343,7 @@
 								sec.setRoleValues(list[i]);
 							}								
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
-					}			
+					}		
 				});
 			},
 			setRoleValues : function(data){
@@ -341,7 +354,7 @@
 			setUserValues : function(data){
 				$('#user' + data.id).on({
 					click: sec.showUser
-				}, {id:data.id, type:data.type, name:data.username,fullname:data.fullname,lastaccess:data.lastAccess,ip:data.ip});
+				}, {id:data.id, type:data.type, name:data.username,fullname:data.fullname,lastaccess:data.lastAccess,ip:data.ip,email:data.email,locked:data.locked,thruDate:data.thruDate});
 				
 				$('#del' + data.id).on({
 					click: sec.delUser
@@ -352,26 +365,28 @@
 					callback:function(data){
 						var list = data.list;
 						var content = '';
-						if (list.length>0){
-							$('.conTr').remove();
+						$('.conTr').remove();
+						if (list.length>0){	
+							$('.conTr1').show();
 							for(var i=0; i<list.length; i++){
-								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+'</td></tr>';
+								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+'</td></tr>';
 								$('.conTable').append(content);
 								sec.setUserValues(list[i]);
 							}					
 							sec.showPaging(pg,id,name,data.totalSize);
-						}else{
+						}else{	
+							$('.conTr1').hide();
 							content = '<tr class="conTr"><td>No record found.</td></tr>';
-							$('.conTable').html(content);
+							$('.conTable').append(content);
 							$('#sortablePagingTop').hide();
 							$('#sortablePagingBottom').hide();			
 						}		
 					},
 					preHook:function(){ 
-					
+						$('#preloader').show();
 					},
 					postHook:function(){ 
-					
+						$('#preloader').hide();
 					}			
 				});
 			},
@@ -387,6 +402,16 @@
 					click: sec.showAdd
 				});
 
+				$('#refmem').datepicker({
+					showOn: "both",
+					minDate: sec.dateMinDate,
+					maxDate: sec.dateMaxDate,
+					buttonText: "Member Date",
+					buttonImage: "../images/icon_calendar.png",
+					buttonImageOnly: true,
+					disabled: false
+				});	
+				
 				sec.getStatList();
 				sec.getExpList();
 				sec.getRoleList();
@@ -395,21 +420,15 @@
 			delUser : function(e){
 				var data = e.data;
 		        if (confirm("Are you sure you want to delete this user ?")){                  
-		          	SecurityServiceJS.deleteUser(data.type,data.id,data.name,{
+		          	SecurityServiceJS.deleteUser(data.id,{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
-								sec.getUserList(sec.curid,sec.curname,1,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 							}else{
 								alert(data.message);
 							}
-						},
-						preHook:function(){ 
-						
-						},
-						postHook:function(){ 
-						
-						}			
+						}		
 		          	});	
 		        }  
 			}

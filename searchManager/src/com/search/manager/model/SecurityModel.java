@@ -20,6 +20,9 @@ public class SecurityModel implements Serializable{
 	private String lastAccess;
 	private String fullname;
 	private String ip;
+	private String email;
+	private boolean locked;
+	private String thruDate;
 	
 	public String getId() {
 		return id;
@@ -80,5 +83,23 @@ public class SecurityModel implements Serializable{
 	}
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public boolean isLocked() {
+		return locked;
+	}
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+	public String getThruDate() {
+		return thruDate;
+	}
+	public void setThruDate(String thruDate) {
+		this.thruDate = thruDate;
 	}
 }
