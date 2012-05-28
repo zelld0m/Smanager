@@ -52,7 +52,6 @@ public class SecurityService {
 	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
 		user.setGroupId(roleId);
-		user.setUsername(search);
 		user.setUsernameLike(StringUtils.isBlank(search)?null:search);
 		
 		if(StringUtils.isNotEmpty(status))
@@ -62,7 +61,6 @@ public class SecurityService {
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
 		searchCriteria.setStartDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince));
-		searchCriteria.setEndDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince));
 		return getUsers(searchCriteria);
 	}
 	
