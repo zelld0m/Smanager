@@ -150,7 +150,7 @@
 								minDate: sec.dateMinDate,
 								maxDate: sec.dateMaxDate,
 								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendar.png",
+								buttonImage: "../images/icon_calendarwithBG.png",
 								buttonImageOnly: true,
 								disabled: false,
 								onSelect: function(dateText, inst) {			
@@ -404,8 +404,6 @@
 
 				$('#refmem').datepicker({
 					showOn: "both",
-					minDate: sec.dateMinDate,
-					maxDate: sec.dateMaxDate,
 					buttonText: "Member Date",
 					buttonImage: "../images/icon_calendar.png",
 					buttonImageOnly: true,

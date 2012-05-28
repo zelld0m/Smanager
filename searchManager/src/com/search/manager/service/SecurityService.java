@@ -55,9 +55,9 @@ public class SecurityService {
 		user.setUsernameLike(StringUtils.isBlank(search)?null:search);
 		
 		if(StringUtils.isNotEmpty(status))
-			user.setAccountNonLocked("YES".equalsIgnoreCase(status)?true:false);
+			user.setAccountNonLocked("YES".equalsIgnoreCase(status)?false:true);
 		if(StringUtils.isNotEmpty(expired))
-			user.setAccountNonExpired("YES".equalsIgnoreCase(expired)?true:false);
+			user.setAccountNonExpired("YES".equalsIgnoreCase(expired)?false:true);
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
 		searchCriteria.setStartDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince));
@@ -271,8 +271,8 @@ public class SecurityService {
 					secModel.setIp(user.getIp());
 					secModel.setDateStarted(user.getCreatedDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getCreatedDate()):"");
 					secModel.setRoleId(user.getGroupId());
-					secModel.setStatus(user.isEnabled()?"yes":"no");
-					secModel.setExpired(user.isAccountNonExpired()?"yes":"no"); // compute expiration
+					secModel.setStatus(user.isAccountNonLocked()?"no":"yes");
+					secModel.setExpired(user.isAccountNonExpired()?"no":"yes"); // compute expiration
 					secModel.setEmail(user.getEmail());
 					secModel.setLocked(user.isAccountNonLocked());
 					secModel.setThruDate(user.getThruDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getThruDate()):"");
