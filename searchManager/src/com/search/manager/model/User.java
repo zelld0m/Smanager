@@ -21,6 +21,7 @@ private static final long serialVersionUID = 1L;
 	private String groupId;
 	private Boolean accountNonLocked;
 	private Boolean credentialsNonExpired;
+	private Boolean accountNonExpired;
 	private Date lastAccessDate;
 	private String ip;
 	private String createdBy;
@@ -51,7 +52,7 @@ private static final long serialVersionUID = 1L;
 		this.lastModifiedBy = lastModifiedBy;
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
-		this.thruDate = thruDate;
+		setThruDate(thruDate);
 		this.storeId = storeId;
 	}
 
@@ -96,15 +97,11 @@ private static final long serialVersionUID = 1L;
 	}
 
 	public Boolean isAccountNonExpired() {
-		return thruDate==null?true:DateAndTimeUtils.compare(new Date(), thruDate) < 0;
+		return accountNonExpired;
 	}
 
 	public void setAccountNonExpired(Boolean accountNonExpired) {
-		if (accountNonExpired) {
-			this.thruDate = DateAndTimeUtils.addYearToDate(2);
-		} else {
-			this.thruDate = DateAndTimeUtils.getDateYesterday();
-		}
+		this.accountNonExpired = accountNonExpired;
 	}
 
 	public Boolean isAccountNonLocked() {
@@ -185,6 +182,7 @@ private static final long serialVersionUID = 1L;
 
 	public void setThruDate(Date thruDate) {
 		this.thruDate = thruDate;
+		this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) < 0;
 	}
 
 	public String getUsernameLike() {
