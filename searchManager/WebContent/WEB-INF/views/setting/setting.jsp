@@ -4,6 +4,8 @@
 <c:set var="submenu" value="setting"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
+<script type="text/javascript" src="<spring:url value="/js/settings/setting.js" />"></script> 
+
  <!-- Start content tabs -->
 <div class="clearB floatL minW240 sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
@@ -34,17 +36,17 @@
 				<tr>
 					<td><img src="../images/uploadImage.jpg" class="border marR10" /></td>
 					<td class="valignTop">
-						<label class="floatL w70">Username :</label><label class="w135 padL5 fbold"><input type="text" id="aduser" class="w135"></label><div class="clearB"></div>
-						<label class="floatL w70 marT5">Fullname :</label><label class="w135 padL5 fbold floatL marT5"><input type="text" id="adfull" class="w135"></label>
+						<label class="floatL w70">Username :</label><label class="w135 padL5 fbold proUser"></label><div class="clearB"></div>
+						<label class="floatL w70 marT5">Fullname :</label><label class="w135 padL5 fbold floatL marT5"><input type="text" id="profull" class="w135"/></label>
 					</td>
 				</tr>
 				<tr>
 					<td>Email :</td>
-					<td><input type="text" class="w210" id="ademail"></td>
+					<td><input type="text" class="w210 " id="proemail"/></td>
 				</tr>
 				<tr>
 					<td></td>
-					<td class="padT5"><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label> <label class="marL10">Expired</label><input type="text" id="adexp" class="w70 adexp marL5"></td>
+					<td class="padT5"></td>
 				</tr>
 				</table>
 				
@@ -54,19 +56,19 @@
 				</tr>
 				<tr>
 					<td width="130px">Old Password</td>
-					<td><input type="password" id="" class="w150"></td>
+					<td><input type="password" id="proOld" class="w150" value="secret"/></td>
 				</tr>
 				<tr>
 					<td>New Password</td>
-					<td><input type="password" id="" class="w150"></td>
+					<td><input type="password" id="proNew" class="w150"/></td>
 				</tr>
 				<tr>
 					<td>Re-Type Password</td>
-					<td><input type="password" id="" class="w150"></td>
+					<td><input type="password" id="proRe" class="w150"/></td>
 				</tr>
 				<tr>
 					<td colspan="2" class="txtAR padT10">
-	      				<a id="" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
+	      				<a id="probut" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
 		      		</td>
 				</tr>
 			</table>
