@@ -153,6 +153,7 @@
 				com.search.manager.service.DeploymentService,
 				com.search.manager.service.UserMgmtService,
 				com.search.manager.service.SecurityService,
+				com.search.manager.cache.service.CacheService,
 				com.search.manager.model.AuditTrail,
 				com.search.manager.model.Store,
 				com.search.manager.model.Keyword,
