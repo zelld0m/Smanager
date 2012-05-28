@@ -27,6 +27,7 @@
 	  </div>
 	</div>
 	
+	<div class="clearB"></div>
 	<div id="monitool" class="tabs">
 		<ul>
 			<li><a href="#cache"><span>Cache</span></a></li>
@@ -36,6 +37,9 @@
 		<div id="cache">
 			<div>
 				<input type="text">
+				<div class="floatR marL8 marR3 padT5"> 	        		
+	        		<a id="checkBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Check Cache</div></a>
+	        	</div>
 			</div>
 			
 			<div>
