@@ -76,7 +76,7 @@
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-
+								
 							if ($.isBlank(skus)) {
 								alert("There are no SKUs specified in the list.");
 							}
@@ -85,6 +85,9 @@
 							}							
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
+							}	
+							else if (!isXSSSafe(comment)){
+								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 							else {
 								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {

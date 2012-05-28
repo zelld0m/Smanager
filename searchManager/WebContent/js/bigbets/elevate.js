@@ -87,6 +87,9 @@
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
 							}
+							else if (!isXSSSafe(comment)){
+								alert("Invalid comment. HTML/XSS is not allowed.");
+							}
 							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
 									callback : function(code){
