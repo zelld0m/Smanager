@@ -15,21 +15,64 @@
 
 <!--  start content tab -->
 <div class="tabSide mar0" style="margin-top:20px; width:98%"> 
-        <div class="tabs">
+        <div id="user-pref" class="tabs">
         	<ul>
-		        <li><a href="#home"><span>Home</span><span class="fsize11">Home 1 content</span></a></li>
-		        <li><a href="#search"><span>Search</span><span class="fsize11">Search 2 content</span></a></li>
-		        <li><a href="#bigBets"><span>Big Bets</span><span class="fsize11">Big Bets 3 content</span></a></li>
-		        <li><a href="#searchAds"><span>Search Ads</span><span class="fsize11">Search Ads 2 content</span></a></li>
-		        <li><a href="#catalog"><span>Catalog</span><span class="fsize11">Catalog 3 content</span></a></li>
-		        <li><a href="#statistics"><span>Statistics</span><span class="fsize11">Statistics 2 content</span></a></li>
-		        <li><a href="#lexicon"><span>Lexicon</span><span class="fsize11">Lexicon Ads 2 content</span></a></li>
-		        <li><a href="#settings"><span>Settings</span><span class="fsize11">Settings 3 content</span></a></li>
+		        <li><a href="#home"><span>Profile</span></a></li>
+		        <li><a href="#search"><span>Search</span> <span class="fsize11"></span></a></li>
+		        <li><a href="#bigBets"><span>Big Bets</span> <span class="fsize11"></span></a></li>
+		        <li><a href="#searchAds"><span>Search Ads</span><span class="fsize11"></span></a></li>
+		        <li><a href="#catalog"><span>Catalog</span><span class="fsize11"></span></a></li>
+		        <li><a href="#statistics"><span>Statistics</span><span class="fsize11"></span></a></li>
+		        <li><a href="#lexicon"><span>Lexicon</span><span class="fsize11"></span></a></li>
+		        <li><a href="#settings"><span>Settings</span><span class="fsize11"></span></a></li>
 		        <li><a href="#dateAndTime"><span>Date and Time</span><spkan class="fsize11"></span></a></li>
 		    </ul>
 		
-		<div id="home">Home</div>
-		<div id="search">Search</div>
+		<div id="home" class="txtAL padL0 marT0">
+			<h2 class="txtAL marT10 padL10 borderB">Profile</h2>
+			<table class="fsize12 marT20 marL20">
+				<tr>
+					<td><img src="../images/uploadImage.jpg" class="border marR10" /></td>
+					<td class="valignTop">
+						<label class="floatL w70">Username :</label><label class="w135 padL5 fbold"><input type="text" id="aduser" class="w135"></label><div class="clearB"></div>
+						<label class="floatL w70 marT5">Fullname :</label><label class="w135 padL5 fbold floatL marT5"><input type="text" id="adfull" class="w135"></label>
+					</td>
+				</tr>
+				<tr>
+					<td>Email :</td>
+					<td><input type="text" class="w210" id="ademail"></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="padT5"><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label> <label class="marL10">Expired</label><input type="text" id="adexp" class="w70 adexp marL5"></td>
+				</tr>
+				</table>
+				
+				<table class="fsize12 marT10 marL20">
+				<tr class="borderT">
+					<td colspan="2"><h2 class="padT5"> Change Password </h2></td>
+				</tr>
+				<tr>
+					<td width="130px">Old Password</td>
+					<td><input type="password" id="" class="w150"></td>
+				</tr>
+				<tr>
+					<td>New Password</td>
+					<td><input type="password" id="" class="w150"></td>
+				</tr>
+				<tr>
+					<td>Re-Type Password</td>
+					<td><input type="password" id="" class="w150"></td>
+				</tr>
+				<tr>
+					<td colspan="2" class="txtAR padT10">
+	      				<a id="" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
+		      		</td>
+				</tr>
+			</table>
+		</div>
+		
+		<div id="search">Search	</div>
 		<div id="bigBets">Big Bets</div>
 		<div id="searchAds">Search Ads</div>
 		<div id="catalog">Catalog</div>

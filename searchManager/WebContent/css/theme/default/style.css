@@ -465,7 +465,7 @@ select 							{ font: normal 12px arial; margin-left:10px; padding: 2px; border:
 input[type="text"], 
 input[type="password"] 			{ outline: none; }
 input[type=text], 
-select, textarea				{ border-top:1px solid #9c9c9c; border-left:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; padding:2px; color:#787878 !important }
+select, textarea, input[type=password]		{ border-top:1px solid #9c9c9c; border-left:1px solid #9c9c9c; border-right:1px solid #c5c4c4; border-bottom:1px solid #c5c4c4; padding:2px; color:#787878 !important }
 							
 
 
@@ -590,14 +590,18 @@ body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padd
 .tabs .ui-widget-content label	{ vertical-align: middle; }
 
 /* side tabs */
-.tabside .ui-tabs-nav				{ background: none !important; border:none !important;  list-style: none }
-.tabside .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold}
-.tabside .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
-body .tabside .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padding:15px; }	
-.tabside .tabs .ui-tabs-panel				{ padding:3px 10px !important;  }
-.tabside .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
-.tabside .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
-.tabside .tabs .ui-widget-content label	{ vertical-align: middle; }
+.tabSide .tabs .ui-tabs-nav				{ background:none !important; border:none !important;  list-style: none; width: 204px; z-index:100 }
+.tabSide .tabs .ui-tabs-nav li			{ -webkit-border-radius: 0 !important; -moz-border-radius: 1px !important; border-radius: 1px !important; border-right:1px solid #d3d3d3 !important; border-bottom:1px solid #d3d3d3 !important }
+.tabSide .tabs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 205px}
+.tabSide .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+.tabSide .tabs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important }				{ }
+body .tabSide .tabs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:700px; margin-left:229px; top:-35px; min-height: 400px; z-index:50 }
+.tabSide .tabs .ui-tabs-panel			{ padding:3px 10px !important;  }
+.tabSide .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.tabSide .tabs .ui-tabs-panel h3		{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.tabSide .tabs .ui-widget-content label	{ vertical-align: top; }
+
+.tabSide .tabs table td					{ padding:4px }
 
 
 /*native tabs */
@@ -609,6 +613,8 @@ body .tabside .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:
 .qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
 .qtip .ui-widget-content label	{ vertical-align: middle; }
+
+
 
 textarea, .qtip textarea		{ resize: vertical; }
 
@@ -756,6 +762,7 @@ html.gecko .endingTxt							{ font-size:11px }
 
 
 .security label					{ margin-top:5px }
+
 
 
 
