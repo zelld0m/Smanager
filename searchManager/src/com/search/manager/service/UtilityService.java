@@ -23,6 +23,11 @@ import com.search.manager.utility.PropsUtils;
 )
 public class UtilityService {
 	
+	private static final String MACMALL = "MacMall";
+	private static final String PCMALL = "PCMall";
+	private static final String ECOST = "eCost";
+	private static final String SBN = "SBN";
+	
 	@RemoteMethod
 	public static String getUsername(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -54,7 +59,22 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getStoreLabel(){
-		return "MacMall";
+		String label = null;
+		if (MACMALL.toLowerCase().equals(getStoreName())) {
+			label = MACMALL;
+		} else if (PCMALL.toLowerCase().equals(getStoreName())) {
+			label = PCMALL;
+		} else if (ECOST.toLowerCase().equals(getStoreName())) {
+			label = ECOST;
+		} else if (SBN.toLowerCase().equals(getStoreName())) {
+			label = SBN;
+		}
+		return label;
+	}
+	
+	@RemoteMethod
+	public static String getStoreLogo(){
+		return new StringBuilder("/images/logo").append(getStoreLabel()).append(".png").toString();
 	}
 	
 	@RemoteMethod

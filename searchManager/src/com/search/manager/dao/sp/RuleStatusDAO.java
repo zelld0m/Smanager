@@ -23,6 +23,7 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.service.UtilityService;
 
 @Repository(value="ruleStatusDAO")
 public class RuleStatusDAO {
@@ -61,6 +62,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -101,6 +103,7 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -151,6 +154,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
+			inputs.put(DAOConstants.PARAM_STORE_ID, UtilityService.getStoreName());
 			return DAOUtils.getRecordSet(getRuleStatusStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRuleStatus()", e);
@@ -169,6 +173,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_STORE_ID, UtilityService.getStoreName());
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {

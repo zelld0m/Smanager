@@ -8,7 +8,7 @@
 
  <!-- Start content tabs -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
     &nbsp;
 </div>
 <!--  end left side -->
