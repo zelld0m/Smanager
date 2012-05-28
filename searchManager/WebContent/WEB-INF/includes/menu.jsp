@@ -2,6 +2,7 @@
    <!-- TODO: Dynamically modify mall based on logged user -->
    
 	<spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
+	<spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
 
    <div class="clearB floatR bgTopHeaderMnu">
     <div class="mar0" style="padding-left:280px; width: 700px" >

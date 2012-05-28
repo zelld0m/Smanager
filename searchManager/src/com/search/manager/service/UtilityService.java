@@ -24,7 +24,7 @@ import com.search.manager.utility.PropsUtils;
 public class UtilityService {
 	
 	private static final String MACMALL = "MacMall";
-	private static final String PCMALL = "PcMall";
+	private static final String PCMALL = "PCMall";
 	private static final String ECOST = "eCost";
 	private static final String SBN = "SBN";
 	
@@ -70,6 +70,11 @@ public class UtilityService {
 			label = SBN;
 		}
 		return label;
+	}
+	
+	@RemoteMethod
+	public static String getStoreLogo(){
+		return new StringBuilder("/images/logo").append(getStoreLabel()).append(".png").toString();
 	}
 	
 	@RemoteMethod

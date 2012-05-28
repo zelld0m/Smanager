@@ -7,7 +7,7 @@
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
-		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+		<a href="javascript:void()"><img src="<spring:url value="${storeLogo}" />"></a>
 	</div>
 	
 	<div class="clearB floatL w240">
