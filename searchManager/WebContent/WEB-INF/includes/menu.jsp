@@ -62,11 +62,17 @@
 	      <c:if test="${topmenu eq 'setting'}">
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'audit'? 'class="active"': ''}><a href="<spring:url value="/audit/"/>${store}">Audit Trail</a></li>
-		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/"/>${store}">User Setting</a></li>	      		
-		      		<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/"/>${store}">Security</a></li>	      		
+		      		<li ${submenu eq 'setting'? 'class="active"': ''}><a href="<spring:url value="/setting/"/>${store}">User Setting</a></li>	  
+		      		<sec:authorize access="hasRole('MANAGE_USER')">    		
+		      			<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/"/>${store}">Security</a></li>
+		      		</sec:authorize>	      		
 		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/"/>${store}">Partners</a></li>	      		
-		      		<li ${submenu eq 'approval'? 'class="active"': ''}><a href="<spring:url value="/approval/"/>${store}">Pending Approval</a></li>	      		
-		      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>	      		
+		      		<sec:authorize access="hasRole('APPROVE_RULE')">    		
+			      		<li ${submenu eq 'approval'? 'class="active"': ''}><a href="<spring:url value="/approval/"/>${store}">Pending Approval</a></li>
+		      		</sec:authorize>
+		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
+			      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>
+		      		</sec:authorize>	      		
 		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>	      		
 		       </ul>
 	      </c:if>
