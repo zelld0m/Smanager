@@ -19,6 +19,7 @@ var Manager;
 				UtilityServiceJS.getStoreName({
 					callback:function(storeName){
 
+						alert (storeName);
 						Manager = new AjaxSolr.Manager({
 							solrUrl: solrurl +'/'+ storeName + '/'
 						});

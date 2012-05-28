@@ -29,6 +29,9 @@ public class CacheConstants {
 		else if("onsale".equalsIgnoreCase(storeId)) {
 			storeId = "ol";			
 		}
+		else if("pcmallcap".equalsIgnoreCase(storeId)) {
+			storeId = "bd";			
+		}
 		else {
 			throw new DataException("Unrecognized Store");
 		}

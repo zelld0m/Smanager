@@ -35,10 +35,10 @@ public class AuditTrailDAO {
     	ddval = new DropdownValues(jdbcTemplate);
     }
 
-	private final static String REFERENCE_SQL = new StringBuilder("select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
-			.append("' UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
-			.append("' UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
-			.append("' UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL WHERE STORE = '").append(UtilityService.getStoreName())
+	private final static String REFERENCE_SQL = new StringBuilder("select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
+			.append("' UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
+			.append("' UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL WHERE STORE = '%1$s")
+			.append("' UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
 			.append("' ORDER BY VALUE").toString();
 
 	private AddAuditTrailStoredProcedure addSP;
@@ -159,6 +159,6 @@ public class AuditTrailDAO {
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<NameValue> getDropdownValues() {
-		return ddval.getJdbcTemplate().query(REFERENCE_SQL, new BeanPropertyRowMapper(NameValue.class));
+		return ddval.getJdbcTemplate().query(String.format(REFERENCE_SQL, UtilityService.getStoreName()), new BeanPropertyRowMapper(NameValue.class));
 	}
  }

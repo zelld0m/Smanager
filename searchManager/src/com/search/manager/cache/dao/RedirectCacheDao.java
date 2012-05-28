@@ -42,7 +42,7 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 			RedirectRule redirectRule = new RedirectRule();
-			redirectRule.setStoreId(UtilityService.getStoreName());
+			redirectRule.setStoreId(storeKeyword.getStoreId());
 			redirectRule.setSearchTerm(storeKeyword.getKeywordId());
 			RecordSet<RedirectRule> rules = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0));
 			if (rules.getTotalSize() > 0) {

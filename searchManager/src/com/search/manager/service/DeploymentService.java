@@ -74,7 +74,7 @@ public class DeploymentService {
 		return result;
 	}
 	
-	public List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
+	private List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
@@ -170,7 +170,7 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
-	public Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
+	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);

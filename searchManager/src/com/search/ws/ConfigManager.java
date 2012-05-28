@@ -1,13 +1,18 @@
 package com.search.ws;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -85,6 +90,33 @@ public class ConfigManager {
     	return nameValuePairList;
     }
     
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getServersByCore(String coreName) {
+    	Map<String, String> map = new LinkedHashMap<String, String>();
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/server");
+    	for (HierarchicalConfiguration hc: hcList) {
+    		String[] store = StringUtils.split(hc.getString("store"), ",");
+    		if (ArrayUtils.contains(store, coreName)) {
+        		String serverName = hc.getString("@name");
+        		String serverUrl = hc.getString("url");
+        		map.put(serverName, serverUrl);
+    		}
+    	}
+    	// sort keys
+    	List<String> keys = new ArrayList<String>(map.keySet());
+		Collections.sort(keys, new Comparator<String>() {
+			@Override
+			public int compare(String arg0, String arg1) {
+				return arg0.compareToIgnoreCase(arg1);
+			}
+			
+		});
+		for (String key: keys) {
+			map.put(key, map.remove(key));
+		}
+    	return map;
+    }
+    
     public String getParameter(String ... keys) {
     	StringBuilder str = new StringBuilder();
     	for (String key: keys) {
@@ -105,12 +137,25 @@ public class ConfigManager {
     }
     
     public static void main(String[] args) {
-    	ConfigManager configManager = new ConfigManager("C:\\home\\widgetti\\conf\\solr.xml");
+    	ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
 		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
 		System.out.println("query: " + configManager.getDefaultSolrParameters("macmall"));
 		System.out.println("query: " + configManager.getStoreName("macmall"));
+		
+		Map<String, String> map = configManager.getServersByCore("macmall");
+		System.out.println("macmall");
+		for (String key: map.keySet()) {
+			System.out.println(key + "\t" + map.get(key));
+		}
+
+		map = configManager.getServersByCore("pcmallcap");
+		System.out.println("pcmallcap");
+		for (String key: map.keySet()) {
+			System.out.println(key + "\t" + map.get(key));
+		}
+
     }
     
 }

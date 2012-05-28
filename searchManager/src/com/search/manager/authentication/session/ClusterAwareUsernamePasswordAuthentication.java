@@ -13,6 +13,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+import com.search.manager.service.UtilityService;
+import com.search.ws.ConfigManager;
+
 public class ClusterAwareUsernamePasswordAuthentication extends UsernamePasswordAuthenticationFilter {
 	private static final Logger logger = Logger.getLogger(ClusterAwareUsernamePasswordAuthentication.class);
 
@@ -29,6 +32,13 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		sessionRegistry.registerNewSession(sessionId, principal);
 
 		super.successfulAuthentication(request, response, authResult);
+		
+		// TODO: get serverName from User
+		String storeName = "macmall";
+		String serverName = ConfigManager.getInstance().getStoreParameter(storeName, "default-server");
+		UtilityService.setStoreName(storeName);
+		UtilityService.setServerName(serverName);
+
 	}
 
 	@Override
