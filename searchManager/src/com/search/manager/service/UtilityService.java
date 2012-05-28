@@ -54,7 +54,17 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getStoreLabel(){
-		return "MacMall";
+		String label = null;
+		if ("macmall".equals(getStoreName())) {
+			label = "MacMall";
+		} else if ("pcmall".equals(getStoreName())) {
+			label = "PcMall";
+		} else if ("ecost".equals(getStoreName())) {
+			label = "eCost";
+		} else if ("sbn".equals(getStoreName())) {
+			label = "SBN";
+		}
+		return label;
 	}
 	
 	@RemoteMethod
