@@ -118,7 +118,8 @@
 			            <h2 class="padT5"> Change Password </h2>
 			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
 			            <div class="clearB"></div>
-			      </div>
+			      </div>    
+			      <div class="alert">keep blank to auto generate password</div>
 		</div>      
 	</div>
 	
@@ -141,6 +142,7 @@
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
 			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
+			            <label><input type="checkbox" class="posRel top4" id="adgen"> Auto-generate password </label>
 			            <div class="clearB"></div>
 			      </div>
 			      

@@ -72,7 +72,7 @@
     <default-server>search</default-server>
   </store>
 
-  <store name="BD">
+  <store name="PCMall BD">
     <core>pcmallcap</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
