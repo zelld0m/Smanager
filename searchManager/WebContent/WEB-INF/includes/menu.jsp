@@ -67,6 +67,7 @@
 		      		<li ${submenu eq 'approval'? 'class="active"': ''}><a href="<spring:url value="/approval/"/>${store}">Pending Approval</a></li>	      		
 		      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>	      		
 		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>	      		
+		      		<li ${submenu eq 'template'? 'class="active"': ''}><a href="<spring:url value="/template/" />">Template</a></li>	      		
 		       </ul>
 	      </c:if>
 	          
