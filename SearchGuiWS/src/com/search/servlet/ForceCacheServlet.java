@@ -2,29 +2,28 @@ package com.search.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import com.search.manager.enums.RuleEntity;
 import com.search.manager.utility.PropsUtils;
-import com.search.thread.LoadRuleThread;
+import com.search.thread.LoadStoreRuleThread;
 
 public class ForceCacheServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
 	private static final Logger logger = Logger.getLogger(ForceCacheServlet.class);
-
-	private static String store;
+	
+	private static String[] stores;
 	
 	static{
-		try {
-			store = PropsUtils.getValue("store");
-		} catch (Exception e) {
-			logger.error(e,e);
-		}
+		stores = PropsUtils.getValue("store").split(",");
 	}
        
     public ForceCacheServlet() {
@@ -33,26 +32,36 @@ public class ForceCacheServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-				// TODO: put some checking if parameter will force a reload or perform the reload at once.
-				LoadRuleThread th1 = new LoadRuleThread(store, RuleEntity.ELEVATE);
-				LoadRuleThread th2 = new LoadRuleThread(store, RuleEntity.EXCLUDE);
-				LoadRuleThread th3 = new LoadRuleThread(store, RuleEntity.QUERY_CLEANING);
-				LoadRuleThread th4 = new LoadRuleThread(store, RuleEntity.RANKING_RULE);
+			PrintWriter out = response.getWriter();
+			List<String> storeList = Arrays.asList(stores);
+			String param = request.getParameter("store");
+			
+			if(StringUtils.isNotEmpty(param)){
+				String[] param_ = param.split(",");
 				
-				th1.start();
-				th2.start();
-				th3.start();
-				th4.start();
+				for(String par : param_){
+					if(!storeList.contains(par)){
+						 out.println("Invalid store parameter...");
+						 out.close();
+						 return;
+					}
+				}
+				
+				storeList = Arrays.asList(param_);
+			}
+				
+			for(String store : storeList){
+				LoadStoreRuleThread th = new LoadStoreRuleThread(store);
+				th.start();
 				
 				while(true){
-					if(!th1.isAlive() && !th2.isAlive() && !th3.isAlive() && !th4.isAlive()){
-						logger.info("########## Rules successfully loaded to cache ...");	
-						PrintWriter out = response.getWriter();
-					    out.println("Rules successfully loaded to cache ...");
-					    out.close();
+					if(!th.isAlive()){
+						out.println("Rules successfully loaded to cache...");
+						out.close();
 						break;
 					}
 				}
+			}	
 		}catch (Exception e) {
 			logger.error(e,e);
 		}
