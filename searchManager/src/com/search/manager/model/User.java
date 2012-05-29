@@ -6,31 +6,38 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.utility.DateAndTimeUtils;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class User implements Serializable {
 	
 private static final long serialVersionUID = 1L;
 	
 	private String username;
+	private String usernameLike;
 	private String fullName;
 	private String password;
 	private String email;
 	private String groupId;
-	private boolean accountNonLocked;
-	private boolean credentialsNonExpired;
+	private Boolean accountNonLocked;
+	private Boolean credentialsNonExpired;
+	private Boolean accountNonExpired;
 	private Date lastAccessDate;
 	private String ip;
 	private String createdBy;
 	private String lastModifiedBy;
 	private Date createdDate;
 	private Date lastModifiedDate;
-
+	private Date thruDate;
+	private Integer successiveFailedLogin;
+	private String storeId;
+	
 	public User() {
 	}
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
 			boolean credentialsNonExpired, Date lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			Date createdDate, Date lastModifiedDate) {
+			Date createdDate, Date lastModifiedDate, Date thruDate, String storeId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -45,6 +52,8 @@ private static final long serialVersionUID = 1L;
 		this.lastModifiedBy = lastModifiedBy;
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
+		setThruDate(thruDate);
+		this.storeId = storeId;
 	}
 
 	public String getUsername() {
@@ -87,35 +96,35 @@ private static final long serialVersionUID = 1L;
 		this.groupId = groupId;
 	}
 
-	public boolean isAccountNonExpired() {
+	public Boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+
+	public void setAccountNonExpired(Boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
+
+	public Boolean isAccountNonLocked() {
 		return accountNonLocked;
 	}
 
-	public void setAccountNonExpired(boolean accountNonExpired) {
-		this.accountNonLocked = accountNonExpired;
-	}
-
-	public boolean isAccountNonLocked() {
-		return accountNonLocked;
-	}
-
-	public void setAccountNonLocked(boolean accountNonLocked) {
+	public void setAccountNonLocked(Boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
 
-	public boolean isCredentialsNonExpired() {
+	public Boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
 
-	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+	public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 
-	public boolean isEnabled() {
+	public Boolean isEnabled() {
 		return accountNonLocked;
 	}
 
-	public void setEnabled(boolean enabled) {
+	public void setEnabled(Boolean enabled) {
 		this.accountNonLocked = enabled;
 	}
 
@@ -165,6 +174,39 @@ private static final long serialVersionUID = 1L;
 
 	public void setLastModifiedDate(Date lastModifiedDate) {
 		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public Date getThruDate() {
+		return thruDate;
+	}
+
+	public void setThruDate(Date thruDate) {
+		this.thruDate = thruDate;
+		this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) < 0;
+	}
+
+	public String getUsernameLike() {
+		return usernameLike;
+	}
+
+	public void setUsernameLike(String usernameLike) {
+		this.usernameLike = usernameLike;
+	}
+
+	public Integer getSuccessiveFailedLogin() {
+		return successiveFailedLogin;
+	}
+
+	public void setSuccessiveFailedLogin(Integer successiveFailedLogin) {
+		this.successiveFailedLogin = successiveFailedLogin;
+	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
 
 }

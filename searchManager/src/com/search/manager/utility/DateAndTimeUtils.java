@@ -59,6 +59,12 @@ public final class DateAndTimeUtils {
 		return calendar;
 	}
 
+	public static Date addYearToDate(int year) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.YEAR, year);
+		return new Date(calendar.getTimeInMillis());
+	}
+	
 	/**
 	 * Returns a date in month day year time format, eg 01/05/2011 10:14 PM
 	 */

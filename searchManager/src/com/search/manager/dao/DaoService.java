@@ -194,7 +194,7 @@ public interface DaoService {
 	
     /* User */
     public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria) throws DaoException;
-    public User getUsers(String username) throws DaoException;
+    public User getUser(String username) throws DaoException;
 	public int addUser(User user) throws DaoException;
 	public int updateUser(User user) throws DaoException;
 	public int removeUser(String username) throws DaoException;

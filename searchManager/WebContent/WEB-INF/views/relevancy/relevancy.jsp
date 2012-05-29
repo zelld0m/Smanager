@@ -37,7 +37,7 @@
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
        
     <div class="clearB floatL w240">
 		<div id="rulePanel"></div>
@@ -88,8 +88,10 @@
 			        	</label>
 		        	</div>
 			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	<div class="floatR marL8 marR3 padT5"> 	    
+	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
+	        			<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -256,7 +258,7 @@
 			
 			<div id="sr" class="MM marT10 clearfix">
 				<label class="marT8 fsize12 fbold w70">Enter Rule:</label>
-				<label><input id="singleRuleFieldMatch" type="text" class="w45" maxlength="4"></label>
+				<label> <input id="singleRuleFieldMatch" type="text" class="w45" value="" maxlength="4"></label>
 			</div>
 			<div class="clearB"></div>
 			
@@ -264,9 +266,9 @@
 			<ul id="multiRule">
 				<li id="multiRulePattern" class="multiRuleItem">
 					<label id="ruleField" class="marT8 fsize12 fbold w70">Enter Rule:</label>
-					<label><input id="ruleFieldCondition" type="text" class="w45" maxlength="4"></label>
+					<label><input id="ruleFieldCondition" type="text" class="w45" value="" maxlength="4"></label>
 					<label><select id="ruleFieldMid"><option value="&lt;">&lt;</option></select></label>
-					<label><input id="ruleFieldMatch" type="text" class="w45"  maxlength="4"></label>
+					<label><input id="ruleFieldMatch" type="text" class="w45" value="" maxlength="4"></label>
 					<a id="addRule" href="javascript:void(0);"><img src="../images/icon_addField2.png" class="marT3"></a>
 					<a id="deleteRule" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marL3 marT3"></a>
 				</li>	
@@ -305,7 +307,7 @@
 				<div id="content">
 					<ul id="fieldListing" class="menuFields">
 						<li id="fieldListingPattern" class="fieldListingItem" style="display:none">
-							<a href="javascript:void(0);"><img src="../images/icon_addField.png" style="margin-bottom:-3px"></a>
+							<a href="javascript:void(0);"><img src="../images/icon_addField.png" style="margin-bottom:-3px; border:0"></a>
 							<span></span>
 						</li>
 					</ul>
@@ -320,7 +322,7 @@
 					<table class="tblfields" style="width:100%" cellpadding="0" cellspacing="0">
 						<tbody id="fieldSelectedBody">
 							<tr id="fieldSelectedPattern" style="display: none" class="fieldSelectedItem">
-								<td class="pad0 txtAC"><a class="removeSelected" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marL3"></a></td>
+								<td class="pad0 txtAC"><a class="removeSelected" href="javascript:void(0);"><img src="../images/icon_delete2.png" class="marL3" style="border:0" ></a></td>
 								<td class="fields">
 									<div class="fieldsHolder marL3">
 										<span class="txtHolder"></span>

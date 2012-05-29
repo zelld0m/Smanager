@@ -126,6 +126,7 @@ body 							{ margin: 0px; }
 .cssReset .padTB5				{padding:5px 0}
 .cssReset .padTB7				{padding:7px 0}
 .cssReset .padTB10				{padding:10px 0}
+.cssReset .padL0, .padL0		{padding-left:0 !important}
 .cssReset .padL5, .padL5		{padding-left:5px !important}
 .cssReset .padL7				{padding-left:7px}
 .cssReset .padL10				{padding-left:10px}

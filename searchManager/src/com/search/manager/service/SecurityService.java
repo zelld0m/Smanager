@@ -1,10 +1,11 @@
 package com.search.manager.service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -13,12 +14,16 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.mail.AccessNotificationMailService;
 import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SecurityModel;
-
+import com.search.manager.model.User;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "securityService")
 @RemoteProxy(
@@ -33,241 +38,160 @@ public class SecurityService {
 	private static final String RESPONSE_STATUS_FAILED = "0";
 	
 	@Autowired private DaoService daoService;
-
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
+	@Autowired private AccessNotificationMailService  mailService;
 
 	@RemoteMethod
-	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String member, String status, String expired) {
-		List<SecurityModel> userList = new ArrayList<SecurityModel>();
+	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
+		User user = new User();
+		user.setGroupId(roleId);
+		user.setUsernameLike(StringUtils.isBlank(search)?null:search);
+		
+		if(StringUtils.isNotEmpty(status))
+			user.setAccountNonLocked("YES".equalsIgnoreCase(status)?false:true);
+		if(StringUtils.isNotEmpty(expired))
+			user.setAccountNonExpired("YES".equalsIgnoreCase(expired)?false:true);
+		
+		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
+		searchCriteria.setStartDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince));
+		return getUsers(searchCriteria);
+	}
+	
+	@RemoteMethod
+	public JSONObject deleteUser(String username){
+		JSONObject json = new JSONObject();
+		int result = -1;
 		try {
+			result = daoService.removeUser(username);
+			if(result > -1){
+				json.put("status", RESPONSE_STATUS_OK);
+				json.put("message", username+" was deleted successfully.");
+				return json;	
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during deleteUser()",e);
+		}
+		json.put("status", RESPONSE_STATUS_FAILED);
+		json.put("message", username+" was not deleted.");
+		return json;	
+	}
+	
+	@RemoteMethod
+	public JSONObject resetPassword(String roleId, String username, String password){
+		
+		JSONObject json = new JSONObject();
+		int result = -1;
+		
+		try {
+			User user = new User();
+			user.setGroupId(roleId);
+			user.setUsername(username);
+	
+			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
+			RecordSet<SecurityModel> record = getUsers(searchCriteria);
 			
-			// dummy
-			int start = 0;
-			int end = 10;
-			
-			switch (Integer.valueOf(page)){
-			case 1:
-				start = 0;
-				end = 10;
-				break;
-			case 2:
-				start = 11;
-				end = 20;
-				break;
-			case 3:
-				start = 21;
-				end = 30;
-				break;
-			case 4:
-				start = 31;
-				end = 40;
-				break;
-			case 5:
-				start = 41;
-				end = 50;
-				break;
-			case 6:
-				start = 51;
-				end = 60;
-				break;
-			case 7:
-				start = 61;
-				end = 70;
-				break;
-			case 8:
-				start = 71;
-				end = 80;
-				break;
-			case 9:
-				start = 81;
-				end = 90;
-				break;
-			case 10:
-				start = 91;
-				end = 100;
-				break;			
-			default:
-				break;
+			if(record != null && record.getTotalSize() > 0){
+				if (StringUtils.isNotBlank(password)) 
+					user.setPassword(getPasswordHash(password));
+				result = daoService.updateUser(user);
 			}
 
-			if(roleId.equals("Role0")){	
-				for(int i=start; i<end; i++){
-					SecurityModel user = new SecurityModel();
-					user.setId("User"+i);
-					user.setUsername("lorem lorem Role0"+i);
-					user.setStatus("Status "+i);
-					user.setAction("Action"+i);
-					user.setDateStarted("Date"+i);
-					user.setType("Administrator");
-					user.setRoleId("Role0");
-					user.setExpired("No");
-					user.setLastAccess("1");
-					user.setFullname("Fullname User"+i);
-					user.setIp("IP User"+i);
-					
-					if(show(user, search, member, status, expired))
-						userList.add(user);
-				}
-			}
-			
-			if(roleId.equals("Role1")){	
-				for(int i=start; i<end; i++){
-					SecurityModel user = new SecurityModel();
-					user.setId("User"+i);
-					user.setUsername("lorem lorem Role1"+i);
-					user.setStatus("Status "+i);
-					user.setAction("Action"+i);
-					user.setDateStarted("Date"+i);
-					user.setType("Administrator");
-					user.setRoleId("Role1");
-					user.setExpired("Yes");
-					user.setLastAccess("2");
-					user.setFullname("Fullname User"+i);
-					user.setIp("IP User"+i);
-					
-					if(show(user, search, member, status, expired))
-						userList.add(user);
-				}
-			}
-			
-			if(roleId.equals("Role2")){	
-				for(int i=start; i<end; i++){
-					SecurityModel user = new SecurityModel();
-					user.setId("User"+i);
-					user.setUsername("lorem lorem Role2"+i);
-					user.setStatus("Status "+i);
-					user.setAction("Action"+i);
-					user.setDateStarted("Date"+i);
-					user.setType("Administrator");
-					user.setRoleId("Role2");
-					user.setExpired("No");
-					user.setLastAccess("3");
-					user.setFullname("Fullname User"+i);
-					user.setIp("IP User"+i);
-					
-					if(show(user, search, member, status, expired))
-						userList.add(user);
-				}
-			}
-			
-			if(roleId.equals("Role3")){	
-				for(int i=start; i<end; i++){
-					SecurityModel user = new SecurityModel();
-					user.setId("User"+i);
-					user.setUsername("lorem lorem Role3"+i);
-					user.setStatus("Status "+i);
-					user.setAction("Action"+i);
-					user.setDateStarted("Date"+i);
-					user.setType("Administrator");
-					user.setRoleId("Role3");
-					user.setExpired("No");
-					user.setLastAccess("4");
-					user.setFullname("Fullname User"+i);
-					user.setIp("IP User"+i);
-					
-					if(show(user, search, member, status, expired))
-						userList.add(user);
-				}
-			}
-			
-			if(roleId.equals("Role4")){	
-				for(int i=start; i<end; i++){
-					SecurityModel user = new SecurityModel();
-					user.setId("User"+i);
-					user.setUsername("lorem lorem Role4"+i);
-					user.setStatus("Status "+i);
-					user.setAction("Action"+i);
-					user.setDateStarted("Date"+i);
-					user.setType("Administrator");
-					user.setRoleId("Role4");
-					user.setExpired("Yes");
-					user.setLastAccess("5");
-					user.setFullname("Fullname User"+i);
-					user.setIp("IP User"+i);
-					
-					if(show(user, search, member, status, expired))
-						userList.add(user);
-				}
+			if(result > -1){
+				mailService.sendResetPassword(user);
+				json.put("status", RESPONSE_STATUS_OK);
+				json.put("message", username+" password was updated successfully.");
+				return json;	
 			}
 		} catch (Exception e) {
-			logger.error("Failed during getUserList()",e);
+			logger.error("Failed during resetPassword()",e);
 		}
-		return new RecordSet<SecurityModel>(userList,100);
-	}
-	
-	@RemoteMethod
-	public JSONObject deleteUser(String type, String userId, String username){
-		JSONObject json = new JSONObject();
-		json.put("status", RESPONSE_STATUS_OK);
-		json.put("message", username+" was deleted successfully");
+		
+		json.put("status", RESPONSE_STATUS_FAILED);
+		json.put("message", username+" password was not updated.");
 		return json;	
 	}
 	
 	@RemoteMethod
-	public JSONObject resetPassword(String roleId, String userId, String username, String lock, String expired, String password){
+	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String password, String expire, String locked, String email){
 		JSONObject json = new JSONObject();
-		json.put("status", RESPONSE_STATUS_OK);
-		json.put("message", username+" password was changed successfully");
-		return json;	
-	}
-	
-	@RemoteMethod
-	public JSONObject addUser(String roleId, String rolename, String username, String fullname, String lastAccess, String ip, String password, String locked, String expire){
-		JSONObject json = new JSONObject();
-		json.put("status", RESPONSE_STATUS_OK);
-		json.put("message", username+" was added successfully.");
-		return json;	
-	}
+		
+		int result = -1;
+		try {
+			//check if username already exist
+			User user = daoService.getUser(username);
+		
+			if(user != null){
+				json.put("status", RESPONSE_STATUS_FAILED);
+				json.put("message", "Username already exist.");
+				return json;
+			}
 
-	/*
-	 * todo
-	 * 
-	 * add updateUser method
-	 * 
-	 */
+			user = new User();
+			user.setFullName(fullname);
+			user.setUsername(username);
+			user.setEmail(email);
+			user.setGroupId(roleId);
+			
+			if(StringUtils.isNotEmpty(locked))
+				user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+
+			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
+			user.setPassword(getPasswordHash(password));
+			result = daoService.addUser(user);
+			
+			if(result > -1){
+				mailService.sendAddUser(user);
+				json.put("status", RESPONSE_STATUS_OK);
+				json.put("message", username+" was added successfully.");
+				return json;
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
+		
+		json.put("status", RESPONSE_STATUS_FAILED);
+		json.put("message", username+" was not added.");
+		
+		return json;	
+	}
 	
 	@RemoteMethod
 	public RecordSet<RoleModel> getRoleList() {
-		List<RoleModel> roleList = new ArrayList<RoleModel>();
+		List<RoleModel> roleList = new ArrayList<RoleModel>();	
 		try {
-			for(int i=0; i<5; i++){
+			List<String> gpList = daoService.getGroups();
+			int cnt = 0;
+			
+			for(String gp : gpList){
 				RoleModel role = new RoleModel();
-				role.setId("Role"+i);
-				role.setRolename("Role"+i);	
-				if(i == 0)
+				role.setId(gp);
+				role.setRolename(gp);
+				if(cnt == 0)
 					role.setDefault(true); // make default
 				roleList.add(role);
-			}
-		} catch (Exception e) {
-			logger.error("Failed during getUserList()",e);
+			}	
+		} catch (DaoException e) {
+			logger.error("Error in SecurityService.getRoleList "+e);
 		}
 		return new RecordSet<RoleModel>(roleList,roleList.size());
 	}
 	
 	@RemoteMethod
 	public RoleModel getRole(String id) {
-
 		List<RoleModel> list = new ArrayList<RoleModel>();
-		
 		try {
-				for(int i=0; i<5; i++){
+			List<String> gpList = daoService.getGroups();
+				for(String gp : gpList){
 					RoleModel role = new RoleModel();
-					role.setId("Role"+i);
-					role.setRolename("Role"+i);	
-					if(("Role"+i).equalsIgnoreCase(id)){
+					role.setId(gp);
+					role.setRolename(gp);	
+					if((gp).equalsIgnoreCase(id)){
 						role.setDefault(true); // get default
 						return role;
 					}
 					list.add(role);
 			}
 		} catch (Exception e) {
-			logger.error("Failed during getUserList()",e);
+			logger.error("Error in SecurityService.getRole "+e);
 		}
 		
 		if(list.size() > 0)
@@ -280,11 +204,17 @@ public class SecurityService {
 	public RecordSet<NameValue> getStatList() {
 		List<NameValue> statList = new ArrayList<NameValue>();
 		try {
-			for(int i=0; i<5; i++){
-				NameValue stat = new NameValue();
-				stat.setName("status "+i);
-				stat.setValue("status "+i);
-				statList.add(stat);
+			for(int i=0; i<1; i++){
+				NameValue stat1 = new NameValue();
+				stat1.setName("No");
+				stat1.setValue("No");
+				
+				NameValue stat2 = new NameValue();
+				stat2.setName("Yes");
+				stat2.setValue("Yes");
+				
+				statList.add(stat1);
+				statList.add(stat2);
 			}
 		} catch (Exception e) {
 			logger.error("Failed during getUserList()",e);
@@ -313,13 +243,89 @@ public class SecurityService {
 		return new RecordSet<NameValue>(expList,expList.size());
 	}
 
-	private boolean show(SecurityModel user, String search, String member, String status, String expired){
+	private RecordSet<SecurityModel> getUsers(SearchCriteria<User> searchCriteria){
 		
-		if(StringUtils.isNotEmpty(search) || StringUtils.isNotEmpty(member) || StringUtils.isNotEmpty(status) || StringUtils.isNotEmpty(expired)){
-			if(user.getUsername().equalsIgnoreCase(search) || user.getDateStarted().equalsIgnoreCase(member) || user.getStatus().equalsIgnoreCase(status) || user.getExpired().equalsIgnoreCase(expired))
-				return true;
-		}else
-			return true;
-		return false;	
+		List<SecurityModel> secList = new ArrayList<SecurityModel>();
+		
+		try {
+			RecordSet<User> recSet = daoService.getUsers(searchCriteria);
+			
+			if(recSet != null && recSet.getTotalSize() > 0){
+				List<User> users = recSet.getList();
+				
+				for(User user : users){
+					SecurityModel secModel = new SecurityModel();
+					secModel.setId(user.getUsername());
+					secModel.setUsername(user.getUsername());
+					secModel.setType(user.getGroupId());
+					secModel.setFullname(user.getFullName());
+					secModel.setLastAccess(user.getLastAccessDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getLastAccessDate()):"");
+					secModel.setIp(user.getIp());
+					secModel.setDateStarted(user.getCreatedDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getCreatedDate()):"");
+					secModel.setRoleId(user.getGroupId());
+					secModel.setStatus(user.isAccountNonLocked()?"no":"yes");
+					secModel.setExpired(user.isAccountNonExpired()?"no":"yes"); // compute expiration
+					secModel.setEmail(user.getEmail());
+					secModel.setLocked(user.isAccountNonLocked());
+					secModel.setThruDate(user.getThruDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getThruDate()):"");
+					secList.add(secModel);
+				}	
+				return new RecordSet<SecurityModel>(secList,recSet.getTotalSize());
+			}
+		} catch (DaoException e) {
+			logger.error("Error in SecurityService.getUsers "+e);
+		}
+		return new RecordSet<SecurityModel>(secList,secList.size());
+	}
+	
+	private String getPasswordHash(String password) {
+		MessageDigest messageDigest = null;
+		String hashedPass = null;
+		try {
+			messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest.update(password.getBytes(),0, password.length());  
+			hashedPass = new BigInteger(1,messageDigest.digest()).toString(16);  
+			if (hashedPass.length() < 32) {
+			   hashedPass = "0" + hashedPass; 
+			}
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("Error in getPasswordHash. " + e.getMessage());
+		}  
+		return hashedPass;
+	}
+	
+	@RemoteMethod
+	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email) {
+		JSONObject json = new JSONObject();
+		int result = -1;
+		
+		try {
+			User user = new User();
+			user.setGroupId(roleId);
+			user.setUsername(username);
+	
+			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
+			RecordSet<SecurityModel> record = getUsers(searchCriteria);
+			
+			if(record != null && record.getTotalSize() > 0){
+				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
+				if(StringUtils.isNotEmpty(locked))
+					user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+				user.setEmail(email);
+				result = daoService.updateUser(user);
+			}
+
+			if(result > -1){
+				json.put("status", RESPONSE_STATUS_OK);
+				json.put("message", username+" was updated successfully.");
+				return json;	
+			}
+		} catch (Exception e) {
+			logger.error("Failed during updateUser()",e);
+		}
+		
+		json.put("status", RESPONSE_STATUS_FAILED);
+		json.put("message", username+" was not updated.");
+		return json;
 	}
 }

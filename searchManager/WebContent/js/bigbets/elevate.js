@@ -230,13 +230,13 @@
 							updateRuleItemPosition(item["edp"], destinationIndex);
 						}
 					}
-					return true;
 				}else{
-					if(code == 8) return true;
-					if(code < 32 || (code > 48 && code < 58)) return true;
-					alert("Should be numeric value");
-					return false;
+					if (((code==48 || code==96) && $.isBlank($(e.target).val())) || (code > 31 && (code < 48 || code > 57))){
+						alert("Should be a positive number not greater than " + selectedRuleItemTotal);
+						return false;
+					}
 				}
+				return true;
 			},
 			focus:function(e){
 				if (e.data.locked) return; 

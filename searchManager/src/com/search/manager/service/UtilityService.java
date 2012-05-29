@@ -85,6 +85,11 @@ public class UtilityService {
 	}
 	
 	@RemoteMethod
+	public static String getStoreLogo(){
+		return new StringBuilder("/images/logo").append(getStoreLabel()).append(".png").toString();
+	}
+	
+	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
 		// TODO replace browsejssolrurl with selected server

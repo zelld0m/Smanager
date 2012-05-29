@@ -151,7 +151,7 @@ public class DeploymentService {
 			logger.error("Failed during getCleanList()",e);
 		}
 		// TODO: add transaction dependency handshake
-		addComment( comment, cleanList.toArray(new String[0]));
+		addComment( comment, ruleStatusIdList);
 		Map<String,Boolean> ruleMap = publishRule(ruleType, cleanList);
 
 			for(String ruleId : ruleRefIdList){	
@@ -195,7 +195,7 @@ public class DeploymentService {
 		} catch (DaoException e) {
 			logger.error("Failed during getCleanList()",e);
 		}
-		addComment(comment, cleanList.toArray(new String[0]));
+		addComment(comment, ruleStatusIdList);
 		Map<String,Boolean> ruleMap = unpublishRule(ruleType, cleanList);
 
 		for(String ruleId : ruleRefIdList){	

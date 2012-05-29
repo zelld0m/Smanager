@@ -10,61 +10,106 @@
 			curid : '',
 			curname : '',
 			curtot : '0',
-	
-			clrUser : function(e){
-				e.find('#aduser').val('');
-				e.find('#adfull').val('');
-				e.find('#adaccs').val('');
-				e.find('#adip').val('');
-				e.find('#adpass').val('');
-				e.find('#adexp').attr('checked', false);
-				e.find('#adlck').attr('checked', false);
-			},	
-			// todo validate ssl
-			addUser : function(e){
-				var aduser = $.trim(e.find('#aduser').val());
-				var adfull = $.trim(e.find('#adfull').val());
-				var adaccs = $.trim(e.find('#adaccs').val());
-				var adip = $.trim(e.find('#adip').val());
-				var adpass = $.trim(e.find('#adpass').val());
-				var adexp = e.find('#adexp').is(':checked');
-				var adlck = e.find('#adlck').is(':checked');
+			dateMinDate : -2,
+			dateMaxDate : '+1Y',
+			expadd : '',
+			expsh : '',
+			
+			updateUser : function(e,api,user){
+				var shexp = sec.expsh;
+				var shemail = $.trim(e.find('#shemail').val());
+				var shlck = e.find('#shlck').is(':checked');
+
+				if(!sec.validField('Email',shemail,true))
+					return;
+				else if(!sec.validField('Expired',shexp,false,true))
+					return;
 				
-				if($.isBlank(aduser)){
-					alert('Username cannot be empty.');
-					return;
-				}else if($.isBlank(adfull)){
-					alert('Fullname cannot be empty.');
-					return;
-				}else if($.isBlank(adaccs)){
-					alert('Last Access cannot be empty.');
-					return;
-				}else if($.isBlank(adip)){
-					alert('IP address cannot be empty.');
-					return;
-				}else if($.isBlank(adpass)){
-					alert('Password cannot be empty.');
-					return;
-				}
-				
-				SecurityServiceJS.addUser(sec.curid,sec.curname,aduser,adfull,adaccs,adip,adpass,adexp,adlck,{
+				SecurityServiceJS.updateUser(sec.curid,user,shexp,shlck,shemail,{
 					callback:function(data){
 						if(data.status == '200'){
 							alert(data.message);
-							sec.getUserList(sec.curid,sec.curname,1,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							api.destroy();
 						}else{
 							alert(data.message);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
-					}			
+					}		
 	          	});		
 			},	
-			showAdd : function(e){					
+			isEmail : function(s) {
+				var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
+				if(!pattern.test(s))
+					return true;
+				else
+					return false;
+			},
+			validField : function(f,fv,e,d){
+				
+				if($.isBlank(fv)){
+					alert(f+' cannot be empty.');
+					return false;
+				}else if(!e && !d && !isAllowedName(fv)){
+					alert(f+" contains invalid value.");
+					return false;
+				}else if(!isAscii(fv)) {
+					alert(f+" contains non-ASCII characters.");		
+					return false;
+				}else if(!isXSSSafe(fv)){
+					alert(f+" contains XSS.");
+					return false;
+				}else if(e && sec.isEmail(fv)){
+					alert(f+" is invalid.");
+					return false;
+				}else if(d && !$.isDate(fv)){
+					alert(f+" is invalid date.");
+					return false;
+				}
+
+				return true;
+			},
+			clrUser : function(e){
+				e.find('#aduser').val('');
+				e.find('#adfull').val('');
+				e.find('#ademail').val('');
+				e.find('#adexp_1').val('');
+				sec.expadd = '';
+				e.find('#adpass').val('');
+				e.find('#adlck').attr('checked', false);
+			},	
+			addUser : function(e,api){
+				var aduser = $.trim(e.find('#aduser').val());
+				var adfull = $.trim(e.find('#adfull').val());
+				var adexp = sec.expadd;
+				var ademail = $.trim(e.find('#ademail').val());
+				var adpass = $.trim(e.find('#adpass').val());
+				var adlck = e.find('#adlck').is(':checked');
+
+				if(!sec.validField('Username',aduser))
+					return;
+				else if(!sec.validField('Fullname',adfull))
+					return;
+				else if(!sec.validField('Email',ademail,true))
+					return;
+				else if(!sec.validField('Password',adpass))
+					return;
+				else if(!sec.validField('Expired',adexp,false,true))
+					return;
+				
+				SecurityServiceJS.addUser(sec.curid,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,{
+					callback:function(data){
+						if(data.status == '200'){
+							alert(data.message);
+							sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+							api.destroy();
+						}else{
+							alert(data.message);
+						}
+					}					
+	          	});		
+			},	
+			showAdd : function(e){		
+				sec.adexp = '';
 				$(this).qtip({
 					content: {
 						text: $('<div/>'),
@@ -89,7 +134,7 @@
 						
 							contentHolder.find("#adaddBtn").on({
 								click: function(e){	
-									sec.addUser(contentHolder);
+									sec.addUser(contentHolder,api);
 								}
 							});
 							
@@ -98,6 +143,20 @@
 									sec.clrUser(contentHolder);
 								}
 							});
+	
+							contentHolder.find("#adexp").attr("id", "adexp_1");		
+							contentHolder.find("#adexp_1").datepicker({
+								showOn: "both",
+								minDate: sec.dateMinDate,
+								maxDate: sec.dateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendarwithBG.png",
+								buttonImageOnly: true,
+								disabled: false,
+								onSelect: function(dateText, inst) {			
+									sec.expadd = contentHolder.find("#adexp_1").val();
+								}
+							});	
 						},
 						hide:function(evt, api){
 							api.destroy();
@@ -105,23 +164,16 @@
 					}
 				});
 			},
-			
-			// todo validate ssl
-			resetPass : function(e,data){
+			resetPass : function(e,data,api){
 				if (!$.isBlank($.trim(e.find('#shpass').val()))){
-					SecurityServiceJS.resetPassword(data.type,data.id,data.name,e.find('#shlck').is(':checked'),e.find('#shexp').is(':checked'),$.trim(e.find('#shpass').val()),{
+					SecurityServiceJS.resetPassword(data.type,data.id,e.find('#shpass').val(),{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
+								api.destroy();
 							}else{
 								alert(data.message);
 							}
-						},
-						preHook:function(){ 
-						
-						},
-						postHook:function(){ 
-						
 						}			
 		          	});	
 				}else
@@ -129,6 +181,7 @@
 			},	
 			showUser : function(e){
 				var data = e.data;
+				sec.expsh = data.thruDate;
 				
 				$(this).qtip({
 					content: {
@@ -155,12 +208,36 @@
 							contentHolder.find(".shfname").html(data.fullname);
 							contentHolder.find(".shlacss").html(data.lastaccess);
 							contentHolder.find(".ship").html(data.ip);
-						
+							contentHolder.find("#shemail").val(data.email);	
+							contentHolder.find("#shlck").attr('checked', data.locked);	
+							
 							contentHolder.find("#resetBtn").on({
 								click: function(e){	
-									sec.resetPass(contentHolder,data);
+									sec.resetPass(contentHolder,data,api);
 								}
 							});
+
+							contentHolder.find("#shexp").attr("id", "shexp_1");	
+							contentHolder.find("#shexp_1").val(data.thruDate);
+							
+							contentHolder.find("#shexp_1").datepicker({
+								showOn: "both",
+								minDate: sec.dateMinDate,
+								maxDate: sec.dateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								disabled: false,
+								onSelect: function(dateText, inst) {			
+									sec.expsh = contentHolder.find("#shexp_1").val();
+								}
+							});	
+							
+							contentHolder.find("#shsv").on({
+								click: function(e){	
+									sec.updateUser(contentHolder,api,data.name);
+								}
+							});	
 						},
 						hide:function(evt, api){
 							api.destroy();
@@ -190,12 +267,6 @@
 							}	
 							$('#refexp').html(content);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -211,12 +282,6 @@
 							}	
 							$('#refstat').html(content);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -258,12 +323,6 @@
 							sec.curname	= data.rolename;
 							sec.getUserList(data.id,data.rolename,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
 					}			
 				});
 			},
@@ -284,13 +343,7 @@
 								sec.setRoleValues(list[i]);
 							}								
 						}
-					},
-					preHook:function(){ 
-					
-					},
-					postHook:function(){ 
-					
-					}			
+					}		
 				});
 			},
 			setRoleValues : function(data){
@@ -301,7 +354,7 @@
 			setUserValues : function(data){
 				$('#user' + data.id).on({
 					click: sec.showUser
-				}, {id:data.id, type:data.type, name:data.username,fullname:data.fullname,lastaccess:data.lastAccess,ip:data.ip});
+				}, {id:data.id, type:data.type, name:data.username,fullname:data.fullname,lastaccess:data.lastAccess,ip:data.ip,email:data.email,locked:data.locked,thruDate:data.thruDate});
 				
 				$('#del' + data.id).on({
 					click: sec.delUser
@@ -311,23 +364,29 @@
 				SecurityServiceJS.getUserList(id,pg,src,mem,stat,exp,{
 					callback:function(data){
 						var list = data.list;
-						if (list.length>0){
-							var content = '';
-							$('.conTr').remove();
+						var content = '';
+						$('.conTr').remove();
+						if (list.length>0){	
+							$('.conTr1').show();
 							for(var i=0; i<list.length; i++){
-								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC hl">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+' days ago</td></tr>';
+								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+'</td></tr>';
 								$('.conTable').append(content);
 								sec.setUserValues(list[i]);
 							}					
 							sec.showPaging(pg,id,name,data.totalSize);
-						}else
-							alert('No record found.');
+						}else{	
+							$('.conTr1').hide();
+							content = '<tr class="conTr"><td>No record found.</td></tr>';
+							$('.conTable').append(content);
+							$('#sortablePagingTop').hide();
+							$('#sortablePagingBottom').hide();			
+						}		
 					},
 					preHook:function(){ 
-					
+						$('#preloader').show();
 					},
 					postHook:function(){ 
-					
+						$('#preloader').hide();
 					}			
 				});
 			},
@@ -343,6 +402,14 @@
 					click: sec.showAdd
 				});
 
+				$('#refmem').datepicker({
+					showOn: "both",
+					buttonText: "Member Date",
+					buttonImage: "../images/icon_calendar.png",
+					buttonImageOnly: true,
+					disabled: false
+				});	
+				
 				sec.getStatList();
 				sec.getExpList();
 				sec.getRoleList();
@@ -351,21 +418,15 @@
 			delUser : function(e){
 				var data = e.data;
 		        if (confirm("Are you sure you want to delete this user ?")){                  
-		          	SecurityServiceJS.deleteUser(data.type,data.id,data.name,{
+		          	SecurityServiceJS.deleteUser(data.id,{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
-								sec.getUserList(sec.curid,sec.curname,1,null,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+								sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 							}else{
 								alert(data.message);
 							}
-						},
-						preHook:function(){ 
-						
-						},
-						postHook:function(){ 
-						
-						}			
+						}		
 		          	});	
 		        }  
 			}

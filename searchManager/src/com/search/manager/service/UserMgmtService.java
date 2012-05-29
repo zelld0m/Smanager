@@ -3,8 +3,10 @@ package com.search.manager.service;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.mail.AccessNotificationMailService;
 import com.search.manager.model.Group;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -32,6 +35,7 @@ public class UserMgmtService {
 	private static final Logger logger = Logger.getLogger(UserMgmtService.class);
 	
 	@Autowired private DaoService daoService;
+	@Autowired private AccessNotificationMailService  mailService;
 
 	public DaoService getDaoService() {
 		return daoService;
@@ -42,12 +46,25 @@ public class UserMgmtService {
 	}
 
 	@RemoteMethod
-	public RecordSet<User> getUsers(String groupId, int page,int itemsPerPage) {
+	public RecordSet<User> getUsers(String groupId, String username, Date memberSince, String expired, String locked, int page,int itemsPerPage) {
 		RecordSet<User> rSet = null;
 		try {
 			User user = new User();
-			user.setGroupId(groupId);
+			user.setGroupId(StringUtils.isBlank(groupId)?null:groupId);
+			user.setUsernameLike(StringUtils.isBlank(username)?null:username);
+			if ("Y".equalsIgnoreCase(expired)) {
+				user.setAccountNonExpired(false);
+			} else if ("N".equalsIgnoreCase(expired)) {
+				user.setAccountNonExpired(true);
+			}
+			if ("Y".equalsIgnoreCase(locked)) {
+				user.setAccountNonLocked(false);
+			} else if ("N".equalsIgnoreCase(locked)) {
+				user.setAccountNonLocked(true);
+			}
 			SearchCriteria<User> searchCriteria =new SearchCriteria<User>(user,null,null,page,itemsPerPage);
+			searchCriteria.setStartDate(memberSince);
+			searchCriteria.setEndDate(memberSince);
 			rSet = daoService.getUsers(searchCriteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getUsers()",e);
@@ -60,7 +77,7 @@ public class UserMgmtService {
 		User result = null;
 		
 		try {
-			result = daoService.getUsers(username);
+			result = daoService.getUser(username);
 		} catch (DaoException e) {
 			logger.error("Failed during getUser()",e);
 		}
@@ -70,9 +87,14 @@ public class UserMgmtService {
 	@RemoteMethod
 	public int addUser(User user) {
 		int result = -1;
+		String password = StringUtils.isBlank(user.getPassword())?generatePassword():user.getPassword();
 		try {
-			user.setPassword(getPasswordHash(user.getPassword()));
+			user.setPassword(getPasswordHash(password));
 			result = daoService.addUser(user);
+			if (result == 1) {
+				user.setPassword(password);
+				mailService.sendAddUser(user);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
 		}
@@ -105,6 +127,26 @@ public class UserMgmtService {
 	}
 	
 	@RemoteMethod
+	public int resetPassword(String username, String newPassword) {
+		int result = -1;
+		try {
+			String password = StringUtils.isBlank(newPassword)?generatePassword():newPassword;
+			User user = new User();
+			user.setUsername(username);
+			user.setPassword(getPasswordHash(password));
+			result = daoService.updateUser(user);
+			if (result == 1) {
+				user = daoService.getUser(username);
+				user.setPassword(password);
+				mailService.sendResetPassword(user);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addComment()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
 	public List<String> getAllPermissions() throws DaoException {
 		return daoService.getAllPermissions();
 	}
@@ -135,4 +177,7 @@ public class UserMgmtService {
 		return hashedPass;
 	}
 
+	private String generatePassword() {
+		return RandomStringUtils.randomAlphabetic(8);
+	}
 }

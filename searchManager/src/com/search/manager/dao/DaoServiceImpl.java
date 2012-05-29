@@ -936,12 +936,12 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public User getUsers(String username) throws DaoException {
+	public User getUser(String username) throws DaoException {
 		User user = new User();
 		user.setUsername(username);
 		SearchCriteria<User> criteria = new SearchCriteria<User>(user,null,null,0,0);
 		RecordSet<User> users = getUsers(criteria);
-		return users.getTotalSize()==1 ? users.getList().get(0) : null;
+		return users.getTotalSize()>0 ? users.getList().get(0) : null;
 	}
 
 	@Override

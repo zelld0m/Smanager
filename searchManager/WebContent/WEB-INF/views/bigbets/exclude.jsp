@@ -12,7 +12,7 @@
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
-		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+		<a href="javascript:void()"><img src="<spring:url value="${storeLogo}" />"></a>
 	</div>
 	
 	<div class="clearB floatL w240">
@@ -61,7 +61,9 @@
 		        	</div>
 			  	</div>   			  	
 	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
+		        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+		        	</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -198,7 +200,7 @@
 			         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 		
 			         	<div class="borderT clearB"></div> 
-			         	<div class="bigbetsShade" style="padding:5px">
+			         	<div class="bigbetsShade" style="padding:5px; min-height: 75px">
 			         	<strong>Exclude Info:</strong>
 			         	<div class="txtAR w60 floatR fgray fsize11">
 			         		<img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 

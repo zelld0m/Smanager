@@ -1,5 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
+
+  <store name="eCost">
+    <core>ecost</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <facet-name>eCost</facet-name>
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
+  </store>
+
+  <store name="SBN">
+    <core>ecost</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <facet-name>sbn</facet-name>
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
+  </store>
+
+  <store name="PCMall">
+    <core>pcmall</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxpcmallrelevancy</qt>
+    <facet-name>PcMall</facet-name>
+    
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    
+    <solr-param-value name="fq">
+    	<param-value>PcMall_StoreFlag:true</param-value>
+    </solr-param-value>    
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
+  </store>
+
+
   <store name="PCMall">
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -68,7 +106,7 @@
     <url>http://vtorschstg03.pcmall.com:8080/solr14/(store)/</url>
     <store>pcmall,macmall,onsale,ecost</store>
   </server>
-  <server name='afs-pl-schpd07.afservice.org'>
+  <server name='afs-pl-schpd07'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
     <store>pcmall,macmall,onsale,ecost</store>
   </server>

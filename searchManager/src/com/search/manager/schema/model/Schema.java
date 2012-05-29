@@ -142,6 +142,9 @@ public class Schema implements Serializable {
 			}
 		}
 		
+		// add GenereicUser_Keyword
+		fieldMap.put("GenericUser_Keywords", new Field("GenericUser_Keywords", fieldTypeMap.get("text"), true, true));
+		
 		// sort the entries
 		List<String> keys = new ArrayList<String>(fieldMap.keySet());
 		Collections.sort(keys, new Comparator<String>() {

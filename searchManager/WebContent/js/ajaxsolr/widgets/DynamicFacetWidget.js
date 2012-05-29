@@ -51,9 +51,14 @@
 						for (var i = 0, l = objectedItems.length; i < l; i++) {
 							var facet = objectedItems[i].facet;
 							var count = objectedItems[i].count;
-							AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
-							if (i == l-1 && $.isNotBlank(self.manager.store.values('q')))
-								AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+							
+							if ($.isNotBlank(facet)){
+								AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
+								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
+									AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+								}
+							}
+						
 						}
 					}	
 				}
@@ -79,6 +84,9 @@
 						}
 					});
 
+					if (selectedItems.length == 0) {
+						return "";
+					}
 					return "(" + selectedItems.join(" ") + ")";
 				};
 
@@ -221,7 +229,9 @@
 
 										contentHolder.find('#continueBtn').click(function(e){
 											self.manager.store.removeByValue('fq', new RegExp('^-?' + facetField + ':'));
-											self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));
+											if ($.isNotBlank(getFacetSelected())) {
+												self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));												
+											}
 											self.manager.store.addByValue('relevancyId', $("select#relevancy").val());
 											self.manager.doRequest(0);
 										});

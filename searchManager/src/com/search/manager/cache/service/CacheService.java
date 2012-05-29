@@ -1,6 +1,10 @@
 package com.search.manager.cache.service;
 
-import org.apache.log4j.Logger;
+
+import org.directwebremoting.annotations.Param;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.cache.ehcache.CacheClient;
@@ -9,12 +13,16 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.exception.DataException;
 
 @Service("cacheService")
+@RemoteProxy(
+		name = "CacheServiceJS",
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "cacheService")
+)
 public class CacheService<E extends CacheModel<?>>{
 	
 	public static CacheClient cacheClient		= null;
 	public String className						= null;
 	public StringBuilder genKey					= null;
-	private static Logger logger = Logger.getLogger(CacheService.class);
 	
 	public CacheService() {
 		className = this.getClass().getSimpleName();
@@ -44,23 +52,7 @@ public class CacheService<E extends CacheModel<?>>{
 	public void put(String paramKey, String paramValue) throws DataException {
 		cacheClient.resetParameterMatrix();
 		cacheClient.addToParameterMatrix(EhCachEDistributedClient.PARAM_MIME_APP_XJAVA_SER);
-		cacheClient.setDualMode(0);
-		
-		boolean loaded = false;
-
-		for(int i = 1; i<=cacheClient.getNumberOfServers(); i++){
-			try{
-				cacheClient.setTestPrimaryNode(i);
-				cacheClient.put(this.generateKey(paramKey), paramValue);
-				loaded = true;
-				break;
-			}catch(Exception e){
-				logger.error(e,e);
-			}
-		}
-		
-		if(!loaded)
-			throw new DataException();	
+		cacheClient.put(this.generateKey(paramKey), paramValue);
 	}
 	
 	/**
@@ -72,22 +64,7 @@ public class CacheService<E extends CacheModel<?>>{
 	public void put(String paramKey, E cacheObject) throws DataException {
 		cacheClient.resetParameterMatrix();
 		cacheClient.addToParameterMatrix(EhCachEDistributedClient.PARAM_MIME_APP_XJAVA_SER);
-		cacheClient.setDualMode(0);
-		boolean loaded = false;
-
-		for(int i = 1; i<=cacheClient.getNumberOfServers(); i++){
-			try{
-				cacheClient.setTestPrimaryNode(i);
-				cacheClient.put(this.generateKey(paramKey), cacheObject);
-				loaded = true;
-				break;
-			}catch(Exception e){
-				logger.error(e,e);
-			}
-		}
-		
-		if(!loaded)
-			throw new DataException();	
+		cacheClient.put(this.generateKey(paramKey), cacheObject);
 	}
 	
 	private String generateKey(String paramKey) throws DataException {
@@ -112,23 +89,13 @@ public class CacheService<E extends CacheModel<?>>{
 	 * @return model object stored in the cache given the param key value.
 	 * @throws DataException
 	 */
-	@SuppressWarnings("unchecked")
+	@RemoteMethod
+	@SuppressWarnings({ "unchecked", "hiding" })
 	public <E> E get(String paramKey) throws DataException {
 		cacheClient.resetParameterMatrix();
 		cacheClient.addToParameterMatrix(EhCachEDistributedClient.PARAM_MIME_APP_XJAVA_SER);
-		cacheClient.setDualMode(0);
-		
-		for(int i = 1; i<=cacheClient.getNumberOfServers(); i++){
-			try{
-				cacheClient.setTestPrimaryNode(i);
-				E cacheObj = (E) cacheClient.get(this.generateKey(paramKey).toString());
-				return cacheObj;
-			}catch(Exception e){
-				logger.error(e,e);
-			}
-		}
-
-		throw new DataException();
+		E cacheObj = (E) cacheClient.get(this.generateKey(paramKey).toString());
+		return cacheObj;
 	}
 	
 	/**

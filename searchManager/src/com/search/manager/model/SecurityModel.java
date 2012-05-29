@@ -14,14 +14,15 @@ public class SecurityModel implements Serializable{
 	private String username;
 	private String status;
 	private String dateStarted;
-	private String action;
 	private String type;
-	private boolean isDefault;
 	private String roleId;
 	private String expired;
 	private String lastAccess;
 	private String fullname;
 	private String ip;
+	private String email;
+	private boolean locked;
+	private String thruDate;
 	
 	public String getId() {
 		return id;
@@ -47,23 +48,11 @@ public class SecurityModel implements Serializable{
 	public void setDateStarted(String dateStarted) {
 		this.dateStarted = dateStarted;
 	}
-	public String getAction() {
-		return action;
-	}
-	public void setAction(String action) {
-		this.action = action;
-	}
 	public String getType() {
 		return type;
 	}
 	public void setType(String type) {
 		this.type = type;
-	}
-	public boolean isDefault() {
-		return isDefault;
-	}
-	public void setDefault(boolean isDefault) {
-		this.isDefault = isDefault;
 	}
 	public String getRoleId() {
 		return roleId;
@@ -94,5 +83,23 @@ public class SecurityModel implements Serializable{
 	}
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public boolean isLocked() {
+		return locked;
+	}
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+	public String getThruDate() {
+		return thruDate;
+	}
+	public void setThruDate(String thruDate) {
+		this.thruDate = thruDate;
 	}
 }
