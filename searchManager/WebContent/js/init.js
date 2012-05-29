@@ -262,26 +262,36 @@ function initFileUploads() {
 			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
 			
 			if($.isNotBlank(serverSelection)){
-				$("#select-server").val(serverSelected);
+				$("#select-server option").remove();
+				parseData = JSON.parse($.trim($.cookie(COOKIE_SERVER_SELECTION)));
+				for (key in parseData){
+					$("#select-server").append($("<option>", { value : parseData[key]}).text(key));							
+				}
+				
 			}else{
 				$("#select-server option").remove();
 				UtilityServiceJS.getServerListForSelectedStore(false, {
 					callback:function(data){
+						
+						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{expires: 1, path:'/'});
+						
 						for (key in data){
 							$("#select-server").append($("<option>", { value : data[key]}).text(key));							
 						}
 					}
 				});
-				$("#select-server:first").attr("selected","selected");
+				
 			}
+			
+			if($.isNotBlank(serverSelected)) $("#select-server option[value='" + serverSelected + "']").attr("selected", "selected") ;
 			
 			$("#select-server").on({
 				change: function(){
-					UtilityServiceJS.setServerName($(this).text(), {
+					$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{expires: 1, path:'/'});
+					UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 						callback:function(){
-							
 						}
-					});
+					});					
 				}
 			});
 			
