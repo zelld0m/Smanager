@@ -40,14 +40,6 @@ public class SecurityService {
 	@Autowired private DaoService daoService;
 	@Autowired private AccessNotificationMailService  mailService;
 
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
-
 	@RemoteMethod
 	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();

@@ -37,7 +37,7 @@
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
        
     <div class="clearB floatL w240">
 		<div id="rulePanel"></div>
@@ -88,8 +88,10 @@
 			        	</label>
 		        	</div>
 			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	<div class="floatR marL8 marR3 padT5"> 	    
+	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
+	        			<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	

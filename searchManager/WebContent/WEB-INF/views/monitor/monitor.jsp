@@ -4,18 +4,26 @@
 <c:set var="submenu" value="monitor"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<!-- Start Left Side -->
-<div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
- 	<div class="clearB floatL w240">
-		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
-    </div>
+<!-- Left Menu-->
+<div class="clearB floatL sideMenuArea">
+	<div class="companyLogo">
+		<a href="javascript:void()"><img src="<spring:url value="${storeLogo}" />"></a>
+	</div>
+	
+	<div class="clearB floatL w240">
+		<div>&nbsp;</div>
+	    <div class="clearB"></div>
+	</div>
 </div>
+<!--Left Menu-->
 
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer breakWord">
-		<h1 class="padT7 padL15 fsize20 fnormal">Monitor</h1>
+	<div class="floatL w730 titlePlacer">		
+	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
+	  </div>
 	</div>
 	
 	<div class="clearB"></div>

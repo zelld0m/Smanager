@@ -8,7 +8,7 @@
 <link href="<spring:url value="/css/dashboard/dashboard.css" />" rel="stylesheet" type="text/css">
 
 <div class="clearB floatL minW240 sideMenuArea">
-<div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+<div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
 
 <div class="sideHeader">Keyword Trends</div>
 <div class="leftStatus">
