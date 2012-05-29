@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages>
+	<message name="common.added">
+		<description>was added successfully.</description>
+	</message>
+	<message name="common.not.added">
+		<description>was not added.</description>
+	</message>
+	<message name="common.updated">
+		<description>was updated successfully.</description>
+	</message>
+	<message name="common.not.updated">
+		<description>was not updated.</description>
+	</message>
+	<message name="common.deleted">
+		<description>was deleted successfully.</description>
+	</message>
+	<message name="common.not.deleted">
+		<description>was not deleted.</description>
+	</message>
+	<message name="password.updated">
+		<description>password was updated successfully.</description>
+	</message>
+	<message name="password.not.updated">
+		<description>password was not updated.</description>
+	</message>
+	<message name="password.not.match">
+		<description>New and old passwords are not match.</description>
+	</message>
+	<message name="username.exist">
+		<description>Username already exist.</description>
+	</message>
+</messages>
