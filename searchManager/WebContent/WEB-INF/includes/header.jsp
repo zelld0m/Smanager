@@ -4,7 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
-
+  <script>
+	var contextPath = "<%=request.getContextPath()%>";	
+  </script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
   <!--  theme -->

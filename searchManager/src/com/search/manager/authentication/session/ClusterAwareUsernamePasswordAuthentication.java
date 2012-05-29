@@ -15,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.cookie.CookieUtils;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.User;
@@ -45,8 +46,12 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		
 		UtilityService.setStoreName(storeName);
 		UtilityService.setServerName(serverName);
-
-		super.successfulAuthentication(request, response, authResult);
+		
+		//Delete cookies
+		response.addCookie(CookieUtils.expireNow("server.selection", request.getContextPath()));
+		response.addCookie(CookieUtils.expireNow("server.selected", request.getContextPath()));
+				
+		System.out.println(request.getContextPath());
 		User user = new User();
 		user.setUsername(obtainUsername(request));
 		user.setLastAccessDate(new Date());
@@ -58,6 +63,8 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		} catch (DaoException e) {
 			logger.error("Updating successful login failed! " + e.getMessage(), e);
 		}
+		
+		super.successfulAuthentication(request, response, authResult);
 	}
 
 	@Override

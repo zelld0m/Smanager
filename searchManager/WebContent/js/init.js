@@ -253,9 +253,11 @@ function initFileUploads() {
 			});
 		};
 		
+		var COOKIE_SERVER_SELECTION = "server.selection";
+		var COOKIE_SERVER_SELECTED = "server.selected";
+		
 		var getServerList = function(){
-			
-			var COOKIE_SERVER_SELECTION = "server.selection";
+		
 			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
 			
 			if($.isNotBlank(serverSelection)){
@@ -269,7 +271,7 @@ function initFileUploads() {
 				$("#select-server option").remove();
 				UtilityServiceJS.getServerListForSelectedStore(true, {
 					callback:function(data){
-						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{expires: 1, path:'/'});
+						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{path: contextPath});
 						for (key in data){
 							$("#select-server").append($("<option>", { value : key }).text(key));							
 						}
@@ -278,16 +280,24 @@ function initFileUploads() {
 				});
 				
 			}
+			
+			$("#select-server").on({
+				change: function(){
+					$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:contextPath});
+					UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
+						callback:function(){
+						}
+					});					
+				}
+			});
 		};
 
 		var setSelectedServer = function() {
-			var COOKIE_SERVER_SELECTED = "server.selected";
 			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
 			if ($.isBlank(serverSelected)) {
 				UtilityServiceJS.getServerName({
 					callback:function(serverName){
-						alert(serverName);
-						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{expires: 1, path:'/'});
+						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{path:contextPath});
 						$("#select-server option[value='" + serverName + "']").attr("selected", "selected");
 					}
 				});
@@ -295,21 +305,6 @@ function initFileUploads() {
 			else {
 				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
 			}
-			
-			$("#select-server").on({
-				change: function(){
-					$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{expires: 1, path:'/'});
-					UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
-						callback:function(){
-							UtilityServiceJS.getServerName({
-								callback:function(data) {
-									alert("server: " + data);
-								}
-							});
-						}
-					});					
-				}
-			});
 		};
 		
 		var COOKIE_NAME_DOCK = "dock.active";
