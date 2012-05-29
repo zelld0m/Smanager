@@ -301,6 +301,11 @@ function initFileUploads() {
 					$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{expires: 1, path:'/'});
 					UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 						callback:function(){
+							UtilityServiceJS.getServerName({
+								callback:function(data) {
+									alert("server: " + data);
+								}
+							});
 						}
 					});					
 				}

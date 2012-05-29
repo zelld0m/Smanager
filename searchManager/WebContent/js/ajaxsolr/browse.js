@@ -5,7 +5,7 @@ var Manager;
 	$.cookie('searchWithin', '', {expires: 1});
 
 	$(function () {	
-		var Manager = null;
+		Manager = null;
 		var solrurl;
 		var isFmGui;
 
@@ -20,7 +20,7 @@ var Manager;
 					callback:function(storeName){
 
 						Manager = new AjaxSolr.Manager({
-							solrUrl: solrurl +'/'+ storeName + '/'
+							solrUrl: solrurl + storeName + '/'
 						});
 
 						Manager.addWidget(new AjaxSolr.ResultWidget({
@@ -123,5 +123,22 @@ var Manager;
 		}
 	};
 
+	$("#select-server").on({
+		change: function(){
+			setTimeout(function(){
+				UtilityServiceJS.getSolrConfig({
+					callback:function(data){	
+						var config = $.parseJSON(data);
+						alert(config.solrUrl);
+						alert(Manager);
+						Manager.setSolrUrl(config.solrUrl + storeName + '/');
+						alert(Manager.solrUrl);
+					},
+					postHook:function() {
+						//Manager.doRequest();						
+					}
+				})}, 1000);			
+		}
+	});
 
 })(jQuery);

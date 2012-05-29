@@ -56,8 +56,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
 
   <!--  scroller  -->
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/tinyscrollbar.css" />">
-
 	<script type="text/javascript" src="<spring:url value="/js/tinyscrollbar/jquery.tinyscrollbar.min.js" />"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
