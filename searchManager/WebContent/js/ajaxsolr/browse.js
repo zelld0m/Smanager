@@ -102,19 +102,21 @@
 
 					Manager.doRequest();
 
-					$("#select-server").on({
-						change: function(){
-							UtilityServiceJS.getSolrConfig({
-								callback:function(data){	
-									var config = $.parseJSON(data);
-									Manager.setSolrUrl(config.solrUrl + storeName + '/');
-								},
-								postHook:function() {
-									Manager.doRequest();						
-								}
-							});			
-						}
-					});
+					if ($("#select-server").is(":visible")){
+						$("#select-server").on({
+							change: function(){
+								UtilityServiceJS.getSolrConfig({
+									callback:function(data){	
+										var config = $.parseJSON(data);
+										Manager.setSolrUrl(config.solrUrl + storeName + '/');
+									},
+									postHook:function() {
+										Manager.doRequest();						
+									}
+								});			
+							}
+						});
+					}
 				}
 			});
 		}
