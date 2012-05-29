@@ -110,6 +110,11 @@
 			<param-name>relevancy-config-file</param-name>
 			<param-value>relevancy.xml</param-value>
 		</init-param>
+		
+		<init-param>
+			<param-name>messages-config-file</param-name>
+			<param-value>messages.xml</param-value>
+		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	

@@ -23,6 +23,7 @@ import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
+import com.search.manager.schema.MessagesConfig;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "securityService")
@@ -64,14 +65,14 @@ public class SecurityService {
 			result = daoService.removeUser(username);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was deleted successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.deleted")));
 				return json;	
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteUser()",e);
 		}
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not deleted.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.deleted")));
 		return json;	
 	}
 	
@@ -98,7 +99,7 @@ public class SecurityService {
 			if(result > -1){
 				mailService.sendResetPassword(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" password was updated successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.updated")));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -106,7 +107,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" password was not updated.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.not.updated")));
 		return json;	
 	}
 	
@@ -121,7 +122,7 @@ public class SecurityService {
 		
 			if(user != null){
 				json.put("status", RESPONSE_STATUS_FAILED);
-				json.put("message", "Username already exist.");
+				json.put("message", MessagesConfig.getInstance().getMessage("username.exist"));
 				return json;
 			}
 
@@ -141,7 +142,7 @@ public class SecurityService {
 			if(result > -1){
 				mailService.sendAddUser(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was added successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.added")));
 				return json;
 			}
 		} catch (DaoException e) {
@@ -149,7 +150,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not added.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.added")));
 		
 		return json;	
 	}
@@ -317,7 +318,7 @@ public class SecurityService {
 
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was updated successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.updated")));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -325,7 +326,11 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not updated.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.updated")));
 		return json;
+	}
+	
+	private String composeMessage(String prefix, String msg){
+		return prefix+" "+msg;
 	}
 }

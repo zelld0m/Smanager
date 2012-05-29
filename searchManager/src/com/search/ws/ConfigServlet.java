@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
 
+import com.search.manager.schema.MessagesConfig;
 import com.search.manager.schema.RelevancyConfig;
 
 public class ConfigServlet extends HttpServlet {
@@ -25,7 +26,10 @@ public class ConfigServlet extends HttpServlet {
 		conf = config.getInitParameter("config-folder") + fileSeparator + config.getInitParameter("relevancy-config-file");
 		logger.info("relevancy config file: " + conf);
 		RelevancyConfig.getInstance(conf);
+		
+		// messages config
+		conf = config.getInitParameter("config-folder") + fileSeparator + config.getInitParameter("messages-config-file");
+		logger.info("messages config file: " + conf);
+		MessagesConfig.getInstance(conf);
 	}
-
-	
 }

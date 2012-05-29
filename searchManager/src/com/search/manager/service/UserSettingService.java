@@ -21,6 +21,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
+import com.search.manager.schema.MessagesConfig;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "userSettingService")
@@ -36,7 +37,6 @@ public class UserSettingService {
 	private static final String RESPONSE_STATUS_FAILED = "0";
 	
 	@Autowired private DaoService daoService;
-	@Autowired private AccessNotificationMailService  mailService;
 
 	@RemoteMethod
 	public SecurityModel getUser() {
@@ -94,7 +94,7 @@ public class UserSettingService {
 						user.setPassword(getPasswordHash(newpassword));
 					}else{
 						json.put("status", RESPONSE_STATUS_FAILED);
-						json.put("message", "New and old passwords are not match.");
+						json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.not.match")));
 						return json;
 					}
 				}
@@ -103,7 +103,7 @@ public class UserSettingService {
 				
 				if(result > -1){
 					json.put("status", RESPONSE_STATUS_OK);
-					json.put("message", username+" was updated successfully.");
+					json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.updated")));
 					return json;	
 				}
 			}	
@@ -112,7 +112,7 @@ public class UserSettingService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not updated.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.updated")));
 		return json;
 	}
 	
@@ -130,5 +130,9 @@ public class UserSettingService {
 			logger.error("Error in getPasswordHash. " + e.getMessage());
 		}  
 		return hashedPass;
+	}
+	
+	private String composeMessage(String prefix, String msg){
+		return prefix+" "+msg;
 	}
 }
