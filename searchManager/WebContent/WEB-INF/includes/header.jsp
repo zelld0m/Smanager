@@ -123,24 +123,11 @@
          	  <div class="clearB"></div>
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
-         	  	<li class="submenu first"><a href="/"><img src="<spring:url value="/images/world.png" />" class="marBn3 marR3">MacMall</a>
-         	  		<ul>
-         	  			<li><a href="javascript:void(0);">PCMall</a></li>
-         	  			<li><a href="javascript:void(0);">OnSale</a></li>
-         	  			<li><a href="javascript:void(0);">eCost</a></li>
-         	  			<li><a href="javascript:void(0);">SBN</a></li>
-         	  		</ul>
-         	  	</li>
-         	  	<li class="divider"></li>
-         	  	<li class="submenu last"><a href="/"><img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"></img>Stage01</a>
-         	  		<ul>
-         	  			<li><a href="javascript:void(0);">Stage02</a></li>
-         	  			<li><a href="javascript:void(0);">Stage03</a></li>
-         	  			<li><a href="javascript:void(0);">Stage04</a></li>
-         	  			<li><a href="javascript:void(0);">Stage05</a></li>
-         	  		</ul>
-         	  	</li>
-         	  </ul>
+		      		<li class="submenu last">
+		         		<img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"/>
+		         	  	<select id="select-server"></select>
+		        	</li>
+		        </ul>
          	  </div>
 	      </td>
         </tr>

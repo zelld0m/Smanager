@@ -190,6 +190,7 @@ function initFileUploads() {
 /** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
+		
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
@@ -251,6 +252,40 @@ function initFileUploads() {
 				}
 			});
 		};
+		
+		var getServerList = function(){
+			
+			var COOKIE_SERVER_SELECTION = "server.selection";
+			var COOKIE_SERVER_SELECTED = "server.selected";
+			
+			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
+			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
+			
+			if($.isNotBlank(serverSelection)){
+				$("#select-server").val(serverSelected);
+			}else{
+				$("#select-server option").remove();
+				UtilityServiceJS.getServerListForSelectedStore(false, {
+					callback:function(data){
+						for (key in data){
+							$("#select-server").append($("<option>", { value : data[key]}).text(key));							
+						}
+					}
+				});
+				$("#select-server:first").attr("selected","selected");
+			}
+			
+			$("#select-server").on({
+				change: function(){
+					UtilityServiceJS.setServerName($(this).text(), {
+						callback:function(){
+							
+						}
+					});
+				}
+			});
+			
+		};
 
 		var COOKIE_NAME_DOCK = "dock.active";
 
@@ -300,9 +335,10 @@ function initFileUploads() {
 				base.$el.find(selector + ' .page').html(model["currentPage"]);
 			}
 		});
-
+		
 		useTabs();
 		useTinyMCE();
+		getServerList();
 		refreshDock();
 	});
 })(jQuery);
