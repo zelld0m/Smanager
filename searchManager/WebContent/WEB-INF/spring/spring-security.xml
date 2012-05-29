@@ -24,7 +24,6 @@
     	<security:intercept-url pattern="/exclude/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/campaign/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/redirect/**" access="isAuthenticated()" />
-    	<security:intercept-url pattern="/redirect2/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/catalog/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/feature/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/migrator/**" access="isAuthenticated()" />
@@ -33,8 +32,12 @@
     	<security:intercept-url pattern="/protword/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/production/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/production/**" access="hasRole('PUBLISH_RULE')" />
     	<security:intercept-url pattern="/approval/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/approval/**" access="hasRole('APPROVE_RULE')" />
     	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/security/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/security/**" access="hasRole('MANAGE_USER')" />
      	<security:intercept-url pattern="/dwr/**" access="isAuthenticated()" />
      	
         <!-- Make CSS and image resources to unsecured -->

@@ -363,7 +363,7 @@
 	</div><!-- end landing page -->
 	
   <div id="ruleIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>	
 </div>  <!--  end content page --> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>

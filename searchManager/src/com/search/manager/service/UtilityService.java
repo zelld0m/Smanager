@@ -11,6 +11,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestAttributes;
@@ -105,6 +106,18 @@ public class UtilityService {
 			map.remove(getServerName());			
 		}
 		return map;
+	}
+	
+	@RemoteMethod
+	public boolean hasPermission(String permission) {
+		boolean flag = false;
+		for (GrantedAuthority auth : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (permission.equals(auth.getAuthority())) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
 	}
 	
 	public static String formatComment(String comment) {
