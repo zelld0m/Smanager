@@ -256,34 +256,45 @@ function initFileUploads() {
 		var getServerList = function(){
 			
 			var COOKIE_SERVER_SELECTION = "server.selection";
-			var COOKIE_SERVER_SELECTED = "server.selected";
-			
 			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
-			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
 			
 			if($.isNotBlank(serverSelection)){
 				$("#select-server option").remove();
 				parseData = JSON.parse($.trim($.cookie(COOKIE_SERVER_SELECTION)));
 				for (key in parseData){
-					$("#select-server").append($("<option>", { value : parseData[key]}).text(key));							
+					$("#select-server").append($("<option>", { value : key }).text(key));							
 				}
-				
+				setSelectedServer();				
 			}else{
 				$("#select-server option").remove();
-				UtilityServiceJS.getServerListForSelectedStore(false, {
+				UtilityServiceJS.getServerListForSelectedStore(true, {
 					callback:function(data){
-						
 						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{expires: 1, path:'/'});
-						
 						for (key in data){
-							$("#select-server").append($("<option>", { value : data[key]}).text(key));							
+							$("#select-server").append($("<option>", { value : key }).text(key));							
 						}
+						setSelectedServer();
 					}
 				});
 				
 			}
-			
-			if($.isNotBlank(serverSelected)) $("#select-server option[value='" + serverSelected + "']").attr("selected", "selected") ;
+		};
+
+		var setSelectedServer = function() {
+			var COOKIE_SERVER_SELECTED = "server.selected";
+			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
+			if ($.isBlank(serverSelected)) {
+				UtilityServiceJS.getServerName({
+					callback:function(serverName){
+						alert(serverName);
+						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{expires: 1, path:'/'});
+						$("#select-server option[value='" + serverName + "']").attr("selected", "selected");
+					}
+				});
+			}
+			else {
+				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
+			}
 			
 			$("#select-server").on({
 				change: function(){
@@ -294,9 +305,8 @@ function initFileUploads() {
 					});					
 				}
 			});
-			
 		};
-
+		
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
