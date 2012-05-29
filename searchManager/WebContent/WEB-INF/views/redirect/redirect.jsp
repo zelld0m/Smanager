@@ -112,8 +112,10 @@
 					<label class="floatL w70 marT8 padT3">Description</label>
 					<label><textarea id="description" rows="3" class="marT8" style="width:240px"></textarea></label>
 					<div class="borderT txtAR padT10">
-						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a> 
+						<sec:authorize access="hasRole('CREATE_RULE')">
+							<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+							<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+						</sec:authorize> 
 					</div>
 				</div>
 			
@@ -163,8 +165,9 @@
 							
 							
 						</td>
-						<td class="w60"><a href="#" class="buttons btnGray marL15 clearfix">
-							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
+						<td class="w60"><sec:authorize access="hasRole('CREATE_RULE')"><a href="#" class="buttons btnGray marL15 clearfix">
+							<div class="buttons fontBold" id="addRuleCondition">+</div></a></sec:authorize><br/>
+						</td>
 						<td class="landingCont bgboxGray" style="vertical-align: top; width: 240px">
 							<div id="ruleConditionPanel"></div>
 						</td>
