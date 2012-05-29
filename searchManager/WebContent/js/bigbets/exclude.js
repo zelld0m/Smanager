@@ -15,7 +15,7 @@
 	
 	var addItemFieldDefaultText = "Enter SKU #";
 	var zeroCountHTMLCode = "&#133;";
-	var dateMinDate = -2;
+	var dateMinDate = 0;
 	var dateMaxDate = "+1Y";
 	var defaultItemDisplay = "sortableTile";
 	
@@ -76,7 +76,7 @@
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-
+								
 							if ($.isBlank(skus)) {
 								alert("There are no SKUs specified in the list.");
 							}
@@ -85,6 +85,9 @@
 							}							
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
+							}	
+							else if (!isXSSSafe(comment)){
+								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 							else {
 								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
@@ -178,7 +181,7 @@
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
 		
-		$("#sItemImg" + id).attr("src",item["imagePath"]);
+		setTimeout(function(){$("#sItemImg" + id).attr("src",item['imagePath']);},10);
 		$("#sItemMan" + id).html(item["manufacturer"]);
 		$("#sItemName" + id).html(item["name"]);
 		$("#sItemDPNo" + id).html(item["dpNo"]);
