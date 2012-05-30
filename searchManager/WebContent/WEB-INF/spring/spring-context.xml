@@ -41,6 +41,8 @@
 	     	<property name="localCacheService" ref="localCacheService" />
 	</bean>
 		
+	<bean id="userPreferences" class="com.search.manager.model.UserPreferences" scope="session"/>
+	
 	<context:annotation-config />		
 
 	<!-- Scans within the base package of the application for @Components to configure as beans,

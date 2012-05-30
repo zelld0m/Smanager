@@ -14,7 +14,15 @@
 			dateMaxDate : '+1Y',
 			expadd : '',
 			expsh : '',
+			key:'abcdefghijklmnopqrstuvwxyz123456789',
 			
+			genpass : function(){
+				var temp='';
+				for (var i=0;i<6;i++){
+					temp+=sec.key.charAt(Math.floor(Math.random()*sec.key.length));
+				}
+				return temp;
+			},
 			updateUser : function(e,api,user){
 				var shexp = sec.expsh;
 				var shemail = $.trim(e.find('#shemail').val());
@@ -76,15 +84,20 @@
 				sec.expadd = '';
 				e.find('#adpass').val('');
 				e.find('#adlck').attr('checked', false);
+				e.find('#adgen').attr('checked', false);
 			},	
 			addUser : function(e,api){
 				var aduser = $.trim(e.find('#aduser').val());
 				var adfull = $.trim(e.find('#adfull').val());
 				var adexp = sec.expadd;
-				var ademail = $.trim(e.find('#ademail').val());
-				var adpass = $.trim(e.find('#adpass').val());
+				var ademail = $.trim(e.find('#ademail').val());			
 				var adlck = e.find('#adlck').is(':checked');
-
+				
+				if(e.find('#adgen').is(':checked'))
+					e.find('#adpass').val(sec.genpass());
+				
+				var adpass = $.trim(e.find('#adpass').val());
+						
 				if(!sec.validField('Username',aduser))
 					return;
 				else if(!sec.validField('Fullname',adfull))
@@ -150,7 +163,7 @@
 								minDate: sec.dateMinDate,
 								maxDate: sec.dateMaxDate,
 								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendarwithBG.png",
+								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true,
 								disabled: false,
 								onSelect: function(dateText, inst) {			
@@ -165,19 +178,18 @@
 				});
 			},
 			resetPass : function(e,data,api){
-				if (!$.isBlank($.trim(e.find('#shpass').val()))){
-					SecurityServiceJS.resetPassword(data.type,data.id,e.find('#shpass').val(),{
-						callback:function(data){
-							if(data.status == '200'){
-								alert(data.message);
-								api.destroy();
-							}else{
-								alert(data.message);
-							}
-						}			
-		          	});	
-				}else
-					alert('Please enter new password.');
+				if($.isBlank($.trim(e.find('#shpass').val())))
+					e.find('#shpass').val(sec.genpass());
+				SecurityServiceJS.resetPassword(data.type,data.id,e.find('#shpass').val(),{
+					callback:function(data){
+						if(data.status == '200'){
+							alert(data.message);
+							api.destroy();
+						}else{
+							alert(data.message);
+						}
+					}			
+	          	});	
 			},	
 			showUser : function(e){
 				var data = e.data;

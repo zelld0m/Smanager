@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
+
+  <store name="eCost">
+    <core>ecost</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxecostrelevancy</qt>
+    <facet-name>eCost</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>    
+    <solr-param-value name="fq">
+    	<param-value>eCOST_StoreFlag:true</param-value>
+    </solr-param-value>   
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
+  </store>
+
+  <store name="SBN">
+    <core>sbn</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxpcmallrelevancy</qt>
+    <facet-name>SBN</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+    	<param-value>SBN_StoreFlag:true</param-value>
+    </solr-param-value>
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
+  </store>
+
   <store name="PCMall">
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PcMall</facet-name>
-    
     <solr-param-name>
     	<param-name>fq</param-name>
     </solr-param-name>
-    
     <solr-param-value name="fq">
     	<param-value>PcMall_StoreFlag:true</param-value>
     </solr-param-value>    
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>search</default-server>
   </store>
   
   <store name="MacMall">
@@ -25,27 +57,57 @@
     <solr-param-name>
     	<param-name>fq</param-name>
     </solr-param-name>
-    
     <solr-param-value name="fq">
     	<param-value>MacMall_StoreFlag:true</param-value>
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat>    
+    <default-server>search</default-server>
+  </store>
+
+  <store name="PCMall BD">
+    <core>pcmallcap</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxpcmallrelevancy</qt>
+    <facet-name>PcMall</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+    	<param-value>PcMall_StoreFlag:true</param-value>
+    </solr-param-value>
+    <dateformat>MM/dd/yyyy</dateformat>    
+    <default-server>afs-pl-schpd04</default-server>
   </store>
   
+  <!-- 
+  <server name='vtorschstg01'> 										<- name of the server to display in gui
+    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 	<- the url of solr
+    <store>pcmall,macmall,onsale,ecost</store> 						<- stores whose data is inside the solr server
+  </server>
+   -->  
   <server name='vtorschstg01'>
-    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 
+    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url>
+    <store>pcmall,macmall,onsale,ecost</store>
   </server>
   <server name='vtorschstg02'>
     <url>http://vtorschstg02.pcmall.com:8080/solr14/(store)/</url>
+    <store>pcmall,macmall,onsale,ecost</store>
   </server>
   <server name='vtorschstg03'>
     <url>http://vtorschstg03.pcmall.com:8080/solr14/(store)/</url>
+    <store>pcmall,macmall,onsale,ecost</store>
   </server>
-  <server name='afs-pl-schpd07.afservice.org'>
+  <server name='afs-pl-schpd07'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
+    <store>pcmall,macmall,onsale,ecost</store>
   </server>
   <server name='search'>
     <url>http://10.17.35.36:8080/solr14/(store)/</url>
+    <store>pcmall,macmall,onsale,ecost</store>
+  </server>
+  <server name='afs-pl-schpd04'>
+    <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(store)/</url>
+    <store>pcmallcap</store>
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath</fields>

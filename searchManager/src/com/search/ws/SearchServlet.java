@@ -241,7 +241,7 @@ public class SearchServlet extends HttpServlet {
 				else if (keywordPresent) {
 					// get relevancy mapped to keyword
 					relevancy = new Relevancy("", "");
-					relevancy.setStore(new Store(UtilityService.getStoreName()));
+					relevancy.setStore(new Store(storeName));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 							new RelevancyKeyword(new Keyword(keyword), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);

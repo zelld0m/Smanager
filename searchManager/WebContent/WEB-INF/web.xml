@@ -45,6 +45,12 @@
 	    </listener-class>
 	</listener>
 
+	<listener>
+	  <listener-class>
+	      org.springframework.web.context.request.RequestContextListener
+	  </listener-class>
+	</listener>
+	
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -103,6 +109,11 @@
 		<init-param>
 			<param-name>relevancy-config-file</param-name>
 			<param-value>relevancy.xml</param-value>
+		</init-param>
+		
+		<init-param>
+			<param-name>messages-config-file</param-name>
+			<param-value>messages.xml</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -166,7 +177,6 @@
 				com.search.manager.model.Category,
 				com.search.manager.model.CategoryList,
 				com.search.manager.model.RedirectRule,
-				com.search.manager.model.RuleEntity,
 				com.search.manager.model.RuleStatus,
 				com.search.manager.model.RedirectRuleCondition,
 				com.search.manager.model.RelevancyKeyword,

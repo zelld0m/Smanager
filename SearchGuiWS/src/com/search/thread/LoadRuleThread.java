@@ -4,11 +4,10 @@ import org.apache.log4j.Logger;
 import com.search.manager.enums.RuleEntity;
 import com.search.service.DeploymentRuleService;
 import com.search.service.DeploymentRuleServiceImpl;
-import com.search.servlet.ForceCacheServlet;
 
 public class LoadRuleThread extends Thread{
 	
-	private static final Logger logger = Logger.getLogger(ForceCacheServlet.class);
+	private static final Logger logger = Logger.getLogger(LoadRuleThread.class);
 	private String store;
 	private RuleEntity entity;
 	private static DeploymentRuleService deploymentRuleService;
