@@ -4,6 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
+
   <script>
 	var contextPath = "<%=request.getContextPath()%>";	
   </script>
@@ -126,7 +127,9 @@
          	  <ul class="topNavMenu topmenu">
 		      		<li class="submenu last">
 		         		<img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"/>
-		         	  	<select id="select-server"></select>
+		         		<sec:authorize access="hasRole('MANAGE_USER')">
+		         	  		<select id="select-server"></select>
+		         	  	</sec:authorize>
 		        	</li>
 		        </ul>
          	  </div>

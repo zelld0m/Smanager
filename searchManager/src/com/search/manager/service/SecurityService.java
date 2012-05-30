@@ -91,12 +91,14 @@ public class SecurityService {
 			RecordSet<SecurityModel> record = getUsers(searchCriteria);
 			
 			if(record != null && record.getTotalSize() > 0){
+				user.setEmail(record.getList().get(0).getEmail());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(getPasswordHash(password));
 				result = daoService.updateUser(user);
 			}
 
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendResetPassword(user);
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.updated")));
@@ -133,13 +135,14 @@ public class SecurityService {
 			user.setGroupId(roleId);
 			
 			if(StringUtils.isNotEmpty(locked))
-				user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
 			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 			user.setPassword(getPasswordHash(password));
 			result = daoService.addUser(user);
 			
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendAddUser(user);
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.added")));
@@ -311,7 +314,7 @@ public class SecurityService {
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 				if(StringUtils.isNotEmpty(locked))
-					user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
 				result = daoService.updateUser(user);
 			}

@@ -8,11 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/template")
-public class MonitorController {
+@RequestMapping("/monitor")
+public class TemplateController {
 	
 	@RequestMapping("/")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model){
-		return "template/template";
+		return "monitor/monitor";
 	}
 }
