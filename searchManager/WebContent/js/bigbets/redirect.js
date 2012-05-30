@@ -20,15 +20,6 @@
 
 	var deleteRuleConfirmText = "Continue deleting this rule?";
 	var deleteKeywordInRuleConfirmText = "Continue deleting this keyword?";
-	var allowModify = true;
-	
-	var getPermission = function() {
-		UtilityServiceJS.hasPermission('CREATE_RULE', {
-		callback:function(data){
-			allowModify = data;
-		}
-	});
-	};
 
 	var prepareRedirect = function(){
 		clearAllQtip();
@@ -382,7 +373,7 @@
 			pageSize: rulePageSize,
 			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 					callback: function(data){
@@ -596,7 +587,6 @@
 	};
 
 	init = function() {
-		getPermission();
 		showRedirect();
 	};
 

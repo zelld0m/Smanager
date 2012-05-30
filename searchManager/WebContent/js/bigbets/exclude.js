@@ -23,16 +23,6 @@
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
 	
-	var allowModify = true;
-	
-	var getPermission = function() {
-		UtilityServiceJS.hasPermission('CREATE_RULE', {
-		callback:function(data){
-			allowModify = data;
-		}
-	});
-	};
-
 	var showAddItem = function(e){
 		if (e.data.locked || !allowModify) return;
 
@@ -376,7 +366,7 @@
 			page: rulePage,
 			pageSize: rulePageSize,
 			filterText: ruleFilterText,
-
+			showAddButton: allowModify,
 			itemDataCallback: function(base, keyword, page){
 				ruleFilterText = keyword;
 				rulePage = page;
@@ -472,7 +462,6 @@
 	};
 
 	var init = function() {
-		getPermission();
 		setItemDisplay();
 		setItemFilter();
 		getExcludeRuleList();

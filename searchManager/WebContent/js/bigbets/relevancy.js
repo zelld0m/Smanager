@@ -21,16 +21,6 @@
 	var bqFacetValuesPageSize = 5;
 	var bqSearchText = "Enter Field Value";
 
-	var allowModify = true;
-	
-	var getPermission = function() {
-		UtilityServiceJS.hasPermission('CREATE_RULE', {
-		callback:function(data){
-			allowModify = data;
-		}
-	});
-	};
-
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
@@ -1139,7 +1129,7 @@
 			pageSize: rulePageSize,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1449,7 +1439,6 @@
 	};
 
 	$(document).ready(function() { 
-		getPermission();
 		showRelevancy();
 		getRelevancyRuleList();
 		getRelevancyRuleKeywordList();
