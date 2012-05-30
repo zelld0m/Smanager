@@ -95,7 +95,7 @@
 	<div class="clearB"></div>	
 	<div id="redirectContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/queryCleaningRuleGuidelines.jpg"></div>
 		<div id="redirect" class="redirect fsize12">	
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
