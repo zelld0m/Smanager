@@ -23,8 +23,18 @@
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
 	
+	var allowModify = true;
+	
+	var getPermission = function() {
+		UtilityServiceJS.hasPermission('CREATE_RULE', {
+		callback:function(data){
+			allowModify = data;
+		}
+	});
+	};
+
 	var showAddItem = function(e){
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		$(this).qtip({
 			content: {
@@ -162,7 +172,7 @@
 
 	var deleteItemInRule = function(e){
 		var data = e.data;
-		if (!data.locked && confirm(deleteItemInRuleConfirmText)){
+		if (!data.locked && allowModify && confirm(deleteItemInRuleConfirmText)){
 			ExcludeServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
@@ -206,16 +216,16 @@
 		
 		$('#commentIcon' + id).on({
 			click: showCommentList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, item: item, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
 
 		$('#auditIcon' + id).on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, item: item, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
 		
 		$('#sItemDelete' + id).off().on({
 			click: deleteItemInRule,
 			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked, edp:item["edp"]});
+		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"]});
 		
 		$("#sItemExpDate" + id).val(item["formattedExpiryDate"]);
 		
@@ -226,7 +236,7 @@
 			buttonText: "Expiration Date",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked,
+			disabled: selectedRuleStatus.locked || !allowModify,
 			onSelect: function(dateText, inst) {	
 				if (item["formattedExpiryDate"] != dateText){
 					ExcludeServiceJS.updateExpiryDate(selectedRule.ruleName,item["edp"], dateText, {
@@ -288,12 +298,12 @@
 				$("#addItemBtn").off().on({
 					click: showAddItem,
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 				
 				$("a#clearRuleBtn").off().on({
 					mouseenter: showHoverInfo,
 					click: function(e){
-						if(!e.data.locked && confirm(clearRuleConfirmText))
+						if(!e.data.locked && allowModify && confirm(clearRuleConfirmText))
 							ExcludeServiceJS.clearRule(selectedRule.ruleName, {
 								callback: function(code){
 									showActionResponse(code, "clear", selectedRule.ruleName);
@@ -301,7 +311,7 @@
 								}
 							});
 					}
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 				
 				$("#submitForApprovalBtn").off().on({
 					click: function(e){
@@ -462,6 +472,7 @@
 	};
 
 	var init = function() {
+		getPermission();
 		setItemDisplay();
 		setItemFilter();
 		getExcludeRuleList();
