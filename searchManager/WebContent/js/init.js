@@ -191,6 +191,21 @@ function initFileUploads() {
 (function($){
 	$(document).ready(function() {
 		
+		var load = false;
+		window.onfocus = function(){
+			console.log("focus");
+			if (load) {
+				console.log("load");
+				load = false;
+				$("#select-server").trigger("change");				
+			}
+		};
+		
+		window.onblur = function() {
+			load = true;
+			console.log("blur");
+	    }
+		
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
