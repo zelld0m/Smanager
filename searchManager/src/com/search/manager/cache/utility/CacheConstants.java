@@ -28,17 +28,17 @@ public class CacheConstants {
 	public static String getCacheKey(String storeId, String type, String kw) throws DataException {
 		if("macmall".equalsIgnoreCase(storeId)) {
 			storeId = "mc";
-		}
-		else if("pcmall".equalsIgnoreCase(storeId)) {
+		}else if("pcmall".equalsIgnoreCase(storeId)) {
 			storeId = "pc";			
-		}
-		else if("onsale".equalsIgnoreCase(storeId)) {
+		}else if("onsale".equalsIgnoreCase(storeId)) {
 			storeId = "ol";			
-		}
-		else if("pcmallcap".equalsIgnoreCase(storeId)) {
+		}else if("pcmallcap".equalsIgnoreCase(storeId)) {
 			storeId = "bd";			
-		}
-		else {
+		}else if("ecost".equalsIgnoreCase(storeId)) {
+			storeId = "ec";			
+		}else if("sbn".equalsIgnoreCase(storeId)) {
+			storeId = "sbn";			
+		}else {
 			throw new DataException("Unrecognized Store");
 		}
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
