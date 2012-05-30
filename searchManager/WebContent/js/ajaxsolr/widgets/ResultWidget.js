@@ -282,7 +282,7 @@
 			var expiredDateSelected = false;
 			var idSuffix = "_" + doc.EDP;
 			var noExpiryDateText = "Indefinite";
-			var expDateMinDate = -2;
+			var expDateMinDate = 0;
 			var expDateMaxDate = "+1Y";
 
 			return function () {
@@ -519,6 +519,7 @@
 											});
 									}else{
 										//add elevation
+										if(isXSSSafe(comment)){
 										ElevateServiceJS.addElevate(keyword, doc.EDP, position, expiryDate, comment, {
 											callback : function(event){
 												maxPosition++;
@@ -530,6 +531,9 @@
 											postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
 											errorHandler: function(message){ alert(message); }
 										});
+										}else{
+											alert("Invalid comment. HTML/XSS is not allowed.");
+										}
 									}
 
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
@@ -541,7 +545,7 @@
 
 							});
 
-							contentHolder.find("#removeBtn").click(function(){
+							contentHolder.find("#removeBtn").click(function(){								
 								ElevateServiceJS.deleteItemInRule(keyword, doc.EDP,{
 									callback : function(event){
 										contentHolder.find("a#removeBtn").attr("style","display:none");
@@ -555,6 +559,7 @@
 									postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
 								});
 							});
+							
 						},
 						hide: function(event, api) {
 							$("#aExpiryDate_"+doc.EDP).datepicker('destroy');
@@ -571,7 +576,7 @@
 			var self = this;
 			var needRefresh = false;
 			var idSuffix = "_" + doc.EDP;
-			var expDateMinDate = -2;
+			var expDateMinDate = 0;
 			var expDateMaxDate = "+1Y";
 
 			return function () {
@@ -630,6 +635,9 @@
 
 							contentHolder.find("#removeBtn").click(function(){
 								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
+								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
+							
+								if(isXSSSafe(comment)){
 								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, {
 									callback : function(data) {
 										needRefresh = true;
@@ -637,7 +645,10 @@
 									},
 									preHook: function() {},
 									postHook: function() {}
-								});						  
+								});	
+								}else{
+									alert("Invalid comment. HTML/XSS is not allowed.");
+								}
 							});
 							
 							//Disable

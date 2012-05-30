@@ -15,23 +15,13 @@
 
 	var addItemFieldDefaultText = "Enter SKU #";
 	var zeroCountHTMLCode = "&#133;";
-	var dateMinDate = -2;
+	var dateMinDate = 0;
 	var dateMaxDate = "+1Y";
 	var defaultItemDisplay = "sortableTile";
 
 	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
-
-	var allowModify = true;
-	
-	var getPermission = function() {
-		UtilityServiceJS.hasPermission('CREATE_RULE', {
-		callback:function(data){
-			allowModify = data;
-		}
-	});
-	};
 
 	var showAddItem = function(e){
 		if (e.data.locked || !allowModify) return;
@@ -96,6 +86,9 @@
 							}							
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
+							}
+							else if (!isXSSSafe(comment)){
+								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(','), {
@@ -428,6 +421,7 @@
 			fieldName: "keyword",
 			headerText : "Keyword",
 			searchText : "Enter Search",
+			showAddButton: allowModify,
 			page: rulePage,
 			pageSize: rulePageSize,
 			filterText: ruleFilterText,
@@ -527,7 +521,6 @@
 	};
 
 	var init = function() {
-		getPermission();
 		setItemDisplay();
 		setItemFilter();
 		getElevateRuleList();
