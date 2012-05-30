@@ -92,6 +92,7 @@ public class SecurityService {
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setEmail(record.getList().get(0).getEmail());
+				user.setFullName(record.getList().get(0).getFullname());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(getPasswordHash(password));
 				result = daoService.updateUser(user);
