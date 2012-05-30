@@ -49,7 +49,7 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="50px" class="txtAL"></th>
+							<th width="50px" class="txtAL">Content</th>
 							<th width="230px" class="txtAL">Rule Info</th>
 							<th width="85px">Request Type</th>
 							<th>Request Details</th>
@@ -63,7 +63,7 @@
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td class="txtAC" width="50px" id="ruleOption">
-								<img class="previewIcon pointer" src="<spring:url value="/images/icon_preview.png" />" alt="Preview Content" title="Preview Content"> 
+								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
 							<td width="230px" id="ruleRefId">
 								<p class="w230 breakWord" id="ruleName"></p>
