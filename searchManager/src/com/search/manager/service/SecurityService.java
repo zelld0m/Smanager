@@ -91,12 +91,14 @@ public class SecurityService {
 			RecordSet<SecurityModel> record = getUsers(searchCriteria);
 			
 			if(record != null && record.getTotalSize() > 0){
+				user.setEmail(record.getList().get(0).getEmail());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(getPasswordHash(password));
 				result = daoService.updateUser(user);
 			}
 
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendResetPassword(user);
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.updated")));
@@ -140,6 +142,7 @@ public class SecurityService {
 			result = daoService.addUser(user);
 			
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendAddUser(user);
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.added")));
