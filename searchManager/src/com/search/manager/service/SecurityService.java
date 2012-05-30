@@ -133,7 +133,7 @@ public class SecurityService {
 			user.setGroupId(roleId);
 			
 			if(StringUtils.isNotEmpty(locked))
-				user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
 			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 			user.setPassword(getPasswordHash(password));
@@ -311,7 +311,7 @@ public class SecurityService {
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 				if(StringUtils.isNotEmpty(locked))
-					user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
 				result = daoService.updateUser(user);
 			}
