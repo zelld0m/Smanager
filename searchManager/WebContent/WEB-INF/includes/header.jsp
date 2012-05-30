@@ -4,6 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
+	<c:set var="req" value="<%=request%>" />
+ 	<spring:eval expression="req.isUserInRole(\"MANAGE_USER\")?\"\":\"disabled\"" var="serverDisabled" />
+
   <script>
 	var contextPath = "<%=request.getContextPath()%>";	
   </script>
@@ -126,7 +129,7 @@
          	  <ul class="topNavMenu topmenu">
 		      		<li class="submenu last">
 		         		<img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"/>
-		         	  	<select id="select-server"></select>
+		         	  	<select id="select-server" ${serverDisabled}></select>
 		        	</li>
 		        </ul>
          	  </div>
