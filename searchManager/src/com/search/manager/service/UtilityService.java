@@ -2,6 +2,8 @@ package com.search.manager.service;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
@@ -56,7 +58,6 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static void setServerName(String serverName) {
-		logger.info("****************************8setServerName:" + serverName);
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
 	}
@@ -70,7 +71,6 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static void setStoreName(String storeName) {
-		logger.info("****************************8setStorerName:" + storeName);
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
@@ -93,8 +93,12 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
-		// TODO replace browsejssolrurl with selected server
-		json.put("solrUrl", PropsUtils.getValue("browsejssolrurl"));
+		String url = ConfigManager.getInstance().getServerParameter(getServerName(), "url");
+		Pattern pattern = Pattern.compile("http://(.*)\\(store\\)/");
+		Matcher m = pattern.matcher(url);
+		if (m.matches()) {
+			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
+		}
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}

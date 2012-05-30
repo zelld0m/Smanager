@@ -341,6 +341,7 @@ public class DeploymentService {
 		RuleStatus ruleStatus = new RuleStatus();
 		ruleStatus.setCreatedBy(userName);
 		ruleStatus.setLastModifiedBy(userName);
+		ruleStatus.setStoreId(UtilityService.getStoreName());
 		return ruleStatus;
 	}
 
