@@ -269,7 +269,7 @@
 		},
 
 		elevateHandler: function (keyword,doc) {
-
+			if (!allowModify) return;
 			var self = this;
 			var selector  = "#resultItem_" + doc.EDP + " div#elevateHolder";
 			var title = "Elevate Product";
@@ -572,7 +572,7 @@
 		},
 
 		excludeHandler: function (keyword,doc) {
-
+			if (!allowModify) return;
 			var self = this;
 			var needRefresh = false;
 			var idSuffix = "_" + doc.EDP;

@@ -39,7 +39,7 @@ public class CacheConstants {
 		}else if("sbn".equalsIgnoreCase(storeId)) {
 			storeId = "sbn";			
 		}else {
-			throw new DataException("Unrecognized Store");
+			throw new DataException("Unrecognized Store: " + storeId);
 		}
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
 						.append(".").append(storeId).append("_")

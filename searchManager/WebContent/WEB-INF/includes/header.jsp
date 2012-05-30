@@ -4,9 +4,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
-
   <script>
 	var contextPath = "<%=request.getContextPath()%>";	
+	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
   </script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
@@ -126,8 +126,8 @@
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
 		      		<li class="submenu last">
-		         		<img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"/>
 		         		<sec:authorize access="hasRole('MANAGE_USER')">
+		         			<span>Search Server</span>
 		         	  		<select id="select-server"></select>
 		         	  	</sec:authorize>
 		        	</li>

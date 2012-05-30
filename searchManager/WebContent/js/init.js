@@ -191,6 +191,21 @@ function initFileUploads() {
 (function($){
 	$(document).ready(function() {
 		
+		var load = false;
+		window.onfocus = function(){
+			if (load) {
+				load = false;
+				var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
+				if (serverSelected !== $("#select-server option:selected").text()) {
+					$("#select-server").triggerHandler("change", {reload: true});				
+				}
+			}
+		};
+		
+		window.onblur = function() {
+			load = true;
+	    };
+		
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
@@ -282,12 +297,21 @@ function initFileUploads() {
 			}
 			
 			$("#select-server").on({
-				change: function(){
-					$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:contextPath});
-					UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
-						callback:function(){
-						}
-					});					
+				change: function(event, data){
+					var reload;
+					if (data != undefined) {
+						reload = data["reload"];
+					}
+					if (reload == undefined) {
+						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:contextPath});
+						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
+							callback:function(){
+							}
+						});						
+					}
+					else if (reload == true) {
+						setSelectedServer();
+					}
 				}
 			});
 		};

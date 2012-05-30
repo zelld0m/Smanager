@@ -104,16 +104,22 @@
 
 					if ($("#select-server").is(":visible")){
 						$("#select-server").on({
-							change: function(){
-								UtilityServiceJS.getSolrConfig({
-									callback:function(data){	
-										var config = $.parseJSON(data);
-										Manager.setSolrUrl(config.solrUrl + storeName + '/');
-									},
-									postHook:function() {
-										Manager.doRequest();						
-									}
-								});			
+							change: function(event, data){
+								var reload;
+								if (data != undefined) {
+									reload = data["reload"];
+								}
+								if (reload == undefined || reload == true) {
+									UtilityServiceJS.getSolrConfig({
+										callback:function(data){	
+											var config = $.parseJSON(data);
+											Manager.setSolrUrl(config.solrUrl + storeName + '/');
+										},
+										postHook:function() {
+											Manager.doRequest();						
+										}
+									});
+								}
 							}
 						});
 					}
