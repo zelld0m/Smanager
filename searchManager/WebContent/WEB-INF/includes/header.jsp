@@ -126,8 +126,8 @@
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
 		      		<li class="submenu last">
-		         		<img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"/>
 		         		<sec:authorize access="hasRole('MANAGE_USER')">
+		         			<span>Search Server</span>
 		         	  		<select id="select-server"></select>
 		         	  	</sec:authorize>
 		        	</li>

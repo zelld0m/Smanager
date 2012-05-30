@@ -141,7 +141,8 @@ public class ConfigManager {
 		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
-		System.out.println("query: " + configManager.getDefaultSolrParameters("macmall"));
+		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));
+		System.out.println("bd default solr param: " + configManager.getDefaultSolrParameters("pcmallcap"));
 		System.out.println("query: " + configManager.getStoreName("macmall"));
 		
 		Map<String, String> map = configManager.getServersByCore("macmall");
