@@ -221,7 +221,7 @@
 							contentHolder.find(".shlacss").html(data.lastaccess);
 							contentHolder.find(".ship").html(data.ip);
 							contentHolder.find("#shemail").val(data.email);	
-							contentHolder.find("#shlck").attr('checked', data.locked);	
+							contentHolder.find("#shlck").attr('checked', !data.locked);	
 							
 							contentHolder.find("#resetBtn").on({
 								click: function(e){	

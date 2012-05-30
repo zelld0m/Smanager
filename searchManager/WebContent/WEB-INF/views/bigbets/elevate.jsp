@@ -144,7 +144,7 @@
   <!--Start Displaying Items-->
   <div id="sortable-bigbets-container" class="clearB floatL w730">
   <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/elevateRuleGuidelines.jpg"></div>
 		<div id="elevate">
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">

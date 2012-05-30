@@ -13,7 +13,7 @@
 	<security:http 
 		auto-config="false" 
 		use-expressions="true"
-		access-denied-page="/denied" 
+		access-denied-page="/denied/" 
 		entry-point-ref="authenticationEntryPoint">
 
 		<security:intercept-url pattern="/" access="isAuthenticated()"/>
