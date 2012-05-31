@@ -920,6 +920,9 @@
 			else if (!isXSSSafe(description)){
 				showMessage("textarea#description", "Description contains XSS.");
 			}
+			else if (description.length>255){
+				showMessage("textarea#description","Description should not exceed 255 characters.");
+			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range!");
 			} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
@@ -987,7 +990,7 @@
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
-		$("#titleHeader").html("");
+		$("#titleHeader").html(moduleName);
 	};
 
 	var showRelevancy = function(){
