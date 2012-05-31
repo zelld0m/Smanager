@@ -280,9 +280,7 @@
 				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
 				var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
-				$ul.find("li span#startDate").parent("li").remove();
-				$ul.find("li span#endDate").parent("li").remove();
-
+				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 
@@ -303,6 +301,8 @@
 							}	
 						}
 
+						$ul.find("span#startDate").parents("li").remove();
+						$ul.find("span#endDate").parents("li").remove();
 						$ul.find("li span#description").html(data["description"]);
 					},
 					preHook: function(){
