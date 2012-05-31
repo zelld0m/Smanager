@@ -2,94 +2,87 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
 <!-- Log4j configuration for the Search Manager. -->
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
-	<!-- Log to the console at debug level -->
+	<!-- Log to file -->
 	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
-		<param name="Threshold" value="INFO,DEBUG,ERROR" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
 		</layout>
 	</appender>
 
-	<!-- Log to file at info level -->
 	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
-		<param name="Threshold" value="INFO,DEBUG,ERROR" />
 		<param name="File" value="/home/solr/tomcat/logs/searchManager.log" />
+		<param name="MaxFileSize" value="2MB"/>  
+       	<param name="MaxBackupIndex" value="5"/>
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
 		</layout>
 	</appender>
-	
-	<!-- Logging of spring security -->
-	<appender name="security-file" class="org.apache.log4j.RollingFileAppender">  
-        <param name="File" value="/home/solr/tomcat/logs/security.log"/>  
-        <param name="Append" value="true"/>  
-        <param name="MaxFileSize" value="2MB"/>  
-        <param name="MaxBackupIndex" value="5"/>  
-        <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="[%d] [%c{1}] %m%n"/>   
-        </layout>  
-    </appender>  
 
-	<!-- Logging of audit trail -->
-	<appender name="audit-file" class="org.apache.log4j.RollingFileAppender">  
-        <param name="File" value="/home/solr/tomcat/logs/audit.log"/>  
-        <param name="Append" value="true"/>  
-        <param name="MaxFileSize" value="2MB"/>  
-        <param name="MaxBackupIndex" value="5"/>  
-        <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="[%d] [%c{1}] %m%n"/>   
-        </layout>  
-    </appender> 
-    
-    
-    <!-- Set com.mall code to run at debug level. -->
+	<appender name="audit-file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/solr/tomcat/logs/audit.log" />
+		<param name="MaxFileSize" value="2MB"/>  
+       	<param name="MaxBackupIndex" value="5"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+		</layout>
+	</appender>
+
+	<appender name="security-file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/solr/tomcat/logs/security.log" />
+		<param name="MaxFileSize" value="2MB"/>  
+       	<param name="MaxBackupIndex" value="5"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+		</layout>
+	</appender>
+
+	<appender name="search-file" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="/home/solr/tomcat/logs/search.log" />
+		<param name="MaxFileSize" value="2MB"/>  
+       	<param name="MaxBackupIndex" value="5"/>
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
+		</layout>
+	</appender>
+
+	
+    <!-- Set logger. -->
 	<logger name="com.search" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender" />
 		<!--<appender-ref ref="fileAppender" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
+
 	<logger name="com.search.manager.authentication.session" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender" />
 		<!--<appender-ref ref="fileAppender" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
+
 	<logger name="org" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender" />
 		<!--<appender-ref ref="fileAppender" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
-    <logger name="com.search.manager.aop.LoginInterceptor" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender"/>
+
+	<logger name="com.search.manager.aop.LoginInterceptor" additivity="false">
 		<!--<appender-ref ref="audit-file" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
+
 	<logger name="org.springframework.security.web.authentication" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender"/>
 		<!--<appender-ref ref="security-file" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
-	<!-- Logging for Search -->
-	<appender name="search-file" class="org.apache.log4j.DailyRollingFileAppender">  
-        <param name="File" value="/home/solr/tomcat/logs/search.log"/>  
-        <param name="Append" value="true"/>  
-        <param name="MaxFileSize" value="200MB"/>  
-        <param name="MaxBackupIndex" value="5"/>  
-        <layout class="org.apache.log4j.PatternLayout">  
-            <param name="ConversionPattern" value="[%d] [%c{1}] %m%n"/>   
-        </layout>  
-    </appender> 
-    
-    <logger name="com.search.manager.utility.SearchLogger" additivity="false">
-		<level value="INFO,DEBUG,ERROR" />
-		<appender-ref ref="consoleAppender"/>
+
+	 <logger name="com.search.manager.utility.SearchLogger" additivity="false">
 		<!--<appender-ref ref="search-file" />-->
+		<appender-ref ref="consoleAppender" />
 	</logger>
-	
+
+	<!-- Set Priority Level. DEV : debug, STG:INFO, PROD:INFO-->
+	<root> 
+    		<priority value ="debug" /> 
+    		<!--<appender-ref ref="fileAppender" />-->
+		<appender-ref ref="consoleAppender" /> 
+  	</root>	
 </log4j:configuration>
