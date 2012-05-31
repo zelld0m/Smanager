@@ -28,7 +28,7 @@
     	<!--  info -->
     <div class="info fsize12 clearfix">
     	<label class="txtLabel">Keyword:</label>
-    	<label class="details marR15"><input type="text" class="w200" id="keyword" /></label>
+    	<label class="details marR15"><input type="text" class="w200" id="keyword" maxlength="200"/></label>
 
     	<label class="txtLabel">Type:</label>
     	<label class="details">
