@@ -5,7 +5,6 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <script type="text/javascript" src="<spring:url value="/js/settings/production.js" />"></script> 
-<sec:authorize access="hasRole('PUBLISH_RULE')">
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
     <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
@@ -89,5 +88,4 @@
 			
 	</div><!-- End Main Content -->
 </div><!-- End Right Side --> 
-</sec:authorize>
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

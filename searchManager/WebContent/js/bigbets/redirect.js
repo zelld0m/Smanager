@@ -83,12 +83,12 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || !allowModify});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || !allowModify});
 
 		$("a#downloadIcon").download({
 			headerText:"Download Query Cleaning",
@@ -134,7 +134,7 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
@@ -175,7 +175,7 @@
 					});
 				}
 			}
-		},{locked: selectedRuleStatus.locked});	
+		},{locked: selectedRuleStatus.locked || !allowModify});	
 	};
 
 	var getKeywordInRuleList = function(page){
@@ -188,7 +188,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked,
+			showAddButton: !selectedRuleStatus.locked || allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -207,7 +207,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -218,10 +218,10 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 			},
 			itemAddCallback: function(base, keyword){
-				if (!selectedRuleStatus.locked){
+				if (!selectedRuleStatus.locked || allowModify){
 					RedirectServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
 						callback: function(code){
 							showActionResponse(code, "add", keyword);
@@ -329,7 +329,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteConditionInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -339,7 +339,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 			}
 		});
 	};
@@ -373,7 +373,7 @@
 			pageSize: rulePageSize,
 			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 					callback: function(data){
@@ -449,7 +449,7 @@
 	};
 
 	var updateRule = function(e) { 
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		var ruleName = $.trim($('div#redirect input[id="name"]').val());  
 		var description = $.trim($('div#redirect textarea[id="description"]').val());  
@@ -507,7 +507,7 @@
 	};
 
 	var deleteRule = function(e) { 
-		if (!e.data.locked && confirm(deleteRuleConfirmText)){
+		if (!e.data.locked  && allowModify && confirm(deleteRuleConfirmText)){
 			RedirectServiceJS.deleteRule(selectedRule,{
 				callback: function(code){
 					showActionResponse(code, "delete", selectedRule.ruleName);

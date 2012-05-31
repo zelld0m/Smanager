@@ -144,7 +144,7 @@
   <!--Start Displaying Items-->
   <div id="sortable-bigbets-container" class="clearB floatL w730">
   <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/elevateRuleGuidelines.jpg"></div>
 		<div id="elevate">
     <ul id="sortable-bigbets">
     	<li id="sItemPattern" style="display: none; position:relative ">
@@ -248,7 +248,7 @@
   <div class="clearB"></div>
   
   <div id="ruleIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>
 </div>
        

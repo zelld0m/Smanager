@@ -7,6 +7,17 @@
 		<param-name>GLOBAL_INIT_PROPERTIES</param-name>
 		<param-value>/home/solr/conf/globalvar.properties</param-value>
 	</context-param>
+	
+	<context-param>
+	    <param-name>log4jConfigLocation</param-name>
+	    <param-value>file:/home/solr/conf/log4j.xml</param-value>
+  	</context-param>
+  	
+	<listener>
+	    <listener-class>
+			org.springframework.web.util.Log4jConfigListener
+		</listener-class>
+	</listener>
     
 	<!-- Processes application requests -->
 	<servlet>
@@ -45,6 +56,12 @@
 	    </listener-class>
 	</listener>
 
+	<listener>
+	  <listener-class>
+	      org.springframework.web.context.request.RequestContextListener
+	  </listener-class>
+	</listener>
+	
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -103,6 +120,11 @@
 		<init-param>
 			<param-name>relevancy-config-file</param-name>
 			<param-value>relevancy.xml</param-value>
+		</init-param>
+		
+		<init-param>
+			<param-name>messages-config-file</param-name>
+			<param-value>messages.xml</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -166,7 +188,6 @@
 				com.search.manager.model.Category,
 				com.search.manager.model.CategoryList,
 				com.search.manager.model.RedirectRule,
-				com.search.manager.model.RuleEntity,
 				com.search.manager.model.RuleStatus,
 				com.search.manager.model.RedirectRuleCondition,
 				com.search.manager.model.RelevancyKeyword,

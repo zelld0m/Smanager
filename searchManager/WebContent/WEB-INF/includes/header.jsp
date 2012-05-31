@@ -4,7 +4,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
-
+  <script>
+	var contextPath = "<%=request.getContextPath()%>";	
+	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
+  </script>
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
   <!--  theme -->
@@ -56,8 +59,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
 
   <!--  scroller  -->
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/tinyscrollbar.css" />">
-
 	<script type="text/javascript" src="<spring:url value="/js/tinyscrollbar/jquery.tinyscrollbar.min.js" />"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
@@ -124,18 +125,13 @@
          	  <div class="clearB"></div>
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
-         	  	<li class="submenu first"><a href="/searchManager"><img src="<spring:url value="/images/world.png" />" class="marBn3 marR3"><%= com.search.manager.service.UtilityService.getStoreLabel() %></a>
-         	  	</li>
-         	  	<!--li class="divider"></li>
-         	  	<li class="submenu last"><a href="/"><img src="<spring:url value="/images/server.png" />" class="marBn3 marR3"></img>Stage01</a>
-         	  		<ul>
-         	  			<li><a href="javascript:void(0);">Stage02</a></li>
-         	  			<li><a href="javascript:void(0);">Stage03</a></li>
-         	  			<li><a href="javascript:void(0);">Stage04</a></li>
-         	  			<li><a href="javascript:void(0);">Stage05</a></li>
-         	  		</ul>
-         	  	</li-->
-         	  </ul>
+		      		<li class="submenu last">
+		         		<sec:authorize access="hasRole('MANAGE_USER')">
+		         			<span>Search Server</span>
+		         	  		<select id="select-server"></select>
+		         	  	</sec:authorize>
+		        	</li>
+		        </ul>
          	  </div>
 	      </td>
         </tr>

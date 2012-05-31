@@ -618,11 +618,11 @@
 		$('div#relevancy .saveIcon').off().on({
 			click:function(e){
 				var field = getRelevancyField(e);
-				if (!e.data.locked) 
+				if (!e.data.locked || allowModify ) 
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 
 		showGraph = function(e){
 			var field = getRelevancyField(e);
@@ -798,6 +798,7 @@
 	};
 
 	var cloneRule = function(e){
+		if (e.data.locked || !allowModify) return;
 		$(this).qtip({
 			content: {
 				text: $('<div/>'),
@@ -897,7 +898,7 @@
 	};
 
 	var updateRule = function(e){
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		var unSaved = getUnSavedRelevancyFields();
 		var ruleName = $.trim($('div#relevancy input[id="name"]').val()); 
@@ -971,7 +972,7 @@
 	};
 
 	var deleteRule = function(e) { 
-		if (!e.data.locked && confirm(deleteRuleConfirmText)){
+		if (!e.data.locked && allowModify && confirm(deleteRuleConfirmText)){
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
 					if (code > 0) {
@@ -1024,7 +1025,7 @@
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default"),
+			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 			onSelect: function(selectedDate) {
 				var option = this.id == "startDate" ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),
@@ -1042,16 +1043,17 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 
 		$("#cloneBtn").off().on({
-			click: cloneRule
-		},{locked:false});
+			click: cloneRule,
+			mouseenter: showHoverInfo
+		},{locked:!allowModify});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 		
 		$("a#downloadIcon").download({
 			headerText:"Download Ranking Rule",
@@ -1097,7 +1099,7 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: false, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
 	};
 
@@ -1130,7 +1132,7 @@
 			pageSize: rulePageSize,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1392,7 +1394,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId, "_default"),
+			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId , "_default") && allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -1411,7 +1413,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -1423,7 +1425,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 			},
 			itemAddCallback: function(base, keyword){
 				RelevancyServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {

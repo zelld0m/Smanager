@@ -1,19 +1,28 @@
 package com.search.manager.service;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.utility.PropsUtils;
+import com.search.ws.ConfigManager;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -23,53 +32,57 @@ import com.search.manager.utility.PropsUtils;
 )
 public class UtilityService {
 	
-	private static final String MACMALL = "MacMall";
-	private static final String PCMALL = "PCMall";
-	private static final String ECOST = "eCost";
-	private static final String SBN = "SBN";
+	private static final Logger logger = Logger.getLogger(UtilityService.class);
 	
 	@RemoteMethod
 	public static String getUsername(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		
 		if (principal==null || !(principal instanceof UserDetailsImpl)) return "";
-
 		return ((UserDetailsImpl) principal).getUsername();
 	}
 
 	@RemoteMethod
 	public static String getServerName(){
-		return "search";
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		String serverName = (String)attr.getAttribute("serverName", RequestAttributes.SCOPE_SESSION);
+		if (StringUtils.isEmpty(serverName)) {
+			// get default server for store
+			ConfigManager cm = ConfigManager.getInstance();
+			if (cm != null) {
+				serverName = cm.getParameterByCore(getStoreName(), "server-url");
+			}
+			attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
+		}
+		return serverName;
 	}
 
+	@RemoteMethod
+	public static void setServerName(String serverName) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
+	}
+	
 	@RemoteMethod
 	public static String getStoreName(){
-		Object principal = null;
-		try {
-			principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); 
-		} catch (NullPointerException npe) {
-			npe.printStackTrace();
-		}
-		
-		
-		if (principal==null || !(principal instanceof UserDetailsImpl)) return "";
-
-		return ((UserDetailsImpl) principal).getStoreId();
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		String storeName = (String)attr.getAttribute("storeName", RequestAttributes.SCOPE_SESSION);
+		return storeName;
 	}
 
 	@RemoteMethod
+	public static void setStoreName(String storeName) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
+	}
+	
+	@RemoteMethod
 	public static String getStoreLabel(){
-		String label = null;
-		if (MACMALL.toLowerCase().equals(getStoreName())) {
-			label = MACMALL;
-		} else if (PCMALL.toLowerCase().equals(getStoreName())) {
-			label = PCMALL;
-		} else if (ECOST.toLowerCase().equals(getStoreName())) {
-			label = ECOST;
-		} else if (SBN.toLowerCase().equals(getStoreName())) {
-			label = SBN;
+		String storeLabel = null;
+		ConfigManager cm = ConfigManager.getInstance();
+		if (cm != null) {
+			storeLabel = cm.getStoreName(getStoreName());
 		}
-		return label;
+		return storeLabel;
 	}
 	
 	@RemoteMethod
@@ -80,11 +93,37 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
-		json.put("solrUrl", PropsUtils.getValue("browsejssolrurl"));
+		String url = ConfigManager.getInstance().getServerParameter(getServerName(), "url");
+		Pattern pattern = Pattern.compile("http://(.*)\\(store\\)/");
+		Matcher m = pattern.matcher(url);
+		if (m.matches()) {
+			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
+		}
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		return json.toString();
 	}
 
+	@RemoteMethod
+	public Map<String,String> getServerListForSelectedStore(boolean includeSelectedStore){
+		Map<String,String> map = ConfigManager.getInstance().getServersByCore(getStoreName());
+		if (!includeSelectedStore) {
+			map.remove(getServerName());			
+		}
+		return map;
+	}
+	
+	@RemoteMethod
+	public boolean hasPermission(String permission) {
+		boolean flag = false;
+		for (GrantedAuthority auth : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+			if (permission.equals(auth.getAuthority())) {
+				flag = true;
+				break;
+			}
+		}
+		return flag;
+	}
+	
 	public static String formatComment(String comment) {
 		if (StringUtils.isNotBlank(comment)) {
 			StringBuilder commentBuilder = new StringBuilder();

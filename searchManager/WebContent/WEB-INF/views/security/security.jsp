@@ -96,15 +96,16 @@
 	<div id="userInfoTemplate" style="display:none">
 		<div class="w300 security fsize11">
 			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/noAvatar.jpg" />" class="border"></div>
-			<div class="w200 floatL">
-			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold shuser"></label><div class="clearB"></div>
-			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold shfname"></label>
+			<div class="w220 floatL">
+			            <label class="floatL w70 padT3">Username :</label><label class="w120 floatL padL5 fbold shuser"></label><div class="clearB"></div>
+			            <label class="floatL w70 padT3">Fullname :</label><label class="w120 floatL padL5 fbold shfname"></label><div class="clearB"></div>
+			            <label class="floatL w70 padT3">Email: </label><label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
 			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
 			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship"></label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">Email</label><label><input type="text" class="w200" id="shemail"></label>
+			            
 			            <div class="clearB marT10"></div>
 			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
 			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
@@ -117,13 +118,14 @@
 			            <h2 class="padT5"> Change Password </h2>
 			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
 			            <div class="clearB"></div>
-			      </div>
+			      </div>    
+			      <div class="alert">keep blank to auto generate password</div>
 		</div>      
 	</div>
 	
 	<div id="addUserInfoTemplate" style="display:none">
 		<div class="w300 security fsize11">
-			<div class="w80 floatL txtAC"><img src="../images/uploadImage.jpg" class="border" /></div>
+			<div class="w80 floatL txtAC"><img src="../images/noAvatar.jpg" class="border" /></div>
 			<div class="w200 floatL">
 			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text" id="aduser"></label><div class="clearB"></div>
 			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text" id="adfull"></label>
@@ -134,12 +136,13 @@
 			            <label class="floatL w80 marL10 marB5">Email :</label><label><input type="text" class="w200" id="ademail"></label>
 			            <div class="clearB marT5"></div>
 			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label>
-			            <label class="marL10">Expired</label><input type="text" id="adexp" class="w70 adexp">
+			            <label class="marL10 marR3">Expired</label><input type="text" id="adexp" class="w70 adexp">
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
 			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
+			            <label><input type="checkbox" class="posRel top4" id="adgen"> Auto-generate password </label>
 			            <div class="clearB"></div>
 			      </div>
 			      

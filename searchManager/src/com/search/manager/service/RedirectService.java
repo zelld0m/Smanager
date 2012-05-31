@@ -75,6 +75,7 @@ public class RedirectService {
 			rule.setRuleId(ruleId);
 			rule.setRuleName(ruleName);
 			rule.setDescription(description);
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
 		} catch (DaoException e) {
@@ -98,6 +99,7 @@ public class RedirectService {
 	public RecordSet<RedirectRule> getAllRule(String name, int page, int itemsPerPage) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setStoreId(UtilityService.getStoreName());
 			redirectRule.setRuleName(name);
 			SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  page, itemsPerPage);
 			return daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
@@ -110,6 +112,7 @@ public class RedirectService {
 	@RemoteMethod
 	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
 		RedirectRule redirectRule = new RedirectRule();
+		redirectRule.setStoreId(UtilityService.getStoreName());
 		redirectRule.setRuleName(ruleName);
 		SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(redirectRule, null, null,  0, 0);
 		RecordSet<RedirectRule> set = daoService.searchRedirectRule(criteria, MatchType.LIKE_NAME);
@@ -129,6 +132,7 @@ public class RedirectService {
 	public RedirectRule getRule(String ruleId) {
 		try {
 			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setStoreId(UtilityService.getStoreName());
 			redirectRule.setRuleId(ruleId);
 			return daoService.getRedirectRule(redirectRule);
 		} catch (DaoException e) {
@@ -144,6 +148,7 @@ public class RedirectService {
 			// add keyword in case it has not been added yet
 			daoService.addKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(keyword);
 			rule.setLastModifiedBy(UtilityService.getUsername());
@@ -159,6 +164,7 @@ public class RedirectService {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setRuleId(ruleId);
 			rule.setSearchTerm(searchTerm);
 			rule.setLastModifiedBy(UtilityService.getUsername());
@@ -174,6 +180,7 @@ public class RedirectService {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setRuleId(ruleId);
 			rule.setCondition(condition);
 			result = daoService.addRedirectCondition(rule);
@@ -188,6 +195,7 @@ public class RedirectService {
 		int result = -1;
 		try {
 			RedirectRule rule = new RedirectRule();
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setRuleId(ruleId);
 			rule.setCondition(condition);
 			result = daoService.deleteRedirectCondition(rule);

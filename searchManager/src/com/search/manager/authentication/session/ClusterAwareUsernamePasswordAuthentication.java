@@ -7,15 +7,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.cookie.CookieUtils;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.User;
+import com.search.manager.service.UtilityService;
+import com.search.ws.ConfigManager;
 
 public class ClusterAwareUsernamePasswordAuthentication extends UsernamePasswordAuthenticationFilter {
 	private static final Logger logger = Logger.getLogger(ClusterAwareUsernamePasswordAuthentication.class);
@@ -33,7 +38,20 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 
 		sessionRegistry.registerNewSession(sessionId, principal);
 
-		super.successfulAuthentication(request, response, authResult);
+		String storeName = ((UserDetailsImpl)authResult.getPrincipal()).getStoreId();
+		String serverName = ConfigManager.getInstance().getStoreParameter(storeName, "default-server");
+		if (StringUtils.isBlank(storeName)) {
+			storeName = "macmall";			
+		}
+		
+		UtilityService.setStoreName(storeName);
+		UtilityService.setServerName(serverName);
+		
+		//Delete cookies
+		response.addCookie(CookieUtils.expireNow("server.selection", request.getContextPath()));
+		response.addCookie(CookieUtils.expireNow("server.selected", request.getContextPath()));
+				
+		System.out.println(request.getContextPath());
 		User user = new User();
 		user.setUsername(obtainUsername(request));
 		user.setLastAccessDate(new Date());
@@ -43,8 +61,10 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		try {
 			daoService.updateUser(user);
 		} catch (DaoException e) {
-			logger.error("Updating successful login failed! " + e.getMessage());
+			logger.error("Updating successful login failed! " + e.getMessage(), e);
 		}
+		
+		super.successfulAuthentication(request, response, authResult);
 	}
 
 	@Override
@@ -60,7 +80,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		try {
 			daoService.updateUser(user);
 		} catch (DaoException e) {
-			logger.error("Updating unsuccessful login failed! " + e.getMessage());
+			logger.error("Updating unsuccessful login failed! " + e.getMessage(), e);
 		}
 	}
 

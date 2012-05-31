@@ -17,6 +17,7 @@ public class RuleStatus extends ModelBean implements Serializable {
 	private String ruleStatusId;
 	private Integer ruleTypeId;
 	private String ruleRefId;
+	private String storeId;
 	private String description;
 	private String approvalStatus;
 	private String updateStatus;
@@ -28,12 +29,13 @@ public class RuleStatus extends ModelBean implements Serializable {
 		super();
 	}
 
-	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String description, String approvalStatus, String updateStatus,
+	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description, String approvalStatus, String updateStatus,
 			String publishedStatus, Date lastPublishedDate, String createdBy, String modifiedBy, Date dateCreated, Date dateModified) {
 		super();
 		this.ruleStatusId = ruleStatusId;
 		this.ruleTypeId = ruleTypeId;
 		this.ruleRefId = ruleRefId;
+		this.storeId = storeId;
 		this.description = description;
 		this.approvalStatus = approvalStatus;
 		this.updateStatus = updateStatus;
@@ -61,6 +63,14 @@ public class RuleStatus extends ModelBean implements Serializable {
 		this.ruleRefId = ruleRefId;
 	}
 
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+	
 	public String getDescription() {
 		return description;
 	}

@@ -159,9 +159,6 @@ public class SearchServlet extends HttpServlet {
 				return;
 			}
 
-			// TODO: workaround for spellchecker
-			requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");			
-			
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
@@ -217,7 +214,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 
-			StoreKeyword sk = new StoreKeyword(storeName, keyword);
+			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			
@@ -241,7 +238,7 @@ public class SearchServlet extends HttpServlet {
 				else if (keywordPresent) {
 					// get relevancy mapped to keyword
 					relevancy = new Relevancy("", "");
-					relevancy.setStore(new Store(UtilityService.getStoreName()));
+					relevancy.setStore(new Store(storeName));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 							new RelevancyKeyword(new Keyword(keyword), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -301,9 +298,9 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(configManager.getStoreParameter(storeName, "sort"));
+				logger.debug(configManager.getStoreParameter(coreName, "sort"));
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
-				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 	
 
@@ -313,13 +310,13 @@ public class SearchServlet extends HttpServlet {
 			
 			if (keywordPresent) {
 				if (fromSearchGui) {
-					if (configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+					if (configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
 						ElevateResult elevateFilter = new ElevateResult();
 						elevateFilter.setStoreKeyword(sk);
 						SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
 						SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
 		
-						if (keywordPresent && configManager.getStoreParameter(storeName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
 							elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
 							List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
 							if (logger.isDebugEnabled()) {
@@ -348,7 +345,6 @@ public class SearchServlet extends HttpServlet {
 			if (elevatedList == null) {
 				elevatedList = new ArrayList<ElevateResult>();
 			}
-
 
 			/* First Request */
 			// get expected resultformat
@@ -433,6 +429,7 @@ public class SearchServlet extends HttpServlet {
 							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
 							nameValuePairs.add(nvp);
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
 						}
 					}					
 				}
@@ -445,6 +442,12 @@ public class SearchServlet extends HttpServlet {
 			Integer numElevateFound = 0;
 
 			// send solr request
+
+			// TODO: workaround for spellchecker
+			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
+				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
+			}
+			
 			// TASK 1A
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {

@@ -23,6 +23,7 @@ import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
+import com.search.manager.schema.MessagesConfig;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "securityService")
@@ -64,14 +65,14 @@ public class SecurityService {
 			result = daoService.removeUser(username);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was deleted successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.deleted")));
 				return json;	
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteUser()",e);
 		}
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not deleted.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.deleted")));
 		return json;	
 	}
 	
@@ -90,15 +91,18 @@ public class SecurityService {
 			RecordSet<SecurityModel> record = getUsers(searchCriteria);
 			
 			if(record != null && record.getTotalSize() > 0){
+				user.setEmail(record.getList().get(0).getEmail());
+				user.setFullName(record.getList().get(0).getFullname());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(getPasswordHash(password));
 				result = daoService.updateUser(user);
 			}
 
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendResetPassword(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" password was updated successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.updated")));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -106,7 +110,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" password was not updated.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.not.updated")));
 		return json;	
 	}
 	
@@ -121,7 +125,7 @@ public class SecurityService {
 		
 			if(user != null){
 				json.put("status", RESPONSE_STATUS_FAILED);
-				json.put("message", "Username already exist.");
+				json.put("message", MessagesConfig.getInstance().getMessage("username.exist"));
 				return json;
 			}
 
@@ -132,16 +136,17 @@ public class SecurityService {
 			user.setGroupId(roleId);
 			
 			if(StringUtils.isNotEmpty(locked))
-				user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
 			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 			user.setPassword(getPasswordHash(password));
 			result = daoService.addUser(user);
 			
 			if(result > -1){
+				user.setPassword(password);
 				mailService.sendAddUser(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was added successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.added")));
 				return json;
 			}
 		} catch (DaoException e) {
@@ -149,7 +154,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not added.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.added")));
 		
 		return json;	
 	}
@@ -310,14 +315,14 @@ public class SecurityService {
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 				if(StringUtils.isNotEmpty(locked))
-					user.setAccountNonLocked("true".equalsIgnoreCase(locked)?true:false);
+					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
 				result = daoService.updateUser(user);
 			}
 
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", username+" was updated successfully.");
+				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.updated")));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -325,7 +330,11 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", username+" was not updated.");
+		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.updated")));
 		return json;
+	}
+	
+	private String composeMessage(String prefix, String msg){
+		return prefix+" "+msg;
 	}
 }

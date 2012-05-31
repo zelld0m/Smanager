@@ -6,7 +6,7 @@
 
 	<!-- Log to the console at debug level -->
 	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
-		<param name="Threshold" value="DEBUG" />
+		<param name="Threshold" value="INFO,DEBUG,ERROR" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
 		</layout>
@@ -14,8 +14,8 @@
 
 	<!-- Log to file at info level -->
 	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
-		<param name="Threshold" value="INFO" />
-		<param name="File" value="searchManager.log" />
+		<param name="Threshold" value="INFO,DEBUG,ERROR" />
+		<param name="File" value="/home/solr/tomcat/logs/searchManager.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p  [%c{1}] %m %n" />
 		</layout>
@@ -23,7 +23,7 @@
 	
 	<!-- Logging of spring security -->
 	<appender name="security-file" class="org.apache.log4j.RollingFileAppender">  
-        <param name="File" value="security.log"/>  
+        <param name="File" value="/home/solr/tomcat/logs/security.log"/>  
         <param name="Append" value="true"/>  
         <param name="MaxFileSize" value="2MB"/>  
         <param name="MaxBackupIndex" value="5"/>  
@@ -34,7 +34,7 @@
 
 	<!-- Logging of audit trail -->
 	<appender name="audit-file" class="org.apache.log4j.RollingFileAppender">  
-        <param name="File" value="audit.log"/>  
+        <param name="File" value="/home/solr/tomcat/logs/audit.log"/>  
         <param name="Append" value="true"/>  
         <param name="MaxFileSize" value="2MB"/>  
         <param name="MaxBackupIndex" value="5"/>  
@@ -46,38 +46,38 @@
     
     <!-- Set com.mall code to run at debug level. -->
 	<logger name="com.search" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender" />
-		<appender-ref ref="fileAppender" />
+		<!--<appender-ref ref="fileAppender" />-->
 	</logger>
 	
 	<logger name="com.search.manager.authentication.session" additivity="false">
-		<level value="INFO, DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender" />
-		<appender-ref ref="fileAppender" />
+		<!--<appender-ref ref="fileAppender" />-->
 	</logger>
 	
 	<logger name="org" additivity="false">
-		<level value="INFO, DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender" />
-		<appender-ref ref="fileAppender" />
+		<!--<appender-ref ref="fileAppender" />-->
 	</logger>
 	
     <logger name="com.search.manager.aop.LoginInterceptor" additivity="false">
-		<level value="INFO, DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender"/>
-		<appender-ref ref="audit-file" />
+		<!--<appender-ref ref="audit-file" />-->
 	</logger>
 	
 	<logger name="org.springframework.security.web.authentication" additivity="false">
-		<level value="INFO, DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender"/>
-		<appender-ref ref="security-file" />
+		<!--<appender-ref ref="security-file" />-->
 	</logger>
 	
 	<!-- Logging for Search -->
 	<appender name="search-file" class="org.apache.log4j.DailyRollingFileAppender">  
-        <param name="File" value="search.log"/>  
+        <param name="File" value="/home/solr/tomcat/logs/search.log"/>  
         <param name="Append" value="true"/>  
         <param name="MaxFileSize" value="200MB"/>  
         <param name="MaxBackupIndex" value="5"/>  
@@ -87,9 +87,9 @@
     </appender> 
     
     <logger name="com.search.manager.utility.SearchLogger" additivity="false">
-		<level value="INFO, DEBUG" />
+		<level value="INFO,DEBUG,ERROR" />
 		<appender-ref ref="consoleAppender"/>
-		<appender-ref ref="search-file" />
+		<!--<appender-ref ref="search-file" />-->
 	</logger>
 	
 </log4j:configuration>
