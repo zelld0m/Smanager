@@ -990,7 +990,7 @@
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
-		$("#titleHeader").html(moduleName);
+		$("#titleText").html(moduleName);
 	};
 
 	var showRelevancy = function(){

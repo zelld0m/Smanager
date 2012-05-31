@@ -18,7 +18,18 @@ AjaxSolr.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
         	links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeFacet(fq[i])));
     	}
     	else {
-    		links.push(AjaxSolr.theme('createLink', fq[i], self.removeFacet(fq[i])));
+    		var displayString = fq[i];
+    		var inDoubleQuote = false;
+    		for (var currIndex = displayString.indexOf(':'); currIndex < displayString.length; currIndex++) {
+    			if (displayString.charAt(currIndex) === ' ' && !inDoubleQuote) {
+    				displayString = displayString.substr(0, currIndex) + ', ' + displayString.substr(currIndex + 1);
+    				currIndex++;
+    			}
+    			else if (displayString.charAt(currIndex) === '"') {
+    				inDoubleQuote = !inDoubleQuote;
+    			} 
+    		}
+    		links.push(AjaxSolr.theme('createLink', displayString, self.removeFacet(fq[i])));
     	}
     }
 

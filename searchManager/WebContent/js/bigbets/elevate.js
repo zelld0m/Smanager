@@ -194,7 +194,7 @@
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
 
-		$("#sItemImg" + id).attr("src",item["imagePath"]);
+		setTimeout(function(){$("#sItemImg" + id).attr("src",item['imagePath']);},10);
 		$("#sItemMan" + id).html(item["manufacturer"]);
 		$("#sItemName" + id).html(item["name"]);
 		$("#sItemDPNo" + id).html(item["dpNo"]);
