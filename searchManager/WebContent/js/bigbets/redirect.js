@@ -136,43 +136,53 @@
 			click: showAuditList
 		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
+		var addRuleConditionRunning = false;
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
 				
-				var rule = getSelectedCategory();
-				manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
+				if (!addRuleConditionRunning) {
+					addRuleConditionRunning = true;
+					
+					var rule = getSelectedCategory();
+					manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
 
-				if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
-					alert("At least one category code, category or manufacturer is expected.");
-					return;
-				}
-				
-				if ($.isNotBlank($("#catcodetext").val())){
-					rule = $("#catcodetext").val();
-					$("#catcodetext").val("");
-				}
-
-				if (rule.length > 0) {
-					if (rule.length < 4 && rule.indexOf("*", 0) == -1) {
-						rule = rule + "*";
+					if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
+						alert("At least one category code, category or manufacturer is expected.");
+						addRuleConditionRunning = false;
+						return;
 					}
-					rule = "CatCode:" + rule;
-				}
-				if (manufacturer!=null && manufacturer.length>0){
+					
+					if ($.isNotBlank($("#catcodetext").val())){
+						rule = $("#catcodetext").val();
+						$("#catcodetext").val("");
+					}
+
 					if (rule.length > 0) {
-						rule = rule + " AND ";
-					}
-					rule = rule + "Manufacturer:\"" + manufacturer + "\"";
-				}
-
-				if($.isNotBlank(rule)){
-					RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
-						callback:function(code){
-							showActionResponse(code, "add", rule);
-							getRuleConditionInRuleList(1);
+						if (rule.length < 4 && rule.indexOf("*", 0) == -1) {
+							rule = rule + "*";
 						}
-					});
+						rule = "CatCode:" + rule;
+					}
+					if (manufacturer!=null && manufacturer.length>0){
+						if (rule.length > 0) {
+							rule = rule + " AND ";
+						}
+						rule = rule + "Manufacturer:\"" + manufacturer + "\"";
+					}
+
+					if($.isNotBlank(rule)){
+						RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
+							callback:function(code){
+								showActionResponse(code, "add", rule);
+								addRuleConditionRunning = false;
+								getRuleConditionInRuleList(1);
+							}
+						});
+					}
+					else {
+						addRuleConditionRunning = false;
+					}
 				}
 			}
 		},{locked: selectedRuleStatus.locked || !allowModify});	

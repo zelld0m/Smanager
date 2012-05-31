@@ -28,7 +28,7 @@
     	<!--  info -->
     <div class="info fsize12 clearfix">
     	<label class="txtLabel">Keyword:</label>
-    	<label class="details marR15"><input type="text" class="w200" id="keyword" /></label>
+    	<label class="details marR15"><input type="text" class="w200" id="keyword" maxlength="200"/></label>
 
     	<label class="txtLabel">Type:</label>
     	<label class="details">
@@ -86,8 +86,8 @@
 
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
-		<h1 class="padT7 padL15 faNarrow fsize20 fnormal breakWord">
+	<div class="floatL w730 titlePlacer breakWord">
+		<h1 class="padT7 padL15 fsize20 fnormal">
 			Audit Trail
 		</h1>
 	</div>
