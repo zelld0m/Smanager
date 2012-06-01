@@ -79,7 +79,7 @@
 			</ul>
 			
 			<!--  tab -->
-			<div id="addBySKU" class="mar0 borderT">
+			<div id="addBySKU" class="mar0">
 				<h3 class="padT10"></h3>
 				<div class="clearB"></div>
 				
