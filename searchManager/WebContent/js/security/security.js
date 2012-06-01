@@ -285,9 +285,14 @@
 				sec.curmem =  $('#refmem').val();
 				sec.curstat = ($('#refstat').val() == 'Select Status')?'':$('#refstat').val();
 				sec.curexp = ($('#refexp').val() == 'Select Expired')?'':$('#refexp').val();
-				sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
-			},
-			
+				var validformat=/^\d{2}\/\d{2}\/\d{4}$/;
+				if(!isXSSSafe(sec.cursrc))
+					alert("Invalid keyword. HTML/XSS is not allowed.");
+				else if(!validformat.test(sec.curmem))
+					alert("Invalid date. (Use MM/DD/YYYY format)");
+				else
+					sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+			},	
 			showPaging : function(page,id,name,total){
 				$("#sortablePagingTop, #sortablePagingBottom").paginate({
 					currentPage:page, 
