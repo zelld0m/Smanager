@@ -1,5 +1,8 @@
 package com.search.manager.service;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -139,4 +142,21 @@ public class UtilityService {
 		}
 		return null;
 	}
+	
+	public static String getPasswordHash(String password) {
+		MessageDigest messageDigest = null;
+		String hashedPass = null;
+		try {
+			messageDigest = MessageDigest.getInstance("MD5");
+			messageDigest.update(password.getBytes(),0, password.length());  
+			hashedPass = new BigInteger(1,messageDigest.digest()).toString(16);  
+			if (hashedPass.length() < 32) {
+			   hashedPass = "0" + hashedPass; 
+			}
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("Error in getPasswordHash. " + e.getMessage());
+		}  
+		return hashedPass;
+	}
+
 }

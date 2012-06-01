@@ -158,7 +158,7 @@ public class AuditTrailDAO {
     }
     
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<NameValue> getDropdownValues() {
-		return ddval.getJdbcTemplate().query(String.format(REFERENCE_SQL, UtilityService.getStoreName()), new BeanPropertyRowMapper(NameValue.class));
+	public List<NameValue> getDropdownValues(String storeId) {
+		return ddval.getJdbcTemplate().query(String.format(REFERENCE_SQL, storeId), new BeanPropertyRowMapper(NameValue.class));
 	}
  }

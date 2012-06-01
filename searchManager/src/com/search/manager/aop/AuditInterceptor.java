@@ -253,9 +253,8 @@ public class AuditInterceptor {
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
 		String searchTerm = rule.getSearchTerm();
-		String condition = rule.getRedirectFilter(); 
-		//TODO fix this later 
-		auditTrail.setStoreId(UtilityService.getStoreName());
+		String condition = rule.getRedirectFilter();
+		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		auditTrail.setKeyword(searchTerm);
 		auditTrail.setReferenceId(refId);
@@ -405,7 +404,7 @@ public class AuditInterceptor {
 	
 	private void logRuleStatus(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RuleStatus ruleStatus = (RuleStatus)jp.getArgs()[0];
-		auditTrail.setStoreId(UtilityService.getStoreName());
+		auditTrail.setStoreId(ruleStatus.getStoreId());
 		auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 		//TODO get keywords for query cleaning/ranking rule?
 		if (RuleEntity.ELEVATE.getCode() == ruleStatus.getRuleTypeId() || RuleEntity.EXCLUDE.getCode() == ruleStatus.getRuleTypeId()) {
