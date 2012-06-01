@@ -504,6 +504,7 @@
 
 								if (position>0 && position <= maxPosition){
 
+									if(isXSSSafe(comment)){
 									if (elevated){
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
@@ -519,7 +520,6 @@
 											});
 									}else{
 										//add elevation
-										if(isXSSSafe(comment)){
 										ElevateServiceJS.addElevate(keyword, doc.EDP, position, expiryDate, comment, {
 											callback : function(event){
 												maxPosition++;
@@ -531,9 +531,10 @@
 											postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
 											errorHandler: function(message){ alert(message); }
 										});
-										}else{
-											alert("Invalid comment. HTML/XSS is not allowed.");
-										}
+										
+									}
+									}else{
+										alert("Invalid comment. HTML/XSS is not allowed.");
 									}
 
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
