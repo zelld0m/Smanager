@@ -14,20 +14,7 @@
     	<div id="sideHeader" class="sideHeader posRel">
     		<img src="../images/corner_tl.png" class="curveTL"/>
     		<img src="../images/corner_tr.png" class="curveTR"/>
-			Role
-			<img src="../images/corner_bl.png" class="curveBL"/>
-			<img src="../images/corner_br.png" class="curveBR"/>
-    	</div>
-        <div class="clearB floatL w230 padL5">
-			<ul class="listRole fsize12 marT10 rolUl">
-			</ul>
-    	</div> 
-
-    	<div class="clearB"></div>
-    	<div id="sideHeader" class="sideHeader posRel">
-    		<img src="../images/corner_tl.png" class="curveTL"/>
-    		<img src="../images/corner_tr.png" class="curveTR"/>
-			Refine Search
+			Search Refinement
 			<img src="../images/corner_bl.png" class="curveBL"/>
 			<img src="../images/corner_br.png" class="curveBR"/>
     	</div>
@@ -36,21 +23,34 @@
        			<input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p">
        		</div>
        		<div class="clearB"></div>     		
-       		<label class="marT10 floatL w100p">Member</label> 
+       		<label class="marT10 floatL w100p">Member Since</label> 
        		<label class="marT3 floatL w55p"><input type="text" class="w90" id="refmem" name="refmem"></label>
-       		<label class="marT8 floatL w100p">Locked</label> 
+       		<label class="marT8 floatL w100p">Account Role</label> 
        		<label class="marT3 floatL w100p">
-				<select class="w90p mar0" id="refstat" style="cursor:pointer">
+				<select class="w90p mar0" id="refrole" style="cursor:pointer">
+					<option value="all">All Roles</option>
 				</select>
 			</label>
-			<label class="marT8 floatL w100p">Expired</label> 
+       		<label class="marT8 floatL w100p">Account Status</label> 
+       		<label class="marT3 floatL w100p">
+				<select class="w90p mar0" id="refstat" style="cursor:pointer">
+					<option value="">Both Locked & Active Account</option>
+					<option value="yes">Locked Account Only</option>
+					<option value="no">Active Account Only</option>
+				</select>
+			</label>
+			<label class="marT8 floatL w100p">Account Validity</label> 
 			<label class="marT3 floatL w100p">
 				<select class="w90p mar0" id="refexp" style="cursor:pointer">
+					<option value="">Both Expired & Valid Account</option>
+					<option value="yes">Expired Account Only</option>
+					<option value="no">Valid Account Only</option>
 				</select>
 			</label>
 			<div class="clearB"></div>
 			<div align="right" class="txtAR marT10 padT5"> 	        		
 	        	<a id="refFilBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Filter</div></a>
+	        	<a id="clrFilBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
 	        </div>
 			
     	</div> 
@@ -75,15 +75,38 @@
     <!--Pagination-->
       <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
       <!--Pagination-->
-     <div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
+     	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
     	<table width="100%" class="fsize12 tblAlpha conTable">
     		<tr class="conTr1">
     			<th width="7%"></th>
-    			<th width="35%">Username</th>
-    			<th width="10%">Locked</th>
-    			<th width="10%">Expired</th>
+    			<th width="35%">User</th>
     			<th width="15%">Member Since</th>
-    			<th width="17%">Last Access</th>
+    			<th width="10%">Status</th>
+    			<th width="10%">Validity</th>
+    			<th width="35%">Last Access</th>
+    		</tr>
+    		<tr id="conTr1Pattern" class="conTableItem" style="display: none">
+    			<td class="txtAC" id="delIcon">
+    				<a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a>
+    			</td>
+    			<td id="userInfo">
+    				<span id="username"><a href="javascript:void(0);"></a></span>
+    				<span id="fullName"></span>
+    				<span id="role"></span>
+    			</td>
+    			<td id="memberSince">
+    				<span></span>
+    			</td>
+    			<td id="status">
+    				<span></span>
+    			</td>
+    			<td id="validity">
+    				<span></span>
+    			</td>
+    			<td id="lastAccess">
+    				<span id="dateAccess"></span>
+    				<span id="ipAccess"></span>
+    			</td>
     		</tr>
     	</table>   
 
@@ -98,28 +121,40 @@
 			<div class="w80 floatL txtAC"><img src="<spring:url value="/images/noAvatar.jpg" />" class="border"></div>
 			<div class="w220 floatL">
 			            <label class="floatL w70 padT3">Username :</label><label class="w120 floatL padL5 fbold shuser"></label><div class="clearB"></div>
-			            <label class="floatL w70 padT3">Fullname :</label><label class="w120 floatL padL5 fbold shfname"></label><div class="clearB"></div>
-			            <label class="floatL w70 padT3">Email: </label><label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
+			            <label class="floatL w70 padT3">Full Name :</label><label class="w120 floatL padL5 fbold shfname"></label><div class="clearB"></div>
+			            <label class="floatL w70 padT3">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
+			            
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
-			            <label class="floatL w80 marL10">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
-			            <label class="floatL w80 marL10">IP Address :</label><label class="floatL ship"></label><div class="clearB"></div>
+			      		<label class="floatL w100 padT3 padL5">Account Role: </label>
+			            <label class="floatL w100">
+							<select id="shrole"></select>
+						</label>
+			            <div class="clearB marT10"></div>
+			            <label class="floatL w100 padT3 padL5">Account Email: </label>
+			            <label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
+			            <div class="clearB marT10"></div>
+			           
+			            <label class="floatL w100 padT3 padL5">Account Validity:</label>
+			            <label class="floatL w140"><input type="text" class="w70" id="shexp"></label>
+			            <div class="clearB marT10"></div>
+			            
+			            <label class="floatL w100 padT3 padL5">Account Status:</label>
+			            <label class="floatL w140"><input type="checkbox" id="shlck" class="firerift-style-checkbox"></label>
 			            
 			            <div class="clearB marT10"></div>
-			            <label class="floatL w80 marL10"></label><label><input type="checkbox" id="shlck"> Locked</label>
-			            <label class="marL10">Expired <input type="text" id="shexp" class="w70"> </label>
-			            <div class="txtAR marT8">
-			            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">save</div></a>
+			            <div class="txtAR marT10">
+			            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
 			            </div>
 			     </div>
 			                        
 			      <div class="borderT">
 			            <h2 class="padT5"> Change Password </h2>
+			      		<div class="alert">Keep blank to auto generate password</div>
 			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
 			            <div class="clearB"></div>
 			      </div>    
-			      <div class="alert">keep blank to auto generate password</div>
 		</div>      
 	</div>
 	

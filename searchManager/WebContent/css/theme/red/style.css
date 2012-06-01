@@ -17,7 +17,7 @@
 .cssReset .subMenu li a			{ color:#222222 }
 .cssReset .subMenu li.active a	{ color:#a20b00 }
 
-.cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; border-top: 3px solid #c90100; margin-top:-65px; z-index:200 }
+.cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:-64px; z-index:200 }
 
 .cssReset .bgFooter				{ background:url(images/bgFooter.gif) repeat-x; padding:15px 10px; font-size: 11px; padding-bottom:20px }
 .cssReset .txtcopyright			{ color:#666666 }
@@ -582,6 +582,20 @@ body .tabs .ui-widget-content			{ border:none; border-top:1px solid #d3d3d3; mar
 .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .tabs .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .tabs .ui-widget-content label	{ vertical-align: middle; }
+
+/* side tabs */
+.tabSide .tabs .ui-tabs-nav				{ background:none !important; border:none !important;  list-style: none; width: 204px; z-index:100 }
+.tabSide .tabs .ui-tabs-nav li			{ -webkit-border-radius: 0 !important; -moz-border-radius: 1px !important; border-radius: 1px !important; border-right:1px solid #d3d3d3 !important; border-bottom:1px solid #d3d3d3 !important }
+.tabSide .tabs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 205px}
+.tabSide .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
+.tabSide .tabs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important }				{ }
+body .tabSide .tabs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:700px; margin-left:229px; top:-35px; min-height: 400px; z-index:50 }
+.tabSide .tabs .ui-tabs-panel			{ padding:3px 10px !important;  }
+.tabSide .tabs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
+.tabSide .tabs .ui-tabs-panel h3		{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
+.tabSide .tabs .ui-widget-content label	{ vertical-align: top; }
+
+.tabSide .tabs table td					{ padding:4px }
 
 
 /*native tabs */

@@ -207,49 +207,6 @@ public class SecurityService {
 		return new RoleModel();
 	}
 	
-	@RemoteMethod
-	public RecordSet<NameValue> getStatList() {
-		List<NameValue> statList = new ArrayList<NameValue>();
-		try {
-			for(int i=0; i<1; i++){
-				NameValue stat1 = new NameValue();
-				stat1.setName("No");
-				stat1.setValue("No");
-				
-				NameValue stat2 = new NameValue();
-				stat2.setName("Yes");
-				stat2.setValue("Yes");
-				
-				statList.add(stat1);
-				statList.add(stat2);
-			}
-		} catch (Exception e) {
-			logger.error("Failed during getUserList()",e);
-		}
-		return new RecordSet<NameValue>(statList,statList.size());
-	}
-	
-	@RemoteMethod
-	public RecordSet<NameValue> getExpList() {
-		List<NameValue> expList = new ArrayList<NameValue>();
-		try {
-			NameValue exp1 = new NameValue();
-			exp1.setName("No");
-			exp1.setValue("No");
-			
-			NameValue exp2 = new NameValue();
-			exp2.setName("Yes");
-			exp2.setValue("Yes");
-			
-			expList.add(exp1);
-			expList.add(exp2);
-
-		} catch (Exception e) {
-			logger.error("Failed during getUserList()",e);
-		}
-		return new RecordSet<NameValue>(expList,expList.size());
-	}
-
 	private RecordSet<SecurityModel> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeUser){
 		
 		List<SecurityModel> secList = new ArrayList<SecurityModel>();

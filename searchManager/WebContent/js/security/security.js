@@ -5,6 +5,7 @@
 		sec = {		
 			cursrc : '',
 			curmem : '',
+			currole : '',
 			curstat : '',
 			curexp : '',
 			curid : '',
@@ -23,6 +24,7 @@
 				}
 				return temp;
 			},
+			
 			updateUser : function(e,api,user){
 				var shexp = sec.expsh;
 				var shemail = $.trim(e.find('#shemail').val());
@@ -45,6 +47,7 @@
 					}		
 	          	});		
 			},	
+			
 			isEmail : function(s) {
 				var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
 				if(!pattern.test(s))
@@ -52,6 +55,7 @@
 				else
 					return false;
 			},
+			
 			validField : function(f,fv,e,d){
 				
 				if($.isBlank(fv)){
@@ -76,6 +80,7 @@
 
 				return true;
 			},
+			
 			clrUser : function(e){
 				e.find('#aduser').val('');
 				e.find('#adfull').val('');
@@ -86,6 +91,7 @@
 				e.find('#adlck').attr('checked', false);
 				e.find('#adgen').attr('checked', false);
 			},	
+			
 			addUser : function(e,api){
 				var aduser = $.trim(e.find('#aduser').val());
 				var adfull = $.trim(e.find('#adfull').val());
@@ -121,6 +127,7 @@
 					}					
 	          	});		
 			},	
+			
 			showAdd : function(e){		
 				sec.adexp = '';
 				$(this).qtip({
@@ -177,6 +184,7 @@
 					}
 				});
 			},
+			
 			resetPass : function(e,data,api){
 				if($.isBlank($.trim(e.find('#shpass').val())))
 					e.find('#shpass').val(sec.genpass());
@@ -191,6 +199,7 @@
 					}			
 	          	});	
 			},	
+			
 			showUser : function(e){
 				var data = e.data;
 				sec.expsh = data.thruDate;
@@ -257,6 +266,7 @@
 					}
 				});
 			},
+			
 			clrFil : function(){
 				sec.curstat = '';
 				sec.curexp = '';
@@ -264,60 +274,39 @@
 				sec.curmem = '';
 				$('#refsrc').val('');
 				$('#refmem').val('');
-				sec.getExpList();
-				sec.getStatList();
+				
+				$('#refrole').prop("selectedIndex", 0);
+				$('#refstat').prop("selectedIndex", 0);
+				$('#refexp').prop("selectedIndex", 0);
 			},
-			getExpList : function(){
-				SecurityServiceJS.getExpList({
-					callback:function(data){
-						var list = data.list;
-						if (list.length>0){
-							$('#refexp').html('');
-							var content = '<option>Select Expired</option>';
-							for(var i=0; i<list.length; i++){							
-								content += '<option id="'+list[i].name+'">'+list[i].value+'</option>';
-							}	
-							$('#refexp').html(content);
-						}
-					}			
-				});
-			},
-			getStatList : function(){
-				SecurityServiceJS.getStatList({
-					callback:function(data){
-						var list = data.list;
-						if (list.length>0){
-							$('#refstat').html('');
-							var content = '<option>Select Status</option>';
-							for(var i=0; i<list.length; i++){							
-								content += '<option id="'+list[i].name+'">'+list[i].value+'</option>';
-							}	
-							$('#refstat').html(content);
-						}
-					}			
-				});
-			},
+			
 			filter : function(){
 				sec.cursrc = $('#refsrc').val();
 				sec.curmem =  $('#refmem').val();
 				sec.curstat = ($('#refstat').val() == 'Select Status')?'':$('#refstat').val();
 				sec.curexp = ($('#refexp').val() == 'Select Expired')?'':$('#refexp').val();
-				sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
-			},		
+				var validformat=/^\d{2}\/\d{2}\/\d{4}$/;
+				if(!isXSSSafe(sec.cursrc))
+					alert("Invalid keyword. HTML/XSS is not allowed.");
+				else if(!validformat.test(sec.curmem))
+					alert("Invalid date. (Use MM/DD/YYYY format)");
+				else
+					sec.getUserList(sec.curid,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
+			},	
 			showPaging : function(page,id,name,total){
 				$("#sortablePagingTop, #sortablePagingBottom").paginate({
 					currentPage:page, 
 					pageSize:10,
 					totalItem:total,
 					callbackText: function(itemStart, itemEnd, itemTotal){
-						return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + " "+name;
-					}
-					,
+						return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + " " + name;
+					},
 					pageLinkCallback: function(e){ sec.getUserList(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
 					nextLinkCallback: function(e){ sec.getUserList(id,name,e.data.page + 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
 					prevLinkCallback: function(e){ sec.getUserList(id,name,e.data.page - 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); }
 				});
 			},
+			
 			getRole : function(e){
 				var id = '';
 				
@@ -338,6 +327,7 @@
 					}			
 				});
 			},
+			
 			getRoleList : function(){
 				SecurityServiceJS.getRoleList({
 					callback:function(data){
@@ -358,11 +348,13 @@
 					}		
 				});
 			},
+			
 			setRoleValues : function(data){
 				$('#role' + data.id).on({
 					click: sec.getRole
 				}, {id:data.id, name:data.rolename});
 			},
+			
 			setUserValues : function(data){
 				$('#user' + data.id).on({
 					click: sec.showUser
@@ -372,19 +364,38 @@
 					click: sec.delUser
 				}, {id:data.id, type:data.type, name:data.username});
 			},
+			
 			getUserList : function(id,name,pg,src,mem,stat,exp){
 				SecurityServiceJS.getUserList(id,pg,src,mem,stat,exp,{
 					callback:function(data){
 						var list = data.list;
 						var content = '';
 						$('.conTr').remove();
+						
+						$('tr.conTableItem').filter('tr:not(#conTr1Pattern)').remove();
+						
 						if (list.length>0){	
 							$('.conTr1').show();
+							$table = $('table.conTable');
 							for(var i=0; i<list.length; i++){
-								content = '<tr class="conTr"><td class="txtAC"><a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a></td><td><a href="javascript:void(0);" id="user'+list[i].id+'">'+list[i].username+'</a></td><td class="txtAC">'+list[i].status+'</td><td class="txtAC">'+list[i].expired+'</td><td class="txtAC">'+list[i].dateStarted+'</td><td class="txtAC">'+list[i].lastAccess+'</td></tr>';
-								$('.conTable').append(content);
+								$tr = $table.find('tr#conTr1Pattern').clone();
+								$tr.prop("id", list[i].id).show();
+								$tr.find("td#delIcon > a").prop("id", "del"+list[i].id);
+								$tr.find("td#userInfo > span#username > a").prop("id", "user"+list[i].id).html(list[i].username);
+								$tr.find("td#userInfo > span#fullName").html(list[i].fullName);
+								$tr.find("td#userInfo > span#role").html(list[i].username);
+								
+								$tr.find("td#memberSince > span").html(list[i].dateStarted);
+								$tr.find("td#status > span").html(list[i].status);
+								$tr.find("td#validity > span").html(list[i].expired);
+								
+								$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccess);
+								$tr.find("td#lastAccess > span#ipAccess").html(list[i].ip);
+								
+								$table.append($tr);
 								sec.setUserValues(list[i]);
 							}					
+							
 							sec.showPaging(pg,id,name,data.totalSize);
 						}else{	
 							$('.conTr1').hide();
@@ -402,11 +413,18 @@
 					}			
 				});
 			},
+			
 			init : function(){
 				
 				$("#refFilBtn").on({
 					click: function(e){
 						sec.filter();
+					}
+				});	
+				
+				$("#clrFilBtn").on({
+					click: function(e){
+						sec.clrFil();
 					}
 				});		
 					
@@ -422,11 +440,10 @@
 					disabled: false
 				});	
 				
-				sec.getStatList();
-				sec.getExpList();
 				sec.getRoleList();
 				sec.getRole(null);
 			},
+			
 			delUser : function(e){
 				var data = e.data;
 		        if (confirm("Are you sure you want to delete this user ?")){                  

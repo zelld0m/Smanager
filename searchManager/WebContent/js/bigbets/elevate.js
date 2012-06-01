@@ -420,7 +420,7 @@
 			fieldId: "keywordId",
 			fieldName: "keyword",
 			headerText : "Keyword",
-			searchText : "Enter Search",
+			searchText : "Enter Keyword",
 			showAddButton: allowModify,
 			page: rulePage,
 			pageSize: rulePageSize,
