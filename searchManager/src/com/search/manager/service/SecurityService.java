@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.mail.AccessNotificationMailService;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;
@@ -46,6 +45,7 @@ public class SecurityService {
 	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
 		user.setGroupId(roleId);
+		user.setStoreId(UtilityService.getStoreName());
 		user.setFullName(StringUtils.isBlank(search)?null:search);
 		
 		if(StringUtils.isNotEmpty(status))
