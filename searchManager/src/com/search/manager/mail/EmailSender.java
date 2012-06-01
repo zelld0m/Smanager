@@ -8,6 +8,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -61,8 +62,13 @@ public class EmailSender{
 			}
 		};
 
-		mailSender.send(preparator);
-
-		logger.info("Sent e-mail to '{}'.", messageDetails.getTo());
+		try {
+			mailSender.send(preparator);
+			logger.info("Sent e-mail to '{}'.", messageDetails.getTo());
+		} catch (MailException e) {
+			logger.error("catched MailException {}", e);
+		} catch (Exception e) {
+			logger.error("catched MailException {}", e);
+		}
 	}
 }

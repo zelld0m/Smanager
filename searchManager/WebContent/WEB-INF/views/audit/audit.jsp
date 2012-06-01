@@ -69,7 +69,7 @@
 
     	<div class="clearB"></div>
 		<div align="right" class="padR5 marT10">
-		    <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="goBtn">&nbsp;&nbsp;Go&nbsp;&nbsp;</div></a>
+		    <a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="goBtn">Filter</div></a>
 			<a href="#" class="buttons btnGray clearfix"><div class="buttons fontBold" id="resetBtn">Reset</div></a>
 		</div>
     </div>

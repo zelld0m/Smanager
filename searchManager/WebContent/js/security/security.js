@@ -232,6 +232,14 @@
 							contentHolder.find("#shemail").val(data.email);	
 							contentHolder.find("#shlck").attr('checked', !data.locked);	
 							
+							contentHolder.find("#view-profile").tabs({
+								cookie: {
+									expires: 1,
+									path: contextPath,
+									name: $(this).prop("id")
+								}
+							});
+							
 							contentHolder.find("#resetBtn").on({
 								click: function(e){	
 									sec.resetPass(contentHolder,data,api);
@@ -258,7 +266,7 @@
 								click: function(e){	
 									sec.updateUser(contentHolder,api,data.name);
 								}
-							});	
+							});
 						},
 						hide:function(evt, api){
 							api.destroy();
