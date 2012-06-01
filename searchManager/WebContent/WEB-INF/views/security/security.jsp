@@ -129,18 +129,18 @@
 			      <div class="clearB"></div>
 			      
 			      <div id="view-profile">
-			      	<ul>
+			      	<ul class="marB0">
 				      	<li><a href="#acctinfo"><span>Account Info</span></a></li>
 				      	<li><a href="#acctact"><span>Account Activities</span></a></li>
 				    </ul>
 				    
 				    <div id="acctinfo">
 				    	<div class="clearB"></div>
-				    	<h2 class="txtAL marT10 padL10 borderB">Account Info</h2>
+				    	<h2 class="txtAL marT0 padL10 padT8 borderT">Account Info</h2>
 				    	<div class="marB10">
 				      		<label class="floatL w80 padT3 padL5">Role: </label>
 				            <label class="floatL w100">
-								<select id="shrole"></select>
+								<select id="shrole" class="mar0"></select>
 							</label>
 				            <div class="clearB marT10"></div>
 				            <label class="floatL w80 padT3 padL5">Email: </label>
@@ -170,12 +170,10 @@
 					      </div>    
 				    </div>
 				    
-				    <div id="acctact">
-				    	<div class="marB10">
-					    	<div class="clearB"></div>
-					    	<h2 class="txtAL marT10 padL10 borderB">Account Activities</h2>
-				    		This feature will be available soon
-				    	</div>
+				    <div id="acctact">				    	
+				    	<div class="clearB"></div>
+				    	<h2 class="txtAL marT0 padL10 padT5 borderT">Account Activities</h2>
+			    		This feature will be available soon
 				    </div>
 			     
 			     

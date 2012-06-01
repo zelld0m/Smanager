@@ -22,8 +22,8 @@
 .cssReset .bgFooter				{ background:url(images/bgFooter.gif) repeat-x; padding:15px 10px; font-size: 11px; padding-bottom:20px }
 .cssReset .txtcopyright			{ color:#666666 }
 
-.cssReset .borderT, .borderT	{border-top:1px solid #ccc}
-.cssReset .borderB, .borderB	{border-bottom:1px solid #ccc}
+.cssReset .borderT, .borderT	{border-top:1px solid #ccc !important}
+.cssReset .borderB, .borderB	{border-bottom:1px solid #ccc !important}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 
@@ -601,7 +601,8 @@ body .tabSide .tabs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1p
 /*native tabs */
 .qtip .ui-tabs-nav				{ background: none; border:none !important }
 .qtip .ui-tabs-nav li a			{ padding:5px !important; font-size:12px;}
-.qtip .ui-widget-content		{ border:none; margin-top:-18px !important; }	
+.qtip .ui-widget-content		{ border:none; margin-top:-18px !important; }
+.qtip .ui-widget-content h2		{ font-size:14px; padding-left:5px }
 .qtip .ui-tabs-panel			{ padding:0 !important;  }
 .qtip .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
