@@ -76,14 +76,16 @@
       <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
       <!--Pagination-->
      	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
+    	<div class="clearB"></div>
     	<table width="100%" class="fsize12 tblAlpha conTable">
     		<tr class="conTr1">
     			<th width="7%"></th>
-    			<th width="35%">User</th>
+    			<th width="30%">User</th>
+    			<th width="12%">Role</th>
     			<th width="15%">Member Since</th>
     			<th width="10%">Status</th>
     			<th width="10%">Validity</th>
-    			<th width="35%">Last Access</th>
+    			<th width="28%">Last Access</th>
     		</tr>
     		<tr id="conTr1Pattern" class="conTableItem" style="display: none">
     			<td class="txtAC" id="delIcon">
@@ -91,8 +93,11 @@
     			</td>
     			<td id="userInfo">
     				<span id="username"><a href="javascript:void(0);"></a></span>
-    				<span id="fullName"></span>
-    				<span id="role"></span>
+    				<div class="clearB"></div>
+    				<span id="fullName"></span>    								
+    			</td>
+    			<td>
+    				Role<span id="role"></span>  
     			</td>
     			<td id="memberSince">
     				<span></span>
@@ -105,7 +110,8 @@
     			</td>
     			<td id="lastAccess">
     				<span id="dateAccess"></span>
-    				<span id="ipAccess"></span>
+    				<div class="clearB"></div>
+    				<span id="ipAccess" class="forange"></span>
     			</td>
     		</tr>
     	</table>   

@@ -159,7 +159,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnAddGray		{ background-position: -4px -62px; height: 20px; width: 22px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
 .cssReset a div.btnAddGray:hover{ background-position: -4px -85px;  }
 .cssReset a div.btnAddGrayL		{ background-position: -4px -181px; height: 24px; width: 27px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
-.cssReset a div.btnAddGrayL:hover{ background-position: -4px -208px;  }
+.cssReset a div.btnAddGrayL:hover { background-position: -4px -208px;  }
 .cssReset a div.btnUploadGray	{ background-position: -4px -235px; height: 24px; width: 27px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
 .cssReset a div.btnUploadGray:hover{ background-position: -4px -262px;  }
 .cssReset a div.btnDownload		 { background-position: -4px -348px; height: 16px; width: 16px; padding:0; cursor:pointer; }
