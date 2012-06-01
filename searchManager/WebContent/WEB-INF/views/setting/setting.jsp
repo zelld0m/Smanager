@@ -19,7 +19,14 @@
 <div class="tabSide mar0" style="margin-top:20px; width:98%"> 
         <div id="user-pref" class="tabs">
         	<ul>
-		        <li><a href="#profile"><span>Profile</span></a></li>
+		        <li><a href="#home"><span>Profile</span></a></li>
+		        <li><a href="#search"><span>Search</span> <span class="fsize11"></span></a></li>
+		        <li><a href="#bigBets"><span>Big Bets</span> <span class="fsize11"></span></a></li>
+		        <li><a href="#searchAds"><span>Search Ads</span><span class="fsize11"></span></a></li>
+		        <li><a href="#catalog"><span>Catalog</span><span class="fsize11"></span></a></li>
+		        <li><a href="#statistics"><span>Statistics</span><span class="fsize11"></span></a></li>
+		        <li><a href="#lexicon"><span>Lexicon</span><span class="fsize11"></span></a></li>
+		        <li><a href="#settings"><span>Settings</span><span class="fsize11"></span></a></li>
 		        <li><a href="#dateAndTime"><span>Date and Time</span><spkan class="fsize11"></span></a></li>
 		    </ul>
 		
@@ -67,10 +74,20 @@
 			</table>
 		</div>
 		
+		<div id="search">Search	</div>
+		<div id="bigBets">Big Bets</div>
+		<div id="searchAds">Search Ads</div>
+		<div id="catalog">Catalog</div>
+		<div id="statistics">Statistics</div>
+		<div id="lexicon">Lexicon</div>
+		<div id="settings">Settings</div>
+		
 	    <div id="dateAndTime">
-		    <h2 class="txtAL marT10 padL10 borderB">Date and Time</h2>
+		    <h2 class="tabMenu">Date and Time</h2>
+		    <h1 class="borderB fnormal pad5">Date and Time</h1>
 		    
 		    <div class="contentTab clearFix">
+		    	<label class="text">Date Format	</label>
 		    	<label class="info">
 			    	<select class="w215">
 			    		<option>YYYY-MM-DDThh:mmTZD</option>
