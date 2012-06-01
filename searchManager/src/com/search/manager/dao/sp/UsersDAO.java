@@ -6,7 +6,6 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,9 +14,10 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.model.User;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.User;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 
@@ -53,8 +53,8 @@ public class UsersDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EMAIL, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_USER, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.DATE));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.DATE));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_LOCKED, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW2, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW2, Types.INTEGER));
@@ -86,18 +86,26 @@ public class UsersDAO {
 		}
 	}
 
-    public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria) throws DaoException {
+    public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeName) throws DaoException {
 		try {
 			User user = searchCriteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
-			inputs.put(DAOConstants.PARAM_USER_NAME, user.getUsername());
-			inputs.put(DAOConstants.PARAM_USER_NAMELIKE, user.getUsernameLike());
+			inputs.put(DAOConstants.PARAM_USER_NAME, null);
+			inputs.put(DAOConstants.PARAM_USER_NAMELIKE, null);
+			switch (matchTypeName) {
+				case MATCH_ID:
+					inputs.put(DAOConstants.PARAM_USER_NAME, user.getUsername());
+					break;
+				default:
+					inputs.put(DAOConstants.PARAM_USER_NAMELIKE, user.getFullName());
+					break;
+			}
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
-			inputs.put(DAOConstants.PARAM_STORE_ID, StringUtils.isBlank(user.getUsername())?UtilityService.getStoreName():null);
+			inputs.put(DAOConstants.PARAM_STORE_ID, user.getStoreId());
 			inputs.put(DAOConstants.PARAM_ACTIVE_USER, user.isAccountNonExpired()==null?null:user.isAccountNonExpired()?'Y':'N');
-			inputs.put(DAOConstants.PARAM_START_DATE2, searchCriteria.getStartDate());
-			inputs.put(DAOConstants.PARAM_END_DATE2, searchCriteria.getEndDate());
+			inputs.put(DAOConstants.PARAM_START_DATE2, DateAndTimeUtils.convertToSqlTimestampStartOfDay(searchCriteria.getStartDate()));
+			inputs.put(DAOConstants.PARAM_END_DATE2, DateAndTimeUtils.convertToSqlTimestampEndOfDay(searchCriteria.getEndDate()));
 			inputs.put(DAOConstants.PARAM_USER_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'1':'0');
 			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW2, searchCriteria.getEndRow());
@@ -151,7 +159,7 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()==null || user.isAccountNonLocked()?'1':'0');
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
-			inputs.put(DAOConstants.PARAM_STORE, UtilityService.getStoreName());
+			inputs.put(DAOConstants.PARAM_STORE, user.getStoreId());
 			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null?DateAndTimeUtils.addYearToDate(5):user.getThruDate());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, UtilityService.getUsername());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));

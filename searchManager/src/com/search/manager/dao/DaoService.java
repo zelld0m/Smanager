@@ -174,7 +174,7 @@ public interface DaoService {
     /* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
-    public List<NameValue> getDropdownValues() throws DaoException;
+    public List<NameValue> getDropdownValues(String storeId) throws DaoException;
 	
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
@@ -193,7 +193,7 @@ public interface DaoService {
 	public int removeComment(Integer commentId) throws DaoException;
 	
     /* User */
-    public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria) throws DaoException;
+    public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeName) throws DaoException;
     public User getUser(String username) throws DaoException;
 	public int addUser(User user) throws DaoException;
 	public int updateUser(User user) throws DaoException;

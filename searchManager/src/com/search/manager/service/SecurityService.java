@@ -1,8 +1,5 @@
 package com.search.manager.service;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +20,7 @@ import com.search.manager.mail.AccessNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
 import com.search.manager.schema.MessagesConfig;
@@ -47,7 +45,7 @@ public class SecurityService {
 	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
 		user.setGroupId(roleId);
-		user.setUsernameLike(StringUtils.isBlank(search)?null:search);
+		user.setFullName(StringUtils.isBlank(search)?null:search);
 		
 		if(StringUtils.isNotEmpty(status))
 			user.setAccountNonLocked("YES".equalsIgnoreCase(status)?false:true);
@@ -55,8 +53,8 @@ public class SecurityService {
 			user.setAccountNonExpired("YES".equalsIgnoreCase(expired)?false:true);
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
-		searchCriteria.setStartDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince));
-		return getUsers(searchCriteria);
+		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince)));
+		return getUsers(searchCriteria, MatchType.LIKE_NAME);
 	}
 	
 	@RemoteMethod
@@ -67,14 +65,14 @@ public class SecurityService {
 			result = daoService.removeUser(username);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.deleted")));
+				json.put("message", MessagesConfig.getInstance().getMessage("common.deleted", username));
 				return json;	
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteUser()",e);
 		}
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.deleted")));
+		json.put("message", MessagesConfig.getInstance().getMessage("common.not.deleted", username));
 		return json;	
 	}
 	
@@ -90,13 +88,13 @@ public class SecurityService {
 			user.setUsername(username);
 	
 			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
-			RecordSet<SecurityModel> record = getUsers(searchCriteria);
+			RecordSet<SecurityModel> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setEmail(record.getList().get(0).getEmail());
 				user.setFullName(record.getList().get(0).getFullname());
 				if (StringUtils.isNotBlank(password)) 
-					user.setPassword(getPasswordHash(password));
+					user.setPassword(UtilityService.getPasswordHash(password));
 				result = daoService.updateUser(user);
 			}
 
@@ -104,7 +102,7 @@ public class SecurityService {
 				user.setPassword(password);
 				mailService.sendResetPassword(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.updated")));
+				json.put("message", MessagesConfig.getInstance().getMessage("password.updated", username));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -112,7 +110,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("password.not.updated")));
+		json.put("message", MessagesConfig.getInstance().getMessage("password.not.updated", username));
 		return json;	
 	}
 	
@@ -136,19 +134,20 @@ public class SecurityService {
 			user.setUsername(username);
 			user.setEmail(email);
 			user.setGroupId(roleId);
+			user.setStoreId(UtilityService.getStoreName());
 			
 			if(StringUtils.isNotEmpty(locked))
 				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
 			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
-			user.setPassword(getPasswordHash(password));
+			user.setPassword(UtilityService.getPasswordHash(password));
 			result = daoService.addUser(user);
 			
 			if(result > -1){
 				user.setPassword(password);
 				mailService.sendAddUser(user);
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.added")));
+				json.put("message", MessagesConfig.getInstance().getMessage("common.added", username));
 				return json;
 			}
 		} catch (DaoException e) {
@@ -156,7 +155,7 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.added")));
+		json.put("message", MessagesConfig.getInstance().getMessage("common.not.added", username));
 		
 		return json;	
 	}
@@ -177,7 +176,7 @@ public class SecurityService {
 				roleList.add(role);
 			}	
 		} catch (DaoException e) {
-			logger.error("Error in SecurityService.getRoleList "+e);
+			logger.error("Error in SecurityService.getRoleList "+e, e);
 		}
 		return new RecordSet<RoleModel>(roleList,roleList.size());
 	}
@@ -198,7 +197,7 @@ public class SecurityService {
 					list.add(role);
 			}
 		} catch (Exception e) {
-			logger.error("Error in SecurityService.getRole "+e);
+			logger.error("Error in SecurityService.getRole "+e, e);
 		}
 		
 		if(list.size() > 0)
@@ -207,12 +206,12 @@ public class SecurityService {
 		return new RoleModel();
 	}
 	
-	private RecordSet<SecurityModel> getUsers(SearchCriteria<User> searchCriteria){
+	private RecordSet<SecurityModel> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeUser){
 		
 		List<SecurityModel> secList = new ArrayList<SecurityModel>();
 		
 		try {
-			RecordSet<User> recSet = daoService.getUsers(searchCriteria);
+			RecordSet<User> recSet = daoService.getUsers(searchCriteria, matchTypeUser);
 			
 			if(recSet != null && recSet.getTotalSize() > 0){
 				List<User> users = recSet.getList();
@@ -237,25 +236,9 @@ public class SecurityService {
 				return new RecordSet<SecurityModel>(secList,recSet.getTotalSize());
 			}
 		} catch (DaoException e) {
-			logger.error("Error in SecurityService.getUsers "+e);
+			logger.error("Error in SecurityService.getUsers "+e, e);
 		}
 		return new RecordSet<SecurityModel>(secList,secList.size());
-	}
-	
-	private String getPasswordHash(String password) {
-		MessageDigest messageDigest = null;
-		String hashedPass = null;
-		try {
-			messageDigest = MessageDigest.getInstance("MD5");
-			messageDigest.update(password.getBytes(),0, password.length());  
-			hashedPass = new BigInteger(1,messageDigest.digest()).toString(16);  
-			if (hashedPass.length() < 32) {
-			   hashedPass = "0" + hashedPass; 
-			}
-		} catch (NoSuchAlgorithmException e) {
-			logger.error("Error in getPasswordHash. " + e.getMessage());
-		}  
-		return hashedPass;
 	}
 	
 	@RemoteMethod
@@ -269,7 +252,7 @@ public class SecurityService {
 			user.setUsername(username);
 	
 			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
-			RecordSet<SecurityModel> record = getUsers(searchCriteria);
+			RecordSet<SecurityModel> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
@@ -281,7 +264,7 @@ public class SecurityService {
 
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
-				json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.updated")));
+				json.put("message", MessagesConfig.getInstance().getMessage("common.updated", username));
 				return json;	
 			}
 		} catch (Exception e) {
@@ -289,11 +272,9 @@ public class SecurityService {
 		}
 		
 		json.put("status", RESPONSE_STATUS_FAILED);
-		json.put("message", composeMessage(username, MessagesConfig.getInstance().getMessage("common.not.updated")));
+		json.put("message", MessagesConfig.getInstance().getMessage("common.not.updated", username));
 		return json;
 	}
 	
-	private String composeMessage(String prefix, String msg){
-		return prefix+" "+msg;
-	}
+
 }

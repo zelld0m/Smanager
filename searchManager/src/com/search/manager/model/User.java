@@ -14,7 +14,6 @@ public class User implements Serializable {
 private static final long serialVersionUID = 1L;
 	
 	private String username;
-	private String usernameLike;
 	private String fullName;
 	private String password;
 	private String email;
@@ -183,14 +182,6 @@ private static final long serialVersionUID = 1L;
 	public void setThruDate(Date thruDate) {
 		this.thruDate = thruDate;
 		this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) < 0;
-	}
-
-	public String getUsernameLike() {
-		return usernameLike;
-	}
-
-	public void setUsernameLike(String usernameLike) {
-		this.usernameLike = usernameLike;
 	}
 
 	public Integer getSuccessiveFailedLogin() {

@@ -180,11 +180,45 @@ public final class DateAndTimeUtils {
 	}
 
 	public static Integer compare(Date date1, Date date2){
-		if (date1==null || date2==null) return 0;
+		if (date1==null && date2==null) return 0;
 		if (date1==null) return 1;
 		if (date2==null) return -1;
 		DateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		return formatter.format(date1).compareTo(formatter.format(date2));
+	}
+
+	public static Date getDateWithEndingTime(Date date) {
+		if (date == null) {
+			return null;
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR, 23);
+		c.set(Calendar.MINUTE, 59);
+		c.set(Calendar.SECOND, 59);
+		c.set(Calendar.MILLISECOND, 999);
+		return c.getTime();
+	}
+	
+	public static String convertToSqlTimestamp(Date date) {		
+		if (date != null) {
+			return new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS").format(date);
+		}
+		return null;
+	}
+
+	public static String convertToSqlTimestampStartOfDay(Date date) {		
+		if (date != null) {
+			return new SimpleDateFormat("yyyy-MM-dd").format(date) + " 00:00:00.000";
+		}
+		return null;
+	}
+
+	public static String convertToSqlTimestampEndOfDay(Date date) {		
+		if (date != null) {
+			return new SimpleDateFormat("yyyy-MM-dd").format(date) + " 23:59:59.999";
+		}
+		return null;
 	}
 
 	public static Date getDate(String store, Date date) {
@@ -273,6 +307,11 @@ public final class DateAndTimeUtils {
 
 	public static void main(String[] args) {
 		try {
+			
+			System.out.println(convertToSqlTimestamp(new Date()));
+			System.out.println(convertToSqlTimestampStartOfDay(new Date()));
+			System.out.println(convertToSqlTimestampEndOfDay(new Date()));
+
 			// acceptable iso date 8601 formats
 			String[] validDates = {
 					"2004-05-23T14:25:10.1234567Z",

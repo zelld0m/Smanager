@@ -2,33 +2,33 @@
 
 <messages>
 	<message name="common.added">
-		<description>was added successfully.</description>
+		<description>%s was added successfully.</description>
 	</message>
 	<message name="common.not.added">
-		<description>was not added.</description>
+		<description>%s was not added.</description>
 	</message>
 	<message name="common.updated">
-		<description>was updated successfully.</description>
+		<description>%s was updated successfully.</description>
 	</message>
 	<message name="common.not.updated">
-		<description>was not updated.</description>
+		<description>%s was not updated.</description>
 	</message>
 	<message name="common.deleted">
-		<description>was deleted successfully.</description>
+		<description>%s was deleted successfully.</description>
 	</message>
 	<message name="common.not.deleted">
-		<description>was not deleted.</description>
+		<description>%s was not deleted.</description>
 	</message>
 	<message name="password.updated">
-		<description>password was updated successfully.</description>
+		<description>%s password was updated successfully.</description>
 	</message>
 	<message name="password.not.updated">
-		<description>password was not updated.</description>
+		<description>%s password was not updated.</description>
 	</message>
 	<message name="password.not.match">
-		<description>New and old passwords are not match.</description>
+		<description>New and old passwords do not match.</description>
 	</message>
 	<message name="username.exist">
-		<description>Username already exist.</description>
+		<description>Username already exists.</description>
 	</message>
 </messages>

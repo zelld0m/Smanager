@@ -67,7 +67,11 @@ public class MessagesConfig {
 		}
 	}
 	
-	public String getMessage(String name){
-		return StringUtils.isNotEmpty(msgMap.get(name))?msgMap.get(name):"";
+	public String getMessage(String name, Object...params){
+		String message = "";
+		if (StringUtils.isNotEmpty(msgMap.get(name))) {
+			String.format(msgMap.get(name), params);
+		}
+		return message;
 	}
 }

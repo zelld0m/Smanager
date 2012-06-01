@@ -151,8 +151,8 @@ public class DaoServiceImpl implements DaoService {
     }
     
 	@Override
-	public List<NameValue> getDropdownValues() throws DaoException {
-		return auditTrailDAO.getDropdownValues();
+	public List<NameValue> getDropdownValues(String storeId) throws DaoException {
+		return auditTrailDAO.getDropdownValues(storeId);
 	}
 
 	/* Big Bets */
@@ -931,8 +931,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria) throws DaoException {
-		return usersDAO.getUsers(searchCriteria);
+	public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeName) throws DaoException {
+		return usersDAO.getUsers(searchCriteria, matchTypeName);
 	}
 
 	@Override
@@ -940,7 +940,7 @@ public class DaoServiceImpl implements DaoService {
 		User user = new User();
 		user.setUsername(username);
 		SearchCriteria<User> criteria = new SearchCriteria<User>(user,null,null,0,0);
-		RecordSet<User> users = getUsers(criteria);
+		RecordSet<User> users = getUsers(criteria, MatchType.MATCH_ID);
 		return users.getTotalSize()>0 ? users.getList().get(0) : null;
 	}
 
