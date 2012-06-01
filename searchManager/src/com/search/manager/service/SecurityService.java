@@ -5,7 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -14,10 +16,10 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.mail.AccessNotificationMailService;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;

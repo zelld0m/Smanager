@@ -50,7 +50,7 @@
 			<div class="clearB"></div>
 			<div align="right" class="txtAR marT10 padT5"> 	        		
 	        	<a id="refFilBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Filter</div></a>
-	        	<a id="clrFilBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
+	        	<a id="clrFilBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset</div></a>
 	        </div>
 			
     	</div> 
@@ -125,36 +125,62 @@
 			            <label class="floatL w70 padT3">Last Access :</label><label class="floatL shlacss"></label><div class="clearB"></div>
 			            
 			      </div>
+			     
 			      <div class="clearB"></div>
-			      <div class="marB10">
-			      		<label class="floatL w100 padT3 padL5">Account Role: </label>
-			            <label class="floatL w100">
-							<select id="shrole"></select>
-						</label>
-			            <div class="clearB marT10"></div>
-			            <label class="floatL w100 padT3 padL5">Account Email: </label>
-			            <label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
-			            <div class="clearB marT10"></div>
-			           
-			            <label class="floatL w100 padT3 padL5">Account Validity:</label>
-			            <label class="floatL w140"><input type="text" class="w70" id="shexp"></label>
-			            <div class="clearB marT10"></div>
-			            
-			            <label class="floatL w100 padT3 padL5">Account Status:</label>
-			            <label class="floatL w140"><input type="checkbox" id="shlck" class="firerift-style-checkbox"></label>
-			            
-			            <div class="clearB marT10"></div>
-			            <div class="txtAR marT10">
-			            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
+			      
+			      <div id="view-profile">
+			      	<ul>
+				      	<li><a href="#acctinfo"><span>Account Info</span></a></li>
+				      	<li><a href="#acctact"><span>Account Activities</span></a></li>
+				    </ul>
+				    
+				    <div id="acctinfo">
+				    	<div class="clearB"></div>
+				    	<h2 class="txtAL marT10 padL10 borderB">Account Info</h2>
+				    	<div class="marB10">
+				      		<label class="floatL w80 padT3 padL5">Role: </label>
+				            <label class="floatL w100">
+								<select id="shrole"></select>
+							</label>
+				            <div class="clearB marT10"></div>
+				            <label class="floatL w80 padT3 padL5">Email: </label>
+				            <label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
+				            <div class="clearB marT10"></div>
+				           
+				            <label class="floatL w80 padT3 padL5">Validity:</label>
+				            <label class="floatL w140"><input type="text" class="w70" id="shexp"></label>
+				            <div class="clearB marT10"></div>
+				            
+				            <label class="floatL w80 padT3 padL5">Status:</label>
+				            <label class="floatL w140"><input type="checkbox" id="shlck" class="firerift-style-checkbox"></label>
+				            
+				            <div class="clearB marT10"></div>
+				            <div class="txtAR marT10">
+				            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
+				            </div>
 			            </div>
+			            
+			             <div class="clearB"></div>
+			      
+					      <div class="borderT">
+					            <h2 class="padT5"> Change Password </h2>
+					      		<div class="alert">Keep blank to auto generate password</div>
+					            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
+					            <div class="clearB"></div>
+					      </div>    
+				    </div>
+				    
+				    <div id="acctact">
+				    	<div class="marB10">
+					    	<div class="clearB"></div>
+					    	<h2 class="txtAL marT10 padL10 borderB">Account Activities</h2>
+				    		This feature will be available soon
+				    	</div>
+				    </div>
+			     
+			     
 			     </div>
-			                        
-			      <div class="borderT">
-			            <h2 class="padT5"> Change Password </h2>
-			      		<div class="alert">Keep blank to auto generate password</div>
-			            <label class="floatL" style="width:150px"><input type="password" id="shpass"></label> <label class="floatL marT0 padT0"> <div class="marT4"><a id="resetBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Reset Password</div></a></div> </label>
-			            <div class="clearB"></div>
-			      </div>    
+			     
 		</div>      
 	</div>
 	
