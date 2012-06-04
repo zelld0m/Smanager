@@ -13,7 +13,6 @@ import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Group;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -174,7 +173,7 @@ public interface DaoService {
     /* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
-    public List<NameValue> getDropdownValues(String storeId) throws DaoException;
+    public List<String> getDropdownValues(int type, String storeId) throws DaoException;
 	
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
@@ -197,6 +196,8 @@ public interface DaoService {
     public User getUser(String username) throws DaoException;
 	public int addUser(User user) throws DaoException;
 	public int updateUser(User user) throws DaoException;
+	public int resetPassword(User user) throws DaoException;
+	public int login(User user) throws DaoException;
 	public int removeUser(User user) throws DaoException;
 
 	public List<String> getGroups() throws DaoException;

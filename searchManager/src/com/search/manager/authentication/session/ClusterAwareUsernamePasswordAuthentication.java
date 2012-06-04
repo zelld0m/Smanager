@@ -59,7 +59,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		user.setSuccessiveFailedLogin(0);
 		user.setAccountNonLocked(true);
 		try {
-			daoService.updateUser(user);
+			daoService.login(user);
 		} catch (DaoException e) {
 			logger.error("Updating successful login failed! " + e.getMessage(), e);
 		}
@@ -78,7 +78,7 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		user.setUsername(obtainUsername(request));
 		user.setSuccessiveFailedLogin(1);
 		try {
-			daoService.updateUser(user);
+			daoService.login(user);
 		} catch (DaoException e) {
 			logger.error("Updating unsuccessful login failed! " + e.getMessage(), e);
 		}
