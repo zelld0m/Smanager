@@ -369,7 +369,7 @@
 
 					$('#del' + $.formatAsId(data.username)).on({
 						click: sec.delUser
-					}, {id:data.id, type:data.type, name:data.username});
+					}, {user:data});
 				},
 
 				getUserList : function(id,name,pg,src,mem,stat,exp){
@@ -454,9 +454,9 @@
 				},
 
 				delUser : function(e){
-					var data = e.data;
+					var data = e.data.user;
 					if (confirm("Are you sure you want to delete this user ?")){                  
-						SecurityServiceJS.deleteUser(data.id,{
+						SecurityServiceJS.deleteUser(data.username,{
 							callback:function(data){
 								if(data.status == '200'){
 									alert(data.message);
