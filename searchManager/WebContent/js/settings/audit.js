@@ -174,13 +174,16 @@
 		});
 
 		$("#resetBtn").click(function() {
-			$("#userList option:first").attr("selected","selected");
-			$("#actionList option:first").attr("selected","selected");
-			$("#typeList option:first").attr("selected","selected");
 			$("#keyword").val("");
-			$("#refList option:first").attr("selected","selected");
 			$("#startDate").val("");
 			$("#endDate").val("");
+			
+			$('#refrole').prop("selectedIndex", 0);
+			$('#actionList').prop("selectedIndex", 0);
+			$('#typeList').prop("selectedIndex", 0);
+			$('#refList').prop("selectedIndex", 0);
+			
+			getAuditTrail(1);
 		});
 
 		getAuditTrail(1);
