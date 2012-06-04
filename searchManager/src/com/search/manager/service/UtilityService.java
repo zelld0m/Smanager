@@ -115,8 +115,7 @@ public class UtilityService {
 		return map;
 	}
 	
-	@RemoteMethod
-	public boolean hasPermission(String permission) {
+	public static boolean hasPermission(String permission) {
 		boolean flag = false;
 		for (GrantedAuthority auth : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			if (permission.equals(auth.getAuthority())) {
