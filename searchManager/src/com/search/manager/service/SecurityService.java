@@ -21,7 +21,6 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RoleModel;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
 import com.search.manager.schema.MessagesConfig;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -42,28 +41,39 @@ public class SecurityService {
 	@Autowired private AccessNotificationMailService  mailService;
 
 	@RemoteMethod
-	public RecordSet<SecurityModel> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
+	public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
 		user.setGroupId(roleId);
 		user.setStoreId(UtilityService.getStoreName());
-		user.setFullName(StringUtils.isBlank(search)?null:search);
+		user.setFullName(StringUtils.trimToNull(search));
 		
-		if(StringUtils.isNotEmpty(status))
-			user.setAccountNonLocked("YES".equalsIgnoreCase(status)?false:true);
-		if(StringUtils.isNotEmpty(expired))
-			user.setAccountNonExpired("YES".equalsIgnoreCase(expired)?false:true);
+		if(StringUtils.isNotEmpty(status)){
+			user.setAccountNonLocked(!StringUtils.equalsIgnoreCase("YES",status));		
+		}
+		if(StringUtils.isNotEmpty(expired)){
+			user.setAccountNonExpired(!StringUtils.equalsIgnoreCase("YES",expired));			
+		}
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
 		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince)));
-		return getUsers(searchCriteria, MatchType.LIKE_NAME);
+		RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
+		for (User u: users.getList()) {
+			// clear the password before returning
+			u.setPassword(null);
+		}
+		return users;
 	}
 	
 	@RemoteMethod
 	public JSONObject deleteUser(String username){
 		JSONObject json = new JSONObject();
+		username = StringUtils.trim(username);
 		int result = -1;
 		try {
-			result = daoService.removeUser(username);
+			User user = new User();
+			user.setUsername(username);
+			user.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.removeUser(user);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
 				json.put("message", MessagesConfig.getInstance().getMessage("common.deleted", username));
@@ -81,6 +91,8 @@ public class SecurityService {
 	public JSONObject resetPassword(String roleId, String username, String password){
 		
 		JSONObject json = new JSONObject();
+		roleId = StringUtils.trim(roleId);
+		username = StringUtils.trim(username);
 		int result = -1;
 		
 		try {
@@ -89,11 +101,12 @@ public class SecurityService {
 			user.setUsername(username);
 	
 			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
-			RecordSet<SecurityModel> record = getUsers(searchCriteria, MatchType.MATCH_ID);
+			RecordSet<User> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setEmail(record.getList().get(0).getEmail());
-				user.setFullName(record.getList().get(0).getFullname());
+				user.setFullName(record.getList().get(0).getFullName());
+				user.setLastModifiedBy(UtilityService.getUsername());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(UtilityService.getPasswordHash(password));
 				result = daoService.updateUser(user);
@@ -122,6 +135,7 @@ public class SecurityService {
 		int result = -1;
 		try {
 			//check if username already exist
+			username = StringUtils.trim(username);
 			User user = daoService.getUser(username);
 		
 			if(user != null){
@@ -142,6 +156,7 @@ public class SecurityService {
 
 			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 			user.setPassword(UtilityService.getPasswordHash(password));
+			user.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addUser(user);
 			
 			if(result > -1){
@@ -207,59 +222,35 @@ public class SecurityService {
 		return new RoleModel();
 	}
 	
-	private RecordSet<SecurityModel> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeUser){
-		
-		List<SecurityModel> secList = new ArrayList<SecurityModel>();
-		
+	private RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeUser){
 		try {
-			RecordSet<User> recSet = daoService.getUsers(searchCriteria, matchTypeUser);
-			
-			if(recSet != null && recSet.getTotalSize() > 0){
-				List<User> users = recSet.getList();
-				
-				for(User user : users){
-					SecurityModel secModel = new SecurityModel();
-					secModel.setId(user.getUsername());
-					secModel.setUsername(user.getUsername());
-					secModel.setType(user.getGroupId());
-					secModel.setFullname(user.getFullName());
-					secModel.setLastAccess(user.getLastAccessDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getLastAccessDate()):"");
-					secModel.setIp(user.getIp());
-					secModel.setDateStarted(user.getCreatedDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getCreatedDate()):"");
-					secModel.setRoleId(user.getGroupId());
-					secModel.setStatus(user.isAccountNonLocked()?"no":"yes");
-					secModel.setExpired(user.isAccountNonExpired()?"no":"yes"); // compute expiration
-					secModel.setEmail(user.getEmail());
-					secModel.setLocked(user.isAccountNonLocked());
-					secModel.setThruDate(user.getThruDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getThruDate()):"");
-					secList.add(secModel);
-				}	
-				return new RecordSet<SecurityModel>(secList,recSet.getTotalSize());
-			}
+			return daoService.getUsers(searchCriteria, matchTypeUser);
 		} catch (DaoException e) {
 			logger.error("Error in SecurityService.getUsers "+e, e);
 		}
-		return new RecordSet<SecurityModel>(secList,secList.size());
+		return new RecordSet<User>(null, 0);
 	}
 	
 	@RemoteMethod
 	public JSONObject updateUser(String roleId, String username, String expire, String locked, String email) {
 		JSONObject json = new JSONObject();
+		username = StringUtils.trim(username);
 		int result = -1;
 		
 		try {
 			User user = new User();
 			user.setGroupId(roleId);
 			user.setUsername(username);
-	
+			user.setLastModifiedBy(UtilityService.getUsername());
 			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
-			RecordSet<SecurityModel> record = getUsers(searchCriteria, MatchType.MATCH_ID);
+			RecordSet<User> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);
+				user.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateUser(user);
 			}
 

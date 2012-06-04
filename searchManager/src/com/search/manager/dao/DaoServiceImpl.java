@@ -955,8 +955,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int removeUser(String username) throws DaoException {
-		return usersDAO.deleteUser(username);
+	public int removeUser(User user) throws DaoException {
+		return usersDAO.deleteUser(user);
 	}
 
 	@Override
