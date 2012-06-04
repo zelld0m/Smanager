@@ -38,7 +38,6 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Group;
 import com.search.manager.model.Keyword;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -151,8 +150,8 @@ public class DaoServiceImpl implements DaoService {
     }
     
 	@Override
-	public List<NameValue> getDropdownValues(String storeId) throws DaoException {
-		return auditTrailDAO.getDropdownValues(storeId);
+	public List<String> getDropdownValues(int type, String storeId) throws DaoException {
+		return auditTrailDAO.getDropdownValues(type, storeId);
 	}
 
 	/* Big Bets */
@@ -954,6 +953,15 @@ public class DaoServiceImpl implements DaoService {
 		return usersDAO.updateUser(user);
 	}
 
+	public int resetPassword(User user) throws DaoException {
+		return usersDAO.resetPassword(user);
+	}
+	
+	public int login(User user) throws DaoException {
+		return usersDAO.login(user);
+	}
+	
+	
 	@Override
 	public int removeUser(User user) throws DaoException {
 		return usersDAO.deleteUser(user);

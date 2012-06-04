@@ -73,6 +73,7 @@ public class SecurityService {
 			User user = new User();
 			user.setUsername(username);
 			user.setLastModifiedBy(UtilityService.getUsername());
+			user.setStoreId(UtilityService.getStoreName());
 			result = daoService.removeUser(user);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
@@ -107,9 +108,10 @@ public class SecurityService {
 				user.setEmail(record.getList().get(0).getEmail());
 				user.setFullName(record.getList().get(0).getFullName());
 				user.setLastModifiedBy(UtilityService.getUsername());
+				user.setStoreId(UtilityService.getStoreName());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(UtilityService.getPasswordHash(password));
-				result = daoService.updateUser(user);
+				result = daoService.resetPassword(user);
 			}
 
 			if(result > -1){
@@ -247,6 +249,7 @@ public class SecurityService {
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
+				user.setStoreId(UtilityService.getStoreName());
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);

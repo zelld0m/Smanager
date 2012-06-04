@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
@@ -162,9 +160,9 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
-	public List<NameValue> getDropdownValues() {
+	public List<String> getDropdownValues(int type) {
 		try {
-			return daoService.getDropdownValues(UtilityService.getStoreName());
+			return daoService.getDropdownValues(type, UtilityService.getStoreName());
 		} catch (DaoException e) {
 			logger.error("Error getting dropdown values" + e.getMessage());
 		}
