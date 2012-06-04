@@ -9,19 +9,15 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.model.AuditTrail;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.service.UtilityService;
 
 @Repository(value="auditTrailDAO")
 public class AuditTrailDAO {
@@ -32,24 +28,15 @@ public class AuditTrailDAO {
 	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddAuditTrailStoredProcedure(jdbcTemplate);
     	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
-    	ddval = new DropdownValues(jdbcTemplate);
     }
 
-	private final static String REFERENCE_SQL = new StringBuilder("select distinct(USER_NAME) as VALUE,'USER_NAME' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
-			.append("' UNION select distinct(OPERATION) as VALUE,'ACTION' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
-			.append("' UNION select distinct(ENTITY)as VALUE,'ENTITY' as NAME  from AUDIT_TRAIL WHERE STORE = '%1$s")
-			.append("' UNION select distinct(REFERENCE)as VALUE,'REFERENCE' as NAME from AUDIT_TRAIL WHERE STORE = '%1$s")
-			.append("' ORDER BY VALUE").toString();
+	private final static String GET_USER_SQL = "select distinct(USER_NAME) from AUDIT_TRAIL WHERE STORE = ? ORDER BY USER_NAME";
+	private final static String GET_ACTION_SQL = "select distinct(OPERATION) from AUDIT_TRAIL WHERE STORE = ? ORDER BY OPERATION";
+	private final static String GET_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? ORDER BY ENTITY";
+	private final static String GET_REF_SQL = "select distinct(REFERENCE) from AUDIT_TRAIL WHERE STORE = ? ORDER BY REFERENCE";
 
 	private AddAuditTrailStoredProcedure addSP;
 	private GetAuditTrailStoredProcedure getSP;
-	private DropdownValues ddval;
-	
-	private class DropdownValues extends JdbcDaoSupport {
-		public DropdownValues(JdbcTemplate jdbcTemplate){
-			setJdbcTemplate(jdbcTemplate);
-		}
-	}
 
 	private class AddAuditTrailStoredProcedure extends CUDStoredProcedure {
 	    public AddAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -157,8 +144,28 @@ public class AuditTrailDAO {
         return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public List<NameValue> getDropdownValues(String storeId) {
-		return ddval.getJdbcTemplate().query(String.format(REFERENCE_SQL, storeId), new BeanPropertyRowMapper(NameValue.class));
+	public List<String> getDropdownValues(int type, String storeId) {
+		String sql = null;
+		switch (type) {
+			case 1: 
+				sql = GET_USER_SQL;
+				break;
+			case 2: 
+				sql = GET_ACTION_SQL;
+				break;
+			case 3: 
+				sql = GET_ENTITY_SQL;
+				break;
+			case 4: 
+				sql = GET_REF_SQL;
+				break;
+		}
+		return getSP.getJdbcTemplate().query(
+				sql, new Object[] {storeId}, new RowMapper() {
+					public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+						return resultSet.getString(1);
+					}
+				});
 	}
+
  }
