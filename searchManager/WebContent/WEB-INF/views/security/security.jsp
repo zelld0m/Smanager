@@ -76,14 +76,16 @@
       <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
       <!--Pagination-->
      	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
+    	<div class="clearB"></div>
     	<table width="100%" class="fsize12 tblAlpha conTable">
     		<tr class="conTr1">
     			<th width="7%"></th>
-    			<th width="35%">User</th>
+    			<th width="30%">User</th>
+    			<th width="12%">Role</th>
     			<th width="15%">Member Since</th>
     			<th width="10%">Status</th>
     			<th width="10%">Validity</th>
-    			<th width="35%">Last Access</th>
+    			<th width="28%">Last Access</th>
     		</tr>
     		<tr id="conTr1Pattern" class="conTableItem" style="display: none">
     			<td class="txtAC" id="delIcon">
@@ -91,8 +93,11 @@
     			</td>
     			<td id="userInfo">
     				<span id="username"><a href="javascript:void(0);"></a></span>
-    				<span id="fullName"></span>
-    				<span id="role"></span>
+    				<div class="clearB"></div>
+    				<span id="fullName"></span>    								
+    			</td>
+    			<td>
+    				Role<span id="role"></span>  
     			</td>
     			<td id="memberSince">
     				<span></span>
@@ -105,7 +110,8 @@
     			</td>
     			<td id="lastAccess">
     				<span id="dateAccess"></span>
-    				<span id="ipAccess"></span>
+    				<div class="clearB"></div>
+    				<span id="ipAccess" class="forange"></span>
     			</td>
     		</tr>
     	</table>   
@@ -129,18 +135,18 @@
 			      <div class="clearB"></div>
 			      
 			      <div id="view-profile">
-			      	<ul>
+			      	<ul class="marB0">
 				      	<li><a href="#acctinfo"><span>Account Info</span></a></li>
 				      	<li><a href="#acctact"><span>Account Activities</span></a></li>
 				    </ul>
 				    
 				    <div id="acctinfo">
 				    	<div class="clearB"></div>
-				    	<h2 class="txtAL marT10 padL10 borderB">Account Info</h2>
+				    	<h2 class="txtAL marT0 padL10 padT8 borderT">Account Info</h2>
 				    	<div class="marB10">
 				      		<label class="floatL w80 padT3 padL5">Role: </label>
 				            <label class="floatL w100">
-								<select id="shrole"></select>
+								<select id="shrole" class="mar0"></select>
 							</label>
 				            <div class="clearB marT10"></div>
 				            <label class="floatL w80 padT3 padL5">Email: </label>
@@ -170,12 +176,10 @@
 					      </div>    
 				    </div>
 				    
-				    <div id="acctact">
-				    	<div class="marB10">
-					    	<div class="clearB"></div>
-					    	<h2 class="txtAL marT10 padL10 borderB">Account Activities</h2>
-				    		This feature will be available soon
-				    	</div>
+				    <div id="acctact">				    	
+				    	<div class="clearB"></div>
+				    	<h2 class="txtAL marT0 padL10 padT5 borderT">Account Activities</h2>
+			    		This feature will be available soon
 				    </div>
 			     
 			     
