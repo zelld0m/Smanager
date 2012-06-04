@@ -2,6 +2,7 @@ package com.search.manager.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -9,9 +10,9 @@ import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class User extends ModelBean {
-	
-private static final long serialVersionUID = 1L;
-	
+
+	private static final long serialVersionUID = 1L;
+
 	private String username;
 	private String fullName;
 	private String password;
@@ -29,28 +30,28 @@ private static final long serialVersionUID = 1L;
 	private Date thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
-	
-	
-//	private String username;
-//	private String fullName;
-//	private String password;
-//	private String email;
-//	private String groupId;				private String roleId;			private String type; -> change to Role class
-//	private Boolean accountNonLocked;		private String status;
-//	private Boolean credentialsNonExpired;
-//	private Boolean accountNonExpired;
-//	private Date lastAccessDate;			private String lastAccess;
-//	private String ip;
-//	private String createdBy;
-//	private String lastModifiedBy;
-//	private Date createdDate;			private String dateStarted;
-//	private Date lastModifiedDate;
-//	private Date thruDate;				private String expired;
-//	private Integer successiveFailedLogin;		private boolean locked;
-//	private String storeId;
-		
-	
-	
+
+
+	//	private String username;
+	//	private String fullName;
+	//	private String password;
+	//	private String email;
+	//	private String groupId;				private String roleId;			private String type; -> change to Role class
+	//	private Boolean accountNonLocked;		private String status;
+	//	private Boolean credentialsNonExpired;
+	//	private Boolean accountNonExpired;
+	//	private Date lastAccessDate;			private String lastAccess;
+	//	private String ip;
+	//	private String createdBy;
+	//	private String lastModifiedBy;
+	//	private Date createdDate;			private String dateStarted;
+	//	private Date lastModifiedDate;
+	//	private Date thruDate;				private String expired;
+	//	private Integer successiveFailedLogin;		private boolean locked;
+	//	private String storeId;
+
+
+
 	public User() {
 	}
 
@@ -122,6 +123,10 @@ private static final long serialVersionUID = 1L;
 	public void setAccountNonExpired(Boolean accountNonExpired) {
 		this.accountNonExpired = accountNonExpired;
 	}
+	
+	public boolean getIsAccountNonExpired(){
+		return BooleanUtils.toBoolean(isAccountNonExpired());
+	}
 
 	public Boolean isAccountNonLocked() {
 		return accountNonLocked;
@@ -130,6 +135,11 @@ private static final long serialVersionUID = 1L;
 	public void setAccountNonLocked(Boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
+	
+	public boolean getIsAccountNonLocked(){
+		return BooleanUtils.toBoolean(isAccountNonLocked());
+	}
+
 
 	public Boolean isCredentialsNonExpired() {
 		return credentialsNonExpired;

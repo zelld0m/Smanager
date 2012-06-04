@@ -196,6 +196,7 @@
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.model.RoleModel,
 				com.search.manager.model.Group,
+				com.search.manager.model.User,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,
 				com.search.manager.schema.model.GenericType,

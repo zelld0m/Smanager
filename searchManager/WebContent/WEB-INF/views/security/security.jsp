@@ -28,7 +28,7 @@
        		<label class="marT8 floatL w100p">Account Role</label> 
        		<label class="marT3 floatL w100p">
 				<select class="w90p mar0" id="refrole" style="cursor:pointer">
-					<option value="all">All Roles</option>
+					<option value="">All Roles</option>
 				</select>
 			</label>
        		<label class="marT8 floatL w100p">Account Status</label> 
@@ -89,15 +89,17 @@
     		</tr>
     		<tr id="conTr1Pattern" class="conTableItem" style="display: none">
     			<td class="txtAC" id="delIcon">
-    				<a href="javascript:void(0);" id="del'+list[i].id+'"><img src="../images/icon_del.png"></a>
+    				<a href="javascript:void(0);"><img src="../images/icon_del.png"></a>
     			</td>
     			<td id="userInfo">
     				<span id="username"><a href="javascript:void(0);"></a></span>
     				<div class="clearB"></div>
-    				<span id="fullName"></span>    								
+    				<span id="fullName"></span> 
+    				<div class="clearB"></div>
+    				<span id="email"></span>   								
     			</td>
-    			<td>
-    				Role<span id="role"></span>  
+    			<td  id="role">
+    				<span></span>  
     			</td>
     			<td id="memberSince">
     				<span></span>
@@ -144,23 +146,32 @@
 				    	<div class="clearB"></div>
 				    	<h2 class="txtAL marT0 padL10 padT8 borderT">Account Info</h2>
 				    	<div class="marB10">
+				    		<div class="clearB marT5"></div>
+				      		
+				      		<label class="floatL w80 padT3 padL5">Email: </label>
+				            <label class="floatL w200">
+				            	<input type="text" class="w200" id="shemail">
+				            </label>
+				            <div class="clearB marT10"></div>
+				      		
 				      		<label class="floatL w80 padT3 padL5">Role: </label>
 				            <label class="floatL w100">
 								<select id="shrole" class="mar0"></select>
 							</label>
 				            <div class="clearB marT10"></div>
-				            <label class="floatL w80 padT3 padL5">Email: </label>
-				            <label class="floatL w140"><input type="text" class="w140" id="shemail"></label>
-				            <div class="clearB marT10"></div>
-				           
+				            
 				            <label class="floatL w80 padT3 padL5">Validity:</label>
-				            <label class="floatL w140"><input type="text" class="w70" id="shexp"></label>
+				            <label class="floatL w140">
+				            	<input type="text" class="w70" id="shexp">
+				            </label>
 				            <div class="clearB marT10"></div>
 				            
 				            <label class="floatL w80 padT3 padL5">Status:</label>
-				            <label class="floatL w140"><input type="checkbox" id="shlck" class="firerift-style-checkbox"></label>
-				            
+				            <label class="floatL w140">
+				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox">
+				            </label>
 				            <div class="clearB marT10"></div>
+				            
 				            <div class="txtAR marT10">
 				            	<a id="shsv" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Update</div></a>
 				            </div>
@@ -198,12 +209,31 @@
 			      <div class="clearB"></div>
 			      <div class="marB10">
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10 marB5">Email :</label><label><input type="text" class="w200" id="ademail"></label>
+			            <label class="floatL w80 marL10 marB5">Email :</label>
+			            <label>
+			            	<input type="text" class="w200" id="ademail">
+			            </label>
+			            <div class="clearB marT10"></div>
+			            
+			            <label class="floatL w80 marL10 marB5">Role :</label>
+			            <label>
+			            	<select id="adrole"></select>
+			            </label>
 			            <div class="clearB marT5"></div>
-			            <label class="floatL w80 marL10"> </label><label><input type="checkbox" id="adlck" class="posRel top2">Locked</label>
-			            <label class="marL10 marR3">Expired</label><input type="text" id="adexp" class="w70 adexp">
+			            
+			            <label class="floatL w80 padT3 padL5">Validity:</label>
+				            <label class="floatL w140">
+				            	<input type="text" class="w70" id="adexp">
+				            </label>
+				        <div class="clearB marT10"></div>
+				        
+				        <label class="floatL w80 padT3 padL5">Status:</label>
+				            <label class="floatL w140">
+				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox">
+				            </label>
 			     </div>
 			                        
+				       <div class="clearB marT10"></div>     
 			      <div class="borderT">
 			            <h2 class="padT5"> Set Password </h2>
 			            <label class="floatL" style="width:150px"><input type="password" id="adpass"></label>
