@@ -19,7 +19,8 @@
 			<img src="../images/corner_br.png" class="curveBR"/>
     	</div>
         <div class="clearB floatL w230 padL5 padT10 fsize12">
-        	<div class="w200 searchBoxHolder floatL">
+        	<label class="marT10 floatL w100p">Name or username</label> 
+        	<div class="marT3 w200 searchBoxHolder floatL">
        			<input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p">
        		</div>
        		<div class="clearB"></div>     		
