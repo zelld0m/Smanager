@@ -76,8 +76,8 @@ public class GroupsDAO {
 
 	public List<String> getGroups() {
 		return getGroupsStoredProcedure.getJdbcTemplate().query(
-				GET_GROUPS, new RowMapper() {
-					public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+				GET_GROUPS, new RowMapper<String>() {
+					public String mapRow(ResultSet resultSet, int i) throws SQLException {
 						return resultSet.getString(1);
 					}
 				});
@@ -85,8 +85,8 @@ public class GroupsDAO {
 
 	public List<String> getAllPermissions() {
 		return getGroupsStoredProcedure.getJdbcTemplate().query(
-				GET_PERMISSIONS, new RowMapper() {
-					public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+				GET_PERMISSIONS, new RowMapper<String>() {
+					public String mapRow(ResultSet resultSet, int i) throws SQLException {
 						return resultSet.getString(1);
 					}
 				});

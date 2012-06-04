@@ -6,6 +6,8 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +20,6 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Repository(value="usersDAO")
@@ -103,10 +104,10 @@ public class UsersDAO {
 			}
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
 			inputs.put(DAOConstants.PARAM_STORE_ID, user.getStoreId());
-			inputs.put(DAOConstants.PARAM_ACTIVE_USER, user.isAccountNonExpired()==null?null:user.isAccountNonExpired()?'Y':'N');
+			inputs.put(DAOConstants.PARAM_ACTIVE_USER, BooleanUtils.toString(user.isAccountNonExpired(),"Y","N", null));
 			inputs.put(DAOConstants.PARAM_START_DATE2, DateAndTimeUtils.convertToSqlTimestampStartOfDay(searchCriteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE2, DateAndTimeUtils.convertToSqlTimestampEndOfDay(searchCriteria.getEndDate()));
-			inputs.put(DAOConstants.PARAM_USER_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'1':'0');
+			inputs.put(DAOConstants.PARAM_USER_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
 			inputs.put(DAOConstants.PARAM_START_ROW2, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW2, searchCriteria.getEndRow());
 			return DAOUtils.getRecordSet(getUserStoredProcedure.execute(inputs));
@@ -155,13 +156,13 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
 			inputs.put(DAOConstants.PARAM_CURRENT_PASSWORD, user.getPassword());
 			inputs.put(DAOConstants.PARAM_PASSWORD_HINT, null);
-			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, user.isCredentialsNonExpired()==null || user.isCredentialsNonExpired()?'0':1);
-			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()==null || user.isAccountNonLocked()?'1':'0');
+			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, BooleanUtils.toString(user.isCredentialsNonExpired(),"0","1", "0"));
+			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", "1"));
 			inputs.put(DAOConstants.PARAM_IP, null);
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_STORE, user.getStoreId());
 			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate()==null?DateAndTimeUtils.addYearToDate(5):user.getThruDate());
-			inputs.put(DAOConstants.PARAM_CREATED_BY, UtilityService.getUsername());
+			inputs.put(DAOConstants.PARAM_CREATED_BY, user.getCreatedBy());
 			result = DAOUtils.getUpdateCount(addUserStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -214,17 +215,15 @@ public class UsersDAO {
 			inputs.put(DAOConstants.PARAM_CURRENT_PASSWORD, user.getPassword());
 			inputs.put(DAOConstants.PARAM_PASSWORD_HINT, null);
 			inputs.put(DAOConstants.PARAM_HAS_LOGGED_OUT, null);
-			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, user.isCredentialsNonExpired()==null?null:user.isCredentialsNonExpired()?'0':1);
-			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, user.isAccountNonLocked()==null?null:user.isAccountNonLocked()?'1':'0');
+			inputs.put(DAOConstants.PARAM_REQUIRE_PASSWORD_CHANGE, BooleanUtils.toString(user.isCredentialsNonExpired(),"0","1", null));
+			inputs.put(DAOConstants.PARAM_ACCT_NON_LOCKED, BooleanUtils.toString(user.isAccountNonLocked(),"1","0", null));
 			inputs.put(DAOConstants.PARAM_LAST_ACCESS_DATE, user.getLastAccessDate());
 			inputs.put(DAOConstants.PARAM_SUCCESSIVE_FAILED_LOGINS, user.getSuccessiveFailedLogin());
 			inputs.put(DAOConstants.PARAM_IP, user.getIp());
 			inputs.put(DAOConstants.PARAM_GROUP_ID, user.getGroupId());
 			inputs.put(DAOConstants.PARAM_THRU_DATE, user.getThruDate());
-			String modifiedBy = null;
-			try {
-				modifiedBy = UtilityService.getUsername();
-			} catch (NullPointerException npe) {
+			String modifiedBy = user.getCreatedBy();
+			if (StringUtils.isEmpty(modifiedBy)) {
 				modifiedBy = "SYSTEM";
 			}
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, modifiedBy);
@@ -248,10 +247,14 @@ public class UsersDAO {
 		}
 	}
 	
-    public int deleteUser(String username) {
+    public int deleteUser(User user) {
 		Map<String, Object> inputs = new HashMap<String, Object>();
-		inputs.put(DAOConstants.PARAM_USER_NAME, username);
-		inputs.put(DAOConstants.PARAM_MODIFIED_BY, UtilityService.getUsername());
+		inputs.put(DAOConstants.PARAM_USER_NAME, user.getUsername());
+		String modifiedBy = user.getLastModifiedBy();
+		if (StringUtils.isEmpty(modifiedBy)) {
+			modifiedBy = "SYSTEM";
+		}
+		inputs.put(DAOConstants.PARAM_MODIFIED_BY, modifiedBy);
         return DAOUtils.getUpdateCount(deleteUserStoredProcedure.execute(inputs));
     }	
 

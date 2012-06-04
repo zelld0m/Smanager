@@ -197,7 +197,7 @@ public interface DaoService {
     public User getUser(String username) throws DaoException;
 	public int addUser(User user) throws DaoException;
 	public int updateUser(User user) throws DaoException;
-	public int removeUser(String username) throws DaoException;
+	public int removeUser(User user) throws DaoException;
 
 	public List<String> getGroups() throws DaoException;
 	public List<String> getAllPermissions() throws DaoException;

@@ -13,10 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.model.SecurityModel;
 import com.search.manager.model.User;
 import com.search.manager.schema.MessagesConfig;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "userSettingService")
 @RemoteProxy(
@@ -33,32 +31,18 @@ public class UserSettingService {
 	@Autowired private DaoService daoService;
 
 	@RemoteMethod
-	public SecurityModel getUser() {
-
-		SecurityModel secModel = new SecurityModel();
-
+	public User getUser() {
+		User user  = null;
 		try {
-			User user = daoService.getUser(UtilityService.getUsername());
-			if(user != null) {
-				secModel.setId(user.getUsername());
-				secModel.setUsername(user.getUsername());
-				secModel.setType(user.getGroupId());
-				secModel.setFullname(user.getFullName());
-				secModel.setLastAccess(user.getLastAccessDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getLastAccessDate()):"");
-				secModel.setIp(user.getIp());
-				secModel.setDateStarted(user.getCreatedDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getCreatedDate()):"");
-				secModel.setRoleId(user.getGroupId());
-				secModel.setStatus(user.isAccountNonLocked()?"no":"yes");
-				secModel.setExpired(user.isAccountNonExpired()?"no":"yes"); // compute expiration
-				secModel.setEmail(user.getEmail());
-				secModel.setLocked(user.isAccountNonLocked());
-				secModel.setThruDate(user.getThruDate() != null?DateAndTimeUtils.getDateStringMMDDYYYY(user.getThruDate()):"");	
-				return secModel;
+			user = daoService.getUser(UtilityService.getUsername());
+			if (user != null) {
+				// don't return the password
+				user.setPassword(null);
 			}
 		} catch (DaoException e) {
 			logger.error("Error in SecurityService.getUsers "+e);
 		}
-		return secModel;
+		return user;
 	}
 	
 	@RemoteMethod
@@ -67,6 +51,9 @@ public class UserSettingService {
 		int result = -1;
 		
 		try {
+			username = StringUtils.trim(username);
+			fullname = StringUtils.trim(fullname);
+			email = StringUtils.trim(email);
 			User user = daoService.getUser(username);
 			if(user != null){
 				user.setFullName(fullname);

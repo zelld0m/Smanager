@@ -194,7 +194,6 @@
 				com.search.manager.model.Comment,
 				com.search.manager.model.NameValue,
 				com.search.manager.model.DeploymentModel,
-				com.search.manager.model.SecurityModel,
 				com.search.manager.model.RoleModel,
 				com.search.manager.model.Group,
 				com.search.manager.schema.model.Field,

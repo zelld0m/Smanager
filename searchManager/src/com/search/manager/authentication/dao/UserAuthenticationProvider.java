@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -67,35 +66,21 @@ public class UserAuthenticationProvider implements UserDetailsService {
 		
 	}
 	
-	public Collection<GrantedAuthority> getAuthorities(String groupId) {
-		List<GrantedAuthority> authList = getGrantedAuthorities(getRoles(groupId));
-		return authList;
-	}
-
-	private List<String> getRoles(String groupId) {
-		List<String> permissions = new ArrayList<String>();
+	private Collection<GrantedAuthority> getAuthorities(String groupId) {
+		
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		try {
 			RecordSet<Group> grpPermission = daoService.getGroupPermission(groupId);
-			for (Group group : grpPermission.getList()) {
-				permissions.add(group.getPermissionId());
+			if (grpPermission.getTotalSize() > 0) {
+				List<String> permissions = new ArrayList<String>();
+				for (Group group : grpPermission.getList()) {
+					permissions.add(group.getPermissionId());
+				}
+				authorities = AuthorityUtils.createAuthorityList(permissions.toArray(new String[0]));				
 			}
 		} catch (DaoException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		}
-		return permissions;
-	}
-
-	/**
-	 * Wraps {@link String} roles to {@link SimpleGrantedAuthority} objects
-	 * @param roles {@link String} of roles
-	 * @return list of granted authorities
-	 */
-	public static List<GrantedAuthority> getGrantedAuthorities(List<String> roles) {
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		
-		if (CollectionUtils.isNotEmpty(roles))
-			authorities = AuthorityUtils.createAuthorityList(roles.toArray(new String[0]));
-		
 		return authorities;
 	}
 	
