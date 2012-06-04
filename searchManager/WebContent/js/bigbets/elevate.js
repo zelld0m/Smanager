@@ -77,7 +77,10 @@
 							var sequence = $.trim(contentHolder.find("#addItemPosition").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-
+							var today = new Date();
+							//ignore time of current date 
+							today.setHours(0,0,0,0);
+							
 							if ($.isBlank(skus)) {
 								alert("There are no SKUs specified in the list.");
 							}
@@ -87,6 +90,8 @@
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
 							}
+							else if(today.getTime() > new Date(expDate).getTime())
+								alert("Start date cannot be earlier than today");
 							else if (!isXSSSafe(comment)){
 								alert("Invalid comment. HTML/XSS is not allowed.");
 							}

@@ -426,8 +426,11 @@
 						contentHolder.find("#addCommentBtn" + id).on({click:function(event){
 							if(data.locked) return;
 							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
-							if(isXSSSafe(comment)){
-								if ($.isNotBlank(comment)){
+															
+							if(!isXSSSafe(comment)){
+								alert("Invalid comment. HTML/XSS is not allowed.");
+							}
+							else if ($.isNotBlank(comment)){
 									if(data.type==="Elevate"){
 										ElevateServiceJS.addComment(data.name, edp, comment,{
 											callback: function(data){
@@ -457,9 +460,6 @@
 										});
 									}
 								}
-							}else{
-								alert("Invalid comment. HTML/XSS is not allowed.");
-							}
 						},
 						mouseenter: showHoverInfo
 						},{locked: data.locked});
