@@ -443,7 +443,7 @@
 
 					$('#refmem').datepicker({
 						showOn: "both",
-						buttonText: "Member Date",
+						buttonText: "Member Since",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
 						disabled: false
