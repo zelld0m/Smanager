@@ -99,8 +99,8 @@
 					var adfull = $.trim(e.find('#adfull').val());
 					var ademail = $.trim(e.find('#ademail').val());			
 					var adrole = $.trim(e.find('#adrole').val());			
-					var adexp = sec.expadd;
-					var adlck = e.find('#adlck').is(':checked');
+					var adexp = $.trim(e.find('#adexp_1').val());
+					var adlck = e.find('div[rel="adlck"]').hasClass('on');
 
 					var adpass = $.trim(e.find('#adpass').val());
 
@@ -285,10 +285,7 @@
 									buttonText: "Expiration Date",
 									buttonImage: "../images/icon_calendar.png",
 									buttonImageOnly: true,
-									disabled: false,
-									onSelect: function(dateText, inst) {			
-										sec.expsh = contentHolder.find("#shexp_1").val();
-									}
+									disabled: false
 								});	
 
 								contentHolder.find("#shsv").on({
