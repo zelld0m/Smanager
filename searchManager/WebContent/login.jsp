@@ -3,6 +3,8 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=100" />
+
 <title>Search Manager</title>
 <link href="<spring:url value="/css/login.css" htmlEscape="true" />" rel="stylesheet" type="text/css">
 
