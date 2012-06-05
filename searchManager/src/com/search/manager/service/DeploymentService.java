@@ -237,6 +237,7 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			result = daoService.getRuleStatus(ruleStatus);
 		} catch (DaoException e) {
 			logger.error("Failed during unpublishRule()",e);
