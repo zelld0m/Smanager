@@ -42,7 +42,7 @@ public class AuditService {
 			auditTrail.setKeyword(keyword);
 			auditTrail.setReferenceId(productId);
 			
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			return null;
 		}
@@ -57,7 +57,7 @@ public class AuditService {
 			auditTrail.setEntity(entity.toString());
 			auditTrail.setStoreId(store);
 			
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			return null;
 		}
@@ -73,7 +73,7 @@ public class AuditService {
 			auditTrail.setStoreId(store);
 			auditTrail.setReferenceId(productId);
 			
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			return null;
 		}
@@ -89,7 +89,7 @@ public class AuditService {
 			auditTrail.setEntity(Entity.queryCleaning.toString());
 			auditTrail.setReferenceId(ruleId);
 			auditTrail.setStoreId(store);
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			return null;
 		}
@@ -106,7 +106,7 @@ public class AuditService {
 			auditTrail.setReferenceId(ruleId);
 			auditTrail.setStoreId(store);
 			
-			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage));
+			return daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, null, null, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			return null;
 		}
@@ -152,7 +152,7 @@ public class AuditService {
 			endDt = DateAndTimeUtils.toSQLDate(store, endDate);
 		}
 		try {
-			rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage));
+			rSet = daoService.getAuditTrail(new SearchCriteria<AuditTrail>(auditTrail, startDt, endDt, page, itemsPerPage), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			logger.error("Error getting audit trail. " + e.getMessage());
 		}

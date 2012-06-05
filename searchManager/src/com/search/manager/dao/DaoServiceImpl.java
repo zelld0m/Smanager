@@ -27,6 +27,7 @@ import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
@@ -141,8 +142,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	/* Audit Trail */
-    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) {
-    	return auditTrailDAO.getAuditTrail(auditDetail);
+    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) {
+    	return auditTrailDAO.getAuditTrail(auditDetail, adminFlag);
     }
     
     public int addAuditTrail(AuditTrail auditTrail) {
@@ -576,7 +577,14 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRelevancy(Relevancy relevancy) throws DaoException {
-		return relevancyDAO.deleteRelevancy(relevancy);
+		int result = relevancyDAO.deleteRelevancy(relevancy);
+		RuleStatus ruleStatus = new RuleStatus();
+		ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
+		ruleStatus.setRuleRefId(relevancy.getRuleId());
+		ruleStatus.setStoreId(relevancy.getStore().getStoreId());
+		//TODO add transaction
+		processRuleStatus(ruleStatus, true);
+		return result;
 	}
 	
 	@Override
@@ -732,7 +740,14 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
-		return redirectRuleDAO.deleteRedirectRule(rule);
+		int result = redirectRuleDAO.deleteRedirectRule(rule);
+		RuleStatus ruleStatus = new RuleStatus();
+		ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
+		ruleStatus.setRuleRefId(rule.getRuleId());
+		ruleStatus.setStoreId(rule.getStoreId());
+		//TODO add transaction
+		processRuleStatus(ruleStatus, true);
+		return result;
 	}
 
 	@Override
@@ -891,7 +906,7 @@ public class DaoServiceImpl implements DaoService {
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
 		int result = -1;
 		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
-		if (rSet.getList().size()>0) {
+		if (rSet.getList().size() > 0) {
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			if (isDelete) {
 				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
@@ -899,7 +914,7 @@ public class DaoServiceImpl implements DaoService {
 				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());
 			}
 			result = updateRuleStatus(ruleStatus);
-		} else {
+		} else if (!isDelete){
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
 			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
