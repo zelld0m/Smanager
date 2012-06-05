@@ -35,7 +35,6 @@
 				click: function(evt){
 					var selectAll = $(this).is(":checked");
 					$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").attr("checked", selectAll);
-					selectAll? $(tabSelected).find("#actionBtn").show() : $(tabSelected).find("#actionBtn").hide();
 				}
 			});
 		};
@@ -44,12 +43,7 @@
 			$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").on({
 				click: function(evt){
 					var selected = $(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").length;
-
-					if (selected>0){
-						$(tabSelected).find("#actionBtn").show();
-					}
-					else{
-						$(tabSelected).find("#actionBtn").hide();
+					if (selected==0){
 						$(tabSelected).find("th#selectAll > input[type='checkbox']").attr("checked", false); 
 					}
 				}
@@ -177,21 +171,40 @@
 							checkSelectHandler();
 							checkSelectAllHandler();
 							publishHandler();
+							$(tabSelected).find('div#actionBtn').show();
 						}else{
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
+							$(tabSelected).find('div#actionBtn').hide();
 						}
+						
+						// What button to display
+						if($.isNotBlank(filterBy)){
+							switch(filterBy){
+								case "approved" : 
+									$(tabSelected).find('a#unpublishBtn').hide();
+									break;
+								case "published" : 
+								case "delete" : 
+									$(tabSelected).find('a#publishBtn').hide(); break;	
+								}
+						}else{
+							$(tabSelected).find('div#actionBtn').hide();
+							$(tabSelected).find("th#selectAll").hide();
+							$(tabSelected).find("tr.ruleItem > td#select").hide();
+						}
+						
 				},
-				preHook:function(){ 
-					prepareTabContent(); 
-					},
+				preHook:function(){ prepareTabContent(); },
 				postHook:function(){ 
+					
 					cleanUpTabContent();
 					
 					$(tabSelected).find("select#ruleFilter").val(filterBy).on({
 						change: function(evt){
 							getForProductionList($(this).val());
 						}
-					});		
+					});
+					
 				}			
 			});
 		};
