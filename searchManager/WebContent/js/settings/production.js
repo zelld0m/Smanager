@@ -137,51 +137,61 @@
 			});
 		};
 		
-		var getForProductionList = function(){
-			DeploymentServiceJS.getDeployedRules(entityName, {
+		var getForProductionList = function(filterBy){
+			
+			DeploymentServiceJS.getDeployedRules(entityName, filterBy, {
 				callback:function(data){
 					var list = data.list;
 					
-					if (data.totalSize>0){
 						var HTML = $("div#tabContentTemplate").html();
 						$(tabSelected).html(HTML);
-					
-						// Populate table row
-						for(var i=0; i<data.totalSize ; i++){
-							$table = $(tabSelected).find("table#rule");
-							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
-							
-							var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
-							var showId = list[i]["ruleRefId"] !== list[i]["description"];
-							
-							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
-							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							if(showId)
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
-							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
-							
-							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
-							if($.isNotBlank(list[i]["approvalStatus"])) 
-								$tr.find("td#requestType").html(list[i]["updateStatus"]);
-							
-							$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
-							$tr.find("td#production > p#productionDate").html(lastPublishedDate);
-							$tr.appendTo($table);
+						
+						if (data.totalSize>0){
+
+							// Populate table row
+							for(var i=0; i<data.totalSize ; i++){
+								$table = $(tabSelected).find("table#rule");
+								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
+
+								var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
+								var showId = list[i]["ruleRefId"] !== list[i]["description"];
+
+								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
+								$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+								if(showId)
+									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+
+								$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
+								if($.isNotBlank(list[i]["approvalStatus"])) 
+									$tr.find("td#requestType").html(list[i]["updateStatus"]);
+
+								$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
+								$tr.find("td#production > p#productionDate").html(lastPublishedDate);
+								$tr.appendTo($table);
+							}
+
+							// Alternate row style
+							$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
+
+							checkSelectHandler();
+							checkSelectAllHandler();
+							publishHandler();
+						}else{
+							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 						}
-						
-						// Alternate row style
-						$(tabSelected).find("tr:not(#ruleItemPattern):even").addClass("alt");
-						
-						checkSelectHandler();
-						checkSelectAllHandler();
-						publishHandler();
-					}
 				},
 				preHook:function(){ 
 					prepareTabContent(); 
 					},
 				postHook:function(){ 
-					cleanUpTabContent(); 
+					cleanUpTabContent();
+					
+					$(tabSelected).find("select#ruleFilter").val(filterBy).on({
+						change: function(evt){
+							getForProductionList($(this).val());
+						}
+					});		
 				}			
 			});
 		};
@@ -189,6 +199,7 @@
 		var prepareTabContent = function(){
 			if (!$("div.circlePreloader").is(":visible")) $('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($(tabSelected));
 			$(tabSelected).find('table.tblItems').hide();
+			$(tabSelected).find('div.filter').hide();
 			$(tabSelected).find('div#actionBtn').hide();
 		};
 		
@@ -196,12 +207,6 @@
 			$(tabSelected).find('div.circlePreloader').remove();
 		};
 		
-		var init = function(){
-			tabSelected = $("li.ui-tabs-selected > a").attr("href");
-			entityName = tabSelected.substring(1, tabSelected.length-3);
-			getForProductionList();
-		};
-
 		$("ul.ui-tabs-nav > li > a").on({
 			click: function(evt){
 				tabSelected = $(this).attr("href");
@@ -209,6 +214,12 @@
 				getForProductionList();
 			}
 		});
+
+		var init = function(){
+			tabSelected = $("li.ui-tabs-selected > a").attr("href");
+			entityName = tabSelected.substring(1, tabSelected.length-3);
+			getForProductionList();
+		};
 		
 		init();
 	});
