@@ -59,8 +59,12 @@
 				},
 
 				validField : function(f,fv,e,d){
-
-					if($.isBlank(fv)){
+					var today = new Date();
+					//ignore time of current date 
+					today.setHours(0,0,0,0);
+					
+					
+					if($.isBlank(fv) && !d){
 						alert(f+' cannot be empty.');
 						return false;
 					}else if(!e && !d && !isAllowedName(fv)){
@@ -75,13 +79,25 @@
 					}else if(e && sec.isEmail(fv)){
 						alert(f+" is invalid.");
 						return false;
-					}else if(d && !$.isDate(fv)){
-						alert(f+" is invalid date.");
+					}else if(d && fv!=null){
+						if(today.getTime() > new Date(fv).getTime()){
+							alert("Validity cannot be earlier than today");
+							return false;
+						 }else if(d && !$.isDate(fv)){
+							alert(f+" is invalid date.");
+							return false;
+						 }
+					}else if(f=="Username" && fv.length < 4){
+						alert(f+" minimum is 4 characters");
+						return false;
+					}else if(f=="Password" && fv.length < 8){
+						alert(f+" minimum is 8 characters");
 						return false;
 					}
 
 					return true;
 				},
+
 
 				clrUser : function(e){
 					e.find('#aduser').val('');
