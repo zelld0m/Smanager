@@ -20,7 +20,7 @@
 
 				genpass : function(){
 					var temp='';
-					for (var i=0;i<6;i++){
+					for (var i=0;i<8;i++){
 						temp+=sec.key.charAt(Math.floor(Math.random()*sec.key.length));
 					}
 					return temp;
@@ -379,8 +379,8 @@
 							$('tr.conTableItem').filter('tr:not(#conTr1Pattern)').remove();
 
 							if (list.length>0){	
-								$('.conTr1').show();
 								$table = $('table.conTable');
+								$('.conTable tr#nomatch').remove();
 								for(var i=0; i<list.length; i++){
 									$tr = $table.find('tr#conTr1Pattern').clone();
 									$tr.prop("id", $.formatAsId(list[i].username)).show();
@@ -403,9 +403,10 @@
 
 								sec.showPaging(pg,id,name,data.totalSize);
 							}else{	
-								$('.conTr1').hide();
-								content = '<tr class="conTr"><td>No record found.</td></tr>';
-								$('.conTable').append(content);
+								$noResult = '<tr id="nomatch"><td colspan="7" class="txtAC">No matching records found</td></tr>';
+								
+								$('.conTable').append($noResult);
+								
 								$('#sortablePagingTop').hide();
 								$('#sortablePagingBottom').hide();			
 							}		
