@@ -69,6 +69,7 @@ public class AuditTrailDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REFERENCE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_ADMIN, Types.CHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.TIMESTAMP));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
@@ -126,7 +127,7 @@ public class AuditTrailDAO {
 			logger.debug(au.getDate() + " " + au.getDetails() + " " + au.getStoreId() + " " + au.getKeyword() + " " + au.getEntity() + " " + au.getOperation() + " " + au.getReferenceId() + " " + au.getDetails());
 		}
      */
-    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DataAccessException {
+    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) throws DataAccessException {
 
     	Map<String, Object> inputs = new HashMap<String, Object>();
 		AuditTrail auditTrail = auditDetail.getModel();
@@ -136,6 +137,7 @@ public class AuditTrailDAO {
         inputs.put(DAOConstants.PARAM_STORE, auditTrail.getStoreId());
         inputs.put(DAOConstants.PARAM_KEYWORD, auditTrail.getKeyword());
         inputs.put(DAOConstants.PARAM_REFERENCE, auditTrail.getReferenceId());
+        inputs.put(DAOConstants.PARAM_ADMIN, adminFlag?'Y':'N');
         inputs.put(DAOConstants.PARAM_START_DATE, auditDetail.getStartDate());
         inputs.put(DAOConstants.PARAM_END_DATE, auditDetail.getEndDate());
         inputs.put(DAOConstants.PARAM_START_ROW, auditDetail.getStartRow());

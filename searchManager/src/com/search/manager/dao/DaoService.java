@@ -171,7 +171,7 @@ public interface DaoService {
 	public CategoryList getCategories(String categoryCode) throws DaoException;
 
     /* Audit Trail */
-    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) throws DaoException;
+    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
     public List<String> getDropdownValues(int type, String storeId) throws DaoException;
 	
