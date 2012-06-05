@@ -254,6 +254,7 @@ public class DeploymentService {
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
 			ruleStatus.setLastModifiedBy(UtilityService.getUsername());
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			result = daoService.processRuleStatus(ruleStatus, isDelete);
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
