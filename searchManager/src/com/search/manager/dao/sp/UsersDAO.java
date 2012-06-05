@@ -56,11 +56,11 @@ public class UsersDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAMELIKE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EMAIL, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_PERMISSION_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_USER, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_LOCKED, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_PERMISSION_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW2, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW2, Types.INTEGER));
 		}
