@@ -58,9 +58,9 @@
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="">All Rules</option>
-						<option value="delete">All Approved Delete Rules Only</option>
-						<option value="approved">All Approved Non-Delete Rules Only</option>
-						<option value="published">All Published Rules Only</option>
+						<option value="delete">Approved Rules for Deletion</option>
+						<option value="approved">Approved Rules for Publishing</option>
+						<option value="published">Published Rules</option>
 					</select>
 				</div>
 				<div class="floatR" id="ruleCount"></div>

@@ -92,8 +92,11 @@
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 					
-					if ($.isNotBlank(comment)){
-
+					if ($.isBlank(comment)){
+						alert("Please add comment");
+					}else if(getSelectedRefId().length==0){
+						alert("Please select rule");
+					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -108,7 +111,7 @@
 									cleanUpTabContent(); 
 								}	
 							});break;
-
+							
 						case "unpublishBtn": 
 							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
@@ -123,10 +126,7 @@
 								}	
 							});break;
 						}	
-					}else{
-						alert("Please add comment.");
 					}
-					
 				}
 			});
 		};
