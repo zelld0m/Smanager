@@ -41,11 +41,20 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div>
+				<span>Show:</span>
+				<select id="ruleFilter">
+					<option value="all">All Rules</option>
+					<option value="approved">Approved Rules Only</option>
+					<option value="published">Published Rules Only</option>
+				</select>
+			</div>
+			<div>
 				<table class="tblItems w100p marT5" >
 					<tr>
 						<th width="24px" id="selectAll"><input type="checkbox"></th>
 						<th width="230px" class="txtAL">Rule Info</th>
-						<th width="110px">Approval Status</th>
+						<th width="100px">Approval Status</th>
+						<th width="100px">Request Type</th>
 						<th>Production Status</th>
 					</tr>
 				</table>
@@ -59,7 +68,8 @@
 								<p id="ruleName" class="w230 breakWord"></p>
 								<p id="ruleId" class="fsize11 w230 breakWord"><a href="javascript:void(0);"></a></p>
 							</td>
-							<td width="110px" class="txtAC" id="approvalStatus"></td>
+							<td width="100px" class="txtAC" id="approvalStatus"></td>
+							<td width="100px" class="txtAC" id="requestType"></td>
 							<td class="txtAL" id="production">
 								<p id="productionStatus"></p>
 								<p id="productionDate" class="fsize11"></p>

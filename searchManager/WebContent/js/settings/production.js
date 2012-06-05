@@ -159,7 +159,11 @@
 							if(showId)
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+							
 							$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);
+							if($.isNotBlank(list[i]["approvalStatus"])) 
+								$tr.find("td#requestType").html(list[i]["updateStatus"]);
+							
 							$tr.find("td#production > p#productionStatus").html(list[i]["publishedStatus"]);
 							$tr.find("td#production > p#productionDate").html(lastPublishedDate);
 							$tr.appendTo($table);
@@ -191,15 +195,6 @@
 		var cleanUpTabContent = function(){
 			$(tabSelected).find('div.circlePreloader').remove();
 		};
-		
-		var switchTab = $("ul.ui-tabs-nav > li > a").on({
-			click: function(evt){
-				tabSelected = $(this).attr("href");
-				tabSelectedText = $(this).find("span").html();
-				entityName = tabSelected.substring(1, tabSelected.length-3);
-				getForProductionList();
-			}
-		});
 		
 		var init = function(){
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
