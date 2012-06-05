@@ -108,6 +108,7 @@
 					e.find('#adpass').val('');
 					e.find('#adlck').attr('checked', false);
 					e.find('#adgen').attr('checked', false);
+					e.find('#adpass').removeProp('readonly');
 				},	
 
 				addUser : function(e,api){

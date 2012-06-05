@@ -19,7 +19,7 @@
 			<img src="../images/corner_br.png" class="curveBR"/>
     	</div>
         <div class="clearB floatL w230 padL5 padT10 fsize12">
-        	<label class="marT10 floatL w100p">Name or username</label> 
+        	<label class="marT10 floatL w100p">Name or Username</label> 
         	<div class="marT3 w200 searchBoxHolder floatL">
        			<input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p">
        		</div>
@@ -61,9 +61,12 @@
 
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
-		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord rolH">
+	<div class="floatL w730 titlePlacer">		
+	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText">User</span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
+	 
 	 <div id="addItemHolder" class="floatL w180 txtAR padT7">
        	<div class="floatL w185 txtAR padT4">   		
 			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
@@ -228,7 +231,7 @@
 				            </label>
 				        <div class="clearB marT10"></div>
 				        
-				        <label class="floatL w80 padT3 padL5">Status:</label>
+				        <label class="floatL w80 padT3 marL10">Status:</label>
 				            <label class="floatL w140">
 				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox">
 				            </label>
