@@ -30,6 +30,7 @@ public class User extends ModelBean {
 	private Date thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
+	private String permissionId; 
 
 
 	//	private String username;
@@ -228,6 +229,14 @@ public class User extends ModelBean {
 
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
+	}
+
+	public String getPermissionId() {
+		return permissionId;
+	}
+
+	public void setPermissionId(String permissionId) {
+		this.permissionId = permissionId;
 	}
 
 }

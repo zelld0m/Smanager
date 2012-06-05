@@ -56,6 +56,7 @@ public class UsersDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_USER_NAMELIKE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EMAIL, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_PERMISSION_ID, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_USER, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_DATE2, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE2, Types.VARCHAR));
@@ -107,6 +108,7 @@ public class UsersDAO {
 			}
 			inputs.put(DAOConstants.PARAM_EMAIL, user.getEmail());
 			inputs.put(DAOConstants.PARAM_STORE_ID, user.getStoreId());
+			inputs.put(DAOConstants.PARAM_PERMISSION_ID, user.getPermissionId());
 			inputs.put(DAOConstants.PARAM_ACTIVE_USER, BooleanUtils.toString(user.isAccountNonExpired(),"Y","N", null));
 			inputs.put(DAOConstants.PARAM_START_DATE2, DateAndTimeUtils.convertToSqlTimestampStartOfDay(searchCriteria.getStartDate()));
 			inputs.put(DAOConstants.PARAM_END_DATE2, DateAndTimeUtils.convertToSqlTimestampEndOfDay(searchCriteria.getEndDate()));
