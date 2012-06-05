@@ -218,11 +218,11 @@
 			            
 			            <label class="floatL w80 marL10 marB5">Role :</label>
 			            <label>
-			            	<select id="adrole"></select>
+			            	<select id="adrole" class="mar0"></select>
 			            </label>
 			            <div class="clearB marT5"></div>
 			            
-			            <label class="floatL w80 padT3 padL5">Validity:</label>
+			            <label class="floatL w80 padT3 marL10">Validity:</label>
 				            <label class="floatL w140">
 				            	<input type="text" class="w70" id="adexp">
 				            </label>
