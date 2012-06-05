@@ -141,7 +141,8 @@
 						$(tabSelected).html(HTML);
 						
 						if (data.totalSize>0){
-
+							
+							$(tabSelected).find("div#ruleCount").html(data.totalSize == 1 ? "1 Rule" : data.totalSize + " Rules");
 							// Populate table row
 							for(var i=0; i<data.totalSize ; i++){
 								$table = $(tabSelected).find("table#rule");
@@ -152,6 +153,10 @@
 
 								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 								$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
+								
+								if($.isBlank(filterBy))
+									$tr.find("td#select").html(i+1);
+								
 								if(showId)
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
@@ -172,27 +177,28 @@
 							checkSelectAllHandler();
 							publishHandler();
 							$(tabSelected).find('div#actionBtn').show();
+							
+							if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+							
 						}else{
 							$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 							$(tabSelected).find('div#actionBtn').hide();
+							$(tabSelected).find('th#selectAll > input[type="checkbox"]').hide();
 						}
 						
 						// What button to display
-						if($.isNotBlank(filterBy)){
-							switch(filterBy){
-								case "approved" : 
-									$(tabSelected).find('a#unpublishBtn').hide();
-									break;
-								case "published" : 
-								case "delete" : 
-									$(tabSelected).find('a#publishBtn').hide(); break;	
-								}
-						}else{
-							$(tabSelected).find('div#actionBtn').hide();
-							$(tabSelected).find("th#selectAll").hide();
-							$(tabSelected).find("tr.ruleItem > td#select").hide();
+						switch(filterBy){
+							case "approved" : 
+								$(tabSelected).find('a#unpublishBtn').hide();
+								break;
+							case "published" : 
+							case "delete" : 
+								$(tabSelected).find('a#publishBtn').hide(); break;
+							case undefined:
+							default:
+								$(tabSelected).find('div#actionBtn').hide();
+								$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						}
-						
 				},
 				preHook:function(){ prepareTabContent(); },
 				postHook:function(){ 

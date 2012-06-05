@@ -63,7 +63,7 @@
 						<option value="published">All Published Rules Only</option>
 					</select>
 				</div>
-				<div class="floatR"></div>
+				<div class="floatR" id="ruleCount"></div>
 			</div>
 			<div class="clearB"></div>
 			<div>
