@@ -133,9 +133,14 @@ public class DeploymentService {
 				rSet = combineRecordSet(approvedRset, publishedRset);
 			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString())) {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
 				rSet = daoService.getRuleStatus(searchCriteria );
 			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.PUBLISHED.toString())) {
 				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			} else if ("DELETE".equalsIgnoreCase(filterBy)) {
+				ruleStatus.setUpdateStatus("DELETE");
 				rSet = daoService.getRuleStatus(searchCriteria );
 			}
 		} catch (DaoException e) {
