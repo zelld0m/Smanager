@@ -76,7 +76,10 @@
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
 					if ($.isNotBlank(comment)){
-
+						alert("Please add comment.");
+					}else if (getSelectedRefId().length==0){
+						alert("Please select rule");
+					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
 							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -106,8 +109,6 @@
 								}	
 							});break;
 						}	
-					}else{
-						alert("Please add comment.");
 					}
 
 				}
@@ -157,6 +158,7 @@
 					}else{
 						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
 						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						$(tabSelected).find('div#actionBtn').hide();
 					}
 				},
 				preHook:function(){ 
