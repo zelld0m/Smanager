@@ -81,7 +81,7 @@
       <!--Pagination-->
      	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
     	<div class="clearB"></div>
-    	<table width="100%" class="fsize12 tblAlpha conTable">
+    	<table width="100%" class="fsize12 tblAlpha conTable marT3">
     		<tr class="conTr1">
     			<th width="7%"></th>
     			<th width="30%">User</th>
