@@ -6,12 +6,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -22,7 +20,8 @@ import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.model.RecordSet;
+import com.search.manager.model.TopKeyword;
 import com.search.manager.utility.PropsUtils;
 
 @Service(value = "topKeywordsService")
@@ -50,7 +49,7 @@ public class TopKeywordsService {
 		int ctr = 1;
 		for (File file : files) {
 	        if (!file.isDirectory()) {
-	        	filenameList.add(file.getName() + " - " + DateAndTimeUtils.formatMMddyyyy(new Date(file.lastModified())));
+	        	filenameList.add(file.getName());
 	        	if (ctr++ > 12) {
 	        		break;
 	        	}
@@ -61,15 +60,16 @@ public class TopKeywordsService {
 	}
 
 	@RemoteMethod
-	public String getFileContents(String filename)  {
-		StringBuilder builder = new StringBuilder();
+	public RecordSet<TopKeyword> getFileContents(String filename)  {
+		List<TopKeyword> list = new ArrayList<TopKeyword>();
 		BufferedReader reader = null;
 		try {
 			try {
 				reader = new BufferedReader(new FileReader(PropsUtils.getValue("logdirectory") + File.separator + UtilityService.getStoreName() + File.separator + filename));
 				String readline = null;
 				while ((readline = reader.readLine()) != null) {
-					builder.append(readline);
+					String[] valueArray = readline.split(",",2);
+					list.add(new TopKeyword(valueArray[1], Integer.parseInt(valueArray[0])));
 				}
 
 			} catch (FileNotFoundException e) {
@@ -80,7 +80,7 @@ public class TopKeywordsService {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-		return builder.toString();
+		return new RecordSet<TopKeyword>(list, list.size());
 	}
 
 	@RemoteMethod
@@ -97,7 +97,7 @@ public class TopKeywordsService {
 				while ((n=bis.read(buf)) != -1) {
 					buffer.write(buf, 0, n);
 				}			
-				fileTransfer = new FileTransfer(filename, "application/txt", buffer.toByteArray());
+				fileTransfer = new FileTransfer(filename, "application/csv", buffer.toByteArray());
 			} catch (FileNotFoundException e) {
 				logger.error(e.getMessage());
 			} finally {
