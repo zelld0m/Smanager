@@ -120,7 +120,7 @@ public class WorkflowController {
 			filename = "for publishing list";
 		}
 
-		RecordSet<RuleStatus> ruleStatuses = deploymentService.getDeployedRules(ruleType);
+		RecordSet<RuleStatus> ruleStatuses = deploymentService.getDeployedRules(ruleType,"");
 		List<PublishRuleStatusReportBean> list = new ArrayList<PublishRuleStatusReportBean>();
 		for (RuleStatus ruleStatus: ruleStatuses.getList()) {
 			ruleStatus.setCommentList(deploymentService.getComment(ruleStatus.getRuleStatusId(), 0, 0).getList());
