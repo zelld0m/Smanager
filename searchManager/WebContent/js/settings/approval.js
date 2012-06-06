@@ -119,9 +119,10 @@
 				callback:function(data){
 					var list = data.list;
 
+					var HTML = $("div#tabContentTemplate").html();
+					$(tabSelected).html(HTML);
+
 					if (data.totalSize>0){
-						var HTML = $("div#tabContentTemplate").html();
-						$(tabSelected).html(HTML);
 
 						// Populate table row
 						for(var i=0; i<data.totalSize ; i++){
@@ -150,6 +151,12 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						approvalHandler();
+						
+						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						
+					}else{
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
+						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 					}
 				},
 				preHook:function(){ 
