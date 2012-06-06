@@ -140,6 +140,7 @@ public class DeploymentService {
 				ruleStatus.setUpdateStatus("ADD,UPDATE");
 				rSet = daoService.getRuleStatus(searchCriteria );
 			} else if ("DELETE".equalsIgnoreCase(filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
 				ruleStatus.setUpdateStatus("DELETE");
 				rSet = daoService.getRuleStatus(searchCriteria );
 			}
