@@ -37,7 +37,7 @@ public class TopKeywordsService {
 	@RemoteMethod
 	public List<String> getFileList(){
 		List<String> filenameList = new ArrayList<String>();
-		File dir = new File(PropsUtils.getValue("logdirectory") + File.separator + UtilityService.getStoreName());
+		File dir = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName());
 		
 		File[] files = dir.listFiles();
 		
@@ -65,7 +65,7 @@ public class TopKeywordsService {
 		BufferedReader reader = null;
 		try {
 			try {
-				reader = new BufferedReader(new FileReader(PropsUtils.getValue("logdirectory") + File.separator + UtilityService.getStoreName() + File.separator + filename));
+				reader = new BufferedReader(new FileReader(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename));
 				String readline = null;
 				while ((readline = reader.readLine()) != null) {
 					String[] valueArray = readline.split(",",2);
@@ -86,7 +86,7 @@ public class TopKeywordsService {
 	@RemoteMethod
 	public FileTransfer downloadFile(String filename)  {
 		FileTransfer fileTransfer = null;
-		File file = new File(PropsUtils.getValue("logdirectory") + File.separator + UtilityService.getStoreName() + File.separator + filename);
+		File file = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		BufferedInputStream bis = null;
 		try {
