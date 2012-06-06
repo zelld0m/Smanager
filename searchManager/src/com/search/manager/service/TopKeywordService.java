@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -24,15 +25,15 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.TopKeyword;
 import com.search.manager.utility.PropsUtils;
 
-@Service(value = "topKeywordsService")
+@Service(value = "topKeywordService")
 @RemoteProxy(
-		name = "TopKeywordsServiceJS",
+		name = "TopKeywordServiceJS",
 		creator = SpringCreator.class,
-		creatorParams = @Param(name = "beanName", value = "topKeywordsService")
+		creatorParams = @Param(name = "beanName", value = "topKeywordService")
 )
-public class TopKeywordsService {
+public class TopKeywordService {
 	
-	private static final Logger logger = Logger.getLogger(TopKeywordsService.class);
+	private static final Logger logger = Logger.getLogger(TopKeywordService.class);
 	
 	@RemoteMethod
 	public List<String> getFileList(){
@@ -84,7 +85,7 @@ public class TopKeywordsService {
 	}
 
 	@RemoteMethod
-	public FileTransfer downloadFile(String filename)  {
+	public FileTransfer downloadFileAsCSV(String filename, String customFilename)  {
 		FileTransfer fileTransfer = null;
 		File file = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -97,7 +98,7 @@ public class TopKeywordsService {
 				while ((n=bis.read(buf)) != -1) {
 					buffer.write(buf, 0, n);
 				}			
-				fileTransfer = new FileTransfer(filename, "application/csv", buffer.toByteArray());
+				fileTransfer = new FileTransfer(StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", "application/csv", buffer.toByteArray());
 			} catch (FileNotFoundException e) {
 				logger.error(e.getMessage());
 			} finally {
