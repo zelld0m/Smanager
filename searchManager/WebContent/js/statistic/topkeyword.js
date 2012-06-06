@@ -18,6 +18,8 @@
 							var list = data.list;
 							var $table = $("table#keywordTable");
 							
+							$table.find("tr.rowItem:not(#rowPattern)").remove();
+							
 							for (var i=0; i < list.length ; i++){
 								var $tr = $("tr#rowPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 								$tr.find("td#iter").html(parseInt(i)+1);
