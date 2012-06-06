@@ -16,7 +16,6 @@
 
 		$('.firerift-style').live('click', function() {
 			checkboxID = '#' + $(this).attr('rel');
-
 			
 			if($(checkboxID)[0].checked == false) {
 				$(checkboxID)[0].checked = true;
@@ -54,9 +53,9 @@
 			var imageLabel = "check-default.png";
 			
 			if ($(this).hasClass("active-locked")) imageLabel = "check-active-locked.png";
-			
-			$('.' + setClass).css("background", "url('" + contextPath + "/js/jquery/checkbox/" + imageLabel + "') no-repeat");
-			
+
+			$(this).siblings("div." + setClass).css("background", "url('" + contextPath + "/js/jquery/checkbox/" + imageLabel + "') no-repeat ").triggerHandler("click");
+				
 		});
 	});
 })(jQuery);

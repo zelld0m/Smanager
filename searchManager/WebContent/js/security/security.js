@@ -277,9 +277,9 @@
 								contentHolder.find('div[rel="shlck"]').removeClass("on").removeClass("off");
 							
 								if (data.isAccountNonLocked){
-									contentHolder.find('div[rel="shlck"]').addClass("on");
+									contentHolder.find('div[rel="shlck"]').addClass("on").css("background-position", "0% 100%");
 								}else{
-									contentHolder.find('div[rel="shlck"]').addClass("off");
+									contentHolder.find('div[rel="shlck"]').addClass("off").css("background-position", "100% 0%");
 								}
 
 								contentHolder.find("#view-profile").tabs({
