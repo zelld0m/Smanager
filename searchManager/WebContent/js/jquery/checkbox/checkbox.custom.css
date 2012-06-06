@@ -1,19 +1,9 @@
 /* iphoneStyle slider */
-
 .firerift-style {		
 	display: block;
 	width: 72px;
 	height: 24px;
-	background: url(check-circle4.png) no-repeat;
 	cursor: pointer;
-}
-	
-.on {
-	background-position: 0% 100%;
-}
-	
-.off {
-	background-position: 100% 0%;
 }
 
 .firerift-style label {

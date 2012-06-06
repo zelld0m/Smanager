@@ -172,7 +172,7 @@
 				            
 				            <label class="floatL w80 padT3 padL5">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
 				            
@@ -233,7 +233,7 @@
 				        
 				        <label class="floatL w80 padT3 marL10">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
 				            </label>
 			     </div>
 			                        
