@@ -1191,9 +1191,12 @@
 									else if (!isXSSSafe(popDescription)){
 										alert("Description contains XSS.");
 									}
+									else if (popDescription.length>255){
+										alert("Description should not exceed 255 characters.");
+									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
-									} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
+									}else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
 											alert("End date cannot be earlier than start date!");
 									}
 									else {

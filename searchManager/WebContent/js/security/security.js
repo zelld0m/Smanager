@@ -17,6 +17,7 @@
 				expadd : '',
 				expsh : '',
 				key:'abcdefghijklmnopqrstuvwxyz123456789',
+				src: 'Search Username',
 
 				genpass : function(){
 					var temp='';
@@ -323,7 +324,7 @@
 					sec.curexp = '';
 					sec.cursrc = '';
 					sec.curmem = '';
-					$('#refsrc').val('');
+					$('#refsrc').val(sec.src);
 					$('#refmem').val('');
 
 					$('#refrole').prop("selectedIndex", 0);
@@ -463,7 +464,19 @@
 						buttonImageOnly: true,
 						disabled: false
 					});	
-
+					
+					$('#refsrc').val(sec.src);
+					$('#refsrc').on({
+						blur: function(e){
+							if ($.trim($(e.target).val()).length == 0) 
+								$(e.target).val(sec.src);
+							},
+						focus: function(e){
+							if ($.trim($(e.target).val()) == sec.src)
+								$(e.target).val('');
+							}
+					});
+					
 					sec.getRoleList();
 					sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 				},

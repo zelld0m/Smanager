@@ -194,7 +194,15 @@
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
 
-		setTimeout(function(){$("#sItemImg" + id).attr("src",item['imagePath']);},10);
+		setTimeout(function(){		
+			$("#sItemImg" + id).attr("src",item['imagePath']);
+			$("#sItemImg" + id).on({
+				error:function(){ 
+					$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
+				}
+			});
+		},10);
+		
 		$("#sItemMan" + id).html(item["manufacturer"]);
 		$("#sItemName" + id).html(item["name"]);
 		$("#sItemDPNo" + id).html(item["dpNo"]);
@@ -206,12 +214,6 @@
 		$("#sItemPosition" + id).val(item["location"]);
 
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
-
-		$("#sItemImg" + id).on({
-			error:function(){ 
-				$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
-			}
-		});
 
 		if (selectedRuleStatus.locked)
 			$('#sItemPosition' + id).attr("readonly", "readonly");
