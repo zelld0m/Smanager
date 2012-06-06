@@ -193,7 +193,7 @@
 				com.search.manager.model.RelevancyKeyword,
 				com.search.manager.model.StoreKeyword,
 				com.search.manager.model.Comment,
-				com.search.manager.model.NameValue,
+				com.search.manager.model.TopKeyword,
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.model.RoleModel,
 				com.search.manager.model.Group,
