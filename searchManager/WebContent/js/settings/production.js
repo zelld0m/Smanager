@@ -97,12 +97,13 @@
 					}else if(getSelectedRefId().length==0){
 						alert("Please select rule");
 					}else{
+						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){									
 									postMsg(data,true);	
-									getForProductionList();	
+									getForProductionList(selRuleFltr);	
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -116,7 +117,7 @@
 							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									postMsg(data,false);	
-									getForProductionList();
+									getForProductionList(selRuleFltr);
 								},
 								preHook:function(){ 
 									prepareTabContent(); 
@@ -230,14 +231,14 @@
 			click: function(evt){
 				tabSelected = $(this).attr("href");
 				entityName = tabSelected.substring(1, tabSelected.length-3);
-				getForProductionList();
+				getForProductionList("approved");
 			}
 		});
 
 		var init = function(){
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
 			entityName = tabSelected.substring(1, tabSelected.length-3);
-			getForProductionList();
+			getForProductionList("approved");
 		};
 		
 		init();

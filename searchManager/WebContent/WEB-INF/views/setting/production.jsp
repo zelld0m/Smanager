@@ -53,7 +53,7 @@
 		<!--  end tabs -->
 
 		<div id="tabContentTemplate" style="display: none">
-			<div class="filter padT5">
+			<div class="filter padT5 fsize12 marT8">
 				<div class="floatL">
 					<span>Show:</span> 
 					<select id="ruleFilter">
@@ -63,7 +63,7 @@
 						<option value="published">Published Rules</option>
 					</select>
 				</div>
-				<div class="floatR" id="ruleCount"></div>
+				<div class="floatR padT3" id="ruleCount"></div>
 			</div>
 			<div class="clearB"></div>
 			<div>

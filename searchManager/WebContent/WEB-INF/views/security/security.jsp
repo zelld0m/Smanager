@@ -77,11 +77,11 @@
 	<div style="width:95%" class="marT20 mar0">
    <div class="clearB"></div>
     <!--Pagination-->
-      <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
+      <div id="sortablePagingTop" class="floatL txtAL w100p"></div>
       <!--Pagination-->
      	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
     	<div class="clearB"></div>
-    	<table width="100%" class="fsize12 tblAlpha conTable">
+    	<table width="100%" class="fsize12 tblAlpha conTable marT8">
     		<tr class="conTr1">
     			<th width="7%"></th>
     			<th width="30%">User</th>
@@ -122,7 +122,7 @@
     		</tr>
     	</table>   
 
-      <div id="sortablePagingBottom" class="w99p floatL txtAL"></div>
+      <div id="sortablePagingBottom" class="w100p floatL txtAL"></div>
       <!--Pagination--> 	
 	</div>
 
@@ -172,7 +172,7 @@
 				            
 				            <label class="floatL w80 padT3 padL5">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
 				            
@@ -233,7 +233,7 @@
 				        
 				        <label class="floatL w80 padT3 marL10">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
 				            </label>
 			     </div>
 			                        
