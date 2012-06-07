@@ -174,6 +174,8 @@
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
 								}
 
+								contentHolder.find('div[rel="adlck"]').removeClass("on").removeClass("off").addClass("on").css("background-position", "0% 100%");
+								
 								contentHolder.find("#adgen").on({
 									click: function(e){	
 										if(contentHolder.find('#adgen').is(':checked')){
@@ -273,7 +275,6 @@
 										
 									contentHolder.find("#shrole").append($option);
 								}
-
 
 								contentHolder.find('div[rel="shlck"]').removeClass("on").removeClass("off");
 							
