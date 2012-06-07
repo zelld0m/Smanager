@@ -49,8 +49,8 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="50px" class="txtAL">Content</th>
-							<th width="230px" class="txtAL">Rule Info</th>
+							<th width="50px">Content</th>
+							<th width="230px">Rule Info</th>
 							<th width="85px">Request Type</th>
 							<th>Request Details</th>
 						</tr>
@@ -120,8 +120,8 @@
 							<th width="20px">#</th>
 							<th width="60px" id="selectAll">Image</th>
 							<th width="94px">Manufacturer</th>
-							<th width="70px" class="txtAL">SKU #</th>
-							<th width="160px" class="txtAL">Name</th>
+							<th width="70px">SKU #</th>
+							<th width="160px">Name</th>
 							<th width="90px">Validity</th>
 						</tr>
 					<tbody>
