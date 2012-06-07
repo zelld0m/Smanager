@@ -896,7 +896,8 @@
 			}
 		});
 	};
-
+	  
+	
 	var updateRule = function(e){
 		if (e.data.locked || !allowModify) return;
 
@@ -1383,7 +1384,28 @@
 			}
 		});
 	};
-
+	var initTextarea =function(){
+	$('textarea[maxlength]').on({
+		keyup:function(){  
+			
+        var limit = parseInt($(this).attr('maxlength'));  
+  
+        var text = $(this).val();  
+          
+        var chars = text.length;  
+  
+        //check if there are more characters then allowed  
+        if(chars > limit){  
+            //and if there are use substr to get the text before the limit  
+            var new_text = text.substr(0, limit);  
+  
+            //and change the current text with the new text  
+            $(this).val(new_text);  
+        }  
+		}
+    
+    });
+	};
 	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
 			fieldId: "keywordId",
@@ -1442,6 +1464,7 @@
 	};
 
 	$(document).ready(function() { 
+		initTextarea();
 		showRelevancy();
 		getRelevancyRuleList();
 		getRelevancyRuleKeywordList();

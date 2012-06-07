@@ -143,7 +143,7 @@
 					<label><input id="endDate" name="endDate" type="text" class="w70 marT5"></label>	
 				<div class="clearB"></div>
 					<label class="floatL w70 marT8 padT3">Description</label>
-					<label><textarea id="description" rows="4" class="marT8" style="width:240px"></textarea> </label>
+					<label><textarea id="description" rows="4" class="marT8" style="width:240px" maxlength="255"></textarea> </label>
 			</div>
 			
 			<div class="landingCont w45p83 minHeight185 floatL marL13">
