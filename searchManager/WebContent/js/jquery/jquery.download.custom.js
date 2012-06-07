@@ -89,16 +89,20 @@
 						
 						if ($content.find("select#type:first").val().toLowerCase()==="mail"){
 							$content.find("div#mailrecipient").show();
+							$content.find("a#downloadBtn > div").html("Send");
 						}else{
 							$content.find("div#mailrecipient").hide();
+							$content.find("a#downloadBtn > div").html("Download");
 						}
 						
 						$content.find("select#type").on({
 							change: function(e){
 								if($(this).val().toLowerCase()==="mail"){
 									$content.find("div#mailrecipient").show();
+									$content.find("a#downloadBtn > div").html("Send");
 								}else{
 									$content.find("div#mailrecipient").hide();
+									$content.find("a#downloadBtn > div").html("Download");
 								}
 								$content.find("textarea#recipient").val("");
 							}
