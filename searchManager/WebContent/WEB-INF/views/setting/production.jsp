@@ -72,7 +72,7 @@
 						<th width="24px" id="selectAll">
 						<input type="checkbox">
 						</th>
-						<th width="230px" class="txtAL">Rule Info</th>
+						<th width="230px">Rule Info</th>
 						<th width="100px">Approval Status</th>
 						<th width="100px">Request Type</th>
 						<th>Production Status</th>

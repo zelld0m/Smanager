@@ -820,8 +820,9 @@
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-						defaultDate: "-2",
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({			
+						minDate: 0,
+						maxDate: '+1Y',			
 						showOn: "both",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
@@ -896,7 +897,8 @@
 			}
 		});
 	};
-
+	  
+	
 	var updateRule = function(e){
 		if (e.data.locked || !allowModify) return;
 
@@ -1021,7 +1023,8 @@
 		$("#startDate, #endDate").datepicker("destroy");
 
 		var dates = $("#startDate, #endDate").datepicker({
-			defaultDate: "-2",
+			minDate: 0,
+			maxDate: '+1Y',
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
@@ -1386,7 +1389,28 @@
 			}
 		});
 	};
-
+	var initTextarea =function(){
+	$('textarea[maxlength]').on({
+		keyup:function(){  
+			
+        var limit = parseInt($(this).attr('maxlength'));  
+  
+        var text = $(this).val();  
+          
+        var chars = text.length;  
+  
+        //check if there are more characters then allowed  
+        if(chars > limit){  
+            //and if there are use substr to get the text before the limit  
+            var new_text = text.substr(0, limit);  
+  
+            //and change the current text with the new text  
+            $(this).val(new_text);  
+        }  
+		}
+    
+    });
+	};
 	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
 			fieldId: "keywordId",
@@ -1445,6 +1469,7 @@
 	};
 
 	$(document).ready(function() { 
+		initTextarea();
 		showRelevancy();
 		getRelevancyRuleList();
 		getRelevancyRuleKeywordList();

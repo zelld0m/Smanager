@@ -17,7 +17,7 @@
 				expadd : '',
 				expsh : '',
 				key:'abcdefghijklmnopqrstuvwxyz123456789',
-				src: 'Search Username',
+				src: 'Enter Name/Username',
 
 				genpass : function(){
 					var temp='';
@@ -133,6 +133,8 @@
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
 								}
 
+								contentHolder.find('div[rel="adlck"]').removeClass("on").removeClass("off").addClass("on").css("background-position", "0% 100%");
+								
 								contentHolder.find("#adgen").on({
 									click: function(e){	
 										if(contentHolder.find('#adgen').is(':checked')){
@@ -236,7 +238,6 @@
 									contentHolder.find("#shrole").append($option);
 								}
 
-
 								contentHolder.find('div[rel="shlck"]').removeClass("on").removeClass("off");
 							
 								if (data.isAccountNonLocked){
@@ -302,7 +303,7 @@
 				},
 
 				filter : function(){
-					sec.cursrc = $('#refsrc').val();
+					sec.cursrc = $('#refsrc').val() !== sec.src ? $.trim($('#refsrc').val()) : "";
 					sec.curmem =  $('#refmem').val();
 					sec.currole =  $('#refrole').val();
 					sec.curstat = $('#refstat').val();
@@ -390,9 +391,8 @@
 
 								sec.showPaging(pg,id,name,data.totalSize);
 							}else{	
-								$noResult = '<tr id="nomatch"><td colspan="7" class="txtAC">No matching records found</td></tr>';
-								
-								$('.conTable').append($noResult);
+								$empty = '<tr class="conTableItem"><td colspan="7" class="txtAC">No matching records found</td></tr>';
+								$('.conTable').append($empty);
 								
 								$('#sortablePagingTop').hide();
 								$('#sortablePagingBottom').hide();			

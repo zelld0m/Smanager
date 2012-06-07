@@ -75,10 +75,10 @@
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
-					if ($.isBlank(comment)){
-						alert("Please add comment.");
-					}else if (getSelectedRefId().length==0){
+					if (getSelectedRefId().length==0){
 						alert("Please select rule");
+					}else if ($.isBlank(comment)){
+						alert("Please add comment.");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
@@ -156,7 +156,7 @@
 						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						
 					}else{
-						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						$(tabSelected).find('div#actionBtn').hide();
 					}
@@ -289,6 +289,8 @@
 				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
 				var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+				$ul.find("span#startDate").parents("li").remove();
+				$ul.find("span#endDate").parents("li").remove();
 				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
@@ -310,8 +312,6 @@
 							}	
 						}
 
-						$ul.find("span#startDate").parents("li").remove();
-						$ul.find("span#endDate").parents("li").remove();
 						$ul.find("li span#description").html(data["description"]);
 					},
 					preHook: function(){
