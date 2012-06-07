@@ -138,7 +138,7 @@
 				visible.push(base.options.totalPages);
 			}
 
-			longPaging += '<div class="txtDisplay floatL farial fsize11 fDblue padT10 marL8">';
+			longPaging += '<div class="txtDisplay floatL farial fsize11 fDblue padT10">';
 			longPaging += base.options.callbackText(itemStart, itemEnd, base.options.totalItem);
 			longPaging += '</div>';
 			longPaging += '<div class="floatR farial fsize11 fgray txtAR padT10">';

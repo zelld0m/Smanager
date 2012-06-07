@@ -208,6 +208,7 @@ public class DAOConstants {
 	
 	public static final String PARAM_GROUP_ID			 	 		= "group_id";
 	public static final String PARAM_PERMISSION_ID		 			= "Permission_ID";
+	public static final String PARAM_ADMIN				 			= "admin";
 
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";

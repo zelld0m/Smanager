@@ -226,7 +226,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset .tblNoBorder td,
 .tblNoBorder td			 		{ padding:4px }
 
-.cssReset .tblAlpha 			{ border:1px solid #a0a0a0; border-collapse:collapse; margin:3px auto; }
+.cssReset .tblAlpha 			{ border:1px solid #a0a0a0; border-collapse:collapse; /*margin:3px auto;*/ }
 .cssReset .tblAlpha th 			{ border:1px solid #a0a0a0; 
 background: #d4d4d4; /* Old browsers */
 /* IE9 SVG, needs conditional override of 'filter' to 'none' */

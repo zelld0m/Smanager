@@ -19,7 +19,6 @@
 			<img src="../images/corner_br.png" class="curveBR"/>
     	</div>
         <div class="clearB floatL w230 padL5 padT10 fsize12">
-        	<label class="marT10 floatL w100p">Name or username</label> 
         	<div class="marT3 w200 searchBoxHolder floatL">
        			<input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p">
        		</div>
@@ -61,9 +60,12 @@
 
 <!-- add contents here -->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
-		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord rolH">
+	<div class="floatL w730 titlePlacer">		
+	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText">User</span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
+	 
 	 <div id="addItemHolder" class="floatL w180 txtAR padT7">
        	<div class="floatL w185 txtAR padT4">   		
 			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
@@ -74,11 +76,11 @@
 	<div style="width:95%" class="marT20 mar0">
    <div class="clearB"></div>
     <!--Pagination-->
-      <div id="sortablePagingTop" class="floatL txtAL w99p"></div>
+      <div id="sortablePagingTop" class="floatL txtAL w100p"></div>
       <!--Pagination-->
      	<div id="preloader" style="display:none;"><img src="../images/ajax-loader-circ.gif" style="position:absolute; top:300px; left: 750px"></div>
     	<div class="clearB"></div>
-    	<table width="100%" class="fsize12 tblAlpha conTable">
+    	<table width="100%" class="fsize12 tblAlpha conTable marT8">
     		<tr class="conTr1">
     			<th width="7%"></th>
     			<th width="30%">User</th>
@@ -119,7 +121,7 @@
     		</tr>
     	</table>   
 
-      <div id="sortablePagingBottom" class="w99p floatL txtAL"></div>
+      <div id="sortablePagingBottom" class="w100p floatL txtAL"></div>
       <!--Pagination--> 	
 	</div>
 
@@ -169,7 +171,7 @@
 				            
 				            <label class="floatL w80 padT3 padL5">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="shlck" class="firerift-style-checkbox active-locked">
 				            </label>
 				            <div class="clearB marT10"></div>
 				            
@@ -218,19 +220,19 @@
 			            
 			            <label class="floatL w80 marL10 marB5">Role :</label>
 			            <label>
-			            	<select id="adrole"></select>
+			            	<select id="adrole" class="mar0"></select>
 			            </label>
 			            <div class="clearB marT5"></div>
 			            
-			            <label class="floatL w80 padT3 padL5">Validity:</label>
+			            <label class="floatL w80 padT3 marL10">Validity:</label>
 				            <label class="floatL w140">
 				            	<input type="text" class="w70" id="adexp">
 				            </label>
 				        <div class="clearB marT10"></div>
 				        
-				        <label class="floatL w80 padT3 padL5">Status:</label>
+				        <label class="floatL w80 padT3 marL10">Status:</label>
 				            <label class="floatL w140">
-				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox">
+				            	<input type="checkbox" id="adlck" class="firerift-style-checkbox active-locked">
 				            </label>
 			     </div>
 			                        

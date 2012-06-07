@@ -53,10 +53,31 @@
 	<beans:bean name="relevancyDao" id="relevancyDAO" class="com.search.manager.dao.sp.RelevancyDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
-		<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
+	<beans:bean name="redirectRuleDao" id="redirectRuleDAO" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
-	
+	<beans:bean name="auditTrailDao" id="auditTrailDAO" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="bannerDao" id="bannerDAO" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="campaignDao" id="campaignDAO" class="com.search.manager.dao.sp.CampaignDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="ruleStatusDao" id="ruleStatusDAO" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="commentDao" id="commentDAO" class="com.search.manager.dao.sp.CommentDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="usersDao" id="usersDAO" class="com.search.manager.dao.sp.UsersDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+	<beans:bean name="groupsDAO" id="groupsDAO" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
+
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
 		<beans:property name="excludeDAO" ref="excludeDAO"/>
@@ -64,6 +85,13 @@
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
 		<beans:property name="redirectRuleDAO" ref="redirectRuleDAO"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAO"/>
+		<beans:property name="bannerDAO" ref="bannerDAO"/>
+		<beans:property name="campaignDAO" ref="campaignDAO"/>
+		<beans:property name="ruleStatusDAO" ref="ruleStatusDAO"/>
+		<beans:property name="commentDAO" ref="commentDAO"/>
+		<beans:property name="usersDAO" ref="usersDAO"/>
+		<beans:property name="groupsDAO" ref="groupsDAO"/>
     </beans:bean>
     
     <!--  dao services stg-->	
@@ -88,6 +116,28 @@
 	<beans:bean name="redirectRuleDaoStg" id="redirectRuleDAOStg" class="com.search.manager.dao.sp.RedirectRuleDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
+	<beans:bean name="auditTrailDaoStg" id="auditTrailDAOStg" class="com.search.manager.dao.sp.AuditTrailDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="bannerDaoStg" id="bannerDAOStg" class="com.search.manager.dao.sp.BannerDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="campaignDaoStg" id="campaignDAOStg" class="com.search.manager.dao.sp.CampaignDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="ruleStatusDaoStg" id="ruleStatusDAOStg" class="com.search.manager.dao.sp.RuleStatusDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="commentDaoStg" id="commentDAOStg" class="com.search.manager.dao.sp.CommentDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="usersDaoStg" id="usersDAOStg" class="com.search.manager.dao.sp.UsersDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="groupsDAOStg" id="groupsDAOStg" class="com.search.manager.dao.sp.GroupsDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	
 
 	<beans:bean name="daoServiceStg" id="daoServiceStg" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
@@ -96,6 +146,13 @@
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAOStg"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
 		<beans:property name="redirectRuleDAO" ref="redirectRuleDAOStg"/>
+		<beans:property name="auditTrailDAO" ref="auditTrailDAOStg"/>
+		<beans:property name="bannerDAO" ref="bannerDAOStg"/>
+		<beans:property name="campaignDAO" ref="campaignDAOStg"/>
+		<beans:property name="ruleStatusDAO" ref="ruleStatusDAOStg"/>
+		<beans:property name="commentDAO" ref="commentDAOStg"/>
+		<beans:property name="usersDAO" ref="usersDAOStg"/>
+		<beans:property name="groupsDAO" ref="groupsDAOStg"/>
     </beans:bean>
     
 </beans:beans>

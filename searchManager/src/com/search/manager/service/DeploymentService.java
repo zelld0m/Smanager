@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -53,6 +55,7 @@ public class DeploymentService {
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			if (includeApprovedFlag) {
 				ruleStatus.setApprovalStatus("PENDING,APPROVED");
 			} else {
@@ -113,19 +116,34 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getDeployedRules(String ruleType) {
+	public RecordSet<RuleStatus> getDeployedRules(String ruleType, String filterBy) {
 		RecordSet<RuleStatus> rSet = null;
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
-			ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
-			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
-			ruleStatus.setApprovalStatus(null);
-			ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
-			RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
-			rSet = combineRecordSet(approvedRset, publishedRset);
+			if (StringUtils.isBlank(filterBy))	{
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+				RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
+				ruleStatus.setApprovalStatus(null);
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
+				rSet = combineRecordSet(approvedRset, publishedRset);
+			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString())) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.PUBLISHED.toString())) {
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			} else if ("DELETE".equalsIgnoreCase(filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("DELETE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during getDeployedRules()",e);
 		}

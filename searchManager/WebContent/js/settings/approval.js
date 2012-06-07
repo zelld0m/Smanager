@@ -75,8 +75,11 @@
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
-					if ($.isNotBlank(comment)){
-
+					if (getSelectedRefId().length==0){
+						alert("Please select rule");
+					}else if ($.isBlank(comment)){
+						alert("Please add comment.");
+					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
 							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -106,8 +109,6 @@
 								}	
 							});break;
 						}	
-					}else{
-						alert("Please add comment.");
 					}
 
 				}
@@ -119,9 +120,10 @@
 				callback:function(data){
 					var list = data.list;
 
+					var HTML = $("div#tabContentTemplate").html();
+					$(tabSelected).html(HTML);
+
 					if (data.totalSize>0){
-						var HTML = $("div#tabContentTemplate").html();
-						$(tabSelected).html(HTML);
 
 						// Populate table row
 						for(var i=0; i<data.totalSize ; i++){
@@ -150,6 +152,13 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						approvalHandler();
+						
+						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						
+					}else{
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
+						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						$(tabSelected).find('div#actionBtn').hide();
 					}
 				},
 				preHook:function(){ 

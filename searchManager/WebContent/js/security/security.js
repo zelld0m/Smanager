@@ -17,6 +17,7 @@
 				expadd : '',
 				expsh : '',
 				key:'abcdefghijklmnopqrstuvwxyz123456789',
+				src: 'Enter Name/Username',
 
 				genpass : function(){
 					var temp='';
@@ -108,6 +109,7 @@
 					e.find('#adpass').val('');
 					e.find('#adlck').attr('checked', false);
 					e.find('#adgen').attr('checked', false);
+					e.find('#adpass').removeProp('readonly');
 				},	
 
 				addUser : function(e,api){
@@ -116,7 +118,7 @@
 					var ademail = $.trim(e.find('#ademail').val());			
 					var adrole = $.trim(e.find('#adrole').val());			
 					var adexp = $.trim(e.find('#adexp_1').val());
-					var adlck = e.find('div[rel="adlck"]').hasClass('on');
+					var adlck = e.find('div[rel="adlck"]').hasClass('off');
 
 					var adpass = $.trim(e.find('#adpass').val());
 
@@ -172,6 +174,8 @@
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
 								}
 
+								contentHolder.find('div[rel="adlck"]').removeClass("on").removeClass("off").addClass("on").css("background-position", "0% 100%");
+								
 								contentHolder.find("#adgen").on({
 									click: function(e){	
 										if(contentHolder.find('#adgen').is(':checked')){
@@ -265,16 +269,19 @@
 								contentHolder.find("#shemail").val(data.email);	
 
 								for (var i=0; i < roleList.list.length; i++){
-									contentHolder.find("#shrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
+									$option = $("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]);
+									
+									if (roleList.list[i]["id"] == data.groupId) $option.prop("selected","selected");
+										
+									contentHolder.find("#shrole").append($option);
 								}
-
 
 								contentHolder.find('div[rel="shlck"]').removeClass("on").removeClass("off");
 							
 								if (data.isAccountNonLocked){
-									contentHolder.find('div[rel="shlck"]').addClass("on");
+									contentHolder.find('div[rel="shlck"]').addClass("on").css("background-position", "0% 100%");
 								}else{
-									contentHolder.find('div[rel="shlck"]').addClass("off");
+									contentHolder.find('div[rel="shlck"]').addClass("off").css("background-position", "100% 0%");
 								}
 
 								contentHolder.find("#view-profile").tabs({
@@ -291,8 +298,11 @@
 									}
 								});
 
-								contentHolder.find("#shexp").attr("id", "shexp_1");	
-								contentHolder.find("#shexp_1").val(data.thruDate);
+								contentHolder.find("#shexp").attr("id", "shexp_1");
+								
+								var formattedThruDate = $.isNotBlank(data.thruDate)? $.datepicker.formatDate('mm/dd/yy', data.thruDate):data.thruDate;
+								
+								contentHolder.find("#shexp_1").val(formattedThruDate);
 
 								contentHolder.find("#shexp_1").datepicker({
 									showOn: "both",
@@ -306,7 +316,7 @@
 
 								contentHolder.find("#shsv").on({
 									click: function(e){	
-										sec.updateUser(contentHolder,api,data.name);
+										sec.updateUser(contentHolder,api,data.username);
 									}
 								});
 							},
@@ -322,7 +332,7 @@
 					sec.curexp = '';
 					sec.cursrc = '';
 					sec.curmem = '';
-					$('#refsrc').val('');
+					$('#refsrc').val(sec.src);
 					$('#refmem').val('');
 
 					$('#refrole').prop("selectedIndex", 0);
@@ -331,7 +341,7 @@
 				},
 
 				filter : function(){
-					sec.cursrc = $('#refsrc').val();
+					sec.cursrc = $('#refsrc').val() !== sec.src ? $.trim($('#refsrc').val()) : "";
 					sec.curmem =  $('#refmem').val();
 					sec.currole =  $('#refrole').val();
 					sec.curstat = $('#refstat').val();
@@ -407,7 +417,7 @@
 									$tr.find("td#role > span").html(list[i].groupId);
 
 									$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].createdDate.toDateString());
-									$tr.find("td#status > span").html(list[i].isAccountNonLocked? "Active" : "Locked");
+									$tr.find("td#status > span").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
 									$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].thruDate.toDateString());
 
 									$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccessDate==null? "" : list[i].lastAccessDate.toUTCString());
@@ -419,9 +429,8 @@
 
 								sec.showPaging(pg,id,name,data.totalSize);
 							}else{	
-								$noResult = '<tr id="nomatch"><td colspan="7" class="txtAC">No matching records found</td></tr>';
-								
-								$('.conTable').append($noResult);
+								$empty = '<tr class="conTableItem"><td colspan="7" class="txtAC">No matching records found</td></tr>';
+								$('.conTable').append($empty);
 								
 								$('#sortablePagingTop').hide();
 								$('#sortablePagingBottom').hide();			
@@ -462,7 +471,19 @@
 						buttonImageOnly: true,
 						disabled: false
 					});	
-
+					
+					$('#refsrc').val(sec.src);
+					$('#refsrc').on({
+						blur: function(e){
+							if ($.trim($(e.target).val()).length == 0) 
+								$(e.target).val(sec.src);
+							},
+						focus: function(e){
+							if ($.trim($(e.target).val()) == sec.src)
+								$(e.target).val('');
+							}
+					});
+					
 					sec.getRoleList();
 					sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 				},

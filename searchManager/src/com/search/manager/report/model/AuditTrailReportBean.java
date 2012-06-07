@@ -40,7 +40,7 @@ public class AuditTrailReportBean extends ReportBean<AuditTrail> {
 		return model.getKeyword();
 	}
 	
-	@ReportField(label="Details", size=20, sortOrder=7)
+	@ReportField(label="Description", size=20, sortOrder=7)
 	public String getDetails(){
 		return model.getDetails();
 	}

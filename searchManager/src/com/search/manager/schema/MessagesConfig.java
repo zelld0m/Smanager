@@ -67,10 +67,10 @@ public class MessagesConfig {
 		}
 	}
 	
-	public String getMessage(String name, Object...params){
+	public String getMessage(String name, String...params){
 		String message = "";
 		if (StringUtils.isNotEmpty(msgMap.get(name))) {
-			message = String.format(msgMap.get(name), params);
+			message = String.format(msgMap.get(name), (Object[])params);
 		}
 		return message;
 	}

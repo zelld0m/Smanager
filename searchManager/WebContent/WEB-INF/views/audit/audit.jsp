@@ -103,7 +103,7 @@
        <div class="clearB"></div>
       <!--end Pagination-->
       
-    	<table width="100%" class="fsize12 tblAlpha">
+    	<table width="100%" class="fsize12 tblAlpha marT8">
     		<tbody id="resultsBody">
     		<tr>
     			<th width="10%">Date</th>

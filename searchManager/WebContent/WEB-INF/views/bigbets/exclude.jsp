@@ -32,7 +32,9 @@
 	  </div>
       <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
       	<!--  input id="addItem" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10"-->
-      	<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      	<sec:authorize access="hasRole('CREATE_RULE')">
+      		<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      	</sec:authorize>
       </div>
 	</div>
     
@@ -160,7 +162,10 @@
 				   </div>
 				   <div class="floatL marT5 w282"> <p>Comment:</p>
 				   <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
-				   <div align="right"><a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a></div>
+				   <div align="right">
+				   		<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
+				   		<a id="clearCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
+				   	</div>
 				   </div>
 				</div>
 				<div id="viewAuditTemplate" style="display: none">
