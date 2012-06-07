@@ -15,6 +15,12 @@
 		base.init = function(){
 			base.options = $.extend({},$.download.defaultOptions, options);
 
+			var fileFormat = base.options.fileFormat;
+			
+			if (base.options.sendMail) fileFormat.push("Mail");
+			
+			base.options.fileFormat = fileFormat;
+			
 			base.$el.off().on({
 				click: base.showDownloadOption()
 			});
@@ -39,16 +45,23 @@
 			
 			template += '<div><span class="floatL marT10 marR5">Type: </span>';
 			template += '<span>';
-			template += '<select id="type" name="type" disabled="disabled" class="mar0 w168 floatR marT6">';
-			template += '<option value="excel" selected="selected">Excel</option>';
-			template += '<option value="pdf">PDF</option>';
-			template += '<option value="csv">CSV</option>';
+			template += '<select id="type" name="type" class="mar0 w168 floatR marT6">';
+			
+			for (var i=0; i < base.options.fileFormat.length; i++){
+				template += '<option value="' +  base.options.fileFormat[i].toLowerCase() + '">' + base.options.fileFormat[i] + '</option>';
+			}
+			
 			template += '</select>';
 			template += '</span></div>';
 			template += '<div class="clearB marT8 txtAR">';
+			template += '<div id="mailrecipient"><span class="floatL marT10 marR5" >Recipient: </span>';	
+			template += '<span><textarea id="recipient" class="w163 marT6 floatR"></textarea></span>';
+			template += '<div class="clearB"></div></div>';
 			template += '<a id="downloadBtn" href="javascript:void(0);" class="buttons btnGray clearfix marT8"><div class="buttons fontBold">Download</div></a>';
+			template += '<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix marT8"><div class="buttons fontBold">Clear</div></a>';
 			template += '</div>';
 			template += '</div>';
+			
 			return template;
 		};
 
@@ -74,19 +87,59 @@
 						var $content = $("div", api.elements.content);
 						$content.html(base.getTemplate());
 						
+						if ($content.find("select#type:first").val().toLowerCase()==="mail"){
+							$content.find("div#mailrecipient").show();
+						}else{
+							$content.find("div#mailrecipient").hide();
+						}
+						
+						$content.find("select#type").on({
+							change: function(e){
+								if($(this).val().toLowerCase()==="mail"){
+									$content.find("div#mailrecipient").show();
+								}else{
+									$content.find("div#mailrecipient").hide();
+								}
+								$content.find("textarea#recipient").val("");
+							}
+						});
+						
 						$content.find("a#downloadBtn").off().on({
 							click: function(e){
 								e.data = {
 										  filename: $.trim($content.find("input#filename").val()),
+										  recipient: $.trim($content.find("textarea#recipient").val()),
 										  page: $content.find('select#page option:selected').val(),
 										  type: $content.find('select#type option:selected').val()
 										};
 								
 								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isAllowedName(e.data.filename))){
 									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
-									base.options.requestCallback(e);
 								}else{
 									alert("Please provide a valid filename");
+									return;
+								}
+								
+								//TODO: add check valid email and input cleaning
+								if (e.data.type.toLowerCase()==="mail" && $.isNotBlank(e.data.recipient)){ 
+									
+								}else{
+									alert("Please provide at least one email recipient");
+									return;
+								}
+										
+								base.options.requestCallback(e);
+							}
+						});
+						
+						$content.find("a#clearBtn").off().on({
+							click: function(e){
+								$content.find("input,textarea").val("");
+								$content.find("select").prop("selectedIndex",0);
+								if ($content.find("select#type:first").val().toLowerCase()==="mail"){
+									$content.find("div#mailrecipient").show();
+								}else{
+									$content.find("div#mailrecipient").hide();
 								}
 							}
 						});
@@ -102,6 +155,8 @@
 	$.download.defaultOptions = {
 			headerText:"Download",
 			defaultFilename:new Date().getTime(),
+			fileFormat: ['Excel'],
+			sendMail: false,
 			hasPageOption: false,
 			requestCallback: function(e){} 
 	};
