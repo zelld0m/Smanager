@@ -34,7 +34,7 @@
 	
 	<div class="clearB"></div>
 	
-	<div class="filter padT5 fsize11 marT8 w95p marRLauto fgray">
+	<div class="filter padT5 fsize12 marT8 w95p marRLauto">
 		<div class="floatL w50p">
 			<span>Show:</span> 
 			<select id="fileFilter"></select>			
