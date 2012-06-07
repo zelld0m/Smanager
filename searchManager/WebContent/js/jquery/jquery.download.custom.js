@@ -113,22 +113,15 @@
 										  type: $content.find('select#type option:selected').val()
 										};
 								
-								if ($.isBlank(e.data.filename) || ($.isNotBlank(e.data.filename) && isAllowedName(e.data.filename))){
-									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
-								}else{
+								if($.isNotBlank(e.data.filename) && !isAllowedName(e.data.filename)){
 									alert("Please provide a valid filename");
-									return;
-								}
-								
 								//TODO: add check valid email and input cleaning
-								if (e.data.type.toLowerCase()==="mail" && $.isNotBlank(e.data.recipient)){ 
-									
-								}else{
+								}else if(base.options.sendMail && e.data.type.toLowerCase() == "mail" && $.isBlank(e.data.recipient)){
 									alert("Please provide at least one email recipient");
-									return;
-								}
-										
-								base.options.requestCallback(e);
+								}else{
+									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
+									base.options.requestCallback(e);
+								}		
 							}
 						});
 						
