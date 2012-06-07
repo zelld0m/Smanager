@@ -156,7 +156,7 @@
 						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						
 					}else{
-						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No matching records found</td></tr>');
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
 						$(tabSelected).find('div#actionBtn').hide();
 					}
