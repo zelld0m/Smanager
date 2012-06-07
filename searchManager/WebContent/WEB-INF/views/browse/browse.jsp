@@ -55,27 +55,21 @@
 		  <!-- Search Widget -->
 		  <div id="search" class="floatL w730 titlePlacer">
 			
-			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>         	
+			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
         	<div class="floatL w460 txtAR padT7"> 
         	    <a id="statisticIcon" href="javascript:void(0);"><img align="absmiddle" class="marR3 marT5 floatR  posRel" src="<spring:url value="/images/icon_statistics.png"/>"></a>
 	        	<a id="searchbutton" href="javascript:void(0)"><img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="<spring:url value="/js/ajaxsolr/images/btn_GO.png"/>"></a> 
 				<!-- a id="searchOptionsIcon" href="javascript:void(0)"><div class="btnGraph btnSearchOption floatR  posRel"></div></a -->
 				<div class="searchBoxHolder w150 floatR marT1 marR8"><input type="text" class="farial fsize12 fgray pad3 w150" id="query" name="query"></div>
 				<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none"><input id="keepRefinement" name="keepRefinement" type="checkbox"><span class="fsize11">Keep Refinements</span></div>    	 
-			</div>
-			
+			</div>			
 		   </div>
-		 
-		  <!-- DidYouMean Widget 
-		  <div class="clearB floatL farial fsize12 marT10 w730">Did you mean: <a href="#" class="fDblue fbold">Apple</a></div>-->
-
-		  <!-- Sorting-->
-		  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine"> 
-	        <div id="searchResultOption"  class="clearfix pad5 txtAL w720" style="background:#e8e8e8">
+		   
+		   <div id="searchResultOption"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
 	        	<!-- span class="fsize14 alert" style="color:#a90400">This is redirected</span -->
 	        	<div class="floatL w60p dropdownArea" >
-	        		<label class="floatL w150">Select Ranking Rule:</label>
-		        	<label class="floatL w200">
+	        		<label class="floatL w150 fbold">Select Ranking Rule:</label>
+		        	<label class="floatL w200 fbold">
 		        	<select id="relevancy" class="w178">
 		        		<option value="" id="norelevancy" >&nbsp;</option>
 		        	</select>
@@ -88,16 +82,45 @@
 		        	</select>
 	        	</div>
 	        		
-	        </div>		
-		  </div>
+	        </div>
 		   
-		  <div>
-		  	  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
-			  	  <div id="searchAttributeIconHolder" class="floatL displayInline w50p marT8">
+		   <!--  start active rule --><div class="clearB"></div>
+		   	<div style="display:block;" class="fsize12 marT10 fDGray border">
+				<ul class="mar16 marB20 ">
+					<li class="borderB padTB5 clearfix">
+						<label class="floatL w20"><input type="checkbox"></label>
+						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
+						<label class="floatL fbold w220">Lorem ipsum</label>
+						<label class="floatL w425">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque gravida lacus id neque tempor quis suscipit nisl bibendum. Morbi vel tellus in  posu...</label>
+					</li>
+					<li class="borderB padTB5 clearfix">
+						<label class="floatL w20"><input type="checkbox"></label>
+						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
+						<label class="floatL fbold w220">Quisque eu feugiat mauris</label>
+						<label class="floatL w425">Etiam ornare dictum facilisis. Aliquam erat volutpat. Morbi accumsan, felis nec pretium mattis, sem magna bibendum eros, at ornare purus urna in sem. Do.</label>
+					</li>
+				</ul>
+				<div class="clearB"></div>
+			</div>
+			<a href="/"><div class="minW110 floatL borderB borderR borderL h27 posRel topn1 fbold fsize12 padT8" style="display:block; background: #fff; z-index:500; left:20px; color:#329eea;"><img src="<spring:url value="/images/icon_arrowDownBlue.png" />" class="top2 posRel marL5 marR3">3 Active Rules</div></a>
+		 	<div class="clearB"></div><!--  end active rule -->
+		 	
+		 	
+		  <!-- DidYouMean Widget 
+		  <div class="clearB floatL farial fsize12 marT10 w730">Did you mean: <a href="#" class="fDblue fbold">Apple</a></div>-->
+
+		  <!-- Sorting-->
+		  <!-- div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine">  		
+		  </div -->
+		   
+		  <div class="posRel" style="display:block; top:-33px">
+		  	  <div class="borderT padL5 padB5 padR0 h33" style="background:#f2f2f2">
+			  	  <!-- div id="searchAttributeIconHolder" class="floatL displayInline w50p marT8">
 			        	<img src="<spring:url value="/images/icon_catalog.png" />" class="marR3">
 			        	<img src="<spring:url value="/images/icon_relevancy.png" />" class="marR3">
 			        	<img src="<spring:url value="/images/icon_redirect.png" />" >
-		          </div>
+		          </div -->
+		          
 			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			  	  <div class="clearB"></div>
 			  </div>

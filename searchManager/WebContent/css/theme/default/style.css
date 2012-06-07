@@ -30,7 +30,9 @@ ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 .cssReset .txtcopyright			{ color:#3B79C2  }
 
 .cssReset .borderT, .borderT	{border-top:1px solid #ccc !important}
+.cssReset .borderR, .borderR	{border-right:1px solid #ccc !important}
 .cssReset .borderB, .borderB	{border-bottom:1px solid #ccc !important}
+.cssReset .borderL, .borderL	{border-left:1px solid #ccc !important}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 
