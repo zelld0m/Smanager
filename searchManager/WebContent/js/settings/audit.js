@@ -175,9 +175,10 @@
 
 		$("#resetBtn").click(function() {
 			$("#keyword").val("");
+			$("#keyword").val("");
 			$("#startDate").val("");
-			$("#endDate").val("");
 			
+			$('#userList').prop("selectedIndex", 0);
 			$('#refrole').prop("selectedIndex", 0);
 			$('#actionList').prop("selectedIndex", 0);
 			$('#typeList').prop("selectedIndex", 0);
