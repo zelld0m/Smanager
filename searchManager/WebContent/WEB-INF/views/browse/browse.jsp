@@ -39,15 +39,42 @@
 
     <!-- Start Left Side -->	   
     <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
-    <div class="clearB marT27"></div>
-	<!-- Search Within Widget -->
-    <div id="searchWithin" class="leftContainer"></div>
-	<div id="dynamicSelection"></div>
-	<div id="dynamicFacets"></div>
-	<div class="clearB"></div>
-	<div id="filterByType"></div>
+	    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
+	    <div class="clearB marT27"></div>
+		<!-- Search Within Widget -->
+	    <div id="searchWithin" class="leftContainer"></div>
+		<div id="dynamicSelection"></div>
+		<div id="dynamicFacets"></div>
+		<div class="clearB"></div>
+		<div id="filterByType"></div>
+		
+		<div class="box">
+			<h2>Condition</h2>
+			<ul>
+				<li><input type="checkbox"> Refurbished </li>
+				<li><input type="checkbox"> Open Box </li>
+				<li><input type="checkbox"> Clearance </li>
+			</ul>
+		</div>
+		
+		<div class="box marT8">
+			<h2>License Product</h2>
+			<select class="mar10 w215">
+				<option>Both License & Non-License</option>
+			</select>
+		</div>
+		
+		<div class="box marT8">
+			<h2>Search Within</h2>
+			<select class="mar10 w215">
+				<option>Both License & Non-License</option>
+			</select>
+		</div>
 	</div>
+	
+	
+	
+	
 	<!-- End Left Side -->
 	
     <!-- Start Right Side -->	  

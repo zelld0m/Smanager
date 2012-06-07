@@ -793,6 +793,11 @@ html.gecko .endingTxt							{ font-size:11px }
 
 .security label					{ margin-top:5px }
 
+.box		{ background: #f4f4f4; border:1px solid #cbcbcb !important;  }
+.box h2		{ font-size:14px; font-weight: bold; color:#282828; background:#e0e0e0; padding:4px 8px }
+.box ul		{ list-style: none; font-size:12px; margin:8px }
+.box li		{ margin:4px }
+
 
 
 
