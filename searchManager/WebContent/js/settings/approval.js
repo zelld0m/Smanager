@@ -75,10 +75,10 @@
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
-					if ($.isBlank(comment)){
-						alert("Please add comment.");
-					}else if (getSelectedRefId().length==0){
+					if (getSelectedRefId().length==0){
 						alert("Please select rule");
+					}else if ($.isBlank(comment)){
+						alert("Please add comment.");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
