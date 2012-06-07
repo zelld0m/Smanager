@@ -241,13 +241,13 @@ public class SecurityService {
 		
 		try {
 			User user = new User();
-			user.setGroupId(roleId);
 			user.setUsername(username);
 			user.setLastModifiedBy(UtilityService.getUsername());
 			SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,null,1);
 			RecordSet<User> record = getUsers(searchCriteria, MatchType.MATCH_ID);
 			
 			if(record != null && record.getTotalSize() > 0){
+				user.setGroupId(roleId);
 				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
 				user.setStoreId(UtilityService.getStoreName());
 				if(StringUtils.isNotEmpty(locked))
