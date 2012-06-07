@@ -33,9 +33,13 @@
 					var shrole = $.trim(e.find('#shrole').val());
 					var shlck = e.find('#shlck').is(':checked');
 
-					if(!sec.validField('Email',shemail,true))
+					minDate = new Date();
+					//ignore time of current date 
+					minDate.setHours(0,0,0,0);
+					
+					if(!validateEmail('Email',shemail,1))
 						return;
-					else if(!sec.validField('Validity Date',shexp,false,true))
+					else if(!validateDate('Validity Date',shexp,1,minDate))
 						return;
 
 					SecurityServiceJS.updateUser(shrole,user,shexp,shlck,shemail,{
@@ -48,58 +52,9 @@
 								alert(data.message);
 							}
 						}		
-					});		
-				},	
-
-				isEmail : function(s) {
-					var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
-					if(!pattern.test(s))
-						return true;
-					else
-						return false;
+					});
 				},
-
-				validField : function(f,fv,e,d){
-					var today = new Date();
-					//ignore time of current date 
-					today.setHours(0,0,0,0);
-					
-					
-					if($.isBlank(fv) && !d){
-						alert(f+' cannot be empty.');
-						return false;
-					}else if(!e && !d && !isAllowedName(fv)){
-						alert(f+" contains invalid value.");
-						return false;
-					}else if(!isAscii(fv)) {
-						alert(f+" contains non-ASCII characters.");		
-						return false;
-					}else if(!isXSSSafe(fv)){
-						alert(f+" contains XSS.");
-						return false;
-					}else if(e && sec.isEmail(fv)){
-						alert(f+" is invalid.");
-						return false;
-					}else if(d && fv!=null){
-						if(today.getTime() > new Date(fv).getTime()){
-							alert("Validity cannot be earlier than today");
-							return false;
-						 }else if(d && !$.isDate(fv)){
-							alert(f+" is invalid date.");
-							return false;
-						 }
-					}else if(f=="Username" && fv.length < 4){
-						alert(f+" minimum is 4 characters");
-						return false;
-					}else if(f=="Password" && fv.length < 8){
-						alert(f+" minimum is 8 characters");
-						return false;
-					}
-
-					return true;
-				},
-
-
+				
 				clrUser : function(e){
 					e.find('#aduser').val('');
 					e.find('#adfull').val('');
@@ -122,15 +77,19 @@
 
 					var adpass = $.trim(e.find('#adpass').val());
 
-					if(!sec.validField('Username',aduser))
+					minDate = new Date();
+					//ignore time of current date 
+					minDate.setHours(0,0,0,0);
+					
+					if(!validateUsername('Username',aduser, 4))
 						return;
-					else if(!sec.validField('Fullname',adfull))
+					else if(!validateField('Fullname',adfull, 1))
 						return;
-					else if(!sec.validField('Email',ademail,true))
+					else if(!validateEmail('Email',ademail, 1))
 						return;
-					else if(!sec.validField('Password',adpass))
+					else if(!validatePassword('Password',adpass, 8))
 						return;
-					else if(!sec.validField('Validity Date',adexp,false,true))
+					else if(!validateDate('Validity Date',adexp,1,minDate))
 						return;
 
 					SecurityServiceJS.addUser(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,{
@@ -223,7 +182,10 @@
 					if($.isBlank($.trim(e.find('#shpass').val())))
 						e.find('#shpass').val(sec.genpass());
 					
-					SecurityServiceJS.resetPassword(data.type,data.id,e.find('#shpass').val(),{
+					if(!validatePassword('Password',e.find('#shpass').val(), 8))
+						return;
+
+					SecurityServiceJS.resetPassword(data.groupId,data.username,e.find('#shpass').val(),{
 						callback:function(data){
 							if(data.status == '200'){
 								alert(data.message);
