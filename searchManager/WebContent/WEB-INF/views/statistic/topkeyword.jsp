@@ -34,18 +34,20 @@
 	
 	<div class="clearB"></div>
 	
-	<div class="filter padT5 fsize12 marT8">
-		<div class="floatL">
+	<div class="filter padT5 fsize11 marT8 w95p marRLauto fgray">
+		<div class="floatL w50p">
 			<span>Show:</span> 
-			<select id="fileFilter"></select>
-			<a href="javascript:void(0);" id="downloadBtn"><div class="btnGraph btnDownload"></div></a>
+			<select id="fileFilter"></select>			
 		</div>
-		<div class="floatR padT3" id="keywordCount"></div>
+		<div class="floatL w50p">
+			<div class="floatR marL5"><a href="javascript:void(0);" id="downloadBtn"><div class="btnGraph btnDownload"></div></a></div>
+			<div class="floatR padT3" id="keywordCount"></div>		
+	    </div>
 	</div>
 	
 	<div class="clearB"></div>
 	<div class="w95p marRLauto">
-		<table class="tblAlpha w100p" >
+		<table class="tblAlpha w100p marT8" >
 			<tr>
 				<th width="75px" id="selectAll"></th>
 				<th width="480px" class="txtAL">Keyword</th>
