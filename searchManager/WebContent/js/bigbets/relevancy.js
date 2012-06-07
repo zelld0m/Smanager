@@ -820,8 +820,9 @@
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-						defaultDate: "-2",
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({			
+						minDate: 0,
+						maxDate: '+1Y',			
 						showOn: "both",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
@@ -1022,7 +1023,8 @@
 		$("#startDate, #endDate").datepicker("destroy");
 
 		var dates = $("#startDate, #endDate").datepicker({
-			defaultDate: "-2",
+			minDate: 0,
+			maxDate: '+1Y',
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
