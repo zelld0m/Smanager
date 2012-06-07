@@ -37,9 +37,10 @@
 	<div class="filter padT5 fsize12 marT8 w95p marRLauto">
 		<div class="floatL w50p">
 			<span>Show:</span> 
-			<select id="fileFilter"></select>			
+			<select id="fileFilter"></select>
+			<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">			
 		</div>
-		<div class="floatL w50p">
+		<div class="floatL w50p" id="countSec">
 			<div class="floatR marL5"><a href="javascript:void(0);" id="downloadBtn"><div class="btnGraph btnDownload"></div></a></div>
 			<div class="floatR padT3" id="keywordCount"></div>		
 	    </div>

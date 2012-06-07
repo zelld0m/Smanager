@@ -20,17 +20,29 @@
 							
 							$table.find("tr.rowItem:not(#rowPattern)").remove();
 							
-							for (var i=0; i < list.length ; i++){
-								var $tr = $("tr#rowPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-								$tr.find("td#iter").html(parseInt(i)+1);
-								$tr.find("td#keyword").html(list[i]["keyword"]);
-								$tr.find("td#count").html(list[i]["count"]);
-								$tr.show();
-								$table.append($tr);
+							if (list.length > 0){
+								for (var i=0; i < list.length ; i++){
+									var $tr = $("tr#rowPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+									$tr.find("td#iter").html(parseInt(i)+1);
+									$tr.find("td#keyword").html(list[i]["keyword"]);
+									$tr.find("td#count").html(list[i]["count"]);
+									$tr.show();
+									$table.append($tr);
+								}
+								
+								$("#keywordCount").html(data.totalSize == 1 ? "1 Keyword" : data.totalSize + " Keywords");
+								$("div#countSec").show();
+							}else{
+								$empty = '<tr class="rowItem"><td colspan="3" class="txtAC">No matching records found</td></tr>';
+								$table.append($empty);
+								$("div#countSec").hide();
 							}
-							
-							$("#keywordCount").html(data.totalSize == 1 ? "1 Keyword" : data.totalSize + " Keywords");
-							
+						},
+						preHook:function(){
+							$("img#preloader").show();
+						},
+						postHook:function(){
+							$("img#preloader").hide();
 						}
 					});
 				},
