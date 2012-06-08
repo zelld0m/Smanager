@@ -111,8 +111,8 @@
 <div class="cssReset">
  
  <!--PC Mall Header-->
- <div class="clearB floatL bgTopHeader">
-    <div class="mar0 w980">
+ <div class="clearB floatL bgTopHeader">  
+    <div class="mar0 w980 posRel">
       <table width="980" border="0" cellspacing="0" cellpadding="0" align="center">
         <tr>
           <td align="left" class="padTB5">
@@ -137,6 +137,7 @@
 	      </td>
         </tr>
       </table>
+      <a href="#"><img src="<spring:url value="images/logoMacMall.png" />" class="companyLogoImg"></a>
     </div>
   </div>
   
