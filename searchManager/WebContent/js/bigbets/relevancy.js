@@ -1162,7 +1162,8 @@
 							$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
 							var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-								defaultDate: "-2",
+								minDate: 0,
+								maxDate: '+1Y',	
 								showOn: "both",
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true,

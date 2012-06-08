@@ -31,7 +31,7 @@
 					var shexp = $.trim(e.find('#shexp_1').val());
 					var shemail = $.trim(e.find('#shemail').val());
 					var shrole = $.trim(e.find('#shrole').val());
-					var shlck = e.find('#shlck').is(':checked');
+					var shlck = e.find('div[rel="shlck"]').hasClass('off');
 
 					minDate = new Date();
 					//ignore time of current date 
