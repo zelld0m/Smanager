@@ -45,7 +45,14 @@ jQuery.extend(
 				},
 
 				formatAsId: function(id) {
-					return "_".concat(("" + id).replace(/\s/g,"_"));
+					return "_".concat(("" + id).
+							replace(/\s/g,"_").
+							replace(/&amp;/g,"_").
+							replace(/\'/g,"_").
+							replace(/\"/g,"_").
+							replace(/\&/g,"_").
+							replace(/\//g,"_")
+					);
 				},
 				
 				isDate: function(text, format){

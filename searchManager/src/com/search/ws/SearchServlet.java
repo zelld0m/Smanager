@@ -446,6 +446,7 @@ public class SearchServlet extends HttpServlet {
 			// TODO: workaround for spellchecker
 			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
 				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
+				solrHelper.setSolrUrl(requestPath);
 			}
 			
 			// TASK 1A

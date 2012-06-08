@@ -4,10 +4,18 @@
 
 		topkeyword = {		
 				
+				sendFileAsEmail: function(customFilename, recipients){
+					TopKeywordServiceJS.sendFileAsEmail($("select#fileFilter").val(), customFilename, recipients, {
+						callback: function(data){
+							 
+						}
+					});
+				},
+				
 				downloadFileAsCSV: function(customFilename){
 					TopKeywordServiceJS.downloadFileAsCSV($("select#fileFilter").val(), customFilename, {
 						callback: function(data){
-							 dwr.engine.openInDownload(data);
+							dwr.engine.openInDownload(data);
 						}
 					});
 				},
@@ -66,8 +74,19 @@
 							$("a#downloadBtn").download({
 								headerText:"Download Top Keyword",
 								defaultFilename: "",
+								sendMail: true,
 								requestCallback:function(e){
 									if (e.data.type==="excel") topkeyword.downloadFileAsCSV(e.data.filename);
+									if (e.data.type==="mail"){
+										var recipientArrCleaned = []
+										var recipientToArr = e.data.recipient.split(',');
+										
+										for(var recipient in recipientToArr){
+											recipientArrCleaned.push($.trim(recipientToArr[recipient]));
+										}
+										
+										topkeyword.sendFileAsEmail(e.data.filename, recipientArrCleaned);
+									}
 								}
 							});
 							
