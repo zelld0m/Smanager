@@ -56,7 +56,7 @@ validateUsername = function(fieldName, fieldValue, length) {
 	};
 	if (!$.isBlank(fieldValue)) {
 		if(!isAllowedName(fieldValue)){
-			alert(f+" contains invalid value.");
+			alert(fieldName+" contains invalid value.");
 			return false;
 		}
 		if(fieldValue.length < 4){
