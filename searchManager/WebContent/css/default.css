@@ -1,6 +1,6 @@
 /** default css common */
 body 							{ margin: 0px; }
-.cssReset .companyLogo			{ width:160px; height:55px;  margin:7px auto 0 auto; }
+.cssReset .companyLogo			{ width:160px; /*height:55px;*/  margin:7px auto 0 auto;  }
 
 .cssReser .wAuto				{ width: auto }
 .cssReset .w15, .w15			{ width: 15px }

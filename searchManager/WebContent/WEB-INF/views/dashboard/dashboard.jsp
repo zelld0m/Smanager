@@ -8,7 +8,6 @@
 <link href="<spring:url value="/css/dashboard/dashboard.css" />" rel="stylesheet" type="text/css">
 
 <div class="clearB floatL minW240 sideMenuArea">
-<div class="companyLogo"></div>
 
 <div class="sideHeader">Keyword Trends</div>
 <div class="leftStatus">

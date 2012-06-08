@@ -1,4 +1,4 @@
-.companyLogoImg 				{ margin-bottom:-3px; position:absolute; top:60px; float:left; left:42px; z-index:500 }
+.companyLogoImg 				{ position:absolute; top:56px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
 
 /* default theme  */
 .cssReset a:link,
@@ -19,7 +19,7 @@
 .cssReset .subMenu li a			{ color:#222222 }
 .cssReset .subMenu li.active a	{ color:#a20b00 }
 
-.cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:-64px; z-index:200 }
+.cssReset .sideMenuArea			{ width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ z-index:200 }
 
 .cssReset .bgFooter				{ background:url(images/bgFooter.gif) repeat-x; padding:15px 10px; font-size: 11px; padding-bottom:20px }
 .cssReset .txtcopyright			{ color:#666666 }

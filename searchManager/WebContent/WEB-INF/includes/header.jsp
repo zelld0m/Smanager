@@ -137,7 +137,10 @@
 	      </td>
         </tr>
       </table>
-      <a href="#"><img src="<spring:url value="images/logoMacMall.png" />" class="companyLogoImg"></a>
+      <div class="companyLogoImg">
+      	<a href="#"><img src="<spring:url value="images/logoMacMall.png" />"></a>
+      	<div class="clearB"></div>
+      </div>
     </div>
   </div>
   

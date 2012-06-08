@@ -39,7 +39,7 @@
 
     <!-- Start Left Side -->	   
     <div class="clearB floatL minW240 sideMenuArea">
-	    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
+	   
 	    <div class="clearB marT27"></div>
 		<!-- Search Within Widget -->
 	    <div id="searchWithin" class="leftContainer"></div>
