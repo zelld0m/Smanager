@@ -70,10 +70,9 @@
 						limit: 5
 					}));
 
-					Manager.addWidget(new AjaxSolr.FilterResultByTypeWidget({
-						id: 'filterByType',
-						target: '#filterByType',
-						headerText: 'Type'
+					Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
+						id: 'prodAttribFilter',
+						target: '#prodAttribFilter'
 					}));
 
 					Manager.init();

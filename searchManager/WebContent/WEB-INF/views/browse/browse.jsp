@@ -26,7 +26,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/TextWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/FilterResultByTypeWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ProductAttributeFilterWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
@@ -44,37 +44,13 @@
 		<!-- Search Within Widget -->
 	    <div id="searchWithin" class="leftContainer"></div>
 		<div id="dynamicSelection"></div>
+		<div class="clearB"></div>
 		<div id="dynamicFacets"></div>
 		<div class="clearB"></div>
-		<div id="filterByType"></div>
+		<div id="prodAttribFilter"></div>
+		<div class="clearB"></div>
 		
-		<div class="box">
-			<h2>Condition</h2>
-			<ul>
-				<li><input type="checkbox"> Refurbished </li>
-				<li><input type="checkbox"> Open Box </li>
-				<li><input type="checkbox"> Clearance </li>
-			</ul>
-		</div>
-		
-		<div class="box marT8">
-			<h2>License Product</h2>
-			<select class="mar10 w215">
-				<option>Both License & Non-License</option>
-			</select>
-		</div>
-		
-		<div class="box marT8">
-			<h2>Search Within</h2>
-			<select class="mar10 w215">
-				<option>Both License & Non-License</option>
-			</select>
-		</div>
 	</div>
-	
-	
-	
-	
 	<!-- End Left Side -->
 	
     <!-- Start Right Side -->	  
