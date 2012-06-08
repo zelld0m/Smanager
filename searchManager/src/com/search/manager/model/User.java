@@ -193,7 +193,11 @@ public class User extends ModelBean {
 	public Date getCreatedDate() {
 		return createdDate;
 	}
-
+	
+	public String getFormattedCreatedDate() {
+		return DateAndTimeUtils.formatDateUsingConfig(storeId, createdDate);
+	}
+	
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}

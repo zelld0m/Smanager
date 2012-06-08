@@ -378,7 +378,7 @@
 									$tr.find("td#userInfo > span#email").html(list[i].email);
 									$tr.find("td#role > span").html(list[i].groupId);
 
-									$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].createdDate.toDateString());
+									$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].formattedCreatedDate);
 									$tr.find("td#status > span").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
 									$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].thruDate.toDateString());
 
