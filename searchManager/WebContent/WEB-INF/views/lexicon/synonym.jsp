@@ -10,9 +10,7 @@
 
  <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
-    
-	<div class="clearB floatL w240">
+   <div class="clearB floatL w240">
     	<div class="sideHeader">Site Updates</div>
         <div class="clearB floatL w230 padL5">
 			<ul class="listSU fsize11 marT10">

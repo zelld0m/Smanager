@@ -9,6 +9,11 @@
 	var contextPath = "<%=request.getContextPath()%>";	
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
   </script>
+  
+  <!-- TODO: Dynamically modify mall based on logged user -->
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
+ 
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
   <!--  theme -->
@@ -138,7 +143,9 @@
         </tr>
       </table>
       <div class="companyLogoImg">
-      	<a href="#"><img src="<spring:url value="images/logoMacMall.png" />"></a>
+      	<a href="javascript:void(0);">
+      		<img src="<spring:url value="${storeLogo}" />">
+      	</a>
       	<div class="clearB"></div>
       </div>
     </div>
