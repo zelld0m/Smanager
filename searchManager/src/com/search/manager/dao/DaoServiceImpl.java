@@ -151,8 +151,8 @@ public class DaoServiceImpl implements DaoService {
     }
     
 	@Override
-	public List<String> getDropdownValues(int type, String storeId) throws DaoException {
-		return auditTrailDAO.getDropdownValues(type, storeId);
+	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException {
+		return auditTrailDAO.getDropdownValues(type, storeId, adminFlag);
 	}
 
 	/* Big Bets */
