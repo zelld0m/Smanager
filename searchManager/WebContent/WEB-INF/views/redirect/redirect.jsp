@@ -124,32 +124,44 @@
 		
 		<div class="clearB"></div>	
 		
-		<div id="redirect-source" class="tabs">
+		<div id="redirect-type" class="tabs">
     		<ul>
-    			<li><a href="#datasource"><span>Filter by Source</span></a></li>
-    			<li><a href="#keyword"><span>Keyword Replacement</span></a></li>
+    			<li><a href="#filter"><span>Filter By</span></a></li>
+    			<li><a href="#keyword"><span>Replace Keyword</span></a></li>
+    			<li><a href="#page"><span>Redirect To Page</span></a></li>
     		</ul>
     		
+    		<div id="page">
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    			</div>
+    			<div class="clearB"></div>
+    		</div>
+			
     		<div id="keyword">
     			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    			</div>
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
-						Replacement Keyword
+						Replace Keyword
 					</div>
-					<input type="text" class="floatL w200"> 
+					<input type="text" class="floatL w200" id="changeKeyword"> 
 					<div class="floatL marL5">
-						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="changeKeywordBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>" style="display: none">	
 					</div>
-					<div>
+					<div id="activerules" style="display: none">
 						<div class="clearB marT10 padT8 borderT"></div>						
-						<div class="alert">Warning: This keyword has 3 active elevate rules</div>
+						<div class="alert">This keyword has <span id="rules"></span></div>
 					</div>				
 				</div>
 				<div class="clearB"></div>
 			</div>
     		
-    		<div id="datasource">
+    		<div id="filter">
     			<div class="landingCont bgboxGray w96p50p floatL marT20">
-    				<input type="checkbox"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
 	        	
 	        	<h2 class="borderB">IMS</h2>
