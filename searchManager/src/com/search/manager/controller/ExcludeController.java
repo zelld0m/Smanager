@@ -66,7 +66,9 @@ public class ExcludeController {
 		String page = request.getParameter("page");
 		String filename = request.getParameter("filename");
 		String itemsPerPage = request.getParameter("itemperpage");
+		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
 		
+		Date headerDate = new Date(clientTimezone);
 		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 		
 		if (StringUtils.isBlank(filename)) {
@@ -103,7 +105,7 @@ public class ExcludeController {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
 		}
 		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		ReportModel<ExcludeReportBean> reportModel = new ExcludeReportModel(reportHeader, list);
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse

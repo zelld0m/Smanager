@@ -345,6 +345,7 @@
 						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
 						params["filter"] = getItemFilter();
 						params["itemperpage"] = ruleItemPageSize;
+						params["clientTimezone"] = +new Date();
 
 						for(var key in params){
 							if (count>0) urlParams +='&';

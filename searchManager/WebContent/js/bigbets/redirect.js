@@ -100,6 +100,7 @@
 				params["id"] = selectedRule["ruleId"];
 				params["filename"] = e.data.filename;
 				params["type"] = e.data.type;
+				params["clientTimezone"] = +new Date();
 
 				for(var key in params){
 					if (count>0) urlParams +='&';

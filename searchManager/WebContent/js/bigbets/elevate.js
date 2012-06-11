@@ -394,12 +394,14 @@
 						var url = document.location.pathname + "/xls";
 						var urlParams = "";
 						var count = 0;
+						
 						params["filename"] = e.data.filename;
 						params["type"] = e.data.type;
 						params["keyword"] = selectedRule.ruleName;
 						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
 						params["filter"] = getItemFilter();
 						params["itemperpage"] = ruleItemPageSize;
+						params["clientTimezone"] = +new Date();
 
 						for(var key in params){
 							if (count>0) urlParams +='&';

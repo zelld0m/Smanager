@@ -1,5 +1,7 @@
 package com.search.manager.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +64,9 @@ public class AuditController {
 		String endDate = request.getParameter("endDate");
 		String totalSize = request.getParameter("totalSize");
 		String filename = request.getParameter("filename");
+		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+		
+		Date headerDate = new Date(clientTimezone);
 		
 		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s %s %s %s", userName, operation, entity, keyword, referenceId, startDate, endDate, totalSize, filename));
 		
@@ -80,7 +85,7 @@ public class AuditController {
 		
 		String subTitle = "Audit Trail";
 		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		ReportModel<AuditTrailReportBean> reportModel = new AuditTrailReportModel(reportHeader, list);
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse

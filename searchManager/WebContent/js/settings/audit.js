@@ -92,6 +92,7 @@
 					params["startDate"] = startDate;
 					params["endDate"] = endDate;
 					params["totalSize"] = totalSize;
+					params["clientTimezone"] = +new Date();
 
 					for(var key in params){
 						if (count>0) urlParams +='&';
