@@ -96,7 +96,23 @@
 	<div id="redirectContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/queryCleaningRuleGuidelines.jpg"></div>
+
 		<div id="redirect" class="redirect fsize12">	
+			
+			<div class="landingCont bgboxGray w96p50p floatL">
+				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
+					Replacement Keyword
+				</div>
+				<input type="text" class="floatL w200"> 
+				<div class="floatL marL5">
+					<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+				</div>
+				<div>
+					<div class="clearB marT10 padT8 borderT"></div>						
+					<div class="alert">Warning: This keyword has 3 active elevate rules</div>
+				</div>				
+			</div>
+		
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						<div class="floatL">Rule Info</div>
