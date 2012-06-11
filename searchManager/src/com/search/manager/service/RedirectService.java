@@ -83,6 +83,38 @@ public class RedirectService {
 		}
 		return result;
 	}
+
+	@RemoteMethod
+	public int setRedirectType(String ruleId, String redirectTypeId) {
+		int result = -1;
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setRedirectTypeId(redirectTypeId);
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during setRedirectType()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int setChangeKeyword(String ruleId, String changeKeyword) {
+		int result = -1;
+		try {
+			changeKeyword = StringUtils.trimToEmpty(changeKeyword);
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setChangeKeyword(changeKeyword);
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during setChangeKeyword()",e);
+		}
+		return result;
+	}
+
 	
 	@RemoteMethod
 	public int deleteRule(RedirectRule rule) {
