@@ -12,7 +12,7 @@
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
-		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+		<a href="javascript:void()"><img src="<spring:url value="${storeLogo}" />"></a>
 	</div>
 	<div class="clearB floatL w240">
 		<div id="rulePanel"></div>
@@ -60,8 +60,10 @@
 			        	</label>
 		        	</div>
 			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	<div class="floatR marL8 marR3 padT5"> 	    
+	        		<sec:authorize access="hasRole('CREATE_RULE')">
+        	    		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+        	    	</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -93,7 +95,7 @@
 	<div class="clearB"></div>	
 	<div id="redirectContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/queryCleaningRuleGuidelines.jpg"></div>
 		<div id="redirect" class="redirect fsize12">	
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
@@ -110,8 +112,8 @@
 					<label class="floatL w70 marT8 padT3">Description</label>
 					<label><textarea id="description" rows="3" class="marT8" style="width:240px"></textarea></label>
 					<div class="borderT txtAR padT10">
-						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a> 
+							<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+							<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 					</div>
 				</div>
 			
@@ -163,6 +165,7 @@
 						</td>
 						<td class="w60"><a href="#" class="buttons btnGray marL15 clearfix">
 							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
+						</td>
 						<td class="landingCont bgboxGray" style="vertical-align: top; width: 240px">
 							<div id="ruleConditionPanel"></div>
 						</td>
@@ -187,7 +190,7 @@
 	</div>
 	
    <div id="ruleIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>
 	
 </div>

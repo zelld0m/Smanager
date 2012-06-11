@@ -1,6 +1,10 @@
 package com.search.manager.cache.service;
 
-import org.apache.log4j.Logger;
+
+import org.directwebremoting.annotations.Param;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
+import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.cache.ehcache.CacheClient;
@@ -9,12 +13,16 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.exception.DataException;
 
 @Service("cacheService")
+@RemoteProxy(
+		name = "CacheServiceJS",
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "cacheService")
+)
 public class CacheService<E extends CacheModel<?>>{
 	
 	public static CacheClient cacheClient		= null;
 	public String className						= null;
 	public StringBuilder genKey					= null;
-	private static Logger logger = Logger.getLogger(CacheService.class);
 	
 	public CacheService() {
 		className = this.getClass().getSimpleName();
@@ -81,7 +89,8 @@ public class CacheService<E extends CacheModel<?>>{
 	 * @return model object stored in the cache given the param key value.
 	 * @throws DataException
 	 */
-	@SuppressWarnings("unchecked")
+	@RemoteMethod
+	@SuppressWarnings({ "unchecked", "hiding" })
 	public <E> E get(String paramKey) throws DataException {
 		cacheClient.resetParameterMatrix();
 		cacheClient.addToParameterMatrix(EhCachEDistributedClient.PARAM_MIME_APP_XJAVA_SER);

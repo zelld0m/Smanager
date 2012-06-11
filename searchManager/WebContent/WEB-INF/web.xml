@@ -7,6 +7,17 @@
 		<param-name>GLOBAL_INIT_PROPERTIES</param-name>
 		<param-value>/home/solr/conf/globalvar.properties</param-value>
 	</context-param>
+	
+	<context-param>
+	    <param-name>log4jConfigLocation</param-name>
+	    <param-value>file:/home/solr/conf/log4j.xml</param-value>
+  	</context-param>
+  	
+	<listener>
+	    <listener-class>
+			org.springframework.web.util.Log4jConfigListener
+		</listener-class>
+	</listener>
     
 	<!-- Processes application requests -->
 	<servlet>
@@ -45,6 +56,12 @@
 	    </listener-class>
 	</listener>
 
+	<listener>
+	  <listener-class>
+	      org.springframework.web.context.request.RequestContextListener
+	  </listener-class>
+	</listener>
+	
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
@@ -104,6 +121,11 @@
 			<param-name>relevancy-config-file</param-name>
 			<param-value>relevancy.xml</param-value>
 		</init-param>
+		
+		<init-param>
+			<param-name>messages-config-file</param-name>
+			<param-value>messages.xml</param-value>
+		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
@@ -129,7 +151,7 @@
 		<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
 		<init-param>
 			<param-name>debug</param-name>
-			<param-value>false</param-value>
+			<param-value>true</param-value>
 		</init-param>
 		<init-param>
 			<param-name>classes</param-name>
@@ -151,6 +173,10 @@
 				com.search.manager.service.StoreKeywordService,
 				com.search.manager.service.UtilityService,
 				com.search.manager.service.DeploymentService,
+				com.search.manager.service.SecurityService,
+				com.search.manager.service.UserSettingService,
+				com.search.manager.service.TopKeywordService,
+				com.search.manager.cache.service.CacheService,
 				com.search.manager.model.AuditTrail,
 				com.search.manager.model.Store,
 				com.search.manager.model.Keyword,
@@ -162,13 +188,16 @@
 				com.search.manager.model.Category,
 				com.search.manager.model.CategoryList,
 				com.search.manager.model.RedirectRule,
-				com.search.manager.model.RuleEntity,
 				com.search.manager.model.RuleStatus,
 				com.search.manager.model.RedirectRuleCondition,
 				com.search.manager.model.RelevancyKeyword,
 				com.search.manager.model.StoreKeyword,
 				com.search.manager.model.Comment,
-				com.search.manager.model.NameValue,
+				com.search.manager.model.TopKeyword,
+				com.search.manager.model.DeploymentModel,
+				com.search.manager.model.RoleModel,
+				com.search.manager.model.Group,
+				com.search.manager.model.User,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,
 				com.search.manager.schema.model.GenericType,

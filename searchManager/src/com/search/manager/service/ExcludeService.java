@@ -98,6 +98,7 @@ public class ExcludeService {
 			e.setEdp(edp);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
+			e.setCreatedBy(UtilityService.getUsername());
 			return daoService.addExcludeResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during addExclude()",e);

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -53,6 +55,7 @@ public class DeploymentService {
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(ruleTypeId);
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			if (includeApprovedFlag) {
 				ruleStatus.setApprovalStatus("PENDING,APPROVED");
 			} else {
@@ -74,7 +77,7 @@ public class DeploymentService {
 		return result;
 	}
 	
-	public List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
+	private List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
@@ -113,19 +116,34 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RuleStatus> getDeployedRules(String ruleType) {
+	public RecordSet<RuleStatus> getDeployedRules(String ruleType, String filterBy) {
 		RecordSet<RuleStatus> rSet = null;
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
-			ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
-			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
-			ruleStatus.setApprovalStatus(null);
-			ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
-			RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
-			rSet = combineRecordSet(approvedRset, publishedRset);
+			if (StringUtils.isBlank(filterBy))	{
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+				RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria );
+				ruleStatus.setApprovalStatus(null);
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				RecordSet<RuleStatus> publishedRset = daoService.getRuleStatus(searchCriteria );
+				rSet = combineRecordSet(approvedRset, publishedRset);
+			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.APPROVED.toString())) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			} else if (filterBy.equalsIgnoreCase(RuleStatusEntity.PUBLISHED.toString())) {
+				ruleStatus.setPublishedStatus(RuleStatusEntity.PUBLISHED.toString());
+				ruleStatus.setUpdateStatus("ADD,UPDATE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			} else if ("DELETE".equalsIgnoreCase(filterBy)) {
+				ruleStatus.setApprovalStatus(RuleStatusEntity.APPROVED.toString());
+				ruleStatus.setUpdateStatus("DELETE");
+				rSet = daoService.getRuleStatus(searchCriteria );
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during getDeployedRules()",e);
 		}
@@ -170,7 +188,7 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
-	public Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
+	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
@@ -237,6 +255,7 @@ public class DeploymentService {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			result = daoService.getRuleStatus(ruleStatus);
 		} catch (DaoException e) {
 			logger.error("Failed during unpublishRule()",e);
@@ -254,6 +273,7 @@ public class DeploymentService {
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
 			ruleStatus.setLastModifiedBy(UtilityService.getUsername());
+			ruleStatus.setStoreId(UtilityService.getStoreName());
 			result = daoService.processRuleStatus(ruleStatus, isDelete);
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
@@ -341,6 +361,7 @@ public class DeploymentService {
 		RuleStatus ruleStatus = new RuleStatus();
 		ruleStatus.setCreatedBy(userName);
 		ruleStatus.setLastModifiedBy(userName);
+		ruleStatus.setStoreId(UtilityService.getStoreName());
 		return ruleStatus;
 	}
 

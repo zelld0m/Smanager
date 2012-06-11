@@ -190,6 +190,22 @@ function initFileUploads() {
 /** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
+		
+		var load = false;
+		window.onfocus = function(){
+			if (load) {
+				load = false;
+				var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
+				if (serverSelected !== $("#select-server option:selected").text()) {
+					$("#select-server").triggerHandler("change", {reload: true});				
+				}
+			}
+		};
+		
+		window.onblur = function() {
+			load = true;
+	    };
+		
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
@@ -251,7 +267,70 @@ function initFileUploads() {
 				}
 			});
 		};
+		
+		var COOKIE_SERVER_SELECTION = "server.selection";
+		var COOKIE_SERVER_SELECTED = "server.selected";
+		
+		var getServerList = function(){
+		
+			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
+			
+			if($.isNotBlank(serverSelection)){
+				$("#select-server option").remove();
+				parseData = JSON.parse($.trim($.cookie(COOKIE_SERVER_SELECTION)));
+				for (key in parseData){
+					$("#select-server").append($("<option>", { value : key }).text(key));							
+				}
+				setSelectedServer();				
+			}else{
+				$("#select-server option").remove();
+				UtilityServiceJS.getServerListForSelectedStore(true, {
+					callback:function(data){
+						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{path: contextPath});
+						for (key in data){
+							$("#select-server").append($("<option>", { value : key }).text(key));							
+						}
+						setSelectedServer();
+					}
+				});
+				
+			}
+			
+			$("#select-server").on({
+				change: function(event, data){
+					var reload;
+					if (data != undefined) {
+						reload = data["reload"];
+					}
+					if (reload == undefined) {
+						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:contextPath});
+						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
+							callback:function(){
+							}
+						});						
+					}
+					else if (reload == true) {
+						setSelectedServer();
+					}
+				}
+			});
+		};
 
+		var setSelectedServer = function() {
+			var serverSelected = $.trim($.cookie(COOKIE_SERVER_SELECTED));
+			if ($.isBlank(serverSelected)) {
+				UtilityServiceJS.getServerName({
+					callback:function(serverName){
+						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{path:contextPath});
+						$("#select-server option[value='" + serverName + "']").attr("selected", "selected");
+					}
+				});
+			}
+			else {
+				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
+			}
+		};
+		
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
@@ -300,9 +379,10 @@ function initFileUploads() {
 				base.$el.find(selector + ' .page').html(model["currentPage"]);
 			}
 		});
-
+		
 		useTabs();
 		useTinyMCE();
+		getServerList();
 		refreshDock();
 	});
 })(jQuery);

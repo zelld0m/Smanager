@@ -6,14 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.event.ConfigurationEvent;
-import org.apache.commons.configuration.event.ConfigurationListener;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -22,7 +16,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.schema.SolrSchemaUtility;
+import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
+import com.search.manager.model.Group;
+import com.search.manager.model.RecordSet;
+import com.search.manager.model.User;
 
 @Service("userDetailsService")
 public class UserAuthenticationProvider implements UserDetailsService {
@@ -31,53 +29,20 @@ public class UserAuthenticationProvider implements UserDetailsService {
 
 	private Map<String, UserDetails> userMap = new HashMap<String, UserDetails>();
 
-	private XMLConfiguration xmlConfig = new XMLConfiguration();
+	@Autowired private DaoService daoService;
+
+	public DaoService getDaoService() {
+		return daoService;
+	}
+
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
+	}
 	
 	public UserAuthenticationProvider() {
 		super();
-		initUserAccess();
 	}
 
-	private void initUserAccess() {
-		try {
-			// user config
-			xmlConfig.setDelimiterParsingDisabled(true);
-			xmlConfig.setExpressionEngine(new XPathExpressionEngine());
-			xmlConfig.load("/home/solr/conf/user.xml");
-			xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-			reloadUsers();
-			xmlConfig.addConfigurationListener(new ConfigurationListener() {
-				@Override
-				public void configurationChanged(ConfigurationEvent event) {
-					if (!event.isBeforeUpdate()) {
-						reloadUsers();
-					}
-				}
-			});			
-		} catch (Exception e) {
-			logger.error("Failed to load users", e);
-		}
-	}
-
-	private void reloadUsers() {
-		synchronized (UserAuthenticationProvider.class) {
-			Map<String, UserDetails> tmpMap = new HashMap<String, UserDetails>();
-	    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/user"));
-	    	for (HierarchicalConfiguration hc: hcList) {
-	    		tmpMap.put(hc.getString("userName"), new UserDetailsImpl(
-    					getAuthorities(hc.getInt("role")),
-    					hc.getString("password"),
-    					hc.getString("userName"),
-    					hc.getString("fullName"),
-    					hc.getBoolean("accountNonExpired"),
-    					hc.getBoolean("accountNonLocked"),
-    					hc.getBoolean("credentialsNonExpired"),
-    					hc.getBoolean("enabled")));
-	    	}
-	    	userMap = tmpMap;
-		}
-	}
-	
 	/**
 	 * Returns a populated {@link UserDetails} object. 
 	 * The username is first retrieved from the database and then mapped to 
@@ -85,59 +50,42 @@ public class UserAuthenticationProvider implements UserDetailsService {
 	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-		logger.info("UserAuthenticationProvider.loadUserByUsername");
-		// check if need to reload
-		xmlConfig.configurationsAt("/user");
-		
-		if (userMap.containsKey(username)) return userMap.get(username);
-
-		return new UserDetailsImpl();
-	}
-	
-	/**
-	 * Retrieves a collection of {@link GrantedAuthority} based on a numerical role
-	 * @param role the numerical role
-	 * @return a collection of {@link GrantedAuthority
-	 */
-	public Collection<GrantedAuthority> getAuthorities(Integer role) {
-		List<GrantedAuthority> authList = getGrantedAuthorities(getRoles(role));
-		return authList;
-	}
-
-	/**
-	 * Converts a numerical role to an equivalent list of roles
-	 * @param role the numerical role
-	 * @return list of roles as as a list of {@link String}
-	 */
-	public List<String> getRoles(Integer role) {
-		List<String> roles = new ArrayList<String>();
-
-		if (role.intValue() == 1) {
-			roles.add("ROLE_USER");
-			roles.add("ROLE_ADMIN");
-
-		} else if (role.intValue() == 2) {
-			roles.add("ROLE_USER");
+		UserDetailsImpl userDetails = new UserDetailsImpl();
+		try {
+			User user = daoService.getUser(username);
+			if (user != null) {
+				userDetails = new UserDetailsImpl(user);
+				userDetails.setAuthorities(getAuthorities(user.getGroupId()));
+				userMap.put(username, userDetails);
+			}
+		} catch (DaoException e) {
+			logger.error(e.getMessage());
 		}
 
-		return roles;
+		return userDetails;
+		
 	}
-
-	/**
-	 * Wraps {@link String} roles to {@link SimpleGrantedAuthority} objects
-	 * @param roles {@link String} of roles
-	 * @return list of granted authorities
-	 */
-	public static List<GrantedAuthority> getGrantedAuthorities(List<String> roles) {
+	
+	private Collection<GrantedAuthority> getAuthorities(String groupId) {
+		
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		
-		if (CollectionUtils.isNotEmpty(roles))
-			authorities = AuthorityUtils.createAuthorityList(roles.toArray(new String[0]));
-		
+		try {
+			RecordSet<Group> grpPermission = daoService.getGroupPermission(groupId);
+			if (grpPermission.getTotalSize() > 0) {
+				List<String> permissions = new ArrayList<String>();
+				for (Group group : grpPermission.getList()) {
+					permissions.add(group.getPermissionId());
+				}
+				authorities = AuthorityUtils.createAuthorityList(permissions.toArray(new String[0]));				
+			}
+		} catch (DaoException e) {
+			logger.error(e.getMessage(), e);
+		}
 		return authorities;
 	}
 	
 	public List<String> getUserNames() {
 		return new ArrayList<String>(userMap.keySet());
 	}
+
 }

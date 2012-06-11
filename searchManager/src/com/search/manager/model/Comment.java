@@ -93,6 +93,7 @@ private static final long serialVersionUID = 1L;
 
 	public String getFormatDateTimeUsingConfig(){
 		//TODO: fix call to getStoreId()
+		// currently only used in GUI so no issue
 		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), createdDate);
 	}
 }

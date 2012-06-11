@@ -26,6 +26,7 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.service.UtilityService;
@@ -118,6 +119,9 @@ public class AuditInterceptor {
 				break;
 			case ruleStatus:
 				logRuleStatus(jp, auditable, auditTrail);
+				break;
+			case security:
+				logSecurity(jp, auditable, auditTrail);
 				break;
 		}
 	}
@@ -253,9 +257,8 @@ public class AuditInterceptor {
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
 		String searchTerm = rule.getSearchTerm();
-		String condition = rule.getRedirectFilter(); 
-		//TODO fix this later 
-		auditTrail.setStoreId(UtilityService.getStoreName());
+		String condition = rule.getRedirectFilter();
+		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		auditTrail.setKeyword(searchTerm);
 		auditTrail.setReferenceId(refId);
@@ -405,7 +408,7 @@ public class AuditInterceptor {
 	
 	private void logRuleStatus(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RuleStatus ruleStatus = (RuleStatus)jp.getArgs()[0];
-		auditTrail.setStoreId(UtilityService.getStoreName());
+		auditTrail.setStoreId(ruleStatus.getStoreId());
 		auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 		//TODO get keywords for query cleaning/ranking rule?
 		if (RuleEntity.ELEVATE.getCode() == ruleStatus.getRuleTypeId() || RuleEntity.EXCLUDE.getCode() == ruleStatus.getRuleTypeId()) {
@@ -424,6 +427,35 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
 							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
 				}
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+
+	private void logSecurity(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		if (auditTrail.getUsername() == null) {
+			return;
+		}
+		User user = (User)jp.getArgs()[0];
+		auditTrail.setStoreId(user.getStoreId());
+		auditTrail.setReferenceId(user.getUsername());
+		auditTrail.setCreatedBy(user.getCreatedBy()==null?user.getLastModifiedBy(): user.getCreatedBy());
+		switch (auditable.operation()) {
+			case add:
+				auditTrail.setDetails(String.format("Created username = [%1$s], group = [%2$s], locked = [%3$s], expired = [%4$s].", user.getUsername(),user.getGroupId(), 
+						!user.isAccountNonExpired(), !user.isAccountNonExpired()));
+				break;
+			case update:
+				auditTrail.setDetails(String.format("Updated username = [%1$s], locked = [%2$s], expired = [%3$s].", user.getUsername(),
+						!user.isAccountNonExpired(), !user.isAccountNonExpired()));
+				break;
+			case delete:
+				auditTrail.setDetails(String.format("Deleted username = [%1$s].", user.getUsername()));
+				break;
+			case resetPassword:
+				auditTrail.setDetails(String.format("Password has been reset for username = [%1$s].", user.getUsername()));
 				break;
 			default:
 				return;

@@ -618,11 +618,11 @@
 		$('div#relevancy .saveIcon').off().on({
 			click:function(e){
 				var field = getRelevancyField(e);
-				if (!e.data.locked) 
+				if (!e.data.locked || allowModify ) 
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 
 		showGraph = function(e){
 			var field = getRelevancyField(e);
@@ -798,6 +798,7 @@
 	};
 
 	var cloneRule = function(e){
+		if (e.data.locked || !allowModify) return;
 		$(this).qtip({
 			content: {
 				text: $('<div/>'),
@@ -819,8 +820,9 @@
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-						defaultDate: "+1w",
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({			
+						minDate: 0,
+						maxDate: '+1Y',			
 						showOn: "both",
 						buttonImage: "../images/icon_calendar.png",
 						buttonImageOnly: true,
@@ -895,9 +897,10 @@
 			}
 		});
 	};
-
+	  
+	
 	var updateRule = function(e){
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		var unSaved = getUnSavedRelevancyFields();
 		var ruleName = $.trim($('div#relevancy input[id="name"]').val()); 
@@ -918,6 +921,9 @@
 			}
 			else if (!isXSSSafe(description)){
 				showMessage("textarea#description", "Description contains XSS.");
+			}
+			else if (description.length>255){
+				showMessage("textarea#description","Description should not exceed 255 characters.");
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
 				alert("Please provide a valid date range!");
@@ -968,7 +974,7 @@
 	};
 
 	var deleteRule = function(e) { 
-		if (!e.data.locked && confirm(deleteRuleConfirmText)){
+		if (!e.data.locked && allowModify && confirm(deleteRuleConfirmText)){
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
 					if (code > 0) {
@@ -986,7 +992,7 @@
 		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
-		$("#titleHeader").html("");
+		$("#titleText").html(moduleName);
 	};
 
 	var showRelevancy = function(){
@@ -1017,11 +1023,12 @@
 		$("#startDate, #endDate").datepicker("destroy");
 
 		var dates = $("#startDate, #endDate").datepicker({
-			defaultDate: "+1w",
+			minDate: 0,
+			maxDate: '+1Y',
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default"),
+			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 			onSelect: function(selectedDate) {
 				var option = this.id == "startDate" ? "minDate" : "maxDate",
 						instance = $(this).data("datepicker"),
@@ -1039,16 +1046,17 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 
 		$("#cloneBtn").off().on({
-			click: cloneRule
-		},{locked:false});
+			click: cloneRule,
+			mouseenter: showHoverInfo
+		},{locked:!allowModify});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 		
 		$("a#downloadIcon").download({
 			headerText:"Download Ranking Rule",
@@ -1095,7 +1103,7 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: false, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
 	};
 
@@ -1128,7 +1136,7 @@
 			pageSize: rulePageSize,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1155,7 +1163,8 @@
 							$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
 							var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
-								defaultDate: "+1w",
+								minDate: 0,
+								maxDate: '+1Y',	
 								showOn: "both",
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true,
@@ -1187,9 +1196,12 @@
 									else if (!isXSSSafe(popDescription)){
 										alert("Description contains XSS.");
 									}
+									else if (popDescription.length>255){
+										alert("Description should not exceed 255 characters.");
+									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
-									} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
+									}else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
 											alert("End date cannot be earlier than start date!");
 									}
 									else {
@@ -1379,7 +1391,28 @@
 			}
 		});
 	};
-
+	var initTextarea =function(){
+	$('textarea[maxlength]').on({
+		keyup:function(){  
+			
+        var limit = parseInt($(this).attr('maxlength'));  
+  
+        var text = $(this).val();  
+          
+        var chars = text.length;  
+  
+        //check if there are more characters then allowed  
+        if(chars > limit){  
+            //and if there are use substr to get the text before the limit  
+            var new_text = text.substr(0, limit);  
+  
+            //and change the current text with the new text  
+            $(this).val(new_text);  
+        }  
+		}
+    
+    });
+	};
 	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
 			fieldId: "keywordId",
@@ -1390,7 +1423,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId, "_default"),
+			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId , "_default") && allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -1409,7 +1442,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -1421,7 +1454,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default")});
+				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 			},
 			itemAddCallback: function(base, keyword){
 				RelevancyServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
@@ -1438,6 +1471,7 @@
 	};
 
 	$(document).ready(function() { 
+		initTextarea();
 		showRelevancy();
 		getRelevancyRuleList();
 		getRelevancyRuleKeywordList();

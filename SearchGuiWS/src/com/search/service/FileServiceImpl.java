@@ -301,7 +301,7 @@ public class FileServiceImpl implements FileService{
 			List<RelevancyKeyword> relKWList = null;
 			Relevancy relevancy = new Relevancy();
 			relevancy.setRelevancyId(ruleId);
-			relevancy.setStore(new Store(UtilityService.getStoreName()));
+			relevancy.setStore(new Store(storeName));
 			relevancy = daoService.getRelevancyDetails(relevancy);
 			
 			if(relevancy != null){

@@ -8,10 +8,9 @@
 
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
 
-     
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
  	<div class="clearB floatL w240">
 		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
     </div>
@@ -50,8 +49,8 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="50px" class="txtAL"></th>
-							<th width="230px" class="txtAL">Rule Info</th>
+							<th width="50px">Content</th>
+							<th width="230px">Rule Info</th>
 							<th width="85px">Request Type</th>
 							<th>Request Details</th>
 						</tr>
@@ -64,7 +63,7 @@
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
 							<td class="txtAC" width="50px" id="ruleOption">
-								<img class="previewIcon pointer" src="<spring:url value="/images/icon_preview.png" />" alt="Preview Content" title="Preview Content"> 
+								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
 							<td width="230px" id="ruleRefId">
 								<p class="w230 breakWord" id="ruleName"></p>
@@ -79,9 +78,14 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="display:none; background: #f3f3f3;">
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Approval Guidelines</h3>
-				<div class="fgray padL10 padR10 padB15 fsize11">lorem ipsum hey ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<div class="fgray padL10 padR10 padB15 fsize11">
+					<p align="justify">
+					Before approving any rule, it is advisable to review each one. Click on <strong>Review</strong> to view the rule details.<br/><br/>
+					If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
+					<p>
+				</div>
 				<label class="floatL padL13 w100"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" class="w510" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
@@ -116,8 +120,8 @@
 							<th width="20px">#</th>
 							<th width="60px" id="selectAll">Image</th>
 							<th width="94px">Manufacturer</th>
-							<th width="70px" class="txtAL">SKU #</th>
-							<th width="160px" class="txtAL">Name</th>
+							<th width="70px">SKU #</th>
+							<th width="160px">Name</th>
 							<th width="90px">Validity</th>
 						</tr>
 					<tbody>
@@ -140,7 +144,12 @@
 			
 			<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none">Approval Guidelines</h3>
-				<div class="fgray padL15 padR10 padB15 fsize11">Rule info Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<div class="fgray padL15 padR10 padB15 fsize11">
+					<p align="justify">
+					Before approving any rule, it is advisable to review rule details.<br/><br/>
+					If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
+					<p>
+				</div>
 				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
@@ -221,7 +230,12 @@
 			<div class="clearB"></div>
 			<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">
 				<h3 class="padL15" style="border:none">Approval Guidelines</h3>
-				<div class="fgray padL15 padR12 padB15 fsize11">1111 ffff Suspendisse ultricies faucibus ultricies. Etiam sit amet nibh id lorem malesuada congue at et lacus. Curabitur eget ligula quis libero porta lacinia. Morbi accumsan suscipit diam, id placerat ante euismod et. Pellentesque convallis lectus eget nibh condimentum nec suscipit nisi euismod. Vivamus accumsan, dolor non porttitor convallis, velit nulla vehicula sapien, quis mattis sapien urna ac massa.</div>
+				<div class="fgray padL15 padR12 padB15 fsize11">
+				<p align="justify">
+				Before approving any rule, it is advisable to review rule details.<br/><br/>
+				If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
+				<p>
+				</div>
 				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
 				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>

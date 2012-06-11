@@ -37,7 +37,7 @@
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
        
     <div class="clearB floatL w240">
 		<div id="rulePanel"></div>
@@ -88,8 +88,10 @@
 			        	</label>
 		        	</div>
 			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        	<div class="floatR marL8 marR3 padT5"> 	    
+	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
+	        			<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -121,7 +123,7 @@
 	<div class="clearB"></div>	
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/rankingRuleGuidelines.jpg"></div>
 		<div id="relevancy" class="relevancy fsize12">		
 			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
@@ -141,7 +143,7 @@
 					<label><input id="endDate" name="endDate" type="text" class="w70 marT5"></label>	
 				<div class="clearB"></div>
 					<label class="floatL w70 marT8 padT3">Description</label>
-					<label><textarea id="description" rows="4" class="marT8" style="width:240px"></textarea> </label>
+					<label><textarea id="description" rows="4" class="marT8" style="width:240px" maxlength="255"></textarea> </label>
 			</div>
 			
 			<div class="landingCont w45p83 minHeight185 floatL marL13">
@@ -188,9 +190,9 @@
 	
 	<div id="addRelevancyTemplate" style="display:none">
 		<div class="w282 padT10 newRelevancy">
-			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185"></label><div class="clearB"></div>
+			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="50"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Schedule </label> <label><input name="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input name="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>
-			<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185"></textarea> </label><div class="clearB"></div>
+			<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185" maxlength="255"></textarea> </label><div class="clearB"></div>
 			<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
 		</div>
 	</div>
@@ -361,7 +363,7 @@
 	</div><!-- end landing page -->
 	
   <div id="ruleIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+  	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>	
 </div>  <!--  end content page --> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>

@@ -20,11 +20,14 @@ import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
+import com.search.manager.dao.sp.GroupsDAO;
 import com.search.manager.dao.sp.KeywordDAO;
 import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
+import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
@@ -34,8 +37,8 @@ import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.Group;
 import com.search.manager.model.Keyword;
-import com.search.manager.model.NameValue;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -49,6 +52,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.User;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -68,6 +72,8 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
 	@Autowired private CommentDAO		commentDAO;
+	@Autowired private UsersDAO			usersDAO;
+	@Autowired private GroupsDAO		groupsDAO;
 
 	private DaoServiceImpl instance;
 	
@@ -127,9 +133,17 @@ public class DaoServiceImpl implements DaoService {
 		this.commentDAO = commentDAO;
 	}
 
+	public void setUsersDAO(UsersDAO usersDAO) {
+		this.usersDAO = usersDAO;
+	}
+
+	public void setGroupsDAO(GroupsDAO groupsDAO) {
+		this.groupsDAO = groupsDAO;
+	}
+
 	/* Audit Trail */
-    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail) {
-    	return auditTrailDAO.getAuditTrail(auditDetail);
+    public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) {
+    	return auditTrailDAO.getAuditTrail(auditDetail, adminFlag);
     }
     
     public int addAuditTrail(AuditTrail auditTrail) {
@@ -137,8 +151,8 @@ public class DaoServiceImpl implements DaoService {
     }
     
 	@Override
-	public List<NameValue> getDropdownValues() throws DaoException {
-		return auditTrailDAO.getDropdownValues();
+	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException {
+		return auditTrailDAO.getDropdownValues(type, storeId, adminFlag);
 	}
 
 	/* Big Bets */
@@ -563,7 +577,14 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRelevancy(Relevancy relevancy) throws DaoException {
-		return relevancyDAO.deleteRelevancy(relevancy);
+		int result = relevancyDAO.deleteRelevancy(relevancy);
+		RuleStatus ruleStatus = new RuleStatus();
+		ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
+		ruleStatus.setRuleRefId(relevancy.getRuleId());
+		ruleStatus.setStoreId(relevancy.getStore().getStoreId());
+		//TODO add transaction
+		processRuleStatus(ruleStatus, true);
+		return result;
 	}
 	
 	@Override
@@ -719,7 +740,14 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
-		return redirectRuleDAO.deleteRedirectRule(rule);
+		int result = redirectRuleDAO.deleteRedirectRule(rule);
+		RuleStatus ruleStatus = new RuleStatus();
+		ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
+		ruleStatus.setRuleRefId(rule.getRuleId());
+		ruleStatus.setStoreId(rule.getStoreId());
+		//TODO add transaction
+		processRuleStatus(ruleStatus, true);
+		return result;
 	}
 
 	@Override
@@ -826,6 +854,14 @@ public class DaoServiceImpl implements DaoService {
 		return commentDAO;
 	}
 
+	public UsersDAO getUsersDAO() {
+		return usersDAO;
+	}
+
+	public GroupsDAO getGroupsDAO() {
+		return groupsDAO;
+	}
+
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
 		return ruleStatusDAO.getRuleStatus(searchCriteria);
@@ -870,7 +906,7 @@ public class DaoServiceImpl implements DaoService {
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
 		int result = -1;
 		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
-		if (rSet.getList().size()>0) {
+		if (rSet.getList().size() > 0) {
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			if (isDelete) {
 				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
@@ -878,7 +914,7 @@ public class DaoServiceImpl implements DaoService {
 				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());
 			}
 			result = updateRuleStatus(ruleStatus);
-		} else {
+		} else if (!isDelete){
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
 			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
@@ -906,5 +942,58 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public int removeComment(Integer commentId) throws DaoException {
 		return commentDAO.deleteComment(commentId);
+	}
+
+	@Override
+	public RecordSet<User> getUsers(SearchCriteria<User> searchCriteria, MatchType matchTypeName) throws DaoException {
+		return usersDAO.getUsers(searchCriteria, matchTypeName);
+	}
+
+	@Override
+	public User getUser(String username) throws DaoException {
+		User user = new User();
+		user.setUsername(username);
+		SearchCriteria<User> criteria = new SearchCriteria<User>(user,null,null,0,0);
+		RecordSet<User> users = getUsers(criteria, MatchType.MATCH_ID);
+		return users.getTotalSize()>0 ? users.getList().get(0) : null;
+	}
+
+	@Override
+	public int addUser(User user) throws DaoException {
+		return usersDAO.addUser(user);
+	}
+
+	@Override
+	public int updateUser(User user) throws DaoException {
+		return usersDAO.updateUser(user);
+	}
+
+	public int resetPassword(User user) throws DaoException {
+		return usersDAO.resetPassword(user);
+	}
+	
+	public int login(User user) throws DaoException {
+		return usersDAO.login(user);
+	}
+	
+	
+	@Override
+	public int removeUser(User user) throws DaoException {
+		return usersDAO.deleteUser(user);
+	}
+
+	@Override
+	public List<String> getAllPermissions() throws DaoException {
+		return groupsDAO.getAllPermissions();
+	}
+
+	@Override
+	public List<String> getGroups() throws DaoException {
+		return groupsDAO.getGroups();
+	}
+
+	@Override
+	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException {
+		return groupsDAO.getGroupPermission(groupId);
 	}
 }

@@ -3,7 +3,7 @@
   <display-name>Search Gui WS</display-name>
   <context-param>
     <param-name>log4jConfigLocation</param-name>
-    <param-value>file:/home/solr/bin/ws/config/log4j.properties</param-value>
+    <param-value>file:/home/solr/bin/ws/config/log4j.xml</param-value>
   </context-param>
   <listener>
     <listener-class>

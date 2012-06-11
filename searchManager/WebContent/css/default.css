@@ -86,6 +86,11 @@ body 							{ margin: 0px; }
 .cssReset .w100p, .w100p		{width:100% }
 .cssReset .w99p, .w99p			{width:99% }
 .cssReset .w97p, .w97p			{width:97% }
+.cssReset .w95p, .w95p			{ width:95% }
+.cssReset .w90p, .w90p			{ width:90% }
+.cssReset .w88p, .w88p			{ width:88% }
+.cssReset .w78p, .w78p			{ width:78% }
+.cssReset .w70p, .w70p			{ width:70% }
 .cssReset .w68p, .w68p			{ width:68% }
 .cssReset .w60p, .w60p			{ width:60% }
 .cssReset .w50p, .w50p			{ width:50% }
@@ -95,11 +100,6 @@ body 							{ margin: 0px; }
 .cssReset .w45p, .w45p			{ width:45% }
 .cssReset .w45p83p, .w45p83		{ width:45.83% }
 .cssReset .w32p, .w32p			{ width:32% }
-.cssReset .w70p, .w70p			{ width:70% }
-.cssReset .w78p, .w78p			{ width:78% }
-.cssReset .w88p, .w88p			{ width:88% }
-.cssReset .w90p, .w90p			{ width:90% }
-
 
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
@@ -126,6 +126,7 @@ body 							{ margin: 0px; }
 .cssReset .padTB5				{padding:5px 0}
 .cssReset .padTB7				{padding:7px 0}
 .cssReset .padTB10				{padding:10px 0}
+.cssReset .padL0, .padL0		{padding-left:0 !important}
 .cssReset .padL5, .padL5		{padding-left:5px !important}
 .cssReset .padL7				{padding-left:7px}
 .cssReset .padL10				{padding-left:10px}
@@ -194,8 +195,10 @@ body 							{ margin: 0px; }
 .cssReset .marL30, .marL30		{margin-left:30px}
 .cssReset .marL70, .marL70		{margin-left:70px}
 .cssReset .marRL3 				{margin-left:3px; margin-right:3px }
+.cssReset .marRLauto, .marRLauto{margin-left:auto; margin-right:auto }
 .cssReset .marRL5, .marRL5		{margin-left:5px; margin-right:5px }
 .cssReset .marRL20, .marRL20	{margin-left:20px; margin-right:20px }
+.cssReset .marB0, .marB0		{margin-bottom:0 !important}
 .cssReset .marB4, .marB4		{margin-bottom:4px}
 .cssReset .marB8, .marB8		{margin-bottom:8px}
 .cssReset .marB10, .marB10		{margin-bottom:10px !important}

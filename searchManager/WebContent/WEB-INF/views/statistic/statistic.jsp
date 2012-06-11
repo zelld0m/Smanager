@@ -20,7 +20,7 @@
      
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
     
 	<div class="clearB floatL w240">
     	<div class="sideHeader">Site Updates</div>
@@ -62,6 +62,93 @@
 	
 	<a href="javascript:void(0);" class="buttons btnDisable clearfix"> <div class="buttons fontBold">Approve</div> 	</a>
 	<div class="clearB"></div>
+	
+	
+	
+	<div class="w95p marRLauto">
+		<table class="tblAlpha w100p" >
+			<tr>
+				<th width="75px" id="selectAll"></th>
+				<th width="480px" class="txtAL">Keyword</th>
+				<th width="135px">Count</th>
+			</tr>
+		</table>
+	</div>
+	<div class="w95p marRLauto padT0 marT0" style="max-height:365px; overflow-y:auto">
+		<table class="tblAlpha padT0 marT0" width="100%">
+			<tr>
+				<td width="69px">1</td>
+				<td width="461px">western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+			<tr>
+				<td>1</td>
+				<td>western digital external hard drive</td>
+				<td>422</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td>dvd drive</td>
+				<td>423</td>
+			</tr>
+		</table>
+	</div>
 	
 </div> 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

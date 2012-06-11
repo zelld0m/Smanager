@@ -49,6 +49,30 @@
 		
 		return $(output);
 	};
+	
+	AjaxSolr.theme.prototype.filterByType = function(headerText) {
+		var output  = '';
+		
+		output  += '<div id="sideHeader" class="sideHeader posRel clearB" style="margin-top: 27px;">';
+		output  += '<img src="../images/corner_tl.png" class="curveTL"/>';
+		output  += '<img src="../images/corner_tr.png" class="curveTR"/>';
+		output  += headerText;
+		output  += '<img src="../images/corner_bl.png" class="curveBL"/>';
+		output  += '<img src="../images/corner_br.png" class="curveBR"/>';
+		output  += '</div>';
+		output  += '<div class="clearB floatL w230 padL5 fsize12 marT8">';
+		output  += '<label class="floatL w30 list"><input type="checkbox"></label><label class="floatL w170 list padT3">Remove Product Descriptions</label>';
+		output  += '<div class="clearB borderT padB5 fsize12 padT10">License Product</div>';
+		output  += '<select class="w100p mar0">';
+		output  += '<option value="both">Both License & Non-License</option>';
+		output  += '<option value="license">License Products Only</option>';
+		output  += '<option value="non-license">Non-License Products Only</option>';
+		output  += '</select>';
+		output  += '<div class="clearB"></div>';
+		output  += '</div>';
+	
+		return $(output);
+	};
 
 	AjaxSolr.theme.prototype.createFacetHolder = function (facetLabel, facet) {
 		var output  = '<div class="clearB floatL w240">';

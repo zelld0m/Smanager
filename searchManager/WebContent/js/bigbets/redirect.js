@@ -83,12 +83,12 @@
 		$("#saveBtn").off().on({
 			click: updateRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || !allowModify});
 
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked});
+		},{locked:selectedRuleStatus.locked || !allowModify});
 
 		$("a#downloadIcon").download({
 			headerText:"Download Query Cleaning",
@@ -135,48 +135,58 @@
 
 		$('#auditIcon').on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 
+		var addRuleConditionRunning = false;
 		$("#addRuleCondition").off().on({
 			mouseenter: showHoverInfo,
 			click:function() {
 				
-				var rule = getSelectedCategory();
-				manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
+				if (!addRuleConditionRunning) {
+					addRuleConditionRunning = true;
+					
+					var rule = getSelectedCategory();
+					manufacturer = $("select#manufacturerList option[value!='all']:selected").val();
 
-				if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
-					alert("At least one category code, category or manufacturer is expected.");
-					return;
-				}
-				
-				if ($.isNotBlank($("#catcodetext").val())){
-					rule = $("#catcodetext").val();
-					$("#catcodetext").val("");
-				}
-
-				if (rule.length > 0) {
-					if (rule.length < 4 && rule.indexOf("*", 0) == -1) {
-						rule = rule + "*";
+					if ($.isBlank(rule) && $.isBlank(manufacturer) && $.isBlank($("#catcodetext").val())) {
+						alert("At least one category code, category or manufacturer is expected.");
+						addRuleConditionRunning = false;
+						return;
 					}
-					rule = "CatCode:" + rule;
-				}
-				if (manufacturer!=null && manufacturer.length>0){
+					
+					if ($.isNotBlank($("#catcodetext").val())){
+						rule = $("#catcodetext").val();
+						$("#catcodetext").val("");
+					}
+
 					if (rule.length > 0) {
-						rule = rule + " AND ";
-					}
-					rule = rule + "Manufacturer:\"" + manufacturer + "\"";
-				}
-
-				if($.isNotBlank(rule)){
-					RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
-						callback:function(code){
-							showActionResponse(code, "add", rule);
-							getRuleConditionInRuleList(1);
+						if (rule.length < 4 && rule.indexOf("*", 0) == -1) {
+							rule = rule + "*";
 						}
-					});
+						rule = "CatCode:" + rule;
+					}
+					if (manufacturer!=null && manufacturer.length>0){
+						if (rule.length > 0) {
+							rule = rule + " AND ";
+						}
+						rule = rule + "Manufacturer:\"" + manufacturer + "\"";
+					}
+
+					if($.isNotBlank(rule)){
+						RedirectServiceJS.addRuleCondition(selectedRule.ruleId, rule,{
+							callback:function(code){
+								showActionResponse(code, "add", rule);
+								addRuleConditionRunning = false;
+								getRuleConditionInRuleList(1);
+							}
+						});
+					}
+					else {
+						addRuleConditionRunning = false;
+					}
 				}
 			}
-		},{locked: selectedRuleStatus.locked});	
+		},{locked: selectedRuleStatus.locked || !allowModify});	
 	};
 
 	var getKeywordInRuleList = function(page){
@@ -189,7 +199,7 @@
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
-			showAddButton: !selectedRuleStatus.locked,
+			showAddButton: !selectedRuleStatus.locked || allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -208,7 +218,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -219,10 +229,10 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 			},
 			itemAddCallback: function(base, keyword){
-				if (!selectedRuleStatus.locked){
+				if (!selectedRuleStatus.locked || allowModify){
 					RedirectServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
 						callback: function(code){
 							showActionResponse(code, "add", keyword);
@@ -330,7 +340,7 @@
 
 				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 					click: function(e){
-						if (!e.data.locked && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
+						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
 							RedirectServiceJS.deleteConditionInRule(selectedRule.ruleId, name,{
 								callback:function(code){
 									showActionResponse(code, "delete", name);
@@ -340,7 +350,7 @@
 							});
 					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 			}
 		});
 	};
@@ -374,7 +384,7 @@
 			pageSize: rulePageSize,
 			headerText : "Query Cleaning Rule",
 			searchText : "Enter Name",
-
+			showAddButton: allowModify,
 			itemDataCallback: function(base, keyword, page){
 				RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 					callback: function(data){
@@ -450,7 +460,7 @@
 	};
 
 	var updateRule = function(e) { 
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		var ruleName = $.trim($('div#redirect input[id="name"]').val());  
 		var description = $.trim($('div#redirect textarea[id="description"]').val());  
@@ -508,7 +518,7 @@
 	};
 
 	var deleteRule = function(e) { 
-		if (!e.data.locked && confirm(deleteRuleConfirmText)){
+		if (!e.data.locked  && allowModify && confirm(deleteRuleConfirmText)){
 			RedirectServiceJS.deleteRule(selectedRule,{
 				callback: function(code){
 					showActionResponse(code, "delete", selectedRule.ruleName);

@@ -12,7 +12,7 @@
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="companyLogo">
-		<a href="javascript:void()"><img src="<spring:url value="/images/logoMacMall.png" />"></a>
+		<a href="javascript:void()"><img src="<spring:url value="${storeLogo}" />"></a>
 	</div>
 	
 	<div class="clearB floatL w240">
@@ -32,7 +32,9 @@
 	  </div>
       <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
       	<!--  input id="addItem" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10"-->
-      	<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      	<sec:authorize access="hasRole('CREATE_RULE')">
+      		<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      	</sec:authorize>
       </div>
 	</div>
     
@@ -61,7 +63,9 @@
 		        	</div>
 			  	</div>   			  	
 	        	<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
+		        		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
+		        	</sec:authorize>
 	        	</div>
 	        </div>	
 	        <div class="clearB"></div>	
@@ -77,7 +81,7 @@
 			</ul>
 			
 			<!--  tab -->
-			<div id="addBySKU" class="mar0 borderT">
+			<div id="addBySKU" class="mar0">
 				<h3 class="padT10"></h3>
 				<div class="clearB"></div>
 				<div class="floatL marT5 marL5">
@@ -136,7 +140,7 @@
       <!--Start Displaying Items-->
       <div id="sortable-bigbets-container" class="clearB floatL w730" style="width:730px">
       	<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/ElevatePageisBlank.jpg"></div>
+		<div id="noSelected"><img id="no-items-img" src="../images/excludeRuleGuidelines.jpg"></div>
 		<div id="exclude">
         <ul id="sortable-bigbets">
         	<li id="sItemPattern" style="display: none; position:relative ">
@@ -158,7 +162,10 @@
 				   </div>
 				   <div class="floatL marT5 w282"> <p>Comment:</p>
 				   <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
-				   <div align="right"><a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a></div>
+				   <div align="right">
+				   		<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
+				   		<a id="clearCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
+				   	</div>
 				   </div>
 				</div>
 				<div id="viewAuditTemplate" style="display: none">
@@ -188,7 +195,7 @@
 		          <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
 		          <div class="txtAC posRel">
 		          <div id="sItemStampExp" class="stampExpired"></div>
-		         	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px">
+		         	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px; display: block; margin:0 auto">
 		         	<div id="sItemMan" class="manfcName"></div>
 		         	</div>
 		         	
@@ -232,7 +239,7 @@
       <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
       
 		<div id="ruleIsLocked" class="w180" style="display:none;">
-	  		<div class="w180 alert">You are not allowed to perform this action because rule is temporarily locked.</div>
+	  		<div class="w180 alert">You are not allowed to perform this action because  you do not have the required permission or rule is temporarily locked.</div>
 	  	</div>
 </div><!--End Right Side-->
        

@@ -26,6 +26,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/TextWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/FilterResultByTypeWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
@@ -38,32 +39,15 @@
 
     <!-- Start Left Side -->	   
     <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
     <div class="clearB marT27"></div>
 	<!-- Search Within Widget -->
     <div id="searchWithin" class="leftContainer"></div>
 	<div id="dynamicSelection"></div>
 	<div id="dynamicFacets"></div>
-	&nbsp; 
-	
-	 <!-- div class="clearB floatL w240">
-        <div class="sideHeader">Keyword Trends</div>
-        
-        <div class="sideBar">
-	        <ul>
-	        	<li>
-	        		<div class="textArea"> Keyword 1</div>
-	        		<div class="graphArea txtAL"> <img src="<spring:url value="/images/sampleGraph.jpg" />"></div>
-	        	</li>
-				<li>
-	        		<div class="textArea"> Keyword 2</div>
-	        		<div class="graphArea txtAL"> <img src="<spring:url value="/images/sampleGraph.jpg" />"></div>
-	        	</li>
-	        </ul>
-        </div>
-     </div  -->
-	
-    </div>
+	<div class="clearB"></div>
+	<div id="filterByType"></div>
+	</div>
 	<!-- End Left Side -->
 	
     <!-- Start Right Side -->	  

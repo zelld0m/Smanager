@@ -8,6 +8,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.search.manager.model.User;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -35,6 +36,8 @@ public class UserDetailsImpl implements UserDetails {
 	
 	private String currentPage;	
 	
+	private String storeId;
+	
 	public UserDetailsImpl() {}
 	
 	public UserDetailsImpl(Collection<GrantedAuthority> authorities, String password, String username, String fullName, boolean accountNonExpired,
@@ -49,6 +52,17 @@ public class UserDetailsImpl implements UserDetails {
 		this.enabled = enabled;
 	}
 	
+	public UserDetailsImpl(User user) {
+		this.password = user.getPassword();
+		this.username = user.getUsername();
+		this.fullName = user.getFullName();
+		this.accountNonExpired = user.isAccountNonExpired();
+		this.accountNonLocked = user.isAccountNonLocked();
+		this.credentialsNonExpired = user.isCredentialsNonExpired();
+		this.enabled = user.isEnabled();
+		this.storeId = user.getStoreId();
+	}
+
 	public Collection<GrantedAuthority> getAuthorities() {
 		return authorities;
 	}
@@ -135,5 +149,13 @@ public class UserDetailsImpl implements UserDetails {
 	
 	public String getElapsedTime(){
 		return DateAndTimeUtils.getElapsedTime(getLoggedIntime(), new Date());
+	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
 	}
 }

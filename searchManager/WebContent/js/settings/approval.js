@@ -70,15 +70,29 @@
 			alert(okmsg);
 		};
 
+		function checkIfDeleted() {
+			var refIds = getSelectedRefId();
+			for(var i=0; i<refIds.length; i++){	
+				status = $("tr#ruleItem" + $.formatAsId(refIds[i]) + " > td#type").html();
+				if ('DELETE' == status) {
+					return true;
+				}
+			}
+			return false;
+		};
+		
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
-					if ($.isNotBlank(comment)){
-
+					if (getSelectedRefId().length==0){
+						alert("Please select rule");
+					}else if ($.isBlank(comment)){
+						alert("Please add comment.");
+					}else{
 						switch($(evt.currentTarget).attr("id")){
-						case "approveBtn": 
+						case "approveBtn":
 							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									postMsg(data,true);	
@@ -93,6 +107,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									postMsg(data,false);	
@@ -106,8 +124,6 @@
 								}	
 							});break;
 						}	
-					}else{
-						alert("Please add comment.");
 					}
 
 				}
@@ -119,9 +135,10 @@
 				callback:function(data){
 					var list = data.list;
 
+					var HTML = $("div#tabContentTemplate").html();
+					$(tabSelected).html(HTML);
+
 					if (data.totalSize>0){
-						var HTML = $("div#tabContentTemplate").html();
-						$(tabSelected).html(HTML);
 
 						// Populate table row
 						for(var i=0; i<data.totalSize ; i++){
@@ -150,6 +167,13 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						approvalHandler();
+						
+						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						
+					}else{
+						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
+						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
+						$(tabSelected).find('div#actionBtn').hide();
 					}
 				},
 				preHook:function(){ 
@@ -227,6 +251,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
 								callback: function(data){
 									refresh = true;
@@ -280,9 +308,9 @@
 				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
 				var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
-				$ul.find("li span#startDate").parent("li").remove();
-				$ul.find("li span#endDate").parent("li").remove();
-
+				$ul.find("span#startDate").parents("li").remove();
+				$ul.find("span#endDate").parents("li").remove();
+				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 
@@ -401,6 +429,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
 								callback: function(data){
 									postMsg(data,false);	

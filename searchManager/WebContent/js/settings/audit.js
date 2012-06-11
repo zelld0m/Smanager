@@ -111,19 +111,38 @@
 
 	$(document).ready(function() { 
 
-		AuditServiceJS.getDropdownValues({
+		AuditServiceJS.getDropdownValues(1,{
 			callback: function(data){ 
-				$.each(data, function(key, element) {
-					if ("USER_NAME" == element.name) {
-						$("#userList").append($("<option>", { value : element.value }).text(element.value)); 
-					} else if ("ACTION" == element.name) {
-						$("#actionList").append($("<option>", { value : element.value }).text(element.value)); 
-					} else if ("ENTITY" == element.name) {
-						$("#typeList").append($("<option>", { value : element.value }).text(element.value)); 
-					} else if ("REFERENCE" == element.name) {
-						$("#refList").append($("<option>", { value : element.value }).text(element.value)); 
-					} 
-				});
+				for (var i = 0; i < data.length; i++) {
+						$("#userList").append($("<option>", { value : data[i] }).text(data[i])); 
+				};
+			},
+			errorHandler: function(message){ alert(message); }
+		});		
+
+		AuditServiceJS.getDropdownValues(2,{
+			callback: function(data){ 
+				for (var i = 0; i < data.length; i++) {
+						$("#actionList").append($("<option>", { value : data[i] }).text(data[i])); 
+				};
+			},
+			errorHandler: function(message){ alert(message); }
+		});		
+
+		AuditServiceJS.getDropdownValues(3,{
+			callback: function(data){ 
+				for (var i = 0; i < data.length; i++) {
+						$("#typeList").append($("<option>", { value : data[i] }).text(data[i])); 
+				};
+			},
+			errorHandler: function(message){ alert(message); }
+		});		
+
+		AuditServiceJS.getDropdownValues(4,{
+			callback: function(data){ 
+				for (var i = 0; i < data.length; i++) {
+						$("#refList").append($("<option>", { value : data[i] }).text(data[i])); 
+				};
 			},
 			errorHandler: function(message){ alert(message); }
 		});		
@@ -156,13 +175,18 @@
 		});
 
 		$("#resetBtn").click(function() {
-			$("#userList option:first").attr("selected","selected");
-			$("#actionList option:first").attr("selected","selected");
-			$("#typeList option:first").attr("selected","selected");
 			$("#keyword").val("");
-			$("#refList option:first").attr("selected","selected");
+			$("#keyword").val("");
 			$("#startDate").val("");
 			$("#endDate").val("");
+			
+			$('#userList').prop("selectedIndex", 0);
+			$('#refrole').prop("selectedIndex", 0);
+			$('#actionList').prop("selectedIndex", 0);
+			$('#typeList').prop("selectedIndex", 0);
+			$('#refList').prop("selectedIndex", 0);
+			
+			getAuditTrail(1);
 		});
 
 		getAuditTrail(1);

@@ -10,7 +10,7 @@
 
     <!--Left Menu-->
     <div class="clearB floatL sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="/images/logoMacMall.png" />"></a></div>
+    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
       <!-- Keyword -->
       <div class="clearB floatL w240">
         <div class="farial fsize16 fwhite bluebgTitle">Keyword</div>

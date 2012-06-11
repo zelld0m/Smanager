@@ -24,7 +24,7 @@
 	var lockedItemDisplayText = "This item is locked";
 
 	var showAddItem = function(e){
-		if (e.data.locked) return;
+		if (e.data.locked || !allowModify) return;
 
 		$(this).qtip({
 			content: {
@@ -171,7 +171,7 @@
 
 	var deleteItemInRule = function(e){
 		var data = e.data;
-		if (!data.locked && confirm(deleteItemInRuleConfirmText)){
+		if (!data.locked && allowModify && confirm(deleteItemInRuleConfirmText)){
 			ElevateServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
 				callback: function(code){
 					showActionResponse(code, "delete", data["edp"]);
@@ -199,7 +199,15 @@
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
 
-		$("#sItemImg" + id).attr("src",item["imagePath"]);
+		setTimeout(function(){		
+			$("#sItemImg" + id).attr("src",item['imagePath']);
+			$("#sItemImg" + id).on({
+				error:function(){ 
+					$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
+				}
+			});
+		},10);
+		
 		$("#sItemMan" + id).html(item["manufacturer"]);
 		$("#sItemName" + id).html(item["name"]);
 		$("#sItemDPNo" + id).html(item["dpNo"]);
@@ -212,18 +220,12 @@
 
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
 
-		$("#sItemImg" + id).on({
-			error:function(){ 
-				$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
-			}
-		});
-
 		if (selectedRuleStatus.locked)
 			$('#sItemPosition' + id).attr("readonly", "readonly");
 
 		$('#sItemPosition' + id).on({
 			keypress:function(e){
-				if (e.data.locked) return;
+				if (e.data.locked || !allowModify) return;
 
 				var currentIndex = $.trim(($(this).parent("li").index()+1) + ((selectedRuleItemPage-1)*ruleItemPageSize));
 
@@ -247,15 +249,15 @@
 				return true;
 			},
 			focus:function(e){
-				if (e.data.locked) return; 
+				if (e.data.locked || !allowModify) return; 
 				if ($(this).val()==item["location"]) $(this).val("");
 			},
 			blur:function(e){
-				if (e.data.locked) return; 
+				if (e.data.locked || !allowModify) return; 
 				$(this).val(item["location"]);   
 			},	
 			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked});
+		},{locked: selectedRuleStatus.locked || !allowModify});
 
 		// Product is no longer visible in the setting
 		if ($.isBlank(item["dpNo"])){
@@ -268,16 +270,16 @@
 
 		$('#commentIcon' + id).on({
 			click: showCommentList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, item: item, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
 
 		$('#auditIcon' + id).on({
 			click: showAuditList
-		}, {locked: selectedRuleStatus.locked, type:moduleName, item: item, name: selectedRule.ruleName});
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
 
 		$('#sItemDelete' + id).off().on({
 			click: deleteItemInRule,
 			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked, edp:item["edp"]});
+		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"]});
 
 		$("#sItemExpDate" + id).val(item["formattedExpiryDate"]);
 
@@ -288,7 +290,7 @@
 			buttonText: "Expiration Date",
 			buttonImage: "../images/icon_calendar.png",
 			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked,
+			disabled: selectedRuleStatus.locked || !allowModify,
 			onSelect: function(dateText, inst) {	
 				if (item["formattedExpiryDate"] != dateText){
 					ElevateServiceJS.updateExpiryDate(selectedRule.ruleName,item["edp"], dateText, {
@@ -350,12 +352,12 @@
 				$("#addItemBtn").off().on({
 					click: showAddItem,
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 
 				$("a#clearRuleBtn").off().on({
 					mouseenter: showHoverInfo,
 					click: function(e){
-						if(!e.data.locked && confirm(clearRuleConfirmText))
+						if(!e.data.locked && allowModify && confirm(clearRuleConfirmText))
 							ElevateServiceJS.clearRule(selectedRule.ruleName, {
 								callback: function(code){
 									showActionResponse(code, "clear", selectedRule.ruleName);
@@ -363,7 +365,7 @@
 								}
 							});
 					}
-				},{locked: selectedRuleStatus.locked});
+				},{locked: selectedRuleStatus.locked || !allowModify});
 
 				$("#submitForApprovalBtn").off().on({
 					click: function(e){
@@ -427,7 +429,8 @@
 			fieldId: "keywordId",
 			fieldName: "keyword",
 			headerText : "Keyword",
-			searchText : "Enter Search",
+			searchText : "Enter Keyword",
+			showAddButton: allowModify,
 			page: rulePage,
 			pageSize: rulePageSize,
 			filterText: ruleFilterText,

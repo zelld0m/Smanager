@@ -3,7 +3,6 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +60,7 @@ public class RuleStatusDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -71,6 +71,7 @@ public class RuleStatusDAO {
 	                		rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
+	                		rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
 	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
@@ -101,6 +102,7 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -151,6 +153,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_END_DATE, searchCriteria.getEndDate());
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
+			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
 			return DAOUtils.getRecordSet(getRuleStatusStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRuleStatus()", e);
@@ -169,6 +172,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -226,8 +230,8 @@ public class RuleStatusDAO {
 			sBuilder.append("AND APPROVED_STATUS = '").append(aStatus).append("'");
 		}
 		
-		return getRuleStatusStoredProcedure.getJdbcTemplate().query(sBuilder.toString(), new RowMapper() {
-		      public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+		return getRuleStatusStoredProcedure.getJdbcTemplate().query(sBuilder.toString(), new RowMapper<String>() {
+		      public String mapRow(ResultSet resultSet, int i) throws SQLException {
 		          return resultSet.getString(1);
 		        }
 		      });

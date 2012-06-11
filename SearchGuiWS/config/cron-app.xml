@@ -11,7 +11,7 @@
 	<beans:bean id="guiCronTriggerSingle" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<beans:property name="jobDetail" ref="guiProcessorCronSingle" />
 		<beans:property name="startDelay" value="5000" />
-		<beans:property name="repeatInterval" value="900000" />
+		<beans:property name="repeatInterval" value="10000" />
 	</beans:bean>
 	
 	<beans:bean name="guiProcessorCronSingle" class="org.springframework.scheduling.quartz.JobDetailBean">
