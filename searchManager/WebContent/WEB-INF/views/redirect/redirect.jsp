@@ -151,10 +151,13 @@
     			<div class="landingCont bgboxGray w96p50p floatL marT20">
     				<input type="checkbox"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
-	        	<h3 class="marT20">Category / Manufacturer</h3>
+	        	
+	        	<h2 class="borderB">IMS</h2>
+	        		        	
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
 						<td valign="top">
+						<h3>Category / Manufacturer</h3>
 							<div class="fsize12 mar10 dropdownArea">
 								<label class="floatL w100">CatCode</label><label class="floatL w200"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></label>
 								<div class="clearB"></div>
