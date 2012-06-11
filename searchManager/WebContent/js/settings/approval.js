@@ -70,6 +70,17 @@
 			alert(okmsg);
 		};
 
+		function checkIfDeleted() {
+			var refIds = getSelectedRefId();
+			for(var i=0; i<refIds.length; i++){	
+				status = $("tr#ruleItem" + $.formatAsId(refIds[i]) + " > td#type").html();
+				if ('DELETE' == status) {
+					return true;
+				}
+			}
+			return false;
+		};
+		
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
@@ -81,7 +92,7 @@
 						alert("Please add comment.");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
-						case "approveBtn": 
+						case "approveBtn":
 							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									postMsg(data,true);	
@@ -96,6 +107,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
 								callback: function(data){
 									postMsg(data,false);	
@@ -236,6 +251,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
 								callback: function(data){
 									refresh = true;
@@ -289,6 +308,8 @@
 				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
 
 				var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
+				$ul.find("span#startDate").parents("li").remove();
+				$ul.find("span#endDate").parents("li").remove();
 				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
@@ -310,8 +331,6 @@
 							}	
 						}
 
-						$ul.find("span#startDate").parents("li").remove();
-						$ul.find("span#endDate").parents("li").remove();
 						$ul.find("li span#description").html(data["description"]);
 					},
 					preHook: function(){
@@ -410,6 +429,10 @@
 							});break;
 
 						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								alert("Deleted rules cannot be rejected!");
+								return;
+							}
 							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
 								callback: function(data){
 									postMsg(data,false);	

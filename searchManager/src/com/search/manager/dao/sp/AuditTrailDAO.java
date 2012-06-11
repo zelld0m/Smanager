@@ -32,7 +32,8 @@ public class AuditTrailDAO {
 
 	private final static String GET_USER_SQL = "select distinct(USER_NAME) from AUDIT_TRAIL WHERE STORE = ? ORDER BY USER_NAME";
 	private final static String GET_ACTION_SQL = "select distinct(OPERATION) from AUDIT_TRAIL WHERE STORE = ? ORDER BY OPERATION";
-	private final static String GET_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? ORDER BY ENTITY";
+	private final static String GET_ADMIN_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? ORDER BY ENTITY";
+	private final static String GET_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? and ENTITY <> 'security' ORDER BY ENTITY";
 	private final static String GET_REF_SQL = "select distinct(REFERENCE) from AUDIT_TRAIL WHERE STORE = ? ORDER BY REFERENCE";
 
 	private AddAuditTrailStoredProcedure addSP;
@@ -146,7 +147,7 @@ public class AuditTrailDAO {
         return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
-	public List<String> getDropdownValues(int type, String storeId) {
+	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) {
 		String sql = null;
 		switch (type) {
 			case 1: 
@@ -156,7 +157,11 @@ public class AuditTrailDAO {
 				sql = GET_ACTION_SQL;
 				break;
 			case 3: 
-				sql = GET_ENTITY_SQL;
+				if (adminFlag) {
+					sql = GET_ADMIN_ENTITY_SQL;
+				} else {
+					sql = GET_ENTITY_SQL;
+				}
 				break;
 			case 4: 
 				sql = GET_REF_SQL;
@@ -169,5 +174,5 @@ public class AuditTrailDAO {
 					}
 				});
 	}
-
+	
  }

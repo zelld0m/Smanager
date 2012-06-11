@@ -26,7 +26,7 @@
 		<description>%s password was not updated.</description>
 	</message>
 	<message name="password.not.match">
-		<description>New and old passwords do not match.</description>
+		<description>Current password is incorrect.</description>
 	</message>
 	<message name="username.exist">
 		<description>Username already exists.</description>

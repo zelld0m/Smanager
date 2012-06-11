@@ -19,8 +19,10 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.TopKeyword;
 import com.search.manager.utility.PropsUtils;
@@ -34,6 +36,8 @@ import com.search.manager.utility.PropsUtils;
 public class TopKeywordService {
 	
 	private static final Logger logger = Logger.getLogger(TopKeywordService.class);
+	
+	@Autowired ReportNotificationMailService reportNotificationMailService;
 	
 	@RemoteMethod
 	public List<String> getFileList(){
@@ -84,10 +88,14 @@ public class TopKeywordService {
 		return new RecordSet<TopKeyword>(list, list.size());
 	}
 
+	private File getFile(String filename){
+		return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
+	}
+	
 	@RemoteMethod
 	public FileTransfer downloadFileAsCSV(String filename, String customFilename)  {
 		FileTransfer fileTransfer = null;
-		File file = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
+		File file = getFile(filename);
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		BufferedInputStream bis = null;
 		try {
@@ -110,5 +118,9 @@ public class TopKeywordService {
 		}
 		return fileTransfer;
 	}
-
+	
+	@RemoteMethod
+	public void sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
+		reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
+	}
 }

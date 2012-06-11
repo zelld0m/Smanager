@@ -162,7 +162,7 @@ public class AuditService {
 	@RemoteMethod
 	public List<String> getDropdownValues(int type) {
 		try {
-			return daoService.getDropdownValues(type, UtilityService.getStoreName());
+			return daoService.getDropdownValues(type, UtilityService.getStoreName(), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			logger.error("Error getting dropdown values" + e.getMessage());
 		}

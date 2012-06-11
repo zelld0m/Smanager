@@ -27,7 +27,7 @@
 		        <li><a href="#statistics"><span>Statistics</span><span class="fsize11"></span></a></li>
 		        <li><a href="#lexicon"><span>Lexicon</span><span class="fsize11"></span></a></li>
 		        <li><a href="#settings"><span>Settings</span><span class="fsize11"></span></a></li>
-		        <li><a href="#dateAndTime"><span>Date and Time</span><spkan class="fsize11"></span></a></li>
+		        <li><a href="#dateAndTime"><span>Date and Time</span><span class="fsize11"></span></a></li>
 		    </ul>
 		
 		<div id="home" class="txtAL padL0 marT0">
@@ -56,7 +56,7 @@
 				</tr>
 				<tr>
 					<td width="130px">Old Password</td>
-					<td><input type="password" id="proOld" class="w150" value="secret"/></td>
+					<td><input type="password" id="proOld" class="w150"/></td>
 				</tr>
 				<tr>
 					<td>New Password</td>
