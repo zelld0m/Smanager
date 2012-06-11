@@ -98,21 +98,6 @@
 		<div id="noSelected"><img id="no-items-img" src="../images/queryCleaningRuleGuidelines.jpg"></div>
 
 		<div id="redirect" class="redirect fsize12">	
-			
-			<div class="landingCont bgboxGray w96p50p floatL">
-				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
-					Replacement Keyword
-				</div>
-				<input type="text" class="floatL w200"> 
-				<div class="floatL marL5">
-					<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-				</div>
-				<div>
-					<div class="clearB marT10 padT8 borderT"></div>						
-					<div class="alert">Warning: This keyword has 3 active elevate rules</div>
-				</div>				
-			</div>
-		
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						<div class="floatL">Rule Info</div>
@@ -141,14 +126,38 @@
 		
 		<div id="redirect-source" class="tabs">
     		<ul>
-    			<li><a href="#ims"><span>IMS</span></a></li>
+    			<li><a href="#datasource"><span>Filter by Source</span></a></li>
+    			<li><a href="#keyword"><span>Keyword Replacement</span></a></li>
     		</ul>
     		
-    		<div id="ims">
-	        	<h3 class="marT20">Category / Manufacturer</h3>
+    		<div id="keyword">
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
+						Replacement Keyword
+					</div>
+					<input type="text" class="floatL w200"> 
+					<div class="floatL marL5">
+						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+					</div>
+					<div>
+						<div class="clearB marT10 padT8 borderT"></div>						
+						<div class="alert">Warning: This keyword has 3 active elevate rules</div>
+					</div>				
+				</div>
+				<div class="clearB"></div>
+			</div>
+    		
+    		<div id="datasource">
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    				<input type="checkbox"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    			</div>
+	        	
+	        	<h2 class="borderB">IMS</h2>
+	        		        	
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
 						<td valign="top">
+						<h3>Category / Manufacturer</h3>
 							<div class="fsize12 mar10 dropdownArea">
 								<label class="floatL w100">CatCode</label><label class="floatL w200"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></label>
 								<div class="clearB"></div>

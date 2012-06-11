@@ -315,6 +315,7 @@ body 							{ margin: 0px; }
 
 .cssReset .fbold, .fbold 		{ font-weight:bold }
 .cssReset .fnormal, .fnormal 	{ font-weight:normal }
+.cssReset .fitalic, .fitalic 	{ font-style: italic }
 
 .cssReset a.funderline, 
 .funderline 					{ text-decoration:underline; }
