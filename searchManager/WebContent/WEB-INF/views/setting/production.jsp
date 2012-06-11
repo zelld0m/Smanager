@@ -45,10 +45,10 @@
 				</li>
 			</ul>
 
-			<div class="minHeight400" id="elevateTab"></div>
-			<div class="minHeight400" id="excludeTab"></div>
-			<div class="minHeight400" id="queryCleaningTab"></div>
-			<div class="minHeight400" id="rankingRuleTab"></div>
+			<div class="minHeight400 marL3" id="elevateTab"></div>
+			<div class="minHeight400 marL3" id="excludeTab"></div>
+			<div class="minHeight400 marL3" id="queryCleaningTab"></div>
+			<div class="minHeight400 marL3" id="rankingRuleTab"></div>
 		</div>
 		<!--  end tabs -->
 
