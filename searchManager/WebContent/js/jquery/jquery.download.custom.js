@@ -117,7 +117,7 @@
 										  type: $content.find('select#type option:selected').val()
 										};
 								
-								if($.isNotBlank(e.data.filename) && !isAllowedName(e.data.filename)){
+								if($.isBlank(e.data.filename) || !isAllowedName(e.data.filename)){
 									alert("Please provide a valid filename");
 								//TODO: add check valid email and input cleaning
 								}else if(base.options.sendMail && e.data.type.toLowerCase() == "mail" && $.isBlank(e.data.recipient)){
