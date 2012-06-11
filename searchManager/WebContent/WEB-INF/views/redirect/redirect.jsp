@@ -131,7 +131,7 @@
     		</ul>
     		
     		<div id="keyword">
-    			<div class="landingCont bgboxGray w96p50p floatL">
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						Replacement Keyword
 					</div>
@@ -144,9 +144,13 @@
 						<div class="alert">Warning: This keyword has 3 active elevate rules</div>
 					</div>				
 				</div>
+				<div class="clearB"></div>
 			</div>
     		
     		<div id="datasource">
+    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    				<input type="checkbox"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    			</div>
 	        	<h3 class="marT20">Category / Manufacturer</h3>
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
