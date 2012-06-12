@@ -193,15 +193,6 @@
 
 	var setItemValues = function(item){
 		var id = $.formatAsId(item["edp"]); 
-
-		setTimeout(function(){		
-			$("#sItemImg" + id).attr("src",item['imagePath']);
-			$("#sItemImg" + id).on({
-				error:function(){ 
-					$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
-				}
-			});
-		},10);
 		
 		$("#sItemMan" + id).html(item["manufacturer"]);
 		$("#sItemName" + id).html(item["name"]);
@@ -253,16 +244,7 @@
 			},	
 			mouseenter: showHoverInfo
 		},{locked: selectedRuleStatus.locked || !allowModify});
-
-		// Product is no longer visible in the setting
-		if ($.isBlank(item["dpNo"])){
-			$("#sItemImg" + id).attr("src","../images/padlock_img.jpg"); 
-			$("#sItemMan" + id).html(lockedItemDisplayText);
-			$("#sItemDPNo" + id).html("Unavailable");
-			$("#sItemMfrPN" + id).html("Unavailable");
-			$("#sItemName" + id).html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
-		}
-
+	
 		$('#commentIcon' + id).on({
 			click: showCommentList
 		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
@@ -297,7 +279,24 @@
 				}
 			}
 		});
-
+		
+		setTimeout(function(){		
+			// Product is no longer visible in the setting
+			if ($.isBlank(item["dpNo"])){
+				$("#sItemImg" + id).attr("src","../images/padlock_img.jpg"); 
+				$("#sItemMan" + id).html(lockedItemDisplayText);
+				$("#sItemDPNo" + id).html("Unavailable");
+				$("#sItemMfrPN" + id).html("Unavailable");
+				$("#sItemName" + id).html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+			}
+			else{
+				$("#sItemImg" + id).prop("src",item['imagePath']).off().on({
+					error:function(){ 
+						$(this).unbind("error").attr("src", "../images/no-image.jpg"); 
+					}
+				});
+			}
+		},10);
 	}; 
 
 	var showDisplayOption= function(){

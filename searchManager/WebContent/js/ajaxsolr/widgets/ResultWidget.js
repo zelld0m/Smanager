@@ -287,6 +287,28 @@
 			var expDateMaxDate = "+1Y";
 
 			return function () {
+				
+				setProductImage = function(contentHolder, item){
+					setTimeout(function(){		
+						// Product is no longer visible in the setting
+						var id = "_" + item["edp"];
+
+						if ($.isBlank(item["dpNo"])){
+							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));
+							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html("Unavailable");
+							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html("Unavailable");
+							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html("Unavailable");
+						}
+						else{
+							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", item["imagePath"]).off().on({
+								error:function(){ 
+									$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
+								}
+							});
+						}
+					},10);
+				};
+				
 				prepareElevateResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
 					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
@@ -303,8 +325,7 @@
 								var id = "_" + list[i].edp;
 								dwr.util.cloneNode("listItemsPattern", {idSuffix: id});
 								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
-								contentHolder.find("#listItemsPattern" + id + " > div > img").attr("src", list[i].imagePath);
-
+								
 								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
 								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
@@ -320,10 +341,8 @@
 								}
 
 								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
-
-								contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).error(function(){
-									$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg'));
-								});
+			
+								setProductImage(contentHolder, list[i]);
 
 								// delete icon is clicked
 								contentHolder.find("#listItemsPattern" + id + " > div > div > a#deleteIcon" + id).click({edp: list[i].edp},function(e){

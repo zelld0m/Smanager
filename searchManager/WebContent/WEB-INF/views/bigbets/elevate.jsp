@@ -202,7 +202,7 @@
         <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" class="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
         <div class="txtAC posRel">
         <div id="sItemStampExp" class="stampExpired"></div>
-       	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px">
+       	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px; display: block; margin:0 auto">
        	<div id="sItemMan" class="manfcName"></div>
        	</div>
        	
