@@ -188,6 +188,7 @@
 				com.search.manager.model.Category,
 				com.search.manager.model.CategoryList,
 				com.search.manager.model.RedirectRule,
+				com.search.manager.model.RedirectRule$RedirectType,
 				com.search.manager.model.RuleStatus,
 				com.search.manager.model.RedirectRuleCondition,
 				com.search.manager.model.RelevancyKeyword,

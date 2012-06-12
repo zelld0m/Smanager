@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRule extends ModelBean {
@@ -19,10 +20,55 @@ public class RedirectRule extends ModelBean {
 	private static final String OR = ") OR (";
 	private static final String COMMA = ",";
 
+	@DataTransferObject(converter = EnumConverter.class)
+	public enum RedirectType {
+		FILTER,
+		CHANGE_KEYWORD,
+		DIRECT_HIT;
+
+		public String getStringValue() {
+			switch (this) {
+				case FILTER:
+					return "1";
+				case CHANGE_KEYWORD:
+					return "2";
+				case DIRECT_HIT:
+					return "3";
+				default:
+					return null;
+			}
+		}
+		
+		public static RedirectType getRedirectType(String string) {
+			for (RedirectType rt: RedirectType.values()) {
+				if (StringUtils.equals(rt.getStringValue(), string)) {
+					return rt;
+				}
+			}
+			return null;
+		}
+		
+		@Override
+		public String toString() {
+			switch (this) {
+			case FILTER:
+				return "Filter";
+			case CHANGE_KEYWORD:
+				return "Change Keyword";
+			case DIRECT_HIT:
+				return "Direct Hit";
+			default:
+				return "Unknown";
+		}
+	}
+		
+		
+	}
+	
 	private String ruleId;
 	private String ruleName;
 	private String description;
-	private String redirectTypeId;
+	private RedirectType redirectType;
 	private String storeId;
 	private Integer priority;
 	private String searchTerm;
@@ -66,7 +112,7 @@ public class RedirectRule extends ModelBean {
 			Date dateCreated, Date dateModified, String changeKeyword) {
 		super();
 		this.ruleId = ruleId;
-		this.redirectTypeId = redirectTypeId;
+		setRedirectTypeId(redirectTypeId);
 		this.ruleName = ruleName;
 		this.storeId = storeId;
 		this.description = description;
@@ -129,22 +175,27 @@ public class RedirectRule extends ModelBean {
 	}
 	
 	public String getRedirectTypeId() {
-		return redirectTypeId;
+		return redirectType == null ? null : redirectType.getStringValue();
 	}
+	
 	public void setRedirectTypeId(String redirectTypeId) {
-		this.redirectTypeId = redirectTypeId;
+		this.redirectType = RedirectType.getRedirectType(redirectTypeId);
 	}
 	
 	public boolean isRedirectToPage() {
-		return StringUtils.startsWithIgnoreCase(condition, "http://");
+		return redirectType == RedirectType.DIRECT_HIT;
+	}
+	
+	public boolean isRedirectFilter() {
+		return redirectType == RedirectType.FILTER;
+	}
+	
+	public boolean isRedirectChangeKeyword() {
+		return redirectType == RedirectType.CHANGE_KEYWORD;
 	}
 	
 	public String getRedirectToPage() {
 		return StringUtils.trimToEmpty(condition);
-	}
-	
-	public boolean isRedirectFilter() {
-		return StringUtils.isNotBlank(condition) && !StringUtils.startsWithIgnoreCase(condition, "http://");
 	}
 	
 	/**
@@ -192,5 +243,13 @@ public class RedirectRule extends ModelBean {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public void setRedirectType(RedirectType redirectType) {
+		this.redirectType = redirectType;
+	}
+
+	public RedirectType getRedirectType() {
+		return redirectType;
 	}
 }

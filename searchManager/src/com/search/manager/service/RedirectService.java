@@ -91,6 +91,7 @@ public class RedirectService {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setRedirectTypeId(redirectTypeId);
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
 		} catch (DaoException e) {
@@ -106,6 +107,7 @@ public class RedirectService {
 			changeKeyword = StringUtils.trimToEmpty(changeKeyword);
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
+			rule.setStoreId(UtilityService.getStoreName());
 			rule.setChangeKeyword(changeKeyword);
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);

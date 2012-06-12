@@ -34,15 +34,16 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private JSONObject responseHeader = null;
 	private Map<String, JSONObject> elevateEntries = new HashMap<String, JSONObject>();
 	private String wrf = "";
+	private String changedKeyword;
 
-	String requestPath;
-	int startRow;
-	int requestedRows;
+	private String requestPath;
+	private int startRow;
+	private int requestedRows;
 
 	private static Logger logger = Logger.getLogger(SolrJsonResponseParser.class);
 
-	List<ElevateResult> elevatedList = null;
-	List<String> expiredElevatedEDPs = null;
+	private List<ElevateResult> elevatedList = null;
+	private List<String> expiredElevatedEDPs = null;
 
 	public SolrJsonResponseParser() {
 		JsonConfig jsonConfig = new JsonConfig();
@@ -124,6 +125,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.SOLR_PARAM_START, startRow);
 			// put back rows in header
 			responseHeader = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER));
+			if (StringUtils.isNotEmpty(changedKeyword)) {
+				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
+			}
 			JSONObject paramsHeader = (JSONObject)(responseHeader.get(SolrConstants.ATTR_NAME_VALUE_PARAMS));
 			paramsHeader.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
 			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);
@@ -255,6 +259,11 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	public void setRequestRows(int startRow, int requestedRows) throws SearchException {
 		this.startRow = startRow;
 		this.requestedRows = requestedRows;
+	}
+
+	@Override
+	public void setChangeKeyword(String changedKeyword) throws SearchException {
+		this.changedKeyword = changedKeyword;
 	}
 
 }
