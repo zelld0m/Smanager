@@ -20,6 +20,11 @@
 	var bqSearchKeyword = "";
 	var bqFacetValuesPageSize = 5;
 	var bqSearchText = "Enter Field Value";
+	
+	var ruleFilterText = "";
+	var keywordFilterText = "";
+	var rulePage = "";
+	var keywordPage = "";
 
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
@@ -1132,11 +1137,13 @@
 		$("#rulePanel").sidepanel({
 			fieldId: "relevancyId",
 			fieldName: "relevancyName",
-			page: page,
+			page: rulePage,
 			pageSize: rulePageSize,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
 			showAddButton: allowModify,
+			filterText: ruleFilterText,
+			
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1249,6 +1256,8 @@
 			},
 
 			itemDataCallback: function(base, keyword, page){
+				ruleFilterText = keyword;
+				rulePage = page;
 				RelevancyServiceJS.getAllRule(keyword, page, rulePageSize,{
 					callback: function(data){
 						base.populateList(data);
@@ -1298,12 +1307,15 @@
 		$("#ruleKeywordPanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
-			page: page,
+			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
 			headerText : "Ranking Rule Keyword",
 			searchText : "Enter Keyword",
 			showAddButton: false,
+			filterText: keywordFilterText,
 			itemDataCallback: function(base, keyword, page){
+				keywordFilterText = keyword;
+				keywordPage = page;
 				StoreKeywordServiceJS.getAllKeyword(keyword, page, ruleKeywordPageSize,{
 					callback: function(data){
 						base.populateList(data);

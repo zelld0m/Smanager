@@ -9,7 +9,11 @@
 		var ruleConditionPageSize = 5;
 		var keywordInRulePageSize = 5;
 		var ruleKeywordPageSize = 5;
-
+		var ruleFilterText = "";
+		var keywordFilterText = "";
+		var rulePage = "";
+		var keywordPage = "";
+		
 		var tabSelectedTypeId = "";
 
 		var prepareRedirect = function(){
@@ -203,6 +207,7 @@
 				pageSize: keywordInRulePageSize,
 				headerText : "Using This Rule",
 				searchText : "Enter Keyword",
+				
 				showAddButton: !selectedRuleStatus.locked || allowModify,
 				itemDataCallback: function(base, keyword, page){
 					RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
@@ -254,12 +259,16 @@
 			$("#ruleKeywordPanel").sidepanel({
 				fieldId: "keywordId",
 				fieldName: "keyword",
-				page: page,
+				page: redirectRulePage,
 				pageSize: ruleKeywordPageSize,
 				headerText : "Query Cleaning Keyword",
 				searchText : "Enter Keyword",
 				showAddButton: false,
+				filterText: keywordFilterText,
+				
 				itemDataCallback: function(base, keyword, page){
+					keywordFilterText = keyword;
+					keywordPage = page;
 					StoreKeywordServiceJS.getAllKeyword(keyword, page, ruleKeywordPageSize,{
 						callback: function(data){
 							base.populateList(data);
@@ -384,12 +393,16 @@
 			$("#rulePanel").sidepanel({
 				fieldId: "ruleId",
 				fieldName: "ruleName",
-				page: page,
+				page: rulePage,
 				pageSize: rulePageSize,
 				headerText : "Query Cleaning Rule",
 				searchText : "Enter Name",
 				showAddButton: allowModify,
+				filterText: ruleFilterText,
+				
 				itemDataCallback: function(base, keyword, page){
+					ruleFilterText = keyword;
+					rulePage = page;
 					RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 						callback: function(data){
 							base.populateList(data);
