@@ -147,9 +147,9 @@
 						Replace Keyword
 					</div>
 					<input type="text" class="floatL w200" id="changeKeyword"> 
-					<div class="floatL marL5">
-						<a id="changeKeywordBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-						<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>" style="display: none">	
+					<div class="floatL marL5 posRel topn1">
+						<div class="floatL"><a id="changeKeywordBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a></div> 
+						<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>" style="display: none;" class="floatL top5 posRel marL3">	
 					</div>
 					<div id="activerules" style="display: none">
 						<div class="clearB marT10 padT8 borderT"></div>						
