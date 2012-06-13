@@ -18,6 +18,8 @@ ul.ui-widget-content			{ margin-left:0 !important }
 .redirect span.ui-button-text	{ display:none; }
 .dropdownArea label		{ margin-top:8px }
 
+.dropdownArea table td { padding:3px 0 }
+
 
 
 
