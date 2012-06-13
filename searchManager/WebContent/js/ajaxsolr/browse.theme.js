@@ -112,8 +112,12 @@
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
-		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB"><div class="floatL"> <div id="auditHolder" class="iconHolder floatL"></div><div class="floatL marL10">' + doc.Manufacturer + '</div></div>';
-		output += '        <div class="floatR">'; 
+		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
+		output += '			<div class="floatL"> ';
+		output += '				<div id="auditHolder" class="iconHolder floatL"></div>';
+		output += '				<div class="floatL marL10">' + doc.Manufacturer + '</div>';
+		output += '			</div>';
+		output += '        <div class="floatR ruleOptionHolder" >'; 
 		output += '			<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
 		output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
 		output += '			<div id="elevateHolder" class="iconHolder"></div>';

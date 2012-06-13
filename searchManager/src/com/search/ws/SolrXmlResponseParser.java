@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.w3c.dom.Document;
@@ -26,18 +27,19 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	// TODO: create a threadpool for this?
 
 	// Belongs to initial Solr XML response which will be used to generate the HTTP Response
-	Document mainDoc = null;
-	Node resultNode = null;
-	Node explainNode = null;
-	Node qtimeNode = null;
-	Node placeHolderNode = null;
+	private Document mainDoc = null;
+	private Node resultNode = null;
+	private Node explainNode = null;
+	private Node qtimeNode = null;
+	private Node placeHolderNode = null;
 
-	String requestPath;
-	int startRow;
-	int requestedRows;
+	private String requestPath;
+	private int startRow;
+	private int requestedRows;
+	private String changedKeyword;
 
-	List<ElevateResult> elevatedList = null;
-	List<String> expiredElevatedEDPs = null;
+	private List<ElevateResult> elevatedList = null;
+	private List<String> expiredElevatedEDPs = null;
 	
 	@Override
 	public void setElevatedItems(List<ElevateResult> list) throws SearchException {
@@ -239,6 +241,13 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			Node responseHeaderNode = locateElementNode(locateElementNode(
 					mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
+
+			if (StringUtils.isNotBlank(changedKeyword)) {
+				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
+				redirectNode.appendChild(mainDoc.createTextNode(changedKeyword));				
+				responseHeaderNode.appendChild(redirectNode);
+			}
+			
 			Node responseHeaderParamsNode = locateElementNode(responseHeaderNode,
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS);
 			locateElementNode(responseHeaderParamsNode,SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_ROWS)
@@ -283,4 +292,8 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 		this.requestedRows = requestedRows;
 	}
 
+	@Override
+	public void setChangeKeyword(String changedKeyword) throws SearchException {
+		this.changedKeyword = changedKeyword;
+	}
 }

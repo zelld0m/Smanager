@@ -269,8 +269,21 @@ public class AuditInterceptor {
 						refId, rule.getRuleName(), searchTerm, condition));
 				break;
 			case update:
-				auditTrail.setDetails(String.format("Updated Rule ID[%1$s] : name = [%2$s].", 
-						refId, rule.getRuleName()));
+				StringBuffer log = new StringBuffer();
+				log.append(String.format("Updated Rule ID[%1$s] : ", refId));
+				if (rule.getRuleName() != null) {
+					log.append(String.format("name = [%1$s];", rule.getRuleName()));
+				}
+				if (rule.getDescription() != null) {
+					log.append(String.format("description = [%1$s];", rule.getDescription()));
+				}
+				if (rule.getRedirectType() != null) {
+					log.append(String.format("redirect type = [%1$s];", rule.getRedirectType()));
+				}
+				if (rule.getChangeKeyword() != null) {
+					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));
+				}
+				auditTrail.setDetails(log.toString());
 				break;
 			case delete:
 				auditTrail.setDetails(String.format("Removed Rule ID[%1$s].", refId));

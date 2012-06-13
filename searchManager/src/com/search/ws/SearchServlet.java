@@ -40,11 +40,10 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.service.UtilityService;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
@@ -95,8 +94,6 @@ public class SearchServlet extends HttpServlet {
 		return added;
 	}
 
-
-
 	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? "" : list.get(0).getValue();
@@ -127,10 +124,9 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO: find some design pattern (strategy or factory) to reduce code complexity. One for XML, another for JSON format
+		// TODO: 
 		// remove the exclude list from the result header
 		// fix if EDP not part of fl
 
@@ -177,7 +173,7 @@ public class SearchServlet extends HttpServlet {
 
 			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
 			
-			// TODO: workaround for spellchecker
+			// workaround for spellchecker
 			nvp = new BasicNameValuePair("echoParams", "explicit");
 			if (addNameValuePairToMap(paramMap, "echoParams", nvp)) {
 				nameValuePairs.add(nvp);
@@ -201,8 +197,9 @@ public class SearchServlet extends HttpServlet {
 			
 			// grab the keyword
 			String keyword = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
-				// TODO: workaround for search compare
+				// workaround for search compare
 				if (keyword.startsWith("DPNo:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
@@ -217,6 +214,76 @@ public class SearchServlet extends HttpServlet {
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+			
+			// redirect 
+			try {
+				RedirectRule redirect = null;
+				List<String> keywordHistory = new ArrayList<String>();
+				while (true) { // look for change keyword
+					if (StringUtils.isBlank(keyword)) {
+						break;
+					}
+					keywordHistory.add(StringUtils.lowerCase(keyword));
+					redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
+							: daoCacheService.getRedirectRule(sk);
+					if (redirect == null) {
+						break;
+					}
+					else {
+						if (!redirect.isRedirectChangeKeyword()) {
+							break;
+						}
+						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
+						sk.setKeyword(new Keyword(keyword));
+						// remove the original keyword
+						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+						if (StringUtils.isEmpty(keyword)) {
+							sk.setKeyword(null);
+							keywordPresent = false;
+							break;
+						}
+						else {
+							// set the new keyword
+							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, redirect.getChangeKeyword());
+							if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
+								nameValuePairs.add(nvp);
+							}
+							if (keywordHistory.contains(StringUtils.lowerCase(keyword))) {
+								logger.warn("Loop in change keywords detected. Aborting search for new keyword. Reverting to original keyword.");
+								redirect = null;
+								keyword = originalKeyword;
+								sk.setKeyword(new Keyword(keyword));
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
+								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
+									nameValuePairs.add(nvp);
+								}
+								break;
+							}
+						}
+					}
+				}
+				
+				if (redirect != null && !redirect.isRedirectChangeKeyword()) {
+					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+					if (redirect.isRedirectToPage()) {
+						// TODO: fix redirect to page implementation
+						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+						nameValuePairs.add(nvp);					
+					}
+					else if (redirect.isRedirectFilter()) {
+						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
+						nameValuePairs.add(nvp);
+						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+					}					
+				}
+			} catch (Exception e) {
+				logger.error("Failed to get redirect for keyword: " + originalKeyword, e);
+			}
 			
 			// set relevancy filters if any was specified
 			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
@@ -240,7 +307,7 @@ public class SearchServlet extends HttpServlet {
 					relevancy = new Relevancy("", "");
 					relevancy.setStore(new Store(storeName));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-							new RelevancyKeyword(new Keyword(keyword), relevancy), new Date(), new Date(), 0, 0),
+							new RelevancyKeyword(sk.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);
 					if (relevancyKeywords.getTotalSize() > 0) {
 						relevancy.setRelevancyId(relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId());						
@@ -300,7 +367,7 @@ public class SearchServlet extends HttpServlet {
 			if (logger.isDebugEnabled()) {
 				logger.debug(configManager.getStoreParameter(coreName, "sort"));
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
-				logger.info(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 	
 
@@ -365,6 +432,9 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setSolrQueryParameters(paramMap);
 			solrHelper.setElevatedItems(elevatedList);
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
+			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
+				solrHelper.setChangeKeyword(keyword);				
+			}
 
 			// remove json.wrf parameter as this is not a JSON standard
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION));
@@ -411,31 +481,6 @@ public class SearchServlet extends HttpServlet {
 			// collate elevate list
 			StringBuilder elevateValues = new StringBuilder();
 			generateElevateList(elevateValues, elevatedList);
-
-			// redirect 
-			try {
-				// TODO: follow up with dba on errors
-				if (StringUtils.isNotBlank(sk.getKeywordId())) {
-					RedirectRule redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
-							: daoCacheService.getRedirectRule(sk);
-					if (redirect != null) {
-						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
-						if (redirect.isRedirectToPage()) {
-							// TODO: fix redirect to page implementation
-							nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
-							nameValuePairs.add(nvp);					
-						}
-						else if (redirect.isRedirectFilter()) {
-							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
-							nameValuePairs.add(nvp);
-							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
-						}
-					}					
-				}
-			} catch (Exception e) {
-				logger.error("Failed to get redirect for keyword: " + keyword, e);
-			}
 
 			BasicNameValuePair elevateNvp = null;
 			Integer numFound = 0;
@@ -582,7 +627,7 @@ public class SearchServlet extends HttpServlet {
 			/* Generate response */
 			Long qtime = new Date().getTime() - start;
 			solrHelper.generateServletResponse(response, qtime);
-			SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, keyword);
+			SearchLogger.logInfo(fromSearchGui, startRow, requestedRows, originalKeyword);
 		} catch (Throwable t) {
 			logger.error("Failed to send solr request", t);
 			throw new ServletException(t);

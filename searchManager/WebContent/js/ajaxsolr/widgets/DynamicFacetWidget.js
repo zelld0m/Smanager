@@ -94,7 +94,7 @@
 					var paramString = "";
 					var keyword = $.trim(self.manager.store.values('q'));
 					
-					var relId = $("select#relevancy").val();
+					var relId = $("select#relevancy").val()==="keyword_default" ? "": $("select#relevancy").val();
 					var params = {
 							'facet': true,
 							'q': keyword,

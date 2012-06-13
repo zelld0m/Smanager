@@ -1,6 +1,10 @@
 (function ($) {
 
 	AjaxSolr.SortResultWidget = AjaxSolr.AbstractFacetWidget.extend({
+		
+		beforeRequest: function () {
+			$("div#changeKeyword").hide();
+		},
 		afterRequest: function () {
 		$(this.target).empty();
 		$(this.target).parent("div").find("#importToExcel").empty();
@@ -9,6 +13,14 @@
 		
 		if (self.manager.response.response.docs.length > 0 && $.isNotBlank(self.manager.store.values('q'))){
 
+			//TODO: move this code fragment to ActiveRulesWidget
+			if ($.isNotBlank(self.manager.response.responseHeader["Redirect"])){
+				$("div#changeKeyword > div.alert > span").html(self.manager.response.responseHeader["Redirect"]);
+				$("div#changeKeyword").show();
+			}else{
+				$("div#changeKeyword").hide();
+			}
+			
 			var defaultPageOptions = 5;
 			var defaultPageInterval = 5;
 			var totalResults = this.manager.response.response.numFound;

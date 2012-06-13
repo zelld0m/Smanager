@@ -16,6 +16,7 @@ public interface SolrResponseParser {
 	public void setRequestRows(int startRow, int requestedRows) throws SearchException;
 	public void setElevatedItems(List<ElevateResult> list) throws SearchException;
 	public void setExpiredElevatedEDPs(List<String> list) throws SearchException;
+	public void setChangeKeyword(String string) throws SearchException;
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedItems(List<NameValuePair> requestParams) throws SearchException;
