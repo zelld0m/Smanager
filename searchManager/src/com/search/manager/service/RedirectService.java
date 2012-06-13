@@ -17,6 +17,7 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRule.RedirectType;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
@@ -40,6 +41,7 @@ public class RedirectService {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleName(ruleName);
+			rule.setRedirectType(RedirectType.FILTER);
 			rule.setStoreId(UtilityService.getStoreName());
 			rule.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addRedirectRule(rule);
@@ -53,6 +55,7 @@ public class RedirectService {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleName(ruleName);
+			rule.setRedirectType(RedirectType.FILTER);
 			rule.setStoreId(UtilityService.getStoreName());
 			rule.setCreatedBy(UtilityService.getUsername());
 			return daoService.addRedirectRuleAndGetId(rule);
@@ -83,6 +86,40 @@ public class RedirectService {
 		}
 		return result;
 	}
+
+	@RemoteMethod
+	public int setRedirectType(String ruleId, String redirectTypeId) {
+		int result = -1;
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setRedirectTypeId(redirectTypeId);
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during setRedirectType()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int setChangeKeyword(String ruleId, String changeKeyword) {
+		int result = -1;
+		try {
+			changeKeyword = StringUtils.trimToEmpty(changeKeyword);
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setChangeKeyword(changeKeyword);
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during setChangeKeyword()",e);
+		}
+		return result;
+	}
+
 	
 	@RemoteMethod
 	public int deleteRule(RedirectRule rule) {

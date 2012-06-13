@@ -40,6 +40,7 @@ public class SolrConstants {
 	public final static String TAG_ELEVATE = "Elevate";
 	public final static String TAG_EXPIRED = "Expired";
 	public final static String TAG_EXCLUDE = "Exclude";
+	public final static String TAG_REDIRECT = "Redirect";
 	public final static String TAG_BANNER = "Banner";
 	public final static String TAG_REDIRECT_ID = "Redirect_Id";
 	public final static String TAG_REDIRECT_PARAM = "Redirect_Param";

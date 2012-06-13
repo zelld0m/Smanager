@@ -93,10 +93,8 @@
 		   
 		  <div>
 		  	  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
-			  	  <div id="searchAttributeIconHolder" class="floatL displayInline w50p marT8">
-			        	<img src="<spring:url value="/images/icon_catalog.png" />" class="marR3">
-			        	<img src="<spring:url value="/images/icon_relevancy.png" />" class="marR3">
-			        	<img src="<spring:url value="/images/icon_redirect.png" />" >
+			  	  <div id="changeKeyword" class="floatL displayInline w50p marT8 wordwrap" style="display: none">
+			      		<div class="alert fsize12 fred wordwrap">Search results displayed are for <span class="fbold"></span></div>  
 		          </div>
 			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			  	  <div class="clearB"></div>
