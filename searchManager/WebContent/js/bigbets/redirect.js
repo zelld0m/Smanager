@@ -651,7 +651,7 @@
 			RedirectServiceJS.getAllRuleUsedByKeyword(inputChangedKeyword, {
 				callback:function(data){
 					if (data.totalSize>0){
-						activeRules += ($.isNotBlank(activeRules)? ", ":'') + "using " + data.totalSize + ' Redirect Rule';
+						activeRules += ($.isNotBlank(activeRules)? ", ":'') + data.totalSize + ' Redirect Rule';
 						activeRules += "(";
 
 						for(var i=0; i<data.totalSize; i++){
@@ -671,7 +671,7 @@
 			RelevancyServiceJS.getAllRuleUsedByKeyword(inputChangedKeyword, {
 				callback:function(data){
 					if (data.totalSize>0){
-						activeRules += ($.isNotBlank(activeRules)? ", ":'') + "using " + data.totalSize + ' Relevancy Rule';
+						activeRules += ($.isNotBlank(activeRules)? ", ":'') + data.totalSize + ' Relevancy Rule';
 						activeRules += "(";
 						
 						for(var i=0; i<data.totalSize; i++){
