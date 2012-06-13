@@ -94,7 +94,7 @@
 		  <div>
 		  	  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
 			  	  <div id="changeKeyword" class="floatL displayInline w50p marT8" style="display: none">
-			      		<div class="alert fsize12 fbold fred">Change keyword used is <span></span></div>  
+			      		<div class="alert fsize12 fred">Change keyword used is <span class="fbold"></span></div>  
 		          </div>
 			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			  	  <div class="clearB"></div>
