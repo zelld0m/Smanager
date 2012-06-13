@@ -257,6 +257,7 @@ body 							{ margin: 0px; }
 .cssReset .top5, .top5			{ top:5px; }
 .cssReset .top6, .top6			{ top:6px; }
 .cssReset .top14, .top14		{ top:14px; }
+.cssReset .topn1, .topn1		{ top:-1px; }
 .cssReset .topn4, .topn4		{ top:-4px; }
 .cssReset .right4				{ right:4px }
 .cssReset .bottomn4, .bottomn4		{ bottom:-4px; }
