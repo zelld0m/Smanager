@@ -139,7 +139,7 @@
 							<td class="txtAC" id="itemValidity"></td>
 						</tr>
 						<tr>
-							<td colspan="6">
+							<td colspan="6" class="txtAC">
 								<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
 							</td>
 						</tr>
@@ -218,7 +218,7 @@
 									<td id="fieldValue" class="wAuto"></td>
 								</tr>
 								<tr>
-									<td colspan="2" class="itemRow">
+									<td colspan="2" class="itemRow txtAC">
 										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
 									</td>
 								</tr>
@@ -248,7 +248,7 @@
 									<td id="fieldValue" class="wAuto"></td>
 								</tr>
 								<tr>
-									<td colspan="2" class="itemRow">
+									<td colspan="2" class="itemRow  txtAC">
 										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
 									</td>
 								</tr>
@@ -334,7 +334,7 @@
 									<td id="fieldValue" class="wAuto"></td>
 								</tr>
 								<tr>
-									<td colspan="2" class="itemRow">
+									<td colspan="2" class="itemRow txtAC">
 										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
 									</td>
 								</tr>
@@ -364,7 +364,7 @@
 									<td id="fieldValue" class="wAuto"></td>
 								</tr>
 								<tr>
-									<td colspan="2" class="itemRow">
+									<td colspan="2" class="itemRow txtAC">
 										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
 									</td>
 								</tr>
