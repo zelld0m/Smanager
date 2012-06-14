@@ -138,6 +138,11 @@
 							<td width="162px" class="txtAC" id="itemName"></td>
 							<td class="txtAC" id="itemValidity"></td>
 						</tr>
+						<tr>
+							<td colspan="6">
+								<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>

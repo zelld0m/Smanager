@@ -207,10 +207,10 @@
 		var populateItemTable = function(ruleType, content, ruleStatus, data){
 			var $content = content;
 			var list = data.list;
-			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-			$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
+			
 			var $table = $content.find("table#item");
+			
+			$table.find("tr:not(#itemPattern)").remove();
 
 			if (data.totalSize==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -218,10 +218,9 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
-
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-					$tr.find("td#itemPosition").html(list[i]["location"]);
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 					$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
 					$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 					$tr.find("td#itemMan").html(list[i]["manufacturer"]);
@@ -272,27 +271,23 @@
 			switch(tabSelectedText){
 			case "Elevate": 
 				$content.html($("#previewTemplate1").html());
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
 						populateItemTable("Elevate", $content, ruleStatus, data);
-					},
-					preHook: function(){
-
 					}
 				});
 				break;
 			case "Exclude": 
 				$content.html($("#previewTemplate1").html());
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+				
 				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
-						populateItemTable("Exclude",$content, ruleStatus, data);
-					},
-					preHook: function(){
-
-					},
-					postHook: function(){
-
+						populateItemTable("Exclude", $content, ruleStatus, data);
 					}
 				});
 				break;
