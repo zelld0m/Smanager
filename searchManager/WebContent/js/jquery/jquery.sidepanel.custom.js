@@ -140,7 +140,7 @@
 
 		base.prepareList = function(){
 			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
-			base.$el.find("#itemListing").prepend('<div class="pad10 txtAC w200"><p style="width:16px; text-align:center; margin:0 auto;"><img src="../images/ajax-loader-rect.gif"></p></div>'); 
+			base.$el.find("#itemListing").prepend('<tr><td><div class="pad10 txtAC w200" style="padding:10px; text-align:center; width:200px;"><img src="../images/ajax-loader-rect.gif"></div></td></tr>'); 
 			base.$el.find("#sideBottomPaging").attr("style", "display:none");
 		};
 
