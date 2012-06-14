@@ -200,8 +200,8 @@
 				
 				<div class="clearB"></div>	
 					<div id="ruleChange" class="ruleChange marB10">
-						<div id="noChangeKeyword" class="txtAC" style="display:none">
-							No replace keyword associated to this rule
+						<div id="noChangeKeyword" class="txtAC mar20" style="display:none">
+							<span class="fsize11">No replacement keyword associated to this rule</span>
 						</div>
 						<div id="hasChangeKeyword" style="display:none">
 							<div class="fsize12 txtAL mar20">
