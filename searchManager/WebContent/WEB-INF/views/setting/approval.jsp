@@ -194,12 +194,19 @@
 				</ul>
 				
 				<div class="clearB"></div>	
-				<div id="ruleChange" class="ruleChange">
-				
+				<div id="ruleChange" class="ruleChange marB10">
+
+						<div class="fsize12 txtAL mar20">
+							Replace Keyword <span class="fbold">lorem ispum</span>
+						</div>						
+						<div class="w97p marRLauto marB10">			
+							<div class="alert">This keyword has <span id="rules"></span></div>
+						</div>				
+					<div class="clearB"></div>
 				</div>
 								
 				<div class="clearB"></div>	
-				<div id="ruleFilter" class="ruleFilter">
+				<div id="ruleFilter" class="ruleFilter marB10">
 					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
