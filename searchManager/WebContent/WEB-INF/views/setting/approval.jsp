@@ -182,7 +182,12 @@
 				<label class="wAuto floatL" id="description">
 					<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">
 				</label>
-				<div class="clearB"></div>						
+				<div class="clearB"></div>
+				<label class="w110 floatL marL20 fbold">Active Type:</label>
+				<label class="wAuto floatL" id="redirectType">
+					<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">
+				</label>
+				<div class="clearB"></div>							
 			</div>
 			
 			<div id="rankingSummary" class="infoTabs marB20 tabs">
@@ -194,13 +199,17 @@
 				</ul>
 				
 				<div class="clearB"></div>	
-				<div id="ruleChange" class="ruleChange marB10">
-
-						<div class="fsize12 txtAL mar20">
-							Replace Keyword <span class="fbold">lorem ispum</span>
-						</div>						
-						<div class="w97p marRLauto marB10">			
-							<div class="alert">This keyword has <span id="rules"></span></div>
+					<div id="ruleChange" class="ruleChange marB10">
+						<div id="noChangeKeyword" class="txtAC" style="display:none">
+							No replace keyword associated to this rule
+						</div>
+						<div id="hasChangeKeyword" style="display:none">
+							<div class="fsize12 txtAL mar20">
+								Replace Keyword: <span id="changeKeyword" class="fbold"></span>
+							</div>						
+							<!-- div id="activerules" class="w97p marRLauto marB10">			
+								<div class="alert">This keyword has <span id="rules"></span></div>
+							</div -->
 						</div>				
 					<div class="clearB"></div>
 				</div>

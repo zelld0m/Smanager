@@ -322,6 +322,7 @@
 
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
+				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
@@ -346,6 +347,14 @@
 
 						$table.find("tr:even").addClass("alt");
 						$content.find("#description").html(data["description"]);
+						$content.find("#redirectType").html(data["redirectType"]);
+						
+						if ($.isNotBlank(data["changeKeyword"])){
+							$content.find("div#ruleChange > div#hasChangeKeyword").show();
+							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
+						}else{
+							$content.find("div#ruleChange > #noChangeKeyword").show();
+						}
 					}
 				});
 
