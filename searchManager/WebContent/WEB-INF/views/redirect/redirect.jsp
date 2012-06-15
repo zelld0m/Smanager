@@ -178,7 +178,8 @@
 									</tr>
 									<tr>
 										<td>Category</td>
-										<td><select name="select" id="categoryList" class="selectCombo w178" title="Select Category">
+										<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category" >
+										<option></option>
 											</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
 									</tr>
 									<tr>

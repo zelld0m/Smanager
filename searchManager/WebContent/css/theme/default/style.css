@@ -21,6 +21,7 @@ ul.dropdown ul.subMenu li a		{ color:#222222 }
 ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 
 .cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:-64px; z-index:200 }
+.ie .cssReset .sideMenuArea		{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; margin-top:-62px ; z-index:200 }
 .cssReset .sideMenuArea img.ui-datepicker-trigger { margin-bottom:-4px; margin-left:3px}
 
 
@@ -759,6 +760,8 @@ span.ui-button-text	{ display:none; }
 
 
 .dropdownArea label img.loadIcon { margin-left:4px }
+.ie .dropdownArea .ui-button { padding-top:0 !important;  }
+.ie .iepadBT0 .ui-button { padding-top:0 !important; padding-bottom:0 !important;  }
 
 /* LEVEL ONE */
 ul.dropdown                         { position:relative }
