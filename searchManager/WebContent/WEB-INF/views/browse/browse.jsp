@@ -92,21 +92,21 @@
 				<ul class="mar16 marB20 ">
 					<li class="borderB padTB5 clearfix">
 						<label class="floatL w20"><input type="checkbox"></label>
+						<label class="floatL fbold w320">Query Cleaning Rule</label>
 						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
-						<label class="floatL fbold w220">Lorem ipsum</label>
-						<label class="floatL w425">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque gravida lacus id neque tempor quis suscipit nisl bibendum. Morbi vel tellus in  posu...</label>
+						<label class="floatL w320"><span class="fbold">Lorem ipsum dolor sit amet.</span></label>
 					</li>
 					<li class="borderB padTB5 clearfix">
-						<label class="floatL w20"><input type="checkbox"></label>
+						<label class="floatL w20"><input type="checkbox"></label>						
+						<label class="floatL fbold w320">Query Cleaning Rule</label>
 						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
-						<label class="floatL fbold w220">Quisque eu feugiat mauris</label>
-						<label class="floatL w425">Etiam ornare dictum facilisis. Aliquam erat volutpat. Morbi accumsan, felis nec pretium mattis, sem magna bibendum eros, at ornare purus urna in sem. Do.</label>
+						<label class="floatL w320"><span class="fbold">Etiam ornare dictum facilisis.</span></label>
 					</li>
 				</ul>
 				<div class="clearB"></div>
 			</div>
 			<a href="/"><div class="minW110 floatL borderB borderR borderL h27 posRel topn1 fbold fsize12 padT8" style="display:block; background: #fff; z-index:500; left:20px; color:#329eea;"><img src="<spring:url value="/images/icon_arrowDownBlue.png" />" class="top2 posRel marL5 marR3">3 Active Rules</div></a>
-		 	<div class="clearB"></div><!--  end active rule -->
+		 	<!--  end active rule -->
 		 	
 		 	
 		  <!-- DidYouMean Widget 
