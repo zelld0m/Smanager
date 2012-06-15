@@ -207,10 +207,10 @@
 		var populateItemTable = function(ruleType, content, ruleStatus, data){
 			var $content = content;
 			var list = data.list;
-			$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-			$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
+			
 			var $table = $content.find("table#item");
+			
+			$table.find("tr:not(#itemPattern)").remove();
 
 			if (data.totalSize==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -218,10 +218,9 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
-
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-					$tr.find("td#itemPosition").html(list[i]["location"]);
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 					$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
 					$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 					$tr.find("td#itemMan").html(list[i]["manufacturer"]);
@@ -269,92 +268,112 @@
 		};
 
 		var populatePreview = function(api, $content, ruleStatus){
+			
+			var populateKeywordInRule = function(data){
+				var list = data.list;
+				var $table = $content.find("div.ruleKeyword table#item");
+				$table.find("tr:not(#itemPattern)").remove();
+
+				if (data.totalSize==0){
+					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("td#fieldName").html("No keywords associated to this rule").attr("colspan","2");
+					$tr.find("td#fieldValue").remove();
+					$tr.appendTo($table);
+				}else{
+					for(var i=0; i< data.totalSize; i++){
+						$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"])).show();
+						$tr.find("td#fieldName").html(parseInt(i)+1);
+						$tr.find("td#fieldValue").html(list[i]["keyword"]);
+						$tr.appendTo($table);
+					}	
+				}
+				
+				$table.find("tr:even").addClass("alt");
+			};
+			
 			switch(tabSelectedText){
 			case "Elevate": 
 				$content.html($("#previewTemplate1").html());
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
 					callback: function(data){
 						populateItemTable("Elevate", $content, ruleStatus, data);
-					},
-					preHook: function(){
-
 					}
 				});
 				break;
 			case "Exclude": 
 				$content.html($("#previewTemplate1").html());
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+				
 				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
-						populateItemTable("Exclude",$content, ruleStatus, data);
-					},
-					preHook: function(){
-
-					},
-					postHook: function(){
-
+						populateItemTable("Exclude", $content, ruleStatus, data);
 					}
 				});
 				break;
 			case "Query Cleaning": 
-				$content.html($("#previewTemplate2").html());
+				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
-				$content.find('a[href="#ruleField"] >span').html("Rule Condition");
-
-				$content.find("div.ruleField table#itemHeader th#fieldNameHeader").html("#");
-				$content.find("div.ruleField table#itemHeader th#fieldValueHeader").html("Rule Condition");
-
-				var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
-				$ul.find("span#startDate").parents("li").remove();
-				$ul.find("span#endDate").parents("li").remove();
+				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
+				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
+				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 				
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 
-						var $table = $content.find("div.ruleField table#item");
+						var $table = $content.find("div.ruleFilter table#item");
+						$table.find("tr:not(#itemPattern)").remove();
 
 						if(data.conditions.length==0){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html("No condition specified for this rule").attr("colspan","2");
+							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 							$tr.find("td#fieldValue").remove();
 							$tr.appendTo($table);
 
 						}else{
 							for(var field in data.conditions){
-								$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 								$tr.find("td#fieldName").html(parseInt(field)+1);
 								$tr.find("td#fieldValue").html(data.conditions[field]);
 								$tr.appendTo($table);
 							}	
 						}
 
-						$ul.find("li span#description").html(data["description"]);
-					},
-					preHook: function(){
-
+						$table.find("tr:even").addClass("alt");
+						$content.find("#description").html(data["description"]);
+						switch (data["redirectTypeId"]) {
+							case "1":
+								$content.find("#redirectType").html("Filter");
+								break;
+							case "2":
+								$content.find("#redirectType").html("Replace Keyword");
+								break;
+							case "3":
+								$content.find("#redirectType").html("Direct Hit");
+								break;
+							default:
+								$content.find("#redirectType").html("");
+								break;									
+						}
+						
+						if ($.isNotBlank(data["changeKeyword"])){
+							$content.find("div#ruleChange > div#hasChangeKeyword").show();
+							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
+						}else{
+							$content.find("div#ruleChange > #noChangeKeyword").show();
+						}
 					}
 				});
 
 				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
 					callback: function(data){
-						var list = data.list;
-
-						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
-
-						if (data.totalSize==0){
-							$content.find("#noKeyword").html("No keyword is using this rule");
-						}else{
-							$content.find("#noKeyword").html("");
-							for (var i=0; i< data.totalSize; i++){
-								$("<li>").text(list[i]["keyword"]).appendTo($ul);
-							}
-						}
-					},
-					preHook: function(){
-
+						populateKeywordInRule(data);
 					}
 				});
 
@@ -362,49 +381,36 @@
 				break;
 			case "Ranking Rule": 
 				$content.html($("#previewTemplate2").html());
-				$content.find(".infoTabs").tabs({});
+				$content.find(".infoTabs").tabs({
+					
+				});
+				
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
+						$content.find("#startDate").html(data["formattedStartDate"]);
+						$content.find("#endDate").html(data["formattedEndDate"]);
+						$content.find("#description").html(data["description"]);
 
 						var $table = $content.find("div.ruleField table#item");
-
+						$table.find("tr:not(#itemPattern)").remove();
+						
 						for(var field in data.parameters){
 							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html(field);
 							$tr.find("td#fieldValue").html(data.parameters[field]);
 							$tr.appendTo($table);
 						}	
-						var $ul = $content.find("div.ruleRanking ul#relevancyInfo");
-
-						$ul.find("li span#startDate").html(data["formattedStartDate"]);
-						$ul.find("li span#endDate").html(data["formattedEndDate"]);
-						$ul.find("li span#description").html(data["description"]);
-					},
-					preHook: function(){
-
+						
+						$table.find("tr:even").addClass("alt");
 					}
 				});
 
 				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
 					callback: function(data){
-						var list = data.list;
-
-						var $ul = $content.find("div.ruleKeyword ul#keywordInRule");
-
-						if (data.totalSize==0){
-							$content.find("#noKeyword").html("No keyword is using this rule");
-						}else{
-							$content.find("#noKeyword").html("");
-							for (var i=0; i< data.totalSize; i++){
-								$("<li>").text(list[i]["keyword"]).appendTo($ul);
-							}
-						}	
-					},
-					preHook: function(){
-
+						populateKeywordInRule(data);
 					}
 				});
 

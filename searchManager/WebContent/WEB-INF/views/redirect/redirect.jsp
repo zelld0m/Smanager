@@ -139,7 +139,7 @@
     			<div class="landingCont bgboxGray w96p50p floatL marT20">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
-    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    			<div class="landingCont bgboxGray w96p50p floatL">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						Replace Keyword
 					</div>
@@ -165,37 +165,47 @@
 	        		        	
 				<table class="fsize12 mar10 tblCatalog">
 					<tr>
-						<td valign="top">
+						<td valign="top" style="">
 						<h3>Category / Manufacturer</h3>
 							<div class="fsize12 mar10 dropdownArea">
-								<label class="floatL w100">CatCode</label><label class="floatL w200"><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></label>
-								<div class="clearB"></div>
-								<label class="floatL w100">Category</label><label class="floatL w200"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category">
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
-								<div class="clearB"></div>
-								<label class="floatL w100">Sub-Category</label>
-								<label class="floatL w200"><select name="select" id="subCategoryList" class="selectCombo w178" title="Select SubCategory">
-									   		<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
-								<div class="clearB"></div>
-								<label class="floatL w100">Class</label>
-								<label class="floatL w200"><select name="select" id="classList" class="selectCombo w178" title="Select Class">
-											<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
-								<div class="clearB"></div>
-								<label class="floatL w100">Minor</label>
-								<label class="floatL w200"><select name="select" id="minorList" class="selectCombo w178" title="Select Minor">
-									 		<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
-								<div class="clearB"></div>
-								<label class="floatL w100">Manufacturer</label>
-								<label class="floatL w200"><select name="select" id="manufacturerList" class="w178" title="Select Manufacturer">
+								<table>
+									<tr>
+										<td class="w100">CatCode</td>
+										<td><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></td>
+									</tr>
+									<tr>
+										<td>Category</td>
+										<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category" >
 										<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></label>
-								<div class="clearB"></div>							
+											</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+									</tr>
+									<tr>
+										<td>Sub-Category</td>
+										<td><select name="select" id="subCategoryList" class="selectCombo w178" title="Select SubCategory">
+									   		<option></option>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+									</tr>
+									<tr>
+										<td>Class</td>
+										<td><select name="select" id="classList" class="selectCombo w178" title="Select Class">
+											<option></option>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+									</tr>
+									<tr>
+										<td>Minor</td>
+										<td><select name="select" id="minorList" class="selectCombo w178" title="Select Minor">
+									 		<option></option>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+									</tr>
+									<tr>
+										<td>Manufacturer</td>
+										<td><select name="select" id="manufacturerList" class="w178" title="Select Manufacturer">
+										<option></option>
+								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+									</tr>
+								</table>						
 							</div>
-							
-							
+
 						</td>
 						<td class="w60"><a href="#" class="buttons btnGray marL15 clearfix">
 							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
