@@ -347,7 +347,20 @@
 
 						$table.find("tr:even").addClass("alt");
 						$content.find("#description").html(data["description"]);
-						$content.find("#redirectType").html(data["redirectType"]);
+						switch (data["redirectTypeId"]) {
+							case "1":
+								$content.find("#redirectType").html("Filter");
+								break;
+							case "2":
+								$content.find("#redirectType").html("Replace Keyword");
+								break;
+							case "3":
+								$content.find("#redirectType").html("Direct Hit");
+								break;
+							default:
+								$content.find("#redirectType").html("");
+								break;									
+						}
 						
 						if ($.isNotBlank(data["changeKeyword"])){
 							$content.find("div#ruleChange > div#hasChangeKeyword").show();
