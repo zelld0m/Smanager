@@ -13,7 +13,6 @@
 
 <!--Start Left Side-->
 <div class="clearB floatL minW240 sideMenuArea">
-	<div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
 
 	<div class="clearB floatL w240">
     	<div class="sideHeader">Catalog</div>
@@ -24,7 +23,7 @@
             <a href="#"><img src="<spring:url value="/images/btn-plus.jpg" />"  align="absmiddle"></a> </span></div>
             
             
-	        <div class="leftStatus"><img src="<spring:url value="/images/information.png" />" class="marR3 marBn3><span class="fgreen">Active :</span> Catalog 8</div>
+	        <div class="leftStatus"><img src="<spring:url value="/images/information.png" />" class="marR3 marBn3"><span class="fgreen">Active :</span> Catalog 8</div>
 		        <table border="0" cellpadding="0" cellspacing="0" class="farial fsize12 fDGray w220">
 		        <c:forEach var="i" begin="1" end="10" step="1">
 		        <tr>
