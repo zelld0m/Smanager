@@ -7,8 +7,8 @@
 <script src="<spring:url value="/js/dashboard/dashboard.js" />" type="text/javascript"></script>  
 <link href="<spring:url value="/css/dashboard/dashboard.css" />" rel="stylesheet" type="text/css">
 
-<div class="clearB floatL minW240 sideMenuArea">
 
+<div class="clearB floatL minW240 sideMenuArea">
 <div class="sideHeader">Keyword Trends</div>
 <div class="leftStatus">
 	<img src="<spring:url value="/images/information.png" />" class="marR3 marBn3">
