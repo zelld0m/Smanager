@@ -10,7 +10,7 @@
                -->
               <li ${topmenu eq 'bigbets'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/"/>${store}">Search Rules</a></span></li>
               <li ${topmenu eq 'advertise'? 'class="active"': ''}><span><a href="<spring:url value="/campaign/"/>${store}">Search Ads</a></span></li>
-              <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/topkeyword/"/>${store}">Statistics</a></span></li>
+              <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/statistic/"/>${store}">Statistics</a></span></li>
               <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/"/>${store}">Linguistics</a></span></li>
               <li ${topmenu eq 'setting'? 'class="active"': ''}><span><a href="<spring:url value="/audit/"/>${store}">Settings</a></span></li>
               <!-- li ${topmenu eq 'migrator'? 'class="active"': ''}><a href="<spring:url value="/migrator/"/>${store}">Migrator</a></li -->
@@ -43,12 +43,6 @@
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'campaign'? 'class="active"': ''}><a href="<spring:url value="/campaign/"/>${store}">Campaign</a></li>
 		      		<li ${submenu eq 'banner'? 'class="active"': ''}><a href="<spring:url value="/banner/"/>${store}">Banner</a></li>	      		
-		       </ul>
-	      </c:if>
-	      
-	      <c:if test="${topmenu eq 'statistic'}">
-		       <ul class="subMenu floatL txtAL">
-		      		<li ${submenu eq 'topkeyword'? 'class="active"': ''}><a href="<spring:url value="/topkeyword/"/>${store}">Top Keyword</a></li>
 		       </ul>
 	      </c:if>
 	      
