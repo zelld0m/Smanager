@@ -34,17 +34,11 @@
 		</ul>
 		
 		<div id="cache">
-			<div>
-
-				<div class="floatR marL8 marR3 marT10"> 	        		
-
-				<input id="cacheKey" type="text">
-				<div class="floatR marL8 marR3 padT5"> 	        		
+			<div>	        		
+				<div class="floatR marL8 marR3 marT8"> 	        		
 	        		<a id="checkCacheBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Check Cache</div></a>
 	        	</div>
-				<div class="floatR marL8 marT10"><input id="cacheKey" type="text"></div>				
-			</div>
-			
+				<div class="floatR marL8 marT10"><input id="cacheKey" type="text"></div>							
 			<div id="contentArea" style="display:none">
 				<div class="w95p marRLauto">
 					<table class="tblAlpha w100p marT8" >
