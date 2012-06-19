@@ -27,11 +27,12 @@
 
 					Manager.addWidget(new AjaxSolr.PagerWidget({
 						id: 'pager',
-						target: '#pager',
+						target: '#top-pager,#bottom-pager',
 						innerWindow: 1,
 						renderHeader: function (perPage, offset, total, qTime) {
-							$('#pager-header').html($('<span/>').text('Displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
-							$('#pager-header').append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
+							var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
+								$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
+							$('#top-pager-text,#bottom-pager-text').html($pagerText);
 						}
 					}));
 
@@ -126,14 +127,4 @@
 			});
 		}
 	});
-
-	$.fn.showIf = function (condition) {
-		if (condition) {
-			return this.show();
-		}
-		else {
-			return this.hide();
-		}
-	};
-
 })(jQuery);

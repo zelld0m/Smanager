@@ -86,29 +86,9 @@
 	        	</div>
 	        		
 	        </div>
-		   
-		   <!--  start active rule --><div class="clearB"></div>
-		   	<div style="display:block;" class="fsize12 marT10 fDGray border">
-				<ul class="mar16 marB20 ">
-					<li class="borderB padTB5 clearfix">
-						<label class="floatL w20"><input type="checkbox"></label>
-						<label class="floatL fbold w320">Query Cleaning Rule</label>
-						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
-						<label class="floatL w320"><span class="fbold">Lorem ipsum dolor sit amet.</span></label>
-					</li>
-					<li class="borderB padTB5 clearfix">
-						<label class="floatL w20"><input type="checkbox"></label>						
-						<label class="floatL fbold w320">Query Cleaning Rule</label>
-						<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>
-						<label class="floatL w320"><span class="fbold">Etiam ornare dictum facilisis.</span></label>
-					</li>
-				</ul>
-				<div class="clearB"></div>
-			</div>
-			<a href="/"><div class="minW110 floatL borderB borderR borderL h27 posRel topn1 fbold fsize12 padT8" style="display:block; background: #fff; z-index:500; left:20px; color:#329eea;"><img src="<spring:url value="/images/icon_arrowDownBlue.png" />" class="top2 posRel marL5 marR3">3 Active Rules</div></a>
-		 	<!--  end active rule -->
-		 	
-		 	
+		  
+		  <div id="activeRule"></div>
+		  	
 		  <!-- DidYouMean Widget 
 		  <div class="clearB floatL farial fsize12 marT10 w730">Did you mean: <a href="#" class="fDblue fbold">Apple</a></div>-->
 
@@ -124,8 +104,15 @@
 			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			  	  <div class="clearB"></div>
 			  </div>
-			  <div id="pager-header" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10"><div class="txtAR"><ul id="pager" class="pagination"></ul></div></div>
+		  </div>
+		
+		 <div>
+		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10">
+				  <div class="txtAR">
+				  	<ul id="top-pager" class="pagination"></ul>
+				  </div>
+			  </div>
 		  </div>
 		  
 		  <div class="w740 txtAR padT20">
@@ -164,6 +151,15 @@
 			  		</select>
 		  		</label -->
 		  	</div>
+		  </div>
+		  
+		  <div>
+		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10">
+				  <div class="txtAR">
+				  	<ul id="bottom-pager" class="pagination"></ul>
+				  </div>
+			  </div>
 		  </div>
 
 		<div id="viewAuditTemplate" style="display: none">
