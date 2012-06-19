@@ -104,8 +104,15 @@
 			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			  	  <div class="clearB"></div>
 			  </div>
-			  <div id="pager-header" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10"><div class="txtAR"><ul id="pager" class="pagination"></ul></div></div>
+		  </div>
+		
+		 <div>
+		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10">
+				  <div class="txtAR">
+				  	<ul id="top-pager" class="pagination"></ul>
+				  </div>
+			  </div>
 		  </div>
 		  
 		  <div class="w740 txtAR padT20">
@@ -144,6 +151,15 @@
 			  		</select>
 		  		</label -->
 		  	</div>
+		  </div>
+		  
+		  <div>
+		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10">
+				  <div class="txtAR">
+				  	<ul id="bottom-pager" class="pagination"></ul>
+				  </div>
+			  </div>
 		  </div>
 
 		<div id="viewAuditTemplate" style="display: none">
