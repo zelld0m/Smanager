@@ -196,7 +196,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			
 			// grab the keyword
-			String keyword = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+			String keyword = StringUtils.trimToEmpty(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
