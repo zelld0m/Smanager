@@ -675,7 +675,7 @@
 					if (field==="mm") text = 'The minimum number of words specified in the keyword phrase that should match';
 					if (field==="qs") text = 'Amount of slop on phrase queries explicitly included in the user\'s query string (affects matching)';
 					if (field==="ps") text = 'Amount of slop (distance between words) on phrase queries built for "pf" fields (affects boosting)';
-					if (field==="tie") text = 'in case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
+					if (field==="tie") text = 'In case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
 
 					$content.html(text);
 
