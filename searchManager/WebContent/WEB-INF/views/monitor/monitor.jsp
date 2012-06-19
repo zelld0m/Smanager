@@ -4,6 +4,9 @@
 <c:set var="submenu" value="monitor"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
+<script type="text/javascript" src="<spring:url value="/dwr/interface/CacheServiceJS.js"/>"></script>
+<script type="text/javascript" src="<spring:url value="/js/monitor/monitor.js" />"></script>
+
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
 	<div class="clearB floatL w240">
@@ -32,18 +35,29 @@
 		
 		<div id="cache">
 			<div>
-				<input type="text">
+				<input id="cacheKey" type="text">
 				<div class="floatR marL8 marR3 padT5"> 	        		
-	        		<a id="checkBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Check Cache</div></a>
+	        		<a id="checkCacheBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Check Cache</div></a>
 	        	</div>
 			</div>
 			
-			<div>
-				<div>
-					<span>Cache Type: </span><span>Object</span>
-					<span>Cache Date: </span><span>Im a date</span>
+			<div id="contentArea" style="display:none">
+				<div class="w95p marRLauto">
+					<table class="tblAlpha w100p marT8" >
+						<tr>
+							<th width="480px" class="txtAL">Field</th>
+							<th width="135px">Value</th>
+						</tr>
+					</table>
 				</div>
-				<div></div>
+				<div class="w95p marRLauto padT0 marT0" style="max-height:365px; overflow-y:auto">
+					<table id="contentTable" class="tblAlpha padT0 marT0" width="100%">
+						<tr id="rowPattern" class="rowItem" style="display: none">
+							<td id="field"></td>
+							<td id="value"></td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 		
