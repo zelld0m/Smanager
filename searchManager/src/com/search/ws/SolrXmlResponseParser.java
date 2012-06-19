@@ -40,7 +40,13 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 
 	private List<ElevateResult> elevatedList = null;
 	private List<String> expiredElevatedEDPs = null;
-	
+	private List<Map<String,String>> activeRules;
+
+	@Override
+	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
+		this.activeRules = activeRules;
+	}
+
 	@Override
 	public void setElevatedItems(List<ElevateResult> list) throws SearchException {
 		elevatedList= list;
@@ -247,6 +253,22 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				redirectNode.appendChild(mainDoc.createTextNode(changedKeyword));				
 				responseHeaderNode.appendChild(redirectNode);
 			}
+			
+			if (activeRules != null) {
+				Node activeRuleNode = mainDoc.createElement(SolrConstants.TAG_SEARCH_RULES);
+				for (Map<String, String> rule: activeRules) {
+					Node ruleNode = mainDoc.createElement(SolrConstants.TAG_RULE);
+					for (String key: rule.keySet()) {
+						Node ruleParamNode = mainDoc.createElement(key);
+						if (StringUtils.isNotBlank(rule.get(key))) {
+							ruleParamNode.appendChild(mainDoc.createTextNode(rule.get(key)));							
+						}
+						ruleNode.appendChild(ruleParamNode);
+					}
+					activeRuleNode.appendChild(ruleNode);
+				}
+				responseHeaderNode.appendChild(activeRuleNode);
+			}		
 			
 			Node responseHeaderParamsNode = locateElementNode(responseHeaderNode,
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS);
