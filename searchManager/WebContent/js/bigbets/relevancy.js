@@ -310,7 +310,7 @@
 									if(($.isBlank(currVal)|| currVal.indexOf("-") == -1) && charCode == 45) return true;
 									if(charCode == 8) return true;
 									if($.isNotBlank(currVal) && currVal.indexOf(".") == -1 && charCode == 46) return true;
-									if($.isNotBlank(currVal) && $.isNumeric(currVal) && !$.endsWith(currVal,'.') && currVal.indexOf("%") == -1 && charCode == 37) return true;
+									if($.isNotBlank(currVal) && (charCode == 37 || charCode == 39)) return true;
 									if(currVal.indexOf("%") == -1 && (charCode < 32 || (charCode > 47 && charCode < 58))){
 										return true;
 									}
@@ -840,6 +840,7 @@
 						}
 					});
 
+				
 					$contentHolder.find('a#addButton').on({
 						click: function(e){
 							var popName = $.trim($contentHolder.find('input[id="popName"]').val());
@@ -1245,7 +1246,7 @@
 									$contentHolder.find('input[type="text"], textarea').val("");
 								}
 							});
-
+							initTextarea(); 
 						},
 						hide: function (e, api){
 							sfExcFields = new Array();
@@ -1253,6 +1254,7 @@
 						}
 					}
 				});
+				
 			},
 
 			itemDataCallback: function(base, keyword, page){
@@ -1406,7 +1408,6 @@
 	var initTextarea =function(){
 	$('textarea[maxlength]').on({
 		keyup:function(){  
-			
         var limit = parseInt($(this).attr('maxlength'));  
   
         var text = $(this).val();  
