@@ -35,7 +35,11 @@
 		
 		<div id="cache">
 			<div>
+
 				<div class="floatR marL8 marR3 marT10"> 	        		
+
+				<input id="cacheKey" type="text">
+				<div class="floatR marL8 marR3 padT5"> 	        		
 	        		<a id="checkCacheBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Check Cache</div></a>
 	        	</div>
 				<div class="floatR marL8 marT10"><input id="cacheKey" type="text"></div>				
