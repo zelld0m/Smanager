@@ -78,7 +78,7 @@
 					</tbody>
 				</table>
 			</div>
-			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="display:none; background: #f3f3f3;">
+			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Approval Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<p align="justify">

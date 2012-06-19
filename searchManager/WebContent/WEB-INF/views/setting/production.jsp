@@ -58,12 +58,12 @@
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="">All Rules</option>
-						<option value="delete">All Approved Delete Rules Only</option>
-						<option value="approved">All Approved Non-Delete Rules Only</option>
-						<option value="published">All Published Rules Only</option>
+						<option value="delete">Approved Rules for Deletion</option>
+						<option value="approved">Approved Rules for Publishing</option>
+						<option value="published">Published Rules</option>
 					</select>
 				</div>
-				<div class="floatR"></div>
+				<div class="floatR" id="ruleCount"></div>
 			</div>
 			<div class="clearB"></div>
 			<div>
@@ -79,7 +79,7 @@
 					</tr>
 				</table>
 			</div>
-			<div style="max-height: 360px; overflow-y: scroll">
+			<div style="max-height: 360px; overflow-y: auto">
 				<table class="tblItems w100p" id="rule">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
