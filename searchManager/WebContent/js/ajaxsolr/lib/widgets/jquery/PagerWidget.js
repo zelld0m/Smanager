@@ -242,6 +242,11 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
     }
   },
 
+  beforeRequest: function(){
+	  $(this.target).empty();
+	  $('#top-pager-text,#bottom-pager-text').empty();
+  },
+  
   afterRequest: function () {
 	var self = this;  
     var perPage = parseInt(this.manager.response.responseHeader.params && this.manager.response.responseHeader.params.rows || 10);
