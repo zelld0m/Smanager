@@ -1,10 +1,13 @@
 (function ($) {
 	
 	AjaxSolr.ActiveRuleWidget = AjaxSolr.AbstractWidget.extend({
-		
-		beforeRequest: function(){
+		beforeRequest:function(){
 			var self = this;
-			$(self.target).empty();
+			
+			$(self.target).find('ul#itemListing > li.items:not(#itemPattern)').each(function(idx, el){
+				$(el).find('label.select > input[type="checkbox"]').prop("disabled", true);
+				$(el).find('.preloader').show();
+			});
 		},
 		
 		afterRequest: function () {
@@ -21,6 +24,11 @@
 				for(var i=0; i<rules.length; i++){
 					var rule = rules[i]["rule"];
 					$li = $ul.find("li#itemPattern").clone().prop("id", $.formatAsId(rule["id"]));
+					
+					$li.removeClass("fgray");
+					if(rule["active"]!=="true") {
+						$li.addClass("fgray"); 
+					}
 					
 					var checkboxId = "";
 					
@@ -53,6 +61,7 @@
 					
 					$li.find("label.ruleType").html(rule["type"]);
 					$li.find("label.name").html(rule["name"]);
+					if(i%2!=0) $li.addClass("alt");
 					$li.show();
 					$ul.append($li);
 				}
