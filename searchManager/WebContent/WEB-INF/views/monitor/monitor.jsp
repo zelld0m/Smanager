@@ -27,7 +27,7 @@
 	
 	<div class="clearB"></div>
 	
-	<div id="monitool" class="tabs">
+	<div id="monitool" class="tabs marT10">
 		<ul>
 			<li><a href="#cache"><span>Cache</span></a></li>
 			<li><a href="#log"><span>Log</span></a></li>
@@ -59,19 +59,14 @@
 						</tr>
 					</table>
 				</div>
-			</div>
+			</div><!--  content Area -->
 			
 			<div class="clearB"></div>
 		</div>
 		
-		<div id="log">
-		
-		</div>
-		
-		
+		<div id="log"></div>
 	</div>
-	
-	
 </div>
-       
+</div>
+  
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
