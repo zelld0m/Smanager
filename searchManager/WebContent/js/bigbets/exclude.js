@@ -71,7 +71,7 @@
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(evt){
 
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
+							var commaDelimitedNumberPattern = /^\s*\d+\s*(,?\s*\d+\s*)*$/;
 							
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
@@ -94,7 +94,7 @@
 								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 							else {
-								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
+								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(/[\s,]+/), {
 									callback : function(code){
 										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										showExclude();

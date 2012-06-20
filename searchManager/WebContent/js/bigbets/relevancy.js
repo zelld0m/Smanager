@@ -1218,7 +1218,7 @@
 												if (data==true){
 													alert("Another ranking rule is already using the name provided.");
 												}else{
-													RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+													RelevancyServiceJS.cloneRule("",popName, popStartDate, popEndDate, popDescription, {
 														callback: function(data){
 															if (data!=null){
 																base.getList(name, 1);

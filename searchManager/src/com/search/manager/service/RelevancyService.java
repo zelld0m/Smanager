@@ -174,7 +174,8 @@ public class RelevancyService {
 	public Relevancy cloneRule(String ruleId, String name, String startDate, String endDate, String description) throws Exception{
 		String clonedId = StringUtils.EMPTY;
 		Relevancy clonedRelevancy = null;
-
+		if(ruleId.equalsIgnoreCase(""))
+			ruleId=UtilityService.getStoreName()+"_default";
 		try {
 			String store = UtilityService.getStoreName();
 			Relevancy relevancy = new Relevancy();
