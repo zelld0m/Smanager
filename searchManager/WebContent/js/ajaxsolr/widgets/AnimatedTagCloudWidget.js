@@ -56,6 +56,11 @@
 			}
 		},
 		
+		beforeRequest: function () {
+			var self = this;
+			$(self.target).hide();
+		},
+		
 		afterRequest: function () {
 			var self = this;
 			
