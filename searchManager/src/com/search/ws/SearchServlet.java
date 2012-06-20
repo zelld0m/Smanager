@@ -129,9 +129,7 @@ public class SearchServlet extends HttpServlet {
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
 		activeRule.put(SolrConstants.TAG_RULE_ID, id);
 		activeRule.put(SolrConstants.TAG_RULE_NAME, name);
-		if (active) {
-			activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "");			
-		}
+		activeRule.put(SolrConstants.TAG_RULE_ACTIVE, String.valueOf(active));			
 		return activeRule;
 	}
 	
