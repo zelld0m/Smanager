@@ -29,12 +29,20 @@
 
 		},
 
+		beforeRequest: function(){
+			var self = this;
+			$(self.target).find('input[type="text"]').prop("disabled", true);
+			$(self.target).find('input[type="checkbox"]').prop("disabled", true);
+		},
+		
 		afterRequest: function () {
 			var self = this;
+			$(self.target).find('input[type="text"]').prop("disabled", false);
+			$(self.target).find('input[type="checkbox"]').prop("disabled", false);
 			var keyword = $.trim(self.manager.store.values('q'));
 
-			$(this.target).find('input').val(keyword);
-			$(this.target).find('input').focus();
+			$(self.target).find('input').val(keyword);
+			$(self.target).find('input').focus();
 			
 			RelevancyServiceJS.getAllRule("", 0, 0, {
 				callback:function(data){
