@@ -256,9 +256,9 @@ AjaxSolr.PagerWidget = AjaxSolr.AbstractWidget.extend(
     this.totalPages = Math.ceil(total / perPage);
 
     $(this.target).empty();
-    $('#pager-header').empty();
+    $('#top-pager-text,#bottom-pager-text').empty();
     
-    if (self.manager.response.response.docs.length>0 && $.isNotBlank(self.manager.store.values('q'))){
+    if (self.manager.response.response["numFound"]>0 && $.isNotBlank(self.manager.store.values('q'))){
 	    this.renderLinks(this.windowedLinks());
 	    this.renderHeader(perPage, offset, total, qTime);
     }

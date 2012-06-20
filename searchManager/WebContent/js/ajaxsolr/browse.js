@@ -70,6 +70,11 @@
 						target: '#dynamicFacets',
 						limit: 5
 					}));
+					
+					Manager.addWidget(new AjaxSolr.ActiveRuleWidget({
+						id: 'activeRule',
+						target: '#activeRule'
+					}));
 
 					Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
 						id: 'prodAttribFilter',
@@ -99,8 +104,6 @@
 					}
 
 					Manager.store.addByValue("store", storeName);
-
-					Manager.doRequest();
 
 					if ($("#select-server").is(":visible")){
 						$("#select-server").on({

@@ -27,6 +27,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ProductAttributeFilterWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ActiveRuleWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
@@ -96,21 +97,28 @@
 		  <!-- div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 GraytopLine">  		
 		  </div -->
 		   
-		  <div>
-		  	  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
-			  	  <div id="changeKeyword" class="floatL displayInline w50p marT8 wordwrap" style="display: none">
-			      		<div class="alert fsize12 fred wordwrap">Search results displayed are for <span class="fbold"></span></div>  
-		          </div>
-			  	  <div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
-			  	  <div class="clearB"></div>
-			  </div>
+		  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
+			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
+			<div class="clearB"></div>
+			
 		  </div>
-		
-		 <div>
+		  
+		  <div>
 		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
 			  <div class="floatR farial fsize11 fgray txtAR padT10">
+			  <div class="txtAR">
+				  <ul id="top-pager" class="pagination"></ul>
+				  </div>
+			  </div>
+			  <div class="clearB"></div>
+		  	  
+		  	  <div id="docs" class="clearB floatL w730"></div>
+		  	  
+		  	  <div class="clearB"></div>
+		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
+			  <div class="floatR farial fsize11 fgray txtAR padT10">
 				  <div class="txtAR">
-				  	<ul id="top-pager" class="pagination"></ul>
+				  	<ul id="bottom-pager" class="pagination"></ul>
 				  </div>
 			  </div>
 		  </div>
@@ -128,11 +136,6 @@
 			 	</div>
 		  </div>			
 					
-		  <!-- Search Results-->
-		  <div class="clearB"></div>
-		  	<div id="docs" class="clearB floatL w730 borderB"></div>
-		  <div class="clearB"></div>
-		  
 		   <!-- Search Options-->
 		  <div id="searchOptionsTemplate" style="display:none">
 		  	<div class="w200 marT10">
@@ -153,15 +156,6 @@
 		  	</div>
 		  </div>
 		  
-		  <div>
-		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10">
-				  <div class="txtAR">
-				  	<ul id="bottom-pager" class="pagination"></ul>
-				  </div>
-			  </div>
-		  </div>
-
 		<div id="viewAuditTemplate" style="display: none">
 			<div class="elevateItemPW">
 				<div class="w265 padB8">
