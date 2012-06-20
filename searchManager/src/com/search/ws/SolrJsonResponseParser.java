@@ -35,7 +35,8 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private Map<String, JSONObject> elevateEntries = new HashMap<String, JSONObject>();
 	private String wrf = "";
 	private String changedKeyword;
-
+	private List<Map<String,String>> activeRules;
+	
 	private String requestPath;
 	private int startRow;
 	private int requestedRows;
@@ -49,6 +50,11 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		JsonConfig jsonConfig = new JsonConfig();
 		jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 		slurper = new JsonSlurper(jsonConfig);
+	}
+
+	@Override
+	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
+		this.activeRules = activeRules;
 	}
 
 	@Override
@@ -128,6 +134,18 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			if (StringUtils.isNotEmpty(changedKeyword)) {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
 			}
+			
+			if (activeRules != null) {
+				JSONArray searchRules = new JSONArray();
+				int i = 0;
+				for (Map<String, String> rule: activeRules) {
+					JSONObject ruleObject = new JSONObject();
+					ruleObject.element(SolrConstants.TAG_RULE, rule);
+					searchRules.element(i++, ruleObject);
+				}
+				responseHeader.element(SolrConstants.TAG_SEARCH_RULES, searchRules);
+			}
+			
 			JSONObject paramsHeader = (JSONObject)(responseHeader.get(SolrConstants.ATTR_NAME_VALUE_PARAMS));
 			paramsHeader.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
 			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);

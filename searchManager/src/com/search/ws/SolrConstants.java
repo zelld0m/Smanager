@@ -62,4 +62,26 @@ public class SolrConstants {
 	public final static String ATTR_NAME_VALUE_DEBUG = "debug";
 	public final static String ATTR_NAME_VALUE_EXPLAIN = "explain";
 	
+	// active rules
+	// params submitted by simulator
+	public final static String SOLR_PARAM_DISABLE_ELEVATE = "disableElevate";
+	public final static String SOLR_PARAM_DISABLE_EXCLUDE = "disableExclude";
+	public final static String SOLR_PARAM_DISABLE_REDIRECT = "disableRedirect";
+	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
+	// returned as part of solr response
+	public final static String TAG_SEARCH_RULES = "search_rules";
+	public final static String TAG_RULE = "rule";
+	public final static String TAG_RULE_ID = "id";
+	public final static String TAG_RULE_TYPE = "type";
+	public final static String TAG_RULE_NAME = "name";
+	public final static String TAG_RULE_ACTIVE = "active";
+	// rule types
+	public final static String TAG_VALUE_RULE_TYPE_ELEVATE = "Elevate";
+	public final static String TAG_VALUE_RULE_TYPE_EXCLUDE = "Exclude";
+	public final static String TAG_VALUE_RULE_TYPE_REDIRECT = "Query Cleaning";
+	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
+
+	
+	
+	
 }

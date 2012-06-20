@@ -8,10 +8,6 @@
 	src="<spring:url value="/js/settings/production.js" />"></script>
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-	<div class="companyLogo">
-		<a href="#"><img src="<spring:url value="${storeLogo}" />">
-		</a>
-	</div>
 	<div class="clearB floatL w240">
 		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
 	</div>

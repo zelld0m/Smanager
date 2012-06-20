@@ -124,6 +124,17 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
+	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
+		Map<String,String> activeRule = new HashMap<String,String>();
+		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
+		activeRule.put(SolrConstants.TAG_RULE_ID, id);
+		activeRule.put(SolrConstants.TAG_RULE_NAME, name);
+		if (active) {
+			activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "");			
+		}
+		return activeRule;
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
@@ -210,7 +221,14 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
-
+			boolean disableElevate    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_ELEVATE) != null;
+			boolean disableExclude    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_EXCLUDE) != null;
+			boolean disableRedirect   = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) != null;
+			boolean disableRedirectIdPresent = StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
+			String  disableRedirectId = disableRedirect ? getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
+			boolean disableRelevancy  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
+			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
+			
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
@@ -230,6 +248,16 @@ public class SearchServlet extends HttpServlet {
 						break;
 					}
 					else {
+						
+						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
+						
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
+						
+						if (stop) {
+							redirect = null;
+							break;
+						}
+						
 						if (!redirect.isRedirectChangeKeyword()) {
 							break;
 						}
@@ -326,7 +354,12 @@ public class SearchServlet extends HttpServlet {
 					// load relevancy details
 					relevancy = daoService.getRelevancyDetails(relevancy);
 					if (relevancy != null) {
-						logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());
+						if (!disableRelevancy) {
+							logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
+						}
+						else {
+							logger.debug("Relevancy disabled. Not applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
+						}
 					}
 					else {
 						logger.error("Unable to find default relevancy!");
@@ -334,7 +367,12 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 			
+			
 			if (relevancy != null) {
+				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));				
+			}
+			
+			if (!disableRelevancy && relevancy != null) {
 				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
 				nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
 				Map<String, String> parameters = relevancy.getParameters();
@@ -376,36 +414,48 @@ public class SearchServlet extends HttpServlet {
 			List<ExcludeResult> excludeList = null;
 			
 			if (keywordPresent) {
+
+				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+				
 				if (fromSearchGui) {
-					if (configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-						ElevateResult elevateFilter = new ElevateResult();
-						elevateFilter.setStoreKeyword(sk);
-						SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
-						SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
-		
-						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-							elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-							List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
-							if (logger.isDebugEnabled()) {
-								logger.debug("Expired List: ");
-							}
-							for (ElevateResult expired: expiredList) {
+					if (!disableElevate) {
+						if (configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							ElevateResult elevateFilter = new ElevateResult();
+							elevateFilter.setStoreKeyword(sk);
+							SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
+							SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
+			
+							if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+								elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
+								List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
 								if (logger.isDebugEnabled()) {
-									logger.debug("\t" + expired.getEdp());
+									logger.debug("Expired List: ");
 								}
-								expiredElevatedList.add(expired.getEdp());
+								for (ElevateResult expired: expiredList) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("\t" + expired.getEdp());
+									}
+									expiredElevatedList.add(expired.getEdp());
+								}
 							}
 						}
 					}
 					
-					ExcludeResult excludeFilter  = new ExcludeResult();
-					excludeFilter.setStoreKeyword(sk);
-					SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
-					excludeList = daoService.getExcludeResultList(excludeCriteria).getList();
+					if (!disableExclude) {
+						ExcludeResult excludeFilter  = new ExcludeResult();
+						excludeFilter.setStoreKeyword(sk);
+						SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
+						excludeList = daoService.getExcludeResultList(excludeCriteria).getList();						
+					}
 				}
 				else {
-					elevatedList = daoCacheService.getElevateRules(sk);	
-					excludeList = daoCacheService.getExcludeRules(sk);
+					if (!disableElevate) {
+						elevatedList = daoCacheService.getElevateRules(sk);	
+					}
+					if (!disableExclude) {
+						excludeList = daoCacheService.getExcludeRules(sk);						
+					}
 				}			
 			}
 			
@@ -494,6 +544,8 @@ public class SearchServlet extends HttpServlet {
 				solrHelper.setSolrUrl(requestPath);
 			}
 			
+			solrHelper.setActiveRules(activeRules);
+
 			// TASK 1A
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {

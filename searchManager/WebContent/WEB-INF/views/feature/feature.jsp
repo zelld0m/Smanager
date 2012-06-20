@@ -22,7 +22,6 @@
 	
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
-<div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
 	<!-- Keyword -->
 	<div class="clearB floatL w240">
 	 	<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>

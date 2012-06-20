@@ -1,3 +1,5 @@
+.companyLogoImg 				{ position:absolute; top:56px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
+
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
@@ -17,14 +19,15 @@
 .cssReset .subMenu li a			{ color:#222222 }
 .cssReset .subMenu li.active a	{ color:#a20b00 }
 
-.cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:-64px; z-index:200 }
-.ie .cssReset .sideMenuArea		{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; margin-top:-62px ; z-index:200 }
+.cssReset .sideMenuArea			{ width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:0; z-index:200 }
 
 .cssReset .bgFooter				{ background:url(images/bgFooter.gif) repeat-x; padding:15px 10px; font-size: 11px; padding-bottom:20px }
 .cssReset .txtcopyright			{ color:#666666 }
 
 .cssReset .borderT, .borderT	{border-top:1px solid #ccc !important}
+.cssReset .borderR, .borderR	{border-right:1px solid #ccc !important}
 .cssReset .borderB, .borderB	{border-bottom:1px solid #ccc !important}
+.cssReset .borderL, .borderL	{border-left:1px solid #ccc !important}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 

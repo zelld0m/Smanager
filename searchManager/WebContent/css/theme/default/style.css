@@ -1,3 +1,5 @@
+.companyLogoImg 				{ position:absolute; top:56px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
+
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
@@ -20,8 +22,8 @@ ul.dropdown ul.subMenu li a		{ color:#222222 }
 .cssReset .subMenu li.active a,
 ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 
-.cssReset .sideMenuArea			{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:-64px; z-index:200 }
-.ie .cssReset .sideMenuArea		{ background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; position:relative; margin-top:-62px ; z-index:200 }
+.cssReset .sideMenuArea			{ width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:0; z-index:200 }
+
 .cssReset .sideMenuArea img.ui-datepicker-trigger { margin-bottom:-4px; margin-left:3px}
 
 
@@ -31,7 +33,9 @@ ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 .cssReset .txtcopyright			{ color:#3B79C2  }
 
 .cssReset .borderT, .borderT	{border-top:1px solid #ccc !important}
+.cssReset .borderR, .borderR	{border-right:1px solid #ccc !important}
 .cssReset .borderB, .borderB	{border-bottom:1px solid #ccc !important}
+.cssReset .borderL, .borderL	{border-left:1px solid #ccc !important}
 .cssReset .borderB2				{border-bottom:2px solid #c7c7c7 }
 .cssReset .border, .border		{border:1px solid #ccc}
 
@@ -793,6 +797,11 @@ html.gecko .endingTxt							{ font-size:11px }
 
 
 .security label					{ margin-top:5px }
+
+.box		{ background: #f4f4f4; border:1px solid #cbcbcb !important;  }
+.box h2		{ font-size:14px; font-weight: bold; color:#282828; background:#e0e0e0; padding:4px 8px }
+.box ul		{ list-style: none; font-size:12px; margin:8px }
+.box li		{ margin:4px }
 
 
 

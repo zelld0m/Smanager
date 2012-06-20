@@ -10,9 +10,6 @@
 
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">
-	<div class="companyLogo">
-		<a href="#"><img src="<spring:url value="${storeLogo}" />"></a>
-	</div>
 	<div class="clearB floatL w240">&nbsp;</div>
 	<div class="sideHeader">Most Popular</div>
 	<div class="marT10 txtAC"><a href=""><img src="<spring:url value="/images/productItems/imgMostPopular.jpg" />">

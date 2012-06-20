@@ -14,9 +14,7 @@
 
 <!--Start Left Side-->
 <div class="clearB floatL minW240 sideMenuArea">
-	<div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
-
-	<div class="clearB floatL w240">
+		<div class="clearB floatL w240">
     	<div id="sideHeader" class="sideHeader posRel">
     		<img src="../images/corner_tl.png" class="curveTL"/>
     		<img src="../images/corner_tr.png" class="curveTR"/>

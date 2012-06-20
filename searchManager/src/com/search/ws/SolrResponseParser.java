@@ -2,6 +2,7 @@ package com.search.ws;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +18,7 @@ public interface SolrResponseParser {
 	public void setElevatedItems(List<ElevateResult> list) throws SearchException;
 	public void setExpiredElevatedEDPs(List<String> list) throws SearchException;
 	public void setChangeKeyword(String string) throws SearchException;
+	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException;
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedItems(List<NameValuePair> requestParams) throws SearchException;
