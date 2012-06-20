@@ -11,8 +11,8 @@
 		var ruleKeywordPageSize = 5;
 		var ruleFilterText = "";
 		var keywordFilterText = "";
-		var rulePage = "";
-		var keywordPage = "";
+		var rulePage = 1;
+		var keywordPage = 1;
 		
 		var tabSelectedTypeId = "";
 
@@ -259,7 +259,7 @@
 			$("#ruleKeywordPanel").sidepanel({
 				fieldId: "keywordId",
 				fieldName: "keyword",
-				page: redirectRulePage,
+				page: keywordPage,
 				pageSize: ruleKeywordPageSize,
 				headerText : "Query Cleaning Keyword",
 				searchText : "Enter Keyword",

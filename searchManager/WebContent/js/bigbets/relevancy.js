@@ -23,8 +23,8 @@
 	
 	var ruleFilterText = "";
 	var keywordFilterText = "";
-	var rulePage = "";
-	var keywordPage = "";
+	var rulePage = 1;
+	var keywordPage = 1;
 
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
