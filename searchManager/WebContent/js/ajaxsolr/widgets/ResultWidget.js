@@ -3,7 +3,6 @@
 	AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
 		beforeRequest: function () {
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
-			$('#canvasContainer').hide();
 		},
 
 		afterRequest: function () {
@@ -13,54 +12,7 @@
 			var keyword = $.trim(self.manager.store.values('q'));
 			var hasKeyword = $.isNotBlank(keyword);
 
-			animatedTagCloud = function(){
-				if (!$('#tagCanvas').tagcanvas({
-					textFont: null,
-					textColour: null,
-					weight: true,
-					outlineThickness : 1,
-					maxSpeed : 0.05,
-					depth : 0.8,
-					reverse: true,
-					freezeActive: true,
-					shape: "sphere"
-				}, 'tagContainer')) {
-					$('#canvasContainer').hide();
-				}
-			};
-
-			if (!hasKeyword){
-				$(self.target).empty(); 
-				$('#canvasContainer').show();
-				$ul = $('ul#tagList');
-				$ul.empty();
-
-				StoreKeywordServiceJS.getAll(25, {
-					callback: function(data){
-						var list = data.list;
-						var total = data.totalSize;
-						var colorCSSList= ["fColorOne","fColorTwo","fColorThree","fColorFour"];
-						var sizeCSSList = ["fontxSmall","fontSmall","fontMedium","fontLarge"];
-
-						for (var i=0; i < list.length; i++){
-							var randomColor = colorCSSList[Math.floor(Math.random()*colorCSSList.length)];
-							var randomSize = sizeCSSList[Math.floor(Math.random()*sizeCSSList.length)];
-							$ul.append('<li><a class="' + randomColor + ' ' + randomSize + '" href="javascript:void(0)">' + list[i].keyword.keyword + '</a></li>');	
-						}
-
-						$('ul#tagList > li > a').click(function(e){
-							$('#canvasContainer').hide();
-							self.manager.store.addByValue('q',$.trim($(e.target).html()));
-							self.manager.doRequest(0);
-						});
-
-						animatedTagCloud();
-					}
-				});
-
-
-			}
-			else{
+			if (hasKeyword){
 				if (this.manager.response.response.docs.length == 0){
 					$(this.target).append(AjaxSolr.theme('noSearchResult', keyword));
 				}else{
@@ -82,11 +34,7 @@
 							$(self.target).wrapInner("<ul class='searchList'>");
 						}
 					}
-					
-					if ($.isNotBlank(self.manager.response.responseHeader["Redirect"])){
-						$(this.target).find("div.ruleOptionHolder").hide();
-					}
-
+	
 				}
 			}
 		},

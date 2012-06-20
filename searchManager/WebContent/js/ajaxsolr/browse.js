@@ -75,6 +75,12 @@
 						id: 'activeRule',
 						target: '#activeRule'
 					}));
+					
+					Manager.addWidget(new AjaxSolr.AnimatedTagCloudWidget({
+						id: 'animatedTagCloud',
+						target: '#tagCloud',
+						limit: 25
+					}));
 
 					Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
 						id: 'prodAttribFilter',

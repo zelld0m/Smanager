@@ -1,5 +1,18 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.animatedTagCloud = function () {
+		var output  = '';
+		
+		output  +='<canvas width="740" height="500" id="canvas">';
+		output  +='<p>In Internet Explorer versions up to 8, things inside the canvas are inaccessible!</p>';
+		output  +='</canvas>';
+		output  +='<div id="tagContainer">';
+		output  +='<ul id="tagList"></ul>';
+		output  +='</div>';
+
+		return $(output);
+	};
+	
 	AjaxSolr.theme.prototype.activeRule = function () {
 		var output  = '';
 		

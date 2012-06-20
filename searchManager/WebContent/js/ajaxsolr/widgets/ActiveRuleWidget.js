@@ -12,9 +12,10 @@
 		
 		afterRequest: function () {
 			var self = this;
+			$(self.target).empty();
 			var keyword = self.manager.store.values('q');
 			
-			if ($.isNotBlank(keyword)){
+			if($.isNotBlank(keyword)){
 				$(self.target).html(AjaxSolr.theme('activeRule'));
 				
 				var rules = self.manager.response.responseHeader["search_rules"];
