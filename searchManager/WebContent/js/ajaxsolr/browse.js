@@ -47,6 +47,11 @@
 						id: 'currentSearch',
 						target: '#dynamicSelection'
 					}));
+					
+					Manager.addWidget(new AjaxSolr.RuleSelectorWidget({
+						id: 'ruleSelector',
+						target: '#ruleSelector'
+					}));
 
 					var sortWidget = new AjaxSolr.SortResultWidget({
 						id: 'sortResult',
