@@ -34,7 +34,11 @@
 							$(self.target).wrapInner("<ul class='searchList'>");
 						}
 					}
-	
+					
+					if ($.isNotBlank(self.manager.response.responseHeader["Redirect"])){
+						$(this.target).find("div.ruleOptionHolder").hide();
+					}
+					
 				}
 			}
 		},
