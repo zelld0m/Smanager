@@ -62,6 +62,12 @@
 					
 					$li.find("label.ruleType").html(rule["type"]);
 					$li.find("label.name").html(rule["name"]);
+					
+					$li.find("label.imageIcon > img").preview({
+						ruleType: rule["type"],
+						ruleId: rule["id"]
+					});
+						
 					if(i%2!=0) $li.addClass("alt");
 					$li.show();
 					$ul.append($li);
