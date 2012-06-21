@@ -1,12 +1,17 @@
 (function ($) {
 	AjaxSolr.SearchWithinWidget = AjaxSolr.AbstractFacetWidget.extend({
+		beforeRequest: function () {
+			var self = this;
+			$(self.target).find('input[type="text"]').prop("disabled",true);
+		},
+		
 		afterRequest: function () {
 			var self = this;
-			$(this.target).empty();
+			$(self.target).empty();
 
 			if (self.manager.response.response.docs.length > 0 && $.isNotBlank(self.manager.store.values('q'))){
-				$(this.target).html(AjaxSolr.theme('searchWithin'));
-				$(this.target).find('input').focus();
+				$(self.target).html(AjaxSolr.theme('searchWithin'));
+				$(self.target).find('input').focus();
 				$(self.searchWithinInput).val($.cookie('searchWithin'));
 
 				$(self.searchWithinInput).bind('keydown', function(e) {
@@ -16,7 +21,7 @@
 					}
 				}); 
 
-				$(this.target).find('#searchbutton').click(function() {
+				$(self.target).find('#searchbutton').click(function() {
 					self.reloadSearch();
 				});  	
 			}
