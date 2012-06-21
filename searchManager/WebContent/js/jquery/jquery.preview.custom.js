@@ -79,9 +79,121 @@
 						}
 					});
 					break; 
-				case "ranking rule": break;
-				case "query cleaning": break;
+				case "query cleaning": 
+					$content.find(".infoTabs").tabs({});
+				
+					$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
+					$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
+					$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
+					
+					RedirectServiceJS.getRule(base.options.ruleId, {
+						callback: function(data){
+
+							var $table = $content.find("div.ruleFilter table#item");
+							$table.find("tr:not(#itemPattern)").remove();
+
+							if(data.conditions.length==0){
+								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
+								$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
+								$tr.find("td#fieldValue").remove();
+								$tr.appendTo($table);
+
+							}else{
+								for(var field in data.conditions){
+									$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+									$tr.find("td#fieldName").html(parseInt(field)+1);
+									$tr.find("td#fieldValue").html(data.conditions[field]);
+									$tr.appendTo($table);
+								}	
+							}
+
+							$table.find("tr:even").addClass("alt");
+							$content.find("#description").html(data["description"]);
+							switch (data["redirectTypeId"]) {
+								case "1":
+									$content.find("#redirectType").html("Filter");
+									break;
+								case "2":
+									$content.find("#redirectType").html("Replace Keyword");
+									break;
+								case "3":
+									$content.find("#redirectType").html("Direct Hit");
+									break;
+								default:
+									$content.find("#redirectType").html("");
+									break;									
+							}
+							
+							if ($.isNotBlank(data["changeKeyword"])){
+								$content.find("div#ruleChange > div#hasChangeKeyword").show();
+								$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
+							}else{
+								$content.find("div#ruleChange > #noChangeKeyword").show();
+							}
+						}
+					});
+
+					RedirectServiceJS.getAllKeywordInRule(base.options.ruleId, "", 0, 0, {
+						callback: function(data){
+							base.populateKeywordInRule($content, data);
+						}
+					});
+					
+					break;
+				case "ranking rule": 
+					$content.find(".infoTabs").tabs({});
+					
+					RelevancyServiceJS.getRule(base.options.ruleId, {
+						callback: function(data){
+							$content.find("#startDate").html(data["formattedStartDate"]);
+							$content.find("#endDate").html(data["formattedEndDate"]);
+							$content.find("#description").html(data["description"]);
+
+							var $table = $content.find("div.ruleField table#item");
+							$table.find("tr:not(#itemPattern)").remove();
+							
+							for(var field in data.parameters){
+								$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+								$tr.find("td#fieldName").html(field);
+								$tr.find("td#fieldValue").html(data.parameters[field]);
+								$tr.appendTo($table);
+							}	
+							
+							$table.find("tr:even").addClass("alt");
+						}
+					});
+
+					RelevancyServiceJS.getAllKeywordInRule(base.options.ruleId, "", 0, 0, {
+						callback: function(data){
+							base.populateKeywordInRule($content, data);
+						}
+					});
+					
+					break;
 			}
+		};
+		
+		base.populateKeywordInRule = function(content, data){
+			var $content = content;
+			var list = data.list;
+			var $table = $content.find("div.ruleKeyword table#item");
+			$table.find("tr:not(#itemPattern)").remove();
+
+			if (data.totalSize==0){
+				$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
+				$tr.find("td#fieldName").html("No keywords associated to this rule").attr("colspan","2");
+				$tr.find("td#fieldValue").remove();
+				$tr.appendTo($table);
+			}else{
+				for(var i=0; i< data.totalSize; i++){
+					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"])).show();
+					$tr.find("td#fieldName").html(parseInt(i)+1);
+					$tr.find("td#fieldValue").html(list[i]["keyword"]);
+					$tr.appendTo($table);
+				}	
+			}
+			
+			$table.find("tr:even").addClass("alt");
 		};
 		
 		base.getTemplate = function(){
