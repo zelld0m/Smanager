@@ -29,6 +29,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ProductAttributeFilterWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ActiveRuleWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/AnimatedTagCloudWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/RuleSelectorWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
@@ -52,7 +53,7 @@
 	
     <!-- Start Right Side -->	  
 	<div class="floatL w730 marL10 marT27" style="min-height:550px">
-		  <!-- Search Widget -->
+		  <!-- Text Widget -->
 		  <div id="search" class="floatL w730 titlePlacer">
 			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
         	<div class="floatL w460 txtAR padT7"> 
@@ -63,50 +64,35 @@
 			</div>			
 		   </div>
 		   
-		   <div id="searchResultOption"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
+		   <!-- Rule Selector Widget -->
+		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
 	        	<div class="floatL w60p dropdownArea" >
-	        		<label class="floatL w150 fbold">Select Ranking Rule:</label>
-		        	<label class="floatL w200 fbold">
-		        	<select id="relevancy" class="w178">
-		        		<option value="" id="norelevancy" >&nbsp;</option>
-		        	</select>
+	        		<label class="floatL w150">Select Ranking Rule:</label>
+		        	<label class="floatL">
+			        	<select id="rankingRule" class="w178"></select>
 		        	</label>	        	
 			  	</div>   
 			  	
-	        	<div class="floatR marL8 marTn2 marR3 padT2"> Select Catalog: 
-		        	<select>	
-		        		<option>DEFAULT</option>
-		        	</select>
+	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea">
+	        	 	<label class="floatL w150">Select Catalog:</label>
+		        	<label class="floatL"> 
+			        	<select>	
+			        		<option>DEFAULT</option>
+			        	</select>
+		        	</label>
 	        	</div>
 	      </div>
 		  
+		  <!-- Active Rule Widget -->
 		  <div id="activeRule"></div>
-		  		  
-		  <!-- Search Options-->
-		  <div id="searchOptionsTemplate" style="display:none">
-		  	<div class="w200 marT10">
-		  		<label class="floatL w60 padT5">Catalog:</label>
-		  		<label style="float:left; width: 130px;">
-			  		<select id="catalog" class="w120">
-			  			<option>Default</option>
-			  			<option>HP Only</option>
-			  		</select>
-		  		</label>
-		  		<div class="clearB marT6"></div>
-		  		<!-- label class="marT6 floatL w60 valignMid">Relevancy:</label>
-		  		<label class="marT6" style="float:left; width: 130px;">
-			  		<select id="relevancy" class="w120">
-			  			<option value="">Schema Default</option>
-			  		</select>
-		  		</label -->
-		  	</div>
-		  </div>
 		  
+		  <!-- Sort Result Widget -->
 		  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
 			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			<div class="clearB"></div>
 		  </div>
 		  
+		  <!-- Result & Pager Widget -->
 		  <div>
 		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
 			  <div class="floatR farial fsize11 fgray txtAR padT10">

@@ -31,48 +31,6 @@
 
 			$(self.target).find('input').val(keyword);
 			$(self.target).find('input').focus();
-
-			RelevancyServiceJS.getAllRule("", 0, 0, {
-				callback:function(data){
-					var list = data.list;
-					var total = data.totalSize;
-
-					$('select#relevancy > option').remove();
-
-					$('select#relevancy').append($("<option>", { value : "keyword_default", selected: true}).text("[ Auto-Match ]"));
-					for(var i=0; i<total; i++){
-						$('select#relevancy').append($("<option>", { value : list[i].relevancyId}).text(list[i].relevancyName));
-					}
-
-					var relevancyId = $.trim(self.manager.store.values('relevancyId'));
-
-					if ($.isNotBlank(relevancyId)) {
-						$('select#relevancy > option[value="' + relevancyId + '"]').attr('selected', 'selected');
-					}
-
-					$("select#relevancy").combobox({
-						selected: function(event, ui){
-							var key = self.manager.store.values('q');
-							var selectedVal = $(this).val();
-							self.manager.store.addByValue('relevancyId', selectedVal==="keyword_default"? "":selectedVal);
-							if($.isNotBlank(key)) self.makeRequest(key);
-						}
-					});
-				}
-			});
-
-			$('a#searchOptionsIcon > div').qtip({
-				content: {
-					text: $('<div/>'),
-					title: { text: "Search Options", button: true }
-				},
-				events: {
-					render: function(event, api) {
-						var content = $('div', api.elements.content);
-						content.html($("#searchOptionsTemplate").html());
-					}
-				}
-			});
 		},
 		
 		makeRequest: function(keyword){
