@@ -66,21 +66,20 @@
 		   
 		   <!-- Rule Selector Widget -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-	        	<div class="floatL w60p dropdownArea" >
-	        		<label class="floatL w150">Select Ranking Rule:</label>
-		        	<label class="floatL">
-			        	<select id="rankingRule" class="w178"></select>
-		        	</label>	        	
-			  	</div>   
-			  	
-	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea">
-	        	 	<label class="floatL w150">Select Catalog:</label>
-		        	<label class="floatL"> 
+	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350">
+	        	 	<label class="floatL w90 padT5">Select Catalog:</label>
+		        	<label class="floatL w200"> 
 			        	<select>	
 			        		<option>DEFAULT</option>
 			        	</select>
 		        	</label>
 	        	</div>
+	        	<div class="floatL w350 dropdownArea" >
+	        		<label class="floatL w150 padT5">Select Ranking Rule:</label>
+		        	<label class="floatL w200">
+			        	<select id="rankingRule" class="w178"></select>
+		        	</label>	        	
+			  	</div>
 	      </div>
 		  
 		  <!-- Active Rule Widget -->

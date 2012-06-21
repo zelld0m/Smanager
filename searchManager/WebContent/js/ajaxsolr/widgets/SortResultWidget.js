@@ -57,7 +57,8 @@
 
 
 				$(this.target).append(AjaxSolr.theme('select_tag', 'itemsPerPage', AjaxSolr.theme('options_for_select', perPageOptions, selectedPageOptions)));
-
+				$(this.target).append(" ");
+				
 				if ($(this.sortLabel)){
 					$(this.target).append(this.sortLabel);
 				}
