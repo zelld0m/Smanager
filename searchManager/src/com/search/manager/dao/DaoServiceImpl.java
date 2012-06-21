@@ -909,6 +909,9 @@ public class DaoServiceImpl implements DaoService {
 		if (rSet.getList().size() > 0) {
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			if (isDelete) {
+				if (((RuleStatus)rSet.getList().get(0)).getPublishedStatus().equals(RuleStatusEntity.UNPUBLISHED.toString())) {
+					ruleStatus.setApprovalStatus(null);
+				}
 				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
 			} else {
 				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());

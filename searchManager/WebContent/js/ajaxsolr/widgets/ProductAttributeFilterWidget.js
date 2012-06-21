@@ -2,6 +2,12 @@
 
 	AjaxSolr.ProductAttributeFilterWidget = AjaxSolr.AbstractWidget.extend({
 	
+		beforeRequest: function () {
+			var self = this;
+			$(self.target).find('select').prop("disabled",true);
+			$(self.target).find('input[type="checkbox"]').prop("disabled",true);
+		},
+		
 		afterRequest: function () {
 			var self = this;
 			$(self.target).empty();
