@@ -66,13 +66,13 @@
 		   
 		   <!-- Rule Selector Widget -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350">
-	        	 	<label class="floatL w90 padT5">Select Catalog:</label>
-		        	<label class="floatL w200"> 
+	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR" style="display:none">
+	        	 	<label class="floatR"> 
 			        	<select>	
 			        		<option>DEFAULT</option>
 			        	</select>
 		        	</label>
+	        	 	<label class="floatR w90 padT5">Select Catalog:</label>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
 	        		<label class="floatL w150 padT5">Select Ranking Rule:</label>
