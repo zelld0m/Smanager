@@ -66,88 +66,43 @@
 	
 	
 	<div class="w95p marRLauto">
-		<table class="tblAlpha w100p" >
-			<tr>
-				<th width="75px" id="selectAll"></th>
-				<th width="480px" class="txtAL">Keyword</th>
-				<th width="135px">Count</th>
-			</tr>
-		</table>
+
 	</div>
-	<div class="w95p marRLauto padT0 marT0" style="max-height:365px; overflow-y:auto">
-		<table class="tblAlpha padT0 marT0" width="100%">
-			<tr>
-				<td width="69px">1</td>
-				<td width="461px">western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-			<tr>
-				<td>1</td>
-				<td>western digital external hard drive</td>
-				<td>422</td>
-			</tr>
-			<tr>
-				<td>2</td>
-				<td>dvd drive</td>
-				<td>423</td>
-			</tr>
-		</table>
+	<div class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">	
+		<div class="pad5 borderB clearfix">
+			<label class="floatL w80">1</label>
+			<label class="floatL w80">422</label>
+			<label class="floatL w500">
+				<label class="floatL w400">western digital external hard drive</label> <label class="floatL fsize11 w100"><a href="/">show active rules</a></label>
+				<div class="marT20 w500">
+					<ul>
+						<li class="items borderB padTB5 clearfix w500 padL5">
+							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
+							<label class="ruleType floatL fbold w220">_appleTV</label>
+							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
+							<label class="name w225 floatL"><span class="fbold">Query Cleaning</span></label>
+						</li>
+						<li class="items padTB5 clearfix w500 padL5">
+							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
+							<label class="ruleType floatL fbold w220">Query Cleaning</label>
+							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
+							<label class="name w225 floatL"><span class="fbold">_appleTV</span></label>
+						</li>
+						
+						<!-- please remove the class borderB for the last item in list thanks -->
+						
+					</ul>
+				</div>
+			</label>
+		</div>
+		
+		<div class="pad5 borderB clearfix alt">
+			<label class="floatL w80">2</label>
+			<label class="floatL w80">423</label>
+			<label class="floatL w500"><label class="floatL w400">western digital external hard drive</label> <label class="floatL fsize11 w100"><a href="/">show active rules</a></label></label>			
+		</div>
+		
+
 	</div>
 	
 </div> 
