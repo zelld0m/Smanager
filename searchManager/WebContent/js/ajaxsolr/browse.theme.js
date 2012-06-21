@@ -17,13 +17,13 @@
 		var output  = '';
 		
 		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-		output  +='	<ul id="itemListing" class="mar16 marB20">';
-		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none">';
+		output  +='	<ul id="itemListing" class="mar16 marB20" >';
+		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
 		output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
 		output  +='			<label class="select floatL w20"><input type="checkbox" class="ruleControl"></label>';
-		output  +='			<label class="ruleType floatL fbold w300"></label>';
+		output  +='			<label class="ruleType floatL fbold w310"></label>';
 		output  +='			<label class="imageIcon floatL w20"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
-		output  +='			<label class="name w310"><span class="fbold"></span></label>';
+		output  +='			<label class="name w340"><span class="fbold"></span></label>';
 		output  +='		</li>';
 		output  +='	</ul>';
 		output  +='<div class="clearB"></div>';
