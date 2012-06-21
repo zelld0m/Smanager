@@ -17,7 +17,7 @@
 		var output  = '';
 		
 		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-		output  +='	<ul id="itemListing" class="mar16 marB20" >';
+		output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
 		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
 		output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
 		output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="ruleControl"></label>';
