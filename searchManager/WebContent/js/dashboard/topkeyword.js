@@ -24,25 +24,26 @@
 					TopKeywordServiceJS.getFileContents($("select#fileFilter").val(), {
 						callback: function(data){
 							var list = data.list;
-							var $table = $("table#keywordTable");
+							var $divList = $("div#itemList");
 							
-							$table.find("tr.rowItem:not(#rowPattern)").remove();
+							$divList.find("div.items:not(#itemPattern)").remove();
 							
 							if (list.length > 0){
 								for (var i=0; i < list.length ; i++){
-									var $tr = $("tr#rowPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-									$tr.find("td#iter").html(parseInt(i)+1);
-									$tr.find("td#keyword").html(list[i]["keyword"]);
-									$tr.find("td#count").html(list[i]["count"]);
-									$tr.show();
-									$table.append($tr);
+									var $divItem = $divList.find("div#itemPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+									$divItem.find("label.iter").html(parseInt(i)+1);
+									$divItem.find("label.keyword").html(list[i]["keyword"]);
+									$divItem.find("label.count").html(list[i]["count"]);
+									$divItem.show();
+									$divList.append($divItem);
 								}
 								
 								$("#keywordCount").html(data.totalSize == 1 ? "1 Keyword" : data.totalSize + " Keywords");
 								$("div#countSec").show();
+								$divList.find("div.items:even").addClass("alt");
 							}else{
 								$empty = '<tr class="rowItem"><td colspan="3" class="txtAC">No matching records found</td></tr>';
-								$table.append($empty);
+								$divList.append($empty);
 								$("div#countSec").hide();
 							}
 						},

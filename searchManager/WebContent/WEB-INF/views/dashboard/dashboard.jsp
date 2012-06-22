@@ -76,23 +76,32 @@
 	</div>
 	
 	<div class="clearB"></div>
-	<div class="w95p marRLauto">
-		<table class="tblAlpha w100p marT8" >
-			<tr>
-				<th width="75px" id="selectAll"></th>
-				<th width="480px" class="txtAL">Keyword</th>
-				<th width="135px">Count</th>
-			</tr>
-		</table>
-	</div>
-	<div class="w95p marRLauto padT0 marT0" style="max-height:365px; overflow-y:auto">
-		<table id="keywordTable" class="tblAlpha padT0 marT0" width="100%">
-			<tr id="rowPattern" class="rowItem" style="display: none">
-				<td width="69px" id="iter"></td>
-				<td width="461px" id="keyword"></td>
-				<td id="count"></td>
-			</tr>
-		</table>
+	
+	<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">	
+		<div id="itemPattern" class="items pad5 borderB clearfix" style="display:none">
+			<label class="iter floatL w80"></label>
+			<label class="count floatL w80"></label>
+			<label class="floatL w500">
+				<label class="keyword floatL w400"></label> 
+				<label class="floatL fsize11 w100"><a href="javascript:void(0);">Show Active Rules</a></label>
+				<div class="activerules marT20 w500" style="display:none">
+					<ul>
+						<li class="items borderB padTB5 clearfix w500 padL5">
+							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
+							<label class="ruleType floatL fbold w220">_appleTV</label>
+							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
+							<label class="name w225 floatL"><span class="fbold">Query Cleaning</span></label>
+						</li>
+						<li class="items padTB5 clearfix w500 padL5">
+							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
+							<label class="ruleType floatL fbold w220">Query Cleaning</label>
+							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
+							<label class="name w225 floatL"><span class="fbold">_appleTV</span></label>
+						</li>
+					</ul>
+				</div>
+			</label>
+		</div>
 	</div>
 </div> 
 
