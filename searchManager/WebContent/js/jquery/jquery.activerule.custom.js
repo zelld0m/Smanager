@@ -31,10 +31,17 @@
 			return template;
 		};
 
+		
 		base.getData = function(){
 			base.options.beforeRequest();
+			
+			var currentURL  = GLOBAL_serverName;
+				currentURL += $.isNotBlank(GLOBAL_serverPort)? ":" + GLOBAL_serverPort : "";
+				
+			var oldUrl = GLOBAL_solrUrl.replace("http://", "").split("/")[0];
+			
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_store + "/select?wt=json&gui=" + $.parseJSON(GLOBAL_solrConfig)["isFmGui"] + "&q=" + base.options.keyword,
+					GLOBAL_solrUrl.replace(oldUrl,currentURL) + GLOBAL_store + "/select?wt=json&gui=" + $.parseJSON(GLOBAL_solrConfig)["isFmGui"] + "&q=" + base.options.keyword,
 					function (json, textStatus) { 
 						base.$el.html(base.getTemplate());
 						var rules = json.responseHeader["search_rules"];
