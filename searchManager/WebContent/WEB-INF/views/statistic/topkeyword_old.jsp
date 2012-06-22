@@ -5,13 +5,14 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
-<script type="text/javascript" src="<spring:url value="/js/dashboard/topkeyword.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/statistic/topkeyword.js" />"></script>
 	    
 <!-- Left Menu-->
 <div class="clearB floatL minW240 sideMenuArea">
     <div class="clearB floatL w240">
 		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">&nbsp;</div>
 	</div>
+	
 </div>
 <!--Left Menu-->
 
@@ -40,19 +41,23 @@
 	</div>
 	
 	<div class="clearB"></div>
-	
-	<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">	
-		<div id="itemPattern" class="items pad5 borderB clearfix" style="display:none">
-			<label class="iter floatL w80"></label>
-			<label class="count floatL w80"></label>
-			<label class="floatL w500">
-				<label class="keyword floatL w400"></label> 
-				<label class="floatL fsize11 w100">
-					<a class="toggle" href="javascript:void(0);"></a>
-				</label>
-				<div class="rules" style="display:none"></div>
-			</label>
-		</div>
+	<div class="w95p marRLauto">
+		<table class="tblAlpha w100p marT8" >
+			<tr>
+				<th width="75px" id="selectAll"></th>
+				<th width="480px" class="txtAL">Keyword</th>
+				<th width="135px">Count</th>
+			</tr>
+		</table>
+	</div>
+	<div class="w95p marRLauto padT0 marT0" style="max-height:365px; overflow-y:auto">
+		<table id="keywordTable" class="tblAlpha padT0 marT0" width="100%">
+			<tr id="rowPattern" class="rowItem" style="display: none">
+				<td width="69px" id="iter"></td>
+				<td width="461px" id="keyword"></td>
+				<td id="count"></td>
+			</tr>
+		</table>
 	</div>
 </div> 
 
