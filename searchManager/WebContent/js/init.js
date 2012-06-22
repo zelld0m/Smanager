@@ -373,7 +373,7 @@ function initFileUploads() {
 			},
 			itemOptionCallback: function(base, id, name, model){
 				var selector = '#item' + $.escapeQuotes($.formatAsId(id)); 
-				base.$el.find(selector + ' img.avatar').attr("src","../images/noAvatar.jpg");
+				base.$el.find(selector + ' img.avatar').attr("src", GLOBAL_contextPath + "/images/noAvatar.jpg");
 				base.$el.find(selector + ' .user').html(model["username"]);
 				base.$el.find(selector + ' .duration').html(model["elapsedTime"]);
 				base.$el.find(selector + ' .page').html(model["currentPage"]);
