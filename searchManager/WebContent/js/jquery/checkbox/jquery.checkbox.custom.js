@@ -54,7 +54,7 @@
 			
 			if ($(this).hasClass("active-locked")) imageLabel = "check-active-locked.png";
 
-			$(this).siblings("div." + setClass).css("background", "url('" + contextPath + "/js/jquery/checkbox/" + imageLabel + "') no-repeat ").triggerHandler("click");
+			$(this).siblings("div." + setClass).css("background", "url('" + GLOBAL_contextPath + "/js/jquery/checkbox/" + imageLabel + "') no-repeat ").triggerHandler("click");
 				
 		});
 	});

@@ -24,7 +24,7 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
   <script>
-	var contextPath = "<%=request.getContextPath()%>";	
+	
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
 	var GLOBAL_store = "${store}";
