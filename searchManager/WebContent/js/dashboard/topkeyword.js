@@ -34,12 +34,38 @@
 									$divItem.find("label.iter").html(parseInt(i)+1);
 									$divItem.find("label.keyword").html(list[i]["keyword"]);
 									$divItem.find("label.count").html(list[i]["count"]);
+									
+									$divItem.find("a.toggle").text("Show Active Rule").on({
+										click:function(data){
+											var toggle = this;
+											var $itm = $(toggle).parents("div.items");
+											var  key = $itm.find(".keyword").html();
+											
+											if($itm.find("div.rules").is(":visible")){
+												$(toggle).html("Show Active Rule");
+												$itm.find("div.rules").empty().hide();
+											}else{
+												
+												$itm.find("div.rules").show().activerule({
+													keyword: key,
+													beforeRequest: function(){
+														$(toggle).html('<img alt="Retrieving..." src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">');
+													},
+													afterRequest: function(){
+														$(toggle).html("Hide Active Rule");
+													}
+												});
+											}
+										}
+									});
+									
 									$divItem.show();
 									$divList.append($divItem);
 								}
 								
 								$("#keywordCount").html(data.totalSize == 1 ? "1 Keyword" : data.totalSize + " Keywords");
 								$("div#countSec").show();
+								$divList.find("div.items").removeClass("alt");
 								$divList.find("div.items:even").addClass("alt");
 							}else{
 								$empty = '<tr class="rowItem"><td colspan="3" class="txtAC">No matching records found</td></tr>';

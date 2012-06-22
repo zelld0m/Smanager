@@ -83,23 +83,10 @@
 			<label class="count floatL w80"></label>
 			<label class="floatL w500">
 				<label class="keyword floatL w400"></label> 
-				<label class="floatL fsize11 w100"><a href="javascript:void(0);">Show Active Rules</a></label>
-				<div class="activerules marT20 w500" style="display:none">
-					<ul>
-						<li class="items borderB padTB5 clearfix w500 padL5">
-							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
-							<label class="ruleType floatL fbold w220">_appleTV</label>
-							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
-							<label class="name w225 floatL"><span class="fbold">Query Cleaning</span></label>
-						</li>
-						<li class="items padTB5 clearfix w500 padL5">
-							<label class="w30 preloader floatR"><img src="<spring:url value="/images/ajax-loader-rect.gif"/>"></label>
-							<label class="ruleType floatL fbold w220">Query Cleaning</label>
-							<label class="imageIcon floatL w20 posRel topn2"><img src="<spring:url value="/images/icon_reviewContent2.png"/>" class="top2 posRel"></label>
-							<label class="name w225 floatL"><span class="fbold">_appleTV</span></label>
-						</li>
-					</ul>
-				</div>
+				<label class="floatL fsize11 w100">
+					<a class="toggle" href="javascript:void(0);"></a>
+				</label>
+				<div class="rules" style="display:none"></div>
 			</label>
 		</div>
 	</div>
