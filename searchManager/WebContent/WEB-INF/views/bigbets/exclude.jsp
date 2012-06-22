@@ -81,8 +81,8 @@
 				<h3 class="padT10"></h3>
 				<div class="clearB"></div>
 				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">SKU #: (comma-delimited)</label> 
-					<label><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
+					<label class="w60 floatL padT5">SKU #: </label> 
+					<label><span class="fsize10 fgray txtAR">(separated by whitespaces or commas)</span><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
 					</label>
 				</div>
 				<div class="clearB"></div>
