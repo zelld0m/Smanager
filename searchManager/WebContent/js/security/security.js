@@ -249,7 +249,7 @@
 								contentHolder.find("#view-profile").tabs({
 									cookie: {
 										expires: 1,
-										path: contextPath,
+										path: GLOBAL_contextPath,
 										name: $(this).prop("id")
 									}
 								});

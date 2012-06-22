@@ -5,24 +5,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=100" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Search Manager</title>
-  <script>
-	var contextPath = "<%=request.getContextPath()%>";	
-	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
-  </script>
-  
-  <!-- TODO: Dynamically modify mall based on logged user -->
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
- 
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
-  <!--  theme -->
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/theme/default/style.css" />">
-
-  <!-- cross-browser css compatibility util -->
-  <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/init-validate.js" />" ></script>
-   
   <!-- jQuery dependencies -->
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-1.7.1.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery-ui-1.8.16.custom.min.js" />" ></script>
@@ -35,6 +17,29 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.tabs.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.widget.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
+
+  <!-- TODO: Dynamically modify mall based on logged user -->
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
+
+  <script>
+	
+	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
+	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
+	var GLOBAL_store = "${store}";
+	var GLOBAL_solrConfig = '${solrConfig}';
+	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
+  </script>
+  
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/default.css" />">
+  <!--  theme -->
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/css/theme/default/style.css" />">
+
+  <!-- cross-browser css compatibility util -->
+  <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/init-validate.js" />" ></script>
   
   <!-- DWR dependencies -->
   <script type="text/javascript" src="<spring:url value="/dwr/util.js"/>"></script>
@@ -62,6 +67,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.preview.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.activerule.custom.js" />" ></script>
   
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  

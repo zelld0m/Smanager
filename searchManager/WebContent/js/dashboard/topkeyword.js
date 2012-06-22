@@ -24,25 +24,54 @@
 					TopKeywordServiceJS.getFileContents($("select#fileFilter").val(), {
 						callback: function(data){
 							var list = data.list;
-							var $table = $("table#keywordTable");
+							var $divList = $("div#itemList");
 							
-							$table.find("tr.rowItem:not(#rowPattern)").remove();
+							$divList.find("div.items:not(#itemPattern)").remove();
 							
 							if (list.length > 0){
 								for (var i=0; i < list.length ; i++){
-									var $tr = $("tr#rowPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
-									$tr.find("td#iter").html(parseInt(i)+1);
-									$tr.find("td#keyword").html(list[i]["keyword"]);
-									$tr.find("td#count").html(list[i]["count"]);
-									$tr.show();
-									$table.append($tr);
+									var $divItem = $divList.find("div#itemPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+									$divItem.find("label.iter").html(parseInt(i)+1);
+									$divItem.find("label.keyword").html(list[i]["keyword"]);
+									$divItem.find("label.count").html(list[i]["count"]);
+									
+									$divItem.find("a.toggle").text("Show Active Rule").on({
+										click:function(data){
+											var toggle = this;
+											var $itm = $(toggle).parents("div.items");
+											var  key = $itm.find(".keyword").html();
+											
+											if($itm.find("div.rules").is(":visible")){
+												$(toggle).html("Show Active Rule");
+												$itm.find("div.rules").empty().hide();
+											}else{
+												var $loader = $('<img id="preloader" alt="Retrieving..." src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">');
+												$itm.find("div.rules").show().activerule({
+													keyword: key,
+													beforeRequest: function(){
+														$(toggle).hide();
+														$loader.insertAfter(toggle);
+													},
+													afterRequest: function(){
+														$(toggle).show().html("Hide Active Rule");
+														$(toggle).nextAll().remove();
+													}
+												});
+											}
+										}
+									});
+									
+									$divItem.show();
+									$divList.append($divItem);
 								}
 								
 								$("#keywordCount").html(data.totalSize == 1 ? "1 Keyword" : data.totalSize + " Keywords");
 								$("div#countSec").show();
+								$divList.find("div.items").removeClass("alt");
+								$divList.find("div.items:even").addClass("alt");
 							}else{
 								$empty = '<tr class="rowItem"><td colspan="3" class="txtAC">No matching records found</td></tr>';
-								$table.append($empty);
+								$divList.append($empty);
 								$("div#countSec").hide();
 							}
 						},

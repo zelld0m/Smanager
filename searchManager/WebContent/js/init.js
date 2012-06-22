@@ -286,7 +286,7 @@ function initFileUploads() {
 				$("#select-server option").remove();
 				UtilityServiceJS.getServerListForSelectedStore(true, {
 					callback:function(data){
-						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{path: contextPath});
+						$.cookie(COOKIE_SERVER_SELECTION, JSON.stringify(data) ,{path: GLOBAL_contextPath});
 						for (key in data){
 							$("#select-server").append($("<option>", { value : key }).text(key));							
 						}
@@ -303,7 +303,7 @@ function initFileUploads() {
 						reload = data["reload"];
 					}
 					if (reload == undefined) {
-						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:contextPath});
+						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:GLOBAL_contextPath});
 						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 							callback:function(){
 							}
@@ -321,7 +321,7 @@ function initFileUploads() {
 			if ($.isBlank(serverSelected)) {
 				UtilityServiceJS.getServerName({
 					callback:function(serverName){
-						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{path:contextPath});
+						$.cookie(COOKIE_SERVER_SELECTED, serverName ,{path:GLOBAL_contextPath});
 						$("#select-server option[value='" + serverName + "']").attr("selected", "selected");
 					}
 				});

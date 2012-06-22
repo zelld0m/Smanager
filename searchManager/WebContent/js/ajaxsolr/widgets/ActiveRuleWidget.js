@@ -51,7 +51,7 @@
 							   var cval = $(this).prop("value"); 
 							
 							   if($(this).is(":checked")){
-								   self.manager.store.removeByValue(cid, AjaxSolr.Parameter.escapeValue(cval));
+								   self.manager.store.remove(cid);
 							   }else{
 								   self.manager.store.addByValue(cid, AjaxSolr.Parameter.escapeValue(cval));
 							   }

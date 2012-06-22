@@ -217,7 +217,6 @@
 					template += '			<tbody>';
 					template += '		</table>';
 					template += '	</div>';
-					
 					template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
 					template += '		<table id="item" class="tblItems w100p">';
 					template += '			<tbody>';
@@ -261,7 +260,11 @@
 
 					template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 					template += '		<ul class="posRel top5" style="z-index:100">';
-					template += '			<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
+					
+					if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+						template += '			<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
+					}
+
 					template += '			<li><a href="#ruleField"><span>Rule Field</span></a></li>';
 					template += '		</ul>';
 
@@ -292,35 +295,38 @@
 					template += '				</table>';
 					template += '			</div>';
 					template += '		</div>';
-						
 					template += '		<div class="clearB"></div>	';
-					template += '		<div id="ruleKeyword" class="ruleKeyword marB10">';
-					template += '			<div class="w580 mar0 padLR5">';
-					template += '				<table class="tblItems w100p marT10" id="itemHeader">';
-					template += '					<tbody>';
-					template += '						<tr>';
-					template += '							<th id="fieldNameHeader" class="w70 txtAC">#</th>';
-					template += '							<th id="fieldValueHeader" class="wAuto txtAC">Keyword</th>';
-					template += '						</tr>';
-					template += '					<tbody>';
-					template += '				</table>';
-					template += '			</div>';
-					template += '			<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">';
-					template += '				<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">';
-					template += '					<tbody>';
-					template += '						<tr id="itemPattern" class="itemRow" style="display: none">';
-					template += '							<td class="txtAC w70" id="fieldName"></td>';
-					template += '							<td id="fieldValue" class="wAuto"></td>';
-					template += '						</tr>';
-					template += '						<tr>';
-					template += '							<td colspan="2" class="itemRow txtAC">';
-					template += '								<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
-					template += '							</td>';
-					template += '						</tr>';
-					template += '					</tbody>';
-					template += '				</table>';
-					template += '			</div>';
-					template += '		</div>';
+					
+					if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+						template += '		<div id="ruleKeyword" class="ruleKeyword marB10">';
+						template += '			<div class="w580 mar0 padLR5">';
+						template += '				<table class="tblItems w100p marT10" id="itemHeader">';
+						template += '					<tbody>';
+						template += '						<tr>';
+						template += '							<th id="fieldNameHeader" class="w70 txtAC">#</th>';
+						template += '							<th id="fieldValueHeader" class="wAuto txtAC">Keyword</th>';
+						template += '						</tr>';
+						template += '					<tbody>';
+						template += '				</table>';
+						template += '			</div>';
+						template += '			<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">';
+						template += '				<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">';
+						template += '					<tbody>';
+						template += '						<tr id="itemPattern" class="itemRow" style="display: none">';
+						template += '							<td class="txtAC w70" id="fieldName"></td>';
+						template += '							<td id="fieldValue" class="wAuto"></td>';
+						template += '						</tr>';
+						template += '						<tr>';
+						template += '							<td colspan="2" class="itemRow txtAC">';
+						template += '								<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
+						template += '							</td>';
+						template += '						</tr>';
+						template += '					</tbody>';
+						template += '				</table>';
+						template += '			</div>';
+						template += '		</div>';
+					}
+					
 					template += '	</div>';
 					template += '</div>';
 					break;
