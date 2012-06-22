@@ -55,6 +55,7 @@ body 							{ margin: 0px; }
 .cssReset .w278, .w278			{width:278px}
 .cssReset .w282, .w282			{width:282px !important}
 .cssReset .w300, .w300			{width:300px}
+.cssReset .w310, .w310			{width:310px}
 .cssReset .w320, .w320			{width:320px}
 .cssReset .w325, .w325			{width:325px}
 .cssReset .w330, .w330			{width:330px}
@@ -64,6 +65,7 @@ body 							{ margin: 0px; }
 .cssReset .w355					{width:355px}
 .cssReset .w400, .w400			{width:400px}
 .cssReset .w405, .w405			{width:405px}
+.cssReset .w416, .w416			{width:416px}
 .cssReset .w425, .w425			{width:425px}
 .cssReset .w450, .w450			{width:450px}
 .cssReset .w460, .w460			{width:460px}
@@ -266,6 +268,8 @@ body 							{ margin: 0px; }
 .cssReset .top6, .top6			{ top:6px; }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .topn1, .topn1		{ top:-1px; }
+.cssReset .topn2, .topn2		{ top:-2px; }
+.cssReset .topn3, .topn3		{ top:-3px; }
 .cssReset .topn4, .topn4		{ top:-4px; }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .right4				{ right:4px }

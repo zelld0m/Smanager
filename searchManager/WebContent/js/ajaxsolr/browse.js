@@ -47,6 +47,11 @@
 						id: 'currentSearch',
 						target: '#dynamicSelection'
 					}));
+					
+					Manager.addWidget(new AjaxSolr.RuleSelectorWidget({
+						id: 'ruleSelector',
+						target: '#ruleSelector'
+					}));
 
 					var sortWidget = new AjaxSolr.SortResultWidget({
 						id: 'sortResult',
@@ -69,6 +74,17 @@
 						id: 'dynamicFacet',
 						target: '#dynamicFacets',
 						limit: 5
+					}));
+					
+					Manager.addWidget(new AjaxSolr.ActiveRuleWidget({
+						id: 'activeRule',
+						target: '#activeRule'
+					}));
+					
+					Manager.addWidget(new AjaxSolr.AnimatedTagCloudWidget({
+						id: 'animatedTagCloud',
+						target: '#tagCloud',
+						limit: 25
 					}));
 
 					Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
@@ -99,8 +115,6 @@
 					}
 
 					Manager.store.addByValue("store", storeName);
-
-					Manager.doRequest();
 
 					if ($("#select-server").is(":visible")){
 						$("#select-server").on({

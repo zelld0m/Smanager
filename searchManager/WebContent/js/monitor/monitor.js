@@ -2,20 +2,21 @@
 	$(document).ready(function(){
 
 		$("div#cache").find("a#checkCacheBtn").click(function(evt){
-				
+			if($.isNotBlank($("div#cache").find("input#cacheKey").val())){
+
 				CacheServiceJS.get($("div#cache").find("input#cacheKey").val(), {
 					callback: function(data){
-						
+
 						var $table = $("div#cache").find("table#contentTable");
 						$table.find("tr.rowItem:not(#rowPattern)").remove();
 						if(data==null){
 							var $tr = $table.find("tr#rowPattern").clone();
 							$tr.prop("id", "row0");
 							$tr.find("td#field")
-							   .prop("colspan", "2")
-							   .removeClass("txtAL")
-							   .addClass("txtAC")
-							   .html("No cache data retrieved");
+							.prop("colspan", "2")
+							.removeClass("txtAL")
+							.addClass("txtAC")
+							.html("No cache data retrieved");
 							$tr.find("td#value").remove();
 							$tr.show();
 							$table.append($tr);
@@ -31,11 +32,12 @@
 							}
 						}
 					},
-				postHook:function(){
-					$("div#contentArea").show();
-				}
+					postHook:function(){
+						$("div#contentArea").show();
+					}
 				});
 			}
+		}
 		);
 	});
 })(jQuery);

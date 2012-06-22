@@ -130,9 +130,7 @@ public class SearchServlet extends HttpServlet {
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
 		activeRule.put(SolrConstants.TAG_RULE_ID, id);
 		activeRule.put(SolrConstants.TAG_RULE_NAME, name);
-		if (active) {
-			activeRule.put(SolrConstants.TAG_RULE_ACTIVE, "");			
-		}
+		activeRule.put(SolrConstants.TAG_RULE_ACTIVE, String.valueOf(active));			
 		return activeRule;
 	}
 	
@@ -420,11 +418,11 @@ public class SearchServlet extends HttpServlet {
 			List<ExcludeResult> excludeList = null;
 			
 			if (keywordPresent) {
-
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
-				
 				if (fromSearchGui) {
+					if (daoService.getKeyword(sk.getStoreId(), sk.getKeywordId()) != null) {
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+					}
 					if (!disableElevate) {
 						if (configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
 							ElevateResult elevateFilter = new ElevateResult();
@@ -456,6 +454,8 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				else {
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					if (!disableElevate) {
 						elevatedList = daoCacheService.getElevateRules(sk);	
 					}

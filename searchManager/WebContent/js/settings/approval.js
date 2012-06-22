@@ -220,12 +220,22 @@
 			}else{
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
-					$tr.find("td#itemPosition").html(ruleType.toLowerCase==="elevate"?  list[i]["location"] : parseInt(i) + 1);
-					$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-					$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-					$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-					$tr.find("td#itemName").html(list[i]["name"]);
-					$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
+
+					if($.isNotBlank(list[i]["dpNo"])){
+						$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+						$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+						$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+						$tr.find("td#itemName").html(list[i]["name"]);
+						$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+					}else{
+						$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+												.prop("colspan",5)
+												.removeClass("txtAC")
+												.addClass("txtAL");
+						$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+					}
+					
 					$tr.appendTo($table);
 				};
 			}

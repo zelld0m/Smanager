@@ -1,22 +1,38 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.animatedTagCloud = function () {
+		var output  = '';
+		
+		output  +='<canvas width="740" height="500" id="canvas">';
+		output  +='<p>In Internet Explorer versions up to 8, things inside the canvas are inaccessible!</p>';
+		output  +='</canvas>';
+		output  +='<div id="tagContainer">';
+		output  +='<ul id="tagList"></ul>';
+		output  +='</div>';
+
+		return $(output);
+	};
+	
 	AjaxSolr.theme.prototype.activeRule = function () {
 		var output  = '';
 		
 		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-		output  +='<ul class="mar16 marB20 ">';
-		output  +='	<li class="borderB padTB5 clearfix">';
-		output  +='		<label class="floatL w20"><input type="checkbox"></label>';
-		output  +='		<label class="floatL fbold w320">Query Cleaning Rule</label>';
-		output  +='<label class="floatL w20"><img src="<spring:url value="/images/icon_reviewContent2.png" />" class="top2 posRel"></label>';
-		output  +='<label class="floatL w320"><span class="fbold">Lorem ipsum dolor sit amet.</span></label>';
-		output  +='</li>';
-		output  +='</ul>';
+		output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
+		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
+		output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
+		output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="ruleControl"></label>';
+		output  +='			<label class="ruleType floatL fbold w310"></label>';
+		output  +='			<label class="imageIcon floatL w20 posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
+		output  +='			<label class="name w310 floatL"><span class="fbold"></span></label>';
+		output  +='		</li>';
+		output  +='	</ul>';
 		output  +='<div class="clearB"></div>';
 		output  +='</div>';
 		output  +='<a href="javascript:void(0);">';
 		output  +='<div class="minW110 floatL borderB borderR borderL h27 posRel topn1 fbold fsize12 padT8" style="display:block; background: #fff; z-index:500; left:20px; color:#329eea;">';
-		output  +='<img src="<spring:url value="/images/icon_arrowDownBlue.png" />" class="top2 posRel marL5 marR3">3 Active Rules</div>';
+		output  +='	<img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_arrowDownBlue.png")  + '" class="top2 posRel marL5 marR3">';
+		output  +='	<span>Active Rules</span>';
+		output  +='</div>';
 		output  +='</a>';
 
 		return $(output);
@@ -62,7 +78,8 @@
 	};
 	
 	AjaxSolr.theme.prototype.searchWithin = function () {
-		var output  = '<div class="box marT8">';
+		var output  = '';
+		output += '<div class="box marT8">';
 		output += '<h2>Search Within</h2>';
 		output += '<div class="mar10 w215">';
 		output += '<input type="text" id="searchWithinInput" class="searchBoxIconLBg w163 padTB4 fgray">';
