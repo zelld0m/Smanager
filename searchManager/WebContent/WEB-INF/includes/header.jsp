@@ -24,9 +24,11 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
   <script>
-	
-	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
+    var GLOBAL_scheme = "<%=request.getScheme()%>";  
+    var GLOBAL_serverName = "<%=request.getServerName()%>";  
+    var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
+	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var GLOBAL_store = "${store}";
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
