@@ -41,6 +41,13 @@
 	
 	<div class="clearB"></div>
 	
+	<div class="w100p padT0 marT20 marL15 fsize12" style="max-height:365px;">	
+		<div id="itemPattern" class="items border clearfix" >
+			<label class="iter floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee"> &nbsp; </label>
+			<label class="count floatL w80 txtAC fbold padTB5" style="border-right:1px solid #cccccc; background:#eee">Count</label>
+			<label class="floatL w535 txtAC fbold padTB5" style="background:#eee">Keyword</label>
+		</div>
+	</div>	
 	<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">	
 		<div id="itemPattern" class="items pad5 borderB clearfix" style="display:none">
 			<label class="iter floatL w80"></label>
