@@ -45,14 +45,16 @@
 												$(toggle).html("Show Active Rule");
 												$itm.find("div.rules").empty().hide();
 											}else{
-												
+												var $loader = $('<img id="preloader" alt="Retrieving..." src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">');
 												$itm.find("div.rules").show().activerule({
 													keyword: key,
 													beforeRequest: function(){
-														$(toggle).html('<img alt="Retrieving..." src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">');
+														$(toggle).hide();
+														$loader.insertAfter(toggle);
 													},
 													afterRequest: function(){
-														$(toggle).html("Hide Active Rule");
+														$(toggle).show().html("Hide Active Rule");
+														$(toggle).nextAll().remove();
 													}
 												});
 											}
