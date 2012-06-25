@@ -1058,6 +1058,11 @@
 			mouseenter: showHoverInfo
 		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 		
+		$("#versionIcon").off().on({
+			click: preview,
+			mouseenter: showHoverInfo
+		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
+		
 		$("a#downloadIcon").download({
 			headerText:"Download Ranking Rule",
 			requestCallback:function(e){
@@ -1465,6 +1470,41 @@
 					},
 					preHook: function(){ base.prepareList(); }
 				});
+			}
+		});
+	};
+
+	var preview = function(evt){
+
+		$(this).qtip({
+			id: "rule-preview",
+			content: {
+				text: $('<div/>'),
+				title: { 
+					text: " Rule Versions", button:true
+				}
+			},
+			position: {
+				my: 'center',
+				at: 'center',
+				target: $(window)
+			},
+			show: {
+				modal: true,
+				solo: true,
+				ready: true
+			},
+			style: {
+				width: 'auto'
+			},
+			events: {
+				show: function(event, api) {
+					var $content = $("div", api.elements.content);
+					populatePreview(api, $content);
+				},
+				hide: function(event, api) {
+					api.destroy();
+				}
 			}
 		});
 	};

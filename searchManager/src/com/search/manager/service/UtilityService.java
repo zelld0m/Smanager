@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -158,4 +159,24 @@ public class UtilityService {
 		return hashedPass;
 	}
 
+	public static String escapeKeyword(String keyword) {
+		Pattern p = Pattern.compile("(\\w*)(\\W*)(.*)");
+		StringBuilder builder = new StringBuilder();
+		String str = keyword.replaceAll("\\s", "_");
+		while (StringUtils.isNotBlank(str)) {
+			Matcher m = p.matcher(str);
+			if (m.matches()) {
+				builder.append(m.group(1));
+				if (StringUtils.isNotBlank(m.group(2))) {
+					builder.append(".").append(Hex.encodeHexString(m.group(2).getBytes())).append(".");
+				}
+				str = m.group(3);
+			}
+			else {
+				builder.append(str);
+				break;
+			}
+		}
+		return builder.toString();
+	}
 }

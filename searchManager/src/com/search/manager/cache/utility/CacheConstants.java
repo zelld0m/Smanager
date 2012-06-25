@@ -1,12 +1,7 @@
 package com.search.manager.cache.utility;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.StringUtils;
-
 import com.search.manager.exception.DataException;
+import com.search.manager.service.UtilityService;
 
 public class CacheConstants {
 	public static final String SEARCH_CACHE_KEY = "src";
@@ -43,36 +38,17 @@ public class CacheConstants {
 		}
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
 						.append(".").append(storeId).append("_")
-						.append(type).append("_").append(escapeKeyword(kw));
+						.append(type).append("_").append(UtilityService.escapeKeyword(kw));
 		return key.toString();
 	}
 	
 	public static String getCacheKey(String type, String kw) throws DataException {
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
-						.append(".").append(type).append("_").append(escapeKeyword(kw));
+						.append(".").append(type).append("_").append(UtilityService.escapeKeyword(kw));
 		return key.toString();
 	}
 	
-	private static String escapeKeyword(String keyword) {
-		Pattern p = Pattern.compile("(\\w*)(\\W*)(.*)");
-		StringBuilder builder = new StringBuilder();
-		String str = keyword.replaceAll("\\s", "_");
-		while (StringUtils.isNotBlank(str)) {
-			Matcher m = p.matcher(str);
-			if (m.matches()) {
-				builder.append(m.group(1));
-				if (StringUtils.isNotBlank(m.group(2))) {
-					builder.append(".").append(Hex.encodeHexString(m.group(2).getBytes())).append(".");
-				}
-				str = m.group(3);
-			}
-			else {
-				builder.append(str);
-				break;
-			}
-		}
-		return builder.toString();
-	}
+
 	
 	
 	public static void main(String[] args) {
@@ -87,7 +63,7 @@ public class CacheConstants {
 		};
 		
 		for (String keyword: data) {
-			System.out.println(keyword + " -> (" + escapeKeyword(keyword) + ")");
+			System.out.println(keyword + " -> (" + UtilityService.escapeKeyword(keyword) + ")");
 		}
 		
 	}
