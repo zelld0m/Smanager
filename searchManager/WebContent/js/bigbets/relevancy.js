@@ -1509,6 +1509,63 @@
 		});
 	};
 
+	var populatePreview = function(api, $content){
+		
+		$content.html($("#previewTemplate2").html());
+
+		RuleVersioningServiceJS.getRankingRuleVersion(selectedRule.ruleId, 1, {
+			callback: function(data){
+				
+				$content.find("#ruleInfo").text($.trim(data["relevancyName"]) + " [ " + $.trim(data["relevancyId"] + " ]"));
+				$content.find("#ruleVersion").text(data["version"]);
+				$content.find("#startDate").html(data["startDate"]);
+				$content.find("#endDate").html(data["endDate"]);
+				$content.find("#description").html(data["description"]);
+
+				var $table = $content.find("div.ruleFieldV table#item");
+				$table.find("tr:not(#itemPattern)").remove();
+					
+				for(var field in data.parameters){
+					$tr = $content.find("div.ruleFieldV tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("td#fieldName").html(field);
+					$tr.find("td#fieldValue").html(data.parameters[field]);
+					$tr.appendTo($table);
+				}	
+					
+				$table.find("tr:even").addClass("alt");
+
+				var list = data.relKeyword;
+				var $table = $content.find("div.ruleKeyword table#item");
+				$table.find("tr:not(#itemPattern)").remove();
+	
+				if (list.length==0){
+					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("td#fieldName").html("No keywords associated to this rule").attr("colspan","2");
+					$tr.find("td#fieldValue").remove();
+					$tr.appendTo($table);
+				}else{
+					for(var i=0; i< list.length; i++){
+						$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"].keyword)).show();
+						$tr.find("td#fieldName").html(parseInt(i)+1);
+						$tr.find("td#fieldValue").html(list[i]["keyword"].keyword);
+						$tr.appendTo($table);
+					}	
+				}
+				
+				$table.find("tr:even").addClass("alt");
+			},
+			errorHandler:function(errorString, exception) { alert(errorString); }
+		});
+
+		$content.find("a#restoreBtn").on({
+			click: function(evt){
+				alert("Restoring version to...");
+			}
+		});
+
+		return $content;
+	};
+
 	$(document).ready(function() { 
 		initTextarea();
 		showRelevancy();
