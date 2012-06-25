@@ -1,6 +1,7 @@
 package com.search.manager.dao.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Matcher;
@@ -49,6 +50,15 @@ public class RuleVersionUtil {
 		return ++version;
 	}
 
+	public static void deleteFile(String filepath) throws IOException{
+		File file = new File(filepath);
+
+		if(file.exists()){
+			if(!file.delete()){
+				file.deleteOnExit();
+			}
+		}
+	}
 	
 	public static String getFileName(String store, int ruleType ,String ruleId, int version){
 		StringBuilder filePath = new StringBuilder(getFileDirectory(store, ruleType)).append(File.separator).append(ruleId).append("__").append(version).append(FileUtil.XML_FILE_TYPE);

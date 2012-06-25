@@ -1,11 +1,13 @@
 package com.search.manager.dao;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,8 @@ import com.search.manager.service.UtilityService;
 
 @Service("fileService")
 public class FileDaoServiceImpl implements FileDaoService{
+	
+	private Logger logger = Logger.getLogger(FileDaoServiceImpl.class);
 	
 	@Autowired private ElevateVersionDAO elevateVersionDAO;
 	@Autowired private ExcludeVersionDAO excludeVersionDAO;
@@ -122,6 +126,19 @@ public class FileDaoServiceImpl implements FileDaoService{
 		}
 
 		return backupList;
+	}
+
+
+	@Override
+	public boolean deleteBackup(String storeName, String ruleId, RuleEntity find, int version) {
+		boolean success = false;
+		try {
+			RuleVersionUtil.deleteFile(RuleVersionUtil.getFileName(storeName, find.getCode(), ruleId, version));
+			success = true;
+		} catch (IOException e) {
+			logger.equals(e.getMessage());
+		}
+		return success;
 	}
 	
 

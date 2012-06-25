@@ -36,10 +36,20 @@ public class RuleVersioningService {
 	public boolean createRuleVersion(String ruleType, String ruleId, String reason) {
 		boolean success = false;
 		try {
-			fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.find(ruleType), UtilityService.getUsername(), reason);
-			success = true;
+			success = fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.find(ruleType), UtilityService.getUsername(), reason);
 		} catch (Exception e) {
 			logger.error("Failed during createRuleVersion()",e);
+		}
+		return success;	
+	}
+
+	@RemoteMethod
+	public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
+		boolean success = false;
+		try {
+			success = fileService.deleteBackup(UtilityService.getStoreName(), ruleId, RuleEntity.find(ruleType), version);
+		} catch (Exception e) {
+			logger.error("Failed during deleteRuleVersion()",e);
 		}
 		return success;	
 	}

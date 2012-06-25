@@ -17,5 +17,6 @@ public interface FileDaoService {
 	public List<Product> readExcludeRuleVersion(String store, String ruleId, int version, String server);
 	public List<BackupInfo> getBackupInfo(String store, String ruleType, String ruleId) throws Exception;
 	public boolean restoreRankingRuleVersion(String store, String ruleId, int version);
+	public boolean deleteBackup(String storeName, String ruleId, RuleEntity find, int version);
 	
 }
