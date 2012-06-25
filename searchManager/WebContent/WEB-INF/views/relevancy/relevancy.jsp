@@ -473,7 +473,7 @@
 				<div class="alert marB10">Reason for Backup</div>
 				<div class="clearB"></div>
 				<label class="w110 floatL fbold">Reason:</label>
-				<label class="wAuto floatL" id="reason"></label>
+				<label><input id="reason" type="text" class="w240 marT5"/></label>
 				<div class="clearB"></div>
 			</div>
 		
