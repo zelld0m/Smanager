@@ -1,5 +1,7 @@
 package com.search.manager.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -66,7 +68,11 @@ public class ElevateController {
 		String page = request.getParameter("page");
 		String filename = request.getParameter("filename");
 		String itemsPerPage = request.getParameter("itemperpage");
+		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
 		
+		Date headerDate = new Date(clientTimezone);
+	
+
 		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 		
 		if (StringUtils.isBlank(filename)) {
@@ -103,7 +109,7 @@ public class ElevateController {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
 		}
 		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, list);
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse

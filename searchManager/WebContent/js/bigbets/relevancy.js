@@ -20,6 +20,11 @@
 	var bqSearchKeyword = "";
 	var bqFacetValuesPageSize = 5;
 	var bqSearchText = "Enter Field Value";
+	
+	var ruleFilterText = "";
+	var keywordFilterText = "";
+	var rulePage = 1;
+	var keywordPage = 1;
 
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
@@ -305,7 +310,7 @@
 									if(($.isBlank(currVal)|| currVal.indexOf("-") == -1) && charCode == 45) return true;
 									if(charCode == 8) return true;
 									if($.isNotBlank(currVal) && currVal.indexOf(".") == -1 && charCode == 46) return true;
-									if($.isNotBlank(currVal) && $.isNumeric(currVal) && !$.endsWith(currVal,'.') && currVal.indexOf("%") == -1 && charCode == 37) return true;
+									if($.isNotBlank(currVal) && (charCode == 37 || charCode == 39)) return true;
 									if(currVal.indexOf("%") == -1 && (charCode < 32 || (charCode > 47 && charCode < 58))){
 										return true;
 									}
@@ -670,7 +675,7 @@
 					if (field==="mm") text = 'The minimum number of words specified in the keyword phrase that should match';
 					if (field==="qs") text = 'Amount of slop on phrase queries explicitly included in the user\'s query string (affects matching)';
 					if (field==="ps") text = 'Amount of slop (distance between words) on phrase queries built for "pf" fields (affects boosting)';
-					if (field==="tie") text = 'in case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
+					if (field==="tie") text = 'In case documents have the same score, this is used to determine which document is prioritized. Computation is done via (score of matching clause with the highest score) + ( (tie paramenter) * (scores of any other matching clauses) ) ';
 
 					$content.html(text);
 
@@ -835,6 +840,7 @@
 						}
 					});
 
+				
 					$contentHolder.find('a#addButton').on({
 						click: function(e){
 							var popName = $.trim($contentHolder.find('input[id="popName"]').val());
@@ -1073,6 +1079,7 @@
 				params["id"] = selectedRule["ruleId"];
 				params["filename"] = e.data.filename;
 				params["type"] = e.data.type;
+				params["clientTimezone"] = +new Date();
 
 				for(var key in params){
 					if (count>0) urlParams +='&';
@@ -1136,11 +1143,13 @@
 		$("#rulePanel").sidepanel({
 			fieldId: "relevancyId",
 			fieldName: "relevancyName",
-			page: page,
+			page: rulePage,
 			pageSize: rulePageSize,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
 			showAddButton: allowModify,
+			filterText: ruleFilterText,
+			
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1214,7 +1223,7 @@
 												if (data==true){
 													alert("Another ranking rule is already using the name provided.");
 												}else{
-													RelevancyServiceJS.addRuleAndGetModel(popName, popDescription, popStartDate, popEndDate, {
+													RelevancyServiceJS.cloneRule("",popName, popStartDate, popEndDate, popDescription, {
 														callback: function(data){
 															if (data!=null){
 																base.getList(name, 1);
@@ -1242,7 +1251,7 @@
 									$contentHolder.find('input[type="text"], textarea').val("");
 								}
 							});
-
+							initTextarea(); 
 						},
 						hide: function (e, api){
 							sfExcFields = new Array();
@@ -1250,9 +1259,12 @@
 						}
 					}
 				});
+				
 			},
 
 			itemDataCallback: function(base, keyword, page){
+				ruleFilterText = keyword;
+				rulePage = page;
 				RelevancyServiceJS.getAllRule(keyword, page, rulePageSize,{
 					callback: function(data){
 						base.populateList(data);
@@ -1302,12 +1314,15 @@
 		$("#ruleKeywordPanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
-			page: page,
+			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
 			headerText : "Ranking Rule Keyword",
 			searchText : "Enter Keyword",
 			showAddButton: false,
+			filterText: keywordFilterText,
 			itemDataCallback: function(base, keyword, page){
+				keywordFilterText = keyword;
+				keywordPage = page;
 				StoreKeywordServiceJS.getAllKeyword(keyword, page, ruleKeywordPageSize,{
 					callback: function(data){
 						base.populateList(data);
@@ -1398,7 +1413,6 @@
 	var initTextarea =function(){
 	$('textarea[maxlength]').on({
 		keyup:function(){  
-			
         var limit = parseInt($(this).attr('maxlength'));  
   
         var text = $(this).val();  

@@ -71,18 +71,22 @@
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(evt){
 
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,\s*\d+\s*)*$/;
-
+							var commaDelimitedNumberPattern = /^\s*\d+\s*(,?\s*\d+\s*)*$/;
+							
 							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
 							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
 							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-								
+							var today = new Date();
+							//ignore time of current date 
+							today.setHours(0,0,0,0);
 							if ($.isBlank(skus)) {
 								alert("There are no SKUs specified in the list.");
 							}
 							else if (!commaDelimitedNumberPattern.test(skus)) {
 								alert("List contains an invalid SKU.");
-							}							
+							}	
+							else if(today.getTime() > new Date(expDate).getTime())
+								alert("Start date cannot be earlier than today");
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 								alert("Invalid date specified.");
 							}	
@@ -90,7 +94,7 @@
 								alert("Invalid comment. HTML/XSS is not allowed.");
 							}
 							else {
-								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(','), {
+								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(/[\s,]+/), {
 									callback : function(code){
 										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										showExclude();
@@ -342,6 +346,7 @@
 						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
 						params["filter"] = getItemFilter();
 						params["itemperpage"] = ruleItemPageSize;
+						params["clientTimezone"] = +new Date();
 
 						for(var key in params){
 							if (count>0) urlParams +='&';

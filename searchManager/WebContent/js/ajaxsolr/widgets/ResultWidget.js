@@ -477,10 +477,17 @@
 								var position = parseInt($.trim(contentHolder.find("#aElevatePosition_"+doc.EDP).val()));
 								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
 								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
-
+								var today = new Date();
+								//ignore time of current date 
+								today.setHours(0,0,0,0);
 								if (position>0 && position <= maxPosition){
-
-									if (elevated){
+									
+									if(!isXSSSafe(comment)){
+										alert("Invalid comment. HTML/XSS is not allowed.");
+									}
+									else if(today.getTime() > new Date(expiryDate).getTime()){
+										alert("Expiry date cannot be earlier than today");
+									}else if (elevated){
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
 										if (position != currentPosition || comment.length > 0 || expiryDate !== currentExpiryDate) 
@@ -495,7 +502,6 @@
 											});
 									}else{
 										//add elevation
-										if(isXSSSafe(comment)){
 										ElevateServiceJS.addElevate(keyword, doc.EDP, position, expiryDate, comment, {
 											callback : function(event){
 												maxPosition++;
@@ -507,10 +513,9 @@
 											postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
 											errorHandler: function(message){ alert(message); }
 										});
-										}else{
-											alert("Invalid comment. HTML/XSS is not allowed.");
-										}
+										
 									}
+									
 
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
 
@@ -613,7 +618,16 @@
 								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
 								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
 							
-								if(isXSSSafe(comment)){
+								var today = new Date();
+								//ignore time of current date 
+								today.setHours(0,0,0,0);
+									
+								if(!isXSSSafe(comment)){
+									alert("Invalid comment. HTML/XSS is not allowed.");
+								}
+								else if(today.getTime() > new Date(expiryDate).getTime()){
+									alert("Expiry date cannot be earlier than today");
+								}else{
 								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, {
 									callback : function(data) {
 										needRefresh = true;
@@ -622,8 +636,6 @@
 									preHook: function() {},
 									postHook: function() {}
 								});	
-								}else{
-									alert("Invalid comment. HTML/XSS is not allowed.");
 								}
 							});
 							

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -190,6 +191,10 @@ public class SearchServlet extends HttpServlet {
 
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
+					
+					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD))
+						paramValue = StringEscapeUtils.escapeJava(paramValue);
+					
 					nvp = new BasicNameValuePair(paramName, paramValue);
 					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
 						nameValuePairs.add(nvp);
@@ -206,6 +211,7 @@ public class SearchServlet extends HttpServlet {
 			
 			// grab the keyword
 			String keyword = StringUtils.trimToEmpty(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
+			
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare

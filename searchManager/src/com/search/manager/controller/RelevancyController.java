@@ -89,6 +89,9 @@ public class RelevancyController {
 		String relevancyId = request.getParameter("id");
 		String filename = request.getParameter("filename");
 		String type = request.getParameter("type");
+		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+		
+		Date headerDate = new Date(clientTimezone);
 
 		logger.debug(String.format("Received request to download report as an XLS: %s %s", relevancyId, filename));
 		
@@ -114,7 +117,7 @@ public class RelevancyController {
 		list.add(new RelevancyReportBean(relevancy));
 		
 		String subTitle = "Relevancy Rule [" + relevancy.getRelevancyName() + "]";
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, new Date());
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		ReportModel<RelevancyReportBean> reportModel = new RelevancyReportModel(reportHeader, list);
 
 		List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();

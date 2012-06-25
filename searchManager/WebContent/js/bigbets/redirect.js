@@ -9,7 +9,11 @@
 		var ruleConditionPageSize = 5;
 		var keywordInRulePageSize = 5;
 		var ruleKeywordPageSize = 5;
-
+		var ruleFilterText = "";
+		var keywordFilterText = "";
+		var rulePage = 1;
+		var keywordPage = 1;
+		
 		var tabSelectedTypeId = "";
 
 		var prepareRedirect = function(){
@@ -203,6 +207,7 @@
 				pageSize: keywordInRulePageSize,
 				headerText : "Using This Rule",
 				searchText : "Enter Keyword",
+				
 				showAddButton: !selectedRuleStatus.locked || allowModify,
 				itemDataCallback: function(base, keyword, page){
 					RedirectServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
@@ -254,12 +259,16 @@
 			$("#ruleKeywordPanel").sidepanel({
 				fieldId: "keywordId",
 				fieldName: "keyword",
-				page: page,
+				page: keywordPage,
 				pageSize: ruleKeywordPageSize,
 				headerText : "Query Cleaning Keyword",
 				searchText : "Enter Keyword",
 				showAddButton: false,
+				filterText: keywordFilterText,
+				
 				itemDataCallback: function(base, keyword, page){
+					keywordFilterText = keyword;
+					keywordPage = page;
 					StoreKeywordServiceJS.getAllKeyword(keyword, page, ruleKeywordPageSize,{
 						callback: function(data){
 							base.populateList(data);
@@ -384,12 +393,16 @@
 			$("#rulePanel").sidepanel({
 				fieldId: "ruleId",
 				fieldName: "ruleName",
-				page: page,
+				page: rulePage,
 				pageSize: rulePageSize,
 				headerText : "Query Cleaning Rule",
 				searchText : "Enter Name",
 				showAddButton: allowModify,
+				filterText: ruleFilterText,
+				
 				itemDataCallback: function(base, keyword, page){
+					ruleFilterText = keyword;
+					rulePage = page;
 					RedirectServiceJS.getAllRule(keyword, page, rulePageSize, {
 						callback: function(data){
 							base.populateList(data);
@@ -609,7 +622,7 @@
 			if ($.isBlank(inputChangedKeyword)){ 
 				return;
 			}
-			
+
 			var activeRulesCtr = 4;
 			var activeRules = "";
 
@@ -647,7 +660,7 @@
 					if (activeRulesCtr==0) hideLoader();
 				}
 			});
-			
+
 			RedirectServiceJS.getAllRuleUsedByKeyword(inputChangedKeyword, {
 				callback:function(data){
 					if (data.totalSize>0){
@@ -667,18 +680,18 @@
 					if (activeRulesCtr==0) hideLoader();
 				}
 			});
-			
+
 			RelevancyServiceJS.getAllRuleUsedByKeyword(inputChangedKeyword, {
 				callback:function(data){
 					if (data.totalSize>0){
 						activeRules += ($.isNotBlank(activeRules)? ", ":'') + data.totalSize + ' Relevancy Rule';
 						activeRules += "(";
-						
+
 						for(var i=0; i<data.totalSize; i++){
 							activeRules += data.list[i]["relevancy"]["ruleName"];
 							if ((i+1)<data.totalSize) activeRules += ", ";
 						}
-						
+
 						activeRules += ")";
 					} 
 				},
@@ -745,7 +758,7 @@
 			setActiveRedirectType();
 
 			switch(tabSelectedTypeId){
-				case "#keyword" : getChangeKeywordActiveRules(selectedRule["changeKeyword"]); break;
+			case "#keyword" : getChangeKeywordActiveRules(selectedRule["changeKeyword"]); break;
 			}
 		};
 
