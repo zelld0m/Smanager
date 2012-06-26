@@ -25,7 +25,8 @@
 	var keywordFilterText = "";
 	var rulePage = 1;
 	var keywordPage = 1;
-
+	var noOfVer = 0;
+	
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
@@ -1298,6 +1299,11 @@
 										prepareRelevancy();
 									}
 								});	
+								RuleVersioningServiceJS.getRuleVersions("ranking rule", selectedRule.ruleId, {
+									callback: function(data){
+										noOfVer = data.length;
+									},
+								});
 							}
 						});
 					},
@@ -1606,7 +1612,7 @@
 				ready: true
 			},
 			style: {
-				width: 'auto'
+				width: '300'
 			},
 			events: {
 				show: function(event, api) {
@@ -1631,19 +1637,23 @@
 				if ($.isNotBlank(reason)){
 					switch($(evt.currentTarget).attr("id")){
 					case "rsaveBtn": 
-						RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
-							callback: function(data){
-								if (data) {
-									alert("Successfully created back up!");
-								} else {
-									alert("Failed creating back up!");
+						if (noOfVer > 3) {
+							alert("Only maximum of 3 backups is allowed!");
+						} else {
+							RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
+								callback: function(data){
+									if (data) {
+										alert("Successfully created back up!");
+									} else {
+										alert("Failed creating back up!");
+									}
+								},
+								preHook: function(){
+									api.destroy();
 								}
-							},
-							preHook: function(){
-								api.destroy();
-							}
-						});break;
-
+							});							
+						}
+						break;
 					case "rcancelBtn": 
 							api.destroy();
 							break;
@@ -1656,7 +1666,7 @@
 
 		return $content;
 	};
-
+	
 	$(document).ready(function() { 
 		initTextarea();
 		showRelevancy();
