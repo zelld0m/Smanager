@@ -21,7 +21,8 @@
 		base.getTemplate = function(){
 			var template  = '<div class="versions marT20 w99p marRLauto">';
 				template += '<div class="clearB"></div>';
-				template += '<div style="max-height:365px;" class="w100p padT0 marT20 fsize12">';
+				template += '<div><div class="txtAR marT10 floatR w100 "><a href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Backup</div> </a></div> <div class="floatL marT20 w200 fsize12 fgray">3 versions available</div></div>';
+				template += '<div style="max-height:365px;" class="w100p padT0 fsize12">';
 				template += '<div class="items border clearfix" id="itemPattern">';
 				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w100 txtAC fbold padTB5"> Version # </label>';
 				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w200 txtAC fbold padTB5"> Version Date </label>';
