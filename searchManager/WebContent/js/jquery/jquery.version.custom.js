@@ -20,6 +20,17 @@
 
 		base.getTemplate = function(){
 			var template  = '<div class="versions marT20 w99p marRLauto">';
+				template += '<div class="clearB"></div>';
+				template += '<div style="max-height:365px;" class="w100p padT0 marT20 fsize12">';
+				template += '<div class="items border clearfix" id="itemPattern">';
+				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w100 txtAC fbold padTB5"> Version # </label>';
+				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w200 txtAC fbold padTB5"> Version Date </label>';
+				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w20 txtAC fbold padTB5"> &nbsp; </label>';
+				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w340 txtAC fbold padTB5"> Version Name </label>';
+				template += '<label style="border-right:1px solid #cccccc; background:#eee" class="floatL w20 txtAC fbold padTB5"> &nbsp; </label>';
+				template += '<label style="background:#eee" class="floatL w30 txtAC fbold padTB5"> &nbsp; </label>';
+				template += '</div>';
+				template += '</div>';
 				template += '	<ul id="verItemList">';
 				template += '		<li id="verItemPattern" class="verItems borderB padTB5 clearfix w99p padL5 fsize12" style="display:none">';
 				template += '			<label class="select floatL fbold w55" style="display:none"><input type="checkbox"></label>';
