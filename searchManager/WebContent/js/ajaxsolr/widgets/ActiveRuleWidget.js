@@ -75,7 +75,8 @@
 					var $li = $ul.find("li#itemPattern").clone().prop("id", "rrNote");
 					$li.find("label.ruleType").removeClass("fbold")
 											  .removeClass("w310")
-											  .html('<div class="alert">Search results displayed are for <span class="fbold fred">' + self.manager.response.responseHeader["Redirect"] + "</span>");
+											  .addClass("w95p")								
+											  .html('<div class="alert padL10">Search results displayed are for <span class="fbold fred">' + self.manager.response.responseHeader["Redirect"] + "</span>");
 					$li.find("label.select,label.imageIcon,label.name").remove();
 					$li.show();
 					$ul.append($li);
