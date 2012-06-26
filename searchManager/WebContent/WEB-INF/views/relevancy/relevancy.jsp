@@ -37,7 +37,6 @@
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
-    <div class="companyLogo"><a href="#"><img src="<spring:url value="${storeLogo}" />"></a></div>
        
     <div class="clearB floatL w240">
 		<div id="rulePanel"></div>
@@ -67,15 +66,15 @@
 	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
 	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
 	        	<div class="floatL padT10 padL10" style="width:70%" >
-	        		<div id="commentHolder">
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
-			        	</label>
-		        	</div>
 	        		<div id="versionHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
 			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>  
+			        	</label>
+		        	</div>
+	        		<div id="commentHolder">
+			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
+			        	<label class="floatL wAuto padL5 fsize11 fLgray">
+			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
 			        	</label>
 		        	</div>
 	        		<div id="statusHolder">
@@ -103,7 +102,9 @@
 	        <div class="clearB"></div>	
 	 </div>
 	 
- 	<div id="viewAuditTemplate" style="display: none">
+	 <div id="versions"></div>
+	 
+ 	 <div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
 	   <div class="w265 padB8">
             <div id="auditTemplate" style="display: none;" >

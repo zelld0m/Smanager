@@ -1020,6 +1020,11 @@
 
 		$("#relevancy").show();
 
+		$("div#versions").version({
+			ruleType: "Ranking Rule",
+			ruleId: selectedRule["ruleId"]
+		});
+		
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
 
@@ -1057,6 +1062,11 @@
 
 		$("#cloneBtn").off().on({
 			click: cloneRule,
+			mouseenter: showHoverInfo
+		},{locked:!allowModify});
+
+		$("#backupBtn").off().on({
+			click: backup,
 			mouseenter: showHoverInfo
 		},{locked:!allowModify});
 

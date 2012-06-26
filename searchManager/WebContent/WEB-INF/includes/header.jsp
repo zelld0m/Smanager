@@ -71,6 +71,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.preview.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.activerule.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.version.custom.js" />" ></script>
   
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  

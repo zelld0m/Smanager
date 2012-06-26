@@ -15,7 +15,7 @@
 		<div id="rulePanel"></div>
 	    <div class="clearB"></div>
 	</div>
-	    <div class="clearB floatL w240">
+	<div class="clearB floatL w240">
     	<div id="ruleKeywordPanel"></div>
         <div class="clearB"></div>
     </div>
