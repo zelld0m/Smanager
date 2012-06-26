@@ -1,7 +1,7 @@
 package com.search.manager.cache.utility;
 
 import com.search.manager.exception.DataException;
-import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
 
 public class CacheConstants {
 	public static final String SEARCH_CACHE_KEY = "search";
@@ -38,13 +38,13 @@ public class CacheConstants {
 		}
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
 						.append(".").append(storeId).append("_")
-						.append(type).append("_").append(UtilityService.escapeKeyword(kw));
+						.append(type).append("_").append(StringUtil.escapeKeyword(kw));
 		return key.toString();
 	}
 	
 	public static String getCacheKey(String type, String kw) throws DataException {
 		StringBuilder key = new StringBuilder(SEARCH_CACHE_KEY)
-						.append(".").append(type).append("_").append(UtilityService.escapeKeyword(kw));
+						.append(".").append(type).append("_").append(StringUtil.escapeKeyword(kw));
 		return key.toString();
 	}
 	
@@ -63,7 +63,7 @@ public class CacheConstants {
 		};
 		
 		for (String keyword: data) {
-			System.out.println(keyword + " -> (" + UtilityService.escapeKeyword(keyword) + ")");
+			System.out.println(keyword + " -> (" + StringUtil.escapeKeyword(keyword) + ")");
 		}
 		
 	}

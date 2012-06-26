@@ -28,6 +28,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ExcludedSkuXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.FileUtil;
+import com.search.manager.utility.StringUtil;
 import com.search.ws.SearchHelper;
 
 @Repository(value="excludeVersionDAO")
@@ -55,7 +56,7 @@ public class ExcludeVersionDAO {
 				excludeRuleXml.setKeyword(ruleId);
 				excludeRuleXml.setReason(reason);
 				List<ExcludedSkuXml> skuList = new ArrayList<ExcludedSkuXml>();
-				ruleId = UtilityService.escapeKeyword(ruleId);
+				ruleId = StringUtil.escapeKeyword(ruleId);
 				for (ExcludeResult excludeResult : excludeList) {
 					ExcludedSkuXml sku = new ExcludedSkuXml();
 					sku.setEdp(excludeResult.getEdp());

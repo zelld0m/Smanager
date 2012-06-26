@@ -1,11 +1,13 @@
 package com.search.manager.dao;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +22,12 @@ import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
-import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
 
 @Service("fileService")
 public class FileDaoServiceImpl implements FileDaoService{
+	
+	private Logger logger = Logger.getLogger(FileDaoServiceImpl.class);
 	
 	@Autowired private ElevateVersionDAO elevateVersionDAO;
 	@Autowired private ExcludeVersionDAO excludeVersionDAO;
@@ -57,13 +61,13 @@ public class FileDaoServiceImpl implements FileDaoService{
 	
 	@Override
 	public List<ElevateProduct> readElevateRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE.getCode(), UtilityService.escapeKeyword(ruleId), version);
+		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE.getCode(), StringUtil.escapeKeyword(ruleId), version);
 		return elevateVersionDAO.readElevatedVersion(filePath, store, server);
 	}
 	
 	@Override
 	public List<Product> readExcludeRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE.getCode(), UtilityService.escapeKeyword(ruleId), version);
+		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE.getCode(), StringUtil.escapeKeyword(ruleId), version);
 		return excludeVersionDAO.readExcludeRuleVersion(filePath, store, server);
 	}
 
@@ -122,6 +126,19 @@ public class FileDaoServiceImpl implements FileDaoService{
 		}
 
 		return backupList;
+	}
+
+
+	@Override
+	public boolean deleteBackup(String storeName, String ruleId, RuleEntity find, int version) {
+		boolean success = false;
+		try {
+			RuleVersionUtil.deleteFile(RuleVersionUtil.getFileName(storeName, find.getCode(), ruleId, version));
+			success = true;
+		} catch (IOException e) {
+			logger.equals(e.getMessage());
+		}
+		return success;
 	}
 	
 

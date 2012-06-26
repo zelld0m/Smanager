@@ -1069,6 +1069,11 @@
 			mouseenter: showHoverInfo
 		},{locked:!allowModify});
 
+		$("#backupBtn").off().on({
+			click: backup,
+			mouseenter: showHoverInfo
+		},{locked:!allowModify});
+
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
