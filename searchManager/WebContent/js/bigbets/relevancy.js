@@ -1012,6 +1012,7 @@
 		if(selectedRule==null){
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
+			$("#titleHeader").html("");
 			return;
 		}
 
