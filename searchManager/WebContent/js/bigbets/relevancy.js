@@ -25,7 +25,6 @@
 	var keywordFilterText = "";
 	var rulePage = 1;
 	var keywordPage = 1;
-	var noOfVer = 0;
 	
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
@@ -1309,11 +1308,6 @@
 										prepareRelevancy();
 									}
 								});	
-								RuleVersioningServiceJS.getRuleVersions("ranking rule", selectedRule.ruleId, {
-									callback: function(data){
-										noOfVer = data.length;
-									},
-								});
 							}
 						});
 					},
@@ -1647,7 +1641,7 @@
 					switch($(evt.currentTarget).attr("id")){
 					case "rsaveBtn": 
 						if ($.isNotBlank(reason)){
-							if (noOfVer > 3) {
+							if ($("div$versions > ul#verItemList").children(":not(#verItemPattern)").length > 3) {
 								alert("Only maximum of 3 backups is allowed!");
 							} else {
 								RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
