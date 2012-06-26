@@ -22,7 +22,7 @@ import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
-import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
 
 @Service("fileService")
 public class FileDaoServiceImpl implements FileDaoService{
@@ -61,13 +61,13 @@ public class FileDaoServiceImpl implements FileDaoService{
 	
 	@Override
 	public List<ElevateProduct> readElevateRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE.getCode(), UtilityService.escapeKeyword(ruleId), version);
+		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE.getCode(), StringUtil.escapeKeyword(ruleId), version);
 		return elevateVersionDAO.readElevatedVersion(filePath, store, server);
 	}
 	
 	@Override
 	public List<Product> readExcludeRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE.getCode(), UtilityService.escapeKeyword(ruleId), version);
+		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE.getCode(), StringUtil.escapeKeyword(ruleId), version);
 		return excludeVersionDAO.readExcludeRuleVersion(filePath, store, server);
 	}
 

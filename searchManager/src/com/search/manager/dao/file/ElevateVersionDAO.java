@@ -26,7 +26,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ElevatedSkuXml;
-import com.search.manager.service.UtilityService;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.FileUtil;
 import com.search.ws.SearchHelper;
 
@@ -56,7 +56,7 @@ public class ElevateVersionDAO {
 				elevateRuleXml.setReason(reason);
 				
 				List<ElevatedSkuXml> skuList = new ArrayList<ElevatedSkuXml>();
-				ruleId = UtilityService.escapeKeyword(ruleId);
+				ruleId = StringUtil.escapeKeyword(ruleId);
 				for (ElevateResult elevateResult : elevatedList) {
 					ElevatedSkuXml sku = new ElevatedSkuXml();
 					sku.setEdp(elevateResult.getEdp());
@@ -115,7 +115,7 @@ public class ElevateVersionDAO {
 					ep.setStore(store);
 					map.put(e.getEdp(), ep);
 				}
-				SearchHelper.getProducts(map, store, UtilityService.getServerName(), elevateRule.getKeyword());
+				SearchHelper.getProducts(map, store, server, elevateRule.getKeyword());
 				list = new ArrayList<ElevateProduct>(map.values());
 			} catch (Exception e) {
 				logger.error(e.getMessage());

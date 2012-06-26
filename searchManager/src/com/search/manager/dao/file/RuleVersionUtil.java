@@ -8,10 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.RuleFileNameFilterImpl;
+import com.search.manager.utility.StringUtil;
 
 public class RuleVersionUtil {
 	
@@ -22,7 +22,7 @@ public class RuleVersionUtil {
 	public static File[] getBackupInfo(String store, int ruleType, String ruleId) {
 		String fileName = ruleId;
 		if (RuleEntity.ELEVATE.getCode() == ruleType || RuleEntity.ELEVATE.getCode() == ruleType) {
-			fileName = UtilityService.escapeKeyword(fileName);
+			fileName = StringUtil.escapeKeyword(fileName);
 		}
 		File dir = new File(getFileDirectory(store, ruleType));
 		File[] files = dir.listFiles(new RuleFileNameFilterImpl(fileName));
