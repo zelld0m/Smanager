@@ -26,7 +26,11 @@ public class RuleVersionUtil {
 		}
 		File dir = new File(getFileDirectory(store, ruleType));
 		File[] files = dir.listFiles(new RuleFileNameFilterImpl(fileName));
-
+		Arrays.sort(files, new Comparator<File>(){
+		    public int compare(File f1, File f2) {
+		        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+		    } 
+	    });
 		return files;
 	}
 	

@@ -86,12 +86,25 @@ public class RuleVersioningService {
 	}
 	
 	@RemoteMethod
-	public boolean restoreRankingRuleVersion(String ruleId, int version) {
-		boolean success = fileService.restoreRankingRuleVersion(UtilityService.getStoreName(), ruleId, version);
-		RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
-		if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-			deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
+		boolean success = fileService.restoreRuleVersion(UtilityService.getStoreName(), ruleId, version, RuleEntity.find(ruleType));
+		switch (RuleEntity.find(ruleType)) {
+		case ELEVATE:
+			break;
+		case EXCLUDE:
+			break;
+		case QUERY_CLEANING:
+			break;
+		case RANKING_RULE:
+			RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
+			if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
+				deploymentService.processRuleStatus("Ranking Rule", ruleId,null, false);
+			}
+			break;
+		default:
+			break;
 		}
+
 		return success;
 	}
 	

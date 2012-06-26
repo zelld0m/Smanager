@@ -82,8 +82,23 @@ public class FileDaoServiceImpl implements FileDaoService{
 	}
 	
 	@Override
-	public boolean restoreRankingRuleVersion(String store, String ruleId, int version) {
-		return rankingRuleVersionDAO.restoreRankingRuleVersion(store, ruleId, version);
+	public boolean restoreRuleVersion(String store, String ruleId, int version, RuleEntity ruleEntity) {
+		boolean success = false;
+		
+		switch (ruleEntity) {
+		case ELEVATE:
+			break;
+		case EXCLUDE:
+			break;
+		case QUERY_CLEANING:
+			break;
+		case RANKING_RULE:
+			success = rankingRuleVersionDAO.restoreRankingRuleVersion(store, ruleId, version);
+			break;
+		default:
+			break;
+		}
+		return success;
 	}
 	
 	@Override
@@ -97,7 +112,7 @@ public class FileDaoServiceImpl implements FileDaoService{
 				BackupInfo backup = new BackupInfo();
 				backup.setRuleId(ruleId);
 				backup.setDateCreated(new Date(file.lastModified()));
-				Matcher matcher = RuleVersionUtil.PATTERN.matcher(files[0].getName());
+				Matcher matcher = RuleVersionUtil.PATTERN.matcher(file.getName());
 		        if(matcher.find()){
 		        	backup.setVersion(Integer.valueOf(matcher.group(1)));
 		        }
