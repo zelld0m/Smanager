@@ -1622,7 +1622,7 @@
 				ready: true
 			},
 			style: {
-				width: '300'
+				width: '350'
 			},
 			events: {
 				show: function(event, api) {
@@ -1644,33 +1644,33 @@
 			click: function(evt){
 				var reason = $content.find("#reason").val();
 
-				if ($.isNotBlank(reason)){
 					switch($(evt.currentTarget).attr("id")){
 					case "rsaveBtn": 
-						if (noOfVer > 3) {
-							alert("Only maximum of 3 backups is allowed!");
-						} else {
-							RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
-								callback: function(data){
-									if (data) {
-										alert("Successfully created back up!");
-									} else {
-										alert("Failed creating back up!");
+						if ($.isNotBlank(reason)){
+							if (noOfVer > 3) {
+								alert("Only maximum of 3 backups is allowed!");
+							} else {
+								RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
+									callback: function(data){
+										if (data) {
+											alert("Successfully created back up!");
+										} else {
+											alert("Failed creating back up!");
+										}
+									},
+									preHook: function(){
+										api.destroy();
 									}
-								},
-								preHook: function(){
-									api.destroy();
-								}
-							});							
+								});							
+							}
+						}else{
+							alert("Reason can not be blank!");
 						}
 						break;
 					case "rcancelBtn": 
 							api.destroy();
 							break;
 					}	
-				}else{
-					alert("Reason can not be blank!");
-				}
 			}		
 		});
 
