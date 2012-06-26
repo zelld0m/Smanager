@@ -1019,6 +1019,11 @@
 
 		$("#relevancy").show();
 
+		$("div#versions").version({
+			ruleType: "Ranking Rule",
+			ruleId: selectedRule["ruleId"]
+		});
+		
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
 
@@ -1056,6 +1061,11 @@
 
 		$("#cloneBtn").off().on({
 			click: cloneRule,
+			mouseenter: showHoverInfo
+		},{locked:!allowModify});
+
+		$("#backupBtn").off().on({
+			click: backup,
 			mouseenter: showHoverInfo
 		},{locked:!allowModify});
 
@@ -1575,6 +1585,78 @@
 			click: function(evt){
 				alert("Restoring version to...");
 			}
+		});
+
+		return $content;
+	};
+
+	var backup = function(evt){
+
+		$(this).qtip({
+			id: "rule-backup",
+			content: {
+				text: $('<div/>'),
+				title: { 
+					text: "Backup Rule", button:true
+				}
+			},
+			position: {
+				my: 'center',
+				at: 'center',
+				target: $(window)
+			},
+			show: {
+				modal: true,
+				solo: true,
+				ready: true
+			},
+			style: {
+				width: 'auto'
+			},
+			events: {
+				show: function(event, api) {
+					var $content = $("div", api.elements.content);
+					renderBackupConfirm(api, $content);
+				},
+				hide: function(event, api) {
+					api.destroy();
+				}
+			}
+		});
+	};
+
+	var renderBackupConfirm = function(api, $content){
+		
+		$content.html($("#reasonView").html());
+
+		$content.find("a#rcancelBtn, a#rsaveBtn").on({
+			click: function(evt){
+				var reason = $content.find("#reason").val();
+
+				if ($.isNotBlank(reason)){
+					switch($(evt.currentTarget).attr("id")){
+					case "rsaveBtn": 
+						RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
+							callback: function(data){
+								if (data) {
+									alert("Successfully created back up!");
+								} else {
+									alert("Failed creating back up!");
+								}
+							},
+							preHook: function(){
+								api.destroy();
+							}
+						});break;
+
+					case "rcancelBtn": 
+							api.destroy();
+							break;
+					}	
+				}else{
+					alert("Reason can not be blank!");
+				}
+			}		
 		});
 
 		return $content;
