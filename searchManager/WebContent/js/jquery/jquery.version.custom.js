@@ -22,10 +22,12 @@
 			var template  = '<div class="versions marT20 w500">';
 				template += '	<ul id="verItemList">';
 				template += '		<li id="verItemPattern" class="verItems borderB padTB5 clearfix w500 padL5" style="display:none">';
-				template += '			<label class="select floatL fbold w220"><input type="checkbox"></label>';
+				template += '			<label class="select floatL fbold w220" style="display:none"><input type="checkbox"></label>';
+				template += '			<label class="ver w225 floatL"></label>';
 				template += '			<label class="verDate w225 floatL"></label>';
 				template += '			<label class="previewIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_reviewContent2.png" class="top2 posRel"></label>';
 				template += '			<label class="verName floatL fbold w220"></label>';
+				template += '			<label class="restoreIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 				template += '			<label class="deleteIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 				template += '		</li>';
 				template += '	</ul>';
@@ -47,6 +49,7 @@
 							var $li = $ul.find("li#verItemPattern").clone();
 							var item = data[i];
 							$li.prop("id", "row" + $.formatAsId(item["ruleId"]));
+							$li.find("label.ver").html(item["version"]);
 							$li.find("label.verDate").html(item["dateCreated"].toUTCString());
 							$li.find("label.verName").html(item["reason"]);
 							
@@ -57,17 +60,19 @@
 							
 							$li.find("label.deleteIcon > img").off().on({
 								click:function(evt){
-									RuleVersioningServiceJS.deleteRuleVersion({
-										callback:function(data){
-											
-										},
-										preHook:function(){
-											
-										},
-										postHook:function(){
-											
-										}
-									});
+									if (confirm("Delete restore point version " + item["version"] + "?")){
+										RuleVersioningServiceJS.deleteRuleVersion(base.options.ruleType ,item["ruleId"], item["version"], {
+											callback:function(data){
+												
+											},
+											preHook:function(){
+												
+											},
+											postHook:function(){
+												
+											}
+										});
+									}
 								}
 							});
 							
