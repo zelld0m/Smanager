@@ -19,14 +19,14 @@
 		};
 
 		base.getTemplate = function(){
-			var template  = '<div class="versions marT20 w500">';
+			var template  = '<div class="versions marT20 w99p marRLauto">';
 				template += '	<ul id="verItemList">';
-				template += '		<li id="verItemPattern" class="verItems borderB padTB5 clearfix w500 padL5" style="display:none">';
-				template += '			<label class="select floatL fbold w220" style="display:none"><input type="checkbox"></label>';
-				template += '			<label class="ver w225 floatL"></label>';
-				template += '			<label class="verDate w225 floatL"></label>';
+				template += '		<li id="verItemPattern" class="verItems borderB padTB5 clearfix w99p padL5 fsize12" style="display:none">';
+				template += '			<label class="select floatL fbold w55" style="display:none"><input type="checkbox"></label>';
+				template += '			<label class="ver w100 floatL"></label>';
+				template += '			<label class="verDate w200 floatL"></label>';
 				template += '			<label class="previewIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_reviewContent2.png" class="top2 posRel"></label>';
-				template += '			<label class="verName floatL fbold w220"></label>';
+				template += '			<label class="verName floatL fbold w340"></label>';
 				template += '			<label class="restoreIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 				template += '			<label class="deleteIcon floatL w20 posRel topn2"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 				template += '		</li>';
