@@ -68,7 +68,10 @@
 	        	<div class="floatL padT10 padL10" style="width:70%" >
 	        		<div id="versionHolder">
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>  
+			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>
+			        		<a id="backupBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
+			        			<div class="buttons fontBold">Backup Now</div>
+			        		</a>  
 			        	</label>
 		        	</div>
 	        		<div id="commentHolder">
@@ -192,7 +195,6 @@
 				<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
 				<a id="cloneBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clone</div></a> 
 				<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
-				<a id="backupBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Backup</div></a>
 			</div>
 	</div>
 	
