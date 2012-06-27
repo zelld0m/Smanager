@@ -40,7 +40,7 @@
 			
 			$(base.options.buttonHolderId).find("#backupBtn").off().on({
 				click:function(evt){
-					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == 3) {
+					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.limit) {
 						alert("Only maximum of 3 backups is allowed!");
 					} else {
 						$(evt.currentTarget).qtip({
@@ -62,7 +62,7 @@
 								ready: true
 							},
 							style: {
-								width: '350'
+								width:'auto'
 							},
 							events: {
 								show: function(event, api) {
@@ -152,14 +152,14 @@
 
 		base.getVersionNameTemplate =  function(){
 			var template  = '<div id="reasonView">';
-			template += '		<div class="w590 marB20">';
-			template += '			<label class="w70 floatL fbold">Name</label>';
+			template += '		<div class="marB20">';
+			template += '			<label class="w70 marT10 floatL fbold">Name</label>';
 			template += '			<label><input id="backupName" type="text" class="w240 marT5"/></label>';
 			template += '			<div class="clearB"></div>';
-			template += '			<label class="w70 floatL fbold">Reason</label>';
+			template += '			<label class="w70 marT4 floatL fbold">Reason</label>';
 			template += '			<label><textarea id="reason" class="w240 marT5"/></label>';
 			template += '		</div>';
-			template += '		<div align="right" class="padR15 marT10">';
+			template += '		<div align="right" class="padR3 marT10">';
 			template += '			<a id="rsaveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '				<div class="buttons fontBold">Save</div>';
 			template += '			</a>';
@@ -195,12 +195,16 @@
 							$ul.append($li);
 						}
 
-						$ul.find("li.verItems:not(#verItemPattern) > label.previewIcon > img").preview({
-							ruleType: base.options.ruleType,
-							ruleId: base.options.ruleId,
-							version: $(this).parent().siblings("label.ver").html()
+						$ul.find("li.verItems:not(#verItemPattern) > label.previewIcon > img").on({
+							click:function(evt){
+								var verNum = $(this).parent().siblings("label.ver").html();
+								$(evt.currentTarget).preview({
+									ruleType: base.options.ruleType,
+									ruleId: base.options.ruleId,
+									version: verNum
+								});
+							}
 						});
-						
 						
 						$ul.find("li.verItems:not(#verItemPattern) > label.deleteIcon > img").off().on({
 							click:function(evt){
@@ -260,6 +264,7 @@
 			headerText: "",
 			ruleType: "",
 			ruleId: "",
+			limit: 3,
 			buttonHolderId: "",
 			beforeRequest: function(){},
 			afterRequest: function(){},
