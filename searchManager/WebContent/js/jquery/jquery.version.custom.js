@@ -38,7 +38,7 @@
 				}
 			});
 			
-			$(base.options.buttonHolderId).find("#backupBtn").css({visibility: "hidden"}).off().on({
+			$(base.options.buttonHolderId).find("#backupBtn").off().on({
 				click:function(evt){
 					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.limit) {
 						alert("Only maximum of 3 backups is allowed!");
@@ -111,7 +111,7 @@
 						});
 					}
 				}
-			});
+			}).parent().css(base.options.locked?{display: "none"}:{display: "block"});
 		};
 		
 		base.init = function(){
@@ -142,8 +142,10 @@
 			template +=	'				</label>';
 			template += '				<label class="verDate w200 floatL"></label>';
 			template += '				<label class="previewIcon floatL w20 posRel topn2"><img alt="Preview Content" title="Preview Content" src="' + GLOBAL_contextPath + '/images/icon_reviewContent2.png" class="top2 posRel"></label>';
-			template += '				<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
-			template += '				<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			if(!base.options.locked){
+				template += '				<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+				template += '				<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			}
 			template += '			</li>';
 			template += '		</ul>';
 			template += '</div>';
@@ -269,7 +271,7 @@
 			ruleType: "",
 			ruleId: "",
 			limit: 3,
-			locked: false,
+			locked: true,
 			buttonHolderId: "",
 			beforeRequest: function(){},
 			afterRequest: function(){},

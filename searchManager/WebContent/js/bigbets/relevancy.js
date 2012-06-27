@@ -1022,7 +1022,7 @@
 			ruleType: "Ranking Rule",
 			ruleId: selectedRule["ruleId"],
 			buttonHolderId: "#versionHolder",
-			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+			locked: true, //selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 			restoreCallback: function(rankingRule){
 				setRelevancy(data);
 			}
