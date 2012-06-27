@@ -40,7 +40,7 @@
 			
 			$(base.options.buttonHolderId).find("#backupBtn").off().on({
 				click:function(evt){
-					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.limit) {
+					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.options.limit) {
 						alert("Only maximum of 3 backups is allowed!");
 					} else {
 						$(evt.currentTarget).qtip({
@@ -116,6 +116,7 @@
 		
 		base.init = function(){
 			base.options = $.extend({},$.version.defaultOptions, options);
+			base.$el.empty();
 			base.setUpTrigger();
 		};
 
