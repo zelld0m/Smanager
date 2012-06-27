@@ -68,7 +68,7 @@
 	        	<div class="floatL padT10 padL10" style="width:70%" >
 	        		<div id="versionHolder">
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>			        		 
+			        		<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>			        		 
 			        	</label>
 			        	<label class="floatL marTn7">
 			        		<a id="backupBtn" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">
@@ -107,6 +107,7 @@
 	        <div class="clearB"></div>	
 	 </div>
 	 
+	 <div class="clearB"></div>
 	 <div id="versions"></div>
 	 
  	 <div id="viewAuditTemplate" style="display: none">
@@ -473,28 +474,7 @@
 				
 			<div class="clearB"></div>
 		</div>
-	<div id="reasonView" style="display: none;">
-			<div class="rulePreview w590 marB20">
-				<label class="w70 floatL fbold">Name:</label>
-				<label><input id="backupName" type="text" class="w240 marT5"/></label>
-				<div class="clearB"></div>
-				<label class="w70 floatL fbold">Reason:</label>
-				<label><input id="reason" type="text" class="w240 marT5"/></label>
-				<div class="clearB"></div>
-			</div>
-		
-			<div align="right" class="padR15 marT10">
-				<a id="rsaveBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div>
-				</a>
-				<a id="rcancelBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Cancel</div>
-				</a>
-			</div>
-				
-			<div class="clearB"></div>
-		</div>
-		
+	
   <div id="ruleIsLocked" class="w180" style="display:none;">
   	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>	
