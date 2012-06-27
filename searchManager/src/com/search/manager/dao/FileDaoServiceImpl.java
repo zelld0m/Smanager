@@ -41,13 +41,13 @@ public class FileDaoServiceImpl implements FileDaoService{
 		
 		switch (ruleEntity) {
 		case ELEVATE:
-			success = elevateVersionDAO.createElevateRuleVersion(store, ruleId, reason);
+			success = elevateVersionDAO.createElevateRuleVersion(store, ruleId, name, reason);
 			break;
 		case EXCLUDE:
-			success = excludeVersionDAO.createExcludeRuleVersion(store, ruleId, reason);
+			success = excludeVersionDAO.createExcludeRuleVersion(store, ruleId, name, reason);
 			break;
 		case QUERY_CLEANING:
-			success = queryCleaningVersionDAO.createQueryCleaningRuleVersion(store, ruleId, reason);
+			success = queryCleaningVersionDAO.createQueryCleaningRuleVersion(store, ruleId, name, reason);
 			break;
 		case RANKING_RULE:
 			success = rankingRuleVersionDAO.createRankingRuleVersion(store, ruleId, name, reason);
@@ -118,13 +118,13 @@ public class FileDaoServiceImpl implements FileDaoService{
 		        }
 				switch (RuleEntity.find(ruleType)) {
 				case ELEVATE:
-					elevateVersionDAO.readElevatedVersion(file);
+					elevateVersionDAO.readElevatedVersion(file, backup);
 					break;
 				case EXCLUDE:
-					excludeVersionDAO.readExcludeRuleVersion(file);
+					excludeVersionDAO.readExcludeRuleVersion(file, backup);
 					break;
 				case QUERY_CLEANING:
-					queryCleaningVersionDAO.readQueryCleaningVersion(file);
+					queryCleaningVersionDAO.readQueryCleaningVersion(file, backup);
 					break;
 				case RANKING_RULE:
 					rankingRuleVersionDAO.readRankingRuleVersion(file, backup);

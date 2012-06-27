@@ -190,9 +190,8 @@ public class RankingRuleVersionDAO {
 
 	}
 
-	public String readRankingRuleVersion(File file, BackupInfo backup){
+	public void readRankingRuleVersion(File file, BackupInfo backup){
 		
-		String reason = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
@@ -202,7 +201,6 @@ public class RankingRuleVersionDAO {
 		}catch (Exception e) {
 			logger.error(e,e);
 		}
-		return reason;
 
 	}
 

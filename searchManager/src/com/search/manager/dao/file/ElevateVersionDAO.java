@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BackupInfo;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.SearchCriteria;
@@ -37,7 +38,7 @@ public class ElevateVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createElevateRuleVersion(String store, String ruleId, String reason){
+	public boolean createElevateRuleVersion(String store, String ruleId, String name, String reason){
 		
 		boolean success = false;
 		ElevateResult elevateFilter = new ElevateResult();
@@ -54,6 +55,7 @@ public class ElevateVersionDAO {
 				ElevateRuleXml elevateRuleXml = new ElevateRuleXml();
 				elevateRuleXml.setKeyword(ruleId);
 				elevateRuleXml.setReason(reason);
+				elevateRuleXml.setName(name);
 				
 				List<ElevatedSkuXml> skuList = new ArrayList<ElevatedSkuXml>();
 				ruleId = StringUtil.escapeKeyword(ruleId);
@@ -126,21 +128,20 @@ public class ElevateVersionDAO {
 		return list;
 	}
 	
-	public String readElevatedVersion(File file){
-		String reason = null;
+	public void readElevatedVersion(File file, BackupInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(ElevateRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				ElevateRuleXml elevateRule = (ElevateRuleXml) um.unmarshal(file);
-				reason = elevateRule.getReason();
+				backup.setReason(elevateRule.getReason());
+				backup.setName(elevateRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} catch (Exception e) {
 			logger.error(e,e);
 		}
-		return reason;
 	}
 	
 
