@@ -1024,7 +1024,7 @@
 			buttonHolderId: "#versionHolder",
 			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 			restoreCallback: function(rankingRule){
-				setRelevancy(data);
+				setRelevancy(rankingRule);
 			}
 		});
 		
