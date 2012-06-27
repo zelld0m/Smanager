@@ -237,9 +237,18 @@
 
 									RuleVersioningServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, verNum, {
 										callback:function(data){
+											
 										},
 										preHook:function(){
-
+											base.$el.empty();
+											
+											var template = '	<div id="preloader" class="txtAC">';
+											template += '			<img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+											template += '			<div class="clearB">';
+											template += '			<div>Restoring Backup Data</div>';
+											template += '		</div>';
+											
+											base.$el.html(template);
 										},
 										postHook:function(){
 											RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, verNum, {
