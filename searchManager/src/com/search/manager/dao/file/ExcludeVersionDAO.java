@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BackupInfo;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.SearchCriteria;
@@ -38,7 +39,7 @@ public class ExcludeVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createExcludeRuleVersion(String store, String ruleId, String reason){
+	public boolean createExcludeRuleVersion(String store, String ruleId, String name, String reason){
 		
 		boolean success = false;
 		ExcludeResult excludeFilter = new ExcludeResult();
@@ -55,6 +56,8 @@ public class ExcludeVersionDAO {
 				ExcludeRuleXml excludeRuleXml = new ExcludeRuleXml();
 				excludeRuleXml.setKeyword(ruleId);
 				excludeRuleXml.setReason(reason);
+				excludeRuleXml.setName(name);
+				
 				List<ExcludedSkuXml> skuList = new ArrayList<ExcludedSkuXml>();
 				ruleId = StringUtil.escapeKeyword(ruleId);
 				for (ExcludeResult excludeResult : excludeList) {
@@ -124,21 +127,20 @@ public class ExcludeVersionDAO {
 		return list;
 	}
 	
-	public String readExcludeRuleVersion(File file){
-		String reason = null;
+	public void readExcludeRuleVersion(File file, BackupInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(ExcludeRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				ExcludeRuleXml excludeRule = (ExcludeRuleXml) um.unmarshal(file);
-				reason = excludeRule.getReason();
+				backup.setReason(excludeRule.getReason());
+				backup.setName(excludeRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
 		} catch (Exception e) {
 			logger.error(e,e);
 		}
-		return reason;
 	}
 	
 }

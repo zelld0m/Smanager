@@ -14,6 +14,7 @@ public class ElevateRuleXml {
 	private List<ElevatedSkuXml> elevatedSku;
 	private long serVersion; 
 	private String reason;
+	private String name;
 	
 	public ElevateRuleXml() {
 		this.serVersion = SERIAL_VERSION_UID;
@@ -47,6 +48,12 @@ public class ElevateRuleXml {
 	}
 	public void setSerVersion(long serVersion) {
 		this.serVersion = serVersion;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

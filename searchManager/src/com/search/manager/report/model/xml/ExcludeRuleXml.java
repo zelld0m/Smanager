@@ -13,6 +13,7 @@ public class ExcludeRuleXml {
 	private List<ExcludedSkuXml> excludedSku;
 	private long serVersion; 
 	private String reason;
+	private String name;
 	
 	public ExcludeRuleXml() {
 		this.serVersion = SERIAL_VERSION_UID;
@@ -44,6 +45,14 @@ public class ExcludeRuleXml {
 
 	public void setSerVersion(long serVersion) {
 		this.serVersion = serVersion;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

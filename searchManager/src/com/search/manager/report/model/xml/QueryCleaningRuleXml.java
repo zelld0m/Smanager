@@ -23,6 +23,7 @@ public class QueryCleaningRuleXml {
 	private Date lastModifiedDate;
 	private long serVersion;
 	private String reason;
+	private String name;
 	
 	public QueryCleaningRuleXml() {
 		this.serVersion = SERIAL_VERSION_UID;
@@ -114,6 +115,14 @@ public class QueryCleaningRuleXml {
 
 	public void setSerVersion(long serVersion) {
 		this.serVersion = serVersion;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
