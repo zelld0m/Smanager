@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.BackupInfo;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -90,7 +91,7 @@ public class RankingRuleVersionDAO {
 		return success;
 	}
 	
-	public boolean createRankingRuleVersion(String store, String ruleId, String reason){
+	public boolean createRankingRuleVersion(String store, String ruleId, String name, String reason){
 		
 		boolean success = false;
 		
@@ -110,6 +111,7 @@ public class RankingRuleVersionDAO {
 				rrXml.setModifiedBy(relevancy.getLastModifiedBy());
 				rrXml.setCreatedBy(relevancy.getCreatedBy());
 				rrXml.setReason(reason);
+				rrXml.setName(name);
 				
 			    if(CollectionUtils.isNotEmpty(relevancy.getRelKeyword())){
 			    	List<RankingRuleKeywordXml> keywords = new ArrayList<RankingRuleKeywordXml>();
@@ -188,14 +190,15 @@ public class RankingRuleVersionDAO {
 
 	}
 
-	public String readRankingRuleVersion(File file){
+	public String readRankingRuleVersion(File file, BackupInfo backup){
 		
 		String reason = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
 			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(file));
-			reason = rr.getReason();
+			backup.setReason(rr.getReason());
+			backup.setName(rr.getName());
 		}catch (Exception e) {
 			logger.error(e,e);
 		}

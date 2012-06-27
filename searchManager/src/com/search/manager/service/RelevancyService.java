@@ -237,7 +237,7 @@ public class RelevancyService {
 	public int deleteRule(String ruleId){
 		try {
 			try {
-				fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.RANKING_RULE, UtilityService.getUsername(), null);
+				fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.RANKING_RULE, UtilityService.getUsername(), "Deleted Rule", "Deleted Rule");
 			} catch (Exception e) {
 				logger.error("Error creating backup. " + e.getMessage());
 			}

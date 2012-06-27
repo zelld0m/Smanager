@@ -12,6 +12,7 @@ public class BackupInfo {
 	private Date dateCreated;
 	private int version;
 	private String reason;
+	private String name;
 	
 	public String getRuleId() {
 		return ruleId;
@@ -36,6 +37,12 @@ public class BackupInfo {
 	}
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

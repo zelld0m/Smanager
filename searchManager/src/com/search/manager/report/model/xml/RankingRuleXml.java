@@ -23,6 +23,7 @@ public class RankingRuleXml {
 	private Map<String,String> relevancyFields;
 	private List<RankingRuleKeywordXml> keywords;
 	private long serVersion;
+	private String name;
 	private String reason;
 	
 	public RankingRuleXml() {
@@ -108,6 +109,14 @@ public class RankingRuleXml {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

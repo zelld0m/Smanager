@@ -10,7 +10,7 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 
 public interface FileDaoService {
-	public boolean createBackup(String store, String ruleId, RuleEntity ruleEntity, String userName, String reason) throws Exception;
+	public boolean createBackup(String store, String ruleId, RuleEntity ruleEntity, String userName, String name, String reason) throws Exception;
 	public RedirectRule readQueryCleaningRuleVersion(String store, String ruleId, int version);
 	public Relevancy readRankingRuleVersion(String store, String ruleId, int version);
 	public List<ElevateProduct> readElevateRuleVersion(String store, String ruleId, int version, String server);

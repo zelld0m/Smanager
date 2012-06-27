@@ -471,9 +471,9 @@
 		</div>
 	<div id="reasonView" style="display: none;">
 			<div class="rulePreview w590 marB20">
-				<!--label class="w70 floatL fbold">Backup Name:</label>
+				<label class="w70 floatL fbold">Name:</label>
 				<label><input id="backupName" type="text" class="w240 marT5"/></label>
-				<div class="clearB"></div-->
+				<div class="clearB"></div>
 				<label class="w70 floatL fbold">Reason:</label>
 				<label><input id="reason" type="text" class="w240 marT5"/></label>
 				<div class="clearB"></div>

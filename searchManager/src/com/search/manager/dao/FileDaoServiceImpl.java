@@ -35,7 +35,7 @@ public class FileDaoServiceImpl implements FileDaoService{
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	
 	@Override
-	public boolean createBackup(String store, String ruleId, RuleEntity ruleEntity, String userName, String reason) throws Exception {
+	public boolean createBackup(String store, String ruleId, RuleEntity ruleEntity, String userName, String name, String reason) throws Exception {
 		
 		boolean success = false;
 		
@@ -50,7 +50,7 @@ public class FileDaoServiceImpl implements FileDaoService{
 			success = queryCleaningVersionDAO.createQueryCleaningRuleVersion(store, ruleId, reason);
 			break;
 		case RANKING_RULE:
-			success = rankingRuleVersionDAO.createRankingRuleVersion(store, ruleId, reason);
+			success = rankingRuleVersionDAO.createRankingRuleVersion(store, ruleId, name, reason);
 			break;
 		default:
 			break;
@@ -116,25 +116,23 @@ public class FileDaoServiceImpl implements FileDaoService{
 		        if(matcher.find()){
 		        	backup.setVersion(Integer.valueOf(matcher.group(1)));
 		        }
-		        String reason = null;
 				switch (RuleEntity.find(ruleType)) {
 				case ELEVATE:
-					reason = elevateVersionDAO.readElevatedVersion(file);
+					elevateVersionDAO.readElevatedVersion(file);
 					break;
 				case EXCLUDE:
-					reason = excludeVersionDAO.readExcludeRuleVersion(file);
+					excludeVersionDAO.readExcludeRuleVersion(file);
 					break;
 				case QUERY_CLEANING:
-					reason = queryCleaningVersionDAO.readQueryCleaningVersion(file);
+					queryCleaningVersionDAO.readQueryCleaningVersion(file);
 					break;
 				case RANKING_RULE:
-					reason = rankingRuleVersionDAO.readRankingRuleVersion(file);
+					rankingRuleVersionDAO.readRankingRuleVersion(file, backup);
 					break;
 				default:
 					break;
 				}
 		        
-		        backup.setReason(reason);
 				backupList.add(backup);
 			}
 

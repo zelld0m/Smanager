@@ -1637,34 +1637,35 @@
 		$content.find("a#rcancelBtn, a#rsaveBtn").on({
 			click: function(evt){
 				var reason = $content.find("#reason").val();
+				var backupName = $content.find("#backupName").val();
 
-					switch($(evt.currentTarget).attr("id")){
-					case "rsaveBtn": 
-						if ($.isNotBlank(reason)){
-							if ($("div$versions > ul#verItemList").children(":not(#verItemPattern)").length > 3) {
-								alert("Only maximum of 3 backups is allowed!");
-							} else {
-								RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId,reason, {
-									callback: function(data){
-										if (data) {
-											alert("Successfully created back up!");
-										} else {
-											alert("Failed creating back up!");
-										}
-									},
-									preHook: function(){
-										api.destroy();
+				switch($(evt.currentTarget).attr("id")){
+				case "rsaveBtn": 
+					if ($.isNotBlank(reason) && $.isNotBlank(backupName)){
+						if ($("div$versions > ul#verItemList").children(":not(#verItemPattern)").length > 2) {
+							alert("Only maximum of 3 backups is allowed!");
+						} else {
+							RuleVersioningServiceJS.createRuleVersion("ranking rule", selectedRule.ruleId, backupName, reason, {
+								callback: function(data){
+									if (data) {
+										alert("Successfully created back up!");
+									} else {
+										alert("Failed creating back up!");
 									}
-								});							
-							}
-						}else{
-							alert("Reason can not be blank!");
+								},
+								preHook: function(){
+									api.destroy();
+								}
+							});							
 						}
+					}else{
+						alert("Name and Reason can not be blank!");
+					}
+					break;
+				case "rcancelBtn": 
+						api.destroy();
 						break;
-					case "rcancelBtn": 
-							api.destroy();
-							break;
-					}	
+				}	
 			}		
 		});
 

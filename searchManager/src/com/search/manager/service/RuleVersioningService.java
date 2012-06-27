@@ -33,10 +33,10 @@ public class RuleVersioningService {
 	@Autowired private DeploymentService deploymentService;
 	
 	@RemoteMethod
-	public boolean createRuleVersion(String ruleType, String ruleId, String reason) {
+	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
 		boolean success = false;
 		try {
-			success = fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.find(ruleType), UtilityService.getUsername(), reason);
+			success = fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.find(ruleType), UtilityService.getUsername(), name, reason);
 		} catch (Exception e) {
 			logger.error("Failed during createRuleVersion()",e);
 		}
