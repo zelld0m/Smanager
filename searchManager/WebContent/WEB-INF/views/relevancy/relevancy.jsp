@@ -471,27 +471,6 @@
 				
 			<div class="clearB"></div>
 		</div>
-	<div id="reasonView" style="display: none;">
-			<div class="rulePreview w590 marB20">
-				<!--label class="w70 floatL fbold">Backup Name:</label>
-				<label><input id="backupName" type="text" class="w240 marT5"/></label>
-				<div class="clearB"></div-->
-				<label class="w70 floatL fbold">Reason:</label>
-				<label><input id="reason" type="text" class="w240 marT5"/></label>
-				<div class="clearB"></div>
-			</div>
-		
-			<div align="right" class="padR15 marT10">
-				<a id="rsaveBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div>
-				</a>
-				<a id="rcancelBtn" href="javascript:void(0);"
-					class="buttons btnGray clearfix"><div class="buttons fontBold">Cancel</div>
-				</a>
-			</div>
-				
-			<div class="clearB"></div>
-		</div>
 		
   <div id="ruleIsLocked" class="w180" style="display:none;">
   	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
