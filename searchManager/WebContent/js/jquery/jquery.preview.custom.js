@@ -61,7 +61,7 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 		
-		base.getData = function(content){
+		base.getDatabaseData = function(content){
 			var $content = content;
 			
 			switch(base.options.ruleType.toLowerCase()){
@@ -135,7 +135,7 @@
 
 					RedirectServiceJS.getAllKeywordInRule(base.options.ruleId, "", 0, 0, {
 						callback: function(data){
-							base.populateKeywordInRule($content, data);
+							base.populateKeywordInRule($content, data.list);
 						}
 					});
 					
@@ -165,7 +165,7 @@
 
 					RelevancyServiceJS.getAllKeywordInRule(base.options.ruleId, "", 0, 0, {
 						callback: function(data){
-							base.populateKeywordInRule($content, data);
+							base.populateKeywordInRule($content, data.list);
 						}
 					});
 					
@@ -173,19 +173,51 @@
 			}
 		};
 		
-		base.populateKeywordInRule = function(content, data){
+		base.getFileData = function(content){
 			var $content = content;
-			var list = data.list;
+			
+			switch(base.options.ruleType.toLowerCase()){
+				case "ranking rule": 
+					$content.find(".infoTabs").tabs({});
+					
+					RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
+						callback: function(data){
+							$content.find("#startDate").html(data["formattedStartDate"]);
+							$content.find("#endDate").html(data["formattedEndDate"]);
+							$content.find("#description").html(data["description"]);
+
+							var $table = $content.find("div.ruleField table#item");
+							$table.find("tr:not(#itemPattern)").remove();
+							
+							for(var field in data.parameters){
+								$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+								$tr.find("td#fieldName").html(field);
+								$tr.find("td#fieldValue").html(data.parameters[field]);
+								$tr.appendTo($table);
+							}	
+							
+							$table.find("tr:even").addClass("alt");
+							
+							base.populateKeywordInRule($content, data["relKeyword"]);
+						}
+					});
+					
+					break;
+			}
+		};
+		
+		base.populateKeywordInRule = function(content, list){
+			var $content = content;
 			var $table = $content.find("div.ruleKeyword table#item");
 			$table.find("tr:not(#itemPattern)").remove();
 
-			if (data.totalSize==0){
+			if (list.length==0){
 				$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td#fieldName").html("No keywords associated to this rule").attr("colspan","2");
 				$tr.find("td#fieldValue").remove();
 				$tr.appendTo($table);
 			}else{
-				for(var i=0; i< data.totalSize; i++){
+				for(var i=0; i< list.length; i++){
 					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"])).show();
 					$tr.find("td#fieldName").html(parseInt(i)+1);
 					$tr.find("td#fieldValue").html(list[i]["keyword"]);
@@ -452,7 +484,11 @@
 					show: function(event, api){
 						var $content = $("div", api.elements.content);
 						$content.html(base.getTemplate());
-						base.getData($content);
+						if ($.isNotBlank(base.options.version)){
+							base.getFileData($content);
+						}else{
+							base.getDatabaseData($content);
+						}
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
@@ -468,7 +504,8 @@
 	$.preview.defaultOptions = {
 			headerText:"Rule Preview",
 			ruleType: "",
-			ruleId: ""
+			ruleId: "",
+			version: "",
 	};
 
 	$.fn.preview = function(options){

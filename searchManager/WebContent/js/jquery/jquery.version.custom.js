@@ -191,16 +191,17 @@
 							$li.find("label.verDate").html(item["dateCreated"].toUTCString());
 							$li.find("label.verDetail > p#verName").html(item["name"]);
 							$li.find("label.verDetail > p#verReason").html(item["reason"]);
-
-							$li.find("label.previewIcon > img").preview({
-								ruleType: base.options.ruleType,
-								ruleId: item["ruleId"]
-							});
-
 							$li.show();
 							$ul.append($li);
 						}
 
+						$ul.find("li.verItems:not(#verItemPattern) > label.previewIcon > img").preview({
+							ruleType: base.options.ruleType,
+							ruleId: base.options.ruleId,
+							version: $(this).parent().siblings("label.ver").html()
+						});
+						
+						
 						$ul.find("li.verItems:not(#verItemPattern) > label.deleteIcon > img").off().on({
 							click:function(evt){
 								var verNum = $(this).parent().siblings("label.ver").html();
@@ -229,13 +230,12 @@
 
 									RuleVersioningServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, verNum, {
 										callback:function(data){
-											base.options.restoreCallback();
 										},
 										preHook:function(){
 
 										},
 										postHook:function(){
-
+											base.options.restoreCallback();
 										}
 									});
 								}

@@ -1023,7 +1023,7 @@
 			ruleId: selectedRule["ruleId"],
 			buttonHolderId: "#versionHolder",
 			restoreCallback: function(){
-				
+				showRelevancy();
 			}
 		});
 		
