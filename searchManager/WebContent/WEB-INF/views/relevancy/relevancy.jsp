@@ -68,10 +68,12 @@
 	        	<div class="floatL padT10 padL10" style="width:70%" >
 	        		<div id="versionHolder">
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>
-			        		<a id="backupBtn" href="javascript:void(0);" class="buttons btnGray clearfix">
-			        			<div class="buttons fontBold">Backup Now</div>
-			        		</a>  
+			        		<span id="versionIcon"><img  class="previewIcon pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>			        		 
+			        	</label>
+			        	<label class="floatL marTn7">
+			        		<a id="backupBtn" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">
+			        			<div class="btnGraph btnBackUp"></div>
+			        		</a> 
 			        	</label>
 		        	</div>
 	        		<div id="commentHolder">

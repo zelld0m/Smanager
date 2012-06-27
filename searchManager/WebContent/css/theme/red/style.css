@@ -112,6 +112,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.buttons,
 .qtip a.buttons					{ text-decoration: none; }
 
+.cssReset .btnGraph, .btnGraph	{ background: url(images/btn_graphics.png) no-repeat; }
+.cssReset a.btnGraph, a.btnGraph{ text-decoration: none;}
+
 .cssReset a.btnGray,
 .qtip a.btnGray		 		  	{ background-position: 0 0; color:#fff; width:auto; height:25px; padding:0 4px; cursor:pointer; }
 .cssReset a.btnGray div,
@@ -153,7 +156,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnAddGray		{ background-position: -4px -62px; height: 20px; width: 22px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
 .cssReset a div.btnAddGray:hover{ background-position: -4px -85px;  }
 .cssReset a div.btnAddGrayL		{ background-position: -4px -181px; height: 24px; width: 27px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
-.cssReset a div.btnAddGrayL:hover{ background-position: -4px -208px;  }
+.cssReset a div.btnAddGrayL:hover { background-position: -4px -208px !important;  }
 .cssReset a div.btnUploadGray	{ background-position: -4px -235px; height: 24px; width: 27px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
 .cssReset a div.btnUploadGray:hover{ background-position: -4px -262px;  }
 .cssReset a div.btnDownload		 { background-position: -4px -348px; height: 16px; width: 16px; padding:0; cursor:pointer; }
@@ -162,6 +165,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnSearchOption:hover{ background-position: -4px -415px;  }
 .cssReset a div.btnClearDel		 { background-position: -1px -518px; height: 16px; width: 16px; padding:0; cursor:pointer; }
 .cssReset a div.btnClearDel:hover{ background-position: -18px -518px;  }
+
+.cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
+.cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
 
 .cssReset a div.btnViewList			{ background-position: -5px -109px; height:16px; width:17px; cursor:pointer; display: block;}
 .cssReset a div.btnViewList:hover,
@@ -174,8 +180,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnGoB:hover,
 .cssReset a.active div.btnGoB		{ background-position: -4px -318px; }
 
-.cssReset a div.btnBluePrev, 
-.btnBluePrev						{ background-position: -4px -445px; width: 10px; height: 12px; }  
+.cssReset a div.btnBluePrev, .btnBluePrev		{ background-position: -4px -445px; width: 10px; height: 12px; }  
 .cssReset a div.btnBluePrev:hover, a div.btnBluePrev:hover, a.active div.btnBluePrev,
 .cssReset a.active div.btnBluePrev	{ background-position: -17px -445px; }
 
@@ -199,13 +204,14 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.styleANext:hover, .styleANext:hover, a.active div.styleANext,
 .cssReset a.active div.styleANext	{ background-position: -48px -461px; }
 
-.cssReset a div.styleAFirst, .styleAFirst		{ background-position: -32px -479px; width: 13px; height: 14px; }  
+.cssReset a div.styleAFirst, .styleAFirst		{ background-position: -32px -497px; width: 13px; height: 14px; }  
 .cssReset a div.styleAFirst:hover, .styleAFirst:hover, a.active div.styleAFirst,
-.cssReset a.active div.styleAFirst	{ background-position: -48px -479px; }
+.cssReset a.active div.styleAFirst	{ background-position: -48px -497px; }
 
-.cssReset a div.styleALast, .styleALast	{ background-position: -32px -497px; width: 13px; height: 14px; }  
+.cssReset a div.styleALast, .styleALast	{ background-position: -32px -479px; width: 13px; height: 14px; }  
 .cssReset a div.styleALast:hover, .styleALast:hover, a.active div.styleALast,
-.cssReset a.active div.styleALast	{ background-position: -48px -497px;}
+.cssReset a.active div.styleALast	{ background-position: -48px -479px; }
+
 .btn-refresh					{ float:right; display:inline; width:50px; position:relative; bottom:-6px; margin-right:-5px }
 
 .cssReset .fgreen				{ color:#417522}
