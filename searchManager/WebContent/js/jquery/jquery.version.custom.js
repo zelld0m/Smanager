@@ -38,7 +38,7 @@
 				}
 			});
 			
-			$(base.options.buttonHolderId).find("#backupBtn").off().on({
+			$(base.options.buttonHolderId).find("#backupBtn").css({visibility: "hidden"}).off().on({
 				click:function(evt){
 					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.limit) {
 						alert("Only maximum of 3 backups is allowed!");
@@ -239,7 +239,11 @@
 
 										},
 										postHook:function(){
-											base.options.restoreCallback();
+											RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, verNum, {
+												callback: function(data){
+													base.options.restoreCallback(data);
+												}
+											});
 										}
 									});
 								}
@@ -265,10 +269,11 @@
 			ruleType: "",
 			ruleId: "",
 			limit: 3,
+			locked: false,
 			buttonHolderId: "",
 			beforeRequest: function(){},
 			afterRequest: function(){},
-			restoreCallback: function(){}
+			restoreCallback: function(rule){}
 	};
 
 	$.fn.version = function(options){

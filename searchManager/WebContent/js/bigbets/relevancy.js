@@ -1022,8 +1022,9 @@
 			ruleType: "Ranking Rule",
 			ruleId: selectedRule["ruleId"],
 			buttonHolderId: "#versionHolder",
-			restoreCallback: function(){
-				showRelevancy();
+			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+			restoreCallback: function(rankingRule){
+				setRelevancy(data);
 			}
 		});
 		
