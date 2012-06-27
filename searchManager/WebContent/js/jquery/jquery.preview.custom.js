@@ -108,6 +108,7 @@
 							}
 
 							$table.find("tr:even").addClass("alt");
+							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
 							$content.find("#description").html(data["description"]);
 							switch (data["redirectTypeId"]) {
 								case "1":
@@ -141,6 +142,7 @@
 					
 					RelevancyServiceJS.getRule(base.options.ruleId, {
 						callback: function(data){
+							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
 							$content.find("#startDate").html(data["formattedStartDate"]);
 							$content.find("#endDate").html(data["formattedEndDate"]);
 							$content.find("#description").html(data["description"]);
@@ -174,6 +176,7 @@
 					
 					RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
 						callback: function(data){
+							$content.find("#ruleInfo").html("<strong>Version " + base.options.version  + "</strong> of " + data["ruleName"]);
 							$content.find("#startDate").html(data["formattedStartDate"]);
 							$content.find("#endDate").html(data["formattedEndDate"]);
 							$content.find("#description").html(data["description"]);
@@ -265,6 +268,11 @@
 				case "ranking rule": 
 					template += '<div id="previewTemplate2">';
 					template += '	<div class="rulePreview w590 marB20">';
+					template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
+					template += '		<label class="wAuto floatL" id="ruleInfo">';
+					template += '			<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
+					template += '		</label>';
+					template += '		<div class="clearB"></div>';
 					template += '		<label class="w110 floatL marL20 fbold">Start Date:</label>';
 					template += '		<label class="wAuto floatL" id="startDate">';
 					template += '			<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
@@ -357,6 +365,11 @@
 				case "query cleaning": 
 					template += '<div id="queryCleaningTemplate">';
 					template += '	<div class="rulePreview w590 marB20">';
+					template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
+					template += '		<label class="wAuto floatL" id="ruleInfo">';
+					template += '			<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
+					template += '		</label>';
+					template += '		<div class="clearB"></div>';
 					template += '		<label class="w110 floatL marL20 fbold">Description:</label>';
 					template += '		<label class="wAuto floatL" id="description">';
 					template += '			<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">';
