@@ -13,6 +13,8 @@ public class BackupInfo {
 	private int version;
 	private String reason;
 	private String name;
+	private boolean hasBackup; //TODO: Build POF
+	private long fileSize; //TODO: Build POF
 	
 	public String getRuleId() {
 		return ruleId;
@@ -44,5 +46,16 @@ public class BackupInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+	public boolean isHasBackup() {
+		return hasBackup;
+	}
+	public void setHasBackup(boolean hasBackup) {
+		this.hasBackup = hasBackup;
+	}
+	public long getFileSize() {
+		return fileSize;
+	}
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
 }
