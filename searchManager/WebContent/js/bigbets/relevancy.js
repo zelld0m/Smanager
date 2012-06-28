@@ -998,6 +998,7 @@
 		$("#noSelected").hide();
 		$("#relevancy").hide();
 		$("#titleText").html(moduleName);
+		$("#versions").empty();
 	};
 
 	var showRelevancy = function(){

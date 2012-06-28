@@ -12,32 +12,25 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("version", base);
 
-		base.setUpTrigger = function(){
-			base.cookieName = "version" + $.formatAsId(base.options.ruleType.toLowerCase());
-			
-			base.showVersions = $.isNotBlank($.cookie(base.cookieName)) && $.cookie(base.cookieName).toLowerCase() === "show";
-			base.imagePath = GLOBAL_contextPath + (base.showVersions? "/images/icon_version_gray.png":"/images/icon_version.png"); 
-			
-			if (base.showVersions){
-				base.getData();
-			}
+		
+		base.addButtonTrigger = function(){
+			base.imagePath = GLOBAL_contextPath + (base.$el.find("div#versions").is(":visible:not(:empty)")? "/images/icon_version_gray.png":"/images/icon_version.png");
 			
 			$(base.options.buttonHolderId).find("img#versionIcon").prop("src", base.imagePath).off().on({
 				click: function(evt){
 					if(base.$el.find("div#versions").is(":visible")){
 						$(this).prop("src", GLOBAL_contextPath + "/images/icon_version.png");
 						base.$el.find("div#versions").slideUp('slow', function(){
-							
+
 						});
 					}
 					else{
 						$(this).prop("src", GLOBAL_contextPath + "/images/icon_version_gray.png");
-						$.cookie(base.cookieName, "show" ,{path: GLOBAL_contextPath});
 						base.getData();
 					}
 				}
 			});
-			
+
 			$(base.options.buttonHolderId).find("#backupBtn").off().on({
 				click:function(evt){
 					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.options.limit) {
@@ -117,7 +110,8 @@
 		base.init = function(){
 			base.options = $.extend({},$.version.defaultOptions, options);
 			base.$el.empty();
-			base.setUpTrigger();
+			
+			base.addButtonTrigger();
 		};
 
 		base.getTemplate = function(){
@@ -176,9 +170,6 @@
 		};
 
 		base.getData = function(){
-			base.$el.empty();
-			base.$el.html(base.getTemplate());
-
 			RuleVersioningServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
 				callback: function(data){
 
@@ -197,6 +188,9 @@
 							$li.show();
 							$ul.append($li);
 						}
+						
+						$ul.find("li").removeClass("alt");
+						$ul.find("li:even").addClass("alt");
 
 						$ul.find("li.verItems:not(#verItemPattern) > label.previewIcon > img").on({
 							click:function(evt){
@@ -208,7 +202,7 @@
 								});
 							}
 						});
-						
+
 						$ul.find("li.verItems:not(#verItemPattern) > label.deleteIcon > img").off().on({
 							click:function(evt){
 								var verNum = $(this).parent().siblings("label.ver").html();
@@ -237,17 +231,17 @@
 
 									RuleVersioningServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, verNum, {
 										callback:function(data){
-											
+
 										},
 										preHook:function(){
 											base.$el.empty();
-											
+
 											var template = '	<div id="preloader" class="txtAC">';
 											template += '			<img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 											template += '			<div class="clearB">';
 											template += '			<div>Restoring Backup Data</div>';
 											template += '		</div>';
-											
+
 											base.$el.html(template);
 										},
 										postHook:function(){
@@ -261,12 +255,29 @@
 								}
 							}
 						});
+					}else{
+						var $li = $ul.find("li#verItemPattern").clone();
+						$li.prop("id", "row_empty");
+						$li.find("label:not(.ver)").remove();
+						$li.find("label.ver").removeClass("w100").addClass("w99p").html("No available version for this rule");
+						$li.show();
+						$ul.append($li);
 					}
 				},
 				preHook: function(){
+					base.$el.empty();
+					base.$el.html(base.getTemplate());
+					var $ul = $("ul#verItemList");
+					var $li = $ul.find("li#verItemPattern").clone();
+					$li.prop("id", "row_empty");
+					$li.find("label:not(.ver)").remove();
+					$li.find("label.ver").removeClass("w100").addClass("w99p").html('<img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">');
+					$li.show();
+					$ul.append($li);
 					base.options.beforeRequest();
 				},
 				postHook: function(){
+					base.addButtonTrigger();
 					base.options.afterRequest();
 				}
 			});
