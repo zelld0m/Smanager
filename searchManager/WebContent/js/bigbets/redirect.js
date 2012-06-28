@@ -335,6 +335,7 @@
 				headerText : "Rule Condition",
 				searchText : "Enter Keyword",
 				showAddButton: false,
+				showSearch: false,
 				itemDataCallback: function(base, keyword, page){
 					RedirectServiceJS.getConditionInRule(selectedRule.ruleId, page, ruleConditionPageSize, {
 						callback: function(data){
