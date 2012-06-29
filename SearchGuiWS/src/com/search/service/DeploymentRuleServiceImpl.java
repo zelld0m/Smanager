@@ -247,7 +247,9 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 					
 					if(addRel != null) {
-						daoService.addRedirectRule(addRel); // prod 
+						//daoService.addRedirectRule(addRel); // prod 
+						daoService.addRedirectKeyword(addRel);
+						daoService.addRedirectCondition(addRel);
 					}					
 					success = true;
 				}
@@ -289,7 +291,9 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 					
 					if(addRel != null) {
-						daoService.addRedirectRule(addRel); // prod 
+						//daoService.addRedirectRule(addRel); // prod
+						daoService.addRedirectKeyword(addRel);
+						daoService.addRedirectCondition(addRel);
 					}					
 					map.put(key, true);
 				}
