@@ -11,6 +11,7 @@
 	<!-- Define the properties used by the build -->
 	<property name="conf.home" value="C:/home/solr/conf"/>
 	<property name="resc.home" value="C:/home/solr/resources"/>
+	<property name="util.home" value="C:/home/solr/utilities"/>
 		
 	 <!-- Define the CLASSPATH -->
 	 <path id="compile.classpath">
@@ -105,5 +106,11 @@
 	  		<copy todir="${resc.home}">
 	  	  	 	<fileset dir="${basedir}/resources" />
 	  	  	</copy>
+	  </target>
+	  <target name="utilities" description="Deploy utility files">
+		  		<mkdir dir="${util.home}" />
+		  		<copy todir="${util.home}">
+		  	  	 	<fileset dir="${basedir}/utilities" />
+		  	  	</copy>
 	  </target>
 </project> 
