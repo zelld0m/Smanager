@@ -160,61 +160,205 @@
     			<div class="landingCont bgboxGray w96p50p floatL marT20">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
+    			
+	        	<div class="dropdownArea">
+	        	<h2 class="borderB padB3">Create Filter Group : 
+	        	<select name="select" class="selectCombo w178" >
+					<option></option>
+				</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+				<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
+	        	</h2>
+	        	<div class="clearB"></div>
+	        	<!--  general scrollbar -->
+	        	<div class="marT20" style="overflow-y:auto; max-height:1000px">
 	        	
-	        	<h2 class="borderB">IMS</h2>
-	        		        	
-				<table class="fsize12 mar10 tblCatalog">
-					<tr>
-						<td valign="top" style="">
-						<h3>Category / Manufacturer</h3>
-							<div class="fsize12 mar10 dropdownArea">
-								<table>
-									<tr>
-										<td class="w100">CatCode</td>
-										<td><input id="catcodetext" type="text" value="" class="farial fsize12  fgray padLR3 padTB4" size="10" maxlength="4"></td>
-									</tr>
-									<tr>
-										<td>Category</td>
-										<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w178" title="Select Category" >
-										<option></option>
-											</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
-									</tr>
-									<tr>
-										<td>Sub-Category</td>
-										<td><select name="select" id="subCategoryList" class="selectCombo w178" title="Select SubCategory">
-									   		<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
-									</tr>
-									<tr>
-										<td>Class</td>
-										<td><select name="select" id="classList" class="selectCombo w178" title="Select Class">
-											<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
-									</tr>
-									<tr>
-										<td>Minor</td>
-										<td><select name="select" id="minorList" class="selectCombo w178" title="Select Minor">
-									 		<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
-									</tr>
-									<tr>
-										<td>Manufacturer</td>
-										<td><select name="select" id="manufacturerList" class="w178" title="Select Manufacturer">
-										<option></option>
-								</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
-									</tr>
-								</table>						
-							</div>
-
+	        	<!--  group 1 -->
+	        	<div class="bgf6f6f6 pad10">
+	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_collapse.png" />"></div>
+	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="clearB"></div>
+	        		<div class="bgfff border pad8">
+	        		<h3 class="fLblue2"><a href="">Category = computer and sub category = router</a></h3>
+	        		
+	        		<!-- item 1 -->
+	        		<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
+	        		<div class="fsize12 marTB20 marRL50">
+						<table>							
+							<tr>
+								<td class="w140">Category :</td>
+								<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
+								<option></option>
+									</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+							</tr>
+							<tr>
+								<td>Sub-Category :</td>
+								<td><select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
+							   		<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+							</tr>
+							<tr>
+								<td>Class :</td>
+								<td><select name="select" id="classList" class="selectCombo w235" title="Select Class">
+									<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+							</tr>
+							<tr>
+								<td valign="top">Minor :</td>
+								<td><select name="select" id="minorList" class="selectCombo w235" title="Select Minor">
+							 		<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+						<div class="fsize11 marB8 txtDecoUL padT3"><a href="/">Use category codes instead &raquo;</a></div>
 						</td>
-						<td class="w60"><a href="#" class="buttons btnGray marL15 clearfix">
-							<div class="buttons fontBold" id="addRuleCondition">+</div></a><br/>
+							</tr>
+							<tr>
+								<td>Manufacturer :</td>
+								<td><select name="select" id="manufacturerList" class="w235" title="Select Manufacturer">
+								<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+							</tr>
+						</table>						
+					</div><!--  end item 1 -->
+					
+					<!--  item 2 -->
+					<h3 class="marT10">Facets</h3>	 
+					<div class="fsize12 marT10 marB20 marRL50">
+						<table>							
+							<tr>
+								<td class="w140">Platform :</td>
+								<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
+								<option></option>
+									</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>  									
+								</td>
+								<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
+							</tr>
+							<tr>
+								<td>Condition :</td>
+								<td><select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
+							   		<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+								</td>
+								<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
+							</tr>
+							<tr>
+								<td>Add Facet :</td>
+								<td><select name="select" id="classList" class="selectCombo w235" title="Select Class">
+									<option></option>
+						</select><img class="loadIcon" src="/images/ajax-loader-rect.gif"/>
+								</td>
+								<td>
+									<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
+								</td>
+							</tr>						
+						</table>						
+					</div>
+					<!--  end item 2 -->
+					<div class="txtAR borderT padT8">
+						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+					</div>
+					</div><!--  end white container -->
+	        	</div>
+	        	<!--  end group 1 -->
+	        	<div class="clearB"></div>
+	        	
+	        	<!--  group 2 -->
+	        	<div class="bgf6f6f6 pad10 marT10">
+	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_expand.png" />"></div>
+	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="clearB"></div>
+	        		<div class="bgfff border pad8">
+	        		<h3 class="fLblue2"><a href="">CatCode = 3F*, Manufacturer = Lenovo</a></h3>
+					</div><!--  end white container -->
+	        	</div>
+	        	<!--  end group 2 -->
+	        	<div class="clearB"></div>
+	        	
+	        	<!--  group 3 -->
+	        	<div class="bgf6f6f6 pad10 marT10">
+	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_expand.png" />"></div>
+	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="clearB"></div>
+	        		<div class="bgfff border pad8">
+	        		<h3 class="fLblue2"><a href="">CatCode = 3F*, Manufacturer = Lenovo</a></h3>
+					</div><!--  end white container -->
+	        	</div>
+	        	<!--  end group 3 -->
+	        	<div class="clearB"></div>
+	        	
+	        	<!--  group 1 -->
+	        	<div class="bgf6f6f6 pad10 marT10">
+	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_collapse.png" />"></div>
+	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="clearB"></div>
+	        		<div class="bgfff border pad8">
+	        		<h3 class="fLblue2"><a href="">Category = computer and sub category = router</a></h3>
+	        		
+	        		<!-- item 1 -->
+	        		<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
+	        		<div class="fsize12 marTB20 marRL50">
+						<table>														
+							<tr>
+								<td valign="top">Cat Code :</td>
+								<td><select name="select" id="minorList" class="selectCombo w235" title="Select Minor">
+							 		<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+						<div class="fsize11 marB8 txtDecoUL padT3"><a href="/">Use category name instead &raquo;</a></div>
 						</td>
-						<td class="landingCont bgboxGray" style="vertical-align: top; width: 240px">
-							<div id="ruleConditionPanel"></div>
-						</td>
-					</tr>
-				</table>
+							</tr>
+							<tr>
+								<td>Manufacturer :</td>
+								<td><select name="select" id="manufacturerList" class="w235" title="Select Manufacturer">
+								<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+							</tr>
+						</table>						
+					</div><!--  end item 1 -->
+					
+					<!--  item 2 -->
+					<h3 class="marT10">Facets</h3>	 
+					<div class="fsize12 marT10 marB20 marRL50">
+						<table>							
+							<tr>
+								<td class="w140">Platform :</td>
+								<td class="iepadBT0"><select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
+								<option></option>
+									</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>  									
+								</td>
+								<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
+							</tr>
+							<tr>
+								<td>Condition :</td>
+								<td><select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
+							   		<option></option>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+								</td>
+								<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
+							</tr>
+							<tr>
+								<td>Add Facet :</td>
+								<td><select name="select" id="classList" class="selectCombo w235" title="Select Class">
+									<option></option>
+						</select><img class="loadIcon" src="/images/ajax-loader-rect.gif"/>
+								</td>
+								<td>
+									<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
+								</td>
+							</tr>						
+						</table>						
+					</div>
+					<!--  end item 2 -->
+					<div class="txtAR borderT padT8">
+						<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+						<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+					</div>
+					</div><!--  end white container -->
+	        	</div>
+	        	<!--  end group 1 -->
+	        	<div class="clearB"></div>
+	        	
+	        	
+	        	</div><!--  end general scrollbar -->	
+			</div>
 			</div>
     	</div>
 

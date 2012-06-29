@@ -454,6 +454,23 @@ public final class StringUtil {
 					.replaceAll(String.valueOf(String.valueOf((char)8253)), "-");
 	}	
 	
+	public static final String decodeHtml(String str) {
+		if(str==null) return str;
+		
+		return str.replaceAll("&amp;", String.valueOf(String.valueOf((char)38)))
+					.replaceAll("&lt;",String.valueOf(String.valueOf((char)60)))
+					.replaceAll("&gt;",String.valueOf(String.valueOf((char)62)))
+					.replaceAll("&lsquo;",String.valueOf(String.valueOf((char)8216)))
+					.replaceAll("&rsquo;",String.valueOf(String.valueOf((char)8217)))
+					.replaceAll("&ldquo;",String.valueOf(String.valueOf((char)8220)))
+					.replaceAll("&rdquo;",String.valueOf(String.valueOf((char)8221)))
+					.replaceAll("&sbquo;",String.valueOf(String.valueOf((char)8218)))
+					.replaceAll("&bdquo;",String.valueOf(String.valueOf((char)8222)))
+					.replaceAll("&prime;",String.valueOf(String.valueOf((char)8242)))
+					.replaceAll("&Prime;",String.valueOf(String.valueOf((char)8243)))
+					.replaceAll("&nbsp;",String.valueOf(String.valueOf((char)160)));
+	}	
+	
 	public static final String stripXSSChars(String str) {
 		if(str==null) return str;
 		return str.replaceAll("\\\"", "")

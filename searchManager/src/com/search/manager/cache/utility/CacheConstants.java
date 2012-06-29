@@ -6,6 +6,7 @@ import com.search.manager.utility.StringUtil;
 public class CacheConstants {
 	public static final String SEARCH_CACHE_KEY = "search";
 	public static final String ELEVATED_LIST_CACHE_KEY 			= "EL";
+	public static final String DEMOTED_LIST_CACHE_KEY 			= "DL";
 	public static final String EXCLUDED_LIST_CACHE_KEY 			= "EXL";
 	public static final String RELEVANCY_LIST_CACHE_KEY 		= "RL";
 	public static final String RELEVANCY_DEFAULT_CACHE_KEY 		= "RD";
@@ -13,6 +14,7 @@ public class CacheConstants {
 	public static final String RULE_REDIRECT_CACHE_KEY			= "RR";
 	public static final String USER_CACHE_KEY 					= "US";
 	public static final String FORCE_UPDATE_CACHE_KEY			= "FU";
+	public static final String CATEGORY_CODES					= "CC";
 	
 	public enum Operation{
 		add,

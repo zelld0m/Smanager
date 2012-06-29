@@ -177,6 +177,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
 
+.cssReset a.btnAddGrayMid		{ background-position: -3px -578px; height: 18px; width: 18px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
+.cssReset a.btnAddGrayMid:hover	{ background-position: -3px -598px;  }
+
 .cssReset a div.btnViewList			{ background-position: -5px -109px; height:16px; width:17px; cursor:pointer; display: block;}
 .cssReset a div.btnViewList:hover,
 .cssReset a.active div.btnViewList	{ background-position: -5px -126px; }
