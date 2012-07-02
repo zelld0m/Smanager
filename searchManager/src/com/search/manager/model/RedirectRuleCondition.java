@@ -113,7 +113,28 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 	
 	public static void main(String[] args) {
+		// if Condition == "Refurbished" set Refurbished_Flag:1
+		//				== "Open Box"    set OpenBox_Flag:1
+		//              == "Clearance"   set Clearance_Flag:1
+		// if License == "Only" set Licence_Flag:1
+		//		      == "Include", do not set License_Flag value
+		//            else, set Licence_Flag:0
+		// if Availability == "In Stock" set InStock:1
+		//                 == "Call"     set InStock:0
+		String[] conditions = {
+				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
+				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0",
+				"Clearance_Flag:1 AND Licence_Flag:0",
+				""
+		};
 		
+		for (String condition: conditions) {
+			RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+			System.out.println(rr.getCondition());
+			System.out.println(rr.getReadableString());
+			System.out.println(rr.getIMSFilters());
+			System.out.println(rr.getFacets());
+		}
 	}
 	
 }
