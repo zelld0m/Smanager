@@ -1,5 +1,9 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.CategoryList;
+import com.search.ws.SearchHelper;
 
 @Service(value = "categoryService")
 @RemoteProxy(
@@ -39,6 +44,45 @@ public class CategoryService {
 			logger.error("Failed during getCategories()",e);
 		}
 		return null;
+	}
+
+	@RemoteMethod
+	public List<String> getIMSCategories() {
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Category");
+	}
+	
+	
+	@RemoteMethod
+	public List<String> getIMSSubcategories(String category) {
+		if (StringUtils.isBlank(category)) {
+			return new ArrayList<String>();
+		}
+		List<String> filters = new ArrayList<String>();
+		filters.add(String.format("Category: %s", category));
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "SubCategory", filters);
 	}	
+
+	@RemoteMethod
+	public List<String> getIMSClasses(String category, String subcategory) {
+		if (StringUtils.isBlank(category) || StringUtils.isBlank(subcategory)) {
+			return new ArrayList<String>();
+		}
+		List<String> filters = new ArrayList<String>();
+		filters.add(String.format("Category: %s", category));
+		filters.add(String.format("SubCategory: %s", subcategory));
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Class", filters);
+	}	
+
+	@RemoteMethod
+	public List<String> getIMSSubclasses(String category, String subcategory, String className) {
+		if (StringUtils.isBlank(category) || StringUtils.isBlank(subcategory) || StringUtils.isBlank(className)) {
+			return new ArrayList<String>();
+		}
+		List<String> filters = new ArrayList<String>();
+		filters.add(String.format("Category: %s", category));
+		filters.add(String.format("SubCategory: %s", subcategory));
+		filters.add(String.format("Class: %s", subcategory));
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "SubClass", filters);
+	}
 
 }
