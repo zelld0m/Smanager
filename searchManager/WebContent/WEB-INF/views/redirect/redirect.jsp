@@ -175,7 +175,7 @@
 	        	<!--  group 1 -->
 	        	<div class="bgf6f6f6 pad10">
 	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_collapse.png" />"></div>
-	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="txtAR floatR w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
 	        	<div class="clearB"></div>
 	        		<div class="bgfff border pad8">
 	        		<h3 class="fLblue2"><a href="">Category = computer and sub category = router</a></h3>
@@ -264,7 +264,7 @@
 	        	<!--  group 2 -->
 	        	<div class="bgf6f6f6 pad10 marT10">
 	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_expand.png" />"></div>
-	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="txtAR floatR w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
 	        	<div class="clearB"></div>
 	        		<div class="bgfff border pad8">
 	        		<h3 class="fLblue2"><a href="">CatCode = 3F*, Manufacturer = Lenovo</a></h3>
@@ -276,7 +276,7 @@
 	        	<!--  group 3 -->
 	        	<div class="bgf6f6f6 pad10 marT10">
 	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_expand.png" />"></div>
-	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="txtAR floatR w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
 	        	<div class="clearB"></div>
 	        		<div class="bgfff border pad8">
 	        		<h3 class="fLblue2"><a href="">CatCode = 3F*, Manufacturer = Lenovo</a></h3>
@@ -288,7 +288,7 @@
 	        	<!--  group 1 -->
 	        	<div class="bgf6f6f6 pad10 marT10">
 	        	<div class="txtAL floatL w50p"><img src="<spring:url value="/images/icon_collapse.png" />"></div>
-	        	<div class="txtAR floatL w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
+	        	<div class="txtAR floatR w50p"><img src="<spring:url value="/images/icon_clone.png" />"> <img src="<spring:url value="/images/icon_delete2.png" />"></div>
 	        	<div class="clearB"></div>
 	        		<div class="bgfff border pad8">
 	        		<h3 class="fLblue2"><a href="">Category = computer and sub category = router</a></h3>

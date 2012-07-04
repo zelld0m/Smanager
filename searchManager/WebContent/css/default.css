@@ -314,6 +314,7 @@ body 							{ margin: 0px; }
 .pointer						{ cursor:pointer }
 
 .displayInline					{ display:inline }
+.displayBlock					{ display:block }
 
 .cssReset td.vtop, .vtop		{ vertical-align:top }
 .cssReset .txtLineThru			{ text-decoration:line-through}
