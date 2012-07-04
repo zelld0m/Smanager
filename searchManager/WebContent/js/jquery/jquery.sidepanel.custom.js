@@ -90,25 +90,28 @@
 			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
 			
 			content+= '</div>';
-			content+= '<div class="sideSearch">';
-			content+= '<span style="padding-top:7px">';
-
-			var textClass="";
 			
-			switch(base.options.region){
+			if (base.options.showSearch){
+				content+= '<div class="sideSearch">';
+				content+= '<span style="padding-top:7px">';
+
+				var textClass="";
+
+				switch(base.options.region){
 				case "left": textClass = base.options.showAddButton? "w70p": "w88p"; break;
 				case "content": textClass = base.options.showAddButton? "w78p": "w90p"; break;
-			}
-			
-			if (base.options.showAddButton){
-				content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
-			}
-			
-			content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
-			
-			content+= '</span>';
-			content+= '</div>';
+				}
 
+				if (base.options.showAddButton){
+					content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
+				}
+
+				content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
+
+				content+= '</span>';
+				content+= '</div>';
+			}
+			
 			content+= '<div id="sideContent" class="sideContent">';
 			content+= '<table width="100%">';
 			content+= '	<tbody id="itemListing">';

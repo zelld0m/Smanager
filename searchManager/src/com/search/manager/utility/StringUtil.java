@@ -9,7 +9,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.StringUtils;
 
 public final class StringUtil {
 	
@@ -569,4 +573,25 @@ public final class StringUtil {
     	if (str == null) return null;
     	return str.replaceAll("\\<.*?>","");
     }
+    
+	public static String escapeKeyword(String keyword) {
+		Pattern p = Pattern.compile("(\\w*)(\\W*)(.*)");
+		StringBuilder builder = new StringBuilder();
+		String str = keyword.replaceAll("\\s", "_");
+		while (StringUtils.isNotBlank(str)) {
+			Matcher m = p.matcher(str);
+			if (m.matches()) {
+				builder.append(m.group(1));
+				if (StringUtils.isNotBlank(m.group(2))) {
+					builder.append(".").append(Hex.encodeHexString(m.group(2).getBytes())).append(".");
+				}
+				str = m.group(3);
+			}
+			else {
+				builder.append(str);
+				break;
+			}
+		}
+		return builder.toString();
+	}
 }

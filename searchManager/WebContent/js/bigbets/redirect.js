@@ -593,5 +593,5 @@
 	$(document).ready(function() {
 		RedirectRule.init();
 	});	
-	
+
 })(jQuery);	

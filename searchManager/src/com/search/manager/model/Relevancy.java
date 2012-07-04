@@ -2,6 +2,7 @@ package com.search.manager.model;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import jxl.common.Logger;
@@ -27,6 +28,7 @@ public class Relevancy extends ModelBean {
 	private Date startDate;
 	private Date endDate;
 	private Map<String, String> fields = new HashMap<String, String>();
+	private List<RelevancyKeyword> relKeyword;
 	
 	@DataTransferObject(converter = EnumConverter.class)
 	public enum Parameter {
@@ -268,5 +270,17 @@ public class Relevancy extends ModelBean {
 		}
 		return map;
 	}
-	
+
+	public List<RelevancyKeyword> getRelKeyword() {
+		return relKeyword;
+	}
+
+	public void setRelKeyword(List<RelevancyKeyword> relKeyword) {
+		this.relKeyword = relKeyword;
+	}
+
+	public void setFields(Map<String, String> fields) {
+		this.fields = fields;
+	}
+
 }

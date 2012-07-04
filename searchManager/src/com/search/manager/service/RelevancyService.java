@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.FileDaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -52,6 +54,7 @@ public class RelevancyService {
 	private static final Logger logger = Logger.getLogger(RelevancyService.class);
 
 	@Autowired private DaoService daoService;
+	@Autowired private FileDaoService fileService;
 
 	@RemoteMethod
 	public Relevancy getRule(String ruleId){
@@ -233,6 +236,11 @@ public class RelevancyService {
 	@RemoteMethod
 	public int deleteRule(String ruleId){
 		try {
+			try {
+				fileService.createBackup(UtilityService.getStoreName(), ruleId, RuleEntity.RANKING_RULE, UtilityService.getUsername(), "Deleted Rule", "Deleted Rule");
+			} catch (Exception e) {
+				logger.error("Error creating backup. " + e.getMessage());
+			}
 			Relevancy rule = new Relevancy();
 			rule.setRuleId(ruleId);
 			rule.setStore(new Store(UtilityService.getStoreName()));

@@ -25,7 +25,7 @@
 	var keywordFilterText = "";
 	var rulePage = 1;
 	var keywordPage = 1;
-
+	
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
@@ -904,7 +904,6 @@
 		});
 	};
 	  
-	
 	var updateRule = function(e){
 		if (e.data.locked || !allowModify) return;
 
@@ -999,6 +998,7 @@
 		$("#noSelected").hide();
 		$("#relevancy").hide();
 		$("#titleText").html(moduleName);
+		$("#versions").empty();
 	};
 
 	var showRelevancy = function(){
@@ -1020,6 +1020,16 @@
 
 		$("#relevancy").show();
 
+		$("div#versions").version({
+			ruleType: "Ranking Rule",
+			ruleId: selectedRule["ruleId"],
+			buttonHolderId: "#versionHolder",
+			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+			restoreCallback: function(rankingRule){
+				setRelevancy(rankingRule);
+			}
+		});
+		
 		$("#titleText").html(moduleName + " for ");
 		$("#titleHeader").html(selectedRule.ruleName);
 
@@ -1059,7 +1069,7 @@
 			click: cloneRule,
 			mouseenter: showHoverInfo
 		},{locked:!allowModify});
-
+		
 		$("#deleteBtn").off().on({
 			click: deleteRule,
 			mouseenter: showHoverInfo
@@ -1483,7 +1493,7 @@
 			}
 		});
 	};
-
+	
 	$(document).ready(function() { 
 		initTextarea();
 		showRelevancy();

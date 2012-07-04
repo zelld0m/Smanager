@@ -37,6 +37,7 @@
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
+       
     <div class="clearB floatL w240">
 		<div id="rulePanel"></div>
 	    <div class="clearB"></div>
@@ -65,7 +66,18 @@
 	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
 	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
 	        	<div class="floatL padT10 padL10" style="width:70%" >
+	        		<div id="versionHolder">
+			        	<label class="floatL wAuto padL5 fsize11 fLgray">
+			        		<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>			        		 
+			        	</label>
+			        	<label class="floatL marTn7">
+			        		<a id="backupBtn" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">
+			        			<div class="btnGraph btnBackUp"></div>
+			        		</a> 
+			        	</label>
+		        	</div>
 	        		<div id="commentHolder">
+			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
 			        	<label class="floatL wAuto padL5 fsize11 fLgray">
 			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
 			        	</label>
@@ -95,7 +107,10 @@
 	        <div class="clearB"></div>	
 	 </div>
 	 
- 	<div id="viewAuditTemplate" style="display: none">
+	 <div class="clearB"></div>
+	 <div id="versions"></div>
+	 
+ 	 <div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
 	   <div class="w265 padB8">
             <div id="auditTemplate" style="display: none;" >
@@ -359,6 +374,106 @@
 	
 	</div>
 	</div><!-- end landing page -->
+	<div id="previewTemplate2" style="display: none;">
+			<div class="rulePreview w590 marB20">
+				<div class="alert marB10">Rule Details</div>
+				<label class="w110 floatL marL20 fbold">Version:</label>
+				<!-- label class="wAuto floatL" id="ruleVersion"></label--><select><option value="1">1 created on 6-12-2012 08:00</option></select>
+				<div class="clearB"></div>
+				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="wAuto floatL" id="ruleInfo"></label>
+				<div class="clearB"></div>
+				<label class="w110 floatL marL20 fbold">Start Date:</label>
+				<label class="wAuto floatL" id="startDate">
+					<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">
+				</label>
+				<div class="clearB"></div>
+				<label class="w110 floatL marL20 fbold">End Date:</label>
+				<label class="wAuto floatL" id="endDate">
+					<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">
+				</label>
+				<div class="clearB"></div>
+				<label class="w110 floatL marL20 fbold">Description:</label>
+				<label class="wAuto floatL" id="description">
+					<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">
+				</label>
+				<div class="clearB"></div>					
+			</div>
+			
+			<div id="rankingSummary" class="infoTabs marB20 tabs">
+			
+				<ul class="posRel top5" style="z-index:100">
+					<li><a href="#ruleKeyword"><span>Keyword</span></a></li>
+					<li><a href="#ruleFieldV"><span>Rule Field</span></a></li>
+				</ul>
+								
+				<div id="ruleFieldV" class="ruleField">
+					<div class="w580 mar0 padLR5">
+						<table class="tblItems w100p marT10" id="itemHeader">
+							<tbody>
+								<tr>
+									<th id="fieldNameHeader" class="w70 txtAC">Field Name</th>
+									<th id="fieldValueHeader" class="wAuto txtAC">Field Value</th>
+								</tr>
+							<tbody>
+						</table>
+					</div>
+					<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">
+						<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">
+							<tbody>
+								<tr id="itemPattern" class="itemRow" style="display: none">
+									<td class="txtAC w70" id="fieldName"></td>
+									<td id="fieldValue" class="wAuto"></td>
+								</tr>
+								<tr>
+									<td colspan="2" class="itemRow">
+										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>	
+							
+				</div>
+				
+				<div class="clearB"></div>	
+				<div id="ruleKeyword" class="ruleKeyword marB10">
+					<div class="w580 mar0 padLR5">
+						<table class="tblItems w100p marT10" id="itemHeader">
+							<tbody>
+								<tr>
+									<th id="fieldNameHeader" class="w70 txtAC">#</th>
+									<th id="fieldValueHeader" class="wAuto txtAC">Keyword</th>
+								</tr>
+							<tbody>
+						</table>
+					</div>
+					<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">
+						<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">
+							<tbody>
+								<tr id="itemPattern" class="itemRow" style="display: none">
+									<td class="txtAC w70" id="fieldName"></td>
+									<td id="fieldValue" class="wAuto"></td>
+								</tr>
+								<tr>
+									<td colspan="2" class="itemRow">
+										<img id="preloader" alt="Retrieving" src="<spring:url value="/images/ajax-loader-rect.gif"/>">	
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>	
+				</div>
+				<div align="right" class="padR15 marT10">
+					<a id="restoreBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Restore</div>
+					</a>
+				</div>
+				
+			</div>
+				
+			<div class="clearB"></div>
+		</div>
 	
   <div id="ruleIsLocked" class="w180" style="display:none;">
   	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
