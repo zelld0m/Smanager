@@ -796,18 +796,18 @@ public class CatCodeUtil {
 		List<String> list = new ArrayList<String>();
 		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
 		
-		if(strCategory.equals("") || strCategory==null){
+		if(StringUtils.isBlank(strCategory)){
 			for(String[] col:categoryRow){
 				if(!list.contains(col[5]))
 					list.add(col[5]);
 			}
-		}else if(strSubcategory.equals("") || strSubcategory==null){
+		}else if(StringUtils.isBlank(strSubcategory)){
 			for(String[] col:categoryRow){
 				if(col[5].equalsIgnoreCase(strCategory))
 					if(!list.contains(col[6]))
 						list.add(col[6]);
 			}
-		}else if(strClass.equals("") || strClass==null){
+		}else if(StringUtils.isBlank(strClass)){
 			for(String[] col:categoryRow){
 				if(col[5].equalsIgnoreCase(strCategory) && col[6].equalsIgnoreCase(strSubcategory))
 					if(!list.contains(col[7]))
