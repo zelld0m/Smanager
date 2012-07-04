@@ -81,8 +81,26 @@ public class CategoryService {
 		List<String> filters = new ArrayList<String>();
 		filters.add(String.format("Category: %s", category));
 		filters.add(String.format("SubCategory: %s", subcategory));
-		filters.add(String.format("Class: %s", subcategory));
+		filters.add(String.format("Class: %s", className));
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "SubClass", filters);
 	}
 
+	@RemoteMethod
+	public List<String> getIMSManufacturers(String category, String subcategory, String className, String subclass) {
+		List<String> filters = new ArrayList<String>();
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("Category: %s", category));
+		}
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("SubCategory: %s", subcategory));
+		}
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("Class: %s", className));
+		}
+		if (StringUtils.isNotBlank(subclass)) {
+			filters.add(String.format("SubClass: %s", subclass));
+		}
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+	}
+	
 }
