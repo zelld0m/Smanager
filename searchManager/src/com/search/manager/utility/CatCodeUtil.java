@@ -5,17 +5,25 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.enums.CatCodes;
@@ -61,6 +69,11 @@ public class CatCodeUtil {
 	public static void loadCatCodesToCache(String wbObject, int sheetNum, String cacheKey) throws DataException, IOException{
 		CacheModel<String[]> cat = new CacheModel<String[]>();
 		cat.setList(XlsxUtil.getXlsxData(getXlsxWorkbook(wbObject),sheetNum));
+		putCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey), cat);
+	}
+	public static void loadCatCodesToCacheCategoryOverride(String wbObject, int sheetNum, String cacheKey) throws DataException, IOException{
+		CacheModel<String[]> cat = new CacheModel<String[]>();
+		cat.setList(getXlsxDataCategoryOverride(getXlsxWorkbook(wbObject),sheetNum));
 		putCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey), cat);
 	}
 	
@@ -688,17 +701,138 @@ public class CatCodeUtil {
 		return "0";
 	}
 	
+	public static Vector<String[]> getXlsxDataCategoryOverride(XSSFWorkbook workbook, int sheetNum) throws IOException, DataException{
+		
+		Vector<String[]> list = new Vector<String[]>();
+	    
+	    XSSFSheet sheet = XlsxUtil.getXlsxWorksheet(workbook, sheetNum);
+	    Iterator<Row> rows = sheet.rowIterator();
+	    int rowcnt = 0;
+	    int colcnt = 0;
+	    String[] data = null;
+	    
+	        
+        while (rows.hasNext()){
+            XSSFRow row = ((XSSFRow) rows.next());
+            Iterator<Cell> cells = row.cellIterator();
+        	String category = "";
+    	    String catCode = "";
+    	    String overrideRule="";
+            int cellcnt = 0;      
+            if(rowcnt == 0){
+            	while(cells.hasNext()){
+            		cells.next();
+            		colcnt++;
+                }
+             	rowcnt++;
+             	continue;
+            }else{
+            	data = new String[colcnt];
+            	
+            	while(cells.hasNext()){
+	            	XSSFCell cell = (XSSFCell) cells.next();
+	            	
+	            	if(colcnt < cell.getColumnIndex() + 1)
+	            			 break;
+	            	if(cellcnt==5){
+	            		category = "";
+	            	    catCode = "";
+	            	    overrideRule="";
+		            	catCode = data[0];
+		            	Vector<String[]> overrideRow = getCatCodesFmCache(CatCodes.CATEGORY_OVERRIDE_RULES.getCodeStr());
+		            	
+		            	for(int x=catCode.length();x!=0;x--){
+			            	for(String[] col:overrideRow){
+				            	if(catCode.substring(0,x).equalsIgnoreCase(col[0])){
+				            		overrideRule=col[1];
+				            		break;
+				            	}
+			            	}
+			            	if(!overrideRule.equals(""))
+			            		break;
+		            	}
+		            	
+		            	if(SUB_CAT_NAME.equalsIgnoreCase(overrideRule)){
+		            		category = SUB_CAT_NAME;
+		     			}else if(TEMPLATE_NAME.equalsIgnoreCase(overrideRule)){
+		     				Vector<String[]> templateRow = getCatCodesFmCache(CatCodes.TEMPLATE_USED.getCodeStr());
+		     				for(int x=catCode.length();x!=0;x--){
+				            	for(String[] col:templateRow){
+					            	if(catCode.substring(0,x).equalsIgnoreCase(col[2])){
+					            		if(!"Misc".equalsIgnoreCase(col[1]))
+					            			category=col[1];
+					            		break;
+					            	}					            	
+				            	}
+				            	if(!category.equals(""))
+				            		break;
+			            	}
+		     				if(category.equals(""))
+		     					category = XlsxUtil.getCellValue(cell);		     					
+		     			}else
+		     				category = XlsxUtil.getCellValue(cell);
+		            	data[cellcnt] =	category;
+	            	}else if(cellcnt==6 && category.equals(SUB_CAT_NAME)){
+	            		data[cellcnt-1] = XlsxUtil.getCellValue(cell);
+	            		data[cellcnt] = XlsxUtil.getCellValue(cell);
+	            	}else{	 
+	            		data[cellcnt] = XlsxUtil.getCellValue(cell);
+	            	}
+	            	cellcnt++;	 
+                }
+            }
+            
+            if(data != null)
+            	list.add(data);
+            rowcnt++; 
+        }
+		return list;   
+	}
+	
+	public static List<String> getIMSCategoryNextLevel(String strCategory, String strSubcategory, String strClass) throws DataException {
+		List<String> list = new ArrayList<String>();
+		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
+		
+		if(StringUtils.isBlank(strCategory)){
+			for(String[] col:categoryRow){
+				if(!list.contains(col[5]))
+					list.add(col[5]);
+			}
+		}else if(StringUtils.isBlank(strSubcategory)){
+			for(String[] col:categoryRow){
+				if(col[5].equalsIgnoreCase(strCategory))
+					if(!list.contains(col[6]))
+						list.add(col[6]);
+			}
+		}else if(StringUtils.isBlank(strClass)){
+			for(String[] col:categoryRow){
+				if(col[5].equalsIgnoreCase(strCategory) && col[6].equalsIgnoreCase(strSubcategory))
+					if(!list.contains(col[7]))
+						list.add(col[7]);
+			}
+		}else{
+			for(String[] col:categoryRow){
+				if(col[5].equalsIgnoreCase(strCategory) && col[6].equalsIgnoreCase(strSubcategory) && col[7].equalsIgnoreCase(strClass))
+					if(!list.contains(col[8]))
+						list.add(col[8]);
+			}
+		}
+				
+		return list;
+	}
+
+	
 	/** Initialized Category code utility when startup */
-	public void init() throws Exception {
+	public static void init() throws Exception {
 		try {
-			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(SOLR_OBJECTS_DEFINITION_XLSX),CatCodes.WORKBOOK_OBJECTS.getCodeStr());
-			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(ALTERNATIVE_CNET_CATEGORIZATION_XLSX),CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
+			CatCodeUtil.loadXlsxWorkbook("C:\\Users\\vhalili\\git\\searchManager\\searchManager\\utilities\\catcodes\\Solr SQL Objects and Definitions.xlsx",CatCodes.WORKBOOK_OBJECTS.getCodeStr());
+			CatCodeUtil.loadXlsxWorkbook("C:\\Users\\vhalili\\git\\searchManager\\searchManager\\utilities\\catcodes\\AlternativeCNETCategorization_Structure.xlsx",CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
 			
 			Thread td1 = new Thread(){
 				@Override
 				public void run() {
 					try {
-						CatCodeUtil.loadCatCodesToCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr(),CatCodes.CATEGORY_CODES.getCode(),CatCodes.CATEGORY_CODES.getCodeStr());
+						CatCodeUtil.loadCatCodesToCacheCategoryOverride(CatCodes.WORKBOOK_OBJECTS.getCodeStr(),CatCodes.CATEGORY_CODES.getCode(),CatCodes.CATEGORY_CODES.getCodeStr());
 					} catch (DataException e) {
 						logger.error(ERROR_MSG+CatCodes.CATEGORY_CODES.getValue(),e);
 					} catch (IOException e) {
@@ -824,7 +958,7 @@ public class CatCodeUtil {
 				}
 			};
 			
-			td1.start();
+			
 			td2.start();
 			td3.start();
 			td4.start();
@@ -834,7 +968,12 @@ public class CatCodeUtil {
 			td8.start();
 			td9.start();
 			td10.start();
-			
+			while(true){
+				if(!td2.isAlive() && !td3.isAlive()){
+					td1.start();
+					break;
+				}
+			}
 			while(true){
 				if(!td1.isAlive() && !td2.isAlive() && !td3.isAlive() && !td4.isAlive() && !td5.isAlive() && !td6.isAlive() && !td7.isAlive() && !td8.isAlive() && !td9.isAlive() && !td10.isAlive()){
 					CatCodeUtil.removeFmCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr());
@@ -850,4 +989,45 @@ public class CatCodeUtil {
 			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
 		}
 	}
+	
+	public static void main(String args[])	throws Exception
+    {
+		init();
+		String strCategory = "";
+		String strSubCategory = "";
+		String strClass = "";
+		boolean repeat = true;
+		List<String> list = new ArrayList<String>();
+		
+		while(repeat){
+			list = new ArrayList<String>();
+			Scanner in = new Scanner(System.in);
+			System.out.println("Please enter category : ");
+			strCategory = in.nextLine();  
+			System.out.println("Please enter sub category : ");
+			strSubCategory = in.nextLine(); 
+			System.out.println("Please enter class : ");
+			strClass = in.nextLine();
+			
+			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
+			
+			for(String field : list){
+				System.out.println(field);
+			}
+			
+			System.out.println("Again?(y/n) : ");
+			if(in.nextLine().equalsIgnoreCase("y")){
+				repeat = true;
+			}else{
+				repeat = false;
+			}
+		}
+		
+		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
+		
+		for(String[] col : categoryRow){
+			System.out.println(col[0]+" : "+col[5]+" : "+col[6]+" : "+col[7]+" : "+col[8]);
+		}
+    }
+	
 }

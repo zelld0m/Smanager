@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.exception.DataException;
 import com.search.manager.model.CategoryList;
+import com.search.manager.utility.CatCodeUtil;
 import com.search.ws.SearchHelper;
 
 @Service(value = "categoryService")
@@ -47,42 +49,42 @@ public class CategoryService {
 	}
 
 	@RemoteMethod
-	public List<String> getIMSCategories() {
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Category");
+	public List<String> getIMSCategories() throws DataException {
+		return CatCodeUtil.getIMSCategoryNextLevel("","","");
 	}
 	
 	
 	@RemoteMethod
-	public List<String> getIMSSubcategories(String category) {
-		if (StringUtils.isBlank(category)) {
-			return new ArrayList<String>();
-		}
-		List<String> filters = new ArrayList<String>();
-		filters.add(String.format("Category: %s", category));
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "SubCategory", filters);
+	public List<String> getIMSSubcategories(String category) throws DataException {
+		return CatCodeUtil.getIMSCategoryNextLevel(category,"","");
 	}	
 
 	@RemoteMethod
-	public List<String> getIMSClasses(String category, String subcategory) {
-		if (StringUtils.isBlank(category) || StringUtils.isBlank(subcategory)) {
-			return new ArrayList<String>();
-		}
-		List<String> filters = new ArrayList<String>();
-		filters.add(String.format("Category: %s", category));
-		filters.add(String.format("SubCategory: %s", subcategory));
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Class", filters);
+	public List<String> getIMSClasses(String category, String subcategory) throws DataException {
+		return CatCodeUtil.getIMSCategoryNextLevel(category,subcategory,"");
 	}	
 
 	@RemoteMethod
-	public List<String> getIMSSubclasses(String category, String subcategory, String className) {
-		if (StringUtils.isBlank(category) || StringUtils.isBlank(subcategory) || StringUtils.isBlank(className)) {
-			return new ArrayList<String>();
-		}
-		List<String> filters = new ArrayList<String>();
-		filters.add(String.format("Category: %s", category));
-		filters.add(String.format("SubCategory: %s", subcategory));
-		filters.add(String.format("Class: %s", subcategory));
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "SubClass", filters);
+	public List<String> getIMSSubclasses(String category, String subcategory, String className) throws DataException {
+		return CatCodeUtil.getIMSCategoryNextLevel(category,subcategory,className);
 	}
 
+	@RemoteMethod
+	public List<String> getIMSManufacturers(String category, String subcategory, String className, String subclass) {
+		List<String> filters = new ArrayList<String>();
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("Category: %s", category));
+		}
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("SubCategory: %s", subcategory));
+		}
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("Class: %s", className));
+		}
+		if (StringUtils.isNotBlank(subclass)) {
+			filters.add(String.format("SubClass: %s", subclass));
+		}
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+	}
+	
 }
