@@ -21,6 +21,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
@@ -98,7 +99,15 @@ public class AuditInterceptor {
 				logExclude(jp, auditable, auditTrail);
 				break;
 			case queryCleaning:
-				logQueryCleaning(jp, auditable, auditTrail);
+				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
+					logQueryCleaning(jp, auditable, auditTrail);
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.queryCleaningConditionOperations, auditable.operation())) {
+					logQueryCleaningCondition(jp, auditable, auditTrail);
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.queryCleaningKeywordOperations, auditable.operation())) {
+					logQueryCleaningKeyword(jp, auditable, auditTrail);					
+				}
 				break;
 			case relevancy:
 				if (ArrayUtils.contains(AuditTrailConstants.relevancyOperations, auditable.operation())) {
@@ -288,24 +297,54 @@ public class AuditInterceptor {
 			case delete:
 				auditTrail.setDetails(String.format("Removed Rule ID[%1$s].", refId));
 				break;
-			case mapKeyword:
-				auditTrail.setDetails(String.format("Added Search Term[%1$s] for Rule ID[%2$s].", searchTerm, refId));
-				break;
-			case unmapKeyword:
-				auditTrail.setDetails(String.format("Removed Search Term[%1$s] from Rule ID[%2$s].", searchTerm, refId));
-				break;
-			case addCondition:
-				auditTrail.setDetails(String.format("Added Condition[%1$s] for Rule ID[%2$s].", condition, refId));
-				break;
-			case removeCondition:
-				auditTrail.setDetails(String.format("Removed Condition[%1$s] from Rule ID[%2$s].", condition, refId));
-				break;
 			default:
 				return;
 		}
 		logAuditTrail(auditTrail);
 	}
 
+	private void logQueryCleaningCondition(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RedirectRuleCondition rule = (RedirectRuleCondition)jp.getArgs()[0];
+		auditTrail.setStoreId(rule.getStoreId());
+		String refId = String.valueOf(rule.getRuleId());
+		auditTrail.setReferenceId(refId);
+		// TODO: check if working
+		switch (auditable.operation()) {
+			case addCondition:
+				auditTrail.setDetails(String.format("Added Condition[%1$d] with value '%3$s' for Rule ID[%2$s].", rule.getSequenceNumber(), refId, rule.getReadableString()));
+				break;
+			case updateCondition:
+				auditTrail.setDetails(String.format("Update Condition[%1$d] with value '%3$s' for Rule ID[%2$s].", rule.getSequenceNumber(), refId, rule.getReadableString()));
+				break;
+			case removeCondition:
+				auditTrail.setDetails(String.format("Removed Condition[%1$d] from Rule ID[%2$s].", rule.getSequenceNumber(), refId));
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+	
+	private void logQueryCleaningKeyword(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
+		String searchTerm = rule.getSearchTerm();
+		auditTrail.setStoreId(rule.getStoreId());
+		String refId = String.valueOf(rule.getRuleId());
+		auditTrail.setKeyword(searchTerm);
+		auditTrail.setReferenceId(refId);
+		switch (auditable.operation()) {
+			case mapKeyword:
+				auditTrail.setDetails(String.format("Added Search Term[%1$s] for Rule ID[%2$s].", searchTerm, refId));
+				break;
+			case unmapKeyword:
+				auditTrail.setDetails(String.format("Removed Search Term[%1$s] from Rule ID[%2$s].", searchTerm, refId));
+				break;
+			default:
+				return;
+		}
+		logAuditTrail(auditTrail);
+	}
+	
 	private void logAuditTrail(AuditTrail auditTrail) {
 		auditTrailDAO.addAuditTrail(auditTrail);
 	}

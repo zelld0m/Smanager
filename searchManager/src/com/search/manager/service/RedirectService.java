@@ -216,33 +216,41 @@ public class RedirectService {
 	public int addRuleCondition(String ruleId, String condition) {
 		int result = -1;
 		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setRuleId(ruleId);
-			rule.setCondition(condition);
-			result = daoService.addRedirectCondition(rule);
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, condition);
+			rr.setStoreId(UtilityService.getStoreName());
+			result = daoService.addRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleCondition()",e);
 		}
 		return result;
 	}
-
+	
 	@RemoteMethod
-	public int deleteConditionInRule(String ruleId, String condition) {
+	public int updateRuleCondition(String ruleId, int sequenceNumber, String condition) {
 		int result = -1;
 		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setRuleId(ruleId);
-			rule.setCondition(condition);
-			result = daoService.deleteRedirectCondition(rule);
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber, condition);
+			rr.setStoreId(UtilityService.getStoreName());
+			result = daoService.updateRedirectCondition(rr);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRuleCondition()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int deleteConditionInRule(String ruleId, int sequenceNumber, String condition) {
+		int result = -1;
+		try {
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber, condition);
+			rr.setStoreId(UtilityService.getStoreName());
+			result = daoService.deleteRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during deleteConditionInRule()",e);
 		}
 		return result;
-
 	}
-
+	
 	@RemoteMethod
 	public RecordSet<Keyword> getAllKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) {
 		try {
