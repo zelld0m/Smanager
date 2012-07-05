@@ -18,11 +18,18 @@ public class RedirectRuleCondition extends ModelBean {
 	
 	private String ruleId;
 	private Integer sequenceNumber;
+	private String storeId;
+	
 	private Map<String,List<String>> conditionMap = new HashMap<String, List<String>>();
 
 	public RedirectRuleCondition() {
 	}
 
+	public RedirectRuleCondition(String ruleId, String condition) {
+		this.ruleId = ruleId;
+		setCondition(condition);
+	}
+	
 	public RedirectRuleCondition(String ruleId, Integer sequenceNumber, String condition) {
 		this.ruleId = ruleId;
 		this.sequenceNumber = sequenceNumber;
@@ -333,6 +340,14 @@ public class RedirectRuleCondition extends ModelBean {
 
 	public Integer getSequenceNumber() {
 		return sequenceNumber;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+	public String getStoreId() {
+		return storeId;
 	}
 	
 }

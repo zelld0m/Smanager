@@ -771,12 +771,17 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int addRedirectCondition(RedirectRule rule) throws DaoException {
+	public int addRedirectCondition(RedirectRuleCondition rule) throws DaoException {
 		return redirectRuleDAO.addRedirectCondition(rule);
 	}
 
 	@Override
-	public int deleteRedirectCondition(RedirectRule rule) throws DaoException {
+	public int updateRedirectCondition(RedirectRuleCondition rule) throws DaoException {
+		return redirectRuleDAO.updateRedirectCondition(rule);
+	}
+	
+	@Override
+	public int deleteRedirectCondition(RedirectRuleCondition rule) throws DaoException {
 		return redirectRuleDAO.removeRedirectCondition(rule);
 	}
 
