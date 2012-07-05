@@ -243,7 +243,7 @@
 								<td>Add Facet :</td>
 								<td><select name="select" id="classList" class="selectCombo w235" title="Select Class">
 									<option></option>
-						</select><img class="loadIcon" src="/images/ajax-loader-rect.gif"/>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 								</td>
 								<td>
 									<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
@@ -338,7 +338,7 @@
 								<td>Add Facet :</td>
 								<td><select name="select" id="classList" class="selectCombo w235" title="Select Class">
 									<option></option>
-						</select><img class="loadIcon" src="/images/ajax-loader-rect.gif"/>
+						</select><img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 								</td>
 								<td>
 									<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
