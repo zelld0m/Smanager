@@ -184,11 +184,11 @@
 	        	<div id="conditionItemPattern" class="conditionItem bgf6f6f6 pad10" style="display:none">
 		        	<div class="topHeader">
 			        	<div class="txtAL floatL w50p">
-			        		<img class="toggleIcon" src="<spring:url value="/images/icon_collapse.png" />">
+			        		<img class="toggleIcon" src="<spring:url value="/images/icon_expand.png" />">
 			        	</div>
 			        	<div class="txtAR floatR w50p">
-			        		<img src="<spring:url value="/images/icon_clone.png" />"> 
-			        		<img src="<spring:url value="/images/icon_delete2.png" />">
+			        		<img class="cloneIcon" src="<spring:url value="/images/icon_clone.png" />"> 
+			        		<img class="deleteIcon" src="<spring:url value="/images/icon_delete2.png" />">
 			        	</div>
 		        	</div>
 		        	
@@ -200,9 +200,9 @@
 	        		
 	        			<div class="conditionFields" style="display: none">
 	        				<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
-	        				<div class="fsize12 marTB20 marRL50">
-							<table>							
-								<tr>
+	        				<div class="ims fsize12 marTB20 marRL50">
+							<table class="imsFields">							
+								<tr class="catName">
 									<td class="w140">Category :</td>
 									<td class="iepadBT0">
 										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
@@ -211,7 +211,7 @@
 										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 									</td>
 								</tr>
-								<tr>
+								<tr class="catName">
 									<td>Sub-Category :</td>
 									<td>
 										<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
@@ -219,7 +219,7 @@
 										</select>
 										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
 								</tr>
-								<tr>
+								<tr class="catName">
 									<td>Class :</td>
 									<td>
 										<select name="select" id="classList" class="selectCombo w235" title="Select Class">
@@ -227,7 +227,7 @@
 										</select>
 										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
 								</tr>
-								<tr>
+								<tr class="catName">
 									<td valign="top">Minor :</td>
 									<td>
 										<select name="select" id="minorList" class="selectCombo w235" title="Select Minor">
@@ -235,19 +235,17 @@
 										</select>
 										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 										<div class="fsize11 marB8 txtDecoUL padT3">
-											<a href="javascript:void(0);">Use category codes instead &raquo;</a>
+											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
 										</div>
 									</td>
 								</tr>
-								<tr>
-									<td valign="top">Minor :</td>
+								<tr class="catCode">
+									<td valign="top">Category Code :</td>
 									<td>
-										<select name="select" id="minorList" class="selectCombo w235" title="Select Minor">
-								 			<option></option>
-										</select>
+										<input id="catcode" type="text">
 										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 										<div class="fsize11 marB8 txtDecoUL padT3">
-											<a href="javascript:void(0);">Use category names instead &raquo;</a>
+											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
 										</div>
 									</td>
 								</tr>
@@ -301,8 +299,8 @@
 							</table>						
 						</div><!--  end item 2 -->
 						<div class="txtAR borderT padT8">
-							<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-							<a id="deleteBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+							<a href="javascript:void(0);" class="saveBtn buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+							<a href="javascript:void(0);" class="deleteBtn buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
 						</div>
 					</div><!--  end white container -->
 	        	</div>

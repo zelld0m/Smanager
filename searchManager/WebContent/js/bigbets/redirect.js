@@ -16,6 +16,9 @@
 			rulePageSize: 5,
 			ruleKeywordPageSize: 5,
 			keywordInRulePageSize: 5,
+			
+			newFilterGroupText: "New Filter Group Condition",
+			defaultIMS: "CatCode",
 
 			prepareRedirect : function(){
 				clearAllQtip();
@@ -571,38 +574,138 @@
 				});
 			},
 
+			addToggleListener:function(){
+				var self = this;
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("img.toggleIcon, a.conditionFormattedText").off().on({
+					click: function(evt){
+						var $item = $(this).parents(".conditionItem");
+						if ($item.find("div.conditionFields").is(":visible")){
+							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_expand.png");
+							$item.find(".conditionFields").slideUp("slow", function(){
+
+							});
+						}else{
+							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
+							$item.find(".conditionFields").slideDown("slow", function(){
+
+							});
+						}
+					}
+				});
+			},
+
+			addNewFilterGroupListener: function(){
+				var self = this;
+			
+				$("#addFilterGroupBtn").off().on({
+					click: function(e){
+						if(!e.data.locked){
+							var $divItemList = $("div#conditionList");
+							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
+							$divItem.prop("id", "temp");
+							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
+							$divItem.show();
+							$divItemList.append($divItem);
+							self.addToggleListener();
+							self.switchIMSFields();
+							self.addDeleteFilterGroupListener();
+							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+							switch(self.defaultIMS){
+								case "CatCode": $divItem.find("a.switchToCatCode").triggerHandler("click"); break;
+								case "CatName": $divItem.find("a.switchToCatName").triggerHandler("click"); break;
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+
+			switchIMSFields:function(){
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("a.switchToCatCode,a.switchToCatName").off().on({
+					click: function(evt){
+						var $item = $(this).parents(".conditionItem");
+						var $table = $item.find("table.imsFields");
+						switch($(evt.currentTarget).attr("class")){
+						case "switchToCatName" : 
+							$table.find("tr.catCode").hide();
+							$table.find("tr.catName").show();
+							break;
+						case "switchToCatCode" : 
+							$table.find("tr.catCode").show();
+							$table.find("tr.catName").hide();
+							break;
+						}
+					}
+				});	
+			},
+
+			showNewFilterGroup: function(){
+
+			},
+			
+			addDeleteFilterGroupListener: function(){
+				var self = this;
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("img.deleteIcon,a.deleteBtn").off().on({
+					click: function(e){
+						var $item = $(this).parents(".conditionItem");
+						var readableString = $item.find(".conditionFormattedText").html();
+						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
+							if (self.newFilterGroupText === readableString){
+								console.log("delete is clicked");
+								return;
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});	
+			},
 
 			showRuleCondition: function(){
 				var self = this;
 
+				self.addNewFilterGroupListener();
+
 				var $divItemList = $("div#conditionList");
+				$divItemList.find("div.conditionItem:not(#conditionItemPattern)").remove();
 
 				RedirectServiceJS.getConditionInRule(self.selectedRule["ruleId"], 0, 0, {
 					callback: function(data){
 						if(data!=null && data.totalSize > 0){
 							var list = data.list;
+
 							for(var i=0; i < list.length; i++){
 								var item = list[i];
 								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
-								$divItem.prop("id", $.formatAsId(item["sequenceNumber"]));
+								$divItem.prop("id", item["sequenceNumber"]);
 								$divItem.find(".conditionFormattedText").html(item["readableString"]);
+
+								var $table = $divItem.find("table.imsFields");
+
+								if(item["imsUsingCategory"]){
+									$table.find("tr.catName").show();
+									$table.find("tr.catCode").hide();
+								}else{
+									$table.find("tr.catName").hide();
+									$table.find("tr.catCode").show();
+									if($.isNotBlank(item.IMSFilters["CatCode"])){
+										$table.find('tr.catCode > td > input[type="text"]').val(item.IMSFilters["CatCode"]);
+									}
+								}
 
 								$divItem.show();
 								$divItemList.append($divItem);
 							}
 
-							$divItemList.find("img.toggleIcon").off().on({
-								click: function(evt){
-									var $item = $(this).parents(".conditionItem");
-									if ($item.find("div.conditionFields").is(":visible")){
-										$(this).attr("src", GLOBAL_contextPath + "/images/icon_expand.png");
-										$item.find(".conditionFields").hide();
-									}else{
-										$(this).attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
-										$item.find("div.conditionFields").show();
-									}
-								}
-							});
+							self.addToggleListener();
+							self.switchIMSFields();
+							self.addDeleteFilterGroupListener();
+
 							return;
 						}
 
