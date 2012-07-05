@@ -759,7 +759,8 @@ public class CatCodeUtil {
 		     				for(int x=catCode.length();x!=0;x--){
 				            	for(String[] col:templateRow){
 					            	if(catCode.substring(0,x).equalsIgnoreCase(col[2])){
-					            		category=col[1];
+					            		if(!"Misc".equalsIgnoreCase(col[1]))
+					            			category=col[1];
 					            		break;
 					            	}					            	
 				            	}
@@ -789,10 +790,6 @@ public class CatCodeUtil {
 	}
 	
 	public static List<String> getIMSCategoryNextLevel(String strCategory, String strSubcategory, String strClass) throws DataException {
-//        If category is blank, return all categories
-//        Else if subcategory is blank, return all subcategories with category=strCategory
-//        Else if class is blank, return all classes with category=strCategory and subcategory=strSubCategory
-//        Else return all subclasses with category=strCategory and subcategory=strSubCategory and class=strClass
 		List<String> list = new ArrayList<String>();
 		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
 		
