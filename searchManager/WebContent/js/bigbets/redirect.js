@@ -24,6 +24,29 @@
 				$("#titleHeader").html("");
 			},
 
+			addDownloadListener: function(){
+				$("a#downloadIcon").download({
+					headerText:"Download Query Cleaning",
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["id"] = self.selectedRule["ruleId"];
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
+			},
+
 			showRedirect : function(){
 				var self = this;
 
@@ -48,7 +71,8 @@
 				$("#description").val(self.selectedRule["description"]);
 
 				self.getKeywordInRuleList(1);
-				self.refreshTab();
+				self.refreshTabContent();
+				self.addTabListener();
 
 				$("#saveBtn").off().on({
 					click: self.updateRule,
@@ -60,26 +84,7 @@
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 
-				$("a#downloadIcon").download({
-					headerText:"Download Query Cleaning",
-					requestCallback:function(e){
-						var params = new Array();
-						var url = document.location.pathname + "/xls";
-						var urlParams = "";
-						var count = 0;
-						params["id"] = self.selectedRule["ruleId"];
-						params["filename"] = e.data.filename;
-						params["type"] = e.data.type;
-
-						for(var key in params){
-							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
-							count++;
-						};
-
-						document.location.href = url + '?' + urlParams;
-					}
-				});
+				self.addDownloadListener();
 
 				$("#submitForApprovalBtn").off().on({
 					click: function(e){
@@ -535,6 +540,13 @@
 
 			setActiveRedirectType : function(){
 				var self = this;
+
+				switch(parseInt(self.selectedRule["redirectTypeId"])){
+				case 1: $("div#filter").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				case 2: $("div#keyword").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				case 3: $("div#page").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				};
+
 				$('input[type="checkbox"]#activate').prop("checked", false).prop("disabled", false).off().on({
 					click:function(evt){
 						var typeId = 1;
@@ -547,13 +559,6 @@
 						self.updateActiveRedirectType(typeId);
 					}
 				});
-
-				switch(parseInt(self.selectedRule["redirectTypeId"])){
-				case 1: $("#filter").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 2: $("#keyword").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 3: $("#page").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				};
-
 			},
 
 			updateActiveRedirectType : function(typeId){
@@ -566,20 +571,71 @@
 				});
 			},
 
-			refreshTab : function(){
+
+			showRuleCondition: function(){
 				var self = this;
-				tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
+
+				var $divItemList = $("div#conditionList");
+
+				RedirectServiceJS.getConditionInRule(self.selectedRule["ruleId"], 0, 0, {
+					callback: function(data){
+						if(data!=null && data.totalSize > 0){
+							var list = data.list;
+							for(var i=0; i < list.length; i++){
+								var item = list[i];
+								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
+								$divItem.prop("id", $.formatAsId(item["sequenceNumber"]));
+								$divItem.find(".conditionFormattedText").html(item["readableString"]);
+
+								$divItem.show();
+								$divItemList.append($divItem);
+							}
+
+							$divItemList.find("img.toggleIcon").off().on({
+								click: function(evt){
+									var $item = $(this).parents(".conditionItem");
+									if ($item.find("div.conditionFields").is(":visible")){
+										$(this).attr("src", GLOBAL_contextPath + "/images/icon_expand.png");
+										$item.find(".conditionFields").hide();
+									}else{
+										$(this).attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
+										$item.find("div.conditionFields").show();
+									}
+								}
+							});
+							return;
+						}
+
+						$divItemList.find("div#emptyConditionItem").show();
+
+					},
+					preHook:function(){
+						$divItemList.find("div#emptyConditionItem").hide();
+						$divItemList.find("#preloader").show();
+					},
+					postHook:function(){
+						$divItemList.find("#preloader").hide();
+					}
+				});
+			},			
+
+			refreshTabContent: function(){
+				var self = this;
+				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
 				self.setActiveRedirectType();
 
-				switch(tabSelectedTypeId){
+				switch(self.tabSelectedTypeId){
+				case "#filter" : self.showRuleCondition(); break;
 				case "#keyword" : self.getChangeKeywordActiveRules(self.selectedRule["changeKeyword"]); break;
 				}
+
 			},
 
 			addTabListener: function(){
-				$("ul.ui-tabs-nav > li > a").on({
+				var self = this;
+				$("div#redirect-type > ul.ui-tabs-nav > li > a").on({
 					click: function(evt){
-						self.refreshTab();
+						self.refreshTabContent();
 					}
 				});
 			},
