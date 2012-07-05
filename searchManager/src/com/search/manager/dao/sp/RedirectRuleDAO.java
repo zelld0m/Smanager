@@ -571,15 +571,7 @@ public class RedirectRuleDAO {
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_RESULT, 2); // return conditions in separate records
-	        RecordSet<RedirectRule> ruleSet = DAOUtils.getRecordSet(getRedirectRuleConditionStoredProcedure.execute(inputs));
-	        List<RedirectRuleCondition> list = new ArrayList<RedirectRuleCondition>();
-	        if (ruleSet.getTotalSize() > 0) {
-		        for (RedirectRule rule: ruleSet.getList()) {
-		        	if(StringUtils.isNotBlank(rule.getCondition()))
-		        	list.add(new RedirectRuleCondition(rule.getCondition()));
-		        }
-	        }
-	        return new RecordSet<RedirectRuleCondition>(list, ruleSet.getTotalSize());
+	        return DAOUtils.getRecordSet(getRedirectRuleConditionStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRedirectConditions()", e);
 		}
