@@ -101,7 +101,7 @@ public class RedirectRuleCondition extends ModelBean {
 			}					
 		}
 		if (map.containsKey("Platform")) {
-			builder.append("Platform").append(":").append(map.get("Platform").get(0));
+			builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
 			
 		}
 		
