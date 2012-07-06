@@ -207,29 +207,38 @@
 									<td class="w140">Category :</td>
 									<td class="iepadBT0">
 										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
+										<div class="floatL">
+											<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
+										</div>
 									</td>
 								</tr>
 								<tr class="catName">
 									<td>Sub-Category :</td>
 									<td>
 										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory"></select>
+										<div class="floatL">
+											<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory"></select>
+										</div>
 									</td>
 								</tr>
 								<tr class="catName">
 									<td>Class :</td>
 									<td>
 										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="classList" class="selectCombo w235" title="Select Class"></select>
+										<div class="floatL">
+											<select name="select" id="classList" class="selectCombo w235" title="Select Class"></select>
+										</div>
 									</td>
 								</tr>
 								<tr class="catName">
 									<td valign="top">Minor :</td>
 									<td>
 										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="minorList" class="selectCombo w235" title="Select Minor"></select>
-										<div class="fsize11 marB8 txtDecoUL padT3">
+										<div class="floatL">
+											<select name="select" id="minorList" class="selectCombo w235" title="Select Minor"></select>
+										</div>
+										<div class="clearB"></div>
+										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
 										</div>
 									</td>
@@ -238,7 +247,8 @@
 									<td  class="w140" valign="top">Category Code :</td>
 									<td>
 										<input id="catcode" type="text">
-										<div class="fsize11 marB8 txtDecoUL padT3">
+										<div class="clearB"></div>
+										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
 										</div>
 									</td>
@@ -246,8 +256,10 @@
 								<tr>
 									<td>Manufacturer :</td>
 									<td>
-										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="manufacturerList" class="selectCombo w235" title="Select Manufacturer"></select>
+										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<div class="floatL">
+											<select name="select" id="manufacturerList" class="selectCombo w235" title="Select Manufacturer"></select>
+										</div>	
 									</td>
 								</tr>
 							</table>						

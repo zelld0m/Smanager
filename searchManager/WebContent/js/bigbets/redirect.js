@@ -16,7 +16,7 @@
 			rulePageSize: 5,
 			ruleKeywordPageSize: 5,
 			keywordInRulePageSize: 5,
-			
+
 			newFilterGroupText: "New Filter Group Condition",
 			defaultIMS: "CatCode",
 
@@ -574,12 +574,66 @@
 				});
 			},
 
-			addToggleListener:function(){
+			addCatCodeListener: function(ui, condition){
 				var self = this;
-				var $divItemList = $("div#conditionList");
+				var $ui = ui;
+				var $input = $ui.find("input#catcode");
+				
+				if ($.isNotBlank(condition)){
+					$input.val(condition.IMSFilters["CatCode"]);
+				}
+				
+				$input.off().on({
+					focusout: function(e){
+						self.populateManufacturers(ui, condition);
+					}
+				},{condition: condition});
+			},
 
-				$divItemList.find("img.toggleIcon, a.conditionFormattedText").off().on({
-					click: function(evt){
+			populateManufacturers: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+
+				var catcode = "";
+				var category = "";
+				var subcategory = "";
+				var clazz = "";
+				var minor = "";
+
+				var inCatCode = $ui.find("input#catcode").val();
+
+				if ($.isNotBlank(inCatCode) && inCatCode.length < 4 && $ui.find("a.switchToCatName").is(":visible")){
+					catcode = $.trim($ui.find("input#catcode").val());
+				}
+
+				CategoryServiceJS.getIMSManufacturers(catcode, category, subcategory, clazz, minor, {
+					callback: function(data){
+						var list = data;
+						var $select = $ui.find("select#manufacturerList");
+						$select.find("option").remove();
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						$ui.find("img#preloaderManufacturerList").show();
+						if ($.isNotBlank(condition)){
+							var $input = $ui.find("input#manufacturerList");
+							$input.val(condition.IMSFilters["Manufacturer"]);
+						}
+					},
+					postHook:function(){
+						$ui.find("img#preloaderManufacturerList").hide();
+					}
+				});
+			},  
+
+			addToggleListener: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+
+				$ui.find("img.toggleIcon, a.conditionFormattedText").off().on({
+					click: function(e){
 						var $item = $(this).parents(".conditionItem");
 						if ($item.find("div.conditionFields").is(":visible")){
 							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_expand.png");
@@ -589,48 +643,55 @@
 						}else{
 							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
 							$item.find(".conditionFields").slideDown("slow", function(){
-
+								self.addCatCodeListener($item, e.data.condition);
+								self.populateManufacturers($item, e.data.condition);
 							});
 						}
 					}
-				});
+				},{condition: condition});
 			},
-			
+
 			addNewFilterGroupListener: function(){
 				var self = this;
-			
+
 				$("#addFilterGroupBtn").off().on({
 					click: function(e){
 						if(!e.data.locked){
 							var $divItemList = $("div#conditionList");
-							
+
 							if ($divItemList.find("div.tempConditionItem").length > 0){
 								alert("You have an empty filter group");
 								return;
 							}
-							
+
 							$divItemList.find("div#emptyConditionItem").hide();
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
-							
+
 							var currCondCount = parseInt($divItemList.find("div.conditionItem:not(#conditionItemPattern):last").attr("id"));
 							if (!$.isNumeric(currCondCount)){
 								currCondCount = 0; 
 							}
-							
+
 							$divItem.prop("id", 1 + parseInt(currCondCount));
 							$divItem.addClass("tempConditionItem");
 							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
 							$divItem.show();
 							$divItemList.append($divItem);
-							self.addToggleListener();
-							self.switchIMSFields();
+							self.addToggleListener($divItem);
+							self.switchIMSFields($divItem);
 							self.addDeleteFilterGroupListener();
 							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 							switch(self.defaultIMS){
-								case "CatCode": $divItem.find("a.switchToCatCode").triggerHandler("click"); break;
-								case "CatName": $divItem.find("a.switchToCatName").triggerHandler("click"); break;
+							case "CatCode": 
+								$divItem.find("a.switchToCatCode").triggerHandler("click"); 
+								self.populateManufacturers($divItem);
+								break;
+							case "CatName": 
+								$divItem.find("a.switchToCatName").triggerHandler("click"); 
+								self.populateManufacturers($divItem);
+								break;
 							}
-							
+
 							$divItemList.find("div.tempConditionItem select.selectCombo").combobox({});
 						}
 					},
@@ -638,41 +699,46 @@
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
-			switchIMSFields:function(){
-				var $divItemList = $("div#conditionList");
+			switchIMSFields:function(ui, condition){
+				var self = this;
+				var $ui = ui;
 
-				$divItemList.find("a.switchToCatCode,a.switchToCatName").off().on({
-					click: function(evt){
+				$ui.find("a.switchToCatCode,a.switchToCatName").off().on({
+					click: function(e){
 						var $item = $(this).parents(".conditionItem");
 						var $table = $item.find("table.imsFields");
-						switch($(evt.currentTarget).attr("class")){
+						switch($(e.currentTarget).attr("class")){
 						case "switchToCatName" : 
 							$table.find("tr.catCode").hide();
 							$table.find("tr.catName").show();
+							self.addCatCodeListener(ui, e.data.condition);
+							self.populateManufacturers(ui, e.data.condition);
 							break;
 						case "switchToCatCode" : 
 							$table.find("tr.catCode").show();
 							$table.find("tr.catName").hide();
+							self.addCatCodeListener(ui, e.data.condition);
+							self.populateManufacturers(ui, e.data.condition);
 							break;
 						}
 					}
-				});	
+				},{condition: condition});	
 			},
 
 			showNewFilterGroup: function(){
 
 			},
-			
+
 			showEmptyFilterGroup: function(){
 				var $divItemList = $("div#conditionList");
-				
+
 				if ($divItemList.find("div.conditionItem:not(#conditionItemPattern)").length==0){
 					$divItemList.find("div#emptyConditionItem").show();
 				}else{
 					$divItemList.find("div#emptyConditionItem").hide();
 				}
 			},
-			
+
 			addDeleteFilterGroupListener: function(){
 				var self = this;
 				var $divItemList = $("div#conditionList");
@@ -709,7 +775,7 @@
 
 				var $divItemList = $("div#conditionList");
 				$divItemList.find("div.conditionItem:not(#conditionItemPattern)").remove();
-				
+
 				RedirectServiceJS.getConditionInRule(self.selectedRule["ruleId"], 0, 0, {
 					callback: function(data){
 						if(data!=null && data.totalSize > 0){
@@ -729,17 +795,14 @@
 								}else{
 									$table.find("tr.catName").hide();
 									$table.find("tr.catCode").show();
-									if($.isNotBlank(item.IMSFilters["CatCode"])){
-										$table.find('tr.catCode > td > input[type="text"]').val(item.IMSFilters["CatCode"]);
-									}
 								}
 
 								$divItem.show();
 								$divItemList.append($divItem);
+								self.addToggleListener($divItem, item);
+								self.switchIMSFields($divItem, item);
 							}
 
-							self.addToggleListener();
-							self.switchIMSFields();
 							self.addDeleteFilterGroupListener();
 
 							return;
@@ -758,7 +821,7 @@
 					}
 				});
 			},
-			
+
 			refreshTabContent: function(){
 				var self = this;
 				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
