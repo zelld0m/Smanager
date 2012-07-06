@@ -199,41 +199,36 @@
 		        		</h3>
 	        		
 	        			<div class="conditionFields" style="display: none">
+	        				<div class="ims">
 	        				<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
-	        				<div class="ims fsize12 marTB20 marRL50">
+	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
 								<tr class="catName">
 									<td class="w140">Category :</td>
 									<td class="iepadBT0">
-										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
-											<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
 									</td>
 								</tr>
 								<tr class="catName">
 									<td>Sub-Category :</td>
 									<td>
-										<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
-								   			<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory"></select>
+									</td>
 								</tr>
 								<tr class="catName">
 									<td>Class :</td>
 									<td>
-										<select name="select" id="classList" class="selectCombo w235" title="Select Class">
-											<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="classList" class="selectCombo w235" title="Select Class"></select>
+									</td>
 								</tr>
 								<tr class="catName">
 									<td valign="top">Minor :</td>
 									<td>
-										<select name="select" id="minorList" class="selectCombo w235" title="Select Minor">
-								 			<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="minorList" class="selectCombo w235" title="Select Minor"></select>
 										<div class="fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
 										</div>
@@ -243,7 +238,6 @@
 									<td valign="top">Category Code :</td>
 									<td>
 										<input id="catcode" type="text">
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
 										<div class="fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
 										</div>
@@ -252,45 +246,31 @@
 								<tr>
 									<td>Manufacturer :</td>
 									<td>
-										<select name="select" id="manufacturerList" class="w235" title="Select Manufacturer">
-											<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/></td>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="manufacturerList" class="selectCombo w235" title="Select Manufacturer"></select>
+									</td>
 								</tr>
 							</table>						
 						</div><!--  end item 1 -->
+					</div>
 					
-					<!--  item 2 -->
+					<div class="facet">
 						<h3 class="marT10">Facets</h3>	 
 						<div class="fsize12 marT10 marB20 marRL50">
 							<table>							
 								<tr>
 									<td class="w140">Platform :</td>
 									<td class="iepadBT0">
-										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category" >
-											<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>  									
-									</td>
-									<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
-								</tr>
-								<tr>
-									<td>Condition :</td>
-									<td>
-										<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory">
-									   		<option></option>
-										</select>
-										<img class="loadIcon" src="../images/ajax-loader-rect.gif"/>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>  									
+										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category" ></select>
 									</td>
 									<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
 								</tr>
 								<tr>
 									<td>Add Facet :</td>
 									<td>
-										<select name="select" id="classList" class="selectCombo w235" title="Select Class">
-											<option></option>
-										</select>
-										<img class="loadIcon" src="/images/ajax-loader-rect.gif"/>
+										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<select name="select" id="facetList" class="selectCombo w235" title="Select Facet"></select>
 									</td>
 									<td>
 										<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
@@ -298,6 +278,7 @@
 								</tr>						
 							</table>						
 						</div><!--  end item 2 -->
+						</div>
 						<div class="txtAR borderT padT8">
 							<a href="javascript:void(0);" class="saveBtn buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
 							<a href="javascript:void(0);" class="deleteBtn buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>

@@ -30,6 +30,11 @@ public class RedirectRuleCondition extends ModelBean {
 		setCondition(condition);
 	}
 	
+	public RedirectRuleCondition(String ruleId, Integer sequenceNumber) {
+		this.ruleId = ruleId;
+		this.sequenceNumber = sequenceNumber;
+	}
+	
 	public RedirectRuleCondition(String ruleId, Integer sequenceNumber, String condition) {
 		this.ruleId = ruleId;
 		this.sequenceNumber = sequenceNumber;

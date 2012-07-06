@@ -595,7 +595,7 @@
 					}
 				});
 			},
-
+			
 			addNewFilterGroupListener: function(){
 				var self = this;
 			
@@ -603,8 +603,22 @@
 					click: function(e){
 						if(!e.data.locked){
 							var $divItemList = $("div#conditionList");
+							
+							if ($divItemList.find("div.tempConditionItem").length > 0){
+								alert("You have an empty filter group");
+								return;
+							}
+							
+							$divItemList.find("div#emptyConditionItem").hide();
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
-							$divItem.prop("id", "temp");
+							
+							var currCondCount = parseInt($divItemList.find("div.conditionItem:not(#conditionItemPattern):last").attr("id"));
+							if (!$.isNumeric(currCondCount)){
+								currCondCount = 0; 
+							}
+							
+							$divItem.prop("id", 1 + parseInt(currCondCount));
+							$divItem.addClass("tempConditionItem");
 							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
 							$divItem.show();
 							$divItemList.append($divItem);
@@ -616,6 +630,8 @@
 								case "CatCode": $divItem.find("a.switchToCatCode").triggerHandler("click"); break;
 								case "CatName": $divItem.find("a.switchToCatName").triggerHandler("click"); break;
 							}
+							
+							$divItemList.find("div.tempConditionItem select.selectCombo").combobox({});
 						}
 					},
 					mouseenter: showHoverInfo
@@ -647,6 +663,16 @@
 
 			},
 			
+			showEmptyFilterGroup: function(){
+				var $divItemList = $("div#conditionList");
+				
+				if ($divItemList.find("div.conditionItem:not(#conditionItemPattern)").length==0){
+					$divItemList.find("div#emptyConditionItem").show();
+				}else{
+					$divItemList.find("div#emptyConditionItem").hide();
+				}
+			},
+			
 			addDeleteFilterGroupListener: function(){
 				var self = this;
 				var $divItemList = $("div#conditionList");
@@ -656,9 +682,19 @@
 						var $item = $(this).parents(".conditionItem");
 						var readableString = $item.find(".conditionFormattedText").html();
 						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
-							if (self.newFilterGroupText === readableString){
-								console.log("delete is clicked");
-								return;
+							if ($item.hasClass("tempConditionItem")){
+								$item.remove();
+								self.showEmptyFilterGroup();
+							}else{
+								RedirectServiceJS.deleteConditionInRule(self.selectedRule["ruleId"], $item.attr("id"),{
+									callback:function(data){
+										if(data==1){
+											$item.remove();
+											self.showEmptyFilterGroup();
+										}
+										showActionResponse(code, "delete", readableString);
+									}
+								});
 							}
 						}
 					},
@@ -673,7 +709,7 @@
 
 				var $divItemList = $("div#conditionList");
 				$divItemList.find("div.conditionItem:not(#conditionItemPattern)").remove();
-
+				
 				RedirectServiceJS.getConditionInRule(self.selectedRule["ruleId"], 0, 0, {
 					callback: function(data){
 						if(data!=null && data.totalSize > 0){
@@ -718,10 +754,11 @@
 					},
 					postHook:function(){
 						$divItemList.find("#preloader").hide();
+						$divItemList.find("div.conditionItem:not(#conditionItemPattern) select.selectCombo").combobox({});
 					}
 				});
-			},			
-
+			},
+			
 			refreshTabContent: function(){
 				var self = this;
 				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");

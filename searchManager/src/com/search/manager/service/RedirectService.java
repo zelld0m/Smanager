@@ -243,10 +243,10 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int deleteConditionInRule(String ruleId, int sequenceNumber, String condition) {
+	public int deleteConditionInRule(String ruleId, int sequenceNumber) {
 		int result = -1;
 		try {
-			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber, condition);
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreName());
 			result = daoService.deleteRedirectCondition(rr);
 		} catch (DaoException e) {
