@@ -49,6 +49,7 @@ public class AuditTrailConstants {
 		updateKeywordMapping,
 		// for redirect only
 		addCondition,
+		updateCondition,
 		removeCondition, 
 		resetPassword		
 	}
@@ -100,9 +101,16 @@ public class AuditTrailConstants {
 		Operation.add,
 		Operation.update,
 		Operation.delete,
+	};
+	
+	public static Operation[] queryCleaningKeywordOperations = {
 		Operation.mapKeyword,
 		Operation.unmapKeyword,
+	};
+
+	public static Operation[] queryCleaningConditionOperations = {
 		Operation.addCondition,
+		Operation.updateCondition,
 		Operation.removeCondition,
 	};
 
@@ -146,7 +154,11 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.storeKeyword, storeKeywordOperations);
 		entityOperationMap.put(Entity.campaign, campaignOperations);
 		entityOperationMap.put(Entity.banner, bannerOperations);
-		entityOperationMap.put(Entity.queryCleaning, queryCleaningOperations);
+		ArrayList<Operation> queryCleaningOperationList = new ArrayList<Operation>();
+		CollectionUtils.mergeArrayIntoCollection(queryCleaningOperations, queryCleaningOperationList);
+		CollectionUtils.mergeArrayIntoCollection(queryCleaningKeywordOperations, queryCleaningOperationList);
+		CollectionUtils.mergeArrayIntoCollection(queryCleaningConditionOperations, queryCleaningOperationList);
+		entityOperationMap.put(Entity.queryCleaning, queryCleaningOperationList.toArray(new Operation[0]));
 		entityOperationMap.put(Entity.ruleStatus, ruleStatusOperations);
 		entityOperationMap.put(Entity.security, securityOperations);
 		ArrayList<Operation> relevancyOperationList = new ArrayList<Operation>();

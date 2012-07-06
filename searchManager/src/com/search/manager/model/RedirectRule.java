@@ -13,7 +13,7 @@ import org.directwebremoting.convert.EnumConverter;
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRule extends ModelBean {
 
-	private static final long serialVersionUID = 4608433178597830827L;
+	private static final long serialVersionUID = 4608433178597830828L;
 
 	private static final String DBL_PIPE_DELIM = "||";
 	private static final String ESCAPED_DBL_PIPE_DELIM = "\\|\\|";
@@ -74,6 +74,8 @@ public class RedirectRule extends ModelBean {
 	private String searchTerm;
 	private String condition;
 	private String changeKeyword;
+	private Boolean includeKeyword;
+	private String redirectUrl;
 	private String modifiedBy;
 	
 	public String getModifiedBy() {
@@ -109,7 +111,7 @@ public class RedirectRule extends ModelBean {
 	
 	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
-			Date dateCreated, Date dateModified, String changeKeyword) {
+			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
 		super();
 		this.ruleId = ruleId;
 		setRedirectTypeId(redirectTypeId);
@@ -124,6 +126,8 @@ public class RedirectRule extends ModelBean {
 		this.createdDate = dateCreated;
 		this.lastModifiedDate = dateModified;
 		this.changeKeyword = changeKeyword;
+		this.redirectUrl = redirectUrl;
+		this.includeKeyword = includeKeyword;
 	}
 	
 	public String getRuleId() {
@@ -251,5 +255,21 @@ public class RedirectRule extends ModelBean {
 
 	public RedirectType getRedirectType() {
 		return redirectType;
+	}
+
+	public void setIncludeKeyword(Boolean includeKeyword) {
+		this.includeKeyword = includeKeyword;
+	}
+
+	public Boolean getIncludeKeyword() {
+		return includeKeyword;
+	}
+
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	public String getRedirectUrl() {
+		return redirectUrl;
 	}
 }

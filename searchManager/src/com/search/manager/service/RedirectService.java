@@ -2,6 +2,7 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -213,36 +214,47 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addRuleCondition(String ruleId, String condition) {
+	public int addRuleCondition(String ruleId, Map<String, List<String>> filter) {
 		int result = -1;
 		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setRuleId(ruleId);
-			rule.setCondition(condition);
-			result = daoService.addRedirectCondition(rule);
+			RedirectRuleCondition rr = new RedirectRuleCondition();
+			rr.setRuleId(ruleId);
+			rr.setStoreId(UtilityService.getStoreName());
+			rr.setFilter(filter);
+			result = daoService.addRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleCondition()",e);
 		}
 		return result;
 	}
 
+	
 	@RemoteMethod
-	public int deleteConditionInRule(String ruleId, String condition) {
+	public int updateRuleCondition(String ruleId, int sequenceNumber, String condition) {
 		int result = -1;
 		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setRuleId(ruleId);
-			rule.setCondition(condition);
-			result = daoService.deleteRedirectCondition(rule);
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber, condition);
+			rr.setStoreId(UtilityService.getStoreName());
+			result = daoService.updateRedirectCondition(rr);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRuleCondition()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int deleteConditionInRule(String ruleId, int sequenceNumber) {
+		int result = -1;
+		try {
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
+			rr.setStoreId(UtilityService.getStoreName());
+			result = daoService.deleteRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during deleteConditionInRule()",e);
 		}
 		return result;
-
 	}
-
+	
 	@RemoteMethod
 	public RecordSet<Keyword> getAllKeywordInRule(String ruleId, String keyword, int page,int itemsPerPage) {
 		try {

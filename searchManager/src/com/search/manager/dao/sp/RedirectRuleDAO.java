@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
+import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
@@ -31,6 +33,8 @@ import com.search.manager.model.constants.AuditTrailConstants.Operation;
 @Repository(value="redirectRuleDAO")
 public class RedirectRuleDAO {
 
+	private static final Logger logger = Logger.getLogger(RedirectRuleDAO.class);
+	
 	// needed by spring AOP
 	public RedirectRuleDAO(){}
 	
@@ -55,7 +59,10 @@ public class RedirectRuleDAO {
 	private GetRedirectRuleKeywordStoredProcedure getRedirectRuleKeywordStoredProcedure;
 	private AddRedirectRuleKeywordStoredProcedure addRedirectRuleKeywordStoredProcedure;
 	private DeleteRedirectRuleKeywordStoredProcedure deleteRedirectRuleKeywordStoredProcedure;
+	// returns the sequence number generated
 	private AddRedirectRuleConditionStoredProcedure addRedirectRuleConditionStoredProcedure;
+	// returns the sequence number passed
+	private UpdateRedirectRuleConditionStoredProcedure updateRedirectRuleConditionStoredProcedure;
 	private DeleteRedirectRuleConditionStoredProcedure deleteRedirectRuleConditionStoredProcedure;
 	private GetRedirectRuleConditionStoredProcedure getRedirectRuleConditionStoredProcedure;	
 	
@@ -80,6 +87,9 @@ public class RedirectRuleDAO {
 		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
 	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        		String includeKeyword = rs.getString(DAOConstants.COLUMN_INCLUDE_KEYWORD);
+	        		Boolean isIncludeKeyword = StringUtils.isBlank(includeKeyword) ? null :
+	        				StringUtils.equalsIgnoreCase(includeKeyword, "Y") ? true : false;
 	                return new RedirectRule(
 	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_TYPE_ID), 
@@ -93,7 +103,9 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
 	                		rs.getDate(DAOConstants.COLUMN_CREATED_DATE),
 	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
-	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD)
+	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
+	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
+	                		isIncludeKeyword	                				
 	                		);
 	        	}
 	        }));
@@ -147,8 +159,8 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_SEARCH_TERM, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));			
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
@@ -166,6 +178,8 @@ public class RedirectRuleDAO {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_TYPE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_DESCRIPTION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.VARCHAR));
@@ -198,19 +212,44 @@ public class RedirectRuleDAO {
 		}
 	}
 
-	private class AddRedirectRuleConditionStoredProcedure extends CUDStoredProcedure {
+	private class AddRedirectRuleConditionStoredProcedure extends StoredProcedure {
+		
 	    public AddRedirectRuleConditionStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_REDIRECT_CONDITION);
+	        declareParameters();
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_RESULT, new RowMapper<List<Integer>>() {
+	        	public List<Integer> mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        		List<Integer> list = new ArrayList<Integer>();
+	        		list.add(rs.getInt(DAOConstants.COLUMN_RESULT));
+	        		list.add(rs.getInt(DAOConstants.COLUMN_SEQUENCE_NUMBER));	        		
+	                return list;
+	        	}
+	        }));
+	        compile();
 	    }
 
-		@Override
-		protected void declareParameters() {
+		private void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
+	private class UpdateRedirectRuleConditionStoredProcedure extends CUDStoredProcedure {
+	    public UpdateRedirectRuleConditionStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_REDIRECT_CONDITION);
+	    }
+
+		@Override
+		protected void declareParameters() {
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+		}
+	}
+	
 	private class GetRedirectRuleConditionStoredProcedure extends GetStoredProcedure {
 	    public GetRedirectRuleConditionStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT);
@@ -231,15 +270,15 @@ public class RedirectRuleDAO {
 
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRule>() {
-	        	public RedirectRule mapRow(ResultSet rs, int rowNum) throws SQLException {
-	                return new RedirectRule(
-	                		rs.getString(DAOConstants.COLUMN_RULE_ID), 
-	                		rs.getString(DAOConstants.COLUMN_STORE_ID), 
-	                		rs.getString(DAOConstants.COLUMN_NAME),
-	                		null,
-	                		rs.getString(DAOConstants.COLUMN_CONDITION)
-	                		);
+	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RedirectRuleCondition>() {
+	        	public RedirectRuleCondition mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        		RedirectRuleCondition rr = new RedirectRuleCondition(
+	        						rs.getString(DAOConstants.COLUMN_RULE_ID),
+	    	                		rs.getInt(DAOConstants.COLUMN_SEQUENCE_NUMBER),
+	    	                		rs.getString(DAOConstants.COLUMN_CONDITION)
+	        						);
+	        		rr.setStoreId(rs.getString(DAOConstants.COLUMN_STORE_ID));
+	        		return rr;
 	        	}
 	        }));
 		}
@@ -266,7 +305,7 @@ public class RedirectRuleDAO {
 		@Override
 		protected void declareParameters() {
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CONDITION, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
@@ -333,8 +372,8 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, rule.getDescription());
 			inputs.put(DAOConstants.PARAM_STORE_ID, rule.getStoreId());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
-			inputs.put(DAOConstants.PARAM_SEARCH_TERM, rule.getSearchTerm());
-			inputs.put(DAOConstants.PARAM_CONDITION, rule.getCondition());
+			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
+			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, rule.getCreatedBy());
@@ -358,6 +397,8 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_REDIRECT_TYPE_ID, rule.getRedirectTypeId());
 			inputs.put(DAOConstants.PARAM_NAME, rule.getRuleName());
 			inputs.put(DAOConstants.PARAM_DESCRIPTION, rule.getDescription());
+			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
+			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_ACTIVE_FLAG, "ENABLED");
@@ -404,28 +445,62 @@ public class RedirectRuleDAO {
 
     
     @Audit(entity = Entity.queryCleaning, operation = Operation.addCondition)
-	public int addRedirectCondition(RedirectRule rule) throws DaoException {
-    	int result = -1;
+	public int addRedirectCondition(RedirectRuleCondition rule) throws DaoException {
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, rule.getSequenceNumber());
 			inputs.put(DAOConstants.PARAM_CONDITION, rule.getCondition());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
-			result = DAOUtils.getUpdateCount(addRedirectRuleConditionStoredProcedure.execute(inputs));
+			
+			int i = -1;
+			Map<String,Object> resultMap = addRedirectRuleConditionStoredProcedure.execute(inputs);
+	    	if (resultMap != null) {
+	    		try {
+	    			@SuppressWarnings("unchecked")
+					List<Integer> resultList = ((List<List<Integer>>)resultMap.get(DAOConstants.RESULT_SET_RESULT)).get(0);
+	    			if (resultList != null) {
+		        		i = resultList.get(0);
+		        		if (i > 0) {
+		        			return resultList.get(1);
+		        		}	    				
+	    			}
+	    		}
+	    		catch (Exception e) {
+	    			logger.error("failed to get update count" , e);
+	    		}
+	    	}
+			return i;
     	}
     	catch (Exception e) {
     		throw new DaoException("Failed during addRedirectCondition()", e);
     	}
-    	return result;
     }
 
-    @Audit(entity = Entity.queryCleaning, operation = Operation.removeCondition)
-	public int removeRedirectCondition(RedirectRule rule) throws DaoException {
+    @Audit(entity = Entity.queryCleaning, operation = Operation.updateCondition)
+	public int updateRedirectCondition(RedirectRuleCondition rule) throws DaoException {
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, rule.getSequenceNumber());
 			inputs.put(DAOConstants.PARAM_CONDITION, rule.getCondition());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
+			result = DAOUtils.getUpdateCount(updateRedirectRuleConditionStoredProcedure.execute(inputs));
+    	}
+    	catch (Exception e) {
+    		throw new DaoException("Failed during updateRedirectCondition()", e);
+    	}
+    	return result;
+    }
+    
+    @Audit(entity = Entity.queryCleaning, operation = Operation.removeCondition)
+	public int removeRedirectCondition(RedirectRuleCondition rule) throws DaoException {
+    	int result = -1;
+		try {
+			Map<String, Object> inputs = new HashMap<String, Object>();
+			inputs.put(DAOConstants.PARAM_RULE_ID, rule.getRuleId());
+			inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, rule.getSequenceNumber());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());
 			result = DAOUtils.getUpdateCount(deleteRedirectRuleConditionStoredProcedure.execute(inputs));
     	}
@@ -479,7 +554,7 @@ public class RedirectRuleDAO {
 	        }
 	        return new RecordSet<StoreKeyword>(list, ruleSet.getTotalSize());
 		} catch (Exception e) {
-			throw new DaoException("Failed during getRedirectrule()", e);
+			throw new DaoException("Failed during getRedirectKeywords()", e);
 		}
 	}
 
@@ -496,17 +571,9 @@ public class RedirectRuleDAO {
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_RESULT, 2); // return conditions in separate records
-	        RecordSet<RedirectRule> ruleSet = DAOUtils.getRecordSet(getRedirectRuleConditionStoredProcedure.execute(inputs));
-	        List<RedirectRuleCondition> list = new ArrayList<RedirectRuleCondition>();
-	        if (ruleSet.getTotalSize() > 0) {
-		        for (RedirectRule rule: ruleSet.getList()) {
-		        	if(StringUtils.isNotBlank(rule.getCondition()))
-		        	list.add(new RedirectRuleCondition(rule.getCondition()));
-		        }
-	        }
-	        return new RecordSet<RedirectRuleCondition>(list, ruleSet.getTotalSize());
+	        return DAOUtils.getRecordSet(getRedirectRuleConditionStoredProcedure.execute(inputs));
 		} catch (Exception e) {
-			throw new DaoException("Failed during getRedirectrule()", e);
+			throw new DaoException("Failed during getRedirectConditions()", e);
 		}
 	}
 	
@@ -522,7 +589,7 @@ public class RedirectRuleDAO {
 	        inputs.put(DAOConstants.PARAM_RESULT, 1);
 	        return DAOUtils.getRecordSet(getRedirectRuleKeywordStoredProcedure.execute(inputs));
 		} catch (Exception e) {
-			throw new DaoException("Failed during getRedirectrule()", e);
+			throw new DaoException("Failed during getRedirectForKeywords()", e);
 		}
 	}
     

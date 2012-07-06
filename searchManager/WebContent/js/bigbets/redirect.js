@@ -16,12 +16,38 @@
 			rulePageSize: 5,
 			ruleKeywordPageSize: 5,
 			keywordInRulePageSize: 5,
+			
+			newFilterGroupText: "New Filter Group Condition",
+			defaultIMS: "CatCode",
 
 			prepareRedirect : function(){
 				clearAllQtip();
 				$("#preloader").show();
 				$("#submitForApproval, #redirect, #noSelected").hide();
 				$("#titleHeader").html("");
+			},
+
+			addDownloadListener: function(){
+				$("a#downloadIcon").download({
+					headerText:"Download Query Cleaning",
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["id"] = self.selectedRule["ruleId"];
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
 			},
 
 			showRedirect : function(){
@@ -48,7 +74,8 @@
 				$("#description").val(self.selectedRule["description"]);
 
 				self.getKeywordInRuleList(1);
-				self.refreshTab();
+				self.refreshTabContent();
+				self.addTabListener();
 
 				$("#saveBtn").off().on({
 					click: self.updateRule,
@@ -60,26 +87,7 @@
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 
-				$("a#downloadIcon").download({
-					headerText:"Download Query Cleaning",
-					requestCallback:function(e){
-						var params = new Array();
-						var url = document.location.pathname + "/xls";
-						var urlParams = "";
-						var count = 0;
-						params["id"] = self.selectedRule["ruleId"];
-						params["filename"] = e.data.filename;
-						params["type"] = e.data.type;
-
-						for(var key in params){
-							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
-							count++;
-						};
-
-						document.location.href = url + '?' + urlParams;
-					}
-				});
+				self.addDownloadListener();
 
 				$("#submitForApprovalBtn").off().on({
 					click: function(e){
@@ -535,6 +543,13 @@
 
 			setActiveRedirectType : function(){
 				var self = this;
+
+				switch(parseInt(self.selectedRule["redirectTypeId"])){
+				case 1: $("div#filter").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				case 2: $("div#keyword").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				case 3: $("div#page").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				};
+
 				$('input[type="checkbox"]#activate').prop("checked", false).prop("disabled", false).off().on({
 					click:function(evt){
 						var typeId = 1;
@@ -547,13 +562,6 @@
 						self.updateActiveRedirectType(typeId);
 					}
 				});
-
-				switch(parseInt(self.selectedRule["redirectTypeId"])){
-				case 1: $("#filter").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 2: $("#keyword").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 3: $("#page").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				};
-
 			},
 
 			updateActiveRedirectType : function(typeId){
@@ -566,20 +574,208 @@
 				});
 			},
 
-			refreshTab : function(){
+			addToggleListener:function(){
 				var self = this;
-				tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("img.toggleIcon, a.conditionFormattedText").off().on({
+					click: function(evt){
+						var $item = $(this).parents(".conditionItem");
+						if ($item.find("div.conditionFields").is(":visible")){
+							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_expand.png");
+							$item.find(".conditionFields").slideUp("slow", function(){
+
+							});
+						}else{
+							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
+							$item.find(".conditionFields").slideDown("slow", function(){
+
+							});
+						}
+					}
+				});
+			},
+			
+			addNewFilterGroupListener: function(){
+				var self = this;
+			
+				$("#addFilterGroupBtn").off().on({
+					click: function(e){
+						if(!e.data.locked){
+							var $divItemList = $("div#conditionList");
+							
+							if ($divItemList.find("div.tempConditionItem").length > 0){
+								alert("You have an empty filter group");
+								return;
+							}
+							
+							$divItemList.find("div#emptyConditionItem").hide();
+							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
+							
+							var currCondCount = parseInt($divItemList.find("div.conditionItem:not(#conditionItemPattern):last").attr("id"));
+							if (!$.isNumeric(currCondCount)){
+								currCondCount = 0; 
+							}
+							
+							$divItem.prop("id", 1 + parseInt(currCondCount));
+							$divItem.addClass("tempConditionItem");
+							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
+							$divItem.show();
+							$divItemList.append($divItem);
+							self.addToggleListener();
+							self.switchIMSFields();
+							self.addDeleteFilterGroupListener();
+							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+							switch(self.defaultIMS){
+								case "CatCode": $divItem.find("a.switchToCatCode").triggerHandler("click"); break;
+								case "CatName": $divItem.find("a.switchToCatName").triggerHandler("click"); break;
+							}
+							
+							$divItemList.find("div.tempConditionItem select.selectCombo").combobox({});
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+
+			switchIMSFields:function(){
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("a.switchToCatCode,a.switchToCatName").off().on({
+					click: function(evt){
+						var $item = $(this).parents(".conditionItem");
+						var $table = $item.find("table.imsFields");
+						switch($(evt.currentTarget).attr("class")){
+						case "switchToCatName" : 
+							$table.find("tr.catCode").hide();
+							$table.find("tr.catName").show();
+							break;
+						case "switchToCatCode" : 
+							$table.find("tr.catCode").show();
+							$table.find("tr.catName").hide();
+							break;
+						}
+					}
+				});	
+			},
+
+			showNewFilterGroup: function(){
+
+			},
+			
+			showEmptyFilterGroup: function(){
+				var $divItemList = $("div#conditionList");
+				
+				if ($divItemList.find("div.conditionItem:not(#conditionItemPattern)").length==0){
+					$divItemList.find("div#emptyConditionItem").show();
+				}else{
+					$divItemList.find("div#emptyConditionItem").hide();
+				}
+			},
+			
+			addDeleteFilterGroupListener: function(){
+				var self = this;
+				var $divItemList = $("div#conditionList");
+
+				$divItemList.find("img.deleteIcon,a.deleteBtn").off().on({
+					click: function(e){
+						var $item = $(this).parents(".conditionItem");
+						var readableString = $item.find(".conditionFormattedText").html();
+						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
+							if ($item.hasClass("tempConditionItem")){
+								$item.remove();
+								self.showEmptyFilterGroup();
+							}else{
+								RedirectServiceJS.deleteConditionInRule(self.selectedRule["ruleId"], $item.attr("id"),{
+									callback:function(data){
+										if(data==1){
+											$item.remove();
+											self.showEmptyFilterGroup();
+										}
+										showActionResponse(code, "delete", readableString);
+									}
+								});
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});	
+			},
+
+			showRuleCondition: function(){
+				var self = this;
+
+				self.addNewFilterGroupListener();
+
+				var $divItemList = $("div#conditionList");
+				$divItemList.find("div.conditionItem:not(#conditionItemPattern)").remove();
+				
+				RedirectServiceJS.getConditionInRule(self.selectedRule["ruleId"], 0, 0, {
+					callback: function(data){
+						if(data!=null && data.totalSize > 0){
+							var list = data.list;
+
+							for(var i=0; i < list.length; i++){
+								var item = list[i];
+								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
+								$divItem.prop("id", item["sequenceNumber"]);
+								$divItem.find(".conditionFormattedText").html(item["readableString"]);
+
+								var $table = $divItem.find("table.imsFields");
+
+								if(item["imsUsingCategory"]){
+									$table.find("tr.catName").show();
+									$table.find("tr.catCode").hide();
+								}else{
+									$table.find("tr.catName").hide();
+									$table.find("tr.catCode").show();
+									if($.isNotBlank(item.IMSFilters["CatCode"])){
+										$table.find('tr.catCode > td > input[type="text"]').val(item.IMSFilters["CatCode"]);
+									}
+								}
+
+								$divItem.show();
+								$divItemList.append($divItem);
+							}
+
+							self.addToggleListener();
+							self.switchIMSFields();
+							self.addDeleteFilterGroupListener();
+
+							return;
+						}
+
+						$divItemList.find("div#emptyConditionItem").show();
+
+					},
+					preHook:function(){
+						$divItemList.find("div#emptyConditionItem").hide();
+						$divItemList.find("#preloader").show();
+					},
+					postHook:function(){
+						$divItemList.find("#preloader").hide();
+						$divItemList.find("div.conditionItem:not(#conditionItemPattern) select.selectCombo").combobox({});
+					}
+				});
+			},
+			
+			refreshTabContent: function(){
+				var self = this;
+				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
 				self.setActiveRedirectType();
 
-				switch(tabSelectedTypeId){
+				switch(self.tabSelectedTypeId){
+				case "#filter" : self.showRuleCondition(); break;
 				case "#keyword" : self.getChangeKeywordActiveRules(self.selectedRule["changeKeyword"]); break;
 				}
+
 			},
 
 			addTabListener: function(){
-				$("ul.ui-tabs-nav > li > a").on({
+				var self = this;
+				$("div#redirect-type > ul.ui-tabs-nav > li > a").on({
 					click: function(evt){
-						self.refreshTab();
+						self.refreshTabContent();
 					}
 				});
 			},
