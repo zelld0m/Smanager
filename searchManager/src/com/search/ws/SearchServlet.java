@@ -192,8 +192,9 @@ public class SearchServlet extends HttpServlet {
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
-					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD))
-						paramValue = StringEscapeUtils.escapeJava(paramValue);
+					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
+						paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[^\\p{Print}]", "");
+					}
 					
 					nvp = new BasicNameValuePair(paramName, paramValue);
 					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
