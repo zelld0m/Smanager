@@ -235,7 +235,7 @@
 									</td>
 								</tr>
 								<tr class="catCode">
-									<td valign="top">Category Code :</td>
+									<td  class="w140" valign="top">Category Code :</td>
 									<td>
 										<input id="catcode" type="text">
 										<div class="fsize11 marB8 txtDecoUL padT3">
