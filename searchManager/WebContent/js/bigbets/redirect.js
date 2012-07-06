@@ -581,6 +581,7 @@
 				
 				if ($.isNotBlank(condition)){
 					$input.val(condition.IMSFilters["CatCode"]);
+					self.populateManufacturers(ui, condition);
 				}
 				
 				$input.off().on({
@@ -590,6 +591,119 @@
 				},{condition: condition});
 			},
 
+			populateCategories: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+				
+				CategoryServiceJS.getIMSCategories({
+					callback: function(data){
+						var list = data;
+						var $select = $ui.find("select#categoryList");
+						$select.find("option").remove();
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+						
+						$select.off().on({
+							change:function(e){
+								self.populateManufacturers(ui, e.data.condition);
+							}
+						}, {condition: condition});
+					},
+					preHook:function(){
+						$ui.find("img#preloaderCategoryList").show();
+						if ($.isNotBlank(condition)){
+							var $input = $ui.find("input#categoryList");
+							$input.val(condition.IMSFilters["Category"]);
+						}
+					},
+					postHook:function(){
+						$ui.find("img#preloaderCategoryList").hide();
+						self.populateManufacturers(ui, condition);
+					}
+				});
+			},
+			
+			populateSubcategories: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+				
+				CategoryServiceJS.getIMSSubcategories(inCategory, {
+					callback: function(data){
+						var list = data;
+						var $select = $ui.find("select#subCategoryList");
+						$select.find("option").remove();
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						$ui.find("img#preloaderSubCategoryList").show();
+						if ($.isNotBlank(condition)){
+							var $input = $ui.find("input#subCategoryList");
+							$input.val(condition.IMSFilters["SubCategory"]);
+						}
+					},
+					postHook:function(){
+						$ui.find("img#preloaderSubCategoryList").hide();
+						self.populateManufacturers(ui, condition);
+					}
+				});
+			},
+			
+			populateClass: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+				
+				CategoryServiceJS.getIMSClasses(inCategory,inSubCategory, {
+					callback: function(data){
+						var list = data;
+						var $select = $ui.find("select#classList");
+						$select.find("option").remove();
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						$ui.find("img#preloaderClassList").show();
+						if ($.isNotBlank(condition)){
+							var $input = $ui.find("input#classList");
+							$input.val(condition.IMSFilters["Class"]);
+						}
+					},
+					postHook:function(){
+						$ui.find("img#preloaderClassList").hide();
+						self.populateManufacturers(ui, condition);
+					}
+				});
+			},
+			
+			populateMinor: function(ui, condition){
+				var self = this;
+				var $ui = ui;
+				
+				CategoryServiceJS.getIMSMinors(inCategory,inSubCategory, inClass, {
+					callback: function(data){
+						var list = data;
+						var $select = $ui.find("select#minorList");
+						$select.find("option").remove();
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						$ui.find("img#preloaderMinorList").show();
+						if ($.isNotBlank(condition)){
+							var $input = $ui.find("input#minorList");
+							$input.val(condition.IMSFilters["Minor"]);
+						}
+					},
+					postHook:function(){
+						$ui.find("img#preloaderMinorList").hide();
+					}
+				});
+			},
+			
 			populateManufacturers: function(ui, condition){
 				var self = this;
 				var $ui = ui;
@@ -643,8 +757,11 @@
 						}else{
 							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
 							$item.find(".conditionFields").slideDown("slow", function(){
-								self.addCatCodeListener($item, e.data.condition);
-								self.populateManufacturers($item, e.data.condition);
+								if(e.data.condition["imsUsingCategory"]){
+									self.populateCategories($item, e.data.condition);
+								}else{
+									self.addCatCodeListener($item, e.data.condition);
+								}
 							});
 						}
 					}
@@ -711,8 +828,7 @@
 						case "switchToCatName" : 
 							$table.find("tr.catCode").hide();
 							$table.find("tr.catName").show();
-							self.addCatCodeListener(ui, e.data.condition);
-							self.populateManufacturers(ui, e.data.condition);
+							self.populateCategories(ui, e.data.condition);
 							break;
 						case "switchToCatCode" : 
 							$table.find("tr.catCode").show();

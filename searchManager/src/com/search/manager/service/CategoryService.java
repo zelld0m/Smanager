@@ -65,7 +65,7 @@ public class CategoryService {
 	}	
 
 	@RemoteMethod
-	public List<String> getIMSSubclasses(String category, String subcategory, String className) throws DataException {
+	public List<String> getIMSMinors(String category, String subcategory, String className) throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel(category,subcategory,className);
 	}
 
