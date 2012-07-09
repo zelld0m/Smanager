@@ -206,7 +206,7 @@
 								<tr class="catName">
 									<td class="w140">Category :</td>
 									<td class="iepadBT0">
-										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
 										</div>
@@ -215,7 +215,7 @@
 								<tr class="catName">
 									<td>Sub-Category :</td>
 									<td>
-										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory"></select>
 										</div>
@@ -224,7 +224,7 @@
 								<tr class="catName">
 									<td>Class :</td>
 									<td>
-										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="classList" class="selectCombo w235" title="Select Class"></select>
 										</div>
@@ -233,7 +233,7 @@
 								<tr class="catName">
 									<td valign="top">Minor :</td>
 									<td>
-										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="minorList" class="selectCombo w235" title="Select Minor"></select>
 										</div>
@@ -256,7 +256,7 @@
 								<tr>
 									<td>Manufacturer :</td>
 									<td>
-										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
+										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="manufacturerList" class="selectCombo w235" title="Select Manufacturer"></select>
 										</div>	
