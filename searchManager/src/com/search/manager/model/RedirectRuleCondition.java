@@ -267,8 +267,11 @@ public class RedirectRuleCondition extends ModelBean {
 		// TODO: update once CNET filters is available
 		for (String key: isImsUsingCategory() ? categoryKeys : catCodeKeys) {
 			List<String> value = conditionMap.get(key);
+			List<String> newValue = new ArrayList<String>();
 			if (value != null && !value.isEmpty()) {
-				map.put(key, new ArrayList<String>(value));
+				for(String tmp:value)
+					newValue.add(tmp.replaceAll("\"", ""));
+				map.put(key, new ArrayList<String>(newValue));
 			}
 		}
 		return map;
