@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
@@ -16,6 +18,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
@@ -247,9 +250,32 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 					
 					if(addRel != null) {
-						//daoService.addRedirectRule(addRel); // prod 
-						daoService.addRedirectKeyword(addRel);
-						daoService.addRedirectCondition(addRel);
+						
+						daoService.addRedirectRule(addRel); // prod 
+						
+						// add redirect keyword
+						for (String keyword: addRel.getSearchTerms()) {
+							RedirectRule rule = new RedirectRule();
+							rule.setRuleId(addRel.getRuleId());
+							rule.setStoreId(addRel.getStoreId());
+							rule.setSearchTerm(keyword);
+							rule.setLastModifiedBy("SYSTEM");
+							daoService.addRedirectKeyword(rule);							
+						}
+						
+						// add rule condition
+						RedirectRule rule = new RedirectRule();
+						rule.setRuleId(addRel.getRuleId());
+						rule.setStoreId(addRel.getStoreId());
+						RecordSet<RedirectRuleCondition> conditionSet = daoServiceStg.getRedirectConditions(
+								new SearchCriteria<RedirectRule>(rule, null, null, 0, 0));
+						if (conditionSet!= null && conditionSet.getTotalSize() > 0) {
+							for (RedirectRuleCondition condition: conditionSet.getList()) {
+								condition.setLastModifiedBy("SYSTEM");
+								daoService.addRedirectCondition(condition);
+							}
+						}
+						
 					}					
 					success = true;
 				}
@@ -291,10 +317,32 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					}
 					
 					if(addRel != null) {
-						//daoService.addRedirectRule(addRel); // prod
-						daoService.addRedirectKeyword(addRel);
-						daoService.addRedirectCondition(addRel);
-					}					
+						daoService.addRedirectRule(addRel); // prod 
+						
+						// add redirect keyword
+						for (String keyword: addRel.getSearchTerms()) {
+							RedirectRule rule = new RedirectRule();
+							rule.setRuleId(addRel.getRuleId());
+							rule.setStoreId(addRel.getStoreId());
+							rule.setSearchTerm(keyword);
+							rule.setLastModifiedBy("SYSTEM");
+							daoService.addRedirectKeyword(rule);							
+						}
+						
+						// add rule condition
+						RedirectRule rule = new RedirectRule();
+						rule.setRuleId(addRel.getRuleId());
+						rule.setStoreId(addRel.getStoreId());
+						RecordSet<RedirectRuleCondition> conditionSet = daoServiceStg.getRedirectConditions(
+								new SearchCriteria<RedirectRule>(rule, null, null, 0, 0));
+						if (conditionSet!= null && conditionSet.getTotalSize() > 0) {
+							for (RedirectRuleCondition condition: conditionSet.getList()) {
+								condition.setLastModifiedBy("SYSTEM");
+								daoService.addRedirectCondition(condition);
+							}
+						}
+					}
+					
 					map.put(key, true);
 				}
 				
