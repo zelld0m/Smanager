@@ -576,8 +576,8 @@
 
 			populateCategories: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var $select = $ui.find("select#categoryList");
+				var $select = ui.find("select#categoryList");
+				var $input = ui.find("input#categoryList");
 
 				CategoryServiceJS.getIMSCategories({
 					callback: function(data){
@@ -587,25 +587,25 @@
 						}
 					},
 					preHook:function(){
-						$ui.find("img#preloaderCategoryList").show();
+						ui.find("img#preloaderCategoryList").show();
 						$select.find("option").remove();
-						if ($.isNotBlank(condition)){
-							var $input = $ui.find("input#categoryList");
-							$input.val(condition.IMSFilters["Category"]);
-						}
 					},
 					postHook:function(){
-						$ui.find("img#preloaderCategoryList").hide();
-						self.populateManufacturers(ui, condition);
+						ui.find("img#preloaderCategoryList").hide();
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
+							$select.prop("selectedText",condition.IMSFilters["Category"]);
+							$input.val(condition.IMSFilters["Category"]);
+							self.populateSubcategories(ui, condition);
+						}
 					}
 				});
 			},
 
 			populateSubcategories: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var inCategory = $.trim($ui.find("select#categoryList option:selected").val());
-				var $select = $ui.find("select#subCategoryList");
+				var inCategory = $.trim(ui.find("input#categoryList").val());
+				var $select = ui.find("select#subCategoryList");
+				var $input = ui.find("input#subCategoryList");
 
 				CategoryServiceJS.getIMSSubcategories(inCategory, {
 					callback: function(data){
@@ -615,26 +615,26 @@
 						}
 					},
 					preHook:function(){
-						$ui.find("img#preloaderSubCategoryList").show();
+						ui.find("img#preloaderSubCategoryList").show();
 						self.clearIMSComboBox(ui, "subcategory");
-						if ($.isNotBlank(condition)){
-							var $input = $ui.find("input#subCategoryList");
-							$input.val(condition.IMSFilters["SubCategory"]);
-						}
 					},
 					postHook:function(){
-						$ui.find("img#preloaderSubCategoryList").hide();
-						self.populateManufacturers(ui, condition);
+						ui.find("img#preloaderSubCategoryList").hide();
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
+							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
+							$input.val(condition.IMSFilters["SubCategory"]);
+							self.populateClass(ui, condition);
+						}
 					}
 				});
 			},
 
 			populateClass: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var inCategory = $.trim($ui.find("select#categoryList option:selected").val());
-				var inSubCategory = $.trim($ui.find("select#subCategoryList option:selected").val());
-				var $select = $ui.find("select#classList");
+				var inCategory = $.trim(ui.find("input#categoryList").val());
+				var inSubCategory = $.trim(ui.find("input#subCategoryList").val());
+				var $select = ui.find("select#classList");
+				var $input = ui.find("input#classList");
 
 				CategoryServiceJS.getIMSClasses(inCategory,inSubCategory, {
 					callback: function(data){
@@ -644,27 +644,27 @@
 						}
 					},
 					preHook:function(){
-						$ui.find("img#preloaderClassList").show();
+						ui.find("img#preloaderClassList").show();
 						self.clearIMSComboBox(ui, "class");
-						if ($.isNotBlank(condition)){
-							var $input = $ui.find("input#classList");
-							$input.val(condition.IMSFilters["Class"]);
-						}
 					},
 					postHook:function(){
-						$ui.find("img#preloaderClassList").hide();
-						self.populateManufacturers(ui, condition);
+						ui.find("img#preloaderClassList").hide();
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
+							$select.prop("selectedText",condition.IMSFilters["Class"]);
+							$input.val(condition.IMSFilters["Class"]);
+							self.populateMinor(ui, condition);
+						}
 					}
 				});
 			},
 
 			populateMinor: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var inCategory = $.trim($ui.find("select#categoryList option:selected").val());
-				var inSubCategory = $.trim($ui.find("select#subCategoryList option:selected").val());
-				var inClass = $.trim($ui.find("select#classList option:selected").val());
-				var $select = $ui.find("select#minorList");
+				var inCategory = $.trim(ui.find("input#categoryList").val());
+				var inSubCategory = $.trim(ui.find("input#subCategoryList").val());
+				var inClass = $.trim(ui.find("input#classList").val());
+				var $select = ui.find("select#minorList");
+				var $input = ui.find("input#minorList");
 
 				CategoryServiceJS.getIMSMinors(inCategory,inSubCategory, inClass, {
 					callback: function(data){
@@ -674,24 +674,24 @@
 						}
 					},
 					preHook:function(){
-						$ui.find("img#preloaderMinorList").show();
+						ui.find("img#preloaderMinorList").show();
 						self.clearIMSComboBox(ui, "minor");
-						if ($.isNotBlank(condition)){
-							var $input = $ui.find("input#minorList");
-							$input.val(condition.IMSFilters["Minor"]);
-						}
 					},
 					postHook:function(){
-						$ui.find("img#preloaderMinorList").hide();
-						self.populateManufacturers(ui, condition);
+						ui.find("img#preloaderMinorList").hide();
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
+							$select.prop("selectedText",condition.IMSFilters["Minor"]);
+							$input.val(condition.IMSFilters["Minor"]);
+							self.populateManufacturers(ui, condition);
+						}
 					}
 				});
 			},
 
 			populateManufacturers: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var $select = $ui.find("select#manufacturerList");
+				var $select = ui.find("select#manufacturerList");
+				var $input = ui.find("input#manufacturerList");
 
 				var inCatCode = "";
 				var inCategory = "";
@@ -699,15 +699,15 @@
 				var inClass = "";
 				var inMinor = "";
 
-				var catCodeVal = $.trim($ui.find("input#catcode").val());
+				var catCodeVal = $.trim(ui.find("input#catcode").val());
 
-				if ($.isNotBlank(catCodeVal) && catCodeVal.length < 4 && $ui.find("a.switchToCatName").is(":visible")){
+				if ($.isNotBlank(catCodeVal) && catCodeVal.length < 4 && ui.find("a.switchToCatName").is(":visible")){
 					inCatCode = catCodeVal;
-				}else if($ui.find("a.switchToCatCode").is(":visible")){
-					inCategory = $.trim($("input#categoryList").val());
-					inSubCategory = $.trim($("input#subCategoryList").val());
-					inClass = $.trim($("input#classList").val());
-					inMinor = $.trim($("input#minorList").val());
+				}else if(ui.find("a.switchToCatCode").is(":visible")){
+					inCategory = $.trim(ui.find("input#categoryList").val());
+					inSubCategory = $.trim(ui.find("input#subCategoryList").val());
+					inClass = $.trim(ui.find("input#classList").val());
+					inMinor = $.trim(ui.find("input#minorList").val());
 				}
 
 				CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
@@ -718,19 +718,47 @@
 						}
 					},
 					preHook:function(){
-						$ui.find("img#preloaderManufacturerList").show();
+						ui.find("img#preloaderManufacturerList").show();
 						self.clearIMSComboBox(ui, "manufacturer");
 					},
 					postHook:function(){
-						$ui.find("img#preloaderManufacturerList").hide();
+						ui.find("img#preloaderManufacturerList").hide();
+						if ($.isNotBlank(condition)  && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
+							$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
+							$input.val(condition.IMSFilters["Manufacturer"]);
+						}
 					}
 				});
 			},  
 
-			addIMSFieldsListener: function(ui, condition){
+			addFacetFieldListener: function(ui, condition){
 				var self = this;
-				var $ui = ui;
-				var $ims = $ui.find("div.ims");
+				var $facet = ui.find("div.facet");
+
+				$facet.find("select.selectCombo").combobox({
+					selected: function(e, u){
+
+					}
+				});
+
+				if ($.isNotBlank(condition)){
+					$facet.find("input#platformList").val(condition.facets["Platform"]);
+					$facet.find("select#platformList").prop("selectedText", condition.facets["Platform"]);
+
+					$facet.find("input#conditionList").val(condition.facets["Condition"]);
+					$facet.find("select#conditionList").prop("selectedText", condition.facets["Condition"]);
+
+					$facet.find("input#availabilityList").val(condition.facets["Availability"]);
+					$facet.find("select#availabilityList").prop("selectedText", condition.facets["Availability"]);
+
+					$facet.find("input#licenseList").val(condition.facets["License"]);
+					$facet.find("select#licenseList").prop("selectedText", condition.facets["License"]);
+				}
+			},
+
+			addIMSFieldListener: function(ui, condition){
+				var self = this;
+				var $ims = ui.find("div.ims");
 
 				$ims.find("select.selectCombo").combobox({
 					selected: function(e, u){
@@ -741,26 +769,24 @@
 							self.populateClass(ui, condition); break;
 						case "classlist" : 
 							self.populateMinor(ui, condition); break;
-						case "manufacturerlist" : 
-							self.populateManufacturers(ui, condition); break;
 						}
 					}
 				});
 
 				var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 
-				if (usingCategory || $ui.find("a.switchToCatCode").is(":visible")){
+				if (usingCategory || ui.find("a.switchToCatCode").is(":visible")){
 					self.populateCategories(ui, condition);
 				}
 
-				if($ui.find("a.switchToCatName").is(":visible")){
-					var $input = $ui.find("input#catcode");
+				if($ims.find("a.switchToCatName").is(":visible")){
+					var $input = $ims.find("input#catcode");
 
 					self.populateManufacturers(ui, condition);
-					
+
 					if ($.isNotBlank(condition)){
 						$input.val(condition.IMSFilters["CatCode"]);
-						$ui.find("input#manufacturerList").val(condition.IMSFilters["Manufacturer"]);
+						$ims.find("input#manufacturerList").val(condition.IMSFilters["Manufacturer"]);
 					}
 
 					$input.off().on({
@@ -769,12 +795,12 @@
 						}
 					},{condition: condition});
 				}		
+
 			},
 
 			clearIMSComboBox: function(ui, trigger){
 				var self = this;
-				var $ui = ui;
-				var $ims = $ui.find("div.ims");
+				var $ims = ui.find("div.ims");
 
 				if ($.isBlank(trigger)){
 					$ims.find("input").val("");
@@ -800,11 +826,112 @@
 				}
 			},
 
+			buildConditionAsMap: function(ui){
+				var self = this;
+				var condMap = new Object();
+				var catCode = new Array();
+				var category = new Array();
+				var subCategory = new Array();
+				var clazz = new Array();
+				var minor = new Array();
+				var manufacturer = new Array();
+
+				if (ui.find("div.ims").is(":visible")){
+					catCode[0] = $.trim(ui.find("input#catcode").val());
+					category[0] = $.trim(ui.find("select#categoryList option:selected").val());
+					subCategory[0] = $.trim(ui.find("select#subCategoryList option:selected").val());
+					clazz[0] = $.trim(ui.find("select#classList option:selected").val());
+					minor[0] = $.trim(ui.find("select#minorList option:selected").val());
+					manufacturer[0] = $.trim(ui.find("select#manufacturerList option:selected").val());
+
+					if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode; 	
+					if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
+					if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
+					if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
+					if ($.isNotBlank(minor[0])) condMap["Minor"] = minor; 	
+					if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+				}
+
+				if (ui.find("div.facet").is(":visible")){
+					var platform = $.trim(ui.find("select#platformList option:selected").val());
+					var condition = $.trim(ui.find("select#conditionList option:selected").val());
+					var availability = $.trim(ui.find("select#availabilityList option:selected").val());
+					var license = $.trim(ui.find("select#licenseList option:selected").val());
+
+					switch(platform){
+					case "universal": condMap["Platform"] = ["Universal"]; break;
+					case "pc": condMap["Platform"] = ["PC"]; break;
+					case "linux": condMap["Platform"] = ["Linux"]; break;
+					case "mac": condMap["Platform"] = ["Macintosh"]; break;
+					}
+
+					switch(condition){
+					case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
+					case "open": condMap["Condition"] = ["Open Box"]; break;
+					case "clearance": condMap["Condition"] = ["Clearance"]; break;
+					}
+
+					switch(availability){
+					case "instock": condMap["Availability"] = ["In Stock"]; break;
+					case "call": condMap["Availability"] = ["Call"]; break;
+					}
+
+					switch(license){
+					case "license": condMap["License"] = ["Show Non-License Products Only"]; break;
+					case "nonlicense": condMap["License"] = ["Show License Products Only"]; break;
+					}
+
+				}
+
+				return condMap;
+			},
+
+			addSaveButtonListener: function(ui, condition){
+				var self = this;
+
+				var $saveBtn = ui.find(".saveBtn");
+
+				$saveBtn.find("div.buttons").html(ui.hasClass("tempConditionItem")? "Save": "Update");
+
+				$saveBtn.off().on({
+					click:function(evt){
+						var $item = $(this).parents(".conditionItem");
+						var condMap = self.buildConditionAsMap(ui);
+
+						if ($item.hasClass("tempConditionItem")){
+							RedirectServiceJS.addCondition(self.selectedRule["ruleId"], condMap, {
+								callback:function(data){
+
+								},
+								preHook:function(){
+
+								},
+								postHook:function(){
+
+								}
+							});
+						}else{
+							RedirectServiceJS.updateCondition(self.selectedRule["ruleId"], $item.attr("id"), condMap, {
+								callback:function(data){
+
+								},
+								preHook:function(){
+
+								},
+								postHook:function(){
+
+								}
+							});
+						}
+					},
+					mouseenter: showHoverInfo
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify , condition: condition});
+			},
+
 			addToggleListener: function(ui, condition){
 				var self = this;
-				var $ui = ui;
 
-				$ui.find("img.toggleIcon, a.conditionFormattedText").off().on({
+				ui.find("img.toggleIcon, a.conditionFormattedText").off().on({
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
 						if ($item.find("div.conditionFields").is(":visible")){
@@ -815,7 +942,9 @@
 						}else{
 							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
 							$item.find(".conditionFields").slideDown("slow", function(){
-								self.addIMSFieldsListener($item, e.data.condition);
+								self.addIMSFieldListener($item, e.data.condition);
+								self.addFacetFieldListener($item, e.data.condition);
+								self.addSaveButtonListener($item, e.data.condition);
 							});
 						}
 					}
@@ -833,6 +962,17 @@
 							if ($divItemList.find("div.tempConditionItem").length > 0){
 								alert("You have an empty filter group");
 								return;
+							}
+
+							switch($("select#filterGroup option:selected").val()){
+							case "ims": 
+								$divItemList.find("div.ims").show();
+								$divItemList.find("div.facet").show();
+								break;
+							case "facet": 
+								$divItemList.find("div.ims").hide();
+								$divItemList.find("div.facet").show();
+								break;
 							}
 
 							$divItemList.find("div#emptyConditionItem").hide();
@@ -861,7 +1001,7 @@
 								$divItem.find("a.switchToCatName").triggerHandler("click"); 
 								break;
 							}
-							self.addIMSFieldsListener($divItem);
+							self.addIMSFieldListener($divItem);
 						}
 					},
 					mouseenter: showHoverInfo
@@ -870,9 +1010,8 @@
 
 			switchIMSFields:function(ui, condition){
 				var self = this;
-				var $ui = ui;
 
-				$ui.find("a.switchToCatCode,a.switchToCatName").off().on({
+				ui.find("a.switchToCatCode,a.switchToCatName").off().on({
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
 						var $table = $item.find("table.imsFields");
@@ -886,13 +1025,9 @@
 							$table.find("tr.catName").hide();
 							break;
 						}
-						self.addIMSFieldsListener(ui, e.data.condition);
+						self.addIMSFieldListener(ui, e.data.condition);
 					}
 				},{condition: condition});	
-			},
-
-			showNewFilterGroup: function(){
-
 			},
 
 			showEmptyFilterGroup: function(){
@@ -954,6 +1089,10 @@
 								$divItem.find(".conditionFormattedText").html(item["readableString"]);
 
 								var $table = $divItem.find("table.imsFields");
+
+								if($.isNotBlank(item) && $.isEmptyObject(item.IMSFilters)){
+									$divItem.find("div.ims").hide();
+								}
 
 								if(item["imsUsingCategory"]){
 									$table.find("tr.catName").show();

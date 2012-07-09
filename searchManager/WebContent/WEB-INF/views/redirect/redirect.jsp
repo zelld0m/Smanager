@@ -164,9 +164,8 @@
     			
 	        	<div class="dropdownArea">
 	        	<h2 class="borderB padB3">Create Filter Group : 
-	        	<select name="select" class="selectCombo w178" >
+	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
-					<option value="cnet">CNET Categories</option>
 					<option value="facet">Facets</option>
 				</select>
 				<a id="addFilterGroupBtn" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
@@ -254,7 +253,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td>Manufacturer :</td>
+									<td valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -273,21 +272,47 @@
 								<tr>
 									<td class="w140">Platform :</td>
 									<td class="iepadBT0">
-										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>  									
-										<select name="select" id="categoryList" class="selectCombo w235" title="Select Category" ></select>
+										<select name="select" id="platformList" class="selectCombo w235" title="Select Platform" >
+											<option value="all"></option>
+											<option value="universal">Universal</option>
+											<option value="pc">PC</option>
+											<option value="linux">Linux</option>
+											<option value="mac">Macintosh</option>
+										</select>
 									</td>
-									<td class="padL9"><img src="<spring:url value="/images/iconDelete.png" />"></td>
 								</tr>
 								<tr>
-									<td>Add Facet :</td>
-									<td>
-										<img class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif"/>
-										<select name="select" id="facetList" class="selectCombo w235" title="Select Facet"></select>
+									<td class="w140">Condition :</td>
+									<td class="iepadBT0">
+										<select name="select" id="conditionList" class="selectCombo w235" title="Select Condition" >
+											<option value="all"></option>
+											<option value="refurbished">Refurbished</option>
+											<option value="open">Open Box</option>
+											<option value="clearance">Clearance</option>
+										</select>
 									</td>
-									<td>
-										<a id="" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
+								</tr>
+								<tr>
+									<td class="w140">Availability :</td>
+									<td class="iepadBT0">
+										<select name="select" id="availabilityList" class="selectCombo w235" title="Select Availability" >
+											<option value="all"></option>
+											<option value="instock">In Stock</option>
+											<option value="call">Call</option>
+										</select>
 									</td>
-								</tr>						
+								</tr>
+								<tr>
+									<td class="w140">License :</td>
+									<td class="iepadBT0">
+										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
+											<option value="all"></option>
+											<option value="license">Show License Products Only</option>
+											<option value="nonlicense">Show Non-License Products Only</option>
+										</select>
+									</td>
+								</tr>
+												
 							</table>						
 						</div><!--  end item 2 -->
 						</div>

@@ -1,8 +1,11 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -214,6 +217,16 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
+	public int addCondition(String ruleId, Map<String, String[]> filter) {
+		Map<String, List<String>> listFilter = new HashMap<String, List<String>>();
+		
+		for(Entry<String, String[]> entry: filter.entrySet()){
+			listFilter.put(entry.getKey(), Arrays.asList(entry.getValue()));
+		}
+		
+		return addRuleCondition(ruleId, listFilter);
+	}
+	
 	public int addRuleCondition(String ruleId, Map<String, List<String>> filter) {
 		int result = -1;
 		try {
@@ -230,11 +243,22 @@ public class RedirectService {
 
 	
 	@RemoteMethod
-	public int updateRuleCondition(String ruleId, int sequenceNumber, String condition) {
+	public int updateCondition(String ruleId, int sequenceNumber, Map<String, String[]> filter) {
+		Map<String, List<String>> listFilter = new HashMap<String, List<String>>();
+		
+		for(Entry<String, String[]> entry: filter.entrySet()){
+			listFilter.put(entry.getKey(), Arrays.asList(entry.getValue()));
+		}
+		
+		return updateRuleCondition(ruleId, sequenceNumber, listFilter);
+	}
+	
+	public int updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
 		int result = -1;
 		try {
-			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber, condition);
+			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreName());
+			rr.setFilter(filter);
 			result = daoService.updateRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during updateRuleCondition()",e);
