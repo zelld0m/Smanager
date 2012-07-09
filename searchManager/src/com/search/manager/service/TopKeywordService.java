@@ -46,21 +46,22 @@ public class TopKeywordService {
 		
 		File[] files = dir.listFiles();
 		
-		Arrays.sort(files, new Comparator<File>(){
-			    public int compare(File f1, File f2) {
-			        return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-			    } 
-		    });
-		int ctr = 1;
-		for (File file : files) {
-	        if (!file.isDirectory()) {
-	        	filenameList.add(file.getName());
-	        	if (ctr++ > 12) {
-	        		break;
-	        	}
-	        }
-	    }
-
+		if (files != null) {
+			Arrays.sort(files, new Comparator<File>(){
+				    public int compare(File f1, File f2) {
+				        return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
+				    } 
+			    });
+			int ctr = 1;
+			for (File file : files) {
+		        if (!file.isDirectory()) {
+		        	filenameList.add(file.getName());
+		        	if (ctr++ > 12) {
+		        		break;
+		        	}
+		        }
+		    }
+		}
 		return filenameList;
 	}
 
