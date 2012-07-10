@@ -78,10 +78,10 @@ public class CategoryService {
 		if (StringUtils.isNotBlank(category)) {
 			filters.add(String.format("Category: %s", category));
 		}
-		if (StringUtils.isNotBlank(category)) {
+		if (StringUtils.isNotBlank(subcategory)) {
 			filters.add(String.format("SubCategory: %s", subcategory));
 		}
-		if (StringUtils.isNotBlank(category)) {
+		if (StringUtils.isNotBlank(className)) {
 			filters.add(String.format("Class: %s", className));
 		}
 		if (StringUtils.isNotBlank(subclass)) {

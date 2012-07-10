@@ -601,6 +601,8 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderCategoryList").hide();
+						console.log("Category Triggered");
+						self.populateManufacturers(ui, condition);
 					}
 				});
 			},
@@ -631,6 +633,8 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
+						console.log("SubCategory Triggered");
+						self.populateManufacturers(ui, condition);
 					}
 				});
 			},
@@ -661,6 +665,8 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
+						console.log("Class Triggered");
+						self.populateManufacturers(ui, condition);
 					}
 				});
 			},
@@ -691,6 +697,7 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
+						console.log("Minor Triggered");
 						self.populateManufacturers(ui, condition);
 					}
 				});
@@ -728,13 +735,13 @@
 					preHook:function(){
 						ui.find("img#preloaderManufacturerList").show();
 						self.clearIMSComboBox(ui, "manufacturer");
-					},
-					postHook:function(){
-						ui.find("img#preloaderManufacturerList").hide();
-						if ($.isNotBlank(condition)  && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
 							$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
 							$input.val(condition.IMSFilters["Manufacturer"]);
 						}
+					},
+					postHook:function(){
+						ui.find("img#preloaderManufacturerList").hide();
 					}
 				});
 			},  
@@ -775,19 +782,32 @@
 						case "categorylist" :
 							$item.find("input#categoryList").val(u.item.text);
 							$item.find("input#categoryList").prop("selectedText", u.item.text);
-							self.populateSubcategories(ui, condition); break;
+							self.populateSubcategories(ui, condition);
+							$item.find("input#subCategoryList").val("");
+							$item.find("input#classList").val("");
+							$item.find("input#minorList").val("");
+							$item.find("input#manufacturerList").val("");
+							break;
 						case "subcategorylist" : 
 							$item.find("input#subCategoryList").val(u.item.text);
 							$item.find("input#subCategoryList").prop("selectedText", u.item.text);
-							self.populateClass(ui, condition); break;
+							self.populateClass(ui, condition); 
+							$item.find("input#classList").val("");
+							$item.find("input#minorList").val("");
+							$item.find("input#manufacturerList").val("");
+							break;
 						case "classlist" : 
 							$item.find("input#classList").val(u.item.text);
 							$item.find("input#classList").prop("selectedText", u.item.text);
-							self.populateMinor(ui, condition); break;
+							self.populateMinor(ui, condition); 
+							$item.find("input#minorList").val("");
+							$item.find("input#manufacturerList").val("");
+							break;
 						case "minorlist" : 
 							$item.find("input#minorList").val(u.item.text);
 							$item.find("input#minorList").prop("selectedText", u.item.text); 
 							self.populateManufacturers(ui, condition);
+							$item.find("input#manufacturerList").val("");
 							break;
 						case "manufacturerlist" : 
 							$item.find("input#manufacturerList").val(u.item.text);
@@ -795,29 +815,40 @@
 						}
 					}
 				});
+				
+				var $input = $ims.find("input#catcode");
+				
+				$input.off().on({
+					focusout: function(e){
+						console.log("CatCode Triggered");
+						self.populateManufacturers(ui, condition);
+					}
+				},{condition: condition});
+					
 
 				var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 
 				if (usingCategory || ui.find("a.switchToCatCode").is(":visible")){
 					self.populateCategories(ui, condition);
 				}
-
-				if($ims.find("a.switchToCatName").is(":visible")){
-					var $input = $ims.find("input#catcode");
-
-					self.populateManufacturers(ui, condition);
-
-					if ($.isNotBlank(condition)){
-						$input.val(condition.IMSFilters["CatCode"]);
-						$ims.find("input#manufacturerList").val(condition.IMSFilters["Manufacturer"]);
-					}
-
-					$input.off().on({
-						focusout: function(e){
-							self.populateManufacturers(ui, condition);
-						}
-					},{condition: condition});
-				}		
+//
+//				if($ims.find("a.switchToCatName").is(":visible")){
+//					var $input = $ims.find("input#catcode");
+//					
+//					console.log("Visibility");
+//					self.populateManufacturers(ui, condition);
+//
+//					if ($.isNotBlank(condition)){
+//						$input.val(condition.IMSFilters["CatCode"]);
+//					}
+//
+//					$input.off().on({
+//						focusout: function(e){
+//							console.log("CatCode Triggered");
+//							self.populateManufacturers(ui, condition);
+//						}
+//					},{condition: condition});
+//				}		
 
 			},
 
@@ -861,18 +892,21 @@
 
 				if (ui.find("div.ims").is(":visible")){
 					catCode[0] = $.trim(ui.find("input#catcode").val());
-					category[0] = $.trim(ui.find("select#categoryList option:selected").val());
-					subCategory[0] = $.trim(ui.find("select#subCategoryList option:selected").val());
-					clazz[0] = $.trim(ui.find("select#classList option:selected").val());
-					minor[0] = $.trim(ui.find("select#minorList option:selected").val());
-					manufacturer[0] = $.trim(ui.find("select#manufacturerList option:selected").val());
+					category[0] = $.trim(ui.find("input#categoryList").val());
+					subCategory[0] = $.trim(ui.find("input#subCategoryList").val());
+					clazz[0] = $.trim(ui.find("input#classList").val());
+					minor[0] = $.trim(ui.find("input#minorList").val());
+					manufacturer[0] = $.trim(ui.find("input#manufacturerList").val());
 
-					if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode; 	
-					if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
-					if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
-					if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
-					if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
-					if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+					if (ui.find("a.switchToCatName").is(":visible")){
+						if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode;
+					}else{
+						if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
+						if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
+						if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
+						if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
+						if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+					}
 				}
 
 				if (ui.find("div.facet").is(":visible")){
@@ -1046,7 +1080,6 @@
 								$divItem.find("a.switchToCatName").triggerHandler("click"); 
 								break;
 							}
-							self.addIMSFieldListener($divItem);
 						}
 					},
 					mouseenter: showHoverInfo
@@ -1064,13 +1097,14 @@
 						case "switchToCatName" : 
 							$table.find("tr.catCode").hide();
 							$table.find("tr.catName").show();
+							self.populateCategories(ui, e.data.condition);
 							break;
 						case "switchToCatCode" : 
 							$table.find("tr.catCode").show();
 							$table.find("tr.catName").hide();
+							self.populateManufacturers(ui, e.data.condition);
 							break;
 						}
-						self.addIMSFieldListener(ui, e.data.condition);
 					}
 				},{condition: condition});	
 			},
