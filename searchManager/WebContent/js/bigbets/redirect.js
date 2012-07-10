@@ -917,7 +917,7 @@
 				$saveBtn.off().on({
 					click:function(evt){
 						var $item = $(this).parents(".conditionItem");
-						var condMap = self.buildConditionAsMap(ui);
+						var condMap = self.buildConditionAsMap($item);
 
 						if ($item.hasClass("tempConditionItem")){
 							RedirectServiceJS.addCondition(self.selectedRule["ruleId"], condMap, {
