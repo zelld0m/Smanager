@@ -587,16 +587,15 @@
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 						
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
-							$select.prop("selectedText",condition.IMSFilters["Category"]);
-							$input.val(condition.IMSFilters["Category"]);
-						}
-						
 						if($.isNotBlank($input.val())) self.populateSubcategories(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderCategoryList").show();
-						$select.find("option").remove();
+						self.clearIMSComboBox(ui, "category");
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
+							$select.prop("selectedText",condition.IMSFilters["Category"]);
+							$input.val(condition.IMSFilters["Category"]);
+						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderCategoryList").hide();
@@ -619,16 +618,15 @@
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 						
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
-							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
-							$input.val(condition.IMSFilters["SubCategory"]);
-						}
-						
 						if($.isNotBlank($input.val())) self.populateClass(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderSubCategoryList").show();
 						self.clearIMSComboBox(ui, "subcategory");
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
+							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
+							$input.val(condition.IMSFilters["SubCategory"]);
+						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
@@ -649,15 +647,16 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
-							$select.prop("selectedText",condition.IMSFilters["Class"]);
-							$input.val(condition.IMSFilters["Class"]);
-						}
+						
 						if($.isNotBlank($input.val())) self.populateMinor(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderClassList").show();
 						self.clearIMSComboBox(ui, "class");
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
+							$select.prop("selectedText",condition.IMSFilters["Class"]);
+							$input.val(condition.IMSFilters["Class"]);
+						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
@@ -679,14 +678,15 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
-							$select.prop("selectedText",condition.IMSFilters["Minor"]);
-							$input.val(condition.IMSFilters["Minor"]);
-						}
+						
 					},
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
 						self.clearIMSComboBox(ui, "minor");
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
+							$select.prop("selectedText",condition.IMSFilters["Minor"]);
+							$input.val(condition.IMSFilters["Minor"]);
+						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
