@@ -1072,12 +1072,12 @@
 								self.showEmptyFilterGroup();
 							}else{
 								RedirectServiceJS.deleteConditionInRule(self.selectedRule["ruleId"], $item.attr("id"),{
-									callback:function(data){
-										if(data==1){
+									callback:function(code){
+										showActionResponse(code, "delete", readableString);
+										if(code==1){
 											$item.remove();
 											self.showEmptyFilterGroup();
 										}
-										showActionResponse(code, "delete", readableString);
 									}
 								});
 							}
