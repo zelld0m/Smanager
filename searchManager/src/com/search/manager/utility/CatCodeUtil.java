@@ -828,9 +828,31 @@ public class CatCodeUtil {
 	/** Initialized Category code utility when startup */
 	public static void init() throws Exception {
 		try {
-			CatCodeUtil.loadXlsxWorkbook("C:\\Users\\vhalili\\git\\searchManager\\searchManager\\utilities\\catcodes\\Solr SQL Objects and Definitions.xlsx",CatCodes.WORKBOOK_OBJECTS.getCodeStr());
-			CatCodeUtil.loadXlsxWorkbook("C:\\Users\\vhalili\\git\\searchManager\\searchManager\\utilities\\catcodes\\AlternativeCNETCategorization_Structure.xlsx",CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
-			
+			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(SOLR_OBJECTS_DEFINITION_XLSX),CatCodes.WORKBOOK_OBJECTS.getCodeStr());
+			CatCodeUtil.loadXlsxWorkbook(PropsUtils.getValue(ALTERNATIVE_CNET_CATEGORIZATION_XLSX),CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());		
+			loadToCache();
+		} catch (DataException e) {
+			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
+		} catch (IOException e) {
+			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
+		}
+	}
+	
+	private static void init2() throws Exception {
+		try {
+			CatCodeUtil.loadXlsxWorkbook("/home/solr/utilities/catcodes/Solr SQL Objects and Definitions.xlsx",CatCodes.WORKBOOK_OBJECTS.getCodeStr());
+			CatCodeUtil.loadXlsxWorkbook("/home/solr/utilities/catcodes/AlternativeCNETCategorization_Structure.xlsx",CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
+			loadToCache();
+		} catch (DataException e) {
+			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
+		} catch (IOException e) {
+			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
+		}
+	}
+	
+	/** Initialized Category code utility when startup */
+	private static void loadToCache() throws Exception {
+		try {
 			Thread td1 = new Thread(){
 				@Override
 				public void run() {
@@ -988,14 +1010,12 @@ public class CatCodeUtil {
 
 		} catch (DataException e) {
 			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
-		} catch (IOException e) {
-			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
 		}
 	}
 	
 	public static void main(String args[])	throws Exception
     {
-		init();
+		init2();
 		String strCategory = "";
 		String strSubCategory = "";
 		String strClass = "";
