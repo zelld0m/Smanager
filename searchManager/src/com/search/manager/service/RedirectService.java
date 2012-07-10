@@ -124,7 +124,6 @@ public class RedirectService {
 		return result;
 	}
 
-	
 	@RemoteMethod
 	public int deleteRule(RedirectRule rule) {
 		int result = -1;
@@ -217,7 +216,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public int addCondition(String ruleId, Map<String, String[]> filter) {
+	public RecordSet<RedirectRuleCondition> addCondition(String ruleId, Map<String, String[]> filter) {
 		Map<String, List<String>> listFilter = new HashMap<String, List<String>>();
 		
 		for(Entry<String, String[]> entry: filter.entrySet()){
@@ -227,7 +226,7 @@ public class RedirectService {
 		return addRuleCondition(ruleId, listFilter);
 	}
 	
-	public int addRuleCondition(String ruleId, Map<String, List<String>> filter) {
+	public RecordSet<RedirectRuleCondition> addRuleCondition(String ruleId, Map<String, List<String>> filter) {
 		int result = -1;
 		try {
 			RedirectRuleCondition rr = new RedirectRuleCondition();
@@ -235,15 +234,19 @@ public class RedirectService {
 			rr.setStoreId(UtilityService.getStoreName());
 			rr.setFilter(filter);
 			result = daoService.addRedirectCondition(rr);
+			
+			if (result>0){
+				return getConditionInRule(ruleId, 0, 0);
+			}
+			
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleCondition()",e);
 		}
-		return result;
+		return null;
 	}
 
-	
 	@RemoteMethod
-	public int updateCondition(String ruleId, int sequenceNumber, Map<String, String[]> filter) {
+	public RecordSet<RedirectRuleCondition> updateCondition(String ruleId, int sequenceNumber, Map<String, String[]> filter) {
 		Map<String, List<String>> listFilter = new HashMap<String, List<String>>();
 		
 		for(Entry<String, String[]> entry: filter.entrySet()){
@@ -253,17 +256,22 @@ public class RedirectService {
 		return updateRuleCondition(ruleId, sequenceNumber, listFilter);
 	}
 	
-	public int updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
-		int result = -1;
+	public RecordSet<RedirectRuleCondition> updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
 		try {
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreName());
 			rr.setFilter(filter);
-			result = daoService.updateRedirectCondition(rr);
+			int result = daoService.updateRedirectCondition(rr);
+			
+			if (result>0){
+				return getConditionInRule(ruleId, 0, 0);
+			}
+			
 		} catch (DaoException e) {
 			logger.error("Failed during updateRuleCondition()",e);
 		}
-		return result;
+		
+		return null;
 	}
 
 	@RemoteMethod
@@ -302,7 +310,7 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
-	public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page,int itemsPerPage) {
+	public RecordSet<RedirectRuleCondition> getConditionInRule(String ruleId, int page, int itemsPerPage) {
 		try {
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);

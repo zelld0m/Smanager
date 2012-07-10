@@ -877,8 +877,8 @@
 					}
 
 					switch(license){
-					case "license": condMap["License"] = ["Show Non-License Products Only"]; break;
-					case "nonlicense": condMap["License"] = ["Show License Products Only"]; break;
+					case "license": condMap["License"] = ["Show License Products Only"]; break;
+					case "nonlicense": condMap["License"] = ["Show Non-License Products Only"]; break;
 					}
 
 				}
@@ -901,7 +901,14 @@
 						if ($item.hasClass("tempConditionItem")){
 							RedirectServiceJS.addCondition(self.selectedRule["ruleId"], condMap, {
 								callback:function(data){
-
+									if (data!=null){
+										var list = data.list;
+										var newItem = list[data.totalSize-1];
+										$item.removeClass("tempConditionItem");
+										$item.find("a.conditionFormattedText").html(newItem["readableString"]);
+										$item.attr("id",newItem["sequenceNumber"]);
+										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+									}
 								},
 								preHook:function(){
 
@@ -913,7 +920,18 @@
 						}else{
 							RedirectServiceJS.updateCondition(self.selectedRule["ruleId"], $item.attr("id"), condMap, {
 								callback:function(data){
-
+									if (data!=null){
+										var list = data.list;
+										var updatedItem = null;
+										
+										for (item in list){
+											if (parseInt(list[item]["sequenceNumber"])==parseInt($item.attr("id"))){
+												updatedItem = list[item];
+											}
+										}	
+										$item.find("a.conditionFormattedText").html(updatedItem["readableString"]);
+										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+									}
 								},
 								preHook:function(){
 
