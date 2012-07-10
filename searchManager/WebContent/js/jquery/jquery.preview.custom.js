@@ -132,7 +132,7 @@
 								$content.find("div#ruleChange > #noChangeKeyword").show();
 							}
 							
-							base.populateKeywordInRule($content, data["relKeyword"]);
+							base.populateKeywordInRule($content, data["searchTerms"]);
 						}
 					});
 					
@@ -159,7 +159,7 @@
 							
 							$table.find("tr:even").addClass("alt");
 							
-							base.populateKeywordInRule($content, data["relKeyword"]);
+							base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
 						}
 					});
 					
@@ -193,12 +193,21 @@
 							
 							$table.find("tr:even").addClass("alt");
 							
-							base.populateKeywordInRule($content, data["relKeyword"]);
+							base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
 						}
 					});
 					
 					break;
 			}
+		};
+		
+		base.toStringArray = function(relKeyObj){
+			var keyList = new Array();
+			var i = 0;
+			for (var relKey in relKeyObj){
+				keyList[i++] = relKeyObj[relKey]["keyword"]["keyword"];
+			}
+			return keyList;
 		};
 		
 		base.populateKeywordInRule = function(content, list){
@@ -213,9 +222,9 @@
 				$tr.appendTo($table);
 			}else{
 				for(var i=0; i< list.length; i++){
-					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"]["keyword"])).show();
+					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i])).show();
 					$tr.find("td#fieldName").html(parseInt(i)+1);
-					$tr.find("td#fieldValue").html(list[i]["keyword"]["keyword"]);
+					$tr.find("td#fieldValue").html(list[i]);
 					$tr.appendTo($table);
 				}	
 			}
