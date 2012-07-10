@@ -212,7 +212,7 @@
 									</td>
 								</tr>
 								<tr class="catName">
-									<td>Sub-Category :</td>
+									<td>SubCategory :</td>
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -230,11 +230,11 @@
 									</td>
 								</tr>
 								<tr class="catName">
-									<td valign="top">Minor :</td>
+									<td valign="top">SubClass :</td>
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="minorList" class="selectCombo w235" title="Select Minor"></select>
+											<select name="select" id="minorList" class="selectCombo w235" title="Select SubClass"></select>
 										</div>
 										<div class="clearB"></div>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">

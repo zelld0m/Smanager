@@ -605,7 +605,6 @@
 
 			populateSubcategories: function(ui, condition){
 				var self = this;
-				console.log(ui.find("input#categoryList").val());
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var $select = ui.find("select#subCategoryList");
 				var $input = ui.find("input#subCategoryList");
@@ -683,9 +682,9 @@
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
 						self.clearIMSComboBox(ui, "minor");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
-							$select.prop("selectedText",condition.IMSFilters["Minor"]);
-							$input.val(condition.IMSFilters["Minor"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubClass"])){
+							$select.prop("selectedText",condition.IMSFilters["SubClass"]);
+							$input.val(condition.IMSFilters["SubClass"]);
 						}
 					},
 					postHook:function(){
@@ -783,6 +782,14 @@
 							$item.find("input#classList").val(u.item.text);
 							$item.find("input#classList").prop("selectedText", u.item.text);
 							self.populateMinor(ui, condition); break;
+						case "minorlist" : 
+							$item.find("input#minorList").val(u.item.text);
+							$item.find("input#minorList").prop("selectedText", u.item.text); 
+							self.populateManufacturers(ui, condition);
+							break;
+						case "manufacturerlist" : 
+							$item.find("input#manufacturerList").val(u.item.text);
+							$item.find("input#manufacturerList").prop("selectedText", u.item.text); break;
 						}
 					}
 				});
@@ -862,7 +869,7 @@
 					if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
 					if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
 					if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
-					if ($.isNotBlank(minor[0])) condMap["Minor"] = minor; 	
+					if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
 					if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
 				}
 
@@ -922,6 +929,8 @@
 										$item.find("a.conditionFormattedText").html(newItem["readableString"]);
 										$item.attr("id",newItem["sequenceNumber"]);
 										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+										self.addToggleListener($item, newItem);
+										self.switchIMSFields($item, newItem);
 									}
 								},
 								preHook:function(){
@@ -945,6 +954,8 @@
 										}	
 										$item.find("a.conditionFormattedText").html(updatedItem["readableString"]);
 										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+										self.addToggleListener($item, updatedItem);
+										self.switchIMSFields($item, updatedItem);
 									}
 								},
 								preHook:function(){
