@@ -61,7 +61,11 @@ public class RelevancyService {
 		try {
 			Relevancy rule = new Relevancy(ruleId);
 			rule.setStore(new Store(UtilityService.getStoreName()));
-			return daoService.getRelevancyDetails(rule);
+			rule = daoService.getRelevancyDetails(rule);
+			// TODO: probably create a new method. one for Approval page. Another for Simulator and Top Keywords
+			List<RelevancyKeyword> relKWList = daoService.getRelevancyKeywords(rule).getList();
+			rule.setRelKeyword(relKWList);
+			return rule;
 		} catch (DaoException e) {
 			logger.error("Failed during getRule()",e);
 		}
