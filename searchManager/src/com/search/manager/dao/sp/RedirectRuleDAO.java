@@ -48,6 +48,7 @@ public class RedirectRuleDAO {
 		addRedirectRuleKeywordStoredProcedure = new AddRedirectRuleKeywordStoredProcedure(jdbcTemplate);
 		deleteRedirectRuleKeywordStoredProcedure = new DeleteRedirectRuleKeywordStoredProcedure(jdbcTemplate);
 		addRedirectRuleConditionStoredProcedure = new AddRedirectRuleConditionStoredProcedure(jdbcTemplate);
+		updateRedirectRuleConditionStoredProcedure = new UpdateRedirectRuleConditionStoredProcedure(jdbcTemplate);
 		deleteRedirectRuleConditionStoredProcedure = new DeleteRedirectRuleConditionStoredProcedure(jdbcTemplate);
 		getRedirectRuleConditionStoredProcedure = new GetRedirectRuleConditionStoredProcedure(jdbcTemplate);
 	}
