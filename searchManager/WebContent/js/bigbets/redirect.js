@@ -582,9 +582,17 @@
 				CategoryServiceJS.getIMSCategories({
 					callback: function(data){
 						var list = data;
+						
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
+							$select.prop("selectedText",condition.IMSFilters["Category"]);
+							$input.val(condition.IMSFilters["Category"]);
+						}
+						
+						if($.isNotBlank($input.val())) self.populateSubcategories(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderCategoryList").show();
@@ -592,17 +600,13 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderCategoryList").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
-							$select.prop("selectedText",condition.IMSFilters["Category"]);
-							$input.val(condition.IMSFilters["Category"]);
-							self.populateSubcategories(ui, condition);
-						}
 					}
 				});
 			},
 
 			populateSubcategories: function(ui, condition){
 				var self = this;
+				console.log(ui.find("input#categoryList").val());
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var $select = ui.find("select#subCategoryList");
 				var $input = ui.find("input#subCategoryList");
@@ -610,9 +614,17 @@
 				CategoryServiceJS.getIMSSubcategories(inCategory, {
 					callback: function(data){
 						var list = data;
+						
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
+							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
+							$input.val(condition.IMSFilters["SubCategory"]);
+						}
+						
+						if($.isNotBlank($input.val())) self.populateClass(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderSubCategoryList").show();
@@ -620,11 +632,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
-							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
-							$input.val(condition.IMSFilters["SubCategory"]);
-							self.populateClass(ui, condition);
-						}
 					}
 				});
 			},
@@ -642,6 +649,11 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
+							$select.prop("selectedText",condition.IMSFilters["Class"]);
+							$input.val(condition.IMSFilters["Class"]);
+						}
+						if($.isNotBlank($input.val())) self.populateMinor(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderClassList").show();
@@ -649,11 +661,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
-							$select.prop("selectedText",condition.IMSFilters["Class"]);
-							$input.val(condition.IMSFilters["Class"]);
-							self.populateMinor(ui, condition);
-						}
 					}
 				});
 			},
@@ -672,6 +679,10 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
+							$select.prop("selectedText",condition.IMSFilters["Minor"]);
+							$input.val(condition.IMSFilters["Minor"]);
+						}
 					},
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
@@ -679,11 +690,7 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Minor"])){
-							$select.prop("selectedText",condition.IMSFilters["Minor"]);
-							$input.val(condition.IMSFilters["Minor"]);
-							self.populateManufacturers(ui, condition);
-						}
+						self.populateManufacturers(ui, condition);
 					}
 				});
 			},
@@ -762,12 +769,19 @@
 
 				$ims.find("select.selectCombo").combobox({
 					selected: function(e, u){
+						var $item = $(this).parents(".conditionItem");
 						switch($(this).attr("id").toLowerCase()){
-						case "categorylist" : 
+						case "categorylist" :
+							$item.find("input#categoryList").val(u.item.text);
+							$item.find("input#categoryList").prop("selectedText", u.item.text);
 							self.populateSubcategories(ui, condition); break;
 						case "subcategorylist" : 
+							$item.find("input#subCategoryList").val(u.item.text);
+							$item.find("input#subCategoryList").prop("selectedText", u.item.text);
 							self.populateClass(ui, condition); break;
 						case "classlist" : 
+							$item.find("input#classList").val(u.item.text);
+							$item.find("input#classList").prop("selectedText", u.item.text);
 							self.populateMinor(ui, condition); break;
 						}
 					}
