@@ -85,25 +85,17 @@ public class DAOConstants {
 	public static final String SP_SEARCH_RELEVANCY_KEYWORD 			= "usp_Search_Relevancy_Prod_Keyword_Relationship";
 	public static final String SP_DELETE_RELEVANCY_KEYWORD 			= "usp_Delete_Relevancy_Prod_Keyword_Relationship";
 	//REDIRECT_RULE
-	// TODO: update once sprint_3 is deployed
-//	public static final String SP_ADD_REDIRECT						= "usp_Add_Redirect_Rule";
-//	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule";
+	public static final String SP_ADD_REDIRECT						= "usp_Add_Redirect_Rule";
+	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule";
 	public static final String SP_DELETE_REDIRECT					= "usp_Delete_Redirect_Rule";
-//	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
-	public static final String SP_ADD_REDIRECT						= "Usp_add_redirect_rule_NEW";
-	public static final String SP_UPDATE_REDIRECT					= "Usp_update_redirect_rule_NEW";
-	public static final String SP_GET_REDIRECT						= "Usp_get_redirect_rule_NEW";
+	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
 	//REDIRECT_RULE_KEYWORD
 	public static final String SP_ADD_REDIRECT_KEYWORD				= "usp_Add_Redirect_Rule_Keyword_Relationship";
 	public static final String SP_DELETE_REDIRECT_KEYWORD			= "usp_Delete_Redirect_Rule_Keyword_Relationship";
 	//REDIRECT_RULE_CONDITION
-	// TODO: update once sprint_3 is deployed
-//	public static final String SP_ADD_REDIRECT_CONDITION			= "usp_Add_Redirect_Rule_Condition_Relationship";
-//	public static final String SP_UPDATE_REDIRECT_CONDITION			= "usp_Update_Redirect_Rule_Condition_Relationship";
-//	public static final String SP_DELETE_REDIRECT_CONDITION			= "usp_Delete_Redirect_Rule_Condition_Relationship";
-	public static final String SP_ADD_REDIRECT_CONDITION			= "Usp_add_redirect_rule_cond_rel_NEW";
-	public static final String SP_UPDATE_REDIRECT_CONDITION			= "Usp_update_redirect_rule_cond_rel_NEW";
-	public static final String SP_DELETE_REDIRECT_CONDITION			= "Usp_delete_redirect_rule_cond_rel_NEW";
+	public static final String SP_ADD_REDIRECT_CONDITION			= "usp_Add_Redirect_Rule_Condition_Relationship";
+	public static final String SP_UPDATE_REDIRECT_CONDITION			= "usp_Update_Redirect_Rule_Condition_Relationship";
+	public static final String SP_DELETE_REDIRECT_CONDITION			= "usp_Delete_Redirect_Rule_Condition_Relationship";
 
 	//RULE STATUS
 	public static final String SP_ADD_RULE_STATUS					= "usp_Add_Rule_Status";
