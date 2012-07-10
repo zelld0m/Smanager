@@ -544,19 +544,21 @@
 			setActiveRedirectType : function(){
 				var self = this;
 
+				$('input[type="checkbox"].activate').prop({checked:false, disabled: false });
+
 				switch(parseInt(self.selectedRule["redirectTypeId"])){
-				case 1: $("div#filter").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 2: $("div#keyword").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
-				case 3: $("div#page").find('input[type="checkbox"]#activate').prop("checked", true).prop("disabled", true); break;
+				case 1: $("div#filter").find('input#activate').prop({checked:true, disabled: true }); break;
+				case 2: $("div#keyword").find('input#activate').prop({checked:true, disabled: true }); break;
+				case 3: $("div#page").find('input#activate').prop({checked:true, disabled: true }); break;
 				};
 
-				$('input[type="checkbox"]#activate').prop("checked", false).prop("disabled", false).off().on({
+				$('input[type="checkbox"].activate').off().on({
 					click:function(evt){
 						var typeId = 1;
 						switch(self.tabSelectedTypeId){
-						case "#filter": typeId = 1; break;
-						case "#keyword": typeId = 2; break; 
-						case "#page": typeId = 3; break; 
+							case "#filter": typeId = 1; break;
+							case "#keyword": typeId = 2; break; 
+							case "#page": typeId = 3; break; 
 						}
 
 						self.updateActiveRedirectType(typeId);
@@ -568,7 +570,7 @@
 				var self = this;
 				RedirectServiceJS.setRedirectType(self.selectedRule["ruleId"], typeId, {
 					callback: function(data){
-						self.selectedRule["redirectTypeId"] = typeId;
+						self.selectedRule["redirectTypeId"] = parseInt(typeId);
 						self.setActiveRedirectType();
 					}
 				});
