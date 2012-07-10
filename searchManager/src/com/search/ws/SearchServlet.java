@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -193,7 +193,18 @@ public class SearchServlet extends HttpServlet {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
 					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_KEYWORD)) {
-						paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[^\\p{Print}]", "");
+						
+						String origKeyword = paramValue;
+						if (origKeyword == null) {
+							origKeyword = "";
+						}
+						
+						paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[\\p{Cntrl}]", "");
+						
+						String convertedKeyword = paramValue;
+						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
+								origKeyword, HexUtils.convert(origKeyword.getBytes()),
+								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
 					}
 					
 					nvp = new BasicNameValuePair(paramName, paramValue);
