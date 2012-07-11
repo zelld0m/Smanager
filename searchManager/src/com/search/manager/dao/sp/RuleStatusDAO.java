@@ -120,6 +120,7 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVED_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 		}
 	}
 
@@ -193,6 +194,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
