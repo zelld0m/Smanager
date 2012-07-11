@@ -38,6 +38,7 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
@@ -319,7 +320,17 @@ public class SearchServlet extends HttpServlet {
 						nameValuePairs.add(nvp);					
 					}
 					else if (redirect.isRedirectFilter()) {
-						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, redirect.getRedirectFilter());
+						StringBuilder builder = new StringBuilder();
+						for (String condition: redirect.getConditions()) {
+							if (StringUtils.isNotEmpty(condition)) {
+								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
+							}							
+						}
+						if (builder.length() > 0) {
+							builder.delete(builder.length() - 4, builder.length());
+						}
+						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
 						nameValuePairs.add(nvp);
 						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);

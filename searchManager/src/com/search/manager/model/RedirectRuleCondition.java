@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
@@ -115,6 +116,48 @@ public class RedirectRuleCondition extends ModelBean {
 		if (map.containsKey("Platform")) {
 			builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
 			
+		}
+		
+		if (builder.length() > 0) {
+			builder.replace(builder.length() - 5, builder.length(), "");
+		}
+		return builder.toString();
+	}
+	
+	private static String[] encloseInQuotesList = {
+		 "Category", 
+		 "SubCategory", 
+		 "Class", 
+		 "SubClass", 
+		 "Manufacturer"
+	};
+	
+	private boolean isEncloseInQuotes(String key) {
+		return ArrayUtils.contains(encloseInQuotesList, key);
+	}
+	
+	public String getConditionForSolr() {
+		StringBuilder builder = new StringBuilder();
+		String value = "";
+		for (String key: conditionMap.keySet()) {
+			builder.append(key).append(":");
+			List<String> values = conditionMap.get(key);
+			if (values.size() == 1) {
+//				try {
+					value = values.get(0);
+					if (isEncloseInQuotes(key)) {
+						value = String.format("\"%s\"", value);
+					}
+//					value = URLEncoder.encode(value, "UTF-8");
+//				} catch (UnsupportedEncodingException e) {
+//					value = "";
+//				}
+				builder.append(value);
+			}
+			else {
+				// TODO: support for multiple values
+			}
+			builder.append(" AND ");
 		}
 		
 		if (builder.length() > 0) {
