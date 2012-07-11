@@ -181,21 +181,20 @@
 	        	</div>
 	        	<!--  group 1 -->
 	        	<div id="conditionItemPattern" class="conditionItem bgf6f6f6 pad10" style="display:none">
-		        	<div class="topHeader">
-			        	<div class="txtAL floatL w50p">
-			        		<img class="toggleIcon" src="<spring:url value="/images/icon_expand.png" />">
-			        	</div>
-			        	<div class="txtAR floatR w50p">
-			        		<img class="cloneIcon" src="<spring:url value="/images/icon_clone.png" />"> 
-			        		<img class="deleteIcon" src="<spring:url value="/images/icon_delete2.png" />">
-			        	</div>
-		        	</div>
-		        	
 		        	<div class="clearB"></div>
 	        		<div class="bgfff border pad8">
 		        		<h3 class="textSummary fLblue2">
-		        			<a class="conditionFormattedText" href="javascript:void(0);"></a>
-		        		</h3>
+							<div class="txtAL floatL w90p">
+								<img class="toggleIcon floatL marR8" src="<spring:url value="/images/icon_expand.png" />">
+								<div class="floatL wordwrap w95p"><a class="conditionFormattedText" href="javascript:void(0);"></a></div>
+							</div>
+							<div class="txtAR floatR w10p">
+								<img class="cloneIcon" src="<spring:url value="/images/icon_clone.png" />"> 
+								<img class="deleteIcon" src="<spring:url value="/images/icon_delete2.png" />">
+							</div> 
+							<div class="clearB"></div>
+						</h3>
+
 	        		
 	        			<div class="conditionFields" style="display: none">
 	        				<div class="ims">
@@ -316,9 +315,16 @@
 							</table>						
 						</div><!--  end item 2 -->
 						</div>
-						<div class="txtAR borderT padT8">
-							<a href="javascript:void(0);" class="saveBtn buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
-							<a href="javascript:void(0);" class="deleteBtn buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+						
+						<div class="clearB"></div>	
+						<div class="borderT padT8">
+							<img id="preloaderUpdating" class="floatL loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+							<div class="floatR">
+								<a href="javascript:void(0);" class="saveBtn buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> 
+								<a href="javascript:void(0);" class="cloneBtn buttons btnGray clearfix"><div class="buttons fontBold">Clone</div></a> 
+								<a href="javascript:void(0);" class="deleteBtn buttons btnGray clearfix"><div class="buttons fontBold">Delete</div></a>
+							</div>
+							<div class="clearB"></div>	
 						</div>
 					</div><!--  end white container -->
 	        	</div>

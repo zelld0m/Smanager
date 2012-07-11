@@ -28,6 +28,7 @@
 			},
 
 			addDownloadListener: function(){
+				var self = this;
 				$("a#downloadIcon").download({
 					headerText:"Download Query Cleaning",
 					requestCallback:function(e){
@@ -359,17 +360,20 @@
 			},
 
 			checkIfUpdateAllowed : function(){
+				var self = this;
 				var ruleName = $.trim($('div#redirect input[id="name"]').val());  
 				var description = $.trim($('div#redirect textarea[id="description"]').val());  
 				isDirty = false;
 
-				isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(selectedRule.ruleName).toLowerCase());
-				isDirty = isDirty || (description.toLowerCase()!==$.trim(selectedRule.description).toLowerCase());
+				isDirty = isDirty || (ruleName.toLowerCase()!==$.trim(self.selectedRule["ruleName"]).toLowerCase());
+				isDirty = isDirty || (description.toLowerCase()!==$.trim(self.selectedRule["description"]).toLowerCase());
 
 				return isDirty;
 			},
 
 			updateRule : function(e) { 
+				var self = this;
+				
 				if (e.data.locked || !allowModify) return;
 
 				var ruleName = $.trim($('div#redirect input[id="name"]').val());  
@@ -428,6 +432,7 @@
 			},
 
 			deleteRule : function(e) { 
+				var self = this;
 				if (!e.data.locked  && allowModify && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
 					RedirectServiceJS.deleteRule(self.selectedRule,{
 						callback: function(code){
@@ -546,24 +551,28 @@
 
 				$('input[type="checkbox"].activate').prop({checked:false, disabled: false });
 
+				$('input[type="checkbox"].activate').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
+					click:function(e){
+						if (e.data.locked) return;
+						
+						var typeId = 1;
+						switch(self.tabSelectedTypeId){
+						case "#filter": typeId = 1; break;
+						case "#keyword": typeId = 2; break; 
+						case "#page": typeId = 3; break; 
+						}
+						
+						self.updateActiveRedirectType(typeId);
+					},
+					mouseenter: showHoverInfo
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify});
+
 				switch(parseInt(self.selectedRule["redirectTypeId"])){
 				case 1: $("div#filter").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 2: $("div#keyword").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 3: $("div#page").find('input#activate').prop({checked:true, disabled: true }); break;
 				};
 
-				$('input[type="checkbox"].activate').off().on({
-					click:function(evt){
-						var typeId = 1;
-						switch(self.tabSelectedTypeId){
-							case "#filter": typeId = 1; break;
-							case "#keyword": typeId = 2; break; 
-							case "#page": typeId = 3; break; 
-						}
-
-						self.updateActiveRedirectType(typeId);
-					}
-				});
 			},
 
 			updateActiveRedirectType : function(typeId){
@@ -584,11 +593,11 @@
 				CategoryServiceJS.getIMSCategories({
 					callback: function(data){
 						var list = data;
-						
+
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if($.isNotBlank($input.val())) self.populateSubcategories(ui, condition);
 					},
 					preHook:function(){
@@ -601,7 +610,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderCategoryList").hide();
-						console.log("Category Triggered");
 						self.populateManufacturers(ui, condition);
 					}
 				});
@@ -616,11 +624,11 @@
 				CategoryServiceJS.getIMSSubcategories(inCategory, {
 					callback: function(data){
 						var list = data;
-						
+
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if($.isNotBlank($input.val())) self.populateClass(ui, condition);
 					},
 					preHook:function(){
@@ -633,7 +641,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
-						console.log("SubCategory Triggered");
 						self.populateManufacturers(ui, condition);
 					}
 				});
@@ -652,7 +659,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if($.isNotBlank($input.val())) self.populateMinor(ui, condition);
 					},
 					preHook:function(){
@@ -665,7 +672,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
-						console.log("Class Triggered");
 						self.populateManufacturers(ui, condition);
 					}
 				});
@@ -685,7 +691,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 					},
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
@@ -697,7 +703,6 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
-						console.log("Minor Triggered");
 						self.populateManufacturers(ui, condition);
 					}
 				});
@@ -815,43 +820,65 @@
 						}
 					}
 				});
-				
-				var $input = $ims.find("input#catcode");
-				
-				$input.off().on({
-					focusout: function(e){
-						console.log("CatCode Triggered");
-						self.populateManufacturers(ui, condition);
+
+				$ims.find("a.switchToCatCode,a.switchToCatName").off().on({
+					click: function(e){
+						var $item = $(this).parents(".conditionItem");
+						var $table = $item.find("table.imsFields");
+						
+						switch($(e.currentTarget).attr("class")){
+						case "switchToCatName" : 
+							$table.find("tr.catCode").hide();
+							$table.find("tr.catName").show();
+							self.populateCategories(ui, e.data.condition);
+							break;
+						case "switchToCatCode" : 
+							$table.find("tr.catCode").show();
+							$table.find("tr.catName").hide();
+							self.populateManufacturers(ui, e.data.condition);
+							break;
+						}
 					}
 				},{condition: condition});
-					
 
-				var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
+				var $input = $ims.find("input#catcode");
 
-				if (usingCategory || ui.find("a.switchToCatCode").is(":visible")){
-					self.populateCategories(ui, condition);
-				}
-//
-//				if($ims.find("a.switchToCatName").is(":visible")){
-//					var $input = $ims.find("input#catcode");
-//					
-//					console.log("Visibility");
-//					self.populateManufacturers(ui, condition);
-//
-//					if ($.isNotBlank(condition)){
-//						$input.val(condition.IMSFilters["CatCode"]);
-//					}
-//
-//					$input.off().on({
-//						focusout: function(e){
-//							console.log("CatCode Triggered");
-//							self.populateManufacturers(ui, condition);
-//						}
-//					},{condition: condition});
-//				}		
+				$input.off().on({
+					focusout: function(e){
+						self.populateManufacturers(ui, e.data.condition);
+					}
+				},{condition: condition});
 
+				self.checkDisplay(ui, condition);
+			
+				if ($.isNotBlank(condition)){
+					$input.val(condition.IMSFilters["CatCode"]);
+				} 
 			},
 
+			checkDisplay: function(ui, condition){
+				var self = this;
+				var $ims = ui.find("div.ims");
+				
+				var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
+				var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
+				var $table = $ims.find("table.imsFields");
+
+				if($.isNotBlank(condition) && $.isEmptyObject(condition.IMSFilters)){
+					$ims.hide();
+				}
+
+				if ((usingCategory && !usingCatCode) || ui.find("a.switchToCatCode").is(":visible")){
+					$table.find("tr.catName").show();
+					$table.find("tr.catCode").hide();
+					self.populateCategories(ui, condition);
+				}else{
+					$table.find("tr.catName").hide();
+					$table.find("tr.catCode").show();
+					self.populateManufacturers(ui, condition);
+				}				
+			},
+			
 			clearIMSComboBox: function(ui, trigger){
 				var self = this;
 				var $ims = ui.find("div.ims");
@@ -905,41 +932,41 @@
 						if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
 						if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
 						if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
-						if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
 					}
+					if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
 				}
 
 				if (ui.find("div.facet").is(":visible")){
-					var platform = $.trim(ui.find("select#platformList option:selected").val());
-					var condition = $.trim(ui.find("select#conditionList option:selected").val());
-					var availability = $.trim(ui.find("select#availabilityList option:selected").val());
-					var license = $.trim(ui.find("select#licenseList option:selected").val());
+					var platform = $.trim(ui.find("input#platformList").val());
+					var condition = $.trim(ui.find("input#conditionList").val());
+					var availability = $.trim(ui.find("input#availabilityList").val());
+					var license = $.trim(ui.find("input#licenseList").val());
 
-					switch(platform){
+					switch(platform.toLowerCase()){
 					case "universal": condMap["Platform"] = ["Universal"]; break;
 					case "pc": condMap["Platform"] = ["PC"]; break;
 					case "linux": condMap["Platform"] = ["Linux"]; break;
-					case "mac": condMap["Platform"] = ["Macintosh"]; break;
+					case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
 					}
 
-					switch(condition){
+					switch(condition.toLowerCase()){
 					case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
-					case "open": condMap["Condition"] = ["Open Box"]; break;
+					case "open box": condMap["Condition"] = ["Open Box"]; break;
 					case "clearance": condMap["Condition"] = ["Clearance"]; break;
 					}
 
-					switch(availability){
-					case "instock": condMap["Availability"] = ["In Stock"]; break;
+					switch(availability.toLowerCase()){
+					case "in stock": condMap["Availability"] = ["In Stock"]; break;
 					case "call": condMap["Availability"] = ["Call"]; break;
 					}
 
-					switch(license){
-					case "license": condMap["License"] = ["Show License Products Only"]; break;
-					case "nonlicense": condMap["License"] = ["Show Non-License Products Only"]; break;
+					switch(license.toLowerCase()){
+					case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
+					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
 					}
 
 				}
-
+				
 				return condMap;
 			},
 
@@ -951,10 +978,18 @@
 				$saveBtn.find("div.buttons").html(ui.hasClass("tempConditionItem")? "Save": "Update");
 
 				$saveBtn.off().on({
-					click:function(evt){
+					click:function(e){
+						
+						if (e.data.locked) return;
+						
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
 
+						if ($.isEmptyObject(condMap)){
+							alert('Please specify at least one filter condition');
+							return;
+						}
+						
 						if ($item.hasClass("tempConditionItem")){
 							RedirectServiceJS.addCondition(self.selectedRule["ruleId"], condMap, {
 								callback:function(data){
@@ -966,14 +1001,14 @@
 										$item.attr("id",newItem["sequenceNumber"]);
 										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 										self.addToggleListener($item, newItem);
-										self.switchIMSFields($item, newItem);
-									}
+										self.addCloneFilterGroupListener($item, newItem);
+									};
 								},
 								preHook:function(){
-
+									$item.find("img#preloaderUpdating").show();
 								},
 								postHook:function(){
-
+									$item.find("img#preloaderUpdating").hide();
 								}
 							});
 						}else{
@@ -982,26 +1017,26 @@
 									if (data!=null){
 										var list = data.list;
 										var updatedItem = null;
-										
+
 										for (item in list){
 											if (parseInt(list[item]["sequenceNumber"])==parseInt($item.attr("id"))){
 												updatedItem = list[item];
-											}
+											};
 										}	
 										$item.find("a.conditionFormattedText").html(updatedItem["readableString"]);
 										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 										self.addToggleListener($item, updatedItem);
-										self.switchIMSFields($item, updatedItem);
-									}
+										self.addCloneFilterGroupListener($item, updatedItem);
+									};
 								},
 								preHook:function(){
-
+									$item.find("img#preloaderUpdating").show();
 								},
 								postHook:function(){
-
+									$item.find("img#preloaderUpdating").hide();
 								}
 							});
-						}
+						};
 					},
 					mouseenter: showHoverInfo
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify , condition: condition});
@@ -1030,6 +1065,48 @@
 				},{condition: condition});
 			},
 
+			addCloneFilterGroupListener: function(ui,condition){
+				var self = this;
+				
+				ui.find("img.cloneIcon,a.cloneBtn").off().on({
+					click: function(e){
+						var $item = $(this).parents(".conditionItem");
+						var readableString = e.data.condition["readableString"];
+						
+						if (!e.data.locked){
+							var $divItemList = $("div#conditionList");
+							
+							if ($divItemList.find("div.tempConditionItem").length > 0){
+								alert("You have an unsaved filter group");
+								return;
+							}
+							
+							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
+
+							var currCondCount = parseInt($divItemList.find("div.conditionItem:not(#conditionItemPattern):last").attr("id"));
+							if (!$.isNumeric(currCondCount)){
+								currCondCount = 0; 
+							}
+
+							$divItem.prop("id", 1 + parseInt(currCondCount));
+							$divItem.addClass("tempConditionItem");
+							$divItem.find(".conditionFormattedText").html('<span class="fred fbold">Cloned </span>' + readableString);
+							$divItem.show();
+							$divItemList.append($divItem);
+							
+							self.checkDisplay($divItem, e.data.condition);
+							
+							self.addToggleListener($divItem, e.data.condition);
+							self.addCloneFilterGroupListener($divItem, e.data.condition);
+							self.addDeleteFilterGroupListener($divItem, e.data.condition);
+							
+							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+						}
+					},
+					mouseenter: showHoverInfo
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
+			},
+
 			addNewFilterGroupListener: function(){
 				var self = this;
 
@@ -1039,19 +1116,8 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($divItemList.find("div.tempConditionItem").length > 0){
-								alert("You have an empty filter group");
+								alert("You have an unsaved filter group");
 								return;
-							}
-
-							switch($("select#filterGroup option:selected").val()){
-							case "ims": 
-								$divItemList.find("div.ims").show();
-								$divItemList.find("div.facet").show();
-								break;
-							case "facet": 
-								$divItemList.find("div.ims").hide();
-								$divItemList.find("div.facet").show();
-								break;
 							}
 
 							$divItemList.find("div#emptyConditionItem").hide();
@@ -1067,46 +1133,38 @@
 							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
 							$divItem.show();
 							$divItemList.append($divItem);
+							
+							switch($("select#filterGroup option:selected").val()){
+							case "ims": 
+								$divItem.find("div.ims").show();
+								$divItem.find("div.facet").show();
+								break;
+							case "facet": 
+								$divItem.find("div.ims").hide();
+								$divItem.find("div.facet").show();
+								break;
+							}
+							
 							self.addToggleListener($divItem);
-							self.switchIMSFields($divItem);
-							self.addDeleteFilterGroupListener();
+							self.addCloneFilterGroupListener($divItem);
+							self.addDeleteFilterGroupListener($divItem);
+
 							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
+
+							var $table = $divItem.find("table.imsFields");
 
 							switch(self.defaultIMS){
 							case "CatCode": 
-								$divItem.find("a.switchToCatCode").triggerHandler("click"); 
-								break;
+								$table.find("tr.catName").hide();
+								$divItem.find("a.switchToCatCode").triggerHandler("click"); break;
 							case "CatName": 
-								$divItem.find("a.switchToCatName").triggerHandler("click"); 
-								break;
+								$table.find("tr.catCode").hide();
+								$divItem.find("a.switchToCatName").triggerHandler("click"); break;
 							}
 						}
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-			},
-
-			switchIMSFields:function(ui, condition){
-				var self = this;
-
-				ui.find("a.switchToCatCode,a.switchToCatName").off().on({
-					click: function(e){
-						var $item = $(this).parents(".conditionItem");
-						var $table = $item.find("table.imsFields");
-						switch($(e.currentTarget).attr("class")){
-						case "switchToCatName" : 
-							$table.find("tr.catCode").hide();
-							$table.find("tr.catName").show();
-							self.populateCategories(ui, e.data.condition);
-							break;
-						case "switchToCatCode" : 
-							$table.find("tr.catCode").show();
-							$table.find("tr.catName").hide();
-							self.populateManufacturers(ui, e.data.condition);
-							break;
-						}
-					}
-				},{condition: condition});	
 			},
 
 			showEmptyFilterGroup: function(){
@@ -1119,14 +1177,13 @@
 				}
 			},
 
-			addDeleteFilterGroupListener: function(){
+			addDeleteFilterGroupListener: function(ui, condition){
 				var self = this;
-				var $divItemList = $("div#conditionList");
-
-				$divItemList.find("img.deleteIcon,a.deleteBtn").off().on({
+				
+				ui.find("img.deleteIcon,a.deleteBtn").off().on({
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
-						var readableString = $item.find(".conditionFormattedText").html();
+						var readableString = $.isNotBlank(condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
 						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
 							if ($item.hasClass("tempConditionItem")){
 								$item.remove();
@@ -1139,15 +1196,21 @@
 											$item.remove();
 											self.showEmptyFilterGroup();
 										}
+									},
+									preHook:function(){
+										$item.find("img#preloaderUpdating").show();
+									},
+									postHook:function(){
+										$item.find("img#preloaderUpdating").hide();
 									}
 								});
 							}
 						}
 					},
 					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});	
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
 			},
-
+			
 			showRuleCondition: function(){
 				var self = this;
 
@@ -1166,28 +1229,13 @@
 								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 								$divItem.prop("id", item["sequenceNumber"]);
 								$divItem.find(".conditionFormattedText").html(item["readableString"]);
-
-								var $table = $divItem.find("table.imsFields");
-
-								if($.isNotBlank(item) && $.isEmptyObject(item.IMSFilters)){
-									$divItem.find("div.ims").hide();
-								}
-
-								if(item["imsUsingCategory"]){
-									$table.find("tr.catName").show();
-									$table.find("tr.catCode").hide();
-								}else{
-									$table.find("tr.catName").hide();
-									$table.find("tr.catCode").show();
-								}
-
+								$divItem.find("tr.catCode,tr.catName").hide();
 								$divItem.show();
 								$divItemList.append($divItem);
 								self.addToggleListener($divItem, item);
-								self.switchIMSFields($divItem, item);
+								self.addCloneFilterGroupListener($divItem, item);
+								self.addDeleteFilterGroupListener($divItem, item);
 							}
-
-							self.addDeleteFilterGroupListener();
 
 							return;
 						}
@@ -1197,6 +1245,7 @@
 					},
 					preHook:function(){
 						$divItemList.find("div#emptyConditionItem").hide();
+						$divItemList.find("div.conditionItem:not(#conditionItemPattern)").remove();
 						$divItemList.find("#preloader").show();
 					},
 					postHook:function(){

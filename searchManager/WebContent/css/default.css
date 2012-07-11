@@ -109,6 +109,7 @@ body 							{ margin: 0px; }
 .cssReset .w45p, .w45p			{ width:45% }
 .cssReset .w45p83p, .w45p83		{ width:45.83% }
 .cssReset .w32p, .w32p			{ width:32% }
+.cssReset .w10p, .w10p 			{ width:10% }
 
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
