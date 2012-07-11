@@ -202,7 +202,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
 								<tr class="catName">
-									<td class="w140">Category :</td>
+									<td class="w140 padB8" valign="bottom">Category :</td>
 									<td class="iepadBT0">
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
@@ -242,7 +242,7 @@
 									</td>
 								</tr>
 								<tr class="catCode">
-									<td  class="w140" valign="top">Category Code :</td>
+									<td  class="w140 padB8" valign="bottom">Category Code :</td>
 									<td>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
