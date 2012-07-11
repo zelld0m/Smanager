@@ -204,13 +204,17 @@
 								<tr class="catName">
 									<td class="w140">Category :</td>
 									<td class="iepadBT0">
+										<div class="floatL fsize11 marB8 txtDecoUL padT3">
+											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
+										</div>
+										<div class="clearB"></div>
 										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
-								<tr class="catName">
+								<tr class="catName" id="subcategory">
 									<td>SubCategory :</td>
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
@@ -219,7 +223,7 @@
 										</div>
 									</td>
 								</tr>
-								<tr class="catName">
+								<tr class="catName" id="class">
 									<td>Class :</td>
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
@@ -228,27 +232,23 @@
 										</div>
 									</td>
 								</tr>
-								<tr class="catName">
+								<tr class="catName" id="minor">
 									<td valign="top">SubClass :</td>
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="minorList" class="selectCombo w235" title="Select SubClass"></select>
 										</div>
-										<div class="clearB"></div>
-										<div class="floatL fsize11 marB8 txtDecoUL padT3">
-											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
-										</div>
 									</td>
 								</tr>
 								<tr class="catCode">
 									<td  class="w140" valign="top">Category Code :</td>
 									<td>
-										<input id="catcode" type="text">
-										<div class="clearB"></div>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
 										</div>
+										<div class="clearB"></div>
+										<input id="catcode" type="text">
 									</td>
 								</tr>
 								<tr>

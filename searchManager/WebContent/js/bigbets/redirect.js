@@ -51,6 +51,92 @@
 				});
 			},
 
+			addDeleteRuleListener: function(){
+				var self = this;
+				
+				$("#deleteBtn").off().on({
+					click: function(e){
+						if (!e.data.locked && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
+							RedirectServiceJS.deleteRule(self.selectedRule,{
+								callback: function(code){
+									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
+									if(code==1) {
+										self.selectedRule = null;
+										self.setRedirect(null);
+									}
+								}
+							});
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+			
+			addSaveRuleListener: function(){
+				var self = this;
+				
+				$("#saveBtn").off().on({
+					click: function(e){
+						if (e.data.locked || !allowModify) return;
+
+						var ruleName = $.trim($('div#redirect input[id="name"]').val());  
+						var description = $.trim($('div#redirect textarea[id="description"]').val());  
+
+						if (self.checkIfUpdateAllowed()){
+							if ($.isBlank(ruleName)){
+								alert("Rule name is required.");
+							}
+							else if (!isAllowedName(ruleName)){
+								alert("Rule name contains invalid value.");
+							}
+							else if (!isAscii(description)) {
+								alert("Description contains non-ASCII characters.");										
+							}
+							else if (!isXSSSafe(description)){
+								alert("Description contains XSS.");
+							}
+							else {
+								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
+									callback: function(data){
+										if (data==true){
+											alert("Another query cleaning rule is already using the name provided.");
+										}else{
+											var response = 0;
+											RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
+												callback: function(data){
+													response = data;
+													showActionResponse(response, "update", ruleName);
+												},
+												preHook: function(){
+													self.prepareRedirect();
+												},
+												postHook: function(){
+													if(response==1){
+														RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
+															callback: function(data){
+																self.setRedirect(data);
+															},
+															preHook: function(){
+																self.prepareRedirect();
+															}
+														});
+													}
+													else{
+														self.setRedirect(self.selectedRule);
+													}
+
+												}
+											});
+										}
+									}
+								});
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+			
 			showRedirect : function(){
 				var self = this;
 
@@ -77,17 +163,8 @@
 				self.getKeywordInRuleList(1);
 				self.refreshTabContent();
 				self.addTabListener();
-
-				$("#saveBtn").off().on({
-					click: self.updateRule,
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-
-				$("#deleteBtn").off().on({
-					click: self.deleteRule,
-					mouseenter: showHoverInfo
-				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-
+				self.addSaveRuleListener();
+				self.addDeleteRuleListener();
 				self.addDownloadListener();
 
 				$("#submitForApprovalBtn").off().on({
@@ -316,6 +393,7 @@
 										callback: function(data){
 											if (data!=null){
 												base.getList(name, 1);
+												self.selectedRule = data;
 												self.setRedirect(data);
 											}else{
 												self.setRedirect(self.selectedRule);
@@ -369,78 +447,6 @@
 				isDirty = isDirty || (description.toLowerCase()!==$.trim(self.selectedRule["description"]).toLowerCase());
 
 				return isDirty;
-			},
-
-			updateRule : function(e) { 
-				var self = this;
-				
-				if (e.data.locked || !allowModify) return;
-
-				var ruleName = $.trim($('div#redirect input[id="name"]').val());  
-				var description = $.trim($('div#redirect textarea[id="description"]').val());  
-
-				if (checkIfUpdateAllowed()){
-					if ($.isBlank(ruleName)){
-						alert("Rule name is required.");
-					}
-					else if (!isAllowedName(ruleName)){
-						alert("Rule name contains invalid value.");
-					}
-					else if (!isAscii(description)) {
-						alert("Description contains non-ASCII characters.");										
-					}
-					else if (!isXSSSafe(description)){
-						alert("Description contains XSS.");
-					}
-					else {
-						RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
-							callback: function(data){
-								if (data==true){
-									alert("Another query cleaning rule is already using the name provided.");
-								}else{
-									var response = 0;
-									RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
-										callback: function(data){
-											response = data;
-											showActionResponse(response, "update", ruleName);
-										},
-										preHook: function(){
-											self.prepareRedirect();
-										},
-										postHook: function(){
-											if(response==1){
-												RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
-													callback: function(data){
-														self.setRedirect(data);
-													},
-													preHook: function(){
-														self.prepareRedirect();
-													}
-												});
-											}
-											else{
-												self.setRedirect(self.selectedRule);
-											}
-
-										}
-									});
-								}
-							}
-						});
-					}
-				}
-			},
-
-			deleteRule : function(e) { 
-				var self = this;
-				if (!e.data.locked  && allowModify && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
-					RedirectServiceJS.deleteRule(self.selectedRule,{
-						callback: function(code){
-							showActionResponse(code, "delete", self.selectedRule["ruleName"]);
-							if(code==1) self.setRedirect(null);
-						}
-					});
-				}
 			},
 
 			getChangeKeywordActiveRules : function(inputChangedKeyword){
@@ -589,7 +595,8 @@
 				var self = this;
 				var $select = ui.find("select#categoryList");
 				var $input = ui.find("input#categoryList");
-
+				var $table = ui.find("table.imsFields");
+				
 				CategoryServiceJS.getIMSCategories({
 					callback: function(data){
 						var list = data;
@@ -603,6 +610,7 @@
 					preHook:function(){
 						ui.find("img#preloaderCategoryList").show();
 						self.clearIMSComboBox(ui, "category");
+						$table.find("tr#subcategory,tr#class,tr#minor").hide();
 						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
 							$select.prop("selectedText",condition.IMSFilters["Category"]);
 							$input.val(condition.IMSFilters["Category"]);
@@ -620,7 +628,8 @@
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var $select = ui.find("select#subCategoryList");
 				var $input = ui.find("input#subCategoryList");
-
+				var $table = ui.find("table.imsFields");
+				
 				CategoryServiceJS.getIMSSubcategories(inCategory, {
 					callback: function(data){
 						var list = data;
@@ -628,12 +637,19 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#subcategory").show();
+						}else{
+							$table.find("tr#subcategory").hide();
+						}  
 
 						if($.isNotBlank($input.val())) self.populateClass(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderSubCategoryList").show();
 						self.clearIMSComboBox(ui, "subcategory");
+						$table.find("tr#class,tr#minor").hide();
 						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
 							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
 							$input.val(condition.IMSFilters["SubCategory"]);
@@ -652,6 +668,7 @@
 				var inSubCategory = $.trim(ui.find("input#subCategoryList").val());
 				var $select = ui.find("select#classList");
 				var $input = ui.find("input#classList");
+				var $table = ui.find("table.imsFields");
 
 				CategoryServiceJS.getIMSClasses(inCategory,inSubCategory, {
 					callback: function(data){
@@ -659,12 +676,19 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#class").show();
+						}else{
+							$table.find("tr#class").hide();
+						}  
 
 						if($.isNotBlank($input.val())) self.populateMinor(ui, condition);
 					},
 					preHook:function(){
 						ui.find("img#preloaderClassList").show();
 						self.clearIMSComboBox(ui, "class");
+						$table.find("tr#minor").hide();
 						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
 							$select.prop("selectedText",condition.IMSFilters["Class"]);
 							$input.val(condition.IMSFilters["Class"]);
@@ -684,6 +708,7 @@
 				var inClass = $.trim(ui.find("input#classList").val());
 				var $select = ui.find("select#minorList");
 				var $input = ui.find("input#minorList");
+				var $table = ui.find("table.imsFields");
 
 				CategoryServiceJS.getIMSMinors(inCategory,inSubCategory, inClass, {
 					callback: function(data){
@@ -691,7 +716,12 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-
+						
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#minor").show();
+						}else{
+							$table.find("tr#minor").hide();
+						}  
 					},
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
