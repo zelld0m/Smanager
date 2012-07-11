@@ -1029,9 +1029,10 @@
 										$item.removeClass("tempConditionItem");
 										$item.find("a.conditionFormattedText").html(newItem["readableString"]);
 										$item.attr("id",newItem["sequenceNumber"]);
-										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 										self.addToggleListener($item, newItem);
 										self.addCloneFilterGroupListener($item, newItem);
+										self.addDeleteFilterGroupListener($item, newItem);
+										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 									};
 								},
 								preHook:function(){
@@ -1048,15 +1049,16 @@
 										var list = data.list;
 										var updatedItem = null;
 
-										for (item in list){
+										for (var item in list){
 											if (parseInt(list[item]["sequenceNumber"])==parseInt($item.attr("id"))){
 												updatedItem = list[item];
 											};
 										}	
 										$item.find("a.conditionFormattedText").html(updatedItem["readableString"]);
-										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 										self.addToggleListener($item, updatedItem);
 										self.addCloneFilterGroupListener($item, updatedItem);
+										self.addDeleteFilterGroupListener($item, updatedItem);
+										$item.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 									};
 								},
 								preHook:function(){
