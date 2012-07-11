@@ -202,21 +202,6 @@ public class RedirectRule extends ModelBean {
 		return StringUtils.trimToEmpty(condition);
 	}
 	
-	/**
-	 * Return URL-encoded SOLR fq parameter
-	 * @return
-	 */
-	public String getRedirectFilter() {
-		StringBuilder fq = new StringBuilder();
-		if (StringUtils.isNotEmpty(condition)) {
-			fq = fq.append(condition.replace(DBL_PIPE_DELIM, OR));
-		}
-		if (fq.length() > 0) {
-			fq.insert(0,"(").append(")");
-		}
-		return fq.toString();
-	}
-	
 	public List<String> getSearchTerms() {
 		ArrayList<String> terms = new ArrayList<String>();
 		if (StringUtils.isNotEmpty(searchTerm)) {

@@ -266,7 +266,7 @@ public class AuditInterceptor {
 	private void logQueryCleaning(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
 		RedirectRule rule = (RedirectRule)jp.getArgs()[0];
 		String searchTerm = rule.getSearchTerm();
-		String condition = rule.getRedirectFilter();
+		String condition = rule.getCondition();
 		auditTrail.setStoreId(rule.getStoreId());
 		String refId = String.valueOf(rule.getRuleId());
 		auditTrail.setKeyword(searchTerm);
