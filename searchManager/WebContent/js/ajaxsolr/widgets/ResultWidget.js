@@ -495,10 +495,10 @@
 												callback : function(data){
 													if(data>0){
 														needRefresh = true;
-														prepareElevateResult(contentHolder);
-														updateElevateResult(contentHolder, doc, keyword);
 													}
-												}
+												},
+												preHook: function() { prepareElevateResult(contentHolder); },
+												postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
 											});
 									}else{
 										//add elevation

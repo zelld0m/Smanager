@@ -54,15 +54,15 @@ public class ElevateService{
 		}
 		
 		if (position!=elevate.getLocation()){
-			changes += updateElevate(keyword, productId, position);
+			changes += ((updateElevate(keyword, productId, position) > 0)? 1 : 0);
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += addComment(keyword, productId, comment);
+			changes += ((addComment(keyword, productId, comment) > 0)? 1 : 0);
 		}
 		
 		if (!StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
-			changes += updateExpiryDate(keyword, productId, expiryDate);
+			changes += ((updateExpiryDate(keyword, productId, expiryDate) > 0)? 1 : 0);
 		}
 		
 		return changes;
