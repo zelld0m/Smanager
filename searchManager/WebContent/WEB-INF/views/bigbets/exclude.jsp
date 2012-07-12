@@ -195,7 +195,7 @@
 		         	<div id="sItemMan" class="manfcName"></div>
 		         	</div>
 		         	
-		         	<div class="listInfo">
+		         	<div class="listInfo exclude">
 			         	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
 			         	<p class="textInfo"><span class="fgreen">SKU #: </span><span id="sItemDPNo"></span></p>
 			         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
@@ -223,7 +223,7 @@
 			         		<div class="floatL userName">			         		
 			         			<p id="sItemModBy" class="fbold fbold floatL marR3" style="overflow:hidden; max-width:160px;"></p> on
 			         		</div> 
-			         		<div class="floatL"><img src="<spring:url value="/images/icon_calendar.png" />" class="marBn4">
+			         		<div class="floatL"><img src="<spring:url value="/images/icon_date.png" />" class="marBn4">
 			         		<span id="sItemModDate" class="fDblue"></span></div>
 			         		<div class="clearB"></div>
 			            </p>

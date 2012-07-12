@@ -36,6 +36,7 @@ ul.sortableList .ui-datepicker-trigger	{ margin-bottom:-4px; margin-left:3px}
 .sortableList .listTitle				{ overflow:hidden; height:28px; margin-bottom:4px }
 .sortableList .listalpha				{ width: 45%; float:left; font-size:11px; padding-top:5px }				
 .sortableList .listbeta					{ width: 34%; float:left; font-size:11px; padding-top:5px; margin-left:10px }
+.exclude .sortableList .listbeta		{ width: 34%; float:left; font-size:11px; padding-top:5px; margin-left:0 !important }
 .sortableList .userName 				{ background:url(../../images/user_red.png) no-repeat; padding-left:20px; overflow:hidden; height:17px; width:200px }
 
 .sortableList .manfcName				{ font-weight:bold; font-size:14; color:#000; margin-top:0px; width: 170px; }
