@@ -219,7 +219,7 @@
         		Elevation <input id="sItemPosition" type="text" class="sItemPosition txtBoxSmall farial marL4 w30"/> <span class="fgray fsize11">Press ENTER to update</span>
         	</div>
 
-		<div class="listbeta">
+		 <div class="listbeta">
         			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
         	</div>
         	<div class="txtAR w65 floatL fgray padT5 endingTxt" >
@@ -227,11 +227,15 @@
 			</div>
 		<div class="clearB"></div>
         	<p class="fgray padT5 fsize11">
-        		<img src="<spring:url value="/images/user_red.png" />" class="marBn4 marR3">
-        		<span id="sItemModBy" class="fbold"></span> on <span id="sItemModDate" class="fDblue"></span></p>
-        	</div>
-       	</div>
-        </div>
+				<!-- img src="<spring:url value="/images/user_red.png" />" class="marBn4 marR3 floatL" -->
+				<div class="floatL userName">		
+				 	<p id="sItemModBy" class="fbold fbold floatL marR3" style="overflow:hidden; max-width:160px;"></p> on
+        		</div> 
+        		<div class="floatL"><img src="<spring:url value="/images/icon_calendar.png" />" class="marBn4"> <span id="sItemModDate" class="fDblue"></span></div>
+        		<div class="clearB"></div>
+        	</p>
+			</div>
+			</div>
         <div class="clearB"></div>
       </div>		        
      </li>

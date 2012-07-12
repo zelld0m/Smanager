@@ -215,7 +215,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="subcategory">
-									<td>SubCategory :</td>
+									<td class="w140">SubCategory :</td>
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -224,7 +224,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="class">
-									<td>Class :</td>
+									<td class="w140">Class :</td>
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -233,7 +233,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="minor">
-									<td valign="top">SubClass :</td>
+									<td class="w140" valign="top">SubClass :</td>
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -252,7 +252,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td valign="top">Manufacturer :</td>
+									<td class="w140" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
