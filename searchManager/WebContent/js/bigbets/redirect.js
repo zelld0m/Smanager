@@ -1102,17 +1102,16 @@
 				
 				ui.find("img.cloneIcon,a.cloneBtn").off().on({
 					click: function(e){
-						var $item = $(this).parents(".conditionItem");
-						var readableString = e.data.condition["readableString"];
-						
 						if (!e.data.locked){
 							var $divItemList = $("div#conditionList");
 							
-							if ($divItemList.find("div.tempConditionItem").length > 0){
+							if ($.isBlank(e.data.condition) || $divItemList.find("div.tempConditionItem").length > 0){
 								alert("You have an unsaved filter group");
 								return;
 							}
 							
+							var readableString = e.data.condition["readableString"];
+
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 
 							var currCondCount = parseInt($divItemList.find("div.conditionItem:not(#conditionItemPattern):last").attr("id"));
@@ -1215,7 +1214,7 @@
 				ui.find("img.deleteIcon,a.deleteBtn").off().on({
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
-						var readableString = $.isNotBlank(condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
+						var readableString = $.isNotBlank(e.data.condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
 						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
 							if ($item.hasClass("tempConditionItem")){
 								$item.remove();
