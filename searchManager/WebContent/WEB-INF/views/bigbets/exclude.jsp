@@ -220,8 +220,13 @@
 						</div>
 						<div class="clearB"></div>
 			         	<p class="fgray padT5 fsize11">
-			         		<img src="<spring:url value="/images/user_red.png" />" class="marBn4 marR3">
-			         		<span id="sItemModBy" class="fbold"></span> on <span id="sItemModDate" class="fDblue"></span></p>
+			         		<div class="floatL userName">			         		
+			         			<p id="sItemModBy" class="fbold fbold floatL marR3" style="overflow:hidden; max-width:160px;"></p> on
+			         		</div> 
+			         		<div class="floatL"><img src="<spring:url value="/images/icon_calendar.png" />" class="marBn4">
+			         		<span id="sItemModDate" class="fDblue"></span></div>
+			         		<div class="clearB"></div>
+			            </p>
 			           </div>
 		         	</div>
 		          </div>
