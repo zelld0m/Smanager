@@ -77,7 +77,7 @@
 				
 				$("#saveBtn").off().on({
 					click: function(e){
-						if (e.data.locked || !allowModify) return;
+						if (e.data.locked) return;
 
 						var ruleName = $.trim($('div#redirect input[id="name"]').val());  
 						var description = $.trim($('div#redirect textarea[id="description"]').val());  
@@ -236,7 +236,7 @@
 
 						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
 							click: function(e){
-								if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?'))
+								if (!e.data.locked && confirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?'))
 									RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
 										callback:function(code){
 											showActionResponse(code, "delete", name);
