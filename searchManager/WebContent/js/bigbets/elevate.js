@@ -277,7 +277,7 @@
 				if (item["formattedExpiryDate"] != dateText){
 					ElevateServiceJS.updateExpiryDate(selectedRule.ruleName,item["edp"], dateText, {
 						callback: function(code){
-							showActionResponse(code, "update", dateText);
+							showActionResponse(code, "update", "expiry date of SKU#: " + item["dpNo"]);
 							if(code==1) showElevate();
 						}
 					});
