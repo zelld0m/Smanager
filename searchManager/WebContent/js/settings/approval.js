@@ -243,38 +243,7 @@
 			// Alternate row style
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
-
-			$content.find("a#approveBtn, a#rejectBtn").on({
-				click:function(evt){
-					var ruleStatusId = ruleStatus["ruleStatusId"];
-					var comment = $.trim($content.find("#approvalComment").val());
-
-					if ($.isNotBlank(comment)){
-
-						switch($(evt.currentTarget).attr("id")){
-						case "approveBtn": 
-							DeploymentServiceJS.approveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId),{
-								callback: function(data){
-									refresh = true;
-								}
-							});break;
-
-						case "rejectBtn": 
-							if (checkIfDeleted()) {
-								alert("Deleted rules cannot be rejected!");
-								return;
-							}
-							DeploymentServiceJS.unapproveRule(ruleType, $.makeArray(ruleStatus["ruleRefId"]), comment, $.makeArray(ruleStatusId), {
-								callback: function(data){
-									refresh = true;
-								}
-							});break;
-						}	
-					}else{
-						alert("Please add comment.");
-					}
-				}
-			});
+			
 		};
 
 		var populatePreview = function(api, $content, ruleStatus){
@@ -427,7 +396,7 @@
 				break;
 			};
 
-			$content.find("a#approveBtn, a#rejectBtn").on({
+			$content.find("a#approveBtn, a#rejectBtn").off().on({
 				click: function(evt){
 					var comment = $content.find("#approvalComment").val();
 
