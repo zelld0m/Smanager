@@ -8,7 +8,7 @@
 
  <!-- Start content tabs -->
 <div class="clearB floatL minW240 sideMenuArea">
-    
+&nbsp;  
 </div>
 <!--  end left side -->
 <div class="clearB"></div>
