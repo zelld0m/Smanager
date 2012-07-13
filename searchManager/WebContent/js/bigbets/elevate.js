@@ -174,7 +174,7 @@
 		if (!data.locked && allowModify && confirm(deleteItemInRuleConfirmText)){
 			ElevateServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
 				callback: function(code){
-					showActionResponse(code, "delete", data["edp"]);
+					showActionResponse(code, "delete", $.isBlank(data.item["dpNo"])? "Product Id#: " + data.item["edp"] : "SKU#: " + data.item["dpNo"]);
 					showElevate();
 				},
 				preHook: function(){
@@ -261,7 +261,7 @@
 		$('#sItemDelete' + id).off().on({
 			click: deleteItemInRule,
 			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"]});
+		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"], item:item});
 
 		$("#sItemExpDate" + id).val(item["formattedExpiryDate"]);
 
