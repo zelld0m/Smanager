@@ -8,8 +8,9 @@
 	    
 <!-- Left Menu-->
 <div class="clearB floatL minW240 sideMenuArea">
+	&nbsp;
     <div class="clearB floatL w240">
-		<div class="sidebarHeader farial fsize16 fwhite bluebgTitle">Keyword Trends</div>
+		<!-- div class="sidebarHeader farial fsize16 fwhite bluebgTitle">Keyword Trends</div>
 		<div class="leftStatus">
 			<img src="<spring:url value="/images/information.png" />" class="marR3 marBn3">
 			<span class="fgreen">Most Searched</span>
@@ -46,10 +47,10 @@
 		       </td>
 		   </tr>
 		   </c:forEach>
-	  </table>
+	  </table -->
 	</div>
 </div>
-<!--Left Menu-->
+<!-- Left Menu-->
 
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">

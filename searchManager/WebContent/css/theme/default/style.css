@@ -281,7 +281,7 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 .cssReset .itemImg				{ background:#fff }
 
 .cssReset .GraytopLine			{ background:url(images/bgSort.jpg) repeat-x; padding-top:5px; margin-top:8px }
-.cssReset .iconHolder			{ float:left; display:inline; width:11px; margin-left:5px }
+.cssReset .iconHolder			{ float:left; display:inline; width:11px; margin-left:2px }
 .cssReset .elevTxtHolder		{ float:left; display:inline; width:auto; margin:-3px 7px 0 5px font-size:11px; color:red; text-align:right; font-weight: normal }
 
 /*.cssReset .bluebgTitle			{ background:url(images/bgLeftMenu.jpg); width:230px; height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }*/

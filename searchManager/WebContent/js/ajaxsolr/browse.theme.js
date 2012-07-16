@@ -154,13 +154,12 @@
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
-		output += '			<div class="floatL"> ';
-		output += '				<div id="auditHolder" class="iconHolder floatL"></div>';
-		output += '				<div class="floatL marL10">' + doc.Manufacturer + '</div>';
+		output += '			<div class="floatR marR5 marTn2">';
+		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
 		output += '			</div>';
-		output += '        <div class="floatR ruleOptionHolder" >'; 
+		output += '        <div class="floatR ruleOptionHolder marR5">'; 
 		output += '			<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
-		output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
+		//output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
 		output += '			<div id="elevateHolder" class="iconHolder"></div>';
 		output += '			<div id="excludeHolder" class="iconHolder"></div>';
 		output += '        </div>';
@@ -168,6 +167,9 @@
 		output += '	</tr>';
 		output += '   <tr>';
 		output += '		<td width="59%" align="left" valign="top" class="padT5">';
+		output += '			<div class="floatL"> ';		
+		output += '				<div class="floatL fbold marR5">' + doc.Manufacturer + '</div>';
+		output += '			</div>';
 		output += '       	<div class="floatL"><div id="docHolder"></div></div>';
 		output += '		</td>';
 		output += '      	<td width="13%" rowspan="2" align="right" valign="top" class="padT5">';
@@ -242,8 +244,8 @@
 			}
 
 			//Add Feature Button
-			secObj.find("div #featureHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
-			secObj.find("div #featureHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', featureicon) + '" alt="' + feaHover + '" title="' + feaHover + '">');
+			//secObj.find("div #featureHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
+			//secObj.find("div #featureHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', featureicon) + '" alt="' + feaHover + '" title="' + feaHover + '">');
 
 			//Add Elevate Button
 			secObj.find("div #elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
@@ -400,7 +402,7 @@
 		output += '</div>';
 		output += '</div>';
 		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
-		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">Current Elevation</h2></div >';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">Current Elevations</h2></div >';
 		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
 		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 

@@ -51,7 +51,7 @@ body 							{ margin: 0px; }
 .cssReset .w233, .w233			{width:233px !important}
 .cssReset .w235, .w235			{width:235px !important}
 .cssReset .w238					{width:238px}
-.cssReset .w240, .w240			{width:240px}
+.cssReset .w240, .w240			{width:240px !important}
 .cssReset .w245, .w245			{width:245px}
 .cssReset .w278, .w278			{width:278px}
 .cssReset .w282, .w282			{width:282px !important}
