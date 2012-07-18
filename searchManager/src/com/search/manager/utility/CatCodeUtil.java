@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -791,9 +793,8 @@ public class CatCodeUtil {
 		List<String> list = new ArrayList<String>();
 		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.SOLR_SEARCH_NAV.getCodeStr());
 		
-		String tmpLevel = ""; 
-		String tmpLevel2 = ""; 
-		String parentID = "";
+		String navID = ""; 
+		Pattern pat =  Pattern.compile("[1-9]");
 		if(StringUtils.isBlank(level1)){
 			for(String[] col:categoryRow){
 				if(col[3].equalsIgnoreCase("0"))
@@ -802,10 +803,13 @@ public class CatCodeUtil {
 			}
 		}else if(StringUtils.isBlank(level2)){
 			for(String[] col:categoryRow){
-				tmpLevel = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
-				if(col[1].equalsIgnoreCase(level1) && tmpLevel.contains("1") ){
+				navID = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
+				Matcher m = pat.matcher(navID);
+				if(col[1].equalsIgnoreCase(level1) && m.find() ){
 					for(String[] coll:categoryRow){
-						if(col[0].equalsIgnoreCase(coll[3])){
+						navID = coll[0].substring(coll[0].length()-6,coll[0].length()-3);
+						Matcher m2 = pat.matcher(navID);
+						if(col[0].equalsIgnoreCase(coll[3]) && m2.find()){
 							if(!list.contains(coll[2]))
 								list.add(coll[2]);
 						}
@@ -814,19 +818,21 @@ public class CatCodeUtil {
 			}
 		}else{
 			for(String[] col:categoryRow){
-				tmpLevel = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
-				
-				if(col[1].equalsIgnoreCase(level1) && tmpLevel.contains("1")){
-					parentID = col[0];
+				navID = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
+				Matcher m = pat.matcher(navID);
+				if(col[1].equalsIgnoreCase(level1) && m.find()){
 					for(String[] coll:categoryRow){
-						tmpLevel2 = coll[0].substring(coll[0].length()-6,coll[0].length()-3);
-						if(coll[3].equalsIgnoreCase(parentID) && tmpLevel2.contains("1")){
-							for(String[] colll:categoryRow){
-								if(coll[0].equalsIgnoreCase(colll[3])){
-									if(!list.contains(colll[2]))
-										list.add(colll[2]);
+						navID = coll[0].substring(coll[0].length()-6,coll[0].length()-3);
+						Matcher m2 = pat.matcher(navID);
+						if(coll[1].equalsIgnoreCase(level2) && m2.find()){
+								for(String[] colll:categoryRow){
+									navID = colll[0].substring(colll[0].length()-3,colll[0].length());
+									Matcher m3 = pat.matcher(navID);
+									if(coll[0].equalsIgnoreCase(colll[3]) && m3.find()){
+										if(!list.contains(colll[2]))
+											list.add(colll[2]);
+									}
 								}
-							}
 						}
 					}
 				}
