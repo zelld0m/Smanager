@@ -214,6 +214,15 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 			}
+			
+			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+
+			if (fromSearchGui && (coreName.equalsIgnoreCase("pcmall") ||  coreName.equalsIgnoreCase("pcmallcap"))) {
+				nvp = new BasicNameValuePair("facet.field", "PCMall_FacetTemplate");
+				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
+					nameValuePairs.add(nvp);
+				}
+			}
 
 			// default parameters for the core
 			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(coreName)) {
@@ -248,8 +257,6 @@ public class SearchServlet extends HttpServlet {
 			
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
-			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
-			
 			// redirect 
 			try {
 				RedirectRule redirect = null;
@@ -586,6 +593,9 @@ public class SearchServlet extends HttpServlet {
 			tasks++;
 
 			// TODO: optional remove the spellcheck parameters for succeeding requests
+			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
+			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
+
 			Future<Integer> getElevatedCount = null;
 			if (requestedRows != 0 && elevateValues.length() > 0) {
 				/* Second Request */
