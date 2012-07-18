@@ -811,6 +811,19 @@ html.gecko .endingTxt							{ font-size:11px }
 .box li		{ margin:4px }
 
 
+.itemCatList { list-style-position: inside }
+.itemCatList li { font-size:12px; color:#333 !important; text-decoration:none !important; padding:3px 5px; border-bottom:1px solid #ccc; }
+.itemCatList li a { text-decoration:none !important; color:#333 !important;}
+.itemCatList li a:hover	{ color:#666 !important; }
+.itemCatList ul { list-style-position: inside; margin:3px 4px 3px 15px; font-weight: normal !important }
+.itemCatList ul li { padding:3px 0; border-bottom:none; font-weight: normal !important}
+/*.itemCatList ul li ul li { padding:2px 0; border-bottom:none; font-weight: normal !important; font-size:11px}*/
+
+
+
+
+
+
 
 
 

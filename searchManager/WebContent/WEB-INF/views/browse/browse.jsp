@@ -48,6 +48,26 @@
 		<div class="clearB"></div>
 		<div id="prodAttribFilter"></div>
 		<div class="clearB"></div>
+		
+		<div style="width:220px; margin:5px auto">
+			<ul class="itemCatList">
+				<li><a href="/">lorem ipsum dolor</a>
+					<ul>
+						<li><a href="/">2222xx222 lorem ipsum</a>
+							<ul>
+								<li><a href="/">333 lorem ipsum</a></li>
+								<li><a href="/">333 lorem</a></li>
+								<li><a href="/">333 ipsum</a></li>
+							</ul>
+						</li>
+						<li><a href="/">2222222 lorem</a></li>
+						<li><a href="/">2222222 ipsum</a></li>
+					</ul>
+				</li>
+				<li><a href="/">sit amet</a></li>
+				<li><a href="/">lorem dolor</a></li>
+			</ul>
+		</div>
 	</div>
 	<!-- End Left Side -->
 	

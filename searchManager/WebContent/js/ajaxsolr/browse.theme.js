@@ -447,7 +447,7 @@
 					if (separator && j > 0) {
 						selDiv.append(separator);
 					}
-					selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 borderB padTB5"><span class="lnk">'));
+					selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 borderB padTB5 wordwrap"><span class="lnk">'));
 					selDiv.find('.'+list + i+' span.lnk').append(items[i][j]);
 					if (items.length==1 || items.length > 1 && i> 0)
 						selDiv.find('.'+list + i+' span.lnk a').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
@@ -457,7 +457,7 @@
 				if (separator && i > 0) {
 					selDiv.append(separator);
 				}
-				selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 borderB padTB5"><span class="lnk">'));
+				selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 borderB padTB5 wordwrap"><span class="lnk">'));
 				selDiv.find('.'+list + i+' span.lnk').append(items[i]);
 				if (items.length==1 || items.length > 1 && i>0)
 					selDiv.find('.'+list + i+' span.lnk a').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
@@ -469,7 +469,7 @@
 
 	AjaxSolr.theme.prototype.createFacetLink = function (facetId, facetField, facet, count, handler) {
 
-		var output = '<div class="' + facetId + ' farial fsize12 fDGray w220 borderB padTB5">';
+		var output = '<div class="' + facetId + ' farial fsize12 fDGray w220 borderB padTB5 wordwrap">';
 		output += '	<div id="facetFilterHolder"><span class="lnk"></span></div>';
 		output += '</div>';
 
@@ -479,7 +479,7 @@
 	};
 
 	AjaxSolr.theme.prototype.createFacetMoreOptionsLink = function (facetField, facetValues, value, handler) {
-		$('.' + facetField).append('<div id="more' + facetField + '" class="farial fsize12 fDGray w220 borderB padTB5">');
+		$('.' + facetField).append('<div id="more' + facetField + '" class="farial fsize12 fDGray w220 borderB padTB5 wordwrap">');
 		$('div#more' + facetField).append('<span class="lnk">');
 
 		return $('div#more' + facetField + ' span.lnk').append(AjaxSolr.theme('createLink', value, handler));
