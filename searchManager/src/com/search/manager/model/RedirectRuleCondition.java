@@ -143,15 +143,11 @@ public class RedirectRuleCondition extends ModelBean {
 			builder.append(key).append(":");
 			List<String> values = conditionMap.get(key);
 			if (values.size() == 1) {
-//				try {
-					value = values.get(0);
-					if (isEncloseInQuotes(key)) {
-						value = String.format("\"%s\"", value);
-					}
-//					value = URLEncoder.encode(value, "UTF-8");
-//				} catch (UnsupportedEncodingException e) {
-//					value = "";
-//				}
+				value = values.get(0);
+				// temp workaround for old data
+				if (isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
+					value = String.format("\"%s\"", value);
+				}
 				builder.append(value);
 			}
 			else {
@@ -276,6 +272,9 @@ public class RedirectRuleCondition extends ModelBean {
 				putToConditionMap("License", "Show License Products Only");
 			}
 
+			// CNET
+		
+			
 			// If InStock:0 set Availability to "In Stock"
 			//           :1 set Availability to "Call"
 			else if (fieldName.equals("InStock") && fieldValue.equals("0")) {
@@ -360,6 +359,7 @@ public class RedirectRuleCondition extends ModelBean {
 		//                 == "Call"     set InStock:0
 		String[] conditions = {
 				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
+				"PCMall_FacetTemplateName:Games\\ |\\ Games*",
 				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
 				"Clearance_Flag:1 AND Licence_Flag:0",
 				"Manufacturer:\"Apple\"",
@@ -373,6 +373,7 @@ public class RedirectRuleCondition extends ModelBean {
 			System.out.println("condition: " + rr.getCondition());
 			System.out.println("readable string: " + rr.getReadableString());
 			System.out.println("ims filter: " + rr.getIMSFilters());
+			System.out.println("cnet filter: " + rr.getCNetFilters());
 			System.out.println("facets: " + rr.getFacets());
 		}
 	}
