@@ -28,8 +28,9 @@ public class AuditTrailDAO {
 	public AuditTrailDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddAuditTrailStoredProcedure(jdbcTemplate);
     	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
+    	getRefSP = new GetAuditTrailReferenceStoredProcedure(jdbcTemplate);
     }
-
+	private final static String GET_REFID_SQL = "select REFERENCE, USER_NAME from dbo.AUDIT_TRAIL where entity = ? AND operation = ? and store = ?";
 	private final static String GET_USER_SQL = "select distinct(USER_NAME) from AUDIT_TRAIL WHERE STORE = ? ORDER BY USER_NAME";
 	private final static String GET_ACTION_SQL = "select distinct(OPERATION) from AUDIT_TRAIL WHERE STORE = ? ORDER BY OPERATION";
 	private final static String GET_ADMIN_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? ORDER BY ENTITY";
@@ -38,6 +39,7 @@ public class AuditTrailDAO {
 
 	private AddAuditTrailStoredProcedure addSP;
 	private GetAuditTrailStoredProcedure getSP;
+	private GetAuditTrailReferenceStoredProcedure getRefSP;
 
 	private class AddAuditTrailStoredProcedure extends CUDStoredProcedure {
 	    public AddAuditTrailStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -96,6 +98,31 @@ public class AuditTrailDAO {
 		        }));
 		}
 	}
+	
+	private class GetAuditTrailReferenceStoredProcedure extends GetStoredProcedure {
+	    public GetAuditTrailReferenceStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_GET_AUDIT_TRAIL);
+	    }
+
+		@Override
+		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_OPERATION, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_ENTITY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE, Types.VARCHAR));
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			 declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<AuditTrail>() {
+		            public AuditTrail mapRow(ResultSet rs, int rowNum) throws SQLException
+		            {
+		                return new AuditTrail(
+		                		rs.getString(DAOConstants.COLUMN_REFERENCE)
+		                		);
+		            }
+		        }));
+		}
+	}
 
     public int addAuditTrail(AuditTrail auditTrail) throws DataAccessException {
     	int i = -1;
@@ -147,6 +174,16 @@ public class AuditTrailDAO {
         return DAOUtils.getRecordSet(getSP.execute(inputs));
     }
     
+    public List<String> getRefIDs(String ent, String opt, String storeId) {
+		String sql = GET_REFID_SQL;
+		
+		return getSP.getJdbcTemplate().query(
+				sql, new Object[] {ent,opt,storeId}, new RowMapper() {
+					public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+						return resultSet.getString(1);
+					}
+				});
+	}
 	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) {
 		String sql = null;
 		switch (type) {

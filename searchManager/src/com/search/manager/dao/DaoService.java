@@ -175,7 +175,7 @@ public interface DaoService {
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
     public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException;
-	
+    public List<String> getRefIDs(String ent, String opt, String storeId) throws DaoException;
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;

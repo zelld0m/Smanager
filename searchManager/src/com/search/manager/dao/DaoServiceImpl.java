@@ -154,7 +154,11 @@ public class DaoServiceImpl implements DaoService {
 	public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException {
 		return auditTrailDAO.getDropdownValues(type, storeId, adminFlag);
 	}
-
+	
+	public List<String> getRefIDs(String ent, String opt, String storeId) {
+		return auditTrailDAO.getRefIDs(ent, opt, storeId);
+	}
+	
 	/* Big Bets */
 	/* retrieve data from both Solr and DB */
 	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{

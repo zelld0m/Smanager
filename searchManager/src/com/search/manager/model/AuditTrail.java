@@ -37,7 +37,10 @@ public class AuditTrail extends ModelBean implements Serializable {
 		this.details = details;
 	}
 
-
+	public AuditTrail(String referenceId){
+		this.referenceId = referenceId;
+	}
+	
 	public String getUsername() {
 		return username;
 	}

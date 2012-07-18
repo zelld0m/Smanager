@@ -9,7 +9,7 @@
 	var	startDate = "";
 	var	endDate = "";
 	var totalSize = 0;
-
+	var filter = "";
 	var getAuditTrail = function(curPage) {
 		username = $("#userList option:selected").val();
 		action = $("#actionList option:selected").val();
@@ -53,7 +53,9 @@
 		});		
 
 	};
+	
 
+	
 	var addFieldValuesPaging = function(curPage, totalItem){
 		if(totalItem==0){
 			$("div#resultsTopPaging, div#resultsBottomPaging").empty();
@@ -105,13 +107,64 @@
 			});
 
 		}
-
+		
 	};
-
-
+	
+	
+	
 	$(document).ready(function() { 
-
-		AuditServiceJS.getDropdownValues(1,{
+		$("#typeList").off().on({
+			change: function(e){
+				entity = $("#typeList option:selected").val();
+				filter = entity;
+				if(entity != "") {
+					$("#actionList").empty();
+					AuditServiceJS.getDropdownValues(2,filter.split(","),{
+						callback: function(data){
+							$("#actionList").append($("<option>", { value : "" }).text("-- Select Action --"));
+							for (var i = 0; i < data.length; i++) {
+								$("#actionList").append($("<option>", { value : data[i]}).text(data[i])); 
+							};
+						},
+						postHook: function(){$("#actionList").removeAttr("disabled");}
+						,
+						errorHandler: function(message){ alert(message); }
+					});	
+				}else{
+					$("#refList").val(""); 							
+					$("#actionList").val(""); 							
+					$("#actionList").attr("disabled","disabled"); 							
+					$("#refList").attr("disabled","disabled"); 						
+				}
+			}
+		});
+		
+		$("#actionList").off().on({
+			change:	function(e){
+				action = $("#actionList option:selected").val();
+				
+				filter = filter + "," + action;
+				if(action != "") {
+					$("#refList").empty();
+					AuditServiceJS.getDropdownValues(4,filter.split(","),{
+					callback: function(data){ 
+						$("#refList").append($("<option>", { value : "" }).text("-- Select Ref ID --"));
+						for (var i = 0; i < data.length; i++) {
+								$("#refList").append($("<option>", { value : data[i] }).text(data[i])); 
+						};
+					},
+					postHook: function(){$("#refList").removeAttr("disabled");}
+					,
+					errorHandler: function(message){ alert(message); }
+					});	
+				}	
+				else{
+					$("#refList").val("");
+					$("#refList").attr("disabled","disabled");
+				}
+			}
+		});
+		AuditServiceJS.getDropdownValues(1,filter.split(","),{
 			callback: function(data){ 
 				for (var i = 0; i < data.length; i++) {
 						$("#userList").append($("<option>", { value : data[i] }).text(data[i])); 
@@ -119,17 +172,9 @@
 			},
 			errorHandler: function(message){ alert(message); }
 		});		
+	
 
-		AuditServiceJS.getDropdownValues(2,{
-			callback: function(data){ 
-				for (var i = 0; i < data.length; i++) {
-						$("#actionList").append($("<option>", { value : data[i] }).text(data[i])); 
-				};
-			},
-			errorHandler: function(message){ alert(message); }
-		});		
-
-		AuditServiceJS.getDropdownValues(3,{
+		AuditServiceJS.getDropdownValues(3,filter.split(","),{
 			callback: function(data){ 
 				for (var i = 0; i < data.length; i++) {
 						$("#typeList").append($("<option>", { value : data[i] }).text(data[i])); 
@@ -138,15 +183,7 @@
 			errorHandler: function(message){ alert(message); }
 		});		
 
-		AuditServiceJS.getDropdownValues(4,{
-			callback: function(data){ 
-				for (var i = 0; i < data.length; i++) {
-						$("#refList").append($("<option>", { value : data[i] }).text(data[i])); 
-				};
-			},
-			errorHandler: function(message){ alert(message); }
-		});		
-
+	
 		var dates = $("#startDate, #endDate").datepicker({
 			defaultDate: "+1w",
 			showOn: "both",
