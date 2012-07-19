@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
@@ -47,6 +48,14 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 	
 	public String getCondition() {
+		return getCondition(false);
+	}
+	
+	public String getConditionForSolr() {
+		return getCondition(true);
+	}
+
+	private String getCondition(boolean forSolr) {
 		// TODO: convert from condition map
 		// Category, SubCategory, Class, SubClass, Manufacturer are grouped together
 		// e.g. Category:"Systems" AND SubCategory:"Notebook Computers" AND Class:"Intel Core i3 Notebook Computers" AND SubClass:"2.75GHz and up" AND Manufacturer:"Acer"
@@ -55,21 +64,70 @@ public class RedirectRuleCondition extends ModelBean {
 		// -or- _FacetTemplate is treated as one (next sprint)		
 		// (TemplateName or *_FacetTemplateName) and af* are grouped together (next sprint)
 		StringBuilder builder = new StringBuilder();
+		Map<String,List<String>> map = null;
 		
-		Map<String,List<String>> map = getIMSFilters();
-		for (String key: map.keySet()) {
-			builder.append(key).append(":");
-			List<String> values = map.get(key);
-			if (values.size() == 1) {
-				builder.append(values.get(0));
+		if (isIMSFilter()) {
+			map = getIMSFilters();
+			for (String key: map.keySet()) {
+				builder.append(key).append(":");
+				List<String> values = map.get(key);
+				if (values.size() == 1) {
+					if ("CatCode".equals(key)) {
+						String value = values.get(0);
+						if (!value.endsWith("*") && value.length() < 4) {
+							value += "*";
+						}
+						builder.append(value);
+					}
+					else {
+						// TODO: move to a method
+						// temp workaround for old data
+						String value = values.get(0);
+						if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
+							value = String.format("\"%s\"", value);
+						}
+						builder.append(value);						
+					}
+				}
+				else {
+					// TODO: support for multiple values
+				}
+				builder.append(" AND ");
 			}
+		}
+		// TODO: CNET
+		else if (isCNetFilter()) {
+			map = getCNetFilters();
+			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
+				String value = map.get("Level1Category").get(0);
+				builder.append("PCMall_FacetTemplate:").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+				if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
+					value = map.get("Level2Category").get(0);
+					builder.append(forSolr ? "\\ |\\ " : " | ").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+					if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
+						value = map.get("Level3Category").get(0);
+						builder.append(forSolr ? "\\ |\\ " : " | ").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+					}
+				}
+				builder.append(forSolr ? "*" : "").append(" AND ");
+			}
+			
+			String key = "Manufacturer";
+			List<String> values = map.get(key);
+			if (values != null && values.size() == 1) {
+				// temp workaround for old data
+				String value = values.get(0);
+				if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
+					value = String.format("\"%s\"", value);
+				}
+				builder.append("Manufacturer:").append(value);
+				builder.append(" AND ");
+				}
 			else {
 				// TODO: support for multiple values
 			}
-			builder.append(" AND ");
 		}
 		
-		// TODO: CNET
 		// TODO: dynamic attributes
 		
 		// Platform, Condition, Availability, License are grouped together
@@ -121,7 +179,7 @@ public class RedirectRuleCondition extends ModelBean {
 		if (builder.length() > 0) {
 			builder.replace(builder.length() - 5, builder.length(), "");
 		}
-		return builder.toString();
+		return builder.toString();		
 	}
 	
 	private static String[] encloseInQuotesList = {
@@ -134,32 +192,6 @@ public class RedirectRuleCondition extends ModelBean {
 	
 	private boolean isEncloseInQuotes(String key) {
 		return ArrayUtils.contains(encloseInQuotesList, key);
-	}
-	
-	public String getConditionForSolr() {
-		StringBuilder builder = new StringBuilder();
-		String value = "";
-		for (String key: conditionMap.keySet()) {
-			builder.append(key).append(":");
-			List<String> values = conditionMap.get(key);
-			if (values.size() == 1) {
-				value = values.get(0);
-				// temp workaround for old data
-				if (isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-					value = String.format("\"%s\"", value);
-				}
-				builder.append(value);
-			}
-			else {
-				// TODO: support for multiple values
-			}
-			builder.append(" AND ");
-		}
-		
-		if (builder.length() > 0) {
-			builder.replace(builder.length() - 5, builder.length(), "");
-		}
-		return builder.toString();
 	}
 	
 	public void setFilter(Map<String, List<String>> filter) {
@@ -182,21 +214,64 @@ public class RedirectRuleCondition extends ModelBean {
 	public String getReadableString() {
 		StringBuilder builder = new StringBuilder();
 		// construct from condition
+		Map<String,List<String>> map = null;
 		
-		Map<String,List<String>> map = getIMSFilters();
-		for (String key: map.keySet()) {
-			builder.append(key).append(" is ");
-			List<String> values = map.get(key);
-			if (values.size() == 1) {
-				builder.append(encloseInQuotes(values.get(0)));
+		if (isIMSFilter()) {
+			map = getIMSFilters();
+			if (CollectionUtils.isNotEmpty(map.get("Category"))) {
+				builder.append("Category is \"").append(map.get("Category").get(0));
+				if (CollectionUtils.isNotEmpty(map.get("SubCategory"))) {
+					builder.append(" > ").append(map.get("SubCategory").get(0));
+					if (CollectionUtils.isNotEmpty(map.get("Class"))) {
+						builder.append(" > ").append(map.get("Class").get(0));
+						if (CollectionUtils.isNotEmpty(map.get("SubClass"))) {
+							builder.append(" > ").append(map.get("SubClass").get(0));
+						}
+					}
+				}
+				builder.append("\" and ");
 			}
-			else {
-				// TODO: support for multiple values
+
+			String key = "Manufacturer";
+			if (CollectionUtils.isNotEmpty(map.get(key))) {
+				builder.append(key).append(" is ");
+				List<String> values = map.get(key);
+				if (values.size() == 1) {
+					builder.append(encloseInQuotes(values.get(0)));
+				}
+				else {
+					// TODO: support for multiple values
+				}
+				builder.append(" and ");
+			}		
+		}
+		else if (isCNetFilter()) {
+			map = getCNetFilters();
+			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
+				builder.append("Category is \"").append(map.get("Level1Category").get(0));
+				if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
+					builder.append(" > ").append(map.get("Level2Category").get(0));
+					if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
+						builder.append(" > ").append(map.get("Level3Category").get(0));
+					}
+				}
+				builder.append("\" and ");
 			}
-			builder.append(" and ");
+
+			String key = "Manufacturer";
+			if (CollectionUtils.isNotEmpty(map.get(key))) {
+				builder.append(key).append(" is ");
+				List<String> values = map.get(key);
+				if (values.size() == 1) {
+					builder.append(encloseInQuotes(values.get(0)));
+				}
+				else {
+					// TODO: support for multiple values
+				}
+				builder.append(" and ");
+			}
 		}
 		
-		// TODO: CNET
 		// TODO: dynamic attributes
 		
 		map = getFacets();
@@ -273,7 +348,26 @@ public class RedirectRuleCondition extends ModelBean {
 			}
 
 			// CNET
-		
+			// TODO: update when MacMall and other stores support CNET Facet Template
+			else if (fieldName.contains("_FacetTemplate")) {
+				if (fieldValue.endsWith("*")) {
+					fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
+				}
+				String[] facets = fieldValue.split("\\ \\|\\ ");
+				if (facets.length > 0) {
+					if (StringUtils.isNotEmpty(facets[0])) {
+						putToConditionMap("Level1Category", facets[0].replaceAll("\\\\", ""));						
+					}
+				}
+				if (facets.length > 1) {
+					putToConditionMap("Level2Category", facets[1].replaceAll("\\\\", ""));
+				}
+				if (facets.length > 2) {
+					putToConditionMap("Level3Category", facets[2].replaceAll("\\\\", ""));					
+				}
+			}
+
+			// Dynamic attributes
 			
 			// If InStock:0 set Availability to "In Stock"
 			//           :1 set Availability to "Call"
@@ -296,7 +390,19 @@ public class RedirectRuleCondition extends ModelBean {
 	public Map<String, List<String>> getCNetFilters() {
 		// if TemplateName or *_FacetTemplateName is present return TemplateName or *_FacetTemplateName and af_* fields and dynamic attributes;
 		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-		// TODO: implement
+		if (isCNetFilter()) {
+			String[] facetKeys = { "Level1Category", "Level2Category", "Level3Category", "Manufacturer" };
+			for (String key: facetKeys) {
+				List<String> value = conditionMap.get(key);
+				List<String> newValue = new ArrayList<String>();
+				if (CollectionUtils.isNotEmpty(value)) {
+					for(String tmp:value) {
+						newValue.add(tmp.replaceAll("\"", ""));					
+					}
+					map.put(key, new ArrayList<String>(newValue));
+				}
+			}
+		}
 		return map;
 	}
 	
@@ -304,16 +410,20 @@ public class RedirectRuleCondition extends ModelBean {
 		// if Category is present return Category, SubCategory, Class, SubClass and Manufacturer fields;
 		// else if CatCode is present return CatCode and Manufacturer fields;
 		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-		String[] categoryKeys = { "Category", "SubCategory", "Class", "SubClass", "Manufacturer" };
-		String[] catCodeKeys = { "CatCode", "Manufacturer"};
-		// TODO: update once CNET filters is available
-		for (String key: isImsUsingCategory() ? categoryKeys : catCodeKeys) {
-			List<String> value = conditionMap.get(key);
-			List<String> newValue = new ArrayList<String>();
-			if (value != null && !value.isEmpty()) {
-				for(String tmp:value)
-					newValue.add(tmp.replaceAll("\"", ""));
-				map.put(key, new ArrayList<String>(newValue));
+		
+		if (isIMSFilter()) {
+			String[] categoryKeys = { "Category", "SubCategory", "Class", "SubClass", "Manufacturer" };
+			String[] catCodeKeys = { "CatCode", "Manufacturer"};
+			// TODO: update once CNET filters is available
+			for (String key: isImsUsingCategory() ? categoryKeys : catCodeKeys) {
+				List<String> value = conditionMap.get(key);
+				List<String> newValue = new ArrayList<String>();
+				if (CollectionUtils.isNotEmpty(value)) {
+					for(String tmp:value) {
+						newValue.add(tmp.replaceAll("\"", ""));					
+					}
+					map.put(key, new ArrayList<String>(newValue));
+				}
 			}
 		}
 		return map;
@@ -325,6 +435,16 @@ public class RedirectRuleCondition extends ModelBean {
 	
 	public boolean isImsUsingCategory() {
 		return conditionMap.get("Category") != null && !conditionMap.get("Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Category").get(0));
+	}
+	
+	public boolean isIMSFilter() {
+		return (!isCNetFilter() && 
+			(conditionMap.get("Manufacturer") != null && !conditionMap.get("Manufacturer").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Manufacturer").get(0)) ||
+					isImsUsingCatCode() || isImsUsingCategory()));
+	}
+
+	public boolean isCNetFilter() {
+		return conditionMap.get("Level1Category") != null && !conditionMap.get("Level1Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Level1Category").get(0));
 	}
 
 	public Map<String, List<String>> getTemplateFilters() {
@@ -359,11 +479,12 @@ public class RedirectRuleCondition extends ModelBean {
 		//                 == "Call"     set InStock:0
 		String[] conditions = {
 				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
-				"PCMall_FacetTemplateName:Games\\ |\\ Games*",
-				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
-				"Clearance_Flag:1 AND Licence_Flag:0",
+				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
+				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
+//				"CatCode:3F AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
+//				"Clearance_Flag:1 AND Licence_Flag:0",
 				"Manufacturer:\"Apple\"",
-				""
+//				""
 		};
 		
 		for (String condition: conditions) {
@@ -371,6 +492,7 @@ public class RedirectRuleCondition extends ModelBean {
 			RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 			System.out.println("text: " + condition);
 			System.out.println("condition: " + rr.getCondition());
+			System.out.println("solr filter: " + rr.getConditionForSolr());
 			System.out.println("readable string: " + rr.getReadableString());
 			System.out.println("ims filter: " + rr.getIMSFilters());
 			System.out.println("cnet filter: " + rr.getCNetFilters());
