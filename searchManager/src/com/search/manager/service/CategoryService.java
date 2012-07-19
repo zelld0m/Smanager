@@ -89,4 +89,34 @@ public class CategoryService {
 		}
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel1Categories() throws DataException {
+		return CatCodeUtil.getCNETNextLevel("","");
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel2Categories(String level1Category) throws DataException {
+		return CatCodeUtil.getCNETNextLevel(level1Category, "");
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel3Categories(String level1Category, String level2Category) throws DataException {
+		return CatCodeUtil.getCNETNextLevel(level1Category, level2Category);
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETManufacturers(String category, String subcategory, String className) {
+		List<String> filters = new ArrayList<String>();
+		if (StringUtils.isNotBlank(category)) {
+			filters.add(String.format("Category: %s", category));
+		}
+		if (StringUtils.isNotBlank(subcategory)) {
+			filters.add(String.format("SubCategory: %s", subcategory));
+		}
+		if (StringUtils.isNotBlank(className)) {
+			filters.add(String.format("Class: %s", className));
+		}
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+	}
 }
