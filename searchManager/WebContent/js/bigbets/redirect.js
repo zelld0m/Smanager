@@ -534,6 +534,29 @@
 					}
 				});
 			},
+			
+			setIncludeKeyword : function(){
+				var self = this;
+				$('input[type="checkbox"].includeKeyword').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
+					click:function(e){
+						if (e.data.locked) return;
+						
+						var isIncludeKeyword = $('input[type="checkbox"].includeKeyword')[0].checked;
+						
+						self.updateIncludeKeyword(isIncludeKeyword);
+					},
+					mouseenter: showHoverInfo
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify});
+			},
+
+			updateIncludeKeyword : function(isIncludeKeyword){
+				var self = this;
+				RedirectServiceJS.setIncludeKeyword(self.selectedRule["ruleId"], isIncludeKeyword, {
+					callback: function(data){
+						self.setIncludeKeyword();
+					}
+				});
+			},
 
 			populateLevel1Categories: function(ui, condition){
 				var self = this;
@@ -555,9 +578,9 @@
 						ui.find("img#preloaderLevel1CategoryList").show();
 						self.clearCNETComboBox(ui, "level1Cat");
 						$table.find("tr#level2Cat, tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Category"])){
-							$select.prop("selectedText",condition.CNETFilters["Category"]);
-							$input.val(condition.CNETFilters["Category"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level1Category"])){
+							$select.prop("selectedText",condition.CNETFilters["Level1Category"]);
+							$input.val(condition.CNETFilters["Level1Category"]);
 						}
 					},
 					postHook:function(){
@@ -594,9 +617,9 @@
 						ui.find("img#preloaderLevel2CategoryList").show();
 						self.clearCNETComboBox(ui, "level2Cat");
 						$table.find("tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["SubCategory"])){
-							$select.prop("selectedText",condition.CNETFilters["SubCategory"]);
-							$input.val(condition.CNETFilters["SubCategory"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level2Category"])){
+							$select.prop("selectedText",condition.CNETFilters["Level2Category"]);
+							$input.val(condition.CNETFilters["Level2Category"]);
 						}
 					},
 					postHook:function(){
@@ -631,9 +654,9 @@
 					preHook:function(){
 						ui.find("img#preloaderLevel3CategoryList").show();
 						self.clearCNETComboBox(ui, "level3Cat");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Class"])){
-							$select.prop("selectedText",condition.CNETFilters["Class"]);
-							$input.val(condition.CNETFilters["Class"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level3Category"])){
+							$select.prop("selectedText",condition.CNETFilters["Level3Category"]);
+							$input.val(condition.CNETFilters["Level3Category"]);
 						}
 					},
 					postHook:function(){
@@ -1185,12 +1208,11 @@
 					level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
 					cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
 
-					//TODO: update Map key once model is ready
-					if ($.isNotBlank(level1Cat[0])) condMap["Category"] = category; 	
-					if ($.isNotBlank(level2Cat[0])) condMap["SubCategory"] = subCategory; 	
-					if ($.isNotBlank(level3Cat[0])) condMap["Class"] = clazz; 	
+					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat[0]; 	
+					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat[0]; 	
+					if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat[0]; 	
 					
-					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer[0]; 	
 				}
 
 				if (ui.find("div.facet").is(":visible")){
@@ -1527,6 +1549,7 @@
 				var self = this;
 				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
 				self.setActiveRedirectType();
+				self.setIncludeKeyword();
 
 				switch(self.tabSelectedTypeId){
 				case "#filter" : self.showRuleCondition(); break;
