@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.InetAddress;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -239,12 +240,11 @@ public class TopKeywordsUtility {
 			HttpResponse solrResponse = null;
 		    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 	        Document doc = null;		
-	        List<String> zeroList = new ArrayList<String>();
-	       
+	        HashMap<String, KeyValuePair> mapZero = new HashMap<String,KeyValuePair>();
 			for (Entry<String, KeyValuePair> entry : map.entrySet())
 			{
 			    parameters.clear();
-			    parameters.add(new BasicNameValuePair("q", entry.getKey()));
+			    parameters.add(new BasicNameValuePair("q", URLDecoder.decode(entry.getKey(),"UTF-8")));
 			    post.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
 			    solrResponse=client.execute(post);
 			    doc = builder.parse(solrResponse.getEntity().getContent());
@@ -253,9 +253,21 @@ public class TopKeywordsUtility {
 							.getAttributes().getNamedItem("numFound").getNodeValue());
 			    if(count == 0){
 			    	toGenerateZero = true;
-			    	zeroList.add(entry.getKey());
+			    	mapZero.put(entry.getKey(), entry.getValue());	
+			    	
 			    }
 			}
+			List<KeyValuePair> valuesZero = new ArrayList<KeyValuePair>(mapZero.values());
+			Collections.sort(valuesZero, new Comparator<KeyValuePair>() {
+				@Override
+				public int compare(KeyValuePair arg0, KeyValuePair arg1) {
+					int result = arg1.value - arg0.value;
+					if (result == 0) {
+						result = arg0.key.compareTo(arg1.key);
+					}
+					return result;
+				}
+			});
 			
 			if (toGenerateZero) {
 				BufferedWriter writer = null;
@@ -264,8 +276,10 @@ public class TopKeywordsUtility {
 				try {
 					outFile.createNewFile();
 					writer = new BufferedWriter(new FileWriter(outFile));
-					for (String keyword: zeroList) {
-						writer.write(keyword);
+					for (KeyValuePair kvp: valuesZero) {
+						writer.write(String.valueOf(kvp.value));
+						writer.write(",");
+						writer.write(URLDecoder.decode(kvp.key, "UTF-8"));
 						writer.write("\n");
 					}
 					generatedZero = true;
@@ -292,6 +306,8 @@ public class TopKeywordsUtility {
 				}
 			});
 			
+			
+			
 			if (toGenerate) {
 				BufferedWriter writer = null;
 				generatedFile = tmpInFolder.getAbsolutePath() + "/" + store + "_summary_" + strDate +".csv";
@@ -302,7 +318,7 @@ public class TopKeywordsUtility {
 					for (KeyValuePair kvp: values) {
 						writer.write(String.valueOf(kvp.value));
 						writer.write(",");
-						writer.write(kvp.key);
+						writer.write(URLDecoder.decode(kvp.key, "UTF-8"));
 						writer.write("\n");
 					}
 					generated = true;
