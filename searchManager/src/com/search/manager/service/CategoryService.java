@@ -1,7 +1,9 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +18,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.utility.CatCodeUtil;
 import com.search.ws.SearchHelper;
 
@@ -106,17 +109,28 @@ public class CategoryService {
 	}
 	
 	@RemoteMethod
-	public List<String> getCNETManufacturers(String category, String subcategory, String className) {
-		List<String> filters = new ArrayList<String>();
-		if (StringUtils.isNotBlank(category)) {
-			filters.add(String.format("Category: %s", category));
+	public List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
+		Map<String, List<String>> filter = new HashMap<String, List<String>>();
+		ArrayList<String> filters = null;
+		if (StringUtils.isNotBlank(level1Category)) {
+			filters = new ArrayList<String>();
+			filters.add(level1Category);
+			filter.put("Level1Category", new ArrayList<String>(filters));
+			if (StringUtils.isNotBlank(level2Category)) {
+				filters = new ArrayList<String>();
+				filters.add(level2Category);
+				filter.put("Level2Category", new ArrayList<String>(filters));
+				if (StringUtils.isNotBlank(level3Category)) {
+					filters = new ArrayList<String>();
+					filters.add(level3Category);
+					filter.put("Level3Category", new ArrayList<String>(filters));
+				}
+			}
 		}
-		if (StringUtils.isNotBlank(subcategory)) {
-			filters.add(String.format("SubCategory: %s", subcategory));
-		}
-		if (StringUtils.isNotBlank(className)) {
-			filters.add(String.format("Class: %s", className));
-		}
+		filters = new ArrayList<String>();
+		RedirectRuleCondition rr = new RedirectRuleCondition();
+		rr.setFilter(filter);
+		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
 }
