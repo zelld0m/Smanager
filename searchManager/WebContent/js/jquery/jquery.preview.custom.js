@@ -428,7 +428,7 @@
 
 					template += '	<div class="clearB"></div>';
 					template += '	<div id="ruleFilter" class="ruleFilter marB10">';
-					template += '		<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6 w580 pad5"></div>';
+					template += '		<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6 w570 pad5 mar10"></div>';
 					template += '		<div class="w580 mar0 padLR5">';
 					template += '			<table class="tblItems w100p marT10" id="itemHeader">';
 					template += '				<tbody>';

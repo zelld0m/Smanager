@@ -812,7 +812,7 @@ html.gecko .endingTxt							{ font-size:11px }
 
 
 /* redirect */
-.containerRedirect   { padding-top:20px !important}
+body .tabs .containerRedirect   { padding-top:20px !important}
 
 
 

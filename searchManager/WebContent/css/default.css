@@ -79,6 +79,7 @@ body 							{ margin: 0px; }
 .cssReset .w535, .w535          {width:535px}
 .cssReset .w550, .w550          {width:550px}
 .cssReset .w555, .w555          {width:555px}
+.cssReset .w570, .w570          {width:570px}
 .cssReset .w580, .w580          {width:580px}
 .cssReset .w590, .w590          {width:590px}
 .cssReset .w600, .w600			{width:600px}
@@ -392,7 +393,7 @@ body 							{ margin: 0px; }
 .cssReset .forange 				{ color:#ea7723 }
 .cssReset .fgreen, .fgreen		{ color:#2d6b00 }
 
-.cssReset .bgf6f6f6				{ background: #f6f6f6 }
+.cssReset .bgf6f6f6, .bgf6f6f6	{ background: #f6f6f6 }
 .cssReset .bgfff				{ background: #fff }
 
 

@@ -215,7 +215,7 @@
 								
 				<div class="clearB"></div>	
 				<div id="ruleFilter" class="ruleFilter marB10">
-					<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6 w580 pad5">Include keyword in search: No</div>
+					<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6  w570 pad5 mar10">Include keyword in search: No</div>
 					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
