@@ -169,7 +169,7 @@
 	        	<h2 class="borderB padB3">Create Filter Group : 
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
-					<c:if test="${store eq 'pcmall' or store eq 'sbn'}">
+					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
 					<option value="cnet">Facet Template Categories</option>
 					</c:if>
 					<option value="facet">Facets</option>
