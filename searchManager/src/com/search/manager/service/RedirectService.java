@@ -108,6 +108,22 @@ public class RedirectService {
 	}
 
 	@RemoteMethod
+	public int setIncludeKeyword(String ruleId, Boolean includeKeyword) {
+		int result = -1;
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setIncludeKeyword(includeKeyword);
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during setIncludeKeyword()",e);
+		}
+		return result;
+	}
+	
+	@RemoteMethod
 	public int setChangeKeyword(String ruleId, String changeKeyword) {
 		int result = -1;
 		try {

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -339,8 +340,10 @@ public class SearchServlet extends HttpServlet {
 						}
 						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
 						nameValuePairs.add(nvp);
-						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
+							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
+						}
 					}					
 				}
 			} catch (Exception e) {

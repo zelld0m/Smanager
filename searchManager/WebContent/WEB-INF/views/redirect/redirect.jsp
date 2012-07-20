@@ -128,15 +128,15 @@
     			<li><a href="#page"><span>Direct Hit</span></a></li>
     		</ul>
     		
-    		<div id="page">
-    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    		<div id="page" class="containerRedirect">
+    			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			<div class="clearB"></div>
     		</div>
 			
-    		<div id="keyword">
-    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    		<div id="keyword" class="containerRedirect">
+    			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			<div class="landingCont bgboxGray w96p50p floatL">
@@ -150,22 +150,28 @@
 					</div>
 					<div id="activerules" style="display: none">
 						<div class="clearB marT10 padT8 borderT"></div>						
-						<div class="alert">This keyword has <span id="rules"></span></div>
+						<div class="alert">This keyword is using the following rules: <span id="rules"></span></div>
 						<div id="activerules"></div>
 					</div>				
 				</div>
 				<div class="clearB"></div>
 			</div>
     		
-    		<div id="filter">
-    			<div class="landingCont bgboxGray w96p50p floatL marT20">
+    		<div id="filter" class="containerRedirect">
+    			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
-    			
-	        	<div class="dropdownArea">
+    			<div class="landingCont bgboxGray w96p50p floatL marB10">
+    				<input type="checkbox" id="includeKeyword" class="includeKeyword"> Include keyword in search (<span class="fitalic">Note: Not checking this box will make Ranking Rule boost query have no effect.</span>)
+    			</div>
+    			<div class="clearB"></div>
+	        	<div class="dropdownArea marT10">
 	        	<h2 class="borderB padB3">Create Filter Group : 
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
+					<c:if test="${store eq 'pcmall' or store eq 'sbn'}">
+					<option value="cnet">Facet Template Categories</option>
+					</c:if>
 					<option value="facet">Facets</option>
 				</select>
 				<a id="addFilterGroupBtn" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
@@ -210,7 +216,7 @@
 										<div class="clearB"></div>
 										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="categoryList" class="selectCombo w235" title="Select Category"></select>
+											<select name="select" id="categoryList" class="categoryList selectCombo w235" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -219,7 +225,7 @@
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="subCategoryList" class="selectCombo w235" title="Select SubCategory"></select>
+											<select name="select" id="subCategoryList" class="subCategoryList selectCombo w235" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -228,7 +234,7 @@
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="classList" class="selectCombo w235" title="Select Class"></select>
+											<select name="select" id="classList" class="classList selectCombo w235" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
@@ -237,7 +243,7 @@
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="minorList" class="selectCombo w235" title="Select SubClass"></select>
+											<select name="select" id="minorList" class="minorList selectCombo w235" title="Select SubClass"></select>
 										</div>
 									</td>
 								</tr>
@@ -256,12 +262,56 @@
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="manufacturerList" class="selectCombo w235" title="Select Manufacturer"></select>
+											<select name="select" id="manufacturerList" class="manufacturerList selectCombo w235" title="Select Manufacturer"></select>
 										</div>	
 									</td>
 								</tr>
 							</table>						
 						</div><!--  end item 1 -->
+					</div>
+					
+					<div class="cnet">
+	        				<h3 class="marT10">Facet Template / Manufacturers</h3>	        		
+	        				<div class="fsize12 marTB20 marRL50">
+							<table class="cnetFields">							
+								<tr class="catName" id="level1Cat">
+									<td class="w140 padB8" valign="bottom">Level 1 Category :</td>
+									<td class="iepadBT0">
+										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w235" title="Select Category"></select>
+										</div>
+									</td>
+								</tr>
+								<tr class="catName" id="level2Cat">
+									<td class="w140">Level 2 Category :</td>
+									<td>
+										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w235" title="Select SubCategory"></select>
+										</div>
+									</td>
+								</tr>
+								<tr class="catName" id="level3Cat">
+									<td class="w140">Level 3 Category :</td>
+									<td>
+										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="w140" valign="top">Manufacturer :</td>
+									<td>
+										<img id="preloaderCNETManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w235" title="Select Manufacturer"></select>
+										</div>	
+									</td>
+								</tr>
+							</table>						
+						</div><!--  end item 2 -->
 					</div>
 					
 					<div class="facet">
@@ -313,7 +363,7 @@
 								</tr>
 												
 							</table>						
-						</div><!--  end item 2 -->
+						</div><!--  end item 3 -->
 						</div>
 						
 						<div class="clearB"></div>	
