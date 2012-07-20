@@ -128,14 +128,14 @@
     			<li><a href="#page"><span>Direct Hit</span></a></li>
     		</ul>
     		
-    		<div id="page">
+    		<div id="page" class="containerRedirect">
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			<div class="clearB"></div>
     		</div>
 			
-    		<div id="keyword">
+    		<div id="keyword" class="containerRedirect">
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
