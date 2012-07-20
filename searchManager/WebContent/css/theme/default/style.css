@@ -811,6 +811,10 @@ html.gecko .endingTxt							{ font-size:11px }
 .box li		{ margin:4px }
 
 
+/* redirect */
+.containerRedirect   { padding-top:20px !important}
+
+
 
 
 

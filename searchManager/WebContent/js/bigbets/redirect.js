@@ -578,9 +578,9 @@
 						ui.find("img#preloaderLevel1CategoryList").show();
 						self.clearCNETComboBox(ui, "level1Cat");
 						$table.find("tr#level2Cat, tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level1Category"])){
-							$select.prop("selectedText",condition.CNETFilters["Level1Category"]);
-							$input.val(condition.CNETFilters["Level1Category"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level1Category"])){
+							$select.prop("selectedText",condition.CNetFilters["Level1Category"]);
+							$input.val(condition.CNetFilters["Level1Category"]);
 						}
 					},
 					postHook:function(){
@@ -617,9 +617,9 @@
 						ui.find("img#preloaderLevel2CategoryList").show();
 						self.clearCNETComboBox(ui, "level2Cat");
 						$table.find("tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level2Category"])){
-							$select.prop("selectedText",condition.CNETFilters["Level2Category"]);
-							$input.val(condition.CNETFilters["Level2Category"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level2Category"])){
+							$select.prop("selectedText",condition.CNetFilters["Level2Category"]);
+							$input.val(condition.CNetFilters["Level2Category"]);
 						}
 					},
 					postHook:function(){
@@ -654,9 +654,9 @@
 					preHook:function(){
 						ui.find("img#preloaderLevel3CategoryList").show();
 						self.clearCNETComboBox(ui, "level3Cat");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Level3Category"])){
-							$select.prop("selectedText",condition.CNETFilters["Level3Category"]);
-							$input.val(condition.CNETFilters["Level3Category"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level3Category"])){
+							$select.prop("selectedText",condition.CNetFilters["Level3Category"]);
+							$input.val(condition.CNetFilters["Level3Category"]);
 						}
 					},
 					postHook:function(){
@@ -689,9 +689,9 @@
 					preHook:function(){
 						ui.find("img#preloaderCNETManufacturerList").show();
 						self.clearCNETComboBox(ui, "cnetmanufacturer");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNETFilters["Manufacturer"])){
-							$select.prop("selectedText",condition.CNETFilters["Manufacturer"]);
-							$input.val(condition.CNETFilters["Manufacturer"]);
+						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Manufacturer"])){
+							$select.prop("selectedText",condition.CNetFilters["Manufacturer"]);
+							$input.val(condition.CNetFilters["Manufacturer"]);
 						}
 					},
 					postHook:function(){
@@ -954,8 +954,6 @@
 						}
 					}
 				});
-
-				self.checkCNETDisplay(ui, condition);
 			},
 
 			addIMSFieldListener: function(ui, condition){
@@ -1035,8 +1033,6 @@
 					}
 				},{condition: condition});
 
-				self.checkIMSDisplay(ui, condition);
-			
 				if ($.isNotBlank(condition)){
 					$input.val(condition.IMSFilters["CatCode"]);
 				} 
@@ -1050,7 +1046,7 @@
 				
 				 ui.find("div.cnet, div.ims").hide();
 				
-				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && !$.isEmptyObject(condition.CNETFilters))){
+				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
 					$cnet.show();
 					self.addCNETFieldListener(ui, condition);
 					
@@ -1058,7 +1054,7 @@
 					$table.find("tr.catName").show();
 					self.populateLevel1Categories(ui, condition);
 				}
-				else if(($.isBlank(condition) && selectedFilter === "ims") ||  $.isNotBlank(condition) && !$.isEmptyObject(condition.IMSFilters)){
+				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					$ims.show();
 					self.addIMSFieldListener(ui, condition);
 					
@@ -1084,7 +1080,7 @@
 				
 				var $table = $cnet.find("table.cnetFields");
 
-				if($.isNotBlank(condition) && $.isEmptyObject(condition.CNETFilters)){
+				if($.isNotBlank(condition) && $.isEmptyObject(condition.CNetFilters)){
 					$cnet.hide();
 				}
 
@@ -1208,11 +1204,11 @@
 					level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
 					cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
 
-					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat[0]; 	
-					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat[0]; 	
-					if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat[0]; 	
+					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
+					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
+					if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat; 	
 					
-					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer[0]; 	
+					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
 				}
 
 				if (ui.find("div.facet").is(":visible")){
@@ -1337,12 +1333,7 @@
 						}else{
 							$item.find("img.toggleIcon").attr("src", GLOBAL_contextPath + "/images/icon_collapse.png");
 							$item.find(".conditionFields").slideDown("slow", function(){
-								//TODO: change to check display before adding listener
 								self.checkDisplay($item, e.data.condition);
-								
-								//self.addIMSFieldListener($item, e.data.condition);
-								//self.addCNETFieldListener($item, e.data.condition);
-
 								self.addFacetFieldListener($item, e.data.condition);
 								self.addSaveButtonListener($item, e.data.condition);
 							});

@@ -347,6 +347,20 @@
 						}else{
 							$content.find("div#ruleChange > #noChangeKeyword").show();
 						}
+						
+						if($.isNotBlank(data["includeKeyword"])){
+							var includeKeywordText = "Include keyword in search: ";
+							
+							if(data["includeKeyword"]){
+								includeKeywordText += "Yes";
+							}
+							else{
+								includeKeywordText += "No";
+							}
+							
+							$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+							$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
+						}
 					}
 				});
 
