@@ -537,6 +537,17 @@
 			
 			setIncludeKeyword : function(){
 				var self = this;
+				
+				$('input[type="checkbox"].includeKeyword').prop({checked:false});
+				
+				RedirectServiceJS.getRule(self.selectedRule["ruleId"], {
+					callback: function(data){
+						if($.isNotBlank(data["includeKeyword"])){
+							$("div#filter").find('input#includeKeyword').prop({checked:data["includeKeyword"] });
+						}
+					}
+				});
+				
 				$('input[type="checkbox"].includeKeyword').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 					click:function(e){
 						if (e.data.locked) return;
