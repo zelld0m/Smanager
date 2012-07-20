@@ -352,10 +352,10 @@
 							var includeKeywordText = "Include keyword in search: ";
 							
 							if(data["includeKeyword"]){
-								includeKeywordText += "Yes";
+								includeKeywordText += "<b>YES</b>";
 							}
 							else{
-								includeKeywordText += "No";
+								includeKeywordText += "<b>NO</b>";
 							}
 							
 							$content.find("div.ruleFilter div#includeKeywordInSearchText").show();

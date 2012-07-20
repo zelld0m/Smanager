@@ -132,6 +132,20 @@
 								$content.find("div#ruleChange > #noChangeKeyword").show();
 							}
 							
+							if($.isNotBlank(data["includeKeyword"])){
+								var includeKeywordText = "Include keyword in search: ";
+								
+								if(data["includeKeyword"]){
+									includeKeywordText += "<b>YES</b>";
+								}
+								else{
+									includeKeywordText += "<b>NO</b>";
+								}
+								
+								$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+								$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
+							}
+							
 							base.populateKeywordInRule($content, data["searchTerms"]);
 						}
 					});
