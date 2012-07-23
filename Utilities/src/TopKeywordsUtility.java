@@ -344,7 +344,7 @@ public class TopKeywordsUtility {
 			}
 			if (!generatedZero) {
 				generatedZeroFile = null;
-				log.append("WARNING Output file was not generated!");
+				log.append("No zero search result found. Zero report was not generated!");
 			}
 			try {
 				if (sendMail(store + " " + strDate + " report ", log.toString(), properties, generatedFile)) {
