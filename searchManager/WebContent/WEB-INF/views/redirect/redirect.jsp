@@ -216,7 +216,7 @@
 										<div class="clearB"></div>
 										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="categoryList" class="categoryList selectCombo w235" title="Select Category"></select>
+											<select name="select" id="categoryList" class="categoryList selectCombo w230" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -225,7 +225,7 @@
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="subCategoryList" class="subCategoryList selectCombo w235" title="Select SubCategory"></select>
+											<select name="select" id="subCategoryList" class="subCategoryList selectCombo w230" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -234,7 +234,7 @@
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="classList" class="classList selectCombo w235" title="Select Class"></select>
+											<select name="select" id="classList" class="classList selectCombo w230" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
@@ -243,7 +243,7 @@
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="minorList" class="minorList selectCombo w235" title="Select SubClass"></select>
+											<select name="select" id="minorList" class="minorList selectCombo w230" title="Select SubClass"></select>
 										</div>
 									</td>
 								</tr>
@@ -279,7 +279,7 @@
 									<td class="iepadBT0">
 										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w235" title="Select Category"></select>
+											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w230" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -288,7 +288,7 @@
 									<td>
 										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w235" title="Select SubCategory"></select>
+											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w230" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -297,7 +297,7 @@
 									<td>
 										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>
+											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w230" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
