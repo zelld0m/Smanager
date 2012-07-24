@@ -218,7 +218,13 @@ public class RedirectRuleCondition extends ModelBean {
 		
 		if (isIMSFilter()) {
 			map = getIMSFilters();
-			if (CollectionUtils.isNotEmpty(map.get("Category"))) {
+			
+			if (CollectionUtils.isNotEmpty(map.get("CatCode"))) {
+				builder.append("Category Code is \"").append(map.get("CatCode").get(0));
+				builder.append("\" and ");
+			}
+			
+			else if (CollectionUtils.isNotEmpty(map.get("Category"))) {
 				builder.append("Category is \"").append(map.get("Category").get(0));
 				if (CollectionUtils.isNotEmpty(map.get("SubCategory"))) {
 					builder.append(" > ").append(map.get("SubCategory").get(0));
@@ -478,12 +484,12 @@ public class RedirectRuleCondition extends ModelBean {
 		// if Availability == "In Stock" set InStock:1
 		//                 == "Call"     set InStock:0
 		String[] conditions = {
-				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
-				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
-				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
-//				"CatCode:3F AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
+//				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
+//				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
+//				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
+				"CatCode:3F AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
-				"Manufacturer:\"Apple\"",
+//				"Manufacturer:\"Apple\"",
 //				""
 		};
 		
