@@ -738,4 +738,5 @@ span.ui-button-text	{ display:none; }
 
 /* redirect */
 body #redirect .tabs .ui-widget-content { padding-top:20px !important}
+.ui-autocomplete 	{ overflow-y:auto !important }
 
