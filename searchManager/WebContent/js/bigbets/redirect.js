@@ -633,8 +633,6 @@
 							$select.prop("selectedText",condition.CNetFilters["Level2Category"]);
 							$input.val(condition.CNetFilters["Level2Category"]);
 						}
-						
-						if($.isNotBlank(condition) && (inLevel1Category != condition.CNetFilters["Level1Category"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderLevel2CategoryList").hide();
@@ -673,8 +671,6 @@
 							$select.prop("selectedText",condition.CNetFilters["Level3Category"]);
 							$input.val(condition.CNetFilters["Level3Category"]);
 						}
-						
-						if($.isNotBlank(condition) && (inLevel1Category != condition.CNetFilters["Level1Category"] || inLevel2Category != condition.CNetFilters["Level2Category"] )) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderLevel3CategoryList").hide();
@@ -710,8 +706,6 @@
 							$select.prop("selectedText",condition.CNetFilters["Manufacturer"]);
 							$input.val(condition.CNetFilters["Manufacturer"]);
 						}
-						
-						if($.isNotBlank(condition) && (inLevel1Category != condition.CNetFilters["Level1Category"] || inLevel2Category != condition.CNetFilters["Level2Category"] || inLevel3Category != condition.CNetFilters["Level3Category"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderCNETManufacturerList").hide();
@@ -783,8 +777,6 @@
 							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
 							$input.val(condition.IMSFilters["SubCategory"]);
 						}
-						
-						if($.isNotBlank(condition) && (inCategory != condition.IMSFilters["Category"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
@@ -825,8 +817,6 @@
 							$select.prop("selectedText",condition.IMSFilters["Class"]);
 							$input.val(condition.IMSFilters["Class"]);
 						}
-						
-						if($.isNotBlank(condition) && (inCategory != condition.IMSFilters["Category"] || inSubCategory != condition.IMSFilters["SubCategory"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
@@ -865,8 +855,6 @@
 							$select.prop("selectedText",condition.IMSFilters["SubClass"]);
 							$input.val(condition.IMSFilters["SubClass"]);
 						}
-						
-						if($.isNotBlank(condition) && (inCategory != condition.IMSFilters["Category"] || inSubCategory != condition.IMSFilters["SubCategory"] || inClass != condition.IMSFilters["Class"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
@@ -911,8 +899,6 @@
 							$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
 							$input.val(condition.IMSFilters["Manufacturer"]);
 						}
-						
-						if($.isNotBlank(condition) && (inCatCode != condition.IMSFilters["CatCode"] || inCategory != condition.IMSFilters["Category"] || inSubCategory != condition.IMSFilters["SubCategory"] || inClass != condition.IMSFilters["Class"] || inSubClass != condition.IMSFilters["SubClass"])) $input.val("");
 					},
 					postHook:function(){
 						ui.find("img#preloaderManufacturerList").hide();
@@ -960,10 +946,10 @@
 						case "level1categorylist" :
 							$item.find("input#level1CategoryList").val(u.item.text);
 							$item.find("input#level1CategoryList").prop("selectedText", u.item.text);
-							self.populateLevel2Categories(ui, condition)
-							$item.find("input#level2CategoryList").val(""),
-							$item.find("input#level3CategoryList").val(""),
-							$item.find("input#cnetmanufacturerList").val("")
+							self.populateLevel2Categories(ui, condition);
+							$item.find("input#level2CategoryList").val("");
+							$item.find("input#level3CategoryList").val("");
+							$item.find("input#cnetmanufacturerList").val("");
 							break;
 						case "level2categorylist" : 
 							$item.find("input#level2CategoryList").val(u.item.text);
