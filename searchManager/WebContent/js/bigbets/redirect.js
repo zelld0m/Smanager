@@ -960,14 +960,10 @@
 						case "level1categorylist" :
 							$item.find("input#level1CategoryList").val(u.item.text);
 							$item.find("input#level1CategoryList").prop("selectedText", u.item.text);
-							ui.find("input#cnetmanufacturerList").val("");
-							$.when(
-								self.populateLevel2Categories(ui, condition)
-							).done(
-								$item.find("input#level2CategoryList").val(""),
-								$item.find("input#level3CategoryList").val(""),
-								$item.find("input#cnetmanufacturerList").val("")
-							);
+							self.populateLevel2Categories(ui, condition)
+							$item.find("input#level2CategoryList").val(""),
+							$item.find("input#level3CategoryList").val(""),
+							$item.find("input#cnetmanufacturerList").val("")
 							break;
 						case "level2categorylist" : 
 							$item.find("input#level2CategoryList").val(u.item.text);
