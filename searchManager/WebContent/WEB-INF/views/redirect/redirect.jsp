@@ -162,7 +162,7 @@
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
-    				<input type="checkbox" id="includeKeyword" class="includeKeyword"> Include keyword in search (<span class="fitalic">Note: Not checking this box will make Ranking Rule boost query have no effect.</span>)
+    				<input type="checkbox" id="includeKeyword" class="includeKeyword"> Include keyword in search (<span class="fitalic">Note: Checking this box will allow Ranking Rule to influence search results based on keyword matches.</span>)
     			</div>
     			<div class="clearB"></div>
 	        	<div class="dropdownArea marT10">
