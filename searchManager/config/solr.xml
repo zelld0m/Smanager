@@ -15,12 +15,13 @@
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>search</default-server>
+    <facet-template></facet-template>
   </store>
 
   <store name="SBN">
     <core>sbn</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
-    <qt>dismaxpcmallrelevancy</qt>
+    <qt>dismaxsbnrelevancy</qt>
     <facet-name>SBN</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
@@ -30,7 +31,8 @@
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
-    <default-server>search</default-server>
+    <default-server>search.pcmall.com</default-server>
+    <facet-template></facet-template>
   </store>
 
   <store name="PCMall">
@@ -47,6 +49,7 @@
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>search</default-server>
+    <facet-template>PCMall_FacetTemplate</facet-template>
   </store>
   
   <store name="MacMall">
@@ -62,6 +65,7 @@
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat>    
     <default-server>search</default-server>
+    <facet-template></facet-template>
   </store>
 
   <store name="PCMall BD">
@@ -75,8 +79,9 @@
     <solr-param-value name="fq">
     	<param-value>PcMall_StoreFlag:true</param-value>
     </solr-param-value>
-    <dateformat>MM/dd/yyyy</dateformat>    
+    <dateformat>MM/dd/yyyy</dateformat> 
     <default-server>afs-pl-schpd04</default-server>
+    <facet-template>PCMall_FacetTemplate</facet-template>
   </store>
   
   <!-- 
@@ -104,6 +109,10 @@
   <server name='search'>
     <url>http://10.17.35.36:8080/solr14/(store)/</url>
     <store>pcmall,macmall,onsale,ecost</store>
+  </server>
+  <server name='search.pcmall.com'>
+    <url>http://search.pcmall.com:8080/solr14/(store)/</url>
+    <store>sbn</store>
   </server>
   <server name='afs-pl-schpd04'>
     <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(store)/</url>

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.InetAddress;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -26,6 +28,18 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.w3c.dom.Document;
+
 
 public class TopKeywordsUtility {
 	
@@ -89,8 +103,11 @@ public class TopKeywordsUtility {
 		String store = "";
 		String strDate = "";
 		String generatedFile = null;
+		String generatedZeroFile = null;
 		boolean generated = false;
+		boolean generatedZero = false;
 		boolean toGenerate = false;
+		boolean toGenerateZero = false;
 		
 		// assuming we have the files 
 		try {
@@ -120,9 +137,9 @@ public class TopKeywordsUtility {
 			String destFolder = properties.getProperty("destHome");
 			store = properties.getProperty("store");
 			String[] servers = properties.getProperty("remoteServers").split(",");
+			String solrURL = properties.getProperty("solrURL");
 			String user = properties.getProperty("remoteUser");
-			String file = properties.getProperty("remoteFile");
-
+			String[] file = properties.getProperty("remoteFile").split(",");
 			log.append("Store: ").append(store).append("\n");
 			log.append("Servers: ");
 			for (String server: servers) {
@@ -142,10 +159,13 @@ public class TopKeywordsUtility {
 			log.append("Output folder: ").append(outFolder).append("\n");
 
 			HashMap<String, KeyValuePair> map = new HashMap<String,KeyValuePair>();
+			int x=0;
 			for (String server: servers) {
 				//scp -p solr@afs-pl-schpd07.afservice.org:/home/solr/utility/keywords/MacMallbtorschprod03_topKeywords.csv /home/solr/utilities/topkeywords/macmall/macmall_afs-pl-schpd07_topkeywords.csv
 				String outputFile = tmpInFolder + "/" + store+ "_" + server + "_topkeywords.csv";
-				String command = "scp -p " + user + "@" + server + ":" + file + " " + outputFile;
+// TODO: uncomment after testing				
+				String command = "scp -p " + user + "@" + server + ":" + file[x] + " " + outputFile;
+				x++;
 				Process p = Runtime.getRuntime().exec(command);
 				if (p.waitFor() != 0) {
 					log.append("Problem with scp: " + command);
@@ -202,6 +222,7 @@ public class TopKeywordsUtility {
 							if (destFile.exists()) {
 								destFile.delete();
 							}
+// TODO: uncomment after test							
 							f.renameTo(destFile);
 						}
 					}
@@ -210,8 +231,68 @@ public class TopKeywordsUtility {
 					log.append("WARNING File not found: ").append(f.getAbsolutePath()).append("\n");
 					continue;
 				}
+				
 			}
 			
+			HttpClient client = new DefaultHttpClient();
+			HttpPost post = new HttpPost(solrURL);
+			List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+			HttpResponse solrResponse = null;
+		    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+	        Document doc = null;		
+	        HashMap<String, KeyValuePair> mapZero = new HashMap<String,KeyValuePair>();
+			for (Entry<String, KeyValuePair> entry : map.entrySet())
+			{
+			    parameters.clear();
+			    parameters.add(new BasicNameValuePair("q", URLDecoder.decode(entry.getKey(),"UTF-8")));
+			    post.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
+			    solrResponse=client.execute(post);
+			    doc = builder.parse(solrResponse.getEntity().getContent());
+			    int count = 0;
+			    	count =  Integer.parseInt(doc.getElementsByTagName("result").item(0)
+							.getAttributes().getNamedItem("numFound").getNodeValue());
+			    if(count == 0){
+			    	toGenerateZero = true;
+			    	mapZero.put(entry.getKey(), entry.getValue());	
+			    	
+			    }
+			}
+			List<KeyValuePair> valuesZero = new ArrayList<KeyValuePair>(mapZero.values());
+			Collections.sort(valuesZero, new Comparator<KeyValuePair>() {
+				@Override
+				public int compare(KeyValuePair arg0, KeyValuePair arg1) {
+					int result = arg1.value - arg0.value;
+					if (result == 0) {
+						result = arg0.key.compareTo(arg1.key);
+					}
+					return result;
+				}
+			});
+			
+			if (toGenerateZero) {
+				BufferedWriter writer = null;
+				generatedZeroFile = tmpInFolder.getAbsolutePath() + "/" + store + "_zero_report" + strDate +".csv";
+				File outFile = new File(generatedZeroFile);
+				try {
+					outFile.createNewFile();
+					writer = new BufferedWriter(new FileWriter(outFile));
+					for (KeyValuePair kvp: valuesZero) {
+						writer.write(String.valueOf(kvp.value));
+						writer.write(",");
+						writer.write(URLDecoder.decode(kvp.key, "UTF-8"));
+						writer.write("\n");
+					}
+					generatedZero = true;
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (writer != null) {
+						writer.close();
+					}
+				}
+				log.append("Generated summary file: ").append(outFile.getAbsolutePath()).append("\n");
+				
+			}
 			// sort
 			List<KeyValuePair> values = new ArrayList<KeyValuePair>(map.values());
 			Collections.sort(values, new Comparator<KeyValuePair>() {
@@ -225,6 +306,8 @@ public class TopKeywordsUtility {
 				}
 			});
 			
+			
+			
 			if (toGenerate) {
 				BufferedWriter writer = null;
 				generatedFile = tmpInFolder.getAbsolutePath() + "/" + store + "_summary_" + strDate +".csv";
@@ -235,7 +318,7 @@ public class TopKeywordsUtility {
 					for (KeyValuePair kvp: values) {
 						writer.write(String.valueOf(kvp.value));
 						writer.write(",");
-						writer.write(kvp.key);
+						writer.write(URLDecoder.decode(kvp.key, "UTF-8"));
 						writer.write("\n");
 					}
 					generated = true;
@@ -247,6 +330,7 @@ public class TopKeywordsUtility {
 					}
 				}
 				log.append("Generated summary file: ").append(outFile.getAbsolutePath()).append("\n");
+				
 			}
 			
 		} catch (Exception e) {
@@ -258,8 +342,18 @@ public class TopKeywordsUtility {
 				generatedFile = null;
 				log.append("WARNING Output file was not generated!");
 			}
+			if (!generatedZero) {
+				generatedZeroFile = null;
+				log.append("No zero search result found. Zero report was not generated!");
+			}
 			try {
 				if (sendMail(store + " " + strDate + " report ", log.toString(), properties, generatedFile)) {
+					System.out.println(new Date() + ": Sent email notification.");
+				}
+				else {
+					System.out.println(new Date() + ": Failed to send email notification.");
+				}
+				if (sendMail(store + " " + strDate + " zero_report ", log.toString(), properties, generatedZeroFile)) {
 					System.out.println(new Date() + ": Sent email notification.");
 				}
 				else {
@@ -268,6 +362,7 @@ public class TopKeywordsUtility {
 			} catch (MessagingException e) {
 				System.out.println(new Date() + ": Failed to send email notification.");
 			}
+			
 			System.out.println(log.toString());
 		}
 		

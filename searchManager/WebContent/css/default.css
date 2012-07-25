@@ -47,6 +47,7 @@ body 							{ margin: 0px; }
 .cssReset .w215, .w215			{width:215px}
 .cssReset .w220, .w220			{width:220px !important}
 .cssReset .w225					{width:225px}
+.cssReset .w229, .w229			{width:229px !important}
 .cssReset .w230, .w230			{width:230px !important}
 .cssReset .w233, .w233			{width:233px !important}
 .cssReset .w235, .w235			{width:235px !important}
@@ -79,6 +80,7 @@ body 							{ margin: 0px; }
 .cssReset .w535, .w535          {width:535px}
 .cssReset .w550, .w550          {width:550px}
 .cssReset .w555, .w555          {width:555px}
+.cssReset .w570, .w570          {width:570px}
 .cssReset .w580, .w580          {width:580px}
 .cssReset .w590, .w590          {width:590px}
 .cssReset .w600, .w600			{width:600px}
@@ -130,7 +132,7 @@ body 							{ margin: 0px; }
 .cssReset .padT10, .padT10		{padding-top:10px !important}
 .cssReset .padT12, .padT12		{padding-top:12px !important}
 .cssReset .padT15, .padT15		{padding-top:15px !important}
-.cssReset .padT20, .padT20		{padding-top:20px}
+.cssReset .padT20, .padT20		{padding-top:20px !important}
 .cssReset .padTB2				{padding:2px 0}
 .cssReset .padTB4				{padding:4px 0}
 .cssReset .padTB5				{padding:5px 0}
@@ -392,5 +394,7 @@ body 							{ margin: 0px; }
 .cssReset .forange 				{ color:#ea7723 }
 .cssReset .fgreen, .fgreen		{ color:#2d6b00 }
 
-.cssReset .bgf6f6f6				{ background: #f6f6f6 }
+.cssReset .bgf6f6f6, .bgf6f6f6	{ background: #f6f6f6 }
 .cssReset .bgfff				{ background: #fff }
+
+

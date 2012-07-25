@@ -5,8 +5,10 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,6 +23,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -31,6 +34,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private JsonSlurper slurper = null;
 	private JSONArray resultArray  = null; // DOCS entry
 	private JSONObject explainObject  = null; // DOCS entry
+	private JSONObject facetTemplate  = null; // Facet Template
 	private JSONObject responseHeader = null;
 	private Map<String, JSONObject> elevateEntries = new HashMap<String, JSONObject>();
 	private String wrf = "";
@@ -134,6 +138,8 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			if (StringUtils.isNotEmpty(changedKeyword)) {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
 			}
+			// TODO: make this get value from solr.xml
+			facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", "PCMall_FacetTemplate"});
 			
 			if (activeRules != null) {
 				JSONArray searchRules = new JSONArray();
@@ -239,10 +245,122 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		return addedRecords;
 	}
 
+	@SuppressWarnings("unchecked")
+	private void getFacetTemplates() {
+		
+		if (facetTemplate == null) {
+			return;
+		}
+		
+		CNetFacetTemplate root = new CNetFacetTemplate("",0);
+		for (String key: (Set<String>)facetTemplate.keySet()) {
+			
+			int count = facetTemplate.getInt(key);
+
+			String[] category = key.split("\\ \\|\\ ");
+			// TODO: optimize
+			if (category.length > 0) {
+				
+				CNetFacetTemplate tmpFacet     = root;
+				CNetFacetTemplate currentFacet = root;
+				
+				// facet template is blank
+				root.addCount(count);
+				if (StringUtils.isBlank(category[0])) {
+					continue;
+				}
+				
+				// lvl 1 facet
+				currentFacet = root.getFacet(category[0]);
+				if (currentFacet == null) {
+					currentFacet = new CNetFacetTemplate(category[0], 0);
+					root.addFacet(currentFacet);
+				}
+				currentFacet.addCount(count);
+
+				// lvl 2 facet
+				if (category.length > 1) {
+					tmpFacet = currentFacet.getFacet(category[1]);
+					if (tmpFacet == null) {
+						tmpFacet = new CNetFacetTemplate(category[1], 0);
+						currentFacet.addFacet(tmpFacet);
+					}
+					tmpFacet.addCount(count);
+					
+					// lvl 3 facet
+					if (category.length > 2) {
+						currentFacet = tmpFacet;
+						tmpFacet = currentFacet.getFacet(category[2]);
+						if (tmpFacet == null) {
+							tmpFacet = new CNetFacetTemplate(category[2], 0);
+							currentFacet.addFacet(tmpFacet);
+						}
+						tmpFacet.addCount(count);
+					}
+				}
+			}
+		}
+		
+		// remove the facet template
+		locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"}).remove("PCMall_FacetTemplate");
+		
+		LinkedHashMap<String, Long> lvl1Map = new LinkedHashMap<String, Long>();
+		LinkedHashMap<String, Long> lvl2Map = new LinkedHashMap<String, Long>();
+		LinkedHashMap<String, Long> lvl3Map = new LinkedHashMap<String, Long>();
+		
+		if (root.getFacetCount() == 0) {
+			return;
+		}
+		
+		JSONObject facets = new JSONObject();
+		if (root.getFacetCount() > 1) {
+			for (String lvl1Key: root.getFacets()) {
+				CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
+				lvl1Map.put(lvl1Key, lvl1.getCount());
+			}
+		}
+		else {
+			// lvl1
+			String lvl1Key = root.getFacets().get(0);
+			CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
+			lvl1Map.put(lvl1Key, lvl1.getCount());
+			
+			if (lvl1.getFacetCount() > 1) {
+				for (String lvl2Key: root.getFacets()) {
+					CNetFacetTemplate lvl2 = lvl1.getFacet(lvl1Key);
+					lvl1Map.put(lvl2Key, lvl2.getCount());
+				}
+			}
+			else {
+				String lvl2Key = root.getFacets().get(0);
+				CNetFacetTemplate lvl2 = root.getFacet(lvl2Key);
+				lvl2Map.put(lvl2Key, lvl2.getCount());
+				
+				for (String lvl3Key: lvl2.getFacets()) {
+					CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
+					lvl3Map.put(lvl3Key, lvl3.getCount());
+				}
+			}
+		}
+		
+		if (!lvl1Map.isEmpty()) {
+			facets.element("Level1", lvl1Map);
+		}
+		if (!lvl2Map.isEmpty()) {
+			facets.element("Level2", lvl2Map);
+		}
+		if (!lvl3Map.isEmpty()) {
+			facets.element("Level3", lvl3Map);
+		}
+		
+		initialJson.element("FacetTemplate", facets);
+	}
+	
 	@Override
 	public boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException {
 		boolean success = false;
 		try {
+			getFacetTemplates();
 			responseHeader.put(SolrConstants.ATTR_NAME_VALUE_QTIME, totalTime);
 			boolean wrfPresent = !StringUtils.isEmpty(wrf);
 			response.setContentType("application/json;charset=UTF-8");

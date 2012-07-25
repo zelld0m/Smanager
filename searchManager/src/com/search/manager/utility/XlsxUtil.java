@@ -3,8 +3,10 @@ package com.search.manager.utility;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Vector;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -270,7 +272,7 @@ public class XlsxUtil {
 	            if (DateUtil.isCellDateFormatted(cell))
 	                return cell.getDateCellValue().toString();
 	            else 
-	                return String.valueOf(cell.getNumericCellValue());
+	                return new BigDecimal(cell.getNumericCellValue()).toString();
 	        case Cell.CELL_TYPE_BOOLEAN:
 	            return String.valueOf(cell.getBooleanCellValue());
 	        case Cell.CELL_TYPE_FORMULA:

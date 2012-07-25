@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -787,12 +789,60 @@ public class CatCodeUtil {
         }
 		return list;   
 	}
-	
+	public static List<String> getCNETNextLevel(String level1,String level2) throws DataException{
+		List<String> list = new ArrayList<String>();
+		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.SOLR_SEARCH_NAV.getCodeStr());
+		
+		String navID = ""; 
+		Pattern pat =  Pattern.compile("[1-9]");
+		if(StringUtils.isBlank(level1)){
+			for(String[] col:categoryRow){
+				if(col[3].equalsIgnoreCase("0"))
+					if(!list.contains(col[2]))
+						list.add(col[2]);
+			}
+		}else if(StringUtils.isBlank(level2)){
+			for(String[] col:categoryRow){
+				navID = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
+				Matcher m = pat.matcher(navID);
+				if(col[1].equalsIgnoreCase(level1) && m.find() ){
+					for(String[] coll:categoryRow){
+						navID = coll[0].substring(coll[0].length()-6,coll[0].length()-3);
+						Matcher m2 = pat.matcher(navID);
+						if(col[0].equalsIgnoreCase(coll[3]) && m2.find()){
+							if(!list.contains(coll[2]))
+								list.add(coll[2]);
+						}
+					}
+				}
+			}
+		}else{
+			for(String[] col:categoryRow){
+				navID = col[0].substring(col[0].length()-9 > 0 ? col[0].length()-9 : 0,col[0].length()-6);
+				Matcher m = pat.matcher(navID);
+				if(col[1].equalsIgnoreCase(level1) && m.find()){
+					for(String[] coll:categoryRow){
+						navID = coll[0].substring(coll[0].length()-6,coll[0].length()-3);
+						Matcher m2 = pat.matcher(navID);
+						if(coll[1].equalsIgnoreCase(level2) && m2.find()){
+								for(String[] colll:categoryRow){
+									navID = colll[0].substring(colll[0].length()-3,colll[0].length());
+									Matcher m3 = pat.matcher(navID);
+									if(coll[0].equalsIgnoreCase(colll[3]) && m3.find()){
+										if(!list.contains(colll[2]))
+											list.add(colll[2]);
+									}
+								}
+						}
+					}
+				}
+			}
+		}
+		SortUtil.sort(list);
+		return list;
+		
+	}
 	public static List<String> getIMSCategoryNextLevel(String strCategory, String strSubcategory, String strClass) throws DataException {
-//        If category is blank, return all categories
-//        Else if subcategory is blank, return all subcategories with category=strCategory
-//        Else if class is blank, return all classes with category=strCategory and subcategory=strSubCategory
-//        Else return all subclasses with category=strCategory and subcategory=strSubCategory and class=strClass
 		List<String> list = new ArrayList<String>();
 		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
 		
@@ -820,7 +870,7 @@ public class CatCodeUtil {
 						list.add(col[8]);
 			}
 		}
-				
+		SortUtil.sort(list);
 		return list;
 	}
 
@@ -1021,6 +1071,7 @@ public class CatCodeUtil {
 		String strClass = "";
 		boolean repeat = true;
 		List<String> list = new ArrayList<String>();
+		List<String> listCNET = new ArrayList<String>();
 		
 		while(repeat){
 			list = new ArrayList<String>();
@@ -1033,8 +1084,11 @@ public class CatCodeUtil {
 			strClass = in.nextLine();
 			
 			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
-			
+			listCNET = getCNETNextLevel(strCategory,strSubCategory);
 			for(String field : list){
+				System.out.println(field);
+			}
+			for(String field : listCNET){
 				System.out.println(field);
 			}
 			

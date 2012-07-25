@@ -347,6 +347,19 @@
 						}else{
 							$content.find("div#ruleChange > #noChangeKeyword").show();
 						}
+						
+						var includeKeywordText = "Include keyword in search: <b>NO</b>";
+						if($.isNotBlank(data["includeKeyword"])){
+							includeKeywordText = "Include keyword in search: ";
+							if(data["includeKeyword"]){
+								includeKeywordText += "<b>YES</b>";
+							}
+							else{
+								includeKeywordText += "<b>NO</b>";
+							}
+						}
+						$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
 					}
 				});
 

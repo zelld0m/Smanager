@@ -132,6 +132,19 @@
 								$content.find("div#ruleChange > #noChangeKeyword").show();
 							}
 							
+							var includeKeywordText = "Include keyword in search: <b>NO</b>";
+							if($.isNotBlank(data["includeKeyword"])){
+								includeKeywordText = "Include keyword in search: ";
+								if(data["includeKeyword"]){
+									includeKeywordText += "<b>YES</b>";
+								}
+								else{
+									includeKeywordText += "<b>NO</b>";
+								}
+							}
+							$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+							$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
+							
 							base.populateKeywordInRule($content, data["searchTerms"]);
 						}
 					});
@@ -414,6 +427,7 @@
 
 					template += '	<div class="clearB"></div>';
 					template += '	<div id="ruleFilter" class="ruleFilter marB10">';
+					template += '		<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6 w570 pad5 mar10"></div>';
 					template += '		<div class="w580 mar0 padLR5">';
 					template += '			<table class="tblItems w100p marT10" id="itemHeader">';
 					template += '				<tbody>';

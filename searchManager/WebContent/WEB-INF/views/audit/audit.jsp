@@ -36,17 +36,18 @@
     	</label>
     	
     	<div class="clearB"></div>
-    	<label class="txtLabel">Reference ID:</label>
-    	<label class="details marR15"><select class="w205" id="refList">
-	    		<option value="">-- Select Ref ID --</option>
-	    	</select>
-    	</label>
     	<label class="txtLabel">Action:</label>
     	<label class="details">
-	    	<select class="w205" id="actionList">
+	    	<select class="w205" id="actionList" disabled="disabled">
 	    		<option value="">-- Select Action --</option>
 	    	</select>
     	</label>
+    	<label class="txtLabel">Reference ID:</label>
+    	<label class="details marR15"><select class="w205" id="refList" disabled="disabled">
+	    		<option value="">-- Select Ref ID --</option>
+	    	</select>
+    	</label>
+    
     	
     	<label class="txtLabel">User Name:</label>
     	<label class="details marR15">

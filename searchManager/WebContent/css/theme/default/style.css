@@ -810,7 +810,6 @@ html.gecko .endingTxt							{ font-size:11px }
 .box ul		{ list-style: none; font-size:12px; margin:8px }
 .box li		{ margin:4px }
 
-
 .itemCatList { list-style-position: inside }
 .itemCatList li { font-size:12px; color:#333 !important; text-decoration:none !important; padding:3px 5px; border-bottom:1px solid #ccc; }
 .itemCatList li a { text-decoration:none !important; color:#333 !important;}
@@ -819,9 +818,10 @@ html.gecko .endingTxt							{ font-size:11px }
 .itemCatList ul li { padding:3px 0; border-bottom:none; font-weight: normal !important}
 /*.itemCatList ul li ul li { padding:2px 0; border-bottom:none; font-weight: normal !important; font-size:11px}*/
 
-
-
-
+/* redirect */
+body .tabs .containerRedirect   { padding-top:20px !important}
+.ui-autocomplete 	{ overflow-y:auto !important; max-height:150px !important; height: expression((this.scrollHeight > 150) ? "150px" : (this.scrollHeight < 149) ? "149px" : "auto" ); }
+.ui-widget li.ui-menu-item a:hover { border:none !important; background:none !important; color:#0166b4 }
 
 
 

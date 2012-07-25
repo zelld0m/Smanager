@@ -1,7 +1,9 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -16,6 +18,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.CategoryList;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.utility.CatCodeUtil;
 import com.search.ws.SearchHelper;
 
@@ -87,6 +90,47 @@ public class CategoryService {
 		if (StringUtils.isNotBlank(subclass)) {
 			filters.add(String.format("SubClass: %s", subclass));
 		}
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel1Categories() throws DataException {
+		return CatCodeUtil.getCNETNextLevel("","");
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel2Categories(String level1Category) throws DataException {
+		return CatCodeUtil.getCNETNextLevel(level1Category, "");
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETLevel3Categories(String level1Category, String level2Category) throws DataException {
+		return CatCodeUtil.getCNETNextLevel(level1Category, level2Category);
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
+		Map<String, List<String>> filter = new HashMap<String, List<String>>();
+		ArrayList<String> filters = null;
+		if (StringUtils.isNotBlank(level1Category)) {
+			filters = new ArrayList<String>();
+			filters.add(level1Category);
+			filter.put("Level1Category", new ArrayList<String>(filters));
+			if (StringUtils.isNotBlank(level2Category)) {
+				filters = new ArrayList<String>();
+				filters.add(level2Category);
+				filter.put("Level2Category", new ArrayList<String>(filters));
+				if (StringUtils.isNotBlank(level3Category)) {
+					filters = new ArrayList<String>();
+					filters.add(level3Category);
+					filter.put("Level3Category", new ArrayList<String>(filters));
+				}
+			}
+		}
+		filters = new ArrayList<String>();
+		RedirectRuleCondition rr = new RedirectRuleCondition();
+		rr.setFilter(filter);
+		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
 }

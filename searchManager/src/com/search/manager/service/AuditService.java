@@ -1,5 +1,7 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +19,11 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.User;
+import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
+import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "auditService")
@@ -158,7 +164,100 @@ public class AuditService {
 		}
 		return rSet;
 	}
-	
+	@RemoteMethod
+	public List<String> getDropdownValues(int type,String[] filter) throws DaoException {
+		List<String> ddList = new ArrayList<String>();
+		
+		switch (type) {
+			case 1 : {
+				User user = new User();
+				user.setStoreId(UtilityService.getStoreName());
+				SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,0,0);
+				try {
+					RecordSet<User> record = daoService.getUsers(searchCriteria, MatchType.MATCH_ID);
+					 for(User tmp:record.getList()) 
+						 ddList.add(tmp.getUsername());
+				} catch (DaoException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			break;
+			case 2 : {
+				Entity ent = Entity.valueOf(filter[0]);
+				switch (ent) {					
+					case elevate:
+						for(Object opt: Arrays.asList(AuditTrailConstants.elevateOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case exclude:
+						for(Object opt: Arrays.asList(AuditTrailConstants.excludeOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case keyword:
+						for(Object opt: Arrays.asList(AuditTrailConstants.keywordOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case storeKeyword:
+						for(Object opt: Arrays.asList(AuditTrailConstants.storeKeywordOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case campaign:
+						for(Object opt: Arrays.asList(AuditTrailConstants.campaignOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case banner:
+						for(Object opt: Arrays.asList(AuditTrailConstants.bannerOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case queryCleaning:
+						for(Object opt: Arrays.asList(AuditTrailConstants.queryCleaningOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case relevancy:
+						for(Object opt: Arrays.asList(AuditTrailConstants.relevancyOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case ruleStatus:
+						for(Object opt: Arrays.asList(AuditTrailConstants.ruleStatusOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case security:
+						if(UtilityService.hasPermission("CREATE_RULE")){
+							for(Object opt: Arrays.asList(AuditTrailConstants.securityOperations)){
+								ddList.add(opt.toString());
+							}
+						}
+						break;
+				}
+			}
+			break;
+			case 3 : {
+				for(Object opt: Arrays.asList(AuditTrailConstants.Entity.values())){
+					if(opt.toString().equals(AuditTrailConstants.Entity.security) && UtilityService.hasPermission("CREATE_RULE") || !opt.toString().equals(AuditTrailConstants.Entity.security)){
+						ddList.add(opt.toString());
+					}
+					
+				} 
+				break;
+			}
+			case 4 : {
+				ddList = daoService.getRefIDs(filter[0], filter[1], UtilityService.getStoreName());
+				break;
+			}
+			
+		}	
+		return ddList;
+	}
 	@RemoteMethod
 	public List<String> getDropdownValues(int type) {
 		try {

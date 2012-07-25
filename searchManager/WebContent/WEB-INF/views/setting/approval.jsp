@@ -198,23 +198,24 @@
 				</ul>
 				
 				<div class="clearB"></div>	
-					<div id="ruleChange" class="ruleChange marB10">
-						<div id="noChangeKeyword" class="txtAC mar20" style="display:none">
-							<span class="fsize11">No replacement keyword associated to this rule</span>
-						</div>
-						<div id="hasChangeKeyword" style="display:none">
-							<div class="fsize12 txtAL mar20">
-								Replace Keyword: <span id="changeKeyword" class="fbold"></span>
-							</div>						
-							<!-- div id="activerules" class="w97p marRLauto marB10">			
-								<div class="alert">This keyword has <span id="rules"></span></div>
-							</div -->
-						</div>				
+				<div id="ruleChange" class="ruleChange marB10">
+					<div id="noChangeKeyword" class="txtAC mar20" style="display:none">
+						<span class="fsize11">No replacement keyword associated to this rule</span>
+					</div>
+					<div id="hasChangeKeyword" style="display:none">
+						<div class="fsize12 txtAL mar20">
+							Replace Keyword: <span id="changeKeyword" class="fbold"></span>
+						</div>						
+						<!-- div id="activerules" class="w97p marRLauto marB10">			
+							<div class="alert">This keyword has <span id="rules"></span></div>
+						</div -->
+					</div>				
 					<div class="clearB"></div>
 				</div>
 								
 				<div class="clearB"></div>	
 				<div id="ruleFilter" class="ruleFilter marB10">
+					<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6  w570 pad5 mar10">Include keyword in search: <b>NO</b></div>
 					<div class="w580 mar0 padLR5">
 						<table class="tblItems w100p marT10" id="itemHeader">
 							<tbody>
