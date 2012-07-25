@@ -6,6 +6,14 @@ jQuery.extend(
 		(function($){  
 			return {  
 
+				setDefaultIfEmpty: function(obj, defaultValue){
+					return (obj) ? obj[0] : defaultValue;
+				},
+				
+				compareBlank: function(str1, str2){
+					return ($.isBlank(str1) && $.isBlank(str2)) ? true : (str1 === str2);
+				},
+				
 				isBlank: function(obj){
 					return(!obj || $.trim(obj) === "");
 				},

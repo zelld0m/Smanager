@@ -46,12 +46,14 @@
 					});
 				},
 				change: function( event, ui ) {
+					var selectedOption;
 					if ( !ui.item ) {
 						var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( $(this).val() ) + "$", "i" ),
 						valid = false;
 						select.children( "option" ).each(function() {
 							if ( $( this ).text().match( matcher ) ) {
 								this.selected = valid = true;
+								selectedOption = this;
 								return false;
 							}
 						});
@@ -60,8 +62,19 @@
 							$( this ).val( "" );
 							select.val( "" );
 							input.data( "autocomplete" ).term = "";
+							
+							self._trigger( "change", event, {
+							});
 							return false;
 						}
+						else{
+							self._trigger( "selected", event, {
+								item: selectedOption
+							});
+							return false;
+						}
+						
+						
 					}
 				}
 			})
