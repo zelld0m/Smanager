@@ -330,7 +330,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				for (String lvl2Key: lvl1.getFacets()) {
 					CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
 					if (lvl2 != null) {
-						lvl1Map.put(lvl2Key, lvl2.getCount());						
+						lvl2Map.put(lvl2Key, lvl2.getCount());						
 					}
 				}
 			}
