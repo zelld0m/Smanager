@@ -113,8 +113,6 @@ public class SearchHelper {
     		resultArray = ((JSONObject)initialJson)
     							.getJSONObject(SolrConstants.TAG_RESPONSE)
     							.getJSONArray(SolrConstants.TAG_DOCS);
-    		String name = null;
-    		String description = null;
     		for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
     			JSONObject json = resultArray.getJSONObject(i);
     			Product product = productList.get(json.getString("EDP"));
@@ -137,12 +135,6 @@ public class SearchHelper {
 	    				else if ("ImagePath".equals(key)) {
 	    					product.setImagePath(value);
 	    				}
-	    				else if ("Name".equals(key)) {
-	    					name = value;
-	    				}
-	    				else if ("Description".equals(key)) {
-	    					description = value;
-	    				}
 	    				else if (key.matches("(.*)_Name$")) {
 	    					product.setName(value);
 	    				}
@@ -150,13 +142,6 @@ public class SearchHelper {
 	    					product.setDescription(value);
 	    				}
 	    			}
-    			}
-    			
-    			if (StringUtils.isBlank(product.getName())) {
-    				product.setName(name);
-    			}
-    			if (StringUtils.isBlank(product.getDescription())) {
-    				product.setName(description);
     			}
     		}
 		} catch (Throwable t) {
@@ -168,9 +153,13 @@ public class SearchHelper {
 	public static List<String> getFacetValues(String server, String storeId, String field) {
 		return getFacetValues(server, storeId, field, null);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
+		return getFacetValues(server, storeId, field, filters,true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters, boolean hasMincount) {
 		List<String> list = new ArrayList<String>();
 		if (StringUtils.isEmpty(field)) {
 			return list;
@@ -200,7 +189,8 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.field", field));
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
-			nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
+			if(hasMincount)
+				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
 			
 			if (CollectionUtils.isNotEmpty(filters)) {
 				for (String filter: filters) {
