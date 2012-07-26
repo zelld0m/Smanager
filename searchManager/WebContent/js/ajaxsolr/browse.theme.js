@@ -1,8 +1,22 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.cnetFacets = function () {
+		var output  = '<div class="clearB floatL w240">';
+		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">Facet Template</div>';
+		output += '<div class="clearB floatL w230 padL10"></div>';  
+		output += '</div>';
+
+		output +='<div style="width:220px; margin:5px auto">';
+		output +='	<ul id="facetHierarchy" class="itemCatList">';
+		output +='</ul>';
+		output +='</div>';
+
+		return $(output);
+	};
+
 	AjaxSolr.theme.prototype.animatedTagCloud = function () {
 		var output  = '';
-		
+
 		output  +='<canvas width="740" height="500" id="canvas">';
 		output  +='<p>In Internet Explorer versions up to 8, things inside the canvas are inaccessible!</p>';
 		output  +='</canvas>';
@@ -12,10 +26,10 @@
 
 		return $(output);
 	};
-	
+
 	AjaxSolr.theme.prototype.activeRule = function () {
 		var output  = '';
-		
+
 		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
 		output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
 		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
@@ -36,8 +50,8 @@
 		output  +='</a>';
 
 		return $(output);
- 	};
-	
+	};
+
 	AjaxSolr.theme.prototype.noSearchResult = function (keyword) {
 		var output  = '';
 
@@ -76,7 +90,7 @@
 
 		return $(output);
 	};
-	
+
 	AjaxSolr.theme.prototype.searchWithin = function () {
 		var output  = '';
 		output += '<div class="box marT8">';
@@ -88,10 +102,10 @@
 		output += '</div>';
 		return $(output);
 	};
-	
+
 	AjaxSolr.theme.prototype.productAttributeFilter = function() {
 		var output  = '';
-		
+
 		output  += '<div class="box marT8">';
 		output  += '	<h2>Condition</h2>';
 		output  += '	<ul>';
@@ -100,7 +114,7 @@
 		output  += '		<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>';
 		output  += '	</ul>';
 		output  += '</div>';
-		
+
 		output  += '<div class="box marT8">';
 		output  += '	<h2>License Product</h2>';
 		output  += '	<select class="dropdownFilter mar10 w215" id="licenseFilter">';
@@ -109,7 +123,7 @@
 		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
 		output  += '	</select>';
 		output  += '</div>';
-	
+
 		return $(output);
 	};
 
@@ -204,15 +218,14 @@
 		//Add Cart Price
 		secObj.find("div #cartPriceHolder").append('$' + doc.CartPrice);
 
-		//TODO: make this dynamic
-		var name = $.isNotBlank(doc.MacMall_Name)? doc.MacMall_Name : doc.Name;
-		
+		var name = $.isNotBlank(doc[GLOBAL_storeLabel + "_Name"])? doc[GLOBAL_storeLabel + "_Name"] : doc.Name;
+
 		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler));
 
 		//Add Audit Button
 		secObj.find("div #auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
 		secObj.find("div #auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
-		
+
 		//Add Debug link
 		if (doc.Elevate == undefined){
 			secObj.find("div #debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
@@ -264,7 +277,7 @@
 
 		//TODO: make this dynamic
 		var description = $.isNotBlank(doc.MacMall_Description)? doc.MacMall_Description : doc.Description;  
-			
+
 		if (description && description.length > 300) {
 			output += description.substring(0, 300);
 			output += '<span style="display:none;">' + description.substring(300) + '</span>';
@@ -289,7 +302,7 @@
 		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField" class="searchBoxIconBg"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
 		output += '</tr>';
 		output += '<tr><td colspan="2"> &nbsp; </td></tr>'
-		output += '<tr>';
+			output += '<tr>';
 		output += '<th width="25%" class="pad3"></th>';
 		output += '<th class="pad3 txtAL fbold">Content Type</th>';
 		output += '</tr>';

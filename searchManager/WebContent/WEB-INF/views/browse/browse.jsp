@@ -20,6 +20,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/AbstractFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/widgets/jquery/PagerWidget.js" />" ></script>
 
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/CurrentSearchWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SortResultWidget.js" />" ></script>
@@ -30,11 +31,10 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ActiveRuleWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/AnimatedTagCloudWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/RuleSelectorWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/CNETFacetWidget.js" />" ></script>
   
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/jquery.livequery.js" />" ></script>
-	
+  
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/search/search.css" />">
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/ajaxsolr/css/browse.css" />">
 	
@@ -42,32 +42,15 @@
 	<div class="clearB floatL minW240 sideMenuArea">
 	    <div class="clearB marT27"></div>
 	    <div id="searchWithin" class="leftContainer"></div>
+	    <div class="clearB"></div>
 		<div id="dynamicSelection"></div>
+		<div class="clearB"></div>
+		<div id="cnetFacets"></div>
 		<div class="clearB"></div>
 		<div id="dynamicFacets"></div>
 		<div class="clearB"></div>
 		<div id="prodAttribFilter"></div>
 		<div class="clearB"></div>
-		
-		<div style="width:220px; margin:5px auto">
-			<ul class="itemCatList">
-				<li><a href="/">lorem ipsum dolor</a>
-					<ul>
-						<li><a href="/">2222xx222 lorem ipsum</a>
-							<ul>
-								<li><a href="/">333 lorem ipsum</a></li>
-								<li><a href="/">333 lorem</a></li>
-								<li><a href="/">333 ipsum</a></li>
-							</ul>
-						</li>
-						<li><a href="/">2222222 lorem</a></li>
-						<li><a href="/">2222222 ipsum</a></li>
-					</ul>
-				</li>
-				<li><a href="/">sit amet</a></li>
-				<li><a href="/">lorem dolor</a></li>
-			</ul>
-		</div>
 	</div>
 	<!-- End Left Side -->
 	
