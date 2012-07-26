@@ -159,10 +159,10 @@
     		
     		<div id="filter" class="containerRedirect">
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
-    				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
+    				<input type="checkbox" id="activate" class="activate floatL marR8"> <p class="flaotL marT2">Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)</p>
     			</div>
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
-    				<input type="checkbox" id="includeKeyword" class="includeKeyword"> Include keyword in search (<span class="fitalic">Note: Not checking this box will make Ranking Rule boost query have no effect.</span>)
+    				<input type="checkbox" id="includeKeyword" class="includeKeyword floatL marR8"> <p class="flaotL marT2">Include keyword in search (<span class="fitalic">Note: Checking this box will allow Ranking Rule to influence search results based on keyword matches.</span>)</p>
     			</div>
     			<div class="clearB"></div>
 	        	<div class="dropdownArea marT10">
@@ -216,7 +216,7 @@
 										<div class="clearB"></div>
 										<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="categoryList" class="categoryList selectCombo w235" title="Select Category"></select>
+											<select name="select" id="categoryList" class="categoryList selectCombo w229" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -225,7 +225,7 @@
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="subCategoryList" class="subCategoryList selectCombo w235" title="Select SubCategory"></select>
+											<select name="select" id="subCategoryList" class="subCategoryList selectCombo w229" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -234,7 +234,7 @@
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="classList" class="classList selectCombo w235" title="Select Class"></select>
+											<select name="select" id="classList" class="classList selectCombo w229" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
@@ -243,7 +243,7 @@
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="minorList" class="minorList selectCombo w235" title="Select SubClass"></select>
+											<select name="select" id="minorList" class="minorList selectCombo w229" title="Select SubClass"></select>
 										</div>
 									</td>
 								</tr>
@@ -279,7 +279,7 @@
 									<td class="iepadBT0">
 										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w235" title="Select Category"></select>
+											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w229" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -288,7 +288,7 @@
 									<td>
 										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w235" title="Select SubCategory"></select>
+											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w229" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -297,7 +297,7 @@
 									<td>
 										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>
+											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w229" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>

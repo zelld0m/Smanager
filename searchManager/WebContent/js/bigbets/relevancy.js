@@ -255,7 +255,7 @@
 
 	/** BELOW: MM */
 	var setupFieldS2 = function(field){
-		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
+		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').attr("readonly", "readonly").qtip({
 			content: { text: $('<div>'), title: { text: "Edit " + field.label, button: true }},
 			show: {modal:true},
 			events: { 

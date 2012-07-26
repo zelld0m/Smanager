@@ -569,7 +569,7 @@
 				});
 			},
 
-			populateLevel1Categories: function(ui, condition){
+			populateLevel1Categories: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#level1CategoryList");
 				var $input = ui.find("input#level1CategoryList");
@@ -583,25 +583,26 @@
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 
-						if($.isNotBlank($input.val())) self.populateLevel2Categories(ui, condition);
+						if($.isNotBlank($input.val())) self.populateLevel2Categories(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderLevel1CategoryList").show();
 						self.clearCNETComboBox(ui, "level1Cat");
 						$table.find("tr#level2Cat, tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level1Category"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level1Category"])){
 							$select.prop("selectedText",condition.CNetFilters["Level1Category"]);
 							$input.val(condition.CNetFilters["Level1Category"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderLevel1CategoryList").hide();
-						self.populateCNETManufacturers(ui, condition);
+						if($.isBlank($input.val()))
+							self.populateCNETManufacturers(ui, condition, e);
 					}
 				});
 			},
 			
-			populateLevel2Categories: function(ui, condition){
+			populateLevel2Categories: function(ui, condition, e){
 				var self = this;
 				var inLevel1Category = $.trim(ui.find("input#level1CategoryList").val());
 				var $select = ui.find("select#level2CategoryList");
@@ -622,25 +623,26 @@
 							$table.find("tr#level2Cat").hide();
 						}  
 
-						if($.isNotBlank($input.val())) self.populateLevel3Categories(ui, condition);
+						if($.isNotBlank($input.val())) self.populateLevel3Categories(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderLevel2CategoryList").show();
 						self.clearCNETComboBox(ui, "level2Cat");
 						$table.find("tr#level3Cat").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level2Category"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level2Category"])){
 							$select.prop("selectedText",condition.CNetFilters["Level2Category"]);
 							$input.val(condition.CNetFilters["Level2Category"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderLevel2CategoryList").hide();
-						self.populateCNETManufacturers(ui, condition);
+						if($.isNotBlank(inLevel1Category) && $.isBlank($input.val()))
+							self.populateCNETManufacturers(ui, condition, e);
 					}
 				});
 			},
 
-			populateLevel3Categories: function(ui, condition){
+			populateLevel3Categories: function(ui, condition, e){
 				var self = this;
 				var inLevel1Category = $.trim(ui.find("input#level1CategoryList").val());
 				var inLevel2Category = $.trim(ui.find("input#level2CategoryList").val());
@@ -665,32 +667,32 @@
 					preHook:function(){
 						ui.find("img#preloaderLevel3CategoryList").show();
 						self.clearCNETComboBox(ui, "level3Cat");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level3Category"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Level3Category"])){
 							$select.prop("selectedText",condition.CNetFilters["Level3Category"]);
 							$input.val(condition.CNetFilters["Level3Category"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderLevel3CategoryList").hide();
-						self.populateCNETManufacturers(ui, condition);
+						self.populateCNETManufacturers(ui, condition, e);
 					}
 				});
 			},
 			
-			populateCNETManufacturers: function(ui, condition){
+			populateCNETManufacturers: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#cnetmanufacturerList");
 				var $input = ui.find("input#cnetmanufacturerList");
 
-				var inCategory = "";
-				var inSubCategory = "";
-				var inClass = "";
+				var inLevel1Category = "";
+				var inLevel2Category = "";
+				var inLevel3Category = "";
 
-				inCategory = $.trim(ui.find("input#level1CategoryList").val());
-				inSubCategory = $.trim(ui.find("input#level2CategoryList").val());
-				inClass = $.trim(ui.find("input#level3CategoryList").val());
+				inLevel1Category = $.trim(ui.find("input#level1CategoryList").val());
+				inLevel2Category = $.trim(ui.find("input#level2CategoryList").val());
+				inLevel3Category = $.trim(ui.find("input#level3CategoryList").val());
 
-				CategoryServiceJS.getCNETManufacturers(inCategory, inSubCategory, inClass, {
+				CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
 					callback: function(data){
 						var list = data;
 						for(var i=0; i<list.length; i++){
@@ -700,7 +702,7 @@
 					preHook:function(){
 						ui.find("img#preloaderCNETManufacturerList").show();
 						self.clearCNETComboBox(ui, "cnetmanufacturer");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Manufacturer"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.CNetFilters["Manufacturer"])){
 							$select.prop("selectedText",condition.CNetFilters["Manufacturer"]);
 							$input.val(condition.CNetFilters["Manufacturer"]);
 						}
@@ -711,7 +713,7 @@
 				});
 			}, 
 
-			populateCategories: function(ui, condition){
+			populateCategories: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#categoryList");
 				var $input = ui.find("input#categoryList");
@@ -725,25 +727,26 @@
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 
-						if($.isNotBlank($input.val())) self.populateSubcategories(ui, condition);
+						if($.isNotBlank($input.val())) self.populateSubcategories(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderCategoryList").show();
 						self.clearIMSComboBox(ui, "category");
 						$table.find("tr#subcategory,tr#class,tr#minor").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Category"])){
 							$select.prop("selectedText",condition.IMSFilters["Category"]);
 							$input.val(condition.IMSFilters["Category"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderCategoryList").hide();
-						self.populateManufacturers(ui, condition);
+						if($.isBlank($input.val()))
+							self.populateManufacturers(ui, condition, e);
 					}
 				});
 			},
 
-			populateSubcategories: function(ui, condition){
+			populateSubcategories: function(ui, condition, e){
 				var self = this;
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var $select = ui.find("select#subCategoryList");
@@ -764,25 +767,26 @@
 							$table.find("tr#subcategory").hide();
 						}  
 
-						if($.isNotBlank($input.val())) self.populateClass(ui, condition);
+						if($.isNotBlank($input.val())) self.populateClass(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderSubCategoryList").show();
 						self.clearIMSComboBox(ui, "subcategory");
 						$table.find("tr#class,tr#minor").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubCategory"])){
 							$select.prop("selectedText",condition.IMSFilters["SubCategory"]);
 							$input.val(condition.IMSFilters["SubCategory"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderSubCategoryList").hide();
-						self.populateManufacturers(ui, condition);
+						if($.isNotBlank(inCategory) && $.isBlank($input.val()))
+							self.populateManufacturers(ui, condition, e);
 					}
 				});
 			},
 
-			populateClass: function(ui, condition){
+			populateClass: function(ui, condition, e){
 				var self = this;
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var inSubCategory = $.trim(ui.find("input#subCategoryList").val());
@@ -803,25 +807,26 @@
 							$table.find("tr#class").hide();
 						}  
 
-						if($.isNotBlank($input.val())) self.populateMinor(ui, condition);
+						if($.isNotBlank($input.val())) self.populateMinor(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderClassList").show();
 						self.clearIMSComboBox(ui, "class");
 						$table.find("tr#minor").hide();
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Class"])){
 							$select.prop("selectedText",condition.IMSFilters["Class"]);
 							$input.val(condition.IMSFilters["Class"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderClassList").hide();
-						self.populateManufacturers(ui, condition);
+						if($.isNotBlank(inSubCategory) && $.isBlank($input.val()))
+							self.populateManufacturers(ui, condition, e);
 					}
 				});
 			},
 
-			populateMinor: function(ui, condition){
+			populateMinor: function(ui, condition, e){
 				var self = this;
 				var inCategory = $.trim(ui.find("input#categoryList").val());
 				var inSubCategory = $.trim(ui.find("input#subCategoryList").val());
@@ -846,19 +851,19 @@
 					preHook:function(){
 						ui.find("img#preloaderMinorList").show();
 						self.clearIMSComboBox(ui, "minor");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubClass"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["SubClass"])){
 							$select.prop("selectedText",condition.IMSFilters["SubClass"]);
 							$input.val(condition.IMSFilters["SubClass"]);
 						}
 					},
 					postHook:function(){
 						ui.find("img#preloaderMinorList").hide();
-						self.populateManufacturers(ui, condition);
+						self.populateManufacturers(ui, condition, e);
 					}
 				});
 			},
 
-			populateManufacturers: function(ui, condition){
+			populateManufacturers: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#manufacturerList");
 				var $input = ui.find("input#manufacturerList");
@@ -890,7 +895,7 @@
 					preHook:function(){
 						ui.find("img#preloaderManufacturerList").show();
 						self.clearIMSComboBox(ui, "manufacturer");
-						if ($.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
 							$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
 							$input.val(condition.IMSFilters["Manufacturer"]);
 						}
@@ -926,6 +931,54 @@
 				}
 			},
 			
+			initializeIMSFilters: function(comboboxId, ui, condition){
+				var self = this;
+				var $ims = ui.find("div.ims");
+				var $input = $ims.find("input#"+comboboxId);
+				
+				switch(comboboxId.toLowerCase()){
+					case "catcode":
+						$input.val(condition.IMSFilters["CatCode"]);
+						break;
+					case "categorylist" :
+						$input.val(condition.IMSFilters["Category"]);
+						break;
+					case "subcategorylist" : 
+						$input.val(condition.IMSFilters["SubCategory"]);
+						break;
+					case "classlist" : 
+						$input.val(condition.IMSFilters["Class"]);
+						break;
+					case "minorlist" : 
+						$input.val(condition.IMSFilters["SubClass"]);
+						break;
+					case "manufacturerlist" : 
+						$input.val(condition.IMSFilters["Manufacturer"]);
+						break;
+				}
+			},
+			
+			initializeCNETFilters: function(comboboxId, ui, condition){
+				var self = this;
+				var $ims = ui.find("div.cnet");
+				var $input = $ims.find("input#"+comboboxId);
+				
+				switch(comboboxId.toLowerCase()){
+					case "level1categorylist":
+						$input.val(condition.CNetFilters["Level1Category"]);
+						break;
+					case "level2categorylist" :
+						$input.val(condition.CNetFilters["Level1Category"]);
+						break;
+					case "level3categorylist" : 
+						$input.val(condition.CNetFilters["Level1Category"]);
+						break;
+					case "cnetmanufacturerlist" : 
+						$input.val(condition.CNetFilters["Manufacturer"]);
+						break;
+				}
+			},
+			
 			addCNETFieldListener: function(ui, condition){
 				var self = this;
 				var $cnet = ui.find("div.cnet");
@@ -934,39 +987,62 @@
 					return;
 				}
 				
-				$cnet.find("select.selectCombo").combobox({
-					selected: function(e, u){
-						var $item = $(this).parents(".conditionItem");
-						switch($(this).attr("id").toLowerCase()){
-						case "level1categorylist" :
+				var updateCNETCombobox = function (target, e, u){
+					var $item = $(target).parents(".conditionItem");
+					switch($(target).attr("id").toLowerCase()){
+					case "level1categorylist" :
+						if(u.item){
 							$item.find("input#level1CategoryList").val(u.item.text);
 							$item.find("input#level1CategoryList").prop("selectedText", u.item.text);
-							self.populateLevel2Categories(ui, condition);
-							$item.find("input#level2CategoryList").val("");
-							$item.find("input#level3CategoryList").val("");
-							$item.find("input#cnetmanufacturerList").val("");
-							break;
-						case "level2categorylist" : 
+							self.populateLevel2Categories(ui, condition, e);
+						}
+						else self.populateLevel1Categories(ui, condition, e);
+						
+						$item.find("input#level2CategoryList").val("");
+						$item.find("input#level3CategoryList").val("");
+						$item.find("input#cnetmanufacturerList").val("");
+						break;
+					case "level2categorylist" : 
+						if(u.item){
 							$item.find("input#level2CategoryList").val(u.item.text);
 							$item.find("input#level2CategoryList").prop("selectedText", u.item.text);
-							self.populateLevel3Categories(ui, condition); 
+							self.populateLevel3Categories(ui, condition, e);
 							$item.find("input#level3CategoryList").val("");
-							$item.find("input#cnetmanufacturerList").val("");
-							break;
-						case "level3categorylist" : 
+						}
+						else self.populateLevel2Categories(ui, condition, e);
+						
+						$item.find("input#cnetmanufacturerList").val("");
+						break;
+					case "level3categorylist" : 
+						if(u.item){
 							$item.find("input#level3CategoryList").val(u.item.text);
 							$item.find("input#level3CategoryList").prop("selectedText", u.item.text);
-							self.populateCNETManufacturers(ui, condition); 
-							$item.find("input#cnetmanufacturerList").val("");
-							break;
-						case "cnetmanufacturerlist" : 
-							$item.find("input#cnetmanufacturerList").val(u.item.text);
-							$item.find("input#cnetmanufacturerList").prop("selectedText", u.item.text); break;
+							self.populateCNETManufacturers(ui, condition, e);
 						}
+						else self.populateLevel3Categories(ui, condition, e);
+						
+						$item.find("input#cnetmanufacturerList").val("");
+						break;
+					case "cnetmanufacturerlist" : 
+						if(u.item){
+							$item.find("input#cnetmanufacturerList").val(u.item.text);
+							$item.find("input#cnetmanufacturerList").prop("selectedText",u.item.text);
+						} 
+						break;
+					}
+				};
+				
+				
+				$cnet.find("select.selectCombo").combobox({
+					change: function(e, u){
+						updateCNETCombobox(this, e, u);
+					},
+					selected: function(e, u){
+						updateCNETCombobox(this, e, u);
 					}
 				});
 			},
-
+			
 			addIMSFieldListener: function(ui, condition){
 				var self = this;
 				var $ims = ui.find("div.ims");
@@ -974,45 +1050,71 @@
 				if($.isBlank($ims) && $cnet.is(":not(:visible)")){
 					return;
 				}
-
-				$ims.find("select.selectCombo").combobox({
-					selected: function(e, u){
-						var $item = $(this).parents(".conditionItem");
-						switch($(this).attr("id").toLowerCase()){
-						case "categorylist" :
+				
+				var updateIMSCombobox = function(target, e, u){
+					var $item = $(target).parents(".conditionItem");
+					switch($(target).attr("id").toLowerCase()){
+					case "categorylist" :
+						if(u.item){
 							$item.find("input#categoryList").val(u.item.text);
 							$item.find("input#categoryList").prop("selectedText", u.item.text);
-							self.populateSubcategories(ui, condition);
-							$item.find("input#subCategoryList").val("");
-							$item.find("input#classList").val("");
-							$item.find("input#minorList").val("");
-							$item.find("input#manufacturerList").val("");
-							break;
-						case "subcategorylist" : 
+							self.populateSubcategories(ui, condition, e);
+						}
+						else self.populateCategories(ui, condition, e);
+						
+						$item.find("input#subCategoryList").val("");
+						$item.find("input#classList").val("");
+						$item.find("input#minorList").val("");
+						$item.find("input#manufacturerList").val("");
+						break;
+					case "subcategorylist" :
+						if(u.item){
 							$item.find("input#subCategoryList").val(u.item.text);
 							$item.find("input#subCategoryList").prop("selectedText", u.item.text);
-							self.populateClass(ui, condition); 
-							$item.find("input#classList").val("");
-							$item.find("input#minorList").val("");
-							$item.find("input#manufacturerList").val("");
-							break;
-						case "classlist" : 
+							self.populateClass(ui, condition, e);
+						}
+						else self.populateSubcategories(ui, condition, e);
+						
+						$item.find("input#classList").val("");
+						$item.find("input#minorList").val("");
+						$item.find("input#manufacturerList").val("");
+						break;
+					case "classlist" : 
+						if(u.item){
 							$item.find("input#classList").val(u.item.text);
 							$item.find("input#classList").prop("selectedText", u.item.text);
-							self.populateMinor(ui, condition); 
-							$item.find("input#minorList").val("");
-							$item.find("input#manufacturerList").val("");
-							break;
-						case "minorlist" : 
+							self.populateMinor(ui, condition, e);
+						}
+						else self.populateClass(ui, condition, e);
+						
+						$item.find("input#minorList").val("");
+						$item.find("input#manufacturerList").val("");
+						break;
+					case "minorlist" : 
+						if(u.item){
 							$item.find("input#minorList").val(u.item.text);
 							$item.find("input#minorList").prop("selectedText", u.item.text); 
-							self.populateManufacturers(ui, condition);
-							$item.find("input#manufacturerList").val("");
-							break;
-						case "manufacturerlist" : 
-							$item.find("input#manufacturerList").val(u.item.text);
-							$item.find("input#manufacturerList").prop("selectedText", u.item.text); break;
+							self.populateManufacturers(ui, condition, e);
 						}
+						else self.populateMinor(ui, condition, e);
+						
+						$item.find("input#manufacturerList").val("");
+						break;
+					case "manufacturerlist" : 
+						if(ui.item){
+							$item.find("input#manufacturerList").val(u.item.text);
+							$item.find("input#manufacturerList").prop("selectedText", u.item.text); 
+						}
+						break;
+					}
+				};
+				
+				$ims.find("select.selectCombo").combobox({
+					change: function(e, u){
+						updateIMSCombobox(this, e, u);
+					},
+					selected: function(e, u){
+						updateIMSCombobox(this, e, u);
 					}
 				});
 
@@ -1025,12 +1127,12 @@
 						case "switchToCatName" : 
 							$table.find("tr.catCode").hide();
 							$table.find("tr.catName").show();
-							self.populateCategories(ui, e.data.condition);
+							self.populateCategories(ui, e.data.condition, e);
 							break;
 						case "switchToCatCode" : 
 							$table.find("tr.catCode").show();
 							$table.find("tr.catName").hide();
-							self.populateManufacturers(ui, e.data.condition);
+							self.populateManufacturers(ui, e.data.condition, e);
 							break;
 						}
 					}
@@ -1038,15 +1140,12 @@
 
 				var $input = $ims.find("input#catcode");
 
+				
 				$input.off().on({
 					focusout: function(e){
-						self.populateManufacturers(ui, e.data.condition);
+						self.populateManufacturers(ui, e.data.condition, e);
 					}
 				},{condition: condition});
-
-				if ($.isNotBlank(condition)){
-					$input.val(condition.IMSFilters["CatCode"]);
-				} 
 			},
 			
 			checkDisplay: function(ui, condition){
@@ -1055,7 +1154,7 @@
 				var $cnet = ui.find("div.cnet");
 				var $ims = ui.find("div.ims");
 				
-				 ui.find("div.cnet, div.ims").hide();
+				ui.find("div.cnet, div.ims").hide();
 				
 				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
 					$cnet.show();
@@ -1063,6 +1162,14 @@
 					
 					var $table = $cnet.find("table.cnetFields");
 					$table.find("tr.catName").show();
+					
+					if ($.isNotBlank(condition)){
+						self.initializeCNETFilters("level1CategoryList", ui, condition);
+						self.initializeCNETFilters("level2CategoryList", ui, condition);
+						self.initializeCNETFilters("level3CategoryList", ui, condition);
+						self.initializeCNETFilters("cnetmanufacturerList", ui, condition);
+					}
+					
 					self.populateLevel1Categories(ui, condition);
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
@@ -1076,50 +1183,29 @@
 					if ((usingCategory && !usingCatCode) || ui.find("a.switchToCatCode").is(":visible")){
 						$table.find("tr.catName").show();
 						$table.find("tr.catCode").hide();
+						
+						if ($.isNotBlank(condition)){
+							self.initializeIMSFilters("categoryList", ui, condition);
+							self.initializeIMSFilters("subCategoryList", ui, condition);
+							self.initializeIMSFilters("classList", ui, condition);
+							self.initializeIMSFilters("minorList", ui, condition);
+							self.initializeIMSFilters("manufacturerList", ui, condition);
+						}
+						
 						self.populateCategories(ui, condition);
+						
 					}else{
 						$table.find("tr.catName").hide();
 						$table.find("tr.catCode").show();
+						
+						if ($.isNotBlank(condition)){
+							self.initializeIMSFilters("catcode", ui, condition);
+							self.initializeIMSFilters("manufacturerList", ui, condition);
+						}
+						
 						self.populateManufacturers(ui, condition);
 					}
 				}
-			},
-
-			checkCNETDisplay: function(ui, condition){
-				var self = this;
-				var $cnet = ui.find("div.cnet");
-				
-				var $table = $cnet.find("table.cnetFields");
-
-				if($.isNotBlank(condition) && $.isEmptyObject(condition.CNetFilters)){
-					$cnet.hide();
-				}
-
-				$table.find("tr.catName").show();
-				self.populateLevel1Categories(ui, condition);
-			},
-			
-			checkIMSDisplay: function(ui, condition){
-				var self = this;
-				var $ims = ui.find("div.ims");
-				
-				var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
-				var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
-				var $table = $ims.find("table.imsFields");
-
-				if($.isNotBlank(condition) && $.isEmptyObject(condition.IMSFilters)){
-					$ims.hide();
-				}
-
-				if ((usingCategory && !usingCatCode) || ui.find("a.switchToCatCode").is(":visible")){
-					$table.find("tr.catName").show();
-					$table.find("tr.catCode").hide();
-					self.populateCategories(ui, condition);
-				}else{
-					$table.find("tr.catName").hide();
-					$table.find("tr.catCode").show();
-					self.populateManufacturers(ui, condition);
-				}				
 			},
 			
 			clearCNETComboBox: function(ui, trigger){
@@ -1381,7 +1467,7 @@
 							$divItem.show();
 							$divItemList.append($divItem);
 							
-							self.checkIMSDisplay($divItem, e.data.condition);
+							self.checkDisplay($divItem, e.data.condition);
 							
 							self.addToggleListener($divItem, e.data.condition);
 							self.addCloneFilterGroupListener($divItem, e.data.condition);

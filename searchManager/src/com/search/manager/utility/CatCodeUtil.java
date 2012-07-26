@@ -838,7 +838,7 @@ public class CatCodeUtil {
 				}
 			}
 		}
-		
+		SortUtil.sort(list);
 		return list;
 		
 	}
@@ -870,7 +870,7 @@ public class CatCodeUtil {
 						list.add(col[8]);
 			}
 		}
-				
+		SortUtil.sort(list);
 		return list;
 	}
 
