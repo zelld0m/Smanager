@@ -91,11 +91,19 @@
 
 			Manager.init();
 
+			//TODO: Make this dynamic
+			var facetTemplate;
+			facetTemplate = ['Category','Manufacturer', 'Platform'];
+			
+			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap"){
+				facetTemplate = ['Manufacturer', 'Platform'];
+			};
+			
 			var params = {
 					'facet': true,
 					'debugQuery': true,
 					'fl': '*,score',
-					'facet.field': ['Category', 'Manufacturer', 'Platform'],
+					'facet.field': facetTemplate,
 					'rows': sortWidget.perPageInterval,
 					'facet.mincount': 1,
 					'sort':'CatCodeOrder asc, score desc, Popularity desc',
