@@ -7,9 +7,7 @@
 
 	UtilityServiceJS.getSolrConfig({
 		callback:function(data){	
-			
-			console.log(GLOBAL_isFromGUI);
-		
+
 			Manager = new AjaxSolr.Manager({
 				solrUrl: GLOBAL_solrUrl + GLOBAL_store + '/'
 			});
@@ -18,7 +16,7 @@
 				id: 'result',
 				target: '#docs'
 			}));
-			
+
 			Manager.addWidget(new AjaxSolr.CNETFacetWidget({
 				id: 'cnet',
 				target: '#cnetFacets'
@@ -123,16 +121,13 @@
 							reload = data["reload"];
 						}
 						if (reload == undefined || reload == true) {
-							
-									Manager.setSolrUrl(GLOBAL_solrUrl + GLOBAL_store + '/');
-								
-									Manager.doRequest();						
-								
+							Manager.setSolrUrl(GLOBAL_solrUrl + GLOBAL_store + '/');
+							Manager.doRequest();						
 						}
 					}
 				});
 			}
 		}
 	});
-		
+
 })(jQuery);

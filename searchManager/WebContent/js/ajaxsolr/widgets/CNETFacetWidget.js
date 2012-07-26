@@ -2,8 +2,26 @@
 
 	AjaxSolr.CNETFacetWidget = AjaxSolr.AbstractFacetWidget.extend({
 
-		makeRequest: function (e) {
+		makeRequest: function(e){
+			var self = e.data.self; 
 		
+			
+			var escapeValue = function(text){
+				return text.trim().replace(/\s/g,"?");
+			};
+			
+			switch(e.data.level){
+			case 3: 
+				
+				break;
+			case 2: 
+				
+				break;
+			case 1: 
+				self.manager.store.addByValue('fq', GLOBAL_storeFacetTemplate + ":" + escapeValue(e.data.text) + "*");
+				break;
+			};
+			
 			self.manager.doRequest(0);
 		},
 		
@@ -36,7 +54,7 @@
 							$thirdLevel.append('<li id="' + $.formatAsId(level3) + '"><span class="lnk"><a href="javascript:void(0);">' + level3 + " (" + $facetTemplate["Level3"][level3] + ')</a></span></li>');
 							$thirdLevel.find('li#' + $.formatAsId(level3)).on({
 								click: self.makeRequest
-							},{level: 3, text: level3});
+							},{self:self, level: 3, text: level3});
 						}
 					}else{
 						$thirdLevel.append('<li>' + $facetTemplate["Level3"][0] + '</li>');
@@ -51,7 +69,7 @@
 							$secondLevel.append('<li id="' + $.formatAsId(level2) + '"><span class="lnk"><a href="javascript:void(0);">' + level2 + " (" + $facetTemplate["Level2"][level2] + ')</a></span></li>');
 							$secondLevel.find('li#' + $.formatAsId(level2)).on({
 								click: self.makeRequest
-							},{level: 2, text: level2});
+							},{self:self, level: 2, text: level2});
 						}
 					}else{
 						$secondLevel.append('<li>' + $facetTemplate["Level2"][0] + '</li>');
@@ -67,11 +85,13 @@
 							$firstLevel.append('<li id="' + $.formatAsId(level1) + '"><span class="lnk"><a href="javascript:void(0);">' + level1 + " (" + $facetTemplate["Level1"][level1] + ')</a></span></li>');
 							$firstLevel.find('li#' + $.formatAsId(level1)).on({
 								click:self.makeRequest
-							},{level: 1, text: level1});
+							},{self:self, level: 1, text: level1});
 						}
 					}else{
-						$firstLevel.append('<li>' + $facetTemplate["Level1"][0] + '</li>');
-						$firstLevel.append($secondLevel);
+						for (var level1 in $facetTemplate["Level1"]){
+							$firstLevel.append('<li>' + level1 + '</li>');
+						}
+						//$firstLevel.append($secondLevel);
 					}
 				}
 
