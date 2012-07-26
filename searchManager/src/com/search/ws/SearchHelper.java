@@ -113,6 +113,8 @@ public class SearchHelper {
     		resultArray = ((JSONObject)initialJson)
     							.getJSONObject(SolrConstants.TAG_RESPONSE)
     							.getJSONArray(SolrConstants.TAG_DOCS);
+    		String name = null;
+    		String description = null;
     		for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
     			JSONObject json = resultArray.getJSONObject(i);
     			Product product = productList.get(json.getString("EDP"));
@@ -135,6 +137,12 @@ public class SearchHelper {
 	    				else if ("ImagePath".equals(key)) {
 	    					product.setImagePath(value);
 	    				}
+	    				else if ("Name".equals(key)) {
+	    					name = value;
+	    				}
+	    				else if ("Description".equals(key)) {
+	    					description = value;
+	    				}
 	    				else if (key.matches("(.*)_Name$")) {
 	    					product.setName(value);
 	    				}
@@ -142,6 +150,13 @@ public class SearchHelper {
 	    					product.setDescription(value);
 	    				}
 	    			}
+    			}
+    			
+    			if (StringUtils.isBlank(product.getName())) {
+    				product.setName(name);
+    			}
+    			if (StringUtils.isBlank(product.getDescription())) {
+    				product.setName(description);
     			}
     		}
 		} catch (Throwable t) {

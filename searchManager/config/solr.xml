@@ -119,7 +119,7 @@
     <store>pcmallcap</store>
   </server>
   <big-bets>
-    <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath</fields>
+    <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
     <query>json.nl=map%amp;wt=json%amp;fl=%amp;fq=(facet)_StoreFlag=true%amp;start=0</query>
   </big-bets>
 </solr-config>
