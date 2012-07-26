@@ -14,8 +14,10 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -30,6 +32,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -42,6 +45,81 @@ import org.w3c.dom.Document;
 
 
 public class TopKeywordsUtility {
+	
+	
+    final ConcurrentHashMap<String, KeyValuePair> mapZero = new ConcurrentHashMap<String,KeyValuePair>();
+	
+	private static class ZeroResults implements Runnable {
+
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = null;
+		HttpResponse solrResponse = null;
+	    DocumentBuilder builder = null;
+        Document doc = null;
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+        List<String> zeroResultsList = new ArrayList<String>();
+        List<String> forReprocess = new ArrayList<String>();
+        BlockingQueue<String> toProcess = new ArrayBlockingQueue<String>(500);
+        boolean running = false;
+        
+        public ZeroResults (String solrURL) {
+			post = new HttpPost(solrURL);
+			try {
+				builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			} catch (ParserConfigurationException e) {
+				e.printStackTrace();
+			}
+		}
+		
+        public boolean addKeywordToProcess(String keyword) {
+        	try {
+        		return toProcess.add(keyword);
+        	} catch (IllegalStateException ie) {
+        		// no capacity at the present
+        		return false;
+        	}
+        }
+		
+		@Override
+		public void run() {
+			int retry = 0;
+			running = true;
+			while (!toProcess.isEmpty()) {
+				String keyword = toProcess.peek();
+			    parameters.clear();
+			    try {
+					parameters.add(new BasicNameValuePair("q", URLDecoder.decode(keyword,"UTF-8")));
+				    post.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
+				    solrResponse = client.execute(post);
+				    doc = builder.parse(solrResponse.getEntity().getContent());
+				    int count = 0;
+				    	count =  Integer.parseInt(doc.getElementsByTagName("result").item(0)
+								.getAttributes().getNamedItem("numFound").getNodeValue());
+				    if(count == 0){
+				    	zeroResultsList.add(keyword);
+				    }
+					toProcess.poll();
+//System.out.println(keyword + " -> " + count);
+				} catch (Exception e) {
+//System.err.println(keyword + " -> " + e.getMessage());
+					try {
+//System.out.println(Thread.currentThread().getId() + "*************retry " + retry++ + " fail" );	        			
+	        			Thread.sleep(5000);
+	        		} catch (Exception ex) {
+	        		}
+	        		
+	        		if (retry > 10) {
+	        			retry = 0;
+	        			toProcess.poll();
+	        			forReprocess.add(keyword);
+	        		}
+					client = new DefaultHttpClient();
+					continue;
+				}
+			}
+			running = false;
+		}
+	}
 	
 	public static class KeyValuePair {
 		
@@ -107,7 +185,6 @@ public class TopKeywordsUtility {
 		boolean generated = false;
 		boolean generatedZero = false;
 		boolean toGenerate = false;
-		boolean toGenerateZero = false;
 		
 		// assuming we have the files 
 		try {
@@ -164,12 +241,12 @@ public class TopKeywordsUtility {
 				//scp -p solr@afs-pl-schpd07.afservice.org:/home/solr/utility/keywords/MacMallbtorschprod03_topKeywords.csv /home/solr/utilities/topkeywords/macmall/macmall_afs-pl-schpd07_topkeywords.csv
 				String outputFile = tmpInFolder + "/" + store+ "_" + server + "_topkeywords.csv";
 // TODO: uncomment after testing				
-				String command = "scp -p " + user + "@" + server + ":" + file[x] + " " + outputFile;
-				x++;
-				Process p = Runtime.getRuntime().exec(command);
-				if (p.waitFor() != 0) {
-					log.append("Problem with scp: " + command);
-				}
+//				String command = "scp -p " + user + "@" + server + ":" + file[x] + " " + outputFile;
+//				x++;
+//				Process p = Runtime.getRuntime().exec(command);
+//				if (p.waitFor() != 0) {
+//					log.append("Problem with scp: " + command);
+//				}
 
 				File f = new File(outputFile);
 				// send out error if file not exists and date is more than one week from current date
@@ -223,7 +300,7 @@ public class TopKeywordsUtility {
 								destFile.delete();
 							}
 // TODO: uncomment after test							
-							f.renameTo(destFile);
+//							f.renameTo(destFile);
 						}
 					}
 				}
@@ -234,42 +311,101 @@ public class TopKeywordsUtility {
 				
 			}
 			
-			HttpClient client = new DefaultHttpClient();
-			HttpPost post = new HttpPost(solrURL);
-			List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-			HttpResponse solrResponse = null;
-		    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-	        Document doc = null;		
-	        HashMap<String, KeyValuePair> mapZero = new HashMap<String,KeyValuePair>();
-			for (Entry<String, KeyValuePair> entry : map.entrySet())
-			{
-			    parameters.clear();
-			    parameters.add(new BasicNameValuePair("q", URLDecoder.decode(entry.getKey(),"UTF-8")));
-			    post.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
-			    solrResponse=client.execute(post);
-			    doc = builder.parse(solrResponse.getEntity().getContent());
-			    int count = 0;
-			    	count =  Integer.parseInt(doc.getElementsByTagName("result").item(0)
-							.getAttributes().getNamedItem("numFound").getNodeValue());
-			    if(count == 0){
-			    	toGenerateZero = true;
-			    	mapZero.put(entry.getKey(), entry.getValue());	
-			    	
-			    }
+	        ArrayList<String> keywordCopy = new ArrayList<String>(map.keySet());
+
+	        // create resource pool. TODO: make this configurable in config file
+	        int poolSize = 100;
+	        ZeroResults[] zeroResultsPool = new ZeroResults[poolSize];
+	        for (int n = 0; n < poolSize; n++) {
+	        	zeroResultsPool[n] = new ZeroResults(solrURL);
+	        }
+	        
+	        // feed initial data
+	        int i = 0;
+	        while (!keywordCopy.isEmpty()) {
+	        	String keyword = keywordCopy.remove(0);
+	        	if (!zeroResultsPool[i].addKeywordToProcess(keyword)) {
+	        		keywordCopy.add(keyword);
+	        		break;
+	        	}
+	        	if (++i >= poolSize) {
+	        		i = 0;
+	        	}
+	        }
+	        
+	        // start the process
+	        for (int n = 0; n < poolSize; n++) {
+	        	new Thread(zeroResultsPool[n]).start();
+	        }
+	        
+	        // feed the rest of the data
+	        i = 0;
+	        while (!keywordCopy.isEmpty()) {
+	        	String keyword = keywordCopy.remove(0);
+	        	if (!zeroResultsPool[i].addKeywordToProcess(keyword)) {
+	        		keywordCopy.add(keyword);
+	        	}
+	        	if (++i >= poolSize) {
+	        		i = 0;
+	        	}
+	        }
+	        
+	        i = 0;
+	        while (true) {
+	        	if (zeroResultsPool[i].running) {
+	        		i = 0;
+	        		// wait for 10 secs
+	        		try {
+	        			Thread.sleep(10000);
+	        		} catch (Exception e) {
+	        		}
+	        		continue;
+	        	}
+	        	else {
+	        		// restart runnable if more words to process
+	        		if (!zeroResultsPool[i].toProcess.isEmpty()) {
+	        			new Thread(zeroResultsPool[i]).start();
+	        			i = 0;
+	        			continue;
+	        		}
+	        	}
+	        	i++;
+	        	if (i >= poolSize) {
+	        		break;
+	        	}
+	        }
+
+	        List<KeyValuePair> valuesZero = new ArrayList<KeyValuePair>();
+	        List<String> forReprocess = new ArrayList<String>();
+			for (int n = 0; n < poolSize; n++) {
+				for (String key: zeroResultsPool[n].zeroResultsList) {
+					valuesZero.add(map.get(key));					
+				}
+				forReprocess.addAll(zeroResultsPool[n].forReprocess);
 			}
-			List<KeyValuePair> valuesZero = new ArrayList<KeyValuePair>(mapZero.values());
+			
+			if (!forReprocess.isEmpty()) {
+				log.append("Please reprocess the following keywords to check for zero results:\n");
+				for (String key: forReprocess) {
+					log.append(key + "\n");
+				}
+			}
+			
 			Collections.sort(valuesZero, new Comparator<KeyValuePair>() {
 				@Override
 				public int compare(KeyValuePair arg0, KeyValuePair arg1) {
 					int result = arg1.value - arg0.value;
 					if (result == 0) {
-						result = arg0.key.compareTo(arg1.key);
+						result = arg0.key.toLowerCase().compareTo(arg1.key.toLowerCase());
+						if (result == 0) {
+							result = arg0.key.compareTo(arg1.key);
+						}
 					}
 					return result;
 				}
 			});
 			
-			if (toGenerateZero) {
+			if (valuesZero.size() > 0) {			
 				BufferedWriter writer = null;
 				generatedZeroFile = tmpInFolder.getAbsolutePath() + "/" + store + "_zero_report" + strDate +".csv";
 				File outFile = new File(generatedZeroFile);
@@ -290,9 +426,9 @@ public class TopKeywordsUtility {
 						writer.close();
 					}
 				}
-				log.append("Generated summary file: ").append(outFile.getAbsolutePath()).append("\n");
-				
+				log.append("Generated zero results summary file: ").append(outFile.getAbsolutePath()).append("\n");
 			}
+			
 			// sort
 			List<KeyValuePair> values = new ArrayList<KeyValuePair>(map.values());
 			Collections.sort(values, new Comparator<KeyValuePair>() {
@@ -300,7 +436,10 @@ public class TopKeywordsUtility {
 				public int compare(KeyValuePair arg0, KeyValuePair arg1) {
 					int result = arg1.value - arg0.value;
 					if (result == 0) {
-						result = arg0.key.compareTo(arg1.key);
+						result = arg0.key.toLowerCase().compareTo(arg1.key.toLowerCase());
+						if (result == 0) {
+							result = arg0.key.compareTo(arg1.key);
+						}
 					}
 					return result;
 				}
@@ -344,7 +483,7 @@ public class TopKeywordsUtility {
 			}
 			if (!generatedZero) {
 				generatedZeroFile = null;
-				log.append("WARNING Output file was not generated!");
+				log.append("No zero search result found. Zero report was not generated!");
 			}
 			try {
 				if (sendMail(store + " " + strDate + " report ", log.toString(), properties, generatedFile)) {
