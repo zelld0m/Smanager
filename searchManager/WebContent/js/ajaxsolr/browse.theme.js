@@ -2,8 +2,8 @@
 
 	AjaxSolr.theme.prototype.cnetFacets = function () {
 		var output  = '<div class="clearB floatL w240">';
-		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">Facet Template</div>';
-		output += '<div class="clearB floatL w230 padL10"></div>';  
+		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Facet Template</div>';
+		output += '<div class="clearB w230 padL10"></div>';  
 		output += '</div>';
 
 		output +='<div style="width:220px; margin:5px auto">';
