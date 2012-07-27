@@ -25,10 +25,13 @@
 
 		afterRequest: function () {
 			var self = this;
-			$(self.target).find('input[type="text"]').prop("disabled", false);
-			$(self.target).find('input[type="checkbox"]').prop("disabled", false);
 			var keyword = $.trim(self.manager.store.values('q'));
 
+			$(self.target).find('input[type="text"]').prop("disabled", false);
+			$(self.target).find('input[type="checkbox"]').prop("disabled", false);
+
+			if ($.isBlank(keyword)) $(self.target).find('div#refinementHolder').hide();
+				
 			$(self.target).find('input').val(keyword);
 			$(self.target).find('input').focus();
 		},

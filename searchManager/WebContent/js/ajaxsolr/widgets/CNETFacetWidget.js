@@ -14,7 +14,7 @@
 			}
 
 			var escapeValue = function(text){
-				return text.trim().replace(/\s/g,"?");
+				return text.replace(/\s/g,"?");
 			};
 
 			switch(e.data.level){
