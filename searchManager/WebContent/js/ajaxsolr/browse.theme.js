@@ -477,6 +477,15 @@
 			}
 		}
 
+		// For aesthetic, need to tag the last item
+		if(selDiv.find("span.lnk a#level3").is(":visible")){
+			selDiv.find("span.lnk a#level3").parent().parent().addClass("last");
+		}else if(selDiv.find("span.lnk a#level2").is(":visible")){
+			selDiv.find("span.lnk a#level2").parent().parent().addClass("last");
+		}else if(selDiv.find("span.lnk a#level1").is(":visible")){
+			selDiv.find("span.lnk a#level1").parent().parent().addClass("last");
+		}
+
 		return selDiv;
 	};
 
