@@ -20,6 +20,8 @@
 
   <!-- TODO: Dynamically modify mall based on logged user -->
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLabel()" var="storeLabel" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
@@ -30,8 +32,11 @@
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var GLOBAL_store = "${store}";
+	var GLOBAL_storeLabel = "${storeLabel}";
+	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
+	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
   </script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/cssReset.css" />">
@@ -142,7 +147,7 @@
          	  <div class="clearB"></div>
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
-		      		<li class="submenu last">
+		      		<li class="submenu">
 		         		<sec:authorize access="hasRole('MANAGE_USER')">
 		         			<span>Search Server</span>
 		         	  		<select id="select-server"></select>
