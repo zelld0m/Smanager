@@ -2,7 +2,7 @@
 
 	AjaxSolr.theme.prototype.cnetFacets = function () {
 		var output  = '<div class="clearB floatL w240">';
-		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Facet Template</div>';
+		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Category</div>';
 		output += '<div class="clearB w230 padL10"></div>';  
 		output += '</div>';
 
@@ -461,7 +461,7 @@
 					if (separator && j > 0) {
 						selDiv.append(separator);
 					}
-					selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 padTB5 wordwrap"><span class="lnk">'));
+					selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 padTB5 borderB wordwrap"><span class="lnk">'));
 					selDiv.find('.'+list + i+' span.lnk').append(items[i][j]);
 					if (items.length==1 || items.length > 1 && i> 0)
 						selDiv.find('.'+list + i+' span.lnk a').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
@@ -471,7 +471,7 @@
 				if (separator && i > 0) {
 					selDiv.append(separator);
 				}
-				selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 padTB5 wordwrap"><span class="lnk">'));
+				selDiv.append($('<div class="' + list + i + ' farial fsize12 fDGray w220 padTB5 borderB wordwrap"><span class="lnk">'));
 				selDiv.find('.'+list + i+' span.lnk').append(items[i]);
 				if (items.length==1 || items.length > 1 && i>0)
 					selDiv.find('.'+list + i+' span.lnk a').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
@@ -480,13 +480,13 @@
 
 		// For aesthetic, need to tag the last item
 		if(selDiv.find("span.lnk a#level3").is(":visible")){
-			selDiv.find("span.lnk a#level3").parent().parent().addClass("last");
+			selDiv.find("span.lnk a#level1, span.lnk a#level2").parent().parent().removeClass("borderB");
 		}else if(selDiv.find("span.lnk a#level2").is(":visible")){
-			selDiv.find("span.lnk a#level2").parent().parent().addClass("last");
+			selDiv.find("span.lnk a#level1").parent().parent().removeClass("borderB");
 		}else if(selDiv.find("span.lnk a#level1").is(":visible")){
 			selDiv.find("span.lnk a#level1").parent().parent().addClass("last");
 		}
-
+		
 		return selDiv;
 	};
 

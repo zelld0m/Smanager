@@ -91,6 +91,7 @@
 							$secondLevel.append($thirdLevel);
 						}
 					}
+					
 				}
 
 				if(!$.isEmptyObject($facetTemplate["Level1"])){
@@ -112,9 +113,11 @@
 							$firstLevel.find(">li#second").append($secondLevel);
 						}
 					}
+					
+					if (!$.isEmptyObject($facetTemplate["Level2"]) || !$.isEmptyObject($facetTemplate["Level3"])){
+						$firstLevel.find("li:first").addClass("borderBNone");
+					}
 				}
-
-
 			};
 
 		}
