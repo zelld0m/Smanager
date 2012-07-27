@@ -147,7 +147,7 @@
          	  <div class="clearB"></div>
          	  <div id="menuTop">
          	  <ul class="topNavMenu topmenu">
-		      		<li class="submenu last">
+		      		<li class="submenu">
 		         		<sec:authorize access="hasRole('MANAGE_USER')">
 		         			<span>Search Server</span>
 		         	  		<select id="select-server"></select>
