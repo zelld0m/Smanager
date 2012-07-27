@@ -181,19 +181,19 @@
 		output += '	</tr>';
 		output += '   <tr>';
 		output += '		<td width="59%" align="left" valign="top" class="padT5">';
-		output += '			<div class="floatL"> ';		
-		output += '				<div class="floatL fbold marR5">' + doc.Manufacturer + '</div>';
+		output += '			<div>';
+		//output += '				<div class="fbold marR5">' + doc.Manufacturer + '</div>';
+		output += '       		<div id="docHolder"></div>';
 		output += '			</div>';
-		output += '       	<div class="floatL"><div id="docHolder"></div></div>';
 		output += '		</td>';
 		output += '      	<td width="13%" rowspan="2" align="right" valign="top" class="padT5">';
-		output += '       	<div>';
+		output += '       	<div>'; 
 		output += '				<div id="cartPriceHolder" class="fred fbold"></div>';
 		output += '        		<div class="padT5">';
-		output +=	'					<div class="txtAR" style="width:116px; margin:0 auto"><img src="' + AjaxSolr.theme('getAvailability', doc, "icon") + '" style="margin-bottom:-5px"> ' + AjaxSolr.theme('getAvailability', doc) + '</div>';
+		output += '					<div class="txtAR" style="width:116px; margin:0 auto"><img src="' + AjaxSolr.theme('getAvailability', doc, "icon") + '" style="margin-bottom:-5px"> ' + AjaxSolr.theme('getAvailability', doc) + '</div>';
 		output += '		 		</div>';
 		output += '			</div>';
-		output +=	'		</td>';
+		output += '		</td>';
 		output += '   </tr>';
 		output += '   <tr>';
 		output += '		<td align="left" valign="top" class="padT5">' + snippet + '</td>';
@@ -216,25 +216,26 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div #cartPriceHolder").append('$' + doc.CartPrice);
+		secObj.find("div#cartPriceHolder").append('$' + doc.CartPrice);
 
 		var name = $.isNotBlank(doc[GLOBAL_storeLabel + "_Name"])? doc[GLOBAL_storeLabel + "_Name"] : doc.Name;
-
-		secObj.find("div #docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler));
+		var manufacturer = '<span class="txtManufact">' + doc.Manufacturer + '</span>';
+		
+		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', manufacturer + name, docHandler));
 
 		//Add Audit Button
-		secObj.find("div #auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
-		secObj.find("div #auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
+		secObj.find("div#auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
+		secObj.find("div#auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
 
 		//Add Debug link
 		if (doc.Elevate == undefined){
-			secObj.find("div #debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
-			secObj.find("div #debugHolder a").addClass("btnShade btnCream");
-			secObj.find("div #debugHolder a").wrapInner("<span class='btnShade'></span>");
+			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
+			secObj.find("div#debugHolder a").addClass("btnShade btnCream");
+			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
 		}else{		  
-			secObj.find("div #debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Elevated Position: ' +  doc.Elevate, null));
-			secObj.find("div #debugHolder a").addClass("btnShade btnGreen");
-			secObj.find("div #debugHolder a").wrapInner("<span class='btnShade'></span>");
+			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Elevated Position: ' +  doc.Elevate, null));
+			secObj.find("div#debugHolder a").addClass("btnShade btnGreen");
+			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
 		}
 
 		//Add Elevate Button if search has keyword
@@ -261,12 +262,12 @@
 			//secObj.find("div #featureHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', featureicon) + '" alt="' + feaHover + '" title="' + feaHover + '">');
 
 			//Add Elevate Button
-			secObj.find("div #elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
-			secObj.find("div #elevateHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', bigbetsicon) + '" alt="' + eleHover + '" title="' + eleHover + '">');
+			secObj.find("div#elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
+			secObj.find("div#elevateHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', bigbetsicon) + '" alt="' + eleHover + '" title="' + eleHover + '">');
 
 			//Add Exclude Button
-			secObj.find("div #excludeHolder").append(AjaxSolr.theme('createLink', '', excludeHandler));
-			secObj.find("div #excludeHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', deleteicon) + '" alt="Exclude" title="Exclude">');
+			secObj.find("div#excludeHolder").append(AjaxSolr.theme('createLink', '', excludeHandler));
+			secObj.find("div#excludeHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', deleteicon) + '" alt="Exclude" title="Exclude">');
 		}
 
 		return secObj;
@@ -477,6 +478,15 @@
 			}
 		}
 
+		// For aesthetic, need to tag the last item
+		if(selDiv.find("span.lnk a#level3").is(":visible")){
+			selDiv.find("span.lnk a#level3").parent().parent().addClass("last");
+		}else if(selDiv.find("span.lnk a#level2").is(":visible")){
+			selDiv.find("span.lnk a#level2").parent().parent().addClass("last");
+		}else if(selDiv.find("span.lnk a#level1").is(":visible")){
+			selDiv.find("span.lnk a#level1").parent().parent().addClass("last");
+		}
+
 		return selDiv;
 	};
 
@@ -511,7 +521,7 @@
 
 
 	AjaxSolr.theme.prototype.createLink = function (value, handler, id) {
-		var $a = $('<a href="javascript:void(0)"/>').text(value).click(handler);
+		var $a = $('<a href="javascript:void(0)"/>').html(value).click(handler);
 		if ($.isNotBlank(id)){
 			$a.prop("id", id);
 		}

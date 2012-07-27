@@ -748,3 +748,8 @@ body #redirect .tabs .ui-widget-content { padding-top:20px !important}
 .ui-autocomplete 	{ overflow-y:auto !important; max-height:150px !important; height: expression((this.scrollHeight > 150) ? "150px" : (this.scrollHeight < 149) ? "149px" : "auto" ); }
 .ui-widget li.ui-menu-item a:hover { border:none !important; background:none !important; color:#0166b4 }
 
+
+/* simulator */
+a .txtManufact { margin-right:5px; color:#282828; font-weight: bold; }
+a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none !important; cursor: default !important; }
+
