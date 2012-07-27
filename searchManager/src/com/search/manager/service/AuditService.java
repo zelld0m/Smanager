@@ -216,13 +216,25 @@ public class AuditService {
 							ddList.add(opt.toString());
 						}
 						break;
-					case queryCleaning:
+					case queryCleaning: 
 						for(Object opt: Arrays.asList(AuditTrailConstants.queryCleaningOperations)){
 							ddList.add(opt.toString());
 						}
+						for(Object opt: Arrays.asList(AuditTrailConstants.queryCleaningConditionOperations)){
+							ddList.add(opt.toString());
+						}
+						for(Object opt: Arrays.asList(AuditTrailConstants.queryCleaningKeywordOperations)){
+							ddList.add(opt.toString());
+						}
 						break;
-					case relevancy:
+					case relevancy: 
 						for(Object opt: Arrays.asList(AuditTrailConstants.relevancyOperations)){
+							ddList.add(opt.toString());
+						}
+						for(Object opt: Arrays.asList(AuditTrailConstants.relevancyKeywordOperations)){
+							ddList.add(opt.toString());
+						}
+						for(Object opt: Arrays.asList(AuditTrailConstants.relevancyFieldOperations)){
 							ddList.add(opt.toString());
 						}
 						break;
