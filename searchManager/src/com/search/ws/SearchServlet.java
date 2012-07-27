@@ -34,6 +34,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
@@ -107,23 +108,63 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
-	private static void generateExcludeList(StringBuilder stringBuilder, Collection<ExcludeResult> excludeList) {
+	private static void generateExcludeList(StringBuilder excludeValues, StringBuilder excludeFacetValues, Collection<ExcludeResult> excludeList) {
+		boolean edpFlag = false;
+		boolean facetFlag = false;
 		if (!(excludeList == null || excludeList.isEmpty())) {
-			stringBuilder.append("EDP:(");
-			for (ExcludeResult edp: excludeList) {
-				stringBuilder.append(" ").append(edp.getEdp());
+			for (ExcludeResult exclude: excludeList) {
+				if (exclude.getExcludeEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (!edpFlag) {
+						excludeValues.append("EDP:(");
+						edpFlag = true;
+					}
+					excludeValues.append(" ").append(exclude.getEdp());
+				} else {
+					if (!facetFlag) {
+						excludeFacetValues.insert(0, "(");
+						facetFlag = true;
+					} else {
+						excludeFacetValues.append(" OR ");
+					}
+					excludeFacetValues.append(exclude.getCondition());
+				}
 			}
-			stringBuilder.append(")");
+			if (edpFlag) {
+				excludeValues.append(")");
+			}
+			if (facetFlag) {
+				excludeFacetValues.append(")");
+			}
 		}
 	}
 
-	private static void generateElevateList(StringBuilder stringBuilder, Collection<ElevateResult> elevateList) {
+	private static void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList) {
+		boolean edpFlag = false;
+		boolean facetFlag = false;
 		if (!(elevateList == null || elevateList.isEmpty())) {
-			stringBuilder.append("EDP:(");
-			for (ElevateResult edp: elevateList) {
-				stringBuilder.append(" ").append(edp.getEdp());
+			for (ElevateResult elevate: elevateList) {
+				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (!edpFlag) {
+						elevateValues.append("EDP:(");
+						edpFlag = true;
+					}
+					elevateValues.append(" ").append(elevate.getEdp());
+				} else {
+					if (!facetFlag) {
+						elevateFacetValues.insert(0, "(");
+						facetFlag = true;
+					} else {
+						elevateFacetValues.append(" OR ");
+					}
+					elevateFacetValues.append(elevate.getCondition());
+				}
 			}
-			stringBuilder.append(")");
+			if (edpFlag) {
+				elevateValues.append(")");
+			}
+			if (facetFlag) {
+				elevateFacetValues.append(")");
+			}
 		}
 	}
 
@@ -490,7 +531,9 @@ public class SearchServlet extends HttpServlet {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					if (!disableElevate) {
-						elevatedList = daoCacheService.getElevateRules(sk);	
+						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							elevatedList = daoCacheService.getElevateRules(sk);								
+						}
 					}
 					if (!disableExclude) {
 						excludeList = daoCacheService.getExcludeRules(sk);						
@@ -558,20 +601,27 @@ public class SearchServlet extends HttpServlet {
 			// collate exclude list
 			if (excludeList != null && !excludeList.isEmpty()) {
 				StringBuilder excludeValues = new StringBuilder();
-				generateExcludeList(excludeValues, excludeList);
+				StringBuilder excludeFacetValues = new StringBuilder();
+				generateExcludeList(excludeValues, excludeFacetValues, excludeList);
 				if (excludeValues.length() > 0) {
 					excludeValues.insert(0, "-");
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeValues.toString());
+					nameValuePairs.add(nvp);
 				}
-				// set filter to not include exclude list &fq=-EDP:(5400741)
-				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeValues.toString());
-				nameValuePairs.add(nvp);
+				if (excludeFacetValues.length() > 0) {
+					excludeFacetValues.insert(0, "-");
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFacetValues.toString());
+					nameValuePairs.add(nvp);
+				}
 			}
 			
 			// collate elevate list
 			StringBuilder elevateValues = new StringBuilder();
-			generateElevateList(elevateValues, elevatedList);
+			StringBuilder elevateFacetValues = new StringBuilder();
+			generateElevateList(elevateValues, elevateFacetValues, elevatedList);
 
 			BasicNameValuePair elevateNvp = null;
+			BasicNameValuePair elevateFacetNvp = null;
 			Integer numFound = 0;
 			Integer numElevateFound = 0;
 
@@ -600,21 +650,49 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
 			Future<Integer> getElevatedCount = null;
-			if (requestedRows != 0 && elevateValues.length() > 0) {
+			Future<Integer> getFacetElevatedCount = null;
+			if (requestedRows != 0 && (elevateValues.length() > 0 || elevateFacetValues.length() > 0)) {
 				/* Second Request */
 				// set filter to exclude & include elevated list only
-				elevateNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString());
-				nameValuePairs.add(elevateNvp);
+				if (elevateValues.length() > 0) {
+					elevateNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString());
+					nameValuePairs.add(elevateNvp);
 
-				// TASK 1B
-				final ArrayList<NameValuePair> getElevatedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-				getElevatedCount = completionService.submit(new Callable<Integer>() {
-					@Override
-					public Integer call() throws Exception {
-						return solrHelper.getElevatedCount(getElevatedCountParams);
+					// TASK 1B
+					final ArrayList<NameValuePair> getElevatedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+					getElevatedCount = completionService.submit(new Callable<Integer>() {
+						@Override
+						public Integer call() throws Exception {
+							return solrHelper.getElevatedCount(getElevatedCountParams);
+						}
+					});
+					tasks++;
+					nameValuePairs.remove(elevateNvp);
+				}
+
+				if (elevateFacetValues.length() > 0) {
+					elevateFacetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFacetValues.toString());
+					nameValuePairs.add(elevateFacetNvp);
+					BasicNameValuePair elevateFNvp = null;
+					if (elevateValues.length() > 0) {
+						elevateFNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+						nameValuePairs.add(elevateFNvp);
 					}
-				});
-				tasks++;
+					final ArrayList<NameValuePair> getElevatedFacetCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+					getFacetElevatedCount = completionService.submit(new Callable<Integer>() {
+						@Override
+						public Integer call() throws Exception {
+							return solrHelper.getElevatedCount(getElevatedFacetCountParams);
+						}
+					});
+					if (elevateValues.length() > 0) {
+						nameValuePairs.remove(elevateFNvp);
+					}
+
+					tasks++;
+					nameValuePairs.remove(elevateFacetNvp);
+				}
+
 			}
 
 
@@ -625,7 +703,11 @@ public class SearchServlet extends HttpServlet {
 					logger.debug("Results found: " + numFound);
 				}
 				else if (completed.equals(getElevatedCount)) {
-					numElevateFound = completed.get();
+					numElevateFound += completed.get();
+					logger.debug("Elevate result size: " + numElevateFound);
+				}
+				else if (completed.equals(getFacetElevatedCount)) {
+					numElevateFound += completed.get();
 					logger.debug("Elevate result size: " + numElevateFound);
 				}
 				tasks--;
@@ -651,10 +733,11 @@ public class SearchServlet extends HttpServlet {
 					// retrieve the elevate list
 					// TASK 2A
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
+					final List<ElevateResult> fElevatedList = elevatedList;
 					getElevatedItems = completionService.submit(new Callable<Integer>() {
 						@Override
 						public Integer call() throws Exception {
-							return solrHelper.getElevatedItems(getElevatedItemsParams);
+							return solrHelper.getElevatedItems(getElevatedItemsParams, fElevatedList);
 						}
 					});
 					tasks++;
@@ -668,10 +751,14 @@ public class SearchServlet extends HttpServlet {
 					// set rows parameter to original number requested minus results returned in second request
 					// grab all the doc nodes <doc>
 					if (elevateValues.length() > 0) {
-						nameValuePairs.remove(elevateNvp);
 						elevateValues.insert(0, "-");
 						elevateNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString());
 						nameValuePairs.add(elevateNvp);
+					}
+					if (elevateFacetValues.length() > 0) {
+						elevateFacetValues.insert(0, "-");
+						elevateFacetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFacetValues.toString());
+						nameValuePairs.add(elevateFacetNvp);
 					}
 
 					nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
