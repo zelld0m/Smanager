@@ -5,8 +5,6 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
-import com.search.manager.utility.DateAndTimeUtils;
-
 @DataTransferObject(converter = BeanConverter.class)
 public class ElevateProduct extends Product {
 
@@ -33,4 +31,5 @@ public class ElevateProduct extends Product {
 	public void setLocation(Integer location) {
 		this.location = location;
 	}
+
 }

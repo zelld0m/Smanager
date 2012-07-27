@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -27,6 +28,7 @@ import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
@@ -178,7 +180,13 @@ public class DaoServiceImpl implements DaoService {
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
 			ep.setStore(storeId);
-			map.put(e.getEdp(), ep);
+			ep.setCondition(e.getCondition());
+			ep.setMemberTypeEntity(e.getElevateEntity());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
@@ -201,6 +209,8 @@ public class DaoServiceImpl implements DaoService {
 		ep.setLastModifiedBy(e.getLastModifiedBy());
 		ep.setCreatedBy(e.getCreatedBy());
 		ep.setStore(elevate.getStoreKeyword().getStoreId());
+		ep.setCondition(e.getCondition());
+		ep.setMemberTypeEntity(e.getElevateEntity());
 		map.put(e.getEdp(), ep);
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return map.get(e.getEdp());
@@ -224,6 +234,8 @@ public class DaoServiceImpl implements DaoService {
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
 			ep.setStore(storeId);
+			ep.setCondition(e.getCondition());
+			ep.setMemberTypeEntity(e.getElevateEntity());
 			map.put(e.getEdp(), ep);
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
@@ -247,6 +259,8 @@ public class DaoServiceImpl implements DaoService {
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
 			ep.setStore(storeId);
+			ep.setCondition(e.getCondition());
+			ep.setMemberTypeEntity(e.getExcludeEntity());
 			map.put(e.getEdp(), ep);
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);

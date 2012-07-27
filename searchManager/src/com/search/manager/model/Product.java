@@ -6,6 +6,7 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -27,6 +28,9 @@ public class Product extends ModelBean {
 	private String comment;
 	private String lastModifiedBy;
 	private String createdBy;
+	private MemberTypeEntity memberTypeEntity;
+	private String condition;
+	private String memberId;
 
 	public Product() {
 		super();
@@ -198,5 +202,29 @@ public class Product extends ModelBean {
 		long diffDays = diff / (24 * 60 * 60 * 1000);
 		
 		return diffDays > 0 ? String.format("%s %s", String.valueOf(diffDays), diffDays==1? "day left" : "days left"): (diffDays == 0 ? "Ending Today" : "");
+	}
+
+	public String getCondition() {
+		return condition;
+	}
+
+	public void setCondition(String condition) {
+		this.condition = condition;
+	}
+
+	public MemberTypeEntity getMemberTypeEntity() {
+		return memberTypeEntity;
+	}
+
+	public void setMemberTypeEntity(MemberTypeEntity memberTypeEntity) {
+		this.memberTypeEntity = memberTypeEntity;
+	}
+
+	public String getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
 	}
 }

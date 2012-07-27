@@ -22,6 +22,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -77,88 +78,93 @@ public class SearchHelper {
 			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
 			int size = productList.size();
+			boolean isWithEDP = false;
 			StringBuilder edps = new StringBuilder("EDP:(");
 			for (Product product: productList.values()) {
 				edps.append(" ").append(product.getEdp());
-			}
-			edps.append(")");
-			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("q", keyword));
-			nameValuePairs.add(new BasicNameValuePair("fl", fields));
-			nameValuePairs.add(new BasicNameValuePair("qt", qt));
-			nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
-			nameValuePairs.add(new BasicNameValuePair("fq", edps.toString()));
-			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
-			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
-			if (logger.isDebugEnabled()) {
-				for (NameValuePair p: nameValuePairs) {
-					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER) {
+					isWithEDP = true;
 				}
 			}
-			
-            /* JSON */
-            JSONObject initialJson = null;
-            JsonSlurper slurper = null;
-            JSONArray resultArray = null;
-            
-            // send solr request
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
-            JsonConfig jsonConfig = new JsonConfig();
-            jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
-    		slurper = new JsonSlurper(jsonConfig);
-    		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-    		
-			// locate the result node
-    		resultArray = ((JSONObject)initialJson)
-    							.getJSONObject(SolrConstants.TAG_RESPONSE)
-    							.getJSONArray(SolrConstants.TAG_DOCS);
-    		String name = null;
-    		String description = null;
-    		for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
-    			JSONObject json = resultArray.getJSONObject(i);
-    			Product product = productList.get(json.getString("EDP"));
-    			if (product != null) {
-	    			Set<String> keys = (Set<String>)json.keySet();
-	    			for (String key: keys) {
-	    				String value = json.getString(key);
-	    				if ("EDP".equals(key)) {
-	    					product.setEdp(value);
-	    				}
-	    				else if ("DPNo".equals(key)) {
-	    					product.setDpNo(value);
-	    				}
-	    				else if ("MfrPN".equals(key)) {
-	    					product.setMfrPN(value);
-	    				}
-	    				else if ("Manufacturer".equals(key)) {
-	    					product.setManufacturer(value);
-	    				}
-	    				else if ("ImagePath".equals(key)) {
-	    					product.setImagePath(value);
-	    				}
-	    				else if ("Name".equals(key)) {
-	    					name = value;
-	    				}
-	    				else if ("Description".equals(key)) {
-	    					description = value;
-	    				}
-	    				else if (key.matches("(.*)_Name$")) {
-	    					product.setName(value);
-	    				}
-	    				else if (key.matches("(.*)_Description$")) {
-	    					product.setDescription(value);
-	    				}
+			edps.append(")");
+			if (isWithEDP) {			
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				nameValuePairs.add(new BasicNameValuePair("q", keyword));
+				nameValuePairs.add(new BasicNameValuePair("fl", fields));
+				nameValuePairs.add(new BasicNameValuePair("qt", qt));
+				nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
+				nameValuePairs.add(new BasicNameValuePair("fq", edps.toString()));
+				nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+				nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+				if (logger.isDebugEnabled()) {
+					for (NameValuePair p: nameValuePairs) {
+						logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+					}
+				}
+				
+	            /* JSON */
+	            JSONObject initialJson = null;
+	            JsonSlurper slurper = null;
+	            JSONArray resultArray = null;
+	            
+	            // send solr request
+				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+	            JsonConfig jsonConfig = new JsonConfig();
+	            jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+	    		slurper = new JsonSlurper(jsonConfig);
+	    		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+	    		
+				// locate the result node
+	    		resultArray = ((JSONObject)initialJson)
+	    							.getJSONObject(SolrConstants.TAG_RESPONSE)
+	    							.getJSONArray(SolrConstants.TAG_DOCS);
+	    		String name = null;
+	    		String description = null;
+	    		for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
+	    			JSONObject json = resultArray.getJSONObject(i);
+	    			Product product = productList.get(json.getString("EDP"));
+	    			if (product != null) {
+		    			Set<String> keys = (Set<String>)json.keySet();
+		    			for (String key: keys) {
+		    				String value = json.getString(key);
+		    				if ("EDP".equals(key)) {
+		    					product.setEdp(value);
+		    				}
+		    				else if ("DPNo".equals(key)) {
+		    					product.setDpNo(value);
+		    				}
+		    				else if ("MfrPN".equals(key)) {
+		    					product.setMfrPN(value);
+		    				}
+		    				else if ("Manufacturer".equals(key)) {
+		    					product.setManufacturer(value);
+		    				}
+		    				else if ("ImagePath".equals(key)) {
+		    					product.setImagePath(value);
+		    				}
+		    				else if ("Name".equals(key)) {
+		    					name = value;
+		    				}
+		    				else if ("Description".equals(key)) {
+		    					description = value;
+		    				}
+		    				else if (key.matches("(.*)_Name$")) {
+		    					product.setName(value);
+		    				}
+		    				else if (key.matches("(.*)_Description$")) {
+		    					product.setDescription(value);
+		    				}
+		    			}
 	    			}
-    			}
-    			
-    			if (StringUtils.isBlank(product.getName())) {
-    				product.setName(name);
-    			}
-    			if (StringUtils.isBlank(product.getDescription())) {
-    				product.setName(description);
-    			}
-    		}
+	    			
+	    			if (StringUtils.isBlank(product.getName())) {
+	    				product.setName(name);
+	    			}
+	    			if (StringUtils.isBlank(product.getDescription())) {
+	    				product.setName(description);
+	    			}
+	    		}
+			}
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
 		}

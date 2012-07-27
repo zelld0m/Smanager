@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
@@ -202,6 +203,8 @@ public class ElevateService{
 			e.setEdp(productId);
 			e.setLocation(sequence);
 			e.setLastModifiedBy(UtilityService.getUsername());
+			e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
+			e.setMemberId("002l9U85s0NeEmHdMAO5");
 			return daoService.updateElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during updateElevate()",e);
