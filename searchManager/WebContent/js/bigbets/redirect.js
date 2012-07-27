@@ -215,7 +215,7 @@
 					headerText : "Using This Rule",
 					searchText : "Enter Keyword",
 
-					showAddButton: !self.selectedRuleStatus["locked"] || allowModify,
+					showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
 					itemDataCallback: function(base, keyword, page){
 						RedirectServiceJS.getAllKeywordInRule(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
 							callback: function(data){
@@ -248,7 +248,7 @@
 						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 					},
 					itemAddCallback: function(base, keyword){
-						if (!self.selectedRuleStatus["locked"] || allowModify){
+						if (!self.selectedRuleStatus["locked"] && allowModify){
 							RedirectServiceJS.addKeywordToRule(self.selectedRule["ruleId"], keyword, {
 								callback: function(code){
 									showActionResponse(code, "add", keyword);

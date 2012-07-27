@@ -490,7 +490,9 @@ public class SearchServlet extends HttpServlet {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					if (!disableElevate) {
-						elevatedList = daoCacheService.getElevateRules(sk);	
+						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							elevatedList = daoCacheService.getElevateRules(sk);								
+						}
 					}
 					if (!disableExclude) {
 						excludeList = daoCacheService.getExcludeRules(sk);						
