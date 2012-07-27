@@ -211,6 +211,7 @@
         	<div class="bigbetsShade" style="padding:5px; min-height: 80px">
         	<strong>Elevate Info:</strong>
         	<div class="txtAR w60 floatR  fgray fsize11">
+        		<img class="removeExpiryDateIcon pointer" id="removeExpiryDateIcon" src="<spring:url value="/images/icon_calendarDelete.png" />" alt="Remove Expiry Date" title="Remove Expiry Date">
         		<img class="commentIcon pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
         		<img class="auditIcon pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 		</div>

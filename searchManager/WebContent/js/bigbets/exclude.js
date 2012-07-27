@@ -20,6 +20,7 @@
 	var defaultItemDisplay = "sortableTile";
 	
 	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
+	var removeExpiryDateConfirmText = "This will remove expiry date associated to this rule. Continue?";
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
 	
@@ -166,6 +167,19 @@
 			}
 		});
 	};
+	
+	var removeExpiryDate = function(e){
+		var data = e.data;
+		if (!data.locked && allowModify && confirm(removeExpiryDateConfirmText)){
+			var dateText = "";
+			ExcludeServiceJS.updateExpiryDate(selectedRule.ruleName, data.item["edp"], dateText, {
+				callback: function(code){
+					showActionResponse(code, "update", "expiry date of SKU#: " + data.item["dpNo"]);
+					if(code==1) showExclude();
+				}
+			});
+		}
+	};
 
 	var deleteItemInRule = function(e){
 		var data = e.data;
@@ -195,6 +209,12 @@
 		$("#sItemValidityText" + id).html(item["validityText"]);
 		
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
+		
+		if ($.isBlank(item["validityText"])) $('#removeExpiryDateIcon' + id).hide();
+		
+		$('#removeExpiryDateIcon' + id).on({
+			click: removeExpiryDate
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
 		
 		$('#commentIcon' + id).on({
 			click: showCommentList
