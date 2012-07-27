@@ -26,7 +26,7 @@
 
 					for (var item in facetTempArr){
 						var trimmed = $.trim(facetTempArr[item].replace(/\*/g,'?').replace(/\?/g,' '));
-						links.push(AjaxSolr.theme('createLink', trimmed, self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(item) + 1)), "level" + (parseInt(item) + 1)));
+						links.push(AjaxSolr.theme('createLink', item==0? "Category: " + trimmed : trimmed , self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(item) + 1)), "level" + (parseInt(item) + 1)));
 					}
 				}
 				else {
