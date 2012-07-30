@@ -151,7 +151,6 @@ public class SearchHelper {
 	    				}
 	    			}
     			}
-    			
     			if (StringUtils.isBlank(product.getName())) {
     				product.setName(name);
     			}
@@ -164,6 +163,92 @@ public class SearchHelper {
 		}
 	}
 
+	public static void getProductsIgnoreKeyword(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {
+		try {
+			if (productList == null || productList.isEmpty()) {
+				return;
+			}
+			ConfigManager configManager = ConfigManager.getInstance();
+
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+			// TODO: replace qt with relevancy
+			String qt = "standard";
+			
+			String core = configManager.getStoreParameter(storeId, "core");
+			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
+			int size = productList.size();
+			StringBuilder edps = new StringBuilder("EDP:(");
+			for (Product product: productList.values()) {
+				edps.append(" ").append(product.getEdp());
+			}
+			edps.append(")");
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("q", edps.toString()));
+			nameValuePairs.add(new BasicNameValuePair("fl", fields));
+			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p: nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+			
+            /* JSON */
+            JSONObject initialJson = null;
+            JsonSlurper slurper = null;
+            JSONArray resultArray = null;
+            
+            // send solr request
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+    		slurper = new JsonSlurper(jsonConfig);
+    		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+    		
+			// locate the result node
+    		resultArray = ((JSONObject)initialJson)
+    							.getJSONObject(SolrConstants.TAG_RESPONSE)
+    							.getJSONArray(SolrConstants.TAG_DOCS);
+    		for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
+    			JSONObject json = resultArray.getJSONObject(i);
+    			Product product = productList.get(json.getString("EDP"));
+    			if (product != null) {
+	    			Set<String> keys = (Set<String>)json.keySet();
+	    			for (String key: keys) {
+	    				String value = json.getString(key);
+	    				if ("EDP".equals(key)) {
+	    					product.setEdp(value);
+	    				}
+	    				else if ("DPNo".equals(key)) {
+	    					product.setDpNo(value);
+	    				}
+	    				else if ("MfrPN".equals(key)) {
+	    					product.setMfrPN(value);
+	    				}
+	    				else if ("Manufacturer".equals(key)) {
+	    					product.setManufacturer(value);
+	    				}
+	    				else if ("ImagePath".equals(key)) {
+	    					product.setImagePath(value);
+	    				}
+	    				else if (key.matches("(.*)_Name$")) {
+	    					product.setName(value);
+	    				}
+	    				else if (key.matches("(.*)_Description$")) {
+	    					product.setDescription(value);
+	    				}
+	    			}
+    			}
+    		}
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr" , t);
+		}
+	}
 	
 	public static List<String> getFacetValues(String server, String storeId, String field) {
 		return getFacetValues(server, storeId, field, null);
