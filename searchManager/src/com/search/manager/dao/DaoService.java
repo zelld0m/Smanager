@@ -121,7 +121,9 @@ public interface DaoService {
 	
 	/* Big Bets */
 	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
+	public RecordSet<Product> getExcludedProductsIgnoreKeyword(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
+	public RecordSet<ElevateProduct> getElevatedProductsIgnoreKeyword(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateProduct> getNoExpiryElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException;
 	public Product getExcludedProduct(String serverName, ExcludeResult exclude) throws DaoException;

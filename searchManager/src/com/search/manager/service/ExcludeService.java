@@ -194,6 +194,23 @@ public class ExcludeService {
 		}
 		return null;
 	}
+	
+	@RemoteMethod
+	public RecordSet<Product> getAllExcludedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+
+			ExcludeResult e = new ExcludeResult();
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllExcludedProducts()",e);
+		}
+		return null;
+	}
 
 	@RemoteMethod
 	public RecordSet<Product> getActiveExcludedProducts(String keyword, int page,int itemsPerPage) {

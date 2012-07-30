@@ -201,7 +201,7 @@
 	var updateRuleItemPosition = function(edp, destinationIndex, dpNo) {
 		ElevateServiceJS.updateElevate(selectedRule.ruleName,edp,destinationIndex, {
 			callback : function(code){
-				showActionResponse(code, "update position", dpNo);
+				showActionResponse(code, "update position", $.isBlank(dpNo)? "Product Id#: " + edp : "SKU#: " + dpNo);
 				showElevate();
 			},
 			preHook: function(){

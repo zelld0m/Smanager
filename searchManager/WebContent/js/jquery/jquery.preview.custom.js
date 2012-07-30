@@ -66,14 +66,14 @@
 			
 			switch(base.options.ruleType.toLowerCase()){
 				case "elevate": 
-					ElevateServiceJS.getProducts(null, base.options.ruleId, 0, 0,{
+					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(base.options.ruleId, 0, 0,{
 						callback: function(data){
 							base.populateItemTable("Elevate", $content, data);
 						}
 					});
 					break;
 				case "exclude": 
-					ExcludeServiceJS.getProducts(null, base.options.ruleId , 0, 0,{
+					ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
 						callback: function(data){
 							base.populateItemTable("Exclude", $content, data);
 						}

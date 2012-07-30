@@ -271,7 +271,7 @@
 				};
 
 				updateElevateResult = function(contentHolder, doc, keyword){
-					ElevateServiceJS.getAllElevatedProducts(keyword, 0, 0,{
+					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
 						callback: function(data){
 							var list = data.list;
 
