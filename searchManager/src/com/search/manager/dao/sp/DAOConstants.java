@@ -22,19 +22,19 @@ public class DAOConstants {
 	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value";
 	public static final String SP_GET_NO_EXPIRY_ELEVATE 			= "usp_Get_Elevate_NoExpiry";
 	public static final String SP_UPDATE_ELEVATE 					= "usp_Update_Elevate_NEW";
-	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date";
+	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date_NEW";
 	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment";
 	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment";
-	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate";
+	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate_NEW";
 	// EXCLUDE
 	public static final String SP_ADD_EXCLUDE 						= "usp_Add_Exclude_NEW";
 	public static final String SP_GET_EXCLUDE 						= "usp_Get_Exclude_NEW";
 	public static final String SP_GET_EXCLUDE_ITEM 					= "usp_Get_Exclude_Value";
 	public static final String SP_UPDATE_EXCLUDE					= "usp_Update_Exclude";
-	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude";
+	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude_NEW";
 	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
 	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment";
-	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date";
+	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date_NEW";
 	// CAMPAIGN
 	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";
 	public static final String SP_GET_CAMPAIGN 						= "usp_Get_Campaign";

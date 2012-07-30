@@ -109,14 +109,14 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int deleteItemInRule(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String memberId) {
 		try {
 			String store = UtilityService.getStoreName();
 
-			logger.info(String.format("%s %s %s", store, keyword, productId));
+			logger.info(String.format("%s %s %s", store, keyword,memberId));
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.deleteExcludeResult(e);
 		} catch (DaoException e) {

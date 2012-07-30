@@ -203,7 +203,7 @@ public class ElevateDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));	
 		}
@@ -259,7 +259,13 @@ public class ElevateDAO {
     		String keyword = DAOUtils.getKeywordId(elevate.getStoreKeyword());
 	    	if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = StringUtils.lowerCase(StringUtils.trim(elevate.getStoreKeyword().getStoreId()));
-	    		String productId = StringUtils.trim(elevate.getEdp());
+	    		String value = null;
+	            if (elevate.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+	            	value = StringUtils.trim(elevate.getEdp());
+	            } else {
+	            	value = elevate.getCondition();
+	            }
+	    		
 	    		Integer sequence = elevate.getLocation();
 	    		String username = StringUtils.trim(elevate.getCreatedBy());
 	    		String comment = StringUtils.trim(elevate.getComment());
@@ -270,13 +276,10 @@ public class ElevateDAO {
 	    		if (match == null) {
 		        	Map<String, Object> inputs = new HashMap<String, Object>();
 		            inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
-		            if (elevate.getElevateEntity() == null) {
-		            	elevate.setElevateEntity(MemberTypeEntity.PART_NUMBER);
-		            }
 		            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
 		            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 		            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
-		            inputs.put(DAOConstants.PARAM_VALUE, productId);
+		            inputs.put(DAOConstants.PARAM_VALUE, value);
 		            inputs.put(DAOConstants.PARAM_COMMENT, comment);
 		            inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
 		            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
@@ -406,7 +409,7 @@ public class ElevateDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
             return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during removeElevate()", e);

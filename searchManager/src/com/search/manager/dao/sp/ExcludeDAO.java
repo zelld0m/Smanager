@@ -329,7 +329,7 @@ public class ExcludeDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
             return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during removeExclude()", e);

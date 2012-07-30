@@ -178,13 +178,13 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int deleteItemInRule(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String memberId) {
 		try {
-			logger.info(String.format("%s %s", keyword, productId));
+			logger.info(String.format("%s %s", keyword, memberId));
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.deleteElevateResult(e);
 		} catch (DaoException e) {
