@@ -149,7 +149,13 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							
+							//TODO: Get delete details from file
+							if (list[i]["updateStatus"]!=="DELETE"){
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							}else{
+								$tr.find("td#ruleOption > img.previewIcon").hide();
+							}
 
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
