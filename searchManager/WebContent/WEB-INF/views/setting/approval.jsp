@@ -81,7 +81,7 @@
 				<h3 style="border:none;">Approval Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
 					<p align="justify">
-					Before approving any rule, it is advisable to review each one. Click on <strong>Review</strong> to view the rule details.<br/><br/>
+					Before approving any rule, it is advisable to review each one. Click on <strong>Preview Content</strong> to view the rule details.<br/><br/>
 					If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
 					<p>
 				</div>
