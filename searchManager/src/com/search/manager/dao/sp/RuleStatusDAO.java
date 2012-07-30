@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -219,7 +220,7 @@ public class RuleStatusDAO {
 		boolean orFlag = size > 1;
 		for (int i = 0; i < ruleRefIds.size(); i++) {
 			String ruleRefId = ruleRefIds.get(i);
-			sBuilder.append("REFERENCE_ID = '").append(ruleRefId).append("'");
+			sBuilder.append("REFERENCE_ID = '").append(StringEscapeUtils.escapeSql(ruleRefId)).append("'");
 			if (orFlag && i != size-1) {
 				sBuilder.append(" OR ");
 			}
