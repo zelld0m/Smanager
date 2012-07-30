@@ -198,10 +198,10 @@
 		}
 	};
 
-	var updateRuleItemPosition = function(edp, destinationIndex) {
+	var updateRuleItemPosition = function(edp, destinationIndex, dpNo) {
 		ElevateServiceJS.updateElevate(selectedRule.ruleName,edp,destinationIndex, {
 			callback : function(code){
-				showActionResponse(code, "update position", edp);
+				showActionResponse(code, "update position", $.isBlank(dpNo)? "Product Id#: " + edp : "SKU#: " + dpNo);
 				showElevate();
 			},
 			preHook: function(){
@@ -244,7 +244,7 @@
 						if(destinationIndex > selectedRuleItemTotal){
 							alert("Maximum allowed value is " + (selectedRuleItemTotal));
 						}else{
-							updateRuleItemPosition(item["edp"], destinationIndex);
+							updateRuleItemPosition(item["edp"], destinationIndex, item["dpNo"]);
 						}
 					}
 				}else{
