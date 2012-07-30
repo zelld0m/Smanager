@@ -475,6 +475,14 @@
 							charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
 						return false;
 					if (charCode == 13){ updateBarLength(content, fieldName, $(e.target).val());}
+				},
+				
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
 				}
 
 			}, { name:fieldName} );
