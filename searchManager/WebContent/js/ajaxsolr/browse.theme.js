@@ -216,9 +216,9 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + doc.CartPrice);
+		secObj.find("div#cartPriceHolder").append('$' + doc[GLOBAL_storeFacetName + "_CartPrice"]);
 
-		var name = $.isNotBlank(doc[GLOBAL_storeLabel + "_Name"])? doc[GLOBAL_storeLabel + "_Name"] : doc.Name;
+		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact">' + doc.Manufacturer + '</span>';
 		
 		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', manufacturer + name, docHandler));
