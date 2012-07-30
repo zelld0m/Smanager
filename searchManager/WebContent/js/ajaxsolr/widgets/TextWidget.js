@@ -25,10 +25,13 @@
 
 		afterRequest: function () {
 			var self = this;
-			$(self.target).find('input[type="text"]').prop("disabled", false);
-			$(self.target).find('input[type="checkbox"]').prop("disabled", false);
 			var keyword = $.trim(self.manager.store.values('q'));
 
+			$(self.target).find('input[type="text"]').prop("disabled", false);
+			$(self.target).find('input[type="checkbox"]').prop("disabled", false);
+
+			if ($.isBlank(keyword)) $(self.target).find('div#refinementHolder').hide();
+				
 			$(self.target).find('input').val(keyword);
 			$(self.target).find('input').focus();
 		},
@@ -37,14 +40,18 @@
 			var self = this;
 			
 			if ($.isNotBlank(keyword)){
-				var isKeepChecked= $('input[name="keepRefinement"]').is(':checked');
-
-				if (!isKeepChecked){
-					self.manager.store.removeByValue('fq', new RegExp('\w*'));
+				if(!isXSSSafe(keyword)){
+					alert("Invalid keyword. HTML/XSS is not allowed.");
+				}else{
+					var isKeepChecked= $('input[name="keepRefinement"]').is(':checked');
+	
+					if (!isKeepChecked){
+						self.manager.store.removeByValue('fq', new RegExp('\w*'));
+					}
+	
+					self.manager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
+					self.manager.doRequest(0);
 				}
-
-				self.manager.store.addByValue('q', $.trim(keyword)); //AjaxSolr.Parameter.escapeValue(value.trim())
-				self.manager.doRequest(0);
 			}
 		}
 		

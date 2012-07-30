@@ -70,21 +70,28 @@
 
 											switch($(evt.currentTarget).attr("id")){
 											case "rsaveBtn": 
+												
 												if ($.isNotBlank(reason) && $.isNotBlank(backupName)){
-
-													RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, backupName, reason, {
-														callback: function(data){
-															if (data) {
-																alert("Successfully created back up!");
-																base.getData();
-															} else {
-																alert("Failed creating back up!");
+													if(!validateField('Name', backupName, 1)){
+														return;
+													}else if(!validateField('Reason', reason, 1)){
+														return;
+													}
+													else{
+														RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, backupName, reason, {
+															callback: function(data){
+																if (data) {
+																	alert("Successfully created back up!");
+																	base.getData();
+																} else {
+																	alert("Failed creating back up!");
+																}
+															},
+															preHook: function(){
+																api.destroy();
 															}
-														},
-														preHook: function(){
-															api.destroy();
-														}
-													});							
+													});
+													}
 
 												}else{
 													alert("Name and Reason can not be blank!");

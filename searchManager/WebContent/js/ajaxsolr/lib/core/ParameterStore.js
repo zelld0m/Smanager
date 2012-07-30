@@ -174,6 +174,15 @@ AjaxSolr.ParameterStore = AjaxSolr.Class.extend(
       }
     }
   },
+  
+  findByIndex: function (name, index) {
+    if (index === undefined) {
+      return;
+    }
+    else {
+      return this.params[name][index]["value"];
+    }
+  },
 
   /**
    * Finds all parameters with matching values.

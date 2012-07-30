@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -35,9 +34,9 @@ import com.search.ws.ConfigManager;
 		creatorParams = @Param(name = "beanName", value = "utilityService")
 )
 public class UtilityService {
-	
+
 	private static final Logger logger = Logger.getLogger(UtilityService.class);
-	
+
 	@RemoteMethod
 	public static String getUsername(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -65,7 +64,7 @@ public class UtilityService {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
 	}
-	
+
 	@RemoteMethod
 	public static String getStoreName(){
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -78,7 +77,7 @@ public class UtilityService {
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		attr.setAttribute("storeName", storeName, RequestAttributes.SCOPE_SESSION);
 	}
-	
+
 	@RemoteMethod
 	public static String getStoreLabel(){
 		String storeLabel = null;
@@ -88,12 +87,12 @@ public class UtilityService {
 		}
 		return storeLabel;
 	}
-	
+
 	@RemoteMethod
 	public static String getStoreLogo(){
 		return new StringBuilder("/images/logo").append(getStoreLabel()).append(".png").toString();
 	}
-	
+
 	@RemoteMethod
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
@@ -115,7 +114,9 @@ public class UtilityService {
 		}
 		return map;
 	}
-	
+
+
+
 	public static boolean hasPermission(String permission) {
 		boolean flag = false;
 		for (GrantedAuthority auth : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
@@ -126,7 +127,7 @@ public class UtilityService {
 		}
 		return flag;
 	}
-	
+
 	public static String formatComment(String comment) {
 		if (StringUtils.isNotBlank(comment)) {
 			StringBuilder commentBuilder = new StringBuilder();
@@ -142,7 +143,7 @@ public class UtilityService {
 		}
 		return null;
 	}
-	
+
 	public static String getPasswordHash(String password) {
 		MessageDigest messageDigest = null;
 		String hashedPass = null;
@@ -151,12 +152,24 @@ public class UtilityService {
 			messageDigest.update(password.getBytes(),0, password.length());  
 			hashedPass = new BigInteger(1,messageDigest.digest()).toString(16);  
 			if (hashedPass.length() < 32) {
-			   hashedPass = "0" + hashedPass; 
+				hashedPass = "0" + hashedPass; 
 			}
 		} catch (NoSuchAlgorithmException e) {
 			logger.error("Error in getPasswordHash. " + e.getMessage());
 		}  
 		return hashedPass;
+	}
+
+	@RemoteMethod
+	public static String getStoreFacetTemplate(){
+
+		ConfigManager cm = ConfigManager.getInstance();
+		String storeFacetTemplate = StringUtils.EMPTY;
+		if (cm != null) {
+			storeFacetTemplate = cm.getParameterByCore(getStoreName(), "facet-template");
+		}
+
+		return storeFacetTemplate;
 	}
 
 }
