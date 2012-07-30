@@ -203,7 +203,7 @@
        	</div>
        	
        	<div class="listInfo">
-        	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
+        	<div class="listTitle"><span class="fLblue" id="sItemName"></span></div>
         	<p class="textInfo"><span class="fgreen">SKU #: </span><span id="sItemDPNo"></span></p>
         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 
