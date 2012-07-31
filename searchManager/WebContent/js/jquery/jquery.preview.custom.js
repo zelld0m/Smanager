@@ -34,12 +34,23 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
+				
+				var setImage = function(tr, imagePath){
+					setTimeout(function(){	
+						tr.find("td#itemImage > img").attr("src",imagePath).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+							}
+						});
+					},10);
+				};
+				
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 
 					if($.isNotBlank(list[i]["dpNo"])){
-						$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+						setImage($tr,list[i]["imagePath"]);
 						$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 						$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 						$tr.find("td#itemName").html(list[i]["name"]);
@@ -66,14 +77,14 @@
 			
 			switch(base.options.ruleType.toLowerCase()){
 				case "elevate": 
-					ElevateServiceJS.getProducts(null, base.options.ruleId, 0, 0,{
+					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(base.options.ruleId, 0, 0,{
 						callback: function(data){
 							base.populateItemTable("Elevate", $content, data);
 						}
 					});
 					break;
 				case "exclude": 
-					ExcludeServiceJS.getProducts(null, base.options.ruleId , 0, 0,{
+					ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
 						callback: function(data){
 							base.populateItemTable("Exclude", $content, data);
 						}

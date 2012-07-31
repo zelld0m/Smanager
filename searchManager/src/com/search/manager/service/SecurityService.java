@@ -43,15 +43,15 @@ public class SecurityService {
 	@RemoteMethod
 	public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
-		user.setGroupId(roleId);
+		user.setGroupId(StringUtils.trimToNull(roleId));
 		user.setStoreId(UtilityService.getStoreName());
 		user.setFullName(StringUtils.trimToNull(search));
 		
 		if(StringUtils.isNotEmpty(status)){
-			user.setAccountNonLocked(!StringUtils.equalsIgnoreCase("YES",status));		
+			user.setAccountNonLocked(!StringUtils.equalsIgnoreCase("YES",status));
 		}
 		if(StringUtils.isNotEmpty(expired)){
-			user.setAccountNonExpired(!StringUtils.equalsIgnoreCase("YES",expired));			
+			user.setAccountNonExpired(!StringUtils.equalsIgnoreCase("YES",expired));
 		}
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);

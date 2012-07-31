@@ -196,7 +196,7 @@
 		         	</div>
 		         	
 		         	<div class="listInfo exclude">
-			         	<div class="listTitle"><a href="javascript:void(0)" id="sItemName"></a></div>
+			         	<div class="listTitle"><span class="fLblue" id="sItemName"></span></div>
 			         	<p class="textInfo"><span class="fgreen">SKU #: </span><span id="sItemDPNo"></span></p>
 			         	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
 		
@@ -204,6 +204,7 @@
 			         	<div class="bigbetsShade" style="padding:5px; min-height: 75px">
 			         	<strong>Exclude Info:</strong>
 			         	<div class="txtAR w60 floatR fgray fsize11">
+			         		<img class="removeExpiryDateIcon pointer" id="removeExpiryDateIcon" src="<spring:url value="/images/icon_calendarDelete.png" />" alt="Remove Expiry Date" title="Remove Expiry Date">
 			         		<img class="pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
 			         		<img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
 						</div>

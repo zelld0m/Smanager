@@ -370,7 +370,7 @@ public class SearchServlet extends HttpServlet {
 				else if (keywordPresent) {
 					// get relevancy mapped to keyword
 					relevancy = new Relevancy("", "");
-					relevancy.setStore(new Store(storeName));
+					relevancy.setStore(new Store(coreName));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 							new RelevancyKeyword(sk.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -490,7 +490,9 @@ public class SearchServlet extends HttpServlet {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					if (!disableElevate) {
-						elevatedList = daoCacheService.getElevateRules(sk);	
+						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							elevatedList = daoCacheService.getElevateRules(sk);								
+						}
 					}
 					if (!disableExclude) {
 						excludeList = daoCacheService.getExcludeRules(sk);						

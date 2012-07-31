@@ -87,11 +87,12 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int addExclude(String keyword, String edp, String expiryDate) {
+	public int addExclude(String keyword, String edp, String expiryDate, String comment) {
 		try {
 			logger.info(String.format("%s %s", keyword, edp));
 
 			String store = UtilityService.getStoreName();
+			
 			daoService.addKeyword(new StoreKeyword(store, keyword));
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -99,6 +100,13 @@ public class ExcludeService {
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setCreatedBy(UtilityService.getUsername());
+			
+			if(!StringUtils.isEmpty(comment)){
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+				e.setComment(UtilityService.formatComment(comment));
+			}
+			
 			return daoService.addExcludeResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during addExclude()",e);
@@ -181,6 +189,23 @@ public class ExcludeService {
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
 			return daoService.getExcludedProducts(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllExcludedProducts()",e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
+	public RecordSet<Product> getAllExcludedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+
+			ExcludeResult e = new ExcludeResult();
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllExcludedProducts()",e);
 		}

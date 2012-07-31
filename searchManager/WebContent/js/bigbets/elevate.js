@@ -21,6 +21,7 @@
 
 	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
 	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
+	var removeExpiryDateConfirmText = "This will remove expiry date associated to this rule. Continue?";
 	var lockedItemDisplayText = "This item is locked";
 
 	var showAddItem = function(e){
@@ -169,6 +170,19 @@
 		});
 	};
 
+	var removeExpiryDate = function(e){
+		var data = e.data;
+		if (!data.locked && allowModify && confirm(removeExpiryDateConfirmText)){
+			var dateText = "";
+			ElevateServiceJS.updateExpiryDate(selectedRule.ruleName, data.item["edp"], dateText, {
+				callback: function(code){
+					showActionResponse(code, "update", "expiry date of SKU#: " + data.item["dpNo"]);
+					if(code==1) showElevate();
+				}
+			});
+		}
+	};
+	
 	var deleteItemInRule = function(e){
 		var data = e.data;
 		if (!data.locked && allowModify && confirm(deleteItemInRuleConfirmText)){
@@ -184,10 +198,10 @@
 		}
 	};
 
-	var updateRuleItemPosition = function(edp, destinationIndex) {
+	var updateRuleItemPosition = function(edp, destinationIndex, dpNo) {
 		ElevateServiceJS.updateElevate(selectedRule.ruleName,edp,destinationIndex, {
 			callback : function(code){
-				showActionResponse(code, "update position", edp);
+				showActionResponse(code, "update position", $.isBlank(dpNo)? "Product Id#: " + edp : "SKU#: " + dpNo);
 				showElevate();
 			},
 			preHook: function(){
@@ -210,6 +224,8 @@
 		$("#sItemPosition" + id).val(item["location"]);
 
 		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
+		
+		if ($.isBlank(item["validityText"])) $('#removeExpiryDateIcon' + id).hide();
 
 		if (selectedRuleStatus.locked)
 			$('#sItemPosition' + id).attr("readonly", "readonly");
@@ -228,7 +244,7 @@
 						if(destinationIndex > selectedRuleItemTotal){
 							alert("Maximum allowed value is " + (selectedRuleItemTotal));
 						}else{
-							updateRuleItemPosition(item["edp"], destinationIndex);
+							updateRuleItemPosition(item["edp"], destinationIndex, item["dpNo"]);
 						}
 					}
 				}else{
@@ -250,6 +266,10 @@
 			mouseenter: showHoverInfo
 		},{locked: selectedRuleStatus.locked || !allowModify});
 	
+		$('#removeExpiryDateIcon' + id).on({
+			click: removeExpiryDate
+		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
+		
 		$('#commentIcon' + id).on({
 			click: showCommentList
 		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
@@ -264,7 +284,7 @@
 		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"], item:item});
 
 		$("#sItemExpDate" + id).val(item["formattedExpiryDate"]);
-
+		
 		$("input#sItemExpDate" + id).datepicker({
 			showOn: "both",
 			minDate: dateMinDate,

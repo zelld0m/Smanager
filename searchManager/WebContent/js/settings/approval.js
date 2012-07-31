@@ -149,7 +149,13 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							
+							//TODO: Get delete details from file
+							if (list[i]["updateStatus"]!=="DELETE"){
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							}else{
+								$tr.find("td#ruleOption > img.previewIcon").hide();
+							}
 
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
@@ -218,12 +224,23 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
+				
+				var setImage = function(tr, imagePath){
+					setTimeout(function(){	
+						tr.find("td#itemImage > img").attr("src",imagePath).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+							}
+						});
+					},10);
+				};
+				
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 
 					if($.isNotBlank(list[i]["dpNo"])){
-						$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
+						setImage($tr,list[i]["imagePath"]);
 						$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 						$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 						$tr.find("td#itemName").html(list[i]["name"]);

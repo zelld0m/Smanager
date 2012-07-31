@@ -242,6 +242,23 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
+	public RecordSet<ElevateProduct> getAllElevatedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+
+			ElevateResult e = new ElevateResult();
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
+			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllElevatedProducts()",e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
 	public RecordSet<ElevateProduct> getActiveElevatedProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));

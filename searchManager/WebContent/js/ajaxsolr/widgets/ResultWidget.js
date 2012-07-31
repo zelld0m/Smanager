@@ -271,7 +271,7 @@
 				};
 
 				updateElevateResult = function(contentHolder, doc, keyword){
-					ElevateServiceJS.getAllElevatedProducts(keyword, 0, 0,{
+					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
 						callback: function(data){
 							var list = data.list;
 
@@ -628,7 +628,7 @@
 								else if(today.getTime() > new Date(expiryDate).getTime()){
 									alert("Expiry date cannot be earlier than today");
 								}else{
-								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, {
+								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, comment, {
 									callback : function(data) {
 										needRefresh = true;
 										api.hide();
