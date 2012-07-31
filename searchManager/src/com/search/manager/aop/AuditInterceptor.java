@@ -203,9 +203,21 @@ public class AuditInterceptor {
 			auditTrail.setReferenceId(e.getEdp());
 		}
 
+		StringBuilder message = null;
+		
 		switch (auditable.operation()) {
 			case add:
-				auditTrail.setDetails(String.format("Adding EDP[%1$s]. Comment[%2$s]",
+				message = new StringBuilder("Adding EDP[%1$s]");
+				if (e.getExpiryDate() != null || e.getComment() != null) {
+					if (e.getExpiryDate() != null) {
+						message.append(" Expiry Date[%2$s]");						
+					}
+					if (e.getComment() != null) {
+						message.append(" Comment[%3$s]");
+					}
+				}
+				
+				auditTrail.setDetails(String.format(message.toString(),
 						auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
 				break;
 			case delete:

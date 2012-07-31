@@ -100,12 +100,7 @@ public class ExcludeService {
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setCreatedBy(UtilityService.getUsername());
-			
-			if(!StringUtils.isEmpty(comment)){
-				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-				e.setComment(UtilityService.formatComment(comment));
-			}
+			e.setComment(UtilityService.formatComment(comment));
 			
 			return daoService.addExcludeResult(e);
 		} catch (DaoException e) {
@@ -291,8 +286,12 @@ public class ExcludeService {
 		try {
 			logger.info(String.format("%s %s %s", keyword, productId, comment));
 			String store = UtilityService.getStoreName();
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			
+			if(StringUtils.isNotBlank(comment)){
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			}
+			
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);

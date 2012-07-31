@@ -162,8 +162,12 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %s", keyword, productId, comment));
 			String store = UtilityService.getStoreName();
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			
+			if(StringUtils.isNotBlank(comment)){
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			}
+			
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
