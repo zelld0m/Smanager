@@ -931,6 +931,57 @@
 				}
 			},
 			
+			addDynamicAttributeFieldListener: function(ui, condition){
+				var self = this;
+				var $dynamicAttribute = ui.find("div.dynamicAttribute");
+
+				var $select = ui.find("select#manufacturerList");
+				var $input = ui.find("input#manufacturerList");
+
+				var inCatCode = "";
+				
+				$dynamicAttribute.find("select.selectCombo").combobox({
+					selected: function(e, u){
+
+					}
+				});
+
+				
+			},
+			
+			populateTemplateName: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#templateNameList");
+				var $input = ui.find("input#templateNameList");
+
+				var inTemplateName = "";
+
+				inTemplateName = $.trim($input.val());
+					
+
+				CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
+					callback: function(data){
+						var list = data;
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderTemplateNameList").show();
+						self.clearIMSComboBox(ui, "manufacturer");
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
+							//$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
+							//$input.val(condition.IMSFilters["Manufacturer"]);
+						}
+					},
+					postHook:function(){
+						ui.find("img#preloaderTemplateNameList").hide();
+					}
+				});
+			},
+			
+			
+			
 			initializeIMSFilters: function(comboboxId, ui, condition){
 				var self = this;
 				var $ims = ui.find("div.ims");
@@ -1204,6 +1255,25 @@
 						}
 						
 						self.populateManufacturers(ui, condition);
+					}
+				}
+			},
+			
+			clearDynamicAttributeComboBox: function(ui, trigger){
+				var self = this;
+				var $dynamicAttribute = ui.find("div.dynamicAttribute");
+
+				if ($.isBlank(trigger)){
+					$dynamicAttribute.find("input").val("");
+					$dynamicAttribute.find("select.selectCombo option").remove();
+				}else{
+					switch (trigger.toLowerCase()){
+					case "templatename": 
+						$dynamicAttribute.find("input#templateNameList").val("");
+						$dynamicAttribute.find("select#templateNameList option").remove();
+					case "dynamicattributelist": 
+						$dynamicAttribute.find("input#dynamicAttributeList").val("");
+						$dynamicAttribute.find("select#dynamicAttributeList option").remove();
 					}
 				}
 			},
@@ -1510,11 +1580,11 @@
 							switch($("select#filterGroup option:selected").val()){
 							case "cnet": 
 								$divItem.find("div.ims").remove();
-								$divItem.find("div.cnet, div.facet").show();
+								$divItem.find("div.cnet, div.facet, div.dynamicAttribute").show();
 								break;
 							case "ims": 
 								$divItem.find("div.cnet").remove();
-								$divItem.find("div.ims, div.facet").show();
+								$divItem.find("div.ims, div.facet, div.dynamicAttribute").show();
 								
 								var $table = $divItem.find("table.imsFields");
 
@@ -1530,7 +1600,7 @@
 								break;
 							case "facet": 
 								$divItem.find("div.ims, div.cnet").remove();
-								$divItem.find("div.facet").show();
+								$divItem.find("div.facet, div.dynamicAttribute").show();
 								break;
 							}
 							

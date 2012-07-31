@@ -366,6 +366,35 @@
 						</div><!--  end item 3 -->
 						</div>
 						
+						<div class="dynamicAttribute">
+	        				<h3 class="marT10">Dynamic Attribute</h3>	        		
+	        				<div class="fsize12 marTB20 marRL50">
+							<table>							
+								<tr>
+									<td class="w140 padB8" valign="bottom">Template Name :</td>
+									<td class="iepadBT0">
+										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="templateNameList" class="templateNameList selectCombo w229" title="Select Template Name"></select>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="w140">Add Dynamic Attribute :</td>
+									<td>
+										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w229" title="Add Dynamic Attribute"></select>
+											<a href="javascript:void(0);" class="btnGraph btnAddGreen floatR" id="addButton"></a>
+										</div>
+									</td>
+								</tr>
+								
+								
+							</table>						
+						</div><!--  end item 4 -->
+					</div>
+						
 						<div class="clearB"></div>	
 						<div class="borderT padT8">
 							<img id="preloaderUpdating" class="floatL loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>

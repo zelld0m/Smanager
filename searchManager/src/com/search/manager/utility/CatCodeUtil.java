@@ -34,6 +34,8 @@ import com.search.manager.model.Category;
 import com.search.manager.model.CategoryCNET;
 import com.search.manager.model.SolrAttribute;
 import com.search.manager.model.SolrAttributeRange;
+import com.search.manager.service.UtilityService;
+import com.search.ws.SearchHelper;
 
 public class CatCodeUtil {
 	
@@ -48,6 +50,9 @@ public class CatCodeUtil {
 	private static final String STATUS_ACTIVE = "1";
 	private static final String ERROR_MSG = "Error while loading ";
 	private static final String DYNAMIC_FACET_PREFIX = "af_";
+	private final static String PCMALL_TEMPLATE = "PCMall_FacetTemplateName:"; 
+	private final static String MACMALL_TEMPLATE = "Template_Name:"; 
+	private final static String VALUE_ATTRIBUTE = "_Value_Attrib";
 	
 	/** Store workbook to cache */
 	public static void loadXlsxWorkbook(String location, String workBook) throws IOException, DataException{
@@ -873,7 +878,96 @@ public class CatCodeUtil {
 		SortUtil.sort(list);
 		return list;
 	}
+	
+	public static List<String> getAllIMSTemplates() throws DataException {
+		List<String> list = new ArrayList<String>();
+		
+		Vector<String[]> templateRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+		
+		for(String[] col : templateRow){
+			if(Integer.parseInt(col[0])<1000)
+				list.add(col[1]);
+		}
+		SortUtil.sort(list);
+		return list;
+	}
+	
+	public static List<String> getAllCNETTemplates() throws DataException {
+		List<String> list = new ArrayList<String>();
+		
+		Vector<String[]> templateRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+		
+		for(String[] col : templateRow){
+			if(Integer.parseInt(col[0])>=1000)
+				list.add(col[1]);
+		}	
+		SortUtil.sort(list);
+		return list;
+	}
+	
+	public static List<String> getTemplateAttribute(String template) throws DataException {
+		List<String> list = new ArrayList<String>();
+		
+		Vector<String[]> attributeRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
+		Vector<String[]> attributeValuesRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
+		String templateNo = getAttributeTemplateNo(template);
+		
+				for(String[] col : attributeRow){
+					if(templateNo.equalsIgnoreCase(col[1])){
+						for(String[] coll : attributeValuesRow){
+							if(col[2].equalsIgnoreCase(coll[0]))
+								list.add(coll[2]);
+						}
+					}						
+				}
+	
+		SortUtil.sort(list);
+		return list;
+	}
+	
+	public static List<String> getTemplateAttributeValues(String template, String attribute) throws DataException {
+		List<String> list = new ArrayList<String>();
+		
+		Vector<String[]> attributeValuesRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
+		Vector<String[]> attributeValuesRangeRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
+		String templateNo = getAttributeTemplateNo(template);
+		List<String> attributeIDs= new ArrayList<String>();
+		
+		Vector<String[]> attributeRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
+		for(String[] col :  attributeRow){
+			if(templateNo.equalsIgnoreCase(col[1])){
+				attributeIDs.add(col[2]);
+			}
+		}
+		
+		for(String[] col : attributeValuesRow){
+			if(attributeIDs.contains(col[0]) && col[2].equalsIgnoreCase(attribute)){
+				if(col[9].equalsIgnoreCase("1")){
+					for(String[] coll : attributeValuesRangeRow){
+						if(col[0].equalsIgnoreCase(coll[0])){
+							list.add(coll[3]);
+						}
+					}
+				}else{
+					List<String> filters = new ArrayList<String>();
+					String templateFilter = template;
+					templateFilter = (Integer.parseInt(templateNo) < 1000) ? PCMALL_TEMPLATE + templateFilter : MACMALL_TEMPLATE + templateFilter;
+					filters.add(templateFilter);
+					List<String> solrList = new ArrayList<String>();
+					solrList = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),col[1]+VALUE_ATTRIBUTE, filters,false);
+		        	
+		        	for(String data : solrList){
+		        		list.add(data.substring(data.indexOf("|")+1));		        		
+		        	}
+		        	
+				}
+			}	
+		}
+		SortUtil.sort(list);
+		return list;
+	}
 
+		
 	
 	/** Initialized Category code utility when startup */
 	public static void init() throws Exception {
@@ -1066,9 +1160,11 @@ public class CatCodeUtil {
 	public static void main(String args[])	throws Exception
     {
 		init2();
-		String strCategory = "";
-		String strSubCategory = "";
-		String strClass = "";
+//		String strCategory = "";
+//		String strSubCategory = "";
+//		String strClass = "";
+		String template = "";
+		String attribute = "";
 		boolean repeat = true;
 		List<String> list = new ArrayList<String>();
 		List<String> listCNET = new ArrayList<String>();
@@ -1076,15 +1172,23 @@ public class CatCodeUtil {
 		while(repeat){
 			list = new ArrayList<String>();
 			Scanner in = new Scanner(System.in);
-			System.out.println("Please enter category : ");
-			strCategory = in.nextLine();  
-			System.out.println("Please enter sub category : ");
-			strSubCategory = in.nextLine(); 
-			System.out.println("Please enter class : ");
-			strClass = in.nextLine();
+//			System.out.println("Please enter category : ");
+//			strCategory = in.nextLine();  
+//			System.out.println("Please enter sub category : ");
+//			strSubCategory = in.nextLine(); 
+//			System.out.println("Please enter class : ");
+//			strClass = in.nextLine();			
 			
-			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
-			listCNET = getCNETNextLevel(strCategory,strSubCategory);
+//			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
+//			listCNET = getCNETNextLevel(strCategory,strSubCategory);
+			
+			System.out.println("Please enter template : ");
+			template = in.nextLine();  
+			System.out.println("Please enter attribute : ");
+			attribute = in.nextLine(); 
+			list = getTemplateAttribute(template);
+			listCNET = getTemplateAttributeValues(template, attribute);
+			
 			for(String field : list){
 				System.out.println(field);
 			}
@@ -1100,11 +1204,11 @@ public class CatCodeUtil {
 			}
 		}
 		
-		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
-		
-		for(String[] col : categoryRow){
-			System.out.println(col[0]+" : "+col[5]+" : "+col[6]+" : "+col[7]+" : "+col[8]);
-		}
+//		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
+//		
+//		for(String[] col : categoryRow){
+//			System.out.println(col[0]+" : "+col[5]+" : "+col[6]+" : "+col[7]+" : "+col[8]);
+//		}
     }
 	
 }

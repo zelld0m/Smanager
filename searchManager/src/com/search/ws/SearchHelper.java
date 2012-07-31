@@ -253,9 +253,13 @@ public class SearchHelper {
 	public static List<String> getFacetValues(String server, String storeId, String field) {
 		return getFacetValues(server, storeId, field, null);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
+		return getFacetValues(server, storeId, field, filters,true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters, boolean hasMincount) {
 		List<String> list = new ArrayList<String>();
 		if (StringUtils.isEmpty(field)) {
 			return list;
@@ -285,7 +289,8 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.field", field));
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
-			nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
+			if(hasMincount)
+				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
 			
 			if (CollectionUtils.isNotEmpty(filters)) {
 				for (String filter: filters) {
