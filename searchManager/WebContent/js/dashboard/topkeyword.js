@@ -3,8 +3,8 @@
 	$(document).ready(function(){
 
 		topkeyword = {		
-				initialNoOfItems: 1000,
-				itemsPerScroll: 100,
+				initialNoOfItems: 2000,
+				itemsPerScroll: 1000,
 				startIndex: 0,
 				
 				sendFileAsEmail: function(customFilename, recipients){
