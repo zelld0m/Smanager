@@ -5,7 +5,7 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!--  slider checkbox -->
-<link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/synonym.css" />">
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/linguistics.css" />">
 <script type="text/javascript" src="<spring:url value="/js/lexicon/synonym.js" />" ></script>
 
  <!-- Start Left Side -->
@@ -64,28 +64,58 @@
         </div>
       </div>
       <!--Pagination-->
-    	<table width="100%" class="fsize12 tblAlpha">
-    		<tr>
-    			<th></th>
-    			<th width="28%">Word</th>
-    			<th width="20%">Date Added</th>
-    			<th width="12%">Enabled</th>
-    			<th width="20%">Username</th>
-    			<th width="14%">Action</th>
-    			
-    		</tr>
-    		<c:forEach var="i" begin="1" end="10" step="1">
-    		<tr>
-    			<td class="txtAC"><a href="#"><img src="<spring:url value="/images/icon_del.png" />"></a></td>
-    			<td>Report</td>
-    			<td class="txtAC">11/${i}/2011 12:30:00</td>
-    			<td class="txtAC"><div class="slideCheckbox"><input type="checkbox" id="checkbox-4" class="firerift-style-checkbox" /></div></td>
-    			<td class="txtAC">mpedcp</td>
-    			<td class="txtAC"><a href="#"><img src="<spring:url value="/images/page_edit.png" />"></a> <a href="#"><img src="<spring:url value="/images/icon_history.png" />" class="marRL5"></a></td>
-    		</tr>
-    		</c:forEach>
-    	
-    	</table>      	
+      <div class="clearB"></div>
+      <div class="linguistics marT20">
+      <table width="100%">
+      	<tr class="borderB">
+      		<td class="alt">
+      			<div class="fbold">A</div>
+      			<ul>
+      				<li>apple</li>
+      			</ul>
+      		</td>
+      		<td>
+	      		<div class="fbold">D</div>
+	      			<ul>
+	      				<li>dontstems</li>
+	      			</ul>
+      		</td>
+      		<td class="alt">
+	      		<div class="fbold">I</div>
+	      			<ul>
+	      				<li>imac</li>
+	      			</ul>
+	      	</td>
+      		<td>
+      			<div class="fbold">M</div>
+      			<ul>
+      				<li>macbook</li>
+      			</ul>
+      		</td>
+      		<td class="alt">
+      			<div class="fbold">S</div>
+      			<ul>
+      				<li>sims</li>
+      			</ul>
+      		</td>
+      	</tr>
+      	<tr>
+      		<td>
+      			<div class="fbold">Z</div>
+      			<ul>
+      				<li>zwhacky</li>
+      			</ul>
+      		</td>
+      		<td class="alt">
+      		</td>
+      		<td>
+      		</td>
+      		<td class="alt">
+      		</td>
+      		<td></td>
+      	</tr>
+      </table>
+    </div>    	
 	</div>
 	<div class="clearB"></div>
 	
