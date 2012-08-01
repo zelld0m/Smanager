@@ -413,14 +413,19 @@ public class ExcludeService {
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			try {
+				addComment(comment,exclude);
+				changes++;
+			} catch (DaoException e) {
+				logger.error("Error adding comment in updateExcludeFacet()",e);
+			}		
 		}
 		
-		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
+		if (exclude.getCondition()!= null || !rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+		if (StringUtils.isNotBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
