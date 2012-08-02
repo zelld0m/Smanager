@@ -33,39 +33,8 @@
    
    	<div class="clearB"></div>
 	
-	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:70%" >
-	        		<div id="commentHolder">
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
-			        	</label>
-		        	</div>
-	        		<div id="statusHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Status:</label>
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="status"></span> 
-			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
-			        	</label>
-		        	</div>
-		        	<div id="publishHolder">
-		        		<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Last Published:</label>
-			        	<label class="padL5 fLgray fsize11">
-			        		<span id="statusDate"></span> 
-			        	</label>
-		        	</div>
-			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	    
-	        		<sec:authorize access="hasRole('CREATE_RULE')">
-        	    		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
-        	    	</sec:authorize>
-	        	</div>
-	        </div>	
-	        <div class="clearB"></div>	
-	 </div>
-	 
+	<div id="submitForApproval"></div>
+	
 	<div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
 		   <div class="w265 padB8">
