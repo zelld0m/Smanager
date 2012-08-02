@@ -33,38 +33,7 @@
    
    	<div class="clearB"></div>
 	
-	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:70%" >
-	        		<div id="commentHolder">
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
-			        	</label>
-		        	</div>
-	        		<div id="statusHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Status:</label>
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="status"></span> 
-			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
-			        	</label>
-		        	</div>
-		        	<div id="publishHolder">
-		        		<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Last Published:</label>
-			        	<label class="padL5 fLgray fsize11">
-			        		<span id="statusDate"></span> 
-			        	</label>
-		        	</div>
-			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	    
-	        		<sec:authorize access="hasRole('CREATE_RULE')">
-        	    		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
-        	    	</sec:authorize>
-	        	</div>
-	        </div>	
-	        <div class="clearB"></div>	
-	 </div>
+	<div id="submitForApproval"></div>
 	 
 	<div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
@@ -317,7 +286,19 @@
 					<div class="facet">
 						<h3 class="marT10">Facets</h3>	 
 						<div class="fsize12 marT10 marB20 marRL50">
-							<table>							
+							<table>
+								<tr>
+									<td class="w140">Name (contains) :</td>
+									<td class="iepadBT0">
+										<input id="nameContains" type="text"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="w140">Description (contains):</td>
+									<td class="iepadBT0">
+										<input id="descriptionContains" type="text"/>
+									</td>
+								</tr>							
 								<tr>
 									<td class="w140">Platform :</td>
 									<td class="iepadBT0">
@@ -361,7 +342,6 @@
 										</select>
 									</td>
 								</tr>
-												
 							</table>						
 						</div><!--  end item 3 -->
 						</div>
@@ -385,15 +365,15 @@
 										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w229" title="Add Dynamic Attribute"></select>
-											<a href="javascript:void(0);" class="btnGraph btnAddGreen floatR" id="addButton"></a>
 										</div>
+										<a href="javascript:void(0);" class="btnGraph btnAddGreen floatR" id="addButton"></a>
 									</td>
 								</tr>
 								
 								
 							</table>						
-						</div><!--  end item 4 -->
-					</div>
+							</div><!--  end item 4 -->
+						</div>
 						
 						<div class="clearB"></div>	
 						<div class="borderT padT8">

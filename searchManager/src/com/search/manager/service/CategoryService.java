@@ -133,4 +133,24 @@ public class CategoryService {
 		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
+	
+	@RemoteMethod
+	public List<String> getIMSTemplateNames() throws DataException {
+		return CatCodeUtil.getAllIMSTemplates();
+	}
+	
+	@RemoteMethod
+	public List<String> getCNETTemplateNames() throws DataException {
+		return CatCodeUtil.getAllCNETTemplates();
+	}
+	
+	@RemoteMethod
+	public List<String> getTemplateAttributesByTemplateName(String templateName) throws DataException {
+		return CatCodeUtil.getTemplateAttribute(templateName);
+	}
+	
+	@RemoteMethod
+	public List<String> getTemplateAttributeValues(String templateName, String templateAttribute) throws DataException {
+		return CatCodeUtil.getTemplateAttributeValues(templateName, templateAttribute);
+	}
 }
