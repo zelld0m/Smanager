@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.ws.ConfigManager;
+
 @DataTransferObject(converter=BeanConverter.class)
 public class RedirectRuleCondition extends ModelBean {
 
@@ -173,7 +175,34 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		if (map.containsKey("Platform")) {
 			builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
-			
+		}
+		
+		String cnetFacet = null;
+		if (StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
+			cnetFacet = ConfigManager.getInstance().getParameterByCore(storeId, "facet-name");
+		}
+		
+		if (map.containsKey("Name")) {
+			String value = map.get("Name").get(0);
+			if (StringUtils.isNotEmpty(cnetFacet)) {
+				builder.append("(").append(cnetFacet).append("_Name").append(":").append(value).append(" OR ");
+			}
+			builder.append("Name").append(":").append(value);
+			if (StringUtils.isNotEmpty(cnetFacet)) {
+				builder.append(")");
+			}
+			builder.append(" AND ");
+		}
+		if (map.containsKey("Description")) {
+			String value = map.get("Description").get(0);
+			if (StringUtils.isNotEmpty(cnetFacet)) {
+				builder.append("(").append(cnetFacet).append("_Description").append(":").append(value).append(" OR ");
+			}
+			builder.append("Description").append(":").append(value);
+			if (StringUtils.isNotEmpty(cnetFacet)) {
+				builder.append(")");
+			}
+			builder.append(" AND ");
 		}
 		
 		if (builder.length() > 0) {
@@ -279,10 +308,11 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		// TODO: dynamic attributes
+		String[] arrFieldContains = { "Name", "Description" };
 		
 		map = getFacets();
 		for (String key: map.keySet()) {
-			builder.append(key).append(" is ");
+			builder.append(key).append(ArrayUtils.contains(arrFieldContains, key) ? " contains " : " is ");
 			List<String> values = map.get(key);
 			if (values.size() == 1) {
 				builder.append(encloseInQuotes(values.get(0)));
@@ -464,7 +494,7 @@ public class RedirectRuleCondition extends ModelBean {
 		// if any of the following fields are present return them;
 		// Platform, Condition, Availability, License
 		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-		String[] keys = { "Platform", "Condition", "Availability", "License" };
+		String[] keys = { "Platform", "Condition", "Availability", "License", "Name", "Description" };
 		for (String key: keys) {
 			List<String> value = conditionMap.get(key);
 			if (value != null && !value.isEmpty()) {
@@ -475,6 +505,7 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 	
 	public static void main(String[] args) {
+		ConfigManager configManager = ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
 		// if Condition == "Refurbished" set Refurbished_Flag:1
 		//				== "Open Box"    set OpenBox_Flag:1
 		//              == "Clearance"   set Clearance_Flag:1
@@ -487,7 +518,9 @@ public class RedirectRuleCondition extends ModelBean {
 //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
 //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
 //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
-				"CatCode:3F AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
+//				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
+//				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
+				"Name:bag AND Description:bag",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
 //				"Manufacturer:\"Apple\"",
 //				""
@@ -496,6 +529,7 @@ public class RedirectRuleCondition extends ModelBean {
 		for (String condition: conditions) {
 			System.out.println("***************");
 			RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+			rr.setStoreId("macmall");
 			System.out.println("text: " + condition);
 			System.out.println("condition: " + rr.getCondition());
 			System.out.println("solr filter: " + rr.getConditionForSolr());
