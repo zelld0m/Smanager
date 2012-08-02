@@ -34,7 +34,7 @@
    	<div class="clearB"></div>
 	
 	<div id="submitForApproval"></div>
-	 
+	
 	<div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
 		   <div class="w265 padB8">

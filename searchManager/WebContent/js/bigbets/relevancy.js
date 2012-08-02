@@ -631,7 +631,7 @@
 		$('div#relevancy .saveIcon').off().on({
 			click:function(e){
 				var field = getRelevancyField(e);
-				if (!e.data.locked || allowModify ) 
+				if (!e.data.locked && allowModify ) 
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
@@ -1002,7 +1002,6 @@
 	var prepareRelevancy = function(){
 		clearAllQtip();
 		$("#preloader").show();
-		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
 		$("#titleText").html(moduleName);
@@ -1010,147 +1009,126 @@
 	};
 
 	var showRelevancy = function(){
-		prepareRelevancy();
-		$("#preloader").hide();
-		resetInputFields("#relevancy");
-
+		
 		getRelevancyRuleList(1);
 		getRelevancyRuleKeywordList(1);
 
 		if(selectedRule==null){
+			$("#preloader").hide();
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			$("#titleHeader").html("");
 			return;
 		}
+		
+		$("#submitForApproval").rulestatus({
+			moduleName: moduleName,
+			rule: selectedRule,
+			enableVersion: true,
+			authorizeRuleBackup: true,
+			authorizeSubmitForApproval: true, // TODO: verify if need to be controlled user access
+			afterSubmitForApprovalRequest:function(ruleStatus){
+				selectedRuleStatus = ruleStatus;
+				showRelevancy();
+			},
+			beforeRuleStatusRequest: function(){
+				prepareRelevancy();
+			},
+			afterRuleStatusRequest: function(ruleStatus){
+				resetInputFields("#relevancy");
 
-		$.endsWith(selectedRule.ruleId, "_default") ? $("#submitForApproval").hide() : $("#submitForApproval").show();
+				$("#preloader").hide();
+				$("#submitForApproval").show();
+				$("#relevancy").show();
+				selectedRuleStatus = ruleStatus;
+				
+				$("div#versions").version({
+					ruleType: "Ranking Rule",
+					ruleId: selectedRule["ruleId"],
+					buttonHolderId: "#versionHolder",
+					locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+					restoreCallback: function(rankingRule){
+						setRelevancy(rankingRule);
+					}
+				});
+				
+				$("#titleText").html(moduleName + " for ");
+				$("#titleHeader").html(selectedRule.ruleName);
 
-		$("#relevancy").show();
+				$("#name").val(selectedRule.ruleName);
+				$("#description").val(selectedRule.description);
+				$("#startDate").val(selectedRule.formattedStartDate);
+				$("#endDate").val(selectedRule.formattedEndDate);
+				$("#startDate, #endDate").datepicker("destroy");
 
-		$("div#versions").version({
-			ruleType: "Ranking Rule",
-			ruleId: selectedRule["ruleId"],
-			buttonHolderId: "#versionHolder",
-			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-			restoreCallback: function(rankingRule){
-				setRelevancy(rankingRule);
+				var dates = $("#startDate, #endDate").datepicker({
+					minDate: 0,
+					maxDate: '+1Y',
+					showOn: "both",
+					buttonImage: "../images/icon_calendar.png",
+					buttonImageOnly: true,
+					disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+					onSelect: function(selectedDate) {
+						var option = this.id == "startDate" ? "minDate" : "maxDate",
+								instance = $(this).data("datepicker"),
+								date = $.datepicker.parseDate(
+										instance.settings.dateFormat ||
+										$.datepicker._defaults.dateFormat,
+										selectedDate, instance.settings);
+						dates.not(this).datepicker("option", option, date);
+					}
+				});
+
+				getKeywordInRuleList(1);
+				setRuleFieldValue();
+
+				$("#saveBtn").off().on({
+					click: updateRule,
+					mouseenter: showHoverInfo
+				},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
+
+				$("#cloneBtn").off().on({
+					click: cloneRule,
+					mouseenter: showHoverInfo
+				},{locked:!allowModify});
+				
+				$("#deleteBtn").off().on({
+					click: deleteRule,
+					mouseenter: showHoverInfo
+				},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
+				
+				$("a#downloadIcon").download({
+					headerText:"Download Ranking Rule",
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["id"] = selectedRule["ruleId"];
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["clientTimezone"] = +new Date();
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
+			
+				$('#auditIcon').off().on({
+					click: showAuditList
+				}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 			}
 		});
-		
-		$("#titleText").html(moduleName + " for ");
-		$("#titleHeader").html(selectedRule.ruleName);
-
-		$("#name").val(selectedRule.ruleName);
-		$("#description").val(selectedRule.description);
-		$("#startDate").val(selectedRule.formattedStartDate);
-		$("#endDate").val(selectedRule.formattedEndDate);
-		$("#startDate, #endDate").datepicker("destroy");
-
-		var dates = $("#startDate, #endDate").datepicker({
-			minDate: 0,
-			maxDate: '+1Y',
-			showOn: "both",
-			buttonImage: "../images/icon_calendar.png",
-			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-			onSelect: function(selectedDate) {
-				var option = this.id == "startDate" ? "minDate" : "maxDate",
-						instance = $(this).data("datepicker"),
-						date = $.datepicker.parseDate(
-								instance.settings.dateFormat ||
-								$.datepicker._defaults.dateFormat,
-								selectedDate, instance.settings);
-				dates.not(this).datepicker("option", option, date);
-			}
-		});
-
-		getKeywordInRuleList(1);
-		setRuleFieldValue();
-
-		$("#saveBtn").off().on({
-			click: updateRule,
-			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
-
-		$("#cloneBtn").off().on({
-			click: cloneRule,
-			mouseenter: showHoverInfo
-		},{locked:!allowModify});
-		
-		$("#deleteBtn").off().on({
-			click: deleteRule,
-			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
-		
-		$("a#downloadIcon").download({
-			headerText:"Download Ranking Rule",
-			requestCallback:function(e){
-				var params = new Array();
-				var url = document.location.pathname + "/xls";
-				var urlParams = "";
-				var count = 0;
-				params["id"] = selectedRule["ruleId"];
-				params["filename"] = e.data.filename;
-				params["type"] = e.data.type;
-				params["clientTimezone"] = +new Date();
-
-				for(var key in params){
-					if (count>0) urlParams +='&';
-					urlParams += (key + '=' + params[key]);
-					count++;
-				};
-
-				document.location.href = url + '?' + urlParams;
-			}
-		});
-		
-		$("#submitForApprovalBtn").off().on({
-			click: function(e){
-				var ruleStatus = null;
-				var data = e.data;
-
-				if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
-					DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
-						callback: function(data){
-							ruleStatus = data;
-						},
-						preHook:function(){
-							prepareRelevancy();
-						},
-						postHook: function(){
-							setRelevancy(selectedRule);
-						}
-					});
-				}
-			}
-		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
-
-		$('#auditIcon').on({
-			click: showAuditList
-		}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
-
 	};
 
 	var setRelevancy = function(rule){
 		selectedRule = rule;
-
-		if (rule!=null){
-			DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-				callback:function(data){
-					selectedRuleStatus = data;
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(moduleName, selectedRuleStatus);
-					
-					showRelevancy();
-				},
-				preHook: function(){
-					prepareRelevancy();
-				}
-			});	
-		}else{
-			showRelevancy();
-		}
+		showRelevancy();
 	};
 
 	var getRelevancyRuleList = function(page){
@@ -1204,7 +1182,7 @@
 								}
 							});
 
-							$contentHolder.find('a#addButton').on({
+							$contentHolder.find('a#addButton').off().on({
 								click: function(e){
 									var popName = $.trim($contentHolder.find('input[id="popName"]').val());
 									var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
@@ -1260,7 +1238,7 @@
 								}
 							});
 
-							$contentHolder.find('a#clearButton').on({
+							$contentHolder.find('a#clearButton').off().on({
 								click: function(e){
 									$contentHolder.find('input[type="text"], textarea').val("");
 								}
@@ -1297,7 +1275,7 @@
 						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
 						base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
 							click: function(e){
 								RelevancyServiceJS.getRule(model.ruleId, {
 									callback:function(data){

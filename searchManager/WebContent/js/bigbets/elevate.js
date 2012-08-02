@@ -120,7 +120,6 @@
 	var prepareElevate = function(){
 		clearAllQtip();
 		$("#preloader").show();
-		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#elevate").hide();
 		$("#addItemHolder").hide();
@@ -352,13 +351,20 @@
 			return;
 		}
 
-		DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-			preHook: function(){ 
-				prepareElevate(); 
+		$("#submitForApproval").rulestatus({
+			moduleName: moduleName,
+			rule: selectedRule,
+			authorizeRuleBackup: true,
+			authorizeSubmitForApproval: true, // TODO: verify if need to be controlled user access
+			afterSubmitForApprovalRequest:function(ruleStatus){
+				selectedRuleStatus = ruleStatus;
+				showElevate();
 			},
-			callback:function(data){
-				selectedRuleStatus = data;
-				showDeploymentStatusBar(moduleName, selectedRuleStatus);
+			beforeRuleStatusRequest: function(){
+				prepareElevate();	
+			},
+			afterRuleStatusRequest: function(ruleStatus){
+				selectedRuleStatus = ruleStatus;
 				getElevateRuleList();
 				populateItem(1);
 
@@ -385,27 +391,6 @@
 							});
 					}
 				},{locked: selectedRuleStatus.locked || !allowModify});
-
-				$("#submitForApprovalBtn").off().on({
-					click: function(e){
-						var ruleStatus = null;
-						var data = e.data;
-
-						if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
-							DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
-								callback: function(data){
-									ruleStatus = data;
-								},
-								preHook:function(){
-									prepareElevate();
-								},
-								postHook: function(){
-									setElevate(selectedRule);
-								}
-							});
-						}
-					}
-				}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
 				
 				$("a#downloadIcon").download({
 					headerText:"Download Elevate",
