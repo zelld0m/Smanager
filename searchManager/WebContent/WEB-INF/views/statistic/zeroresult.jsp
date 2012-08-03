@@ -1,10 +1,10 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 <c:set var="topmenu" value="statistic"/>
-<c:set var="submenu" value="topkeyword"/>
+<c:set var="submenu" value="zeroresult"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<script type="text/javascript" src="<spring:url value="/js/statistics/topkeyword.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/statistics/zeroresult.js" />"></script>
 	    
 <!-- Left Menu-->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -19,7 +19,7 @@
 	
 	<div class="floatL w730 titlePlacer">		
 	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
-		<span id="titleText">Top Keyword</span>
+		<span id="titleText">Zero Result</span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
 	</div>  
