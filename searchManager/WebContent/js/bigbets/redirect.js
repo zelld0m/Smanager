@@ -930,7 +930,7 @@
 							if(u.item){
 								$item.find("input#templateNameList").val(u.item.text);
 								$item.find("input#templateNameList").prop("selectedText", u.item.text);
-								self.populateIMSDynamicAttributes(ui, condition, e);
+								self.populateDynamicAttributes(ui, condition, e);
 							}
 							else self.populateTemplateNames(ui, condition, e);
 
@@ -1274,7 +1274,7 @@
 					ui.find("div.cnet, div.dynamicAttribute").show();
 
 					self.addCNETFieldListener(ui, condition);
-					self.addFacetTemplateFieldListener($item, e.data.condition);
+					self.addFacetTemplateFieldListener(ui, condition);
 
 					var $table = $cnet.find("table.cnetFields");
 					$table.find("tr.catName").show();
@@ -1292,7 +1292,7 @@
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					ui.find("div.ims, div.dynamicAttribute").show();
 					self.addIMSFieldListener(ui, condition);
-					self.addFacetTemplateFieldListener($item, e.data.condition);
+					self.addFacetTemplateFieldListener(ui, condition);
 
 					var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 					var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
@@ -1311,7 +1311,6 @@
 						}
 
 						self.populateCategories(ui, condition);
-						self.populateIMSTemplateNames(ui, condition);
 					}else{
 						$table.find("tr.catName").hide();
 						$table.find("tr.catCode").show();
@@ -1323,6 +1322,7 @@
 
 						self.populateManufacturers(ui, condition);
 					}
+					self.populateIMSTemplateNames(ui, condition);
 				}
 			},
 
