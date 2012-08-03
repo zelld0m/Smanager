@@ -177,7 +177,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
 								<tr class="catName">
-									<td class="w140 padB8" valign="bottom">Category :</td>
+									<td class="w175 padB8" valign="bottom">Category :</td>
 									<td class="iepadBT0">
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
@@ -190,7 +190,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="subcategory">
-									<td class="w140">SubCategory :</td>
+									<td class="w175">SubCategory :</td>
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -199,7 +199,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="class">
-									<td class="w140">Class :</td>
+									<td class="w175">Class :</td>
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -208,7 +208,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="minor">
-									<td class="w140" valign="top">SubClass :</td>
+									<td class="w175" valign="top">SubClass :</td>
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -217,7 +217,7 @@
 									</td>
 								</tr>
 								<tr class="catCode">
-									<td  class="w140 padB8" valign="bottom">Category Code :</td>
+									<td  class="w175 padB8" valign="bottom">Category Code :</td>
 									<td>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
@@ -227,7 +227,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140" valign="top">Manufacturer :</td>
+									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -244,7 +244,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="cnetFields">							
 								<tr class="catName" id="level1Cat">
-									<td class="w140 padB8" valign="bottom">Level 1 Category :</td>
+									<td class="w175 padB8" valign="bottom">Level 1 Category :</td>
 									<td class="iepadBT0">
 										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -253,7 +253,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="level2Cat">
-									<td class="w140">Level 2 Category :</td>
+									<td class="w175">Level 2 Category :</td>
 									<td>
 										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -262,7 +262,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="level3Cat">
-									<td class="w140">Level 3 Category :</td>
+									<td class="w175">Level 3 Category :</td>
 									<td>
 										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -271,7 +271,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140" valign="top">Manufacturer :</td>
+									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderCNETManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -288,19 +288,19 @@
 						<div class="fsize12 marT10 marB20 marRL50">
 							<table>
 								<tr>
-									<td class="w140">Name (contains) :</td>
+									<td class="w175">Name (contains) :</td>
 									<td class="iepadBT0">
 										<input id="nameContains" type="text"/>
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">Description (contains):</td>
+									<td class="w175">Description (contains):</td>
 									<td class="iepadBT0">
 										<input id="descriptionContains" type="text"/>
 									</td>
 								</tr>							
 								<tr>
-									<td class="w140">Platform :</td>
+									<td class="w175">Platform :</td>
 									<td class="iepadBT0">
 										<select name="select" id="platformList" class="selectCombo w235" title="Select Platform" >
 											<option value="all"></option>
@@ -312,7 +312,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">Condition :</td>
+									<td class="w175">Condition :</td>
 									<td class="iepadBT0">
 										<select name="select" id="conditionList" class="selectCombo w235" title="Select Condition" >
 											<option value="all"></option>
@@ -323,7 +323,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">Availability :</td>
+									<td class="w175">Availability :</td>
 									<td class="iepadBT0">
 										<select name="select" id="availabilityList" class="selectCombo w235" title="Select Availability" >
 											<option value="all"></option>
@@ -333,7 +333,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">License :</td>
+									<td class="w175">License :</td>
 									<td class="iepadBT0">
 										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
 											<option value="all"></option>
@@ -351,7 +351,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table>							
 								<tr>
-									<td class="w140 padB8" valign="bottom">Template Name :</td>
+									<td class="w175 padB8" valign="bottom">Template Name :</td>
 									<td class="iepadBT0">
 										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -359,14 +359,25 @@
 										</div>
 									</td>
 								</tr>
+								<!--  sample added line -->
 								<tr>
-									<td class="w140">Add Dynamic Attribute :</td>
+									<td class="w175"><p class="padL25">Lorem ipsum dolor sit amet :</p></td>
 									<td>
 										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w229" title="Add Dynamic Attribute"></select>
+										</div>								
+									</td>
+								</tr>
+								<!--  end sample addded line -->
+								<tr>
+									<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>
+									<td>
+										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>
 										</div>
-										<a href="javascript:void(0);" class="btnGraph btnAddGreen floatR" id="addButton"></a>
+										<a href="javascript:void(0);" class="btnGraph btnAddGrayMid floatR marT3" id="addButton"></a>
 									</td>
 								</tr>
 								

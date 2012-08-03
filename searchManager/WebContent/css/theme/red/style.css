@@ -753,3 +753,8 @@ body #redirect .tabs .ui-widget-content { padding-top:20px !important}
 a .txtManufact { margin-right:5px; color:#282828; font-weight: bold; }
 a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none !important; cursor: default !important; }
 
+.lnk a#level2 { padding-left:10px }
+.lnk a#level3 { padding-left:20px }
+
+.dynamicAttribute table td  { vertical-align: top }
+
