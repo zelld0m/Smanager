@@ -44,10 +44,7 @@
 	</div>
 	<div class="clearB"></div>
 	<div style="width:95%" class="marT20 mar0">
-    <h2 class="fsize12 txtAR borderB2 padB8"> Keyword: 
-    	<div class="floatR" style="margin-top:-6px; margin-left:1px"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a></div>
-    	<div class="searchBoxHolder w160 floatR" style="margin-top:-5px; margin-left:4px;"><input type="text" class="w99p"> </div>  
-    </h2>
+    
     <!--Pagination-->
       <div class="mar0">
         <div class="clearB floatL farial fsize12 fDblue w300 padT10 marL10">Displaying 1 to 25 of 26901 Products</div>
@@ -66,17 +63,19 @@
       <!--Pagination-->
       	<div class="clearB"></div>
       	<div class="linguistics marT20">
+      	<div style="height:600px; overflow-y:auto">
 	    	<table id="itemPattern">
 		    	<tr>
 			    	<td>
 				    	<ul id="itemList">
-				    		<li id="item" class="alt"></li>
+				    		<li id="item" class="alt txtAL pad2"></li>
 				    	</ul>
 			    	</td>
 		    	</tr>
 	    	</table>
+	    </div>
     	</div>
 	<div class="clearB"></div>
-	
+	</div>
 </div>   
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
