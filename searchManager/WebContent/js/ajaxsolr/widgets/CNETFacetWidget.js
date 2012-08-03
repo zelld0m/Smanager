@@ -14,15 +14,44 @@
 			}
 
 			var escapeValue = function(text){
-				return text.replace(/\s/g,"?");
+				if($.isNotBlank(text))
+					return ("" + text).replace(/\s/g,"?");
+				return text;
 			};
 
+			var $facetTemplate = self.manager.response.FacetTemplate;
+			
 			switch(e.data.level){
 			case 3: 
+				if ($.isBlank(currFacetTemplate)){
+					var ctr = 0;
+					var first = "";
+					var second = "";
+					for (var facet in $facetTemplate["Level1"]){
+						if (ctr==0) first = escapeValue(facet);
+						break;
+					}
+					ctr = 0;
+					for (var facet in $facetTemplate["Level2"]){
+						if (ctr==0) second = escapeValue(facet);
+						break;
+					}
+					
+					currFacetTemplate = GLOBAL_storeFacetTemplate + ":" + first + "?|?" + second + "*";
+				}
+				
 				var level3Filter = currFacetTemplate.substring(0, currFacetTemplate.length-1) + "?|?" +  escapeValue(e.data.text);
 				self.manager.store.addByValue('fq', level3Filter);
 				break;
 			case 2: 
+				if ($.isBlank(currFacetTemplate)){
+					var ctr = 0;
+					for (var facet in $facetTemplate["Level1"]){
+						if (ctr==0) currFacetTemplate = GLOBAL_storeFacetTemplate + ":" + escapeValue(facet) + "*";
+						break;
+					};
+				}
+
 				var level2Filter = currFacetTemplate.substring(0, currFacetTemplate.length-1) + "?|?" +  escapeValue(e.data.text) + "*";
 				self.manager.store.addByValue('fq', level2Filter);
 				break;
