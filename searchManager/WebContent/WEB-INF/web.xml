@@ -165,6 +165,7 @@
 				com.search.manager.service.ElevateService,
 				com.search.manager.service.ExcludeService,
 				com.search.manager.service.FeatureService,
+				com.search.manager.service.LinguisticsService,
 				com.search.manager.service.MigratorService,
 				com.search.manager.service.RedirectService,
 				com.search.manager.service.RelevancyService,

@@ -6,7 +6,7 @@
 
 <!--  slider checkbox -->
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/linguistics.css" />">
-<script type="text/javascript" src="<spring:url value="/js/lexicon/synonym.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/lexicon/protword.js" />" ></script>
 
  <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -62,53 +62,15 @@
       <!--Pagination-->
       <div class="clearB"></div>
       <div class="linguistics marT20">
-      <table width="100%">
-      	<tr class="borderB">
-      		<td class="alt">
-      			<div class="fbold">A</div>
+      <table id="itemPattern" width="100%">
+      	<tr id="itemRow" class="borderB">
+      		<td id="itemList" class="alt">
+      			<div class="fbold"></div>
       			<ul>
-      				<li>apple</li>
+      				<li id="item"></li>
       			</ul>
       		</td>
-      		<td>
-	      		<div class="fbold">D</div>
-	      			<ul>
-	      				<li>dontstems</li>
-	      			</ul>
-      		</td>
-      		<td class="alt">
-	      		<div class="fbold">I</div>
-	      			<ul>
-	      				<li>imac</li>
-	      			</ul>
-	      	</td>
-      		<td>
-      			<div class="fbold">M</div>
-      			<ul>
-      				<li>macbook</li>
-      			</ul>
-      		</td>
-      		<td class="alt">
-      			<div class="fbold">S</div>
-      			<ul>
-      				<li>sims</li>
-      			</ul>
-      		</td>
-      	</tr>
-      	<tr>
-      		<td>
-      			<div class="fbold">Z</div>
-      			<ul>
-      				<li>zwhacky</li>
-      			</ul>
-      		</td>
-      		<td class="alt">
-      		</td>
-      		<td>
-      		</td>
-      		<td class="alt">
-      		</td>
-      		<td></td>
+      		
       	</tr>
       </table>
     </div>    	

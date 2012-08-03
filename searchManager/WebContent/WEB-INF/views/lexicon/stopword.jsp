@@ -6,7 +6,7 @@
 
 <!--  slider checkbox -->
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/lexicon/linguistics.css" />">
-<script type="text/javascript" src="<spring:url value="/js/lexicon/synonym.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/lexicon/stopword.js" />" ></script>
 
  <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -62,89 +62,15 @@
       <!--Pagination-->
       <div class="clearB"></div>
       <div class="linguistics marT20">
-      <table width="100%">
-      	<tr class="borderB">
-      		<td class="alt">
-      			<div class="fbold">A</div>
+       <table id="itemPattern" width="100%">
+      	<tr id="itemRow" class="borderB">
+      		<td id="itemList" class="alt">
+      			<div class="fbold"></div>
       			<ul>
-      				<li>an</li>
-      				<li>and</li>
-      				<li>&</li>
-      				<li>are</li>
-      				<li>as</li>
-      				<li>at</li>
+      				<li id="item"></li>
       			</ul>
       		</td>
-      		<td>
-	      		<div class="fbold">B</div>
-	      			<ul>
-	      				<li>be</li>
-	      				<li>but</li>
-	      				<li>buy</li>
-	      			</ul>
-      		</td>
-      		<td class="alt">
-	      		<div class="fbold">F</div>
-	      			<ul>
-	      				<li>for</li>
-	      			</ul>
-	      	</td>
-      		<td>
-      			<div class="fbold">I</div>
-      			<ul>
-      				<li>if</li>
-      				<li>in</li>
-      				<li>into</li>
-      				<li>is</li>
-      				<li>it</li>
-      			</ul>
-      		</td>
-      		<td class="alt">
-      			<div class="fbold">N</div>
-      			<ul>
-      				<li>no</li>
-      				<li>not</li>
-      			</ul>
-      		</td>
-      	</tr>
-      	<tr>
-      		<td>
-      			<div class="fbold">O</div>
-      			<ul>
-      				<li>of</li>
-      				<li>on</li>
-      				<li>or</li>
-      			</ul>
-      		</td>
-      		<td class="alt">
-      			<div class="fbold">S</div>
-      			<ul>
-      				<li>such</li>
-      			</ul>
-      		</td>
-      		<td>
-      			<div class="fbold">T</div>
-      			<ul>
-      				<li>that</li>
-      				<li>the</li>
-      				<li>their</li>
-      				<li>then</li>
-      				<li>there</li>
-      				<li>these</li>
-      				<li>they</li>
-      				<li>this</li>
-      				<li>to</li>
-      			</ul>
-      		</td>
-      		<td class="alt">
-      			<div class="fbold">W</div>
-      			<ul>
-      				<li>was</li>
-      				<li>will</li>
-      				<li>with</li>
-      			</ul>
-      		</td>
-      		<td></td>
+      		
       	</tr>
       </table>
     </div>
