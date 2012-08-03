@@ -332,6 +332,7 @@ public class SearchServlet extends HttpServlet {
 						for (String condition: redirect.getConditions()) {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+								rr.setStoreId(coreName);
 								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
 							}							
 						}

@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.client.solrj.util.ClientUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -178,12 +179,16 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		String cnetFacet = null;
-		if (StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
+		if (forSolr && StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
 			cnetFacet = ConfigManager.getInstance().getParameterByCore(storeId, "facet-name");
 		}
 		
 		if (map.containsKey("Name")) {
 			String value = map.get("Name").get(0);
+			if (forSolr) {
+				value = ClientUtils.escapeQueryChars(value);
+			}
+			
 			if (StringUtils.isNotEmpty(cnetFacet)) {
 				builder.append("(").append(cnetFacet).append("_Name").append(":").append(value).append(" OR ");
 			}
@@ -195,6 +200,10 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		if (map.containsKey("Description")) {
 			String value = map.get("Description").get(0);
+			if (forSolr) {
+				value = ClientUtils.escapeQueryChars(value);
+			}
+			
 			if (StringUtils.isNotEmpty(cnetFacet)) {
 				builder.append("(").append(cnetFacet).append("_Description").append(":").append(value).append(" OR ");
 			}
@@ -505,7 +514,7 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 	
 	public static void main(String[] args) {
-		ConfigManager configManager = ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
+		ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
 		// if Condition == "Refurbished" set Refurbished_Flag:1
 		//				== "Open Box"    set OpenBox_Flag:1
 		//              == "Clearance"   set Clearance_Flag:1
@@ -520,7 +529,7 @@ public class RedirectRuleCondition extends ModelBean {
 //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
 //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
 //				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
-				"Name:bag AND Description:bag",
+				"Name:bag ivory AND Description:bag ivory",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
 //				"Manufacturer:\"Apple\"",
 //				""
