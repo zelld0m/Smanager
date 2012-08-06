@@ -831,6 +831,9 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .lnk a#level2 { padding-left:10px }
 .lnk a#level3 { padding-left:20px }
 
+.dynamicAttribute table td  { vertical-align: top }
+.dynamicAttribute table td ul { list-style: none }
+
 
 
 

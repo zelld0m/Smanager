@@ -20,6 +20,13 @@
       
       <div class="subMenuHolder">
       	<div class="w980 mar0">
+	       <c:if test="${topmenu eq 'dashboard'}">
+		       <!-- ul class="subMenu floatL txtAL">
+		      		<li ${submenu eq 'topkeyword'? 'class="active"': ''}><a href="<spring:url value="/"/>">Top Keywords</a></li>
+		      		<li ${submenu eq 'zeroresult'? 'class="active"': ''}><a href="<spring:url value="/zeroresult/"/>${store}">Zero Results</a></li>     		
+		       </ul -->
+	      </c:if>
+	      
 	      <c:if test="${topmenu eq 'browse'}">
 		       <!--ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'product'? 'class="active"': ''}><a href="<spring:url value="/browse/"/>${store}">Product</a></li>
@@ -49,6 +56,7 @@
 	      <c:if test="${topmenu eq 'statistic'}">
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'topkeyword'? 'class="active"': ''}><a href="<spring:url value="/topkeyword/"/>${store}">Top Keyword</a></li> 		
+		      		<li ${submenu eq 'zeroresult'? 'class="active"': ''}><a href="<spring:url value="/zeroresult/"/>${store}">Zero Result</a></li> 		
 		       </ul>
 	      </c:if>
 	      
