@@ -1,11 +1,10 @@
 (function($){
 	var ProtWord = {
 		fileName: "protwords.txt",
-		serverName: "afs-pl-schpd07",
 		defaultFilename: "protwords",
 		downloadFile: function(customFilename){
 			var self = this;
-			LinguisticsServiceJS.downloadFile(this.defaultFilename, customFilename, {
+			LinguisticsServiceJS.downloadFile(1,self.defaultFilename, customFilename, {
 				callback: function(data){
 					dwr.engine.openInDownload(data);
 				}
@@ -52,7 +51,7 @@
 		},
 		showProtWord : function(){
 			var self = this;
-			LinguisticsServiceJS.getProtStopWord(self.fileName, self.serverName, {
+			LinguisticsServiceJS.getProtStopWord(self.fileName, {
 				callback:function(data){
 					self.loadItems($("table#itemPattern"),data);
 					$("a#downloadBtn").download({
