@@ -40,10 +40,14 @@
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			Protword
+			<a id="downloadBtn" href="javascript:void(0);" rel="nofollow" >
+				<div class="btnGraph btnDownload"></div>
+			</a>
 		</h1>
 	</div>
 	<div class="clearB"></div>
 	<div style="width:95%" class="marT20 mar0">
+<<<<<<< OURS
     <h2 class="fsize12 txtAR borderB2 padB8"> Keyword: 
     	<div class="floatR" style="margin-top:-6px; margin-left:1px"><a href="javascript:void(0);" id="addSortableImg" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a></div>
     	<div class="searchBoxHolder w160 floatR" style="margin-top:-5px; margin-left:4px;"><input type="text" class="w99p"> </div>  
@@ -63,6 +67,8 @@
           </div>
         </div>
       </div>
+=======
+>>>>>>> THEIRS
       <!--Pagination-->
     	<table width="100%" class="fsize12 tblAlpha">
     		<tr>
