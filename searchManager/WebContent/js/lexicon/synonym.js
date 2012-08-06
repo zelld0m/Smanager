@@ -1,5 +1,3 @@
-<<<<<<< OURS
-=======
 (function($){
 	var synonym = {
 		fileName: "synonyms.txt",
@@ -55,4 +53,3 @@ $(document).ready(function() {
 	});	
 
 })(jQuery);	
->>>>>>> THEIRS
