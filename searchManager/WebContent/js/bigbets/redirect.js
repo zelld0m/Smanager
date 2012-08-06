@@ -934,19 +934,7 @@
 							}
 							else self.populateTemplateNames(ui, condition, e);
 
-
-
 							$item.find("input#dynamicAttributeList").val("");
-							break;
-						case "dynamicattributelist" :
-							$item.find("input#dynamicAttributeList").val(u.item.text);
-							$item.find("input#dynamicAttributeList").prop("selectedText", u.item.text);
-
-
-							//TODO: add dynamic attribute / input val
-
-
-
 							break;
 						}
 					}
@@ -957,11 +945,9 @@
 				var self = this;
 				var $select = ui.find("select#templateNameList");
 				var $input = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
 
-				var inTemplateName = "";
-
-				inTemplateName = $.trim($input.val());
-
+				var inTemplateName = $.trim($input.val());
 
 				CategoryServiceJS.getIMSTemplateNames({
 					callback: function(data){
@@ -969,13 +955,16 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if($.isNotBlank(inTemplateName)) self.populateDynamicAttributes(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderTemplateNameList").show();
-						//self.clearIMSComboBox(ui, "manufacturer");
-						//if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
-						//$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
-						//$input.val(condition.IMSFilters["Manufacturer"]);
+						self.clearDynamicAttributeComboBox(ui, "dynamicAttributeName");
+						$table.find("tr#dynamicAttributeName").hide();
+						//if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSDynamicAttributes["TemplateName"])){
+						//$select.prop("selectedText",condition.IMSDynamicAttributes["TemplateName"]);
+						//$input.val(condition.IMSDynamicAttributes["TemplateName"]);
 						//}
 					},
 					postHook:function(){
@@ -988,11 +977,9 @@
 				var self = this;
 				var $select = ui.find("select#templateNameList");
 				var $input = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
 
-				var inTemplateName = "";
-
-				inTemplateName = $.trim($input.val());
-
+				var inTemplateName = $.trim($input.val());
 
 				CategoryServiceJS.getCNETTemplateNames({
 					callback: function(data){
@@ -1003,7 +990,8 @@
 					},
 					preHook:function(){
 						ui.find("img#preloaderTemplateNameList").show();
-						//self.clearIMSComboBox(ui, "manufacturer");
+						self.clearDynamicAttributeComboBox(ui, "dynamicAttributeName");
+						$table.find("tr#dynamicAttributeName").hide();
 						//if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
 						//$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
 						//$input.val(condition.IMSFilters["Manufacturer"]);
@@ -1021,6 +1009,7 @@
 				var $select = ui.find("select#dynamicAttributeList");
 				var $input = ui.find("input#dynamicAttributeList");
 				var $templateName = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
 
 				var inTemplateName = $.trim($templateName.val());
 
@@ -1030,10 +1019,18 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#dynamicAttributeName").show();
+							self.addDynamicAttributeButtonListener(ui, condition);
+						}else{
+							$table.find("tr#dynamicAttributeName").hide();
+						}
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
-						//self.clearIMSComboBox(ui, "manufacturer");
+						self.clearDynamicAttributeComboBox(ui, "dynamicattributelist");
+						//$table.find("tr#dynamicAttributeValue").hide();
 						//if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
 						//$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
 						//$input.val(condition.IMSFilters["Manufacturer"]);
@@ -1271,10 +1268,13 @@
 				ui.find("div.cnet, div.ims, div.dynamicAttribute").hide();
 
 				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
-					ui.find("div.cnet, div.dynamicAttribute").show();
+					ui.find("div.cnet").show();
+					//ui.find("div.cnet, div.dynamicAttribute").show();
 
 					self.addCNETFieldListener(ui, condition);
+					/* TODO: uncomment after QA
 					self.addFacetTemplateFieldListener(ui, condition);
+					*/
 
 					var $table = $cnet.find("table.cnetFields");
 					$table.find("tr.catName").show();
@@ -1290,9 +1290,13 @@
 					self.populateCNETTemplateNames(ui, condition);
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
-					ui.find("div.ims, div.dynamicAttribute").show();
+					ui.find("div.ims").show();
+					
+					//ui.find("div.ims, div.dynamicAttribute").show();
 					self.addIMSFieldListener(ui, condition);
+					/* TODO: uncomment after QA
 					self.addFacetTemplateFieldListener(ui, condition);
+					*/
 
 					var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 					var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
@@ -1486,6 +1490,38 @@
 				return condMap;
 			},
 
+			addDynamicAttributeButtonListener: function(ui,condition){
+				var self = this;
+
+				ui.find("a.addDynamicAttrBtn").off().on({
+					click: function(e){
+						if (!e.data.locked){
+							var $divItemList = ui.find('div#dynamicAttributeItemList');
+							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
+							
+							var $input = ui.find("input#dynamicAttributeList");
+							var inDynamicAttribute = $.trim($input.val());
+
+							if($.isNotBlank(inDynamicAttribute)){
+								var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
+								if (!$.isNumeric(currCondCount)){
+									currCondCount = 0; 
+								}
+	
+								$divDynamicAttributeItem.prop("id", 1 + parseInt(currCondCount));
+								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
+								$divDynamicAttributeItem.show();
+								$divItemList.append($divDynamicAttributeItem);
+							}
+							else{
+								alert("Please specify a dynamic attribute first.");
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
+			},
+			
 			addSaveButtonListener: function(ui, condition){
 				var self = this;
 
