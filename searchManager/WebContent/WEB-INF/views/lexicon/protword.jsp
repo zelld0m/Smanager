@@ -40,9 +40,11 @@
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			Protword
+			<div class="floatR marR8 marT4">
 			<a id="downloadBtn" href="javascript:void(0);" rel="nofollow" >
 				<div class="btnGraph btnDownload"></div>
 			</a>
+			<div class="floatR marR8 marT4">
 		</h1>
 	</div>
 	<div class="clearB"></div>
