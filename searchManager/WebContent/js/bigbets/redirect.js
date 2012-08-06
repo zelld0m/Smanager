@@ -1024,6 +1024,16 @@
 
 				var inTemplateName = $.trim($templateName.val());
 
+				CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
+					callback: function(data){
+					}
+				});
+				
+				CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
+					callback: function(data){
+					}
+				});
+				
 				CategoryServiceJS.getTemplateAttributesByTemplateName(inTemplateName, {
 					callback: function(data){
 						var list = data;

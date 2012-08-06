@@ -14,12 +14,12 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.utility.CatCodeUtil;
+import com.search.manager.utility.CatCodeUtil.Attribute;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 @Service(value = "categoryService")
@@ -42,20 +42,9 @@ public class CategoryService {
 	}
 	
 	@RemoteMethod
-	public CategoryList getCategories(String categoryCode) {
-		try {
-			return daoService.getCategories(categoryCode);
-		} catch (DaoException e) {
-			logger.error("Failed during getCategories()",e);
-		}
-		return null;
-	}
-
-	@RemoteMethod
 	public List<String> getIMSCategories() throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel("","","");
 	}
-	
 	
 	@RemoteMethod
 	public List<String> getIMSSubcategories(String category) throws DataException {
@@ -143,14 +132,66 @@ public class CategoryService {
 	public List<String> getCNETTemplateNames() throws DataException {
 		return CatCodeUtil.getAllCNETTemplates();
 	}
-	
+
 	@RemoteMethod
-	public List<String> getTemplateAttributesByTemplateName(String templateName) throws DataException {
-		return CatCodeUtil.getTemplateAttribute(templateName);
+	public List<Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
+		List<Attribute> attrList = new ArrayList<Attribute>();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		filters.add("TemplateName:\"" + templateName + "\"");
+		ArrayList<String> fields = new ArrayList<String>();
+
+		for (Attribute a: CatCodeUtil.getIMSTemplateAttribute(templateName)) {
+			attrList.add(new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			fields.add(a.getAttributeName());
+		}	
+		
+		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+				fields, filters, false);
+
+		for (Attribute a: attrList) {
+			List<String> values = map.get(a.getAttributeName());
+			if (values != null) {
+				for (String value: values) {
+					a.addAttributeValue(value);
+				}				
+			}
+		}
+		
+		return attrList;
 	}
-	
+
 	@RemoteMethod
-	public List<String> getTemplateAttributeValues(String templateName, String templateAttribute) throws DataException {
-		return CatCodeUtil.getTemplateAttributeValues(templateName, templateAttribute);
+	public List<Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
+		List<Attribute> attrList = new ArrayList<Attribute>();
+		String storeId = UtilityService.getStoreName();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		ArrayList<String> fields = new ArrayList<String>();
+
+		for (Attribute a: CatCodeUtil.getCNETTemplateAttribute(templateName)) {
+			attrList.add(new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			fields.add(a.getAttributeName());
+		}
+
+		String templateNameField = ConfigManager.getInstance().getParameterByCore(storeId, "facet-template");
+		if (StringUtils.isNotEmpty(templateNameField)) {
+			filters.add(templateNameField + "Name:\"" + templateName + "\"");
+
+			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+					fields, filters,false);
+
+			for (Attribute a: attrList) {
+				List<String> values = map.get(a.getAttributeName());
+				if (values != null) {
+					for (String value: values) {
+						a.addAttributeValue(value);
+					}					
+				}
+			}			
+		}
+		
+		return attrList;
 	}
+
 }

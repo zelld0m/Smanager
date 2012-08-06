@@ -218,7 +218,9 @@
 				com.search.manager.schema.model.mm.ConditionalMatch,
 				com.search.manager.cache.dao.DaoCacheServiceImpl,
 				com.search.manager.authentication.dao.UserDetailsImpl,
-				com.search.manager.model.DeploymentModel
+				com.search.manager.model.DeploymentModel,
+				com.search.manager.utility.CatCodeUtil$Attribute,
+				com.search.manager.utility.CatCodeUtil$Template				
 			</param-value>
 		</init-param>
 	</servlet>
