@@ -7,12 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.exception.DataException;
+import com.search.manager.service.CategoryService;
+import com.search.manager.utility.CatCodeUtil;
+import com.search.manager.utility.CatCodeUtil.Attribute;
 import com.search.ws.ConfigManager;
 
 @DataTransferObject(converter=BeanConverter.class)
@@ -21,6 +27,8 @@ public class RedirectRuleCondition extends ModelBean {
 	// increment after every change in model
 	private static final long serialVersionUID = -6248904441308276236L;
 	
+	private static final Logger logger = Logger.getLogger(RedirectRuleCondition.class);
+
 	private String ruleId;
 	private Integer sequenceNumber;
 	private String storeId;
@@ -131,7 +139,51 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		// TODO: dynamic attributes
-		
+		map = getDynamicAttributes();
+		if (MapUtils.isNotEmpty(map)) {
+			String templateName = null;
+			for (String key: map.keySet()) {
+				if (StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName")) {
+					templateName = map.get(key).get(0);
+					String value = templateName;
+					if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
+						value = String.format("\"%s\"", value);
+					}
+					builder.append(key).append(":").append(value).append(" AND ");
+					break;
+				}
+			}
+			
+			if (StringUtils.isNotBlank(templateName)) {
+				for (String key: map.keySet()) {
+					if (!(StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName"))) {
+						List<String> values = map.get(key);
+						if (CollectionUtils.isNotEmpty(values)) {
+							builder.append(key).append(":");
+							
+							if (forSolr) {
+								builder.append("(");
+							}
+							for (String value: values) {
+								// TODO: convert to encloseInQuotes method
+								if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
+									value = String.format("\"%s\"", value);
+								}
+								builder.append(value);
+								builder.append(forSolr ? " " : " OR ");
+							}
+							if (forSolr) {
+								builder.append(")");
+							}
+							else {
+								builder.replace(builder.length() - 4, builder.length(), "");								
+							}
+							builder.append(" AND ");										
+						}
+					}
+				}
+			}
+		}
 		
 		
 		// Platform, Condition, Availability, License are grouped together
@@ -317,7 +369,50 @@ public class RedirectRuleCondition extends ModelBean {
 			}
 		}
 		
-		// TODO: dynamic attributes
+		
+		map = getDynamicAttributes();
+		if (MapUtils.isNotEmpty(map)) {
+			boolean isCNET = false;
+			String templateName = null;
+			for (String key: map.keySet()) {
+				if (StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName")) {
+					isCNET = StringUtils.endsWith(key, "_FacetTemplateName");
+					templateName = map.get(key).get(0);
+					break;
+				}
+			}
+			
+			// TODO: dynamic attributes
+			if (StringUtils.isNotBlank(templateName)) {
+				// get readable value
+				try {
+					builder.append("Template Name is \"").append(templateName).append("\" AND ");
+					
+					Map<String, Attribute> attributeMap = isCNET ? 
+									CategoryService.getCNETTemplateAttributesMap(templateName) :
+									CategoryService.getIMSTemplateAttributesMap(templateName);
+					for (String key: map.keySet()) {
+						if (!(StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName"))) {
+							Attribute a = attributeMap.get(key);
+							List<String> values = map.get(key);
+							if (CollectionUtils.isNotEmpty(values)) {
+								builder.append(a == null ? key : a.getAttributeDisplayName()).append(" is ");
+								for (String value: values) {
+									value = value.substring(value.indexOf("|") + 1);
+									builder.append("\"").append(value).append("\"");
+									builder.append(" or ");										
+								}
+								builder.replace(builder.length() - 4, builder.length(), "");
+								builder.append(" AND ");										
+							}
+						}
+					}
+				} catch (DataException e) {
+					logger.error("Failed to get template attributes", e);
+				}
+			}
+		}
+		
 		String[] arrFieldContains = { "Name", "Description" };
 		
 		map = getFacets();
@@ -338,6 +433,17 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		return builder.toString();
+	}
+	
+	private void putListToConditionMap(String key, String values) {
+		List<String> list = conditionMap.get(key);
+		if (list == null) {
+			list = new ArrayList<String>();
+			conditionMap.put(key, list);
+		}
+		for (String value : values.split(" OR ")) {
+			list.add(value);
+		}
 	}
 	
 	private void putToConditionMap(String key, String value) {
@@ -395,7 +501,7 @@ public class RedirectRuleCondition extends ModelBean {
 
 			// CNET
 			// TODO: update when MacMall and other stores support CNET Facet Template
-			else if (fieldName.contains("_FacetTemplate")) {
+			else if (fieldName.endsWith("_FacetTemplate")) {
 				if (fieldValue.endsWith("*")) {
 					fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
 				}
@@ -414,6 +520,9 @@ public class RedirectRuleCondition extends ModelBean {
 			}
 
 			// Dynamic attributes
+			else if (fieldName.startsWith("af_")) {
+				putListToConditionMap(fieldName, fieldValue);
+			}
 			
 			// If InStock:0 set Availability to "In Stock"
 			//           :1 set Availability to "Call"
@@ -493,13 +602,6 @@ public class RedirectRuleCondition extends ModelBean {
 		return conditionMap.get("Level1Category") != null && !conditionMap.get("Level1Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Level1Category").get(0));
 	}
 
-	public Map<String, List<String>> getTemplateFilters() {
-		// if TemplateName or *_FacetTemplateName is present return TemplateName or *_FacetTemplateName and af_* fields and dynamic attributes;
-		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-		// TODO: implement
-		return map;
-	}
-
 	public Map<String, List<String>> getFacets() {
 		// if any of the following fields are present return them;
 		// Platform, Condition, Availability, License
@@ -515,20 +617,38 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 	
 	public Map<String, List<String>> getDynamicAttributes() {
+		// if TemplateName or *_FacetTemplateName is present return TemplateName or *_FacetTemplateName and af_* fields and dynamic attributes;
+		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+		// TODO: implement
+
 		// if any of the following fields are present return them;
 		// Platform, Condition, Availability, License
-		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
 		for (String key: conditionMap.keySet()) {
-			
-			List<String> value = conditionMap.get(key);
-			if (value != null && !value.isEmpty()) {
-				map.put(key, new ArrayList<String>(value));
+			if (key.contains("TemplateName") || key.startsWith("af_")) {
+				List<String> value = conditionMap.get(key);
+				if (value != null && !value.isEmpty()) {
+					map.put(key, new ArrayList<String>(value));
+				}				
 			}
 		}
 		return map;
 	}
 	public static void main(String[] args) {
 		ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
+		
+		// initialize catcodeutil
+		boolean initCatCodeUtil = false;
+		
+		if (initCatCodeUtil) {
+			try {
+				CatCodeUtil.init2();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		
+		
 		// if Condition == "Refurbished" set Refurbished_Flag:1
 		//				== "Open Box"    set OpenBox_Flag:1
 		//              == "Clearance"   set Clearance_Flag:1
@@ -542,10 +662,10 @@ public class RedirectRuleCondition extends ModelBean {
 //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
 //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
 //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
-//				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
+//				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\s"",
 //				"Name:bag ivory AND Description:bag ivory",
-				"TemplateName:Notebook Computers and af_Processor1_Value_Attrib:a2|Core i5",
-				"PCMall_FacetTemplateName:Notebook Computers and af_Processor1_Value_Attrib:a2|Core i5",
+				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
+//				"PCMall_FacetTemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
 //				"Manufacturer:\"Apple\"",
 //				""
@@ -562,6 +682,7 @@ public class RedirectRuleCondition extends ModelBean {
 			System.out.println("ims filter: " + rr.getIMSFilters());
 			System.out.println("cnet filter: " + rr.getCNetFilters());
 			System.out.println("facets: " + rr.getFacets());
+			System.out.println("dynamic attributes: " + rr.getDynamicAttributes());
 		}
 	}
 

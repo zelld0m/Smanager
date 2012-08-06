@@ -432,7 +432,7 @@ public class CatCodeUtil {
 		}
 	}
 	
-	private static void init2() throws Exception {
+	public static void init2() throws Exception {
 		try {
 			CatCodeUtil.loadXlsxWorkbook("/home/solr/utilities/catcodes/Solr SQL Objects and Definitions.xlsx",CatCodes.WORKBOOK_OBJECTS.getCodeStr());
 			CatCodeUtil.loadXlsxWorkbook("/home/solr/utilities/catcodes/AlternativeCNETCategorization_Structure.xlsx",CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
