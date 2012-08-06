@@ -170,9 +170,6 @@ public interface DaoService {
 	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria, MatchType relevancyMatchType,
 				ExactMatch keywordExactMatch) throws DaoException;
 	
-    //Redirect Rule
-	public CategoryList getCategories(String categoryCode) throws DaoException;
-
     /* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;

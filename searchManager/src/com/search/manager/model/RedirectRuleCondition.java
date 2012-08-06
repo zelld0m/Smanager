@@ -98,7 +98,6 @@ public class RedirectRuleCondition extends ModelBean {
 				builder.append(" AND ");
 			}
 		}
-		// TODO: CNET
 		else if (isCNetFilter()) {
 			map = getCNetFilters();
 			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
@@ -132,6 +131,8 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		// TODO: dynamic attributes
+		
+		
 		
 		// Platform, Condition, Availability, License are grouped together
 		// special processing
@@ -513,6 +514,19 @@ public class RedirectRuleCondition extends ModelBean {
 		return map;
 	}
 	
+	public Map<String, List<String>> getDynamicAttributes() {
+		// if any of the following fields are present return them;
+		// Platform, Condition, Availability, License
+		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
+		for (String key: conditionMap.keySet()) {
+			
+			List<String> value = conditionMap.get(key);
+			if (value != null && !value.isEmpty()) {
+				map.put(key, new ArrayList<String>(value));
+			}
+		}
+		return map;
+	}
 	public static void main(String[] args) {
 		ConfigManager.getInstance("C:\\home\\solr\\conf\\solr.xml");
 		// if Condition == "Refurbished" set Refurbished_Flag:1
@@ -529,7 +543,9 @@ public class RedirectRuleCondition extends ModelBean {
 //				"PCMall_FacetTemplate:Electronics | Gaming | PC Games & Accessories",
 //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
 //				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\"",
-				"Name:bag ivory AND Description:bag ivory",
+//				"Name:bag ivory AND Description:bag ivory",
+				"TemplateName:Notebook Computers and af_Processor1_Value_Attrib:a2|Core i5",
+				"PCMall_FacetTemplateName:Notebook Computers and af_Processor1_Value_Attrib:a2|Core i5",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
 //				"Manufacturer:\"Apple\"",
 //				""

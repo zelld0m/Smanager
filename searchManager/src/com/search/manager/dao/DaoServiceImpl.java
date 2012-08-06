@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
-import com.search.manager.dao.sp.CategoryDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.ElevateDAO;
@@ -32,7 +31,6 @@ import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -68,7 +66,6 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private BannerDAO 		bannerDAO;
 	@Autowired private CampaignDAO 		campaignDAO;
 	@Autowired private RelevancyDAO		relevancyDAO;
-	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
 	@Autowired private CommentDAO		commentDAO;
@@ -115,10 +112,6 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setRelevancyDAO(RelevancyDAO relevancyDAO) {
 		this.relevancyDAO = relevancyDAO;
-	}
-
-	public void setCategoryDAO(CategoryDAO categoryDAO) {
-		this.categoryDAO = categoryDAO;
 	}
 
 	public void setRedirectRuleDAO(RedirectRuleDAO redirectRuleDAO) {
@@ -770,12 +763,6 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public CategoryList getCategories(String categoryCode) throws DaoException {
-		logger.error("CategoryDAO is null " + (categoryDAO==null));
-		return categoryDAO.getCategories(categoryCode);
-	}
-
-	@Override
 	public int addRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.addRedirectRule(rule);
 	}
@@ -893,10 +880,6 @@ public class DaoServiceImpl implements DaoService {
 
 	public RelevancyDAO getRelevancyDAO() {
 		return relevancyDAO;
-	}
-
-	public CategoryDAO getCategoryDAO() {
-		return categoryDAO;
 	}
 
 	public RedirectRuleDAO getRedirectRuleDAO() {

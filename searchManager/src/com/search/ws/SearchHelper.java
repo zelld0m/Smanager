@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -255,20 +256,50 @@ public class SearchHelper {
 	}
 
 	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters) {
-		return getFacetValues(server, storeId, field, filters,true);
+		return getFacetValues(server, storeId, field, filters, true);
+	}
+
+	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields) {
+		return getFacetValues(server, storeId, fields, null);
+	}
+
+	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields, List<String> filters) {
+		return getFacetValues(server, storeId, fields, filters, true);
+	}
+
+	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters, boolean hasMincount) {
+		ArrayList<String> fields = new ArrayList<String>();
+		fields.add(field);
+		Map<String, List<String>> map = getFacetValues(server, storeId, fields, filters, hasMincount);
+		if (map != null) {
+			return map.get(field);
+		}
+		return new ArrayList<String>();
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<String> getFacetValues(String server, String storeId, String field, List<String> filters, boolean hasMincount) {
-		List<String> list = new ArrayList<String>();
-		if (StringUtils.isEmpty(field)) {
-			return list;
+	public static Map<String, List<String>> getFacetValues(String server, String storeId, List<String> fields, List<String> filters, boolean hasMincount) {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		
+		if (CollectionUtils.isEmpty(fields)) {
+			return map;
 		}
 		
 		try {
 			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			for (String field: fields) {
+				if (StringUtils.isNotBlank(field)) {
+					nameValuePairs.add(new BasicNameValuePair("facet.field", field));					
+				}
+			}
+			
+			if (nameValuePairs.isEmpty()) {
+				return map;
+			}
+			
 			// TODO: replace qt with relevancy
 			String qt = configManager.getStoreParameter(storeId, "qt");
 			if (StringUtils.isEmpty(qt)) {
@@ -278,7 +309,6 @@ public class SearchHelper {
 			String coreName = configManager.getParameterByStore(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", coreName).concat("select?");
 			
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q.alt", "*:*"));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
 			nameValuePairs.add(new BasicNameValuePair("defType", "dismax"));
@@ -287,10 +317,10 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("facet", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
-			nameValuePairs.add(new BasicNameValuePair("facet.field", field));
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
-			if(hasMincount)
-				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));
+			if(hasMincount) {
+				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));				
+			}
 			
 			if (CollectionUtils.isNotEmpty(filters)) {
 				for (String filter: filters) {
@@ -307,6 +337,7 @@ public class SearchHelper {
             /* JSON */
             JSONObject initialJson = null;
             JsonSlurper slurper = null;
+            JSONObject facetFields = null;
             JSONObject facets = null;
             
             // send solr request
@@ -317,27 +348,38 @@ public class SearchHelper {
     		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
     		
 			// locate the result node
-    		facets = ((JSONObject)initialJson)
+    		facetFields = ((JSONObject)initialJson)
     							.getJSONObject(SolrConstants.TAG_FACET_COUNTS)
-    							.getJSONObject(SolrConstants.TAG_FACET_FIELDS)
-    							.getJSONObject(field);
-    		if (facets.size() > 0) {
-    			for (String value: (Set<String>)facets.keySet()) {
-    				list.add(value);
-    			}
-    			// TODO: add facet sorting rule here
-    			// sort the list
-    			Collections.sort(list, new Comparator<String>() {
-					@Override
-					public int compare(String s1, String s2) {
-						return s1.compareToIgnoreCase(s2);
-					}
-    			});
+    							.getJSONObject(SolrConstants.TAG_FACET_FIELDS);
+    		
+    		for (String key: (Set<String>)facetFields.keySet()) {
+    			facets = facetFields.getJSONObject(key);
+    			
+        		if (facets.size() > 0) {
+        			
+        			List<String> list = new ArrayList<String>();
+        			
+        			for (String value: (Set<String>)facets.keySet()) {
+        				list.add(value);
+        			}
+        			// TODO: add facet sorting rule here
+        			// sort the list
+        			Collections.sort(list, new Comparator<String>() {
+    					@Override
+    					public int compare(String s1, String s2) {
+    						return s1.compareToIgnoreCase(s2);
+    					}
+        			});
+        			
+        			map.put(key, list);
+        		}
     		}
+    		
+
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
 		}
-		return list;
+		return map;
 	}
 	
 	public static String getEdpByPartNumber(String server, String storeId, String keyword, String partNumber) {

@@ -4,19 +4,20 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,16 +26,15 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.enums.CatCodes;
 import com.search.manager.exception.DataException;
-import com.search.manager.model.Category;
-import com.search.manager.model.CategoryCNET;
-import com.search.manager.model.SolrAttribute;
-import com.search.manager.model.SolrAttributeRange;
 import com.search.manager.service.UtilityService;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 public class CatCodeUtil {
@@ -46,13 +46,96 @@ public class CatCodeUtil {
 	private static final String SUB_CAT_NAME = "SubCategory Name";
 	private static final String TEMPLATE_NAME = "Template Name";
 	private static final String CLASS_NAME = "Class Name";
-	private static final String CATEGORY_NAME = "Category Name";
 	private static final String STATUS_ACTIVE = "1";
 	private static final String ERROR_MSG = "Error while loading ";
-	private static final String DYNAMIC_FACET_PREFIX = "af_";
-	private final static String PCMALL_TEMPLATE = "PCMall_FacetTemplateName:"; 
-	private final static String MACMALL_TEMPLATE = "Template_Name:"; 
 	private final static String VALUE_ATTRIBUTE = "_Value_Attrib";
+	
+	@DataTransferObject(converter = BeanConverter.class)
+	public static class Attribute {
+		
+		public Attribute(String attributeName, String attributeDisplayName) {
+			this.attributeName = attributeName;
+			this.attributeDisplayName = attributeDisplayName;
+		}
+		
+		public Attribute(String attributeNumber, String attributeName, String attributeDisplayName) {
+			this.attributeName = attributeName;
+			this.attributeNumber = attributeNumber;
+			this.attributeDisplayName = attributeDisplayName;
+		}
+		
+		public String getAttributeName() {
+			return attributeName;
+		}
+		
+		public void setAttributeName(String attributeName) {
+			this.attributeName = attributeName;
+		}
+		
+		public String getAttributeDisplayName() {
+			return attributeDisplayName;
+		}
+		
+		public void setAttributeDisplayName(String attributeDisplayName) {
+			this.attributeDisplayName = attributeDisplayName;
+		}
+		
+		public void addAttributeValue(String value) {
+			attributeValues.add(value);
+		}
+		
+		public List<String> getAttributeValues() {
+			return attributeValues;
+		}	
+
+		String attributeName;
+		String attributeNumber;
+		String attributeDisplayName;
+		List<String> attributeValues = new ArrayList<String>();
+		
+	}
+	
+	@DataTransferObject(converter = BeanConverter.class)
+	public static class Template {
+		
+		Template (String templateNumber, String templateName) {
+			this.templateName = templateName;
+			this.templateNumber = templateNumber;
+		}
+		
+		String templateName;
+		String templateNumber;
+		
+		public String getTemplateName() {
+			return templateName;
+		}
+		
+		public void setTemplateName(String templateName) {
+			this.templateName = templateName;
+		}
+		
+		public String getTemplateNumber() {
+			return templateNumber;
+		}
+		
+		public void setTemplateNumber(String templateNumber) {
+			this.templateNumber = templateNumber;
+		}
+		
+		public List<Attribute> getAttributeList() {
+			return attributeList;
+		}
+
+		List<Attribute> attributeList = new ArrayList<Attribute>();
+		
+	}
+	
+	// key = TemplateNumber
+	private static Map<String, Template> templateMap 		= new LinkedHashMap<String, Template>();
+	private static Map<String, Template> imsTemplateMap 	= new LinkedHashMap<String, Template>();
+	private static Map<String, Template> cnetTemplateMap 	= new LinkedHashMap<String, Template>();
+	private static Map<String, Attribute> attributeMap 		= new HashMap<String, Attribute>();
+	
 	
 	/** Store workbook to cache */
 	public static void loadXlsxWorkbook(String location, String workBook) throws IOException, DataException{
@@ -78,6 +161,7 @@ public class CatCodeUtil {
 		cat.setList(XlsxUtil.getXlsxData(getXlsxWorkbook(wbObject),sheetNum));
 		putCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey), cat);
 	}
+	
 	public static void loadCatCodesToCacheCategoryOverride(String wbObject, int sheetNum, String cacheKey) throws DataException, IOException{
 		CacheModel<String[]> cat = new CacheModel<String[]>();
 		cat.setList(getXlsxDataCategoryOverride(getXlsxWorkbook(wbObject),sheetNum));
@@ -94,421 +178,9 @@ public class CatCodeUtil {
 	public static void removeFmCache(String cacheKey) throws DataException{
 		removeCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey));
 	}
-
-	/** Retrieve category listing by IMS */
-	public static List<Category> getCategoriesByIMSCatCode(String catCode) throws DataException{
-		
-		List<Category> catList = new ArrayList<Category>();
-		Set<String> filterCat = new TreeSet<String>();
-		Set<String> filterSubCat = new TreeSet<String>();
-		Set<String> filterClass = new TreeSet<String>();
-		String code = "";
-		String subCode = "";
-		String subCol = "";
-		
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
-
-		if(CollectionUtils.isNotEmpty(row)){
-			
-			for(String[] col : row){
-
-				switch (catCode.length()) {	
-					case 0:
-						subCode = col[1];
-						subCol = col[5];
-						break;
-					case 1:
-						code = col[1];
-						subCode = col[1]+col[2];
-						subCol = col[6];
-						break;
-					case 2:
-						code = col[1]+col[2];
-						subCode = col[1]+col[2]+col[3];
-						subCol = col[7];
-						break;	
-					case 3:
-						code = col[1]+col[2]+col[3];
-						subCode = col[1]+col[2]+col[3]+col[4];
-						subCol = col[8];
-						break;	
-					case 4:
-						code = col[1]+col[2]+col[3]+col[4];
-						subCode = code;
-						subCol = col[8];
-						break;	
-					default:
-						break;
-				}
-				
-				if(catCode.equalsIgnoreCase(code) || catCode.length() == 0){
-					String template = getTemplate(subCode);
-					
-					if(SUB_CAT_NAME.equalsIgnoreCase(template)){
-						if(filterSubCat.add(col[6]))
-							catList.add(new Category(subCode,col[6]));
-					}else if(TEMPLATE_NAME.equalsIgnoreCase(template)){
-						Vector<String[]> row_ = getCatCodesFmCache(CatCodes.TEMPLATE_USED.getCodeStr());
-						
-						if(CollectionUtils.isNotEmpty(row_)){
-							for(String[] col_ : row_){
-								if((subCode).equalsIgnoreCase(col_[2])){
-									if(filterCat.add(subCode))
-										catList.add(new Category(subCode,col_[1]));
-								}
-							}
-						}
-						if(filterCat.add(subCode))
-							catList.add(new Category(subCode,subCol));
-						
-					}else if(CLASS_NAME.equalsIgnoreCase(template)){
-						if(filterClass.add(col[7]))
-							catList.add(new Category(subCode,col[7]));
-					}else if(CATEGORY_NAME.equalsIgnoreCase(template)){
-						if(filterCat.add(subCode))
-							catList.add(new Category(subCode,col[5]));
-					}else{
-						if(filterCat.add(subCode))
-							catList.add(new Category(subCode,subCol));
-					}
-				}
-			}	
-		}
-
-		filterCat = null;
-		filterSubCat = null;
-		filterClass = null;
-		SortUtil.sort(catList,"catName");
-		return catList;
-	}
-	
-	/** Retrieve category listing by IMS */
-	public static List<Category> getCategoriesByIMSCatName(String catName) throws DataException{
-		if(StringUtils.isNotEmpty(catName)){
-			catName = StringUtil.decodeHtml(catName);
-			String catCode = getCatCodeByIMSCatName(catName);
-			if(StringUtils.isNotEmpty(catCode))
-				return getCategoriesByIMSCatCode(catCode);
-		}
-		return Collections.EMPTY_LIST;
-	}
-	
-	/** Retrieve category code by category name */
-	public static String getCatCodeByIMSCatName(String catName) throws DataException{
-		
-		String catCode = "";
-		
-		if(StringUtils.isNotEmpty(catName)){
-			// Search @ First Level
-			catCode = getCatCodeByIMSCatName(catName, CatCodes.LEVEL1);	
-			if(StringUtils.isNotEmpty(catCode))
-				return catCode;
-			// Search @ Second Level
-			catCode = getCatCodeByIMSCatName(catName, CatCodes.LEVEL2);
-			if(StringUtils.isNotEmpty(catCode))
-				return catCode;
-			// Search @ Third Level
-			catCode = getCatCodeByIMSCatName(catName, CatCodes.LEVEL3);
-			if(StringUtils.isNotEmpty(catCode))
-				return catCode;
-			// Search @ Forth Level
-			catCode = getCatCodeByIMSCatName(catName, CatCodes.LEVEL4);
-			if(StringUtils.isNotEmpty(catCode))
-				return catCode;
-		}
-		
-		return catCode;
-	}
-	
-	/** Retrieve category name by category code */
-	public static String getCatNameByIMSCatCode(String catCode) throws DataException{
-		
-		String code = "";
-		String subCol = "";
-		String catName = "";
-		Set<String> filter = new TreeSet<String>();
-		
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
-
-		if(CollectionUtils.isNotEmpty(row)){
-			
-			for(String[] col : row){
-
-				switch (catCode.length()) {	
-					case 0:
-						return "";
-					case 1:
-						code = col[1];
-						subCol = col[5];
-						break;
-					case 2:
-						code = col[1]+col[2];
-						subCol = col[6];
-						break;	
-					case 3:
-						code = col[1]+col[2]+col[3];
-						subCol = col[7];
-						break;	
-					case 4:
-						code = col[1]+col[2]+col[3]+col[4];
-						subCol = col[8];
-						break;	
-					default:
-						return "";
-				}
-				
-				if(catCode.equalsIgnoreCase(code)){
-					String template = getTemplate(code);
-					
-					if(SUB_CAT_NAME.equalsIgnoreCase(template)){
-						if(filter.add(col[6])){
-							if(StringUtils.isNotEmpty(catName))
-								catName += ";"+ col[6];
-							else
-								catName = col[6];
-						}
-					}else if(TEMPLATE_NAME.equalsIgnoreCase(template)){
-						Vector<String[]> row_ = getCatCodesFmCache(CatCodes.TEMPLATE_USED.getCodeStr());
-						
-						if(CollectionUtils.isNotEmpty(row_)){
-							for(String[] col_ : row_){
-								if((code).equalsIgnoreCase(col_[2])){
-									if(filter.add(col_[1])){
-										if(StringUtils.isNotEmpty(catName))
-											catName += ";"+ col_[1];
-										else
-											catName = col_[1];
-									}
-								}
-							}
-						}
-						if(filter.add(subCol)){
-							if(StringUtils.isNotEmpty(catName))
-								catName += ";"+ subCol;
-							else
-								catName = subCol;
-						}
-					}else if(CLASS_NAME.equalsIgnoreCase(template)){
-						if(filter.add(col[7])){
-							if(StringUtils.isNotEmpty(catName))
-								catName += ";"+ col[7];
-							else
-								catName = col[7];
-						}
-					}else if(CATEGORY_NAME.equalsIgnoreCase(template)){
-						if(filter.add(col[5])){
-							if(StringUtils.isNotEmpty(catName))
-								catName += ";"+ col[5];
-							else
-								catName = col[5];
-						}
-					}else{
-						if(filter.add(subCol)){
-							if(StringUtils.isNotEmpty(catName))
-								catName += ";"+ subCol;
-							else
-								catName = subCol;
-						}
-					}
-				}
-			}	
-		}
-		return catName;
-	}
-
-	/** Retrieve category code by category name and catcode entity */
-	public static String getCatCodeByIMSCatName(String catName, CatCodes catCodes) throws DataException{
-
-		String subCode = "";
-		String subCol = "";
-		
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
-
-		if(StringUtils.isNotEmpty(catName) && CollectionUtils.isNotEmpty(row)){
-			
-			for(String[] col : row){
-
-				switch (catCodes) {	
-					case LEVEL1:
-						subCode = col[1];
-						subCol = col[5];
-						break;
-					case LEVEL2:
-						subCode = col[1]+col[2];
-						subCol = col[6];
-						break;
-					case LEVEL3:
-						subCode = col[1]+col[2]+col[3];
-						subCol = col[7];
-						break;	
-					case LEVEL4:
-						subCode = col[1]+col[2]+col[3]+col[4];
-						subCol = col[8];
-						break;		
-					default:
-						break;
-				}
-				
-				String template = getTemplate(subCode);
-				
-				if(SUB_CAT_NAME.equalsIgnoreCase(template)){
-					if(catName.equalsIgnoreCase(col[6]))
-						return col[1]+col[2];
-				}else if(TEMPLATE_NAME.equalsIgnoreCase(template)){
-					Vector<String[]> row_ = getCatCodesFmCache(CatCodes.TEMPLATE_USED.getCodeStr());
-					
-					if(CollectionUtils.isNotEmpty(row_)){
-						for(String[] col_ : row_){
-							if((subCode).equalsIgnoreCase(col_[2])){
-								if(catName.equalsIgnoreCase(col_[1]))
-									return subCode;
-							}
-						}
-					}
-					
-					if(catName.equalsIgnoreCase(subCol))
-						return subCode;	
-				}else if(CLASS_NAME.equalsIgnoreCase(template)){	
-					if(catName.equalsIgnoreCase(col[7]))
-						return col[1]+col[2]+col[3];
-				}else if(CATEGORY_NAME.equalsIgnoreCase(template)){	
-					if(catName.equalsIgnoreCase(col[5]))
-						return col[1];	
-				}else{
-					if(catName.equalsIgnoreCase(subCol))
-						return subCode;	
-				}
-			
-			}	
-		}
-
-		return "";
-	}
-
-	/** Retrieve category listing by CNET */
-	public static List<CategoryCNET> getCategoriesByCNET(String searchName, String store) throws DataException{
-		
-		List<CategoryCNET> catList = new ArrayList<CategoryCNET>();
-		
-		if(StringUtils.isNotEmpty(searchName)){
-			searchName = StringUtil.decodeHtml(searchName);
-			Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_SEARCH_NAV.getCodeStr());
-			
-			List<CategoryCNET> searchIds = getCNETSearchId(row, searchName, store);
-			
-			for(CategoryCNET searchId : searchIds){
-				boolean hasKey = false;
-					for(String[] col : row){
-							if(searchId.getId().equalsIgnoreCase(getWholeNumber(col[3]))){
-								catList.add(new CategoryCNET(getWholeNumber(col[0]), col[1], col[2], getWholeNumber(col[3]), col[4]));
-								hasKey = true;
-							}	
-					}
-					if(!hasKey)
-						catList.add(searchId);			
-			}	
-		}
-		
-		return catList;
-	}
-	
-	/** Retrieve category listing by alternate CNET */
-	public static List<CategoryCNET> getCategoriesByCNETAlternate(String catName) throws DataException{
-		
-		List<CategoryCNET> catList = new ArrayList<CategoryCNET>();
-		
-		if(StringUtils.isNotEmpty(catName)){
-			catName = StringUtil.decodeHtml(catName);
-			Vector<String[]> row = getCatCodesFmCache(CatCodes.ALTERNATE_CNET.getCodeStr());
-			
-			List<CategoryCNET> catIds = getCNETAlternateCatId(row, catName);
-			
-			
-			for(CategoryCNET catId : catIds){
-				boolean hasKey = false;
-					for(String[] col : row){
-							if(catId.getId().equalsIgnoreCase(getWholeNumber(col[4]))){
-								catList.add(new CategoryCNET(getWholeNumber(col[1]), col[2], col[2], getWholeNumber(col[4]), null));
-								hasKey = true;
-							}	
-					}
-					if(!hasKey)
-						catList.add(catId);			
-			}	
-		}
-		
-		return catList;
-	}
-	
-	/** Retrieve categories alternative cnet by category name given worksheet values */
-	public static List<CategoryCNET> getCNETAlternateCatId(Vector<String[]> row, String catName) throws DataException{
-		
-		List<CategoryCNET> searchList = new ArrayList<CategoryCNET>();
-		
-		if(StringUtils.isNotEmpty(catName)){
-			if(CollectionUtils.isNotEmpty(row)){	
-				for(String[] col : row){
-					if(catName.equalsIgnoreCase(col[2])){
-						searchList.add(new CategoryCNET(getWholeNumber(col[1]), col[2], col[2], getWholeNumber(col[4]),null));
-					}
-				}
-			}
-		}		
-		return searchList;
-	}
-	
-	/** Retrieve categories cnet by category  name and store given worksheet values */
-	public static List<CategoryCNET> getCNETSearchId(Vector<String[]> row, String searchName, String store) throws DataException{
-		
-		List<CategoryCNET> searchList = new ArrayList<CategoryCNET>();
-		
-		if(StringUtils.isNotEmpty(searchName) && StringUtils.isNotEmpty(store)){
-			if(CollectionUtils.isNotEmpty(row)){	
-				for(String[] col : row){
-					if(searchName.equalsIgnoreCase(col[1]) && store.equalsIgnoreCase(col[4])){
-						searchList.add(new CategoryCNET(getWholeNumber(col[0]), col[1], col[2], getWholeNumber(col[3]), col[4]));
-					}
-				}
-			}
-		}		
-		return searchList;
-	}
-	
-	/** Retrieve categories cnet by category name and store */
-	public static List<CategoryCNET> getCNETSearchId(String searchName, String store) throws DataException{
-		
-		List<CategoryCNET> searchList = new ArrayList<CategoryCNET>();
-		
-		if(StringUtils.isNotEmpty(searchName) && StringUtils.isNotEmpty(store)){
-			Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_SEARCH_NAV.getCodeStr());
-			
-			if(CollectionUtils.isNotEmpty(row)){
-				for(String[] col : row){
-					if(searchName.equalsIgnoreCase(col[1]) && store.equalsIgnoreCase(col[4])){
-						searchList.add(new CategoryCNET(getWholeNumber(col[0]), col[1], col[2], getWholeNumber(col[3]), col[4]));
-					}
-				}
-			}
-		}
-		
-		return searchList;
-	}
-
-	/** Retrieve category override template IMS by category code */
-	public static String getTemplate(String catCode) throws DataException{
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.CATEGORY_OVERRIDE_RULES.getCodeStr());
-		
-		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(catCode)){
-			for(String[] col : row){
-				if(catCode.equalsIgnoreCase(col[0]))
-					return col[1];
-			}
-		}
-		return "";
-	}
 	
 	/** Retrieve attribute template number by template name */
-	public static String getAttributeTemplateNo(String name) throws DataException{
+	private static String getAttributeTemplateNo(String name) throws DataException{
 		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
 		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(name)){
 			for(String[] col : row){
@@ -533,163 +205,6 @@ public class CatCodeUtil {
 		return attr;
 	}
 	
-	/** Retrieve dynamic facet listing given a template name */
-	public static List<SolrAttribute> getDynamicFacetListByTemplateName(String name) throws DataException{
-		
-		List<SolrAttribute> attrList = new ArrayList<SolrAttribute>();
-
-		if(StringUtils.isNotEmpty(name)){
-			name = StringUtil.decodeHtml(name);
-			String template = getAttributeTemplateNo(name);
-			List<String[]> attrTemplate = getAttributeTemplateAttribute(template);
-	
-			Map<String, SolrAttribute> attrMap = getSolrAttributes();
-	
-			if(CollectionUtils.isNotEmpty(attrTemplate) && attrMap.size() > 0){	
-				for(String[] col : attrTemplate){
-					if(attrMap.containsKey(col[2]) && DYNAMIC_FACET_PREFIX.equalsIgnoreCase(attrMap.get(col[2]).getName().substring(0, 3)) && !STATUS_ACTIVE.equalsIgnoreCase(attrMap.get(col[2]).getIsRange()))
-						attrList.add(attrMap.get(col[2]));
-				}
-			}
-		}
-		return attrList;
-	}
-
-	/** Retrieve list of attributes given a Template Name */
-	public static List<SolrAttribute> getAttributeByTemplateName(String name) throws DataException{
-		
-		List<SolrAttribute> attrList = new ArrayList<SolrAttribute>();
-
-		if(StringUtils.isNotEmpty(name)){
-			name = StringUtil.decodeHtml(name);
-			String template = getAttributeTemplateNo(name);
-			List<String[]> attrTemplate = getAttributeTemplateAttribute(template);
-	
-			Map<String, SolrAttribute> attrMap = getSolrAttributes();
-	
-			if(CollectionUtils.isNotEmpty(attrTemplate) && attrMap.size() > 0){	
-				for(String[] col : attrTemplate){
-					if(attrMap.containsKey(col[2]))
-						attrList.add(attrMap.get(col[2]));
-				}
-			}
-		}
-		return attrList;
-	}
-
-	/** Store solr attributes to cache */
-	public static void loadSolrAttributesToCache() throws DataException{
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
-		Map<String,SolrAttribute> map = new HashMap<String, SolrAttribute>();
-		for(String[] col : row){
-			map.put(col[0], new SolrAttribute(col[0],col[1],col[2],getWholeNumber(col[3]),getWholeNumber(col[4]),getWholeNumber(col[6]),getWholeNumber(col[9]),getSolrAttributeRange(col[0])));
-		}
-
-		putCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, CatCodes.SOLR_ATTRIBUTES.getCodeStr()), new CacheModel<SolrAttribute>(map));
-	}
-	
-	/** Retrieve solr attributes from cache */
-	public static Map<String,SolrAttribute> getSolrAttributes() throws DataException{
-		CacheModel<SolrAttribute> cache = getCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, CatCodes.SOLR_ATTRIBUTES.getCodeStr()));
-		return cache.getMap();
-	}
-	
-	/** Retrieve list of attribute values given an attribute */
-	public static List<String> getSolrAttributeValuesByTemplateName(String name) throws DataException{
-
-		Map<String, List<SolrAttributeRange>> map = getSolrAttributeRangeListByTemplateName(name);
-		List<String> list = new ArrayList<String>();
-		
-		if(map.size() > 0 && StringUtils.isNotEmpty(name)){	
-				
-			for(String key : map.keySet()){
-				list.addAll(getSolrAttributeValuesByAttribute(key));
-			}		
-		}
-		return list;
-	}
-	
-	/** Retrieve list of attribute values given an attribute */
-	public static List<String> getSolrAttributeValuesByAttribute(String attrId) throws DataException{
-		Map<String, SolrAttribute> attrMap = getSolrAttributes();
-		List<String> list = new ArrayList<String>();
-		
-		if(attrMap.size() > 0 && StringUtils.isNotEmpty(attrId)){	
-				if(attrMap.containsKey(attrId)){
-					for(SolrAttributeRange range : attrMap.get(attrId).getList()){
-						list.addAll(range.getRangevalues());
-					}
-				}
-		}
-		
-		return list;
-	}
-	
-	/** Retrieve list of attribute range values given an template name */
-	public static Map<String, List<SolrAttributeRange>> getSolrAttributeRangeListByTemplateName(String name) throws DataException{
-		
-		Map<String, List<SolrAttributeRange>> range = new HashMap<String, List<SolrAttributeRange>>();
-		List<SolrAttribute> attrs = getAttributeByTemplateName(name);
-		
-		if(StringUtils.isNotEmpty(name) && CollectionUtils.isNotEmpty(attrs)){
-			name = StringUtil.decodeHtml(name);
-			for(SolrAttribute attr : attrs){
-				range.put(attr.getId(), attr.getList());
-			}
-		}
-		
-		return range;
-	}
-	
-	/** Retrieve list of attribute range values given an attribute */
-	public static List<SolrAttributeRange> getSolrAttributeRangeListByAttribute(String attrId) throws DataException{
-		Map<String, SolrAttribute> attrMap = getSolrAttributes();
-		
-		if(attrMap.size() > 0 && StringUtils.isNotEmpty(attrId)){	
-				if(attrMap.containsKey(attrId))
-					return attrMap.get(attrId).getList();
-		}
-		
-		return Collections.EMPTY_LIST;
-	}
-	
-	/** Retrieve solr attribute range values by attribute id */
-	public static List<SolrAttributeRange> getSolrAttributeRange(String attrId) throws DataException{
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
-		List<SolrAttributeRange> attrRanges = null;
-		Set<String> keys = new TreeSet<String>();
-		
-		// Get all the key
-		for(String[] col : row){
-			keys.add(col[0]);
-		}
-		
-		// For each key get attr range
-		if(StringUtils.isNotEmpty(attrId)){
-			attrRanges = new ArrayList<SolrAttributeRange>();
-			for(String[] col : row){
-				if(attrId.equalsIgnoreCase(col[0]))
-					attrRanges.add(new SolrAttributeRange(getWholeNumber(col[1]), getWholeNumber(col[2]), col[3], col[4], getSolrAttributeValues(getWholeNumber(col[1]))));	
-			}
-		}
-
-		return attrRanges;
-	}
-	
-	/** Retrieve solr attribute values by range id */
-	public static List<String> getSolrAttributeValues(String rangeId) throws DataException{
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE_XREF.getCodeStr());
-		List<String> list = new ArrayList<String>();
-		
-		if(StringUtils.isNotEmpty(rangeId)){
-			for(String[] col : row){
-				if(rangeId.equalsIgnoreCase(getWholeNumber(col[3])))
-					list.add(col[2]);	
-			}
-		}
-		return list;
-	}
-
 	private static <E> void putCache(String key, CacheModel<E> v){
 		cache.put(key, v);
 	}
@@ -708,7 +223,7 @@ public class CatCodeUtil {
 		return "0";
 	}
 	
-	public static Vector<String[]> getXlsxDataCategoryOverride(XSSFWorkbook workbook, int sheetNum) throws IOException, DataException{
+	private static Vector<String[]> getXlsxDataCategoryOverride(XSSFWorkbook workbook, int sheetNum) throws IOException, DataException{
 		
 		Vector<String[]> list = new Vector<String[]>();
 	    
@@ -880,94 +395,29 @@ public class CatCodeUtil {
 	}
 	
 	public static List<String> getAllIMSTemplates() throws DataException {
-		List<String> list = new ArrayList<String>();
-		
-		Vector<String[]> templateRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
-		
-		for(String[] col : templateRow){
-			if(Integer.parseInt(col[0])<1000)
-				list.add(col[1]);
-		}
-		SortUtil.sort(list);
-		return list;
+		return new ArrayList<String>(imsTemplateMap.keySet());
 	}
 	
 	public static List<String> getAllCNETTemplates() throws DataException {
-		List<String> list = new ArrayList<String>();
-		
-		Vector<String[]> templateRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
-		
-		for(String[] col : templateRow){
-			if(Integer.parseInt(col[0])>=1000)
-				list.add(col[1]);
-		}	
-		SortUtil.sort(list);
+		return new ArrayList<String>(cnetTemplateMap.keySet());
+	}
+	
+	private static List<Attribute> getTemplateAttribute(String templateName, Map<String, Template> templateMap) throws DataException {
+		List<Attribute> list = new ArrayList<Attribute>();
+		Template template = templateMap.get(templateName);
+		if (template != null) {
+			list.addAll(template.attributeList);
+		}
 		return list;
 	}
 	
-	public static List<String> getTemplateAttribute(String template) throws DataException {
-		List<String> list = new ArrayList<String>();
-		
-		Vector<String[]> attributeRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
-		Vector<String[]> attributeValuesRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
-		String templateNo = getAttributeTemplateNo(template);
-		
-				for(String[] col : attributeRow){
-					if(templateNo.equalsIgnoreCase(col[1])){
-						for(String[] coll : attributeValuesRow){
-							if(col[2].equalsIgnoreCase(coll[0]))
-								list.add(coll[2]);
-						}
-					}						
-				}
-	
-		SortUtil.sort(list);
-		return list;
-	}
-	
-	public static List<String> getTemplateAttributeValues(String template, String attribute) throws DataException {
-		List<String> list = new ArrayList<String>();
-		
-		Vector<String[]> attributeValuesRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
-		Vector<String[]> attributeValuesRangeRow = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
-		String templateNo = getAttributeTemplateNo(template);
-		List<String> attributeIDs= new ArrayList<String>();
-		
-		Vector<String[]> attributeRow = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
-		for(String[] col :  attributeRow){
-			if(templateNo.equalsIgnoreCase(col[1])){
-				attributeIDs.add(col[2]);
-			}
-		}
-		
-		for(String[] col : attributeValuesRow){
-			if(attributeIDs.contains(col[0]) && col[2].equalsIgnoreCase(attribute)){
-				if(col[9].equalsIgnoreCase("1")){
-					for(String[] coll : attributeValuesRangeRow){
-						if(col[0].equalsIgnoreCase(coll[0])){
-							list.add(coll[3]);
-						}
-					}
-				}else{
-					List<String> filters = new ArrayList<String>();
-					String templateFilter = template;
-					templateFilter = (Integer.parseInt(templateNo) < 1000) ? PCMALL_TEMPLATE + templateFilter : MACMALL_TEMPLATE + templateFilter;
-					filters.add(templateFilter);
-					List<String> solrList = new ArrayList<String>();
-					solrList = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),col[1]+VALUE_ATTRIBUTE, filters,false);
-		        	
-		        	for(String data : solrList){
-		        		list.add(data.substring(data.indexOf("|")+1));		        		
-		        	}
-		        	
-				}
-			}	
-		}
-		SortUtil.sort(list);
-		return list;
+	public static List<Attribute> getIMSTemplateAttribute(String templateName) throws DataException {
+		return getTemplateAttribute(templateName, imsTemplateMap);
 	}
 
-		
+	public static List<Attribute> getCNETTemplateAttribute(String templateName) throws DataException {
+		return getTemplateAttribute(templateName, cnetTemplateMap);		
+	}
 	
 	/** Initialized Category code utility when startup */
 	public static void init() throws Exception {
@@ -1114,20 +564,6 @@ public class CatCodeUtil {
 				}
 			};
 			
-			Thread td10 = new Thread(){
-				@Override
-				public void run() {
-					try {
-						CatCodeUtil.loadCatCodesToCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr(),CatCodes.SOLR_ATTRIBUTE_RANGE_XREF.getCode(),CatCodes.SOLR_ATTRIBUTE_RANGE_XREF.getCodeStr());
-					} catch (DataException e) {
-						logger.error(ERROR_MSG+CatCodes.SOLR_ATTRIBUTE_RANGE_XREF.getValue(),e);
-					} catch (IOException e) {
-						logger.error(ERROR_MSG+CatCodes.SOLR_ATTRIBUTE_RANGE_XREF.getValue(),e);
-					}
-				}
-			};
-			
-			
 			td2.start();
 			td3.start();
 			td4.start();
@@ -1136,21 +572,135 @@ public class CatCodeUtil {
 			td7.start();
 			td8.start();
 			td9.start();
-			td10.start();
+			
 			while(true){
 				if(!td2.isAlive() && !td3.isAlive()){
 					td1.start();
 					break;
 				}
-			}
-			while(true){
-				if(!td1.isAlive() && !td2.isAlive() && !td3.isAlive() && !td4.isAlive() && !td5.isAlive() && !td6.isAlive() && !td7.isAlive() && !td8.isAlive() && !td9.isAlive() && !td10.isAlive()){
-					CatCodeUtil.removeFmCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr());
-					CatCodeUtil.removeFmCache(CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
-					CatCodeUtil.loadSolrAttributesToCache();
-					break;
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { 
+					// discard
 				}
 			}
+			
+			while(true){
+				if(!td1.isAlive() && !td2.isAlive() && !td3.isAlive() && !td4.isAlive() && !td5.isAlive() && !td6.isAlive() && !td7.isAlive() && !td8.isAlive() && !td9.isAlive()){
+					CatCodeUtil.removeFmCache(CatCodes.WORKBOOK_OBJECTS.getCodeStr());
+					CatCodeUtil.removeFmCache(CatCodes.WORKBOOK_OBJECTS_CNET_ALTERNATE.getCodeStr());
+					
+					/* generate Template and Attributes data */
+					
+					// load template data
+//System.out.println(new Date() + "***TEMPLATE***");
+					Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+					for (String[] values: row) {
+						boolean isAdd = BooleanUtils.toBoolean(values[2] /* Active */, "1", "0");
+						if (isAdd) {
+							String templateNo = values[0];
+							Template template = new Template(templateNo, values[1]);
+							try {
+								templateMap.put(templateNo, template);
+							} catch (Exception e) {
+								logger.error("Failed to load template " + values[0], e);
+							}
+						}
+					}
+					
+					// load attribute data
+//System.out.println(new Date() + "***ATRIBUTE***");			
+					row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
+					for (String[] values: row) {
+						boolean isAdd = BooleanUtils.toBoolean(values[6] /* Status */, "1", "0");
+						if (isAdd) {
+							attributeMap.put(values[0], new Attribute(values[0], String.format("%1$s_Value_Attrib", values[1]), values[2]));
+						}
+					}
+					
+//System.out.println(new Date() + "***ATRIBUTE_VALUES***");				
+					// load attribute values
+					row = getCatCodesFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
+					for (String[] values: row) {
+						Attribute attribute = attributeMap.get(values[0]);
+						if (attribute != null) {
+							attribute.attributeValues.add(String.format("%1$s|%2$s", values[4], values[3]));
+						}
+					}
+					
+					// TODO: check if need to sort attribute values
+					
+					// map attributes to templates
+//System.out.println(new Date() + "***ATRIBUTE_TEMPLATE_MAP***");					
+					row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
+					for (String[] values: row) {
+						boolean isAdd = BooleanUtils.toBoolean(values[4] /* Active */, "1", "0");
+						if (isAdd) {
+							Template template = templateMap.get(values[1]);
+							Attribute attribute = attributeMap.get(values[2]);
+							if (template != null && attribute != null) {
+								template.attributeList.add(attribute);
+							}
+						}
+					}
+
+					// sort template alphabetically
+					for (Template template: templateMap.values()) {
+						if (Integer.valueOf(template.templateNumber) < 1000) {
+							imsTemplateMap.put(template.templateName, template);
+						}
+						else {
+							cnetTemplateMap.put(template.templateName, template);
+						}						
+					}
+					
+
+//System.out.println(new Date() + "***SORT***");					
+					// TODO: put into function
+					List<String> templateKeys = new ArrayList<String>(imsTemplateMap.keySet());
+					Collections.sort(templateKeys, new Comparator<String>() {
+						@Override
+						public int compare(String arg0, String arg1) {
+							int val = arg0.compareTo(arg1);
+							if (val == 0) {
+								val = arg0.compareTo(arg1);
+							}
+							return val;
+						}
+					});
+					for (String key: templateKeys) {
+						imsTemplateMap.put(key, imsTemplateMap.remove(key));
+					}
+					
+					templateKeys = new ArrayList<String>(cnetTemplateMap.keySet());
+					Collections.sort(templateKeys, new Comparator<String>() {
+						@Override
+						public int compare(String arg0, String arg1) {
+							int val = arg0.compareTo(arg1);
+							if (val == 0) {
+								val = arg0.compareTo(arg1);
+							}
+							return val;
+						}
+					});
+					for (String key: templateKeys) {
+						cnetTemplateMap.put(key, cnetTemplateMap.remove(key));
+					}
+					
+					break;
+				}
+				System.out.println("*");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) { 
+					// discard
+				}
+			}
+			
+			CatCodeUtil.removeFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+			CatCodeUtil.removeFmCache(CatCodes.SOLR_ATTRIBUTE_MASTER.getCodeStr());
+			CatCodeUtil.removeFmCache(CatCodes.SOLR_ATTRIBUTE_RANGE.getCodeStr());
+			CatCodeUtil.removeFmCache(CatCodes.SOLR_TEMPLATE_ATTRIBUTE.getCodeStr());
 
 		} catch (DataException e) {
 			logger.error(ERROR_MSG+CatCodeUtil.CLASS_NAME+" ERROR - " +e);
@@ -1169,40 +719,60 @@ public class CatCodeUtil {
 		List<String> list = new ArrayList<String>();
 		List<String> listCNET = new ArrayList<String>();
 		
-		while(repeat){
-			list = new ArrayList<String>();
-			Scanner in = new Scanner(System.in);
-//			System.out.println("Please enter category : ");
-//			strCategory = in.nextLine();  
-//			System.out.println("Please enter sub category : ");
-//			strSubCategory = in.nextLine(); 
-//			System.out.println("Please enter class : ");
-//			strClass = in.nextLine();			
-			
-//			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
-//			listCNET = getCNETNextLevel(strCategory,strSubCategory);
-			
-			System.out.println("Please enter template : ");
-			template = in.nextLine();  
-			System.out.println("Please enter attribute : ");
-			attribute = in.nextLine(); 
-			list = getTemplateAttribute(template);
-			listCNET = getTemplateAttributeValues(template, attribute);
-			
-			for(String field : list){
-				System.out.println(field);
-			}
-			for(String field : listCNET){
-				System.out.println(field);
-			}
-			
-			System.out.println("Again?(y/n) : ");
-			if(in.nextLine().equalsIgnoreCase("y")){
-				repeat = true;
-			}else{
-				repeat = false;
+		for (Template t: imsTemplateMap.values()) {
+			System.out.println(t.templateNumber + ":" + t.templateName);
+			for (Attribute a: t.attributeList) {
+				System.out.println("\t" + a.attributeDisplayName + " -> " + a.attributeName);
+				for (String values: a.attributeValues) {
+					System.out.println("\t\t" + values);
+				}
 			}
 		}
+
+		System.out.println("****************CNET");
+		for (Template t: cnetTemplateMap.values()) {
+			System.out.println(t.templateNumber + ":" + t.templateName);
+			for (Attribute a: t.attributeList) {
+				System.out.println("\t" + a.attributeDisplayName + " -> " + a.attributeName);
+				for (String values: a.attributeValues) {
+					System.out.println("\t\t" + values);
+				}
+			}
+		}
+
+//		while(repeat){
+//			list = new ArrayList<String>();
+//			Scanner in = new Scanner(System.in);
+////			System.out.println("Please enter category : ");
+////			strCategory = in.nextLine();  
+////			System.out.println("Please enter sub category : ");
+////			strSubCategory = in.nextLine(); 
+////			System.out.println("Please enter class : ");
+////			strClass = in.nextLine();			
+//			
+////			list = getIMSCategoryNextLevel(strCategory,strSubCategory,strClass);
+////			listCNET = getCNETNextLevel(strCategory,strSubCategory);
+//			
+//			System.out.println("Please enter template : ");
+//			template = in.nextLine();  
+//			System.out.println("Please enter attribute : ");
+//			attribute = in.nextLine(); 
+//			list = getTemplateAttribute(template);
+//			
+//			for(String field : list){
+//				System.out.println(field);
+//			}
+//			for(String field : listCNET){
+//				System.out.println(field);
+//			}
+//			
+//			System.out.println("Again?(y/n) : ");
+//			if(in.nextLine().equalsIgnoreCase("y")){
+//				repeat = true;
+//			}else{
+//				repeat = false;
+//			}
+//		}
 		
 //		Vector<String[]> categoryRow = getCatCodesFmCache(CatCodes.CATEGORY_CODES.getCodeStr());
 //		

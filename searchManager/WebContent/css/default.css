@@ -116,6 +116,7 @@ body 							{ margin: 0px; }
 
 
 .cssReset .pad0, .pad0			{ padding:0px !important }
+.cssReset .pad2, .pad2			{ padding:2px }
 .cssReset .pad3, .pad3			{ padding:3px }
 .cssReset .pad5, .pad5			{ padding:5px }
 .cssReset .pad6, .pad6			{ padding:6px }
