@@ -1,11 +1,10 @@
 (function($){
 	var synonym = {
 		fileName: "synonyms.txt",
-		serverName: "afs-pl-schpd07",
 		defaultFilename: "synonyms",
 		downloadFile: function(customFilename){
 			var self = this;
-			LinguisticsServiceJS.downloadFile(this.defaultFilename, customFilename, {
+			LinguisticsServiceJS.downloadFile(2,self.defaultFilename, customFilename, {
 				callback: function(data){
 					dwr.engine.openInDownload(data);
 				}
@@ -26,7 +25,7 @@
 		},
 		showSynonym: function(){
 			var self = this;
-			LinguisticsServiceJS.getSynonyms(self.fileName, self.serverName, {
+			LinguisticsServiceJS.getSynonyms(self.fileName, {
 				callback:function(data){
 					self.loadItems($("table#itemPattern"), data);
 					$("a#downloadBtn").download({

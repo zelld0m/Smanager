@@ -1,19 +1,17 @@
 package com.search.manager.service;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,7 +26,6 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 
 import com.search.ws.ConfigManager;
 
@@ -42,14 +39,13 @@ public class LinguisticsService {
 	private static final Logger logger = Logger.getLogger(LinguisticsService.class);
 	
 	
-	public HttpResponse getDocument(String fileName,String server) throws ParserConfigurationException {
+	public HttpResponse getDocument(String fileName) throws ParserConfigurationException {
 		
 		String url="";
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = null;
 		HttpResponse response = null;
-		
-		url = ConfigManager.getInstance().getServerParameter(server,"url").replace("(store)", UtilityService.getStoreName())+"admin/file/?file="+fileName;
+		url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(),"url").replace("(store)", UtilityService.getStoreName())+"admin/file/?file="+fileName;
 		post = new HttpPost(url);
 		try {
 			response = client.execute(post);
@@ -61,10 +57,10 @@ public class LinguisticsService {
 	}
 	
 	@RemoteMethod
-	public TreeMap<Character,List<String>> getProtStopWord(String fileName,String server) throws ParserConfigurationException, IllegalStateException, IOException{
+	public TreeMap<Character,List<String>> getProtStopWord(String fileName) throws ParserConfigurationException, IllegalStateException, IOException{
 		List<String> list = new ArrayList<String>();
 		TreeMap<Character,List<String>> map = new TreeMap<Character,List<String>>();
-		HttpResponse response = getDocument(fileName,server);
+		HttpResponse response = getDocument(fileName);
 		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String line = "";
 		Character tmpKey = null;
@@ -89,10 +85,10 @@ public class LinguisticsService {
 		
 	}
 	@RemoteMethod
-	public TreeMap<String,List<String>> getSynonyms(String fileName,String server) throws ParserConfigurationException, IllegalStateException, IOException{
+	public TreeMap<String,List<String>> getSynonyms(String fileName) throws ParserConfigurationException, IllegalStateException, IOException{
 		List<String> list = new ArrayList<String>();
 		TreeMap<String,List<String>> map = new TreeMap<String,List<String>>();
-		HttpResponse response = getDocument(fileName,server);
+		HttpResponse response = getDocument(fileName);
 		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 		String line = "";
 		String tmpKey = "";
@@ -115,36 +111,48 @@ public class LinguisticsService {
 	}
 	
 	@RemoteMethod
-	public FileTransfer downloadFile(String file,String customFileName)  {
-		
-		HttpClient client = new DefaultHttpClient();
-		HttpPost post = null;
-		HttpResponse urlResponse = null;
-	    String url = "http://afs-pl-schpd07.afservice.org:8080/solr14/"+UtilityService.getStoreName()+"/admin/file/?file="+file+".txt";
+	public FileTransfer downloadFile(int type,String fileName,String customFileName)  {
 		FileTransfer fileTransfer = null;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		BufferedInputStream bis = null;
-		post = new HttpPost(url);
 		
 		try {
 			try {
-				urlResponse = client.execute(post);
-				bis = new BufferedInputStream(urlResponse.getEntity().getContent());
-				byte[] buf = new byte[1024];
-				int n = 0;
-				while ((n=bis.read(buf)) != -1) {
-					buffer.write(buf, 0, n);
-				}			
-				fileTransfer = new FileTransfer(StringUtils.isBlank(customFileName) ? file : customFileName + ".txt", "text/plain", buffer.toByteArray());
-			} catch (FileNotFoundException e) {
-				logger.error(e.getMessage());
-			} finally {
-				bis.close();
+				switch(type){
+				case 1:
+					TreeMap<Character,List<String>> map2 = getProtStopWord(fileName+".txt");
+					for (Entry<Character, List<String>> entry : map2.entrySet())
+					{
+						for(String tmp : entry.getValue()){
+							tmp = tmp + System.getProperty("line.separator");
+							buffer.write(tmp.getBytes());
+						}
+					}
+					break;
+				case 2:
+					TreeMap<String,List<String>> map = getSynonyms(fileName+".txt");
+					for (Entry<String, List<String>> entry : map.entrySet())
+					{
+						String tmp = entry.getKey().toString()+" =>";
+						for(String str : entry.getValue())
+							tmp = tmp + str;
+						tmp = tmp + System.getProperty("line.separator");  
+						buffer.write(tmp.getBytes());
+					}
+					break;				
+				}
+				fileTransfer = new FileTransfer(StringUtils.isBlank(customFileName) ? fileName : customFileName + ".txt", "text/plain", buffer.toByteArray());
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
 				buffer.close();
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		
 		return fileTransfer;
 	}
 	
