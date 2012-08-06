@@ -2,6 +2,7 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,22 +123,22 @@ public class CategoryService {
 	}
 
 	@RemoteMethod
-	public static List<Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
-		List<Attribute> attrList = new ArrayList<Attribute>();
+	public static Map<String, Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
+		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
 
 		ArrayList<String> filters = new ArrayList<String>();
 		filters.add("TemplateName:\"" + templateName + "\"");
 		ArrayList<String> fields = new ArrayList<String>();
 
 		for (Attribute a: CatCodeUtil.getIMSTemplateAttribute(templateName)) {
-			attrList.add(new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
 			fields.add(a.getAttributeName());
 		}	
 		
 		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
 				fields, filters, false);
 
-		for (Attribute a: attrList) {
+		for (Attribute a: attrMap.values()) {
 			List<String> values = map.get(a.getAttributeName());
 			if (values != null) {
 				for (String value: values) {
@@ -146,19 +147,20 @@ public class CategoryService {
 			}
 		}
 		
-		return attrList;
+		return attrMap;
 	}
 	
 	@RemoteMethod
-	public static List<Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
-		List<Attribute> attrList = new ArrayList<Attribute>();
+	public static Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
+		// TODO: merge with above method
+		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
 		String storeId = UtilityService.getStoreName();
 
 		ArrayList<String> filters = new ArrayList<String>();
 		ArrayList<String> fields = new ArrayList<String>();
 
 		for (Attribute a: CatCodeUtil.getCNETTemplateAttribute(templateName)) {
-			attrList.add(new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
 			fields.add(a.getAttributeName());
 		}
 
@@ -169,7 +171,7 @@ public class CategoryService {
 			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
 					fields, filters,false);
 
-			for (Attribute a: attrList) {
+			for (Attribute a: attrMap.values()) {
 				List<String> values = map.get(a.getAttributeName());
 				if (values != null) {
 					for (String value: values) {
@@ -179,7 +181,7 @@ public class CategoryService {
 			}			
 		}
 		
-		return attrList;
+		return attrMap;
 	}
 
 	public static Map<String, Attribute> getIMSTemplateAttributesMap(String templateName) throws DataException {
