@@ -41,7 +41,7 @@
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			Stopword 
 			<a id="downloadBtn" href="javascript:void(0);" rel="nofollow" >
-				<div class="btnGraph btnDownload"></div>
+				<div class="btnGraph btnDownload floatR marR8 marT4"></div>
 			</a>
 		</h1>
 	</div>
