@@ -113,6 +113,7 @@ public class LinguisticsService {
 	@RemoteMethod
 	public FileTransfer downloadFile(int type,String fileName,String customFileName)  {
 		FileTransfer fileTransfer = null;
+		byte[] newline = "\r\n".getBytes();
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		
 		try {
@@ -123,8 +124,8 @@ public class LinguisticsService {
 					for (Entry<Character, List<String>> entry : map2.entrySet())
 					{
 						for(String tmp : entry.getValue()){
-							tmp = tmp + System.getProperty("line.separator");
 							buffer.write(tmp.getBytes());
+							buffer.write(newline);
 						}
 					}
 					break;
@@ -135,21 +136,19 @@ public class LinguisticsService {
 						String tmp = entry.getKey().toString()+" =>";
 						for(String str : entry.getValue())
 							tmp = tmp + str;
-						tmp = tmp + System.getProperty("line.separator");  
 						buffer.write(tmp.getBytes());
+						buffer.write(newline);
 					}
 					break;				
 				}
 				fileTransfer = new FileTransfer(StringUtils.isBlank(customFileName) ? fileName : customFileName + ".txt", "text/plain", buffer.toByteArray());
 			
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}finally{
 				buffer.close();
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 		
