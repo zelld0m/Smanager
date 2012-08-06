@@ -1013,6 +1013,16 @@
 
 				var inTemplateName = $.trim($templateName.val());
 
+				CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
+					callback: function(data){
+					}
+				});
+				
+				CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
+					callback: function(data){
+					}
+				});
+				
 				CategoryServiceJS.getTemplateAttributesByTemplateName(inTemplateName, {
 					callback: function(data){
 						var list = data;
@@ -1268,13 +1278,10 @@
 				ui.find("div.cnet, div.ims, div.dynamicAttribute").hide();
 
 				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
-					ui.find("div.cnet").show();
-					//ui.find("div.cnet, div.dynamicAttribute").show();
-
+					//ui.find("div.cnet").show();
+					ui.find("div.cnet, div.dynamicAttribute").show();
 					self.addCNETFieldListener(ui, condition);
-					/* TODO: uncomment after QA
 					self.addFacetTemplateFieldListener(ui, condition);
-					*/
 
 					var $table = $cnet.find("table.cnetFields");
 					$table.find("tr.catName").show();
@@ -1290,13 +1297,11 @@
 					self.populateCNETTemplateNames(ui, condition);
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
-					ui.find("div.ims").show();
+					//ui.find("div.ims").show();
 					
-					//ui.find("div.ims, div.dynamicAttribute").show();
+					ui.find("div.ims, div.dynamicAttribute").show();
 					self.addIMSFieldListener(ui, condition);
-					/* TODO: uncomment after QA
 					self.addFacetTemplateFieldListener(ui, condition);
-					*/
 
 					var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 					var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
@@ -1501,12 +1506,42 @@
 							
 							var $input = ui.find("input#dynamicAttributeList");
 							var inDynamicAttribute = $.trim($input.val());
+							var inTemplateName = ui.find("input#templateNameList").val();
+							var $checkboxCombo = ui.find("ul#dynamicAttributeValues");
 
 							if($.isNotBlank(inDynamicAttribute)){
 								var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 								if (!$.isNumeric(currCondCount)){
 									currCondCount = 0; 
 								}
+								
+								var $dynamicAttributeLabel = $divDynamicAttributeItem.find('span#dynamicAttributeLabel');
+								$dynamicAttributeLabel.prop("id", "dynamicAttributeLabel" + (1 + parseInt(currCondCount)));
+								$dynamicAttributeLabel.html(inDynamicAttribute + ":");
+								
+								//TODO: list template values in combobox
+								CategoryServiceJS.getTemplateAttributeValues(inTemplateName, inDynamicAttribute, {
+									callback:function(data){
+										if (data!=null){
+											var list = data;
+											
+											var $attributeValue = $checkboxCombo.find("li#dynamicAttributeValuesPattern").clone();
+											$attributeValue.prop("id", "dynamicAttributeValues" + (1 + parseInt(currCondCount)));
+											
+											var $attributeValueItem = $attributeValue.find("input.checkboxFilter");
+											
+											for(var i=0; i<list.length; i++){
+												$attributeValueItem.show();
+												$attributeValueItem.prop("name", inDynamicAttribute+"_val");
+												$attributeValueItem.prop("value", list[i]);
+												
+												$attributeValue.append($attributeValueItem);
+											}
+											
+											$checkboxCombo.append($attributeValue);
+										};
+									}
+								});
 	
 								$divDynamicAttributeItem.prop("id", 1 + parseInt(currCondCount));
 								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
