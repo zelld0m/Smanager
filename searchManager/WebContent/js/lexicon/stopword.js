@@ -2,6 +2,15 @@
 	var StopWord = {
 		fileName: "stopwords.txt",
 		serverName: "afs-pl-schpd07",
+		defaultFilename: "stopwords",
+		downloadFile: function(customFilename){
+			var self = this;
+			LinguisticsServiceJS.downloadFile(this.defaultFilename, customFilename, {
+				callback: function(data){
+					dwr.engine.openInDownload(data);
+				}
+			});
+		},
 		getObjectSize : function(object){
 			var ctr = 0;
 			for(var obj in object)
@@ -48,6 +57,15 @@
 			LinguisticsServiceJS.getProtStopWord(self.fileName, self.serverName, {
 				callback:function(data){
 					self.loadItems($("table#itemPattern"),data);
+					
+					$("a#downloadBtn").download({
+						headerText:"Download Stop Words",
+						fileFormat:['Text'],
+						requestCallback:function(e){
+							self.downloadFile(e.data.filename);
+						}
+					});
+					
 				},
 				preHook: function(){
 					
@@ -57,7 +75,7 @@
 		
 		init: function(){
 			var self= this;
-			this.showStopWord();
+			self.showStopWord();
 		}
 	};
 $(document).ready(function() {

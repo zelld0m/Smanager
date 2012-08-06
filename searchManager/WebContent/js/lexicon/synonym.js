@@ -2,6 +2,15 @@
 	var synonym = {
 		fileName: "synonyms.txt",
 		serverName: "afs-pl-schpd07",
+		defaultFilename: "synonyms",
+		downloadFile: function(customFilename){
+			var self = this;
+			LinguisticsServiceJS.downloadFile(this.defaultFilename, customFilename, {
+				callback: function(data){
+					dwr.engine.openInDownload(data);
+				}
+			});
+		},
 		loadItems: function($tablePattern,map){
 		
 			var ctr = 1;
@@ -20,6 +29,13 @@
 			LinguisticsServiceJS.getSynonyms(self.fileName, self.serverName, {
 				callback:function(data){
 					self.loadItems($("table#itemPattern"), data);
+					$("a#downloadBtn").download({
+						headerText:"Download Stop Words",
+						fileFormat:['Text'],
+						requestCallback:function(e){
+							self.downloadFile(e.data.filename);
+						}
+					});
 				},
 				preHook: function(){
 					
@@ -29,7 +45,7 @@
 		
 		init: function(){
 			var self= this;
-			this.showSynonym();
+			self.showSynonym();
 		}
 	};
 $(document).ready(function() {

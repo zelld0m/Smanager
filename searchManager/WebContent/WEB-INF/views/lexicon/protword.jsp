@@ -40,25 +40,13 @@
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 class="padT7 padL15 fsize20 fnormal">
 			Protword
+			<a id="downloadBtn" href="javascript:void(0);" rel="nofollow" >
+				<div class="btnGraph btnDownload"></div>
+			</a>
 		</h1>
 	</div>
 	<div class="clearB"></div>
 	<div style="width:95%" class="marT20 mar0">
-    <!--Pagination-->
-      <div class="mar0">
-        <div class="clearB floatL farial fsize12 fDblue w300 padT10 marL10">Displaying 1 to 25 of 26901 Products</div>
-        <div class="floatR farial fsize12 fgray txtAR padT10">
-          <div class="txtAR">
-            <ul class="pagination">
-              <li><a href="#">&lt;&lt;prev</a></li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">next&gt;&gt;</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
       <!--Pagination-->
       <div class="clearB"></div>
       <div class="linguistics marT20">
