@@ -32,10 +32,16 @@ public class SearchHelper {
 	
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 		
-	public static JSON parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
+	private static JSON parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			
+			String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
+			if (encoding == null) {
+				encoding = "UTF-8";
+			}
+
+			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
 			String line = null;
 			StringBuilder jsonText = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
