@@ -2,13 +2,12 @@ package com.search.manager.service;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -19,6 +18,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -85,35 +85,49 @@ public class LinguisticsService {
 		
 	}
 	@RemoteMethod
-	public TreeMap<String,List<String>> getSynonyms(String fileName) throws ParserConfigurationException, IllegalStateException, IOException{
+	public List<String> getSynonyms(String fileName) throws ParserConfigurationException, IllegalStateException, IOException{
+		List<BasicNameValuePair> vpList = new ArrayList<BasicNameValuePair>(); 
 		List<String> list = new ArrayList<String>();
-		TreeMap<String,List<String>> map = new TreeMap<String,List<String>>();
 		HttpResponse response = getDocument(fileName);
 		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-		String line = "";
-		String tmpKey = "";
-		String tmpString = "";
+		String line = null;
 		while ((line = reader.readLine()) != null) {
-			String tmp = line.trim();
-			
-			if(!StringUtils.isBlank(tmp) && tmp.charAt(0)!='#' && tmp.indexOf("=>")!=-1){
-				list = new ArrayList<String>();
-				tmpKey = tmp.substring(0,tmp.indexOf("=>"));
-				tmpString = tmp.substring(tmp.indexOf("=>")+2);
-				list.addAll(Arrays.asList(tmpString.split(",")));
-				map.put(tmpKey,list);
+			line = StringUtils.trimToEmpty(line.trim());
+			if (StringUtils.isNotBlank(line) && !StringUtils.startsWith(line, "#")) {
+				int i = line.indexOf("=>");
+				String key = (i >= 0) ? StringUtils.trim(line.substring(0, i)) : line;
+				String value = (i >= 0) ? StringUtils.trim(line.substring(i + 2)) : null;
+				key = StringUtils.join(key.split("\\s*,\\s*"), ", ");
+				if (value != null) {
+					value = StringUtils.trimToEmpty(StringUtils.join(value.split("\\s*,\\s*"), ", "));					
+				}
+				vpList.add(new BasicNameValuePair(key, value));
 			}
 		}
-		
-		
-		return map;
-		
+		// sort
+		Collections.sort(vpList, new Comparator<BasicNameValuePair>() {
+			@Override
+			public int compare(BasicNameValuePair arg0, BasicNameValuePair arg1) {
+				return StringUtils.lowerCase(arg0.getName()).compareTo(StringUtils.lowerCase(arg1.getName()));
+			}
+		});
+		// add to list
+		for (BasicNameValuePair b: vpList) {
+			if (b.getValue() == null) {
+				list.add(b.getName());
+			}
+			else {
+				list.add(b.getName() + " => " + b.getValue());				
+			}
+		}
+		return list;
 	}
 	
 	@RemoteMethod
 	public FileTransfer downloadFile(int type,String fileName,String customFileName)  {
 		FileTransfer fileTransfer = null;
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		byte[] newline = "\r\n".getBytes();
 		
 		try {
 			try {
@@ -123,22 +137,18 @@ public class LinguisticsService {
 					for (Entry<Character, List<String>> entry : map2.entrySet())
 					{
 						for(String tmp : entry.getValue()){
-							tmp = tmp + System.getProperty("line.separator");
 							buffer.write(tmp.getBytes());
+							buffer.write(newline);
 						}
 					}
 					break;
 				case 2:
-					TreeMap<String,List<String>> map = getSynonyms(fileName+".txt");
-					for (Entry<String, List<String>> entry : map.entrySet())
-					{
-						String tmp = entry.getKey().toString()+" =>";
-						for(String str : entry.getValue())
-							tmp = tmp + str;
-						tmp = tmp + System.getProperty("line.separator");  
-						buffer.write(tmp.getBytes());
+					List<String> list = getSynonyms(fileName+".txt");
+					for (String value : list) {
+						buffer.write(value.getBytes());
+						buffer.write(newline);
 					}
-					break;				
+					break;
 				}
 				fileTransfer = new FileTransfer(StringUtils.isBlank(customFileName) ? fileName : customFileName + ".txt", "text/plain", buffer.toByteArray());
 			
