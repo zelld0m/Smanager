@@ -6,9 +6,20 @@
 			startIndex: 0,
 
 			sendFileAsEmail: function(customFilename, recipients){
+				for (var i = 0; i < recipients.length; i++) {
+					if (!validateEmail(recipients[i],recipients[i],1)) {
+						return;
+					}
+				}
+
 				ZeroResultServiceJS.sendFileAsEmail($("select#fileFilter").val(), customFilename, recipients, {
 					callback: function(data){
-
+						if (data == true) {
+							alert("Email sent.");
+						}
+						else {
+							alert("Unable to send email.");
+						}
 					}
 				});
 			},

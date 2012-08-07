@@ -14,7 +14,7 @@ public class ReportNotificationMailService {
 	@Autowired private EmailSender emailSender;
 	@Autowired private SimpleMailMessage mailDetails;
 	
-	public void sendTopKeyword(File file, String filename, String[] recipients){
+	public boolean sendTopKeyword(File file, String filename, String[] recipients){
 		SimpleMailMessage messageDetails = mailDetails;
 		String templateLocation = "default-topkeyword.vm";
 		String subject = "[SearchManager] Top Keyword";
@@ -26,10 +26,10 @@ public class ReportNotificationMailService {
 
 		fileMap.put(filename, file);
 
-		emailSender.send(messageDetails, templateLocation, model, fileMap);
+		return emailSender.send(messageDetails, templateLocation, model, fileMap);
 	}
 	
-	public void sendZeroResult(File file, String filename, String[] recipients){
+	public boolean sendZeroResult(File file, String filename, String[] recipients){
 		SimpleMailMessage messageDetails = mailDetails;
 		String templateLocation = "default-zeroresult.vm";
 		String subject = "[SearchManager] Zero Result";
@@ -41,6 +41,6 @@ public class ReportNotificationMailService {
 
 		fileMap.put(filename, file);
 
-		emailSender.send(messageDetails, templateLocation, model, fileMap);
+		return emailSender.send(messageDetails, templateLocation, model, fileMap);
 	}
 }

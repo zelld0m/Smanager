@@ -121,7 +121,7 @@ public class TopKeywordService {
 	}
 	
 	@RemoteMethod
-	public void sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
-		reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
+	public boolean sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
+		return reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
 	}
 }
