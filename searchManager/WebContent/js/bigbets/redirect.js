@@ -1566,6 +1566,20 @@
 				return condMap;
 			},
 
+			addDeleteDynamicAttributeButtonListener: function(ui,condition){
+				var self = this;
+
+				ui.find("img.deleteAttrIcon").off().on({
+					click: function(e){
+						var $item = $(this).parents(".dynamicAttributeItem");
+						if (!e.data.locked && confirm("Delete attribute?")){
+							$item.remove();
+						}
+					},
+					mouseenter: showHoverInfo
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+			
 			addDynamicAttributeButtonListener: function(ui,condition, attrName){
 				var self = this;
 
@@ -1600,13 +1614,8 @@
 											var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
 											$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 											$liAttributeValue.show();
-											
-											var $attributeValueItem = $liAttributeValue.find("input.checkboxFilter");
-											$attributeValueItem.prop({name:attrName, value:attributeValues[i]});
-											
+											$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
 											$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
-											
-											//$liAttributeValue.append($attributeValueItem);
 											$ulAttributeValues.append($liAttributeValue);
 										}
 									}
@@ -1616,9 +1625,11 @@
 								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
 								$divDynamicAttributeItem.show();
 								$divItemList.append($divDynamicAttributeItem);
+								
+								self.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, e.data.condition);
 							}
 							else{
-								//alert("");
+								alert("Please select a dynamic attribute.");
 							}
 						}
 					},
