@@ -289,7 +289,7 @@
 							<table class="dynamicAttributeFields">							
 								<tr>
 									<td class="w175 padB8" valign="bottom">Template Name :</td>
-									<td class="iepadBT0">
+									<td class="iepadBT0 w278">
 										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
 											<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>
@@ -303,7 +303,8 @@
 											<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">
 												<div class="clearB"></div>
 												<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>
-												<div class="w251 floatL marT8">
+												<img src="../images/iconDelete.png" class="posRel floatR marT8 marR8">
+												<div class="w235 floatL marT8 border pad10" style="overflow-y:auto; max-height: 107px">													
 													<ul id="dynamicAttributeValues">
 														<li id="dynamicAttributeValuesPattern" style="display: none;">
 															<div>
@@ -323,9 +324,9 @@
 									<td>
 										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>
+											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w210" title="Add Dynamic Attribute"></select>
 										</div>
-										<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3" id="addButton"></a>
+										<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>
 									</td>
 								</tr>
 								
@@ -341,13 +342,13 @@
 								<tr>
 									<td class="w175">Name (contains) :</td>
 									<td class="iepadBT0">
-										<input id="nameContains" type="text"/>
+										<input id="nameContains" type="text" class="w250"/>
 									</td>
 								</tr>
 								<tr>
 									<td class="w175">Description (contains):</td>
 									<td class="iepadBT0">
-										<input id="descriptionContains" type="text"/>
+										<input id="descriptionContains" type="text" class="w250"/>
 									</td>
 								</tr>							
 								<tr>

@@ -54,8 +54,9 @@ body 							{ margin: 0px; }
 .cssReset .w238					{width:238px}
 .cssReset .w240, .w240			{width:240px !important}
 .cssReset .w245, .w245			{width:245px}
+.cssReset .w250, .w250			{width:250px !important}
 .cssReset .w251, .w251			{width:251px !important}
-.cssReset .w278, .w278			{width:278px}
+.cssReset .w278, .w278			{width:278px !important}
 .cssReset .w282, .w282			{width:282px !important}
 .cssReset .w300, .w300			{width:300px}
 .cssReset .w310, .w310			{width:310px}
@@ -240,6 +241,7 @@ body 							{ margin: 0px; }
 .cssReset .marBn9, .marBn9		{margin-bottom:-9px}
 .cssReset .marLn2, .marLn2		{ margin-left:-2px !important }
 .cssReset .marLn4, .marLn4		{ margin-left:-4px !important }
+.cssReset .marLn10, .marLn10		{ margin-left:-10px !important }
 
 .cssReset .minHeight32, 
 .minHeight32					{ min-height:32px; }
@@ -285,6 +287,7 @@ body 							{ margin: 0px; }
 .cssReset .topn4, .topn4		{ top:-4px; }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .right4				{ right:4px }
+.cssReset .leftn22				{ left:-22px }
 .cssReset .bottomn4, .bottomn4		{ bottom:-4px; }
 .cssReset .bottomn7, .bottomn7		{ bottom:-7px; }
 
