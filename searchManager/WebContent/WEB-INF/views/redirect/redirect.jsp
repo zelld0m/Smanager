@@ -305,7 +305,12 @@
 												<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>
 												<div class="w251 floatL marT8">
 													<ul id="dynamicAttributeValues">
-														<li id="dynamicAttributeValuesPattern" style="display: none;"><input type="checkbox" class="checkboxFilter"></li>
+														<li id="dynamicAttributeValuesPattern" style="display: none;">
+															<div>
+																<input type="checkbox" class="checkboxFilter">
+																<span id="attributeValueName"></span>
+															</div>
+														</li>
 													</ul>
 												</div>
 											</div>
