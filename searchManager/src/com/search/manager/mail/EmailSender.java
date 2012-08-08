@@ -66,28 +66,33 @@ public class EmailSender{
 	 * @param hTemplateVariables	Variables to use when processing the template.
 	 * @param fileMap				Map of filename and file
 	 */
-	public void send(final SimpleMailMessage messageDetails,
+	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
 			final Map<Object, Object> hTemplateVariables, 
 			Map<String, File> fileMap) {
 
+		boolean sent = false;
+		
 		messageDetails.setText(VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, templateLocation, hTemplateVariables));
 
 		MimeMessagePreparator preparator = getMimeMessagePreparator(messageDetails, fileMap);
 
 		try {
 			mailSender.send(preparator);
+			sent = true;
 			logger.info("Sent e-mail to '{}'.", messageDetails.getTo());
 		} catch (MailException e) {
 			logger.error("catched MailException {}", e);
 		} catch (Exception e) {
 			logger.error("catched MailException {}", e);
 		}
+		
+		return sent;
 	}
 
-	public void send(final SimpleMailMessage messageDetails,
+	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
 			final Map<Object, Object> hTemplateVariables) {
-		send(messageDetails, templateLocation, hTemplateVariables, null);
+		return send(messageDetails, templateLocation, hTemplateVariables, null);
 	}
 }

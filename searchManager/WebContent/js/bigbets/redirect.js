@@ -930,7 +930,7 @@
 							if(u.item){
 								$item.find("input#templateNameList").val(u.item.text);
 								$item.find("input#templateNameList").prop("selectedText", u.item.text);
-								self.populateDynamicAttributes(ui, condition, e);
+								self.populateIMSDynamicAttributes(ui, condition, e);
 							}
 							else self.populateTemplateNames(ui, condition, e);
 
@@ -956,7 +956,7 @@
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 						
-						if($.isNotBlank(inTemplateName)) self.populateDynamicAttributes(ui, condition, e);
+						if($.isNotBlank(inTemplateName)) self.populateIMSDynamicAttributes(ui, condition, e);
 					},
 					preHook:function(){
 						ui.find("img#preloaderTemplateNameList").show();
@@ -1004,7 +1004,7 @@
 				});
 			},
 
-			populateDynamicAttributes: function(ui, condition, e){
+			populateIMSDynamicAttributes: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#dynamicAttributeList");
 				var $input = ui.find("input#dynamicAttributeList");
@@ -1015,19 +1015,51 @@
 
 				CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
 					callback: function(data){
+						var list = data;
+						/*for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i].attributeName}).text(list[i].attributeDisplayName));
+						}*/
+						
+						$.each(list, function(attrName, attrData) { 
+							$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
+						});
+						
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#dynamicAttributeName").show();
+							self.addDynamicAttributeButtonListener(ui, condition, list);
+						}else{
+							$table.find("tr#dynamicAttributeName").hide();
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").show();
+						self.clearDynamicAttributeComboBox(ui, "dynamicattributelist");
+						//$table.find("tr#dynamicAttributeValue").hide();
+						//if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.IMSFilters["Manufacturer"])){
+						//$select.prop("selectedText",condition.IMSFilters["Manufacturer"]);
+						//$input.val(condition.IMSFilters["Manufacturer"]);
+						//}
+					},
+					postHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").hide();
 					}
 				});
-				
+			},
+			
+			populateDynamicAttributes: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#dynamicAttributeList");
+				var $input = ui.find("input#dynamicAttributeList");
+				var $templateName = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
+
+				var inTemplateName = $.trim($templateName.val());
+
 				CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
-					callback: function(data){
-					}
-				});
-				
-				CategoryServiceJS.getTemplateAttributesByTemplateName(inTemplateName, {
 					callback: function(data){
 						var list = data;
 						for(var i=0; i<list.length; i++){
-							$select.append($("<option>", {value: list[i]}).text(list[i]));
+							$select.append($("<option>", {value: list[i].attributeDisplayName}).text(list[i].attributeDisplayName));
 						}
 						
 						if ($.isNotBlank(list) && list.length>0){
@@ -1495,7 +1527,7 @@
 				return condMap;
 			},
 
-			addDynamicAttributeButtonListener: function(ui,condition){
+			addDynamicAttributeButtonListener: function(ui,condition, data){
 				var self = this;
 
 				ui.find("a.addDynamicAttrBtn").off().on({
@@ -1515,12 +1547,14 @@
 									currCondCount = 0; 
 								}
 								
+								var countId = 1 + parseInt(currCondCount);
 								var $dynamicAttributeLabel = $divDynamicAttributeItem.find('span#dynamicAttributeLabel');
-								$dynamicAttributeLabel.prop("id", "dynamicAttributeLabel" + (1 + parseInt(currCondCount)));
+								$dynamicAttributeLabel.prop("id", "dynamicAttributeLabel" + countId);
 								$dynamicAttributeLabel.html(inDynamicAttribute + ":");
 								
 								//TODO: list template values in combobox
-								CategoryServiceJS.getTemplateAttributeValues(inTemplateName, inDynamicAttribute, {
+								
+								/*CategoryServiceJS.getTemplateAttributeValues(inTemplateName, inDynamicAttribute, {
 									callback:function(data){
 										if (data!=null){
 											var list = data;
@@ -1541,7 +1575,7 @@
 											$checkboxCombo.append($attributeValue);
 										};
 									}
-								});
+								});*/
 	
 								$divDynamicAttributeItem.prop("id", 1 + parseInt(currCondCount));
 								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");

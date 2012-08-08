@@ -2,11 +2,12 @@ package com.search.manager.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.TopKeyword;
+import com.search.manager.utility.CombinedInputStream;
 import com.search.manager.utility.PropsUtils;
 
 @Service(value = "topKeywordService")
@@ -97,22 +99,15 @@ public class TopKeywordService {
 	public FileTransfer downloadFileAsCSV(String filename, String customFilename)  {
 		FileTransfer fileTransfer = null;
 		File file = getFile(filename);
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		BufferedInputStream bis = null;
 		try {
 			try {
 				bis = new BufferedInputStream(new FileInputStream(file));
-				byte[] buf = new byte[1024];
-				int n = 0;
-				while ((n=bis.read(buf)) != -1) {
-					buffer.write(buf, 0, n);
-				}			
-				fileTransfer = new FileTransfer(StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", "application/csv", buffer.toByteArray());
+				CombinedInputStream cis = new CombinedInputStream(new InputStream[]{new ByteArrayInputStream("Count,Keyword".getBytes()), bis});
+				// FileTransfer auto-closes the stream
+				fileTransfer = new FileTransfer(StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", "application/csv", cis);
 			} catch (FileNotFoundException e) {
 				logger.error(e.getMessage());
-			} finally {
-				bis.close();
-				buffer.close();
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -121,7 +116,7 @@ public class TopKeywordService {
 	}
 	
 	@RemoteMethod
-	public void sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
-		reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
+	public boolean sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
+		return reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
 	}
 }
