@@ -143,12 +143,14 @@ public class FileDaoServiceImpl implements FileDaoService{
 
 
 	@Override
-	public boolean deleteBackup(String storeName, String ruleId, RuleEntity find, int version) {
+	public boolean deleteBackup(String storeName, String ruleId, RuleEntity entity, int version) {
 		boolean success = false;
 		try {
-			RuleVersionUtil.deleteFile(RuleVersionUtil.getFileName(storeName, find.getCode(), ruleId, version));
+			RuleVersionUtil.deleteFile(storeName, ruleId, entity.getCode(), version);
 			success = true;
 		} catch (IOException e) {
+			logger.equals(e.getMessage());
+		} catch (Exception e) {
 			logger.equals(e.getMessage());
 		}
 		return success;

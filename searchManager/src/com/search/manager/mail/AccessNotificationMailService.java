@@ -21,7 +21,7 @@ public class AccessNotificationMailService {
 	public void sendAddUser(User user){
 		SimpleMailMessage messageDetails = mailDetails;
 		String templateLocation = "default-adduser.vm";
-		String subject = "[SearchManager] You've granted an access";
+		String subject = "[SearchManager] Welcome to Search Manager";
 		Map<Object,Object> model = new HashMap<Object,Object>();
 		
 		messageDetails.setTo(user.getEmail());

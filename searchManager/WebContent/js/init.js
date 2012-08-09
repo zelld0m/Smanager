@@ -34,7 +34,6 @@ getRuleNameSubTextStatus = function(ruleStatus){
 	}	
 };
 
-
 showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
@@ -58,47 +57,6 @@ showActionResponseFromMap = function(code, action, param, additionalFailMessage)
 		}
 	}
 	alert (message); 
-};
-
-showDeploymentStatusBar = function(moduleName, ruleStatus){
-	$("span#status").html("");
-	$("span#statusMode").html("");
-	$("span#statusDate").html("");
-
-	$("#submitForApproval").hide();
-
-	if(ruleStatus!=null){
-		
-		ruleId = ruleStatus["ruleStatusId"];
-		if (ruleId == null) {
-			ruleId = "";
-		}
-	
-		$("#submitForApproval").show();
-
-		$("div#statusHolder").hide();
-		if($.isNotBlank(ruleStatus["approvalStatus"])){
-			$("div#statusHolder").show();
-			$("span#status").html(getRuleNameSubTextStatus(ruleStatus));
-		}
-
-		$("div#publishHolder").hide();
-		if($.isNotBlank(ruleStatus["lastPublishedDate"])){
-			$("div#publishHolder").show();
-			$("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
-		}
-
-		$("a#submitForApprovalBtn").show();
-		if(ruleStatus["locked"]){
-			$("span#statusMode").append("[Read-Only]");
-			$("a#submitForApprovalBtn").hide();
-		}
-		
-		$("div#commentHolder span#commentIcon").on({
-			click: showAuditList
-		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
-
-	}
 };
 
 /** Style for HTML upload tag */
@@ -296,7 +254,7 @@ function initFileUploads() {
 				
 			}
 			
-			$("#select-server").on({
+			$("#select-server").off().on({
 				change: function(event, data){
 					var reload;
 					if (data != undefined) {
@@ -306,6 +264,7 @@ function initFileUploads() {
 						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:GLOBAL_contextPath});
 						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 							callback:function(){
+								
 							}
 						});						
 					}
