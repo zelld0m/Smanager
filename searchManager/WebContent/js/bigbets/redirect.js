@@ -936,9 +936,12 @@
 							else if (ui.find("div.cnet").is(":visible"))
 								self.populateCNETDynamicAttributes(ui, condition, e);
 						}
-						else
-							self.populateIMSTemplateNames(ui, condition, e);
-
+						else{
+							if (ui.find("div.ims").is(":visible"))
+								self.populateIMSTemplateNames(ui, condition, e);
+							else if (ui.find("div.cnet").is(":visible"))
+								self.populateCNETTemplateNames(ui, condition, e);
+						}
 						$item.find("input#dynamicAttributeList").val("");
 						break;
 					
@@ -981,7 +984,7 @@
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
 							
-							$ulAttributeValues.prop("id", attrName);
+							$ulAttributeValues.prop("id", $.formatAsId(attrName));
 							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 							if (!$.isNumeric(currCondCount)){
 								currCondCount = 0; 
@@ -998,7 +1001,6 @@
 									for(var i=0; i<attributeValues.length; i++){
 										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
 										$liAttributeValue.show();
-										$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 										$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
 										$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
 										$ulAttributeValues.append($liAttributeValue);
@@ -1145,6 +1147,10 @@
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
 						}
+						
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							self.populateDynamicAttributeValues(ui, condition, data);
+						}
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
@@ -1203,6 +1209,9 @@
 					break;
 				case "cnetmanufacturerlist" : 
 					$input.val(condition.CNetFilters["Manufacturer"]);
+					break;
+				case "templatenamelist" :
+					$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
 					break;
 				}
 			},
@@ -1398,6 +1407,7 @@
 						self.initializeCNETFilters("level2CategoryList", ui, condition);
 						self.initializeCNETFilters("level3CategoryList", ui, condition);
 						self.initializeCNETFilters("cnetmanufacturerList", ui, condition);
+						self.initializeCNETFilters("templateNameList", ui, condition);
 					}
 
 					self.populateLevel1Categories(ui, condition);
@@ -1573,7 +1583,7 @@
 					condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
 					
 					$divDynamicAttrItems.find("ul").each(function(){ 
-						var attributeItem = this.id;
+						var attributeItem = this.title;
 						var attributeValues = new Array();
 						
 						$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
@@ -1654,11 +1664,11 @@
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
 							
 							if($.isNotBlank(inDynamicAttribute)){
-								if($divItemList.find("ul#"+attrName).length > 0){
+								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
 									alert("Attribute already added. Please select a different attribute name.");
 								}
 								else{
-									$ulAttributeValues.prop("id", attrName);
+									$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
 									var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 									if (!$.isNumeric(currCondCount)){
 										currCondCount = 0; 
@@ -1676,7 +1686,7 @@
 										if(attributeValues){
 											for(var i=0; i<attributeValues.length; i++){
 												var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
-												$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
+												$liAttributeValue.prop("id", "dynamicAttributeValues");
 												$liAttributeValue.show();
 												$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
 												$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
