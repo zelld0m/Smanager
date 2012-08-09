@@ -594,12 +594,19 @@ public class RedirectRuleCondition extends ModelBean {
 	
 	public boolean isIMSFilter() {
 		return (!isCNetFilter() && 
-			(conditionMap.get("Manufacturer") != null && !conditionMap.get("Manufacturer").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Manufacturer").get(0)) ||
-					isImsUsingCatCode() || isImsUsingCategory()));
+			(CollectionUtils.isNotEmpty(conditionMap.get("Manufacturer")) && StringUtils.isNotBlank(conditionMap.get("Manufacturer").get(0)) ||
+					CollectionUtils.isNotEmpty(conditionMap.get("TemplateName")) ||
+					isImsUsingCatCode() || 
+					isImsUsingCategory()));
 	}
 
 	public boolean isCNetFilter() {
-		return conditionMap.get("Level1Category") != null && !conditionMap.get("Level1Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Level1Category").get(0));
+		for (String key : conditionMap.keySet()) {
+			if (key.endsWith("FacetTemplateName")) {
+				return true;
+			}
+		}
+		return (conditionMap.get("Level1Category") != null && !conditionMap.get("Level1Category").isEmpty() && StringUtils.isNotBlank(conditionMap.get("Level1Category").get(0)));
 	}
 
 	public Map<String, List<String>> getFacets() {

@@ -283,6 +283,58 @@
 						</div><!--  end item 2 -->
 					</div>
 					
+					<div class="dynamicAttribute">
+	        				<h3 class="marT10">Dynamic Attribute</h3>	        		
+	        				<div class="fsize12 marTB20 marRL50">
+							<table class="dynamicAttributeFields">							
+								<tr>
+									<td class="w175 padB8" valign="bottom">Template Name :</td>
+									<td class="iepadBT0 w278">
+										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>
+										</div>
+									</td>
+								</tr>
+								<!--  sample added line -->
+								<tr id="dynamicAttributeValue">
+									<td colspan="2">
+										<div id="dynamicAttributeItemList">							
+											<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">
+												<div class="clearB"></div>
+												<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>
+												<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8" alt="Delete Attribute" title="Delete Attribute">
+												<div class="w235 floatL marT8 border pad10" style="overflow-y:auto; max-height: 107px">													
+													<ul id="dynamicAttributeValues">
+														<li id="dynamicAttributeValuesPattern" style="display: none;">
+															<div>
+																<input type="checkbox" class="checkboxFilter">
+																<span id="attributeValueName"></span>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
+								<!--  end sample addded line -->
+								<tr id="dynamicAttributeName">
+									<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>
+									<td>
+										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w210" title="Add Dynamic Attribute"></select>
+										</div>
+										<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>
+									</td>
+								</tr>
+								
+								
+							</table>						
+							</div><!--  end item 3 -->
+						</div>
+					
 					<div class="facet">
 						<h3 class="marT10">Facets</h3>	 
 						<div class="fsize12 marT10 marB20 marRL50">
@@ -290,13 +342,13 @@
 								<tr>
 									<td class="w175">Name (contains) :</td>
 									<td class="iepadBT0">
-										<input id="nameContains" type="text"/>
+										<input id="nameContains" type="text" class="w250"/>
 									</td>
 								</tr>
 								<tr>
 									<td class="w175">Description (contains):</td>
 									<td class="iepadBT0">
-										<input id="descriptionContains" type="text"/>
+										<input id="descriptionContains" type="text" class="w250"/>
 									</td>
 								</tr>							
 								<tr>
@@ -343,56 +395,10 @@
 									</td>
 								</tr>
 							</table>						
-						</div><!--  end item 3 -->
+						</div><!--  end item 4 -->
 						</div>
 						
-						<div class="dynamicAttribute" style="display:none;">
-	        				<h3 class="marT10">Dynamic Attribute</h3>	        		
-	        				<div class="fsize12 marTB20 marRL50">
-							<table class="dynamicAttributeFields">							
-								<tr>
-									<td class="w175 padB8" valign="bottom">Template Name :</td>
-									<td class="iepadBT0">
-										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
-										<div class="floatL">
-											<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>
-										</div>
-									</td>
-								</tr>
-								<!--  sample added line -->
-								<tr id="dynamicAttributeValue">
-									<td colspan="2">
-										<div id="dynamicAttributeItemList">							
-											<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">
-												<div class="clearB"></div>
-												<div class="w150 floatL padL25 marT8">Dynamic Attr 1 :</div>
-												<div class="w251 floatL marT8">
-													<ul>
-														<li><input type="checkbox" id="Refurbished_Flag" class="checkboxFilter"> Refurbished </li>
-														<li><input type="checkbox" id="OpenBox_Flag" class="checkboxFilter"> Open Box </li>
-														<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</td>
-								</tr>
-								<!--  end sample addded line -->
-								<tr id="dynamicAttributeName">
-									<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>
-									<td>
-										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
-										<div class="floatL">
-											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>
-										</div>
-										<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3" id="addButton"></a>
-									</td>
-								</tr>
-								
-								
-							</table>						
-							</div><!--  end item 4 -->
-						</div>
+						
 						
 						<div class="clearB"></div>	
 						<div class="borderT padT8">
