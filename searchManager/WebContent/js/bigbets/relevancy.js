@@ -299,8 +299,14 @@
 									var charCode = (e.which) ? e.which : e.keyCode;
 									if (charCode > 31 && (charCode < 48 || charCode > 57))
 										return false;
+								},
+								keydown:function(e){
+									var charCode = (e.which) ? e.which : e.keyCode;
+									var ctrlDown = e.ctrlKey||e.metaKey ;
+									if (ctrlDown) {
+										return false;
+									}
 								}
-
 							});
 
 							$contentHolder.find('li.multiRuleItem input#ruleFieldMatch, input#singleRuleFieldMatch').on({
@@ -315,6 +321,13 @@
 										return true;
 									}
 									else{
+										return false;
+									}
+								},
+								keydown:function(e){
+									var charCode = (e.which) ? e.which : e.keyCode;
+									var ctrlDown = e.ctrlKey||e.metaKey ;
+									if (ctrlDown) {
 										return false;
 									}
 								}
@@ -698,38 +711,59 @@
 
 		$('div[id="q.alt"]').hide();
 
-		$('div[id="tie"] input[type="text"]').off('blur focus keypress').on({
-			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters["tie"]) $(e.target).val("");},
+		$('div[id="tie"] input[type="text"]').off('blur keypress keydown').on({
+			blur:function(e){
+				$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
+				$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
+				if ($(e.target).val() > 1) {
+					alert("Tie value should be between 0 - 1.");
+				}
+			},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
-
-				if(charCode == 46 && ($.trim($(e.target).val()) == 0 || $.isBlank($(e.target).val()))) return true;
-				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
-				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
-				if(($(e.target).val()==1 || $(e.target).val()==0) && (charCode == 49 || charCode == 48)) {
-					if ($('div[id="tie"] input[type="text"]').length == 1) {
-						$(e.target).val(String.fromCharCode(charCode));
-						return false;
-					}
+				if (e.charCode == 0) {
+					return; // allow non-printable characters
 				}
-				alert("Tie value should be between 0 - 1.");
+				if (charCode == 46){ 
+					if($(e.target).val().indexOf('.') != -1) {
+						return false; // allow only one .
+					}
+					return true;
+				} 
+				else if (charCode > 47 && charCode < 58) {
+					return true;
+				}
 				return false;
-
+			},
+			keydown:function(e){
+				var charCode = (e.which) ? e.which : e.keyCode;
+				var ctrlDown = e.ctrlKey||e.metaKey ;
+				if (ctrlDown) {
+					return false;
+				}
 			}
 		});
 
-		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('blur focus keypress').on({
-			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters[getRelevancyField(e).id]) $(e.target).val("");},
+		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('keypress keydown').on({
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
-
-				if(charCode == 8) return true;
-				if($(e.target).length > 4) 
-					return false;
-				if($.inArray(charCode,[48,96]) != -1 && $.isBlank($(e.target).val())) return false;
-				if(charCode < 32 || (charCode > 47 && charCode < 58)) return true;
-				alert(getRelevancyField(e).label + " value should be numeric.");
+				if (e.charCode == 0) {
+					return; // allow non-printable characters
+				}
+				if($(e.target).length > 4) {
+					return false;					
+				}
+				if(charCode > 47 && charCode < 58) {
+					return true;
+				}
 				return false;
+			},
+			keydown:function(e){
+				var charCode = (e.which) ? e.which : e.keyCode;
+				var ctrlDown = e.ctrlKey||e.metaKey ;
+				if (ctrlDown) {
+					return false;
+				}
 			}
 		});
 	};
