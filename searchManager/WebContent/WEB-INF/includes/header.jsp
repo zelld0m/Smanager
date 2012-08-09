@@ -36,6 +36,7 @@
 	var GLOBAL_storeLabel = "${storeLabel}";
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
+	var GLOBAL_storeFacetTemplateName = GLOBAL_storeFacetTemplate + "Name"; 
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
