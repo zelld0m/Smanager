@@ -1054,7 +1054,7 @@
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
-						self.clearDynamicAttributeComboBox(ui, "dynamicattributelist");
+						self.clearDynamicAttributeComboBox(ui, "attributevaluelist");
 						//$table.find("tr#dynamicAttributeValue").hide();
 					},
 					postHook:function(){
@@ -1090,7 +1090,7 @@
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
-						self.clearDynamicAttributeComboBox(ui, "dynamicattributelist");
+						self.clearDynamicAttributeComboBox(ui, "attributevaluelist");
 						$table.find("tr#dynamicAttributeValue").hide();
 					},
 					postHook:function(){
@@ -1344,8 +1344,6 @@
 					self.populateCNETTemplateNames(ui, condition);
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
-					//ui.find("div.ims").show();
-					
 					ui.find("div.ims, div.dynamicAttribute").show();
 					self.addIMSFieldListener(ui, condition);
 					self.addFacetTemplateFieldListener(ui, condition);
@@ -1394,11 +1392,11 @@
 					case "templatenamelist": 
 						$dynamicAttribute.find("input#templateNameList").val("");
 						$dynamicAttribute.find("select#templateNameList option").remove();
-					/*case "attributevaluelist":
+					case "attributevaluelist":
 						$dynamicAttribute.find("div.dynamicAttributeItem").each(function(){ 
-							if(!$(this).is(":visible"))
+							if(this.id != "dynamicAttributeItemPattern")
 								$(this).remove();
-						});*/
+						});
 					case "dynamicattributelist": 
 						$dynamicAttribute.find("input#dynamicAttributeList").val("");
 						$dynamicAttribute.find("select#dynamicAttributeList option").remove();
@@ -1472,7 +1470,7 @@
 				var level2Cat = new Array();
 				var level3Cat = new Array();
 				var cnetManufacturer = new Array();
-
+				var facetTemplateName = "TemplateName";
 
 				if (ui.find("div.ims").is(":visible")){
 					catCode[0] = $.trim(ui.find("input#catcode").val());
@@ -1498,6 +1496,7 @@
 					level2Cat[0] = $.trim(ui.find("input#level2CategoryList").val());
 					level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
 					cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
+					facetTemplateName = GLOBAL_storeFacetTemplate;
 
 					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
 					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
@@ -1510,7 +1509,7 @@
 					var inTemplateName = ui.find("input#templateNameList").val();
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
 					
-					condMap["TemplateName"] = $.makeArray(inTemplateName.trim());
+					condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
 					
 					$divDynamicAttrItems.find("ul").each(function(){ 
 						var attributeItem = this.id;
