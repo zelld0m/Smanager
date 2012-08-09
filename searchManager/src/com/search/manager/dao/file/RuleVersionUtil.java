@@ -43,6 +43,17 @@ public class RuleVersionUtil {
 		return files;
 	}
 
+	public static boolean hasVersionCounter(String store, int ruleType, String ruleId){
+		File dir = new File(getFileDirectory(store, ruleType));
+		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
+		
+		if (ArrayUtils.isNotEmpty(verFiles)){
+			return true;
+		}
+		
+		return false;
+	}
+	
 	public static void addVersionCounterFile(String store, int ruleType, String ruleId, int count) throws Exception{
 		File dir = new File(getFileDirectory(store, ruleType));
 		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
@@ -63,14 +74,17 @@ public class RuleVersionUtil {
 			file.close();
 			if(file!=null){
 				for(File oFile: verFiles){
-					oFile.delete();
-					oFile.deleteOnExit();
+					if(oFile.exists()){
+						if(!oFile.delete()){
+							oFile.deleteOnExit();
+						}
+					}
 				}
 			}
 		}
 	}
 
-	public static synchronized int getVersionCounter(String store, int ruleType, String ruleId) {
+	public static synchronized int getCurrentVersion(String store, int ruleType, String ruleId) {
 		File dir = new File(getFileDirectory(store, ruleType));
 		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
 		File[] ruleFiles = dir.listFiles(new RuleFileNameFilterImpl(ruleId));
@@ -107,9 +121,19 @@ public class RuleVersionUtil {
 	}
 
 	public static synchronized int getNextVersion(String store, int ruleType, String ruleId) {
-		return getVersionCounter(store, ruleType, ruleId) + 1;
+		return getCurrentVersion(store, ruleType, ruleId) + 1;
 	}
 
+	public static void deleteFile(String storeName, String ruleId, int ruleType, int version) throws Exception{
+		
+		if(!hasVersionCounter(storeName, ruleType, ruleId)){
+			int currVer = getCurrentVersion(storeName, ruleType, ruleId);
+			addVersionCounterFile(storeName, ruleType, ruleId, currVer);
+		}
+
+		deleteFile(getFileName(storeName, ruleType, ruleId, version));
+	}
+	
 	public static void deleteFile(String filepath) throws IOException{
 		File file = new File(filepath);
 
