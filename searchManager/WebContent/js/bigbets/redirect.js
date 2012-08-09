@@ -978,9 +978,11 @@
 				var self = this;
 				
 				if(condition.dynamicAttributes){
+					var $divItemList = ui.find('div#dynamicAttributeItemList');
+					$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
+					
 					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
 						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
-							var $divItemList = ui.find('div#dynamicAttributeItemList');
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
 							
@@ -1001,6 +1003,7 @@
 									for(var i=0; i<attributeValues.length; i++){
 										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
 										$liAttributeValue.show();
+										$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 										$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
 										$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
 										$ulAttributeValues.append($liAttributeValue);
@@ -1087,7 +1090,6 @@
 			populateIMSDynamicAttributes: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#dynamicAttributeList");
-				var $input = ui.find("input#dynamicAttributeList");
 				var $templateName = ui.find("input#templateNameList");
 				var $table = ui.find("table.dynamicAttributeFields");
 
@@ -1108,10 +1110,6 @@
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
 						}
-						
-						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
-							self.populateDynamicAttributeValues(ui, condition, data);
-						}
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
@@ -1119,6 +1117,9 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							self.populateDynamicAttributeValues(ui, condition, self.templateAttributes);
+						}
 					}
 				});
 			},
@@ -1126,7 +1127,6 @@
 			populateCNETDynamicAttributes: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#dynamicAttributeList");
-				var $input = ui.find("input#dynamicAttributeList");
 				var $templateName = ui.find("input#templateNameList");
 				var $table = ui.find("table.dynamicAttributeFields");
 
@@ -1147,10 +1147,6 @@
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
 						}
-						
-						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
-							self.populateDynamicAttributeValues(ui, condition, data);
-						}
 					},
 					preHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").show();
@@ -1158,6 +1154,9 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderDynamicAttributeList").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							self.populateDynamicAttributeValues(ui, condition, self.templateAttributes);
+						}
 					}
 				});
 			},
@@ -1452,7 +1451,6 @@
 			},
 
 			clearDynamicAttributeComboBox: function(ui, trigger){
-				var self = this;
 				var $dynamicAttribute = ui.find("div.dynamicAttribute");
 
 				if ($.isBlank(trigger)){
@@ -1464,10 +1462,7 @@
 						$dynamicAttribute.find("input#templateNameList").val("");
 						$dynamicAttribute.find("select#templateNameList option").remove();
 					case "attributevaluelist":
-						$dynamicAttribute.find("div.dynamicAttributeItem").each(function(){ 
-							if(this.id != "dynamicAttributeItemPattern")
-								$(this).remove();
-						});
+						$dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
 					case "dynamicattributelist": 
 						$dynamicAttribute.find("input#dynamicAttributeList").val("");
 						$dynamicAttribute.find("select#dynamicAttributeList option").remove();
@@ -1476,7 +1471,6 @@
 			},
 
 			clearCNETComboBox: function(ui, trigger){
-				var self = this;
 				var $cnet = ui.find("div.cnet");
 
 				if ($.isBlank(trigger)){
@@ -1686,8 +1680,8 @@
 										if(attributeValues){
 											for(var i=0; i<attributeValues.length; i++){
 												var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
-												$liAttributeValue.prop("id", "dynamicAttributeValues");
 												$liAttributeValue.show();
+												$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 												$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
 												$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
 												$ulAttributeValues.append($liAttributeValue);
