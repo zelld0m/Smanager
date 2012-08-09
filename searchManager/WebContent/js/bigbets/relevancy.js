@@ -81,15 +81,32 @@
 				blur:function(e){
 					updateFacetValueBarLength(content, fieldValue, $(e.target).val());
 				},
-
 				keypress:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
-					if (charCode > 57 || (charCode > 31 && charCode < 46 || 
-							charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
+					if (e.charCode == 0){
+						if (charCode == 13){ updateFacetValueBarLength(content, fieldValue, $(e.target).val());}
+						return; // allow non-printable characters
+					}
+					if (charCode == 46){ 
+						return $(e.target).val().indexOf('.') == -1;
+					} 
+					else if (charCode > 47 && charCode < 58){
+						return true;
+					}
+					else {
 						return false;
-					if (charCode == 13){ updateFacetValueBarLength(content, fieldValue, $(e.target).val());}
+					}
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
 				}
-
 			}, { name:fieldValue} );
 
 			content.find('tr#fieldSelected' + $.formatAsId(fieldValue) + ' a.removeSelected').on({ click:function(e){removeSelectedFacetValue(content, fieldValue);}});
@@ -306,23 +323,37 @@
 									if (ctrlDown) {
 										return false;
 									}
+								},
+								contextmenu:function(e){
+									return false;
 								}
 							});
 
 							$contentHolder.find('li.multiRuleItem input#ruleFieldMatch, input#singleRuleFieldMatch').on({
+								blur:function(e){
+									$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
+									$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
+								},
 								keypress:function(e){
 									var charCode = (e.which) ? e.which : e.keyCode;
 									var currVal = $(e.target).val();
-									if(($.isBlank(currVal)|| currVal.indexOf("-") == -1) && charCode == 45) return true;
-									if(charCode == 8) return true;
-									if($.isNotBlank(currVal) && currVal.indexOf(".") == -1 && charCode == 46) return true;
-									if($.isNotBlank(currVal) && (charCode == 37 || charCode == 39)) return true;
-									if(currVal.indexOf("%") == -1 && (charCode < 32 || (charCode > 47 && charCode < 58))){
+
+									if (e.charCode == 0){
+										return; // allow non-printable characters
+									}
+									if (charCode == 45){
+										return $.isBlank(currVal);
+									}
+									if (charCode == 46){ 
+										return ($(e.target).val().indexOf('.') == -1); // allow only one .
+									} 
+									if (charCode == 37){
+										return ($.isNotBlank(currVal) && $(e.target).val().indexOf('%') == -1); // allow only one %
+									}
+									else if (charCode > 47 && charCode < 58){
 										return true;
 									}
-									else{
-										return false;
-									}
+									return false;
 								},
 								keydown:function(e){
 									var charCode = (e.which) ? e.which : e.keyCode;
@@ -330,6 +361,9 @@
 									if (ctrlDown) {
 										return false;
 									}
+								},
+								contextmenu:function(e){
+									return false;
 								}
 							});
 
@@ -481,21 +515,31 @@
 				blur:function(e){
 					updateBarLength(content, fieldName, $(e.target).val());
 				},
-
 				keypress:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
-					if (charCode > 57 || (charCode > 31 && charCode < 46 || 
-							charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
+					if (e.charCode == 0){
+						if (charCode == 13){ updateBarLength(content, fieldValue, $(e.target).val()); }
+						return; // allow non-printable characters
+					}
+					if (charCode == 46){ 
+						return $(e.target).val().indexOf('.') == -1;
+					} 
+					else if (charCode > 47 && charCode < 58){
+						return true;
+					}
+					else {
 						return false;
-					if (charCode == 13){ updateBarLength(content, fieldName, $(e.target).val());}
+					}
 				},
-				
 				keydown:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
 					var ctrlDown = e.ctrlKey||e.metaKey ;
 					if (ctrlDown) {
 						return false;
 					}
+				},
+				contextmenu:function(e){
+					return false;
 				}
 
 			}, { name:fieldName} );
@@ -715,22 +759,19 @@
 			blur:function(e){
 				$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
 				$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
-				if ($(e.target).val() > 1) {
+				if ($(e.target).val() > 1){
 					alert("Tie value should be between 0 - 1.");
 				}
 			},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
-				if (e.charCode == 0) {
+				if (e.charCode == 0){
 					return; // allow non-printable characters
 				}
 				if (charCode == 46){ 
-					if($(e.target).val().indexOf('.') != -1) {
-						return false; // allow only one .
-					}
-					return true;
+					return $(e.target).val().indexOf('.') == -1;
 				} 
-				else if (charCode > 47 && charCode < 58) {
+				else if (charCode > 47 && charCode < 58){
 					return true;
 				}
 				return false;
@@ -741,6 +782,9 @@
 				if (ctrlDown) {
 					return false;
 				}
+			},
+			contextmenu:function(e){
+				return false;
 			}
 		});
 
@@ -750,10 +794,10 @@
 				if (e.charCode == 0) {
 					return; // allow non-printable characters
 				}
-				if($(e.target).length > 4) {
+				if($(e.target).length > 4){
 					return false;					
 				}
-				if(charCode > 47 && charCode < 58) {
+				if(charCode > 47 && charCode < 58){
 					return true;
 				}
 				return false;
@@ -764,6 +808,9 @@
 				if (ctrlDown) {
 					return false;
 				}
+			},
+			contextmenu:function(e){
+				return false;
 			}
 		});
 	};
