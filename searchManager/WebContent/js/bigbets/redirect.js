@@ -178,6 +178,7 @@
 						$("#description").val(self.selectedRule["description"]);
 
 						self.getKeywordInRuleList(1);
+						self.refreshTabContent();
 						self.addTabListener();
 						self.addSaveRuleListener();
 						self.addDeleteRuleListener();
@@ -2013,11 +2014,12 @@
 
 			addTabListener: function(){
 				var self = this;
-				$("div#redirect-type > ul.ui-tabs-nav > li > a").on({
-					click: function(evt){
+				
+				// Do not use on and off advance binding of jQuery 1.7
+				$("div#redirect-type > ul.ui-tabs-nav > li > a").bind("click", function(evt){
 						self.refreshTabContent();
 					}
-				});
+				);
 			},
 
 			init : function() {
