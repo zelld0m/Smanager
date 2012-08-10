@@ -290,16 +290,13 @@
 				},
 
 				clrFil : function(){
-					sec.curstat = '';
-					sec.curexp = '';
-					sec.cursrc = '';
-					sec.curmem = '';
 					$('#refsrc').val(sec.src);
 					$('#refmem').val('');
-
 					$('#refrole').prop("selectedIndex", 0);
 					$('#refstat').prop("selectedIndex", 0);
 					$('#refexp').prop("selectedIndex", 0);
+					
+					sec.filter();
 				},
 
 				filter : function(){
