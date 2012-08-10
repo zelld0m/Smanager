@@ -178,7 +178,6 @@
 						$("#description").val(self.selectedRule["description"]);
 
 						self.getKeywordInRuleList(1);
-						self.refreshTabContent();
 						self.addTabListener();
 						self.addSaveRuleListener();
 						self.addDeleteRuleListener();
@@ -2003,10 +2002,10 @@
 				var self = this;
 				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
 				self.setActiveRedirectType();
-				self.setIncludeKeyword();
+				
 
 				switch(self.tabSelectedTypeId){
-				case "#filter" : self.showRuleCondition(); break;
+				case "#filter" : self.showRuleCondition(); self.setIncludeKeyword(); break;
 				case "#keyword" : self.getChangeKeywordActiveRules(); break;
 				}
 
