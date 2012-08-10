@@ -1981,19 +1981,12 @@
 
 			addTabListener: function(){
 				var self = this;
-<<<<<<< HEAD
-			
-=======
-
-				console.log("Enter Tab Listener"); 
 				
->>>>>>> refs/remotes/origin/sprint_5_bugfixes_pluginupdates
 				$("#redirect-type").tabs("destroy").tabs({
 					show: function(event, ui){
 						var tabNumber = ui.index;
 						self.tabSelectedTypeId = tabNumber + 1;
 						self.setActiveRedirectType();
-						console.log("Enter Show");
 						switch(self.tabSelectedTypeId){
 							case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
 							case 2: self.getChangeKeywordActiveRules(); break;
