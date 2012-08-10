@@ -1574,19 +1574,21 @@
 					var inTemplateName = ui.find("input#templateNameList").val();
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
 					
-					condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
-					
-					$divDynamicAttrItems.find("ul").each(function(){ 
-						var attributeItem = this.title;
-						var attributeValues = new Array();
+					if($.isNotBlank(inTemplateName.trim())){
+						condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
 						
-						$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
-							attributeValues.push($(this).val()); 
+						$divDynamicAttrItems.find("ul").each(function(){ 
+							var attributeItem = this.title;
+							var attributeValues = new Array();
+							
+							$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
+								attributeValues.push($(this).val()); 
+							});
+	
+							if(attributeValues.length > 0)
+								condMap[attributeItem] = attributeValues;
 						});
-
-						if(attributeValues.length > 0)
-							condMap[attributeItem] = attributeValues;
-					});
+					}
 				}
 
 				if (ui.find("div.facet").is(":visible")){
