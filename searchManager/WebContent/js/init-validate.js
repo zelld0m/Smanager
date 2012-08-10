@@ -24,7 +24,7 @@ validateEmail = function(fieldName, fieldValue, length) {
 		return false;
 	};
 	if (!$.isBlank(fieldValue)) {
-		var pattern=/^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+\.([a-zA-Z])+([a-zA-Z])+/;
+		var pattern = /^[\w\\+\\-]+([\.-]?[\w\\+\\-]+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		if (!pattern.test(fieldValue)) {
 			alert(fieldName+" is an invalid email.");
 			return false;
