@@ -7,7 +7,7 @@
 
 			ruleFilterText: "",
 			ruleKeywordFilterText: "",
-			tabSelectedTypeId: "",
+			tabSelectedTypeId: 1,
 
 			rulePage: 1,
 			ruleKeywordPage: 1,
@@ -173,18 +173,16 @@
 						$("#redirect").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
-
 						$("#name").val(self.selectedRule["ruleName"]);
 						$("#description").val(self.selectedRule["description"]);
 
 						self.getKeywordInRuleList(1);
-						self.refreshTabContent();
 						self.addTabListener();
 						self.addSaveRuleListener();
 						self.addDeleteRuleListener();
 						self.addDownloadListener();
 
-						$('#auditIcon').on({
+						$('#auditIcon').off().on({
 							click: showAuditList
 						}, {locked: self.selectedRuleStatus["locked"] || !allowModify, type:self.moduleName, ruleRefId: self.selectedRule["ruleId"], name:  self.selectedRule["ruleName"]});
 
@@ -233,7 +231,7 @@
 						icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
 						base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
 
-						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
+						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).off().on({
 							click: function(e){
 								if (!e.data.locked && confirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?'))
 									RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
@@ -399,7 +397,7 @@
 								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
 								base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
 									click: function(e){
 										self.setRedirect(model);
 									}
@@ -484,36 +482,29 @@
 				var self = this;
 
 				$('input[type="checkbox"].activate').prop({checked:false, disabled: false });
-
+			
 				$('input[type="checkbox"].activate').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 					click:function(e){
 						if (e.data.locked) return;
-
-						var typeId = 1;
-						switch(self.tabSelectedTypeId){
-						case "#filter": typeId = 1; break;
-						case "#keyword": typeId = 2; break; 
-						case "#page": typeId = 3; break; 
-						}
-
-						self.updateActiveRedirectType(typeId);
+						self.updateActiveRedirectType();
 					},
 					mouseenter: showHoverInfo
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify});
-
+				
 				switch(parseInt(self.selectedRule["redirectTypeId"])){
 				case 1: $("div#filter").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 2: $("div#keyword").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 3: $("div#page").find('input#activate').prop({checked:true, disabled: true }); break;
 				};
-
 			},
 
-			updateActiveRedirectType : function(typeId){
+			updateActiveRedirectType : function(){
 				var self = this;
-				RedirectServiceJS.setRedirectType(self.selectedRule["ruleId"], typeId, {
+				RedirectServiceJS.setRedirectType(self.selectedRule["ruleId"], parseInt(self.tabSelectedTypeId), {
 					callback: function(data){
-						self.selectedRule["redirectTypeId"] = parseInt(typeId);
+						self.selectedRule["redirectTypeId"] = self.tabSelectedTypeId;
+					},
+					postHook: function(){
 						self.setActiveRedirectType();
 					}
 				});
@@ -930,7 +921,7 @@
 						if(u.item){
 							$item.find("input#templateNameList").val(u.item.text);
 							$item.find("input#templateNameList").prop("selectedText", u.item.text);
-							
+
 							if (ui.find("div.ims").is(":visible"))
 								self.populateIMSDynamicAttributes(ui, condition, e);
 							else if (ui.find("div.cnet").is(":visible"))
@@ -944,7 +935,7 @@
 						}
 						$item.find("input#dynamicAttributeList").val("");
 						break;
-					
+
 					case "dynamicattributelist" :
 						if(u.item){
 							$item.find("input#dynamicAttributeList").val(u.item.text);
@@ -958,7 +949,7 @@
 						break;
 					}
 				};
-				
+
 				$dynamicAttribute.find("select.selectCombo").combobox({
 					change: function(e, u){
 						updateFacetTemplateCombobox(this, e, u);
@@ -967,7 +958,7 @@
 						updateFacetTemplateCombobox(this, e, u);
 					}
 				});
-				
+
 				if (ui.find("div.ims").is(":visible"))
 					self.populateIMSTemplateNames(ui, condition);
 				else if (ui.find("div.cnet").is(":visible"))
@@ -976,29 +967,29 @@
 
 			populateDynamicAttributeValues: function(ui, condition, attributeMap){
 				var self = this;
-				
+
 				if(condition.dynamicAttributes){
 					var $divItemList = ui.find('div#dynamicAttributeItemList');
 					$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
-					
+
 					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
 						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
-							
+
 							$ulAttributeValues.prop("id", $.formatAsId(attrName));
 							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 							if (!$.isNumeric(currCondCount)){
 								currCondCount = 0; 
 							}
-							
+
 							var countId = 1 + parseInt(currCondCount);
 							$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
-							
+
 							if(attributeMap && attributeMap[attrName]){
 								var attributeValues = attributeMap[attrName].attributeValues;
 								$divDynamicAttributeItem.find('span#dynamicAttributeLabel').html(attributeMap[attrName].attributeDisplayName + ":");
-								
+
 								if(attributeValues){
 									for(var i=0; i<attributeValues.length; i++){
 										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
@@ -1009,19 +1000,19 @@
 										$ulAttributeValues.append($liAttributeValue);
 									}
 								}
-								
+
 								$divDynamicAttributeItem.show();
 								$divDynamicAttributeItem.prop("id", countId);
 								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
 								$divItemList.append($divDynamicAttributeItem);
-								
+
 								self.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, condition);
 							}
 						}
 					});
 				}
 			},
-			
+
 			populateIMSTemplateNames: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#templateNameList");
@@ -1099,12 +1090,12 @@
 					callback: function(data){
 						self.templateAttributes = data;
 						var isEmpty = true;
-						
+
 						$.each(self.templateAttributes, function(attrName, attrData) { 
 							$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
 							isEmpty = false;
 						});
-						
+
 						if (!isEmpty){
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
@@ -1123,7 +1114,7 @@
 					}
 				});
 			},
-			
+
 			populateCNETDynamicAttributes: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#dynamicAttributeList");
@@ -1136,12 +1127,12 @@
 					callback: function(data){
 						self.templateAttributes = data;
 						var isEmpty = true;
-						
+
 						$.each(self.templateAttributes, function(attrName, attrData) { 
 							$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
 							isEmpty = false;
 						});
-						
+
 						if (!isEmpty){
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
@@ -1268,7 +1259,6 @@
 					}
 				};
 
-
 				$cnet.find("select.selectCombo").combobox({
 					change: function(e, u){
 						updateCNETCombobox(this, e, u);
@@ -1375,7 +1365,6 @@
 				},{condition: condition});
 
 				var $input = $ims.find("input#catcode");
-
 
 				$input.off().on({
 					focusout: function(e){
@@ -1569,22 +1558,22 @@
 
 					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
 				}
-				
+
 				if(ui.find("div.dynamicAttribute").is(":visible")){
 					var inTemplateName = ui.find("input#templateNameList").val();
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
-					
+
 					if($.isNotBlank(inTemplateName.trim())){
 						condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
-						
+
 						$divDynamicAttrItems.find("ul").each(function(){ 
 							var attributeItem = this.title;
 							var attributeValues = new Array();
-							
+
 							$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
 								attributeValues.push($(this).val()); 
 							});
-	
+
 							if(attributeValues.length > 0)
 								condMap[attributeItem] = attributeValues;
 						});
@@ -1645,7 +1634,7 @@
 					mouseenter: showHoverInfo
 				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
-			
+
 			addDynamicAttributeButtonListener: function(ui,condition, attrName){
 				var self = this;
 
@@ -1658,7 +1647,7 @@
 							var inDynamicAttribute = $.trim($input.val());
 							var inTemplateName = ui.find("input#templateNameList").val();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
-							
+
 							if($.isNotBlank(inDynamicAttribute)){
 								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
 									alert("Attribute already added. Please select a different attribute name.");
@@ -1669,13 +1658,13 @@
 									if (!$.isNumeric(currCondCount)){
 										currCondCount = 0; 
 									}
-									
+
 									var countId = 1 + parseInt(currCondCount);
 									$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
-									
+
 									var $dynamicAttributeLabel = $divDynamicAttributeItem.find('span#dynamicAttributeLabel');
 									$dynamicAttributeLabel.html(inDynamicAttribute + ":");
-									
+
 									var attributeMap = self.templateAttributes;
 									if(attributeMap && attributeMap[attrName]){
 										var attributeValues = attributeMap[attrName].attributeValues;
@@ -1690,12 +1679,12 @@
 											}
 										}
 									}
-		
+
 									$divDynamicAttributeItem.prop("id", countId);
 									$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
 									$divDynamicAttributeItem.show();
 									$divItemList.append($divDynamicAttributeItem);
-									
+
 									self.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, e.data.condition);
 								}
 							}
@@ -1707,7 +1696,7 @@
 					mouseenter: showHoverInfo
 				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
 			},
-			
+
 			addSaveButtonListener: function(ui, condition){
 				var self = this;
 
@@ -1999,27 +1988,21 @@
 				});
 			},
 
-			refreshTabContent: function(){
-				var self = this;
-				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
-				self.setActiveRedirectType();
-				
-
-				switch(self.tabSelectedTypeId){
-				case "#filter" : self.showRuleCondition(); self.setIncludeKeyword(); break;
-				case "#keyword" : self.getChangeKeywordActiveRules(); break;
-				}
-
-			},
-
 			addTabListener: function(){
 				var self = this;
-				
-				// Do not use on and off advance binding of jQuery 1.7
-				$("div#redirect-type > ul.ui-tabs-nav > li > a").bind("click", function(evt){
-						self.refreshTabContent();
+
+				$("#redirect-type").tabs({
+					show: function(event, ui){
+						var tabNumber = ui.index;
+						self.tabSelectedTypeId = tabNumber + 1;
+						self.setActiveRedirectType();
+
+						switch(self.tabSelectedTypeId){
+						case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
+						case 2: self.getChangeKeywordActiveRules(); break;
+						}
 					}
-				);
+				});
 			},
 
 			init : function() {
