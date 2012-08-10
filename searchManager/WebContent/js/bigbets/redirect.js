@@ -958,11 +958,6 @@
 						updateFacetTemplateCombobox(this, e, u);
 					}
 				});
-
-				if (ui.find("div.ims").is(":visible"))
-					self.populateIMSTemplateNames(ui, condition);
-				else if (ui.find("div.cnet").is(":visible"))
-					self.populateCNETTemplateNames(ui, condition);
 			},
 
 			populateDynamicAttributeValues: function(ui, condition, attributeMap){
@@ -1019,8 +1014,6 @@
 				var $input = ui.find("input#templateNameList");
 				var $table = ui.find("table.dynamicAttributeFields");
 
-				var inTemplateName = $.trim($input.val());
-
 				CategoryServiceJS.getIMSTemplateNames({
 					callback: function(data){
 						var list = data;
@@ -1039,7 +1032,7 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderTemplateNameList").hide();
-						if($.isNotBlank(inTemplateName))
+						if($.isNotBlank($.trim($input.val())))
 							self.populateIMSDynamicAttributes(ui, condition, e);
 					}
 				});
@@ -1050,8 +1043,6 @@
 				var $select = ui.find("select#templateNameList");
 				var $input = ui.find("input#templateNameList");
 				var $table = ui.find("table.dynamicAttributeFields");
-
-				var inTemplateName = $.trim($input.val());
 
 				CategoryServiceJS.getCNETTemplateNames({
 					callback: function(data){
@@ -1072,7 +1063,7 @@
 					},
 					postHook:function(){
 						ui.find("img#preloaderTemplateNameList").hide();
-						if($.isNotBlank(inTemplateName)) 
+						if($.isNotBlank($.trim($input.val()))) 
 							self.populateCNETDynamicAttributes(ui, condition, e);
 					}
 				});
@@ -1382,7 +1373,6 @@
 				ui.find("div.cnet, div.ims, div.dynamicAttribute").hide();
 
 				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
-					//ui.find("div.cnet").show();
 					ui.find("div.cnet, div.dynamicAttribute").show();
 					self.addCNETFieldListener(ui, condition);
 					self.addFacetTemplateFieldListener(ui, condition);
@@ -1431,6 +1421,7 @@
 						if ($.isNotBlank(condition)){
 							self.initializeIMSFilters("catcode", ui, condition);
 							self.initializeIMSFilters("manufacturerList", ui, condition);
+							self.initializeIMSFilters("templateNameList", ui, condition);
 						}
 
 						self.populateManufacturers(ui, condition);
@@ -1990,8 +1981,8 @@
 
 			addTabListener: function(){
 				var self = this;
-
-				$("#redirect-type").tabs({
+			
+				$("#redirect-type").tabs("destroy").tabs({
 					show: function(event, ui){
 						var tabNumber = ui.index;
 						self.tabSelectedTypeId = tabNumber + 1;
