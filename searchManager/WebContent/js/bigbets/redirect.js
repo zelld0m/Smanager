@@ -156,7 +156,7 @@
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					authorizeRuleBackup: true,
-					authorizeSubmitForApproval: true, // TODO: verify if need to be controlled user access
+					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRedirect();
