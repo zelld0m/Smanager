@@ -204,8 +204,8 @@
 		<div class="w300 security fsize11">
 			<div class="w80 floatL txtAC"><img src="../images/noAvatar.jpg" class="border" /></div>
 			<div class="w200 floatL">
-			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text" id="aduser"></label><div class="clearB"></div>
-			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text" id="adfull"></label>
+			            <label class="floatL w70">Username :</label><label class="w120 floatL padL5 fbold"><input type="text" id="aduser" class="w135"></label><div class="clearB"></div>
+			            <label class="floatL w70">Fullname :</label><label class="w120 floatL padL5 fbold"><input type="text" id="adfull" class="w135"></label>
 			      </div>
 			      <div class="clearB"></div>
 			      <div class="marB10">
