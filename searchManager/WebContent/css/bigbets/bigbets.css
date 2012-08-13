@@ -99,6 +99,75 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f3f8', end
 
 /* facet list */
 .facetlist 		{ list-style: none; }
+
+
+
+/* New sortable list */
+/* tileView */
+div.tileView		{ font-size: 12px }
+div.tileView ul.box		{ list-style: none;  }
+div.tileView ul.box li  { background: #fafafa; border:2px solid #f5f5f5; padding:0 !important; float:left; display: inline; width:224px; margin:10px 7px; }
+div.tileView ul.box li div.bgShade { 
+background: #ffffff; /* Old browsers */
+background: -moz-linear-gradient(top,  #ffffff 0%, #dddddd 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#dddddd)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #ffffff 0%,#dddddd 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 ); /* IE6-9 */
+height: 69px; margin:0 !important; padding:8px;
+}
+div.tileView ul.box li div.bgShade label { margin:0 !important; padding:0 }
+div.tileView ul.box li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px }
+div.tileView ul.box li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden  }
+div.tileView ul.box li div.proInfo { margin:10px 8px; }
+div.tileView ul.box li div.proName { height: 45px; overflow: hidden; vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
+div.tileView ul.box li p.textInfo { padding:1px 0 }
+
+div.tileView  ul.listIcons { list-style: none; margin:0 }
+div.tileView ul.listIcons li { float:left; width: 17px; background: none; border:none; margin:1px;  }
+div.tileView .bgShade label { float:left; color:#282828 }
+
+div.tileView ul li div.iconGroup { clear:both }
+div.tileView ul li div.elevationDate { clear:both; margin-bottom:4px}
+div.tileView ul li div.vDate { clear:both; margin-bottom:4px}
+
+
+/* listView */
+div.listView		{ font-size: 12px }
+div.listView ul.box		{ list-style: none; }
+div.listView ul.box li  { background: #fafafa; border:2px solid #f5f5f5; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
+div.listView ul.box li div.bgShade { 
+background: #ffffff; /* Old browsers */
+background: -moz-linear-gradient(top,  #ffffff 0%, #dddddd 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#dddddd)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #ffffff 0%,#dddddd 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #ffffff 0%,#dddddd 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#dddddd',GradientType=0 ); /* IE6-9 */
+height: 20px; margin:0 !important; padding:8px;
+}
+div.listView ul.box li div.bgShade label { margin:0 !important; padding:0 }
+div.listView ul.box li div.picInfo { float:left; margin-left:10px }
+div.listView ul.box li div.picArea { height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px; float:left }
+div.listView ul.box li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; float:left  }
+
+div.listView ul.box li div.proInfo { margin:10px 8px; float:left; margin-left:10px }
+div.listView ul.box li div.proName { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
+div.listView ul.box li p.textInfo { padding:1px 0 }
+
+div.listView  ul.listIcons { list-style: none; margin:0 }
+div.listView ul.listIcons li { float:left; width: 17px; background: none; border:none; margin:1px;  }
+div.listView .bgShade label { float:left; color:#282828 }
+
+div.listView ul li div.iconGroup { float:right; width:27%}
+div.listView ul li div.elevationDate { float:left; width:33% }
+div.listView ul li div.vDate { float:left; width:33% }
+
+/* end sortable list */
 				
+
 
 

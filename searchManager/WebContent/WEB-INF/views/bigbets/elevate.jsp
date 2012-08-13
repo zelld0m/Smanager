@@ -219,6 +219,64 @@
   
   <div class="clearB"></div>
   
+  <!--  new layout -->
+  <div class="tileView">
+  	<ul class="box">
+  		<li>
+  			<div class="bgShade pad8">	
+  				<div class="iconGroup">
+  				<label class="w90 fsize11"> <span class="fLblue fbold">Ending Today</span></label>
+  				<label>
+					<ul class="listIcons">
+						<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
+						<li><img src="<spring:url value="/images/icon_history.png" />"></li>
+						<li><img src="<spring:url value="/images/user_red.png" />"></li>
+						<li><img src="<spring:url value="/images/icon_date.png" />"></li>
+						<li><img src="<spring:url value="/images/icon_delete2.png" />"></li>
+					</ul>
+  				</label>
+  				</div>
+  				
+  				<div class="elevationDate">
+  					<label class="w90">Elevation : </label>
+  					<label><input type="text" class="txtBoxSmall w30"><span class="fgray fsize11"> ENTER to update</span></label>
+  				</div>
+				
+  				<div class="vDate">
+  					<label class="w90">Valid Until : </label>
+  					<label>
+  						<input type="text" class="txtBoxSmall w60 floatL marR3" />
+  						<ul class="listIcons floatL">
+  							<li><img src="<spring:url value="/images/icon_calendar.png" />"></li>
+  							<li><img src="<spring:url value="/images/icon_calendarDelete.png" />"></li>
+  						</ul>
+  					</label>
+  				</div>
+  				
+  				
+  			</div>
+  			
+  				<div class="picArea"><img src="<spring:url value="/images/no-image.jpg" />"></div>  					
+  			<div class="proInfo">
+  				<div class="titleArea">Lorem ipsum dolor</div>	
+  				<div class="clearB"></div>
+	  			<div class="proName">Black & Copper In-ear headphone</div>
+	  			<p class="textInfo">
+	  				<span class="fgreen">SKU #:</span>
+	  				<span>0000000</span>
+	  			</p>
+	  			<p class="textInfo">
+	  				<span class="fgreen">Mfr. Part #:</span>
+	  				<span>BDH653BCCP</span>
+	  			</p>
+  			</div>
+  		</li>
+  		<li></li>
+  		<li></li>
+  	</ul>
+  </div>
+  <!--  end new layout -->
+  
   <div id="ruleIsLocked" class="w180" style="display:none;">
   	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
   </div>

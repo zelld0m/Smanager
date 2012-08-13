@@ -13,7 +13,7 @@ body 							{ margin: 0px; }
 .cssReset .w67, .w67			{width: 67px}
 .cssReset .w70, .w70			{width: 70px}
 .cssReset .w72, .w72			{width: 72px !important}
-.cssReset .w80, .w80			{width: 80px}
+.cssReset .w80, .w80			{width: 80px !important}
 .cssReset .w83, .w83			{width: 83px}
 .cssReset .w85, .w85			{width: 85px}
 .cssReset .w90, .w90			{width:90px}
@@ -101,6 +101,7 @@ body 							{ margin: 0px; }
 .cssReset .w96p50p, .w96p50p	{width:96.58% }
 .cssReset .w95p, .w95p			{ width:95% }
 .cssReset .w90p, .w90p			{ width:90% }
+.cssReset .w80p, .w80p			{ width:80% }
 .cssReset .w88p, .w88p			{ width:88% }
 .cssReset .w78p, .w78p			{ width:78% }
 .cssReset .w70p, .w70p			{ width:70% }
