@@ -61,7 +61,7 @@ public class LinguisticsService {
 		List<String> list = new ArrayList<String>();
 		TreeMap<Character,List<String>> map = new TreeMap<Character,List<String>>();
 		HttpResponse response = getDocument(fileName);
-		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent(),"ISO-8859-1"));
 		String line = "";
 		Character tmpKey = null;
 		while ((line = reader.readLine()) != null) {
@@ -89,7 +89,7 @@ public class LinguisticsService {
 		List<BasicNameValuePair> vpList = new ArrayList<BasicNameValuePair>(); 
 		List<String> list = new ArrayList<String>();
 		HttpResponse response = getDocument(fileName);
-		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		BufferedReader reader= new BufferedReader(new InputStreamReader(response.getEntity().getContent(),"ISO-8859-1"));
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			line = StringUtils.trimToEmpty(line.trim());
