@@ -95,7 +95,7 @@
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/rankingRuleGuidelines.jpg"></div>
-		<div id="relevancy" class="relevancy fsize12">		
+		<div id="relevancy" class="relevancy fsize12" style="display: none;">		
 			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 					<div class="floatL">Rule Info</div>
