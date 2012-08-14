@@ -10,9 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.cookie.CookieUtils;
@@ -51,7 +55,6 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 		response.addCookie(CookieUtils.expireNow("server.selection", request.getContextPath()));
 		response.addCookie(CookieUtils.expireNow("server.selected", request.getContextPath()));
 				
-		System.out.println(request.getContextPath());
 		User user = new User();
 		user.setUsername(obtainUsername(request));
 		user.setLastAccessDate(new Date());
@@ -73,6 +76,15 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 	throws IOException, ServletException {
 
 		logger.info("===Failed Login===");
+		try {
+			if (daoService.getUser(obtainUsername(request)) == null) {
+				WebApplicationContext webAppContext = ContextLoader.getCurrentWebApplicationContext();
+				MessageSource messageSource = (MessageSource)webAppContext.getBean("messageSource");
+				failed = new AuthenticationCredentialsNotFoundException(messageSource.getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", null, null));
+			}
+		} catch (DaoException e) {
+			logger.error("Failed to get user! " + e.getMessage(), e);
+		}
 		super.unsuccessfulAuthentication(request, response, failed);
 		User user = new User();
 		user.setUsername(obtainUsername(request));

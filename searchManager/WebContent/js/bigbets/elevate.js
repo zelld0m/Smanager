@@ -355,7 +355,7 @@
 			moduleName: moduleName,
 			rule: selectedRule,
 			authorizeRuleBackup: true,
-			authorizeSubmitForApproval: true, // TODO: verify if need to be controlled user access
+			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 			afterSubmitForApprovalRequest:function(ruleStatus){
 				selectedRuleStatus = ruleStatus;
 				showElevate();

@@ -206,22 +206,24 @@ function initFileUploads() {
 		};
 
 		var useTabs = function(){
-			$(".tabs").each(function() {
-				var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
-				if (tabid == undefined || tabid == null || tabid == "") {
-					$(this).tabs({
-						cookie: {
-							expires: 30
-						}
-					});
-				}
-				else {
-					$(this).tabs({
-						cookie: {
-							expires: 30,
-							name: tabid
-						}
-					});
+			$(".tabs").each(function(idx, el) {
+				if($(this).attr("id")!=="redirect-type"){
+					var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
+					if (tabid == undefined || tabid == null || tabid == "") {
+						$(this).tabs({
+							cookie: {
+								expires: 30
+							}
+						});
+					}
+					else {
+						$(this).tabs({
+							cookie: {
+								expires: 30,
+								name: tabid
+							}
+						});
+					}
 				}
 			});
 		};

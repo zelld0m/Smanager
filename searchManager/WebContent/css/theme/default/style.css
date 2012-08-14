@@ -835,6 +835,9 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .dynamicAttribute table td ul { list-style: none }
 
 
+.conditionItem img:hover { cursor: pointer }
+
+
 
 
 

@@ -117,6 +117,6 @@ public class ZeroResultService {
 	
 	@RemoteMethod
 	public boolean sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
-		return reportNotificationMailService.sendZeroResult(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients);
+		return reportNotificationMailService.sendZeroResult(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients,new ByteArrayInputStream("Count,Keyword".getBytes()),"text/csv");
 	}
 }
