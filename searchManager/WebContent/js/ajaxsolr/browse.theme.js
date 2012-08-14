@@ -55,38 +55,38 @@
 	AjaxSolr.theme.prototype.noSearchResult = function (keyword) {
 		var output  = '';
 
-		output  +='<div class="containerAB txtAL">';
+		output  +='<div class="marT10 txtAL">';
 		output  +='<h2>No products found for "' + keyword + '"</h2>';
-		output  +='<p class="contentAB">Proin varius dapibus metus, ac gravida enim pretium sed. Phasellus varius, elit id posuere vestibulum, justo metus consectetur odio, in consectetur turpis metus et odio. </p>';
-		output  +='<ol class="marT10 marRL20">';
-		output  +='<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>';
-		output  +='<li>Morbi eget leo sit amet sapien commodo ultricies sed id turpis. Aenean tortor arcu, porttitor sed placerat at, adipiscing vitae metus. </li>';
-		output  +='<li>Donec vitae metus lacus, at sollicitudin leo. Proin metus tellus, molestie in fermentum eu, congue a risus.</li>';
-		output  +='</ol>';
+//		output  +='<p class="contentAB">Proin varius dapibus metus, ac gravida enim pretium sed. Phasellus varius, elit id posuere vestibulum, justo metus consectetur odio, in consectetur turpis metus et odio. </p>';
+//		output  +='<ol class="marT10 marRL20">';
+//		output  +='<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>';
+//		output  +='<li>Morbi eget leo sit amet sapien commodo ultricies sed id turpis. Aenean tortor arcu, porttitor sed placerat at, adipiscing vitae metus. </li>';
+//		output  +='<li>Donec vitae metus lacus, at sollicitudin leo. Proin metus tellus, molestie in fermentum eu, congue a risus.</li>';
+//		output  +='</ol>';
 		output  +='</div>';
 
-		output  +='<div class="containerAC txtAL clearfix">';
-		output  +='<h2>Browse By Product Category</h2>';
-		output  +='<p class="contentAC">';
-		output  +='<ul>';
-		output  +='	<li>Computers</li>';
-		output  +='<li>Servers</li>';
-		output  +='<li>Storage</li>';
-		output  +='<li>Printers</li>';
-		output  +='<li>Software</li>';
-		output  +='<li>Networking</li>';
-		output  +='<li>Displays</li>';
-		output  +='<li>Accessories</li>';
-		output  +='<li>Power</li>';
-		output  +='<li>Memory</li>';
-		output  +='<li>Scanners</li>';
-		output  +='<li>Electronics</li>';
-		output  +='<li>Supplies</li>';
-		output  +='<li>Projectors</li>';
-		output  +='<li>Browse All Categories</li>';
-		output  +='</ul>';
-		output  +='</p>';
-		output  +='</div>';
+//		output  +='<div class="containerAC txtAL clearfix">';
+//		output  +='<h2>Browse By Product Category</h2>';
+//		output  +='<p class="contentAC">';
+//		output  +='<ul>';
+//		output  +='	<li>Computers</li>';
+//		output  +='<li>Servers</li>';
+//		output  +='<li>Storage</li>';
+//		output  +='<li>Printers</li>';
+//		output  +='<li>Software</li>';
+//		output  +='<li>Networking</li>';
+//		output  +='<li>Displays</li>';
+//		output  +='<li>Accessories</li>';
+//		output  +='<li>Power</li>';
+//		output  +='<li>Memory</li>';
+//		output  +='<li>Scanners</li>';
+//		output  +='<li>Electronics</li>';
+//		output  +='<li>Supplies</li>';
+//		output  +='<li>Projectors</li>';
+//		output  +='<li>Browse All Categories</li>';
+//		output  +='</ul>';
+//		output  +='</p>';
+//		output  +='</div>';
 
 		return $(output);
 	};
@@ -103,6 +103,30 @@
 		return $(output);
 	};
 
+	AjaxSolr.theme.prototype.dynamicAttributeFilter = function() {
+		var output  = '';
+
+		output  += '<div class="box marT8">';
+		output  += '	<h2>Condition</h2>';
+		output  += '	<ul>';
+		output  += '		<li><input type="checkbox" id="Refurbished_Flag" class="checkboxFilter"> Refurbished </li>';
+		output  += '		<li><input type="checkbox" id="OpenBox_Flag" class="checkboxFilter"> Open Box </li>';
+		output  += '		<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>';
+		output  += '	</ul>';
+		output  += '</div>';
+
+		output  += '<div class="box marT8">';
+		output  += '	<h2>License Product</h2>';
+		output  += '	<select class="dropdownFilter mar10 w215" id="licenseFilter">';
+		output  += '		<option value="all">Both License & Non-License</option>';
+		output  += '		<option value="Licence_Flag:1">License Product Only</option>';
+		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
+		output  += '	</select>';
+		output  += '</div>';
+
+		return $(output);
+	};
+	
 	AjaxSolr.theme.prototype.productAttributeFilter = function() {
 		var output  = '';
 
