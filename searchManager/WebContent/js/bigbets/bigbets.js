@@ -133,7 +133,7 @@
 							
 							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
 							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-							auditTemplate = auditTemplate.replace("%%comment%%", item.comment);
+							auditTemplate = auditTemplate.replace("%%comment%%",item.comment.replace(new RegExp("&",'g'),"&amp;"));
 							auditItems += auditTemplate;
 						}
 
@@ -172,7 +172,7 @@
 
 							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
 							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-							auditTemplate = auditTemplate.replace("%%comment%%", item.details);
+							auditTemplate = auditTemplate.replace("%%comment%%", item.details.replace(new RegExp("&",'g'),"&amp;"));
 							auditItems += auditTemplate;
 						}
 
@@ -211,7 +211,7 @@
 
 							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
 							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-							auditTemplate = auditTemplate.replace("%%comment%%", item.details);
+							auditTemplate = auditTemplate.replace("%%comment%%", item.details.replace(new RegExp("&",'g'),"&amp;"));
 							auditItems += auditTemplate;
 						}
 
@@ -250,7 +250,7 @@
 
 							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
 							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-							auditTemplate = auditTemplate.replace("%%comment%%", item.details);
+							auditTemplate = auditTemplate.replace("%%comment%%", item.details.replace(new RegExp("&",'g'),"&amp;"));
 							auditItems += auditTemplate;
 						}
 
@@ -289,7 +289,7 @@
 
 							auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
 							auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-							auditTemplate = auditTemplate.replace("%%comment%%", item.details);
+							auditTemplate = auditTemplate.replace("%%comment%%", item.details.replace(new RegExp("&",'g'),"&amp;"));
 							auditItems += auditTemplate;
 						}
 
@@ -344,7 +344,7 @@
 									if (i%0==0) $(commentTemplate).find("div#commentTemplate" + id + " div").addClass("altBg"); 
 									commentTemplate = commentTemplate.replace("%%timestamp%%",item.date);
 									commentTemplate = commentTemplate.replace("%%commentor%%",item.username);
-									commentTemplate = commentTemplate.replace("%%comment%%",item.comment);
+									commentTemplate = commentTemplate.replace("%%comment%%",item.comment.replace(new RegExp("&",'g'),"&amp;"));
 									commentItems += commentTemplate;
 								}
 
@@ -373,7 +373,7 @@
 									if (i%0==0) $(commentTemplate).find("div#commentTemplate" + id + " div").addClass("altBg"); 
 									commentTemplate = commentTemplate.replace("%%timestamp%%",item.date);
 									commentTemplate = commentTemplate.replace("%%commentor%%",item.username);
-									commentTemplate = commentTemplate.replace("%%comment%%",item.comment);
+									commentTemplate = commentTemplate.replace("%%comment%%",item.comment.replace(new RegExp("&",'g'),"&amp;"));
 									commentItems += commentTemplate;
 								}
 
