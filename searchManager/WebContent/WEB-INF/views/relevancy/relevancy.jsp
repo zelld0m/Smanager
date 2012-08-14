@@ -106,7 +106,7 @@
 					<div class="clearB"></div>
 				</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
-					<label><input id="name" type="text" class="w240 marT5"/></label>
+					<label><input id="name" type="text" class="w240 marT5" maxlength="100"/></label>
 					<div class="clearB"></div>			
 					<label class="floatL w70 marT5 padT3">Schedule</label> 
 					<label><input id="startDate" name="startDate" type="text" class="w70 marT5"></label> 
