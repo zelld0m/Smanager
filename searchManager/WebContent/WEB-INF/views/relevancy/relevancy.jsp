@@ -161,7 +161,7 @@
 	
 	<div id="addRelevancyTemplate" style="display:none">
 		<div class="w282 padT10 newRelevancy">
-			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="50"></label><div class="clearB"></div>
+			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Schedule </label> <label><input name="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input name="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185" maxlength="255"></textarea> </label><div class="clearB"></div>
 			<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>

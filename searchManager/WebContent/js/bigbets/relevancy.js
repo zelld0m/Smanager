@@ -1010,6 +1010,9 @@
 			else if (!isAllowedName(ruleName)){
 				showMessage("#name", "Rule name contains invalid value.");
 			}
+			else if (ruleName.length>100){
+				showMessage("#name","Name should not exceed 100 characters.");
+			}
 			else if (!isAscii(description)) {
 				showMessage("textarea#description", "Description contains non-ASCII characters.");										
 			}
@@ -1301,7 +1304,7 @@
 															if (data!=null){
 																base.getList(name, 1);
 																setRelevancy(data);
-																showActionResponse(1, "add", name);
+																showActionResponse(1, "add", popName);
 																addRuleFieldValue("q.alt", "*:*");
 															}else{
 																setRelevancy(selectedRule);
