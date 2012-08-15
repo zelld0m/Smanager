@@ -19,17 +19,17 @@ public class DAOConstants {
 	// ELEVATE
 	public static final String SP_ADD_ELEVATE 						= "usp_Add_Elevate_NEW";
 	public static final String SP_GET_ELEVATE 						= "usp_Get_Elevate_NEW";
-	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value";
+	public static final String SP_GET_ELEVATE_ITEM 					= "usp_Get_Elevate_Value_NEW";
 	public static final String SP_GET_NO_EXPIRY_ELEVATE 			= "usp_Get_Elevate_NoExpiry";
 	public static final String SP_UPDATE_ELEVATE 					= "usp_Update_Elevate_NEW";
 	public static final String SP_UPDATE_ELEVATE_EXPIRY_DATE 		= "usp_Update_Elevate_Expiry_Date_NEW";
-	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment";
-	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment";
+	public static final String SP_UPDATE_ELEVATE_COMMENT 			= "usp_Update_Elevate_Comment_NEW";
+	public static final String SP_APPEND_ELEVATE_COMMENT 			= "usp_Append_Elevate_Comment_NEW";
 	public static final String SP_DELETE_ELEVATE 					= "usp_Delete_Elevate_NEW";
 	// EXCLUDE
 	public static final String SP_ADD_EXCLUDE 						= "usp_Add_Exclude_NEW";
 	public static final String SP_GET_EXCLUDE 						= "usp_Get_Exclude_NEW";
-	public static final String SP_GET_EXCLUDE_ITEM 					= "usp_Get_Exclude_Value";
+	public static final String SP_GET_EXCLUDE_ITEM 					= "usp_Get_Exclude_Value_NEW";
 	public static final String SP_UPDATE_EXCLUDE					= "usp_Update_Exclude";
 	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude_NEW";
 	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
@@ -214,6 +214,7 @@ public class DAOConstants {
 	public static final String PARAM_ADMIN				 			= "admin";
 	public static final String PARAM_MEMBER_TYPE_ID					= "member_type_id";
 	public static final String PARAM_FACET_NAME						= "facet_name";
+	public static final String PARAM_FORCE_ADD						= "force_add";
 
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
@@ -291,6 +292,8 @@ public class DAOConstants {
 	
 	public static final String COLUMN_MEMBER_TYPE_ID	 	 		= "member_type_id";
 	public static final String COLUMN_MEMBER_ID 					= "member_id";
+	public static final String COLUMN_FORCE_ADD 					= "force_add";
+	
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
 	

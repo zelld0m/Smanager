@@ -45,6 +45,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	private List<ElevateResult> elevatedList = null;
 	private List<String> expiredElevatedEDPs = null;
 	private List<Map<String,String>> activeRules;
+	private List<ElevateResult> forceAddedList = null;
 
 	@Override
 	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
@@ -446,6 +447,21 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	@Override
 	public void setChangeKeyword(String changedKeyword) throws SearchException {
 		this.changedKeyword = changedKeyword;
+	}
+
+	public List<ElevateResult> getForceAddedList() {
+		return forceAddedList;
+	}
+
+	public void setForceAddedList(List<ElevateResult> forceAddedList) {
+		this.forceAddedList = forceAddedList;
+	}
+
+	@Override
+	public int getForceAddTemplateCounts(List<NameValuePair> requestParams)
+			throws SearchException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

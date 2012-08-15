@@ -15,11 +15,12 @@ public class ElevateResult extends ModelBean {
 	private MemberTypeEntity elevateEntity;
 	private String condition;
 	private String memberId;
+	private Boolean forceAdd;
 	
 	public ElevateResult() {
 	}
 	
-	public ElevateResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
+	public ElevateResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId, boolean forceAdd) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			elevateEntity = MemberTypeEntity.FACET;
 			this.condition = edp;
@@ -37,6 +38,7 @@ public class ElevateResult extends ModelBean {
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
 		this.memberId = memberId;
+		this.forceAdd = forceAdd;
 	}
 	
 	public StoreKeyword getStoreKeyword() {
@@ -98,5 +100,13 @@ public class ElevateResult extends ModelBean {
 
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
+	}
+
+	public Boolean isForceAdd() {
+		return forceAdd;
+	}
+
+	public void setForceAdd(Boolean forceAdd) {
+		this.forceAdd = forceAdd;
 	}
 }

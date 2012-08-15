@@ -24,6 +24,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.directwebremoting.json.types.JsonArray;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.CNetFacetTemplate;
@@ -52,6 +53,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 
 	private List<ElevateResult> elevatedList = null;
 	private List<String> expiredElevatedEDPs = null;
+	private List<ElevateResult> forceAddedList = null;
 
 	public SolrJsonResponseParser() {
 		JsonConfig jsonConfig = new JsonConfig();
@@ -165,6 +167,44 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	}
 
 	@Override
+	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
+		int numFound = -1;
+		try {
+			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
+			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
+			requestParams.add(new BasicNameValuePair("defType", "dismax"));
+
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
+			int count = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			if (count > 0) {
+				JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
+				for (int i = 0; i < facetNames.size(); i++) {
+					String facet = facetNames.getString(i);
+					JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
+					for (int j = 0; j < facetValues.size(); j++) {
+						String facetValue = facetValues.getString(j);
+						int origFacetCount = 0;
+						try {
+							origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
+						} catch (Exception ex) {
+							origFacetCount = 1;
+						}
+						initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount);
+					}
+				}
+				numFound += count;
+				((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.ATTR_NUM_FOUND, numFound);
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get template counts" ,e);
+		}
+		return numFound;
+	}
+
+	@Override
 	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException {
 		int numElevateFound = -1;
 		try {
@@ -223,17 +263,29 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			Map<String, JSONObject> explainMap = new HashMap<String, JSONObject>();
 			List<JSONObject> docList = new ArrayList<JSONObject>();
 			int size = startRow + requestedRows;
-			for (ElevateResult elevateResult : elevatedList) {
+			BasicNameValuePair kwNvp = null;
+			if (forceAddedList.size() > 0) {
+				for (NameValuePair nameValuePair : requestParams) {
+					if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
+						kwNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD,nameValuePair.getValue());
+						break;
+					}
+				}
+			}
+			for (ElevateResult e : elevatedList) {
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
 				BasicNameValuePair excludeFacetNVP = null;
 				StringBuilder elevateValues = new StringBuilder();
 				StringBuilder elevateFacetValues = new StringBuilder();
-				if (elevateResult.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp().toString());
+				if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + e.getEdp().toString());
+					if (e.isForceAdd() && kwNvp!=null) {
+						requestParams.remove(kwNvp);
+					}
 				} else {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().toString());
-					generateElevateList(elevateValues, elevateFacetValues, elevatedList, elevateResult);
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().toString());
+					generateElevateList(elevateValues, elevateFacetValues, elevatedList, e);
 					if (elevateValues.length() > 0) {
 						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
 						requestParams.add(excludeEDPNVP);
@@ -246,6 +298,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				requestParams.add(nvp);
 				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 				requestParams.remove(nvp);
+				if (e.isForceAdd()  && kwNvp!=null) {
+					requestParams.add(kwNvp);
+				}
 				if (elevateValues.length() > 0) {
 					requestParams.remove(excludeEDPNVP);
 				}				
@@ -262,7 +317,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				for (int j = 0, length = docs.size(); j < length; j++) {
 					JSONObject doc = (JSONObject)docs.get(j);
 					String edp = doc.getString("EDP");
-					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(elevateResult.getLocation()));
+					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
 					docList.add(doc);
 					explainMap.put(edp, tmpExplain);
 				}
@@ -517,6 +572,14 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	@Override
 	public void setChangeKeyword(String changedKeyword) throws SearchException {
 		this.changedKeyword = changedKeyword;
+	}
+
+	public List<ElevateResult> getForceAddedList() {
+		return forceAddedList;
+	}
+
+	public void setForceAddedList(List<ElevateResult> forceAddedList) {
+		this.forceAddedList = forceAddedList;
 	}
 
 }

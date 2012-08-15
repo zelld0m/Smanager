@@ -84,6 +84,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -256,6 +257,7 @@ public class ExcludeDAO {
 	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExclude()", e);

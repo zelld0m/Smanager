@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -101,6 +102,23 @@ public class SearchServlet extends HttpServlet {
 	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? "" : list.get(0).getValue();
+	}
+
+	private static StringBuffer getAllValuesFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
+		List<NameValuePair> list = paramMap.get(paramterName);
+		StringBuffer value = new StringBuffer();
+		if (list!=null) {
+			boolean firstFlag = true;
+			for (NameValuePair nameValuePair : list) {
+				if (firstFlag) {
+					firstFlag = false;
+				} else {
+					value.append(" AND ");
+				}
+				value.append(nameValuePair.getValue());
+			}
+		}
+		return value;
 	}
 
 	private static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
@@ -486,8 +504,8 @@ public class SearchServlet extends HttpServlet {
 				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 	
-
 			List<ElevateResult> elevatedList = null;
+			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			
@@ -498,7 +516,8 @@ public class SearchServlet extends HttpServlet {
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					}
 					if (!disableElevate) {
-						if (configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+						String sort = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT);
+						if (configManager.getStoreParameter(coreName, "sort").equals(sort)) {
 							ElevateResult elevateFilter = new ElevateResult();
 							elevateFilter.setStoreKeyword(sk);
 							SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
@@ -514,10 +533,17 @@ public class SearchServlet extends HttpServlet {
 									if (logger.isDebugEnabled()) {
 										logger.debug("\t" + expired.getEdp());
 									}
-									expiredElevatedList.add(expired.getEdp());
+									if (MemberTypeEntity.PART_NUMBER.equals(expired.getElevateEntity())) {
+										expiredElevatedList.add(expired.getEdp());
+									}
 								}
 							}
 						}
+						ElevateResult forceAddFilter = new ElevateResult();
+						forceAddFilter.setStoreKeyword(sk);
+						forceAddFilter.setForceAdd(true);
+						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
+						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
 					}
 					
 					if (!disableExclude) {
@@ -564,6 +590,7 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setSolrQueryParameters(paramMap);
 			solrHelper.setElevatedItems(elevatedList);
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
+			solrHelper.setForceAddedList(forceAddList);
 			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
 				solrHelper.setChangeKeyword(keyword);				
 			}
@@ -623,6 +650,7 @@ public class SearchServlet extends HttpServlet {
 			BasicNameValuePair elevateNvp = null;
 			BasicNameValuePair elevateFacetNvp = null;
 			Integer numFound = 0;
+			Integer numForceAddFound = 0;
 			Integer numElevateFound = 0;
 
 			// send solr request
@@ -644,7 +672,30 @@ public class SearchServlet extends HttpServlet {
 				}
 			});
 			tasks++;
-
+			Future<Integer> getForceAddTemplateCount = null;
+			if (forceAddList.size() > 0) {
+				NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+				nameValuePairs.remove(kwNvp);
+				StringBuffer buffer = new StringBuffer("EDP:(");
+				for (ElevateResult e : forceAddList) {
+					buffer.append(e.getEdp()).append(" ");
+				}
+				buffer.append(")");
+				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
+				nameValuePairs.add(edpNvp);
+				final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+				getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
+					@Override
+					public Integer call() throws Exception {
+						return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
+					}
+				});
+				tasks++;
+				nameValuePairs.remove(edpNvp);
+				if (kwNvp != null) {
+					nameValuePairs.add(kwNvp);
+				}
+			}
 			// TODO: optional remove the spellcheck parameters for succeeding requests
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
@@ -702,6 +753,10 @@ public class SearchServlet extends HttpServlet {
 					numFound = completed.get();
 					logger.debug("Results found: " + numFound);
 				}
+				else if (completed.equals(getForceAddTemplateCount)) {
+					numForceAddFound = completed.get();
+					logger.debug("Results found: " + numFound);
+				}
 				else if (completed.equals(getElevatedCount)) {
 					numElevateFound += completed.get();
 					logger.debug("Elevate result size: " + numElevateFound);
@@ -713,6 +768,7 @@ public class SearchServlet extends HttpServlet {
 				tasks--;
 			}
 
+			numElevateFound += numForceAddFound;
 
 			if (requestedRows != 0 && numFound != 0) {
 

@@ -72,6 +72,8 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_TYPE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.VARCHAR));
 		}
 	}
 
@@ -88,6 +90,8 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.INTEGER));
 		}
 
 		@Override
@@ -107,7 +111,8 @@ public class ElevateDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
 	            }
 	        }));
 		}
@@ -131,12 +136,13 @@ public class ElevateDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
 	            }
 	        }));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 	        compile();
 	    }
 	}
@@ -171,7 +177,8 @@ public class ElevateDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
 	            }
 	        }));
 		}
@@ -189,7 +196,6 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 	}
@@ -201,9 +207,7 @@ public class ElevateDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));	
 		}
@@ -216,9 +220,7 @@ public class ElevateDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
@@ -231,9 +233,7 @@ public class ElevateDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
@@ -248,7 +248,7 @@ public class ElevateDAO {
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -276,7 +276,6 @@ public class ElevateDAO {
 	    		if (match == null) {
 		        	Map<String, Object> inputs = new HashMap<String, Object>();
 		            inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
-		            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
 		            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 		            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 		            inputs.put(DAOConstants.PARAM_VALUE, value);
@@ -284,6 +283,8 @@ public class ElevateDAO {
 		            inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
 		            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
 		            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
+		            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
+		            inputs.put(DAOConstants.PARAM_FORCE_ADD, elevate.isForceAdd()!=null && elevate.isForceAdd()?1:0);
 		            return DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    		}
 	    	}
@@ -304,6 +305,8 @@ public class ElevateDAO {
 	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
+	        inputs.put(DAOConstants.PARAM_FORCE_ADD, criteria.getModel().isForceAdd());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getElevate()", e);
@@ -315,7 +318,7 @@ public class ElevateDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 	    	return DAOUtils.getItem(getItemSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getElevateItem()", e);
@@ -343,10 +346,15 @@ public class ElevateDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        if (!StringUtils.isBlank(elevate.getEdp())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        } else if (!StringUtils.isBlank(elevate.getCondition())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getCondition());
+	        } else {
+	        	inputs.put(DAOConstants.PARAM_VALUE, null);
+	        }
 	        inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, elevate.getLocation());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
-	        inputs.put(DAOConstants.PARAM_FACET_NAME, elevate.getElevateEntity().toString());
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 	        return DAOUtils.getUpdateCount(updateSP.execute(inputs));
 		} catch (Exception e) {
@@ -359,9 +367,7 @@ public class ElevateDAO {
 		try {
     		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 	        inputs.put(DAOConstants.PARAM_EXPIRY_DATE, elevate.getExpiryDate());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(updateExpiryDateSP.execute(inputs));
@@ -375,9 +381,7 @@ public class ElevateDAO {
 		try {
     		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 	        inputs.put(DAOConstants.PARAM_COMMENT, elevate.getComment());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
@@ -391,9 +395,7 @@ public class ElevateDAO {
 		try {
     		DAOValidation.checkElevatePK(elevate);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 	        inputs.put(DAOConstants.PARAM_COMMENT, elevate.getComment());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
