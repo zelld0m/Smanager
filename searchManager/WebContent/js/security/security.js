@@ -376,8 +376,9 @@
 									$tr.find("td#role > span").html(list[i].groupId);
 
 									$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].formattedCreatedDate);
-									$tr.find("td#status > span").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
-									$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].thruDate.toDateString());
+									$tr.find("td#status > span#nonLocked").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
+									$tr.find("td#status > span#nonExpired").html(list[i].isAccountNonExpired==true? "Valid" : "Expired");
+									$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].formattedThruDate);
 
 									$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccessDate==null? "" : list[i].lastAccessDate.toUTCString());
 									$tr.find("td#lastAccess > span#ipAccess").html(list[i].ip);
