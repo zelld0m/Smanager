@@ -105,7 +105,7 @@
 				var $item = item;
 				var self = this;
 
-				var id = $.formatAsId($item["edp"]);
+				var id = $.formatAsId($item["memberId"]);
 				$li.attr("id", id);
 
 				$li.find(".sortOrderTextBox").val($item["location"]);
@@ -140,7 +140,7 @@
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	
 						if ($item["formattedExpiryDate"] !== dateText){
-							ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["edp"], dateText, {
+							ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 								callback: function(code){
 									showActionResponse(code, "update", "expiry date of SKU#: " + $item["dpNo"]);
 									if(code==1) self.showRuleContent();
@@ -277,20 +277,21 @@
 			addRuleItemOptionListener: function(){
 				var self = this;
 
-				$("#filterDisplay").on({
+				$("#filterDisplay").off().on({
 					change: function(e){
-						self.setRuleItemFilter($(this).val());
+						$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]),$(this).val(),{expires: 1, path:GLOBAL_contextPath});
+						self.setRuleItemFilter();
 					}
 				});
 				
 				$("#tileViewIcon").off().on({click:function(e) {
-					$.cookie('elevate.display', 'tileView', {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {expires: 1, path:GLOBAL_contextPath});
 					$("#listViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
 
 				$("#listViewIcon").off().on({click:function(e) {
-					$.cookie('elevate.display', 'listView', {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {expires: 1, path:GLOBAL_contextPath});
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
@@ -300,10 +301,10 @@
 //				focus: setFieldEmptyHandler
 //				}, {text:addItemFieldDefaultText});
 
-//				$("#addItemBtn").off().on({
-//				click: showAddItem,
-//				mouseenter: showHoverInfo
-//				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+				$("#addRuleItemIcon").off().on({
+					click: function(e){}, //add here
+					mouseenter: showHoverInfo
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 
 				$("#clearRuleItemIcon").off().on({
 					click: function(e){
@@ -376,7 +377,7 @@
 						self.selectedRuleStatus = ruleStatus;
 						self.getRuleList();
 						self.setRuleItemDisplay();
-						self.populateRuleItem();
+						self.setRuleItemFilter();
 					}
 				});	
 			},
@@ -392,11 +393,11 @@
 
 				$("#ruleItemContainer").removeClass("tileView").removeClass("listView");
 
-				if ($.cookie('elevate.display')==="listView" || $.cookie('elevate.display')==="tileView"){
-					$("#ruleItemContainer").addClass($.cookie('elevate.display'));
-					$("#" + $.cookie('elevate.display') + "Icon").addClass("active");
+				if ($.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]))==="listView" || $.cookie('elevate.display'+ $.formatAsId(self.selectedRule["ruleId"]))==="tileView"){
+					$("#ruleItemContainer").addClass($.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"])));
+					$("#" + $.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"])) + "Icon").addClass("active");
 				}else{
-					$.cookie('elevate.display', self.defaultRuleItemDisplay, {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), self.defaultRuleItemDisplay, {expires: 1, path:GLOBAL_contextPath});
 					$("#ruleItemContainer").addClass(self.defaultRuleItemDisplay);
 					$("#" + self.defaultRuleItemDisplay + "Icon").addClass("active");				
 				}
@@ -404,13 +405,21 @@
 
 			setRuleItemFilter: function(value){
 				var self = this;
-				$.cookie('elevate.filter', value ,{expires: 1, path:GLOBAL_contextPath});
-				$("#filterDisplay").val(value);
-				self.populateRuleItem(1);
+				var selectedFilter = $.isNotBlank(value)? value : $.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]));
+				
+				if ($.isNotBlank(selectedFilter)){
+					$("#filterDisplay").val(selectedFilter);
+				}else{
+					$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{expires: 1, path:GLOBAL_contextPath});
+					$("#filterDisplay").val("all");
+				}
+				
+				self.populateRuleItem();
 			},
 			
 			getRuleItemFilter: function(){
-				var cookieFilter = $.trim($.cookie('elevate.filter'));
+				var self = this;
+				var cookieFilter = $.trim($.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"])));
 				var activefilter = $.isBlank(cookieFilter)? $("#filterDisplay").val() : cookieFilter;
 				return $.isBlank(activefilter) ? "all" : activefilter;
 			},
