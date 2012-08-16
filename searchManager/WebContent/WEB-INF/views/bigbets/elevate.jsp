@@ -26,9 +26,17 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
-	  <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
+	  <div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none">
       	<sec:authorize access="hasRole('CREATE_RULE')">
-      		<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
+      		<select id="selectRuleItemType" class="selectCombo w178" >
+				<option value="product">Product Item</option>
+				<option value="ims">IMS Categories</option>
+				<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
+					<option value="cnet">Facet Template Categories</option>
+				</c:if>
+				<option value="facet">Facets</option>
+			</select>
+			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
       	</sec:authorize>
       </div>
 	</div>

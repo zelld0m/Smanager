@@ -15,7 +15,7 @@
 			zeroCountHTMLCode: "&#133;",
 			defaultRuleItemDisplay: "tileView",
 			lockedItemDisplayText: "Item is locked",
-			
+
 			removeExpiryDateConfirmText: "This will remove expiry date associated to this rule. Continue?",
 			removeRuleItemConfirmText: "This will remove item associated to this rule. Continue?",
 			clearRuleItemConfirmText: "This will remove all items associated to this rule. Continue?",
@@ -113,7 +113,7 @@
 				$li.find(".manufacturer").html($item["manufacturer"]);
 				$li.find(".sku").html($item["dpNo"]);
 				$li.find(".mfrpn").html($item["mfrPN"]);
-				
+
 				if (item["isExpired"]){
 					$li.find(".validityDaysExpired").show();
 					$li.find(".validityDays").empty();
@@ -129,7 +129,7 @@
 					$li.find(".validityDateTextBox").val(formattedExpiryDate);
 					$li.find(".clearDate").show();
 				};
-				
+
 				$li.find(".validityDateTextBox").datepicker({
 					showOn: "both",
 					minDate: self.dateMinDate,
@@ -153,9 +153,9 @@
 				$li.find('.clearDate').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						
+
 						if (confirm(self.removeExpiryDateConfirmText)){
-							ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], e.data.item["edp"], "", {
+							ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], e.data.item["memberId"], "", {
 								callback: function(code){
 									showActionResponse(code, "update", "expiry date of SKU#: " + e.data.item["dpNo"]);
 									if(code==1) self.showRuleContent();
@@ -164,13 +164,13 @@
 						}
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
-				
+
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						
+
 						if(confirm(self.removeRuleItemConfirmText)){
-							ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["edp"], {
+							ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
 								callback: function(code){
 									showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 									self.showRuleContent();
@@ -180,11 +180,11 @@
 								}
 							});
 						}
-						
+
 					},
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
-				
+
 				setTimeout(function(){		
 					if ($.isBlank($item["dpNo"])){
 						$li.find(".itemImg").prop("src","../images/padlock_img.jpg"); 
@@ -205,30 +205,30 @@
 			preShowRuleContent: function(){
 				var self = this;
 				$("#preloader").show();
-				$("#noSelected").hide();
+				$("#noSelected,#ruleSelected,#ruleItemDisplayOptions").hide();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
 			},
-			
+
 			postShowRuleContent: function(){
 				var self = this;
 				$("#preloader,#noSelected").hide();
-				$("#ruleSelected").show();
+				$("#ruleSelected, #addRuleItemContainer").show();
 				$("#titleText").html(self.moduleName + " for ");
 				$("#titleHeader").html(self.selectedRule["ruleName"]);
 			},
-			
+
 			populateRuleItem: function(page){
 				var self = this;
-				self.selectedRulePage = page;
+				self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
 				self.selectedRuleItemTotal = 0;
 				var $ul = $("ul#ruleItemHolder");
 				$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
 
-				ElevateServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], page, self.ruleItemPageSize, {
+				ElevateServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
 					callback: function(data){
 						self.selectedRuleItemTotal = data.totalSize;
 						var list = data.list;
-						
+
 						if(self.getRuleItemFilter()==="all"){
 							var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
 							$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
@@ -238,22 +238,9 @@
 							$('#ruleItemDisplayOptions').hide(); 
 						}else{
 							$('#ruleItemDisplayOptions').show();
-							
-							$("#tileViewIcon").off().on({click:function(e) {
-								$.cookie('elevate.display', 'tileView', {expires: 1, path:GLOBAL_contextPath});
-								$("#listViewIcon").removeClass("active");
-								self.setRuleItemDisplay();
-							}
-							});
-
-							$("#listViewIcon").off().on({click:function(e) {
-								$.cookie('elevate.display', 'listView', {expires: 1, path:GLOBAL_contextPath});
-								$("#tileViewIcon").removeClass("active");
-								self.setRuleItemDisplay();
-							}
-							});
+							self.addRuleItemOptionListener();
 						}
-						
+
 						$("#ruleItemPagingTop, #ruleItemPagingBottom").paginate({
 							currentPage:page, 
 							pageSize:self.ruleItemPageSize,
@@ -276,7 +263,7 @@
 								$ul.append($li);
 							}
 						};
-						
+
 					},
 					preHook: function(){
 						self.preShowRuleContent();
@@ -285,6 +272,82 @@
 						self.postShowRuleContent();
 					}
 				});
+			},
+
+			addRuleItemOptionListener: function(){
+				var self = this;
+
+				$("#filterDisplay").on({
+					change: function(e){
+						self.setRuleItemFilter($(this).val());
+					}
+				});
+				
+				$("#tileViewIcon").off().on({click:function(e) {
+					$.cookie('elevate.display', 'tileView', {expires: 1, path:GLOBAL_contextPath});
+					$("#listViewIcon").removeClass("active");
+					self.setRuleItemDisplay();
+				}});
+
+				$("#listViewIcon").off().on({click:function(e) {
+					$.cookie('elevate.display', 'listView', {expires: 1, path:GLOBAL_contextPath});
+					$("#tileViewIcon").removeClass("active");
+					self.setRuleItemDisplay();
+				}});
+
+//				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
+//				blur: setFieldDefaultTextHandler,
+//				focus: setFieldEmptyHandler
+//				}, {text:addItemFieldDefaultText});
+
+//				$("#addItemBtn").off().on({
+//				click: showAddItem,
+//				mouseenter: showHoverInfo
+//				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+
+				$("#clearRuleItemIcon").off().on({
+					click: function(e){
+						console.log("triggered");
+						if(e.data.locked) return;
+						if (confirm(self.clearRuleItemConfirmText)){
+							ElevateServiceJS.clearRule(self.selectedRule["ruleName"], {
+								callback: function(code){
+									showActionResponse(code, "clear", self.selectedRule["ruleName"]);
+									self.showRuleContent();
+								}
+							});
+						}
+					},
+					mouseenter: showHoverInfo,
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+
+				$("#downloadRuleItemIcon").download({
+					headerText:"Download Elevate",
+					hasPageOption: true,
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["keyword"] = self.selectedRule["ruleName"];
+						params["page"] = (e.data.page==="current") ? self.selectedRuleItemPage : e.data.page;
+						params["filter"] = self.getRuleItemFilter();
+						params["itemperpage"] = self.ruleItemPageSize;
+						params["clientTimezone"] = +new Date();
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
+
 			},
 
 			showRuleContent: function(){
@@ -313,59 +376,7 @@
 						self.selectedRuleStatus = ruleStatus;
 						self.getRuleList();
 						self.setRuleItemDisplay();
-						self.populateRuleItem(1);
-
-						$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
-							blur: setFieldDefaultTextHandler,
-							focus: setFieldEmptyHandler
-						}, {text:addItemFieldDefaultText});
-
-						$("#addItemBtn").off().on({
-							click: showAddItem,
-							mouseenter: showHoverInfo
-						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
-
-						$("#clearRuleItemIcon").off().on({
-							click: function(e){
-								if(e.data.locked) return;
-								if (confirm(self.clearRuleItemConfirmText)){
-									ElevateServiceJS.clearRule(self.selectedRule["ruleName"], {
-										callback: function(code){
-											showActionResponse(code, "clear", self.selectedRule["ruleName"]);
-											self.showRuleContent();
-										}
-									});
-								}
-							},
-							mouseenter: showHoverInfo,
-						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
-
-						$("#downloadRuleItemIcon").download({
-							headerText:"Download Elevate",
-							hasPageOption: true,
-							requestCallback:function(e){
-								var params = new Array();
-								var url = document.location.pathname + "/xls";
-								var urlParams = "";
-								var count = 0;
-
-								params["filename"] = e.data.filename;
-								params["type"] = e.data.type;
-								params["keyword"] = self.selectedRule["ruleName"];
-								params["page"] = (e.data.page==="current") ? self.selectedRuleItemPage : e.data.page;
-								params["filter"] = self.getRuleItemFilter();
-								params["itemperpage"] = self.ruleItemPageSize;
-								params["clientTimezone"] = +new Date();
-
-								for(var key in params){
-									if (count>0) urlParams +='&';
-									urlParams += (key + '=' + params[key]);
-									count++;
-								};
-
-								document.location.href = url + '?' + urlParams;
-							}
-						});
+						self.populateRuleItem();
 					}
 				});	
 			},
@@ -378,9 +389,9 @@
 
 			setRuleItemDisplay: function(){
 				var self = this;
-				
+
 				$("#ruleItemContainer").removeClass("tileView").removeClass("listView");
-			
+
 				if ($.cookie('elevate.display')==="listView" || $.cookie('elevate.display')==="tileView"){
 					$("#ruleItemContainer").addClass($.cookie('elevate.display'));
 					$("#" + $.cookie('elevate.display') + "Icon").addClass("active");
@@ -389,6 +400,13 @@
 					$("#ruleItemContainer").addClass(self.defaultRuleItemDisplay);
 					$("#" + self.defaultRuleItemDisplay + "Icon").addClass("active");				
 				}
+			},
+
+			setRuleItemFilter: function(value){
+				var self = this;
+				$.cookie('elevate.filter', value ,{expires: 1, path:GLOBAL_contextPath});
+				$("#filterDisplay").val(value);
+				self.populateRuleItem(1);
 			},
 			
 			getRuleItemFilter: function(){
