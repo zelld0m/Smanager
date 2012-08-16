@@ -72,7 +72,7 @@ public class DAOValidation {
     public static void checkElevatePK(ElevateResult elevate) throws DaoException {
     	checkObjectNotNull(elevate, ERROR_MESSAGE_NO_ELEVATE_VALUE);
     	checkStoreKeywordPK(elevate.getStoreKeyword());    	
-		checkStringNotEmpty(elevate.getEdp(), ERROR_MESSAGE_NO_ELEVATE_VALUE);
+//		checkStringNotEmpty(elevate.getEdp(), ERROR_MESSAGE_NO_ELEVATE_VALUE);
     }
 
     public static void checkExcludePK(ExcludeResult exclude) throws DaoException {

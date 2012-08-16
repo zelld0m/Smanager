@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
@@ -37,12 +38,12 @@ public class ElevateService{
 	@Autowired private DaoService daoService;
 
 	@RemoteMethod
-	public int updateElevateItem(String keyword, String productId, int position, String comment, String expiryDate){
+	public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
 		
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
-		elevate.setEdp(productId);
+		elevate.setMemberId(memberId);
 		try {
 			elevate = daoService.getElevateItem(elevate);
 		} catch (DaoException e) {
@@ -54,29 +55,39 @@ public class ElevateService{
 		}
 		
 		if (position!=elevate.getLocation()){
-			changes += ((updateElevate(keyword, productId, position) > 0)? 1 : 0);
+			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, productId, comment) > 0)? 1 : 0);
+			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
-			changes += ((updateExpiryDate(keyword, productId, expiryDate) > 0)? 1 : 0);
+		if (StringUtils.isNotBlank(condition)){
+			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
+		}
+		
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
+			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
 		return changes;
 	}
 
 	@RemoteMethod
-	public int addElevate(String keyword, String edp, int sequence, String expiryDate, String comment) {
+	public int addElevate(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
 		try {
-			logger.info(String.format("%s %s %d %s %s", keyword, edp, sequence, expiryDate, comment));
+			logger.info(String.format("%s %s %s %d %s %s", keyword, memberTypeId, value, sequence, expiryDate, comment));
 			String store = UtilityService.getStoreName();
 
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(edp);
+			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
+				e.setEdp(value);
+				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
+			} else {
+				e.setCondition(value);
+				e.setElevateEntity(MemberTypeEntity.FACET);
+			}
 			e.setLocation(sequence);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setCreatedBy(UtilityService.getUsername());
@@ -98,8 +109,10 @@ public class ElevateService{
 
 		ArrayList<String> passedList = new ArrayList<String>();
 		ArrayList<String> failedList = new ArrayList<String>();
+		ArrayList<String> forcedList = new ArrayList<String>();
 
 		resultMap.put("PASSED", passedList);
+		resultMap.put("FORCED", forcedList);
 		resultMap.put("FAILED", failedList);
 		
 		String server = UtilityService.getServerName();
@@ -112,26 +125,36 @@ public class ElevateService{
 		sequence = (sequence==0)? 1: sequence;
 		for(String partNumber: partNumbers){
 			count = 0;
+			ElevateResult e = new ElevateResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
+				if (StringUtils.isBlank(edp)) {
+					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
+					e.setForceAdd(true);
+				}
 				if (StringUtils.isNotBlank(edp)) {
-					ElevateResult e = new ElevateResult();
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
 					e.setEdp(edp);
 					e.setLocation(sequence++);
 					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 					e.setCreatedBy(UtilityService.getUsername());
 					e.setComment(UtilityService.formatComment(comment));
-					
+					e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addElevateResult(e);
 					}
+				} else {
+					
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
 			if (count > 0) {
-				passedList.add(StringUtils.trim(partNumber));						
+				if (e.isForceAdd()) {
+					forcedList.add(StringUtils.trim(partNumber));						
+				} else {
+					passedList.add(StringUtils.trim(partNumber));						
+				}
 			}
 			else {
 				failedList.add(StringUtils.trim(partNumber));
@@ -141,13 +164,13 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int updateExpiryDate(String keyword, String productId, String expiryDate){
+	public int updateExpiryDate(String keyword, String memberId, String expiryDate){
 		try {
-			logger.info(String.format("%s %s %s", keyword, productId, expiryDate));
+			logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateElevateResultExpiryDate(e);
@@ -158,9 +181,9 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int addComment(String keyword, String productId, String comment){
+	public int addComment(String keyword, String memberId, String comment){
 		try {
-			logger.info(String.format("%s %s %s", keyword, productId, comment));
+			logger.info(String.format("%s %s %s", keyword, memberId, comment));
 			String store = UtilityService.getStoreName();
 			
 			if(StringUtils.isNotBlank(comment)){
@@ -170,7 +193,7 @@ public class ElevateService{
 			
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			return daoService.appendElevateResultComment(e);
@@ -181,13 +204,13 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int deleteItemInRule(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String memberId) {
 		try {
-			logger.info(String.format("%s %s", keyword, productId));
+			logger.info(String.format("%s %s", keyword, memberId));
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.deleteElevateResult(e);
 		} catch (DaoException e) {
@@ -197,16 +220,25 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int updateElevate(String keyword, String productId, int sequence) {
+	public int updateElevate(String keyword, String memberId, int sequence, String condition) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, productId, sequence));
-			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
-			e.setLocation(sequence);
-			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateElevateResult(e);
+			logger.info(String.format("%s %s %d", keyword, memberId, sequence));
+			ElevateResult elevate = new ElevateResult();
+			elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			elevate.setMemberId(memberId);
+			try {
+				elevate = daoService.getElevateItem(elevate);
+			} catch (DaoException e) {
+				elevate = null;
+			}
+			if (elevate!=null) {
+				if (!StringUtils.isBlank(condition)) {
+					elevate.setCondition(condition);
+				}
+				elevate.setLocation(sequence);
+				elevate.setLastModifiedBy(UtilityService.getUsername());
+				return daoService.updateElevateResult(elevate);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateElevate()",e);
 		}
@@ -326,14 +358,14 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public ElevateProduct getElevatedProduct(String keyword, String productId) {
+	public ElevateProduct getElevatedProduct(String keyword, String memberId) {
 		try {
-			logger.info(String.format("%s %s", keyword, productId));
+			logger.info(String.format("%s %s", keyword, memberId));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			return daoService.getElevatedProduct(server, e);
 		} catch (DaoException e) {
 			logger.error("Failed during getElevatedProduct()",e);
@@ -342,8 +374,8 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public String getComment(String keyword, String productId) {
-		ElevateProduct elevatedProduct = getElevatedProduct(keyword, productId);
+	public String getComment(String keyword, String memberId) {
+		ElevateProduct elevatedProduct = getElevatedProduct(keyword, memberId);
 		if (elevatedProduct == null)
 			return StringUtils.EMPTY;
 

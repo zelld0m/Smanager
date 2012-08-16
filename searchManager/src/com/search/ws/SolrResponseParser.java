@@ -22,6 +22,10 @@ public interface SolrResponseParser {
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException;
 	public int getElevatedItems(List<NameValuePair> requestParams) throws SearchException;
+	public int getElevatedItems(List<NameValuePair> requestParams, List<ElevateResult> elevatedList) throws SearchException;
 	public int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException;
 	boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException;
+	public void setForceAddedList(List<ElevateResult> forceAddedList) throws SearchException;
+	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
+
 }

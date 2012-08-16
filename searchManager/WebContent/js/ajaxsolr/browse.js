@@ -94,11 +94,11 @@
 			//TODO: Make this dynamic
 			var facetTemplate;
 			facetTemplate = ['Category','Manufacturer', 'Platform'];
-			
+
 			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap"){
 				facetTemplate = ['Manufacturer', 'Platform'];
 			};
-			
+
 			var params = {
 					'facet': true,
 					'debugQuery': true,
@@ -122,15 +122,27 @@
 			Manager.store.addByValue("store", GLOBAL_store);
 
 			if ($("#select-server").is(":visible")){
-				$("#select-server").on({
+				$("#select-server").off().on({
 					change: function(event, data){
 						var reload;
-						if (data != undefined) {
+						console.log($.cookie("server.selected"));
+						console.log(reload);
+						console.log(data);
+						if ($.isNotBlank(data)) {
 							reload = data["reload"];
 						}
-						if (reload == undefined || reload == true) {
-							Manager.setSolrUrl(GLOBAL_solrUrl + GLOBAL_store + '/');
-							Manager.doRequest();						
+						if ($.isBlank(reload) || reload == true) {
+							console.log("set url");
+							UtilityServiceJS.getSolrConfig({
+								callback:function(data){	
+									var config = $.parseJSON(data);
+									Manager.setSolrUrl(config.solrUrl + GLOBAL_store + '/');
+									console.log(config.solrUrl);
+								},
+								postHook:function() {
+									Manager.doRequest();						
+								}
+							});					
 						}
 					}
 				});

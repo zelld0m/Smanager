@@ -20,266 +20,122 @@
 
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
-	
+
 	<div class="floatL w730 titlePlacer">		
 	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
 	  <div id="addItemHolder" class="floatL w180 txtAR padT7" style="display: none">
-      	<!--  input id="addItem" type="text" class="farial fsize12 fgray searchBox searchBoxIconLBg w90 marT1" maxlength="10"-->
       	<sec:authorize access="hasRole('CREATE_RULE')">
       		<a href="javascript:void(0);" id="addItemBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a>
       	</sec:authorize>
       </div>
-	 </div>
-	  
-	 <div id="submitForApproval"></div>
-	 
-	 <div class="clearB"></div>	
-	 
-	 <!--Add Item Content-->
-	<div id="addItemTemplate" style="display: none">
-		<div id="addOption" style="width: 257px">
-			<ul>
-				<li><a href="#addBySKU"><span>By SKU</span></a></li>
-			</ul>
-			
-			<!--  tab -->
-			<div id="addBySKU" class="mar0">
-				<h3 class="padT10"></h3>
-				<div class="clearB"></div>
-				
-				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">SKU #: </label> 
-					<label><span class="fsize10 fgray txtAR">(separated by whitespaces or commas)</span><textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
-					</label>
-				</div>
-				<div class="floatL w155 marT5">
-					<label class="floatL w60 marL5 padT5">Valid Until:</label> 
-					<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>
-				</div>
-				
-				<div class="floatL marT5" style="width: 97px">
-					<label class="floatL marL5 padT5" style="width: 55px">Elevation:</label>
-					<label><input id="addItemPosition" type="text" class="w25"></label>
-				</div>
-				<div class="clearB"></div>
-				<div class="clearB"></div>
-				<div class="floatL marT5 marL5">
-					<label class="w60 floatL padT5">Comment: </label> 
-					<label><textarea id="addItemComment" style="width: 180px; float: left; margin-bottom: 7px"></textarea>
-					</label>
-				</div>
-				<div align="right">
-					<a id="addItemToRuleBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Elevate</div>
-					</a>
-					<a id="clearBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div>
-					</a>
-				</div>
-				<div class="clearB"></div>
-			</div>
-			<!-- end tab -->
-		</div>
 	</div>
-
-	<!--Start Pagination-->
-<div id="sortableDisplayOptions" style="display: none">
-<ul class="viewSelect marT6">
-	<li class="fLgray2">|</li>
-	<li class="padR5 fLgray2">
-	<select id="filterDisplay" class="marTn3">
-		<option value="all">All</option>
-		<option value="active">Active</option>
-		<option value="expired">Expired</option>
-	</select></li>
-	<li class="padT1"><a href="javascript:void(0);" id="sortableTile" class="btnGraph" alt="Grid View" title="Grid View"><div class="btnGraph btnViewTile"></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="sortableList" class="btnGraph" alt="List View" title="List View"><div class="btnGraph btnViewList"></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" alt="Download" title="Download" ></div></a></li>
-	<li class="padT1"><a href="javascript:void(0);" id="clearRuleBtn"><div class="btnGraph btnClearDel marT1" alt="Remove All" title="Remove All"></div></a></li>
-</ul>
-</div>
-
-  <div id="sortablePagingTop" class="floatL txtAL w550"></div>
-     
-     <!--End Pagination-->
-  <div class="clearB floatR farial fsize12 fDGray fbold txtAR w730 marT10 padT8"></div>
-  <div class="clearB"></div>
+	<div class="clearB"></div>	 
+	
+	<div id="submitForApproval"></div>
+	<div class="clearB"></div>	
+	
+	<!--Start Rule Item Options-->
+	<div id="ruleItemDisplayOptions" style="display: none">
+		<ul class="viewSelect marT6">
+			<li class="fLgray2">|</li>
+			<li class="padR5 fLgray2">
+				<select id="filterDisplay" class="marTn3">
+					<option value="all">All</option>
+					<option value="active">Active</option>
+					<option value="expired">Expired</option>
+				</select>
+			</li>
+			<li class="padT1"><a href="javascript:void(0);" id="tileViewIcon" class="btnGraph" alt="Grid View" title="Grid View"><div class="btnGraph btnViewTile"></div></a></li>
+			<li class="padT1"><a href="javascript:void(0);" id="listViewIcon" class="btnGraph" alt="List View" title="List View"><div class="btnGraph btnViewList"></div></a></li>
+			<li class="padT1"><a href="javascript:void(0);" id="downloadRuleItemIcon"><div class="btnGraph btnDownload marT1 marL3" alt="Download" title="Download" ></div></a></li>
+			<li class="padT1"><a href="javascript:void(0);" id="clearRuleItemIcon"><div class="btnGraph btnClearDel marT1" alt="Remove All" title="Remove All"></div></a></li>
+		</ul>
+	</div>
+	<!--End Rule Item Options-->
+	
+	<!--Top Paging-->
+  	<div id="ruleItemPagingTop" class="floatL txtAL w550"></div>
    
-  <!--Start Displaying Items-->
-  <div id="sortable-bigbets-container" class="clearB floatL w730">
-  <div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
-		<div id="noSelected"><img id="no-items-img" src="../images/elevateRuleGuidelines.jpg"></div>
-		<div id="elevate">
-    <ul id="sortable-bigbets">
-    	<li id="sItemPattern" style="display: none; position:relative ">
-     	<div id="addCommentTemplate" style="display: none">
-   <div class="elevateItemPW w282">
-   <div class="borderB padB8 autoScroll height120">
-   <div id="commentTemplate" style="display: none">
-        <div class="pad5">
-	   		<div class="padR8 floatL wordwrap padT3" style="width:60px">%%timestamp%%</div>
-            <div class="floatL w150 padT7">
-            	<img src="<spring:url value="/images/user13x13.png" />" class="marBn3 marR3">
-            	<span class="fDblue">%%commentor%%</span>
-                <span>%%comment%%</span>   
-            </div>
-            <div class="clearB"></div>
-           </div>
-    </div>
+   	<!--Start Content Area -->
+  	<div id="ruleItemContainer" class="listView">
+  		<div id="preloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
+		<div id="noSelected"><img src="<spring:url value="/images/elevateRuleGuidelines.jpg" />"></div>
+		<div id="ruleSelected" style="display:none">
+	  		<ul id="ruleItemHolder" class="box">
+	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
+	  				<div class="bgShade pad8">	
+	  					<div class="iconGroup">
+	  						<label class="w90 fsize11">
+	  							<span class="validityDays fLblue fbold"></span>
+	  							<span style="display: none" class="validityDaysExpired fLblue fbold">
+	  								<img src="<spring:url value="/images/expired_stamp50x16.png" />">
+	  							</span>
+	  						</label>
+	  						<label>
+								<ul class="listIcons">
+									<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
+									<li><img class="auditRuleItemIcon" src="<spring:url value="/images/icon_history.png" />"></li>
+									<li><img src="<spring:url value="/images/user_red.png" />"></li>
+									<li><img src="<spring:url value="/images/icon_date.png" />"></li>
+									<li><img class="deleteRuleItemIcon" src="<spring:url value="/images/icon_delete2.png" />"></li>
+								</ul>
+			  				</label>
+	  					</div>
+	  				
+		  				<div class="sortOrder">
+		  					<label class="w90">Elevation : </label>
+		  					<label>
+		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
+		  					</label>
+		  				</div>
+					
+		  				<div class="validityDate">
+		  					<label class="w90">Valid Until : </label>
+		  					<label>
+		  						<input type="text" class="validityDateTextBox txtBoxSmall w60 floatL marR3" />
+		  						<img class="clearDate" src="<spring:url value="/images/icon_calendarDelete.png" />">
+		  					</label>
+		  				</div>
+	  				</div>
+	  			
+	  				<div class="picArea">
+	  					<img class="itemImg" src="<spring:url value="/images/no-image.jpg" />">
+	  				</div>  					
+		  			
+		  			<div class="proInfo">
+		  				<div class="manufacturer titleArea"></div>	
+		  				<div class="clearB"></div>
+			  			<div class="name proName"></div>
+			  			<p class="textInfo">
+			  				<span class="fgreen">SKU #:</span>
+			  				<span class="sku"></span>
+			  			</p>
+			  			<p class="textInfo">
+			  				<span class="fgreen">Mfr. Part #:</span>
+			  				<span class="mfrpn"></span>
+			  			</p>
+		  			</div>
+	  			</li>
+	  		</ul>
+  		</div>
+  	</div>
+  	<div class="clearB"></div>
+   	<!--End Content Area -->
    
-   <div id="commentHolder"></div> 
-   </div>
-   <div class="floatL marT5 w282"> <p>Comment:</p>
-   <textarea id="newComment" class="w278 marB7 resizeNone"></textarea></div>
-   <div align="right">
-   	<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a>
-   	<a id="clearCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a>
-   </div>
-   </div>
-</div>
-<div id="viewAuditTemplate" style="display: none">
-   <div class="elevateItemPW">
-   <div class="w265 padB8">
-           <div id="auditTemplate" style="display: none;" >
-	   		<div class="pad8 borderB"> 
-		   		<div class="padR8 floatL wordwrap" style="width:60px">%%timestamp%%</div>
-	            <div class="floatL w175">
-	            	<img src="<spring:url value="/images/user13x13.png" />" class="marBn3 marR3">
-	            	<span class="fDblue">%%commentor%%</span>
-	                <span>%%comment%%</span>
-	            </div>
-            <div class="clearB"></div>
-            </div>         
-	    </div>
-	    <div id="auditPagingTop"></div>
-	    	<div class="clearB"></div>	
-           <div id="auditHolder"></div>
-           	<div class="clearB"></div>	
-           <div id="auditPagingBottom" style="margin-top:8px"></div>
-           		        	
-   </div>
-   </div>
-</div>
-      <div id="sortableBox" class="handle sortableBox">
-        <div class="floatR posRel padR10" style="z-index:1"><a id="sItemDelete" class="sItemDelete" href="javascript:void(0);"><img src="<spring:url value="/images/btn_delete_graybg.jpg" />"></a></div>
-        <div class="txtAC posRel">
-        <div id="sItemStampExp" class="stampExpired"></div>
-       	<div class="elevateItemImg"><img id="sItemImg" src="" style="width:100px; height:100px; display: block; margin:0 auto">
-       	<div id="sItemMan" class="manfcName"></div>
-       	</div>
-       	
-       	<div class="listInfo">
-        	<div class="listTitle"><span class="fLblue" id="sItemName"></span></div>
-        	<p class="textInfo"><span class="fgreen">SKU #: </span><span id="sItemDPNo"></span></p>
-        	<p class="textInfo"><span class="fgreen">Mfr. Part #: </span><span id="sItemMfrPN"></span></p>
+  	<!--Bottom Paging-->
+  	<div id="ruleItemPagingBottom" class="w730 floatL txtAL marT20"></div>
+  	<div class="clearB"></div>
+  	
+  	<!--Locked Rule Display Template-->
+  	<div id="ruleIsLocked" class="w180" style="display:none;">
+  		<div class="w180 alert">
+  			You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.
+  		</div>
+  	</div>
 
-        	<div class="borderT clearB"></div> 
-        	<div class="bigbetsShade" style="padding:5px; min-height: 80px">
-        	<strong>Elevate Info:</strong>
-        	<div class="txtAR w60 floatR  fgray fsize11">
-        		<img class="removeExpiryDateIcon pointer" id="removeExpiryDateIcon" src="<spring:url value="/images/icon_calendarDelete.png" />" alt="Remove Expiry Date" title="Remove Expiry Date">
-        		<img class="commentIcon pointer" id="commentIcon" src="<spring:url value="/images/icon_comment.png" />" alt="Comment" title="Comment"> 
-        		<img class="auditIcon pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History">
-		</div>
-        	<div class="clearB"></div>
-        	<div class="listalpha">
-        		Elevation <input id="sItemPosition" type="text" class="sItemPosition txtBoxSmall farial marL4 w30"/> <span class="fgray fsize11">Press ENTER to update</span>
-        	</div>
-
-		 <div class="listbeta">
-        			Valid Until<input id="sItemExpDate" type="text" class="sItemExpDate txtBoxSmall farial marL3 w60" style="margin-top:-4px" />
-        	</div>
-        	<div class="txtAR w65 floatL fgray padT5 endingTxt" >
-        		<span id="sItemValidityText" class="fDblue"></span>
-			</div>
-		<div class="clearB"></div>
-        	<p class="fgray padT5 fsize11">
-				<!-- img src="<spring:url value="/images/user_red.png" />" class="marBn4 marR3 floatL" -->
-				<div class="floatL userName">		
-				 	<p id="sItemModBy" class="fbold fbold floatL marR3" style="overflow:hidden; max-width:160px;"></p>
-        		</div> 
-        		<div class="floatL"><img src="<spring:url value="/images/icon_date.png" />" class="marBn4"> <span id="sItemModDate" class="fDblue"></span></div>
-        		<div class="clearB"></div>
-        	</p>
-			</div>
-			</div>
-        <div class="clearB"></div>
-      </div>		        
-     </li>
-    </ul>
-    </div>
-  </div>
-  <!--End Displaying Items-->
-  
-  <div id="sortablePagingBottom" class="w730 floatL txtAL marT20"></div>
-  <!--Pagination-->
-  
-  <div class="clearB"></div>
-  
-  <!--  new layout -->
-  <div class="tileView">
-  	<ul class="box">
-  		<li>
-  			<div class="bgShade pad8">	
-  				<div class="iconGroup">
-  				<label class="w90 fsize11"> <span class="fLblue fbold">Ending Today</span></label>
-  				<label>
-					<ul class="listIcons">
-						<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
-						<li><img src="<spring:url value="/images/icon_history.png" />"></li>
-						<li><img src="<spring:url value="/images/user_red.png" />"></li>
-						<li><img src="<spring:url value="/images/icon_date.png" />"></li>
-						<li><img src="<spring:url value="/images/icon_delete2.png" />"></li>
-					</ul>
-  				</label>
-  				</div>
-  				
-  				<div class="elevationDate">
-  					<label class="w90">Elevation : </label>
-  					<label><input type="text" class="txtBoxSmall w30"><span class="fgray fsize11"> ENTER to update</span></label>
-  				</div>
-				
-  				<div class="vDate">
-  					<label class="w90">Valid Until : </label>
-  					<label>
-  						<input type="text" class="txtBoxSmall w60 floatL marR3" />
-  						<ul class="listIcons floatL">
-  							<li><img src="<spring:url value="/images/icon_calendar.png" />"></li>
-  							<li><img src="<spring:url value="/images/icon_calendarDelete.png" />"></li>
-  						</ul>
-  					</label>
-  				</div>
-  				
-  				
-  			</div>
-  			
-  				<div class="picArea"><img src="<spring:url value="/images/no-image.jpg" />"></div>  					
-  			<div class="proInfo">
-  				<div class="titleArea">Lorem ipsum dolor</div>	
-  				<div class="clearB"></div>
-	  			<div class="proName">Black & Copper In-ear headphone</div>
-	  			<p class="textInfo">
-	  				<span class="fgreen">SKU #:</span>
-	  				<span>0000000</span>
-	  			</p>
-	  			<p class="textInfo">
-	  				<span class="fgreen">Mfr. Part #:</span>
-	  				<span>BDH653BCCP</span>
-	  			</p>
-  			</div>
-  		</li>
-  		<li></li>
-  		<li></li>
-  	</ul>
-  </div>
-  <!--  end new layout -->
-  
-  <div id="ruleIsLocked" class="w180" style="display:none;">
-  	<div class="w180 alert">You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.</div>
-  </div>
 </div>
        
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

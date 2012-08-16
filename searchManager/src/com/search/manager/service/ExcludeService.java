@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -68,6 +69,7 @@ public class ExcludeService {
 					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 					e.setCreatedBy(UtilityService.getUsername());
 					e.setComment(UtilityService.formatComment(comment));
+					e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addExcludeResult(e);
 					}
@@ -110,14 +112,14 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int deleteItemInRule(String keyword, String productId) {
+	public int deleteItemInRule(String keyword, String memberId) {
 		try {
 			String store = UtilityService.getStoreName();
 
-			logger.info(String.format("%s %s %s", store, keyword, productId));
+			logger.info(String.format("%s %s %s", store, keyword,memberId));
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setEdp(productId);
+			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.deleteExcludeResult(e);
 		} catch (DaoException e) {
@@ -247,6 +249,22 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
+			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setLastModifiedBy(UtilityService.getUsername());
+			return daoService.updateExcludeResultExpiryDate(e);
+		} catch (DaoException e) {
+			logger.error("Failed during updateExpiryDate()",e);
+		}
+		return -1;
+	}
+
+	@RemoteMethod
+	public int updateExpiryDate(String memberId, String expiryDate){
+		try {
+			logger.info(String.format("updateExpiryDate %s %s ", memberId, expiryDate));
+			String store = UtilityService.getStoreName();
+			ExcludeResult e = new ExcludeResult();
+			e.setMemberId(memberId);
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			return daoService.updateExcludeResultExpiryDate(e);

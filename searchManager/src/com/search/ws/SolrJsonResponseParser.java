@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,8 +22,11 @@ import net.sf.json.groovy.JsonSlurper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
+import org.directwebremoting.json.types.JsonArray;
 
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.utility.SolrRequestDispatcher;
@@ -49,6 +53,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 
 	private List<ElevateResult> elevatedList = null;
 	private List<String> expiredElevatedEDPs = null;
+	private List<ElevateResult> forceAddedList = null;
 
 	public SolrJsonResponseParser() {
 		JsonConfig jsonConfig = new JsonConfig();
@@ -166,6 +171,44 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	}
 
 	@Override
+	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
+		int numFound = -1;
+		try {
+			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
+			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
+			requestParams.add(new BasicNameValuePair("defType", "dismax"));
+
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
+			int count = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			if (count > 0) {
+				JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
+				for (int i = 0; i < facetNames.size(); i++) {
+					String facet = facetNames.getString(i);
+					JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
+					for (int j = 0; j < facetValues.size(); j++) {
+						String facetValue = facetValues.getString(j);
+						int origFacetCount = 0;
+						try {
+							origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
+						} catch (Exception ex) {
+							origFacetCount = 1;
+						}
+						initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount);
+					}
+				}
+				numFound += count;
+				((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.ATTR_NUM_FOUND, numFound);
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get template counts" ,e);
+		}
+		return numFound;
+	}
+
+	@Override
 	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException {
 		int numElevateFound = -1;
 		try {
@@ -215,6 +258,129 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			throw new SearchException("Error occured while trying to get elevated items" ,e);
 		}
 		return addedRecords;
+	}
+
+	public int getElevatedItems(List<NameValuePair> requestParams, List<ElevateResult> elevatedList) throws SearchException {
+		int addedRecords = 0;
+		try {
+			JSONObject tmpExplain = null;
+			Map<String, JSONObject> explainMap = new HashMap<String, JSONObject>();
+			List<JSONObject> docList = new ArrayList<JSONObject>();
+			int size = startRow + requestedRows;
+			BasicNameValuePair kwNvp = null;
+			if (forceAddedList.size() > 0) {
+				for (NameValuePair nameValuePair : requestParams) {
+					if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
+						kwNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD,nameValuePair.getValue());
+						break;
+					}
+				}
+			}
+			for (ElevateResult e : elevatedList) {
+				BasicNameValuePair nvp = null;
+				BasicNameValuePair excludeEDPNVP = null;
+				BasicNameValuePair excludeFacetNVP = null;
+				StringBuilder elevateValues = new StringBuilder();
+				StringBuilder elevateFacetValues = new StringBuilder();
+				if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + e.getEdp().toString());
+					if (e.isForceAdd() && kwNvp!=null) {
+						requestParams.remove(kwNvp);
+					}
+				} else {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().toString());
+					generateElevateList(elevateValues, elevateFacetValues, elevatedList, e);
+					if (elevateValues.length() > 0) {
+						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+						requestParams.add(excludeEDPNVP);
+					}				
+					if (elevateFacetValues.length() > 0) {
+						excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
+						requestParams.add(excludeFacetNVP);
+					}				
+				}
+				requestParams.add(nvp);
+				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+				requestParams.remove(nvp);
+				if (e.isForceAdd()  && kwNvp!=null) {
+					requestParams.add(kwNvp);
+				}
+				if (elevateValues.length() > 0) {
+					requestParams.remove(excludeEDPNVP);
+				}				
+				if (elevateFacetValues.length() > 0) {
+					requestParams.remove(excludeFacetNVP);
+				}				
+				JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+				// locate the result node and get the numFound attribute
+				// <result> tag that is parent node for all the <doc> tags
+				JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
+				if (explainObject != null) {
+					tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
+				}
+				for (int j = 0, length = docs.size(); j < length; j++) {
+					JSONObject doc = (JSONObject)docs.get(j);
+					String edp = doc.getString("EDP");
+					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
+					docList.add(doc);
+					explainMap.put(edp, tmpExplain);
+				}
+				if (docList.size() >= size) {
+					break;
+				}
+				
+			}
+			
+			// sort the edps
+			// "debug":{ "explain":{ "6230888":
+			// for (int i = startRow, size = startRow + requestedRows, resultSize = docList.size(); i < size && i < resultSize; i++) {
+			logger.debug("****************" + Math.min(size, docList.size()) + ";" + startRow + ";" + requestedRows);
+			for (int i = Math.min(size, docList.size()) - 1; i >= startRow; i--) {
+				addedRecords++;
+				// insert the elevate results to the docs entry
+				resultArray.add(0, docList.get(i));
+				if (explainObject != null) {
+					String edp = docList.get(i).getString("EDP");
+					explainObject.put(edp, explainMap.get(edp).getString(edp));
+				}
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get elevated items" ,e);
+		}
+		return addedRecords;
+	}
+
+	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, ElevateResult elevateResult) {
+		boolean edpFlag = false;
+		boolean facetFlag = false;
+		if (!(elevateList == null || elevateList.isEmpty())) {
+			for (ElevateResult elevate: elevateList) {
+				if (elevate.getMemberId().equals(elevateResult.getMemberId())) {
+					continue;
+				}
+				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (!edpFlag) {
+						elevateValues.append("EDP:(");
+						edpFlag = true;
+					}
+					elevateValues.append(" ").append(elevate.getEdp());
+				} else {
+					if (!facetFlag) {
+						elevateFacetValues.insert(0, "(");
+						facetFlag = true;
+					} else {
+						elevateFacetValues.append(" OR ");
+					}
+					elevateFacetValues.append(elevate.getCondition());
+				}
+			}
+			if (edpFlag) {
+				elevateValues.append(")");
+			}
+			if (facetFlag) {
+				elevateFacetValues.append(")");
+			}
+		}
 	}
 
 	@Override
@@ -410,6 +576,14 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	@Override
 	public void setChangeKeyword(String changedKeyword) throws SearchException {
 		this.changedKeyword = changedKeyword;
+	}
+
+	public List<ElevateResult> getForceAddedList() {
+		return forceAddedList;
+	}
+
+	public void setForceAddedList(List<ElevateResult> forceAddedList) {
+		this.forceAddedList = forceAddedList;
 	}
 
 }

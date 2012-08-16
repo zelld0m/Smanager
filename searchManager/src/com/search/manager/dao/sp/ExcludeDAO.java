@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
@@ -83,6 +84,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 
 		@Override
@@ -99,7 +101,9 @@ public class ExcludeDAO {
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 	                		rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 	            }
 	        }));
 	    }
@@ -120,7 +124,9 @@ public class ExcludeDAO {
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
 	                		rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 	            }
 	        }));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -221,6 +227,10 @@ public class ExcludeDAO {
 	    		if (match == null) {
 		        	Map<String, Object> inputs = new HashMap<String, Object>();
 		            inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
+		            if (match.getExcludeEntity() == null) {
+		            	match.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
+		            }
+		            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, match.getExcludeEntity());
 		            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 		            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 		            inputs.put(DAOConstants.PARAM_VALUE, productId);
@@ -247,6 +257,7 @@ public class ExcludeDAO {
 	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExclude()", e);
@@ -320,7 +331,7 @@ public class ExcludeDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
             return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during removeExclude()", e);

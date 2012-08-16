@@ -1,7 +1,9 @@
 package com.search.ws;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,10 +17,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -41,6 +45,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	private List<ElevateResult> elevatedList = null;
 	private List<String> expiredElevatedEDPs = null;
 	private List<Map<String,String>> activeRules;
+	private List<ElevateResult> forceAddedList = null;
 
 	@Override
 	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
@@ -116,6 +121,131 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			throw new SearchException("Error occured while trying to get number of elevated items" ,e);
 		}
 		return numElevateFound;
+	}
+
+	@Override
+	public int getElevatedItems(List<NameValuePair> requestParams, List<ElevateResult> elevatedList) throws SearchException {
+		int addedRecords = 0;
+		try {
+			Map<String, Node> explainMap = new HashMap<String, Node>();
+			Map<String, Node> nodeMap = new LinkedHashMap<String, Node>();
+			Document elevateDoc = null;
+			int size = startRow + requestedRows;
+			for (ElevateResult elevateResult : elevatedList) {
+				BasicNameValuePair nvp = null;
+				BasicNameValuePair excludeEDPNVP = null;
+				BasicNameValuePair excludeFacetNVP = null;
+				StringBuilder elevateValues = new StringBuilder();
+				StringBuilder elevateFacetValues = new StringBuilder();
+				if (elevateResult.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp().toString());
+				} else {
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().toString());
+					generateElevateList(elevateValues, elevateFacetValues, elevatedList, elevateResult);
+					if (elevateValues.length() > 0) {
+						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+						requestParams.add(excludeEDPNVP);
+					}				
+					if (elevateFacetValues.length() > 0) {
+						excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
+						requestParams.add(excludeFacetNVP);
+					}				
+				}
+				requestParams.add(nvp);
+				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+				requestParams.remove(nvp);
+				if (elevateValues.length() > 0) {
+					requestParams.remove(excludeEDPNVP);
+				}				
+				if (elevateFacetValues.length() > 0) {
+					requestParams.remove(excludeFacetNVP);
+				}		
+				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				elevateDoc  = docBuilder.parse(solrResponse.getEntity().getContent());
+				// <result> tag that is parent node for all the <doc> tags
+				Node tmpResultNode = locateElementNode(locateElementNode(elevateDoc, SolrConstants.TAG_RESPONSE),
+						SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
+	
+				NodeList children = elevateDoc.getElementsByTagName(SolrConstants.TAG_DOC);
+	
+				for (int j = 0, length = children.getLength(); j < length; j++) {
+					Node docNode = children.item(j);
+					if (docNode.getParentNode() == tmpResultNode) {
+						// get the EDPs
+						NodeList docNodes = docNode.getChildNodes();
+						for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
+							Node kNode = docNodes.item(k);
+							if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT) &&
+									kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+									.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+								String edp = kNode.getTextContent();
+								nodeMap.put(edp, docNode);
+								explainMap.put(edp, locateElementNode(locateElementNode(locateElementNode(elevateDoc, SolrConstants.TAG_RESPONSE),
+												SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
+												SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN));
+								break;
+							}
+						}
+					}
+				}
+				
+				if (nodeMap.size() >= size) {
+					break;
+				}
+				
+			}
+
+			int ctr = startRow;
+			int resultSize = nodeMap.size();
+			for (Map.Entry<String, Node> entry : nodeMap.entrySet()) {
+	        	resultNode.insertBefore(mainDoc.importNode(entry.getValue(), true), placeHolderNode);
+				if (explainNode != null) {
+				explainNode.appendChild(mainDoc.importNode(locateElementNode(explainMap.get(entry.getKey()), SolrConstants.TAG_STR,
+						locateElementNode(entry.getValue(), SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent()), true));
+				}
+				addedRecords++;
+				ctr++;
+	        	if (ctr >= size && ctr >= resultSize) {
+	        		break;
+	        	}
+	        }			
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get elevated items" ,e);
+		}
+		return addedRecords;
+	}
+
+	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, ElevateResult elevateResult) {
+		boolean edpFlag = false;
+		boolean facetFlag = false;
+		if (!(elevateList == null || elevateList.isEmpty())) {
+			for (ElevateResult elevate: elevateList) {
+				if (elevate.getMemberId().equals(elevateResult.getMemberId())) {
+					continue;
+				}
+				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (!edpFlag) {
+						elevateValues.append("EDP:(");
+						edpFlag = true;
+					}
+					elevateValues.append(" ").append(elevate.getEdp());
+				} else {
+					if (!facetFlag) {
+						elevateFacetValues.insert(0, "(");
+						facetFlag = true;
+					} else {
+						elevateFacetValues.append(" OR ");
+					}
+					elevateFacetValues.append(elevate.getCondition());
+				}
+			}
+			if (edpFlag) {
+				elevateValues.append(")");
+			}
+			if (facetFlag) {
+				elevateFacetValues.append(")");
+			}
+		}
 	}
 
 	@Override
@@ -318,4 +448,20 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	public void setChangeKeyword(String changedKeyword) throws SearchException {
 		this.changedKeyword = changedKeyword;
 	}
+
+	public List<ElevateResult> getForceAddedList() {
+		return forceAddedList;
+	}
+
+	public void setForceAddedList(List<ElevateResult> forceAddedList) {
+		this.forceAddedList = forceAddedList;
+	}
+
+	@Override
+	public int getForceAddTemplateCounts(List<NameValuePair> requestParams)
+			throws SearchException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }
