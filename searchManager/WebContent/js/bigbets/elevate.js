@@ -262,9 +262,9 @@
 								var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
 								return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
 							},
-							pageLinkCallback: function(e){ populateItem(e.data.page); },
-							nextLinkCallback: function(e){ populateItem(e.data.page + 1); },
-							prevLinkCallback: function(e){ populateItem(e.data.page - 1); }
+							pageLinkCallback: function(e){ self.populateRuleItem(e.data.page); },
+							nextLinkCallback: function(e){ self.populateRuleItem(e.data.page + 1); },
+							prevLinkCallback: function(e){ self.populateRuleItem(e.data.page - 1); }
 						});
 
 						for (var i = 0; i < self.selectedRuleItemTotal; i++) {

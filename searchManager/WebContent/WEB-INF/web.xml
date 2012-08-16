@@ -223,7 +223,8 @@
 				com.search.manager.authentication.dao.UserDetailsImpl,
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.utility.CatCodeUtil$Attribute,
-				com.search.manager.utility.CatCodeUtil$Template				
+				com.search.manager.utility.CatCodeUtil$Template,
+				com.search.manager.enums.MemberTypeEntity				
 			</param-value>
 		</init-param>
 	</servlet>
