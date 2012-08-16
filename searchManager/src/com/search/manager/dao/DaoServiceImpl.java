@@ -175,6 +175,7 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getElevateEntity());
+			ep.setMemberId(e.getMemberId());
 			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 				map.put(UUID.randomUUID().toString(), ep);
 			} else {

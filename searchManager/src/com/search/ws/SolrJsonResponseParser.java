@@ -172,7 +172,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 
 	@Override
 	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
-		int numFound = -1;
+		int forceAddCount = -1;
 		try {
 			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
 			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
@@ -181,9 +181,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			int count = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-			numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-			if (count > 0) {
+			forceAddCount = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			int numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			if (forceAddCount > 0) {
 				JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
 				for (int i = 0; i < facetNames.size(); i++) {
 					String facet = facetNames.getString(i);
@@ -199,13 +199,13 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 						initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount);
 					}
 				}
-				numFound += count;
+				numFound += forceAddCount;
 				((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.ATTR_NUM_FOUND, numFound);
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get template counts" ,e);
 		}
-		return numFound;
+		return forceAddCount;
 	}
 
 	@Override
