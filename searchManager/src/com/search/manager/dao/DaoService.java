@@ -204,4 +204,5 @@ public interface DaoService {
 	public List<String> getGroups() throws DaoException;
 	public List<String> getAllPermissions() throws DaoException;
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException;
+	public int getFacetCount(String serverName, String storeId, String keyword, String fqCondition);
 }
