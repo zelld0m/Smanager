@@ -74,7 +74,7 @@
   		<div id="preloader" class="circlePreloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
 		<div id="noSelected"><img src="<spring:url value="/images/elevateRuleGuidelines.jpg" />"></div>
 		<div id="ruleSelected" style="display:none">
-	  		<ul id="ruleItemHolder" class="box">
+	  		<ul id="ruleItemHolder" class="boxContainer">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
 	  				<div class="bgShade pad8">	
 	  					<div class="iconGroup">

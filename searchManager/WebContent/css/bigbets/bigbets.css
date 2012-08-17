@@ -105,10 +105,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f3f8', end
 /* New sortable list */
 /* tileView */
 div.tileView		{ font-size: 12px }
-div.tileView ul.box		{ list-style: none;  }
-div.tileView ul.box li  { background: #fafafa; border:2px solid #e8e8e8; padding:0 !important; float:left; display: inline; width:224px; margin:10px 7px; }
+div.tileView ul.boxContainer		{ list-style: none;  }
+div.tileView ul.boxContainer li  { background: #fafafa; border:2px solid #e8e8e8; padding:0 !important; float:left; display: inline; width:224px; margin:10px 7px; }
 
-div.tileView ul.box li div.bgShade { 
+div.tileView ul.boxContainer li div.bgShade { 
 background: #dcdcdc; /* Old browsers */
 /* IE9 SVG, needs conditional override of 'filter' to 'none' */
 background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2RjZGNkYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmYWZhZmEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -121,13 +121,13 @@ background: linear-gradient(to bottom,  #dcdcdc 0%,#fafafa 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcdcdc', endColorstr='#fafafa',GradientType=0 ); /* IE6-8 */
 }
 
-div.tileView ul.box li div.bgShade label { margin:0 !important; padding:0 }
-div.tileView ul.box li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px;  }
-div.tileView ul.box li div.picArea img { border:1px solid #f2f2f2 }
-div.tileView ul.box li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden;   }
-div.tileView ul.box li div.proInfo { margin:10px 8px; }
-div.tileView ul.box li div.proName { height: 45px; overflow: hidden; vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
-div.tileView ul.box li p.textInfo { padding:1px 0 }
+div.tileView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
+div.tileView ul.boxContainer li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px;  }
+div.tileView ul.boxContainer li div.picArea img { border:1px solid #f2f2f2 }
+div.tileView ul.boxContainer li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden;   }
+div.tileView ul.boxContainer li div.proInfo { margin:10px 8px; }
+div.tileView ul.boxContainer li div.proName { height: 45px; overflow: hidden; vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
+div.tileView ul.boxContainer li p.textInfo { padding:1px 0 }
 
 div.tileView  ul.listIcons { list-style: none; margin:0 }
 div.tileView ul.listIcons li { float:left; width: 17px; background: none; border:none; margin:1px;  }
@@ -140,9 +140,9 @@ div.tileView ul li div.validityDate { clear:both; margin-bottom:4px}
 
 /* listView */
 div.listView		    { font-size: 12px; border:none !important }
-div.listView ul.box		{ list-style: none; }
-div.listView ul.box li  { background: #fafafa; border:2px solid #e8e8e8; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
-div.listView ul.box li div.bgShade { 
+div.listView ul.boxContainer		{ list-style: none; }
+div.listView ul.boxContainer li  { background: #fafafa; border:2px solid #e8e8e8; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
+div.listView ul.boxContainer li div.bgShade { 
 background: #dcdcdc; /* Old browsers */
 /* IE9 SVG, needs conditional override of 'filter' to 'none' */
 background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2RjZGNkYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmYWZhZmEiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
@@ -155,14 +155,14 @@ background: linear-gradient(to bottom,  #dcdcdc 0%,#fafafa 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dcdcdc', endColorstr='#fafafa',GradientType=0 ); /* IE6-8 */
 height: 20px; margin:0 !important; padding:8px;
 }
-div.listView ul.box li div.bgShade label { margin:0 !important; padding:0 }
-div.listView ul.box li div.picInfo { float:left; margin-left:10px }
-div.listView ul.box li div.picArea { height: 100px; overflow: hidden; margin:17px 10px 10px 10px; float:left }
-div.listView ul.box li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; float:left  }
+div.listView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
+div.listView ul.boxContainer li div.picInfo { float:left; margin-left:10px }
+div.listView ul.boxContainer li div.picArea { height: 100px; overflow: hidden; margin:17px 10px 10px 10px; float:left }
+div.listView ul.boxContainer li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; float:left  }
 
-div.listView ul.box li div.proInfo { margin:10px 8px; float:left; margin-left:10px; width:80% }
-div.listView ul.box li div.proName { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
-div.listView ul.box li p.textInfo { padding:1px 0 }
+div.listView ul.boxContainer li div.proInfo { margin:10px 8px; float:left; margin-left:10px; width:80% }
+div.listView ul.boxContainer li div.proName { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
+div.listView ul.boxContainer li p.textInfo { padding:1px 0 }
 
 div.listView  ul.listIcons { list-style: none; margin:0 }
 div.listView ul.listIcons li { float:left; width: 17px; background: none; border:none; margin:1px;  }
