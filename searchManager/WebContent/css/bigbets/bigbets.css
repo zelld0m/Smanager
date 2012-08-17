@@ -134,6 +134,7 @@ div.tileView ul.listIcons li { float:left; width: 17px; background: none; border
 div.tileView .bgShade label { float:left; color:#282828 }
 
 div.tileView ul li div.iconGroup { clear:both }
+div.tileView ul li div.iconGroup label.iconGroupW { width:110px }
 div.tileView ul li div.sortOrder { clear:both; margin-bottom:4px}
 div.tileView ul li div.validityDate { clear:both; margin-bottom:4px}
 
@@ -169,6 +170,7 @@ div.listView ul.listIcons li { float:left; width: 17px; background: none; border
 div.listView .bgShade label { float:left; color:#282828 }
 
 div.listView ul li div.iconGroup { float:right; width:27%}
+div.listView ul li div.iconGroup label.iconGroupW { width:90px }
 div.listView ul li div.sortOrder { float:left; width:33% }
 div.listView ul li div.validityDate { float:left; width:33% }
 

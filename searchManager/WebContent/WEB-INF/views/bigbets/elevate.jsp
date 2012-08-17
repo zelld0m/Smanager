@@ -78,7 +78,7 @@
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
 	  				<div class="bgShade pad8">	
 	  					<div class="iconGroup">
-	  						<label class="w110 floatL fsize11">
+	  						<label class="iconGroupW floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
 	  							<span style="display: none" class="validityDaysExpired fLblue fbold">
 	  								<img src="<spring:url value="/images/expired_stamp50x16.png" />">
