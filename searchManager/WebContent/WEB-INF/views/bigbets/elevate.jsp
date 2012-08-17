@@ -21,12 +21,8 @@
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
 
-	<div class="floatL w730 titlePlacer">		
-	  <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
-		<span id="titleText"></span>
-		<span id="titleHeader" class="fLblue fnormal"></span>
-	  </div>
-	  <div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none">
+	<div class="floatL w730 titlePlacer">	
+		<div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none">
       	<sec:authorize access="hasRole('CREATE_RULE')">
       		<select id="selectRuleItemType" class="selectCombo w178" >
 				<option value="product">Product Item</option>
@@ -39,6 +35,12 @@
 			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
       	</sec:authorize>
       </div>
+      	
+	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
+	  </div>
+	  
 	</div>
 	<div class="clearB"></div>	 
 	
@@ -76,13 +78,14 @@
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
 	  				<div class="bgShade pad8">	
 	  					<div class="iconGroup">
-	  						<label class="w90 fsize11">
+	  						<label class="w90 floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
 	  							<span style="display: none" class="validityDaysExpired fLblue fbold">
 	  								<img src="<spring:url value="/images/expired_stamp50x16.png" />">
 	  							</span>
+	  							&nbsp;
 	  						</label>
-	  						<label>
+	  						<label class="floatR">
 								<ul class="listIcons">
 									<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
 									<li><img class="auditRuleItemIcon" src="<spring:url value="/images/icon_history.png" />"></li>
@@ -107,8 +110,9 @@
 		  						<img class="clearDate" src="<spring:url value="/images/icon_calendarDelete.png" />">
 		  					</label>
 		  				</div>
+		  				<div class="clearB"></div>
 	  				</div>
-	  			
+	  				
 	  				<div class="picArea">
 	  					<img class="itemImg" src="<spring:url value="/images/no-image.jpg" />">
 	  				</div>  					
