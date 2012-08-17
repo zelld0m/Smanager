@@ -78,7 +78,7 @@
 
 						if (self.checkIfUpdateAllowed()){
 							if ($.isBlank(ruleName)){
-								smoke.alert("Rule name is required.");
+								jAlert("Rule name is required.");
 							}
 							else if (!isAllowedName(ruleName)){
 								smoke.alert("Rule name contains invalid value.");
