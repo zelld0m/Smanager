@@ -614,7 +614,7 @@
 									alert("Expiry date cannot be earlier than today");
 								}
 								else if(excluded){
-									ExcludeServiceJS.updateExcludeFacet(keyword, item["memberId"], comment, expiryDate, null, {
+									ExcludeServiceJS.updateExcludeFacet(keyword, item["memberId"], comment, expiryDate, item["condition"], {
 										callback : function(data) {
 											needRefresh = true;
 											api.hide();

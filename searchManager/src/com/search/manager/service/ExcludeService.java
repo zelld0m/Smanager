@@ -421,7 +421,7 @@ public class ExcludeService {
 			}		
 		}
 		
-		if (exclude.getCondition()!= null || !rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
+		if (exclude.getCondition() != null && !exclude.getCondition().getCondition().equals(rrCondition.getCondition())){
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
