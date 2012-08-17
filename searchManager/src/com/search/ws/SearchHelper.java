@@ -453,4 +453,50 @@ public class SearchHelper {
 		return edp;
 	}
 
+	public static int getFacetCount(String server, String storeId, String keyword, String fqCondition) {
+		int count = 0;
+		try {
+			ConfigManager configManager = ConfigManager.getInstance();
+
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+			// TODO: replace qt with relevancy
+			String qt = configManager.getStoreParameter(storeId, "qt");
+			if (StringUtils.isEmpty(qt)) {
+				qt = "standard";
+			}
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?");
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("q", keyword));
+			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
+			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p: nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+			
+            /* JSON */
+            JSONObject initialJson = null;
+            JsonSlurper slurper = null;
+            
+            // send solr request
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+    		slurper = new JsonSlurper(jsonConfig);
+    		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+    		
+    		count = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr" , t);
+		}
+		return count;
+	}
+
 }

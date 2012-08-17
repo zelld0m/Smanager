@@ -200,7 +200,7 @@ public class AuditInterceptor {
 			e = (ExcludeResult)jp.getArgs()[0];
 			auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
 			auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
-			auditTrail.setReferenceId(e.getEdp());
+			auditTrail.setReferenceId(e.getMemberId());
 		}
 
 		StringBuilder message = null;

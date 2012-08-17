@@ -75,29 +75,34 @@ public class ElevateService{
 
 	@RemoteMethod
 	public int addElevate(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
+		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %d %s %s", keyword, memberTypeId, value, sequence, expiryDate, comment));
 			String store = UtilityService.getStoreName();
 
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			e.setLocation(sequence);
+			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setCreatedBy(UtilityService.getUsername());
+			e.setComment(UtilityService.formatComment(comment));
 			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
 				e.setEdp(value);
 				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 			} else {
 				e.setCondition(value);
 				e.setElevateEntity(MemberTypeEntity.FACET);
+				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
+				if (e.isForceAdd()) {
+					result = 2;
+				}
 			}
-			e.setLocation(sequence);
-			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
-			return daoService.addElevateResult(e);
+			result  = daoService.addElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during addElevate()",e);
 		}
-		return -1;
+		return result;
 
 	}
 
@@ -262,6 +267,7 @@ public class ElevateService{
 
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getAllElevatedProducts(String keyword, int page,int itemsPerPage) {
+		RecordSet<ElevateProduct> result = null;
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
@@ -270,11 +276,11 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
-			return daoService.getElevatedProducts(server, criteria);
+			result  = daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllElevatedProducts()",e);
 		}
-		return null;
+		return result;
 	}
 
 	@RemoteMethod

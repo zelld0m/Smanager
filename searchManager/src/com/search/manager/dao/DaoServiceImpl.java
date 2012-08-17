@@ -314,6 +314,11 @@ public class DaoServiceImpl implements DaoService {
 		return SearchHelper.getEdpByPartNumber(serverName, storeId, keyword, partNumber);
 	}
 
+	@Override
+	public int getFacetCount(String serverName, String storeId, String keyword, String fqCondition) {
+		return SearchHelper.getFacetCount(serverName, storeId, keyword, fqCondition);
+	}
+
 	/* Keywords */
 	@Override
 	public int addKeyword(StoreKeyword storeKeyword) throws DaoException {

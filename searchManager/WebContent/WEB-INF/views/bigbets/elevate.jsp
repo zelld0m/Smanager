@@ -47,10 +47,13 @@
 	<div id="submitForApproval"></div>
 	<div class="clearB"></div>	
 	
+	<!--Top Paging-->
+  	<div id="ruleItemPagingTop" class="floatL txtAL w550"></div>
+   
 	<!--Start Rule Item Options-->
 	<div id="ruleItemDisplayOptions" style="display: none">
 		<ul class="viewSelect marT6">
-			<li class="fLgray2">|</li>
+			<li id="optionSplitter" class="fLgray2">|</li>
 			<li class="padR5 fLgray2">
 				<select id="filterDisplay" class="marTn3">
 					<option value="all">All</option>
@@ -66,9 +69,6 @@
 	</div>
 	<!--End Rule Item Options-->
 	
-	<!--Top Paging-->
-  	<div id="ruleItemPagingTop" class="floatL txtAL w550"></div>
-   
    	<!--Start Content Area -->
   	<div id="ruleItemContainer" class="listView">
   		<div id="preloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>

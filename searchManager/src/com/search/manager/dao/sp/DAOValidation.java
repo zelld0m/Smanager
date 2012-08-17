@@ -78,7 +78,7 @@ public class DAOValidation {
     public static void checkExcludePK(ExcludeResult exclude) throws DaoException {
     	checkObjectNotNull(exclude, ERROR_MESSAGE_NO_EXCLUDE_VALUE);
     	checkStoreKeywordPK(exclude.getStoreKeyword());    	
-		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
+//		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
     }
 
     public static void checkRelevancy(Relevancy relevancy) throws DaoException {
