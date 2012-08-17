@@ -111,6 +111,10 @@
 			$('#scrollbar1').tinyscrollbar();	
 		});
 	</script>	
+	
+  <!-- smoke  -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/smoke/smoke.min.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/smoke/smoke.css" />" />
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
