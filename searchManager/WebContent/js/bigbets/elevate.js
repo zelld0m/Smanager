@@ -175,7 +175,7 @@
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
 
-				
+
 				setTimeout(function(){		
 					if ($.isBlank($item["dpNo"])){
 						$li.find(".itemImg").prop("src","../images/padlock_img.jpg"); 
@@ -204,20 +204,21 @@
 					}
 				});
 			},
-			
+
 			preShowRuleContent: function(){
 				var self = this;
 				$("#preloader").show();
-				$("#noSelected, #ruleSelected, #ruleItemDisplayOptions").hide();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("fast", function(){});
 			},
 
 			postShowRuleContent: function(){
 				var self = this;
-				$("#preloader,#noSelected").hide();
-				$("#ruleSelected, #addRuleItemContainer").show();
-				$("#titleText").html(self.moduleName + " for ");
-				$("#titleHeader").html(self.selectedRule["ruleName"]);
+				$("#preloader, #noSelected").hide();
+				$("#ruleSelected, #addRuleItemContainer").fadeIn("slow", function(){
+					$("#titleText").html(self.moduleName + " for ");
+					$("#titleHeader").html(self.selectedRule["ruleName"]);
+				});
 			},
 
 			populateRuleItem: function(page){

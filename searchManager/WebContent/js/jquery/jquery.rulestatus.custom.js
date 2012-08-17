@@ -52,9 +52,6 @@
 
 					base.addSubmitForApprovalListener();
 					base.options.afterRuleStatusRequest(ruleStatus);
-				},
-				preHook:function(){
-					base.options.beforeRuleStatusRequest();
 				}
 			});	
 		};
@@ -64,6 +61,7 @@
 			base.$el.empty();
 			
 			if (!$.endsWith(base.options.rule["ruleId"], "_default")){
+				base.options.beforeRuleStatusRequest();
 				base.getRuleStatus();
 			}
 		};
