@@ -71,14 +71,14 @@
 	
    	<!--Start Content Area -->
   	<div id="ruleItemContainer" class="listView">
-  		<div id="preloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
+  		<div id="preloader" class="circlePreloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
 		<div id="noSelected"><img src="<spring:url value="/images/elevateRuleGuidelines.jpg" />"></div>
 		<div id="ruleSelected" style="display:none">
 	  		<ul id="ruleItemHolder" class="box">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
 	  				<div class="bgShade pad8">	
 	  					<div class="iconGroup">
-	  						<label class="w90 floatL fsize11">
+	  						<label class="w110 floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
 	  							<span style="display: none" class="validityDaysExpired fLblue fbold">
 	  								<img src="<spring:url value="/images/expired_stamp50x16.png" />">
@@ -103,7 +103,7 @@
 		  					</label>
 		  				</div>
 					
-		  				<div class="validityDate">
+		  				<div class="validityDate padT3">
 		  					<label class="w90">Valid Until : </label>
 		  					<label>
 		  						<input type="text" class="validityDateTextBox txtBoxSmall w60 floatL marR3" />

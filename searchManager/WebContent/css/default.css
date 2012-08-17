@@ -20,6 +20,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w95, .w95			{width:95px}
 .cssReset .w100, .w100			{width:100px}
 .cssReset .w110, .w110			{width:110px}
+.cssReset .w115, .w115			{width:115px !important}
 .cssReset .w120, .w120			{width:120px !important}
 .cssReset .w125, .w125			{width:125px !important}
 .cssReset .w130, .w130			{width:130px}
