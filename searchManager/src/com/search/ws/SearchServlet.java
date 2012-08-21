@@ -676,13 +676,13 @@ public class SearchServlet extends HttpServlet {
 			if (forceAddList.size() > 0) {
 				NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 				nameValuePairs.remove(kwNvp);
-				StringBuffer buffer = new StringBuffer("EDP:(");
-				for (ElevateResult e : forceAddList) {
-					buffer.append(e.getEdp()).append(" ");
-				}
-				buffer.append(")");
-				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
-				nameValuePairs.add(edpNvp);
+//				StringBuffer buffer = new StringBuffer("EDP:(");
+//				for (ElevateResult e : forceAddList) {
+//					buffer.append(e.getEdp()).append(" ");
+//				}
+//				buffer.append(")");
+//				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
+//				nameValuePairs.add(edpNvp);
 				final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 				getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
 					@Override
@@ -691,7 +691,7 @@ public class SearchServlet extends HttpServlet {
 					}
 				});
 				tasks++;
-				nameValuePairs.remove(edpNvp);
+//				nameValuePairs.remove(edpNvp);
 				if (kwNvp != null) {
 					nameValuePairs.add(kwNvp);
 				}
