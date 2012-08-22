@@ -80,13 +80,13 @@
     	<div class="clearB"></div>
     	<table width="100%" class="fsize12 tblAlpha conTable marT8">
     		<tr class="conTr1">
-    			<th width="7%"></th>
+    			<th width="5%"></th>
     			<th width="30%">User</th>
-    			<th width="12%">Role</th>
-    			<th width="15%">Member Since</th>
-    			<th width="10%">Status</th>
-    			<th width="10%">Validity</th>
-    			<th width="28%">Last Access</th>
+    			<th width="11%">Role</th>
+    			<th width="14%">Member Since</th>
+    			<th width="12%">Status</th>
+    			<th width="12%">Validity</th>
+    			<th width="26%">Last Access</th>
     		</tr>
     		<tr id="conTr1Pattern" class="conTableItem" style="display: none">
     			<td class="txtAC" id="delIcon">
@@ -102,7 +102,7 @@
     			<td  id="role">
     				<span></span>  
     			</td>
-    			<td id="memberSince">
+    			<td id="memberSince" class="txtAC">
     				<span></span>
     			</td>
     			<td id="status">
@@ -110,7 +110,7 @@
     				<div class="clearB"></div>
     				<span id="nonExpired"></span>
     			</td>
-    			<td id="validity">
+    			<td id="validity" class="txtAC">
     				<span></span>
     			</td>
     			<td id="lastAccess">
