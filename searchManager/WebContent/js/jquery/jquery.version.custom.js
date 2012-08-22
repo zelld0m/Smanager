@@ -74,8 +74,17 @@
 												if ($.isNotBlank(reason) && $.isNotBlank(backupName)){
 													if(!validateField('Name', backupName, 1)){
 														return;
-													}else if(!validateField('Reason', reason, 1)){
+													}
+													else if (backupName.length>100){
+														//showMessage("#backupName","Name should not exceed 100 characters.");
+														alert("Name should not exceed 100 characters.");
+													}
+													else if(!validateField('Reason', reason, 1)){
 														return;
+													}
+													else if (reason.length>255){
+														//showMessage("#reason","Reason should not exceed 255 characters.");
+														alert("Reason should not exceed 255 characters.");
 													}
 													else{
 														RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, backupName, reason, {

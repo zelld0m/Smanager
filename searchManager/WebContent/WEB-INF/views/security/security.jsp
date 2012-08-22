@@ -106,7 +106,9 @@
     				<span></span>
     			</td>
     			<td id="status">
-    				<span></span>
+    				<span id="nonLocked"></span>
+    				<div class="clearB"></div>
+    				<span id="nonExpired"></span>
     			</td>
     			<td id="validity">
     				<span></span>

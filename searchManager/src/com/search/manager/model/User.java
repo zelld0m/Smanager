@@ -213,6 +213,10 @@ public class User extends ModelBean {
 	public Date getThruDate() {
 		return thruDate;
 	}
+	
+	public String getFormattedThruDate() {
+		return DateAndTimeUtils.formatDateUsingConfig(storeId, getThruDate());
+	}
 
 	public void setThruDate(Date thruDate) {
 		this.thruDate = thruDate;

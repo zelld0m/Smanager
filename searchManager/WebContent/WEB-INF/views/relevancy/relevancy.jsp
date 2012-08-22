@@ -95,7 +95,7 @@
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/rankingRuleGuidelines.jpg"></div>
-		<div id="relevancy" class="relevancy fsize12" style="display:none">		
+		<div id="relevancy" class="relevancy fsize12" style="display:none">			
 			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 					<div class="floatL">Rule Info</div>
@@ -106,7 +106,7 @@
 					<div class="clearB"></div>
 				</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
-					<label><input id="name" type="text" class="w240 marT5"/></label>
+					<label><input id="name" type="text" class="w240 marT5" maxlength="100"/></label>
 					<div class="clearB"></div>			
 					<label class="floatL w70 marT5 padT3">Schedule</label> 
 					<label><input id="startDate" name="startDate" type="text" class="w70 marT5"></label> 
@@ -161,7 +161,7 @@
 	
 	<div id="addRelevancyTemplate" style="display:none">
 		<div class="w282 padT10 newRelevancy">
-			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="50"></label><div class="clearB"></div>
+			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Schedule </label> <label><input name="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input name="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185" maxlength="255"></textarea> </label><div class="clearB"></div>
 			<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
