@@ -78,16 +78,16 @@
 
 						if (self.checkIfUpdateAllowed()){
 							if ($.isBlank(ruleName)){
-								smoke.alert("Rule name is required.");
+								jAlert("Rule name is required.");
 							}
 							else if (!isAllowedName(ruleName)){
-								smoke.alert("Rule name contains invalid value.");
+								jAlert("Rule name contains invalid value.");
 							}
 							else if (!isAscii(description)) {
-								smoke.alert("Description contains non-ASCII characters.");										
+								jAlert("Description contains non-ASCII characters.");										
 							}
 							else if (!isXSSSafe(description)){
-								smoke.alert("Description contains XSS.");
+								jAlert("Description contains XSS.");
 							}
 							else {
 								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
@@ -367,7 +367,7 @@
 						RedirectServiceJS.checkForRuleNameDuplicate("", name, {
 							callback: function(data){
 								if (data==true){
-									smoke.alert("Another query cleaning rule is already using the name provided.");
+									jAlert("Another query cleaning rule is already using the name provided.");
 								}else{
 									RedirectServiceJS.addRuleAndGetModel(name, {
 										callback: function(data){
@@ -942,7 +942,7 @@
 							self.addDynamicAttributeButtonListener(ui, condition, u.item.value);
 						}
 						else{
-							smoke.alert("Please specify a valid attribute name.");
+							jAlert("Please specify a valid attribute name.");
 							self.addDynamicAttributeButtonListener(ui, condition, "");
 						}
 						break;
@@ -1640,7 +1640,7 @@
 
 							if($.isNotBlank(inDynamicAttribute)){
 								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
-									smoke.alert("Attribute already added. Please select a different attribute name.");
+									jAlert("Attribute already added. Please select a different attribute name.");
 								}
 								else{
 									$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
@@ -1679,7 +1679,7 @@
 								}
 							}
 							else{
-								smoke.alert("Please select a dynamic attribute.");
+								jAlert("Please select a dynamic attribute.");
 							}
 						}
 					},
@@ -1703,7 +1703,7 @@
 						var condMap = self.buildConditionAsMap($item);
 
 						if ($.isEmptyObject(condMap)){
-							smoke.alert('Please specify at least one filter condition');
+							jAlert('Please specify at least one filter condition');
 							return;
 						}
 
@@ -1793,7 +1793,7 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($.isBlank(e.data.condition) || $divItemList.find("div.tempConditionItem").length > 0){
-								smoke.alert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group");
 								return;
 							}
 
@@ -1834,7 +1834,7 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($divItemList.find("div.tempConditionItem").length > 0){
-								smoke.alert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group");
 								return;
 							}
 

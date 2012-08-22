@@ -111,10 +111,11 @@
 			$('#scrollbar1').tinyscrollbar();	
 		});
 	</script>	
-	
-  <!-- smoke  -->
-  <script type="text/javascript" src="<spring:url value="/js/jquery/smoke/smoke.min.js" />" ></script>
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/smoke/smoke.css" />" />
+
+  <!-- jQuery alert  -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.css" />" />
+  
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
