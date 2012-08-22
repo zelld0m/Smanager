@@ -106,9 +106,9 @@
 		  				<div class="validityDate padT3">
 		  					<label class="w90">Valid Until : </label>
 		  					<label>
-		  						<input type="text" class="validityDateTextBox txtBoxSmall w60 floatL marR3" />
-		  						<img class="clearDate" src="<spring:url value="/images/icon_calendarDelete.png" />">
+		  						<input type="text" class="validityDateTextBox txtBoxSmall w60 floatL marR3" />		  						
 		  					</label>
+		  					<label class="padL3"><img class="clearDate" src="<spring:url value="/images/icon_calendarDelete.png" />"></label>
 		  				</div>
 		  				<div class="clearB"></div>
 	  				</div>
@@ -120,7 +120,7 @@
 		  			<div class="proInfo">
 		  				<div class="manufacturer titleArea"></div>	
 		  				<div class="clearB"></div>
-			  			<div class="name proName"></div>
+			  			<div class="name proName breakWord"></div>
 			  			<p class="textInfo">
 			  				<span class="fgreen">SKU #:</span>
 			  				<span class="sku"></span>
