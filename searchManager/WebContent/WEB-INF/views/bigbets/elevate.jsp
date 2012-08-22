@@ -32,7 +32,7 @@
 				</c:if>
 				<option value="facet">Facets</option>
 			</select>
-			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix"><div class="btnGraph marB8"></div></a>
+			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3"><div class="btnGraph marB8"></div></a>
       	</sec:authorize>
       </div>
       	
