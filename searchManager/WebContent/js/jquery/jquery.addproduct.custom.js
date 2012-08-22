@@ -38,15 +38,16 @@
 
 		base.getAddProductItemTemplate = function(){
 			var template ='';
-
-			template  += '<div id="addItemTemplate" class="mar0">';
+			
+			template  += '<div>';
+			template  += '<div id="addItemTemplate" class="mar0 w250">';
 			template  += '	<h3 class="padT10"></h3>';
 			template  += '	<div class="clearB"></div>';
 			template  += '	<div class="floatL marT5 marL5">';
 			template  += '		<label class="w60 floatL padT5">SKU #: </label>';
 			template  += '		<label>';
 			template  += '			<span class="fsize10 fgray txtAR">(separated by whitespaces or commas)</span>';
-			template  += '			<textarea id="addItemDPNo" style="width: 180px; float: left; margin-bottom: 7px"></textarea>';
+			template  += '			<textarea id="addItemDPNo" style="width: 230px; float: left; margin-bottom: 7px"></textarea>';
 			template  += '		</label>';
 			template  += '	</div>';
 			template  += '	<div class="floatL w155 marT5">';
@@ -55,13 +56,13 @@
 			template  += '	</div>';
 
 			template  += '	<div class="floatL marT5" style="width: 97px">';
-			template  += '		<label class="floatL marL5 padT5" style="width: 55px">Elevation:</label>';
+			template  += '		<label class="floatL marL5 padT5 w60">Elevation:</label>';
 			template  += '		<label><input id="addItemPosition" type="text" class="w25"></label>';
 			template  += '	</div>';
 			template  += '	<div class="clearB"></div>';
 			template  += '	<div class="floatL marT5 marL5">';
 			template  += '		<label class="w60 floatL padT5">Comment: </label> ';
-			template  += '		<label><textarea id="addItemComment" style="width: 180px; float: left; margin-bottom: 7px"></textarea></label>';
+			template  += '		<label><textarea id="addItemComment" style="width: 230px; float: left; margin-bottom: 7px"></textarea></label>';
 			template  += '	</div>';
 			template  += '	<div align="right">';
 			template  += '		<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
@@ -73,6 +74,8 @@
 			template  += '	</div>';
 			template  += '	<div class="clearB"></div>';
 			template  += '</div>';
+			template  += '</div>';
+			
 
 			return template;
 		},
