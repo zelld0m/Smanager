@@ -209,7 +209,10 @@
 				var self = this;
 				$("#preloader").show();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
-				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("fast", function(){});
+				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+					$("#titleText").html(self.moduleName);
+					$("#titleHeader").empty();
+				});
 			},
 
 			postShowRuleContent: function(){
@@ -224,24 +227,24 @@
 			populateRuleItem: function(page){
 				var self = this;
 
+				self.preShowRuleContent();
+				
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify,
-					beforeSubmitForApprovalRequest:function(){
-						self.preShowRuleContent();
-					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
 						self.selectedRuleItemTotal = 0;
 						var $ul = $("ul#ruleItemHolder");
-						$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
-
+						
 						ElevateServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
 							callback: function(data){
 								self.selectedRuleItemTotal = data.totalSize;
+								$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
+
 								var list = data.list;
 
 								if(self.getRuleItemFilter()==="all"){
@@ -291,13 +294,16 @@
 							},
 							postHook: function(){
 								self.postShowRuleContent();
+								$('#addRuleItemContainer').addproduct({
+									locked: self.selectedRuleStatus["locked"] || !allowModify
+								});
 							}
 						});
 
 					}
 				});	
 			},
-
+			
 			addRuleItemOptionListener: function(){
 				var self = this;
 
@@ -326,7 +332,9 @@
 //				}, {text:addItemFieldDefaultText});
 
 				$("#addRuleItemIcon").off().on({
-					click: function(e){}, //add here
+					click: function(e){
+						self.showAddProductItem(e);
+					}, 
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 
