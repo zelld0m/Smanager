@@ -96,8 +96,11 @@
 		output += '<div class="box marT8">';
 		output += '<h2>Search Within</h2>';
 		output += '<div class="mar10 w215">';
-		output += '<input type="text" id="searchWithinInput" class="searchBoxIconLBg w163 padTB4 fgray">';
+		output += '<div class="searchBoxHolder w145 floatL marT1 marR5">';
+		output += '<input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3">';
+		output += '</div>';
 		output += '<a href="javascript:void(0)" id="searchbutton" class="btnGraph"><div class="btnGraph btnGoB floatR"></div></a>';
+		output += '<div class="clearB"></div>';
 		output += '</div>';
 		output += '</div>';
 		return $(output);
