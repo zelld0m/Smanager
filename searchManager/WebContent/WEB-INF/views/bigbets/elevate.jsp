@@ -91,7 +91,7 @@
 					
 		  				<div class="validityDate padT3">
 		  					<label class="w90">Valid Until : </label>
-		  						<label>
+		  					<label>
 		  						<input type="text" class="validityDateTextBox txtBoxSmall w60 floatL marR3" />		  						
 		  					</label>
 		  					<label class="padL3"><img class="clearDate" src="<spring:url value="/images/icon_calendarDelete.png" />"></label>
