@@ -300,8 +300,7 @@
 	AjaxSolr.theme.prototype.snippet = function (doc) {
 		var output = '';
 
-		//TODO: make this dynamic
-		var description = $.isNotBlank(doc.MacMall_Description)? doc.MacMall_Description : doc.Description;  
+		var description = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Description"])? doc[GLOBAL_storeFacetName + "_Description"] : doc.Description;  
 
 		if (description && description.length > 300) {
 			output += description.substring(0, 300);
