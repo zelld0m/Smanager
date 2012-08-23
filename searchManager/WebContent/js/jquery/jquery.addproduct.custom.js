@@ -259,7 +259,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Description (contains):</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padB8">';
 			template  += '						<input id="descriptionContains" type="text" class="w250"/>';
 			template  += '					</td>';
 			template  += '				</tr>';		
