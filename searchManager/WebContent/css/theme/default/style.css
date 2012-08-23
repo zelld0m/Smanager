@@ -838,6 +838,10 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .conditionItem img:hover { cursor: pointer }
 
 
+/* elevate */
+#facetItem .ui-widget-content { float:left !important; }
+
+
 
 
 
