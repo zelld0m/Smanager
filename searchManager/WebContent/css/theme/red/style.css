@@ -761,3 +761,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .conditionItem img:hover { cursor: pointer }
 
+/* elevate */
+.qtip #facetItem .ui-state-default   { top:-5px !important }
+
