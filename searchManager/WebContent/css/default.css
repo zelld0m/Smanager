@@ -127,7 +127,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .pad10, .pad10		{ padding:10px }
 .cssReset .pad30				{ padding:30px }
 .cssReset .padT0, .padT0		{padding-top:0px}
-.cssReset .padT1				{padding-top:1px}
+.cssReset .padT1, .padT1		{padding-top:1px}
 .cssReset .padT2, .padT2		{padding-top:2px}
 .cssReset .padT3, .padT3		{padding-top:3px}
 .cssReset .padT5, .padT5		{padding-top:5px}
@@ -138,6 +138,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .padT12, .padT12		{padding-top:12px !important}
 .cssReset .padT15, .padT15		{padding-top:15px !important}
 .cssReset .padT20, .padT20		{padding-top:20px !important}
+.cssReset .padT35, .padT35		{padding-top:35px !important}
 .cssReset .padT40, .padT40		{padding-top:40px !important}
 .cssReset .padTB2				{padding:2px 0}
 .cssReset .padTB4				{padding:4px 0}
