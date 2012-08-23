@@ -169,11 +169,34 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		return numFound;
 	}
 
+	private int getForceAddCount(List<NameValuePair> requestParams) throws Exception {
+		HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+		JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
+		int forceAddCount = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+		if (forceAddCount > 0) {
+			JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
+			for (int i = 0; i < facetNames.size(); i++) {
+				String facet = facetNames.getString(i);
+				JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
+				for (int j = 0; j < facetValues.size(); j++) {
+					String facetValue = facetValues.getString(j);
+					int origFacetCount = 0;
+					int facetCount = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
+					try {
+						origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
+					} catch (Exception ex) {
+					}
+					initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount + facetCount);
+				}
+			}
+		}
+		return forceAddCount;
+	}
+	
 	@Override
 	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
 		int result = -1;
 		try {
-			HttpResponse solrResponse = null;
 			int forceAddCount = 0;
 			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
 			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
@@ -189,28 +212,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			if (edpBuffer.length() > 8) {
 				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, edpBuffer.toString());
 				requestParams.add(edpNvp);
-				solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-				JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
-				forceAddCount = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-				if (forceAddCount > 0) {
-					JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
-					for (int i = 0; i < facetNames.size(); i++) {
-						String facet = facetNames.getString(i);
-						JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
-						for (int j = 0; j < facetValues.size(); j++) {
-							String facetValue = facetValues.getString(j);
-							int origFacetCount = 0;
-							try {
-								origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
-							} catch (Exception ex) {
-								origFacetCount = 1;
-							}
-							initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount);
-						}
-					}
-					numFound += forceAddCount;
-					result += forceAddCount;
-				}
+				forceAddCount = getForceAddCount(requestParams);
+				numFound += forceAddCount;
+				result += forceAddCount;
 				requestParams.remove(edpNvp);
 			}
 			for (ElevateResult e : forceAddedList) {
@@ -222,28 +226,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				}
 				BasicNameValuePair facetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
 				requestParams.add(facetNvp);
-				solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-				JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
-				forceAddCount = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-				if (forceAddCount > 0) {
-					JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
-					for (int i = 0; i < facetNames.size(); i++) {
-						String facet = facetNames.getString(i);
-						JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
-						for (int j = 0; j < facetValues.size(); j++) {
-							String facetValue = facetValues.getString(j);
-							int origFacetCount = 0;
-							try {
-								origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
-							} catch (Exception ex) {
-								origFacetCount = 1;
-							}
-							initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount);
-						}
-					}
-					numFound += forceAddCount;
-					result += forceAddCount;
-				}
+				forceAddCount = getForceAddCount(requestParams);
+				numFound += forceAddCount;
+				result += forceAddCount;
 				requestParams.remove(facetNvp);
 			}
 			((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.ATTR_NUM_FOUND, numFound);
@@ -322,6 +307,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				}
 			}
 			for (ElevateResult e : elevatedList) {
+				if (e.isForceAdd()) {
+					continue; //disregard force add
+				}
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
 				BasicNameValuePair excludeFacetNVP = null;

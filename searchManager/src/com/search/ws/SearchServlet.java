@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -509,7 +508,7 @@ public class SearchServlet extends HttpServlet {
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
-			
+			boolean withElevateFacet = false;
 			if (keywordPresent) {
 				if (fromSearchGui) {
 					if (daoService.getKeyword(sk.getStoreId(), sk.getKeywordId()) != null) {
@@ -540,11 +539,11 @@ public class SearchServlet extends HttpServlet {
 								}
 							}
 						}
-						ElevateResult forceAddFilter = new ElevateResult();
-						forceAddFilter.setStoreKeyword(sk);
-						forceAddFilter.setForceAdd(true);
-						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
-						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
+//						ElevateResult forceAddFilter = new ElevateResult();
+//						forceAddFilter.setStoreKeyword(sk);
+//						forceAddFilter.setForceAdd(true);
+//						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
+//						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
 					}
 					
 					if (!disableExclude) {
@@ -559,7 +558,12 @@ public class SearchServlet extends HttpServlet {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					if (!disableElevate) {
 						if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
-							elevatedList = daoCacheService.getElevateRules(sk);								
+							elevatedList = daoCacheService.getElevateRules(sk);			
+							for (ElevateResult elevateResult : elevatedList) {
+								if (elevateResult.isForceAdd()) {
+									forceAddList.add(elevateResult);
+								}
+							}
 						}
 					}
 					if (!disableExclude) {
@@ -647,7 +651,8 @@ public class SearchServlet extends HttpServlet {
 			StringBuilder elevateValues = new StringBuilder();
 			StringBuilder elevateFacetValues = new StringBuilder();
 			generateElevateList(elevateValues, elevateFacetValues, elevatedList);
-
+			withElevateFacet = elevateFacetValues.length() > 0;
+			
 			BasicNameValuePair elevateNvp = null;
 			BasicNameValuePair elevateFacetNvp = null;
 			Integer numFound = 0;
@@ -673,34 +678,47 @@ public class SearchServlet extends HttpServlet {
 				}
 			});
 			tasks++;
-			Future<Integer> getForceAddTemplateCount = null;
-			if (forceAddList.size() > 0) {
-				NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
-				nameValuePairs.remove(kwNvp);
-//				StringBuffer buffer = new StringBuffer("EDP:(");
-//				for (ElevateResult e : forceAddList) {
-//					buffer.append(e.getEdp()).append(" ");
-//				}
-//				buffer.append(")");
-//				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
-//				nameValuePairs.add(edpNvp);
-				final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-				getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
-					@Override
-					public Integer call() throws Exception {
-						return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
-					}
-				});
-				tasks++;
-//				nameValuePairs.remove(edpNvp);
-				if (kwNvp != null) {
-					nameValuePairs.add(kwNvp);
+
+			while (tasks > 0) {
+				Future<Integer> completed = completionService.take();
+				if (completed.equals(getTemplateCount)) {
+					numFound = completed.get();
+					logger.debug("Results found: " + numFound);
 				}
+				tasks--;
 			}
+
+//			Future<Integer> getForceAddTemplateCount = null;
+//			if (forceAddList.size() > 0) {
+//				NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+//				nameValuePairs.remove(kwNvp);
+//				final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+//				getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
+//					@Override
+//					public Integer call() throws Exception {
+//						return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
+//					}
+//				});
+//				tasks++;
+//				if (kwNvp != null) {
+//					nameValuePairs.add(kwNvp);
+//				}
+//			}
+//
+//			while (tasks > 0) {
+//				Future<Integer> completed = completionService.take();
+//				if  (completed.equals(getForceAddTemplateCount)) {
+//					numForceAddFound = completed.get();
+//					logger.debug("Results found: " + numFound);
+//				}
+//				tasks--;
+//			}
+
 			// TODO: optional remove the spellcheck parameters for succeeding requests
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
+			
 			Future<Integer> getElevatedCount = null;
 			Future<Integer> getFacetElevatedCount = null;
 			if (requestedRows != 0 && (elevateValues.length() > 0 || elevateFacetValues.length() > 0)) {
@@ -750,15 +768,7 @@ public class SearchServlet extends HttpServlet {
 
 			while (tasks > 0) {
 				Future<Integer> completed = completionService.take();
-				if (completed.equals(getTemplateCount)) {
-					numFound = completed.get();
-					logger.debug("Results found: " + numFound);
-				}
-				else if (completed.equals(getForceAddTemplateCount)) {
-					numForceAddFound = completed.get();
-					logger.debug("Results found: " + numFound);
-				}
-				else if (completed.equals(getElevatedCount)) {
+				if (completed.equals(getElevatedCount)) {
 					numElevateFound += completed.get();
 					logger.debug("Elevate result size: " + numElevateFound);
 				}
@@ -790,13 +800,22 @@ public class SearchServlet extends HttpServlet {
 					// retrieve the elevate list
 					// TASK 2A
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
-					final List<ElevateResult> fElevatedList = elevatedList;
-					getElevatedItems = completionService.submit(new Callable<Integer>() {
-						@Override
-						public Integer call() throws Exception {
-							return solrHelper.getElevatedItems(getElevatedItemsParams, fElevatedList);
-						}
-					});
+					if (withElevateFacet) {
+						final List<ElevateResult> fElevatedList = elevatedList;
+						getElevatedItems = completionService.submit(new Callable<Integer>() {
+							@Override
+							public Integer call() throws Exception {
+								return solrHelper.getElevatedItems(getElevatedItemsParams, fElevatedList);
+							}
+						});
+					} else {
+						getElevatedItems = completionService.submit(new Callable<Integer>() {
+							@Override
+							public Integer call() throws Exception {
+								return solrHelper.getElevatedItems(getElevatedItemsParams);
+							}
+						});
+					}
 					tasks++;
 					requestedRows -= (numElevateFound - startRow);
 				}
