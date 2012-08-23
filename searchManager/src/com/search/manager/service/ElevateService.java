@@ -137,6 +137,8 @@ public class ElevateService{
 				if (StringUtils.isBlank(edp)) {
 					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
 					e.setForceAdd(true);
+				} else {
+					e.setForceAdd(false);
 				}
 				if (StringUtils.isNotBlank(edp)) {
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
