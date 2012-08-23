@@ -69,16 +69,18 @@
 		base.addSubmitForApprovalListener = function(){
 			base.$el.find("#submitForApprovalBtn").off().on({
 				click: function(e){
-					if(confirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?")){
-						DeploymentServiceJS.processRuleStatus(base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
-							callback: function(ruleStatus){
-								base.options.afterSubmitForApprovalRequest(ruleStatus);
-							},
-							preHook:function(){
-								base.options.beforeSubmitForApprovalRequest();
-							}
-						});
-					}
+					jConfirm(base.options.moduleName + " " + base.options.rule["ruleName"] + " will be locked for approval. Continue?", "Submit For Approval", function(result){
+						if(result){
+							DeploymentServiceJS.processRuleStatus(base.options.moduleName, base.options.rule["ruleId"], base.options.rule["ruleName"], false,{
+								callback: function(ruleStatus){
+									base.options.afterSubmitForApprovalRequest(ruleStatus);
+								},
+								preHook:function(){
+									base.options.beforeSubmitForApprovalRequest();
+								}
+							});
+						}
+					});
 				}
 			});
 		};

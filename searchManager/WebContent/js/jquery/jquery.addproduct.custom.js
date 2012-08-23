@@ -322,7 +322,7 @@
 			return template;
 		};
 
-		base.promptAddFacetItem = function(api, contentHolder){
+		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
 
 			contentHolder.find("#facetItem").tabs({
@@ -415,10 +415,10 @@
 						var contentHolder = $("div", api.elements.content);
 
 						switch(type){
-						case "product": base.promptAddProductItem(api, contentHolder); break; 
-						case "ims": base.promptAddFacetItem(api, contentHolder); break;
-						case "cnet": base.promptAddFacetItem(api, contentHolder); break;
-						case "facet": base.promptAddFacetItem(api, contentHolder); break;
+							case "product": base.promptAddProductItem(api, contentHolder); break; 
+							case "ims": base.promptAddFacetItem(api, contentHolder, type); break;
+							case "cnet": base.promptAddFacetItem(api, contentHolder, type); break;
+							case "facet": base.promptAddFacetItem(api, contentHolder, type); break;
 						};
 
 					},

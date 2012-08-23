@@ -126,13 +126,6 @@
   	<!--Bottom Paging-->
   	<div id="ruleItemPagingBottom" class="w730 floatL txtAL marT20"></div>
   	<div class="clearB"></div>
-  	
-  	<!--Locked Rule Display Template-->
-  	<div id="ruleIsLocked" class="w180" style="display:none;">
-  		<div class="w180 alert">
-  			You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.
-  		</div>
-  	</div>
 
 </div>
        

@@ -89,34 +89,22 @@ showMessage = function(selector, msg){
 	});
 };
 
+getLockedRuleHTMLTemplate = function(){
+	var template = '';
+	
+	template += '<div id="ruleIsLocked" class="w180">';
+	template += '	<div class="w180 alert">';
+	template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	template += '	</div>';
+	template += '</div>';
+	
+	return $(template).html();
+};
+
 /** Style for HTML upload tag */
 showHoverInfo = function(e){
 	if(e.data.locked){
-		$(this).qtip({
-			id: "hover-locked",
-			content: {
-				text: $('<div/>')
-			},
-			position:{
-				at: 'right center',
-				my: 'left center'
-			},
-			show:{
-				solo: false,
-				ready: true
-			},
-			hide: 'unfocus, mouseout',
-			style:{width:'auto'},
-			events: {
-				show: function(event, api){
-					var $content = $("div", api.elements.content);
-					$content.html($("#ruleIsLocked").html());
-				},
-				hide: function(event, api){
-					api.destroy();
-				}
-			}
-		});
+		showMessage(e.target, getLockedRuleHTMLTemplate());
 	}
 };
 
@@ -148,7 +136,7 @@ function initFileUploads() {
 /** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
-		
+
 		var load = false;
 		window.onfocus = function(){
 			if (load) {
@@ -159,11 +147,11 @@ function initFileUploads() {
 				}
 			}
 		};
-		
+
 		window.onblur = function() {
 			load = true;
-	    };
-		
+		};
+
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
@@ -227,14 +215,14 @@ function initFileUploads() {
 				}
 			});
 		};
-		
+
 		var COOKIE_SERVER_SELECTION = "server.selection";
 		var COOKIE_SERVER_SELECTED = "server.selected";
-		
+
 		var getServerList = function(){
-		
+
 			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
-			
+
 			if($.isNotBlank(serverSelection)){
 				$("#select-server option").remove();
 				parseData = JSON.parse($.trim($.cookie(COOKIE_SERVER_SELECTION)));
@@ -253,9 +241,9 @@ function initFileUploads() {
 						setSelectedServer();
 					}
 				});
-				
+
 			}
-			
+
 			$("#select-server").off().on({
 				change: function(event, data){
 					var reload;
@@ -266,7 +254,7 @@ function initFileUploads() {
 						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:GLOBAL_contextPath});
 						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 							callback:function(){
-								
+
 							}
 						});						
 					}
@@ -291,7 +279,7 @@ function initFileUploads() {
 				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
 			}
 		};
-		
+
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
@@ -340,7 +328,7 @@ function initFileUploads() {
 				base.$el.find(selector + ' .page').html(model["currentPage"]);
 			}
 		});
-		
+
 		useTabs();
 		useTinyMCE();
 		getServerList();

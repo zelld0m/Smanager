@@ -89,7 +89,7 @@
 									});
 								}
 								else {
-									alert("The keyword provided already exists.");
+									jAlert("Keyword <strong>" + keyword + "</strong> already exists.", "Duplicate Record");
 								}
 							}
 						});
@@ -176,12 +176,15 @@
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
 
-				if (self.selectedRuleStatus["locked"]) $li.find('.sortOrderTextBox').prop("readonly", true);
+				if (self.selectedRuleStatus["locked"]){
+					$li.find('.clearDate').hide();
+					$li.find('.sortOrderTextBox').prop("readonly", true);
+				}
 				
 				$li.find('.sortOrderTextBox').off().on({
 					keypress:function(e){
 						if (e.data.locked) return;
-
+					
 						var currentIndex = $.trim(($(this).parent("li").index()+1) + ((self.selectedRuleItemPage-1)*self.ruleItemPageSize));
 
 						var code = (e.keyCode ? e.keyCode : e.which);
@@ -190,14 +193,14 @@
 							var destinationIndex = $.trim($(this).val());
 							if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
 								if(destinationIndex > self.selectedRuleItemTotal){
-									alert("Maximum allowed value is " + (self.selectedRuleItemTotal));
+									jAlert("Elevation value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
 								}else{
 									self.setRuleItemPosition(e.data.item, destinationIndex);
 								}
 							}
 						}else{
 							if (((code==48 || code==96) && $.isBlank($(e.target).val())) || (code > 31 && (code < 48 || code > 57))){
-								alert("Should be a positive number not greater than " + self.selectedRuleItemTotal);
+								jAlert("Elevation value should be a number from 1 - " + self.selectedRuleItemTotal + ".", "Invalid Input Type");
 								return false;
 							}
 						}
@@ -205,6 +208,7 @@
 					},
 					focus:function(e){
 						if (e.data.locked) return; 
+						showMessage(this, "Press <strong>ENTER</strong> to update<br/><strong>Elevation Range:</strong> 1 - " + self.selectedRuleItemTotal);
 						if (parseInt($(this).val()) == parseInt(e.data.item["location"])) $(this).val("");
 					},
 					blur:function(e){
@@ -272,6 +276,9 @@
 					rule: self.selectedRule,
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify,
+					afterSubmitForApprovalRequest: function(ruleStatus){
+						self.populateRuleItem(page);
+					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
@@ -375,11 +382,6 @@
 					self.setRuleItemDisplay();
 				}});
 
-//				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
-//				blur: setFieldDefaultTextHandler,
-//				focus: setFieldEmptyHandler
-//				}, {text:addItemFieldDefaultText});
-
 				$("#addRuleItemIcon").off().on({
 					click: function(e){
 						self.showAddProductItem(e);
@@ -389,7 +391,6 @@
 
 				$("#clearRuleItemIcon").off().on({
 					click: function(e){
-						console.log("triggered");
 						if(e.data.locked) return;
 						if (confirm(self.clearRuleItemConfirmText)){
 							ElevateServiceJS.clearRule(self.selectedRule["ruleName"], {
