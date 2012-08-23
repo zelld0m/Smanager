@@ -36,6 +36,7 @@ public class SolrConstants {
 	public final static String TAG_DOC = "doc";
 	public final static String TAG_DOCS = "docs";
 	public final static String TAG_INT = "int";
+	public final static String TAG_ARR = "arr";
 	
 	public final static String TAG_ELEVATE = "Elevate";
 	public final static String TAG_EXPIRED = "Expired";
@@ -48,6 +49,7 @@ public class SolrConstants {
 		
 	public final static String TAG_FACET_COUNTS = "facet_counts";
 	public final static String TAG_FACET_FIELDS = "facet_fields";
+	public final static String TAG_FACET_FIELD = "facet.field";
 	
 	public final static String ATTR_NUM_FOUND = "numFound";
 	public final static String ATTR_MAX_SCORE = "maxScore";
