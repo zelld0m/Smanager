@@ -132,6 +132,7 @@ public class ElevateService{
 			count = 0;
 			ElevateResult e = new ElevateResult();
 			try {
+				e.setForceAdd(false);
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isBlank(edp)) {
 					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
