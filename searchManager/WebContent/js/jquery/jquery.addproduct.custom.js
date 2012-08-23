@@ -89,17 +89,161 @@
 			template  += '		<li><a href="#dynamicAttribute"><span>Dynamic Attributes</span></a></li>';
 			template  += '		<li><a href="#facet"><span>Facets</span></a></li>';
 			template  += '	</ul>';
-			
+
 			template  += '	<div id="ims">';
-			template  += '	</div>';
-			
-			template  += '	<div id="cnet">';
-			template  += '		<div class="fsize12 padT40">';
-			template  += '			lorem ipsum dolor sit amet';
+			template  += '		<div class="fsize12 marTB20 marRL50">';
+			template  += '			<table class="imsFields">';				
+			template  += '				<tr class="catName">';
+			template  += '					<td class="w175 padB8" valign="bottom">Category :</td>';
+			template  += '					<td class="iepadBT0">';
+			template  += '						<div class="floatL fsize11 marB8 txtDecoUL padT3">';
+			template  += '							<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>';
+			template  += '						</div>';
+			template  += '						<div class="clearB"></div>';
+			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="categoryList" class="categoryList selectCombo w229" title="Select Category"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catName" id="subcategory">';
+			template  += '					<td class="w175">SubCategory :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="subCategoryList" class="subCategoryList selectCombo w229" title="Select SubCategory"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catName" id="class">';
+			template  += '					<td class="w175">Class :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="classList" class="classList selectCombo w229" title="Select Class"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catName" id="minor">';
+			template  += '					<td class="w175" valign="top">SubClass :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="minorList" class="minorList selectCombo w229" title="Select SubClass"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catCode">';
+			template  += '					<td  class="w175 padB8" valign="bottom">Category Code :</td>';
+			template  += '					<td>';
+			template  += '						<div class="floatL fsize11 marB8 txtDecoUL padT3">';
+			template  += '							<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>';
+			template  += '						</div>';
+			template  += '						<div class="clearB"></div>';
+			template  += '						<input id="catcode" type="text">';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr>';
+			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="manufacturerList" class="manufacturerList selectCombo w235" title="Select Manufacturer"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '			</table>';						
 			template  += '		</div>';
 			template  += '	</div>';
-			
+
+			template  += '	<div id="cnet">';
+			template  += '		<div class="fsize12 marTB20 marRL50">';
+			template  += '			<table class="cnetFields">';							
+			template  += '				<tr class="catName" id="level1Cat">';
+			template  += '					<td class="w175 padB8" valign="bottom">Level 1 Category :</td>';
+			template  += '					<td class="iepadBT0">';
+			template  += '						<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w235" title="Select Category"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catName" id="level2Cat">';
+			template  += '					<td class="w175">Level 2 Category :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w235" title="Select SubCategory"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr class="catName" id="level3Cat">';
+			template  += '					<td class="w175">Level 3 Category :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr>';
+			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderCNETManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w235" title="Select Manufacturer"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '			</table>';						
+			template  += '		</div>';
+			template  += '	</div>';
+
 			template  += '	<div id="dynamicAttribute">';
+			template  += '		<div class="fsize12 marTB20 marRL50">';
+			template  += '			<table class="dynamicAttributeFields">';							
+			template  += '				<tr>';
+			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
+			template  += '					<td class="iepadBT0 w278">';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr id="dynamicAttributeValue">';
+			template  += '					<td colspan="2">';
+			template  += '						<div id="dynamicAttributeItemList">';							
+			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">';
+			template  += '								<div class="clearB"></div>';
+			template  += '								<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
+			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8" alt="Delete Attribute" title="Delete Attribute">';
+			template  += '								<div class="w235 floatL marT8 border pad10" style="overflow-y:auto; max-height: 107px">';												
+			template  += '									<ul id="dynamicAttributeValues">';
+			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
+			template  += '											<div>';
+			template  += '												<input type="checkbox" class="checkboxFilter">';
+			template  += '												<span id="attributeValueName"></span>';
+			template  += '											</div>';
+			template  += '										</li>';
+			template  += '									</ul>';
+			template  += '								</div>';
+			template  += '							</div>';
+			template  += '						</div>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '				<tr id="dynamicAttributeName">';
+			template  += '					<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>';
+			template  += '					<td>';
+			template  += '						<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL">';
+			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w210" title="Add Dynamic Attribute"></select>';
+			template  += '						</div>';
+			template  += '						<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>';
+			template  += '					</td>';
+			template  += '				</tr>';
+			template  += '			</table>';						
+			template  += '		</div>';
 			template  += '	</div>';
 
 			template  += '	<div id="facet">';
@@ -161,12 +305,20 @@
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '			</table>';
-			template  += '			<div style="clear:both">';	
+			template  += '			<div class="clearB"></div>';	
 			template  += '		</div>';
 			template  += '	</div>';
-			
 			template  += '</div>';
 
+			template  += '<div align="right">';
+			template  += '	<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template  += '		<div class="buttons fontBold">Elevate</div>';
+			template  += '	</a>';
+			template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template  += '		<div class="buttons fontBold">Clear</div>';
+			template  += '	</a>';
+			template  += '</div>';
+			
 			return template;
 		};
 
@@ -176,6 +328,11 @@
 			contentHolder.find("#facetItem").tabs({
 
 			});
+			
+			contentHolder.find("select.selectCombo").combobox({
+				
+			});
+			
 
 		};
 

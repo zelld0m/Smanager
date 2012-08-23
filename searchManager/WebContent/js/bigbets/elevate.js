@@ -3,6 +3,7 @@
 	var Elevate = {
 			moduleName: "Elevate",
 			selectedRule:  null,
+			selectedRuleItemPage: 1,
 			selectedRuleItemTotal: 0,
 			selectedRuleStatus: null,
 
@@ -114,7 +115,7 @@
 				$li.find(".sku").html($item["dpNo"]);
 				$li.find(".mfrpn").html($item["mfrPN"]);
 
-				if (item["isExpired"]){
+				if ($item["isExpired"]){
 					$li.find(".validityDaysExpired").show();
 					$li.find(".validityDays").empty();
 				}else{
@@ -175,7 +176,44 @@
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
 
+				if (self.selectedRuleStatus["locked"]) $li.find('.sortOrderTextBox').prop("readonly", true);
+				
+				$li.find('.sortOrderTextBox').off().on({
+					keypress:function(e){
+						if (e.data.locked) return;
 
+						var currentIndex = $.trim(($(this).parent("li").index()+1) + ((self.selectedRuleItemPage-1)*self.ruleItemPageSize));
+
+						var code = (e.keyCode ? e.keyCode : e.which);
+
+						if(code == 13) { 
+							var destinationIndex = $.trim($(this).val());
+							if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
+								if(destinationIndex > self.selectedRuleItemTotal){
+									alert("Maximum allowed value is " + (self.selectedRuleItemTotal));
+								}else{
+									self.setRuleItemPosition(e.data.item, destinationIndex);
+								}
+							}
+						}else{
+							if (((code==48 || code==96) && $.isBlank($(e.target).val())) || (code > 31 && (code < 48 || code > 57))){
+								alert("Should be a positive number not greater than " + self.selectedRuleItemTotal);
+								return false;
+							}
+						}
+						return true;
+					},
+					focus:function(e){
+						if (e.data.locked) return; 
+						if (parseInt($(this).val()) == parseInt(e.data.item["location"])) $(this).val("");
+					},
+					blur:function(e){
+						if (e.data.locked) return; 
+						$(this).val(e.data.item["location"]);   
+					},	
+					mouseenter: showHoverInfo
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+				
 				setTimeout(function(){		
 					if ($.isBlank($item["dpNo"])){
 						$li.find(".itemImg").prop("src","../images/padlock_img.jpg"); 
@@ -226,7 +264,7 @@
 
 			populateRuleItem: function(page){
 				var self = this;
-
+				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
 				
 				$("#submitForApproval").rulestatus({
@@ -295,7 +333,18 @@
 							postHook: function(){
 								self.postShowRuleContent();
 								$('#addRuleItemContainer').addproduct({
-									locked: self.selectedRuleStatus["locked"] || !allowModify
+									locked: self.selectedRuleStatus["locked"] || !allowModify,
+									addProductItemCallback:function(skus, expDate, sequence, comment){
+										ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], sequence, expDate, comment, skus, {
+											callback : function(code){
+												showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+												self.populateRuleItem();
+											},
+											preHook: function(){ 
+												self.preShowRuleContent();
+											}
+										});		
+									}
 								});
 							}
 						});
@@ -433,6 +482,21 @@
 				self.populateRuleItem();
 			},
 
+			setRuleItemPosition: function(item, position) {
+				var self = this;
+				var $item = item;
+				
+				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
+					callback : function(code){
+						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						self.populateRuleItem();
+					},
+					preHook: function(){
+						self.preShowRuleContent();
+					}
+				});
+			},
+			
 			getRuleItemFilter: function(){
 				var self = this;
 				var cookieFilter = $.trim($.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"])));
