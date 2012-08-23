@@ -200,11 +200,12 @@
 			template  += '	</div>';
 
 			template  += '	<div id="dynamicAttribute">';
+			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
 			template  += '		<div class="fsize12 padT35 marRL20">';
 			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
-			template  += '					<td class="iepadBT0 w278">';
+			template  += '					<td class="iepadBT0 w278 padT1">';
 			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>';
@@ -212,7 +213,7 @@
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr id="dynamicAttributeValue">';
-			template  += '					<td colspan="2">';
+			template  += '					<td colspan="2" class="padT1">';
 			template  += '						<div id="dynamicAttributeItemList">';							
 			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">';
 			template  += '								<div class="clearB"></div>';
@@ -234,7 +235,7 @@
 			template  += '				</tr>';
 			template  += '				<tr id="dynamicAttributeName">';
 			template  += '					<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>';
-			template  += '					<td class="padT2">';
+			template  += '					<td class="padT1">';
 			template  += '						<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w235" title="Add Dynamic Attribute"></select>';
@@ -243,6 +244,7 @@
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '			</table>';						
+			template  += '		</div>';
 			template  += '		</div>';
 			template  += '	</div>';
 
@@ -310,7 +312,7 @@
 			template  += '	</div>';
 			template  += '</div>';
 
-			template  += '<div align="right">';
+			template  += '<div align="right" class="padR50">';
 			template  += '	<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '		<div class="buttons fontBold">Elevate</div>';
 			template  += '	</a>';
