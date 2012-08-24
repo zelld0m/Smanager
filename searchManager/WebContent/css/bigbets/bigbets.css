@@ -161,7 +161,7 @@ div.listView ul.boxContainer li div.picArea { height: 100px; overflow: hidden; m
 div.listView ul.boxContainer li div.titleArea { text-align: center; font-weight: bold; height:18px; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; float:left  }
 
 div.listView ul.boxContainer li div.proInfo { margin:10px 8px; float:left; margin-left:10px; width:80% }
-div.listView ul.boxContainer li .proName { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
+div.listView ul.boxContainer li .proName, .proName a { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
 div.listView ul.boxContainer li p.textInfo { padding:1px 0 }
 
 div.listView  ul.listIcons { list-style: none; margin:0 }

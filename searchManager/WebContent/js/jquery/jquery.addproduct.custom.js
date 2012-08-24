@@ -67,7 +67,7 @@
 
 			template  += '<div id="facetItem">';
 			template  += '	<h3 class="fLblue">Lorem ipsum dolor sit amet</h3>';
-			template  += '	<div style="height:42px">';
+			template  += '	<div style="height:23px" class="borderB">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
 			template  += '		<li><a href="#cnet"><span>Facet Template/Manufacturer</span></a></li>';
@@ -77,7 +77,7 @@
 			template  += '	<div class="clearB"></div>';
 			template  += '	</div>';
 							
-			template  += '	<div id="ims" class="w500 borderT">';
+			template  += '	<div id="ims" class="w500">';
 			template  += '		<div class="holder fsize12 padT20 marRL20">';
 			template  += '			<table class="imsFields">';				
 			template  += '				<tr class="catName">';
@@ -143,7 +143,7 @@
 			template  += '		</div>';
 			template  += '	</div>';
 
-			template  += '	<div id="cnet" class="w500 borderT">';
+			template  += '	<div id="cnet" class="w500">';
 			template  += '		<div class="holder fsize12 padT20 marRL20">';
 			template  += '			<table class="cnetFields">';							
 			template  += '				<tr class="catName" id="level1Cat">';
@@ -186,7 +186,7 @@
 			template  += '		</div>';
 			template  += '	</div>';
 
-			template  += '	<div id="dynamicAttribute" class="borderT">';
+			template  += '	<div id="dynamicAttribute">';
 			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
 			template  += '		<div class="holder fsize12 padT20 marRL20">';
 			template  += '			<table class="dynamicAttributeFields">';							
@@ -235,7 +235,7 @@
 			template  += '		</div>';
 			template  += '	</div>';
 
-			template  += '	<div id="facet" class="w500 borderT">';
+			template  += '	<div id="facet" class="w500">';
 			template  += '		<div class="holder fsize12 padT20">';
 			template  += '			<table>';
 			template  += '				<tr>';
