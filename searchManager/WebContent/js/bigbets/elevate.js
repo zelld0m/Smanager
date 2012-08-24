@@ -105,7 +105,6 @@
 				var $condition = item.condition;
 				var type = "";
 
-				console.log(item.condition);
 				if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
 					type="facet";
 				}else if($condition["CNetFilter"]){
@@ -145,11 +144,14 @@
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
 								newRecord: false,
-								condition: e.data.item.condition,
-								updateFacetItemCallback: function(selectedFacetFieldValues){
-									ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], 1, "", "",  selectedFacetFieldValues, {
+								item: e.data.item,
+								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
+									ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											
+											self.populateRuleItem(self.selectedRulePage);
+										},
+										preHook: function(){ 
+											self.preShowRuleContent();
 										}
 									});
 								}
@@ -418,7 +420,7 @@
 												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], sequence, expDate, comment, skus, {
 													callback : function(code){
 														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-														self.populateRuleItem();
+														self.populateRuleItem(self.selectedRulePage);
 													},
 													preHook: function(){ 
 														self.preShowRuleContent();
@@ -428,7 +430,10 @@
 											addFacetItemCallback: function(selectedFacetFieldValues){
 												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], 1, "", "",  selectedFacetFieldValues, {
 													callback: function(data){
-														
+														self.populateRuleItem();
+													},
+													preHook: function(){ 
+														self.preShowRuleContent();
 													}
 												});
 											}

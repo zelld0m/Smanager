@@ -424,40 +424,41 @@
 		},
 
 		base.populateFacets = function(api, contentHolder){
-			if (!base.options.condition["CNetFilter"] && !base.options.condition["IMSFilter"]){
+			var $condition = base.options.item.condition;
+			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
 				var $facet = contentHolder.find("div#facet");
 				
-				$facet.find("input#platformList").val(base.options.condition.facets["Platform"]);
-				$facet.find("select#platformList").prop("selectedText", base.options.condition.facets["Platform"]);
+				$facet.find("input#platformList").val($condition.facets["Platform"]);
+				$facet.find("select#platformList").prop("selectedText", $condition.facets["Platform"]);
 
-				$facet.find("input#conditionList").val(base.options.condition.facets["Condition"]);
-				$facet.find("select#conditionList").prop("selectedText", base.options.condition.facets["Condition"]);
+				$facet.find("input#conditionList").val($condition.facets["Condition"]);
+				$facet.find("select#conditionList").prop("selectedText", $condition.facets["Condition"]);
 
-				$facet.find("input#availabilityList").val(base.options.condition.facets["Availability"]);
-				$facet.find("select#availabilityList").prop("selectedText", base.options.condition.facets["Availability"]);
+				$facet.find("input#availabilityList").val($condition.facets["Availability"]);
+				$facet.find("select#availabilityList").prop("selectedText", $condition.facets["Availability"]);
 
-				$facet.find("input#licenseList").val(base.options.condition.facets["License"]);
-				$facet.find("select#licenseList").prop("selectedText", base.options.condition.facets["License"]);
+				$facet.find("input#licenseList").val($condition.facets["License"]);
+				$facet.find("select#licenseList").prop("selectedText", $condition.facets["License"]);
 
-				$facet.find("input#nameContains").val(base.options.condition.facets["Name"]);
-				$facet.find("input#descriptionContains").val(base.options.condition.facets["Description"]);
+				$facet.find("input#nameContains").val($condition.facets["Name"]);
+				$facet.find("input#descriptionContains").val($condition.facets["Description"]);
 			}
 		};
 		
 		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
 
-			if ($.isBlank(base.options.condition)){
+			if ($.isBlank(base.options.item)){
 				contentHolder.find("#conditionText").hide();
 			}else{
-				contentHolder.find("#conditionText").html(base.options.condition["readableString"]);
+				contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
 			}
 
 			switch(type){
 			case "facet": 
 				contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
 				contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
-				if ($.isNotBlank(base.options.condition)) 
+				if ($.isNotBlank(base.options.item)) 
 					base.populateFacets(api, contentHolder);
 				break;
 			case "cnet": 
@@ -490,7 +491,7 @@
 					if (base.options.newRecord){
 						base.options.addFacetItemCallback(base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
 					}else{
-						base.options.updateFacetItemCallback(base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+						base.options.updateFacetItemCallback(base.options.item["memberId"], base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
 					}
 				}
 			}, {api:api, contentHolder:contentHolder});
@@ -597,12 +598,12 @@
 			type: "product",
 			locked: true,
 			newRecord: true,
-			condition: null,
+			item: null,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
 			addProductItemCallback: function(skus, expDate, sequence, comment){},
 			addFacetItemCallback: function(selectedFacetFieldValues){},
-			updateFacetItemCallback: function(selectedFacetFieldValues){}
+			updateFacetItemCallback: function(memberId, selectedFacetFieldValues){}
 	};
 
 	$.fn.addproduct = function(options){
