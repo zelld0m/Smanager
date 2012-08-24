@@ -76,7 +76,7 @@
 			template  += '	</ul>';
 			template  += '	<div class="clearB"></div>';
 			template  += '	</div>';
-							
+
 			template  += '	<div id="ims" class="w500">';
 			template  += '		<div class="holder fsize12 padT20 marRL20">';
 			template  += '			<table class="imsFields">';				
@@ -300,51 +300,201 @@
 			template  += '</div>';
 
 			template  += '<div align="right" class="padR50">';
-			template  += '	<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '		<div class="buttons fontBold">Save</div>';
+			template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Save' : 'Update')  + '</div>';
 			template  += '	</a>';
 			template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '		<div class="buttons fontBold">Clear</div>';
 			template  += '	</a>';
 			template  += '</div>';
-			
+
 			return template;
 		};
 
+		base.getSelectedFacetFieldValues= function(api, contentHolder){
+			var self = this;
+
+			var condMap = new Object();
+			var catCode = new Array();
+			var category = new Array();
+			var subCategory = new Array();
+			var clazz = new Array();
+			var minor = new Array();
+			var manufacturer = new Array();
+			var level1Cat = new Array();
+			var level2Cat = new Array();
+			var level3Cat = new Array();
+			var cnetManufacturer = new Array();
+
+
+//			if (ui.find("div.ims").is(":visible")){
+//			catCode[0] = $.trim(ui.find("input#catcode").val());
+//			category[0] = $.trim(ui.find("input#categoryList").val());
+//			subCategory[0] = $.trim(ui.find("input#subCategoryList").val());
+//			clazz[0] = $.trim(ui.find("input#classList").val());
+//			minor[0] = $.trim(ui.find("input#minorList").val());
+//			manufacturer[0] = $.trim(ui.find("input#manufacturerList").val());
+
+//			if (ui.find("a.switchToCatName").is(":visible")){
+//			if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode;
+//			}else{
+//			if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
+//			if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
+//			if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
+//			if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
+//			}
+//			if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+//			}
+
+//			if (ui.find("div.cnet").is(":visible")){
+//			level1Cat[0] = $.trim(ui.find("input#level1CategoryList").val());
+//			level2Cat[0] = $.trim(ui.find("input#level2CategoryList").val());
+//			level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
+//			cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
+
+//			if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
+//			if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
+//			if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat; 	
+
+//			if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
+//			}
+
+//			if(ui.find("div.dynamicAttribute").is(":visible")){
+//			var inTemplateName = ui.find("input#templateNameList").val();
+//			var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
+
+//			if($.isNotBlank(inTemplateName.trim())){
+//			condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
+
+//			$divDynamicAttrItems.find("ul").each(function(){ 
+//			var attributeItem = this.title;
+//			var attributeValues = new Array();
+
+//			$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
+//			attributeValues.push($(this).val()); 
+//			});
+
+//			if(attributeValues.length > 0)
+//			condMap[attributeItem] = attributeValues;
+//			});
+//			}
+//			}
+
+
+			// Facet tab is always visible
+			var $facetDiv = contentHolder.find("div#facet"); 
+
+			var platform = $facetDiv.find("input#platformList").val();
+			var condition = $facetDiv.find("input#conditionList").val();
+			var availability = $facetDiv.find("input#availabilityList").val();
+			var license = $facetDiv.find("input#licenseList").val();
+			var nameContains = $.trim($facetDiv.find("input#nameContains").val());
+			var descriptionContains = $.trim($facetDiv.find("input#descriptionContains").val());
+
+			switch($.trim(platform.toLowerCase())){
+			case "universal": condMap["Platform"] = ["Universal"]; break;
+			case "pc": condMap["Platform"] = ["PC"]; break;
+			case "linux": condMap["Platform"] = ["Linux"]; break;
+			case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
+			}
+
+			switch($.trim(condition.toLowerCase())){
+			case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
+			case "open box": condMap["Condition"] = ["Open Box"]; break;
+			case "clearance": condMap["Condition"] = ["Clearance"]; break;
+			}
+
+			switch($.trim(availability.toLowerCase())){
+			case "in stock": condMap["Availability"] = ["In Stock"]; break;
+			case "call": condMap["Availability"] = ["Call"]; break;
+			}
+
+			switch($.trim(license.toLowerCase())){
+			case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
+			case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+			}
+
+			if($.isNotBlank(nameContains))
+				condMap["Name"] = $.makeArray(nameContains);
+
+			if($.isNotBlank(descriptionContains))
+				condMap["Description"] = $.makeArray(descriptionContains);
+
+			return condMap;
+		},
+
+		base.populateFacets = function(api, contentHolder){
+			if (!base.options.condition["CNetFilter"] && !base.options.condition["IMSFilter"]){
+				var $facet = contentHolder.find("div#facet");
+				
+				$facet.find("input#platformList").val(base.options.condition.facets["Platform"]);
+				$facet.find("select#platformList").prop("selectedText", base.options.condition.facets["Platform"]);
+
+				$facet.find("input#conditionList").val(base.options.condition.facets["Condition"]);
+				$facet.find("select#conditionList").prop("selectedText", base.options.condition.facets["Condition"]);
+
+				$facet.find("input#availabilityList").val(base.options.condition.facets["Availability"]);
+				$facet.find("select#availabilityList").prop("selectedText", base.options.condition.facets["Availability"]);
+
+				$facet.find("input#licenseList").val(base.options.condition.facets["License"]);
+				$facet.find("select#licenseList").prop("selectedText", base.options.condition.facets["License"]);
+
+				$facet.find("input#nameContains").val(base.options.condition.facets["Name"]);
+				$facet.find("input#descriptionContains").val(base.options.condition.facets["Description"]);
+			}
+		};
+		
 		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
-			
+
 			if ($.isBlank(base.options.condition)){
 				contentHolder.find("#conditionText").hide();
 			}else{
 				contentHolder.find("#conditionText").html(base.options.condition["readableString"]);
 			}
-			
+
 			switch(type){
-				case "facet": 
-					contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
-					contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove(); 
-					break;
-				case "cnet": 
-					contentHolder.find('a[href="#ims"]').parent('li').remove();
-					contentHolder.find("div#ims").remove(); 
-					break;
-				case "ims": 
-					contentHolder.find('a[href="#cnet"]').parent('li').remove();
-					contentHolder.find("div#cnet").remove();
-					break;
+			case "facet": 
+				contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
+				contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
+				if ($.isNotBlank(base.options.condition)) 
+					base.populateFacets(api, contentHolder);
+				break;
+			case "cnet": 
+				contentHolder.find('a[href="#ims"]').parent('li').remove();
+				contentHolder.find("div#ims").remove(); 
+				break;
+			case "ims": 
+				contentHolder.find('a[href="#cnet"]').parent('li').remove();
+				contentHolder.find("div#cnet").remove();
+
+				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="sbn"){
+					contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
+					contentHolder.find("div#dynamicAttribute").remove();
+				}
+				break;
 			}
-			
+
 			if (type!=="facet"){
 				contentHolder.find("#facetItem").tabs({
-					
+
 				});
 			}
-			
+
 			contentHolder.find("select.selectCombo").combobox({
-				
+
 			});
 			
+			contentHolder.find("#addFacetItemToRuleBtn").off().on({
+				click: function(e){
+					if (base.options.newRecord){
+						base.options.addFacetItemCallback(base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+					}else{
+						base.options.updateFacetItemCallback(base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+					}
+				}
+			}, {api:api, contentHolder:contentHolder});
+
 		};
 
 		base.promptAddProductItem = function(api, contentHolder){
@@ -403,7 +553,7 @@
 		};
 
 		base.promptRuleItemDetails = function(target, type){
-
+			var self = this;
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
@@ -426,12 +576,11 @@
 						var contentHolder = $("div", api.elements.content);
 
 						switch(type){
-							case "product": base.promptAddProductItem(api, contentHolder); break; 
-							case "ims": base.promptAddFacetItem(api, contentHolder, type); break;
-							case "cnet": base.promptAddFacetItem(api, contentHolder, type); break;
-							case "facet": base.promptAddFacetItem(api, contentHolder, type); break;
-						};
-
+						case "product": base.promptAddProductItem(api, contentHolder); break; 
+						case "ims": base.promptAddFacetItem(api, contentHolder, type); break;
+						case "cnet": base.promptAddFacetItem(api, contentHolder, type); break;
+						case "facet": base.promptAddFacetItem(api, contentHolder, type); break;
+						};						
 					},
 					hide: function(event, api){
 						api.destroy();
@@ -439,7 +588,7 @@
 				}
 			});
 		};
-
+		
 		// Run initializer
 		base.init();
 	};
@@ -447,11 +596,13 @@
 	$.addproduct.defaultOptions = {
 			type: "product",
 			locked: true,
+			newRecord: true,
 			condition: null,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
 			addProductItemCallback: function(skus, expDate, sequence, comment){},
-			addFacetItemCallback: function(){}
+			addFacetItemCallback: function(selectedFacetFieldValues){},
+			updateFacetItemCallback: function(selectedFacetFieldValues){}
 	};
 
 	$.fn.addproduct = function(options){
