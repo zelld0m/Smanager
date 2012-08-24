@@ -263,7 +263,7 @@ public class ElevateDAO {
 	            if (elevate.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
 	            	value = StringUtils.trim(elevate.getEdp());
 	            } else {
-	            	value = elevate.getCondition();
+	            	value = elevate.getCondition().getCondition();
 	            }
 	    		
 	    		Integer sequence = elevate.getLocation();
@@ -348,8 +348,8 @@ public class ElevateDAO {
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
 	        if (!StringUtils.isBlank(elevate.getEdp())) {
 		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
-	        } else if (!StringUtils.isBlank(elevate.getCondition())) {
-		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getCondition());
+	        } else if (elevate.getCondition() != null && !StringUtils.isBlank(elevate.getCondition().getConditionForSolr())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getCondition().getConditionForSolr());
 	        } else {
 	        	inputs.put(DAOConstants.PARAM_VALUE, null);
 	        }

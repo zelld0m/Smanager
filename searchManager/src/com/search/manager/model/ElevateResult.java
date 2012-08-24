@@ -13,7 +13,7 @@ public class ElevateResult extends ModelBean {
 	private Integer location;
 	private Date expiryDate;
 	private MemberTypeEntity elevateEntity;
-	private String condition;
+	private RedirectRuleCondition condition;
 	private String memberId;
 	private Boolean forceAdd;
 	
@@ -23,7 +23,7 @@ public class ElevateResult extends ModelBean {
 	public ElevateResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId, boolean forceAdd) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			elevateEntity = MemberTypeEntity.FACET;
-			this.condition = edp;
+			condition = new RedirectRuleCondition(edp);
 			this.edp = "";
 		} else {
 			elevateEntity = MemberTypeEntity.PART_NUMBER;
@@ -86,11 +86,11 @@ public class ElevateResult extends ModelBean {
 		this.elevateEntity = elevateEntity;
 	}
 
-	public String getCondition() {
+	public RedirectRuleCondition getCondition() {
 		return condition;
 	}
 
-	public void setCondition(String condition) {
+	public void setCondition(RedirectRuleCondition condition) {
 		this.condition = condition;
 	}
 

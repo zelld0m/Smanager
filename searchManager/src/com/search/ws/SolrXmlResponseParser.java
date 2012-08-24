@@ -139,9 +139,9 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				StringBuilder elevateValues = new StringBuilder();
 				StringBuilder elevateFacetValues = new StringBuilder();
 				if (elevateResult.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp().toString());
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp());
 				} else {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().toString());
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().getConditionForSolr());
 					generateElevateList(elevateValues, elevateFacetValues, elevatedList, elevateResult);
 					if (elevateValues.length() > 0) {
 						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
@@ -237,7 +237,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 					} else {
 						elevateFacetValues.append(" OR ");
 					}
-					elevateFacetValues.append(elevate.getCondition());
+					elevateFacetValues.append(elevate.getCondition().getConditionForSolr());
 				}
 			}
 			if (edpFlag) {
@@ -481,7 +481,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			for (ElevateResult e : forceAddedList) {
 				StringBuffer buffer = new StringBuffer("");
 				if (MemberTypeEntity.FACET == e.getElevateEntity()) {
-					buffer.append(e.getCondition());
+					buffer.append(e.getCondition().getConditionForSolr());
 				} else {
 					continue;
 				}

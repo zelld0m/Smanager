@@ -29,7 +29,7 @@ public class Product extends ModelBean {
 	private String lastModifiedBy;
 	private String createdBy;
 	private MemberTypeEntity memberTypeEntity;
-	private String condition;
+	private RedirectRuleCondition condition;
 	private String memberId;
 
 	public Product() {
@@ -204,11 +204,11 @@ public class Product extends ModelBean {
 		return diffDays > 0 ? String.format("%s %s", String.valueOf(diffDays), diffDays==1? "day left" : "days left"): (diffDays == 0 ? "Ending Today" : "");
 	}
 
-	public String getCondition() {
+	public RedirectRuleCondition getCondition() {
 		return condition;
 	}
 
-	public void setCondition(String condition) {
+	public void setCondition(RedirectRuleCondition condition) {
 		this.condition = condition;
 	}
 

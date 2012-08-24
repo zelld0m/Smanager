@@ -21,6 +21,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -90,7 +91,7 @@ public class ElevateService{
 				e.setEdp(value);
 				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 			} else {
-				e.setCondition(value);
+				e.setCondition(new RedirectRuleCondition(value));
 				e.setElevateEntity(MemberTypeEntity.FACET);
 				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
 				if (e.isForceAdd()) {
@@ -236,7 +237,7 @@ public class ElevateService{
 			}
 			if (elevate!=null) {
 				if (!StringUtils.isBlank(condition)) {
-					elevate.setCondition(condition);
+					elevate.setCondition(new RedirectRuleCondition((condition)));
 				}
 				elevate.setLocation(sequence);
 				elevate.setLastModifiedBy(UtilityService.getUsername());
