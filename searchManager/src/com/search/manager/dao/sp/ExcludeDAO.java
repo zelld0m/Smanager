@@ -222,7 +222,7 @@ public class ExcludeDAO {
 	            if (exclude.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
 	            	value = StringUtils.trim(exclude.getEdp());
 	            } else {
-	            	value = exclude.getCondition();
+	            	value = exclude.getCondition().getCondition();
 	            }
 		        Map<String, Object> inputs = new HashMap<String, Object>();
 		        inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());

@@ -12,7 +12,7 @@ public class ExcludeResult extends ModelBean {
 	private String edp;
 	private Date expiryDate;
 	private MemberTypeEntity excludeEntity;
-	private String condition;
+	private RedirectRuleCondition condition;
 	private String memberId;
 	
 	public ExcludeResult() {
@@ -21,7 +21,7 @@ public class ExcludeResult extends ModelBean {
 	public ExcludeResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			excludeEntity = MemberTypeEntity.FACET;
-			this.condition = edp;
+			this.condition = new RedirectRuleCondition(edp);
 			this.edp = "";
 		} else {
 			excludeEntity = MemberTypeEntity.PART_NUMBER;
@@ -69,11 +69,11 @@ public class ExcludeResult extends ModelBean {
 		this.excludeEntity = excludeEntity;
 	}
 
-	public String getCondition() {
+	public RedirectRuleCondition getCondition() {
 		return condition;
 	}
 
-	public void setCondition(String condition) {
+	public void setCondition(RedirectRuleCondition condition) {
 		this.condition = condition;
 	}
 

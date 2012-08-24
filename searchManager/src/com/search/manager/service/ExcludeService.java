@@ -21,6 +21,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -102,7 +103,7 @@ public class ExcludeService {
 				e.setEdp(value);
 				e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
 			} else {
-				e.setCondition(value);
+				e.setCondition(new RedirectRuleCondition(value));
 				e.setExcludeEntity(MemberTypeEntity.FACET);
 			}			
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
