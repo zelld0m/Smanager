@@ -84,7 +84,7 @@
 
 			template  += '<div id="facetItem">';
 			template  += '	<h3 class="fLblue">Lorem ipsum dolor sit amet</h3>';
-			template  += '	<div style="height:43px">';
+			template  += '	<div style="height:42px">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
 			template  += '		<li><a href="#cnet"><span>Facet Template/Manufacturer</span></a></li>';
