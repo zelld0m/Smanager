@@ -20,13 +20,26 @@
 
 <!--Main Menu-->
 <div class="floatL w730 marL10 marT27">
-
+	
 	<div class="floatL w730 titlePlacer">	
-	  <div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none"></div>
-      <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+	  <div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none">
+      	<sec:authorize access="hasRole('CREATE_RULE')">
+      		<select id="selectRuleItemType" class="selectCombo w178" >
+				<option value="product">Product Item</option>
+				<option value="ims">IMS Categories</option>
+				<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
+					<option value="cnet">Facet Template Categories</option>
+				</c:if>
+				<option value="facet">Facets</option>
+			</select>
+			<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3"><div class="btnGraph marB8"></div></a>
+      	</sec:authorize>
+      </div>
+	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
+	  
 	</div>
 	<div class="clearB"></div>	 
 	

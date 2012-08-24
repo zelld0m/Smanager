@@ -101,6 +101,21 @@
 				});
 			},
 
+			getFacetItemType: function(item){
+				var $condition = item.condition;
+				var type = "";
+
+				console.log(item.condition);
+				if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+					type="facet";
+				}else if($condition["CNetFilter"]){
+					type="cnet";
+				}else if($condition["IMSFilter"]){
+					type="ims";
+				}
+				return type;
+			},
+
 			setRuleItemValues: function(li, item){
 				var $li = li;
 				var $item = item;
@@ -122,7 +137,16 @@
 				}
 
 				if(FACET){
-					$li.find(".name").html($item["condition"]);
+
+					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
+					$li.find(".name > a").off().on({
+						click:function(e){
+							$(this).addproduct({
+								type: self.getFacetItemType(e.data.item),
+								locked: e.data.locked,
+							});
+						}
+					},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
 				}
 
 				if ($item["isExpired"]){
@@ -233,20 +257,36 @@
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
 
-				setTimeout(function(){		
-					if (PART_NUMBER && $.isBlank($item["dpNo"])){
-						$li.find(".itemImg").prop("src","../images/padlock_img.jpg"); 
-						$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
-						$li.find(".manufacturer").html(self.lockedItemDisplayText);
-						$li.find(".sku, .mfrpn").html("Unavailable");
-						return;
+				setTimeout(function(){	
+					if (PART_NUMBER){
+						if ($.isBlank($item["dpNo"])){
+							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
+							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+							$li.find(".manufacturer").html(self.lockedItemDisplayText);
+							$li.find(".sku, .mfrpn").html("Unavailable");
+							return;
+						}
+
+						$li.find("img.itemImg").prop("src",item['imagePath']).off().on({
+							error:function(){ 
+								$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image.jpg'); 
+							}
+						});
+					}
+					
+					if (FACET){
+						var imagePath = "";
+
+						switch(self.getFacetItemType($item)){
+						case "ims" : imagePath = "ims_img.jpg"; break;
+						case "cnet" : imagePath = "cnet_img.jpg"; break;
+						case "facet" : imagePath = "facet_img.jpg"; break;
+						}
+
+						if($.isNotBlank(imagePath))
+							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/' + imagePath); 
 					}
 
-					$li.find("img.itemImg").prop("src",item['imagePath']).off().on({
-						error:function(){ 
-							$(this).unbind("error").prop("src", "../images/no-image.jpg"); 
-						}
-					});
 				}, 10);
 			},
 
@@ -354,18 +394,23 @@
 							},
 							postHook: function(){
 								self.postShowRuleContent();
-								$('#addRuleItemContainer').addproduct({
-									locked: self.selectedRuleStatus["locked"] || !allowModify,
-									addProductItemCallback:function(skus, expDate, sequence, comment){
-										ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], sequence, expDate, comment, skus, {
-											callback : function(code){
-												showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-												self.populateRuleItem();
-											},
-											preHook: function(){ 
-												self.preShowRuleContent();
+								$("a#addRuleItemIcon").off().on({
+									click:function(e){
+										$(this).addproduct({
+											type: $('select#selectRuleItemType').val(),
+											locked: self.selectedRuleStatus["locked"] || !allowModify,
+											addProductItemCallback:function(skus, expDate, sequence, comment){
+												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], sequence, expDate, comment, skus, {
+													callback : function(code){
+														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+														self.populateRuleItem();
+													},
+													preHook: function(){ 
+														self.preShowRuleContent();
+													}
+												});		
 											}
-										});		
+										});
 									}
 								});
 							}

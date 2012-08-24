@@ -15,25 +15,8 @@
 		base.init = function(){
 			base.options = $.extend({},$.addproduct.defaultOptions, options);
 			if (!base.options.locked){
-				base.$el.empty().html(base.getTemplate());
-				base.addButtonListener();
+				base.promptRuleItemDetails(this, base.options.type);
 			}
-		};
-
-		base.getTemplate = function(){
-			var template ='';
-
-			template  += '<select id="selectRuleItemType" class="selectCombo w178">';
-			template  += '	<option value="product">Product Item</option>';
-			template  += '	<option value="ims">IMS Categories</option>';
-			template  += '	<option value="cnet">Facet Template Categories</option>';
-			template  += '	<option value="facet">Facets</option>';
-			template  += '</select>';
-			template  += '<a id="addRuleItemIcon" href="javascript:void(0);" class="btnGraph btnAddGrayMid clearfix marR10 marL3">';
-			template  += '	<div class="btnGraph marB8"></div>';
-			template  += '</a>';
-
-			return template;
 		};
 
 		base.getAddProductItemTemplate = function(){
@@ -446,19 +429,12 @@
 			});
 		};
 
-		base.addButtonListener = function(){
-			base.$el.find('a#addRuleItemIcon').off().on({
-				click: function(e){
-					base.promptRuleItemDetails(this, $.trim(base.$el.find('select#selectRuleItemType').val()).toLowerCase());
-				}
-			},{});
-		};
-
 		// Run initializer
 		base.init();
 	};
 
 	$.addproduct.defaultOptions = {
+			type: "product",
 			locked: true,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
