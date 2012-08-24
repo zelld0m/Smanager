@@ -348,8 +348,8 @@ public class ElevateDAO {
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(elevate.getStoreKeyword()));
 	        if (!StringUtils.isBlank(elevate.getEdp())) {
 		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getEdp());
-	        } else if (elevate.getCondition() != null && !StringUtils.isBlank(elevate.getCondition().getConditionForSolr())) {
-		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getCondition().getConditionForSolr());
+	        } else if (elevate.getCondition() != null && !StringUtils.isBlank(elevate.getCondition().getCondition())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, elevate.getCondition().getCondition());
 	        } else {
 	        	inputs.put(DAOConstants.PARAM_VALUE, null);
 	        }
