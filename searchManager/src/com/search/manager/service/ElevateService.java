@@ -75,12 +75,14 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
+	public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		elevate.setMemberId(memberId);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setFilter(filter);
 		try {
 			elevate = daoService.getElevateItem(elevate);
 		} catch (DaoException e) {
@@ -99,8 +101,8 @@ public class ElevateService{
 			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
 		}
 		
-		if (StringUtils.isNotBlank(condition)){
-			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
+		if (!rrCondition.getCondition().equals(elevate.getCondition().getCondition())){
+			changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
 		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
