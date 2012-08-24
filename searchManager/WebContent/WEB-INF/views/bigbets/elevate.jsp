@@ -62,7 +62,7 @@
 		<div id="ruleSelected" style="display:none">
 	  		<ul id="ruleItemHolder" class="boxContainer">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
-	  				<div class="bgShade pad8">	
+	  				<div class="bgShade pad8 height66">	
 	  					<div class="iconGroup">
 	  						<label class="iconGroupW floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
@@ -108,15 +108,18 @@
 		  					<span class="name proName breakWord"></span>
 		  				</div>	
 			  			<div class="clearB"></div>
-			  			<p id="sku" class="textInfo" style="display:none">
-			  				<span class="fgreen">SKU #:</span>
-			  				<span class="sku"></span>
-			  			</p>
-			  			<div class="clearB"></div>
-		  				<p id="mfrpn" class="textInfo" style="display:none">
-			  				<span class="fgreen">Mfr. Part #:</span>
-			  				<span class="mfrpn"></span>
-			  			</p>
+			  			<div class="textInfo marT5">
+				  			<p id="sku" style="display:none">
+				  				<span class="fgreen">SKU #:</span>
+				  				<span class="sku"></span>
+				  			</p>
+			  			</div>
+		  				<div class="textInfo">
+			  				<p id="mfrpn" style="display:none">
+				  				<span class="fgreen">Mfr. Part #:</span>
+				  				<span class="mfrpn"></span>
+				  			</p>
+			  			</div>
 			  			<div class="clearB"></div>
 		  			</div>
 	  			</li>

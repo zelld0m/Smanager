@@ -275,6 +275,8 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .h27					{ height:27px }
 .cssReset .h33					{ height:33px }
 .cssReset .h35					{ height:35px }
+.cssReset .height66, 
+.height66						{height:66px; }
 
 .cssReset .minW110				{ min-width:110px !important; }
 .cssReset .minW240				{ min-width:240px !important; }
