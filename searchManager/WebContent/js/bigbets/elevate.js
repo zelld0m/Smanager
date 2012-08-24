@@ -144,6 +144,7 @@
 							$(this).addproduct({
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
+								condition: e.data.item.condition
 							});
 						}
 					},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
@@ -425,19 +426,19 @@
 
 				$("#filterDisplay").off().on({
 					change: function(e){
-						$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]),$(this).val(),{expires: 1, path:GLOBAL_contextPath});
+						$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]),$(this).val(),{path:GLOBAL_contextPath});
 						self.setRuleItemFilter();
 					}
 				});
 
 				$("#tileViewIcon").off().on({click:function(e) {
-					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {path:GLOBAL_contextPath});
 					$("#listViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
 
 				$("#listViewIcon").off().on({click:function(e) {
-					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {path:GLOBAL_contextPath});
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
@@ -526,7 +527,7 @@
 					$("#ruleItemContainer").addClass($.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"])));
 					$("#" + $.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"])) + "Icon").addClass("active");
 				}else{
-					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), self.defaultRuleItemDisplay, {expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.display' + $.formatAsId(self.selectedRule["ruleId"]), self.defaultRuleItemDisplay, {path:GLOBAL_contextPath});
 					$("#ruleItemContainer").addClass(self.defaultRuleItemDisplay);
 					$("#" + self.defaultRuleItemDisplay + "Icon").addClass("active");				
 				}
@@ -539,7 +540,7 @@
 				if ($.isNotBlank(selectedFilter)){
 					$("#filterDisplay").val(selectedFilter);
 				}else{
-					$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{expires: 1, path:GLOBAL_contextPath});
+					$.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{path:GLOBAL_contextPath});
 					$("#filterDisplay").val("all");
 				}
 

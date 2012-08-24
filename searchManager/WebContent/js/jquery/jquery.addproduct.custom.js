@@ -66,8 +66,8 @@
 			var template ='';
 
 			template  += '<div id="facetItem">';
-			template  += '	<h3 class="fLblue">Lorem ipsum dolor sit amet</h3>';
-			template  += '	<div style="height:23px" class="borderB">';
+			template  += '	<h3 id="conditionText" class="fLblue"></h3>';
+			template  += '	<div id="tabHeight" style="height:23px" class="borderB">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
 			template  += '		<li><a href="#cnet"><span>Facet Template/Manufacturer</span></a></li>';
@@ -313,11 +313,16 @@
 
 		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
-
+			
+			if ($.isBlank(base.options.condition)){
+				contentHolder.find("#conditionText").hide();
+			}else{
+				contentHolder.find("#conditionText").html(base.options.condition["readableString"]);
+			}
+			
 			switch(type){
 				case "facet": 
-					contentHolder.find('div#facet > div.holder').removeClass("padT35");
-					contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"],a[href="#facet"]').parent('li').remove();
+					contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
 					contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove(); 
 					break;
 				case "cnet": 
@@ -330,9 +335,11 @@
 					break;
 			}
 			
-			contentHolder.find("#facetItem").tabs({
-
-			});
+			if (type!=="facet"){
+				contentHolder.find("#facetItem").tabs({
+					
+				});
+			}
 			
 			contentHolder.find("select.selectCombo").combobox({
 				
@@ -440,6 +447,7 @@
 	$.addproduct.defaultOptions = {
 			type: "product",
 			locked: true,
+			condition: null,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
 			addProductItemCallback: function(skus, expDate, sequence, comment){},
