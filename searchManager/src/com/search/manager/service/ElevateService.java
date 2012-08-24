@@ -75,6 +75,42 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
+	public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
+		int changes = 0;
+		
+		ElevateResult elevate = new ElevateResult();
+		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		elevate.setMemberId(memberId);
+		try {
+			elevate = daoService.getElevateItem(elevate);
+		} catch (DaoException e) {
+			elevate = null;
+		}
+
+		if(elevate==null){
+			return changes;
+		}
+		
+		if (position!=elevate.getLocation()){
+			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
+		}
+		
+		if (StringUtils.isNotBlank(comment)){
+			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+		}
+		
+		if (StringUtils.isNotBlank(condition)){
+			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
+		}
+		
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
+			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
+		}
+		
+		return changes;
+	}
+
+	@RemoteMethod
 	public int addElevate(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
 		int result = -1;
 		try {
@@ -169,6 +205,29 @@ public class ElevateService{
 			}
 		}
 		return resultMap;
+	}
+
+	@RemoteMethod
+	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+		
+		int count = 0;
+		try {
+			String store = UtilityService.getStoreName();
+			ElevateResult e = new ElevateResult();
+			RedirectRuleCondition condition = new RedirectRuleCondition();
+			condition.setFilter(filter);
+			e.setCondition(condition );
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			e.setLocation(sequence++);
+			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setCreatedBy(UtilityService.getUsername());
+			e.setComment(UtilityService.formatComment(comment));
+			e.setElevateEntity(MemberTypeEntity.FACET);
+			count = daoService.addElevateResult(e);
+		} catch (DaoException de) {
+				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
+		}
+		return count;
 	}
 
 	@RemoteMethod
