@@ -15,7 +15,7 @@
 
 					var facetFields = this.manager.response.facet_counts.facet_fields;
 
-					if ( facetFields === undefined) {
+					if ($.isBlank(facetFields)) {
 						$(this.target).html(AjaxSolr.theme('no_items_found'));
 						return;
 					}
@@ -25,13 +25,16 @@
 					var output= '';
 
 					for (var facetField in facetFields) {
-						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
-
 						var maxCount = 0;
 						var objectedItems = [];
 						var limit = this.limit;
 						var counter = 0;
 						facetValues = facetFields[facetField];
+						
+						if($.isBlank(facetValues) || facetField === GLOBAL_storeFacetTemplateName)
+							continue;
+							
+						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
 
 						for (var facetValue in facetValues) {
 							if (counter == limit) break;

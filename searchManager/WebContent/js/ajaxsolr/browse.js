@@ -72,7 +72,13 @@
 				target: '#dynamicFacets',
 				limit: 5
 			}));
-
+			
+			Manager.addWidget(new AjaxSolr.DynamicAttributeWidget({
+				id: 'dynamicAttribute',
+				target: '#dynamicAttributes',
+				limit: 5
+			}));
+			
 			Manager.addWidget(new AjaxSolr.ActiveRuleWidget({
 				id: 'activeRule',
 				target: '#activeRule'
@@ -93,10 +99,10 @@
 
 			//TODO: Make this dynamic
 			var facetTemplate;
-			facetTemplate = ['Category','Manufacturer', 'Platform'];
+			facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
 			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap"){
-				facetTemplate = ['Manufacturer', 'Platform'];
+				facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 			};
 
 			var params = {

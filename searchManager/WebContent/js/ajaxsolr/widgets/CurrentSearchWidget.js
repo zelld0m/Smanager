@@ -19,7 +19,9 @@
 			for (var i = 0, l = fq.length; i < l; i++) {
 				if (fq[i] == searchWithin) {
 					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeFacet(fq[i])));
-
+				}else if($.startsWith(fq[i],GLOBAL_storeFacetTemplateName)){ // Facet Template Name / Or Find By display
+					var facetTempVal = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
+					links.push(AjaxSolr.theme('createLink', "Or Find By: " + facetTempVal, self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(item) + 1)), "level" + (parseInt(item) + 1)));
 				}else if($.startsWith(fq[i],GLOBAL_storeFacetTemplate)){ // Facet Hierarchical display
 					var facetTempVal = fq[i].substring(GLOBAL_storeFacetTemplate.length+1,fq[i].length);
 					var facetTempArr = facetTempVal.split("?|?");

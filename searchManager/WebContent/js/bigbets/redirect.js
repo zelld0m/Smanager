@@ -1025,8 +1025,8 @@
 						self.clearDynamicAttributeComboBox(ui, "templateNameList");
 						$table.find("tr#dynamicAttributeName").hide();
 						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
-							$select.prop("selectedText",condition.dynamicAttributes["TemplateName"]);
-							$input.val(condition.dynamicAttributes["TemplateName"]);
+							$select.prop("selectedText",condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+							$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
 						}
 					},
 					postHook:function(){
@@ -1167,7 +1167,7 @@
 					$input.val(condition.IMSFilters["Manufacturer"]);
 					break;
 				case "templatenamelist" :
-					$input.val(condition.dynamicAttributes["TemplateName"]);
+					$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
 					break;
 				}
 			},
@@ -1392,6 +1392,11 @@
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					ui.find("div.ims, div.dynamicAttribute").show();
+					
+					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'sbn'){
+						ui.find("div.dynamicAttribute").hide();
+					}
+					
 					self.addIMSFieldListener(ui, condition);
 					self.addFacetTemplateFieldListener(ui, condition);
 
@@ -1514,7 +1519,7 @@
 				var level2Cat = new Array();
 				var level3Cat = new Array();
 				var cnetManufacturer = new Array();
-				var facetTemplateName = "TemplateName";
+				
 
 				if (ui.find("div.ims").is(":visible")){
 					catCode[0] = $.trim(ui.find("input#catcode").val());
@@ -1540,7 +1545,6 @@
 					level2Cat[0] = $.trim(ui.find("input#level2CategoryList").val());
 					level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
 					cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
-					facetTemplateName = GLOBAL_storeFacetTemplateName;
 
 					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
 					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
@@ -1554,7 +1558,7 @@
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
 
 					if($.isNotBlank(inTemplateName.trim())){
-						condMap[facetTemplateName] = $.makeArray(inTemplateName.trim());
+						condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
 
 						$divDynamicAttrItems.find("ul").each(function(){ 
 							var attributeItem = this.title;
