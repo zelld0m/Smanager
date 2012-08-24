@@ -382,7 +382,7 @@
 
 
 			// Facet tab is always visible
-			var $facetDiv = contentHolder.find("div#facet"); 
+			var $facetDiv = contentHolder.find("div#facet >div.holder >table"); 
 
 			var platform = $facetDiv.find("input#platformList").val();
 			var condition = $facetDiv.find("input#conditionList").val();
@@ -423,11 +423,66 @@
 			return condMap;
 		},
 
-		base.populateFacets = function(api, contentHolder){
+		base.populateIMSCategories = function(api, contentHolder){
+
+			var $ims = contentHolder.find("div#ims");
+
+			$ims.find("select.selectCombo").combobox({
+
+			});
+			
+			base.populateDynamicAttribute(api, contentHolder);
+			base.populateFacet(api, contentHolder);
+			
+			if ($.isBlank(base.options.item)) return;
+
 			var $condition = base.options.item.condition;
+		},
+
+		base.populateCNETCategories = function(api, contentHolder){
+
+			var $cnet = contentHolder.find("div#cnet");
+
+			$cnet.find("select.selectCombo").combobox({
+
+			});
+
+			base.populateDynamicAttribute(api, contentHolder);
+			base.populateFacet(api, contentHolder);
+			
+			if ($.isBlank(base.options.item)) return;
+
+			var $condition = base.options.item.condition;
+			
+		},
+		
+		base.populateDynamicAttribute = function(api, contentHolder){
+
+			var $dynamicAttribute = contentHolder.find("div#dynamicAttribute");
+
+			$dynamicAttribute.find("select.selectCombo").combobox({
+
+			});
+
+			if ($.isBlank(base.options.item)) return;
+
+			var $condition = base.options.item.condition;
+		},
+
+		base.populateFacet = function(api, contentHolder){
+
+			var $facet = contentHolder.find("div#facet");
+
+			$facet.find("select.selectCombo").combobox({
+
+			});
+
+			if ($.isBlank(base.options.item)) return;
+
+			var $condition = base.options.item.condition;
+
 			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-				var $facet = contentHolder.find("div#facet");
-				
+
 				$facet.find("input#platformList").val($condition.facets["Platform"]);
 				$facet.find("select#platformList").prop("selectedText", $condition.facets["Platform"]);
 
@@ -444,7 +499,7 @@
 				$facet.find("input#descriptionContains").val($condition.facets["Description"]);
 			}
 		};
-		
+
 		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
 
@@ -456,14 +511,15 @@
 
 			switch(type){
 			case "facet": 
-				contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
+				//contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
+				contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"]').parent('li').remove();
 				contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
-				if ($.isNotBlank(base.options.item)) 
-					base.populateFacets(api, contentHolder);
+				base.populateFacet(api, contentHolder);
 				break;
 			case "cnet": 
 				contentHolder.find('a[href="#ims"]').parent('li').remove();
 				contentHolder.find("div#ims").remove(); 
+				base.populateCNETCategories(api, contentHolder);
 				break;
 			case "ims": 
 				contentHolder.find('a[href="#cnet"]').parent('li').remove();
@@ -473,25 +529,28 @@
 					contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
 					contentHolder.find("div#dynamicAttribute").remove();
 				}
+				
+				base.populateIMSCategories(api, contentHolder);
 				break;
 			}
 
-			if (type!=="facet"){
-				contentHolder.find("#facetItem").tabs({
-
-				});
-			}
-
-			contentHolder.find("select.selectCombo").combobox({
-
+			contentHolder.find("#facetItem").tabs("destroy").tabs({
+				show: function(){
+				}
 			});
-			
+
 			contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
+					//TODO: Add other fields
+					var position = 1; 
+					var expiryDate = "";
+					var comment= "";
+
 					if (base.options.newRecord){
-						base.options.addFacetItemCallback(base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
 					}else{
-						base.options.updateFacetItemCallback(base.options.item["memberId"], base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+						api.destroy();
+						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
 					}
 				}
 			}, {api:api, contentHolder:contentHolder});
@@ -547,7 +606,7 @@
 					}
 					else {
 						api.destroy();
-						base.options.addProductItemCallback(skus.split(/[\s,]+/), expDate, sequence, comment);						
+						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
 				}
 			});
@@ -589,7 +648,7 @@
 				}
 			});
 		};
-		
+
 		// Run initializer
 		base.init();
 	};
@@ -601,9 +660,10 @@
 			item: null,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
-			addProductItemCallback: function(skus, expDate, sequence, comment){},
-			addFacetItemCallback: function(selectedFacetFieldValues){},
-			updateFacetItemCallback: function(memberId, selectedFacetFieldValues){}
+			defaultIMSType: "CatCode",
+			addProductItemCallback: function(position, expiryDate, comment, skus){},
+			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){},
+			updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){}
 	};
 
 	$.fn.addproduct = function(options){

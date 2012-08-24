@@ -43,20 +43,24 @@ showActionResponse = function(code, action, param){
 };
 
 showActionResponseFromMap = function(code, action, param, additionalFailMessage){
-	message = "";
+	var message = "";
+	var title = "";
+	
 	if (code["PASSED"].length > 0) {
 		message += "Successful " + action + " request for " + code["PASSED"] + ".";
+		title = "Successful Request";
 	}
 	if (message !== "") {
 		message += "\n\n";
 	}
 	if (code["FAILED"].length > 0) {
 		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
+		title = "Failed Request";
 		if (additionalFailMessage) {
 			message += "\n" + additionalFailMessage;
 		}
 	}
-	alert (message); 
+	jAlert(message,title); 
 };
 
 /** Style for HTML upload tag */
@@ -106,8 +110,9 @@ getLastModifiedHTMLTemplate = function(user, date){
 	var template = '';
 	
 	template += '<div>';
-	template += '	<span>Modified by <strong>' + user + '</strong></span>';
-	template += '	<span>on ' + date + '</span>';
+	template += '	<div>Modified by <strong>' + user + '</strong><br/>';
+	template += '	on ' + date;
+	template += '	</div>';
 	template += '</div>';
 
 	return $(template).html();

@@ -416,8 +416,8 @@
 										$(this).addproduct({
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
-											addProductItemCallback:function(skus, expDate, sequence, comment){
-												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], sequence, expDate, comment, skus, {
+											addProductItemCallback:function(position, expiryDate, comment, skus){
+												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
 														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 														self.populateRuleItem(self.selectedRulePage);
@@ -427,8 +427,8 @@
 													}
 												});		
 											},
-											addFacetItemCallback: function(selectedFacetFieldValues){
-												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], 1, "", "",  selectedFacetFieldValues, {
+											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
+												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
 														self.populateRuleItem();
 													},
