@@ -26,6 +26,7 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SortResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/TextWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicAttributeWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ProductAttributeFilterWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ActiveRuleWidget.js" />" ></script>
@@ -48,6 +49,8 @@
 		<div id="cnetFacets"></div>
 		<div class="clearB"></div>
 		<div id="dynamicFacets"></div>
+		<div class="clearB"></div>
+		<div id="dynamicAttributes"></div>
 		<div class="clearB"></div>
 		<div id="prodAttribFilter"></div>
 		<div class="clearB"></div>

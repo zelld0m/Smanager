@@ -392,8 +392,10 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .fgray 				{ color:#666 }
 .cssReset .fLgray 				{ color:#999 }
 .cssReset .fLgray2 				{ color:#cbcbcb }
-.cssReset .fLblue, .fLblue		{ color:#3B79C2 }
-.cssReset .fLblue2, .fLblue2	{ color:#0065b2 }
+.cssReset .fLblue, .fLblue,
+.qtip .fLblue					{ color:#3B79C2 }
+.cssReset .fLblue2, .fLblue2, 
+.qtip .fLblue2					{ color:#0065b2 }
 .cssReset .fLblue3, .fLblue3	{ color:#038ac5 }
 .cssReset .fLAblue, 
 .cssReset .fLAblue a			{ color:#60c3e0 }

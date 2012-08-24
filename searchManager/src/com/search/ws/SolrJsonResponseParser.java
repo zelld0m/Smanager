@@ -542,14 +542,16 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			}
 			else {
 				// only one level 2
-				String lvl2Key = lvl1.getFacets().get(0);
-				CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
-				lvl2Map.put(lvl2Key, lvl2.getCount());
-				
-				for (String lvl3Key: lvl2.getFacets()) {
-					CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
-					if (lvl3 != null) {
-						lvl3Map.put(lvl3Key, lvl3.getCount());						
+				if(lvl1.getFacets().size() > 0){
+					String lvl2Key = lvl1.getFacets().get(0);
+					CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
+					lvl2Map.put(lvl2Key, lvl2.getCount());
+					
+					for (String lvl3Key: lvl2.getFacets()) {
+						CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
+						if (lvl3 != null) {
+							lvl3Map.put(lvl3Key, lvl3.getCount());						
+						}
 					}
 				}
 			}

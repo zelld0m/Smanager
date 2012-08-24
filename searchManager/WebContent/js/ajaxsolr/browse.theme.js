@@ -317,7 +317,7 @@
 		return output;
 	};
 
-	AjaxSolr.theme.prototype.displayFacetMoreOptions = function (value, title, facets) {
+	AjaxSolr.theme.prototype.displayFacetMoreOptions = function (value, title, facets, delimiter) {
 		var output = ''; 
 
 		output += '<div class="tblcontContainer">';
@@ -348,7 +348,7 @@
 				var count = parseInt(facets[facet]);
 				output += '<tr>';
 				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
-				output += '<td class="values"><span class="value">' + facet + '</span></td>';
+				output += '<td class="values"><span class="value">' + (delimiter ? facet.split(delimiter)[1] : facet) + '</span></td>';
 				//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
 				output += '</tr>';		
 			}

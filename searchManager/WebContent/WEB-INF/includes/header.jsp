@@ -23,6 +23,7 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLabel()" var="storeLabel" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetName()" var="storeFacetName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplateName()" var="storeFacetTemplateName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
@@ -36,7 +37,7 @@
 	var GLOBAL_storeLabel = "${storeLabel}";
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
-	var GLOBAL_storeFacetTemplateName = GLOBAL_storeFacetTemplate + "Name"; 
+	var GLOBAL_storeFacetTemplateName = "${storeFacetTemplateName}";
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
@@ -152,7 +153,7 @@
  <!--PC Mall Header-->
  <div class="clearB floatL bgTopHeader">  
     <div class="mar0 w980 posRel">
-      <table width="980" border="0" cellspacing="0" cellpadding="0" align="center">
+     <table width="980" border="0" style="height: 49px" cellspacing="0" cellpadding="0" align="center">
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">

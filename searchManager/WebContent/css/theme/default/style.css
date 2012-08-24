@@ -11,7 +11,8 @@
 
 /* layout */
 .cssReset .bgTopHeader 			{ width:100%; background:#3a3a3a; padding:8px 0; z-index:10 }
-.cssReset .bgTopHeaderMnu 		{ width:100%; height:44px; background:url(images/bgNav.gif); z-index:10 }
+.cssReset .bgTopHeaderMnu   	{ width:100%; height:44px; background:url(images/bgNav.gif); z-index:10; position:relative; top:-1px;}
+.ie .cssReset .bgTopHeaderMnu   { top:-2px;}
 .bgTopHeaderMnu .mnuHeader		{ display:inline; list-style-type:none; z-index:10 }
 
 .cssReset .subMenuHolder	 	{ background:url(images/bgSubNav.gif) repeat-x;  width:100%; height: 30px }
@@ -839,20 +840,4 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 
 /* elevate */
-.qtip #facetItem .ui-state-default   { top:-6px !important }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.qtip #facetItem .ui-state-default   { top:-5px !important }
