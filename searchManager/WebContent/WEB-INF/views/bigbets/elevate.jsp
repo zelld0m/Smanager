@@ -75,8 +75,7 @@
 								<ul class="listIcons">
 									<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
 									<li><img class="auditRuleItemIcon" src="<spring:url value="/images/icon_history.png" />"></li>
-									<li><img src="<spring:url value="/images/user_red.png" />"></li>
-									<li><img src="<spring:url value="/images/icon_date.png" />"></li>
+									<li><img class="lastModifiedIcon" src="<spring:url value="/images/user_red.png" />"></li>
 									<li><img class="deleteRuleItemIcon" src="<spring:url value="/images/icon_delete2.png" />"></li>
 								</ul>
 			  				</label>
@@ -104,17 +103,21 @@
 	  				</div>  					
 		  			
 		  			<div class="proInfo">
-		  				<div class="manufacturer titleArea"></div>	
-		  				<div class="clearB"></div>
-			  			<div class="name proName breakWord"></div>
-			  			<p class="textInfo">
+		  				<div class="titleArea">
+		  					<span class="manufacturer"></span>
+		  					<span class="name proName breakWord"></span>
+		  				</div>	
+			  			<div class="clearB"></div>
+			  			<p id="sku" class="textInfo" style="display:none">
 			  				<span class="fgreen">SKU #:</span>
 			  				<span class="sku"></span>
 			  			</p>
-			  			<p class="textInfo">
+			  			<div class="clearB"></div>
+		  				<p id="mfrpn" class="textInfo" style="display:none">
 			  				<span class="fgreen">Mfr. Part #:</span>
 			  				<span class="mfrpn"></span>
 			  			</p>
+			  			<div class="clearB"></div>
 		  			</div>
 	  			</li>
 	  		</ul>

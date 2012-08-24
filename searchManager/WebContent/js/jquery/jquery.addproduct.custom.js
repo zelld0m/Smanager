@@ -91,7 +91,7 @@
 			template  += '	</ul>';
 
 			template  += '	<div id="ims">';
-			template  += '		<div class="fsize12 padT35 marRL20">';
+			template  += '		<div class="holder fsize12 padT35 marRL20">';
 			template  += '			<table class="imsFields">';				
 			template  += '				<tr class="catName">';
 			template  += '					<td class="w175 padB8" valign="bottom">Category :</td>';
@@ -157,7 +157,7 @@
 			template  += '	</div>';
 
 			template  += '	<div id="cnet">';
-			template  += '		<div class="fsize12 padT35 marRL20">';
+			template  += '		<div class="holder fsize12 padT35 marRL20">';
 			template  += '			<table class="cnetFields">';							
 			template  += '				<tr class="catName" id="level1Cat">';
 			template  += '					<td class="w175 padB8" valign="bottom">Level 1 Category :</td>';
@@ -201,7 +201,7 @@
 
 			template  += '	<div id="dynamicAttribute">';
 			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
-			template  += '		<div class="fsize12 padT35 marRL20">';
+			template  += '		<div class="holder fsize12 padT35 marRL20">';
 			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
@@ -249,7 +249,7 @@
 			template  += '	</div>';
 
 			template  += '	<div id="facet">';
-			template  += '		<div class="fsize12 padT40">';
+			template  += '		<div class="holder fsize12 padT35">';
 			template  += '			<table>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Name (contains) :</td>';
@@ -314,7 +314,7 @@
 
 			template  += '<div align="right" class="padR50">';
 			template  += '	<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '		<div class="buttons fontBold">Elevate</div>';
+			template  += '		<div class="buttons fontBold">Save</div>';
 			template  += '	</a>';
 			template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '		<div class="buttons fontBold">Clear</div>';
@@ -327,6 +327,22 @@
 		base.promptAddFacetItem = function(api, contentHolder, type){
 			contentHolder.html(base.getAddFacetItemTemplate());
 
+			switch(type){
+				case "facet": 
+					contentHolder.find('div#facet > div.holder').removeClass("padT35");
+					contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"],a[href="#facet"]').parent('li').remove();
+					contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove(); 
+					break;
+				case "cnet": 
+					contentHolder.find('a[href="#ims"]').parent('li').remove();
+					contentHolder.find("div#ims").remove(); 
+					break;
+				case "ims": 
+					contentHolder.find('a[href="#cnet"]').parent('li').remove();
+					contentHolder.find("div#cnet").remove();
+					break;
+			}
+			
 			contentHolder.find("#facetItem").tabs({
 
 			});
@@ -335,7 +351,6 @@
 				
 			});
 			
-
 		};
 
 		base.promptAddProductItem = function(api, contentHolder){
@@ -436,7 +451,7 @@
 				click: function(e){
 					base.promptRuleItemDetails(this, $.trim(base.$el.find('select#selectRuleItemType').val()).toLowerCase());
 				}
-			});
+			},{});
 		};
 
 		// Run initializer

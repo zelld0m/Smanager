@@ -839,7 +839,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 
 /* elevate */
-.qtip #facetItem .ui-state-default   { top:-5px !important }
+.qtip #facetItem .ui-state-default   { top:-6px !important }
 
 
 

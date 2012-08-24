@@ -36,9 +36,9 @@ getRuleNameSubTextStatus = function(ruleStatus){
 
 showActionResponse = function(code, action, param){
 	switch(code){
-	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-	case  0: alert("Failed " + action + " request for " + param); break;
-	default: alert("Successful " + action + " request for " + param); break;
+	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
+	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
+	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };
 
@@ -91,14 +91,30 @@ showMessage = function(selector, msg){
 
 getLockedRuleHTMLTemplate = function(){
 	var template = '';
-	
+
 	template += '<div id="ruleIsLocked" class="w180">';
 	template += '	<div class="w180 alert">';
 	template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
 	template += '	</div>';
 	template += '</div>';
-	
+
 	return $(template).html();
+};
+
+
+getLastModifiedHTMLTemplate = function(user, date){
+	var template = '';
+	
+	template += '<div>';
+	template += '	<span>Modified by <strong>' + user + '</strong></span>';
+	template += '	<span>on ' + date + '</span>';
+	template += '</div>';
+
+	return $(template).html();
+};
+
+showLastModified = function(e){
+	showMessage(e.target, getLastModifiedHTMLTemplate(e.data.user, e.data.date));
 };
 
 /** Style for HTML upload tag */

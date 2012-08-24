@@ -17,9 +17,9 @@
 			defaultRuleItemDisplay: "tileView",
 			lockedItemDisplayText: "Item is locked",
 
-			removeExpiryDateConfirmText: "This will remove expiry date associated to this rule. Continue?",
-			removeRuleItemConfirmText: "This will remove item associated to this rule. Continue?",
-			clearRuleItemConfirmText: "This will remove all items associated to this rule. Continue?",
+			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
+			removeRuleItemConfirmText: "Item will be removed to this rule. Continue?",
+			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
 
 			getRuleList: function(){
 				var self = this;
@@ -106,14 +106,24 @@
 				var $item = item;
 				var self = this;
 
+				var PART_NUMBER = $item["memberTypeEntity"] === "PART_NUMBER";
+				var FACET = $item["memberTypeEntity"] === "FACET";
 				var id = $.formatAsId($item["memberId"]);
-				$li.attr("id", id);
 
+				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);
-				$li.find(".name").html($item["name"]);
-				$li.find(".manufacturer").html($item["manufacturer"]);
-				$li.find(".sku").html($item["dpNo"]);
-				$li.find(".mfrpn").html($item["mfrPN"]);
+
+				if(PART_NUMBER){
+					$li.find(".manufacturer").html($item["manufacturer"]);
+					$li.find(".name").html($item["name"]);
+					$li.find("#sku,#mfrpn").show();
+					$li.find(".sku").html($item["dpNo"]);
+					$li.find(".mfrpn").html($item["mfrPN"]);
+				}
+
+				if(FACET){
+					$li.find(".name").html($item["condition"]);
+				}
 
 				if ($item["isExpired"]){
 					$li.find(".validityDaysExpired").show();
@@ -150,28 +160,33 @@
 					click: function(e){
 						if (e.data.locked) return;
 
-						if (confirm(self.removeExpiryDateConfirmText)){
-							self.updateValidityDate(e.data.item, "");
-						}
+						jConfirm(self.removeExpiryDateConfirmText, "Remove Field Value", function(result){
+							if(result) self.updateValidityDate(e.data.item, "");
+						});
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+
+				$li.find('.lastModifiedIcon').off().on({
+					mouseenter: showLastModified 
+				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
 
 				$li.find('.deleteRuleItemIcon').off().on({
 					click: function(e){
 						if (e.data.locked) return;
 
-						if(confirm(self.removeRuleItemConfirmText)){
-							ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
-								callback: function(code){
-									showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
-									self.showRuleContent();
-								},
-								preHook: function(){
-									self.preShowRuleContent();
-								}
-							});
-						}
-
+						jConfirm(self.removeRuleItemConfirmText, "Delete Item", function(result){
+							if(result){
+								ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
+									callback: function(code){
+										showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										self.showRuleContent();
+									},
+									preHook: function(){
+										self.preShowRuleContent();
+									}
+								});
+							}
+						});
 					},
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
@@ -180,11 +195,11 @@
 					$li.find('.clearDate').hide();
 					$li.find('.sortOrderTextBox').prop("readonly", true);
 				}
-				
+
 				$li.find('.sortOrderTextBox').off().on({
 					keypress:function(e){
 						if (e.data.locked) return;
-					
+
 						var currentIndex = $.trim(($(this).parent("li").index()+1) + ((self.selectedRuleItemPage-1)*self.ruleItemPageSize));
 
 						var code = (e.keyCode ? e.keyCode : e.which);
@@ -217,9 +232,9 @@
 					},	
 					mouseenter: showHoverInfo
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
-				
+
 				setTimeout(function(){		
-					if ($.isBlank($item["dpNo"])){
+					if (PART_NUMBER && $.isBlank($item["dpNo"])){
 						$li.find(".itemImg").prop("src","../images/padlock_img.jpg"); 
 						$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
 						$li.find(".manufacturer").html(self.lockedItemDisplayText);
@@ -270,7 +285,7 @@
 				var self = this;
 				self.selectedRuleItemPage = page;
 				self.preShowRuleContent();
-				
+
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
@@ -284,7 +299,7 @@
 						self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
 						self.selectedRuleItemTotal = 0;
 						var $ul = $("ul#ruleItemHolder");
-						
+
 						ElevateServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
 							callback: function(data){
 								self.selectedRuleItemTotal = data.totalSize;
@@ -359,7 +374,7 @@
 					}
 				});	
 			},
-			
+
 			addRuleItemOptionListener: function(){
 				var self = this;
 
@@ -392,14 +407,17 @@
 				$("#clearRuleItemIcon").off().on({
 					click: function(e){
 						if(e.data.locked) return;
-						if (confirm(self.clearRuleItemConfirmText)){
-							ElevateServiceJS.clearRule(self.selectedRule["ruleName"], {
-								callback: function(code){
-									showActionResponse(code, "clear", self.selectedRule["ruleName"]);
-									self.showRuleContent();
-								}
-							});
-						}
+
+						jConfirm(self.clearRuleItemConfirmText, "Delete Item", function(result){
+							if(result) 
+								ElevateServiceJS.clearRule(self.selectedRule["ruleName"], {
+									callback: function(code){
+										showActionResponse(code, "clear", self.selectedRule["ruleName"]);
+										self.showRuleContent();
+									}
+								});
+						});
+
 					},
 					mouseenter: showHoverInfo,
 				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
@@ -486,7 +504,7 @@
 			setRuleItemPosition: function(item, position) {
 				var self = this;
 				var $item = item;
-				
+
 				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
 						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
@@ -497,7 +515,7 @@
 					}
 				});
 			},
-			
+
 			getRuleItemFilter: function(){
 				var self = this;
 				var cookieFilter = $.trim($.cookie('elevate.filter' + $.formatAsId(self.selectedRule["ruleId"])));
