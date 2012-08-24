@@ -109,7 +109,7 @@ public class ElevateService{
 		
 		return changes;
 	}
-
+	
 	@RemoteMethod
 	public int addElevate(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
 		int result = -1;
