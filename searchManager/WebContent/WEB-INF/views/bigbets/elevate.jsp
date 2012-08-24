@@ -19,7 +19,7 @@
 <!--Left Menu-->
 
 <!--Main Menu-->
-<div class="floatL w730 marL10 marT27">
+<div class="floatL w730 marL10 marT27 facetPage">
 	
 	<div class="floatL w730 titlePlacer">	
 	  <div id="addRuleItemContainer" class="floatR txtAR padT7" style="display: none">

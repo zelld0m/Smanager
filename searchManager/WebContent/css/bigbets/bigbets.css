@@ -126,6 +126,7 @@ div.tileView ul.boxContainer li div.picArea { text-align: center; height: 100px;
 div.tileView ul.boxContainer li div.picArea img { border:1px solid #f2f2f2 }
 div.tileView ul.boxContainer li div.titleArea { height: 45px; margin-bottom:3px; display:block; text-align: left; font-weight: bold; vertical-align: middle !important; word-wrap:break-word; overflow:hidden;   }
 div.tileView ul.boxContainer li div.proInfo { margin:10px 8px; }
+div.tileView ul.boxContainer li .proName, .proName a { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
 div.tileView ul.boxContainer li div.textInfo { padding:1px 0; height: 18px; display:block; }
 
 div.tileView  ul.listIcons { list-style: none; margin:0 }
@@ -174,6 +175,12 @@ div.listView ul li div.sortOrder { float:left; width:33% }
 div.listView ul li div.validityDate { float:left; width:33% }
 
 /* end sortable list */
+
+
+.qtip #facetItem ul.ui-widget-content			{ margin-left:0 !important }
+.qtip #facetItem .ui-widget .ui-menu		 { list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
+
+.ui-autocomplete { list-style:none !important; margin:0; padding:4px 12px }
 				
 
 

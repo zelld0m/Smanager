@@ -66,7 +66,7 @@
 			var template ='';
 
 			template  += '<div id="facetItem">';
-			template  += '	<h3 id="conditionText" class="fLblue"></h3>';
+			template  += '	<h3 id="conditionText" class="fLblue w500 breakWord"></h3>';
 			template  += '	<div id="tabHeight" style="height:23px" class="borderB">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
