@@ -144,7 +144,15 @@
 							$(this).addproduct({
 								type: self.getFacetItemType(e.data.item),
 								locked: e.data.locked,
-								condition: e.data.item.condition
+								newRecord: false,
+								condition: e.data.item.condition,
+								updateFacetItemCallback: function(selectedFacetFieldValues){
+									ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], 1, "", "",  selectedFacetFieldValues, {
+										callback: function(data){
+											
+										}
+									});
+								}
 							});
 						}
 					},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
@@ -316,7 +324,13 @@
 			postShowRuleContent: function(){
 				var self = this;
 				$("#preloader, #noSelected").hide();
-				$("#ruleSelected, #addRuleItemContainer").fadeIn("slow", function(){
+				var $selector = $("#ruleSelected, #addRuleItemContainer");
+				
+				if (self.selectedRuleStatus["locked"] || !allowModify){
+					$selector = $("#ruleSelected");
+				}
+				
+				$selector.fadeIn("slow", function(){
 					$("#titleText").html(self.moduleName + " for ");
 					$("#titleHeader").html(self.selectedRule["ruleName"]);
 				});
@@ -410,6 +424,13 @@
 														self.preShowRuleContent();
 													}
 												});		
+											},
+											addFacetItemCallback: function(selectedFacetFieldValues){
+												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], 1, "", "",  selectedFacetFieldValues, {
+													callback: function(data){
+														
+													}
+												});
 											}
 										});
 									}
