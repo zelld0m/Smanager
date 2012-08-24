@@ -68,6 +68,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_TYPE_ID, Types.VARCHAR));
 		}
 	}
 
@@ -226,13 +227,13 @@ public class ExcludeDAO {
 	            }
 		        Map<String, Object> inputs = new HashMap<String, Object>();
 		        inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
-	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, exclude.getExcludeEntity());
 	            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 	            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 	            inputs.put(DAOConstants.PARAM_VALUE, value);
 	            inputs.put(DAOConstants.PARAM_COMMENT, comment);
 	            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
 	            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
+	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, exclude.getExcludeEntity());
 	            return DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    	}
 	    	return -1;

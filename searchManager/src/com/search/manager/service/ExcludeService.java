@@ -90,6 +90,29 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
+	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+		
+		int count = 0;
+		try {
+			String store = UtilityService.getStoreName();
+			ExcludeResult e = new ExcludeResult();
+			RedirectRuleCondition condition = new RedirectRuleCondition();
+			condition.setFilter(filter);
+			e.setCondition(condition );
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setCreatedBy(UtilityService.getUsername());
+			e.setComment(UtilityService.formatComment(comment));
+			e.setExcludeEntity(MemberTypeEntity.FACET);
+			count = daoService.addExcludeResult(e);
+		} catch (DaoException de) {
+				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
+		}
+		return count;
+	}
+
+
+	@RemoteMethod
 	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate) {
 		try {
 			logger.info(String.format("%s %s", keyword, value));
