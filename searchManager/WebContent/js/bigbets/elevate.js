@@ -146,7 +146,7 @@
 								newRecord: false,
 								item: e.data.item,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
-									ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
+									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
 											self.populateRuleItem(self.selectedRulePage);
 										},

@@ -187,9 +187,9 @@
 			template  += '	</div>';
 
 			template  += '	<div id="dynamicAttribute">';
-			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
 			template  += '		<div class="holder fsize12 padT20 marRL20">';
-			template  += '			<table class="dynamicAttributeFields">';							
+									
+			template  += '				<table>';
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
@@ -199,6 +199,10 @@
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
+			template  += '				</table>';
+			
+			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
+			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr id="dynamicAttributeValue">';
 			template  += '					<td colspan="2" class="padT1">';
 			template  += '						<div id="dynamicAttributeItemList">';							
@@ -220,6 +224,9 @@
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
+			template  += '			</table>';						
+			template  += '		</div>';
+			template  += '			<table id="addDynamicAttributeName">';						
 			template  += '				<tr id="dynamicAttributeName">';
 			template  += '					<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>';
 			template  += '					<td class="padT1">';
@@ -227,11 +234,10 @@
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w235" title="Add Dynamic Attribute"></select>';
 			template  += '						</div>';
-			template  += '						<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>';
+			template  += '						<a href="javascript:void(0);" src="" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton">Click Me</a>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '			</table>';						
-			template  += '		</div>';
 			template  += '		</div>';
 			template  += '	</div>';
 
@@ -311,9 +317,7 @@
 			return template;
 		};
 
-		base.getSelectedFacetFieldValues= function(api, contentHolder){
-			var self = this;
-
+		base.getSelectedFacetFieldValues= function(){
 			var condMap = new Object();
 			var catCode = new Array();
 			var category = new Array();
@@ -326,152 +330,954 @@
 			var level3Cat = new Array();
 			var cnetManufacturer = new Array();
 
+			var $imsTab = base.contentHolder.find("div#ims"); 
 
-//			if (ui.find("div.ims").is(":visible")){
-//			catCode[0] = $.trim(ui.find("input#catcode").val());
-//			category[0] = $.trim(ui.find("input#categoryList").val());
-//			subCategory[0] = $.trim(ui.find("input#subCategoryList").val());
-//			clazz[0] = $.trim(ui.find("input#classList").val());
-//			minor[0] = $.trim(ui.find("input#minorList").val());
-//			manufacturer[0] = $.trim(ui.find("input#manufacturerList").val());
+			if ($imsTab.length){
+				catCode[0] = $.trim($imsTab.find("input#catcode").val());
+				category[0] = $.trim($imsTab.find("input#categoryList").val());
+				subCategory[0] = $.trim($imsTab.find("input#subCategoryList").val());
+				clazz[0] = $.trim($imsTab.find("input#classList").val());
+				minor[0] = $.trim($imsTab.find("input#minorList").val());
+				manufacturer[0] = $.trim($imsTab.find("input#manufacturerList").val());
 
-//			if (ui.find("a.switchToCatName").is(":visible")){
-//			if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode;
-//			}else{
-//			if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
-//			if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
-//			if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
-//			if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
-//			}
-//			if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
-//			}
+				if ($imsTab.find("a.switchToCatName").is(":visible")){
+					if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode;
+				}else{
+					if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
+					if ($.isNotBlank(subCategory[0])) condMap["SubCategory"] = subCategory; 	
+					if ($.isNotBlank(clazz[0])) condMap["Class"] = clazz; 	
+					if ($.isNotBlank(minor[0])) condMap["SubClass"] = minor; 	
+				}
+				if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
+			}
 
-//			if (ui.find("div.cnet").is(":visible")){
-//			level1Cat[0] = $.trim(ui.find("input#level1CategoryList").val());
-//			level2Cat[0] = $.trim(ui.find("input#level2CategoryList").val());
-//			level3Cat[0] = $.trim(ui.find("input#level3CategoryList").val());
-//			cnetManufacturer[0] = $.trim(ui.find("input#cnetmanufacturerList").val());
+			var $cnetTab = base.contentHolder.find("div#cnet"); 
 
-//			if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
-//			if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
-//			if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat; 	
+			if ($cnetTab.length){
+				level1Cat[0] = $.trim($cnetTab.find("input#level1CategoryList").val());
+				level2Cat[0] = $.trim($cnetTab.find("input#level2CategoryList").val());
+				level3Cat[0] = $.trim($cnetTab.find("input#level3CategoryList").val());
+				cnetManufacturer[0] = $.trim($cnetTab.find("input#cnetmanufacturerList").val());
 
-//			if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
-//			}
+				if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
+				if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
+				if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat; 	
 
-//			if(ui.find("div.dynamicAttribute").is(":visible")){
-//			var inTemplateName = ui.find("input#templateNameList").val();
-//			var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
+				if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
+			}
 
-//			if($.isNotBlank(inTemplateName.trim())){
-//			condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
+			var $dynamicAttribute = base.contentHolder.find("div#dynamicAttribute"); 
 
-//			$divDynamicAttrItems.find("ul").each(function(){ 
-//			var attributeItem = this.title;
-//			var attributeValues = new Array();
+			if($dynamicAttribute.length){
+				var inTemplateName = $dynamicAttribute.find("input#templateNameList").val();
+				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem");
 
-//			$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
-//			attributeValues.push($(this).val()); 
-//			});
+				if($.isNotBlank($.trim(inTemplateName))){
+					condMap[GLOBAL_storeFacetTemplateName] = $.makeArray($.trim(inTemplateName));
 
-//			if(attributeValues.length > 0)
-//			condMap[attributeItem] = attributeValues;
-//			});
-//			}
-//			}
+					$divDynamicAttrItems.find("ul").each(function(){ 
+						var attributeItem = this.title;
+						var attributeValues = new Array();
 
+						$dynamicAttribute.find("input:checkbox[name="+attributeItem+"]:checked").each(function(){
+							attributeValues.push($(this).val()); 
+						});
+
+						if(attributeValues.length > 0)
+							condMap[attributeItem] = attributeValues;
+					});
+				}
+			}
 
 			// Facet tab is always visible
-			var $facetDiv = contentHolder.find("div#facet >div.holder >table"); 
+			var $facetTab = base.contentHolder.find("div#facet"); 
 
-			var platform = $facetDiv.find("input#platformList").val();
-			var condition = $facetDiv.find("input#conditionList").val();
-			var availability = $facetDiv.find("input#availabilityList").val();
-			var license = $facetDiv.find("input#licenseList").val();
-			var nameContains = $.trim($facetDiv.find("input#nameContains").val());
-			var descriptionContains = $.trim($facetDiv.find("input#descriptionContains").val());
+			if($facetTab.length){
+				var platform = $facetTab.find("input#platformList").val();
+				var condition = $facetTab.find("input#conditionList").val();
+				var availability = $facetTab.find("input#availabilityList").val();
+				var license = $facetTab.find("input#licenseList").val();
+				var nameContains = $.trim($facetTab.find("input#nameContains").val());
+				var descriptionContains = $.trim($facetTab.find("input#descriptionContains").val());
 
-			switch($.trim(platform.toLowerCase())){
-			case "universal": condMap["Platform"] = ["Universal"]; break;
-			case "pc": condMap["Platform"] = ["PC"]; break;
-			case "linux": condMap["Platform"] = ["Linux"]; break;
-			case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
+				switch($.trim(platform.toLowerCase())){
+				case "universal": condMap["Platform"] = ["Universal"]; break;
+				case "pc": condMap["Platform"] = ["PC"]; break;
+				case "linux": condMap["Platform"] = ["Linux"]; break;
+				case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
+				}
+
+				switch($.trim(condition.toLowerCase())){
+				case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
+				case "open box": condMap["Condition"] = ["Open Box"]; break;
+				case "clearance": condMap["Condition"] = ["Clearance"]; break;
+				}
+
+				switch($.trim(availability.toLowerCase())){
+				case "in stock": condMap["Availability"] = ["In Stock"]; break;
+				case "call": condMap["Availability"] = ["Call"]; break;
+				}
+
+				switch($.trim(license.toLowerCase())){
+				case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
+				case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+				}
+
+				if($.isNotBlank(nameContains))
+					condMap["Name"] = $.makeArray(nameContains);
+
+				if($.isNotBlank(descriptionContains))
+					condMap["Description"] = $.makeArray(descriptionContains);
 			}
-
-			switch($.trim(condition.toLowerCase())){
-			case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
-			case "open box": condMap["Condition"] = ["Open Box"]; break;
-			case "clearance": condMap["Condition"] = ["Clearance"]; break;
-			}
-
-			switch($.trim(availability.toLowerCase())){
-			case "in stock": condMap["Availability"] = ["In Stock"]; break;
-			case "call": condMap["Availability"] = ["Call"]; break;
-			}
-
-			switch($.trim(license.toLowerCase())){
-			case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
-			case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
-			}
-
-			if($.isNotBlank(nameContains))
-				condMap["Name"] = $.makeArray(nameContains);
-
-			if($.isNotBlank(descriptionContains))
-				condMap["Description"] = $.makeArray(descriptionContains);
 
 			return condMap;
 		},
 
-		base.populateIMSCategories = function(api, contentHolder){
+		base.populateCategories = function(e){
+			var $tab = base.contentHolder.find("div#ims");
+			var $select = $tab.find("select#categoryList");
+			var $input = $tab.find("input#categoryList");
+			var $table = $tab.find("table.imsFields");
 
-			var $ims = contentHolder.find("div#ims");
+			CategoryServiceJS.getIMSCategories({
+				callback: function(data){
+					var list = data;
 
-			$ims.find("select.selectCombo").combobox({
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
 
+					//if($.isNotBlank($input.val())) base.populateSubcategories();
+				},
+				preHook:function(){
+					$tab.find("img#preloaderCategoryList").show();
+					base.clearIMSComboBox("category");
+
+					$table.find("tr#subcategory,tr#class,tr#minor").hide();
+					if (!e && $.isNotBlank(base.options.item) && $.isNotBlank(base.options.item.condition.IMSFilters["Category"])){
+						$select.prop("selectedText",base.options.item.condition.IMSFilters["Category"]);
+						$input.val(base.options.item.condition.IMSFilters["Category"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderCategoryList").hide();
+					if($.isBlank($input.val()))
+						base.populateIMSManufacturers(e);
+				}
 			});
-			
-			base.populateDynamicAttribute(api, contentHolder);
-			base.populateFacet(api, contentHolder);
-			
-			if ($.isBlank(base.options.item)) return;
-
-			var $condition = base.options.item.condition;
 		},
 
-		base.populateCNETCategories = function(api, contentHolder){
+		base.populateSubcategories= function(e){
+			var $tab = base.contentHolder.find("div#ims");
+			var inCategory = $.trim($tab.find("input#categoryList").val());
+			var $select = $tab.find("select#subCategoryList");
+			var $input = $tab.find("input#subCategoryList");
+			var $table = $tab.find("table.imsFields");
 
-			var $cnet = contentHolder.find("div#cnet");
+			CategoryServiceJS.getIMSSubcategories(inCategory, {
+				callback: function(data){
+					var list = data;
 
-			$cnet.find("select.selectCombo").combobox({
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
 
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#subcategory").show();
+					}else{
+						$table.find("tr#subcategory").hide();
+					}  
+
+					if($.isNotBlank($input.val())) base.populateClass(e);
+				},
+				preHook:function(){
+					$tab.find("img#preloaderSubCategoryList").show();
+					base.clearIMSComboBox("subcategory");
+					$table.find("tr#class,tr#minor").hide();
+					if (!e && $.isNotBlank(base.options.item) && $.isNotBlank(base.options.item.condition.IMSFilters["SubCategory"])){
+						$select.prop("selectedText",base.options.item.condition.IMSFilters["SubCategory"]);
+						$input.val(base.options.item.condition.IMSFilters["SubCategory"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderSubCategoryList").hide();
+					if($.isNotBlank(inCategory) && $.isBlank($input.val()))
+						base.populateIMSManufacturers(e);
+				}
+			});
+		},
+
+		base.populateClass = function(e){
+			var $tab = base.contentHolder.find("div#ims");
+			var inCategory = $.trim($tab.find("input#categoryList").val());
+			var inSubCategory = $.trim($tab.find("input#subCategoryList").val());
+			var $select = $tab.find("select#classList");
+			var $input = $tab.find("input#classList");
+			var $table = $tab.find("table.imsFields");
+
+			CategoryServiceJS.getIMSClasses(inCategory,inSubCategory, {
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#class").show();
+					}else{
+						$table.find("tr#class").hide();
+					}  
+
+					if($.isNotBlank($input.val())) base.populateMinor(e);
+				},
+				preHook:function(){
+					$tab.find("img#preloaderClassList").show();
+					base.clearIMSComboBox("class");
+					$table.find("tr#minor").hide();
+					if (!e && $.isNotBlank(base.option.item) && $.isNotBlank(base.option.item.condition.IMSFilters["Class"])){
+						$select.prop("selectedText",base.option.item.condition.IMSFilters["Class"]);
+						$input.val(base.option.item.condition.IMSFilters["Class"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderClassList").hide();
+					if($.isNotBlank(inSubCategory) && $.isBlank($input.val()))
+						base.populateIMSManufacturers(e);
+				}
+			});
+		},
+
+		base.populateMinor = function(e){
+			var $tab = base.contentHolder.find("div#ims");
+			var inCategory = $.trim($tab.find("input#categoryList").val());
+			var inSubCategory = $.trim($tab.find("input#subCategoryList").val());
+			var inClass = $.trim($tab.find("input#classList").val());
+			var $select = $tab.find("select#minorList");
+			var $input = $tab.find("input#minorList");
+			var $table = $tab.find("table.imsFields");
+
+			CategoryServiceJS.getIMSMinors(inCategory,inSubCategory, inClass, {
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#minor").show();
+					}else{
+						$table.find("tr#minor").hide();
+					}  
+				},
+				preHook:function(){
+					$tab.find("img#preloaderMinorList").show();
+					base.clearIMSComboBox("minor");
+					if (!e && $.isNotBlank(base.options.item) && $.isNotBlank(base.options.item.condition.IMSFilters["SubClass"])){
+						$select.prop("selectedText",base.options.item.condition.IMSFilters["SubClass"]);
+						$input.val(base.options.item.condition.IMSFilters["SubClass"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderMinorList").hide();
+					base.populateIMSManufacturers(e);
+				}
+			});
+		},
+
+		base.populateIMSManufacturers= function(e){
+			var $tab = base.contentHolder.find("div#ims");
+			var $select = $tab.find("select#manufacturerList");
+			var $input = $tab.find("input#manufacturerList");
+
+			var inCatCode = "";
+			var inCategory = "";
+			var inSubCategory = "";
+			var inClass = "";
+			var inMinor = "";
+
+			var catCodeVal = $.trim($tab.find("input#catcode").val());
+
+			if ($.isNotBlank(catCodeVal) && catCodeVal.length < 4 && $tab.find("a.switchToCatName").is(":visible")){
+				inCatCode = catCodeVal;
+			}else if($tab.find("a.switchToCatCode").is(":visible")){
+				inCategory = $.trim($tab.find("input#categoryList").val());
+				inSubCategory = $.trim($tab.find("input#subCategoryList").val());
+				inClass = $.trim($tab.find("input#classList").val());
+				inMinor = $.trim($tab.find("input#minorList").val());
+			}
+
+			CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderManufacturerList").show();
+					base.clearIMSComboBox("manufacturer");
+					if (!e && $.isNotBlank(base.options.item) && $.isNotBlank(base.options.item.condition.IMSFilters["Manufacturer"])){
+						$select.prop("selectedText",base.options.item.condition.IMSFilters["Manufacturer"]);
+						$input.val(base.options.item.condition.IMSFilters["Manufacturer"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderManufacturerList").hide();
+				}
+			});
+		},  
+
+		base.clearIMSComboBox = function(trigger){
+			var $tab = base.contentHolder.find("div#ims");
+
+			if ($.isBlank(trigger)){
+				$tab.find("input").val("");
+				$tab.find("select.selectCombo option").remove();
+			}else{
+				switch (trigger.toLowerCase()){
+				case "category": 
+					$tab.find("input#categoryList").val("");
+					$tab.find("select#categoryList option").remove();
+				case "subcategory": 
+					$tab.find("input#subCategoryList").val("");
+					$tab.find("select#subCategoryList option").remove();
+				case "class": 
+					$tab.find("input#classList").val("");
+					$tab.find("select#classList option").remove();
+				case "minor": 
+					$tab.find("input#minorList").val("");
+					$tab.find("select#minorList option").remove();
+				case "manufacturer": 
+					$tab.find("input#manufacturerList").val("");
+					$tab.find("select#manufacturerList option").remove();	
+				}
+			}
+		},
+
+		base.updateIMSCombobox = function(target, e, u){
+			var $tab = base.contentHolder.find("div#ims");
+
+			switch($(target).attr("id").toLowerCase()){
+			case "categorylist" :
+				if(u.item){
+					$tab.find("input#categoryList").val(u.item.text);
+					$tab.find("input#categoryList").prop("selectedText", u.item.text);
+					base.populateSubcategories(e);
+				}
+				else base.populateCategories(e);
+
+				$tab.find("input#subCategoryList").val("");
+				$tab.find("input#classList").val("");
+				$tab.find("input#minorList").val("");
+				$tab.find("input#manufacturerList").val("");
+				break;
+			case "subcategorylist" :
+				if(u.item){
+					$tab.find("input#subCategoryList").val(u.item.text);
+					$tab.find("input#subCategoryList").prop("selectedText", u.item.text);
+					base.populateClass(e);
+				}
+				else base.populateSubcategories(e);
+
+				$tab.find("input#classList").val("");
+				$tab.find("input#minorList").val("");
+				$tab.find("input#manufacturerList").val("");
+				break;
+			case "classlist" : 
+				if(u.item){
+					$tab.find("input#classList").val(u.item.text);
+					$tab.find("input#classList").prop("selectedText", u.item.text);
+					base.populateMinor(e);
+				}
+				else base.populateClass(e);
+
+				$tab.find("input#minorList").val("");
+				$tab.find("input#manufacturerList").val("");
+				break;
+			case "minorlist" : 
+				if(u.item){
+					$tab.find("input#minorList").val(u.item.text);
+					$tab.find("input#minorList").prop("selectedText", u.item.text); 
+					base.populateIMSManufacturers(e);
+				}
+				else base.populateMinor(e);
+
+				$tab.find("input#manufacturerList").val("");
+				break;
+			case "manufacturerlist" : 
+				if(u.item){
+					$tab.find("input#manufacturerList").val(u.item.text);
+					$tab.find("input#manufacturerList").prop("selectedText", u.item.text); 
+				}
+				break;
+			}
+		},
+
+		base.addIMSListener = function(){
+
+			var $tab = base.contentHolder.find("div#ims");
+			var $table = $tab.find("table.imsFields");
+			var usingCategory = false;
+			var usingCatCode = false;
+
+			$table.find("tr.catCode").hide();
+
+			if ($.isNotBlank(base.options.item)){
+				usingCategory = base.options.item.condition["imsUsingCategory"];
+				usingCatCode = base.options.item.condition["imsUsingCatCode"];
+
+			}else{
+
+			}
+
+			base.populateCategories();
+
+
+			$tab.find("select.selectCombo").combobox({
+				change: function(e, u){
+					base.updateIMSCombobox(this, e, u);
+				},
+				selected: function(e, u){
+					base.updateIMSCombobox(this, e, u);
+				}
 			});
 
-			base.populateDynamicAttribute(api, contentHolder);
-			base.populateFacet(api, contentHolder);
-			
-			if ($.isBlank(base.options.item)) return;
+			$tab.find("a.switchToCatCode,a.switchToCatName").off().on({
+				click: function(e){
+					var $table = $tab.find("table.imsFields");
 
-			var $condition = base.options.item.condition;
-			
+					switch($(e.currentTarget).attr("class")){
+					case "switchToCatName" : 
+						$table.find("tr.catCode").hide();
+						$table.find("tr.catName").show();
+						base.populateCategories(e);
+						break;
+					case "switchToCatCode" : 
+						$table.find("tr.catCode").show();
+						$table.find("tr.catName").hide();
+						base.populateIMSManufacturers(e);
+						break;
+					}
+				}
+			});
+
+			$tab.find("input#catcode").off().on({
+				focusout: function(e){
+					base.populateIMSManufacturers(e);
+				}
+			});
+
+			base.addDynamicAttributeListener();
+			base.addFacetListener();
+		},
+
+		base.populateLevel1Categories= function(e){
+			var $tab = base.contentHolder.find("div#cnet");
+			var $select = $tab.find("select#level1CategoryList");
+			var $input = $tab.find("input#level1CategoryList");
+			var $table = $tab.find("table.cnetFields");
+			var $item = base.options.item;
+
+			CategoryServiceJS.getCNETLevel1Categories({
+				callback: function(data){
+					var list = data;
+
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+
+					if($.isNotBlank($input.val())) base.populateLevel2Categories(e);
+				},
+				preHook:function(){
+					$tab.find("img#preloaderLevel1CategoryList").show();
+					base.clearCNETComboBox("level1Cat");
+					$table.find("tr#level2Cat, tr#level3Cat").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level1Category"])){
+						$select.prop("selectedText",$item.condition.CNetFilters["Level1Category"]);
+						$input.val($item.condition.CNetFilters["Level1Category"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderLevel1CategoryList").hide();
+					if($.isBlank($input.val()))
+						base.populateCNETManufacturers(e);
+				}
+			});
+		},
+
+		base.populateLevel2Categories= function(e){
+			var $tab = base.contentHolder.find("div#cnet");
+			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
+			var $select = $tab.find("select#level2CategoryList");
+			var $input = $tab.find("input#level2CategoryList");
+			var $table = $tab.find("table.cnetFields");
+			var $item = base.options.item;
+
+			CategoryServiceJS.getCNETLevel2Categories(inLevel1Category, {
+				callback: function(data){
+					var list = data;
+
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#level2Cat").show();
+					}else{
+						$table.find("tr#level2Cat").hide();
+					}  
+
+					if($.isNotBlank($input.val())) base.populateLevel3Categories(e);
+				},
+				preHook:function(){
+					$tab.find("img#preloaderLevel2CategoryList").show();
+					base.clearCNETComboBox("level2Cat");
+					$table.find("tr#level3Cat").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level2Category"])){
+						$select.prop("selectedText",$item.condition.CNetFilters["Level2Category"]);
+						$input.val($item.condition.CNetFilters["Level2Category"]);
+					};
+				},
+				postHook:function(){
+					$tab.find("img#preloaderLevel2CategoryList").hide();
+					if($.isNotBlank(inLevel1Category) && $.isBlank($input.val()))
+						base.populateCNETManufacturers(e);
+				}
+			});
+		},
+
+		base.populateLevel3Categories= function(e){
+			var $tab = base.contentHolder.find("div#cnet");
+			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
+			var inLevel2Category = $.trim($tab.find("input#level2CategoryList").val());
+			var $select = $tab.find("select#level3CategoryList");
+			var $input = $tab.find("input#level3CategoryList");
+			var $table = $tab.find("table.cnetFields");
+			var $item = base.options.item;
+
+			CategoryServiceJS.getCNETLevel3Categories(inLevel1Category, inLevel2Category, {
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#level3Cat").show();
+					}else{
+						$table.find("tr#level3Cat").hide();
+					}  
+
+				},
+				preHook:function(){
+					$tab.find("img#preloaderLevel3CategoryList").show();
+					base.clearCNETComboBox("level3Cat");
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level3Category"])){
+						$select.prop("selectedText",$item.condition.CNetFilters["Level3Category"]);
+						$input.val($item.condition.CNetFilters["Level3Category"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderLevel3CategoryList").hide();
+					base.populateCNETManufacturers(e);
+				}
+			});
+		},
+
+		base.populateCNETManufacturers= function(e){
+			var $tab = base.contentHolder.find("div#cnet");
+			var $select = $tab.find("select#cnetmanufacturerList");
+			var $input = $tab.find("input#cnetmanufacturerList");
+			var $item = base.options.item;
+
+			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
+			var inLevel2Category = $.trim($tab.find("input#level2CategoryList").val());
+			var inLevel3Category = $.trim($tab.find("input#level3CategoryList").val());
+
+			CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderCNETManufacturerList").show();
+					base.clearCNETComboBox("cnetmanufacturer");
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Manufacturer"])){
+						$select.prop("selectedText",$item.condition.CNetFilters["Manufacturer"]);
+						$input.val($item.condition.CNetFilters["Manufacturer"]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderCNETManufacturerList").hide();
+				}
+			});
+		}, 
+
+		base.updateCNETCombobox = function (target, e, u){
+			var $tab = base.contentHolder.find("div#cnet");
+
+			switch($(target).attr("id").toLowerCase()){
+			case "level1categorylist" :
+				if(u.item){
+					$tab.find("input#level1CategoryList").val(u.item.text);
+					$tab.find("input#level1CategoryList").prop("selectedText", u.item.text);
+					base.populateLevel2Categories(e);
+				}
+				else base.populateLevel1Categories(e);
+
+				$tab.find("input#level2CategoryList").val("");
+				$tab.find("input#level3CategoryList").val("");
+				$tab.find("input#cnetmanufacturerList").val("");
+				break;
+			case "level2categorylist" : 
+				if(u.item){
+					$tab.find("input#level2CategoryList").val(u.item.text);
+					$tab.find("input#level2CategoryList").prop("selectedText", u.item.text);
+					base.populateLevel3Categories(e);
+					$tab.find("input#level3CategoryList").val("");
+				}
+				else base.populateLevel2Categories(e);
+
+				$tab.find("input#cnetmanufacturerList").val("");
+				break;
+			case "level3categorylist" : 
+				if(u.item){
+					$tab.find("input#level3CategoryList").val(u.item.text);
+					$tab.find("input#level3CategoryList").prop("selectedText", u.item.text);
+					base.populateCNETManufacturers(e);
+				}
+				else base.populateLevel3Categories(e);
+
+				$tab.find("input#cnetmanufacturerList").val("");
+				break;
+			case "cnetmanufacturerlist" : 
+				if(u.item){
+					$tab.find("input#cnetmanufacturerList").val(u.item.text);
+					$tab.find("input#cnetmanufacturerList").prop("selectedText",u.item.text);
+				} 
+				break;
+			}
+		};
+
+		base.clearCNETComboBox= function(trigger){
+			var $tab = base.contentHolder.find("div#cnet");
+
+			if ($.isBlank(trigger)){
+				$tab.find("input").val("");
+				$tab.find("select.selectCombo option").remove();
+			}else{
+				switch (trigger.toLowerCase()){
+				case "level1cat": 
+					$tab.find("input#level1CategoryList").val("");
+					$tab.find("select#level1CategoryList option").remove();
+				case "level2cat": 
+					$tab.find("input#level2CategoryList").val("");
+					$tab.find("select#level2CategoryList option").remove();
+				case "level3cat": 
+					$tab.find("input#level3CategoryList").val("");
+					$tab.find("select#level3CategoryList option").remove();
+				case "cnetmanufacturer": 
+					$tab.find("input#cnetmanufacturerList").val("");
+					$tab.find("select#cnetmanufacturerList option").remove();	
+				}
+			}
+		},
+
+		base.addCNETListener = function(){
+			var $tab = base.contentHolder.find("div#cnet");
+
+			$tab.find("select.selectCombo").combobox({
+				change: function(e, u){
+					base.updateCNETCombobox(this, e, u);
+				},
+				selected: function(e, u){
+					base.updateCNETCombobox(this, e, u);
+				}
+			});
+
+			base.populateLevel1Categories();
+			base.addDynamicAttributeListener();
+			base.addFacetListener();
+		},
+
+		base.populateDynamicAttributeValues = function(){
+			var $attributeMap = base.templateAttributes;
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			var $item = base.options.item;
+
+			if($item.condition["dynamicAttributes"]){
+				var $divItemList = $tab.find('div#dynamicAttributeItemList');
+				$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
+
+				$.each($item.condition["dynamicAttributes"], function(attrName, attrData) { 
+					if(attrName !== "TemplateName" || attrName !== GLOBAL_storeFacetTemplateName){
+						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
+						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+
+						$ulAttributeValues.prop("id", $.formatAsId(attrName));
+						var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
+						if (!$.isNumeric(currCondCount)){
+							currCondCount = 0; 
+						}
+
+						var countId = 1 + parseInt(currCondCount);
+						$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
+
+						if($attributeMap && $attributeMap[attrName]){
+							var attributeValues = $attributeMap[attrName].attributeValues;
+							$divDynamicAttributeItem.find('span#dynamicAttributeLabel').html($attributeMap[attrName].attributeDisplayName + ":");
+
+							if(attributeValues){
+								for(var i=0; i<attributeValues.length; i++){
+									var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+									$liAttributeValue.show();
+									$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
+									$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
+									$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
+									$ulAttributeValues.append($liAttributeValue);
+								}
+							}
+
+							$divDynamicAttributeItem.show();
+							$divDynamicAttributeItem.prop("id", countId);
+							$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
+							$divItemList.append($divDynamicAttributeItem);
+
+							base.addDeleteDynamicAttributeButtonListener($attributeMap[attrName].attributeDisplayName);
+						}
+					}
+				});
+			}
+		},
+
+		base.populateCNETDynamicAttributes = function(e){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			var $select = $tab.find("select#dynamicAttributeList");
+			var $templateName = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttributeFields");
+			var $item = base.options.item;
+
+			var inTemplateName = $.trim($templateName.val());
+
+			CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
+				callback: function(data){
+					base.templateAttributes = data;
+					var isEmpty = true;
+
+					$.each(base.templateAttributes, function(attrName, attrData) { 
+						$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
+						isEmpty = false;
+					});
+
+					if (!isEmpty){
+						$tab.find("table#addDynamicAttributeName").show();
+					}else{
+						$tab.find("table#addDynamicAttributeName").hide();
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderDynamicAttributeList").show();
+					base.clearDynamicAttributeComboBox("attributevaluelist");
+				},
+				postHook:function(){
+					$tab.find("img#preloaderDynamicAttributeList").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
+						base.populateDynamicAttributeValues();
+					}
+				}
+			});
+		},
+
+		base.populateCNETTemplateNames= function(e){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			var $select = $tab.find("select#templateNameList");
+			var $input = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttributeFields");
+			var $item = base.options.item;
+
+			CategoryServiceJS.getCNETTemplateNames({
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderTemplateNameList").show();
+					base.clearDynamicAttributeComboBox("templateNameList");
+					$tab.find("table#addDynamicAttributeName").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+						$select.prop("selectedText",$item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+						$input.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+					}
+
+				},
+				postHook:function(){
+					$tab.find("img#preloaderTemplateNameList").hide();
+					if($.isNotBlank($.trim($input.val()))) 
+						base.populateCNETDynamicAttributes(e);
+				}
+			});
+		},
+
+		base.clearDynamicAttributeComboBox= function(trigger){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+
+			if ($.isBlank(trigger)){
+				$tab.find("input").val("");
+				$tab.find("select.selectCombo option").remove();
+			}else{
+				switch (trigger.toLowerCase()){
+				case "templatenamelist": 
+					$tab.find("input#templateNameList").val("");
+					$tab.find("select#templateNameList option").remove();
+				case "attributevaluelist":
+					$tab.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
+				case "dynamicattributelist": 
+					$tab.find("input#dynamicAttributeList").val("");
+					$tab.find("select#dynamicAttributeList option").remove();
+				}
+			}
 		},
 		
-		base.populateDynamicAttribute = function(api, contentHolder){
+		base.updateFacetTemplateCombobox = function (target, e, u){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			
+			switch($(target).attr("id").toLowerCase()){
+			case "templatenamelist" :
+				if(u.item){
+					$tab.find("input#templateNameList").val(u.item.text);
+					$tab.find("input#templateNameList").prop("selectedText", u.item.text);
 
-			var $dynamicAttribute = contentHolder.find("div#dynamicAttribute");
+					if (base.contentHolder.find("div#ims").length)
+						base.populateIMSDynamicAttributes(e);
+					else if (base.contentHolder.find("div#cnet").length)
+						base.populateCNETDynamicAttributes(e);
+				}
+				else{
+					if (base.contentHolder.find("div#ims").length)
+						base.populateIMSTemplateNames(e);
+					else if (base.contentHolder.find("div#cnet"))
+						base.populateCNETTemplateNames(e);
+				}
+				$tab.find("input#dynamicAttributeList").val("");
+				break;
 
-			$dynamicAttribute.find("select.selectCombo").combobox({
+			case "dynamicattributelist" :
+				if(u.item){
+					$tab.find("input#dynamicAttributeList").val(u.item.text);
+					$tab.find("input#dynamicAttributeList").prop("selectedText", u.item.text);
+					base.addDynamicAttributeButtonListener(u.item.value);
+				}
+				else{
+					jAlert("Please specify a valid attribute name.");
+					base.addDynamicAttributeButtonListener("");
+				}
+				break;
+			}
+		},
+		
+		base.addDynamicAttributeButtonListener= function(attrName){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
 
+			$tab.find("a.addDynamicAttrBtn").off().on({
+				click: function(e){
+					if (!e.data.locked){
+						var $divItemList = $tab.find('div#dynamicAttributeItemList');
+						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
+						var $input = $tab.find("input#dynamicAttributeList");
+						var inDynamicAttribute = $.trim($input.val());
+						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+
+						if($.isNotBlank(inDynamicAttribute)){
+							if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
+								jAlert("Attribute already added. Please select a different attribute name.");
+							}
+							else{
+								$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
+								var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
+								if (!$.isNumeric(currCondCount)){
+									currCondCount = 0; 
+								}
+
+								var countId = 1 + parseInt(currCondCount);
+								$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
+
+								var $dynamicAttributeLabel = $divDynamicAttributeItem.find('span#dynamicAttributeLabel');
+								$dynamicAttributeLabel.html(inDynamicAttribute + ":");
+
+								var attributeMap = base.templateAttributes;
+								if(attributeMap && attributeMap[attrName]){
+									var attributeValues = attributeMap[attrName].attributeValues;
+									if(attributeValues){
+										for(var i=0; i<attributeValues.length; i++){
+											var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+											$liAttributeValue.show();
+											$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
+											$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
+											$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
+											$ulAttributeValues.append($liAttributeValue);
+										}
+									}
+								}
+
+								$divDynamicAttributeItem.prop("id", countId);
+								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
+								$divDynamicAttributeItem.show();
+								$divItemList.append($divDynamicAttributeItem);
+								base.addDeleteDynamicAttributeButtonListener(inDynamicAttribute);
+							}
+						}
+						else{
+							jAlert("Please select a dynamic attribute.");
+						}
+					}
+				},
+				mouseenter: showHoverInfo
+			},{locked: base.options.locked});	
+		},
+		
+		base.addDeleteDynamicAttributeButtonListener= function(attribName){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			
+			$tab.find("img.deleteAttrIcon").off().on({
+				click: function(e){
+					if (e.data.locked) return;
+					var $item = $(this).parents(".dynamicAttributeItem");
+					jConfirm("Delete " + e.data.attrib + "?", "Delete Attribute", function(result){
+						if(result){
+							$item.remove();
+						}
+					});
+				},
+				mouseenter: showHoverInfo
+			},{locked: base.options.locked, attrib: attribName});
+		},
+		
+		base.addDynamicAttributeListener = function(){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			
+			$tab.find("select.selectCombo").combobox({
+				change: function(e, u){
+					base.updateFacetTemplateCombobox(this, e, u);
+				},
+				selected: function(e, u){
+					base.updateFacetTemplateCombobox(this, e, u);
+				}
 			});
 
-			if ($.isBlank(base.options.item)) return;
+			if (base.contentHolder.find("div#ims").length){
 
-			var $condition = base.options.item.condition;
+			}else if(base.contentHolder.find("div#cnet").length){
+				base.populateCNETTemplateNames();
+			}
 		},
 
-		base.populateFacet = function(api, contentHolder){
+		base.addFacetListener = function(){
 
-			var $facet = contentHolder.find("div#facet");
+			var $facet = base.contentHolder.find("div#facet");
 
 			$facet.find("select.selectCombo").combobox({
 
@@ -481,65 +1287,63 @@
 
 			var $condition = base.options.item.condition;
 
-			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+			$facet.find("input#platformList").val($condition.facets["Platform"]);
+			$facet.find("select#platformList").prop("selectedText", $condition.facets["Platform"]);
 
-				$facet.find("input#platformList").val($condition.facets["Platform"]);
-				$facet.find("select#platformList").prop("selectedText", $condition.facets["Platform"]);
+			$facet.find("input#conditionList").val($condition.facets["Condition"]);
+			$facet.find("select#conditionList").prop("selectedText", $condition.facets["Condition"]);
 
-				$facet.find("input#conditionList").val($condition.facets["Condition"]);
-				$facet.find("select#conditionList").prop("selectedText", $condition.facets["Condition"]);
+			$facet.find("input#availabilityList").val($condition.facets["Availability"]);
+			$facet.find("select#availabilityList").prop("selectedText", $condition.facets["Availability"]);
 
-				$facet.find("input#availabilityList").val($condition.facets["Availability"]);
-				$facet.find("select#availabilityList").prop("selectedText", $condition.facets["Availability"]);
+			$facet.find("input#licenseList").val($condition.facets["License"]);
+			$facet.find("select#licenseList").prop("selectedText", $condition.facets["License"]);
 
-				$facet.find("input#licenseList").val($condition.facets["License"]);
-				$facet.find("select#licenseList").prop("selectedText", $condition.facets["License"]);
+			$facet.find("input#nameContains").val($condition.facets["Name"]);
+			$facet.find("input#descriptionContains").val($condition.facets["Description"]);
 
-				$facet.find("input#nameContains").val($condition.facets["Name"]);
-				$facet.find("input#descriptionContains").val($condition.facets["Description"]);
-			}
 		};
 
-		base.promptAddFacetItem = function(api, contentHolder, type){
-			contentHolder.html(base.getAddFacetItemTemplate());
+		base.promptAddFacetItem = function(type){
+			base.contentHolder.html(base.getAddFacetItemTemplate());
 
 			if ($.isBlank(base.options.item)){
-				contentHolder.find("#conditionText").hide();
+				base.contentHolder.find("#conditionText").hide();
 			}else{
-				contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
+				base.contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
 			}
 
 			switch(type){
 			case "facet": 
 				//contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
-				contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"]').parent('li').remove();
-				contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
-				base.populateFacet(api, contentHolder);
+				base.contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"]').parent('li').remove();
+				base.contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
+				base.addFacetListener();
 				break;
 			case "cnet": 
-				contentHolder.find('a[href="#ims"]').parent('li').remove();
-				contentHolder.find("div#ims").remove(); 
-				base.populateCNETCategories(api, contentHolder);
+				base.contentHolder.find('a[href="#ims"]').parent('li').remove();
+				base.contentHolder.find("div#ims").remove(); 
+				base.addCNETListener();
 				break;
 			case "ims": 
-				contentHolder.find('a[href="#cnet"]').parent('li').remove();
-				contentHolder.find("div#cnet").remove();
+				base.contentHolder.find('a[href="#cnet"]').parent('li').remove();
+				base.contentHolder.find("div#cnet").remove();
 
 				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="sbn"){
-					contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
-					contentHolder.find("div#dynamicAttribute").remove();
+					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
+					base.contentHolder.find("div#dynamicAttribute").remove();
 				}
-				
-				base.populateIMSCategories(api, contentHolder);
+
+				base.addIMSListener();
 				break;
 			}
 
-			contentHolder.find("#facetItem").tabs("destroy").tabs({
+			base.contentHolder.find("#facetItem").tabs("destroy").tabs({
 				show: function(){
 				}
 			});
 
-			contentHolder.find("#addFacetItemToRuleBtn").off().on({
+			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					//TODO: Add other fields
 					var position = 1; 
@@ -547,22 +1351,22 @@
 					var comment= "";
 
 					if (base.options.newRecord){
-						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues());
 					}else{
-						api.destroy();
-						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, base.getSelectedFacetFieldValues(e.data.api, e.data.contentHolder));
+						base.api.destroy();
+						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, base.getSelectedFacetFieldValues());
 					}
 				}
-			}, {api:api, contentHolder:contentHolder});
+			});
 
 		};
 
-		base.promptAddProductItem = function(api, contentHolder){
-			contentHolder.html(base.getAddProductItemTemplate());
+		base.promptAddProductItem = function(){
+			base.contentHolder.html(base.getAddProductItemTemplate());
 
-			contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
+			base.contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
 
-			contentHolder.find("#addItemDate_1").datepicker({
+			base.contentHolder.find("#addItemDate_1").datepicker({
 				showOn: "both",
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
@@ -571,41 +1375,41 @@
 				buttonImageOnly: true
 			});
 
-			contentHolder.find("#clearBtn").on({
+			base.contentHolder.find("#clearBtn").on({
 				click: function(evt){
-					contentHolder.find("input,textarea").val("");
+					base.contentHolder.find("input,textarea").val("");
 				}
 			});
 
-			contentHolder.find("#addItemToRuleBtn").on({
+			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
 					var commaDelimitedNumberPattern = /^\s*\d+\s*(,?\s*\d+\s*)*$/;
 
-					var skus = $.trim(contentHolder.find("#addItemDPNo").val());
-					var sequence = $.trim(contentHolder.find("#addItemPosition").val());
-					var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
-					var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
+					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
+					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
+					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+					var comment = $.trim(base.contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
 					var today = new Date();
 
 					today.setHours(0,0,0,0); //ignore time of current date 
 
 					if ($.isBlank(skus)) {
-						alert("There are no SKUs specified in the list.");
+						jAlert("There are no SKUs specified in the list.", "Invalid Input");
 					}
 					else if (!commaDelimitedNumberPattern.test(skus)) {
-						alert("List contains an invalid SKU.");
+						jAlert("List contains an invalid SKU.", "Invalid Input");
 					}							
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-						alert("Invalid date specified.");
+						jAlert("Invalid date specified.", "Invalid Input");
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
-						alert("Start date cannot be earlier than today");
+						jAlert("Start date cannot be earlier than today", "Invalid Input");
 					else if (!isXSSSafe(comment)){
-						alert("Invalid comment. HTML/XSS is not allowed.");
+						jAlert("Invalid comment. HTML/XSS is not allowed.", "Invalid Input");
 					}
 					else {
-						api.destroy();
+						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
 				}
@@ -614,6 +1418,7 @@
 
 		base.promptRuleItemDetails = function(target, type){
 			var self = this;
+
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
@@ -633,13 +1438,14 @@
 				},
 				events: { 
 					show: function(event, api){
-						var contentHolder = $("div", api.elements.content);
+						base.api = api;
+						base.contentHolder = $("div", api.elements.content);
 
 						switch(type){
-						case "product": base.promptAddProductItem(api, contentHolder); break; 
-						case "ims": base.promptAddFacetItem(api, contentHolder, type); break;
-						case "cnet": base.promptAddFacetItem(api, contentHolder, type); break;
-						case "facet": base.promptAddFacetItem(api, contentHolder, type); break;
+						case "product": base.promptAddProductItem(); break; 
+						case "ims": base.promptAddFacetItem(type); break;
+						case "cnet": base.promptAddFacetItem(type); break;
+						case "facet": base.promptAddFacetItem(type); break;
 						};						
 					},
 					hide: function(event, api){

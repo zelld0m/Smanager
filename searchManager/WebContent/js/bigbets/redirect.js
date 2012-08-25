@@ -1317,7 +1317,7 @@
 						$item.find("input#manufacturerList").val("");
 						break;
 					case "manufacturerlist" : 
-						if(ui.item){
+						if(u.item){
 							$item.find("input#manufacturerList").val(u.item.text);
 							$item.find("input#manufacturerList").prop("selectedText", u.item.text); 
 						}
