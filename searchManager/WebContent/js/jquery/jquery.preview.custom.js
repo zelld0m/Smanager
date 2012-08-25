@@ -45,23 +45,64 @@
 					},10);
 				};
 				
+				var getFacetItemType = function(item){
+					var $condition = item.condition;
+					var type = "";
+
+					if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+						type="facet";
+					}else if($condition["CNetFilter"]){
+						type="cnet";
+					}else if($condition["IMSFilter"]){
+						type="ims";
+					}
+					return type;
+				};
+				
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 
-					if($.isNotBlank(list[i]["dpNo"])){
-						setImage($tr,list[i]["imagePath"]);
-						$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-						$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-						$tr.find("td#itemName").html(list[i]["name"]);
+					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
+					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
+					
+					if(FACET){
+						var imagePath = list[i]["imagePath"];
+						
+						if($.isBlank(imagePath)){
+							imagePath = GLOBAL_contextPath + '/images/';
+							switch(getFacetItemType(list[i])){
+							case "ims" : imagePath += "ims_img.jpg"; break;
+							case "cnet" : imagePath += "cnet_img.jpg"; break;
+							case "facet" : imagePath += "facet_img.jpg"; break;
+							}
+						}
+						
+						setImage($tr,imagePath);
+						$tr.find("td#itemMan").html(list[i].condition["readableString"])
+							.prop("colspan",3)
+							.removeClass("txtAC")
+							.addClass("txtAL");
 						$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-					}else{
-						$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-												.prop("colspan",5)
-												.removeClass("txtAC")
-												.addClass("txtAL");
-						$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
+					else if(PART_NUMBER){
+						if($.isNotBlank(list[i]["dpNo"])){
+							setImage($tr,list[i]["imagePath"]);
+							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+							$tr.find("td#itemName").html(list[i]["name"]);
+							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						}
+						else{
+							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+													.prop("colspan",5)
+													.removeClass("txtAC")
+													.addClass("txtAL");
+							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+						}
+					}
+					
 					
 					$tr.appendTo($table);
 				};
@@ -103,17 +144,17 @@
 							var $table = $content.find("div.ruleFilter table#item");
 							$table.find("tr:not(#itemPattern)").remove();
 
-							if(data.conditions.length==0){
+							if(data.readableConditions.length==0){
 								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 								$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 								$tr.find("td#fieldValue").remove();
 								$tr.appendTo($table);
 
 							}else{
-								for(var field in data.conditions){
+								for(var field in data.readableConditions){
 									$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 									$tr.find("td#fieldName").html(parseInt(field)+1);
-									$tr.find("td#fieldValue").html(data.conditions[field]);
+									$tr.find("td#fieldValue").html(data.readableConditions[field]);
 									$tr.appendTo($table);
 								}	
 							}
@@ -544,7 +585,7 @@
 			headerText:"Rule Preview",
 			ruleType: "",
 			ruleId: "",
-			version: "",
+			version: ""
 	};
 
 	$.fn.preview = function(options){

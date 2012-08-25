@@ -204,6 +204,9 @@ public class DaoServiceImpl implements DaoService {
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
 			ep.setStore(storeId);
+			ep.setMemberId(e.getMemberId());
+			ep.setMemberTypeEntity(e.getElevateEntity());
+			ep.setCondition(e.getCondition());
 			map.put(e.getEdp(), ep);
 		}
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
@@ -303,6 +306,9 @@ public class DaoServiceImpl implements DaoService {
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
 			ep.setStore(storeId);
+			ep.setMemberId(e.getMemberId());
+			ep.setMemberTypeEntity(e.getExcludeEntity());
+			ep.setCondition(e.getCondition());
 			map.put(e.getEdp(), ep);
 		}
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);

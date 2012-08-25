@@ -1,6 +1,8 @@
 (function ($) {
 
 	AjaxSolr.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
+		SESS_TEMPLATE_ATTRIBUTES : "simulator.template.attributes",
+	
 		afterRequest: function () {
 			var self = this;
 			var links = [];
@@ -16,6 +18,12 @@
 
 			var fq = this.manager.store.values('fq');
 			var searchWithin = $.cookie('searchWithin');
+			var dynamicAttr;
+
+			if($.isNotBlank($.trim($.cookie(self.SESS_TEMPLATE_ATTRIBUTES)))){
+				dynamicAttr = JSON.parse($.trim($.cookie(self.SESS_TEMPLATE_ATTRIBUTES)));
+			}
+			
 			for (var i = 0, l = fq.length; i < l; i++) {
 				if (fq[i] == searchWithin) {
 					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeFacet(fq[i])));
@@ -34,6 +42,16 @@
 				else {
 					var displayString = fq[i];
 					var inDoubleQuote = false;
+					var filterName = displayString.substr(0, displayString.indexOf(':'));
+					
+					if(dynamicAttr && dynamicAttr[filterName]){	// Dynamic Attribute
+						var filterValue = displayString.split(":")[1];
+						var displayName = dynamicAttr[filterName].attributeDisplayName;
+						var displayValue = filterValue.split("|")[1];
+						
+						displayString = displayName + ": " + displayValue;
+					}
+					
 					for (var currIndex = displayString.indexOf(':'); currIndex < displayString.length; currIndex++) {
 						if (displayString.charAt(currIndex) === ' ' && !inDoubleQuote) {
 							displayString = displayString.substr(0, currIndex) + ', ' + displayString.substr(currIndex + 1);
@@ -43,6 +61,7 @@
 							inDoubleQuote = !inDoubleQuote;
 						} 
 					}
+					
 					links.push(AjaxSolr.theme('createLink', displayString, self.removeFacet(fq[i])));
 				}
 			}
