@@ -217,6 +217,17 @@ public class RedirectRule extends ModelBean {
 		}
 		return conditions;		
 	}
+	
+	public List<String> getReadableConditions(){
+		ArrayList<String> conditions = new ArrayList<String>();
+		if(StringUtils.isNotEmpty(condition)){
+			for(String cond : condition.split(ESCAPED_DBL_PIPE_DELIM)){
+				conditions.add((new RedirectRuleCondition(ruleId, cond)).getReadableString());
+			}
+		}
+				
+		return conditions;
+	}
 
 	public void setChangeKeyword(String changeKeyword) {
 		this.changeKeyword = changeKeyword;
