@@ -1,6 +1,7 @@
 (function ($) {
 
 	AjaxSolr.DynamicAttributeWidget = AjaxSolr.AbstractFacetWidget.extend({
+		SESS_TEMPLATE_ATTRIBUTES : "simulator.template.attributes",
 		templateName: null,
 		
 		afterRequest: function () {
@@ -23,6 +24,8 @@
 					
 					if(counter == 1 && self.templateName === ""){
 						self.templateName = objectedItems[0].facet;
+					}
+					else if(counter == 1 && objectedItems && self.templateName.indexOf(objectedItems[0].facet) != -1){
 					}
 					else if(counter > 0){
 						self.displayFacet('Or Find By', GLOBAL_storeFacetTemplateName, objectedItems, $.isNotBlank(self.manager.store.values('q')));
@@ -154,6 +157,7 @@
 				callback: function(data){
 					//send solr query to get attribute values
 					if(data){
+						$.cookie(self.SESS_TEMPLATE_ATTRIBUTES, JSON.stringify(data), {path: GLOBAL_contextPath});
 						self.displayDynamicAttributes(Object.keys(data), data);
 					}
 				}
@@ -165,6 +169,7 @@
 			CategoryServiceJS.getCNETTemplateAttributes(templateName, {
 				callback: function(data){
 					if(data){
+						$.cookie(self.SESS_TEMPLATE_ATTRIBUTES, JSON.stringify(data), {path: GLOBAL_contextPath});
 						self.displayDynamicAttributes(Object.keys(data), data);
 					}
 				}
