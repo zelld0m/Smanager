@@ -49,7 +49,7 @@
 			template  += '		</div>';
 			template  += '		<div align="right">';
 			template  += '			<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '				<div class="buttons fontBold">Elevate</div>';
+			template  += '				<div class="buttons fontBold">Add</div>';
 			template  += '			</a>';
 			template  += '			<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '				<div class="buttons fontBold">Clear</div>';
@@ -307,7 +307,7 @@
 
 			template  += '<div align="right" class="padR50">';
 			template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Save' : 'Update')  + '</div>';
+			template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Add' : 'Update')  + '</div>';
 			template  += '	</a>';
 			template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '		<div class="buttons fontBold">Clear</div>';
@@ -370,17 +370,17 @@
 
 			if($dynamicAttribute.length){
 				var inTemplateName = $dynamicAttribute.find("input#templateNameList").val();
-				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem");
+				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)");
 
 				if($.isNotBlank($.trim(inTemplateName))){
 					condMap[GLOBAL_storeFacetTemplateName] = $.makeArray($.trim(inTemplateName));
 
-					$divDynamicAttrItems.find("ul").each(function(){ 
-						var attributeItem = this.title;
+					$divDynamicAttrItems.find("ul").each(function(ulInd, uEl){
+						var attributeItem = $(uEl).prop("title");
 						var attributeValues = new Array();
 
-						$dynamicAttribute.find("input:checkbox[name="+attributeItem+"]:checked").each(function(){
-							attributeValues.push($(this).val()); 
+						$divDynamicAttrItems.find('input:checkbox[name="' + attributeItem + '"]:checked').each(function(inInd, inEl){
+							attributeValues.push($(inEl).val()); 
 						});
 
 						if(attributeValues.length > 0)
@@ -1016,7 +1016,7 @@
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
 
-						$ulAttributeValues.prop("id", $.formatAsId(attrName));
+						$ulAttributeValues.prop({id: $.formatAsId(attrName), title:attrName});
 						var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 						if (!$.isNumeric(currCondCount)){
 							currCondCount = 0; 
@@ -1045,7 +1045,7 @@
 							$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
 							$divItemList.append($divDynamicAttributeItem);
 
-							base.addDeleteDynamicAttributeButtonListener($attributeMap[attrName].attributeDisplayName);
+							base.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, $attributeMap[attrName].attributeDisplayName);
 						}
 					}
 				});
@@ -1056,7 +1056,6 @@
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#dynamicAttributeList");
 			var $templateName = $tab.find("input#templateNameList");
-			var $table = $tab.find("table.dynamicAttributeFields");
 			var $item = base.options.item;
 
 			var inTemplateName = $.trim($templateName.val());
@@ -1094,7 +1093,6 @@
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#templateNameList");
 			var $input = $tab.find("input#templateNameList");
-			var $table = $tab.find("table.dynamicAttributeFields");
 			var $item = base.options.item;
 
 			CategoryServiceJS.getCNETTemplateNames({
@@ -1227,7 +1225,7 @@
 								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
 								$divDynamicAttributeItem.show();
 								$divItemList.append($divDynamicAttributeItem);
-								base.addDeleteDynamicAttributeButtonListener(inDynamicAttribute);
+								base.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, inDynamicAttribute);
 							}
 						}
 						else{
@@ -1239,10 +1237,8 @@
 			},{locked: base.options.locked});	
 		},
 		
-		base.addDeleteDynamicAttributeButtonListener= function(attribName){
-			var $tab = base.contentHolder.find("div#dynamicAttribute");
-			
-			$tab.find("img.deleteAttrIcon").off().on({
+		base.addDeleteDynamicAttributeButtonListener= function(attribItem, attribName){
+			attribItem.find("img.deleteAttrIcon").off().on({
 				click: function(e){
 					if (e.data.locked) return;
 					var $item = $(this).parents(".dynamicAttributeItem");
@@ -1254,6 +1250,73 @@
 				},
 				mouseenter: showHoverInfo
 			},{locked: base.options.locked, attrib: attribName});
+		},
+		
+		base.populateIMSDynamicAttributes= function(e){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			var $select = $tab.find("select#dynamicAttributeList");
+			var $templateName = $tab.find("input#templateNameList");
+			var $item = base.options.item;
+			
+			var inTemplateName = $.trim($templateName.val());
+
+			CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
+				callback: function(data){
+					base.templateAttributes = data;
+					var isEmpty = true;
+
+					$.each(base.templateAttributes, function(attrName, attrData) { 
+						$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
+						isEmpty = false;
+					});
+
+					if (!isEmpty){
+						$tab.find("table#addDynamicAttributeName").show();
+					}else{
+						$tab.find("table#addDynamicAttributeName").hide();
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderDynamicAttributeList").show();
+					base.clearDynamicAttributeComboBox("attributevaluelist");
+				},
+				postHook:function(){
+					$tab.find("img#preloaderDynamicAttributeList").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+						base.populateDynamicAttributeValues();
+					}
+				}
+			});
+		},
+		
+		base.populateIMSTemplateNames= function(e){
+			var $tab = base.contentHolder.find("div#dynamicAttribute");
+			var $select = $tab.find("select#templateNameList");
+			var $input = $tab.find("input#templateNameList");
+			var $item = base.options.item;
+
+			CategoryServiceJS.getIMSTemplateNames({
+				callback: function(data){
+					var list = data;
+					for(var i=0; i<list.length; i++){
+						$select.append($("<option>", {value: list[i]}).text(list[i]));
+					}
+				},
+				preHook:function(){
+					$tab.find("img#preloaderTemplateNameList").show();
+					base.clearDynamicAttributeComboBox("templateNameList");
+					$tab.find("table#addDynamicAttributeName").hide();
+					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
+						$select.prop("selectedText",$item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+						$input.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+					}
+				},
+				postHook:function(){
+					$tab.find("img#preloaderTemplateNameList").hide();
+					if($.isNotBlank($.trim($input.val())))
+						base.populateIMSDynamicAttributes(e);
+				}
+			});
 		},
 		
 		base.addDynamicAttributeListener = function(){
@@ -1269,7 +1332,7 @@
 			});
 
 			if (base.contentHolder.find("div#ims").length){
-
+				base.populateIMSTemplateNames();
 			}else if(base.contentHolder.find("div#cnet").length){
 				base.populateCNETTemplateNames();
 			}
@@ -1417,8 +1480,6 @@
 		};
 
 		base.promptRuleItemDetails = function(target, type){
-			var self = this;
-
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
