@@ -1,343 +1,475 @@
 (function($){
-	var moduleName = "Exclude";
-	var selectedRule = null;
-	var selectedRuleStatus = null;
 
-	var selectedRuleItemPage = 1;
-	var selectedRuleItemTotal = 0;
-	var selectedRulePage = 1;
+	var Exclude = {
+			moduleName: "Exclude",
+			selectedRule:  null,
+			selectedRuleItemPage: 1,
+			selectedRuleItemTotal: 0,
+			selectedRuleStatus: null,
 
-	var rulePage = 1;
-	var rulePageSize = 10;
-	var ruleFilterText = "";
-	
-	var ruleItemPageSize = 6;
-	
-	var addItemFieldDefaultText = "Enter SKU #";
-	var zeroCountHTMLCode = "&#133;";
-	var dateMinDate = 0;
-	var dateMaxDate = "+1Y";
-	var defaultItemDisplay = "sortableTile";
-	
-	var deleteItemInRuleConfirmText = "This will remove item associated to this rule. Continue?";
-	var removeExpiryDateConfirmText = "This will remove expiry date associated to this rule. Continue?";
-	var clearRuleConfirmText = "This will remove all items associated to this rule. Continue?";
-	var lockedItemDisplayText = "This item is locked";
-	
-	var showAddItem = function(e){
-		if (e.data.locked || !allowModify) return;
+			rulePage: 1,
+			rulePageSize: 15,
+			ruleItemPageSize: 6,
+			ruleFilterText: "",
+			dateMinDate: 0,
+			dateMaxDate: "+1Y",
+			zeroCountHTMLCode: "&#133;",
+			defaultRuleItemDisplay: "tileView",
+			lockedItemDisplayText: "Item is locked",
 
-		$(this).qtip({
-			content: {
-				text: $('<div/>'),
-				title: { text: 'Exclude Item', button: true
+			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
+			removeRuleItemConfirmText: "Item will be removed to this rule. Continue?",
+			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
+
+			getRuleList: function(){
+				var self = this;
+
+				$("#rulePanel").sidepanel({
+					fieldId: "keywordId",
+					fieldName: "keyword",
+					headerText : "Keyword",
+					searchText : "Enter Keyword",
+					showAddButton: allowModify,
+					page: self.rulePage,
+					pageSize: self.rulePageSize,
+					filterText: self.ruleFilterText,
+
+					itemDataCallback: function(base, keyword, page){
+						self.ruleFilterText = keyword;
+						self.rulePage = page;
+						StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
+							callback: function(data){
+								base.populateList(data);
+								base.addPaging(keyword, page, data.totalSize);
+							},
+							preHook: function(){ base.prepareList(); }
+						});
+					},
+
+					itemOptionCallback: function(base, id, name, model){
+
+						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
+
+						ExcludeServiceJS.getTotalProductInRule(id,{
+							callback: function(count){
+
+								var totalText = (count == 0) ? self.zeroCountHTMLCode: "(" + count + ")"; 
+								base.$el.find(selector + ' div.itemLink a').html(totalText);
+
+								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+									click: function(e){
+										self.setRule(model);
+									}
+								});
+							},
+							preHook: function(){ 
+								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+							}
+						});
+
+						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
+							callback:function(data){
+								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+							}
+						});
+					},
+
+					itemAddCallback: function(base, keyword){
+						StoreKeywordServiceJS.getKeyword(keyword,{
+							callback : function(data){
+								if(data==null){
+									StoreKeywordServiceJS.addKeyword(keyword,{
+										callback : function(data){
+											showActionResponse(data==null?0:1, "add", keyword);
+											if(data!=null){
+												base.getList(keyword, 1);
+												self.setRule(data);
+											}
+										}
+									});
+								}
+								else {
+									jAlert("Keyword <strong>" + keyword + "</strong> already exists.", "Duplicate Record");
+								}
+							}
+						});
+					},
+
+					pageChangeCallback: function(page){
+						self.rulePage = page;
+					}
+				});
+			},
+
+			getFacetItemType: function(item){
+				var $condition = item.condition;
+				var type = "";
+
+				if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+					type="facet";
+				}else if($condition["CNetFilter"]){
+					type="cnet";
+				}else if($condition["IMSFilter"]){
+					type="ims";
 				}
+				return type;
 			},
-			position:{
-				at: 'top center',
-				my: 'bottom center'
-			},
-			show:{
-				solo: true,
-				ready: true
-			},
-			style: {
-				width: 'auto'
-			},
-			events: { 
-				show: function(event, api){
-					var contentHolder = $("div", api.elements.content);
-					contentHolder.html($("#addItemTemplate").html());
-					contentHolder.find("#addOption").tabs({
 
-					});
+			setRuleItemValues: function(li, item){
+				var $li = li;
+				var $item = item;
+				var self = this;
 
-					contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
+				var PART_NUMBER = $item["memberTypeEntity"] === "PART_NUMBER";
+				var FACET = $item["memberTypeEntity"] === "FACET";
+				var id = $.formatAsId($item["memberId"]);
 
-					contentHolder.find("#addItemDate_1").datepicker({
-						showOn: "both",
-						minDate: dateMinDate,
-						maxDate: dateMaxDate,
-						buttonText: "Expiration Date",
-						buttonImage: "../images/icon_calendar.png",
-						buttonImageOnly: true
-					});
+				$li.attr("id", id);
+				$li.find(".sortOrderTextBox").val($item["location"]);
 
-					contentHolder.find("#clearBtn").on({
-						click: function(evt){
-							contentHolder.find("input,textarea").val("");
+				if(PART_NUMBER){
+					$li.find(".manufacturer").html($item["manufacturer"]);
+					$li.find(".name").html($item["name"]);
+					$li.find("#sku,#mfrpn").show();
+					$li.find(".sku").html($item["dpNo"]);
+					$li.find(".mfrpn").html($item["mfrPN"]);
+				}
+
+				if(FACET){
+
+					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
+					$li.find(".name > a").off().on({
+						click:function(e){
+							$(this).addproduct({
+								type: self.getFacetItemType(e.data.item),
+								locked: e.data.locked,
+								newRecord: false,
+								item: e.data.item,
+								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
+									ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
+										callback: function(data){
+											showActionResponse(data, "update", "Rule Facet Item");
+											self.populateRuleItem(self.selectedRulePage);
+										},
+										preHook: function(){ 
+											self.preShowRuleContent();
+										}
+									});
+								}
+							});
 						}
-					});
-					
-					contentHolder.find("#addItemToRuleBtn").on({
-						click: function(evt){
+					},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+				}
 
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,?\s*\d+\s*)*$/;
-							
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
-							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
-							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-							var today = new Date();
-							//ignore time of current date 
-							today.setHours(0,0,0,0);
-							if ($.isBlank(skus)) {
-								alert("There are no SKUs specified in the list.");
-							}
-							else if (!commaDelimitedNumberPattern.test(skus)) {
-								alert("List contains an invalid SKU.");
-							}	
-							else if(today.getTime() > new Date(expDate).getTime())
-								alert("Start date cannot be earlier than today");
-							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-								alert("Invalid date specified.");
-							}	
-							else if (!isXSSSafe(comment)){
-								alert("Invalid comment. HTML/XSS is not allowed.");
-							}
-							else {
-								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(/[\s,]+/), {
-									callback : function(code){
-										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-										showExclude();
+				if ($item["isExpired"]){
+					$li.find(".validityDaysExpired").show();
+					$li.find(".validityDays").empty();
+				}else{
+					$li.find(".validityDaysExpired").hide();
+					$li.find(".validityDays").html($item["validityText"]);
+				} 
+
+				var formattedExpiryDate = $item["formattedExpiryDate"];
+				if($.isBlank(formattedExpiryDate)){
+					$li.find(".clearDate").hide();
+				}else{
+					$li.find(".validityDateTextBox").val(formattedExpiryDate);
+					$li.find(".clearDate").show();
+				};
+
+				$li.find(".validityDateTextBox").datepicker({
+					showOn: "both",
+					minDate: self.dateMinDate,
+					maxDate: self.dateMaxDate,
+					buttonText: "Expiration Date",
+					buttonImage: "../images/icon_calendar.png",
+					buttonImageOnly: true,
+					disabled: self.selectedRuleStatus["locked"] || !allowModify,
+					onSelect: function(dateText, inst) {	
+						if ($item["formattedExpiryDate"] !== dateText){
+							self.updateValidityDate($item, dateText);
+						}
+					}
+				});
+
+				$li.find('.clearDate').off().on({
+					click: function(e){
+						if (e.data.locked) return;
+
+						jConfirm(self.removeExpiryDateConfirmText, "Remove Field Value", function(result){
+							if(result) self.updateValidityDate(e.data.item, "");
+						});
+					}
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+
+				$li.find('.lastModifiedIcon').off().on({
+					mouseenter: showLastModified 
+				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
+
+				$li.find('.deleteRuleItemIcon').off().on({
+					click: function(e){
+						if (e.data.locked) return;
+
+						jConfirm(self.removeRuleItemConfirmText, "Delete Item", function(result){
+							if(result){
+								ExcludeServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
+									callback: function(code){
+										showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										self.showRuleContent();
 									},
-									preHook: function(){ 
-										prepareExclude();
+									preHook: function(){
+										self.preShowRuleContent();
 									}
 								});
 							}
-						}
-					});
-				},
-				hide: function(event, api){
-					api.destroy();
-				}
-			}
-		});
-	};
-
-	var prepareExclude = function(){
-		clearAllQtip();
-		$("#preloader").show();
-		$("#noSelected").hide();
-		$("#exclude").hide();
-		$("#addItemHolder").hide();
-		$("#titleText").html(moduleName);
-		$("#titleHeader").html("");
-		$('#sortable-bigbets li:not(#sItemPattern)').remove();
-		$('#sortablePagingTop,#sortablePagingBottom,#sortableDisplayOptions').hide();
-	};
-
-	var populateItem = function(page){
-		selectedRulePage = page;
-		selectedRuleItemTotal = 0;
-		ExcludeServiceJS.getProducts(getItemFilter(), selectedRule.ruleName, page, ruleItemPageSize, {
-			callback: function(data){
-				selectedRuleItemTotal = data.totalSize;
-				var list = data.list;
-				var item, id;
-
-				if(getItemFilter()==="all"){
-					var totalText = selectedRuleItemTotal==0? zeroCountHTMLCode:  "(" + selectedRuleItemTotal + ")";
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemLink a').html(totalText);
-				}
-				
-				$('#sortable-bigbets li:not(#sItemPattern)').remove();
-				for (var i = 0; i < selectedRuleItemTotal; i++) {
-					item = list[i];
-					if(item!=null){
-						id = $.formatAsId(item["edp"]);
-						dwr.util.cloneNode("sItemPattern", { idSuffix:id });
-						$("#sItemPattern" + id).show(); 		
-						setItemValues(item);
-					}
-				};
-				
-				showPaging(page);
-				showDisplayOption();
-			},
-			postHook: function(){
-				$("#preloader").hide();
-				$("#submitForApproval").show();
-				$("#exclude").show();
-
-				$("#titleText").html(moduleName + " for ");
-				$("#titleHeader").html(selectedRule.ruleName);
-				$("#addItemHolder").show();
-			}
-		});
-	};
-	
-	var removeExpiryDate = function(e){
-		var data = e.data;
-		if (!data.locked && allowModify && confirm(removeExpiryDateConfirmText)){
-			var dateText = "";
-			ExcludeServiceJS.updateExpiryDate(selectedRule.ruleName, data.item["edp"], dateText, {
-				callback: function(code){
-					showActionResponse(code, "update", "expiry date of SKU#: " + data.item["dpNo"]);
-					if(code==1) showExclude();
-				}
-			});
-		}
-	};
-
-	var deleteItemInRule = function(e){
-		var data = e.data;
-		if (!data.locked && allowModify && confirm(deleteItemInRuleConfirmText)){
-			ExcludeServiceJS.deleteItemInRule(selectedRule.ruleName, data["edp"], {
-				callback: function(code){
-					showActionResponse(code, "delete", $.isBlank(data.item["dpNo"])? "Product Id#: " + data.item["edp"] : "SKU#: " + data.item["dpNo"]);
-					showExclude();
-				},
-				preHook: function(){ 
-					prepareExclude();
-				}
-			});
-		}
-	};
-	
-	var setItemValues = function(item){
-		var id = $.formatAsId(item["edp"]); 
-		
-		$("#sItemMan" + id).html(item["manufacturer"]);
-		$("#sItemName" + id).html(item["name"]);
-		$("#sItemDPNo" + id).html(item["dpNo"]);
-		$("#sItemMfrPN" + id).html(item["mfrPN"]);
-
-		$("#sItemModBy" + id).html(item["lastModifiedBy"]);
-		$("#sItemModDate" + id).html(item["formattedLastModifiedDate"]);
-		$("#sItemValidityText" + id).html(item["validityText"]);
-		
-		if (item["isExpired"]) $("#sItemValidityText" + id).html('<img src="../images/expired_stamp50x16.png">');
-		
-		if ($.isBlank(item["validityText"])) $('#removeExpiryDateIcon' + id).hide();
-		
-		$('#removeExpiryDateIcon' + id).on({
-			click: removeExpiryDate
-		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
-		
-		$('#commentIcon' + id).on({
-			click: showCommentList
-		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
-
-		$('#auditIcon' + id).on({
-			click: showAuditList
-		}, {locked: selectedRuleStatus.locked || !allowModify, type:moduleName, item: item, name: selectedRule.ruleName});
-		
-		$('#sItemDelete' + id).off().on({
-			click: deleteItemInRule,
-			mouseenter: showHoverInfo
-		},{locked: selectedRuleStatus.locked || !allowModify, edp:item["edp"], item:item});
-		
-		$("#sItemExpDate" + id).val(item["formattedExpiryDate"]);
-		
-		$("input#sItemExpDate" + id).datepicker({
-			showOn: "both",
-			minDate: dateMinDate,
-			maxDate: dateMaxDate,
-			buttonText: "Expiration Date",
-			buttonImage: "../images/icon_calendar.png",
-			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked || !allowModify,
-			onSelect: function(dateText, inst) {	
-				if (item["formattedExpiryDate"] != dateText){
-					ExcludeServiceJS.updateExpiryDate(selectedRule.ruleName,item["edp"], dateText, {
-						callback: function(code){
-							showActionResponse(code, "update", "expiry date of SKU#: " + item["dpNo"]);
-							if(code==1) showExclude();
-						}
-					});
-				}
-			}
-		});
-		
-		setTimeout(function(){
-			// Product is no longer visible in the setting
-			if ($.isBlank(item["dpNo"])){
-				$("#sItemImg" + id).attr("src","../images/padlock_img.jpg"); 
-				$("#sItemMan" + id).html(lockedItemDisplayText);
-				$("#sItemDPNo" + id).html("Unavailable");
-				$("#sItemMfrPN" + id).html("Unavailable");
-				$("#sItemName" + id).html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
-			}else{
-				$("#sItemImg" + id).prop("src",item['imagePath']).off().on({
-					error:function(){ $(this).unbind("error").attr("src", "../images/no-image.jpg"); 
-					}
-				});				
-			}
-		},10);
-		
-	}; 
-
-	var showDisplayOption= function(){
-		(selectedRuleItemTotal == 0 && getItemFilter()==="all") ? $('#sortableDisplayOptions').hide(): $('#sortableDisplayOptions').show();
-	};
-
-	var showPaging = function(page){
-		selectedRuleItemPage = page;
-		$("#sortablePagingTop, #sortablePagingBottom").paginate({
-			currentPage:page, 
-			pageSize:ruleItemPageSize,
-			totalItem:selectedRuleItemTotal,
-			callbackText: function(itemStart, itemEnd, itemTotal){
-				var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
-				return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
-			},
-			pageLinkCallback: function(e){ populateItem(e.data.page); },
-			nextLinkCallback: function(e){ populateItem(e.data.page + 1); },
-			prevLinkCallback: function(e){ populateItem(e.data.page - 1); }
-		});
-	};
-
-	var showExclude = function(){
-		if(selectedRule==null){
-			$("#preloader").hide();
-			$("#noSelected").show();
-			$("#titleText").html(moduleName);
-			return;
-		}
-
-		$("#submitForApproval").rulestatus({
-			moduleName: moduleName,
-			rule: selectedRule,
-			authorizeRuleBackup: true,
-			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
-			afterSubmitForApprovalRequest:function(ruleStatus){
-				selectedRuleStatus = ruleStatus;
-				showExclude();
-			},
-			beforeRuleStatusRequest: function(){
-				prepareExclude();	
-			},
-			afterRuleStatusRequest: function(ruleStatus){
-				selectedRuleStatus = ruleStatus;
-				getExcludeRuleList();
-				populateItem(1);
-				
-				$("#addItem, #addItemDPNo").val(addItemFieldDefaultText).off().on({
-					blur: setFieldDefaultTextHandler,
-					focus: setFieldEmptyHandler
-				},{text:addItemFieldDefaultText}
-				);
-				
-				$("#addItemBtn").off().on({
-					click: showAddItem,
+						});
+					},
 					mouseenter: showHoverInfo
-				},{locked: selectedRuleStatus.locked || !allowModify});
-				
-				$("a#clearRuleBtn").off().on({
-					mouseenter: showHoverInfo,
-					click: function(e){
-						if(!e.data.locked && allowModify && confirm(clearRuleConfirmText))
-							ExcludeServiceJS.clearRule(selectedRule.ruleName, {
-								callback: function(code){
-									showActionResponse(code, "clear", selectedRule.ruleName);
-									showExclude();
-								}
-							});
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item});
+
+				if (self.selectedRuleStatus["locked"]){
+					$li.find('.clearDate').hide();
+					$li.find('.sortOrderTextBox').prop("readonly", true);
+				}
+
+				setTimeout(function(){	
+					if (PART_NUMBER){
+						if ($.isBlank($item["dpNo"])){
+							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
+							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+							$li.find(".manufacturer").html(self.lockedItemDisplayText);
+							$li.find(".sku, .mfrpn").html("Unavailable");
+							return;
+						}
+
+						$li.find("img.itemImg").prop("src",item['imagePath']).off().on({
+							error:function(){ 
+								$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image.jpg'); 
+							}
+						});
 					}
-				},{locked: selectedRuleStatus.locked || !allowModify});
+					
+					if (FACET){
+						var imagePath = "";
+
+						switch(self.getFacetItemType($item)){
+						case "ims" : imagePath = "ims_img.jpg"; break;
+						case "cnet" : imagePath = "cnet_img.jpg"; break;
+						case "facet" : imagePath = "facet_img.jpg"; break;
+						}
+
+						if($.isNotBlank(imagePath))
+							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/' + imagePath); 
+					}
+
+				}, 10);
+			},
+
+			updateValidityDate: function(item, dateText){
+				var self = this;
+				var $item = item;
+				//TODO: Locked item has no dpNo, change message
+				ExcludeServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
+					callback: function(code){
+						showActionResponse(code, "update", "expiry date of SKU#: " + $item["dpNo"]);
+						if(code==1) self.populateRuleItem(self.selectedRulePage);
+					}
+				});
+			},
+
+			preShowRuleContent: function(){
+				var self = this;
+				$("#preloader").show();
+				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+					$("#titleText").html(self.moduleName);
+					$("#titleHeader").empty();
+				});
+			},
+
+			postShowRuleContent: function(){
+				var self = this;
+				$("#preloader, #noSelected").hide();
+				var $selector = $("#ruleSelected, #addRuleItemContainer");
 				
-				$("a#downloadIcon").download({
+				if (self.selectedRuleStatus["locked"] || !allowModify){
+					$selector = $("#ruleSelected");
+				}
+				
+				$selector.fadeIn("slow", function(){
+					$("#titleText").html(self.moduleName + " for ");
+					$("#titleHeader").html(self.selectedRule["ruleName"]);
+				});
+			},
+
+			populateRuleItem: function(page){
+				var self = this;
+				self.selectedRuleItemPage = page;
+				self.preShowRuleContent();
+
+				$("#submitForApproval").rulestatus({
+					moduleName: self.moduleName,
+					rule: self.selectedRule,
+					authorizeRuleBackup: true,
+					viewAuditCallback: function(target){
+						$(target).viewaudit({
+							getDataCallback: function(base, page){
+								CommentServiceJS.getComment(self.moduleName, self.selectedRule["ruleId"], page, 5, {
+									callback: function(data){}
+								});
+							}
+						});
+					},
+					
+					authorizeSubmitForApproval: allowModify,
+					afterSubmitForApprovalRequest: function(ruleStatus){
+						self.populateRuleItem(page);
+					},
+					afterRuleStatusRequest: function(ruleStatus){
+						self.selectedRuleStatus = ruleStatus;
+						self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
+						self.selectedRuleItemTotal = 0;
+						var $ul = $("ul#ruleItemHolder");
+
+						ExcludeServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
+							callback: function(data){
+								self.selectedRuleItemTotal = data.totalSize;
+								$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
+
+								var list = data.list;
+
+								if(self.getRuleItemFilter()==="all"){
+									var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
+									$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
+								}
+
+								if(self.selectedRuleItemTotal == 0 && self.getRuleItemFilter()==="all"){
+									$('#ruleItemDisplayOptions').hide(); 
+								}else{
+									$('#ruleItemDisplayOptions').show();
+									self.addRuleItemOptionListener();
+								}
+
+								if(self.selectedRuleItemTotal == 0){
+									$("#optionSplitter").hide();
+								}else{
+									$("#optionSplitter").show();
+								}
+
+								$("#ruleItemPagingTop, #ruleItemPagingBottom").paginate({
+									currentPage:page, 
+									pageSize:self.ruleItemPageSize,
+									totalItem:self.selectedRuleItemTotal,
+									callbackText: function(itemStart, itemEnd, itemTotal){
+										var selectedText = $.trim($("#filterDisplay").val()) != "all" ? " " + $("#filterDisplay option:selected").text(): "";
+										return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + selectedText + " Items";
+									},
+									pageLinkCallback: function(e){ self.populateRuleItem(e.data.page); },
+									nextLinkCallback: function(e){ self.populateRuleItem(e.data.page + 1); },
+									prevLinkCallback: function(e){ self.populateRuleItem(e.data.page - 1); }
+								});
+
+								for (var i = 0; i < self.selectedRuleItemTotal; i++) {
+									var $item = list[i];
+									if($item != null){
+										var $li = $ul.find('li#ruleItemPattern').clone();
+										self.setRuleItemValues($li, $item);
+										$li.show();
+										$ul.append($li);
+									}
+								};
+
+							},
+							preHook:function(){
+								self.preShowRuleContent();
+							},
+							postHook: function(){
+								self.postShowRuleContent();
+								$("a#addRuleItemIcon").off().on({
+									click:function(e){
+										$(this).addproduct({
+											type: $('select#selectRuleItemType').val(),
+											locked: self.selectedRuleStatus["locked"] || !allowModify,
+											addProductItemCallback:function(position, expiryDate, comment, skus){
+												ExcludeServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], expiryDate, comment, skus, {
+													callback : function(code){
+														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+														self.populateRuleItem(self.selectedRulePage);
+													},
+													preHook: function(){ 
+														self.preShowRuleContent();
+													}
+												});		
+											},
+											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
+												ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
+													callback: function(data){
+														showActionResponse(data, "add", "Rule Facet Item");
+														self.populateRuleItem();
+													},
+													preHook: function(){ 
+														self.preShowRuleContent();
+													}
+												});
+											}
+										});
+									}
+								});
+							}
+						});
+
+					}
+				});	
+			},
+
+			addRuleItemOptionListener: function(){
+				var self = this;
+
+				$("#filterDisplay").off().on({
+					change: function(e){
+						$.cookie('exclude.filter' + $.formatAsId(self.selectedRule["ruleId"]),$(this).val(),{path:GLOBAL_contextPath});
+						self.setRuleItemFilter();
+					}
+				});
+
+				$("#tileViewIcon").off().on({click:function(e) {
+					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'tileView', {path:GLOBAL_contextPath});
+					$("#listViewIcon").removeClass("active");
+					self.setRuleItemDisplay();
+				}});
+
+				$("#listViewIcon").off().on({click:function(e) {
+					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), 'listView', {path:GLOBAL_contextPath});
+					$("#tileViewIcon").removeClass("active");
+					self.setRuleItemDisplay();
+				}});
+
+				$("#addRuleItemIcon").off().on({
+					click: function(e){
+						self.showAddProductItem(e);
+					}, 
+					mouseenter: showHoverInfo
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+
+				$("#clearRuleItemIcon").off().on({
+					click: function(e){
+						if(e.data.locked) return;
+
+						jConfirm(self.clearRuleItemConfirmText, "Delete Item", function(result){
+							if(result) 
+								ExcludeServiceJS.clearRule(self.selectedRule["ruleName"], {
+									callback: function(code){
+										showActionResponse(code, "clear", self.selectedRule["ruleName"]);
+										self.showRuleContent();
+									}
+								});
+						});
+
+					},
+					mouseenter: showHoverInfo,
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+
+				$("#downloadRuleItemIcon").download({
 					headerText:"Download Exclude",
 					hasPageOption: true,
 					requestCallback:function(e){
@@ -345,12 +477,13 @@
 						var url = document.location.pathname + "/xls";
 						var urlParams = "";
 						var count = 0;
+
 						params["filename"] = e.data.filename;
 						params["type"] = e.data.type;
-						params["keyword"] = selectedRule.ruleName;
-						params["page"] = (e.data.page==="current") ? selectedRuleItemPage : e.data.page;
-						params["filter"] = getItemFilter();
-						params["itemperpage"] = ruleItemPageSize;
+						params["keyword"] = self.selectedRule["ruleName"];
+						params["page"] = (e.data.page==="current") ? self.selectedRuleItemPage : e.data.page;
+						params["filter"] = self.getRuleItemFilter();
+						params["itemperpage"] = self.ruleItemPageSize;
 						params["clientTimezone"] = +new Date();
 
 						for(var key in params){
@@ -362,148 +495,74 @@
 						document.location.href = url + '?' + urlParams;
 					}
 				});
-			}
-		});		
-	};
 
-	var setExclude = function(rule){
-		selectedRule = rule;
-		showExclude();
-	};
-
-	var getExcludeRuleList = function(page){
-		$("#rulePanel").sidepanel({
-			fieldId: "keywordId",
-			fieldName: "keyword",
-			headerText : "Keyword",
-			searchText : "Enter Keyword",
-			page: rulePage,
-			pageSize: rulePageSize,
-			filterText: ruleFilterText,
-			showAddButton: allowModify,
-			itemDataCallback: function(base, keyword, page){
-				ruleFilterText = keyword;
-				rulePage = page;
-				StoreKeywordServiceJS.getAllKeyword(keyword, page, rulePageSize,{
-					callback: function(data){
-						base.populateList(data);
-						base.addPaging(keyword, page, data.totalSize);
-					},
-					preHook: function(){ base.prepareList(); }
-				});
 			},
 
-			itemOptionCallback: function(base, id, name, model){
+			showRuleContent: function(){
+				var self = this;
+				self.getRuleList();
 
-				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-				dwr.engine.beginBatch();
-				ExcludeServiceJS.getTotalProductInRule(id,{
-					callback: function(count){
+				if(self.selectedRule==null){
+					$("#preloader").hide();
+					$("#titleText").html(self.moduleName);
+					return;
+				}
 
-						var totalText = (count == 0) ? zeroCountHTMLCode: "(" + count + ")"; 
-						base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
-							click: function(e){
-								setExclude(model);
-							}
-						});
-					},
-					preHook: function(){ 
-						base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-					}
-				});
-
-				DeploymentServiceJS.getRuleStatus(moduleName, id, {
-					callback:function(data){
-						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
-					}
-				});
-				dwr.engine.endBatch();
+				self.getRuleList();
+				self.setRuleItemDisplay();
+				self.setRuleItemFilter();
 			},
 
-			itemAddCallback: function(base, keyword){
-				StoreKeywordServiceJS.getKeyword(keyword,{
-					callback : function(data){
-						if(data==null){
-							StoreKeywordServiceJS.addKeyword(keyword,{
-								callback : function(data){
-									showActionResponse(data==null?0:1, "add", keyword);
-									if(data!=null){
-										base.getList(keyword, 1);
-										setExclude(data);
-									}
-								}
-							});
-						}
-						else {
-							alert("The keyword provided already exists.");
-						}
-					}
-				});
+			setRule: function(rule){
+				var self = this;
+				self.selectedRule = rule;
+				self.showRuleContent();
 			},
-			
-			pageChangeCallback: function(page){
-				rulePage = page;
+
+			setRuleItemDisplay: function(){
+				var self = this;
+
+				$("#ruleItemContainer").removeClass("tileView").removeClass("listView");
+
+				if ($.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]))==="listView" || $.cookie('exclude.display'+ $.formatAsId(self.selectedRule["ruleId"]))==="tileView"){
+					$("#ruleItemContainer").addClass($.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"])));
+					$("#" + $.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"])) + "Icon").addClass("active");
+				}else{
+					$.cookie('exclude.display' + $.formatAsId(self.selectedRule["ruleId"]), self.defaultRuleItemDisplay, {path:GLOBAL_contextPath});
+					$("#ruleItemContainer").addClass(self.defaultRuleItemDisplay);
+					$("#" + self.defaultRuleItemDisplay + "Icon").addClass("active");				
+				}
+			},
+
+			setRuleItemFilter: function(value){
+				var self = this;
+				var selectedFilter = $.isNotBlank(value)? value : $.cookie('exclude.filter' + $.formatAsId(self.selectedRule["ruleId"]));
+
+				if ($.isNotBlank(selectedFilter)){
+					$("#filterDisplay").val(selectedFilter);
+				}else{
+					$.cookie('exclude.filter' + $.formatAsId(self.selectedRule["ruleId"]), "all" ,{path:GLOBAL_contextPath});
+					$("#filterDisplay").val("all");
+				}
+
+				self.populateRuleItem();
+			},
+
+			getRuleItemFilter: function(){
+				var self = this;
+				var cookieFilter = $.trim($.cookie('exclude.filter' + $.formatAsId(self.selectedRule["ruleId"])));
+				var activefilter = $.isBlank(cookieFilter)? $("#filterDisplay").val() : cookieFilter;
+				return $.isBlank(activefilter) ? "all" : activefilter;
+			},
+
+			init : function() {
+				var self = this;
+				self.showRuleContent();
 			}
-		});
 	};
 
-	var getItemFilter = function(){
-		var cookieFilter = $.trim($.cookie('exclude.filter'));
-		var filter = $.isBlank(cookieFilter)? $("#filterDisplay").val() : cookieFilter;
-		return $.isBlank(filter) ? "all" : filter;
-	};
-
-	var setItemFilter = function(value){
-		$.cookie('exclude.filter', value ,{expires: 1});
-		$("#filterDisplay").val(value);
-		showExclude();
-	};
-
-	var setItemDisplay = function(){
-
-		$("#sortable-bigbets").removeClass("sortableTile");
-		$("#sortable-bigbets").removeClass("sortableList");
-
-		if ($.cookie('exclude.display')=="sortableList" || $.cookie('exclude.display')=="sortableTile"){
-			$("#sortable-bigbets").addClass($.cookie('exclude.display'));
-			$("#" + $.cookie('exclude.display')).addClass("active");
-		}else{
-			$("#sortable-bigbets").addClass(defaultItemDisplay);
-			$("#" + defaultItemDisplay).addClass("active");				
-		}
-	};
-
-	var init = function() {
-		setItemDisplay();
-		setItemFilter();
-		getExcludeRuleList();
-		showExclude();
-	};
-	
-	$(document).ready(function() { 
-
-		$("#filterDisplay").on({
-			change: function(e){
-				setItemFilter($(this).val());
-			}
-		});
-
-		$("#sortableTile").on({click:function(e) {
-			$.cookie('exclude.display', 'sortableTile',{expires: 1});
-			$("#sortableList").removeClass("active");
-			setItemDisplay();
-		}
-		});
-
-		$("#sortableList").on({click:function(e) {
-			$.cookie('exclude.display', 'sortableList',{expires: 1});
-			$("#sortableTile").removeClass("active");
-			setItemDisplay();
-		}
-		});
-
-		init();	
+	$(document).ready(function() {
+		Exclude.init();
 	});	
+
 })(jQuery);	

@@ -90,7 +90,7 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		
 		int count = 0;
 		try {
@@ -300,18 +300,18 @@ public class ExcludeService {
 			e.setEdp(productId);
 			return daoService.getExcludedProduct(server, e);
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProduct()",e);
+			logger.error("Failed during getExcludedProduct()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
 	public String getComment(String keyword, String productId) {
-		Product elevatedProduct = getExcludedProduct(keyword, productId);
-		if (elevatedProduct == null)
+		Product excludedProduct = getExcludedProduct(keyword, productId);
+		if (excludedProduct == null)
 			return StringUtils.EMPTY;
 
-		return StringUtils.trimToEmpty(elevatedProduct.getComment());
+		return StringUtils.trimToEmpty(excludedProduct.getComment());
 	}
 
 	@RemoteMethod
@@ -335,6 +335,66 @@ public class ExcludeService {
 			logger.error("Failed during addComment()",e);
 		}
 		return -1;
+	}
+	
+	@RemoteMethod
+	public int updateExclude(String keyword, String memberId, String condition) {
+		try {
+			logger.info(String.format("%s %s %d", keyword, memberId));
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude!=null) {
+				if (!StringUtils.isBlank(condition)) {
+					exclude.setCondition(new RedirectRuleCondition((condition)));
+				}
+				
+				exclude.setLastModifiedBy(UtilityService.getUsername());
+				return daoService.updateExcludeResult(exclude);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during updateExclude()",e);
+		}
+		return -1;
+	}
+	
+	@RemoteMethod
+	public int updateExcludeFacet(String keyword, String memberId, String comment, String expiryDate, Map<String, List<String>> filter){
+		int changes = 0;
+		
+		ExcludeResult exclude = new ExcludeResult();
+		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		exclude.setMemberId(memberId);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setFilter(filter);
+		try {
+			exclude = daoService.getExcludeItem(exclude);
+		} catch (DaoException e) {
+			exclude = null;
+		}
+
+		if(exclude==null){
+			return changes;
+		}
+		
+		if (StringUtils.isNotBlank(comment)){
+			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+		}
+		
+		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
+			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
+		}
+		
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
+		}
+		
+		return changes;
 	}
 
 	@RemoteMethod

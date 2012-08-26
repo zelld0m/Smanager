@@ -454,6 +454,11 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
+	public int updateExcludeResult(ExcludeResult exclude) throws DaoException {
+		return excludeDAO.updateExclude(exclude);
+	}
+	
+	@Override
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException {
 		return excludeDAO.getExclude(criteria);
 	}
