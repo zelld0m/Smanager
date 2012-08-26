@@ -40,10 +40,7 @@
 				searchWithinInput: '#searchWithinInput'
 			}));
 
-			Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
-				id: 'currentSearch',
-				target: '#dynamicSelection'
-			}));
+			
 
 			Manager.addWidget(new AjaxSolr.RuleSelectorWidget({
 				id: 'ruleSelector',
@@ -76,7 +73,14 @@
 			Manager.addWidget(new AjaxSolr.DynamicAttributeWidget({
 				id: 'dynamicAttribute',
 				target: '#dynamicAttributes',
-				limit: 5
+				limit: 5,
+				attribMap: null
+			}));
+			
+			
+			Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
+				id: 'currentSearch',
+				target: '#dynamicSelection'
 			}));
 			
 			Manager.addWidget(new AjaxSolr.ActiveRuleWidget({

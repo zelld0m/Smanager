@@ -1,8 +1,6 @@
 (function ($) {
 
 	AjaxSolr.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
-		SESS_TEMPLATE_ATTRIBUTES : "simulator.template.attributes",
-	
 		afterRequest: function () {
 			var self = this;
 			var links = [];
@@ -18,11 +16,7 @@
 
 			var fq = this.manager.store.values('fq');
 			var searchWithin = $.cookie('searchWithin');
-			var dynamicAttr;
-
-			if($.isNotBlank($.trim($.cookie(self.SESS_TEMPLATE_ATTRIBUTES)))){
-				dynamicAttr = JSON.parse($.trim($.cookie(self.SESS_TEMPLATE_ATTRIBUTES)));
-			}
+			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;
 			
 			for (var i = 0, l = fq.length; i < l; i++) {
 				if (fq[i] == searchWithin) {
@@ -76,7 +70,7 @@
 				}
 
 				if (links.length) {
-					AjaxSolr.theme('createSelectionLink', this.id, links);
+					AjaxSolr.theme('createSelectionLink', $.formatAsId(this.id), links);
 				}
 			}
 
