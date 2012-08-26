@@ -148,6 +148,7 @@
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
+											showActionResponse(data, "update", "Rule Facet Item");
 											self.populateRuleItem(self.selectedRulePage);
 										},
 										preHook: function(){ 
@@ -430,6 +431,7 @@
 											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
 												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
+														showActionResponse(data, "add", "Rule Facet Item");
 														self.populateRuleItem();
 													},
 													preHook: function(){ 
