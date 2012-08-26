@@ -971,7 +971,7 @@
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
 
-							$ulAttributeValues.prop("id", $.formatAsId(attrName));
+							$ulAttributeValues.prop({id:$.formatAsId(attrName), title:attrName});
 							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
 							if (!$.isNumeric(currCondCount)){
 								currCondCount = 0; 
