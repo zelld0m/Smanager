@@ -10,6 +10,10 @@ jQuery.extend(
 					return (obj) ? obj[0] : defaultValue;
 				},
 				
+				defaultIfBlank: function(obj, defaultValue){
+					return $.isNotBlank(obj) ? obj : defaultValue;
+				},
+				
 				compareBlank: function(str1, str2){
 					return ($.isBlank(str1) && $.isBlank(str2)) ? true : (str1 === str2);
 				},

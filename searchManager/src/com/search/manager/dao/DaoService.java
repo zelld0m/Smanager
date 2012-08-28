@@ -7,7 +7,6 @@ import java.util.Map;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -110,6 +109,7 @@ public interface DaoService {
 	
 	/* Exclude */
 	public int addExcludeResult(ExcludeResult exclude) throws DaoException;
+	public int updateExcludeResult(ExcludeResult exclude) throws DaoException;
 	public int updateExcludeResultComment(ExcludeResult exclude) throws DaoException;
 	public int appendExcludeResultComment(ExcludeResult exclude) throws DaoException;
 	public int updateExcludeResultExpiryDate(ExcludeResult exclude) throws DaoException;
