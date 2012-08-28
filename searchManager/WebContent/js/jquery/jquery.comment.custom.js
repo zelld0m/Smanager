@@ -41,11 +41,13 @@
 			template += '	<div id="commentPagingBottom" style="margin-top:8px"></div>';
 
 			if(!base.options.locked && base.options.showAddComment){
-				template += '	<div id="addCommentHolder">';
-				template += '		<textarea id="comment"></textarea>';
-				template += '		<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Add Comment</div>';
-				template += '		</a>';
+				template += '	<div id="addCommentHolder" class="marT8">';
+				template += '		<textarea id="comment" class="w250"></textarea>';
+				template += '		<div class="txtAR marT8">';
+				template += '			<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '				<div class="buttons fontBold">Add Comment</div>';
+				template += '			</a>';
+				template += '		</div>';
 				template += '	</div>';
 			}
 

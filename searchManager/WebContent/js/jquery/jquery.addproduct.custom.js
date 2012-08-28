@@ -204,7 +204,7 @@
 			template  += '				</tr>';
 			template  += '				</table>';
 
-			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 w500 floatL">';
+			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 floatL">';
 			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr id="dynamicAttributeValue">';
 			template  += '					<td colspan="2" class="padT1">';
