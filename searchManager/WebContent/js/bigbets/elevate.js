@@ -145,9 +145,11 @@
 								locked: e.data.locked,
 								newRecord: false,
 								item: e.data.item,
+								showPosition: true,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
+											showActionResponse(data, "update", "Rule Facet Item");
 											self.populateRuleItem(self.selectedRulePage);
 										},
 										preHook: function(){ 
@@ -200,6 +202,26 @@
 						});
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+
+				$li.find('.auditRuleItemIcon').off().on({
+					click: function(e){
+						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];
+						$(e.currentTarget).viewaudit({
+							itemDataCallback: function(base, page){
+								AuditServiceJS.getElevateItemTrail(self.selectedRule["ruleId"], itemId, base.options.page, base.options.pageSize, {
+									callback: function(data){
+										var total = data.totalSize;
+										base.populateList(data);
+										base.addPaging(base.options.page, total);
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							}
+						});
+					}
+				}, {item: $item});
 
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
@@ -284,7 +306,7 @@
 							}
 						});
 					}
-					
+
 					if (FACET){
 						var imagePath = "";
 
@@ -327,11 +349,11 @@
 				var self = this;
 				$("#preloader, #noSelected").hide();
 				var $selector = $("#ruleSelected, #addRuleItemContainer");
-				
+
 				if (self.selectedRuleStatus["locked"] || !allowModify){
 					$selector = $("#ruleSelected");
 				}
-				
+
 				$selector.fadeIn("slow", function(){
 					$("#titleText").html(self.moduleName + " for ");
 					$("#titleHeader").html(self.selectedRule["ruleName"]);
@@ -347,6 +369,16 @@
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					authorizeRuleBackup: true,
+					viewAuditCallback: function(target){
+						$(target).viewaudit({
+							getDataCallback: function(base, page){
+								CommentServiceJS.getComment(self.moduleName, self.selectedRule["ruleId"], page, 5, {
+									callback: function(data){}
+								});
+							}
+						});
+					},
+
 					authorizeSubmitForApproval: allowModify,
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.populateRuleItem(page);
@@ -416,6 +448,7 @@
 										$(this).addproduct({
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
+											showPosition: true,
 											addProductItemCallback:function(position, expiryDate, comment, skus){
 												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
@@ -430,6 +463,7 @@
 											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
 												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
+														showActionResponse(data, "add", "Rule Facet Item");
 														self.populateRuleItem();
 													},
 													preHook: function(){ 
