@@ -1427,7 +1427,7 @@
 				
 				var formattedExpiryDate = base.options.item["formattedExpiryDate"];
 				if($.isNotBlank(formattedExpiryDate)){
-					base.contentHolder.find("#addItemDate_1").val(formattedExpiryDate);
+					base.contentHolder.find("#addItemDate").val(formattedExpiryDate);
 				};
 				
 				if (base.options.showPosition)
