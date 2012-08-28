@@ -48,6 +48,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
@@ -276,8 +277,8 @@ public class SearchServlet extends HttpServlet {
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
-			if (fromSearchGui && (coreName.equalsIgnoreCase("pcmall") ||  coreName.equalsIgnoreCase("pcmallcap"))) {
-				nvp = new BasicNameValuePair("facet.field", "PCMall_FacetTemplate");
+			if (fromSearchGui && StringUtils.isNotBlank(UtilityService.getStoreFacetTemplate())) {
+				nvp = new BasicNameValuePair("facet.field", UtilityService.getStoreFacetTemplate());
 				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
 					nameValuePairs.add(nvp);
 				}
