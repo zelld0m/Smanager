@@ -24,9 +24,9 @@ import com.search.manager.utility.DateAndTimeUtils;
 @Service(value = "commentService")
 @RemoteProxy(
 		name = "CommentServiceJS",
-	    creator = SpringCreator.class,
-	    creatorParams = @Param(name = "beanName", value = "commentService")
-	)
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "commentService")
+)
 public class CommentService {
 
 	private static final Logger logger = Logger.getLogger(CommentService.class);
@@ -40,10 +40,10 @@ public class CommentService {
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
-	
+
 	public CommentService() {
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<Comment> parseComment(String strComment) {
 		List<Comment> commentList = new ArrayList<Comment>();
@@ -104,6 +104,23 @@ public class CommentService {
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
+		}
+		return result;
+	}
+
+	@RemoteMethod
+	public int addRuleItemComment(String ruleType, String memberId, String pComment) {
+		int result = 0;
+		try {
+			Comment comment = new Comment();
+			comment.setReferenceId(memberId);
+			comment.setRuleTypeId(RuleEntity.getId(ruleType));
+			comment.setUsername(UtilityService.getUsername());
+			comment.setComment(pComment);
+			result = daoService.addComment(comment);
+
+		} catch (DaoException e) {
+			logger.error("Failed during addRuleItemComment()",e);
 		}
 		return result;
 	}

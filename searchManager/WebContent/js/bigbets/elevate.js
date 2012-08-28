@@ -203,6 +203,50 @@
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
 
+				$li.find('.commentRuleItemIcon').off().on({
+					click: function(e){
+						$(e.currentTarget).comment({
+							showAddComment: true,
+							locked: e.data.locked,
+							itemDataCallback: function(base, page){
+								CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
+									callback: function(data){
+										var total = data.totalSize;
+										base.populateList(data);
+										base.addPaging(base.options.page, total);
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							},
+							itemAddComment: function(base, comment){
+								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
+									callback: function(data){
+										showActionResponse(data, "add", "item comment");
+										if(data==1){
+											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
+												callback: function(data){
+													var total = data.totalSize;
+													base.populateList(data);
+													base.addPaging(base.options.page, total);
+												},
+												preHook: function(){
+													base.prepareList();
+												}
+											});
+										}
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							}
+						});
+					}
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
+				
+				
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
 						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];

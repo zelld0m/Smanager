@@ -86,7 +86,7 @@
 	  						</label>
 	  						<label class="floatR">
 								<ul class="listIcons">
-									<li><img src="<spring:url value="/images/icon_comment.png" />"></li>
+									<li><img class="commentRuleItemIcon" src="<spring:url value="/images/icon_comment.png" />"></li>
 									<li><img class="auditRuleItemIcon" src="<spring:url value="/images/icon_history.png" />"></li>
 									<li><img class="lastModifiedIcon" src="<spring:url value="/images/user_red.png" />"></li>
 									<li><img class="deleteRuleItemIcon" src="<spring:url value="/images/icon_delete2.png" />"></li>

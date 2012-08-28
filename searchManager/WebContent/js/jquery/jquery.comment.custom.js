@@ -1,6 +1,6 @@
 (function($){
 
-	$.viewcomment = function(el, options){
+	$.comment = function(el, options){
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
@@ -13,7 +13,7 @@
 		base.$el.data("viewcomment", base);
 
 		base.init = function(){
-			base.options = $.extend({},$.viewcomment.defaultOptions, options);
+			base.options = $.extend({},$.comment.defaultOptions, options);
 			base.displayToolTip(base.el);
 		};
 
@@ -39,25 +39,37 @@
 			template += '	<div id="commentHolder"></div>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div id="commentPagingBottom" style="margin-top:8px"></div>';
+
+			if(!base.options.locked && base.options.showAddComment){
+				template += '	<div id="addCommentHolder">';
+				template += '		<textarea id="comment"></textarea>';
+				template += '		<a id="addCommentBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Add Comment</div>';
+				template += '		</a>';
+				template += '	</div>';
+			}
+
 			template += '</div>';
-		
+
 			return $(template).html();
 		};
-		
+
 		base.getList = function(page) {
 			base.options.page = page;
 			base.options.itemDataCallback(base, page);
 		};
-		
+
 		base.prepareList = function(){
-			base.contentHolder.find('div#empty').hide();
+			base.contentHolder.find('div#commentHolder,#commentPagingTop, #commentPagingBottom').empty();
+			base.contentHolder.find('div#empty, div#addCommentHolder').hide();
 			base.contentHolder.find('div#preloader').show();
 		};
-		
+
 		base.populateList = function(data){
 			var auditItems = "";
-			
+
 			base.contentHolder.find('div#preloader,div#empty').hide();
+			base.contentHolder.find('div#addCommentHolder').show();
 
 			if(data==null || data.totalSize==0){
 				base.contentHolder.find('div#empty').show();
@@ -72,29 +84,29 @@
 				auditEntryHTML = auditEntryHTML.replace("%%comment%%", $.defaultIfBlank($item.comment, "").replace(new RegExp("&",'g'),"&amp;"));
 				auditItems += auditEntryHTML;
 			}
-			
+
 			base.contentHolder.find('div#commentHolder').html(auditItems);
 			base.contentHolder.find('div#commentHolder >div:nth-child(even)').addClass("alt");
-			
+
 		};
-		
+
 		base.addPaging = function(page, total){
 			if (total > 0)
-			base.contentHolder.find("#commentPagingTop, #commentPagingBottom").paginate({
-				type: "short",
-				pageStyle: "style2",
-				currentPage: page, 
-				pageSize: base.options.pageSize,
-				totalItem: total,
-				callbackText: function(itemStart, itemEnd, itemTotal){
-					return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
-				},
-				pageLinkCallback: function(e){ base.getList(e.data.page);},
-				nextLinkCallback: function(e){ base.getList(parseInt(e.data.page)+1);},
-				prevLinkCallback: function(e){ base.getList(parseInt(e.data.page)-1);},
-				firstLinkCallback: function(e){ base.getList(1);},
-				lastLinkCallback: function(e){ base.getList(e.data.totalPages);}
-			});
+				base.contentHolder.find("#commentPagingTop, #commentPagingBottom").paginate({
+					type: "short",
+					pageStyle: "style2",
+					currentPage: page, 
+					pageSize: base.options.pageSize,
+					totalItem: total,
+					callbackText: function(itemStart, itemEnd, itemTotal){
+						return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
+					},
+					pageLinkCallback: function(e){ base.getList(e.data.page);},
+					nextLinkCallback: function(e){ base.getList(parseInt(e.data.page)+1);},
+					prevLinkCallback: function(e){ base.getList(parseInt(e.data.page)-1);},
+					firstLinkCallback: function(e){ base.getList(1);},
+					lastLinkCallback: function(e){ base.getList(e.data.totalPages);}
+				});
 		};
 
 		base.displayToolTip = function(target){
@@ -121,6 +133,15 @@
 						base.contentHolder = $("div", api.elements.content);
 						base.contentHolder.html(base.getCommentTemplate());
 						base.getList(1);
+
+						base.contentHolder.find("#addCommentBtn").off().on({
+							click: function(e){
+								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "").replace(/\n\r?/g, '<br/>');
+
+								if ($.isNotBlank(comment))
+									base.options.itemAddComment(base, comment);
+							}
+						});
 					},
 					hide: function(event, api){
 						api.destroy();
@@ -133,18 +154,21 @@
 		base.init();
 	};
 
-	$.viewcomment.defaultOptions = {
+	$.comment.defaultOptions = {
 			title: "Rule Item Comment",
+			locked: false,
 			page: 1,
 			pageSize: 5,
 			emptyDisplay: "No comment available.",
-			itemDataCallback: function(base, page){}
+			showAddComment: false,
+			itemDataCallback: function(base, page){},
+			itemAddComment: function(base){}
 	};
 
-	$.fn.viewcomment = function(options){
+	$.fn.comment = function(options){
 		if (this.length) {
 			return this.each(function() {
-				(new $.viewcomment(this, options));
+				(new $.comment(this, options));
 			});
 		};
 	};

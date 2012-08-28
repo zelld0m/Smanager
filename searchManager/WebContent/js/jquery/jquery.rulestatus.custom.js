@@ -48,7 +48,7 @@
 
 						base.$el.find("div#commentHolder span#commentIcon").off().on({
 							click:function(e){
-								$(this).viewcomment({
+								$(this).comment({
 									title: "Rule Comment",
 									itemDataCallback: function(plugin, page){
 										CommentServiceJS.getComment("Rule Status", base.options.ruleStatus["ruleStatusId"], plugin.options.page, plugin.options.pageSize, {
