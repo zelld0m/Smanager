@@ -270,12 +270,12 @@ public class ElevateDAO {
 	    		String username = StringUtils.trim(elevate.getCreatedBy());
 	    		String comment = StringUtils.trim(elevate.getComment());
 	    		Date expiryDate = elevate.getExpiryDate();
-	    		
+	    		elevate.setMemberId(DAOUtils.generateUniqueId());
 	    		// check for duplicates
 	    		ElevateResult match = getElevateItem(elevate);
 	    		if (match == null) {
 		        	Map<String, Object> inputs = new HashMap<String, Object>();
-		            inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
+		            inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
 		            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 		            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 		            inputs.put(DAOConstants.PARAM_VALUE, value);
