@@ -225,8 +225,9 @@ public class ExcludeDAO {
 	            } else {
 	            	value = exclude.getCondition().getCondition();
 	            }
+	            exclude.setMemberId(DAOUtils.generateUniqueId());
 		        Map<String, Object> inputs = new HashMap<String, Object>();
-		        inputs.put(DAOConstants.PARAM_MEMBER_ID, DAOUtils.generateUniqueId());
+		        inputs.put(DAOConstants.PARAM_MEMBER_ID,exclude.getMemberId());
 	            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
 	            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
 	            inputs.put(DAOConstants.PARAM_VALUE, value);
