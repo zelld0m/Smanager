@@ -207,7 +207,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberId(e.getMemberId());
 			ep.setMemberTypeEntity(e.getElevateEntity());
 			ep.setCondition(e.getCondition());
-			map.put(e.getEdp(), ep);
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
@@ -233,7 +237,11 @@ public class DaoServiceImpl implements DaoService {
 		ep.setStore(elevate.getStoreKeyword().getStoreId());
 		ep.setCondition(e.getCondition());
 		ep.setMemberTypeEntity(e.getElevateEntity());
-		map.put(e.getEdp(), ep);
+		if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+			map.put(UUID.randomUUID().toString(), ep);
+		} else {
+			map.put(e.getEdp(), ep);
+		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return map.get(e.getEdp());
 	}
@@ -258,7 +266,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getElevateEntity());
-			map.put(e.getEdp(), ep);
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
@@ -283,7 +295,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getExcludeEntity());
-			map.put(e.getEdp(), ep);
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
@@ -309,7 +325,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberId(e.getMemberId());
 			ep.setMemberTypeEntity(e.getExcludeEntity());
 			ep.setCondition(e.getCondition());
-			map.put(e.getEdp(), ep);
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
@@ -451,6 +471,11 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public int addExcludeResult(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.addExclude(exclude);
+	}
+	
+	@Override
+	public int updateExcludeResult(ExcludeResult exclude) throws DaoException {
+		return excludeDAO.updateExclude(exclude);
 	}
 	
 	@Override
