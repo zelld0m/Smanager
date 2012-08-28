@@ -55,7 +55,7 @@
 											callback: function(data){
 												var total = data.totalSize;
 												plugin.populateList(data);
-												plugin.addPaging(base.options.page, total);
+												plugin.addPaging(plugin.options.page, total);
 											},
 											preHook: function(){
 												plugin.prepareList();

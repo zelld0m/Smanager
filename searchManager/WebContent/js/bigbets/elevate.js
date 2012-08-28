@@ -223,7 +223,7 @@
 							itemAddComment: function(base, comment){
 								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add", "item comment");
+										showActionResponse(data, "add", "rule item comment");
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
