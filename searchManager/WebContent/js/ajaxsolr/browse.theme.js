@@ -454,11 +454,12 @@
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
 		output += '						<li class="label">Elevation:</li><li class="value" id="elevatePosition">1</li>';
-		output += '						<li class="label">SKU #:</li><li class="value" id="partNo">846896</li>'; 
-		output += '						<li class="label">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
+		output += '						<li class="label partNoLabel">SKU #:</li><li class="value" id="partNo">846896</li>'; 
+		output += '						<li class="label mfrNoLabel">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
 		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
 		output += '				  	</ul>';
 		output += '					</div>';
+		output += '					<div class="label w125 floatL marL8 posRel" id="readableStr"></div>';
 		output += '				</div>';
 		output += '			</li>';
 		output += '		</ul>';

@@ -37,13 +37,24 @@
 					var displayString = fq[i];
 					var inDoubleQuote = false;
 					var filterName = displayString.substr(0, displayString.indexOf(':'));
+					var isDynamicAttr = dynamicAttr && dynamicAttr[filterName];
 					
-					if(dynamicAttr && dynamicAttr[filterName]){	// Dynamic Attribute
-						var filterValue = displayString.split(":")[1];
+					if(isDynamicAttr){	// TODO Dynamic Attribute
 						var displayName = dynamicAttr[filterName].attributeDisplayName;
-						var displayValue = filterValue.split("|")[1];
+						var displayValue = displayString.substr(displayString.indexOf(':')); 
+
+						/*for (var currIndex = displayValue.indexOf(':'); currIndex < displayValue.length; currIndex++) {
+							if (displayValue.charAt(currIndex) === ' ' && !inDoubleQuote) {
+								displayValue = (displayValue.substr(0, currIndex)).split("|")[1] + ', ' + displayValue.substr(currIndex + 1);
+								currIndex++;
+							}
+							else if (displayValue.charAt(currIndex) === '"') {
+								inDoubleQuote = !inDoubleQuote;
+							}
+						}*/
 						
-						displayString = displayName + ": " + displayValue;
+						links.push(AjaxSolr.theme('createLink', displayName + displayValue, self.removeFacet(fq[i])));
+						continue;
 					}
 					
 					for (var currIndex = displayString.indexOf(':'); currIndex < displayString.length; currIndex++) {

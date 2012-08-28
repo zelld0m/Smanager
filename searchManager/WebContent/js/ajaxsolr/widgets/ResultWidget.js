@@ -251,9 +251,8 @@
 
 						if ($.isBlank(item["dpNo"])){
 							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));
-							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html("Unavailable");
-							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html("Unavailable");
-							contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html("Unavailable");
+							var $selector = contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo");
+							$selector.find("li#partNo" + id + ", li#mfrNo" + id + ", li#expiryDate" + id).html("Unavailable");
 						}
 						else{
 							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", item["imagePath"]).off().on({
@@ -274,11 +273,42 @@
 					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
 						callback: function(data){
 							var list = data.list;
+							
+							var setImage = function(contentHolder, id, imagePath){
+								setTimeout(function(){	
+									contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", imagePath).off().on({
+										error:function(){ 
+											$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
+										}
+									});
+								},10);
+							};
+							
+							var getFacetItemType = function(item){
+								var $condition = item.condition;
+								var type = "";
+
+								if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+									type="facet";
+								}else if($condition["CNetFilter"]){
+									type="cnet";
+								}else if($condition["IMSFilter"]){
+									type="ims";
+								}
+								return type;
+							};
 
 							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
 
 							for (var i=0; i<data.totalSize; i++){
+								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
+								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
+								
 								var id = "_" + list[i].edp;
+								if($.isBlank(list[i].edp)){
+									id += "facet"+i;
+								}
+								
 								dwr.util.cloneNode("listItemsPattern", {idSuffix: id});
 								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
 								
@@ -286,38 +316,69 @@
 								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
 								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
+								
 								var expiryDate = list[i].formattedExpiryDate;
-
 								if (list[i].isExpired){
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html('<img id="stampExpired' + id + '" src="../images/expired_stamp50x16.png">');
 								}else{
 									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html("Validity:");
 								}
-
 								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
-			
-								setProductImage(contentHolder, list[i]);
-
-								// delete icon is clicked
-								contentHolder.find("#listItemsPattern" + id + " > div > div > a#deleteIcon" + id).click({edp: list[i].edp},function(e){
-									var edp = e.data.edp;
-									if (confirm("Continue?")){
-										ElevateServiceJS.deleteItemInRule(keyword, edp, {
-											callback : function(data){
-												contentHolder.find("a#removeBtn").attr("style","display:none");
-												contentHolder.find("#aElevatePosition_"+edp).val("");
-												contentHolder.find("#aExpiryDate_"+edp).val("");
-												maxPosition--;
-												needRefresh = true;
-											},
-											preHook: function() { prepareElevateResult(contentHolder); },
-											postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
-										});
+								
+								
+								if(FACET){
+									var readableStr = list[i].condition['readableString'];
+									
+									if(readableStr.length > 100){
+										readableStr = readableStr.substring(0,100);
+										readableStr += "...";
 									}
-								});
+									
+									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).html(readableStr);
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).remove();
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.partNoLabel").remove();
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).remove();
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.mfrNoLabel").remove();
+								
+									var imagePath = list[i]["imagePath"];
+									
+									if($.isBlank(imagePath)){
+										imagePath = GLOBAL_contextPath + '/images/';
+										switch(getFacetItemType(list[i])){
+										case "ims" : imagePath += "ims_img.jpg"; break;
+										case "cnet" : imagePath += "cnet_img.jpg"; break;
+										case "facet" : imagePath += "facet_img.jpg"; break;
+										}
+									}
+									
+									setImage(contentHolder, id, imagePath);
+								}
+								else if(PART_NUMBER){
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
+									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
+									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).remove();
+									
+									setProductImage(contentHolder, list[i]);
+								}
 							}
+							
+							// delete icon is clicked
+							contentHolder.find("#listItemsPattern" + id + " > div > div > a#deleteIcon" + id).click({edp: list[i].edp},function(e){
+								var edp = e.data.edp;
+								if (confirm("Continue?")){
+									ElevateServiceJS.deleteItemInRule(keyword, edp, {
+										callback : function(data){
+											contentHolder.find("a#removeBtn").attr("style","display:none");
+											contentHolder.find("#aElevatePosition_"+edp).val("");
+											contentHolder.find("#aExpiryDate_"+edp).val("");
+											maxPosition--;
+											needRefresh = true;
+										},
+										preHook: function() { prepareElevateResult(contentHolder); },
+										postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
+									});
+								}
+							});
 
 							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
 							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
@@ -498,7 +559,7 @@
 													}
 												},
 												preHook: function() { prepareElevateResult(contentHolder); },
-												postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
+												postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
 											});
 									}else{
 										//add elevation
