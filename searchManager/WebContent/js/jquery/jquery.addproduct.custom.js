@@ -29,7 +29,7 @@
 			template  += '		<div class="floatL marT5 marL5">';
 			template  += '			<label class="w60 floatL padT5">SKU #: </label>';
 			template  += '			<label>';
-			template  += '				<span class="fsize10 fgray txtAR">(separated by whitespaces or commas)</span>';
+			template  += '				<span class="fsize10 fgray txtAR" style="bottom:-3px; position:relative">(separated by whitespaces or commas)</span>';
 			template  += '				<textarea id="addItemDPNo" style="width: 230px; float: left; margin-bottom: 7px"></textarea>';
 			template  += '			</label>';
 			template  += '		</div>';
@@ -46,9 +46,9 @@
 				template  += '		<div class="clearB"></div>';
 				template  += '		<div class="floatL marT5 marL5">';
 			}
-			
-			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
-			template  += '			<label><textarea id="addItemComment" style="width: 230px; float: left; margin-bottom: 7px"></textarea></label>';
+			template  += '		<div class="clearB"></div>';
+			template  += '			<label class="w60 floatL marL5 padT5">Comment: </label> ';
+			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL marL5 w230"></textarea></label>';
 			template  += '		</div>';
 			template  += '		<div align="right">';
 			template  += '			<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
@@ -307,17 +307,10 @@
 			template  += '		</div>';
 			template  += '	</div>';
 			template  += '</div>';
-<<<<<<< HEAD
-			
 			
 			template  += '<div class="fcetItem marT20">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
-=======
-
-			template  += '<div align="right" class="padR50 fcetItem marRL20 marT20">';
-			template  += '			<table class="fsize12">';
->>>>>>> refs/remotes/origin/sprint_6_elexc_facet_options
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
 			template  += '					<td class="iepadBT0">';
@@ -331,7 +324,8 @@
 				template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
-
+			
+			template  += '					</td>';
 			template  += '			    </tr>';		
 			template  += '				<tr>';
 			template  += '					<td class="w175">Comment :</td>';
@@ -341,20 +335,10 @@
 			template  += '				</tr>';
 			template  += '			</table>';
 			template  += '</div>';
-<<<<<<< HEAD
-			
-			template  += '<div align="right" class="">';
-			template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Add' : 'Update')  + '</div>';
-			template  += '	</a>';
-			template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template  += '		<div class="buttons fontBold">Clear</div>';
-			template  += '	</a>';
-			template  += '</div>';
-=======
+
 
 			if (!base.options.locked){
-				template  += '<div align="right" class="padR50">';
+				template  += '<div align="right">';
 				template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 				template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Add' : 'Update')  + '</div>';
 				template  += '	</a>';
@@ -363,7 +347,7 @@
 				template  += '	</a>';
 				template  += '</div>';
 			}
->>>>>>> refs/remotes/origin/sprint_6_elexc_facet_options
+
 
 			return template;
 		};

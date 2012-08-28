@@ -772,3 +772,4 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip .fcetItem input[type='text'],
 .qtip .fcetItem textarea { border:1px solid #d3d3d3 !important }
 .qtip .ui-tooltip-content { background: #fff !important }
+.qtip .ui-widget li.ui-menu-item { padding:8px 0 0 !important }
