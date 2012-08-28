@@ -842,7 +842,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 
 /* elevate */
-.qtip #facetItem .ui-state-default   { top:-5px !important }
+.qtip #facetItem .ui-state-default   { top:-6px !important }
 .qtip #facetItem .holder a { color:#3B79C2; }
 .dynamicAttributeItem { padding-left:0 !important }
 .dynamicAttributeItem ul { list-style: none; margin:5px; padding-left:0 !important }
@@ -850,5 +850,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip #facet input[type='text'], 
 .qtip .fcetItem input[type='text'],
 .qtip .fcetItem textarea { border:1px solid #d3d3d3 !important }
+.qtip .ui-tooltip-content { background: #fff !important }
 
 

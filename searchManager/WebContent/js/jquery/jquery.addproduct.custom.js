@@ -305,8 +305,10 @@
 			template  += '	</div>';
 			template  += '</div>';
 			
-			template  += '<div align="right" class="padR50 fcetItem marRL20 marT20">';
-			template  += '			<table class="fsize12">';
+			
+			template  += '<div class="fcetItem marT20">';
+			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
+			template  += '			<table class="fsize12 marRL20">';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
 			template  += '					<td class="iepadBT0">';
@@ -329,7 +331,7 @@
 			template  += '			</table>';
 			template  += '</div>';
 			
-			template  += '<div align="right" class="padR50">';
+			template  += '<div align="right" class="">';
 			template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Add' : 'Update')  + '</div>';
 			template  += '	</a>';
