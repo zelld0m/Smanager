@@ -156,8 +156,8 @@
 
 	AjaxSolr.theme.prototype.createFacetHolder = function (facetLabel, facet) {
 		var output  = '<div class="clearB floatL w240">';
-		output += '<div id="' + facet + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
-		output += '<div class="' + facet +' clearB floatL w230 padL10"></div>';  
+		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
+		output += '<div class="' + $.formatAsId(facet) +' clearB floatL w230 padL10"></div>';  
 		output += '</div>';
 
 		return $(output);	
@@ -328,8 +328,8 @@
 		output += '<tr>';
 		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField" class="searchBoxIconBg"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
 		output += '</tr>';
-		output += '<tr><td colspan="2"> &nbsp; </td></tr>'
-			output += '<tr>';
+		output += '<tr><td colspan="2"> &nbsp; </td></tr>';
+		output += '<tr>';
 		output += '<th width="25%" class="pad3"></th>';
 		output += '<th class="pad3 txtAL fbold">Content Type</th>';
 		output += '</tr>';
@@ -522,7 +522,7 @@
 		output += '	<div id="facetFilterHolder"><span class="lnk"></span></div>';
 		output += '</div>';
 
-		var scbObj= $("." + facetField).append($(output));
+		var scbObj= $("." + $.formatAsId(facetField)).append($(output));
 		scbObj.find(" ." + facetId + " div#" + "facetFilterHolder span.lnk").append(AjaxSolr.theme('createLink', facet + " (" + count + ")", handler));
 
 	};

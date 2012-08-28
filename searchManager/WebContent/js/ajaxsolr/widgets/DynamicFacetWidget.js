@@ -56,9 +56,9 @@
 							var count = objectedItems[i].count;
 							
 							if ($.isNotBlank(facet)){
-								AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
+								AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i,facetField, facet, count, this.clickHandler(facetField, facet));
 								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
-									AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+									AjaxSolr.theme('createFacetMoreOptionsLink', $.formatAsId(facetField), facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
 								}
 							}
 						
@@ -180,7 +180,7 @@
 
 				};
 
-				$('#more' + facetField + " .lnk").qtip({
+				$('#more' + $.formatAsId(facetField) + " .lnk").qtip({
 					content: {
 						text: $('<div/>'),
 						title: {
