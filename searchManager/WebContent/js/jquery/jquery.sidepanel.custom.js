@@ -138,6 +138,7 @@
 		};
 
 		base.getList = function(keyword, page) {
+			base.options.page = page;
 			base.options.itemDataCallback(base, keyword, page);
 		};
 

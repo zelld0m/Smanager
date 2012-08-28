@@ -202,6 +202,26 @@
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
 
+				$li.find('.auditRuleItemIcon').off().on({
+					click: function(e){
+						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];
+						$(e.currentTarget).viewaudit({
+							itemDataCallback: function(base, page){
+								AuditServiceJS.getExcludeItemTrail(self.selectedRule["ruleId"], itemId, base.options.page, base.options.pageSize, {
+									callback: function(data){
+										var total = data.totalSize;
+										base.populateList(data);
+										base.addPaging(base.options.page, total);
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							}
+						});
+					}
+				}, {item: $item});
+				
 				$li.find('.lastModifiedIcon').off().on({
 					mouseenter: showLastModified 
 				},{user: $item["lastModifiedBy"], date:$item["formattedLastModifiedDate"]});
