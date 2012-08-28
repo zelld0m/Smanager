@@ -179,8 +179,10 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
 
-.cssReset a.btnAddGrayMid		{ background-position: -3px -578px; height: 18px; width: 18px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
-.cssReset a.btnAddGrayMid:hover	{ background-position: -3px -598px;  }
+.cssReset a.btnAddGrayMid,
+.qtip a.btnAddGrayMid			{ background-position: -3px -578px; height: 18px; width: 18px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
+.cssReset a.btnAddGrayMid:hover,
+.qtip a.btnAddGrayMid:hover		{ background-position: -3px -598px;  }
 
 .cssReset a div.btnViewList			{ background-position: -5px -109px; height:16px; width:17px; cursor:pointer; display: block;}
 .cssReset a div.btnViewList:hover,
@@ -842,4 +844,11 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 /* elevate */
 .qtip #facetItem .ui-state-default   { top:-5px !important }
 .qtip #facetItem .holder a { color:#3B79C2; }
+.dynamicAttributeItem { padding-left:0 !important }
+.dynamicAttributeItem ul { list-style: none; margin:5px; padding-left:0 !important }
+.dynamicAttributeItem ul li { margin-left:0; padding-left:0 !important }
+.qtip #facet input[type='text'], 
+.qtip .fcetItem input[type='text'],
+.qtip .fcetItem textarea { border:1px solid #d3d3d3 !important }
+
 

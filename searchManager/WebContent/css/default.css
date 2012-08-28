@@ -38,8 +38,10 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w175, .w175			{width:175px}
 .cssReset .w178, .w178			{width:178px}
 .cssReset .w180, .w180			{width:180px}
+.cssReset .w188, .w188			{width:188px}
 .cssReset .w185, .w185			{width:185px}
 .cssReset .w190, .w190			{width:190px !important}
+.cssReset .w195, .w195			{width:195px !important}
 .cssReset .w200, .w200			{width:200px !important}
 .cssReset .w205, .w205			{width:205px !important}
 .cssReset .w203					{width:203px}
@@ -47,15 +49,17 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w212					{width:212px}
 .cssReset .w215, .w215			{width:215px}
 .cssReset .w220, .w220			{width:220px !important}
-.cssReset .w225					{width:225px}
+.cssReset .w225, .w225			{width:225px}
 .cssReset .w229, .w229			{width:229px !important}
 .cssReset .w230, .w230			{width:230px !important}
 .cssReset .w233, .w233			{width:233px !important}
 .cssReset .w235, .w235			{width:235px !important}
 .cssReset .w238					{width:238px}
 .cssReset .w240, .w240			{width:240px !important}
+.cssReset .w249, .w249			{width:249px !important}
 .cssReset .w245, .w245			{width:245px}
 .cssReset .w250, .w250			{width:250px !important}
+.cssReset .w255, .w255			{width:255px !important}
 .cssReset .w251, .w251			{width:251px !important}
 .cssReset .w278, .w278			{width:278px !important}
 .cssReset .w282, .w282			{width:282px !important}
@@ -215,7 +219,8 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marL15, .marL15		{margin-left:15px}
 .cssReset .marL20, .marL20		{margin-left:20px}
 .cssReset .marL22				{margin-left:22px}
-.cssReset .marL30, .marL30		{margin-left:30px}
+.cssReset .marL30, .marL30, 
+.qtip .marL30					{margin-left:30px}
 .cssReset .marL70, .marL70		{margin-left:70px}
 .cssReset .marRL3 				{margin-left:3px; margin-right:3px }
 .cssReset .marRLauto, .marRLauto{margin-left:auto; margin-right:auto }
