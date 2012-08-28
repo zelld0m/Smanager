@@ -24,6 +24,9 @@ public class ElevateResult extends ModelBean {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			elevateEntity = MemberTypeEntity.FACET;
 			condition = new RedirectRuleCondition(edp);
+			if (storeKeyword != null) {
+				condition.setStoreId(storeKeyword.getStoreId());
+			}
 			this.edp = "";
 		} else {
 			elevateEntity = MemberTypeEntity.PART_NUMBER;

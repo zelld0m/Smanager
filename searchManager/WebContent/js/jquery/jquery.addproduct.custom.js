@@ -14,9 +14,9 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.addproduct.defaultOptions, options);
-			if (!base.options.locked){
-				base.promptRuleItemDetails(this, base.options.type);
-			}
+
+			base.promptRuleItemDetails(this, base.options.type);
+
 		};
 
 		base.getAddProductItemTemplate = function(){
@@ -38,12 +38,15 @@
 			template  += '			<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>';
 			template  += '		</div>';
 
-			template  += '		<div class="floatL marT5" style="width: 97px">';
-			template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
-			template  += '			<label><input id="addItemPosition" type="text" class="w25"></label>';
-			template  += '		</div>';
-			template  += '		<div class="clearB"></div>';
-			template  += '		<div class="floatL marT5 marL5">';
+			if (base.options.showPosition){
+				template  += '		<div class="floatL marT5" style="width: 97px">';
+				template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
+				template  += '			<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '		</div>';
+				template  += '		<div class="clearB"></div>';
+				template  += '		<div class="floatL marT5 marL5">';
+			}
+			
 			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
 			template  += '			<label><textarea id="addItemComment" style="width: 230px; float: left; margin-bottom: 7px"></textarea></label>';
 			template  += '		</div>';
@@ -304,23 +307,31 @@
 			template  += '		</div>';
 			template  += '	</div>';
 			template  += '</div>';
+<<<<<<< HEAD
 			
 			
 			template  += '<div class="fcetItem marT20">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
+=======
+
+			template  += '<div align="right" class="padR50 fcetItem marRL20 marT20">';
+			template  += '			<table class="fsize12">';
+>>>>>>> refs/remotes/origin/sprint_6_elexc_facet_options
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
 			template  += '					<td class="iepadBT0">';
 			template  += '						<div class="floatL w100 marT5">';
-			//template  += '							<label class="floatL w60 marL5 padT5">Valid Until:</label> ';
 			template  += '							<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>';
 			template  += '						</div>';
 
-			template  += '						<div class="floatL marT5" style="width: 97px">';
-			template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
-			template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
-			template  += '						</div>';
+			if (base.options.showPosition){
+				template  += '						<div class="floatL marT5" style="width: 97px">';
+				template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
+				template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '						</div>';
+			}
+
 			template  += '			    </tr>';		
 			template  += '				<tr>';
 			template  += '					<td class="w175">Comment :</td>';
@@ -330,6 +341,7 @@
 			template  += '				</tr>';
 			template  += '			</table>';
 			template  += '</div>';
+<<<<<<< HEAD
 			
 			template  += '<div align="right" class="">';
 			template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
@@ -339,6 +351,19 @@
 			template  += '		<div class="buttons fontBold">Clear</div>';
 			template  += '	</a>';
 			template  += '</div>';
+=======
+
+			if (!base.options.locked){
+				template  += '<div align="right" class="padR50">';
+				template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template  += '		<div class="buttons fontBold">' + (base.options.newRecord ? 'Add' : 'Update')  + '</div>';
+				template  += '	</a>';
+				template  += '	<a id="clearBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template  += '		<div class="buttons fontBold">Clear</div>';
+				template  += '	</a>';
+				template  += '</div>';
+			}
+>>>>>>> refs/remotes/origin/sprint_6_elexc_facet_options
 
 			return template;
 		};
@@ -623,7 +648,7 @@
 			var inSubCategory = "";
 			var inClass = "";
 			var inMinor = "";
-			
+
 			if ($.isNotBlank($catcode.val())){
 				inCatCode = $.trim($catcode.val());
 			}else{
@@ -747,7 +772,7 @@
 			var usingCategory = false;
 			var $item = base.options.item;
 			var $catcode = $table.find("input#catcode");
-			
+
 			$tab.find("select.selectCombo").combobox({
 				change: function(e, u){
 					base.updateIMSCombobox(this, e, u);
@@ -800,7 +825,7 @@
 					}
 				}
 			});
-			
+
 			$catcode.off().on({
 				mouseleave: function(e){
 					if ($catcode.is(":visible"))
@@ -1415,6 +1440,14 @@
 				base.contentHolder.find("#conditionText").hide();
 			}else{
 				base.contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
+				
+				var formattedExpiryDate = base.options.item["formattedExpiryDate"];
+				if($.isNotBlank(formattedExpiryDate)){
+					base.contentHolder.find("#addItemDate_1").val(formattedExpiryDate);
+				};
+				
+				if (base.options.showPosition)
+					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
 
 			switch(type){
@@ -1447,12 +1480,27 @@
 				}
 			});
 
+			base.contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
+
+			base.contentHolder.find("#addItemDate_1").datepicker({
+				showOn: "both",
+				minDate: base.options.dateMinDate,
+				maxDate: base.options.dateMaxDate,
+				buttonText: "Expiration Date",
+				buttonImage: "../images/icon_calendar.png",
+				buttonImageOnly: true
+			});
+
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
-					//TODO: Add other fields
-					var position = 1; 
-					var expiryDate = "";
-					var comment= "";
+					var position = 1;
+					
+					if (base.options.showPosition){
+						position = base.contentHolder.find("#addItemPosition").val();
+					}
+					
+					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
 					if (base.options.newRecord){
 						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues());
@@ -1493,7 +1541,7 @@
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment = $.trim(base.contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
+					var comment = $.trim($.defaultIfBlank(base.contentHolder.find("#addItemComment").val()).replace(/\n\r?/g, '<br />'));
 					var today = new Date();
 
 					today.setHours(0,0,0,0); //ignore time of current date 
@@ -1548,7 +1596,9 @@
 						case "ims": base.promptAddFacetItem(type); break;
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
-						};						
+						};				
+
+
 					},
 					hide: function(event, api){
 						api.destroy();
@@ -1569,6 +1619,7 @@
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
 			defaultIMSType: "CatCode",
+			showPosition:false,
 			addProductItemCallback: function(position, expiryDate, comment, skus){},
 			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){},
 			updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){}

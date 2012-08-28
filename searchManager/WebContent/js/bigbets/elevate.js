@@ -145,6 +145,7 @@
 								locked: e.data.locked,
 								newRecord: false,
 								item: e.data.item,
+								showPosition: true,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
@@ -447,6 +448,7 @@
 										$(this).addproduct({
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
+											showPosition: true,
 											addProductItemCallback:function(position, expiryDate, comment, skus){
 												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
