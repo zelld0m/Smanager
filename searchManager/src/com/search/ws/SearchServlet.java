@@ -810,6 +810,7 @@ public class SearchServlet extends HttpServlet {
 							}
 						});
 					} else {
+						getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString()));
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
