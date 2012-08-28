@@ -105,7 +105,7 @@
 			var facetTemplate;
 			facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
-			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap"){
+			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn"){
 				facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 			};
 
