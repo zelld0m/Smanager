@@ -837,7 +837,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .dynamicAttribute table td  { vertical-align: top }
 .dynamicAttribute table td ul { list-style: none }
 
-
 .conditionItem img:hover { cursor: pointer }
 
 
@@ -846,11 +845,12 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip #facetItem .holder a { color:#3B79C2; }
 .dynamicAttributeItem { padding-left:0 !important }
 .dynamicAttributeItem ul { list-style: none; margin:5px; padding-left:0 !important }
-.dynamicAttributeItem ul li { margin-left:0; padding-left:0 !important }
+.dynamicAttributeItem ul li { margin-left:0; padding-left:0 !important; padding: 8px 0 0 0 !important }
+.ui-widget li.ui-menu-item { padding:8px 0 0  !important }
 .qtip #facet input[type='text'], 
 .qtip .fcetItem input[type='text'],
 .qtip .fcetItem textarea { border:1px solid #d3d3d3 !important }
 .qtip .ui-tooltip-content { background: #fff !important }
-.qtip .ui-widget li.ui-menu-item { padding:8px 0 0 !important }
+
 
 
