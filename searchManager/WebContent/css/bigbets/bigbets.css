@@ -178,9 +178,10 @@ div.listView ul li div.validityDate { float:left; width:33% }
 
 
 .qtip #facetItem ul.ui-widget-content			{ margin-left:0 !important }
-.qtip #facetItem .ui-widget .ui-menu		 { list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
+.qtip #facetItem .ui-widget .ui-menu		 	{ list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
+.qtip #facetItem .ui-menu li 		             { padding:8px 0 0 !important }
 
-.ui-autocomplete { list-style:none !important; margin:0; padding:4px 12px }
+.ui-autocomplete 								{ list-style:none !important; margin:0; padding:4px 12px !important  }
 				
 
 
