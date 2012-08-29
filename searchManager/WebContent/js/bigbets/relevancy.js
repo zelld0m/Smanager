@@ -20,12 +20,12 @@
 	var bqSearchKeyword = "";
 	var bqFacetValuesPageSize = 5;
 	var bqSearchText = "Enter Field Value";
-	
+
 	var ruleFilterText = "";
 	var keywordFilterText = "";
 	var rulePage = 1;
 	var keywordPage = 1;
-	
+
 	/** BELOW: BF */
 	var setupFieldS4 = function(field){
 		$('div[id="' + field.id + '"] a.editIcon, div[id="' + field.id + '"] input[type="text"]').qtip({
@@ -729,7 +729,7 @@
 					var $content = $("div", api.elements.content);	
 					var field =	api.elements.target.parents('div.AlphaCont').attr("id");
 					var text = "";
-					
+
 					if(!$content.get(0))						
 						$content = api.elements.content;
 
@@ -818,13 +818,13 @@
 	var addRuleFieldValue = function(field, value){
 		var $parent = $('div#relevancy div[id="' + field + '"]');
 		var label = $parent.find('span[id="fieldLabel"]').html();
-		
+
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value >= 0 && value <= 1)){
 			alert("Tie value should be between 0 - 1.");
 			return;
 		}
-		
+
 		// validation for qs and ps
 		if ((field === "qs" || field === "ps") && !$.isBlank(value) &&!isDigit(value)){
 			if (field==="qs") {
@@ -835,7 +835,7 @@
 			}
 			return;
 		}
-		
+
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
 			callback: function(code){
 				if (field !== "q.alt") {
@@ -929,14 +929,14 @@
 						}
 					});
 
-				
+
 					$contentHolder.find('a#addButton').on({
 						click: function(e){
 							var popName = $.trim($contentHolder.find('input[id="popName"]').val());
 							var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
 							var popEndDate =  $.trim($contentHolder.find('input[id="popEndDate"]').val()); ; 
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
-							
+
 							if ($.isBlank(popName)){
 								alert("Rule name is required.");
 							}
@@ -992,7 +992,7 @@
 			}
 		});
 	};
-	  
+
 	var updateRule = function(e){
 		if (e.data.locked || !allowModify) return;
 
@@ -1093,7 +1093,7 @@
 	};
 
 	var showRelevancy = function(){
-		
+
 		getRelevancyRuleList(1);
 		getRelevancyRuleKeywordList(1);
 
@@ -1104,7 +1104,7 @@
 			$("#titleHeader").html("");
 			return;
 		}
-		
+
 		$("#submitForApproval").rulestatus({
 			moduleName: moduleName,
 			rule: selectedRule,
@@ -1125,7 +1125,7 @@
 				$("#submitForApproval").show();
 				$("#relevancy").show();
 				selectedRuleStatus = ruleStatus;
-				
+
 				$("div#versions").version({
 					ruleType: "Ranking Rule",
 					ruleId: selectedRule["ruleId"],
@@ -1135,7 +1135,7 @@
 						setRelevancy(rankingRule);
 					}
 				});
-				
+
 				$("#titleText").html(moduleName + " for ");
 				$("#titleHeader").html(selectedRule.ruleName);
 
@@ -1175,12 +1175,12 @@
 					click: cloneRule,
 					mouseenter: showHoverInfo
 				},{locked:!allowModify});
-				
+
 				$("#deleteBtn").off().on({
 					click: deleteRule,
 					mouseenter: showHoverInfo
 				},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
-				
+
 				$("a#downloadIcon").download({
 					headerText:"Download Ranking Rule",
 					requestCallback:function(e){
@@ -1202,10 +1202,25 @@
 						document.location.href = url + '?' + urlParams;
 					}
 				});
-			
+
 				$('#auditIcon').off().on({
-					click: showAuditList
-				}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
+					click: function(e){
+						$(e.currentTarget).viewaudit({
+							itemDataCallback: function(base, page){
+								AuditServiceJS.getRelevancyTrail(selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+									callback: function(data){
+										var total = data.totalSize;
+										base.populateList(data);
+										base.addPaging(base.options.page, total);
+									},
+									preHook: function(){
+										base.prepareList();
+									}
+								});
+							}
+						});
+					}
+				});
 			}
 		});
 	};
@@ -1225,7 +1240,7 @@
 			searchText : "Enter Name",
 			showAddButton: allowModify,
 			filterText: ruleFilterText,
-			
+
 			itemAddCallback: function(base, name){
 				$("a#addButton").qtip({
 					id: "add-relevancy",
@@ -1291,7 +1306,7 @@
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
 										alert("Please provide a valid date range");
 									}else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
-											alert("End date cannot be earlier than start date!");
+										alert("End date cannot be earlier than start date!");
 									}
 									else {
 										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
@@ -1335,7 +1350,7 @@
 						}
 					}
 				});
-				
+
 			},
 
 			itemDataCallback: function(base, keyword, page){
@@ -1437,7 +1452,7 @@
 													$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
 													$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
 												}
-							
+
 												$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
 
 												$content.find("ul#ruleListing").sortable({ 
@@ -1464,7 +1479,7 @@
 														var destinationIndex = (ui.item.index());
 
 														var relId = ui.item.find("span").attr("id");
-														
+
 														RelevancyServiceJS.updateRulePriority(relId, name, destinationIndex, {
 															callback: function(data){
 
@@ -1487,25 +1502,25 @@
 		});
 	};
 	var initTextarea =function(){
-	$('textarea[maxlength]').on({
-		keyup:function(){  
-        var limit = parseInt($(this).attr('maxlength'));  
-  
-        var text = $(this).val();  
-          
-        var chars = text.length;  
-  
-        //check if there are more characters then allowed  
-        if(chars > limit){  
-            //and if there are use substr to get the text before the limit  
-            var new_text = text.substr(0, limit);  
-  
-            //and change the current text with the new text  
-            $(this).val(new_text);  
-        }  
-		}
-    
-    });
+		$('textarea[maxlength]').on({
+			keyup:function(){  
+				var limit = parseInt($(this).attr('maxlength'));  
+
+				var text = $(this).val();  
+
+				var chars = text.length;  
+
+				//check if there are more characters then allowed  
+				if(chars > limit){  
+					//and if there are use substr to get the text before the limit  
+					var new_text = text.substr(0, limit);  
+
+					//and change the current text with the new text  
+					$(this).val(new_text);  
+				}  
+			}
+
+		});
 	};
 	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
@@ -1563,7 +1578,7 @@
 			}
 		});
 	};
-	
+
 	$(document).ready(function() { 
 		initTextarea();
 		showRelevancy();

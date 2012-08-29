@@ -183,9 +183,24 @@
 						self.addDownloadListener();
 
 						$('#auditIcon').off().on({
-							click: showAuditList
-						}, {locked: self.selectedRuleStatus["locked"] || !allowModify, type:self.moduleName, ruleRefId: self.selectedRule["ruleId"], name:  self.selectedRule["ruleName"]});
-
+							click: function(e){
+								$(e.currentTarget).viewaudit({
+									itemDataCallback: function(base, page){
+										AuditServiceJS.getRedirectTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+											callback: function(data){
+												var total = data.totalSize;
+												base.populateList(data);
+												base.addPaging(base.options.page, total);
+											},
+											preHook: function(){
+												base.prepareList();
+											}
+										});
+									}
+								});
+							}
+						});
+						
 						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
 
 						$("div#keyword").find("#changeKeywordBtn").off().on({
