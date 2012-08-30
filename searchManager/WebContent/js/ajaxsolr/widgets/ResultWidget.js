@@ -304,10 +304,7 @@
 								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
 								
-								var id = "_" + list[i].edp;
-								if($.isBlank(list[i].edp)){
-									id += "facet"+i;
-								}
+								var id = "_" + list[i]["memberId"];
 								
 								dwr.util.cloneNode("listItemsPattern", {idSuffix: id});
 								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
