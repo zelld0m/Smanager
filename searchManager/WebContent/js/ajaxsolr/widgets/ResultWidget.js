@@ -464,7 +464,7 @@
 
 							if (elevated){
 								//TODO: should not pass server
-								ElevateServiceJS.getElevatedProduct(keyword, doc.EDP,{
+								ElevateServiceJS.getElevatedProduct(keyword, doc.ElevateId,{
 									callback : function(item){
 										currentExpiryDate = item.formattedExpiryDate;
 										currentPosition = item.location;
@@ -493,7 +493,7 @@
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
 										if (position != currentPosition || comment.length > 0 || expiryDate !== currentExpiryDate) 
-											ElevateServiceJS.updateElevateItem(keyword, doc.EDP, position, comment, expiryDate, {
+											ElevateServiceJS.updateElevateItem(keyword, doc.ElevateId, position, comment, expiryDate, {
 												callback : function(data){
 													if(data>0){
 														needRefresh = true;
@@ -504,7 +504,7 @@
 											});
 									}else{
 										//add elevation
-										ElevateServiceJS.addElevate(keyword, doc.EDP, position, expiryDate, comment, {
+										ElevateServiceJS.addElevate(keyword, 'PART_NUMBER', doc.EDP, position, expiryDate, comment, {
 											callback : function(event){
 												maxPosition++;
 												needRefresh = true;
@@ -630,7 +630,7 @@
 								else if(today.getTime() > new Date(expiryDate).getTime()){
 									alert("Expiry date cannot be earlier than today");
 								}else{
-								ExcludeServiceJS.addExclude(keyword, parseInt(doc.EDP), expiryDate, comment, {
+								ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', parseInt(doc.EDP), expiryDate, comment, {
 									callback : function(data) {
 										needRefresh = true;
 										api.hide();
