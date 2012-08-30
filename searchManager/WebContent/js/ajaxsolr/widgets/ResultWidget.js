@@ -191,7 +191,7 @@
 				setProductImage = function(contentHolder, item){
 					setTimeout(function(){		
 						// Product is no longer visible in the setting
-						var id = "_" + item["edp"];
+						var id = "_" + item["memberId"];
 
 						if ($.isBlank(item["dpNo"])){
 							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));

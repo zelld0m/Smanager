@@ -195,6 +195,10 @@
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
+		output += '			<div class="floatL">';
+		output += '				<div id="debugHolder" class="floatL"></div>';
+		output += '				<div id="elevatePosition" class="floatL"></div>';
+		output += '			</div>';
 		output += '			<div class="floatR marR5 marTn2">';
 		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
 		output += '			</div>';
@@ -229,7 +233,6 @@
 		output += '		<td colspan="2" align="left" valign="top" class="padTB7 fgray">';
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
-		output += '       			<td width="60"><span class="fgreen"><div><div id="debugHolder" class="floatL"></div></div></td>';
 		output += '       			<td width="60"><span class="fgreen">SKU #: </span>' + doc.DPNo + '</td>';
 		output += '       			<td width="130"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
@@ -255,14 +258,27 @@
 		secObj.find("div#auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
 
 		//Add Debug link
-		if (doc.Elevate == undefined){
+		if ($.isBlank(doc.Elevate) || doc["ElevateType"] === "FACET"){
 			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
 			secObj.find("div#debugHolder a").addClass("btnShade btnCream");
 			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
-		}else{		  
-			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Elevated Position: ' +  doc.Elevate, null));
-			secObj.find("div#debugHolder a").addClass("btnShade btnGreen");
-			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
+		}
+		
+		if ($.isNotBlank(doc.Elevate)){		  
+			var displayText = "Elevated at position " + doc["Elevate"];
+			
+			if(doc["ElevateType"] === "FACET")
+				displayText = 'Included in <a href="javascript:void(0);">Facet Rule Item</a> elevated at position '+ doc["Elevate"];
+
+			secObj.find("div#elevatePosition").html(displayText);
+			secObj.find("div#elevatePosition a").off().on({
+				click: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				},
+				mouseenter: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				}
+			}, {doc: doc});
 		}
 
 		//Add Elevate Button if search has keyword
