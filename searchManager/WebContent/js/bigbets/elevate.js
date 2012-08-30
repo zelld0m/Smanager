@@ -223,7 +223,7 @@
 							itemAddComment: function(base, comment){
 								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add", "rule item comment");
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -370,10 +370,9 @@
 			updateValidityDate: function(item, dateText){
 				var self = this;
 				var $item = item;
-				//TODO: Locked item has no dpNo, change message
 				ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, "update", "expiry date of SKU#: " + $item["dpNo"]);
+						showActionResponse(code, "update", "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRulePage);
 					}
 				});
