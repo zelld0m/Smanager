@@ -307,6 +307,8 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					}
 				}
 			}
+			
+			int currItem = 1;
 			for (ElevateResult e : elevatedList) {
 				if (e.isForceAdd()) {
 					continue; //disregard force add
@@ -321,21 +323,24 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					if (e.isForceAdd() && kwNvp!=null) {
 						requestParams.remove(kwNvp);
 					}
-				} else {
+				} 
+				else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().getConditionForSolr());
-					generateElevateList(elevateValues, elevateFacetValues, elevatedList, e);
-					if (elevateValues.length() > 0) {
-						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
-						requestParams.add(excludeEDPNVP);
-					}				
-					if (elevateFacetValues.length() > 0) {
-						excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
-						requestParams.add(excludeFacetNVP);
-						if (e.isForceAdd() && kwNvp!=null) {
-							requestParams.remove(kwNvp);
-						}
-					}				
 				}
+				
+				generateElevateList(elevateValues, elevateFacetValues, elevatedList, currItem++);
+				if (elevateValues.length() > 0) {
+					excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+					requestParams.add(excludeEDPNVP);
+				}				
+				if (elevateFacetValues.length() > 0) {
+					excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
+					requestParams.add(excludeFacetNVP);
+					if (e.isForceAdd() && kwNvp!=null) {
+						requestParams.remove(kwNvp);
+					}
+				}
+					
 				requestParams.add(nvp);
 				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 				requestParams.remove(nvp);
@@ -392,13 +397,14 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		return addedRecords;
 	}
 
-	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, ElevateResult elevateResult) {
+	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, int currItem) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
+		int i = 1;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
-				if (elevate.getMemberId().equals(elevateResult.getMemberId())) {
-					continue;
+				if (++i > currItem) {
+					break;
 				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
