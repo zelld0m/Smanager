@@ -64,88 +64,32 @@
 		},
 
 		auditHandler: function (doc) {
-			var self = this;
-
+			
 			return function () {
-				prepareAuditList = function(contentHolder){
-					contentHolder.find("#auditPagingTop").html("");
-					contentHolder.find("#auditPagingBottom").html("");
-					contentHolder.find("#auditHolder").html('<div class="circlePreloader"><img src="../images/ajax-loader-circ25x25.gif"></div>');
-				};
-
-				updateAuditList = function(contentHolder, edp, auditPage, auditPageSize){
-					var idSuffix = '_' + edp;
-
-					AuditServiceJS.getItemTrail(edp, auditPage, auditPageSize, {
-						callback: function(data){
-							var totalItems = data.totalSize;
-							var auditItems = "";
-
-							for(var i = 0 ; i <  data.list.length ; i++){
-								var auditTemplate = $("#auditTemplate").html();
-
-								var item = data.list[i];
-
-								auditTemplate = auditTemplate.replace("%%timestamp%%", item.formatDateTimeUsingConfig);
-								auditTemplate = auditTemplate.replace("%%commentor%%", item.username);
-								auditTemplate = auditTemplate.replace("%%comment%%", item.details);
-								auditItems += auditTemplate;
-							}
-
-							if (totalItems > 0){
-								contentHolder.find("#auditPagingTop, #auditPagingBottom").paginate({
-									type: 'short',
-									pageStyle: 'style2',
-									currentPage: auditPage, 
-									pageSize: auditPageSize,
-									totalItem: totalItems,
-									callbackText: function(itemStart, itemEnd, itemTotal){
-										return itemStart + ' - ' + itemEnd + ' of ' + itemTotal;
-									},
-									pageLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page, auditPageSize);},
-									nextLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page+1, auditPageSize); },
-									prevLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.page-1, auditPageSize); },
-									firstLinkCallback: function(e){ updateAuditList(contentHolder, edp, 1, auditPageSize); },
-									lastLinkCallback: function(e){ updateAuditList(contentHolder, edp, e.data.totalPages, auditPageSize); }
-								});
-							}else{
-								auditItems ="<div><center>No available audit trail</center></div>";
-							}
-
-							contentHolder.find("#auditHolder").html(auditItems);
-							contentHolder.find("#auditHolder > div:nth-child(even)").addClass("alt");
-						},
-						preHook: function(){ prepareAuditList(contentHolder); }				
-					});
-				};
-
 				var selector  = "#resultItem_" + doc.EDP + " div#auditHolder";
-				var title = "Audit Trail for " + doc.DPNo;
-
-				$(selector).qtip({
-					content: {
-						text: $('<div/>'),
-						title: {
-							text: title,
-							button: true
-						}
-					},
-					position: {
-						my: 'top center',
-						at: 'bottom center'
-					},
-					events: {
-						render: function(event, api) {
-							var auditPage=1;
-							var auditPageSize=5;
-							var contentHolder = $('div', api.elements.content);
-							contentHolder.html($("#viewAuditTemplate").html());
-
-							updateAuditList(contentHolder, doc.EDP, auditPage, auditPageSize);
-						}
+				
+				$(selector).off().on({
+					click: function(e){
+						$(e.currentTarget).viewaudit({
+							itemDataCallback: function(base, page){
+								AuditServiceJS.getItemTrail(e.data.doc["EDP"], base.options.page, base.options.pageSize, {
+									callback: function(data){
+										var total = data.totalSize;
+										base.populateList(data);
+										base.addPaging(base.options.page, total);
+									},
+									preHook: function(){
+										base.prepareList();
+									},
+									postHook:function(){
+										base.api.reposition();
+									}
+								});
+							}
+						});
 					}
-				}).click(function(event) { event.preventDefault(); });	 
-			};
+				},{doc: doc});
+			}
 		},
 
 		debugHandler: function (doc) {
@@ -247,7 +191,7 @@
 				setProductImage = function(contentHolder, item){
 					setTimeout(function(){		
 						// Product is no longer visible in the setting
-						var id = "_" + item["edp"];
+						var id = "_" + item["memberId"];
 
 						if ($.isBlank(item["dpNo"])){
 							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));
