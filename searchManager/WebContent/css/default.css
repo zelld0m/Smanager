@@ -291,6 +291,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .top4, .top4			{ top:4px; }
 .cssReset .top5, .top5			{ top:5px; }
 .cssReset .top6, .top6			{ top:6px; }
+.cssReset .top10, .top10		{ top:10px; }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .topn1, .topn1		{ top:-1px; }
 .cssReset .topn2, .topn2		{ top:-2px; }
