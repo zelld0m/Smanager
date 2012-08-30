@@ -81,18 +81,18 @@
 							//ignore time of current date 
 							today.setHours(0,0,0,0);
 							if ($.isBlank(skus)) {
-								alert("There are no SKUs specified in the list.");
+								jAlert("There are no SKUs specified in the list.","Exclude");
 							}
 							else if (!commaDelimitedNumberPattern.test(skus)) {
-								alert("List contains an invalid SKU.");
+								jAlert("List contains an invalid SKU.","Exclude");
 							}	
 							else if(today.getTime() > new Date(expDate).getTime())
-								alert("Start date cannot be earlier than today");
+								jAlert("Start date cannot be earlier than today","Exclude");
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-								alert("Invalid date specified.");
+								jAlert("Invalid date specified.","Exclude");
 							}	
 							else if (!isXSSSafe(comment)){
-								alert("Invalid comment. HTML/XSS is not allowed.");
+								jAlert("Invalid comment. HTML/XSS is not allowed.","Exclude");
 							}
 							else {
 								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(/[\s,]+/), {
@@ -437,7 +437,7 @@
 							});
 						}
 						else {
-							alert("The keyword provided already exists.");
+							jAlert("The keyword provided already exists.","Exclude");
 						}
 					}
 				});

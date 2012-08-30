@@ -67,7 +67,7 @@
 				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
 			}
 
-			alert(okmsg);
+			jAlert(okmsg,"Approval");
 		};
 
 		function checkIfDeleted() {
@@ -87,9 +87,9 @@
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
 					if (getSelectedRefId().length==0){
-						alert("Please select rule");
+						jAlert("Please select rule","Approval");
 					}else if ($.isBlank(comment)){
-						alert("Please add comment.");
+						jAlert("Please add comment.","Approval");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
@@ -108,7 +108,7 @@
 
 						case "rejectBtn": 
 							if (checkIfDeleted()) {
-								alert("Deleted rules cannot be rejected!");
+								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
 							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -445,7 +445,7 @@
 
 						case "rejectBtn": 
 							if (checkIfDeleted()) {
-								alert("Deleted rules cannot be rejected!");
+								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
 							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
@@ -459,7 +459,7 @@
 							});break;
 						}	
 					}else{
-						alert("Please add comment.");
+						jAlert("Please add comment.","Approval");
 					}
 				}
 			});

@@ -428,7 +428,7 @@
 							var comment = $.trim(contentHolder.find("#newComment" + id).val().replace(/\n\r?/g, '<br/>'));
 															
 							if(!isXSSSafe(comment)){
-								alert("Invalid comment. HTML/XSS is not allowed.");
+								jAlert("Invalid comment. HTML/XSS is not allowed.","Comment");
 							}
 							else if ($.isNotBlank(comment)){
 									if(data.type==="Elevate"){
