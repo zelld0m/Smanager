@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
@@ -188,6 +190,9 @@ public class ElevateService{
 					e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addElevateResult(e);
+						if (!StringUtils.isBlank(comment)) {
+							addComment(comment, e);
+						}
 					}
 				} else {
 					
@@ -226,6 +231,9 @@ public class ElevateService{
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
 			count = daoService.addElevateResult(e);
+			if (!StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
@@ -470,4 +478,15 @@ public class ElevateService{
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+
+	private Comment addComment(String comment, ElevateResult e) throws DaoException {
+		Comment com = new Comment();
+		com.setComment(comment);
+		com.setUsername(UtilityService.getUsername());
+		com.setReferenceId(e.getMemberId());
+		com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+		daoService.addComment(com);
+		return com;
+	}
+
 }
