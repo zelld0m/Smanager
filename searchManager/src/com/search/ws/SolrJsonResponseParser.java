@@ -360,6 +360,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					String edp = doc.getString("EDP");
 					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
 					doc.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
+					if (e.getElevateEntity() == MemberTypeEntity.FACET) {
+						doc.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+					}
 					doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 					docList.add(doc);
 					explainMap.put(edp, tmpExplain);
