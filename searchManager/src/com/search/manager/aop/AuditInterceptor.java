@@ -369,6 +369,9 @@ public class AuditInterceptor {
 				if (rule.getRedirectType() != null) {
 					log.append(String.format("redirect type = [%1$s];", rule.getRedirectType()));
 				}
+				if (rule.getIncludeKeyword() != null) {
+					log.append(String.format("include keyword = [%1$s];", rule.getIncludeKeyword()));
+				}
 				if (rule.getChangeKeyword() != null) {
 					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));
 				}
