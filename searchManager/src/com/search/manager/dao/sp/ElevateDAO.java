@@ -425,7 +425,7 @@ public class ElevateDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(storeKeyword));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(storeKeyword));
-	        inputs.put(DAOConstants.PARAM_VALUE, null);
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, null);
             return DAOUtils.getUpdateCount(deleteSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during clearElevate()", e);

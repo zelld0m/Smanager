@@ -18,7 +18,7 @@
 			lockedItemDisplayText: "Item is locked",
 
 			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
-			removeRuleItemConfirmText: "Item will be removed to this rule. Continue?",
+			removeRuleItemConfirmText: "Item will be removed from this rule. Continue?",
 			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
 
 			getRuleList: function(){
@@ -277,7 +277,8 @@
 							if(result){
 								ExcludeServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
 									callback: function(code){
-										showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : 
+											$.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
 									preHook: function(){

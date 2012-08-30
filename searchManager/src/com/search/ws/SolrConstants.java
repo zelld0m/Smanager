@@ -39,6 +39,9 @@ public class SolrConstants {
 	public final static String TAG_ARR = "arr";
 	
 	public final static String TAG_ELEVATE = "Elevate";
+	public final static String TAG_ELEVATE_TYPE = "ElevateType";
+	public final static String TAG_ELEVATE_ID = "ElevateId";
+	public final static String TAG_ELEVATE_CONDITION = "ElevateCondition";
 	public final static String TAG_EXPIRED = "Expired";
 	public final static String TAG_EXCLUDE = "Exclude";
 	public final static String TAG_REDIRECT = "Redirect";

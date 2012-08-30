@@ -1477,7 +1477,7 @@
 				buttonImage: "../images/icon_calendar.png",
 				buttonImageOnly: true
 			});
-
+ 
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					var position = 1;
@@ -1514,12 +1514,6 @@
 				buttonImageOnly: true
 			});
 
-			base.contentHolder.find("#clearBtn").on({
-				click: function(evt){
-					base.contentHolder.find("input,textarea").val("");
-				}
-			});
-
 			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
@@ -1528,7 +1522,7 @@
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment = $.trim($.defaultIfBlank(base.contentHolder.find("#addItemComment").val()).replace(/\n\r?/g, '<br />'));
+					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
 
 					today.setHours(0,0,0,0); //ignore time of current date 
@@ -1584,7 +1578,12 @@
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
 						};				
-
+						
+						base.contentHolder.find("#clearBtn").on({
+							click: function(evt){
+								base.contentHolder.find("input,textarea").val("");
+							}
+						});
 
 					},
 					hide: function(event, api){
