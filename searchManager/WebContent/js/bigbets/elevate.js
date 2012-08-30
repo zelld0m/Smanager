@@ -68,6 +68,24 @@
 							contentHolder.find("input,textarea").val("");
 						}
 					});
+					
+					contentHolder.find("#addItemPosition").on({
+						keypress:function(e){
+							var charCode = (e.which) ? e.which : e.keyCode;
+							if (charCode > 31 && (charCode < 48 || charCode > 57))
+								return false;
+						},
+						keydown:function(e){
+							var charCode = (e.which) ? e.which : e.keyCode;
+							var ctrlDown = e.ctrlKey||e.metaKey ;
+							if (ctrlDown) {
+								return false;
+							}
+						},
+						contextmenu:function(e){
+							return false;
+						}
+					});
 
 					contentHolder.find("#addItemToRuleBtn").on({
 						click: function(evt){
@@ -83,18 +101,18 @@
 							today.setHours(0,0,0,0);
 							
 							if ($.isBlank(skus)) {
-								alert("There are no SKUs specified in the list.");
+								jAlert("There are no SKUs specified in the list.","Elevate");
 							}
 							else if (!commaDelimitedNumberPattern.test(skus)) {
-								alert("List contains an invalid SKU.");
+								jAlert("List contains an invalid SKU.","Elevate");
 							}							
 							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-								alert("Invalid date specified.");
+								jAlert("Invalid date specified.","Elevate");
 							}
 							else if(today.getTime() > new Date(expDate).getTime())
-								alert("Start date cannot be earlier than today");
+								jAlert("Start date cannot be earlier than today.","Elevate");
 							else if (!isXSSSafe(comment)){
-								alert("Invalid comment. HTML/XSS is not allowed.");
+								jAlert("Invalid comment. HTML/XSS is not allowed.","Elevate");
 							}
 							else {								
 								ElevateServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId, sequence, expDate, comment, skus.split(/[\s,]+/), {
@@ -241,14 +259,14 @@
 					var destinationIndex = $.trim($(this).val());
 					if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
 						if(destinationIndex > selectedRuleItemTotal){
-							alert("Maximum allowed value is " + (selectedRuleItemTotal));
+							jAlert("Maximum allowed value is " + (selectedRuleItemTotal),"Elevate");
 						}else{
 							updateRuleItemPosition(item["edp"], destinationIndex, item["dpNo"]);
 						}
 					}
 				}else{
 					if (((code==48 || code==96) && $.isBlank($(e.target).val())) || (code > 31 && (code < 48 || code > 57))){
-						alert("Should be a positive number not greater than " + selectedRuleItemTotal);
+						jAlert("Should be a positive number not greater than " + selectedRuleItemTotal,"Elevate");
 						return false;
 					}
 				}
@@ -495,7 +513,7 @@
 							});
 						}
 						else {
-							alert("The keyword provided already exists.");
+							jAlert("The keyword provided already exists.","Elevate");
 						}
 					}
 				});
