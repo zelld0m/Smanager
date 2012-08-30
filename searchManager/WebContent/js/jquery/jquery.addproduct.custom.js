@@ -190,14 +190,14 @@
 			template  += '		</div>';
 			template  += '	</div>';
 
-			template  += '	<div id="dynamicAttribute">';
+			template  += '	<div id="dynamicAttribute" class="w500">';
 			template  += '		<div class="holder fsize12 padT40 marRL20">';
 
-			template  += '				<table>';
+			template  += '				<table class="w460">';
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="templateNameList" class="templateNameList selectCombo w229" title="Select Template Name"></select>';
 			template  += '						</div>';
@@ -212,9 +212,9 @@
 			template  += '						<div id="dynamicAttributeItemList">';							
 			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem marL30" style="display:none">';
 			template  += '								<div class="clearB"></div>';
-			template  += '								<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
+			template  += '								<div class="w146 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
 			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8 marL5" alt="Delete Attribute" title="Delete Attribute">';
-			template  += '								<div class="w245 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
+			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
 			template  += '									<ul id="dynamicAttributeValues">';
 			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
 			template  += '											<div>';
@@ -228,20 +228,22 @@
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
-			template  += '			</table>';						
+			template  += '			</table>';
+			template  += '			<div class="clearB"></div>';
 			template  += '		</div>';
-			template  += '			<table id="addDynamicAttributeName">';						
+			template  += '			<table id="addDynamicAttributeName" class="w460">';						
 			template  += '				<tr id="dynamicAttributeName">';
-			template  += '					<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>';
-			template  += '					<td class="padT2">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
-			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w229" title="Add Dynamic Attribute"></select>';
+			template  += '					<td class="w175">Add Dynamic Attribute :</td>';
+			template  += '					<td class="iepadBT0 w278 padT1">';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL posRel leftn2">';
+			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>';
 			template  += '						</div>';
-			template  += '						<a href="javascript:void(0);" src="" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marTn3 leftn22 posRel" id="addButton"></a>';
+			template  += '						<a href="javascript:void(0);" src="" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatL leftn22 posRel top3" id="addButton"></a>';
 			template  += '					</td>';
 			template  += '				</tr>';
-			template  += '			</table>';						
+			template  += '			</table>';
+			template  += '			<div class="clearB"></div>';
 			template  += '		</div>';
 			template  += '	</div>';
 
@@ -250,7 +252,7 @@
 			template  += '			<table>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Name (contains) :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<input id="nameContains" type="text" class="w249"/>';
 			template  += '					</td>';
 			template  += '				</tr>';
@@ -262,7 +264,7 @@
 			template  += '				</tr>';		
 			template  += '				<tr>';
 			template  += '					<td class="w175">Platform :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="platformList" class="selectCombo w229" title="Select Platform" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="universal">Universal</option>';
@@ -274,7 +276,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Condition :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="conditionList" class="selectCombo w229" title="Select Condition" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="refurbished">Refurbished</option>';
@@ -285,7 +287,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Availability :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="availabilityList" class="selectCombo w229" title="Select Availability" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="instock">In Stock</option>';
@@ -295,7 +297,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">License :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="license">Show License Products Only</option>';
@@ -309,12 +311,12 @@
 			template  += '	</div>';
 			template  += '</div>';
 			
-			template  += '<div class="fcetItem marT20">';
+			template  += '<div class="fcetItem marT20 w500">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<div class="floatL w100 marT5">';
 			template  += '							<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>';
 			template  += '						</div>';
