@@ -69,8 +69,9 @@
 			var template ='';
 
 			template  += '<div id="facetItem">';
-			template  += '	<h3 id="conditionText" class="fLblue w500 breakWord"></h3>';
-			template  += '	<div id="tabHeight" style="height:23px" class="borderB marT20">';
+			template  += '	<h3 id="conditionText" class="fLblue w500 breakWord fsize12"></h3>';
+			template  += '	<div class="clearB"></div>';
+			template  += '	<div id="tabHeight" style="height:29.5px" class="borderB marT20">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
 			template  += '		<li><a href="#cnet"><span>Facet Template/Manufacturer</span></a></li>';
@@ -90,7 +91,7 @@
 			template  += '							<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>';
 			template  += '						</div>';
 			template  += '						<div style="clear:both"></div>';
-			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="categoryList" class="categoryList selectCombo w229" title="Select Category"></select>';
 			template  += '						</div>';
@@ -99,7 +100,7 @@
 			template  += '				<tr class="catName" id="subcategory">';
 			template  += '					<td class="w175">SubCategory :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="subCategoryList" class="subCategoryList selectCombo w229" title="Select SubCategory"></select>';
 			template  += '						</div>';
@@ -108,7 +109,7 @@
 			template  += '				<tr class="catName" id="class">';
 			template  += '					<td class="w175">Class :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="classList" class="classList selectCombo w229" title="Select Class"></select>';
 			template  += '						</div>';
@@ -117,7 +118,7 @@
 			template  += '				<tr class="catName" id="minor">';
 			template  += '					<td class="w175" valign="top">SubClass :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="minorList" class="minorList selectCombo w229" title="Select SubClass"></select>';
 			template  += '						</div>';
@@ -136,7 +137,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderManufacturerList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="manufacturerList" class="manufacturerList selectCombo w229" title="Select Manufacturer"></select>';
 			template  += '						</div>';
@@ -152,36 +153,36 @@
 			template  += '				<tr class="catName" id="level1Cat">';
 			template  += '					<td class="w175 padB8" valign="bottom">Level 1 Category :</td>';
 			template  += '					<td class="iepadBT0">';
-			template  += '						<img id="preloaderLevel1CategoryList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel1CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w235" title="Select Category"></select>';
+			template  += '							<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w229" title="Select Category"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr class="catName" id="level2Cat">';
 			template  += '					<td class="w175">Level 2 Category :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderLevel2CategoryList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel2CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w235" title="Select SubCategory"></select>';
+			template  += '							<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w229" title="Select SubCategory"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr class="catName" id="level3Cat">';
 			template  += '					<td class="w175">Level 3 Category :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderLevel3CategoryList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel3CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>';
+			template  += '							<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w229" title="Select Class"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr>';
-			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
+			template  += '					<td class="w175">Manufacturer :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderCNETManufacturerList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderCNETManufacturerList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w235" title="Select Manufacturer"></select>';
+			template  += '							<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w229" title="Select Manufacturer"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
@@ -194,7 +195,7 @@
 
 			template  += '				<table>';
 			template  += '				<tr>';
-			template  += '					<td class="w188 padB8" valign="bottom">Template Name :</td>';
+			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
 			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
@@ -1525,7 +1526,7 @@
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment = $.trim($.defaultIfBlank(base.contentHolder.find("#addItemComment").val()).replace(/\n\r?/g, '<br />'));
+					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
 
 					today.setHours(0,0,0,0); //ignore time of current date 
