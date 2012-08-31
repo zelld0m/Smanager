@@ -78,10 +78,19 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private List<JSONObject> sortElevateEntries(Map<String, JSONObject> nodeMap){
 		JSONObject node;
 		ArrayList<JSONObject> sortedElevateList = new ArrayList<JSONObject>();
-		for (ElevateResult result: elevatedList) {
-			node = nodeMap.get(result.getEdp());
+		for (ElevateResult e: elevatedList) {
+			String edp = e.getEdp();
+			node = nodeMap.get(edp);
 			if (node != null) {
-				node.element(SolrConstants.TAG_ELEVATE, String.valueOf(result.getLocation()));
+				node.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
+				node.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
+				if (e.getElevateEntity() == MemberTypeEntity.FACET) {
+					node.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+				}
+				if (expiredElevatedEDPs.contains(edp)) {
+					node.element(SolrConstants.TAG_EXPIRED,"");
+				}
+				node.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 				sortedElevateList.add(node);
 			}
 		}
