@@ -230,7 +230,9 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marRL20, .marRL20	{margin-left:20px; margin-right:20px }
 .cssReset .marRL50, .marRL50	{margin-left:50px; margin-right:50px }
 .cssReset .marB0, .marB0		{margin-bottom:0 !important}
+.cssReset .marB2, .marB2		{margin-bottom:2px !important}
 .cssReset .marB4, .marB4		{margin-bottom:4px}
+.cssReset .marB6, .marB6		{margin-bottom:6px}
 .cssReset .marB8, .marB8		{margin-bottom:8px}
 .cssReset .marB10, .marB10		{margin-bottom:10px !important}
 .cssReset .marB20, .marB20		{margin-bottom:20px}

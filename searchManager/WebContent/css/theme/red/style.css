@@ -753,6 +753,7 @@ body #redirect .tabs .ui-widget-content { padding-top:20px !important}
 /* simulator */
 a .txtManufact { margin-right:5px; color:#282828; font-weight: bold; }
 a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none !important; cursor: default !important; }
+.searchList li #elevatePosition a:hover { text-decoration: none !important; color:#999 }
 
 .lnk a#level2 { padding-left:10px }
 .lnk a#level3 { padding-left:20px }

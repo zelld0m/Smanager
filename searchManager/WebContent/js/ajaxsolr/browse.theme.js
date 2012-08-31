@@ -194,9 +194,9 @@
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
-		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
+		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';
-		output += '				<div id="debugHolder" class="floatL"></div>';
+		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '			</div>';
 		output += '			<div class="floatR marR5 marTn2">';
@@ -268,7 +268,7 @@
 			var displayText = "Elevated at position " + doc["Elevate"];
 			
 			if(doc["ElevateType"] === "FACET")
-				displayText = 'Included in <a href="javascript:void(0);">Facet Rule Item</a> elevated at position '+ doc["Elevate"];
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> elevated at position '+ doc["Elevate"];
 
 			secObj.find("div#elevatePosition").html(displayText);
 			secObj.find("div#elevatePosition a").off().on({

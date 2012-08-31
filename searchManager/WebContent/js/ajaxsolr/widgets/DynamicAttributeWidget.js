@@ -129,7 +129,10 @@
 					var items = self.asObjectedItems(facetFields, facetField);
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
-					self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
+					
+					if(counter){
+						self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
+					}
 				}
 			};
 				

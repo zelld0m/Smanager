@@ -830,6 +830,7 @@ body .tabs .containerRedirect   { padding-top:20px !important}
 /* simulator */
 a .txtManufact { margin-right:5px; color:#282828; font-weight: bold; }
 a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none !important; cursor: default !important; }
+.searchList li #elevatePosition a:hover { text-decoration: none !important; color:#999 }
 
 .lnk a#level2 { padding-left:10px }
 .lnk a#level3 { padding-left:20px }
@@ -861,3 +862,4 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .ie .qtip #cnet .ui-button-icon { height:20px !important;  }
 .ie .qtip #cnet .ui-autocomplete-input  { padding-top:4px !important }
 .ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }
+

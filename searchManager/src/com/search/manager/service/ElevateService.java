@@ -292,6 +292,7 @@ public class ElevateService{
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
+			e = daoService.getElevateItem(e);
 			return daoService.deleteElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during removeElevate()",e);
@@ -338,6 +339,20 @@ public class ElevateService{
 			return getExpiredElevatedProducts(keyword, page, itemsPerPage);
 
 		return null;
+	}
+
+	@RemoteMethod
+	public ElevateProduct getProductByEdp(String keyword, String edp) {
+
+		RecordSet<ElevateProduct> products = getAllElevatedProducts(keyword, 0, 100);
+		ElevateProduct product = null;
+		for (ElevateProduct  prod: products.getList()) {
+			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
+				product = prod;
+				break;
+			}
+		}
+		return product;
 	}
 
 	@RemoteMethod
