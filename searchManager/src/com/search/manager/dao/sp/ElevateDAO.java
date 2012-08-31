@@ -257,7 +257,8 @@ public class ElevateDAO {
 		try {
     		DAOValidation.checkElevatePK(elevate);
     		String keyword = DAOUtils.getKeywordId(elevate.getStoreKeyword());
-	    	if (StringUtils.isNotEmpty(keyword)) {
+	    	int count = -1;
+			if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = StringUtils.lowerCase(StringUtils.trim(elevate.getStoreKeyword().getStoreId()));
 	    		String value = null;
 	            if (elevate.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
@@ -271,24 +272,20 @@ public class ElevateDAO {
 	    		String comment = StringUtils.trim(elevate.getComment());
 	    		Date expiryDate = elevate.getExpiryDate();
 	    		elevate.setMemberId(DAOUtils.generateUniqueId());
-	    		// check for duplicates
-	    		ElevateResult match = getElevateItem(elevate);
-	    		if (match == null) {
-		        	Map<String, Object> inputs = new HashMap<String, Object>();
-		            inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-		            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
-		            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
-		            inputs.put(DAOConstants.PARAM_VALUE, value);
-		            inputs.put(DAOConstants.PARAM_COMMENT, comment);
-		            inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
-		            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
-		            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
-		            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
-		            inputs.put(DAOConstants.PARAM_FORCE_ADD, elevate.isForceAdd()!=null && elevate.isForceAdd()?1:0);
-		            return DAOUtils.getUpdateCount(addSP.execute(inputs));
-	    		}
+	        	Map<String, Object> inputs = new HashMap<String, Object>();
+	            inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
+	            inputs.put(DAOConstants.PARAM_STORE_ID, storeId);
+	            inputs.put(DAOConstants.PARAM_KEYWORD, keyword);
+	            inputs.put(DAOConstants.PARAM_VALUE, value);
+	            inputs.put(DAOConstants.PARAM_COMMENT, comment);
+	            inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, sequence);
+	            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
+	            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
+	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, elevate.getElevateEntity());
+	            inputs.put(DAOConstants.PARAM_FORCE_ADD, elevate.isForceAdd()!=null && elevate.isForceAdd()?1:0);
+	            count  = DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    	}
-	    	return -1;
+	    	return count;
     	}
     	catch (Exception e) {
     		throw new DaoException("Failed during addElevate()", e);
@@ -312,7 +309,7 @@ public class ElevateDAO {
     		throw new DaoException("Failed during getElevate()", e);
     	}
     }
-    
+
     public ElevateResult getElevateItem(ElevateResult elevate) throws DaoException {
     	try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
