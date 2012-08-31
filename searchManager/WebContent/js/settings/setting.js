@@ -25,7 +25,7 @@
 					else if(!validatePassword('Re-type password',proRe,8))
 						return;
 					else if(proNew != proRe){
-						alert('New and re-type passwords do not match.');
+						jAlert('New and re-type passwords do not match.',"User Setting");
 						return;
 					}
 				}
@@ -33,12 +33,12 @@
 				UserSettingServiceJS.updateUser(set.user,profull,proemail,proOld,proNew,{
 					callback:function(data){
 						if(data.status == '200'){
-							alert(data.message);
+							jAlert(data.message,"User Setting");
 							$('#proOld').val('');
 							$('#proNew').val('');
 							$('#proRe').val('');
 						}else{
-							alert(data.message);
+							jAlert(data.message,"User Setting");
 						}	
 					}		
 				});

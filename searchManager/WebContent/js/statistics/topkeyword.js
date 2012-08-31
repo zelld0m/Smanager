@@ -16,10 +16,10 @@
 				TopKeywordServiceJS.sendFileAsEmail($("select#fileFilter").val(), customFilename, recipients, {
 					callback: function(data){
 						if (data == true) {
-							alert("Email sent.");
+							jAlert("Email sent.","Top Keyword");
 						}
 						else {
-							alert("Unable to send email.");
+							jAlert("Unable to send email.","Top Keyword");
 						}
 					}
 				});
@@ -155,6 +155,8 @@
 								}
 							}
 						});
+						
+						
 
 					},
 					postHook: function(){
@@ -162,7 +164,7 @@
 					}
 				});
 			},
-
+			
 			init: function(){
 				var self = this;
 				self.getFileList();
