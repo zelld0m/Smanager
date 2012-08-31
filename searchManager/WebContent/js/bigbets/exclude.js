@@ -158,7 +158,6 @@
 								}
 							});
 						}
-<<<<<<< HEAD
 					},{locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
 				}
 
@@ -214,40 +213,6 @@
 										var total = data.totalSize;
 										base.populateList(data);
 										base.addPaging(base.options.page, total);
-=======
-					});
-					
-					contentHolder.find("#addItemToRuleBtn").on({
-						click: function(evt){
-
-							var commaDelimitedNumberPattern = /^\s*\d+\s*(,?\s*\d+\s*)*$/;
-							
-							var skus = $.trim(contentHolder.find("#addItemDPNo").val());
-							var expDate = $.trim(contentHolder.find("#addItemDate_1").val());
-							var comment = $.trim(contentHolder.find("#addItemComment").val().replace(/\n\r?/g, '<br />'));
-							var today = new Date();
-							//ignore time of current date 
-							today.setHours(0,0,0,0);
-							if ($.isBlank(skus)) {
-								jAlert("There are no SKUs specified in the list.","Exclude");
-							}
-							else if (!commaDelimitedNumberPattern.test(skus)) {
-								jAlert("List contains an invalid SKU.","Exclude");
-							}	
-							else if(today.getTime() > new Date(expDate).getTime())
-								jAlert("Start date cannot be earlier than today","Exclude");
-							else if (!$.isBlank(expDate) && !$.isDate(expDate)){
-								jAlert("Invalid date specified.","Exclude");
-							}	
-							else if (!isXSSSafe(comment)){
-								jAlert("Invalid comment. HTML/XSS is not allowed.","Exclude");
-							}
-							else {
-								ExcludeServiceJS.addItemToRuleUsingPartNumber(selectedRule.ruleId,expDate, comment, skus.split(/[\s,]+/), {
-									callback : function(code){
-										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-										showExclude();
->>>>>>> refs/remotes/origin/sprint_6_revamp_alert
 									},
 									preHook: function(){
 										base.prepareList();
@@ -611,32 +576,10 @@
 				self.setRuleItemFilter();
 			},
 
-<<<<<<< HEAD
 			setRule: function(rule){
 				var self = this;
 				self.selectedRule = rule;
 				self.showRuleContent();
-=======
-			itemAddCallback: function(base, keyword){
-				StoreKeywordServiceJS.getKeyword(keyword,{
-					callback : function(data){
-						if(data==null){
-							StoreKeywordServiceJS.addKeyword(keyword,{
-								callback : function(data){
-									showActionResponse(data==null?0:1, "add", keyword);
-									if(data!=null){
-										base.getList(keyword, 1);
-										setExclude(data);
-									}
-								}
-							});
-						}
-						else {
-							jAlert("The keyword provided already exists.","Exclude");
-						}
-					}
-				});
->>>>>>> refs/remotes/origin/sprint_6_revamp_alert
 			},
 
 			setRuleItemDisplay: function(){
