@@ -176,7 +176,7 @@
 			var title = "Elevate Product";
 			var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Elevate Info</h2>"); 
 			var needRefresh = false;
-			console.log(doc["ElevateType"]);
+
 			var elevated = doc["ElevateType"] === "PART_NUMBER" || doc["Expired"] != undefined;
 			var maxPosition = 0;
 			var currentExpiryDate = "";
@@ -385,21 +385,6 @@
 
 							contentHolder.html(content);
 
-							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
-								showOn: "both",
-								minDate: expDateMinDate,
-								maxDate: expDateMaxDate,
-								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendar.png",
-								buttonImageOnly: true,
-								onSelect: function(dateText, inst) {
-									var today = new Date();
-									var selDate = Date.parse(dateText);
-									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
-									expiredDateSelected = (selDate < today)? true : false;
-								}
-							});
-
 							// Set maximum elevate position
 							ElevateServiceJS.getTotalProductInRule(keyword, {
 								callback: function(count){
@@ -447,7 +432,7 @@
 										// Update elevate position
 										if(sourceIndex != destinationIndex){
 											var memberId = ui.item.attr("id").split('_')[1];
-											
+
 											ElevateServiceJS.updateElevate(keyword,memberId,destinationIndex,{
 												callback : function(event){
 													needRefresh = true;
@@ -464,12 +449,30 @@
 							contentHolder.find("a#removeBtn").attr("style", elevated? "display:float" : "display:none"); 
 							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
 
+							contentHolder.find("#aExpiryDate_" + doc["EDP"]).datepicker({
+								showOn: "both",
+								minDate: expDateMinDate,
+								maxDate: expDateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true,
+								onSelect: function(dateText, inst) {
+									var today = new Date();
+									var selDate = Date.parse(dateText);
+									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
+									expiredDateSelected = (selDate < today)? true : false;
+								}
+							});
+
 							if (elevated){
-								ElevateServiceJS.getElevatedProduct(keyword, doc["ElevateId"], {
+								ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
 									callback : function(item){
 										if(item!=null){
-											contentHolder.find("#aElevatePosition_" + doc["EDP"]).val(item["location"]);
-											contentHolder.find("#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
+											doc["ElevateId"] = item["memberId"];
+											setTimeout(function(){	
+												contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
+												contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
+											},1);
 										}
 									},
 									errorHandler: handleAddElevateError 
@@ -518,7 +521,6 @@
 										});
 
 									}
-
 
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
 
