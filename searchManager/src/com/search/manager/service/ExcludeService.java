@@ -163,7 +163,8 @@ public class ExcludeService {
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteExcludeResult(e);
+			RecordSet<ExcludeResult> rset = daoService.getExcludeResultList(new SearchCriteria<ExcludeResult>(e, null, null, 0, 1));
+			return daoService.deleteExcludeResult(rset.getList().get(0));
 		} catch (DaoException e) {
 			logger.error("Failed during removeExclude()",e);
 		}

@@ -292,6 +292,7 @@ public class ElevateService{
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
+			e = daoService.getElevateItem(e);
 			return daoService.deleteElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during removeElevate()",e);
