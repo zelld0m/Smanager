@@ -396,6 +396,22 @@
 								}
 							});
 
+							
+							var populateSelectedProduct = function(){
+								ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
+									callback : function(item){
+										if(item!=null){
+											doc["ElevateId"] = item["memberId"];
+											setTimeout(function(){	
+												contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
+												contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
+											},1);
+										}
+									},
+									errorHandler: handleAddElevateError 
+								});
+							};
+							
 							if(contentHolder.find("div#current").is('not(:visible)')){
 								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
 							}else{
@@ -435,6 +451,7 @@
 											ElevateServiceJS.updateElevate(keyword,memberId,destinationIndex,{
 												callback : function(event){
 													needRefresh = true;
+													populateSelectedProduct();
 												},
 												preHook: function() { prepareElevateResult(contentHolder); },
 												postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
@@ -464,18 +481,7 @@
 							});
 
 							if (elevated){
-								ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
-									callback : function(item){
-										if(item!=null){
-											doc["ElevateId"] = item["memberId"];
-											setTimeout(function(){	
-												contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
-												contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
-											},1);
-										}
-									},
-									errorHandler: handleAddElevateError 
-								});
+								populateSelectedProduct();
 							}
 
 							contentHolder.find("#saveBtn").click(function(){
