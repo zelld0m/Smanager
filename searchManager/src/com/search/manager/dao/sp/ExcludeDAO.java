@@ -214,7 +214,8 @@ public class ExcludeDAO {
 		try {
 			DAOValidation.checkExcludePK(exclude);
     		String keyword = DAOUtils.getKeywordId(exclude.getStoreKeyword());
-	    	if (StringUtils.isNotEmpty(keyword)) {
+	    	int count = -1;
+			if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = DAOUtils.getStoreId(exclude.getStoreKeyword());
 	    		String username = StringUtils.trim(exclude.getCreatedBy());
 	    		String comment = StringUtils.trim(exclude.getComment());
@@ -235,9 +236,9 @@ public class ExcludeDAO {
 	            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
 	            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, exclude.getExcludeEntity());
-	            return DAOUtils.getUpdateCount(addSP.execute(inputs));
+	            count = DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    	}
-	    	return -1;
+	    	return count;
     	}
     	catch (Exception e) {
     		throw new DaoException("Failed during addExclude()", e);
@@ -255,6 +256,7 @@ public class ExcludeDAO {
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
+	        inputs.put(DAOConstants.PARAM_VALUE, !StringUtils.isBlank(criteria.getModel().getEdp())?criteria.getModel().getEdp():criteria.getModel().getCondition());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExclude()", e);
