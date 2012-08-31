@@ -105,7 +105,7 @@
 						}
 						else{
 							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-													.prop("colspan",5)
+													.prop("colspan",4)
 													.removeClass("txtAC")
 													.addClass("txtAL");
 							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
