@@ -341,6 +341,20 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
+	public ElevateProduct getProductByEdp(String keyword, String edp) {
+
+		RecordSet<ElevateProduct> products = getAllElevatedProducts(keyword, 0, 100);
+		ElevateProduct product = null;
+		for (ElevateProduct  prod: products.getList()) {
+			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
+				product = prod;
+				break;
+			}
+		}
+		return product;
+	}
+
+	@RemoteMethod
 	public RecordSet<ElevateProduct> getAllElevatedProducts(String keyword, int page,int itemsPerPage) {
 		RecordSet<ElevateProduct> result = null;
 		try {
