@@ -148,7 +148,7 @@
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ExcludeServiceJS.updateExcludeFacet(self.selectedRule["ruleId"], memberId, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											showActionResponse(data, "update", "Rule Facet Item");
+											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 											self.populateRuleItem(self.selectedRulePage);
 										},
 										preHook: function(){ 
@@ -467,7 +467,7 @@
 											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
 												ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
-														showActionResponse(data, "add", "Rule Facet Item");
+														showActionResponse(data, "add", "New Rule Facet Item");
 														self.populateRuleItem();
 													},
 													preHook: function(){ 
