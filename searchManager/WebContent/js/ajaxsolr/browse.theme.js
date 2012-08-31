@@ -292,7 +292,7 @@
 
 			if (doc.Elevate != undefined){
 				bigbetsicon = 'images/icon_arrowUp.png'; 
-				eleHover = "Remove Elevate";
+				eleHover = "Update Elevate";
 			} 
 
 			if (doc.Feature != undefined){
