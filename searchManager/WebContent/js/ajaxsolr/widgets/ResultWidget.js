@@ -176,7 +176,7 @@
 			var title = "Elevate Product";
 			var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Elevate Info</h2>"); 
 			var needRefresh = false;
-			console.log(doc["ElevateType"]);
+			//console.log(doc["ElevateType"]);
 			var elevated = doc["ElevateType"] === "PART_NUMBER";
 			var maxPosition = 0;
 			var currentExpiryDate = "";
