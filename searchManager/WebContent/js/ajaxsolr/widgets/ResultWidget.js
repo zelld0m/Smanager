@@ -176,10 +176,6 @@
 			var title = "Elevate Product";
 			var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Elevate Info</h2>"); 
 			var needRefresh = false;
-<<<<<<< HEAD
-
-=======
->>>>>>> refs/remotes/origin/sprint_6_elexc_facet_options
 			var elevated = doc["ElevateType"] === "PART_NUMBER" || doc["Expired"] != undefined;
 			var maxPosition = 0;
 			var currentExpiryDate = "";
