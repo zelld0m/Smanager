@@ -1489,11 +1489,18 @@
 					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
+					var condMap = base.getSelectedFacetFieldValues();
+					
+					if ($.isEmptyObject(condMap)){
+						jAlert('Please specify at least one filter condition');
+						return;
+					}
+					
 					if (base.options.newRecord){
-						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues());
+						base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
 					}else{
 						base.api.destroy();
-						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, base.getSelectedFacetFieldValues());
+						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
 					}
 				}
 			});
