@@ -177,7 +177,7 @@
 			var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Elevate Info</h2>"); 
 			var needRefresh = false;
 			console.log(doc["ElevateType"]);
-			var elevated = doc["ElevateType"] === "PART_NUMBER";
+			var elevated = doc["ElevateType"] === "PART_NUMBER" || doc["Expired"] != undefined;
 			var maxPosition = 0;
 			var currentExpiryDate = "";
 			var currentPosition = 0;
@@ -468,10 +468,8 @@
 								ElevateServiceJS.getElevatedProduct(keyword, doc["ElevateId"], {
 									callback : function(item){
 										if(item!=null){
-											currentExpiryDate = item.formattedExpiryDate;
-											currentPosition = item.location;
-											contentHolder.find("#aElevatePosition_" + doc.EDP).val(currentPosition);
-											contentHolder.find("#aExpiryDate_" + doc.EDP).val(currentExpiryDate);
+											contentHolder.find("#aElevatePosition_" + doc["EDP"]).val(item["location"]);
+											contentHolder.find("#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
 										}
 									},
 									errorHandler: handleAddElevateError 
