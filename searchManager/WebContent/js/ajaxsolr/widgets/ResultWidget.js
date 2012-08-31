@@ -208,6 +208,23 @@
 					},10);
 				};
 
+				populateSelectedProduct = function(contentHolder){
+					ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
+						callback : function(item){
+							if(item!=null){
+								doc["ElevateId"] = item["memberId"];
+								setTimeout(function(){	
+									contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
+									contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
+								},1);
+							}else{
+								elevated = false;
+							}
+						},
+						errorHandler: handleAddElevateError 
+					});
+				};
+				
 				prepareElevateResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
 					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
@@ -243,7 +260,7 @@
 							};
 
 							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
-
+							
 							for (var i=0; i<data.totalSize; i++){
 								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
@@ -317,7 +334,10 @@
 												needRefresh = true;
 											},
 											preHook: function() { prepareElevateResult(contentHolder); },
-											postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
+											postHook: function() { 
+												updateElevateResult(contentHolder, doc, keyword);
+												populateSelectedProduct(contentHolder);
+											}
 										});
 									}
 								});
@@ -395,22 +415,6 @@
 									}	
 								}
 							});
-
-							
-							var populateSelectedProduct = function(){
-								ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
-									callback : function(item){
-										if(item!=null){
-											doc["ElevateId"] = item["memberId"];
-											setTimeout(function(){	
-												contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
-												contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
-											},1);
-										}
-									},
-									errorHandler: handleAddElevateError 
-								});
-							};
 							
 							if(contentHolder.find("div#current").is('not(:visible)')){
 								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
@@ -451,7 +455,7 @@
 											ElevateServiceJS.updateElevate(keyword,memberId,destinationIndex,{
 												callback : function(event){
 													needRefresh = true;
-													populateSelectedProduct();
+													populateSelectedProduct(contentHolder);
 												},
 												preHook: function() { prepareElevateResult(contentHolder); },
 												postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
@@ -481,7 +485,7 @@
 							});
 
 							if (elevated){
-								populateSelectedProduct();
+								populateSelectedProduct(contentHolder);
 							}
 
 							contentHolder.find("#saveBtn").click(function(){
@@ -521,7 +525,10 @@
 												content.find("a#removeBtn").attr("style","display:float"); 
 											},
 											preHook: function() { prepareElevateResult(contentHolder); },
-											postHook: function() { updateElevateResult(contentHolder, doc, keyword); },
+											postHook: function() {
+												updateElevateResult(contentHolder, doc, keyword); 
+												populateSelectedProduct(contentHolder);
+											},
 											errorHandler: function(message){ alert(message); }
 										});
 
@@ -537,17 +544,20 @@
 							});
 
 							contentHolder.find("#removeBtn").click(function(){								
-								ElevateServiceJS.deleteItemInRule(keyword, doc.EDP,{
+								ElevateServiceJS.deleteItemInRule(keyword, doc["ElevateId"],{
 									callback : function(event){
 										contentHolder.find("a#removeBtn").attr("style","display:none");
-										contentHolder.find("#aElevatePosition_"+doc.EDP).val("");
-										contentHolder.find("#aExpiryDate_"+doc.EDP).val("");
+										contentHolder.find("#aElevatePosition_"+doc["EDP"]).val("");
+										contentHolder.find("#aExpiryDate_"+doc["EDP"]).val("");
 										needRefresh = true;
 										elevated = false;
 										maxPosition--;
 									},
 									preHook: function() { prepareElevateResult(contentHolder); },
-									postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
+									postHook: function() { 
+										updateElevateResult(contentHolder, doc, keyword); 
+										populateSelectedProduct(contentHolder);
+										}
 								});
 							});
 
