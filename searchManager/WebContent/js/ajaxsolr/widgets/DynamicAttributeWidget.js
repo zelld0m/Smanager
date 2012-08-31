@@ -63,9 +63,13 @@
 			return facetTemplateName;
 		},
 		
+		escapeValue: function (value) {
+			  return '"' + value + '"';
+		},
+		
 		displayDynamicAttributes: function (facetFields, list) {
 			var self = this;
-			
+						
 			var getFacetSelected = function() {
 				var i = 0;
 				var selectedItems = [];
@@ -75,7 +79,7 @@
 						var sel = $.trim($('#' + $(this).attr('rel')).val());
 						if ($.isNotBlank(sel)){
 							i++;
-							selectedItems.push(AjaxSolr.Parameter.escapeValue(sel));
+							selectedItems.push(self.escapeValue(sel));
 						}
 					}
 				});
@@ -125,7 +129,10 @@
 					var items = self.asObjectedItems(facetFields, facetField);
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
-					self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
+					
+					if(counter){
+						self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
+					}
 				}
 			};
 				
@@ -174,7 +181,7 @@
 		
 		moreOptionsHandler: function (facetField, facetValues, facetFieldLabel, delimiter) {
 			var self = this;
-
+			
 			return function () {
 
 				getFacetSelected = function() {
@@ -186,7 +193,7 @@
 							var sel = $.trim($('#' + $(this).attr('rel')).val());
 							if ($.isNotBlank(sel)){
 								i++;
-								selectedItems.push(AjaxSolr.Parameter.escapeValue(sel));
+								selectedItems.push(self.escapeValue(sel));
 							}
 						}
 					});
@@ -324,7 +331,7 @@
 												currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1));
 											}
 
-											var splitArray = currFacet.match(/\w+|"[^".*"]+"/g);
+											var splitArray = currFacet.match(/\w+|"[^"*"]+"/g);  
 
 											for(var par in splitArray){
 												var cBoxId = $('input[value="'+ splitArray[par].replace(/\"/g,'') +'"]').attr("id");
