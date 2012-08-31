@@ -144,7 +144,7 @@ public class ExcludeService {
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			count  = daoService.addExcludeResult(e);
-			if (!StringUtils.isBlank(comment)) {
+			if (count > 0 && !StringUtils.isBlank(comment)) {
 				addComment(comment, e);
 			}
 		} catch (DaoException e) {

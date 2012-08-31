@@ -140,6 +140,9 @@ public class ElevateService{
 			}
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			result  = daoService.addElevateResult(e);
+			if (result > 0 && !StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addElevate()",e);
 		}
