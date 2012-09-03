@@ -1534,6 +1534,8 @@
 
 					today.setHours(0,0,0,0); //ignore time of current date 
 
+					base.contentHolder.find("#addItemDate_1").datepicker('disable');
+					
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", "Invalid Input");
 					}
@@ -1552,6 +1554,9 @@
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
+					
+					base.contentHolder.find("#addItemDate_1").datepicker('enable');
+
 				}
 			});
 		};
