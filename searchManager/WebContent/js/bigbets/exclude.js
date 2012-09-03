@@ -344,7 +344,8 @@
 				var self = this;
 				$("#preloader").show();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
-				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+				$("#ruleItemDisplayOptions").hide();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer").fadeOut("slow", function(){
 					$("#titleText").html(self.moduleName);
 					$("#titleHeader").empty();
 				});

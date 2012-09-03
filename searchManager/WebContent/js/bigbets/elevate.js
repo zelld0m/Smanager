@@ -382,7 +382,8 @@
 				var self = this;
 				$("#preloader").show();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
-				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+				$("#ruleItemDisplayOptions").hide();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer").fadeOut("slow", function(){
 					$("#titleText").html(self.moduleName);
 					$("#titleHeader").empty();
 				});
@@ -443,7 +444,7 @@
 									var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
 									$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
 								}
-
+								
 								if(self.selectedRuleItemTotal == 0 && self.getRuleItemFilter()==="all"){
 									$('#ruleItemDisplayOptions').hide(); 
 								}else{
