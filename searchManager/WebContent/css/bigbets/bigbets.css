@@ -183,6 +183,7 @@ div.listView ul li div.validityDate { float:left; width:33% }
 
 .ui-autocomplete 								{ list-style:none !important; margin:0; padding:4px 12px !important  }
 				
-
-
+.listIcons img:hover { cursor:pointer; border:0 }
+.validityDate label img:hover { cursor:pointer; border:0 }
+#commentIcon img:hover { cursor:pointer; border:0 }
 

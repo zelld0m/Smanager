@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -73,6 +75,9 @@ public class ExcludeService {
 					e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addExcludeResult(e);
+						if (!StringUtils.isBlank(comment)) {
+							addComment(comment, e);
+						}
 					}
 				}
 			} catch (DaoException de) {
@@ -105,6 +110,9 @@ public class ExcludeService {
 			e.setComment(UtilityService.formatComment(comment));
 			e.setExcludeEntity(MemberTypeEntity.FACET);
 			count = daoService.addExcludeResult(e);
+			if (!StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
@@ -114,6 +122,7 @@ public class ExcludeService {
 
 	@RemoteMethod
 	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate, String comment) {
+		int count = -1;
 		try {
 			logger.info(String.format("%s %s", keyword, value));
 
@@ -134,12 +143,14 @@ public class ExcludeService {
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
-			
-			return daoService.addExcludeResult(e);
+			count  = daoService.addExcludeResult(e);
+			if (count > 0 && !StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addExclude()",e);
 		}
-		return -1;
+		return count;
 	}
 
 	@RemoteMethod
@@ -152,7 +163,8 @@ public class ExcludeService {
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteExcludeResult(e);
+			RecordSet<ExcludeResult> rset = daoService.getExcludeResultList(new SearchCriteria<ExcludeResult>(e, null, null, 0, 1));
+			return daoService.deleteExcludeResult(rset.getList().get(0));
 		} catch (DaoException e) {
 			logger.error("Failed during removeExclude()",e);
 		}
@@ -415,4 +427,15 @@ public class ExcludeService {
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+	
+	private Comment addComment(String comment, ExcludeResult e) throws DaoException {
+		Comment com = new Comment();
+		com.setComment(comment);
+		com.setUsername(UtilityService.getUsername());
+		com.setReferenceId(e.getMemberId());
+		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+		daoService.addComment(com);
+		return com;
+	}
+
 }

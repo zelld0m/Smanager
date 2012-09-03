@@ -132,6 +132,8 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			Map<String, Node> nodeMap = new LinkedHashMap<String, Node>();
 			Document elevateDoc = null;
 			int size = startRow + requestedRows;
+			
+			int currItem = 1;
 			for (ElevateResult elevateResult : elevatedList) {
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
@@ -142,16 +144,16 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp());
 				} else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().getConditionForSolr());
-					generateElevateList(elevateValues, elevateFacetValues, elevatedList, elevateResult);
-					if (elevateValues.length() > 0) {
-						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
-						requestParams.add(excludeEDPNVP);
-					}				
-					if (elevateFacetValues.length() > 0) {
-						excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
-						requestParams.add(excludeFacetNVP);
-					}				
 				}
+				generateElevateList(elevateValues, elevateFacetValues, elevatedList, currItem++);
+				if (elevateValues.length() > 0) {
+					excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+					requestParams.add(excludeEDPNVP);
+				}				
+				if (elevateFacetValues.length() > 0) {
+					excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
+					requestParams.add(excludeFacetNVP);
+				}				
 				requestParams.add(nvp);
 				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 				requestParams.remove(nvp);
@@ -216,13 +218,14 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 		return addedRecords;
 	}
 
-	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, ElevateResult elevateResult) {
+	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, int currItem) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
+		int i = 1;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
-				if (elevate.getMemberId().equals(elevateResult.getMemberId())) {
-					continue;
+				if (++i > currItem) {
+					break;
 				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {

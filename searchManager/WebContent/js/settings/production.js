@@ -81,9 +81,9 @@
 					cmpltmsg += flmsg;
 				}
 				
-				alert(cmpltmsg);	
+				jAlert(cmpltmsg,"Push to Prod");	
 			}else{		
-				alert("No rules were " + msg_);
+				jAlert("No rules were " + msg_,"Push to Prod");
 			}
 		};
 		
@@ -93,9 +93,9 @@
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 					
 					if(getSelectedRefId().length==0){
-						alert("Please select rule");
+						jAlert("Please select rule","Push to Prod");
 					}else if ($.isBlank(comment)){
-						alert("Please add comment");
+						jAlert("Please add comment","Push to Prod");
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						switch($(evt.currentTarget).attr("id")){

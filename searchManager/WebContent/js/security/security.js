@@ -45,11 +45,11 @@
 					SecurityServiceJS.updateUser(shrole,user,shexp,shlck,shemail,{
 						callback:function(data){
 							if(data.status == '200'){
-								alert(data.message);
+								jAlert(data.message,"Security");
 								sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 								api.destroy();
 							}else{
-								alert(data.message);
+								jAlert(data.message,"Security");
 							}
 						}		
 					});
@@ -95,11 +95,11 @@
 					SecurityServiceJS.addUser(adrole,sec.curname,aduser,adfull,adpass,adexp,adlck,ademail,{
 						callback:function(data){
 							if(data.status == '200'){
-								alert(data.message);
+								jAlert(data.message,"Security");
 								sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 								api.destroy();
 							}else{
-								alert(data.message);
+								jAlert(data.message,"Security");
 							}
 						}					
 					});		
@@ -190,10 +190,10 @@
 					SecurityServiceJS.resetPassword(data.groupId,data.username,e.find('#shpass').val(),{
 						callback:function(data){
 							if(data.status == '200'){
-								alert(data.message);
+								jAlert(data.message,"Security");
 								api.destroy();
 							}else{
-								alert(data.message);
+								jAlert(data.message,"Security");
 							}
 						}			
 					});	
@@ -308,9 +308,9 @@
 
 					var validformat=/^\d{2}\/\d{2}\/\d{4}$/;
 					if(!isXSSSafe(sec.cursrc))
-						alert("Invalid keyword. HTML/XSS is not allowed.");
+						jAlert("Invalid keyword. HTML/XSS is not allowed.","Security");
 					else if($.isNotBlank(sec.curmem) && !validformat.test(sec.curmem))
-						alert("Invalid date. (Use MM/DD/YYYY format)");
+						jAlert("Invalid date. (Use MM/DD/YYYY format)","Security");
 					else
 						sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 				},	
@@ -454,10 +454,10 @@
 						SecurityServiceJS.deleteUser(data.username,{
 							callback:function(data){
 								if(data.status == '200'){
-									alert(data.message);
+									jAlert(data.message,"Security");
 									sec.getUserList(sec.currole,sec.curname,1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp);
 								}else{
-									alert(data.message);
+									jAlert(data.message,"Security");
 								}
 							}		
 						});	

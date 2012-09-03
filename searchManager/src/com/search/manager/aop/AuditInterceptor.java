@@ -150,7 +150,7 @@ public class AuditInterceptor {
 			e = (ElevateResult)jp.getArgs()[0];
 			auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
 			auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
-			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+			if (e.getElevateEntity() == null || e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
 				auditTrail.setReferenceId(e.getEdp());
 			} else {
 				auditTrail.setReferenceId(e.getMemberId());
@@ -164,7 +164,7 @@ public class AuditInterceptor {
 							auditTrail.getReferenceId(), e.getLocation(),e.getExpiryDate(), e.getComment()));
 				} else {
 					auditTrail.setDetails(String.format("Adding ID[%1$s] to position[%2$s]. Condition[%3$s] expiring on[%4$tF]. Comment[%5$s]",
-							auditTrail.getReferenceId(), e.getLocation(),e.getCondition().getCondition(), e.getExpiryDate(), e.getComment()));
+							auditTrail.getReferenceId(), e.getLocation(),e.getCondition() != null ? e.getCondition().getReadableString() : "", e.getExpiryDate(), e.getComment()));
 				}
 				break;
 			case update:
@@ -172,8 +172,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Elevated EDP[%1$s] to position[%2$s]",
 							auditTrail.getReferenceId(), e.getLocation()));
 				} else {
-					auditTrail.setDetails(String.format("Elevated ID[%1$s] to position[%2$s]",
-							auditTrail.getReferenceId(), e.getLocation()));
+					auditTrail.setDetails(String.format("Elevated ID[%1$s] Condition[%2$s] to position[%3$s]",
+							auditTrail.getReferenceId(), e.getCondition() != null ? e.getCondition().getReadableString() : "", e.getLocation()));
 				}
 				break;
 			case delete:
@@ -181,8 +181,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Removed elevated entry EDP[%1$s]",
 							auditTrail.getReferenceId()));
 				} else {
-					auditTrail.setDetails(String.format("Removed elevated entry ID[%1$s]",
-							auditTrail.getReferenceId()));
+					auditTrail.setDetails(String.format("Removed elevated entry ID[%1$s] Condition[%2$s]",
+							auditTrail.getReferenceId(),e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case appendComment:
@@ -190,8 +190,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Appending comment [%2$s] for elevated entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getComment()));
 				} else {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for elevated entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					auditTrail.setDetails(String.format("Appending comment [%2$s] for elevated entry ID[%1$s] Condition[%3$s]",
+							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case updateComment:
@@ -199,8 +199,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Setting comment [%2$s] for elevated entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getComment()));
 				} else {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for elevated entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					auditTrail.setDetails(String.format("Setting comment [%2$s] for elevated entry ID[%1$s] Condition[%3$s]",
+							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case updateExpiryDate:
@@ -208,8 +208,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for elevated entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getExpiryDate()));
 				} else {
-					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for elevated entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getExpiryDate()));
+					auditTrail.setDetails(String.format("Changing expiry date to [%1$tF] for elevated entry ID[%1$s]",
+							e.getExpiryDate(), e.getMemberId()));
 				}
 				break;
 			case clear:
@@ -263,8 +263,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Adding EDP[%1$s]. Comment[%2$s]",
 							auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
 				} else {
-					auditTrail.setDetails(String.format("Adding ID[%1$s]. Comment[%2$s]",
-							auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
+					auditTrail.setDetails(String.format("Adding ID[%1$s]. Condition[%2$s] expiring on[%3$tF]. Comment[%4$s]",
+							auditTrail.getReferenceId(),e.getCondition() != null ? e.getCondition().getReadableString() : "", e.getExpiryDate(), e.getComment()));
 				}
 
 				break;
@@ -273,8 +273,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Removed excluded entry EDP[%1$s]",
 							auditTrail.getReferenceId()));
 				} else {
-					auditTrail.setDetails(String.format("Removed excluded entry ID[%1$s]",
-							auditTrail.getReferenceId()));
+					auditTrail.setDetails(String.format("Removed excluded entry ID[%1$s] Condition[%2$s]",
+							auditTrail.getReferenceId(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case appendComment:
@@ -282,8 +282,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getComment()));
 				} else {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry ID[%1$s] Condition[%3$s]",
+							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case updateComment:
@@ -291,8 +291,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getComment()));
 				} else {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry ID[%1$s] Condition[%3$s]",
+							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 				}
 				break;
 			case updateExpiryDate:
@@ -300,8 +300,8 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getExpiryDate()));
 				} else {
-					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getExpiryDate()));
+					auditTrail.setDetails(String.format("Changing expiry date to [%1$tF] for elevated entry ID[%1$s]",
+							e.getExpiryDate(), e.getMemberId()));
 				}
 				break;
 			case clear:
@@ -368,6 +368,9 @@ public class AuditInterceptor {
 				}
 				if (rule.getRedirectType() != null) {
 					log.append(String.format("redirect type = [%1$s];", rule.getRedirectType()));
+				}
+				if (rule.getIncludeKeyword() != null) {
+					log.append(String.format("include keyword = [%1$s];", rule.getIncludeKeyword()));
 				}
 				if (rule.getChangeKeyword() != null) {
 					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));

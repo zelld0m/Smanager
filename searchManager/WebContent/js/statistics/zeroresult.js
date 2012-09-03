@@ -15,10 +15,10 @@
 				ZeroResultServiceJS.sendFileAsEmail($("select#fileFilter").val(), customFilename, recipients, {
 					callback: function(data){
 						if (data == true) {
-							alert("Email sent.");
+							jAlert("Email sent.","Zero Result");
 						}
 						else {
-							alert("Unable to send email.");
+							jAlert("Unable to send email.","Zero Result");
 						}
 					}
 				});

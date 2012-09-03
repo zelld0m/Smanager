@@ -43,15 +43,19 @@
 						var displayName = dynamicAttr[filterName].attributeDisplayName;
 						var displayValue = displayString.substr(displayString.indexOf(':')); 
 
-						/*for (var currIndex = displayValue.indexOf(':'); currIndex < displayValue.length; currIndex++) {
+						for (var currIndex = displayValue.indexOf(':'); currIndex < displayValue.length; currIndex++) {
+							if (displayValue.charAt(currIndex) === '|' && currIndex >= 2) {
+								displayValue = displayValue.substr(0, currIndex-2) + displayValue.substr(currIndex + 1);
+								currIndex = currIndex - 2;
+							}
 							if (displayValue.charAt(currIndex) === ' ' && !inDoubleQuote) {
-								displayValue = (displayValue.substr(0, currIndex)).split("|")[1] + ', ' + displayValue.substr(currIndex + 1);
+								displayValue = displayValue.substr(0, currIndex) + ', ' + displayValue.substr(currIndex + 1);
 								currIndex++;
 							}
 							else if (displayValue.charAt(currIndex) === '"') {
 								inDoubleQuote = !inDoubleQuote;
 							}
-						}*/
+						}
 						
 						links.push(AjaxSolr.theme('createLink', displayName + displayValue, self.removeFacet(fq[i])));
 						continue;

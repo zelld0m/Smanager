@@ -41,7 +41,7 @@
 			if (base.options.showPosition){
 				template  += '		<div class="floatL marT5" style="width: 97px">';
 				template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '			<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '			<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '		</div>';
 				template  += '		<div class="clearB"></div>';
 				template  += '		<div class="floatL marT5 marL5">';
@@ -50,6 +50,7 @@
 			template  += '			<label class="w60 floatL marL5 padT5">Comment: </label> ';
 			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL marL5 w230"></textarea></label>';
 			template  += '		</div>';
+			template  += '		<div class="clearB"></div>';
 			template  += '		<div align="right">';
 			template  += '			<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '				<div class="buttons fontBold">Add</div>';
@@ -190,14 +191,14 @@
 			template  += '		</div>';
 			template  += '	</div>';
 
-			template  += '	<div id="dynamicAttribute">';
+			template  += '	<div id="dynamicAttribute" class="w500">';
 			template  += '		<div class="holder fsize12 padT40 marRL20">';
 
-			template  += '				<table>';
+			template  += '				<table class="w460">';
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="templateNameList" class="templateNameList selectCombo w229" title="Select Template Name"></select>';
 			template  += '						</div>';
@@ -212,9 +213,9 @@
 			template  += '						<div id="dynamicAttributeItemList">';							
 			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem marL30" style="display:none">';
 			template  += '								<div class="clearB"></div>';
-			template  += '								<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
+			template  += '								<div class="w146 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
 			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8 marL5" alt="Delete Attribute" title="Delete Attribute">';
-			template  += '								<div class="w245 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
+			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
 			template  += '									<ul id="dynamicAttributeValues">';
 			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
 			template  += '											<div>';
@@ -228,20 +229,22 @@
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
-			template  += '			</table>';						
+			template  += '			</table>';
+			template  += '			<div class="clearB"></div>';
 			template  += '		</div>';
-			template  += '			<table id="addDynamicAttributeName">';						
+			template  += '			<table id="addDynamicAttributeName" class="w460">';						
 			template  += '				<tr id="dynamicAttributeName">';
-			template  += '					<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>';
-			template  += '					<td class="padT2">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
-			template  += '						<div class="floatL">';
-			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w229" title="Add Dynamic Attribute"></select>';
+			template  += '					<td class="w175">Add Dynamic Attribute :</td>';
+			template  += '					<td class="iepadBT0 w278 padT1">';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<div class="floatL posRel leftn2">';
+			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>';
 			template  += '						</div>';
-			template  += '						<a href="javascript:void(0);" src="" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marTn3 leftn22 posRel" id="addButton"></a>';
+			template  += '						<a href="javascript:void(0);" src="" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatL leftn22 posRel top3" id="addButton"></a>';
 			template  += '					</td>';
 			template  += '				</tr>';
-			template  += '			</table>';						
+			template  += '			</table>';
+			template  += '			<div class="clearB"></div>';
 			template  += '		</div>';
 			template  += '	</div>';
 
@@ -250,7 +253,7 @@
 			template  += '			<table>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Name (contains) :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<input id="nameContains" type="text" class="w249"/>';
 			template  += '					</td>';
 			template  += '				</tr>';
@@ -262,7 +265,7 @@
 			template  += '				</tr>';		
 			template  += '				<tr>';
 			template  += '					<td class="w175">Platform :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="platformList" class="selectCombo w229" title="Select Platform" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="universal">Universal</option>';
@@ -274,7 +277,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Condition :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="conditionList" class="selectCombo w229" title="Select Condition" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="refurbished">Refurbished</option>';
@@ -285,7 +288,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Availability :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="availabilityList" class="selectCombo w229" title="Select Availability" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="instock">In Stock</option>';
@@ -295,7 +298,7 @@
 			template  += '				</tr>';
 			template  += '				<tr>';
 			template  += '					<td class="w175">License :</td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
 			template  += '							<option value="all"></option>';
 			template  += '							<option value="license">Show License Products Only</option>';
@@ -309,12 +312,12 @@
 			template  += '	</div>';
 			template  += '</div>';
 			
-			template  += '<div class="fcetItem marT20">';
+			template  += '<div class="fcetItem marT20 w500">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
-			template  += '					<td class="iepadBT0">';
+			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<div class="floatL w100 marT5">';
 			template  += '							<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>';
 			template  += '						</div>';
@@ -322,7 +325,7 @@
 			if (base.options.showPosition){
 				template  += '						<div class="floatL marT5" style="width: 97px">';
 				template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
 			
@@ -1434,6 +1437,23 @@
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
+			base.contentHolder.find("#addItemPosition").on({
+				keypress:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					if (charCode > 31 && (charCode < 48 || charCode > 57))
+						return false;
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
+				}
+			});
 
 			switch(type){
 			case "facet": 
@@ -1475,7 +1495,7 @@
 				buttonImage: "../images/icon_calendar.png",
 				buttonImageOnly: true
 			});
-
+ 
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					var position = 1;
@@ -1487,11 +1507,18 @@
 					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
+					var condMap = base.getSelectedFacetFieldValues();
+					
+					if ($.isEmptyObject(condMap)){
+						jAlert('Please specify at least one filter condition');
+						return;
+					}
+					
 					if (base.options.newRecord){
-						base.options.addFacetItemCallback(position, expiryDate, comment, base.getSelectedFacetFieldValues());
+						base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
 					}else{
 						base.api.destroy();
-						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, base.getSelectedFacetFieldValues());
+						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
 					}
 				}
 			});
@@ -1511,13 +1538,26 @@
 				buttonImage: "../images/icon_calendar.png",
 				buttonImageOnly: true
 			});
+			
 
-			base.contentHolder.find("#clearBtn").on({
-				click: function(evt){
-					base.contentHolder.find("input,textarea").val("");
+			base.contentHolder.find("#addItemPosition").on({
+				keypress:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					if (charCode > 31 && (charCode < 48 || charCode > 57))
+						return false;
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
 				}
 			});
-
+			
 			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
@@ -1526,11 +1566,13 @@
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment = $.trim($.defaultIfBlank(base.contentHolder.find("#addItemComment").val()).replace(/\n\r?/g, '<br />'));
+					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
 
 					today.setHours(0,0,0,0); //ignore time of current date 
 
+					base.contentHolder.find("#addItemDate_1").datepicker('disable');
+					
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", "Invalid Input");
 					}
@@ -1549,6 +1591,9 @@
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
+					
+					base.contentHolder.find("#addItemDate_1").datepicker('enable');
+
 				}
 			});
 		};
@@ -1582,7 +1627,12 @@
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
 						};				
-
+						
+						base.contentHolder.find("#clearBtn").on({
+							click: function(evt){
+								base.contentHolder.find("input,textarea").val("");
+							}
+						});
 
 					},
 					hide: function(event, api){
