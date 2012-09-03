@@ -540,11 +540,11 @@ public class SearchServlet extends HttpServlet {
 								}
 							}
 						}
-//						ElevateResult forceAddFilter = new ElevateResult();
-//						forceAddFilter.setStoreKeyword(sk);
-//						forceAddFilter.setForceAdd(true);
-//						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
-//						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
+						ElevateResult forceAddFilter = new ElevateResult();
+						forceAddFilter.setStoreKeyword(sk);
+						forceAddFilter.setForceAdd(true);
+						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
+						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
 					}
 					
 					if (!disableExclude) {

@@ -27,6 +27,7 @@ import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
+import com.search.ws.SearchHelper;
 
 @Service(value = "elevateService")
 @RemoteProxy(
@@ -177,12 +178,12 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
-//				if (StringUtils.isBlank(edp)) {
-//					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
-//					e.setForceAdd(true);
-//				} else {
+				if (StringUtils.isBlank(edp)) {
+					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
+					e.setForceAdd(true);
+				} else {
 					e.setForceAdd(false);
-//				}
+				}
 				if (StringUtils.isNotBlank(edp)) {
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
 					e.setEdp(edp);
@@ -222,6 +223,7 @@ public class ElevateService{
 		
 		int count = 0;
 		try {
+			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			RedirectRuleCondition condition = new RedirectRuleCondition();
@@ -233,12 +235,14 @@ public class ElevateService{
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
+			int facetCount = SearchHelper.getFacetCount(server, store, keyword, e.getCondition().getConditionForSolr());
+			e.setForceAdd(facetCount == 0);
 			count = daoService.addElevateResult(e);
 			if (!StringUtils.isBlank(comment)) {
 				addComment(comment, e);
 			}
 		} catch (DaoException de) {
-				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
+			logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
 		return count;
 	}
