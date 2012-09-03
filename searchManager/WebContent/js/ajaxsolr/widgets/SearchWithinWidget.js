@@ -33,8 +33,13 @@
 			var oldSearchString = $.cookie('searchWithin');
 			self.manager.store.removeByValue('fq', oldSearchString);
 			$.cookie('searchWithin', value, {expires: 1});
-			if (value.trim()){
-				self.manager.store.addByValue('fq', $.trim(value));
+			if ($.trim(value)){
+				if(!isXSSSafe($.trim(value))){
+					alert("Invalid keyword. HTML/XSS is not allowed.");
+					return false;
+				}
+				else
+					self.manager.store.addByValue('fq', $.trim(value));
 			}
 			self.manager.doRequest(0);
 		}

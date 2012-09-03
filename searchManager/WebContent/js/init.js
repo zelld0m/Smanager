@@ -34,17 +34,17 @@ getRuleNameSubTextStatus = function(ruleStatus){
 	}	
 };
 
-
 showActionResponse = function(code, action, param){
 	switch(code){
-	case -1: alert("Error encountered while processing " + action + " request for " + param); break;
-	case  0: alert("Failed " + action + " request for " + param); break;
-	default: alert("Successful " + action + " request for " + param); break;
+	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
+	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
+	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };
 
 showActionResponseFromMap = function(code, action, param, additionalFailMessage){
-	message = "";
+	var message = "";
+	
 	if (code["PASSED"].length > 0) {
 		message += "Successful " + action + " request for " + code["PASSED"] + ".";
 	}
@@ -57,48 +57,7 @@ showActionResponseFromMap = function(code, action, param, additionalFailMessage)
 			message += "\n" + additionalFailMessage;
 		}
 	}
-	alert (message); 
-};
-
-showDeploymentStatusBar = function(moduleName, ruleStatus){
-	$("span#status").html("");
-	$("span#statusMode").html("");
-	$("span#statusDate").html("");
-
-	$("#submitForApproval").hide();
-
-	if(ruleStatus!=null){
-		
-		ruleId = ruleStatus["ruleStatusId"];
-		if (ruleId == null) {
-			ruleId = "";
-		}
-	
-		$("#submitForApproval").show();
-
-		$("div#statusHolder").hide();
-		if($.isNotBlank(ruleStatus["approvalStatus"])){
-			$("div#statusHolder").show();
-			$("span#status").html(getRuleNameSubTextStatus(ruleStatus));
-		}
-
-		$("div#publishHolder").hide();
-		if($.isNotBlank(ruleStatus["lastPublishedDate"])){
-			$("div#publishHolder").show();
-			$("span#statusDate").html(ruleStatus["lastPublishedDate"].toUTCString());
-		}
-
-		$("a#submitForApprovalBtn").show();
-		if(ruleStatus["locked"]){
-			$("span#statusMode").append("[Read-Only]");
-			$("a#submitForApprovalBtn").hide();
-		}
-		
-		$("div#commentHolder span#commentIcon").on({
-			click: showAuditList
-		}, {type:moduleName, ruleId:ruleId, ruleType:"Rule Status" });
-
-	}
+	jAlert(message,"Multiple Rule Item Add"); 
 };
 
 /** Style for HTML upload tag */
@@ -131,34 +90,39 @@ showMessage = function(selector, msg){
 	});
 };
 
+getLockedRuleHTMLTemplate = function(){
+	var template = '';
+
+	template += '<div id="ruleIsLocked" class="w180">';
+	template += '	<div class="w180 alert">';
+	template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	template += '	</div>';
+	template += '</div>';
+
+	return $(template).html();
+};
+
+
+getLastModifiedHTMLTemplate = function(user, date){
+	var template = '';
+	
+	template += '<div>';
+	template += '	<div>Modified by <strong>' + user + '</strong><br/>';
+	template += '	on ' + date;
+	template += '	</div>';
+	template += '</div>';
+
+	return $(template).html();
+};
+
+showLastModified = function(e){
+	showMessage(e.target, getLastModifiedHTMLTemplate(e.data.user, e.data.date));
+};
+
 /** Style for HTML upload tag */
 showHoverInfo = function(e){
 	if(e.data.locked){
-		$(this).qtip({
-			id: "hover-locked",
-			content: {
-				text: $('<div/>')
-			},
-			position:{
-				at: 'right center',
-				my: 'left center'
-			},
-			show:{
-				solo: false,
-				ready: true
-			},
-			hide: 'unfocus, mouseout',
-			style:{width:'auto'},
-			events: {
-				show: function(event, api){
-					var $content = $("div", api.elements.content);
-					$content.html($("#ruleIsLocked").html());
-				},
-				hide: function(event, api){
-					api.destroy();
-				}
-			}
-		});
+		showMessage(e.target, getLockedRuleHTMLTemplate());
 	}
 };
 
@@ -190,7 +154,7 @@ function initFileUploads() {
 /** Global initialization of jQuery */
 (function($){
 	$(document).ready(function() {
-		
+
 		var load = false;
 		window.onfocus = function(){
 			if (load) {
@@ -201,11 +165,11 @@ function initFileUploads() {
 				}
 			}
 		};
-		
+
 		window.onblur = function() {
 			load = true;
-	    };
-		
+		};
+
 		var useTinyMCE = function(){
 			$('textarea.tinymce').tinymce({
 				// Location of TinyMCE script
@@ -248,33 +212,35 @@ function initFileUploads() {
 		};
 
 		var useTabs = function(){
-			$(".tabs").each(function() {
-				var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
-				if (tabid == undefined || tabid == null || tabid == "") {
-					$(this).tabs({
-						cookie: {
-							expires: 30
-						}
-					});
-				}
-				else {
-					$(this).tabs({
-						cookie: {
-							expires: 30,
-							name: tabid
-						}
-					});
+			$(".tabs").each(function(idx, el) {
+				if($(this).attr("id")!=="redirect-type"){
+					var tabid = "ui-tab-" + $(this).attr("id").toLowerCase();
+					if (tabid == undefined || tabid == null || tabid == "") {
+						$(this).tabs({
+							cookie: {
+								expires: 30
+							}
+						});
+					}
+					else {
+						$(this).tabs({
+							cookie: {
+								expires: 30,
+								name: tabid
+							}
+						});
+					}
 				}
 			});
 		};
-		
+
 		var COOKIE_SERVER_SELECTION = "server.selection";
 		var COOKIE_SERVER_SELECTED = "server.selected";
-		
+
 		var getServerList = function(){
-		
+
 			var serverSelection = $.trim($.cookie(COOKIE_SERVER_SELECTION));
-			
+
 			if($.isNotBlank(serverSelection)){
 				$("#select-server option").remove();
 				parseData = JSON.parse($.trim($.cookie(COOKIE_SERVER_SELECTION)));
@@ -293,10 +259,10 @@ function initFileUploads() {
 						setSelectedServer();
 					}
 				});
-				
+
 			}
-			
-			$("#select-server").on({
+
+			$("#select-server").off().on({
 				change: function(event, data){
 					var reload;
 					if (data != undefined) {
@@ -306,6 +272,7 @@ function initFileUploads() {
 						$.cookie(COOKIE_SERVER_SELECTED, $("#select-server option:selected").val() ,{path:GLOBAL_contextPath});
 						UtilityServiceJS.setServerName($("#select-server option:selected").text(), {
 							callback:function(){
+
 							}
 						});						
 					}
@@ -330,7 +297,7 @@ function initFileUploads() {
 				$("#select-server option[value='" + serverSelected + "']").attr("selected", "selected");				
 			}
 		};
-		
+
 		var COOKIE_NAME_DOCK = "dock.active";
 
 		var refreshDock = function(){
@@ -379,7 +346,7 @@ function initFileUploads() {
 				base.$el.find(selector + ' .page').html(model["currentPage"]);
 			}
 		});
-		
+
 		useTabs();
 		useTinyMCE();
 		getServerList();

@@ -12,27 +12,36 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.search.manager.cache.dao.DaoCacheService;
-import com.search.manager.service.StatisticService;
 import com.search.manager.service.UtilityService;
 
 @Controller
-@RequestMapping("/statistic")
+@RequestMapping("/")
 @Scope(value="prototype")
 public class StatisticController {
 
 	private static final Logger logger = Logger.getLogger(StatisticController.class);
 	
 	@Autowired DaoCacheService daoCacheService;
-	@Autowired private StatisticService statisticService;
 	
-	@RequestMapping(value="/{store}")
-	public String execute(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+	@RequestMapping(value="/topkeyword/{store}")
+	public String topKeyword(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
 		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Statistic");
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Top Keyword");
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
-		return "statistic/statistic";
+		return "statistic/topkeyword";
+	}
+	
+	@RequestMapping(value="/zeroresult/{store}")
+	public String zeroResult(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+		model.addAttribute("store", store);
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Zero Result");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		return "statistic/zeroresult";
 	}
 }

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
@@ -25,6 +27,7 @@ import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
+import com.search.ws.SearchHelper;
 
 @Service(value = "elevateService")
 @RemoteProxy(
@@ -138,6 +141,9 @@ public class ElevateService{
 			}
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			result  = daoService.addElevateResult(e);
+			if (result > 0 && !StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addElevate()",e);
 		}
@@ -172,12 +178,12 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
-//				if (StringUtils.isBlank(edp)) {
-//					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
-//					e.setForceAdd(true);
-//				} else {
+				if (StringUtils.isBlank(edp)) {
+					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
+					e.setForceAdd(true);
+				} else {
 					e.setForceAdd(false);
-//				}
+				}
 				if (StringUtils.isNotBlank(edp)) {
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
 					e.setEdp(edp);
@@ -188,6 +194,9 @@ public class ElevateService{
 					e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addElevateResult(e);
+						if (!StringUtils.isBlank(comment)) {
+							addComment(comment, e);
+						}
 					}
 				} else {
 					
@@ -214,6 +223,7 @@ public class ElevateService{
 		
 		int count = 0;
 		try {
+			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			RedirectRuleCondition condition = new RedirectRuleCondition();
@@ -225,9 +235,14 @@ public class ElevateService{
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
+			int facetCount = SearchHelper.getFacetCount(server, store, keyword, e.getCondition().getConditionForSolr());
+			e.setForceAdd(facetCount == 0);
 			count = daoService.addElevateResult(e);
+			if (!StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException de) {
-				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
+			logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
 		return count;
 	}
@@ -254,8 +269,12 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, comment));
 			String store = UtilityService.getStoreName();
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			
+			if(StringUtils.isNotBlank(comment)){
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			}
+			
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
@@ -277,6 +296,7 @@ public class ElevateService{
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
+			e = daoService.getElevateItem(e);
 			return daoService.deleteElevateResult(e);
 		} catch (DaoException e) {
 			logger.error("Failed during removeElevate()",e);
@@ -326,6 +346,20 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
+	public ElevateProduct getProductByEdp(String keyword, String edp) {
+
+		RecordSet<ElevateProduct> products = getAllElevatedProducts(keyword, 0, 100);
+		ElevateProduct product = null;
+		for (ElevateProduct  prod: products.getList()) {
+			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
+				product = prod;
+				break;
+			}
+		}
+		return product;
+	}
+
+	@RemoteMethod
 	public RecordSet<ElevateProduct> getAllElevatedProducts(String keyword, int page,int itemsPerPage) {
 		RecordSet<ElevateProduct> result = null;
 		try {
@@ -343,6 +377,23 @@ public class ElevateService{
 		return result;
 	}
 
+	@RemoteMethod
+	public RecordSet<ElevateProduct> getAllElevatedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+
+			ElevateResult e = new ElevateResult();
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
+			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllElevatedProducts()",e);
+		}
+		return null;
+	}
+	
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getActiveElevatedProducts(String keyword, int page,int itemsPerPage) {
 		try {
@@ -449,4 +500,15 @@ public class ElevateService{
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+
+	private Comment addComment(String comment, ElevateResult e) throws DaoException {
+		Comment com = new Comment();
+		com.setComment(comment);
+		com.setUsername(UtilityService.getUsername());
+		com.setReferenceId(e.getMemberId());
+		com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+		daoService.addComment(com);
+		return com;
+	}
+
 }

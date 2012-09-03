@@ -15,7 +15,7 @@
 
 					var facetFields = this.manager.response.facet_counts.facet_fields;
 
-					if ( facetFields === undefined) {
+					if ($.isBlank(facetFields)) {
 						$(this.target).html(AjaxSolr.theme('no_items_found'));
 						return;
 					}
@@ -25,13 +25,16 @@
 					var output= '';
 
 					for (var facetField in facetFields) {
-						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
-
 						var maxCount = 0;
 						var objectedItems = [];
 						var limit = this.limit;
 						var counter = 0;
 						facetValues = facetFields[facetField];
+						
+						if($.isBlank(facetValues) || facetField === GLOBAL_storeFacetTemplateName)
+							continue;
+							
+						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
 
 						for (var facetValue in facetValues) {
 							if (counter == limit) break;
@@ -53,9 +56,10 @@
 							var count = objectedItems[i].count;
 							
 							if ($.isNotBlank(facet)){
-								AjaxSolr.theme('createFacetLink', facetField + i,facetField, facet, count, this.clickHandler(facetField, facet));
+								facetValue = (facet.match(/^["\(].*["\)]$/)) ? facet :  '"' + facet + '"';
+								AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i,facetField, facet, count, this.clickHandler(facetField, facetValue));
 								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
-									AjaxSolr.theme('createFacetMoreOptionsLink', facetField, facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
+									AjaxSolr.theme('createFacetMoreOptionsLink', $.formatAsId(facetField), facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
 								}
 							}
 						
@@ -65,7 +69,7 @@
 			}
 		},
 
-		moreOptionsHandler: function (facetField,facetValues) {
+		moreOptionsHandler: function (facetField) {
 			var self = this;
 
 			return function () {
@@ -79,6 +83,7 @@
 							var sel = $.trim($('#' + $(this).attr('rel')).val());
 							if ($.isNotBlank(sel)){
 								i++;
+								sel = (sel.match(/^["\(].*["\)]$/)) ? sel :  '"' + sel + '"';
 								selectedItems.push(AjaxSolr.Parameter.escapeValue(sel));
 							}
 						}
@@ -93,8 +98,10 @@
 				getFacetParams = function (){
 					var paramString = "";
 					var keyword = $.trim(self.manager.store.values('q'));
-					
-					var relId = $("select#relevancy").val()==="keyword_default" ? "": $("select#relevancy").val();
+					var relId = $("select#relevancy").val();
+					if (relId == undefined || selectedRelevancy === "keyword_default") {
+						relId = "";
+					}
 					var params = {
 							'facet': true,
 							'q': keyword,
@@ -177,7 +184,7 @@
 
 				};
 
-				$('#more' + facetField + " .lnk").qtip({
+				$('#more' + $.formatAsId(facetField) + " .lnk").qtip({
 					content: {
 						text: $('<div/>'),
 						title: {

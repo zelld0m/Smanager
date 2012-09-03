@@ -3,12 +3,15 @@ package com.search.manager.utility;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 public class FileUtil {
@@ -19,7 +22,7 @@ public class FileUtil {
 
 	public static void createDirectory(String basePath,String directoryName) throws Exception{
 		try{
-			if(isBlank(basePath)) throw new Exception("basePath is null.");
+			if(StringUtils.isBlank(basePath)) throw new Exception("basePath is null.");
 			if("".equals(directoryName.trim()) || null == directoryName.trim()) throw new Exception("directoryName is null.");
 			createDirectory(basePath+directoryName);
 		}catch(Exception e){
@@ -29,7 +32,7 @@ public class FileUtil {
 
 	public static void createDirectory(String directoryName) throws Exception{
 		try{
-			if(isBlank(directoryName)) throw new Exception("directoryName is null.");
+			if(StringUtils.isBlank(directoryName)) throw new Exception("directoryName is null.");
 			File newPath = new File(directoryName);
 			if(!newPath.exists()) {
 				boolean status = newPath.mkdirs();
@@ -38,7 +41,7 @@ public class FileUtil {
 			throw new Exception(e);
 		}
 	}
-
+	
 	// Put the file into server
 	public static void fileStream(Object obj, String filePath, String fileName) throws Exception{
 		ObjectOutputStream mediaFileOut=null;
@@ -131,18 +134,6 @@ public class FileUtil {
 	
 	public static void deleteDir(String dir) throws IOException{
 		new File(dir).deleteOnExit();
-	}
-
-	public static boolean isBlank(String str){
-		try 
-		{
-			if (null == str || "".equals(str))
-				return true;
-			else
-				return false;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 	
 	// Check allowable file count

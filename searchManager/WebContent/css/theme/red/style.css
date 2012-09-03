@@ -11,7 +11,8 @@
 
 /* layout */
 .cssReset .bgTopHeader 			{ width:100%; background:#3a3a3a; padding:8px 0; z-index:10 }
-.cssReset .bgTopHeaderMnu 		{ width:100%; height:44px; background:url(images/bgNav.gif); z-index:10 }
+.cssReset .bgTopHeaderMnu   	{ width:100%; height:44px; background:url(images/bgNav.gif); z-index:10; position:relative; top:-1px;}
+.ie .cssReset .bgTopHeaderMnu  	{ top:-2px;}
 .bgTopHeaderMnu .mnuHeader		{ display:inline; list-style-type:none; z-index:10 }
 
 .cssReset .subMenuHolder	 	{ background:url(images/bgSubNav.gif) repeat-x;  width:100%; height: 30px }
@@ -363,7 +364,7 @@ ul.topmenu li.submenu:hover ul li:hover { }
 .keywordPagingResult			{ background:url(images/paging_bgGray.png) no-repeat; height:22px; width:240px; color:#8a8a8a; font-size: 11px !important; font-weight: normal }
 .cssReset .titlePlacer          { background:#f1f4f9; -webkit-border-radius: 2px; -moz-border-radius: 2px; border-radius: 2px; position:relative;  min-height:39px }
 .cssReset .bGraytitlePlacer     { background:url(images/excludeBgHeader.jpg) no-repeat; width:230px; height:26px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }
-.cssReset .txtBoxSmall			{ height:12px; font-size:11px; padding-left:1px; padding-right:0}
+.cssReset .txtBoxSmall			{ height:12px; font-size:11px; padding-left:1px; padding-right:0; background: #fff }
 .cssReset .viewSelect			{ float:right; display: inline; height: 16px; margin-top:3px}
 .cssReset .viewSelect li		{ float:left; display:inline; padding-right:3px}
 .cssReset .viewSelect li select { padding: 2px; border:1px solid #ccc; color:#666 }
@@ -752,4 +753,35 @@ body #redirect .tabs .ui-widget-content { padding-top:20px !important}
 /* simulator */
 a .txtManufact { margin-right:5px; color:#282828; font-weight: bold; }
 a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none !important; cursor: default !important; }
+.searchList li #elevatePosition a:hover { text-decoration: none !important; color:#999 }
 
+.lnk a#level2 { padding-left:10px }
+.lnk a#level3 { padding-left:20px }
+
+.dynamicAttribute table td  { vertical-align: top }
+
+
+.conditionItem img:hover { cursor: pointer }
+
+
+/* elevate */
+.qtip #facetItem .ui-widget-content .ui-autocomplete-input { position:relative; bottom:-6.5px }
+.qtip #facetItem .holder a { color:#3B79C2; }
+.dynamicAttributeItem { padding-left:0 !important }
+.dynamicAttributeItem ul { list-style: none; margin:5px; padding-left:0 !important }
+.dynamicAttributeItem ul li { margin-left:0; padding-left:0 !important; padding: 8px 0 0 0 !important }
+.ui-widget li.ui-menu-item { padding:8px 0 0  !important }
+.qtip #facet input[type='text'], 
+.qtip .fcetItem input[type='text'],
+.qtip .fcetItem textarea { border:1px solid #d3d3d3 !important }
+.qtip .ui-tooltip-content { background: #fff !important }
+
+/* elevate for ie issue */
+.ie .qtip #facet .ui-button-icon { height:20px; top:1px }
+.ie .qtip .imsFields input[type='text'] { padding-top:2px }
+.ie .qtip #dynamicAttribute .ui-button-icon { position:relative; top:2px !important }
+.ie .qtip #ims .ui-autocomplete-input { padding-top:4px !important }
+.ie .qtip #ims .ui-button-icon { position:relative; top:0 !important }
+.ie .qtip #cnet .ui-button-icon { height:20px !important;  }
+.ie .qtip #cnet .ui-autocomplete-input  { padding-top:4px !important }
+.ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }

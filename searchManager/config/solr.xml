@@ -16,6 +16,7 @@
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>search</default-server>
     <facet-template></facet-template>
+    <facet-template-name></facet-template-name>
   </store>
 
   <store name="SBN">
@@ -32,7 +33,8 @@
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>search.pcmall.com</default-server>
-    <facet-template></facet-template>
+    <facet-template>PCMall_FacetTemplate</facet-template>
+    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
 
   <store name="PCMall">
@@ -50,6 +52,7 @@
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>search</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
+    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
   <store name="MacMall">
@@ -66,6 +69,7 @@
     <dateformat>MM/dd/yyyy</dateformat>    
     <default-server>search</default-server>
     <facet-template></facet-template>
+    <facet-template-name>TemplateName</facet-template-name>
   </store>
 
   <store name="PCMall BD">
@@ -82,6 +86,7 @@
     <dateformat>MM/dd/yyyy</dateformat> 
     <default-server>afs-pl-schpd04</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
+    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
   <!-- 

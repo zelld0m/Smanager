@@ -81,15 +81,32 @@
 				blur:function(e){
 					updateFacetValueBarLength(content, fieldValue, $(e.target).val());
 				},
-
 				keypress:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
-					if (charCode > 57 || (charCode > 31 && charCode < 46 || 
-							charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
+					if (e.charCode == 0){
+						if (charCode == 13){ updateFacetValueBarLength(content, fieldValue, $(e.target).val());}
+						return; // allow non-printable characters
+					}
+					if (charCode == 46){ 
+						return $(e.target).val().indexOf('.') == -1;
+					} 
+					else if (charCode > 47 && charCode < 58){
+						return true;
+					}
+					else {
 						return false;
-					if (charCode == 13){ updateFacetValueBarLength(content, fieldValue, $(e.target).val());}
+					}
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
 				}
-
 			}, { name:fieldValue} );
 
 			content.find('tr#fieldSelected' + $.formatAsId(fieldValue) + ' a.removeSelected').on({ click:function(e){removeSelectedFacetValue(content, fieldValue);}});
@@ -299,24 +316,54 @@
 									var charCode = (e.which) ? e.which : e.keyCode;
 									if (charCode > 31 && (charCode < 48 || charCode > 57))
 										return false;
+								},
+								keydown:function(e){
+									var charCode = (e.which) ? e.which : e.keyCode;
+									var ctrlDown = e.ctrlKey||e.metaKey ;
+									if (ctrlDown) {
+										return false;
+									}
+								},
+								contextmenu:function(e){
+									return false;
 								}
-
 							});
 
 							$contentHolder.find('li.multiRuleItem input#ruleFieldMatch, input#singleRuleFieldMatch').on({
+								blur:function(e){
+									$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
+									$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
+								},
 								keypress:function(e){
 									var charCode = (e.which) ? e.which : e.keyCode;
 									var currVal = $(e.target).val();
-									if(($.isBlank(currVal)|| currVal.indexOf("-") == -1) && charCode == 45) return true;
-									if(charCode == 8) return true;
-									if($.isNotBlank(currVal) && currVal.indexOf(".") == -1 && charCode == 46) return true;
-									if($.isNotBlank(currVal) && (charCode == 37 || charCode == 39)) return true;
-									if(currVal.indexOf("%") == -1 && (charCode < 32 || (charCode > 47 && charCode < 58))){
+
+									if (e.charCode == 0){
+										return; // allow non-printable characters
+									}
+									if (charCode == 45){
+										return $.isBlank(currVal);
+									}
+									if (charCode == 46){ 
+										return ($(e.target).val().indexOf('.') == -1); // allow only one .
+									} 
+									if (charCode == 37){
+										return ($.isNotBlank(currVal) && $(e.target).val().indexOf('%') == -1); // allow only one %
+									}
+									else if (charCode > 47 && charCode < 58){
 										return true;
 									}
-									else{
+									return false;
+								},
+								keydown:function(e){
+									var charCode = (e.which) ? e.which : e.keyCode;
+									var ctrlDown = e.ctrlKey||e.metaKey ;
+									if (ctrlDown) {
 										return false;
 									}
+								},
+								contextmenu:function(e){
+									return false;
 								}
 							});
 
@@ -337,13 +384,13 @@
 										var count = $contentHolder.find('li.multiRuleItem').length;
 										var conditionCount = $contentHolder.find('input#ruleFieldCondition').length;
 										if (conditionCount > 5) {
-											alert("Maximum no of rules allowed is 5!");
+											jAlert("Maximum no of rules allowed is 5!","Ranking Rule");
 											return;
 										}
 										for ( var i = 1; i < conditionCount; i++) {
 											var value = $contentHolder.find('li#multiRule' + i + ' input#ruleFieldCondition').val();
 											if (value == condition) {
-												alert("Rule already exists for " + condition + ".");
+												jAlert("Rule already exists for " + condition + ".","Ranking Rule");
 												return;
 											}
 										}
@@ -468,13 +515,31 @@
 				blur:function(e){
 					updateBarLength(content, fieldName, $(e.target).val());
 				},
-
 				keypress:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
-					if (charCode > 57 || (charCode > 31 && charCode < 46 || 
-							charCode == 47) || (charCode == 46 && $(this).val().indexOf(".")>=0))
+					if (e.charCode == 0){
+						if (charCode == 13){ updateBarLength(content, fieldValue, $(e.target).val()); }
+						return; // allow non-printable characters
+					}
+					if (charCode == 46){ 
+						return $(e.target).val().indexOf('.') == -1;
+					} 
+					else if (charCode > 47 && charCode < 58){
+						return true;
+					}
+					else {
 						return false;
-					if (charCode == 13){ updateBarLength(content, fieldName, $(e.target).val());}
+					}
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
 				}
 
 			}, { name:fieldName} );
@@ -623,7 +688,7 @@
 		$('div#relevancy .saveIcon').off().on({
 			click:function(e){
 				var field = getRelevancyField(e);
-				if (!e.data.locked || allowModify ) 
+				if (!e.data.locked && allowModify ) 
 					addRuleFieldValue(field.id, field.value);
 			},
 			mouseenter: showHoverInfo
@@ -685,42 +750,66 @@
 
 		// add field restrictions
 		$('div[id="q.alt"] input[type="text"]').attr("readonly", "readonly").on({
-			focus: function(e){alert("Contact administrator to modify this field.");}
+			focus: function(e){jAlert("Contact administrator to modify this field.","Ranking Rule");}
 		});
 
 		$('div[id="q.alt"]').hide();
 
-		$('div[id="tie"] input[type="text"]').off('blur focus keypress').on({
-			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters["tie"]) $(e.target).val("");},
+		$('div[id="tie"] input[type="text"]').off('blur keypress keydown').on({
+			blur:function(e){
+				$(e.target).val($(e.target).val().replace(/^\./,'0.')); // insert leading 0 before .
+				$(e.target).val($(e.target).val().replace(/\.$/,'')); // remove trailing .
+				if ($(e.target).val() > 1){
+					jAlert("Tie value should be between 0 - 1.","Ranking Rule");
+				}
+			},
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
-
-				if(charCode == 46 && ($.trim($(e.target).val()) == 0 || $.isBlank($(e.target).val()))) return true;
-				if(charCode == 8 || ($.inArray(charCode,[48,49,96])!=-1 && $.isBlank($(e.target).val()))) return true;
-				if($.isNotBlank($(e.target).val()) && $(e.target).val().indexOf('.') != -1 && (charCode < 32 || (charCode > 47 && charCode < 58))) return true;
-				if(($(e.target).val()==1 || $(e.target).val()==0) && (charCode == 49 || charCode == 48)) {
-					if ($('div[id="tie"] input[type="text"]').length == 1) {
-						$(e.target).val(String.fromCharCode(charCode));
-						return false;
-					}
+				if (e.charCode == 0){
+					return; // allow non-printable characters
 				}
-				alert("Tie value should be between 0 - 1.");
+				if (charCode == 46){ 
+					return $(e.target).val().indexOf('.') == -1;
+				} 
+				else if (charCode > 47 && charCode < 58){
+					return true;
+				}
 				return false;
-
+			},
+			keydown:function(e){
+				var charCode = (e.which) ? e.which : e.keyCode;
+				var ctrlDown = e.ctrlKey||e.metaKey ;
+				if (ctrlDown) {
+					return false;
+				}
+			},
+			contextmenu:function(e){
+				return false;
 			}
 		});
 
-		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('blur focus keypress').on({
-			focus: function(e){if ($.trim($(e.target).val()) == selectedRule.parameters[getRelevancyField(e).id]) $(e.target).val("");},
+		$('div[id="qs"] input[type="text"], div[id="ps"] input[type="text"]').off('keypress keydown').on({
 			keypress:function(e){
 				var charCode = (e.which) ? e.which : e.keyCode;
-
-				if(charCode == 8) return true;
-				if($(e.target).length > 4) 
+				if (e.charCode == 0) {
+					return; // allow non-printable characters
+				}
+				if($(e.target).length > 4){
+					return false;					
+				}
+				if(charCode > 47 && charCode < 58){
+					return true;
+				}
+				return false;
+			},
+			keydown:function(e){
+				var charCode = (e.which) ? e.which : e.keyCode;
+				var ctrlDown = e.ctrlKey||e.metaKey ;
+				if (ctrlDown) {
 					return false;
-				if($.inArray(charCode,[48,96]) != -1 && $.isBlank($(e.target).val())) return false;
-				if(charCode < 32 || (charCode > 47 && charCode < 58)) return true;
-				alert(getRelevancyField(e).label + " value should be numeric.");
+				}
+			},
+			contextmenu:function(e){
 				return false;
 			}
 		});
@@ -732,17 +821,17 @@
 		
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value >= 0 && value <= 1)){
-			alert("Tie value should be between 0 - 1.");
+			jAlert("Tie value should be between 0 - 1.","Ranking Rule");
 			return;
 		}
 		
 		// validation for qs and ps
 		if ((field === "qs" || field === "ps") && !$.isBlank(value) &&!isDigit(value)){
 			if (field==="qs") {
-				alert("Query slop should be a positive number.");
+				jAlert("Query slop should be a positive number.","Ranking Rule");
 			}
 			else if (field==="ps") {
-				alert("Phrase slop should be a positive number.");
+				jAlert("Phrase slop should be a positive number.","Ranking Rule");
 			}
 			return;
 		}
@@ -849,27 +938,27 @@
 							var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 							
 							if ($.isBlank(popName)){
-								alert("Rule name is required.");
+								jAlert("Rule name is required.","Ranking Rule");
 							}
 							else if (!isAllowedName(popName)){
-								alert("Rule name contains invalid value.");
+								jAlert("Rule name contains invalid value.","Ranking Rule");
 							}
 							else if (!isAscii(popDescription)) {
-								alert("Description contains non-ASCII characters.");										
+								jAlert("Description contains non-ASCII characters.","Ranking Rule");										
 							}
 							else if (!isXSSSafe(popDescription)){
-								alert("Description contains XSS.");
+								jAlert("Description contains XSS.","Ranking Rule");
 							}
 							else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
-								alert("Please provide a valid date range.");
+								jAlert("Please provide a valid date range.","Ranking Rule");
 							} else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
-								alert("End date cannot be earlier than start date!");
+								jAlert("End date cannot be earlier than start date!","Ranking Rule");
 							}
 							else {
 								RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 									callback: function(data){
 										if (data==true){
-											alert("Another ranking rule is already using the name provided.");
+											jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
 										}else{
 											RelevancyServiceJS.cloneRule(selectedRule.ruleId, popName, popStartDate, popEndDate, popDescription, {
 												callback:function(data){
@@ -921,6 +1010,9 @@
 			else if (!isAllowedName(ruleName)){
 				showMessage("#name", "Rule name contains invalid value.");
 			}
+			else if (ruleName.length>100){
+				showMessage("#name","Name should not exceed 100 characters.");
+			}
 			else if (!isAscii(description)) {
 				showMessage("textarea#description", "Description contains non-ASCII characters.");										
 			}
@@ -931,9 +1023,9 @@
 				showMessage("textarea#description","Description should not exceed 255 characters.");
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-				alert("Please provide a valid date range!");
+				jAlert("Please provide a valid date range!","Ranking Rule");
 			} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
-				alert("End date cannot be earlier than start date!");
+				jAlert("End date cannot be earlier than start date!","Ranking Rule");
 			}
 			else {
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
@@ -983,7 +1075,7 @@
 			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
 				callback: function(code){
 					if (code > 0) {
-						alert(selectedRule.ruleName + " was successfully deleted.");
+						jAlert(selectedRule.ruleName + " was successfully deleted.","Ranking Rule");
 					}
 					if(code==1) setRelevancy(null);
 				}
@@ -994,7 +1086,6 @@
 	var prepareRelevancy = function(){
 		clearAllQtip();
 		$("#preloader").show();
-		$("#submitForApproval").hide();
 		$("#noSelected").hide();
 		$("#relevancy").hide();
 		$("#titleText").html(moduleName);
@@ -1002,147 +1093,126 @@
 	};
 
 	var showRelevancy = function(){
-		prepareRelevancy();
-		$("#preloader").hide();
-		resetInputFields("#relevancy");
-
+		
 		getRelevancyRuleList(1);
 		getRelevancyRuleKeywordList(1);
 
 		if(selectedRule==null){
+			$("#preloader").hide();
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			$("#titleHeader").html("");
 			return;
 		}
+		
+		$("#submitForApproval").rulestatus({
+			moduleName: moduleName,
+			rule: selectedRule,
+			enableVersion: true,
+			authorizeRuleBackup: true,
+			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+			afterSubmitForApprovalRequest:function(ruleStatus){
+				selectedRuleStatus = ruleStatus;
+				showRelevancy();
+			},
+			beforeRuleStatusRequest: function(){
+				prepareRelevancy();
+			},
+			afterRuleStatusRequest: function(ruleStatus){
+				resetInputFields("#relevancy");
 
-		$.endsWith(selectedRule.ruleId, "_default") ? $("#submitForApproval").hide() : $("#submitForApproval").show();
+				$("#preloader").hide();
+				$("#submitForApproval").show();
+				$("#relevancy").show();
+				selectedRuleStatus = ruleStatus;
+				
+				$("div#versions").version({
+					ruleType: "Ranking Rule",
+					ruleId: selectedRule["ruleId"],
+					buttonHolderId: "#versionHolder",
+					locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+					restoreCallback: function(rankingRule){
+						setRelevancy(rankingRule);
+					}
+				});
+				
+				$("#titleText").html(moduleName + " for ");
+				$("#titleHeader").html(selectedRule.ruleName);
 
-		$("#relevancy").show();
+				$("#name").val(selectedRule.ruleName);
+				$("#description").val(selectedRule.description);
+				$("#startDate").val(selectedRule.formattedStartDate);
+				$("#endDate").val(selectedRule.formattedEndDate);
+				$("#startDate, #endDate").datepicker("destroy");
 
-		$("div#versions").version({
-			ruleType: "Ranking Rule",
-			ruleId: selectedRule["ruleId"],
-			buttonHolderId: "#versionHolder",
-			locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-			restoreCallback: function(rankingRule){
-				setRelevancy(rankingRule);
+				var dates = $("#startDate, #endDate").datepicker({
+					minDate: 0,
+					maxDate: '+1Y',
+					showOn: "both",
+					buttonImage: "../images/icon_calendar.png",
+					buttonImageOnly: true,
+					disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+					onSelect: function(selectedDate) {
+						var option = this.id == "startDate" ? "minDate" : "maxDate",
+								instance = $(this).data("datepicker"),
+								date = $.datepicker.parseDate(
+										instance.settings.dateFormat ||
+										$.datepicker._defaults.dateFormat,
+										selectedDate, instance.settings);
+						dates.not(this).datepicker("option", option, date);
+					}
+				});
+
+				getKeywordInRuleList(1);
+				setRuleFieldValue();
+
+				$("#saveBtn").off().on({
+					click: updateRule,
+					mouseenter: showHoverInfo
+				},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
+
+				$("#cloneBtn").off().on({
+					click: cloneRule,
+					mouseenter: showHoverInfo
+				},{locked:!allowModify});
+				
+				$("#deleteBtn").off().on({
+					click: deleteRule,
+					mouseenter: showHoverInfo
+				},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
+				
+				$("a#downloadIcon").download({
+					headerText:"Download Ranking Rule",
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["id"] = selectedRule["ruleId"];
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["clientTimezone"] = +new Date();
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
+			
+				$('#auditIcon').off().on({
+					click: showAuditList
+				}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
 			}
 		});
-		
-		$("#titleText").html(moduleName + " for ");
-		$("#titleHeader").html(selectedRule.ruleName);
-
-		$("#name").val(selectedRule.ruleName);
-		$("#description").val(selectedRule.description);
-		$("#startDate").val(selectedRule.formattedStartDate);
-		$("#endDate").val(selectedRule.formattedEndDate);
-		$("#startDate, #endDate").datepicker("destroy");
-
-		var dates = $("#startDate, #endDate").datepicker({
-			minDate: 0,
-			maxDate: '+1Y',
-			showOn: "both",
-			buttonImage: "../images/icon_calendar.png",
-			buttonImageOnly: true,
-			disabled: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-			onSelect: function(selectedDate) {
-				var option = this.id == "startDate" ? "minDate" : "maxDate",
-						instance = $(this).data("datepicker"),
-						date = $.datepicker.parseDate(
-								instance.settings.dateFormat ||
-								$.datepicker._defaults.dateFormat,
-								selectedDate, instance.settings);
-				dates.not(this).datepicker("option", option, date);
-			}
-		});
-
-		getKeywordInRuleList(1);
-		setRuleFieldValue();
-
-		$("#saveBtn").off().on({
-			click: updateRule,
-			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
-
-		$("#cloneBtn").off().on({
-			click: cloneRule,
-			mouseenter: showHoverInfo
-		},{locked:!allowModify});
-		
-		$("#deleteBtn").off().on({
-			click: deleteRule,
-			mouseenter: showHoverInfo
-		},{locked:selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
-		
-		$("a#downloadIcon").download({
-			headerText:"Download Ranking Rule",
-			requestCallback:function(e){
-				var params = new Array();
-				var url = document.location.pathname + "/xls";
-				var urlParams = "";
-				var count = 0;
-				params["id"] = selectedRule["ruleId"];
-				params["filename"] = e.data.filename;
-				params["type"] = e.data.type;
-				params["clientTimezone"] = +new Date();
-
-				for(var key in params){
-					if (count>0) urlParams +='&';
-					urlParams += (key + '=' + params[key]);
-					count++;
-				};
-
-				document.location.href = url + '?' + urlParams;
-			}
-		});
-		
-		$("#submitForApprovalBtn").off().on({
-			click: function(e){
-				var ruleStatus = null;
-				var data = e.data;
-
-				if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
-					DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
-						callback: function(data){
-							ruleStatus = data;
-						},
-						preHook:function(){
-							prepareRelevancy();
-						},
-						postHook: function(){
-							setRelevancy(selectedRule);
-						}
-					});
-				}
-			}
-		}, { module: moduleName, ruleRefId: selectedRule.ruleId , ruleRefName: selectedRule.ruleName, isDelete: false});
-
-		$('#auditIcon').on({
-			click: showAuditList
-		}, {locked: !allowModify, type:moduleName, ruleRefId: selectedRule.ruleId, name: selectedRule.ruleName});
-
 	};
 
 	var setRelevancy = function(rule){
 		selectedRule = rule;
-
-		if (rule!=null){
-			DeploymentServiceJS.getRuleStatus(moduleName, selectedRule.ruleId, {
-				callback:function(data){
-					selectedRuleStatus = data;
-					$('#itemPattern' + $.escapeQuotes($.formatAsId(selectedRule.ruleId)) + ' div.itemSubText').html(getRuleNameSubTextStatus(selectedRuleStatus));
-					showDeploymentStatusBar(moduleName, selectedRuleStatus);
-					
-					showRelevancy();
-				},
-				preHook: function(){
-					prepareRelevancy();
-				}
-			});	
-		}else{
-			showRelevancy();
-		}
+		showRelevancy();
 	};
 
 	var getRelevancyRuleList = function(page){
@@ -1196,7 +1266,7 @@
 								}
 							});
 
-							$contentHolder.find('a#addButton').on({
+							$contentHolder.find('a#addButton').off().on({
 								click: function(e){
 									var popName = $.trim($contentHolder.find('input[id="popName"]').val());
 									var popStartDate = $.trim($contentHolder.find('input[id="popStartDate"]').val()); 
@@ -1204,37 +1274,37 @@
 									var popDescription =  $.trim($contentHolder.find('textarea[id="popDescription"]').val()); ; 
 
 									if ($.isBlank(popName)){
-										alert("Ranking rule name is required.");
+										jAlert("Ranking rule name is required.","Ranking Rule");
 									}
 									else if (!isAllowedName(popName)) {
-										alert(ruleNameErrorText);
+										jAlert(ruleNameErrorText,"Ranking Rule");
 									}
 									else if (!isAscii(popDescription)) {
-										alert("Description contains non-ASCII characters.");										
+										jAlert("Description contains non-ASCII characters.","Ranking Rule");										
 									}
 									else if (!isXSSSafe(popDescription)){
-										alert("Description contains XSS.");
+										jAlert("Description contains XSS.","Ranking Rule");
 									}
 									else if (popDescription.length>255){
-										alert("Description should not exceed 255 characters.");
+										jAlert("Description should not exceed 255 characters.","Ranking Rule");
 									}
 									else if(($.isNotBlank(popStartDate) && !$.isDate(popStartDate)) || ($.isNotBlank(popEndDate) && !$.isDate(popEndDate))){
-										alert("Please provide a valid date range");
+										jAlert("Please provide a valid date range","Ranking Rule");
 									}else if ($.isNotBlank(popStartDate) && $.isDate(popStartDate) && $.isNotBlank(popEndDate) && $.isDate(popEndDate) && (new Date(popStartDate).getTime() > new Date(popEndDate).getTime())) {
-											alert("End date cannot be earlier than start date!");
+											jAlert("End date cannot be earlier than start date!","Ranking Rule");
 									}
 									else {
 										RelevancyServiceJS.checkForRuleNameDuplicate('', popName, {
 											callback: function(data){
 												if (data==true){
-													alert("Another ranking rule is already using the name provided.");
+													jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
 												}else{
 													RelevancyServiceJS.cloneRule("",popName, popStartDate, popEndDate, popDescription, {
 														callback: function(data){
 															if (data!=null){
 																base.getList(name, 1);
 																setRelevancy(data);
-																showActionResponse(1, "add", name);
+																showActionResponse(1, "add", popName);
 																addRuleFieldValue("q.alt", "*:*");
 															}else{
 																setRelevancy(selectedRule);
@@ -1252,7 +1322,7 @@
 								}
 							});
 
-							$contentHolder.find('a#clearButton').on({
+							$contentHolder.find('a#clearButton').off().on({
 								click: function(e){
 									$contentHolder.find('input[type="text"], textarea').val("");
 								}
@@ -1289,7 +1359,7 @@
 						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
 						base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
 							click: function(e){
 								RelevancyServiceJS.getRule(model.ruleId, {
 									callback:function(data){

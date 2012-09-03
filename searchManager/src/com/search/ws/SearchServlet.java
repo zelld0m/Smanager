@@ -48,6 +48,7 @@ import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
@@ -276,8 +277,8 @@ public class SearchServlet extends HttpServlet {
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
-			if (fromSearchGui && (coreName.equalsIgnoreCase("pcmall") ||  coreName.equalsIgnoreCase("pcmallcap"))) {
-				nvp = new BasicNameValuePair("facet.field", "PCMall_FacetTemplate");
+			if (fromSearchGui && StringUtils.isNotBlank(UtilityService.getStoreFacetTemplate())) {
+				nvp = new BasicNameValuePair("facet.field", UtilityService.getStoreFacetTemplate());
 				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
 					nameValuePairs.add(nvp);
 				}
@@ -390,6 +391,7 @@ public class SearchServlet extends HttpServlet {
 						for (String condition: redirect.getConditions()) {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+								rr.setStoreId(coreName);
 								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
 							}							
 						}
@@ -428,7 +430,7 @@ public class SearchServlet extends HttpServlet {
 				else if (keywordPresent) {
 					// get relevancy mapped to keyword
 					relevancy = new Relevancy("", "");
-					relevancy.setStore(new Store(storeName));
+					relevancy.setStore(new Store(coreName));
 					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 							new RelevancyKeyword(sk.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
 							MatchType.LIKE_NAME, ExactMatch.MATCH);
@@ -808,6 +810,7 @@ public class SearchServlet extends HttpServlet {
 							}
 						});
 					} else {
+						getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString()));
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Comment;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -73,6 +75,9 @@ public class ExcludeService {
 					e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
 					if (StringUtils.isNotBlank(edp)){
 						count = daoService.addExcludeResult(e);
+						if (!StringUtils.isBlank(comment)) {
+							addComment(comment, e);
+						}
 					}
 				}
 			} catch (DaoException de) {
@@ -90,7 +95,7 @@ public class ExcludeService {
 	}
 
 	@RemoteMethod
-	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		
 		int count = 0;
 		try {
@@ -105,6 +110,9 @@ public class ExcludeService {
 			e.setComment(UtilityService.formatComment(comment));
 			e.setExcludeEntity(MemberTypeEntity.FACET);
 			count = daoService.addExcludeResult(e);
+			if (!StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
@@ -113,11 +121,13 @@ public class ExcludeService {
 
 
 	@RemoteMethod
-	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate) {
+	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate, String comment) {
+		int count = -1;
 		try {
 			logger.info(String.format("%s %s", keyword, value));
 
 			String store = UtilityService.getStoreName();
+			
 			daoService.addKeyword(new StoreKeyword(store, keyword));
 			ExcludeResult e = new ExcludeResult();
 			
@@ -132,11 +142,15 @@ public class ExcludeService {
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setCreatedBy(UtilityService.getUsername());
-			return daoService.addExcludeResult(e);
+			e.setComment(UtilityService.formatComment(comment));
+			count  = daoService.addExcludeResult(e);
+			if (count > 0 && !StringUtils.isBlank(comment)) {
+				addComment(comment, e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addExclude()",e);
 		}
-		return -1;
+		return count;
 	}
 
 	@RemoteMethod
@@ -149,7 +163,8 @@ public class ExcludeService {
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteExcludeResult(e);
+			RecordSet<ExcludeResult> rset = daoService.getExcludeResultList(new SearchCriteria<ExcludeResult>(e, null, null, 0, 1));
+			return daoService.deleteExcludeResult(rset.getList().get(0));
 		} catch (DaoException e) {
 			logger.error("Failed during removeExclude()",e);
 		}
@@ -219,6 +234,23 @@ public class ExcludeService {
 		}
 		return null;
 	}
+	
+	@RemoteMethod
+	public RecordSet<Product> getAllExcludedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+
+			ExcludeResult e = new ExcludeResult();
+			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllExcludedProducts()",e);
+		}
+		return null;
+	}
 
 	@RemoteMethod
 	public RecordSet<Product> getActiveExcludedProducts(String keyword, int page,int itemsPerPage) {
@@ -280,18 +312,18 @@ public class ExcludeService {
 			e.setEdp(productId);
 			return daoService.getExcludedProduct(server, e);
 		} catch (DaoException e) {
-			logger.error("Failed during getElevatedProduct()",e);
+			logger.error("Failed during getExcludedProduct()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
 	public String getComment(String keyword, String productId) {
-		Product elevatedProduct = getExcludedProduct(keyword, productId);
-		if (elevatedProduct == null)
+		Product excludedProduct = getExcludedProduct(keyword, productId);
+		if (excludedProduct == null)
 			return StringUtils.EMPTY;
 
-		return StringUtils.trimToEmpty(elevatedProduct.getComment());
+		return StringUtils.trimToEmpty(excludedProduct.getComment());
 	}
 
 	@RemoteMethod
@@ -299,8 +331,12 @@ public class ExcludeService {
 		try {
 			logger.info(String.format("%s %s %s", keyword, productId, comment));
 			String store = UtilityService.getStoreName();
-			comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
-			comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			
+			if(StringUtils.isNotBlank(comment)){
+				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
+				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
+			}
+			
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
@@ -311,6 +347,66 @@ public class ExcludeService {
 			logger.error("Failed during addComment()",e);
 		}
 		return -1;
+	}
+	
+	@RemoteMethod
+	public int updateExclude(String keyword, String memberId, String condition) {
+		try {
+			logger.info(String.format("%s %s %d", keyword, memberId));
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude!=null) {
+				if (!StringUtils.isBlank(condition)) {
+					exclude.setCondition(new RedirectRuleCondition((condition)));
+				}
+				
+				exclude.setLastModifiedBy(UtilityService.getUsername());
+				return daoService.updateExcludeResult(exclude);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during updateExclude()",e);
+		}
+		return -1;
+	}
+	
+	@RemoteMethod
+	public int updateExcludeFacet(String keyword, String memberId, String comment, String expiryDate, Map<String, List<String>> filter){
+		int changes = 0;
+		
+		ExcludeResult exclude = new ExcludeResult();
+		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		exclude.setMemberId(memberId);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setFilter(filter);
+		try {
+			exclude = daoService.getExcludeItem(exclude);
+		} catch (DaoException e) {
+			exclude = null;
+		}
+
+		if(exclude==null){
+			return changes;
+		}
+		
+		if (StringUtils.isNotBlank(comment)){
+			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+		}
+		
+		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
+			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
+		}
+		
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
+		}
+		
+		return changes;
 	}
 
 	@RemoteMethod
@@ -331,4 +427,15 @@ public class ExcludeService {
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+	
+	private Comment addComment(String comment, ExcludeResult e) throws DaoException {
+		Comment com = new Comment();
+		com.setComment(comment);
+		com.setUsername(UtilityService.getUsername());
+		com.setReferenceId(e.getMemberId());
+		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+		daoService.addComment(com);
+		return com;
+	}
+
 }

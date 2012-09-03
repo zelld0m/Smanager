@@ -7,7 +7,6 @@ import java.util.Map;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -110,6 +109,7 @@ public interface DaoService {
 	
 	/* Exclude */
 	public int addExcludeResult(ExcludeResult exclude) throws DaoException;
+	public int updateExcludeResult(ExcludeResult exclude) throws DaoException;
 	public int updateExcludeResultComment(ExcludeResult exclude) throws DaoException;
 	public int appendExcludeResultComment(ExcludeResult exclude) throws DaoException;
 	public int updateExcludeResultExpiryDate(ExcludeResult exclude) throws DaoException;
@@ -121,7 +121,9 @@ public interface DaoService {
 	
 	/* Big Bets */
 	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
+	public RecordSet<Product> getExcludedProductsIgnoreKeyword(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<ElevateProduct> getElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
+	public RecordSet<ElevateProduct> getElevatedProductsIgnoreKeyword(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public RecordSet<ElevateProduct> getNoExpiryElevatedProducts(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException;
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException;
 	public Product getExcludedProduct(String serverName, ExcludeResult exclude) throws DaoException;
@@ -168,9 +170,6 @@ public interface DaoService {
 	public RecordSet<RelevancyKeyword> searchRelevancyKeywords(SearchCriteria<RelevancyKeyword> criteria, MatchType relevancyMatchType,
 				ExactMatch keywordExactMatch) throws DaoException;
 	
-    //Redirect Rule
-	public CategoryList getCategories(String categoryCode) throws DaoException;
-
     /* Audit Trail */
     public RecordSet<AuditTrail> getAuditTrail(SearchCriteria<AuditTrail> auditDetail, boolean adminFlag) throws DaoException;
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;

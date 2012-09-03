@@ -67,7 +67,7 @@
 				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
 			}
 
-			alert(okmsg);
+			jAlert(okmsg,"Approval");
 		};
 
 		function checkIfDeleted() {
@@ -87,9 +87,9 @@
 					var comment = $.trim($(tabSelected).find("#approvalComment").val());
 
 					if (getSelectedRefId().length==0){
-						alert("Please select rule");
+						jAlert("Please select rule","Approval");
 					}else if ($.isBlank(comment)){
-						alert("Please add comment.");
+						jAlert("Please add comment.","Approval");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
@@ -108,7 +108,7 @@
 
 						case "rejectBtn": 
 							if (checkIfDeleted()) {
-								alert("Deleted rules cannot be rejected!");
+								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
 							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -149,7 +149,13 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							
+							//TODO: Get delete details from file
+							if (list[i]["updateStatus"]!=="DELETE"){
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+							}else{
+								$tr.find("td#ruleOption > img.previewIcon").hide();
+							}
 
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
@@ -218,22 +224,72 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
+				
+				var setImage = function(tr, imagePath){
+					setTimeout(function(){	
+						tr.find("td#itemImage > img").attr("src",imagePath).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+							}
+						});
+					},10);
+				};
+				
+				var getFacetItemType = function(item){
+					var $condition = item.condition;
+					var type = "";
+
+					if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+						type="facet";
+					}else if($condition["CNetFilter"]){
+						type="cnet";
+					}else if($condition["IMSFilter"]){
+						type="ims";
+					}
+					return type;
+				};
+				
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 
-					if($.isNotBlank(list[i]["dpNo"])){
-						$tr.find("td#itemImage > img").attr("src",list[i]["imagePath"]);
-						$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-						$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-						$tr.find("td#itemName").html(list[i]["name"]);
+					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
+					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
+					
+					if(FACET){
+						var imagePath = list[i]["imagePath"];
+						
+						if($.isBlank(imagePath)){
+							imagePath = GLOBAL_contextPath + '/images/';
+							switch(getFacetItemType(list[i])){
+							case "ims" : imagePath += "ims_img.jpg"; break;
+							case "cnet" : imagePath += "cnet_img.jpg"; break;
+							case "facet" : imagePath += "facet_img.jpg"; break;
+							}
+						}
+						
+						setImage($tr,imagePath);
+						$tr.find("td#itemMan").html(list[i].condition["readableString"])
+							.prop("colspan",3)
+							.removeClass("txtAC")
+							.addClass("txtAL");
 						$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-					}else{
-						$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-												.prop("colspan",5)
-												.removeClass("txtAC")
-												.addClass("txtAL");
-						$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+						$tr.find("td#itemDPNo,td#itemName").remove();
+					}
+					else if(PART_NUMBER){
+						if($.isNotBlank(list[i]["dpNo"])){
+							setImage($tr,list[i]["imagePath"]);
+							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+							$tr.find("td#itemName").html(list[i]["name"]);
+							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						}else{
+							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+													.prop("colspan",5)
+													.removeClass("txtAC")
+													.addClass("txtAL");
+							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+					}
 					}
 					
 					$tr.appendTo($table);
@@ -428,7 +484,7 @@
 
 						case "rejectBtn": 
 							if (checkIfDeleted()) {
-								alert("Deleted rules cannot be rejected!");
+								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
 							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
@@ -442,7 +498,7 @@
 							});break;
 						}	
 					}else{
-						alert("Please add comment.");
+						jAlert("Please add comment.","Approval");
 					}
 				}
 			});

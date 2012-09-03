@@ -134,7 +134,10 @@ public class RankingRuleVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.RANKING_RULE.getCode(), ruleId)));
+					int nextVer = RuleVersionUtil.getNextVersion(store, RuleEntity.RANKING_RULE.getCode(), ruleId);
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, nextVer));
+					RuleVersionUtil.addVersionCounterFile(store, RuleEntity.RANKING_RULE.getCode(), ruleId, nextVer);
+					
 					m.marshal(rrXml, w);
 				} finally {
 					try {

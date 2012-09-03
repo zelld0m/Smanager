@@ -216,7 +216,8 @@ public final class DateAndTimeUtils {
 
 	public static String convertToSqlTimestampEndOfDay(Date date) {		
 		if (date != null) {
-			return new SimpleDateFormat("yyyy-MM-dd").format(date) + " 23:59:59.999";
+			// .999 will automatically round up to the next day
+			return new SimpleDateFormat("yyyy-MM-dd").format(date) + " 23:59:59.998";
 		}
 		return null;
 	}

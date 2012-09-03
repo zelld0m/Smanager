@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
-import com.search.manager.dao.sp.CategoryDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.ElevateDAO;
@@ -34,7 +33,6 @@ import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
@@ -44,10 +42,10 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
-import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
@@ -70,7 +68,6 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private BannerDAO 		bannerDAO;
 	@Autowired private CampaignDAO 		campaignDAO;
 	@Autowired private RelevancyDAO		relevancyDAO;
-	@Autowired private CategoryDAO		categoryDAO;
 	@Autowired private RedirectRuleDAO	redirectRuleDAO;
 	@Autowired private RuleStatusDAO	ruleStatusDAO;
 	@Autowired private CommentDAO		commentDAO;
@@ -117,10 +114,6 @@ public class DaoServiceImpl implements DaoService {
 
 	public void setRelevancyDAO(RelevancyDAO relevancyDAO) {
 		this.relevancyDAO = relevancyDAO;
-	}
-
-	public void setCategoryDAO(CategoryDAO categoryDAO) {
-		this.categoryDAO = categoryDAO;
 	}
 
 	public void setRedirectRuleDAO(RedirectRuleDAO redirectRuleDAO) {
@@ -193,6 +186,38 @@ public class DaoServiceImpl implements DaoService {
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
 	}
 	
+	/* retrieve data from both Solr and DB */
+	public RecordSet<ElevateProduct> getElevatedProductsIgnoreKeyword(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{
+		RecordSet<ElevateResult> set = getElevateResultList(criteria);
+		LinkedHashMap<String, ElevateProduct> map = new LinkedHashMap<String, ElevateProduct>();
+		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		for (ElevateResult e: set.getList()) {
+			ElevateProduct ep = new ElevateProduct();
+			ep.setEdp(e.getEdp());
+			ep.setLocation(e.getLocation());
+			ep.setExpiryDate(e.getExpiryDate());
+			ep.setCreatedDate(e.getCreatedDate());
+			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setComment(e.getComment());
+			ep.setLastModifiedBy(e.getLastModifiedBy());
+			ep.setCreatedBy(e.getCreatedBy());
+			ep.setStore(storeId);
+			ep.setMemberId(e.getMemberId());
+			ep.setMemberTypeEntity(e.getElevateEntity());
+			ep.setCondition(e.getCondition());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
+		}
+		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
+		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
+	}
+	
+	
 	@Override
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException {
 		ElevateResult e = getElevateItem(elevate);
@@ -212,7 +237,11 @@ public class DaoServiceImpl implements DaoService {
 		ep.setStore(elevate.getStoreKeyword().getStoreId());
 		ep.setCondition(e.getCondition());
 		ep.setMemberTypeEntity(e.getElevateEntity());
-		map.put(e.getEdp(), ep);
+		if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+			map.put(UUID.randomUUID().toString(), ep);
+		} else {
+			map.put(e.getEdp(), ep);
+		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return map.get(e.getEdp());
 	}
@@ -237,7 +266,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getElevateEntity());
-			map.put(e.getEdp(), ep);
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
@@ -262,9 +295,44 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getExcludeEntity());
-			map.put(e.getEdp(), ep);
+			ep.setMemberId(e.getMemberId());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
+		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
+	}
+	
+	@Override
+	public RecordSet<Product> getExcludedProductsIgnoreKeyword(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException {
+		RecordSet<ExcludeResult> set = getExcludeResultList(criteria);
+		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
+		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		for (ExcludeResult e: set.getList()) {
+			Product ep = new Product();
+			ep.setEdp(e.getEdp());
+			ep.setExpiryDate(e.getExpiryDate());
+			ep.setCreatedDate(e.getCreatedDate());
+			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setComment(e.getComment());
+			ep.setLastModifiedBy(e.getLastModifiedBy());
+			ep.setCreatedBy(e.getCreatedBy());
+			ep.setStore(storeId);
+			ep.setMemberId(e.getMemberId());
+			ep.setMemberTypeEntity(e.getExcludeEntity());
+			ep.setCondition(e.getCondition());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
+		}
+		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
 		return new RecordSet<Product>(new ArrayList<Product>(map.values()),set.getTotalSize());
 	}
 	
@@ -404,6 +472,11 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public int addExcludeResult(ExcludeResult exclude) throws DaoException {
 		return excludeDAO.addExclude(exclude);
+	}
+	
+	@Override
+	public int updateExcludeResult(ExcludeResult exclude) throws DaoException {
+		return excludeDAO.updateExclude(exclude);
 	}
 	
 	@Override
@@ -742,12 +815,6 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public CategoryList getCategories(String categoryCode) throws DaoException {
-		logger.error("CategoryDAO is null " + (categoryDAO==null));
-		return categoryDAO.getCategories(categoryCode);
-	}
-
-	@Override
 	public int addRedirectRule(RedirectRule rule) throws DaoException {
 		return redirectRuleDAO.addRedirectRule(rule);
 	}
@@ -865,10 +932,6 @@ public class DaoServiceImpl implements DaoService {
 
 	public RelevancyDAO getRelevancyDAO() {
 		return relevancyDAO;
-	}
-
-	public CategoryDAO getCategoryDAO() {
-		return categoryDAO;
 	}
 
 	public RedirectRuleDAO getRedirectRuleDAO() {

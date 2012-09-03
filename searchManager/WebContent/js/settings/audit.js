@@ -20,13 +20,13 @@
 		endDate = $.trim($("#endDate").val());
 		
 		if (!$.isBlank(keyword) && !isAllowedName(keyword)) {
-			alert("Keyword is an invalid value!");
+			jAlert("Keyword is an invalid value!","Audit");
 			return;
 		} else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-			alert("Please provide a valid date range!");
+			jAlert("Please provide a valid date range!","Audit");
 			return;
 		} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
-			alert("End date cannot be earlier than start date!");
+			jAlert("End date cannot be earlier than start date!","Audit");
 			return;
 		}
 		AuditServiceJS.getAuditTrail(username, action, entity, keyword, refId, startDate, endDate, curPage, pageSize, {
@@ -128,7 +128,7 @@
 						},
 						postHook: function(){$("#actionList").removeAttr("disabled");}
 						,
-						errorHandler: function(message){ alert(message); }
+						errorHandler: function(message){ jAlert(message,"Audit"); }
 					});	
 				}else{
 					$("#refList").val(""); 							
@@ -155,7 +155,7 @@
 					},
 					postHook: function(){$("#refList").removeAttr("disabled");}
 					,
-					errorHandler: function(message){ alert(message); }
+					errorHandler: function(message){ jAlert(message,"Audit"); }
 					});	
 				}	
 				else{
@@ -170,7 +170,7 @@
 						$("#userList").append($("<option>", { value : data[i] }).text(data[i])); 
 				};
 			},
-			errorHandler: function(message){ alert(message); }
+			errorHandler: function(message){ jAlert(message,"Audit"); }
 		});		
 	
 
@@ -180,7 +180,7 @@
 						$("#typeList").append($("<option>", { value : data[i] }).text(data[i])); 
 				};
 			},
-			errorHandler: function(message){ alert(message); }
+			errorHandler: function(message){ jAlert(message,"Audit"); }
 		});		
 
 	
@@ -205,7 +205,7 @@
 			var endDate = $.trim($("#endDate").val());
 
 			if(($.isNotBlank(strDate) && !$.isDate(strDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-				alert("Please provide a valid date range");
+				jAlert("Please provide a valid date range");
 			}else{
 				getAuditTrail(1);
 			}

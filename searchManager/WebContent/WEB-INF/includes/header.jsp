@@ -21,7 +21,9 @@
   <!-- TODO: Dynamically modify mall based on logged user -->
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLabel()" var="storeLabel" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetName()" var="storeFacetName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplateName()" var="storeFacetTemplateName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
@@ -33,7 +35,9 @@
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var GLOBAL_store = "${store}";
 	var GLOBAL_storeLabel = "${storeLabel}";
+	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
+	var GLOBAL_storeFacetTemplateName = "${storeFacetTemplateName}";
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
@@ -65,19 +69,25 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SecurityServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/UserSettingServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleVersioningServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/LinguisticsServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
   <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery-store-functions.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.viewaudit.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.comment.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.preview.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.activerule.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.version.custom.js" />" ></script>
-  
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.rulestatus.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.addproduct.custom.js" />" ></script>
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
@@ -104,6 +114,16 @@
 			$('#scrollbar1').tinyscrollbar();	
 		});
 	</script>	
+
+  <!-- jQuery alert  -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.css" />" />
+  
+  
+  <!-- alert  -->
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jquery.alerts/jquery.alerts.css" />" />
+  
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
@@ -134,7 +154,7 @@
  <!--PC Mall Header-->
  <div class="clearB floatL bgTopHeader">  
     <div class="mar0 w980 posRel">
-      <table width="980" border="0" cellspacing="0" cellpadding="0" align="center">
+     <table width="980" border="0" style="height: 49px" cellspacing="0" cellpadding="0" align="center">
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">

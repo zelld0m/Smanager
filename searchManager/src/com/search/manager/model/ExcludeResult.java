@@ -21,7 +21,10 @@ public class ExcludeResult extends ModelBean {
 	public ExcludeResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			excludeEntity = MemberTypeEntity.FACET;
-			this.condition = new RedirectRuleCondition(edp);
+			condition = new RedirectRuleCondition(edp);
+			if (storeKeyword != null) {
+				condition.setStoreId(storeKeyword.getStoreId());
+			}
 			this.edp = "";
 		} else {
 			excludeEntity = MemberTypeEntity.PART_NUMBER;

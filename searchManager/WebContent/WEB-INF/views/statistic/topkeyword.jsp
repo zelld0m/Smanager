@@ -4,8 +4,7 @@
 <c:set var="submenu" value="topkeyword"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-<script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
-<script type="text/javascript" src="<spring:url value="/js/dashboard/topkeyword.js" />"></script>
+<script type="text/javascript" src="<spring:url value="/js/statistics/topkeyword.js" />"></script>
 	    
 <!-- Left Menu-->
 <div class="clearB floatL minW240 sideMenuArea">

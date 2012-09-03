@@ -63,49 +63,7 @@
 	</div>    
 	<div class="clearB"></div>
 	
-	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:70%" >
-	        		<div id="versionHolder">
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>			        		 
-			        	</label>
-			        	<label class="floatL marTn7">
-			        		<a id="backupBtn" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">
-			        			<div class="btnGraph btnBackUp"></div>
-			        		</a> 
-			        	</label>
-		        	</div>
-	        		<div id="commentHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
-			        	</label>
-		        	</div>
-	        		<div id="statusHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Status:</label>
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="status"></span> 
-			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
-			        	</label>
-		        	</div>
-		        	<div id="publishHolder">
-		        		<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Last Published:</label>
-			        	<label class="padL5 fLgray fsize11">
-			        		<span id="statusDate"></span> 
-			        	</label>
-		        	</div>
-			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	    
-	        		<sec:authorize access="hasRole('CREATE_RULE')">    		
-	        			<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
-	        		</sec:authorize>
-	        	</div>
-	        </div>	
-	        <div class="clearB"></div>	
-	 </div>
+	<div id="submitForApproval"></div>
 	 
 	 <div class="clearB"></div>
 	 <div id="versions"></div>
@@ -137,7 +95,7 @@
 	<div id="relevancyContainer" style="width:95%" class="marT20 mar0">
 		<div class="circlePreloader" id="preloader"><img src="../images/ajax-loader-circ.gif"></div>
 		<div id="noSelected"><img id="no-items-img" src="../images/rankingRuleGuidelines.jpg"></div>
-		<div id="relevancy" class="relevancy fsize12">		
+		<div id="relevancy" class="relevancy fsize12" style="display:none">			
 			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 					<div class="floatL">Rule Info</div>
@@ -148,7 +106,7 @@
 					<div class="clearB"></div>
 				</div>		
 					<label class="floatL w70 marT5 padT3">Name</label>
-					<label><input id="name" type="text" class="w240 marT5"/></label>
+					<label><input id="name" type="text" class="w240 marT5" maxlength="100"/></label>
 					<div class="clearB"></div>			
 					<label class="floatL w70 marT5 padT3">Schedule</label> 
 					<label><input id="startDate" name="startDate" type="text" class="w70 marT5"></label> 
@@ -203,7 +161,7 @@
 	
 	<div id="addRelevancyTemplate" style="display:none">
 		<div class="w282 padT10 newRelevancy">
-			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="50"></label><div class="clearB"></div>
+			<label class="w72 txtLabel">Name</label> <label><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Schedule </label> <label><input name="popStartDate" type="text" class="w65 fsize11"></label> <label class="txtLabel"> - </label> <label><input name="popEndDate" type="text" class="w65 fsize11"></label><div class="clearB"></div>
 			<label class="w72 txtLabel">Description</label> <label><textarea id="popDescription" rows="1" class="w185" maxlength="255"></textarea> </label><div class="clearB"></div>
 			<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>

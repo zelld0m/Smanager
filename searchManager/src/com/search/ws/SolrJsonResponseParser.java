@@ -78,10 +78,19 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private List<JSONObject> sortElevateEntries(Map<String, JSONObject> nodeMap){
 		JSONObject node;
 		ArrayList<JSONObject> sortedElevateList = new ArrayList<JSONObject>();
-		for (ElevateResult result: elevatedList) {
-			node = nodeMap.get(result.getEdp());
+		for (ElevateResult e: elevatedList) {
+			String edp = e.getEdp();
+			node = nodeMap.get(edp);
 			if (node != null) {
-				node.element(SolrConstants.TAG_ELEVATE, String.valueOf(result.getLocation()));
+				node.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
+				node.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
+				if (e.getElevateEntity() == MemberTypeEntity.FACET) {
+					node.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+				}
+				if (expiredElevatedEDPs.contains(edp)) {
+					node.element(SolrConstants.TAG_EXPIRED,"");
+				}
+				node.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 				sortedElevateList.add(node);
 			}
 		}
@@ -91,7 +100,11 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private static JSON parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
+			if (encoding == null) {
+				encoding = "UTF-8";
+			}
+			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
 			String line = null;
 			StringBuilder jsonText = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
@@ -286,6 +299,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		return addedRecords;
 	}
 
+	@Override
 	public int getElevatedItems(List<NameValuePair> requestParams, List<ElevateResult> elevatedList) throws SearchException {
 		int addedRecords = 0;
 		try {
@@ -302,6 +316,8 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					}
 				}
 			}
+			
+			int currItem = 1;
 			for (ElevateResult e : elevatedList) {
 				if (e.isForceAdd()) {
 					continue; //disregard force add
@@ -316,21 +332,24 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					if (e.isForceAdd() && kwNvp!=null) {
 						requestParams.remove(kwNvp);
 					}
-				} else {
+				} 
+				else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().getConditionForSolr());
-					generateElevateList(elevateValues, elevateFacetValues, elevatedList, e);
-					if (elevateValues.length() > 0) {
-						excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
-						requestParams.add(excludeEDPNVP);
-					}				
-					if (elevateFacetValues.length() > 0) {
-						excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
-						requestParams.add(excludeFacetNVP);
-						if (e.isForceAdd() && kwNvp!=null) {
-							requestParams.remove(kwNvp);
-						}
-					}				
 				}
+				
+				generateElevateList(elevateValues, elevateFacetValues, elevatedList, currItem++);
+				if (elevateValues.length() > 0) {
+					excludeEDPNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
+					requestParams.add(excludeEDPNVP);
+				}				
+				if (elevateFacetValues.length() > 0) {
+					excludeFacetNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateFacetValues.toString());
+					requestParams.add(excludeFacetNVP);
+					if (e.isForceAdd() && kwNvp!=null) {
+						requestParams.remove(kwNvp);
+					}
+				}
+					
 				requestParams.add(nvp);
 				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 				requestParams.remove(nvp);
@@ -354,6 +373,14 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					JSONObject doc = (JSONObject)docs.get(j);
 					String edp = doc.getString("EDP");
 					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
+					doc.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
+					if (e.getElevateEntity() == MemberTypeEntity.FACET) {
+						doc.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+					}
+					if (expiredElevatedEDPs.contains(edp)) {
+						doc.element(SolrConstants.TAG_EXPIRED,"");
+					}
+					doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 					docList.add(doc);
 					explainMap.put(edp, tmpExplain);
 				}
@@ -382,13 +409,14 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 		return addedRecords;
 	}
 
-	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, ElevateResult elevateResult) {
+	private void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList, int currItem) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
+		int i = 1;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
-				if (elevate.getMemberId().equals(elevateResult.getMemberId())) {
-					continue;
+				if (++i > currItem) {
+					break;
 				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
@@ -538,14 +566,16 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			}
 			else {
 				// only one level 2
-				String lvl2Key = lvl1.getFacets().get(0);
-				CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
-				lvl2Map.put(lvl2Key, lvl2.getCount());
-				
-				for (String lvl3Key: lvl2.getFacets()) {
-					CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
-					if (lvl3 != null) {
-						lvl3Map.put(lvl3Key, lvl3.getCount());						
+				if(lvl1.getFacets().size() > 0){
+					String lvl2Key = lvl1.getFacets().get(0);
+					CNetFacetTemplate lvl2 = lvl1.getFacet(lvl2Key);
+					lvl2Map.put(lvl2Key, lvl2.getCount());
+					
+					for (String lvl3Key: lvl2.getFacets()) {
+						CNetFacetTemplate lvl3 = lvl2.getFacet(lvl3Key);
+						if (lvl3 != null) {
+							lvl3Map.put(lvl3Key, lvl3.getCount());						
+						}
 					}
 				}
 			}

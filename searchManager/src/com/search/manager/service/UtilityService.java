@@ -171,5 +171,29 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
+	
+	@RemoteMethod
+	public static String getStoreFacetTemplateName(){
+
+		ConfigManager cm = ConfigManager.getInstance();
+		String storeFacetTemplateName = StringUtils.EMPTY;
+		if (cm != null) {
+			storeFacetTemplateName = cm.getParameterByCore(getStoreName(), "facet-template-name");
+		}
+		
+		return storeFacetTemplateName;
+	}
+	
+	@RemoteMethod
+	public static String getStoreFacetName(){
+
+		ConfigManager cm = ConfigManager.getInstance();
+		String storeFacetTemplate = StringUtils.EMPTY;
+		if (cm != null) {
+			storeFacetTemplate = cm.getParameterByCore(getStoreName(), "facet-name");
+		}
+
+		return storeFacetTemplate;
+	}
 
 }

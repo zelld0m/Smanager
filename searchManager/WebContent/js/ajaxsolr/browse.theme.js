@@ -55,38 +55,38 @@
 	AjaxSolr.theme.prototype.noSearchResult = function (keyword) {
 		var output  = '';
 
-		output  +='<div class="containerAB txtAL">';
+		output  +='<div class="marT10 txtAL">';
 		output  +='<h2>No products found for "' + keyword + '"</h2>';
-		output  +='<p class="contentAB">Proin varius dapibus metus, ac gravida enim pretium sed. Phasellus varius, elit id posuere vestibulum, justo metus consectetur odio, in consectetur turpis metus et odio. </p>';
-		output  +='<ol class="marT10 marRL20">';
-		output  +='<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>';
-		output  +='<li>Morbi eget leo sit amet sapien commodo ultricies sed id turpis. Aenean tortor arcu, porttitor sed placerat at, adipiscing vitae metus. </li>';
-		output  +='<li>Donec vitae metus lacus, at sollicitudin leo. Proin metus tellus, molestie in fermentum eu, congue a risus.</li>';
-		output  +='</ol>';
+//		output  +='<p class="contentAB">Proin varius dapibus metus, ac gravida enim pretium sed. Phasellus varius, elit id posuere vestibulum, justo metus consectetur odio, in consectetur turpis metus et odio. </p>';
+//		output  +='<ol class="marT10 marRL20">';
+//		output  +='<li>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</li>';
+//		output  +='<li>Morbi eget leo sit amet sapien commodo ultricies sed id turpis. Aenean tortor arcu, porttitor sed placerat at, adipiscing vitae metus. </li>';
+//		output  +='<li>Donec vitae metus lacus, at sollicitudin leo. Proin metus tellus, molestie in fermentum eu, congue a risus.</li>';
+//		output  +='</ol>';
 		output  +='</div>';
 
-		output  +='<div class="containerAC txtAL clearfix">';
-		output  +='<h2>Browse By Product Category</h2>';
-		output  +='<p class="contentAC">';
-		output  +='<ul>';
-		output  +='	<li>Computers</li>';
-		output  +='<li>Servers</li>';
-		output  +='<li>Storage</li>';
-		output  +='<li>Printers</li>';
-		output  +='<li>Software</li>';
-		output  +='<li>Networking</li>';
-		output  +='<li>Displays</li>';
-		output  +='<li>Accessories</li>';
-		output  +='<li>Power</li>';
-		output  +='<li>Memory</li>';
-		output  +='<li>Scanners</li>';
-		output  +='<li>Electronics</li>';
-		output  +='<li>Supplies</li>';
-		output  +='<li>Projectors</li>';
-		output  +='<li>Browse All Categories</li>';
-		output  +='</ul>';
-		output  +='</p>';
-		output  +='</div>';
+//		output  +='<div class="containerAC txtAL clearfix">';
+//		output  +='<h2>Browse By Product Category</h2>';
+//		output  +='<p class="contentAC">';
+//		output  +='<ul>';
+//		output  +='	<li>Computers</li>';
+//		output  +='<li>Servers</li>';
+//		output  +='<li>Storage</li>';
+//		output  +='<li>Printers</li>';
+//		output  +='<li>Software</li>';
+//		output  +='<li>Networking</li>';
+//		output  +='<li>Displays</li>';
+//		output  +='<li>Accessories</li>';
+//		output  +='<li>Power</li>';
+//		output  +='<li>Memory</li>';
+//		output  +='<li>Scanners</li>';
+//		output  +='<li>Electronics</li>';
+//		output  +='<li>Supplies</li>';
+//		output  +='<li>Projectors</li>';
+//		output  +='<li>Browse All Categories</li>';
+//		output  +='</ul>';
+//		output  +='</p>';
+//		output  +='</div>';
 
 		return $(output);
 	};
@@ -96,13 +96,40 @@
 		output += '<div class="box marT8">';
 		output += '<h2>Search Within</h2>';
 		output += '<div class="mar10 w215">';
-		output += '<input type="text" id="searchWithinInput" class="searchBoxIconLBg w163 padTB4 fgray">';
+		output += '<div class="searchBoxHolder w145 floatL marT1 marR5">';
+		output += '<input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3">';
+		output += '</div>';
 		output += '<a href="javascript:void(0)" id="searchbutton" class="btnGraph"><div class="btnGraph btnGoB floatR"></div></a>';
+		output += '<div class="clearB"></div>';
 		output += '</div>';
 		output += '</div>';
 		return $(output);
 	};
 
+	AjaxSolr.theme.prototype.dynamicAttributeFilter = function() {
+		var output  = '';
+
+		output  += '<div class="box marT8">';
+		output  += '	<h2>Condition</h2>';
+		output  += '	<ul>';
+		output  += '		<li><input type="checkbox" id="Refurbished_Flag" class="checkboxFilter"> Refurbished </li>';
+		output  += '		<li><input type="checkbox" id="OpenBox_Flag" class="checkboxFilter"> Open Box </li>';
+		output  += '		<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>';
+		output  += '	</ul>';
+		output  += '</div>';
+
+		output  += '<div class="box marT8">';
+		output  += '	<h2>License Product</h2>';
+		output  += '	<select class="dropdownFilter mar10 w215" id="licenseFilter">';
+		output  += '		<option value="all">Both License & Non-License</option>';
+		output  += '		<option value="Licence_Flag:1">License Product Only</option>';
+		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
+		output  += '	</select>';
+		output  += '</div>';
+
+		return $(output);
+	};
+	
 	AjaxSolr.theme.prototype.productAttributeFilter = function() {
 		var output  = '';
 
@@ -129,8 +156,8 @@
 
 	AjaxSolr.theme.prototype.createFacetHolder = function (facetLabel, facet) {
 		var output  = '<div class="clearB floatL w240">';
-		output += '<div id="' + facet + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
-		output += '<div class="' + facet +' clearB floatL w230 padL10"></div>';  
+		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
+		output += '<div class="' + $.formatAsId(facet) +' clearB floatL w230 padL10"></div>';  
 		output += '</div>';
 
 		return $(output);	
@@ -167,7 +194,11 @@
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
-		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
+		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
+		output += '			<div class="floatL">';
+		output += '				<div id="debugHolder" class="floatL marB6"></div>';
+		output += '				<div id="elevatePosition" class="floatL"></div>';
+		output += '			</div>';
 		output += '			<div class="floatR marR5 marTn2">';
 		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
 		output += '			</div>';
@@ -202,7 +233,6 @@
 		output += '		<td colspan="2" align="left" valign="top" class="padTB7 fgray">';
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
-		output += '       			<td width="60"><span class="fgreen"><div><div id="debugHolder" class="floatL"></div></div></td>';
 		output += '       			<td width="60"><span class="fgreen">SKU #: </span>' + doc.DPNo + '</td>';
 		output += '       			<td width="130"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
@@ -216,9 +246,9 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + doc.CartPrice);
+		secObj.find("div#cartPriceHolder").append('$' + doc[GLOBAL_storeFacetName + "_CartPrice"]);
 
-		var name = $.isNotBlank(doc[GLOBAL_storeLabel + "_Name"])? doc[GLOBAL_storeLabel + "_Name"] : doc.Name;
+		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact">' + doc.Manufacturer + '</span>';
 		
 		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', manufacturer + name, docHandler));
@@ -228,14 +258,27 @@
 		secObj.find("div#auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
 
 		//Add Debug link
-		if (doc.Elevate == undefined){
+		if ($.isBlank(doc.Elevate) || doc["ElevateType"] === "FACET"){
 			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
 			secObj.find("div#debugHolder a").addClass("btnShade btnCream");
 			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
-		}else{		  
-			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Elevated Position: ' +  doc.Elevate, null));
-			secObj.find("div#debugHolder a").addClass("btnShade btnGreen");
-			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
+		}
+		
+		if ($.isNotBlank(doc.Elevate)){		  
+			var displayText = "Elevated at position " + doc["Elevate"];
+			
+			if(doc["ElevateType"] === "FACET")
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> elevated at position '+ doc["Elevate"];
+
+			secObj.find("div#elevatePosition").html(displayText);
+			secObj.find("div#elevatePosition a").off().on({
+				click: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				},
+				mouseenter: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				}
+			}, {doc: doc});
 		}
 
 		//Add Elevate Button if search has keyword
@@ -249,7 +292,7 @@
 
 			if (doc.Elevate != undefined){
 				bigbetsicon = 'images/icon_arrowUp.png'; 
-				eleHover = "Remove Elevate";
+				eleHover = "Update Elevate";
 			} 
 
 			if (doc.Feature != undefined){
@@ -276,8 +319,7 @@
 	AjaxSolr.theme.prototype.snippet = function (doc) {
 		var output = '';
 
-		//TODO: make this dynamic
-		var description = $.isNotBlank(doc.MacMall_Description)? doc.MacMall_Description : doc.Description;  
+		var description = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Description"])? doc[GLOBAL_storeFacetName + "_Description"] : doc.Description;  
 
 		if (description && description.length > 300) {
 			output += description.substring(0, 300);
@@ -291,7 +333,7 @@
 		return output;
 	};
 
-	AjaxSolr.theme.prototype.displayFacetMoreOptions = function (value, title, facets) {
+	AjaxSolr.theme.prototype.displayFacetMoreOptions = function (value, title, facets, delimiter) {
 		var output = ''; 
 
 		output += '<div class="tblcontContainer">';
@@ -302,8 +344,8 @@
 		output += '<tr>';
 		output += '<td colspan="2" class="top"><div class="floatL w240">Search: <input type="text" id="searchField" class="searchBoxIconBg"></div> <div class="searchCount fsize11 fgray w110 floatL txtAR padT3"></div></td>';
 		output += '</tr>';
-		output += '<tr><td colspan="2"> &nbsp; </td></tr>'
-			output += '<tr>';
+		output += '<tr><td colspan="2"> &nbsp; </td></tr>';
+		output += '<tr>';
 		output += '<th width="25%" class="pad3"></th>';
 		output += '<th class="pad3 txtAL fbold">Content Type</th>';
 		output += '</tr>';
@@ -322,7 +364,7 @@
 				var count = parseInt(facets[facet]);
 				output += '<tr>';
 				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
-				output += '<td class="values"><span class="value">' + facet + '</span></td>';
+				output += '<td class="values"><span class="value">' + (delimiter ? facet.split(delimiter)[1] : facet) + '</span></td>';
 				//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
 				output += '</tr>';		
 			}
@@ -428,11 +470,12 @@
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
 		output += '						<li class="label">Elevation:</li><li class="value" id="elevatePosition">1</li>';
-		output += '						<li class="label">SKU #:</li><li class="value" id="partNo">846896</li>'; 
-		output += '						<li class="label">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
+		output += '						<li class="label partNoLabel">SKU #:</li><li class="value" id="partNo">846896</li>'; 
+		output += '						<li class="label mfrNoLabel">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
 		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
 		output += '				  	</ul>';
 		output += '					</div>';
+		output += '					<div class="label w125 floatL marL8 posRel" id="readableStr"></div>';
 		output += '				</div>';
 		output += '			</li>';
 		output += '		</ul>';
@@ -496,7 +539,7 @@
 		output += '	<div id="facetFilterHolder"><span class="lnk"></span></div>';
 		output += '</div>';
 
-		var scbObj= $("." + facetField).append($(output));
+		var scbObj= $("." + $.formatAsId(facetField)).append($(output));
 		scbObj.find(" ." + facetId + " div#" + "facetFilterHolder span.lnk").append(AjaxSolr.theme('createLink', facet + " (" + count + ")", handler));
 
 	};

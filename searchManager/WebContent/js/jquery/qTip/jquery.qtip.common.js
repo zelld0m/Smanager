@@ -100,6 +100,7 @@
 				//if there is text, lets filter  
 				else {  
 					query = $.trim($(this).val()); //trim white space  
+					query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
 					query = query.replace(/ /gi, '|'); //add OR for regex query  
 
 					content.find('.resultTable tbody tr').each(function() {  

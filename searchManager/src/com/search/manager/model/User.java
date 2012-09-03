@@ -213,10 +213,17 @@ public class User extends ModelBean {
 	public Date getThruDate() {
 		return thruDate;
 	}
+	
+	public String getFormattedThruDate() {
+		return DateAndTimeUtils.formatDateUsingConfig(storeId, getThruDate());
+	}
 
 	public void setThruDate(Date thruDate) {
 		this.thruDate = thruDate;
-		this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) < 0;
+		// TODO: expired is also used for expired password
+		if (BooleanUtils.isNotTrue(accountNonExpired)) {
+			this.accountNonExpired = DateAndTimeUtils.compare(new Date(), thruDate) <= 0;			
+		}
 	}
 
 	public Integer getSuccessiveFailedLogin() {

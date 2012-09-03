@@ -40,10 +40,7 @@
 				searchWithinInput: '#searchWithinInput'
 			}));
 
-			Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
-				id: 'currentSearch',
-				target: '#dynamicSelection'
-			}));
+			
 
 			Manager.addWidget(new AjaxSolr.RuleSelectorWidget({
 				id: 'ruleSelector',
@@ -72,7 +69,20 @@
 				target: '#dynamicFacets',
 				limit: 5
 			}));
-
+			
+			Manager.addWidget(new AjaxSolr.DynamicAttributeWidget({
+				id: 'dynamicAttribute',
+				target: '#dynamicAttributes',
+				limit: 5,
+				attribMap: null
+			}));
+			
+			
+			Manager.addWidget(new AjaxSolr.CurrentSearchWidget({
+				id: 'currentSearch',
+				target: '#dynamicSelection'
+			}));
+			
 			Manager.addWidget(new AjaxSolr.ActiveRuleWidget({
 				id: 'activeRule',
 				target: '#activeRule'
@@ -93,12 +103,12 @@
 
 			//TODO: Make this dynamic
 			var facetTemplate;
-			facetTemplate = ['Category','Manufacturer', 'Platform'];
-			
-			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap"){
-				facetTemplate = ['Manufacturer', 'Platform'];
+			facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
+
+			if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn"){
+				facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 			};
-			
+
 			var params = {
 					'facet': true,
 					'debugQuery': true,
@@ -122,15 +132,27 @@
 			Manager.store.addByValue("store", GLOBAL_store);
 
 			if ($("#select-server").is(":visible")){
-				$("#select-server").on({
+				$("#select-server").off().on({
 					change: function(event, data){
 						var reload;
-						if (data != undefined) {
+						console.log($.cookie("server.selected"));
+						console.log(reload);
+						console.log(data);
+						if ($.isNotBlank(data)) {
 							reload = data["reload"];
 						}
-						if (reload == undefined || reload == true) {
-							Manager.setSolrUrl(GLOBAL_solrUrl + GLOBAL_store + '/');
-							Manager.doRequest();						
+						if ($.isBlank(reload) || reload == true) {
+							console.log("set url");
+							UtilityServiceJS.getSolrConfig({
+								callback:function(data){	
+									var config = $.parseJSON(data);
+									Manager.setSolrUrl(config.solrUrl + GLOBAL_store + '/');
+									console.log(config.solrUrl);
+								},
+								postHook:function() {
+									Manager.doRequest();						
+								}
+							});					
 						}
 					}
 				});

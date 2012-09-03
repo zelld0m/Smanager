@@ -2,6 +2,7 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,15 +12,13 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.dao.DaoException;
-import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
-import com.search.manager.model.CategoryList;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.utility.CatCodeUtil;
+import com.search.manager.utility.CatCodeUtil.Attribute;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 @Service(value = "categoryService")
@@ -31,49 +30,28 @@ import com.search.ws.SearchHelper;
 public class CategoryService {
 	private static final Logger logger = Logger.getLogger(CategoryService.class);
 	
-	@Autowired private DaoService daoService;
-	
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
-	
 	@RemoteMethod
-	public CategoryList getCategories(String categoryCode) {
-		try {
-			return daoService.getCategories(categoryCode);
-		} catch (DaoException e) {
-			logger.error("Failed during getCategories()",e);
-		}
-		return null;
-	}
-
-	@RemoteMethod
-	public List<String> getIMSCategories() throws DataException {
+	public static List<String> getIMSCategories() throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel("","","");
 	}
 	
-	
 	@RemoteMethod
-	public List<String> getIMSSubcategories(String category) throws DataException {
+	public static List<String> getIMSSubcategories(String category) throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel(category,"","");
 	}	
 
 	@RemoteMethod
-	public List<String> getIMSClasses(String category, String subcategory) throws DataException {
+	public static List<String> getIMSClasses(String category, String subcategory) throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel(category,subcategory,"");
 	}	
 
 	@RemoteMethod
-	public List<String> getIMSMinors(String category, String subcategory, String className) throws DataException {
+	public static List<String> getIMSMinors(String category, String subcategory, String className) throws DataException {
 		return CatCodeUtil.getIMSCategoryNextLevel(category,subcategory,className);
 	}
 
 	@RemoteMethod
-	public List<String> getIMSManufacturers(String catcode, String category, String subcategory, String className, String subclass) {
+	public static List<String> getIMSManufacturers(String catcode, String category, String subcategory, String className, String subclass) {
 		List<String> filters = new ArrayList<String>();
 		if (StringUtils.isNotBlank(catcode)) {
 			filters.add(String.format("CatCode: %s", catcode));
@@ -94,22 +72,22 @@ public class CategoryService {
 	}
 	
 	@RemoteMethod
-	public List<String> getCNETLevel1Categories() throws DataException {
+	public static List<String> getCNETLevel1Categories() throws DataException {
 		return CatCodeUtil.getCNETNextLevel("","");
 	}
 	
 	@RemoteMethod
-	public List<String> getCNETLevel2Categories(String level1Category) throws DataException {
+	public static List<String> getCNETLevel2Categories(String level1Category) throws DataException {
 		return CatCodeUtil.getCNETNextLevel(level1Category, "");
 	}
 	
 	@RemoteMethod
-	public List<String> getCNETLevel3Categories(String level1Category, String level2Category) throws DataException {
+	public static List<String> getCNETLevel3Categories(String level1Category, String level2Category) throws DataException {
 		return CatCodeUtil.getCNETNextLevel(level1Category, level2Category);
 	}
 	
 	@RemoteMethod
-	public List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
+	public static List<String> getCNETManufacturers(String level1Category, String level2Category, String level3Category) {
 		Map<String, List<String>> filter = new HashMap<String, List<String>>();
 		ArrayList<String> filters = null;
 		if (StringUtils.isNotBlank(level1Category)) {
@@ -133,4 +111,103 @@ public class CategoryService {
 		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
+	
+	@RemoteMethod
+	public static List<String> getIMSTemplateNames() throws DataException {
+		return CatCodeUtil.getAllIMSTemplates();
+	}
+	
+	@RemoteMethod
+	public static List<String> getCNETTemplateNames() throws DataException {
+		return CatCodeUtil.getAllCNETTemplates();
+	}
+
+	@RemoteMethod
+	public static Map<String, Attribute> getIMSTemplateAttributes(String templateName) throws DataException {
+		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		filters.add("TemplateName:\"" + templateName + "\"");
+		ArrayList<String> fields = new ArrayList<String>();
+
+		for (Attribute a: CatCodeUtil.getIMSTemplateAttribute(templateName)) {
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			fields.add(a.getAttributeName());
+		}	
+		
+		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+				fields, filters, false);
+
+		for (Attribute a: attrMap.values()) {
+			List<String> values = map.get(a.getAttributeName());
+			if (values != null) {
+				for (String value: values) {
+					a.addAttributeValue(value);
+				}				
+			}
+		}
+		
+		return attrMap;
+	}
+	
+	@RemoteMethod
+	public static Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
+		// TODO: merge with above method
+		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
+		String storeId = UtilityService.getStoreName();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		ArrayList<String> fields = new ArrayList<String>();
+
+		for (Attribute a: CatCodeUtil.getCNETTemplateAttribute(templateName)) {
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+			fields.add(a.getAttributeName());
+		}
+
+		String templateNameField = ConfigManager.getInstance().getParameterByCore(storeId, "facet-template");
+		if (StringUtils.isNotEmpty(templateNameField)) {
+			filters.add(templateNameField + "Name:\"" + templateName + "\"");
+
+			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+					fields, filters,false);
+
+			for (Attribute a: attrMap.values()) {
+				List<String> values = map.get(a.getAttributeName());
+				if (values != null) {
+					for (String value: values) {
+						a.addAttributeValue(value);
+					}					
+				}
+			}			
+		}
+		
+		return attrMap;
+	}
+
+	public static Map<String, Attribute> getIMSTemplateAttributesMap(String templateName) throws DataException {
+		Map <String, Attribute> attrMap = new HashMap<String, Attribute>();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		filters.add("TemplateName:\"" + templateName + "\"");
+
+		for (Attribute a: CatCodeUtil.getIMSTemplateAttribute(templateName)) {
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+		}	
+
+		return attrMap;
+	}
+	
+	public static Map<String, Attribute> getCNETTemplateAttributesMap(String templateName) throws DataException {
+		Map <String, Attribute> attrMap = new HashMap<String, Attribute>();
+
+		ArrayList<String> filters = new ArrayList<String>();
+		filters.add("TemplateName:\"" + templateName + "\"");
+
+		for (Attribute a: CatCodeUtil.getCNETTemplateAttribute(templateName)) {
+			attrMap.put(a.getAttributeName(), new Attribute(a.getAttributeName(), a.getAttributeDisplayName()));
+		}	
+
+		return attrMap;
+	}
+	
 }

@@ -7,7 +7,7 @@
 
 			ruleFilterText: "",
 			ruleKeywordFilterText: "",
-			tabSelectedTypeId: "",
+			tabSelectedTypeId: 1,
 
 			rulePage: 1,
 			ruleKeywordPage: 1,
@@ -19,13 +19,7 @@
 
 			newFilterGroupText: "New Filter Group Condition",
 			defaultIMS: "CatCode",
-
-			prepareRedirect : function(){
-				clearAllQtip();
-				$("#preloader").show();
-				$("#submitForApproval, #redirect, #noSelected").hide();
-				$("#titleHeader").html("");
-			},
+			templateAttributes: null,
 
 			addDownloadListener: function(){
 				var self = this;
@@ -53,7 +47,7 @@
 
 			addDeleteRuleListener: function(){
 				var self = this;
-				
+
 				$("#deleteBtn").off().on({
 					click: function(e){
 						if (!e.data.locked && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
@@ -71,10 +65,10 @@
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
-			
+
 			addSaveRuleListener: function(){
 				var self = this;
-				
+
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
@@ -84,22 +78,22 @@
 
 						if (self.checkIfUpdateAllowed()){
 							if ($.isBlank(ruleName)){
-								alert("Rule name is required.");
+								jAlert("Rule name is required.","Query Cleaning");
 							}
 							else if (!isAllowedName(ruleName)){
-								alert("Rule name contains invalid value.");
+								jAlert("Rule name contains invalid value.","Query Cleaning");
 							}
 							else if (!isAscii(description)) {
-								alert("Description contains non-ASCII characters.");										
+								jAlert("Description contains non-ASCII characters.","Query Cleaning");										
 							}
 							else if (!isXSSSafe(description)){
-								alert("Description contains XSS.");
+								jAlert("Description contains XSS.","Query Cleaning");
 							}
 							else {
 								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
 									callback: function(data){
 										if (data==true){
-											alert("Another query cleaning rule is already using the name provided.");
+											jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
 										}else{
 											var response = 0;
 											RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
@@ -136,7 +130,14 @@
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
-			
+
+			prepareRedirect : function(){
+				clearAllQtip();
+				$("#preloader").show();
+				$("#submitForApproval, #redirect, #noSelected").hide();
+				$("#titleHeader").html("");
+			},
+
 			showRedirect : function(){
 				var self = this;
 
@@ -151,56 +152,54 @@
 					return;
 				}
 
-				$("#submitForApproval").show();
-				$("#redirect").show();
+				$("#submitForApproval").rulestatus({
+					moduleName: self.moduleName,
+					rule: self.selectedRule,
+					authorizeRuleBackup: true,
+					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+					afterSubmitForApprovalRequest:function(ruleStatus){
+						self.selectedRuleStatus = ruleStatus;
+						self.showRedirect();
+					},
+					beforeRuleStatusRequest: function(){
+						self.prepareRedirect();	
+					},
+					afterRuleStatusRequest: function(ruleStatus){
+						$("#submitForApproval").show();
+						$("#preloader").hide();
+						$("#titleText").html(self.moduleName + " for ");
+						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						self.selectedRuleStatus = ruleStatus;
+						$("#redirect").show();
+						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
-				$("#titleText").html(self.moduleName + " for ");
-				$("#titleHeader").html(self.selectedRule["ruleName"]);
+						$("#name").val(self.selectedRule["ruleName"]);
+						$("#description").val(self.selectedRule["description"]);
 
-				$("#name").val(self.selectedRule["ruleName"]);
-				$("#description").val(self.selectedRule["description"]);
+						self.getKeywordInRuleList(1);
+						self.addTabListener();
+						self.addSaveRuleListener();
+						self.addDeleteRuleListener();
+						self.addDownloadListener();
 
-				self.getKeywordInRuleList(1);
-				self.refreshTabContent();
-				self.addTabListener();
-				self.addSaveRuleListener();
-				self.addDeleteRuleListener();
-				self.addDownloadListener();
+						$('#auditIcon').off().on({
+							click: showAuditList
+						}, {locked: self.selectedRuleStatus["locked"] || !allowModify, type:self.moduleName, ruleRefId: self.selectedRule["ruleId"], name:  self.selectedRule["ruleName"]});
 
-				$("#submitForApprovalBtn").off().on({
-					click: function(e){
-						if(confirm(e.data.module + " " + e.data.ruleRefName + " will be locked for approval. Continue?")){
-							DeploymentServiceJS.processRuleStatus(e.data.module, e.data.ruleRefId, e.data.ruleRefName, e.data.isDelete,{
-								callback: function(data){
-									self.ruleStatus = data;
-								},
-								preHook:function(){
-									self.prepareRedirect();
-								},
-								postHook: function(){
-									self.setRedirect(self.selectedRule);
+						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
+
+						$("div#keyword").find("#changeKeywordBtn").off().on({
+							mouseenter: showHoverInfo,
+							click: function(evt){
+								if (!evt.data.locked){
+									$('div#keyword').find('#activerules').hide();
+									$('div#keyword').find('#activerules > .alert > #rules').empty();
+									self.updateChangeKeyword();
 								}
-							});
-						}
+							}
+						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 					}
-				}, { module: self.moduleName, ruleRefId: self.selectedRule["ruleId"] , ruleRefName: self.selectedRule["ruleName"], isDelete: false});
-
-				$('#auditIcon').on({
-					click: showAuditList
-				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, type:self.moduleName, ruleRefId: self.selectedRule["ruleId"], name:  self.selectedRule["ruleName"]});
-
-				$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
-				
-				$("div#keyword").find("#changeKeywordBtn").off().on({
-					mouseenter: showHoverInfo,
-					click: function(evt){
-						if (!evt.data.locked){
-							$('div#keyword').find('#activerules').hide();
-							$('div#keyword').find('#activerules > .alert > #rules').empty();
-							self.updateChangeKeyword();
-						}
-					}
-				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+				});
 			},
 
 			getKeywordInRuleList : function(page){
@@ -232,7 +231,7 @@
 						icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
 						base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
 
-						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
+						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).off().on({
 							click: function(e){
 								if (!e.data.locked && confirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?'))
 									RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
@@ -336,24 +335,7 @@
 			setRedirect : function(rule){
 				var self = this;
 				self.selectedRule = rule;
-
-				if (rule==null){
-					self.showRedirect();
-					return;
-				}
-
-				DeploymentServiceJS.getRuleStatus(self.moduleName, self.selectedRule["ruleId"], {
-					callback:function(data){
-						self.selectedRuleStatus = data;
-						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
-						showDeploymentStatusBar(self.moduleName, self.selectedRuleStatus);
-						self.showRedirect();
-					},
-					preHook: function(){
-						self.prepareRedirect();
-					}
-				});		
-
+				self.showRedirect();
 			},
 
 			getRedirectRuleList : function(page) { 
@@ -385,7 +367,7 @@
 						RedirectServiceJS.checkForRuleNameDuplicate("", name, {
 							callback: function(data){
 								if (data==true){
-									alert("Another query cleaning rule is already using the name provided.");
+									jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
 								}else{
 									RedirectServiceJS.addRuleAndGetModel(name, {
 										callback: function(data){
@@ -394,7 +376,6 @@
 												self.selectedRule = data;
 												self.setRedirect(data);
 											}else{
-												self.setRedirect(self.selectedRule);
 											}
 										},
 										preHook: function(){ 
@@ -415,7 +396,7 @@
 								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
 								base.$el.find(selector + ' div.itemLink a').html(totalText);
 
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
 									click: function(e){
 										self.setRedirect(model);
 									}
@@ -451,31 +432,31 @@
 				var self = this;
 				var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
 				var $preloader = $("div#keyword").find('#preloader');
-				
+
 				$input.val(self.selectedRule["changeKeyword"]).prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
-				
+
 				if ($.isNotBlank($input.val()))
-				$('div#keyword').find('#activerules > .alert > #rules').activerule({
-					keyword: $input.val(), 
-					beforeRequest: function(){
-						$preloader.show();
-						$input.prop({disabled:true});
-						$('div#keyword').find('#activerules > .alert > #rules').empty();
-						$('div#keyword').find('#activerules').hide();
-					},
-					afterRequest: function(){
-						$preloader.hide();
-						$input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
-						$('div#keyword').find('#activerules').show();
-					}
-				});
+					$('div#keyword').find('#activerules > .alert > #rules').activerule({
+						keyword: $input.val(), 
+						beforeRequest: function(){
+							$preloader.show();
+							$input.prop({disabled:true});
+							$('div#keyword').find('#activerules > .alert > #rules').empty();
+							$('div#keyword').find('#activerules').hide();
+						},
+						afterRequest: function(){
+							$preloader.hide();
+							$input.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
+							$('div#keyword').find('#activerules').show();
+						}
+					});
 			},
 
 			updateChangeKeyword : function(){
 				var self = this;
 				var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
 				var $preloader = $("div#keyword").find('#preloader');
-					
+
 				RedirectServiceJS.setChangeKeyword(self.selectedRule["ruleId"], $.trim($input.val()), {
 					callback: function(data){
 						if (data>0){
@@ -500,46 +481,39 @@
 				var self = this;
 
 				$('input[type="checkbox"].activate').prop({checked:false, disabled: false });
-
+			
 				$('input[type="checkbox"].activate').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 					click:function(e){
 						if (e.data.locked) return;
-						
-						var typeId = 1;
-						switch(self.tabSelectedTypeId){
-						case "#filter": typeId = 1; break;
-						case "#keyword": typeId = 2; break; 
-						case "#page": typeId = 3; break; 
-						}
-						
-						self.updateActiveRedirectType(typeId);
+						self.updateActiveRedirectType();
 					},
 					mouseenter: showHoverInfo
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify});
-
+				
 				switch(parseInt(self.selectedRule["redirectTypeId"])){
 				case 1: $("div#filter").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 2: $("div#keyword").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 3: $("div#page").find('input#activate').prop({checked:true, disabled: true }); break;
 				};
-
 			},
 
-			updateActiveRedirectType : function(typeId){
+			updateActiveRedirectType : function(){
 				var self = this;
-				RedirectServiceJS.setRedirectType(self.selectedRule["ruleId"], typeId, {
+				RedirectServiceJS.setRedirectType(self.selectedRule["ruleId"], parseInt(self.tabSelectedTypeId), {
 					callback: function(data){
-						self.selectedRule["redirectTypeId"] = parseInt(typeId);
+						self.selectedRule["redirectTypeId"] = self.tabSelectedTypeId;
+					},
+					postHook: function(){
 						self.setActiveRedirectType();
 					}
 				});
 			},
-			
+
 			setIncludeKeyword : function(){
 				var self = this;
-				
+
 				$('input[type="checkbox"].includeKeyword').prop({checked:false});
-				
+
 				RedirectServiceJS.getRule(self.selectedRule["ruleId"], {
 					callback: function(data){
 						if($.isNotBlank(data["includeKeyword"])){
@@ -547,13 +521,13 @@
 						}
 					}
 				});
-				
+
 				$('input[type="checkbox"].includeKeyword').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 					click:function(e){
 						if (e.data.locked) return;
-						
+
 						var isIncludeKeyword = $('input[type="checkbox"].includeKeyword')[0].checked;
-						
+
 						self.updateIncludeKeyword(isIncludeKeyword);
 					},
 					mouseenter: showHoverInfo
@@ -574,7 +548,7 @@
 				var $select = ui.find("select#level1CategoryList");
 				var $input = ui.find("input#level1CategoryList");
 				var $table = ui.find("table.cnetFields");
-				
+
 				CategoryServiceJS.getCNETLevel1Categories({
 					callback: function(data){
 						var list = data;
@@ -601,14 +575,14 @@
 					}
 				});
 			},
-			
+
 			populateLevel2Categories: function(ui, condition, e){
 				var self = this;
 				var inLevel1Category = $.trim(ui.find("input#level1CategoryList").val());
 				var $select = ui.find("select#level2CategoryList");
 				var $input = ui.find("input#level2CategoryList");
 				var $table = ui.find("table.cnetFields");
-				
+
 				CategoryServiceJS.getCNETLevel2Categories(inLevel1Category, {
 					callback: function(data){
 						var list = data;
@@ -616,7 +590,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if ($.isNotBlank(list) && list.length>0){
 							$table.find("tr#level2Cat").show();
 						}else{
@@ -656,7 +630,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if ($.isNotBlank(list) && list.length>0){
 							$table.find("tr#level3Cat").show();
 						}else{
@@ -678,7 +652,7 @@
 					}
 				});
 			},
-			
+
 			populateCNETManufacturers: function(ui, condition, e){
 				var self = this;
 				var $select = ui.find("select#cnetmanufacturerList");
@@ -718,7 +692,7 @@
 				var $select = ui.find("select#categoryList");
 				var $input = ui.find("input#categoryList");
 				var $table = ui.find("table.imsFields");
-				
+
 				CategoryServiceJS.getIMSCategories({
 					callback: function(data){
 						var list = data;
@@ -752,7 +726,7 @@
 				var $select = ui.find("select#subCategoryList");
 				var $input = ui.find("input#subCategoryList");
 				var $table = ui.find("table.imsFields");
-				
+
 				CategoryServiceJS.getIMSSubcategories(inCategory, {
 					callback: function(data){
 						var list = data;
@@ -760,7 +734,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if ($.isNotBlank(list) && list.length>0){
 							$table.find("tr#subcategory").show();
 						}else{
@@ -800,7 +774,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if ($.isNotBlank(list) && list.length>0){
 							$table.find("tr#class").show();
 						}else{
@@ -841,7 +815,7 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
-						
+
 						if ($.isNotBlank(list) && list.length>0){
 							$table.find("tr#minor").show();
 						}else{
@@ -928,65 +902,308 @@
 
 					$facet.find("input#licenseList").val(condition.facets["License"]);
 					$facet.find("select#licenseList").prop("selectedText", condition.facets["License"]);
+
+					$facet.find("input#nameContains").val(condition.facets["Name"]);
+					$facet.find("input#descriptionContains").val(condition.facets["Description"]);
+
 				}
 			},
-			
+
+			addFacetTemplateFieldListener: function(ui, condition){
+				var self = this;
+				var $dynamicAttribute = ui.find("div.dynamicAttribute");
+
+				var updateFacetTemplateCombobox = function (target, e, u){
+					var $item = $(target).parents(".conditionItem");
+					switch($(target).attr("id").toLowerCase()){
+					case "templatenamelist" :
+						if(u.item){
+							$item.find("input#templateNameList").val(u.item.text);
+							$item.find("input#templateNameList").prop("selectedText", u.item.text);
+
+							if (ui.find("div.ims").is(":visible"))
+								self.populateIMSDynamicAttributes(ui, condition, e);
+							else if (ui.find("div.cnet").is(":visible"))
+								self.populateCNETDynamicAttributes(ui, condition, e);
+						}
+						else{
+							if (ui.find("div.ims").is(":visible"))
+								self.populateIMSTemplateNames(ui, condition, e);
+							else if (ui.find("div.cnet").is(":visible"))
+								self.populateCNETTemplateNames(ui, condition, e);
+						}
+						$item.find("input#dynamicAttributeList").val("");
+						break;
+
+					case "dynamicattributelist" :
+						if(u.item){
+							$item.find("input#dynamicAttributeList").val(u.item.text);
+							$item.find("input#dynamicAttributeList").prop("selectedText", u.item.text);
+							self.addDynamicAttributeButtonListener(ui, condition, u.item.value);
+						}
+						else{
+							jAlert("Please specify a valid attribute name.","Query Cleaning");
+							self.addDynamicAttributeButtonListener(ui, condition, "");
+						}
+						break;
+					}
+				};
+
+				$dynamicAttribute.find("select.selectCombo").combobox({
+					change: function(e, u){
+						updateFacetTemplateCombobox(this, e, u);
+					},
+					selected: function(e, u){
+						updateFacetTemplateCombobox(this, e, u);
+					}
+				});
+			},
+
+			populateDynamicAttributeValues: function(ui, condition, attributeMap){
+				var self = this;
+
+				if(condition.dynamicAttributes){
+					var $divItemList = ui.find('div#dynamicAttributeItemList');
+					$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
+
+					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
+						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
+							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
+							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+
+							$ulAttributeValues.prop({id:$.formatAsId(attrName), title:attrName});
+							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
+							if (!$.isNumeric(currCondCount)){
+								currCondCount = 0; 
+							}
+
+							var countId = 1 + parseInt(currCondCount);
+							$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
+
+							if(attributeMap && attributeMap[attrName]){
+								var attributeValues = attributeMap[attrName].attributeValues;
+								$divDynamicAttributeItem.find('span#dynamicAttributeLabel').html(attributeMap[attrName].attributeDisplayName + ":");
+
+								if(attributeValues){
+									for(var i=0; i<attributeValues.length; i++){
+										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+										$liAttributeValue.show();
+										$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
+										$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
+										$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
+										$ulAttributeValues.append($liAttributeValue);
+									}
+								}
+
+								$divDynamicAttributeItem.show();
+								$divDynamicAttributeItem.prop("id", countId);
+								$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
+								$divItemList.append($divDynamicAttributeItem);
+
+								self.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, condition);
+							}
+						}
+					});
+				}
+			},
+
+			populateIMSTemplateNames: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#templateNameList");
+				var $input = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
+
+				CategoryServiceJS.getIMSTemplateNames({
+					callback: function(data){
+						var list = data;
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderTemplateNameList").show();
+						self.clearDynamicAttributeComboBox(ui, "templateNameList");
+						$table.find("tr#dynamicAttributeName").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							$select.prop("selectedText",condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+							$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+						}
+					},
+					postHook:function(){
+						ui.find("img#preloaderTemplateNameList").hide();
+						if($.isNotBlank($.trim($input.val())))
+							self.populateIMSDynamicAttributes(ui, condition, e);
+					}
+				});
+			},
+
+			populateCNETTemplateNames: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#templateNameList");
+				var $input = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
+
+				CategoryServiceJS.getCNETTemplateNames({
+					callback: function(data){
+						var list = data;
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderTemplateNameList").show();
+						self.clearDynamicAttributeComboBox(ui, "templateNameList");
+						$table.find("tr#dynamicAttributeName").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							$select.prop("selectedText",condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+							$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+						}
+
+					},
+					postHook:function(){
+						ui.find("img#preloaderTemplateNameList").hide();
+						if($.isNotBlank($.trim($input.val()))) 
+							self.populateCNETDynamicAttributes(ui, condition, e);
+					}
+				});
+			},
+
+			populateIMSDynamicAttributes: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#dynamicAttributeList");
+				var $templateName = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
+
+				var inTemplateName = $.trim($templateName.val());
+
+				CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
+					callback: function(data){
+						self.templateAttributes = data;
+						var isEmpty = true;
+
+						$.each(self.templateAttributes, function(attrName, attrData) { 
+							$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
+							isEmpty = false;
+						});
+
+						if (!isEmpty){
+							$table.find("tr#dynamicAttributeName").show();
+						}else{
+							$table.find("tr#dynamicAttributeName").hide();
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").show();
+						self.clearDynamicAttributeComboBox(ui, "attributevaluelist");
+					},
+					postHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							self.populateDynamicAttributeValues(ui, condition, self.templateAttributes);
+						}
+					}
+				});
+			},
+
+			populateCNETDynamicAttributes: function(ui, condition, e){
+				var self = this;
+				var $select = ui.find("select#dynamicAttributeList");
+				var $templateName = ui.find("input#templateNameList");
+				var $table = ui.find("table.dynamicAttributeFields");
+
+				var inTemplateName = $.trim($templateName.val());
+
+				CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
+					callback: function(data){
+						self.templateAttributes = data;
+						var isEmpty = true;
+
+						$.each(self.templateAttributes, function(attrName, attrData) { 
+							$select.append($("<option>", {value: attrName}).text(attrData.attributeDisplayName));
+							isEmpty = false;
+						});
+
+						if (!isEmpty){
+							$table.find("tr#dynamicAttributeName").show();
+						}else{
+							$table.find("tr#dynamicAttributeName").hide();
+						}
+					},
+					preHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").show();
+						self.clearDynamicAttributeComboBox(ui, "attributevaluelist");
+					},
+					postHook:function(){
+						ui.find("img#preloaderDynamicAttributeList").hide();
+						if (!e && $.isNotBlank(condition) && $.isNotBlank(condition.dynamicAttributes)){
+							self.populateDynamicAttributeValues(ui, condition, self.templateAttributes);
+						}
+					}
+				});
+			},
+
 			initializeIMSFilters: function(comboboxId, ui, condition){
 				var self = this;
 				var $ims = ui.find("div.ims");
 				var $input = $ims.find("input#"+comboboxId);
-				
+
 				switch(comboboxId.toLowerCase()){
-					case "catcode":
-						$input.val(condition.IMSFilters["CatCode"]);
-						break;
-					case "categorylist" :
-						$input.val(condition.IMSFilters["Category"]);
-						break;
-					case "subcategorylist" : 
-						$input.val(condition.IMSFilters["SubCategory"]);
-						break;
-					case "classlist" : 
-						$input.val(condition.IMSFilters["Class"]);
-						break;
-					case "minorlist" : 
-						$input.val(condition.IMSFilters["SubClass"]);
-						break;
-					case "manufacturerlist" : 
-						$input.val(condition.IMSFilters["Manufacturer"]);
-						break;
+				case "catcode":
+					$input.val(condition.IMSFilters["CatCode"]);
+					break;
+				case "categorylist" :
+					$input.val(condition.IMSFilters["Category"]);
+					break;
+				case "subcategorylist" : 
+					$input.val(condition.IMSFilters["SubCategory"]);
+					break;
+				case "classlist" : 
+					$input.val(condition.IMSFilters["Class"]);
+					break;
+				case "minorlist" : 
+					$input.val(condition.IMSFilters["SubClass"]);
+					break;
+				case "manufacturerlist" : 
+					$input.val(condition.IMSFilters["Manufacturer"]);
+					break;
+				case "templatenamelist" :
+					$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+					break;
 				}
 			},
-			
+
 			initializeCNETFilters: function(comboboxId, ui, condition){
 				var self = this;
 				var $ims = ui.find("div.cnet");
 				var $input = $ims.find("input#"+comboboxId);
-				
+
 				switch(comboboxId.toLowerCase()){
-					case "level1categorylist":
-						$input.val(condition.CNetFilters["Level1Category"]);
-						break;
-					case "level2categorylist" :
-						$input.val(condition.CNetFilters["Level1Category"]);
-						break;
-					case "level3categorylist" : 
-						$input.val(condition.CNetFilters["Level1Category"]);
-						break;
-					case "cnetmanufacturerlist" : 
-						$input.val(condition.CNetFilters["Manufacturer"]);
-						break;
+				case "level1categorylist":
+					$input.val(condition.CNetFilters["Level1Category"]);
+					break;
+				case "level2categorylist" :
+					$input.val(condition.CNetFilters["Level1Category"]);
+					break;
+				case "level3categorylist" : 
+					$input.val(condition.CNetFilters["Level1Category"]);
+					break;
+				case "cnetmanufacturerlist" : 
+					$input.val(condition.CNetFilters["Manufacturer"]);
+					break;
+				case "templatenamelist" :
+					$input.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
+					break;
 				}
 			},
-			
+
 			addCNETFieldListener: function(ui, condition){
 				var self = this;
 				var $cnet = ui.find("div.cnet");
-				
+
 				if($.isBlank($cnet) && $cnet.is(":not(:visible)")){
 					return;
 				}
-				
+
 				var updateCNETCombobox = function (target, e, u){
 					var $item = $(target).parents(".conditionItem");
 					switch($(target).attr("id").toLowerCase()){
@@ -997,7 +1214,7 @@
 							self.populateLevel2Categories(ui, condition, e);
 						}
 						else self.populateLevel1Categories(ui, condition, e);
-						
+
 						$item.find("input#level2CategoryList").val("");
 						$item.find("input#level3CategoryList").val("");
 						$item.find("input#cnetmanufacturerList").val("");
@@ -1010,7 +1227,7 @@
 							$item.find("input#level3CategoryList").val("");
 						}
 						else self.populateLevel2Categories(ui, condition, e);
-						
+
 						$item.find("input#cnetmanufacturerList").val("");
 						break;
 					case "level3categorylist" : 
@@ -1020,7 +1237,7 @@
 							self.populateCNETManufacturers(ui, condition, e);
 						}
 						else self.populateLevel3Categories(ui, condition, e);
-						
+
 						$item.find("input#cnetmanufacturerList").val("");
 						break;
 					case "cnetmanufacturerlist" : 
@@ -1031,8 +1248,7 @@
 						break;
 					}
 				};
-				
-				
+
 				$cnet.find("select.selectCombo").combobox({
 					change: function(e, u){
 						updateCNETCombobox(this, e, u);
@@ -1042,15 +1258,15 @@
 					}
 				});
 			},
-			
+
 			addIMSFieldListener: function(ui, condition){
 				var self = this;
 				var $ims = ui.find("div.ims");
-				
+
 				if($.isBlank($ims) && $cnet.is(":not(:visible)")){
 					return;
 				}
-				
+
 				var updateIMSCombobox = function(target, e, u){
 					var $item = $(target).parents(".conditionItem");
 					switch($(target).attr("id").toLowerCase()){
@@ -1061,7 +1277,7 @@
 							self.populateSubcategories(ui, condition, e);
 						}
 						else self.populateCategories(ui, condition, e);
-						
+
 						$item.find("input#subCategoryList").val("");
 						$item.find("input#classList").val("");
 						$item.find("input#minorList").val("");
@@ -1074,7 +1290,7 @@
 							self.populateClass(ui, condition, e);
 						}
 						else self.populateSubcategories(ui, condition, e);
-						
+
 						$item.find("input#classList").val("");
 						$item.find("input#minorList").val("");
 						$item.find("input#manufacturerList").val("");
@@ -1086,7 +1302,7 @@
 							self.populateMinor(ui, condition, e);
 						}
 						else self.populateClass(ui, condition, e);
-						
+
 						$item.find("input#minorList").val("");
 						$item.find("input#manufacturerList").val("");
 						break;
@@ -1097,18 +1313,18 @@
 							self.populateManufacturers(ui, condition, e);
 						}
 						else self.populateMinor(ui, condition, e);
-						
+
 						$item.find("input#manufacturerList").val("");
 						break;
 					case "manufacturerlist" : 
-						if(ui.item){
+						if(u.item){
 							$item.find("input#manufacturerList").val(u.item.text);
 							$item.find("input#manufacturerList").prop("selectedText", u.item.text); 
 						}
 						break;
 					}
 				};
-				
+
 				$ims.find("select.selectCombo").combobox({
 					change: function(e, u){
 						updateIMSCombobox(this, e, u);
@@ -1122,7 +1338,7 @@
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
 						var $table = $item.find("table.imsFields");
-						
+
 						switch($(e.currentTarget).attr("class")){
 						case "switchToCatName" : 
 							$table.find("tr.catCode").hide();
@@ -1140,42 +1356,50 @@
 
 				var $input = $ims.find("input#catcode");
 
-				
 				$input.off().on({
 					focusout: function(e){
 						self.populateManufacturers(ui, e.data.condition, e);
 					}
 				},{condition: condition});
 			},
-			
+
 			checkDisplay: function(ui, condition){
 				var self = this;
 				var selectedFilter = $("select#filterGroup option:selected").val();
 				var $cnet = ui.find("div.cnet");
 				var $ims = ui.find("div.ims");
-				
-				ui.find("div.cnet, div.ims").hide();
-				
+
+				ui.find("div.cnet, div.ims, div.dynamicAttribute").hide();
+
 				if(($.isBlank(condition) && selectedFilter === "cnet") || ($.isNotBlank(condition) && condition.CNetFilter)){
-					$cnet.show();
+					ui.find("div.cnet, div.dynamicAttribute").show();
 					self.addCNETFieldListener(ui, condition);
-					
+					self.addFacetTemplateFieldListener(ui, condition);
+
 					var $table = $cnet.find("table.cnetFields");
 					$table.find("tr.catName").show();
-					
+
 					if ($.isNotBlank(condition)){
 						self.initializeCNETFilters("level1CategoryList", ui, condition);
 						self.initializeCNETFilters("level2CategoryList", ui, condition);
 						self.initializeCNETFilters("level3CategoryList", ui, condition);
 						self.initializeCNETFilters("cnetmanufacturerList", ui, condition);
+						self.initializeCNETFilters("templateNameList", ui, condition);
 					}
-					
+
 					self.populateLevel1Categories(ui, condition);
+					self.populateCNETTemplateNames(ui, condition);
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
-					$ims.show();
-					self.addIMSFieldListener(ui, condition);
+					ui.find("div.ims, div.dynamicAttribute").show();
 					
+					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'sbn'){
+						ui.find("div.dynamicAttribute").hide();
+					}
+					
+					self.addIMSFieldListener(ui, condition);
+					self.addFacetTemplateFieldListener(ui, condition);
+
 					var usingCategory = $.isNotBlank(condition) && condition["imsUsingCategory"];
 					var usingCatCode = $.isNotBlank(condition) && condition["imsUsingCatCode"];
 					var $table = $ims.find("table.imsFields");
@@ -1183,33 +1407,54 @@
 					if ((usingCategory && !usingCatCode) || ui.find("a.switchToCatCode").is(":visible")){
 						$table.find("tr.catName").show();
 						$table.find("tr.catCode").hide();
-						
+
 						if ($.isNotBlank(condition)){
 							self.initializeIMSFilters("categoryList", ui, condition);
 							self.initializeIMSFilters("subCategoryList", ui, condition);
 							self.initializeIMSFilters("classList", ui, condition);
 							self.initializeIMSFilters("minorList", ui, condition);
 							self.initializeIMSFilters("manufacturerList", ui, condition);
+							self.initializeIMSFilters("templateNameList", ui, condition);
 						}
-						
+
 						self.populateCategories(ui, condition);
-						
 					}else{
 						$table.find("tr.catName").hide();
 						$table.find("tr.catCode").show();
-						
+
 						if ($.isNotBlank(condition)){
 							self.initializeIMSFilters("catcode", ui, condition);
 							self.initializeIMSFilters("manufacturerList", ui, condition);
+							self.initializeIMSFilters("templateNameList", ui, condition);
 						}
-						
+
 						self.populateManufacturers(ui, condition);
+					}
+					self.populateIMSTemplateNames(ui, condition);
+				}
+			},
+
+			clearDynamicAttributeComboBox: function(ui, trigger){
+				var $dynamicAttribute = ui.find("div.dynamicAttribute");
+
+				if ($.isBlank(trigger)){
+					$dynamicAttribute.find("input").val("");
+					$dynamicAttribute.find("select.selectCombo option").remove();
+				}else{
+					switch (trigger.toLowerCase()){
+					case "templatenamelist": 
+						$dynamicAttribute.find("input#templateNameList").val("");
+						$dynamicAttribute.find("select#templateNameList option").remove();
+					case "attributevaluelist":
+						$dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
+					case "dynamicattributelist": 
+						$dynamicAttribute.find("input#dynamicAttributeList").val("");
+						$dynamicAttribute.find("select#dynamicAttributeList option").remove();
 					}
 				}
 			},
-			
+
 			clearCNETComboBox: function(ui, trigger){
-				var self = this;
 				var $cnet = ui.find("div.cnet");
 
 				if ($.isBlank(trigger)){
@@ -1232,7 +1477,7 @@
 					}
 				}
 			},
-			
+
 			clearIMSComboBox: function(ui, trigger){
 				var self = this;
 				var $ims = ui.find("div.ims");
@@ -1294,7 +1539,7 @@
 					}
 					if ($.isNotBlank(manufacturer[0])) condMap["Manufacturer"] = manufacturer; 	
 				}
-				
+
 				if (ui.find("div.cnet").is(":visible")){
 					level1Cat[0] = $.trim(ui.find("input#level1CategoryList").val());
 					level2Cat[0] = $.trim(ui.find("input#level2CategoryList").val());
@@ -1304,8 +1549,29 @@
 					if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
 					if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
 					if ($.isNotBlank(level3Cat[0])) condMap["Level3Category"] = level3Cat; 	
-					
+
 					if ($.isNotBlank(cnetManufacturer[0])) condMap["Manufacturer"] = cnetManufacturer; 	
+				}
+
+				if(ui.find("div.dynamicAttribute").is(":visible")){
+					var inTemplateName = ui.find("input#templateNameList").val();
+					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
+
+					if($.isNotBlank(inTemplateName.trim())){
+						condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
+
+						$divDynamicAttrItems.find("ul").each(function(){ 
+							var attributeItem = this.title;
+							var attributeValues = new Array();
+
+							$("input:checkbox[name="+attributeItem+"]:checked").each(function(){
+								attributeValues.push($(this).val()); 
+							});
+
+							if(attributeValues.length > 0)
+								condMap[attributeItem] = attributeValues;
+						});
+					}
 				}
 
 				if (ui.find("div.facet").is(":visible")){
@@ -1313,6 +1579,8 @@
 					var condition = $.trim(ui.find("input#conditionList").val());
 					var availability = $.trim(ui.find("input#availabilityList").val());
 					var license = $.trim(ui.find("input#licenseList").val());
+					var nameContains = $.trim(ui.find("input#nameContains").val());
+					var descriptionContains = $.trim(ui.find("input#descriptionContains").val());
 
 					switch(platform.toLowerCase()){
 					case "universal": condMap["Platform"] = ["Universal"]; break;
@@ -1337,9 +1605,90 @@
 					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
 					}
 
+					if($.isNotBlank(nameContains))
+						condMap["Name"] = $.makeArray(nameContains);
+
+					if($.isNotBlank(descriptionContains))
+						condMap["Description"] = $.makeArray(descriptionContains);
 				}
-				
+
 				return condMap;
+			},
+
+			addDeleteDynamicAttributeButtonListener: function(ui,condition){
+				var self = this;
+
+				ui.find("img.deleteAttrIcon").off().on({
+					click: function(e){
+						var $item = $(this).parents(".dynamicAttributeItem");
+						if (!e.data.locked && confirm("Delete attribute?")){
+							$item.remove();
+						}
+					},
+					mouseenter: showHoverInfo
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+
+			addDynamicAttributeButtonListener: function(ui,condition, attrName){
+				var self = this;
+
+				ui.find("a.addDynamicAttrBtn").off().on({
+					click: function(e){
+						if (!e.data.locked){
+							var $divItemList = ui.find('div#dynamicAttributeItemList');
+							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
+							var $input = ui.find("input#dynamicAttributeList");
+							var inDynamicAttribute = $.trim($input.val());
+							var inTemplateName = ui.find("input#templateNameList").val();
+							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+
+							if($.isNotBlank(inDynamicAttribute)){
+								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
+									jAlert("Attribute already added. Please select a different attribute name.","Query Cleaning");
+								}
+								else{
+									$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
+									var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
+									if (!$.isNumeric(currCondCount)){
+										currCondCount = 0; 
+									}
+
+									var countId = 1 + parseInt(currCondCount);
+									$divDynamicAttributeItem.prop("id", "dynamicAttributeItem");
+
+									var $dynamicAttributeLabel = $divDynamicAttributeItem.find('span#dynamicAttributeLabel');
+									$dynamicAttributeLabel.html(inDynamicAttribute + ":");
+
+									var attributeMap = self.templateAttributes;
+									if(attributeMap && attributeMap[attrName]){
+										var attributeValues = attributeMap[attrName].attributeValues;
+										if(attributeValues){
+											for(var i=0; i<attributeValues.length; i++){
+												var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+												$liAttributeValue.show();
+												$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
+												$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
+												$liAttributeValue.find("span#attributeValueName").text(attributeValues[i].split("|")[1]);
+												$ulAttributeValues.append($liAttributeValue);
+											}
+										}
+									}
+
+									$divDynamicAttributeItem.prop("id", countId);
+									$divDynamicAttributeItem.addClass("tempDynamicAttributeItem");
+									$divDynamicAttributeItem.show();
+									$divItemList.append($divDynamicAttributeItem);
+
+									self.addDeleteDynamicAttributeButtonListener($divDynamicAttributeItem, e.data.condition);
+								}
+							}
+							else{
+								jAlert("Please select a dynamic attribute.","Query Cleaning");
+							}
+						}
+					},
+					mouseenter: showHoverInfo
+				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
 			},
 
 			addSaveButtonListener: function(ui, condition){
@@ -1351,17 +1700,17 @@
 
 				$saveBtn.off().on({
 					click:function(e){
-						
+
 						if (e.data.locked) return;
-						
+
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
 
 						if ($.isEmptyObject(condMap)){
-							alert('Please specify at least one filter condition');
+							jAlert('Please specify at least one filter condition',"Query Cleaning");
 							return;
 						}
-						
+
 						if ($item.hasClass("tempConditionItem")){
 							RedirectServiceJS.addCondition(self.selectedRule["ruleId"], condMap, {
 								callback:function(data){
@@ -1441,17 +1790,17 @@
 
 			addCloneFilterGroupListener: function(ui,condition){
 				var self = this;
-				
+
 				ui.find("img.cloneIcon,a.cloneBtn").off().on({
 					click: function(e){
 						if (!e.data.locked){
 							var $divItemList = $("div#conditionList");
-							
+
 							if ($.isBlank(e.data.condition) || $divItemList.find("div.tempConditionItem").length > 0){
-								alert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group","Query Cleaning");
 								return;
 							}
-							
+
 							var readableString = e.data.condition["readableString"];
 
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
@@ -1466,13 +1815,13 @@
 							$divItem.find(".conditionFormattedText").html('<span class="fred fbold">Cloned </span>' + readableString);
 							$divItem.show();
 							$divItemList.append($divItem);
-							
+
 							self.checkDisplay($divItem, e.data.condition);
-							
+
 							self.addToggleListener($divItem, e.data.condition);
 							self.addCloneFilterGroupListener($divItem, e.data.condition);
 							self.addDeleteFilterGroupListener($divItem, e.data.condition);
-							
+
 							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 						}
 					},
@@ -1489,7 +1838,7 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($divItemList.find("div.tempConditionItem").length > 0){
-								alert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group","Query Cleaning");
 								return;
 							}
 
@@ -1506,16 +1855,16 @@
 							$divItem.find(".conditionFormattedText").html(self.newFilterGroupText);
 							$divItem.show();
 							$divItemList.append($divItem);
-							
+
 							switch($("select#filterGroup option:selected").val()){
 							case "cnet": 
 								$divItem.find("div.ims").remove();
-								$divItem.find("div.cnet, div.facet").show();
+								$divItem.find("div.cnet, div.facet, div.dynamicAttribute").show();
 								break;
 							case "ims": 
 								$divItem.find("div.cnet").remove();
-								$divItem.find("div.ims, div.facet").show();
-								
+								$divItem.find("div.ims, div.facet, div.dynamicAttribute").show();
+
 								var $table = $divItem.find("table.imsFields");
 
 								switch(self.defaultIMS){
@@ -1526,21 +1875,21 @@
 									$table.find("tr.catCode").hide();
 									$divItem.find("a.switchToCatName").triggerHandler("click"); break;
 								}
-								
+
 								break;
 							case "facet": 
 								$divItem.find("div.ims, div.cnet").remove();
-								$divItem.find("div.facet").show();
+								$divItem.find("div.facet, div.dynamicAttribute").show();
 								break;
 							}
-							
+
 							self.addToggleListener($divItem);
 							self.addCloneFilterGroupListener($divItem);
 							self.addDeleteFilterGroupListener($divItem);
 
 							$divItem.find("img.toggleIcon, a.conditionFormattedText").triggerHandler("click");
 
-							
+
 						}
 					},
 					mouseenter: showHoverInfo
@@ -1559,7 +1908,7 @@
 
 			addDeleteFilterGroupListener: function(ui, condition){
 				var self = this;
-				
+
 				ui.find("img.deleteIcon,a.deleteBtn").off().on({
 					click: function(e){
 						var $item = $(this).parents(".conditionItem");
@@ -1590,7 +1939,7 @@
 					mouseenter: showHoverInfo
 				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
 			},
-			
+
 			showRuleCondition: function(){
 				var self = this;
 
@@ -1633,24 +1982,18 @@
 				});
 			},
 
-			refreshTabContent: function(){
-				var self = this;
-				self.tabSelectedTypeId = $("li.ui-tabs-selected > a").attr("href");
-				self.setActiveRedirectType();
-				self.setIncludeKeyword();
-
-				switch(self.tabSelectedTypeId){
-				case "#filter" : self.showRuleCondition(); break;
-				case "#keyword" : self.getChangeKeywordActiveRules(); break;
-				}
-
-			},
-
 			addTabListener: function(){
 				var self = this;
-				$("div#redirect-type > ul.ui-tabs-nav > li > a").on({
-					click: function(evt){
-						self.refreshTabContent();
+				
+				$("#redirect-type").tabs("destroy").tabs({
+					show: function(event, ui){
+						var tabNumber = ui.index;
+						self.tabSelectedTypeId = tabNumber + 1;
+						self.setActiveRedirectType();
+						switch(self.tabSelectedTypeId){
+							case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
+							case 2: self.getChangeKeywordActiveRules(); break;
+						}
 					}
 				});
 			},
@@ -1658,7 +2001,7 @@
 			init : function() {
 				var self = this;
 				self.showRedirect();
-			},
+			}
 	};
 
 	$(document).ready(function() {

@@ -33,39 +33,8 @@
    
    	<div class="clearB"></div>
 	
-	<div id="submitForApproval" class="clearB floatR farial fsize12 fDGray txtAR w730 GraytopLine" style="display:none"> 
-	        <div class="txtAL w730 minHeight36" style="background: #e8e8e8">       	
-	        	<div class="floatL padT10 padL10" style="width:70%" >
-	        		<div id="commentHolder">
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="commentIcon"><img src="../images/icon_comment.png"></span>  
-			        	</label>
-		        	</div>
-	        		<div id="statusHolder">
-			        	<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Status:</label>
-			        	<label class="floatL wAuto padL5 fsize11 fLgray">
-			        		<span id="status"></span> 
-			        		<span id="statusMode" class="fsize11 forange padL5"></span> 
-			        	</label>
-		        	</div>
-		        	<div id="publishHolder">
-		        		<label class="floatL wAuto marRL5 fLgray2">|</label>
-			        	<label class="floatL wAuto">Last Published:</label>
-			        	<label class="padL5 fLgray fsize11">
-			        		<span id="statusDate"></span> 
-			        	</label>
-		        	</div>
-			  	</div>   			  	
-	        	<div class="floatR marL8 marR3 padT5"> 	    
-	        		<sec:authorize access="hasRole('CREATE_RULE')">
-        	    		<a id="submitForApprovalBtn" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Submit for Approval</div></a>
-        	    	</sec:authorize>
-	        	</div>
-	        </div>	
-	        <div class="clearB"></div>	
-	 </div>
-	 
+	<div id="submitForApproval"></div>
+	
 	<div id="viewAuditTemplate" style="display: none">
 	   <div class="elevateItemPW">
 		   <div class="w265 padB8">
@@ -169,7 +138,7 @@
 	        	<h2 class="borderB padB3">Create Filter Group : 
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
-					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
+					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap' or store eq 'sbn'}">
 					<option value="cnet">Facet Template Categories</option>
 					</c:if>
 					<option value="facet">Facets</option>
@@ -208,7 +177,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
 								<tr class="catName">
-									<td class="w140 padB8" valign="bottom">Category :</td>
+									<td class="w175 padB8" valign="bottom">Category :</td>
 									<td class="iepadBT0">
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>
@@ -221,7 +190,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="subcategory">
-									<td class="w140">SubCategory :</td>
+									<td class="w175">SubCategory :</td>
 									<td>
 										<img id="preloaderSubCategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -230,7 +199,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="class">
-									<td class="w140">Class :</td>
+									<td class="w175">Class :</td>
 									<td>
 										<img id="preloaderClassList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -239,7 +208,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="minor">
-									<td class="w140" valign="top">SubClass :</td>
+									<td class="w175" valign="top">SubClass :</td>
 									<td>
 										<img id="preloaderMinorList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -248,7 +217,7 @@
 									</td>
 								</tr>
 								<tr class="catCode">
-									<td  class="w140 padB8" valign="bottom">Category Code :</td>
+									<td  class="w175 padB8" valign="bottom">Category Code :</td>
 									<td>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
@@ -258,7 +227,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140" valign="top">Manufacturer :</td>
+									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -275,7 +244,7 @@
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="cnetFields">							
 								<tr class="catName" id="level1Cat">
-									<td class="w140 padB8" valign="bottom">Level 1 Category :</td>
+									<td class="w175 padB8" valign="bottom">Level 1 Category :</td>
 									<td class="iepadBT0">
 										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -284,7 +253,7 @@
 									</td>
 								</tr>
 								<tr class="catName" id="level2Cat">
-									<td class="w140">Level 2 Category :</td>
+									<td class="w175">Level 2 Category :</td>
 									<td>
 										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -293,16 +262,16 @@
 									</td>
 								</tr>
 								<tr class="catName" id="level3Cat">
-									<td class="w140">Level 3 Category :</td>
+									<td class="w175">Level 3 Category :</td>
 									<td>
 										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w229" title="Select Class"></select>
+											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td class="w140" valign="top">Manufacturer :</td>
+									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderCNETManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
@@ -314,12 +283,76 @@
 						</div><!--  end item 2 -->
 					</div>
 					
+					<div class="dynamicAttribute">
+	        				<h3 class="marT10">Dynamic Attribute</h3>	        		
+	        				<div class="fsize12 marTB20 marRL50">
+							<table class="dynamicAttributeFields">							
+								<tr>
+									<td class="w175 padB8" valign="bottom">Template Name :</td>
+									<td class="iepadBT0 w278">
+										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>
+										</div>
+									</td>
+								</tr>
+								<!--  sample added line -->
+								<tr id="dynamicAttributeValue">
+									<td colspan="2">
+										<div id="dynamicAttributeItemList">							
+											<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem" style="display:none">
+												<div class="clearB"></div>
+												<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>
+												<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8" alt="Delete Attribute" title="Delete Attribute">
+												<div class="w235 floatL marT8 border pad10" style="overflow-y:auto; max-height: 107px">													
+													<ul id="dynamicAttributeValues">
+														<li id="dynamicAttributeValuesPattern" style="display: none;">
+															<div>
+																<input type="checkbox" class="checkboxFilter">
+																<span id="attributeValueName"></span>
+															</div>
+														</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</td>
+								</tr>
+								<!--  end sample addded line -->
+								<tr id="dynamicAttributeName">
+									<td class="w175"><p class="padL25">Add Dynamic Attribute :</p></td>
+									<td>
+										<img id="preloaderDynamicAttributeList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
+										<div class="floatL">
+											<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w210" title="Add Dynamic Attribute"></select>
+										</div>
+										<a href="javascript:void(0);" class="addDynamicAttrBtn btnGraph btnAddGrayMid floatR marT3 leftn22 posRel" id="addButton"></a>
+									</td>
+								</tr>
+								
+								
+							</table>						
+							</div><!--  end item 3 -->
+						</div>
+					
 					<div class="facet">
 						<h3 class="marT10">Facets</h3>	 
 						<div class="fsize12 marT10 marB20 marRL50">
-							<table>							
+							<table>
 								<tr>
-									<td class="w140">Platform :</td>
+									<td class="w175">Name (contains) :</td>
+									<td class="iepadBT0">
+										<input id="nameContains" type="text" class="w250"/>
+									</td>
+								</tr>
+								<tr>
+									<td class="w175">Description (contains):</td>
+									<td class="iepadBT0">
+										<input id="descriptionContains" type="text" class="w250"/>
+									</td>
+								</tr>							
+								<tr>
+									<td class="w175">Platform :</td>
 									<td class="iepadBT0">
 										<select name="select" id="platformList" class="selectCombo w235" title="Select Platform" >
 											<option value="all"></option>
@@ -331,7 +364,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">Condition :</td>
+									<td class="w175">Condition :</td>
 									<td class="iepadBT0">
 										<select name="select" id="conditionList" class="selectCombo w235" title="Select Condition" >
 											<option value="all"></option>
@@ -342,7 +375,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">Availability :</td>
+									<td class="w175">Availability :</td>
 									<td class="iepadBT0">
 										<select name="select" id="availabilityList" class="selectCombo w235" title="Select Availability" >
 											<option value="all"></option>
@@ -352,7 +385,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td class="w140">License :</td>
+									<td class="w175">License :</td>
 									<td class="iepadBT0">
 										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
 											<option value="all"></option>
@@ -361,10 +394,11 @@
 										</select>
 									</td>
 								</tr>
-												
 							</table>						
-						</div><!--  end item 3 -->
+						</div><!--  end item 4 -->
 						</div>
+						
+						
 						
 						<div class="clearB"></div>	
 						<div class="borderT padT8">

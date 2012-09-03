@@ -211,7 +211,8 @@ public class TopKeywordsUtility {
 		    properties.load(new FileInputStream(configLocation));
 		    //String[0]"/home/solr/utilities/topkeywords/macmall.properties"));
 		    
-			String destFolder = properties.getProperty("destHome");
+			String destFolder = properties.getProperty("destHome")+"topkeywords/";
+			String destFolderZero = properties.getProperty("destHome")+"zeroresults/";
 			store = properties.getProperty("store");
 			String[] servers = properties.getProperty("remoteServers").split(",");
 			String solrURL = properties.getProperty("solrURL");
@@ -241,12 +242,12 @@ public class TopKeywordsUtility {
 				//scp -p solr@afs-pl-schpd07.afservice.org:/home/solr/utility/keywords/MacMallbtorschprod03_topKeywords.csv /home/solr/utilities/topkeywords/macmall/macmall_afs-pl-schpd07_topkeywords.csv
 				String outputFile = tmpInFolder + "/" + store+ "_" + server + "_topkeywords.csv";
 // TODO: uncomment after testing				
-//				String command = "scp -p " + user + "@" + server + ":" + file[x] + " " + outputFile;
-//				x++;
-//				Process p = Runtime.getRuntime().exec(command);
-//				if (p.waitFor() != 0) {
-//					log.append("Problem with scp: " + command);
-//				}
+				String command = "scp -p " + user + "@" + server + ":" + file[x] + " " + outputFile;
+				x++;
+				Process p = Runtime.getRuntime().exec(command);
+				if (p.waitFor() != 0) {
+					log.append("Problem with scp: " + command);
+				}
 
 				File f = new File(outputFile);
 				// send out error if file not exists and date is more than one week from current date
@@ -300,7 +301,7 @@ public class TopKeywordsUtility {
 								destFile.delete();
 							}
 // TODO: uncomment after test							
-//							f.renameTo(destFile);
+							f.renameTo(destFile);
 						}
 					}
 				}
@@ -407,7 +408,7 @@ public class TopKeywordsUtility {
 			
 			if (valuesZero.size() > 0) {			
 				BufferedWriter writer = null;
-				generatedZeroFile = tmpInFolder.getAbsolutePath() + "/" + store + "_zero_report" + strDate +".csv";
+				generatedZeroFile = destFolderZero + store + "/" + store + "_zero_report" + strDate +".csv";
 				File outFile = new File(generatedZeroFile);
 				try {
 					outFile.createNewFile();

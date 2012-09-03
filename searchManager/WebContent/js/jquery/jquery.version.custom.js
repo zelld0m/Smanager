@@ -33,83 +33,97 @@
 
 			$(base.options.buttonHolderId).find("#backupBtn").off().on({
 				click:function(evt){
-					if (base.$el.find("ul#verItemList").children(":not(#verItemPattern)").length == base.options.limit) {
-						alert("Only maximum of 3 backups is allowed!");
-					} else {
-						$(evt.currentTarget).qtip({
-							id: "rule-backup",
-							content: {
-								text: $('<div/>'),
-								title: { 
-									text: "Backup Rule", button:true
-								}
-							},
-							position: {
-								my: 'center',
-								at: 'center',
-								target: $(window)
-							},
-							show: {
-								modal: true,
-								solo: true,
-								ready: true
-							},
-							style: {
-								width:'auto'
-							},
-							events: {
-								show: function(event, api) {
-									var $content = $("div", api.elements.content);
-									$content.html(base.getVersionNameTemplate());
-
-									$content.find("a#rcancelBtn, a#rsaveBtn").on({
-										click: function(evt){
-
-											var reason = $content.find("#reason").val();
-											var backupName = $content.find("#backupName").val();
-
-											switch($(evt.currentTarget).attr("id")){
-											case "rsaveBtn": 
-												
-												if ($.isNotBlank(reason) && $.isNotBlank(backupName)){
-													if(!validateField('Name', backupName, 1)){
-														return;
-													}else if(!validateField('Reason', reason, 1)){
-														return;
-													}
-													else{
-														RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, backupName, reason, {
-															callback: function(data){
-																if (data) {
-																	alert("Successfully created back up!");
-																	base.getData();
-																} else {
-																	alert("Failed creating back up!");
-																}
-															},
-															preHook: function(){
-																api.destroy();
-															}
-													});
-													}
-
-												}else{
-													alert("Name and Reason can not be blank!");
-												}
-												break;
-											case "rcancelBtn": 
-												api.destroy();
-												break;
-											}	
-										}
-									});
-								},
-								hide: function(event, api) {
-									api.destroy();
-								}
+					RuleVersioningServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
+						callback: function(data){
+							if(data!=null && data.length >= base.options.limit){
+								alert("Only maximum of "+base.options.limit+" backups is allowed!");
 							}
-						});
-					}
+							else{
+								$(evt.currentTarget).qtip({
+									id: "rule-backup",
+									content: {
+										text: $('<div/>'),
+										title: { 
+											text: "Backup Rule", button:true
+										}
+									},
+									position: {
+										my: 'center',
+										at: 'center',
+										target: $(window)
+									},
+									show: {
+										modal: true,
+										solo: true,
+										ready: true
+									},
+									style: {
+										width:'auto'
+									},
+									events: {
+										show: function(event, api) {
+											var $content = $("div", api.elements.content);
+											$content.html(base.getVersionNameTemplate());
+
+											$content.find("a#rcancelBtn, a#rsaveBtn").on({
+												click: function(evt){
+
+													var reason = $content.find("#reason").val();
+													var backupName = $content.find("#backupName").val();
+
+													switch($(evt.currentTarget).attr("id")){
+													case "rsaveBtn": 
+														
+														if ($.isNotBlank(reason) && $.isNotBlank(backupName)){
+															if(!validateField('Name', backupName, 1)){
+																return;
+															}
+															else if (backupName.length>100){
+																//showMessage("#backupName","Name should not exceed 100 characters.");
+																alert("Name should not exceed 100 characters.");
+															}
+															else if(!validateField('Reason', reason, 1)){
+																return;
+															}
+															else if (reason.length>255){
+																//showMessage("#reason","Reason should not exceed 255 characters.");
+																alert("Reason should not exceed 255 characters.");
+															}
+															else{
+																RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, backupName, reason, {
+																	callback: function(data){
+																		if (data) {
+																			alert("Successfully created back up!");
+																			base.getData();
+																		} else {
+																			alert("Failed creating back up!");
+																		}
+																	},
+																	preHook: function(){
+																		api.destroy();
+																	}
+															});
+															}
+
+														}else{
+															alert("Name and Reason can not be blank!");
+														}
+														break;
+													case "rcancelBtn": 
+														api.destroy();
+														break;
+													}	
+												}
+											});
+										},
+										hide: function(event, api) {
+											api.destroy();
+										}
+									}
+								});
+							}
+						}
+					});
 				}
 			}).parent().css(base.options.locked?{display: "none"}:{display: "block"});
 		};
