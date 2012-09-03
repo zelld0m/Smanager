@@ -56,7 +56,8 @@
 							var count = objectedItems[i].count;
 							
 							if ($.isNotBlank(facet)){
-								AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i,facetField, facet, count, this.clickHandler(facetField, facet));
+								facetValue = (facet.match(/^["\(].*["\)]$/)) ? facet :  '"' + facet + '"';
+								AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i,facetField, facet, count, this.clickHandler(facetField, facetValue));
 								if (i == l-1 && $.isNotBlank(self.manager.store.values('q'))){
 									AjaxSolr.theme('createFacetMoreOptionsLink', $.formatAsId(facetField), facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues));
 								}
@@ -68,7 +69,7 @@
 			}
 		},
 
-		moreOptionsHandler: function (facetField,facetValues) {
+		moreOptionsHandler: function (facetField) {
 			var self = this;
 
 			return function () {
@@ -82,6 +83,7 @@
 							var sel = $.trim($('#' + $(this).attr('rel')).val());
 							if ($.isNotBlank(sel)){
 								i++;
+								sel = (sel.match(/^["\(].*["\)]$/)) ? sel :  '"' + sel + '"';
 								selectedItems.push(AjaxSolr.Parameter.escapeValue(sel));
 							}
 						}
@@ -96,8 +98,10 @@
 				getFacetParams = function (){
 					var paramString = "";
 					var keyword = $.trim(self.manager.store.values('q'));
-					
-					var relId = $("select#relevancy").val()==="keyword_default" ? "": $("select#relevancy").val();
+					var relId = $("select#relevancy").val();
+					if (relId == undefined || selectedRelevancy === "keyword_default") {
+						relId = "";
+					}
 					var params = {
 							'facet': true,
 							'q': keyword,

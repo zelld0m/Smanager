@@ -94,7 +94,10 @@
 				var paramString = "";
 				var keyword = $.trim(self.manager.store.values('q'));
 				
-				var relId = $("select#relevancy").val()==="keyword_default" ? "": $("select#relevancy").val();
+				var relId = $("select#relevancy").val();
+				if (relId == undefined || selectedRelevancy === "keyword_default") {
+					relId = "";
+				}
 				var params = {
 						'facet': true,
 						'q': keyword,
@@ -208,7 +211,10 @@
 					var paramString = "";
 					var keyword = $.trim(self.manager.store.values('q'));
 					
-					var relId = $("select#relevancy").val()==="keyword_default" ? "": $("select#relevancy").val();
+					var relId = $("select#relevancy").val();
+					if (relId == undefined || selectedRelevancy === "keyword_default") {
+						relId = "";
+					}
 					var params = {
 							'facet': true,
 							'q': keyword,
