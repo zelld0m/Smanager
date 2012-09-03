@@ -1520,7 +1520,26 @@
 				buttonImage: "../images/icon_calendar.png",
 				buttonImageOnly: true
 			});
+			
 
+			base.contentHolder.find("#addItemPosition").on({
+				keypress:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					if (charCode > 31 && (charCode < 48 || charCode > 57))
+						return false;
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
+				}
+			});
+			
 			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
