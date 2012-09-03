@@ -41,7 +41,7 @@
 			if (base.options.showPosition){
 				template  += '		<div class="floatL marT5" style="width: 97px">';
 				template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '			<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '			<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '		</div>';
 				template  += '		<div class="clearB"></div>';
 				template  += '		<div class="floatL marT5 marL5">';
@@ -324,7 +324,7 @@
 			if (base.options.showPosition){
 				template  += '						<div class="floatL marT5" style="width: 97px">';
 				template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
 			
@@ -1436,6 +1436,23 @@
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
+			base.contentHolder.find("#addItemPosition").on({
+				keypress:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					if (charCode > 31 && (charCode < 48 || charCode > 57))
+						return false;
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
+				}
+			});
 
 			switch(type){
 			case "facet": 
