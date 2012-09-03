@@ -50,6 +50,7 @@
 			template  += '			<label class="w60 floatL marL5 padT5">Comment: </label> ';
 			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL marL5 w230"></textarea></label>';
 			template  += '		</div>';
+			template  += '		<div class="clearB"></div>';
 			template  += '		<div align="right">';
 			template  += '			<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '				<div class="buttons fontBold">Add</div>';
