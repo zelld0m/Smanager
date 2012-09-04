@@ -513,7 +513,7 @@
 				content: {
 					text: $('<div/>'),
 					title: { 
-						text: tabSelectedText + " Rule Preview", button:true
+						text: (tabSelectedText==="Ranking Rule"? "Ranking Rule Preview" :  tabSelectedText + " Rule Preview"), button:true
 					}
 				},
 				position: {
