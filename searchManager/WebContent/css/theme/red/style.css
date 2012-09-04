@@ -744,7 +744,6 @@ span.ui-button-text	{ display:none; }
 .itemCatList ul li { padding:3px 0; border-bottom:none; font-weight: normal !important}
 /*.itemCatList ul li ul li { padding:2px 0; border-bottom:none; font-weight: normal !important; font-size:11px}*/
 
-.cssReset .imageIcon:hover, .imageIcon:hover { cursor:pointer }
 
 /* redirect */
 body #redirect .tabs .ui-widget-content { padding-top:20px !important}
@@ -762,8 +761,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .dynamicAttribute table td  { vertical-align: top }
 
-
-.conditionItem img:hover { cursor: pointer }
+.pointer:hover, .conditionItem img:hover, .relevancy .ui-datepicker-trigger:hover { cursor: pointer }
 
 
 /* elevate */
