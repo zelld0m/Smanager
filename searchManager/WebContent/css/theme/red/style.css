@@ -761,7 +761,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .dynamicAttribute table td  { vertical-align: top }
 
-.pointer:hover, .conditionItem img:hover, .relevancy .ui-datepicker-trigger:hover { cursor: pointer }
+.pointer:hover, .sideMenuArea .ui-datepicker-trigger, .conditionItem img:hover, .relevancy .ui-datepicker-trigger:hover { cursor: pointer }
 
 
 /* elevate */
