@@ -334,7 +334,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Comment :</td>';
 			template  += '					<td class="iepadBT0">';
-			template  += '						<textarea id="" style="width: 245px; float: left; margin-bottom: 7px"></textarea>';
+			template  += '						<textarea id="addItemComment" style="width: 245px; float: left; margin-bottom: 7px"></textarea>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '			</table>';
@@ -1499,6 +1499,7 @@
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					var position = 1;
+					var valid = true;
 					
 					if (base.options.showPosition){
 						position = base.contentHolder.find("#addItemPosition").val();
@@ -1507,18 +1508,38 @@
 					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
+					if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
+						valid = false;
+					}
+
+					if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
+						valid = false;
+					}
+					
 					var condMap = base.getSelectedFacetFieldValues();
 					
 					if ($.isEmptyObject(condMap)){
+						valid = false;
 						jAlert('Please specify at least one filter condition');
-						return;
 					}
 					
-					if (base.options.newRecord){
-						base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
-					}else{
-						base.api.destroy();
-						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+					if (valid){
+						$.each(condMap, function(idx, el){
+							$.each(el, function(i,elem){
+								if(!validateGeneric("Input", elem)) {
+									valid = false;
+								}
+							});
+						});
+					}
+
+					if (valid){
+						if (base.options.newRecord){
+							base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
+						}else{
+							base.api.destroy();
+							base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+						}
 					}
 				}
 			});
