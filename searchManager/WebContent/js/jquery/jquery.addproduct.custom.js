@@ -1568,6 +1568,7 @@
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
+					var valid = false;
 
 					today.setHours(0,0,0,0); //ignore time of current date 
 
@@ -1588,11 +1589,13 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Invalid Input");
 					}
 					else {
+						valid = true;
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
 					
-					base.contentHolder.find("#addItemDate_1").datepicker('enable');
+					if(!valid)
+						base.contentHolder.find("#addItemDate_1").datepicker('enable');
 
 				}
 			});
