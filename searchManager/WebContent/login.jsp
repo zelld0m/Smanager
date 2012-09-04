@@ -24,8 +24,8 @@
 
 <form name="f" action="<c:url value='j_spring_security_check'/>" method="POST">
 <div class="formContainer">
-	<label class="labelTxt">Username :</label><label class="labelTxtBox"><input type="text" name='j_username' class="txtbox" /></label><br>
-	<label class="labelTxt">Password :</label><label class="labelTxtBox"><input type='password' name='j_password' class="txtbox" /></label>
+	<label class="labelTxt">Username :</label><label class="labelTxtBox"><input type="text" name='j_username' required="true" class="txtbox" /></label><br>
+	<label class="labelTxt">Password :</label><label class="labelTxtBox"><input type='password' name='j_password' required="true" class="txtbox" /></label>
     
     <div class="clearboth"></div>
     <div class="clearB floatR padT10 marRn5">
