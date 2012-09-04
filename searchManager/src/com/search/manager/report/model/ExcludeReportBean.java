@@ -1,5 +1,7 @@
 package com.search.manager.report.model;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
 import com.search.manager.report.annotation.ReportField;
@@ -55,8 +57,12 @@ public class ExcludeReportBean extends ReportBean<Product> {
 	}
 
 	private String getPartNumberDetails() {
-		return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" EDP:").append(model.getEdp())
-				.append(" Part #:").append(model.getDpNo()).append("Manufacturer Part #:").append(model.getMfrPN()).toString();
+		if (StringUtils.isNotBlank(model.getDpNo())){
+			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append("  EDP:").append(model.getEdp())
+			.append("  Part #:").append(model.getDpNo()).append("  Manufacturer Part #:").append(model.getMfrPN()).toString();
+		}
+		
+		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
 	}
 
 }
