@@ -33,8 +33,8 @@
 			        	</span>
 		        	</td>
 		            <td class="borderB padTB5 txtAR scorelink">
-		            	<img src="<spring:url value="/images/icon_notactive.png" />">
-		            	<img src="<spring:url value="/images/page_edit.png" />">
+		            	<img src="<spring:url value="/images/icon_notactive.png" />" class="pointer">
+		            	<img src="<spring:url value="/images/page_edit.png" />" class="pointer">
 		            </td>
 		        </tr>
 		        </c:forEach>
@@ -192,7 +192,7 @@
   </tr>
   <c:forEach var="i" begin="1" end="3" step="1">	
   <tr>
-  	<td class="vtop"><img src="<spring:url value="/images/close1.png" />"></td>
+  	<td class="vtop"><img src="<spring:url value="/images/close1.png" />" class="pointer"></td>
       <td width="30%" class="vtop">Lock in Category / Manufacturer</td>
       <td width="40%"  class="vtop">Category: All Categories, Sub-Category: All Sub-Categories Brand: Apple</td>
       <td class="vtop">
@@ -200,7 +200,7 @@
            <option>Include</option>
            <option>Exclude</option>
         </select></td>
-      <td><img src="<spring:url value="/images/page_edit.png" />"></td>
+      <td><img src="<spring:url value="/images/page_edit.png" />" class="pointer"></td>
   </tr>
   </c:forEach>
 </table>
