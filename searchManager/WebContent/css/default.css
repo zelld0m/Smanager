@@ -236,6 +236,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marB8, .marB8		{margin-bottom:8px}
 .cssReset .marB10, .marB10		{margin-bottom:10px !important}
 .cssReset .marB20, .marB20		{margin-bottom:20px}
+.cssReset .marB27, .marB27		{margin-bottom:27px}
 .cssReset .marTB5, .marTB5		{margin-top:5px !important; margin-bottom:5px !important}
 .cssReset .marTB10, .marTB10	{margin-top:10px !important; margin-bottom:10px !important}
 .cssReset .marTB20, .marTB20	{margin-top:20px !important; margin-bottom:20px !important}

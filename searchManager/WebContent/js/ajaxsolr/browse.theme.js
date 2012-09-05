@@ -154,8 +154,8 @@
 	};
 
 	AjaxSolr.theme.prototype.createFacetHolder = function (facetLabel, facet) {
-		var output  = '<div class="clearB floatL w240">';
-		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
+		var output  = '<div class="clearB floatL w240 marB27">';
+		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px;">' + facetLabel + '</div>';
 		output += '<div class="' + $.formatAsId(facet) +' clearB floatL w230 padL10"></div>';  
 		output += '</div>';
 
