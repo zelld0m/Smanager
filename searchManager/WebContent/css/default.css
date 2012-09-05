@@ -280,6 +280,7 @@ body 							{ margin: 0px; min-width:1200px }
 .minHeight400	  				{ min-height:400px; }
 
 .cssReset .height15				{ height:15px }
+.cssReset .height23, .height23	{ height:23px }
 .cssReset .height24, .height24	{ height:24px }
 .cssReset .h27					{ height:27px }
 .cssReset .h33					{ height:33px }
@@ -287,6 +288,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .height66, 
 .height66						{height:66px; }
 
+.cssReset .minW100				{ min-width:100px !important; }
 .cssReset .minW110				{ min-width:110px !important; }
 .cssReset .minW240				{ min-width:240px !important; }
 

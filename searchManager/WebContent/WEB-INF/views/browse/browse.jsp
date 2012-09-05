@@ -91,7 +91,7 @@
 		  
 		  <!-- Sort Result Widget -->
 		  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
-		  	<div id="searchWithin" class="float"></div>
+		  	<div id="searchWithin" class="floatL"></div>
 			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			<div class="clearB"></div>
 		  </div>
