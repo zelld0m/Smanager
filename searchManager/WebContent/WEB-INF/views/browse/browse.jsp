@@ -42,9 +42,7 @@
     <!-- Start Left Side -->	   
 	<div class="clearB floatL minW240 sideMenuArea">
 	    <div class="clearB marT27"></div>
-	    <div id="searchWithin" class="leftContainer"></div>
-	    <div class="clearB"></div>
-		<div id="dynamicSelection"></div>
+	    <div id="dynamicSelection"></div>
 		<div class="clearB"></div>
 		<div id="cnetFacets"></div>
 		<div class="clearB"></div>
@@ -93,6 +91,7 @@
 		  
 		  <!-- Sort Result Widget -->
 		  <div class="borderT padL5 padB5 padR0" style="background:#f2f2f2">
+		  	<div id="searchWithin" class="float"></div>
 			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			<div class="clearB"></div>
 		  </div>

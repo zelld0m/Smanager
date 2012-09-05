@@ -93,15 +93,14 @@
 
 	AjaxSolr.theme.prototype.searchWithin = function () {
 		var output  = '';
-		output += '<div class="box marT8">';
-		output += '<h2>Search Within</h2>';
-		output += '<div class="mar10 w215">';
-		output += '<div class="searchBoxHolder w145 floatL marT1 marR5">';
-		output += '<input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3">';
-		output += '</div>';
-		output += '<a href="javascript:void(0)" id="searchbutton" class="btnGraph"><div class="btnGraph btnGoB floatR"></div></a>';
-		output += '<div class="clearB"></div>';
-		output += '</div>';
+		output += '<div>';
+		output += '		<div class="searchBoxHolder w145 floatL marT1 marR5">';
+		output += '			<span>Search Within</span>';
+		output += '			<span><input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3"></span>';
+		output += '		</div>';
+		output += '		<a href="javascript:void(0)" id="searchbutton" class="btnGraph">';
+		output += '			<div class="btnGraph btnGoB floatR"></div>';
+		output += '		</a>';
 		output += '</div>';
 		return $(output);
 	};
