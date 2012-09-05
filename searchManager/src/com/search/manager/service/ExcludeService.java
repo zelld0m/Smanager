@@ -217,6 +217,20 @@ public class ExcludeService {
 
 		return null;
 	}
+	
+	@RemoteMethod
+	public Product getProductByEdp(String keyword, String edp) {
+
+		RecordSet<Product> products = getAllExcludedProducts(keyword, 0, 100);
+		Product product = null;
+		for (Product prod: products.getList()) {
+			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
+				product = prod;
+				break;
+			}
+		}
+		return product;
+	}
 
 	@RemoteMethod
 	public RecordSet<Product> getAllExcludedProducts(String keyword, int page,int itemsPerPage) {
@@ -383,7 +397,11 @@ public class ExcludeService {
 		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		exclude.setMemberId(memberId);
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
-		rrCondition.setFilter(filter);
+		
+		if(filter != null && !filter.isEmpty()){
+			rrCondition.setFilter(filter);
+		}
+		
 		try {
 			exclude = daoService.getExcludeItem(exclude);
 		} catch (DaoException e) {
@@ -395,14 +413,19 @@ public class ExcludeService {
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			try {
+				addComment(comment,exclude);
+				changes++;
+			} catch (DaoException e) {
+				logger.error("Error adding comment in updateExcludeFacet()",e);
+			}		
 		}
 		
-		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
+		if (exclude.getCondition() != null && !exclude.getCondition().getCondition().equals(rrCondition.getCondition())){
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+		if (StringUtils.isNotBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
