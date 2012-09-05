@@ -822,7 +822,7 @@
 		//Save validation TODO: field validation
 		if (field=="tie" && !(value >= 0 && value <= 1)){
 			jAlert("Tie value should be between 0 - 1.","Ranking Rule");
-			return;
+			return false;
 		}
 
 		// validation for qs and ps
@@ -833,7 +833,7 @@
 			else if (field==="ps") {
 				jAlert("Phrase slop should be a positive number.","Ranking Rule");
 			}
-			return;
+			return false;
 		}
 
 		RelevancyServiceJS.addRuleFieldValue(selectedRule.ruleId, field, value, {
@@ -1001,8 +1001,16 @@
 		var description = $.trim($('div#relevancy textarea[id="description"]').val()); 
 		var startDate = $.trim($('div#relevancy input[name="startDate"]').val());
 		var endDate = $.trim($('div#relevancy input[name="endDate"]').val());
+		
+		var isRelevancyFieldsValid = true;
 
-		if (checkIfUpdateAllowed()){
+		if (!$.isEmptyObject(unSaved)){
+			$.map(unSaved, function(value, index) {
+				isRelevancyFieldsValid = addRuleFieldValue(index, value);
+			}); 
+		}
+		
+		if (checkIfUpdateAllowed() && isRelevancyFieldsValid){
 			var response = 0;
 			if ($.isBlank(ruleName)){
 				showMessage("#name", "Rule name is required.");
@@ -1063,11 +1071,7 @@
 			}
 		}
 
-		if (!$.isEmptyObject(unSaved)){
-			$.map(unSaved, function(value, index) {
-				addRuleFieldValue(index, value);
-			}); 
-		}
+		
 	};
 
 	var deleteRule = function(e) { 

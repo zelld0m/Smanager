@@ -26,7 +26,7 @@ validateEmail = function(fieldName, fieldValue, length) {
 	if (!$.isBlank(fieldValue)) {
 		var pattern = /^[\w\\+\\-]+([\.-]?[\w\\+\\-]+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 		if (!pattern.test(fieldValue)) {
-			alert(fieldName+" is an invalid email.");
+			jAlert(fieldName+" is an invalid email.");
 			return false;
 		};
 	}
@@ -39,11 +39,11 @@ validateDate = function(fieldName, fieldValue, length, minDate) {
 	};
 	if(!$.isBlank(fieldValue)) {
 		if(minDate != null && minDate.getTime() > new Date(fieldValue).getTime()) {
-			alert(fieldName+" cannot be earlier than " + $.datepicker.formatDate('mm/dd/yy', minDate));
+			jAlert(fieldName+" cannot be earlier than " + $.datepicker.formatDate('mm/dd/yy', minDate));
 			return false;
 		}
 		if(!$.isDate(fieldValue)){
-			alert(fieldName+" is an invalid date.");
+			jAlert(fieldName+" is an invalid date.");
 			return false;
 		}
 		return true;
@@ -56,11 +56,11 @@ validateUsername = function(fieldName, fieldValue, length) {
 	};
 	if (!$.isBlank(fieldValue)) {
 		if(!isAllowedName(fieldValue)){
-			alert(fieldName+" contains invalid value.");
+			jAlert(fieldName+" contains invalid value.");
 			return false;
 		}
 		if(fieldValue.length < 4){
-			alert("Minimum size for " + fieldName + " is 4 characters.");
+			jAlert("Minimum size for " + fieldName + " is 4 characters.");
 			return false;
 		}		
 	}
@@ -75,7 +75,7 @@ validatePassword = function(fieldName, fieldValue, length) {
 		var passwordRegex= /^[a-zA-Z0-9_.?*+^$[\]\\|-]*$/;
 		if (!$.isBlank(fieldValue)) {
 			if(!passwordRegex.test(fieldValue)) {
-				alert("Invalid characters detected in " + fieldName + ".\nAcceptable characters are alphanumeric characters " +
+				jAlert("Invalid characters detected in " + fieldName + ".\nAcceptable characters are alphanumeric characters " +
 						"and the special characters *+^$[]\|-_?.");
 				return false;
 			}
@@ -90,7 +90,7 @@ validateField = function(fieldName, fieldValue, length) {
 	};
 	if (!$.isBlank(fieldValue)) {
 		if(!isAllowedName(fieldValue)){
-			alert(fieldName+" contains invalid value.");
+			jAlert(fieldName+" contains invalid value.");
 			return false;
 		}
 	}
@@ -100,20 +100,20 @@ validateField = function(fieldName, fieldValue, length) {
 validateGeneric = function(fieldName, fieldValue, length) {	
 	if(length != undefined) {
 		if ($.isBlank(fieldValue)) {
-			alert(fieldName+' cannot be empty.');
+			jAlert(fieldName+' cannot be empty.');
 			return false;
 		}		
 		if (fieldValue.length < length){
-			alert("Minimum size for  " + fieldName + " is " + length + " characters.");
+			jAlert("Minimum size for  " + fieldName + " is " + length + " characters.");
 			return false;
 		}
 	}
 	if(!isAscii(fieldValue)) {
-		alert(fieldName+" contains non-ASCII characters.");		
+		jAlert(fieldName+" contains non-ASCII characters.");		
 		return false;
 	}
 	if(!isXSSSafe(fieldValue)){
-		alert(fieldName+" contains XSS.");
+		jAlert(fieldName+" contains XSS.");
 		return false;
 	}
 	return true;

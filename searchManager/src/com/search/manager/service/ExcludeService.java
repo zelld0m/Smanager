@@ -352,7 +352,7 @@ public class ExcludeService {
 	@RemoteMethod
 	public int updateExclude(String keyword, String memberId, String condition) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, memberId));
+			logger.info(String.format("%s %s %s", keyword, memberId, condition));
 			ExcludeResult exclude = new ExcludeResult();
 			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 			exclude.setMemberId(memberId);
@@ -395,7 +395,12 @@ public class ExcludeService {
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			try {
+				addComment(comment,exclude);
+				changes++;
+			} catch (DaoException e) {
+				logger.error("Error adding comment in updateExcludeFacet()",e);
+			}		
 		}
 		
 		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){

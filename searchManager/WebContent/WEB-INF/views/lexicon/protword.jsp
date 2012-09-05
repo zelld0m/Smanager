@@ -44,7 +44,7 @@
 			<a id="downloadBtn" href="javascript:void(0);" rel="nofollow" >
 				<div class="btnGraph btnDownload"></div>
 			</a>
-			<div class="floatR marR8 marT4">
+			</div>
 		</h1>
 	</div>
 	<div class="clearB"></div>
@@ -66,7 +66,6 @@
     </div>    	
 	</div>
 	<div class="clearB"></div>
-	
 	
 </div>     
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	
