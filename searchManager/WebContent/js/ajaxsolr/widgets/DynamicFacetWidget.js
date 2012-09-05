@@ -102,7 +102,6 @@
 					if (relId == undefined || selectedRelevancy === "keyword_default") {
 						relId = "";
 					}
-					console.log(self.manager.store.params);
 					var params = {
 							'facet': true,
 							'q': keyword,
