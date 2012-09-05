@@ -217,6 +217,20 @@ public class ExcludeService {
 
 		return null;
 	}
+	
+	@RemoteMethod
+	public Product getProductByEdp(String keyword, String edp) {
+
+		RecordSet<Product> products = getAllExcludedProducts(keyword, 0, 100);
+		Product product = null;
+		for (Product prod: products.getList()) {
+			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
+				product = prod;
+				break;
+			}
+		}
+		return product;
+	}
 
 	@RemoteMethod
 	public RecordSet<Product> getAllExcludedProducts(String keyword, int page,int itemsPerPage) {
@@ -352,7 +366,7 @@ public class ExcludeService {
 	@RemoteMethod
 	public int updateExclude(String keyword, String memberId, String condition) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, memberId));
+			logger.info(String.format("%s %s %s", keyword, memberId, condition));
 			ExcludeResult exclude = new ExcludeResult();
 			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 			exclude.setMemberId(memberId);
@@ -383,7 +397,11 @@ public class ExcludeService {
 		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		exclude.setMemberId(memberId);
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
-		rrCondition.setFilter(filter);
+		
+		if(filter != null && !filter.isEmpty()){
+			rrCondition.setFilter(filter);
+		}
+		
 		try {
 			exclude = daoService.getExcludeItem(exclude);
 		} catch (DaoException e) {

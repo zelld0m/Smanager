@@ -579,12 +579,66 @@
 			var idSuffix = "_" + doc.EDP;
 			var expDateMinDate = 0;
 			var expDateMaxDate = "+1Y";
+			var excluded = false;
 
 			return function () {
 				var selector  = "#resultItem_" + doc.EDP + " div#excludeHolder";
 				var title = "Exclude Product";
 				var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Exclude Info</h2>"); 
 
+				populateSelectedProduct = function(contentHolder, api){
+					ExcludeServiceJS.getProductByEdp(keyword, doc["EDP"], {
+						callback : function(item){
+							if(item!=null){
+								excluded = true;
+								
+								setTimeout(function(){	
+									contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
+								},1);
+							}else{
+								excluded = false;
+							}
+							
+							contentHolder.find("#removeBtn").click(function(){
+								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc["EDP"]).val());
+								var comment = $.trim(contentHolder.find("#aComment_" + doc["EDP"]).val());
+
+								var today = new Date();
+								//ignore time of current date 
+								today.setHours(0,0,0,0);
+
+								if(!isXSSSafe(comment)){
+									alert("Invalid comment. HTML/XSS is not allowed.");
+								}
+								else if(today.getTime() > new Date(expiryDate).getTime()){
+									alert("Expiry date cannot be earlier than today");
+								}
+								else if(excluded){
+									ExcludeServiceJS.updateExcludeFacet(keyword, item["memberId"], comment, expiryDate, null, {
+										callback : function(data) {
+											needRefresh = true;
+											api.hide();
+										},
+										preHook: function() {},
+										postHook: function() {}
+									});
+								}
+								else{
+									ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', parseInt(doc["EDP"]), expiryDate, comment, {
+										callback : function(data) {
+											needRefresh = true;
+											api.hide();
+										},
+										preHook: function() {},
+										postHook: function() {}
+									});	
+								}
+							});
+						}/*,
+						errorHandler: handleAddElevateError */
+					});
+				};
+				
 				$(selector).qtip({
 					content: {
 						text: $('<div/>'),
@@ -634,31 +688,8 @@
 								}
 							});
 
-							contentHolder.find("#removeBtn").click(function(){
-								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
-								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
-
-								var today = new Date();
-								//ignore time of current date 
-								today.setHours(0,0,0,0);
-
-								if(!isXSSSafe(comment)){
-									alert("Invalid comment. HTML/XSS is not allowed.");
-								}
-								else if(today.getTime() > new Date(expiryDate).getTime()){
-									alert("Expiry date cannot be earlier than today");
-								}else{
-									ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', parseInt(doc.EDP), expiryDate, comment, {
-										callback : function(data) {
-											needRefresh = true;
-											api.hide();
-										},
-										preHook: function() {},
-										postHook: function() {}
-									});	
-								}
-							});
-
+							populateSelectedProduct(contentHolder, api);
+														
 							//Disable
 							DeploymentServiceJS.getRuleStatus("Exclude", keyword, {
 								callback:function(ruleStatus){
