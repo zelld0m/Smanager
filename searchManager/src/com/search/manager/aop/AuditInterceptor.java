@@ -300,7 +300,7 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry EDP[%1$s]",
 							auditTrail.getReferenceId(), e.getExpiryDate()));
 				} else {
-					auditTrail.setDetails(String.format("Changing expiry date to [%1$tF] for elevated entry ID[%1$s]",
+					auditTrail.setDetails(String.format("Changing expiry date to [%1$tF] for elevated entry ID[%2$s]",
 							e.getExpiryDate(), e.getMemberId()));
 				}
 				break;
