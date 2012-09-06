@@ -281,33 +281,36 @@ public class ExcludeDAO {
     
 	@Audit(entity = Entity.exclude, operation = Operation.update)
     public int updateExclude(ExcludeResult exclude) throws DaoException {
-		int result = -1;
 		try {
 			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        String value = null;
-            if (exclude.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-            	value = StringUtils.trim(exclude.getEdp());
-            } else {
-            	value = exclude.getCondition().getCondition();
-            }
-	        inputs.put(DAOConstants.PARAM_VALUE, value);
+	        if (exclude.getCondition() != null && !StringUtils.isBlank(exclude.getCondition().getCondition())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getCondition().getCondition());
+	        } else {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        }
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, 1);
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
-	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
-	        result  = DAOUtils.getUpdateCount(updateSP.execute(inputs));
+	        return DAOUtils.getUpdateCount(updateSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during updateExclude()", e);
     	}
-		return result;
     }
     
 	@Audit(entity = Entity.exclude, operation = Operation.updateComment)
     public int updateExcludeComment(ExcludeResult exclude) throws DaoException {
 		try {
-			return updateExclude(exclude);
+			DAOValidation.checkExcludePK(exclude);
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        inputs.put(DAOConstants.PARAM_COMMENT, exclude.getComment());
+	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
+	        return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during updateExcludeComment()", e);
     	}
@@ -316,7 +319,14 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.appendComment)
     public int appendExcludeComment(ExcludeResult exclude) throws DaoException {
 		try {
-			return updateExclude(exclude);
+			DAOValidation.checkExcludePK(exclude);
+	    	Map<String, Object> inputs = new HashMap<String, Object>();
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        inputs.put(DAOConstants.PARAM_COMMENT, exclude.getComment());
+	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
+	        return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during appendExcludeComment()", e);
 		}

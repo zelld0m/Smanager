@@ -157,10 +157,10 @@
 			template +=	'					<p id="verReason" class="fsize11 breakWord"></p>';
 			template +=	'				</label>';
 			template += '				<label class="verDate w200 floatL"></label>';
-			template += '				<label class="previewIcon floatL w20 posRel topn2"><img alt="Preview Content" title="Preview Content" src="' + GLOBAL_contextPath + '/images/icon_reviewContent2.png" class="top2 posRel pointer"></label>';
+			template += '				<label class="previewIcon floatL w20 posRel topn2"><img alt="Preview Content" title="Preview Content" src="' + GLOBAL_contextPath + '/images/icon_reviewContent2.png" class="top2 posRel"></label>';
 			if(!base.options.locked){
-				template += '				<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel pointer"></label>';
-				template += '				<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel pointer"></label>';
+				template += '				<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+				template += '				<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			}
 			template += '			</li>';
 			template += '		</ul>';

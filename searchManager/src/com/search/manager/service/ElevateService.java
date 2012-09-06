@@ -526,6 +526,7 @@ public class ElevateService{
 			}
 			if (elevate != null) {
 				elevate.setComment(pComment);
+				elevate.setLastModifiedBy(UtilityService.getUsername());
 				daoService.updateElevateResultComment(elevate);
 				Comment com = new Comment();
 				com.setComment(pComment);
