@@ -19,12 +19,22 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 
 	@ReportField(label="Type", size=20, sortOrder=2)
 	public String getType(){
-		return isEdp()?"Part Number":model.getCondition().isCNetFilter()?"Facets":"IMS Categories";
+		if(isFacet()){
+			if(model.getCondition() != null){
+				if(model.getCondition().isIMSFilter())
+					return "IMS Categories";
+				else if (model.getCondition().isCNetFilter())
+					return "Facet Template Categories";
+			}
+			return "Facets";
+		}
+		
+		return "Part Number";
 	}
 	
 	@ReportField(label="Rule Details", size=60, sortOrder=3)
 	public String getRuleDetails(){
-		return isEdp()?getPartNumberDetails():model.getCondition().getCondition();
+		return isPartNumber()?getPartNumberDetails():model.getCondition().getCondition();
 	}
 	
 	@ReportField(label="Status", size=20, sortOrder=4)
@@ -57,7 +67,11 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 		return model.getFormattedLastModifiedDate();
 	}
 
-	private boolean isEdp() {
+	private boolean isFacet() {
+		return MemberTypeEntity.FACET == model.getMemberTypeEntity();
+	}
+	
+	private boolean isPartNumber() {
 		return MemberTypeEntity.PART_NUMBER == model.getMemberTypeEntity();
 	}
 
