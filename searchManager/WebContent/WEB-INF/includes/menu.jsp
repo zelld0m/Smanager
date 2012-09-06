@@ -8,34 +8,8 @@
               <li ${topmenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${store}">Relevancy</a></li>
               <li ${topmenu eq 'synonyms'? 'class="active"': ''}><a href="<spring:url value="/synonyms/"/>${store}">Synonyms</a></li>
                -->
-              <li ${topmenu eq 'bigbets'? 'class="active posRel"': ''}>
-              		<span><a href="<spring:url value="/elevate/"/>${store}">Search Rules</a></span>
-          			
-          			<div class="subMenuHolder">
-	      				<div class="w980 mar0 posAbs subMenuWrapper">
-	          			<ul class="subMenu floatL txtAL">
-				      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${store}">Elevate</a></li>
-				      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${store}">Exclude</a></li>
-				      		<li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/"/>${store}">Feature</a></li>
-				      		<li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${store}">Query Cleaning</a></li>		      		
-				      		<li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${store}">Ranking Rule</a></li>
-				      		<li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/"/>${store}">Catalog</a></li>  		      		
-				      		<li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facet/"/>${store}">Facet Rule</a></li>  		      		
-			       		</ul>
-			       		</div>
-		       		</div>
-              </li>
-              <li ${topmenu eq 'advertise'? 'class="active"': ''}>
-              	<span><a href="<spring:url value="/campaign/"/>${store}">Search Ads</a></span>
-              	<div class="subMenuHolder">
-      				<div class="w980 mar0 posAbs subMenuWrapper" id="subMenuWrapper">
-		              	<ul class="subMenu floatL txtAL">
-				      		<li ${submenu eq 'campaign'? 'class="active"': ''}><a href="<spring:url value="/campaign/"/>${store}">Campaign</a></li>
-				      		<li ${submenu eq 'banner'? 'class="active"': ''}><a href="<spring:url value="/banner/"/>${store}">Banner</a></li>	      		
-				       </ul>
-				   </div>
-				</div>
-              </li>
+              <li ${topmenu eq 'bigbets'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/"/>${store}">Search Rules</a></span></li>
+              <li ${topmenu eq 'advertise'? 'class="active"': ''}><span><a href="<spring:url value="/campaign/"/>${store}">Search Ads</a></span></li>
               <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/topkeyword/"/>${store}">Statistics</a></span></li>
               <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/"/>${store}">Linguistics</a></span></li>
               <li ${topmenu eq 'setting'? 'class="active"': ''}><span><a href="<spring:url value="/audit/"/>${store}">Settings</a></span></li>
@@ -61,7 +35,6 @@
 	      </c:if>
 	      
 	      <c:if test="${topmenu eq 'bigbets'}">
-	      <div id="subMenuWrapper2" >
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${store}">Elevate</a></li>
 		      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${store}">Exclude</a></li>
@@ -71,7 +44,6 @@
 		      		<li ${submenu eq 'catalog'? 'class="active"': ''}><a href="<spring:url value="/catalog/"/>${store}">Catalog</a></li>  		      		
 		      		<li ${submenu eq 'facet'? 'class="active"': ''}><a href="<spring:url value="/facet/"/>${store}">Facet Rule</a></li>  		      		
 		       </ul>
-		  </div>
 	      </c:if>
 	      
 	      <c:if test="${topmenu eq 'advertise'}">
@@ -120,5 +92,3 @@
    </div>
    <div class="clearB"> &nbsp; </div>
 <div class="mar0 w980">
-
-
