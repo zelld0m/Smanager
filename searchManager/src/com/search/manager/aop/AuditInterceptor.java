@@ -242,11 +242,16 @@ public class AuditInterceptor {
 			}
 		}
 
-		StringBuilder message = null;
+		StringBuilder message = new StringBuilder("");
 		
 		switch (auditable.operation()) {
 			case add:
-				message = new StringBuilder("Adding EDP[%1$s]");
+				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
+					message.append("Adding EDP[%1$s]");
+				} else {
+					message.append("Adding ID[%1$s]");
+				}
+				
 				if (e.getExpiryDate() != null || e.getComment() != null) {
 					if (e.getExpiryDate() != null) {
 						message.append(" Expiry Date[%2$s]");						
@@ -255,60 +260,42 @@ public class AuditInterceptor {
 						message.append(" Comment[%3$s]");
 					}
 				}
-				
-				auditTrail.setDetails(String.format(message.toString(),
-						auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
-
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Adding EDP[%1$s]. Comment[%2$s]",
-							auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
-				} else {
-					auditTrail.setDetails(String.format("Adding ID[%1$s]. Comment[%2$s]",
-							auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
-				}
-
 				break;
 			case delete:
 				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Removed excluded entry EDP[%1$s]",
-							auditTrail.getReferenceId()));
+					message.append("Removed excluded entry EDP[%1$s]");
 				} else {
-					auditTrail.setDetails(String.format("Removed excluded entry ID[%1$s]",
-							auditTrail.getReferenceId()));
+					message.append("Removed excluded entry ID[%1$s]");
 				}
 				break;
 			case appendComment:
 				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry EDP[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					message.append("Appending comment [%3$s] for excluded entry EDP[%1$s]");
 				} else {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					message.append("Appending comment [%3$s] for excluded entry ID[%1$s]");
 				}
 				break;
 			case updateComment:
 				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry EDP[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					message.append("Setting comment [%3$s] for excluded entry EDP[%1$s]");
 				} else {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
+					message.append("Setting comment [%3$s] for excluded entry ID[%1$s]");
 				}
 				break;
 			case updateExpiryDate:
 				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry EDP[%1$s]",
-							auditTrail.getReferenceId(), e.getExpiryDate()));
+					message.append("Changing expiry date to [%2$tF] for excluded entry EDP[%1$s]");
 				} else {
-					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getExpiryDate()));
+					message.append("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]");
 				}
 				break;
 			case clear:
-				auditTrail.setDetails(String.format("Removed all excluded entries"));				
+				message.append("Removed all excluded entries");
 			default:
 				return;
 		}
+		
+		auditTrail.setDetails(String.format(message.toString(),	auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
 		logAuditTrail(auditTrail);
 	}
 	
