@@ -461,4 +461,32 @@ public class ExcludeService {
 		return com;
 	}
 
+	@RemoteMethod
+	public int addRuleComment(String keyword, String memberId, String pComment) {
+		int result = -1;
+		try {
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude != null) {
+				exclude.setComment(pComment);
+				daoService.updateExcludeResultComment(exclude);
+				Comment com = new Comment();
+				com.setComment(pComment);
+				com.setUsername(UtilityService.getUsername());
+				com.setReferenceId(exclude.getMemberId());
+				com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+				result = daoService.addComment(com);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addRuleItemComment()",e);
+		}
+		return result;
+	}
+
 }
