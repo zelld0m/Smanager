@@ -217,20 +217,6 @@ public class ExcludeService {
 
 		return null;
 	}
-	
-	@RemoteMethod
-	public Product getProductByEdp(String keyword, String edp) {
-
-		RecordSet<Product> products = getAllExcludedProducts(keyword, 0, 100);
-		Product product = null;
-		for (Product prod: products.getList()) {
-			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
-				product = prod;
-				break;
-			}
-		}
-		return product;
-	}
 
 	@RemoteMethod
 	public RecordSet<Product> getAllExcludedProducts(String keyword, int page,int itemsPerPage) {
@@ -397,11 +383,7 @@ public class ExcludeService {
 		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		exclude.setMemberId(memberId);
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
-		
-		if(filter != null && !filter.isEmpty()){
-			rrCondition.setFilter(filter);
-		}
-		
+		rrCondition.setFilter(filter);
 		try {
 			exclude = daoService.getExcludeItem(exclude);
 		} catch (DaoException e) {
@@ -421,11 +403,11 @@ public class ExcludeService {
 			}		
 		}
 		
-		if (exclude.getCondition() != null && !exclude.getCondition().getCondition().equals(rrCondition.getCondition())){
+		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (StringUtils.isNotBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
@@ -459,6 +441,35 @@ public class ExcludeService {
 		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
 		daoService.addComment(com);
 		return com;
+	}
+
+	@RemoteMethod
+	public int addRuleComment(String keyword, String memberId, String pComment) {
+		int result = -1;
+		try {
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude != null) {
+				exclude.setComment(pComment);
+				exclude.setLastModifiedBy(UtilityService.getUsername());
+				daoService.updateExcludeResultComment(exclude);
+				Comment com = new Comment();
+				com.setComment(pComment);
+				com.setUsername(UtilityService.getUsername());
+				com.setReferenceId(exclude.getMemberId());
+				com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+				result = daoService.addComment(com);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addRuleItemComment()",e);
+		}
+		return result;
 	}
 
 }
