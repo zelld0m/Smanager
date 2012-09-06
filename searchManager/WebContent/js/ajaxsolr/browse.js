@@ -135,19 +135,14 @@
 				$("#select-server").off().on({
 					change: function(event, data){
 						var reload;
-						console.log($.cookie("server.selected"));
-						console.log(reload);
-						console.log(data);
 						if ($.isNotBlank(data)) {
 							reload = data["reload"];
 						}
 						if ($.isBlank(reload) || reload == true) {
-							console.log("set url");
 							UtilityServiceJS.getSolrConfig({
 								callback:function(data){	
 									var config = $.parseJSON(data);
 									Manager.setSolrUrl(config.solrUrl + GLOBAL_store + '/');
-									console.log(config.solrUrl);
 								},
 								postHook:function() {
 									Manager.doRequest();						
