@@ -15,12 +15,14 @@
 <body>
 <div class="w635 h353 txtAC mar0 posRel top100 bgsrclogo">
 
-<c:if test="${not empty param.login_error}">
+<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION.message}">
      <div id="error" class="clearB posAbs w100p farial fsize12 fred logAlert">
      	<p class="mar0">Login failed. Please try again.</p>
      	<p class="mar0">Reason: <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}" /></p>
      </div>    
 </c:if>
+
+<c:remove var = "SPRING_SECURITY_LAST_EXCEPTION" scope = "session" />
 
 <form name="f" action="<c:url value='j_spring_security_check'/>" method="POST">
 <div class="formContainer">
