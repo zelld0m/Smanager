@@ -47,8 +47,8 @@
 				template  += '		<div class="floatL marT5 marL5">';
 			}
 			template  += '		<div class="clearB"></div>';
-			template  += '			<label class="w60 floatL marL5 padT5">Comment: </label> ';
-			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL marL5 w230"></textarea></label>';
+			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
+			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL w230"></textarea></label>';
 			template  += '		</div>';
 			template  += '		<div class="clearB"></div>';
 			template  += '		<div align="right">';
@@ -92,7 +92,7 @@
 			template  += '							<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>';
 			template  += '						</div>';
 			template  += '						<div style="clear:both"></div>';
-			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="categoryList" class="categoryList selectCombo w229" title="Select Category"></select>';
 			template  += '						</div>';
@@ -101,7 +101,7 @@
 			template  += '				<tr class="catName" id="subcategory">';
 			template  += '					<td class="w175">SubCategory :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="subCategoryList" class="subCategoryList selectCombo w229" title="Select SubCategory"></select>';
 			template  += '						</div>';
@@ -110,16 +110,16 @@
 			template  += '				<tr class="catName" id="class">';
 			template  += '					<td class="w175">Class :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="classList" class="classList selectCombo w229" title="Select Class"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr class="catName" id="minor">';
-			template  += '					<td class="w175" valign="top">SubClass :</td>';
+			template  += '					<td class="w175">SubClass :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="minorList" class="minorList selectCombo w229" title="Select SubClass"></select>';
 			template  += '						</div>';
@@ -136,9 +136,9 @@
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr>';
-			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
+			template  += '					<td class="w175">Manufacturer :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="manufacturerList" class="manufacturerList selectCombo w229" title="Select Manufacturer"></select>';
 			template  += '						</div>';
@@ -206,7 +206,7 @@
 			template  += '				</tr>';
 			template  += '				</table>';
 
-			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 floatL">';
+			template  += '    <div style="max-height:300px;  width:460px; overflow-y:auto;" class="marB10 floatL">';
 			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr id="dynamicAttributeValue">';
 			template  += '					<td colspan="2" class="padT1">';
@@ -214,11 +214,11 @@
 			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem marL30" style="display:none">';
 			template  += '								<div class="clearB"></div>';
 			template  += '								<div class="w146 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
-			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8 marL5" alt="Delete Attribute" title="Delete Attribute">';
+			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR4 marL5" alt="Delete Attribute" title="Delete Attribute">';
 			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
 			template  += '									<ul id="dynamicAttributeValues">';
 			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
-			template  += '											<div>';
+			template  += '											<div class="w240">';
 			template  += '												<input type="checkbox" class="checkboxFilter">';
 			template  += '												<span id="attributeValueName"></span>';
 			template  += '											</div>';
