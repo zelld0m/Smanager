@@ -43,7 +43,7 @@
 		output  +='<div class="clearB"></div>';
 		output  +='</div>';
 		output  +='<a href="javascript:void(0);">';
-		output  +='<div class="minW110 floatL borderB borderR borderL h27 posRel topn1 fbold fsize12 padT8" style="display:block; background: #fff; z-index:500; left:20px; color:#329eea;">';
+		output  +='<div class="minW100 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
 		output  +='	<img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_arrowDownBlue.png")  + '" class="top2 posRel marL5 marR3">';
 		output  +='	<span>Active Rules</span>';
 		output  +='</div>';
@@ -93,15 +93,14 @@
 
 	AjaxSolr.theme.prototype.searchWithin = function () {
 		var output  = '';
-		output += '<div class="box marT8">';
-		output += '<h2>Search Within</h2>';
-		output += '<div class="mar10 w215">';
-		output += '<div class="searchBoxHolder w145 floatL marT1 marR5">';
-		output += '<input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3">';
-		output += '</div>';
-		output += '<a href="javascript:void(0)" id="searchbutton" class="btnGraph"><div class="btnGraph btnGoB floatR"></div></a>';
-		output += '<div class="clearB"></div>';
-		output += '</div>';
+		output += '<div class="h27">';
+		output += '		<div class="fsize12 fbold floatL padT10 padR5">Search Within: </div> ';		
+		output += '		<div class="searchBoxHolder w145 floatL marT4 marR5">';
+		output += '			<span><input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3"></span>';
+		output += '		</div>';
+		output += '		<a href="javascript:void(0)" id="searchbutton" class="btnGraph">';
+		output += '			<div class="btnGraph btnGoB floatR marT3"></div>';
+		output += '		</a>';
 		output += '</div>';
 		return $(output);
 	};
@@ -155,8 +154,8 @@
 	};
 
 	AjaxSolr.theme.prototype.createFacetHolder = function (facetLabel, facet) {
-		var output  = '<div class="clearB floatL w240">';
-		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px">' + facetLabel + '</div>';
+		var output  = '<div class="clearB floatL w240 marB27">';
+		output += '<div id="' + $.formatAsId(facet) + '" class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px;">' + facetLabel + '</div>';
 		output += '<div class="' + $.formatAsId(facet) +' clearB floatL w230 padL10"></div>';  
 		output += '</div>';
 
@@ -194,7 +193,11 @@
 		output += '      <td width="28%" rowspan="5" align="center" valign="top"><div style="width:116px; height:100px" class="border itemImg">';
 		output += '	   		<img src="' + doc.ImagePath + '"></div>';
 		output += '	   </td>';
-		output += '      <td colspan="2" align="left" valign="top" class="fbold borderB">';
+		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
+		output += '			<div class="floatL">';
+		output += '				<div id="debugHolder" class="floatL marB6"></div>';
+		output += '				<div id="elevatePosition" class="floatL"></div>';
+		output += '			</div>';
 		output += '			<div class="floatR marR5 marTn2">';
 		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
 		output += '			</div>';
@@ -229,7 +232,6 @@
 		output += '		<td colspan="2" align="left" valign="top" class="padTB7 fgray">';
 		output += '			<table width="100%" border="0" cellpadding="0" cellspacing="0">';
 		output += '				<tr>';
-		output += '       			<td width="60"><span class="fgreen"><div><div id="debugHolder" class="floatL"></div></div></td>';
 		output += '       			<td width="60"><span class="fgreen">SKU #: </span>' + doc.DPNo + '</td>';
 		output += '       			<td width="130"><span class="fgreen">Mfr. Part #:</span>' + doc.MfrPN + '</td>';
 		output += '				</tr>';
@@ -255,14 +257,27 @@
 		secObj.find("div#auditHolder a").html('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_history.png') + '" alt="Audit Trail" title="Audit Trail">');
 
 		//Add Debug link
-		if (doc.Elevate == undefined){
+		if ($.isBlank(doc.Elevate) || doc["ElevateType"] === "FACET"){
 			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Score: ' + doc.score, debugHandler));
 			secObj.find("div#debugHolder a").addClass("btnShade btnCream");
 			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
-		}else{		  
-			secObj.find("div#debugHolder").wrapInner(AjaxSolr.theme('createLink', 'Elevated Position: ' +  doc.Elevate, null));
-			secObj.find("div#debugHolder a").addClass("btnShade btnGreen");
-			secObj.find("div#debugHolder a").wrapInner("<span class='btnShade'></span>");
+		}
+		
+		if ($.isNotBlank(doc.Elevate)){		  
+			var displayText = "Elevated at position " + doc["Elevate"];
+			
+			if(doc["ElevateType"] === "FACET")
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> elevated at position '+ doc["Elevate"];
+
+			secObj.find("div#elevatePosition").html(displayText);
+			secObj.find("div#elevatePosition a").off().on({
+				click: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				},
+				mouseenter: function(e){
+					showMessage(this, e.data.doc["ElevateCondition"]);
+				}
+			}, {doc: doc});
 		}
 
 		//Add Elevate Button if search has keyword
@@ -276,7 +291,7 @@
 
 			if (doc.Elevate != undefined){
 				bigbetsicon = 'images/icon_arrowUp.png'; 
-				eleHover = "Remove Elevate";
+				eleHover = "Update Elevate";
 			} 
 
 			if (doc.Feature != undefined){

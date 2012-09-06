@@ -5,8 +5,7 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- Page specific file dependencies --> 
-<link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet">
-<script type="text/javascript" src="<spring:url value="/js/bigbets/bigbets.js" />"></script>   
+<link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
 <script type="text/javascript" src="<spring:url value="/js/bigbets/elevate.js" />"></script>   
 
 <!-- Left Menu-->

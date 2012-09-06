@@ -83,7 +83,12 @@
 							.prop("colspan",3)
 							.removeClass("txtAC")
 							.addClass("txtAL");
-						$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						
+						if (!list[i]["isExpired"]){
+							$tr.find("#itemValidityDaysExpired").remove();
+						}
+						
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
@@ -92,11 +97,15 @@
 							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+							$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
+							
+							if (!list[i]["isExpired"]){
+								$tr.find("#itemValidityDaysExpired").remove();
+							}
 						}
 						else{
 							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-													.prop("colspan",5)
+													.prop("colspan",4)
 													.removeClass("txtAC")
 													.addClass("txtAL");
 							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
@@ -327,7 +336,10 @@
 					template += '					<td width="94px" class="txtAC" id="itemMan"></td>';
 					template += '					<td width="70px" class="txtAC" id="itemDPNo"></td>';
 					template += '					<td width="162px" class="txtAC" id="itemName"></td>';
-					template += '					<td class="txtAC" id="itemValidity"></td>';
+					template += '					<td class="txtAC">';
+					template += '						<div id="itemValidity"></div>';
+					template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
+					template +='					</td>';
 					template += '				</tr>';
 					template += '				<tr>';
 					template += '					<td colspan="6" class="txtAC">';

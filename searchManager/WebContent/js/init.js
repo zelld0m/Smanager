@@ -1,7 +1,8 @@
 /** Global DWR Handler */
 dwr.engine.setTextHtmlHandler(function() {
-	window.alert("Your session has expired, please login again.");
-	document.location.href = document.location.href;
+	jAlert("Your session has expired, please login again.","Search Manager",function(r){
+		document.location.href = document.location.href;
+	});
 });
 
 dwr.engine.setErrorHandler(function(msg, exc) {
@@ -44,23 +45,20 @@ showActionResponse = function(code, action, param){
 
 showActionResponseFromMap = function(code, action, param, additionalFailMessage){
 	var message = "";
-	var title = "";
 	
 	if (code["PASSED"].length > 0) {
 		message += "Successful " + action + " request for " + code["PASSED"] + ".";
-		title = "Successful Request";
 	}
 	if (message !== "") {
 		message += "\n\n";
 	}
 	if (code["FAILED"].length > 0) {
 		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
-		title = "Failed Request";
 		if (additionalFailMessage) {
 			message += "\n" + additionalFailMessage;
 		}
 	}
-	jAlert(message,title); 
+	jAlert(message,"Multiple Rule Item Add"); 
 };
 
 /** Style for HTML upload tag */

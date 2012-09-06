@@ -129,7 +129,7 @@
 
 			template += '			<div id="commentHolder">';
 			template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-			template += '					<span id="commentIcon"><img src="' + GLOBAL_contextPath + '/images/icon_comment.png"></span>';  
+			template += '					<span id="commentIcon"><img src="' + GLOBAL_contextPath + '/images/icon_comment.png" class="pointer"></span>';  
 			template += '				</label>';
 			template += '			</div>';
 

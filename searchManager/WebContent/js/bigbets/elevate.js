@@ -18,7 +18,7 @@
 			lockedItemDisplayText: "Item is locked",
 
 			removeExpiryDateConfirmText: "Expiry date for this item will be removed. Continue?",
-			removeRuleItemConfirmText: "Item will be removed to this rule. Continue?",
+			removeRuleItemConfirmText: "Item will be removed from this rule. Continue?",
 			clearRuleItemConfirmText: "All items associated to this rule will be removed. Continue?",
 
 			getRuleList: function(){
@@ -149,7 +149,7 @@
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											showActionResponse(data, "update", "Rule Facet Item");
+											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 											self.populateRuleItem(self.selectedRulePage);
 										},
 										preHook: function(){ 
@@ -223,7 +223,7 @@
 							itemAddComment: function(base, comment){
 								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
 									callback: function(data){
-										showActionResponse(data, "add", "rule item comment");
+										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
 											CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
 												callback: function(data){
@@ -277,9 +277,9 @@
 
 						jConfirm(self.removeRuleItemConfirmText, "Delete Item", function(result){
 							if(result){
-								ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {
+								ElevateServiceJS.deleteItemInRule(self.selectedRule["ruleName"], e.data.item["memberId"], {	
 									callback: function(code){
-										showActionResponse(code, "delete", $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+										showActionResponse(code, "delete", e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
 										self.showRuleContent();
 									},
 									preHook: function(){
@@ -338,7 +338,7 @@
 					if (PART_NUMBER){
 						if ($.isBlank($item["dpNo"])){
 							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
-							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>Not available in the search server</p>');
 							$li.find(".manufacturer").html(self.lockedItemDisplayText);
 							$li.find(".sku, .mfrpn").html("Unavailable");
 							return;
@@ -370,10 +370,9 @@
 			updateValidityDate: function(item, dateText){
 				var self = this;
 				var $item = item;
-				//TODO: Locked item has no dpNo, change message
 				ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, "update", "expiry date of SKU#: " + $item["dpNo"]);
+						showActionResponse(code, "update", "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRulePage);
 					}
 				});
@@ -383,7 +382,8 @@
 				var self = this;
 				$("#preloader").show();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
-				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+				$("#ruleItemDisplayOptions").hide();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer").fadeOut("slow", function(){
 					$("#titleText").html(self.moduleName);
 					$("#titleHeader").empty();
 				});
@@ -444,7 +444,7 @@
 									var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
 									$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
 								}
-
+								
 								if(self.selectedRuleItemTotal == 0 && self.getRuleItemFilter()==="all"){
 									$('#ruleItemDisplayOptions').hide(); 
 								}else{
@@ -507,7 +507,7 @@
 											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
 												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
-														showActionResponse(data, "add", "Rule Facet Item");
+														showActionResponse(data, "add", "New Rule Facet Item");
 														self.populateRuleItem();
 													},
 													preHook: function(){ 

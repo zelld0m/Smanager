@@ -149,6 +149,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -214,7 +215,8 @@ public class ExcludeDAO {
 		try {
 			DAOValidation.checkExcludePK(exclude);
     		String keyword = DAOUtils.getKeywordId(exclude.getStoreKeyword());
-	    	if (StringUtils.isNotEmpty(keyword)) {
+	    	int count = -1;
+			if (StringUtils.isNotEmpty(keyword)) {
 	    		String storeId = DAOUtils.getStoreId(exclude.getStoreKeyword());
 	    		String username = StringUtils.trim(exclude.getCreatedBy());
 	    		String comment = StringUtils.trim(exclude.getComment());
@@ -235,9 +237,9 @@ public class ExcludeDAO {
 	            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
 	            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, exclude.getExcludeEntity());
-	            return DAOUtils.getUpdateCount(addSP.execute(inputs));
+	            count = DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    	}
-	    	return -1;
+	    	return count;
     	}
     	catch (Exception e) {
     		throw new DaoException("Failed during addExclude()", e);
@@ -266,8 +268,12 @@ public class ExcludeDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
-	    	return DAOUtils.getItem(getItemSP.execute(inputs));
+	        inputs.put(DAOConstants.PARAM_START_DATE, null);
+	        inputs.put(DAOConstants.PARAM_END_DATE, null);
+	        inputs.put(DAOConstants.PARAM_START_ROW, null);
+	        inputs.put(DAOConstants.PARAM_END_ROW, null);
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
+	    	return DAOUtils.getItem(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExcludeItem()", e);
     	}
@@ -280,7 +286,12 @@ public class ExcludeDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        if (exclude.getCondition() != null && !StringUtils.isBlank(exclude.getCondition().getCondition())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getCondition().getCondition());
+	        } else {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        }
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, 1);
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(updateSP.execute(inputs));

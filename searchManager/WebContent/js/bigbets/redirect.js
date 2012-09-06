@@ -78,22 +78,22 @@
 
 						if (self.checkIfUpdateAllowed()){
 							if ($.isBlank(ruleName)){
-								jAlert("Rule name is required.");
+								jAlert("Rule name is required.","Query Cleaning");
 							}
 							else if (!isAllowedName(ruleName)){
-								jAlert("Rule name contains invalid value.");
+								jAlert("Rule name contains invalid value.","Query Cleaning");
 							}
 							else if (!isAscii(description)) {
-								jAlert("Description contains non-ASCII characters.");										
+								jAlert("Description contains non-ASCII characters.","Query Cleaning");										
 							}
 							else if (!isXSSSafe(description)){
-								jAlert("Description contains XSS.");
+								jAlert("Description contains XSS.","Query Cleaning");
 							}
 							else {
 								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
 									callback: function(data){
 										if (data==true){
-											alert("Another query cleaning rule is already using the name provided.");
+											jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
 										}else{
 											var response = 0;
 											RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
@@ -183,9 +183,24 @@
 						self.addDownloadListener();
 
 						$('#auditIcon').off().on({
-							click: showAuditList
-						}, {locked: self.selectedRuleStatus["locked"] || !allowModify, type:self.moduleName, ruleRefId: self.selectedRule["ruleId"], name:  self.selectedRule["ruleName"]});
-
+							click: function(e){
+								$(e.currentTarget).viewaudit({
+									itemDataCallback: function(base, page){
+										AuditServiceJS.getRedirectTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+											callback: function(data){
+												var total = data.totalSize;
+												base.populateList(data);
+												base.addPaging(base.options.page, total);
+											},
+											preHook: function(){
+												base.prepareList();
+											}
+										});
+									}
+								});
+							}
+						});
+						
 						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
 
 						$("div#keyword").find("#changeKeywordBtn").off().on({
@@ -367,7 +382,7 @@
 						RedirectServiceJS.checkForRuleNameDuplicate("", name, {
 							callback: function(data){
 								if (data==true){
-									jAlert("Another query cleaning rule is already using the name provided.");
+									jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
 								}else{
 									RedirectServiceJS.addRuleAndGetModel(name, {
 										callback: function(data){
@@ -942,7 +957,7 @@
 							self.addDynamicAttributeButtonListener(ui, condition, u.item.value);
 						}
 						else{
-							jAlert("Please specify a valid attribute name.");
+							jAlert("Please specify a valid attribute name.","Query Cleaning");
 							self.addDynamicAttributeButtonListener(ui, condition, "");
 						}
 						break;
@@ -1644,7 +1659,7 @@
 
 							if($.isNotBlank(inDynamicAttribute)){
 								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
-									jAlert("Attribute already added. Please select a different attribute name.");
+									jAlert("Attribute already added. Please select a different attribute name.","Query Cleaning");
 								}
 								else{
 									$ulAttributeValues.prop({id: $.formatAsId(attrName), title: attrName});
@@ -1683,7 +1698,7 @@
 								}
 							}
 							else{
-								jAlert("Please select a dynamic attribute.");
+								jAlert("Please select a dynamic attribute.","Query Cleaning");
 							}
 						}
 					},
@@ -1707,7 +1722,7 @@
 						var condMap = self.buildConditionAsMap($item);
 
 						if ($.isEmptyObject(condMap)){
-							jAlert('Please specify at least one filter condition');
+							jAlert('Please specify at least one filter condition',"Query Cleaning");
 							return;
 						}
 
@@ -1797,7 +1812,7 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($.isBlank(e.data.condition) || $divItemList.find("div.tempConditionItem").length > 0){
-								jAlert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group","Query Cleaning");
 								return;
 							}
 
@@ -1838,7 +1853,7 @@
 							var $divItemList = $("div#conditionList");
 
 							if ($divItemList.find("div.tempConditionItem").length > 0){
-								jAlert("You have an unsaved filter group");
+								jAlert("You have an unsaved filter group","Query Cleaning");
 								return;
 							}
 
