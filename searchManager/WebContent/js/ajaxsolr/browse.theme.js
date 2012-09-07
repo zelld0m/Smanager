@@ -1,5 +1,36 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.searchKeyword = function(){
+		var template = '';
+		template += '<a id="statisticIcon" href="javascript:void(0);">';
+		template += '	<img align="absmiddle" class="marR3 marT5 floatR  posRel" src="' + GLOBAL_contextPath + '/images/icon_statistics.png">';
+		template += '</a>'; 
+		template += '<a id="searchBtn" href="javascript:void(0);">';
+		template += '	<img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="' + GLOBAL_contextPath + '/js/ajaxsolr/images/btn_GO.png">';
+		template += '</a> '; 
+		template += '<div class="searchBoxHolder w150 floatR marT1 marR8">';
+		template += '	<input type="text" class="farial fsize12 fgray pad3 w150" id="keyword" name="keyword">';
+		template += '</div>'; 
+		template += '<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none">';
+		template += '	<input id="keepRefinement" name="keepRefinement" type="checkbox">';
+		template += '	<span class="fsize11">Keep Refinements</span>';
+		template += '</div>';     	 
+		return template;
+	};
+	
+	AjaxSolr.theme.prototype.searchWithin = function(){
+		var template = '';
+		template += '<div class="h27">';
+		template += '	<div class="searchBoxHolder w145 floatL marT4 marR5">';
+		template += '		<span><input type="text" id="searchWithin" name="searchWithin" class="w140 farial fsize12 fgray pad3"></span>';
+		template += '	</div>';
+		template += '	<a href="javascript:void(0)" id="searchBtn" class="btnGraph">';
+		template += '		<div class="btnGraph btnGoB floatR marT3"></div>';
+		template += '	</a>';
+		template += '</div>';
+		return template;
+	};
+	
 	AjaxSolr.theme.prototype.cnetFacets = function () {
 		var output  = '<div class="clearB floatL w240">';
 		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Category</div>';
@@ -88,20 +119,6 @@
 //		output  +='</p>';
 //		output  +='</div>';
 
-		return $(output);
-	};
-
-	AjaxSolr.theme.prototype.searchWithin = function () {
-		var output  = '';
-		output += '<div class="h27">';
-		output += '		<div class="fsize12 fbold floatL padT10 padR5">Search Within: </div> ';		
-		output += '		<div class="searchBoxHolder w145 floatL marT4 marR5">';
-		output += '			<span><input type="text" id="searchWithinInput" class="w140 farial fsize12 fgray pad3"></span>';
-		output += '		</div>';
-		output += '		<a href="javascript:void(0)" id="searchbutton" class="btnGraph">';
-		output += '			<div class="btnGraph btnGoB floatR marT3"></div>';
-		output += '		</a>';
-		output += '</div>';
 		return $(output);
 	};
 

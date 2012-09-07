@@ -4,7 +4,23 @@
 <c:set var="submenu" value="product"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
-  <script type="text/javascript" src="<spring:url value="/js/dwr/browse.js" />"></script>
+	<script type="text/javascript">
+		var WIDGET_ID_searchWithin = 'searchWithin';
+		var WIDGET_ID_searchKeyword = 'searchKeyword';
+		var WIDGET_ID_searchResult = 'searchResult';
+		var WIDGET_ID_cnetFacet = 'cnetFacet';
+		var WIDGET_ID_pager = 'pager';
+	
+		var WIDGET_TARGET_searchWithin = '#searchWithin';
+		var WIDGET_TARGET_searchResult = '#docs';
+		var WIDGET_TARGET_searchKeyword = '#searchKeyword';
+		var WIDGET_TARGET_cnetFacet = '#cnetFacets';
+		var WIDGET_TARGET_pager = '#top-pager,#bottom-pager';
+	
+		var WIDGET_TEXTDEFAULT_searchKeyword = 'Enter Keyword';
+		var WIDGET_TEXTDEFAULT_searchWithin = 'Search Within';
+	</script>
+	<script type="text/javascript" src="<spring:url value="/js/dwr/browse.js" />"></script>
 	
   <!-- Ajax Solr Dependencies -->
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/Core.js" />"></script>
@@ -21,10 +37,10 @@
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/widgets/jquery/PagerWidget.js" />" ></script>
 
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ResultWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/CurrentSearchWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SortResultWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/TextWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchKeywordWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicAttributeWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
@@ -60,13 +76,8 @@
 		  <!-- Text Widget -->
 		  <div id="search" class="floatL w730 titlePlacer">
 			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
-        	<div class="floatL w460 txtAR padT7"> 
-        	    <a id="statisticIcon" href="javascript:void(0);"><img align="absmiddle" class="marR3 marT5 floatR  posRel" src="<spring:url value="/images/icon_statistics.png"/>"></a>
-	        	<a id="searchbutton" href="javascript:void(0)"><img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="<spring:url value="/js/ajaxsolr/images/btn_GO.png"/>"></a> 
-				<div class="searchBoxHolder w150 floatR marT1 marR8"><input type="text" class="farial fsize12 fgray pad3 w150" id="query" name="query"></div>
-				<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none"><input id="keepRefinement" name="keepRefinement" type="checkbox"><span class="fsize11">Keep Refinements</span></div>    	 
-			</div>			
-		   </div>
+        	<div id="searchKeyword" class="floatL w460 txtAR padT7"></div>			
+		  </div>
 		   
 		   <!-- Rule Selector Widget -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
