@@ -1,7 +1,8 @@
 /** Global DWR Handler */
 dwr.engine.setTextHtmlHandler(function() {
-	window.alert("Your session has expired, please login again.");
-	document.location.href = document.location.href;
+	jAlert("Your session has expired, please login again.","Search Manager",function(r){
+		document.location.href = document.location.href;
+	});
 });
 
 dwr.engine.setErrorHandler(function(msg, exc) {

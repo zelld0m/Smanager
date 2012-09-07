@@ -352,7 +352,7 @@ public class ExcludeService {
 	@RemoteMethod
 	public int updateExclude(String keyword, String memberId, String condition) {
 		try {
-			logger.info(String.format("%s %s %d", keyword, memberId));
+			logger.info(String.format("%s %s %s", keyword, memberId, condition));
 			ExcludeResult exclude = new ExcludeResult();
 			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 			exclude.setMemberId(memberId);
@@ -395,7 +395,12 @@ public class ExcludeService {
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			try {
+				addComment(comment,exclude);
+				changes++;
+			} catch (DaoException e) {
+				logger.error("Error adding comment in updateExcludeFacet()",e);
+			}		
 		}
 		
 		if (!rrCondition.getCondition().equals(exclude.getCondition().getCondition())){
@@ -436,6 +441,35 @@ public class ExcludeService {
 		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
 		daoService.addComment(com);
 		return com;
+	}
+
+	@RemoteMethod
+	public int addRuleComment(String keyword, String memberId, String pComment) {
+		int result = -1;
+		try {
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude != null) {
+				exclude.setComment(pComment);
+				exclude.setLastModifiedBy(UtilityService.getUsername());
+				daoService.updateExcludeResultComment(exclude);
+				Comment com = new Comment();
+				com.setComment(pComment);
+				com.setUsername(UtilityService.getUsername());
+				com.setReferenceId(exclude.getMemberId());
+				com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+				result = daoService.addComment(com);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addRuleItemComment()",e);
+		}
+		return result;
 	}
 
 }

@@ -41,15 +41,16 @@
 			if (base.options.showPosition){
 				template  += '		<div class="floatL marT5" style="width: 97px">';
 				template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '			<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '			<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '		</div>';
 				template  += '		<div class="clearB"></div>';
 				template  += '		<div class="floatL marT5 marL5">';
 			}
 			template  += '		<div class="clearB"></div>';
-			template  += '			<label class="w60 floatL marL5 padT5">Comment: </label> ';
-			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL marL5 w230"></textarea></label>';
+			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
+			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL w230"></textarea></label>';
 			template  += '		</div>';
+			template  += '		<div class="clearB"></div>';
 			template  += '		<div align="right">';
 			template  += '			<a id="addItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template  += '				<div class="buttons fontBold">Add</div>';
@@ -91,7 +92,7 @@
 			template  += '							<a class="switchToCatCode" href="javascript:void(0);">Use category codes instead &raquo;</a>';
 			template  += '						</div>';
 			template  += '						<div style="clear:both"></div>';
-			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderCategoryList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="categoryList" class="categoryList selectCombo w229" title="Select Category"></select>';
 			template  += '						</div>';
@@ -100,7 +101,7 @@
 			template  += '				<tr class="catName" id="subcategory">';
 			template  += '					<td class="w175">SubCategory :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderSubCategoryList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="subCategoryList" class="subCategoryList selectCombo w229" title="Select SubCategory"></select>';
 			template  += '						</div>';
@@ -109,16 +110,17 @@
 			template  += '				<tr class="catName" id="class">';
 			template  += '					<td class="w175">Class :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderClassList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="classList" class="classList selectCombo w229" title="Select Class"></select>';
 			template  += '						</div>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr class="catName" id="minor">';
-			template  += '					<td class="w175" valign="top">SubClass :</td>';
+			template  += '					<td class="w175">SubClass :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
+
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="minorList" class="minorList selectCombo w229" title="Select SubClass"></select>';
 			template  += '						</div>';
@@ -135,9 +137,10 @@
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr>';
-			template  += '					<td class="w175" valign="top">Manufacturer :</td>';
+			template  += '					<td class="w175">Manufacturer :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderMinorList" class="floatR loadIcon marL3 top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderManufacturerList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
+
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="manufacturerList" class="manufacturerList selectCombo w229" title="Select Manufacturer"></select>';
 			template  += '						</div>';
@@ -153,7 +156,7 @@
 			template  += '				<tr class="catName" id="level1Cat">';
 			template  += '					<td class="w175 padB8" valign="bottom">Level 1 Category :</td>';
 			template  += '					<td class="iepadBT0">';
-			template  += '						<img id="preloaderLevel1CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel1CategoryList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w229" title="Select Category"></select>';
 			template  += '						</div>';
@@ -162,7 +165,7 @@
 			template  += '				<tr class="catName" id="level2Cat">';
 			template  += '					<td class="w175">Level 2 Category :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderLevel2CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel2CategoryList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w229" title="Select SubCategory"></select>';
 			template  += '						</div>';
@@ -171,7 +174,7 @@
 			template  += '				<tr class="catName" id="level3Cat">';
 			template  += '					<td class="w175">Level 3 Category :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderLevel3CategoryList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderLevel3CategoryList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w229" title="Select Class"></select>';
 			template  += '						</div>';
@@ -180,7 +183,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Manufacturer :</td>';
 			template  += '					<td>';
-			template  += '						<img id="preloaderCNETManufacturerList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderCNETManufacturerList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w229" title="Select Manufacturer"></select>';
 			template  += '						</div>';
@@ -197,7 +200,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top6" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top6" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL">';
 			template  += '							<select name="select" id="templateNameList" class="templateNameList selectCombo w229" title="Select Template Name"></select>';
 			template  += '						</div>';
@@ -205,7 +208,7 @@
 			template  += '				</tr>';
 			template  += '				</table>';
 
-			template  += '    <div style="max-height:300px; overflow-y:auto;" class="marB10 floatL">';
+			template  += '    <div style="max-height:300px;  width:460px; overflow-y:auto;" class="marB10 floatL">';
 			template  += '			<table class="dynamicAttributeFields">';							
 			template  += '				<tr id="dynamicAttributeValue">';
 			template  += '					<td colspan="2" class="padT1">';
@@ -213,11 +216,12 @@
 			template  += '							<div id="dynamicAttributeItemPattern" class="dynamicAttributeItem marL30" style="display:none">';
 			template  += '								<div class="clearB"></div>';
 			template  += '								<div class="w146 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
-			template  += '								<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8 marL5" alt="Delete Attribute" title="Delete Attribute">';
+			template  += '								<img src="' +  GLOBAL_contextPath + '/images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR4 marL5" alt="Delete Attribute" title="Delete Attribute">';
+
 			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
 			template  += '									<ul id="dynamicAttributeValues">';
 			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
-			template  += '											<div>';
+			template  += '											<div class="w240">';
 			template  += '												<input type="checkbox" class="checkboxFilter">';
 			template  += '												<span id="attributeValueName"></span>';
 			template  += '											</div>';
@@ -235,7 +239,7 @@
 			template  += '				<tr id="dynamicAttributeName">';
 			template  += '					<td class="w175">Add Dynamic Attribute :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
-			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top3" src="../images/ajax-loader-rect.gif" style="display: none"/>';
+			template  += '						<img id="preloaderTemplateNameList" class="floatR loadIcon marL3 posRel top3" src="' +  GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display: none"/>';
 			template  += '						<div class="floatL posRel leftn2">';
 			template  += '							<select name="select" id="dynamicAttributeList" class="dynamicAttributeList selectCombo w205" title="Add Dynamic Attribute"></select>';
 			template  += '						</div>';
@@ -324,7 +328,7 @@
 			if (base.options.showPosition){
 				template  += '						<div class="floatL marT5" style="width: 97px">';
 				template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
-				template  += '							<label><input id="addItemPosition" type="text" class="w25"></label>';
+				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
 			
@@ -333,7 +337,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Comment :</td>';
 			template  += '					<td class="iepadBT0">';
-			template  += '						<textarea id="" style="width: 245px; float: left; margin-bottom: 7px"></textarea>';
+			template  += '						<textarea id="addItemComment" style="width: 245px; float: left; margin-bottom: 7px"></textarea>';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '			</table>';
@@ -1436,6 +1440,23 @@
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
+			base.contentHolder.find("#addItemPosition").on({
+				keypress:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					if (charCode > 31 && (charCode < 48 || charCode > 57))
+						return false;
+				},
+				keydown:function(e){
+					var charCode = (e.which) ? e.which : e.keyCode;
+					var ctrlDown = e.ctrlKey||e.metaKey ;
+					if (ctrlDown) {
+						return false;
+					}
+				},
+				contextmenu:function(e){
+					return false;
+				}
+			});
 
 			switch(type){
 			case "facet": 
@@ -1474,13 +1495,14 @@
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				buttonText: "Expiration Date",
-				buttonImage: "../images/icon_calendar.png",
+				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
  
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					var position = 1;
+					var valid = true;
 					
 					if (base.options.showPosition){
 						position = base.contentHolder.find("#addItemPosition").val();
@@ -1489,18 +1511,38 @@
 					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
+					if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
+						valid = false;
+					}
+
+					if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
+						valid = false;
+					}
+					
 					var condMap = base.getSelectedFacetFieldValues();
 					
 					if ($.isEmptyObject(condMap)){
+						valid = false;
 						jAlert('Please specify at least one filter condition');
-						return;
 					}
 					
-					if (base.options.newRecord){
-						base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
-					}else{
-						base.api.destroy();
-						base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+					if (valid){
+						$.each(condMap, function(idx, el){
+							$.each(el, function(i,elem){
+								if(!validateGeneric("Input", elem)) {
+									valid = false;
+								}
+							});
+						});
+					}
+
+					if (valid){
+						if (base.options.newRecord){
+							base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
+						}else{
+							base.api.destroy();
+							base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+						}
 					}
 				}
 			});
@@ -1517,7 +1559,7 @@
 				minDate: base.options.dateMinDate,
 				maxDate: base.options.dateMaxDate,
 				buttonText: "Expiration Date",
-				buttonImage: "../images/icon_calendar.png",
+				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
 			
@@ -1550,6 +1592,7 @@
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
+					var valid = false;
 
 					today.setHours(0,0,0,0); //ignore time of current date 
 
@@ -1570,11 +1613,13 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Invalid Input");
 					}
 					else {
+						valid = true;
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
 					
-					base.contentHolder.find("#addItemDate_1").datepicker('enable');
+					if(!valid)
+						base.contentHolder.find("#addItemDate_1").datepicker('enable');
 
 				}
 			});

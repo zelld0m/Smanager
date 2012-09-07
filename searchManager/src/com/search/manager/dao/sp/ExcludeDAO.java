@@ -149,6 +149,7 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 	}
 	
@@ -256,7 +257,6 @@ public class ExcludeDAO {
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
-	        inputs.put(DAOConstants.PARAM_VALUE, !StringUtils.isBlank(criteria.getModel().getEdp())?criteria.getModel().getEdp():criteria.getModel().getCondition());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getExclude()", e);
@@ -268,6 +268,10 @@ public class ExcludeDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_START_DATE, null);
+	        inputs.put(DAOConstants.PARAM_END_DATE, null);
+	        inputs.put(DAOConstants.PARAM_START_ROW, null);
+	        inputs.put(DAOConstants.PARAM_END_ROW, null);
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	    	return DAOUtils.getItem(getSP.execute(inputs));
 		} catch (Exception e) {
@@ -282,7 +286,12 @@ public class ExcludeDAO {
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        if (exclude.getCondition() != null && !StringUtils.isBlank(exclude.getCondition().getCondition())) {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getCondition().getCondition());
+	        } else {
+		        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        }
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, 1);
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(updateSP.execute(inputs));

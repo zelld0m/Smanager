@@ -300,7 +300,7 @@
 					if (PART_NUMBER){
 						if ($.isBlank($item["dpNo"])){
 							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
-							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
+							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>Not available in the search server</p>');
 							$li.find(".manufacturer").html(self.lockedItemDisplayText);
 							$li.find(".sku, .mfrpn").html("Unavailable");
 							return;
@@ -344,7 +344,8 @@
 				var self = this;
 				$("#preloader").show();
 				$("#ruleItemPagingTop, #ruleItemPagingBottom").empty();
-				$("#noSelected, #ruleSelected, #addRuleItemContainer, #ruleItemDisplayOptions").fadeOut("slow", function(){
+				$("#ruleItemDisplayOptions").hide();
+				$("#noSelected, #ruleSelected, #addRuleItemContainer").fadeOut("slow", function(){
 					$("#titleText").html(self.moduleName);
 					$("#titleHeader").empty();
 				});

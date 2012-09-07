@@ -101,7 +101,12 @@ public class ElevateService{
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			try {
+				addComment(comment,elevate);
+				changes++;
+			} catch (DaoException e) {
+				logger.error("Error adding comment in updateElevateFacet()",e);
+			}
 		}
 		
 		if (!rrCondition.getCondition().equals(elevate.getCondition().getCondition())){
@@ -511,4 +516,32 @@ public class ElevateService{
 		return com;
 	}
 
+	@RemoteMethod
+	public int addRuleComment(String keyword, String memberId, String pComment) {
+		int result = -1;
+		try {
+			ElevateResult elevate = new ElevateResult();
+			elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			elevate.setMemberId(memberId);
+			try {
+				elevate = daoService.getElevateItem(elevate);
+			} catch (DaoException e) {
+				elevate = null;
+			}
+			if (elevate != null) {
+				elevate.setComment(pComment);
+				elevate.setLastModifiedBy(UtilityService.getUsername());
+				daoService.updateElevateResultComment(elevate);
+				Comment com = new Comment();
+				com.setComment(pComment);
+				com.setUsername(UtilityService.getUsername());
+				com.setReferenceId(elevate.getMemberId());
+				com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+				result = daoService.addComment(com);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during addRuleItemComment()",e);
+		}
+		return result;
+	}
 }

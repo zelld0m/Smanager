@@ -204,6 +204,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marT40, .marT40		{margin-top:40px !important}
 .cssReset .marR0, .marR0		{margin-right:0px !important;}
 .cssReset .marR3, .marR3		{margin-right:3px}
+.cssReset .marR4, .marR4		{margin-right:4px}
 .cssReset .marR5, .marR5		{margin-right:5px}
 .cssReset .marR8, .marR8		{margin-right:8px}
 .cssReset .marR10, .marR10		{margin-right:10px}

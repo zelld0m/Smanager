@@ -1,5 +1,7 @@
 package com.search.manager.report.model;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
 import com.search.manager.report.annotation.ReportField;
@@ -12,12 +14,22 @@ public class ExcludeReportBean extends ReportBean<Product> {
 
 	@ReportField(label="Type", size=20, sortOrder=1)
 	public String getType(){
-		return isEdp()?"Part Number":model.getCondition().isCNetFilter()?"Facets":"IMS Categories";
+		if(isFacet()){
+			if(model.getCondition() != null){
+				if(model.getCondition().isIMSFilter())
+					return "IMS Categories";
+				else if (model.getCondition().isCNetFilter())
+					return "Facet Template Categories";
+			}
+			return "Facets";
+		}
+		
+		return "Part Number";
 	}
 	
 	@ReportField(label="Rule Details", size=60, sortOrder=2)
 	public String getRuleDetails(){
-		return isEdp()?getPartNumberDetails():model.getCondition().getCondition();
+		return isPartNumber()?getPartNumberDetails():model.getCondition().getCondition();
 	}
 	
 	@ReportField(label="Status", size=20, sortOrder=3)
@@ -50,13 +62,21 @@ public class ExcludeReportBean extends ReportBean<Product> {
 		return model.getFormattedLastModifiedDate();
 	}
 
-	private boolean isEdp() {
+	private boolean isFacet() {
+		return MemberTypeEntity.FACET == model.getMemberTypeEntity();
+	}
+	
+	private boolean isPartNumber() {
 		return MemberTypeEntity.PART_NUMBER == model.getMemberTypeEntity();
 	}
 
 	private String getPartNumberDetails() {
-		return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" EDP:").append(model.getEdp())
-				.append(" Part #:").append(model.getDpNo()).append("Manufacturer Part #:").append(model.getMfrPN()).toString();
+		if (StringUtils.isNotBlank(model.getDpNo())){
+			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append("  EDP:").append(model.getEdp())
+			.append("  Part #:").append(model.getDpNo()).append("  Manufacturer Part #:").append(model.getMfrPN()).toString();
+		}
+		
+		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 
 	}
 
 }
