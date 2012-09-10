@@ -854,3 +854,11 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .ie .qtip #cnet .ui-autocomplete-input  { padding-top:4px !important }
 .ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }
 
+
+.searchBoxHolder:focus, div.searchBoxHolder:focus, select:focus, textarea:focus { 
+	border:1px solid #fafafa;
+ 	-webkit-box-shadow:0 0 6px #007eff;
+ 	-moz-box-shadow:0 0 5px #007eff;
+ 	box-shadow:0 0 5px #007eff;
+}
+
