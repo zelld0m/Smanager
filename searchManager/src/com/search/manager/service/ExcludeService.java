@@ -292,19 +292,25 @@ public class ExcludeService {
 
 	@RemoteMethod
 	public int updateExpiryDate(String keyword, String memberId, String expiryDate){
+		int result = -1;
 		try {
 			logger.info(String.format("updateExpiryDate %s %s ", memberId, expiryDate));
 			String store = UtilityService.getStoreName();
 			ExcludeResult e = new ExcludeResult();
-			e.setMemberId(memberId);
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			return daoService.updateExcludeResultExpiryDate(e);
+			e.setMemberId(memberId);
+			e = daoService.getExcludeItem(e);
+			if (e != null) {
+				e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setLastModifiedBy(UtilityService.getUsername());
+				result = daoService.updateExcludeResultExpiryDate(e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
 		}
-		return -1;
+		return result;
 	}
 
 	@RemoteMethod

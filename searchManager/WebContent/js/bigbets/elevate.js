@@ -221,7 +221,7 @@
 								});
 							},
 							itemAddComment: function(base, comment){
-								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
+								ElevateServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
 										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
@@ -249,7 +249,7 @@
 				
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
-						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];
+						var itemId = e.data.item["memberId"];
 						$(e.currentTarget).viewaudit({
 							itemDataCallback: function(base, page){
 								AuditServiceJS.getElevateItemTrail(self.selectedRule["ruleId"], itemId, base.options.page, base.options.pageSize, {
