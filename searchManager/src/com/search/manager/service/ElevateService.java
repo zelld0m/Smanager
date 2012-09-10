@@ -250,19 +250,23 @@ public class ElevateService{
 
 	@RemoteMethod
 	public int updateExpiryDate(String keyword, String memberId, String expiryDate){
+		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
-			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.updateElevateResultExpiryDate(e);
+			e = daoService.getElevateItem(e);
+			if (e != null) {
+				e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setLastModifiedBy(UtilityService.getUsername());
+				result = daoService.updateElevateResultExpiryDate(e);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during updateExpiryDate()",e);
 		}
-		return -1;
+		return result;
 	}
 
 	@RemoteMethod
