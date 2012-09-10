@@ -3,6 +3,7 @@ package com.search.manager.dao.sp;
 import org.apache.commons.lang.StringUtils;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
@@ -26,8 +27,10 @@ public class DAOValidation {
     public final static String ERROR_MESSAGE_NO_STORE_KEYWORD			= "No store keyword provided";
     // ELEVATE
     public final static String ERROR_MESSAGE_NO_ELEVATE_VALUE			= "No elevate value provided";
-    // ELEVATE
-    public final static String ERROR_MESSAGE_NO_EXCLUDE_VALUE			= "No exclude value provided";    
+    // EXCLUDE
+    public final static String ERROR_MESSAGE_NO_EXCLUDE_VALUE			= "No exclude value provided";
+    // DEMOTE
+    public final static String ERROR_MESSAGE_NO_DEMOTE_VALUE			= "No demote value provided";
     // RELEVANCY
     public final static String ERROR_MESSAGE_NO_RELEVANCY 				= "No relevancy provided";
     public final static String ERROR_MESSAGE_NO_RELEVANCY_ID			= "No relevancy id provided";
@@ -78,6 +81,12 @@ public class DAOValidation {
     public static void checkExcludePK(ExcludeResult exclude) throws DaoException {
     	checkObjectNotNull(exclude, ERROR_MESSAGE_NO_EXCLUDE_VALUE);
     	checkStoreKeywordPK(exclude.getStoreKeyword());    	
+//		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
+    }
+    
+    public static void checkDemotePK(DemoteResult demote) throws DaoException {
+    	checkObjectNotNull(demote, ERROR_MESSAGE_NO_DEMOTE_VALUE);
+    	checkStoreKeywordPK(demote.getStoreKeyword());    	
 //		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
     }
 

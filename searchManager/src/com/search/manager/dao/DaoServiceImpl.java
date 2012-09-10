@@ -18,6 +18,7 @@ import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
 import com.search.manager.dao.sp.CommentDAO;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
 import com.search.manager.dao.sp.GroupsDAO;
@@ -34,6 +35,8 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.Comment;
+import com.search.manager.model.DemoteProduct;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -64,6 +67,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private StoreKeywordDAO 	storeKeywordDAO;
 	@Autowired private ElevateDAO 		elevateDAO;
 	@Autowired private ExcludeDAO 		excludeDAO;
+	@Autowired private DemoteDAO 		demoteDAO;
 	@Autowired private AuditTrailDAO 	auditTrailDAO;
 	@Autowired private BannerDAO 		bannerDAO;
 	@Autowired private CampaignDAO 		campaignDAO;
@@ -99,6 +103,11 @@ public class DaoServiceImpl implements DaoService {
 	public void setExcludeDAO(ExcludeDAO excludeDAO) {
 		this.excludeDAO = excludeDAO;
 	}
+	
+	public void setDemoteDAO(DemoteDAO demoteDAO) {
+		this.demoteDAO = demoteDAO;
+	}
+
 
 	public void setAuditTrailDAO(AuditTrailDAO auditTrailDAO) {
 		this.auditTrailDAO = auditTrailDAO;
@@ -274,6 +283,126 @@ public class DaoServiceImpl implements DaoService {
 		}
 		SearchHelper.getProducts(map, storeId, serverName, keyword);
 		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
+	}
+	
+	public RecordSet<DemoteProduct> getDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException{
+		RecordSet<DemoteResult> set = getDemoteResultList(criteria);
+		LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
+		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		for (DemoteResult e: set.getList()) {
+			DemoteProduct ep = new DemoteProduct();
+			ep.setEdp(e.getEdp());
+			ep.setLocation(e.getLocation());
+			ep.setExpiryDate(e.getExpiryDate());
+			ep.setCreatedDate(e.getCreatedDate());
+			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setComment(e.getComment());
+			ep.setLastModifiedBy(e.getLastModifiedBy());
+			ep.setCreatedBy(e.getCreatedBy());
+			ep.setStore(storeId);
+			ep.setCondition(e.getCondition());
+			ep.setMemberTypeEntity(e.getDemoteEntity());
+			ep.setMemberId(e.getMemberId());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
+		}
+		SearchHelper.getProducts(map, storeId, serverName, keyword);
+		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
+	}
+	
+	/* retrieve data from both Solr and DB */
+	public RecordSet<DemoteProduct> getDemotedProductsIgnoreKeyword(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException{
+		RecordSet<DemoteResult> set = getDemoteResultList(criteria);
+		LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
+		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		for (DemoteResult e: set.getList()) {
+			DemoteProduct ep = new DemoteProduct();
+			ep.setEdp(e.getEdp());
+			ep.setLocation(e.getLocation());
+			ep.setExpiryDate(e.getExpiryDate());
+			ep.setCreatedDate(e.getCreatedDate());
+			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setComment(e.getComment());
+			ep.setLastModifiedBy(e.getLastModifiedBy());
+			ep.setCreatedBy(e.getCreatedBy());
+			ep.setStore(storeId);
+			ep.setMemberId(e.getMemberId());
+			ep.setMemberTypeEntity(e.getDemoteEntity());
+			ep.setCondition(e.getCondition());
+			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), ep);
+			} else {
+				map.put(e.getEdp(), ep);
+			}
+		}
+		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
+		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
+	}
+	
+	
+	@Override
+	public DemoteProduct getDemotedProduct(String serverName, DemoteResult demote) throws DaoException {
+		DemoteResult e = getDemoteItem(demote);
+		StoreKeyword sk = demote.getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
+		DemoteProduct dp = new DemoteProduct();
+		dp.setEdp(e.getEdp());
+		dp.setLocation(e.getLocation());
+		dp.setExpiryDate(e.getExpiryDate());
+		dp.setCreatedDate(e.getCreatedDate());
+		dp.setLastModifiedDate(e.getLastModifiedDate());
+		dp.setComment(e.getComment());
+		dp.setLastModifiedBy(e.getLastModifiedBy());
+		dp.setCreatedBy(e.getCreatedBy());
+		dp.setStore(demote.getStoreKeyword().getStoreId());
+		dp.setCondition(e.getCondition());
+		dp.setMemberTypeEntity(e.getDemoteEntity());
+		if (dp.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+			map.put(UUID.randomUUID().toString(), dp);
+		} else {
+			map.put(e.getEdp(), dp);
+		}
+		SearchHelper.getProducts(map, storeId, serverName, keyword);
+		return map.get(e.getEdp());
+	}
+
+	@Override
+	public RecordSet<DemoteProduct> getNoExpiryDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException {
+		RecordSet<DemoteResult> set = getNoExpireDemoteResultList(criteria);
+		LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
+		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		String storeId = DAOUtils.getStoreId(sk);
+		String keyword = DAOUtils.getKeywordId(sk);
+		for (DemoteResult e: set.getList()) {
+			DemoteProduct dp = new DemoteProduct();
+			dp.setEdp(e.getEdp());
+			dp.setLocation(e.getLocation());
+			dp.setExpiryDate(e.getExpiryDate());
+			dp.setCreatedDate(e.getCreatedDate());
+			dp.setLastModifiedDate(e.getLastModifiedDate());
+			dp.setComment(e.getComment());
+			dp.setLastModifiedBy(e.getLastModifiedBy());
+			dp.setCreatedBy(e.getCreatedBy());
+			dp.setStore(storeId);
+			dp.setCondition(e.getCondition());
+			dp.setMemberTypeEntity(e.getDemoteEntity());
+			if (dp.getMemberTypeEntity() == MemberTypeEntity.FACET) {
+				map.put(UUID.randomUUID().toString(), dp);
+			} else {
+				map.put(e.getEdp(), dp);
+			}
+		}
+		SearchHelper.getProducts(map, storeId, serverName, keyword);
+		return new RecordSet<DemoteProduct>(new ArrayList<DemoteProduct>(map.values()),set.getTotalSize());
 	}
 	
 	@Override
@@ -465,6 +594,76 @@ public class DaoServiceImpl implements DaoService {
 	public int getElevateResultCount(SearchCriteria<ElevateResult> criteria) throws DaoException {
 		SearchCriteria<ElevateResult> sc = new SearchCriteria<ElevateResult>(criteria.getModel(), criteria.getStartDate(), criteria.getEndDate(), null, null);
 		RecordSet<ElevateResult> set = getElevateResultList(sc);
+		return set.getTotalSize();
+	}
+	
+	/* Demote */
+	@Override
+	public int addDemoteResult(DemoteResult elevate) throws DaoException {
+		return demoteDAO.addDemote(elevate);
+	}
+
+	
+	@Override
+	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		RecordSet<DemoteResult> list = demoteDAO.getDemote(criteria);
+		return list;
+	}
+
+	@Override
+	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		return demoteDAO.getDemoteNoExpiry(criteria);
+	}
+
+	@Override
+	public DemoteResult getDemoteItem(DemoteResult elevate) throws DaoException {
+		return demoteDAO.getDemoteItem(elevate);
+	}
+
+	@Override
+	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		Map<String, DemoteResult> map = new LinkedHashMap<String, DemoteResult>();
+		RecordSet<DemoteResult> set = demoteDAO.getDemote(criteria);
+		for (DemoteResult e: set.getList()) {
+			map.put(e.getEdp(), e);
+		}
+		return map;
+	}
+
+	@Override
+	public int deleteDemoteResult(DemoteResult elevate) throws DaoException {
+		return demoteDAO.removeDemote(elevate);
+	}
+
+	@Override
+	public int clearDemoteResult(StoreKeyword keyword) throws DaoException {
+		return demoteDAO.clearDemote(keyword);
+	}
+	
+	@Override
+	public int updateDemoteResult(DemoteResult elevate) throws DaoException {
+		return demoteDAO.updateDemote(elevate);
+	}
+	
+	@Override
+	public int updateDemoteResultExpiryDate(DemoteResult elevate) throws DaoException {
+		return demoteDAO.updateDemoteExpiryDate(elevate);
+	}
+
+	@Override
+	public int updateDemoteResultComment(DemoteResult elevate) throws DaoException {
+		return demoteDAO.updateDemoteComment(elevate);
+	}
+
+	@Override
+	public int appendDemoteResultComment(DemoteResult elevate) throws DaoException {
+		return demoteDAO.appendDemoteComment(elevate);
+	}
+	
+	@Override
+	public int getDemoteResultCount(SearchCriteria<DemoteResult> criteria) throws DaoException {
+		SearchCriteria<DemoteResult> sc = new SearchCriteria<DemoteResult>(criteria.getModel(), criteria.getStartDate(), criteria.getEndDate(), null, null);
+		RecordSet<DemoteResult> set = getDemoteResultList(sc);
 		return set.getTotalSize();
 	}
 
@@ -918,6 +1117,10 @@ public class DaoServiceImpl implements DaoService {
 		return excludeDAO;
 	}
 
+	public DemoteDAO getDemoteDAO() {
+		return demoteDAO;
+	}
+	
 	public AuditTrailDAO getAuditTrailDAO() {
 		return auditTrailDAO;
 	}
@@ -1091,4 +1294,5 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException {
 		return groupsDAO.getGroupPermission(groupId);
 	}
+	
 }

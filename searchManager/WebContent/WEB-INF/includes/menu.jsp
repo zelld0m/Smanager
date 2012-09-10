@@ -38,6 +38,7 @@
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${store}">Elevate</a></li>
 		      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${store}">Exclude</a></li>
+		      		<li ${submenu eq 'demote'? 'class="active"': ''}><a href="<spring:url value="/demote/"/>${store}">Demote</a></li>
 		      		<li ${submenu eq 'feature'? 'class="active"': ''}><a href="<spring:url value="/feature/"/>${store}">Feature</a></li>
 		      		<li ${submenu eq 'redirect'? 'class="active"': ''}><a href="<spring:url value="/redirect/"/>${store}">Query Cleaning</a></li>		      		
 		      		<li ${submenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${store}">Ranking Rule</a></li>

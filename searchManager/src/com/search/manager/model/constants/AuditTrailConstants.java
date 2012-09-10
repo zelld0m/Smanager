@@ -11,6 +11,7 @@ public class AuditTrailConstants {
 	public enum Entity {
 		elevate,
 		exclude,
+		demote,
 		keyword,
 		storeKeyword,
 		campaign,
@@ -63,6 +64,14 @@ public class AuditTrailConstants {
 		Operation.appendComment };
 	
 	public static Operation[] excludeOperations = {
+		Operation.add,
+		Operation.update,
+		Operation.delete,
+		Operation.updateExpiryDate,
+		Operation.updateComment,
+		Operation.appendComment };
+	
+	public static Operation[] demoteOperations = {
 		Operation.add,
 		Operation.update,
 		Operation.delete,
@@ -150,6 +159,7 @@ public class AuditTrailConstants {
 		entityOperationMap = new HashMap<Entity, Operation[]>();
 		entityOperationMap.put(Entity.elevate, elevateOperations);
 		entityOperationMap.put(Entity.exclude, excludeOperations);
+		entityOperationMap.put(Entity.demote, demoteOperations);
 		entityOperationMap.put(Entity.keyword, keywordOperations);
 		entityOperationMap.put(Entity.storeKeyword, storeKeywordOperations);
 		entityOperationMap.put(Entity.campaign, campaignOperations);

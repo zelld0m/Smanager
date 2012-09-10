@@ -8,6 +8,8 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
 import com.search.manager.model.Comment;
+import com.search.manager.model.DemoteProduct;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -119,6 +121,20 @@ public interface DaoService {
 	public RecordSet<ExcludeResult> getExcludeResultList(SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public ExcludeResult getExcludeItem(ExcludeResult exclude) throws DaoException;
 	
+	/* Demote */
+	public int addDemoteResult(DemoteResult demote) throws DaoException;
+	public int updateDemoteResult(DemoteResult demote) throws DaoException;
+	public int updateDemoteResultExpiryDate(DemoteResult demote) throws DaoException;
+	public int updateDemoteResultComment(DemoteResult demote) throws DaoException;
+	public int appendDemoteResultComment(DemoteResult demote) throws DaoException;
+	public int deleteDemoteResult(DemoteResult demote) throws DaoException;
+	public int clearDemoteResult(StoreKeyword keyword) throws DaoException;
+	public int getDemoteResultCount(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException;
+	
 	/* Big Bets */
 	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
 	public RecordSet<Product> getExcludedProductsIgnoreKeyword(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
@@ -128,6 +144,11 @@ public interface DaoService {
 	public ElevateProduct getElevatedProduct(String serverName, ElevateResult elevate) throws DaoException;
 	public Product getExcludedProduct(String serverName, ExcludeResult exclude) throws DaoException;
 	public String getEdpByPartNumber(String serverName, String storeId, String keyword, String partNumber) throws DaoException;
+	public RecordSet<DemoteProduct> getDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteProduct> getDemotedProductsIgnoreKeyword(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public RecordSet<DemoteProduct> getNoExpiryDemotedProducts(String serverName, SearchCriteria<DemoteResult> criteria) throws DaoException;
+	public DemoteProduct getDemotedProduct(String serverName, DemoteResult elevate) throws DaoException;
+	
 	
 	/* Relevancy */
 	/**
