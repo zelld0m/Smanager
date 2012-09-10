@@ -155,20 +155,26 @@ public class ExcludeService {
 
 	@RemoteMethod
 	public int deleteItemInRule(String keyword, String memberId) {
+		int result = -1;
 		try {
-			String store = UtilityService.getStoreName();
 
+			String store = UtilityService.getStoreName();
 			logger.info(String.format("%s %s %s", store, keyword,memberId));
-			ExcludeResult e = new ExcludeResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setMemberId(memberId);
-			e.setLastModifiedBy(UtilityService.getUsername());
-			RecordSet<ExcludeResult> rset = daoService.getExcludeResultList(new SearchCriteria<ExcludeResult>(e, null, null, 0, 1));
-			return daoService.deleteExcludeResult(rset.getList().get(0));
+			ExcludeResult exclude = new ExcludeResult();
+			exclude.setStoreKeyword(new StoreKeyword(store, keyword));
+			exclude.setMemberId(memberId);
+			try {
+				exclude = daoService.getExcludeItem(exclude);
+			} catch (DaoException e) {
+				exclude = null;
+			}
+			if (exclude != null) {
+				result  = daoService.deleteExcludeResult(exclude);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during removeExclude()",e);
 		}
-		return -1;
+		return result;
 	}
 
 	@RemoteMethod

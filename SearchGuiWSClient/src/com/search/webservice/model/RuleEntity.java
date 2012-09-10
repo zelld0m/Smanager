@@ -12,6 +12,7 @@ public class RuleEntity implements java.io.Serializable {
 
     public static final java.lang.String _ELEVATE = "ELEVATE";
     public static final java.lang.String _EXCLUDE = "EXCLUDE";
+    public static final java.lang.String _DEMOTE = "DEMOTE";
     public static final java.lang.String _KEYWORD = "KEYWORD";
     public static final java.lang.String _STORE_KEYWORD = "STORE_KEYWORD";
     public static final java.lang.String _CAMPAIGN = "CAMPAIGN";
@@ -20,6 +21,7 @@ public class RuleEntity implements java.io.Serializable {
     public static final java.lang.String _RANKING_RULE = "RANKING_RULE";
     public static final RuleEntity ELEVATE = new RuleEntity(_ELEVATE);
     public static final RuleEntity EXCLUDE = new RuleEntity(_EXCLUDE);
+    public static final RuleEntity DEMOTE = new RuleEntity(_DEMOTE);
     public static final RuleEntity KEYWORD = new RuleEntity(_KEYWORD);
     public static final RuleEntity STORE_KEYWORD = new RuleEntity(_STORE_KEYWORD);
     public static final RuleEntity CAMPAIGN = new RuleEntity(_CAMPAIGN);

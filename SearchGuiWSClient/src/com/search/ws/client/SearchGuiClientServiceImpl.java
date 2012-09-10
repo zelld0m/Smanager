@@ -318,7 +318,9 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 		case 7:
 			return "QUERY_CLEANING";	
 		case 8:
-			return "RANKING_RULE";	
+			return "RANKING_RULE";
+		case 9:
+			return "DEMOTE";
 		default:
 			break;
 		}
