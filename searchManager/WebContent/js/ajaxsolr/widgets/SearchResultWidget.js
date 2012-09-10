@@ -1,6 +1,6 @@
 (function ($) {
 
-	AjaxSolr.ResultWidget = AjaxSolr.AbstractWidget.extend({
+	AjaxSolr.SearchResultWidget = AjaxSolr.AbstractWidget.extend({
 		beforeRequest: function () {
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
 		},

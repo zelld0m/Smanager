@@ -7,6 +7,21 @@
 			self.showTagCloud();
 		},
 		
+		beforeRequest: function () {
+			var self = this;
+			$(self.target).hide();
+		},
+		
+		afterRequest: function () {
+			var self = this;
+			
+			if($.isNotBlank(self.manager.store.values('q'))){
+				$(self.target).hide();
+			}else{
+				$(self.target).show();
+			}	
+		},
+		
 		showTagCloud: function(){
 			var self = this;
 			$(self.target).show();
@@ -54,21 +69,6 @@
 			}, 'tagContainer')) {
 				$(self.target).hide();
 			}
-		},
-		
-		beforeRequest: function () {
-			var self = this;
-			$(self.target).hide();
-		},
-		
-		afterRequest: function () {
-			var self = this;
-			
-			if($.isNotBlank(self.manager.store.values('q'))){
-				$(self.target).hide();
-			}else{
-				$(self.target).show();
-			}	
 		}
 	});
 

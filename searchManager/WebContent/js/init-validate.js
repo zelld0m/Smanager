@@ -98,7 +98,7 @@ validateField = function(fieldName, fieldValue, length) {
 };
 
 validateGeneric = function(fieldName, fieldValue, length) {	
-	if(length != undefined) {
+	if(length != undefined && length > 0) {
 		if ($.isBlank(fieldValue)) {
 			jAlert(fieldName+' cannot be empty.');
 			return false;

@@ -4,9 +4,9 @@
 		afterRequest: function () {
 			var self = this;
 			var links = [];
-			$(this.target).empty();
+			$(self.target).empty();
 
-			var q = this.manager.store.values('q'); 
+			var q = self.manager.store.values('q'); 
 
 			if ($.isBlank(q)) return;
 			
@@ -14,13 +14,13 @@
 				links.push(AjaxSolr.theme('createLink', 'Search keyword: ' + q[i], self.removeKeyword(q[i])));
 			}
 
-			var fq = this.manager.store.values('fq');
-			var searchWithin = $.cookie('searchWithin');
+			var fq = self.manager.store.values('fq');
+			var searchWithin = self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
 			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;
 			
 			for (var i = 0, l = fq.length; i < l; i++) {
 				if (fq[i] == searchWithin) {
-					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeFacet(fq[i])));
+					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeSearchWithin(fq[i])));
 				}else if($.startsWith(fq[i],GLOBAL_storeFacetTemplateName)){ // Facet Template Name / Or Find By display
 					var facetTempVal = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
 					links.push(AjaxSolr.theme('createLink', "Or Find By: " + facetTempVal, self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(item) + 1)), "level" + (parseInt(item) + 1)));
@@ -71,14 +71,12 @@
 						} 
 					}
 					
-					links.push(AjaxSolr.theme('createLink', displayString, self.removeFacet(fq[i])));
+					links.push(AjaxSolr.theme('createLink', displayString, self.removeSearchWithin(fq[i])));
 				}
 			}
 
-			
-
 			if(links.length > 0){
-				$(this.target).append(AjaxSolr.theme('createFacetHolder', "Current Selection", this.id));
+				$(self.target).append(AjaxSolr.theme('createFacetHolder', "Current Selection", self.id));
 
 				if (links.length > 1) {
 					links.unshift(AjaxSolr.theme('createLink', 'Remove All Filters', self.removeAllFilters()));
@@ -91,14 +89,14 @@
 
 		},
 
-		removeFacet: function (facet) {
+		removeSearchWithin: function (searchWithin) {
 			var self = this;
 			return function () {
-				if (self.manager.store.removeByValue('fq', facet)) {
-					if (facet == $.cookie('searchWithin')) {
-						$.cookie('searchWithin', '', {expires: 1});
+				if (self.manager.store.removeByValue('fq', searchWithin)) {
+					if (searchWithin === self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"]) {
+						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+						self.manager.doRequest(0);
 					}
-					self.manager.doRequest(0);
 				}
 				return false;
 			};
@@ -126,10 +124,12 @@
 			};
 		},
 
-		removeKeyword: function (facet) {
+		removeKeyword: function (keyword) {
 			var self = this;
 			return function () {
-				if (self.manager.store.removeByValue('q', facet)) {
+				if (self.manager.store.removeByValue('q', keyword)) {
+					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
+					self.manager.store.remove('fq');
 					self.manager.doRequest(0);
 				}
 				return false;
