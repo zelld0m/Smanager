@@ -250,6 +250,7 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(nvp);
 			}
 
+			StringBuffer fqBuffer = new StringBuffer();
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
@@ -268,13 +269,26 @@ public class SearchServlet extends HttpServlet {
 								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
 					}
 					
-					nvp = new BasicNameValuePair(paramName, paramValue);
-					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
-						nameValuePairs.add(nvp);
+					if(paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+						if (fqBuffer.length() > 0) {
+							fqBuffer.append(" AND ");
+						} 
+						fqBuffer.append(paramValue).append(" AND ");
+					} else {
+						nvp = new BasicNameValuePair(paramName, paramValue);
+						if (addNameValuePairToMap(paramMap, paramName, nvp)) {
+							nameValuePairs.add(nvp);
+						}
 					}
 				}
 			}
 			
+			if (fqBuffer.length() > 0) {
+				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, fqBuffer.toString());
+				if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_FIELD_QUERY, nvp)) {
+					nameValuePairs.add(nvp);
+				}
+			}
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
 			if (fromSearchGui && StringUtils.isNotBlank(UtilityService.getStoreFacetTemplate())) {
@@ -504,7 +518,8 @@ public class SearchServlet extends HttpServlet {
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
-	
+			
+			NameValuePair fq = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_FIELD_QUERY);	
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
