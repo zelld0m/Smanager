@@ -32,8 +32,8 @@ public class DAOConstants {
 	public static final String SP_GET_EXCLUDE_ITEM 					= "usp_Get_Exclude_Value";
 	public static final String SP_UPDATE_EXCLUDE					= "usp_Update_Exclude";
 	public static final String SP_DELETE_EXCLUDE 					= "usp_Delete_Exclude";
-	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment_NEW";
-	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment_NEW";
+	public static final String SP_UPDATE_EXCLUDE_COMMENT 			= "usp_Update_Exclude_Comment";
+	public static final String SP_APPEND_EXCLUDE_COMMENT 			= "usp_Append_Exclude_Comment";
 	public static final String SP_UPDATE_EXCLUDE_EXPIRY_DATE 		= "usp_Update_Exclude_Expiry_Date";
 	// DEMOTE
 	public static final String SP_ADD_DEMOTE 						= "usp_Add_Demote";

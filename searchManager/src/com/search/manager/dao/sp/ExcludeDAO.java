@@ -173,9 +173,7 @@ public class ExcludeDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
@@ -303,11 +301,8 @@ public class ExcludeDAO {
 	@Audit(entity = Entity.exclude, operation = Operation.updateComment)
     public int updateExcludeComment(ExcludeResult exclude) throws DaoException {
 		try {
-			DAOValidation.checkExcludePK(exclude);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(exclude.getStoreKeyword()));
-	        inputs.put(DAOConstants.PARAM_VALUE, exclude.getEdp());
+	        inputs.put(DAOConstants.PARAM_MEMBER_ID, exclude.getMemberId());
 	        inputs.put(DAOConstants.PARAM_COMMENT, exclude.getComment());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, exclude.getLastModifiedBy());
 	        return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
