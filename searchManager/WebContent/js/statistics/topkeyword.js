@@ -1,8 +1,8 @@
 (function($){
 
 	var TopKeyword = {		
-			initialNoOfItems: 2000,
-			itemsPerScroll: 1000,
+			initialNoOfItems: 100,
+			itemsPerScroll: 100,
 			startIndex: 0,
 
 			sendFileAsEmail: function(customFilename, recipients){
