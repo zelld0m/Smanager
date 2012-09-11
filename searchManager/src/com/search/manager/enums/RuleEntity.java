@@ -17,7 +17,8 @@ public enum RuleEntity {
 	BANNER(6, "Banner"),
 	QUERY_CLEANING(7, "Query Cleaning"),
 	RANKING_RULE(8, "Ranking Rule"),
-	RULE_STATUS(9, "Rule Status");
+	RULE_STATUS(9, "Rule Status"),
+	DEMOTE(10, "Demote");
 
 	private final int code;
 	private final List<String> values;

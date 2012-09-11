@@ -599,8 +599,8 @@ public class DaoServiceImpl implements DaoService {
 	
 	/* Demote */
 	@Override
-	public int addDemoteResult(DemoteResult elevate) throws DaoException {
-		return demoteDAO.addDemote(elevate);
+	public int addDemoteResult(DemoteResult demote) throws DaoException {
+		return demoteDAO.addDemote(demote);
 	}
 
 	

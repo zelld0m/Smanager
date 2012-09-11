@@ -164,6 +164,7 @@
 				com.search.manager.service.CommentService,
 				com.search.manager.service.ElevateService,
 				com.search.manager.service.ExcludeService,
+				com.search.manager.service.DemoteService,
 				com.search.manager.service.FeatureService,
 				com.search.manager.service.LinguisticsService,
 				com.search.manager.service.MigratorService,

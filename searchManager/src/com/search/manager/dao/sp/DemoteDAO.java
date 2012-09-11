@@ -59,7 +59,7 @@ public class DemoteDAO {
 
 	private class AddDemoteStoredProcedure extends CUDStoredProcedure {
 	    public AddDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_ADD_ELEVATE);
+	        super(jdbcTemplate, DAOConstants.SP_ADD_DEMOTE);
 	    }
 
 		@Override
@@ -73,13 +73,12 @@ public class DemoteDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_TYPE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.VARCHAR));
 		}
 	}
 
 	private class GetDemoteStoredProcedure extends GetStoredProcedure {
 	    public GetDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE);
+	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE);
 	    }
 
 		@Override
@@ -91,7 +90,6 @@ public class DemoteDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.INTEGER));
 		}
 
 		@Override
@@ -111,8 +109,7 @@ public class DemoteDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
-                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 	            }
 	        }));
 		}
@@ -120,7 +117,7 @@ public class DemoteDAO {
 
 	private class GetDemoteItemStoredProcedure extends StoredProcedure {
 	    public GetDemoteItemStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE_ITEM);
+	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE_ITEM);
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<DemoteResult>() {
 	            public DemoteResult mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -136,8 +133,7 @@ public class DemoteDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
-                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 	            }
 	        }));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -149,7 +145,7 @@ public class DemoteDAO {
 	
 	private class GetNoExpiryDemoteStoredProcedure extends GetStoredProcedure {
 	    public GetNoExpiryDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_ELEVATE);
+	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE);
 	    }
 
 		@Override
@@ -177,8 +173,7 @@ public class DemoteDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
                 			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
                 			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID),
-                			rs.getInt(DAOConstants.COLUMN_FORCE_ADD) == 1);
+                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
 	            }
 	        }));
 		}
@@ -186,7 +181,7 @@ public class DemoteDAO {
 	
 	private class UpdateDemoteStoredProcedure extends CUDStoredProcedure {
 	    public UpdateDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE);
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE);
 	    }
 
 		@Override
@@ -202,7 +197,7 @@ public class DemoteDAO {
 	
 	private class UpdateDemoteExpiryDateStoredProcedure extends CUDStoredProcedure {
 	    public UpdateDemoteExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_EXPIRY_DATE);
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE_EXPIRY_DATE);
 	    }
 
 		@Override
@@ -215,7 +210,7 @@ public class DemoteDAO {
 	
 	private class UpdateDemoteCommentStoredProcedure extends CUDStoredProcedure {
 	    public UpdateDemoteCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_COMMENT);
+	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE_COMMENT);
 	    }
 
 		@Override
@@ -228,7 +223,7 @@ public class DemoteDAO {
 
 	private class AppendDemoteCommentStoredProcedure extends CUDStoredProcedure {
 	    public AppendDemoteCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_APPEND_ELEVATE_COMMENT);
+	        super(jdbcTemplate, DAOConstants.SP_APPEND_DEMOTE_COMMENT);
 	    }
 
 		@Override
@@ -241,7 +236,7 @@ public class DemoteDAO {
 	
 	private class DeleteDemoteStoredProcedure extends CUDStoredProcedure {
 	    public DeleteDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_DELETE_ELEVATE);
+	        super(jdbcTemplate, DAOConstants.SP_DELETE_DEMOTE);
 	    }
 
 		@Override
@@ -282,7 +277,7 @@ public class DemoteDAO {
 	            inputs.put(DAOConstants.PARAM_EXPIRY_DATE, expiryDate);
 	            inputs.put(DAOConstants.PARAM_CREATED_BY, username);
 	            inputs.put(DAOConstants.PARAM_MEMBER_TYPE_ID, demote.getDemoteEntity());
-	            inputs.put(DAOConstants.PARAM_FORCE_ADD, demote.isForceAdd()!=null && demote.isForceAdd()?1:0);
+	            
 	            count  = DAOUtils.getUpdateCount(addSP.execute(inputs));
 	    	}
 	    	return count;
@@ -303,7 +298,6 @@ public class DemoteDAO {
 	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, criteria.getModel().getMemberId());
-	        inputs.put(DAOConstants.PARAM_FORCE_ADD, criteria.getModel().isForceAdd());
 	        return DAOUtils.getRecordSet(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getDemote()", e);

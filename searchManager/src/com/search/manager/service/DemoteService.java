@@ -138,10 +138,6 @@ public class DemoteService{
 			} else {
 				e.setCondition(new RedirectRuleCondition(value));
 				e.setDemoteEntity(MemberTypeEntity.FACET);
-				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
-				if (e.isForceAdd()) {
-					result = 2;
-				}
 			}
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			result  = daoService.addDemoteResult(e);
@@ -163,10 +159,8 @@ public class DemoteService{
 
 		ArrayList<String> passedList = new ArrayList<String>();
 		ArrayList<String> failedList = new ArrayList<String>();
-		ArrayList<String> forcedList = new ArrayList<String>();
 
 		resultMap.put("PASSED", passedList);
-		resultMap.put("FORCED", forcedList);
 		resultMap.put("FAILED", failedList);
 		
 		String server = UtilityService.getServerName();
@@ -182,12 +176,7 @@ public class DemoteService{
 			DemoteResult e = new DemoteResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
-//				if (StringUtils.isBlank(edp)) {
-//					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
-//					e.setForceAdd(true);
-//				} else {
-					e.setForceAdd(false);
-//				}
+
 				if (StringUtils.isNotBlank(edp)) {
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
 					e.setEdp(edp);
@@ -209,11 +198,7 @@ public class DemoteService{
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
 			if (count > 0) {
-				if (e.isForceAdd()) {
-					forcedList.add(StringUtils.trim(partNumber));						
-				} else {
-					passedList.add(StringUtils.trim(partNumber));						
-				}
+				passedList.add(StringUtils.trim(partNumber));						
 			}
 			else {
 				failedList.add(StringUtils.trim(partNumber));
@@ -455,7 +440,7 @@ public class DemoteService{
 		} catch (DaoException e) {
 			logger.error("Failed during getTotalProductInRule()",e);
 		}
-		return null;
+		return Integer.valueOf(0);
 	}
 
 	@RemoteMethod

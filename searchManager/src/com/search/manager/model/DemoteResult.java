@@ -15,12 +15,11 @@ public class DemoteResult extends ModelBean {
 	private MemberTypeEntity demoteEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;
-	private Boolean forceAdd;
 	
-	public DemoteResult() {
+	public DemoteResult() {   
 	}
 	
-	public DemoteResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId, boolean forceAdd) {
+	public DemoteResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
 			demoteEntity = MemberTypeEntity.FACET;
 			condition = new RedirectRuleCondition(edp);
@@ -41,7 +40,6 @@ public class DemoteResult extends ModelBean {
 		this.createdDate = createdDate;
 		this.lastModifiedDate = lastModifiedDate;
 		this.memberId = memberId;
-		this.forceAdd = forceAdd;
 	}
 	
 	public StoreKeyword getStoreKeyword() {
@@ -103,13 +101,5 @@ public class DemoteResult extends ModelBean {
 
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
-	}
-
-	public Boolean isForceAdd() {
-		return forceAdd;
-	}
-
-	public void setForceAdd(Boolean forceAdd) {
-		this.forceAdd = forceAdd;
 	}
 }
