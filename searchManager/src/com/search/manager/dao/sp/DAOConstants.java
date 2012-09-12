@@ -40,8 +40,6 @@ public class DAOConstants {
 	public static final String SP_GET_DEMOTE 						= "usp_Get_Demote";
 	public static final String SP_UPDATE_DEMOTE 					= "usp_Update_Demote";
 	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
-	public static final String SP_UPDATE_DEMOTE_COMMENT 			= "usp_Update_Demote_Comment";
-	public static final String SP_APPEND_DEMOTE_COMMENT 			= "usp_Append_Demote_Comment";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 	
 	// CAMPAIGN

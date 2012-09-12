@@ -197,7 +197,7 @@
 		return stockText;
 	};
 
-	AjaxSolr.theme.prototype.result = function (i, hasKeyword, doc, snippet, auditHandler, docHandler, debugHandler, featureHandler, elevateHandler, excludeHandler) {
+	AjaxSolr.theme.prototype.result = function (i, hasKeyword, doc, snippet, auditHandler, docHandler, debugHandler, featureHandler, elevateHandler, excludeHandler, demoteHandler) {
 
 		var altclass ="";
 
@@ -222,6 +222,7 @@
 		output += '			<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
 		//output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
 		output += '			<div id="elevateHolder" class="iconHolder"></div>';
+		output += '			<div id="demoteHolder" class="iconHolder"></div>';
 		output += '			<div id="excludeHolder" class="iconHolder"></div>';
 		output += '        </div>';
 		output += '      </td>';
@@ -296,21 +297,45 @@
 				}
 			}, {doc: doc});
 		}
+		
+		if ($.isNotBlank(doc.Demote)){		  
+			var displayText = "Demoted at position " + doc["Demote"];
+			
+			if(doc["DemoteType"] === "FACET")
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> demoted at position '+ doc["Demote"];
+
+			secObj.find("div#demotePosition").html(displayText);
+			secObj.find("div#demotePosition a").off().on({
+				click: function(e){
+					showMessage(this, e.data.doc["DemoteCondition"]);
+				},
+				mouseenter: function(e){
+					showMessage(this, e.data.doc["DemoteCondition"]);
+				}
+			}, {doc: doc});
+		}
 
 		//Add Elevate Button if search has keyword
 		if (hasKeyword){
 			var bigbetsicon = 'images/icon_arrowUpDisable.png';
 			var featureicon = 'images/icon_starGray.png';
 			var deleteicon = 'images/btn_delete.png';
+			var demoteicon = 'images/icon_arrowDownDisable.png';
 
 			var feaHover = "Feature";
 			var eleHover = "Elevate";
+			var demHover = "Demote";
 
 			if (doc.Elevate != undefined){
 				bigbetsicon = 'images/icon_arrowUp.png'; 
 				eleHover = "Update Elevate";
 			} 
 
+			if (doc.Demote != undefined){
+				bigbetsicon = 'images/icon_arrowDown.png'; 
+				demHover = "Update Demote";
+			} 
+			
 			if (doc.Feature != undefined){
 				featureicon = 'images/icon_star.png'; 
 				feaHover = "Remove Feature";
@@ -324,9 +349,14 @@
 			secObj.find("div#elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
 			secObj.find("div#elevateHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', bigbetsicon) + '" alt="' + eleHover + '" title="' + eleHover + '">');
 
+			//Add Demote Button
+			secObj.find("div#demoteHolder").append(AjaxSolr.theme('createLink', '', demoteHandler));
+			secObj.find("div#demoteHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', demoteicon) + '" alt="' + demHover + '" title="' + demHover + '">');
+			
 			//Add Exclude Button
 			secObj.find("div#excludeHolder").append(AjaxSolr.theme('createLink', '', excludeHandler));
-			secObj.find("div#excludeHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', deleteicon) + '" alt="Exclude" title="Exclude">');
+			secObj.find("div#excludeHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', deleteicon) + '" alt="Exclude" title="Exclude">');		
+
 		}
 
 		return secObj;
@@ -506,6 +536,64 @@
 		});
 
 		//if (doc.Expired == undefined) secObj.find("#aStampExpired" + idSuffix).attr("style","display:none");
+
+		return secObj;
+	};
+	
+	AjaxSolr.theme.prototype.createDemoteConfirmDialog = function (doc, headerTitle, confirmMessage) {
+		var idSuffix = "_" + doc.EDP;
+		var output  = '<div class="demoteProduct">';
+		output += '<div id="dialog-confirm" title="' + headerTitle + '" class="farial" style="float:left; width:225px">';
+		output += '	<div class="marB10"><span>' + confirmMessage + '</span></div>';
+		//output += '	<div id="aStampExpired' + idSuffix + '" ><div class="posAbs" style="top:80px; left:80px"><img src="../images/expired_stamp90x40.png"></div></div>';
+		output += '	<div><center><img id="aProductImage' + idSuffix + '" src="' + doc.ImagePath + '" class="border" style="width:116px; height:100px"></center></div>';
+		output += '	<div><center><span class="fbold">' + doc.Manufacturer + '</span></div>';
+		output += ' <div style="position:absolute; float:right; top:50px; left:224px"><a href="javascript:void(0);" id="toggleCurrent"><img src="../images/btnTonggleShow.png"></a></div>';
+		output += '	<div>';
+		output += '		<ul class="listProd">';
+		output += '			<li><label class="fbold title">SKU #: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
+		output += '			<li><label class="fbold title">Demote: </label><input type="text" id="aDemotePosition' + idSuffix + '" style="width:30px"></li>';
+		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
+		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
+		output += '		</ul>';
+		output += '	</div>';
+		output += '<div id="btnHolder' + idSuffix + '" class="marB10 txtAC">';
+		output += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="saveBtn"><div class="buttons fontBold">Save</div></a>';
+		output += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="removeBtn"><div class="buttons fontBold">Remove</div></a>';
+		output += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
+		output += '</div>';
+		output += '</div>';
+		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">Current Elevations</h2></div >';
+		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
+		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
+		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 
+		output += '				<div class="handle">';
+		output += ' 				<div class="floatR posRel padR10" style="z-index:1; top:-8px"><a id="deleteIcon" class="deleteIcon" href="javascript:void(0);"><img src="../images/iconDelete.png"></a></div>';
+		output += '					<img id="productImage" src="' + doc.ImagePath + '" class="border floatL" width="60px" >';
+		//output += '					<div id="stampExpired"><img src="../images/expired_stamp50x16.png"></div>';	
+		//output += '				<div id="stampExpired" class="posAbs" style="top:30px; display:none"><img src="../images/expired_stamp60x28.png" class="noborder"></div>';	
+		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
+		output += '				  	<ul class="listItemInfo">';
+		output += '						<li class="label">Demote:</li><li class="value" id="demotePosition">1</li>';
+		output += '						<li class="label partNoLabel">SKU #:</li><li class="value" id="partNo">846896</li>'; 
+		output += '						<li class="label mfrNoLabel">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
+		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
+		output += '				  	</ul>';
+		output += '					</div>';
+		output += '					<div class="label w125 floatL marL8 posRel" id="readableStr"></div>';
+		output += '				</div>';
+		output += '			</li>';
+		output += '		</ul>';
+		output += '</div>';
+		output += '</div>';
+
+		var secObj = $(output);
+
+		// on error detection is upon element creation
+		secObj.find("#aProductImage" + idSuffix).error(function(){
+			$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image.jpg'));
+		});
 
 		return secObj;
 	};

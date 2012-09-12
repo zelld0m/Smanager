@@ -40,8 +40,8 @@ public class DemoteService{
 
 	@Autowired private DaoService daoService;
 
-	/*@RemoteMethod
-	public int updateDemoteItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
+	@RemoteMethod
+	public int updateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
 		
 		DemoteResult demote = new DemoteResult();
@@ -58,7 +58,7 @@ public class DemoteService{
 		}
 		
 		if (position!=demote.getLocation()){
-			changes += ((updateDemote(keyword, memberId, position, null) > 0)? 1 : 0);
+			changes += ((update(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
@@ -66,7 +66,7 @@ public class DemoteService{
 		}
 		
 		if (StringUtils.isNotBlank(condition)){
-			changes += ((updateDemote(keyword, memberId, position, condition) > 0)? 1 : 0);
+			changes += ((update(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 		
 		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), demote.getExpiryDate()))) {
@@ -74,7 +74,7 @@ public class DemoteService{
 		}
 		
 		return changes;
-	}*/
+	}
 
 	@RemoteMethod
 	public int updateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
@@ -119,8 +119,8 @@ public class DemoteService{
 		return changes;
 	}
 	
-	/*@RemoteMethod
-	public int addDemote(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
+	@RemoteMethod
+	public int add(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %d %s %s", keyword, memberTypeId, value, sequence, expiryDate, comment));
@@ -149,7 +149,7 @@ public class DemoteService{
 		}
 		return result;
 
-	}*/
+	}
 
 	@RemoteMethod
 	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
