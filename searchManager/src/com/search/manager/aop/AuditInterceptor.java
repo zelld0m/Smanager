@@ -18,6 +18,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
@@ -98,6 +99,9 @@ public class AuditInterceptor {
 				break;
 			case exclude:
 				logExclude(jp, auditable, auditTrail);
+				break;
+			case demote:
+				logDemote(jp, auditable, auditTrail);
 				break;
 			case queryCleaning:
 				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
@@ -277,6 +281,82 @@ public class AuditInterceptor {
 			auditTrail.setDetails(String.format(message.toString(),
 				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
+		logAuditTrail(auditTrail);
+	}
+	
+	private void logDemote(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		
+		DemoteResult e = null;
+		StoreKeyword sk = null;
+		
+		if (auditable.operation().equals(Operation.clear)) {
+			sk = (StoreKeyword)jp.getArgs()[0];
+			auditTrail.setStoreId(sk.getStoreId());
+			auditTrail.setKeyword(sk.getKeywordId());
+		}
+		else {
+			e = (DemoteResult)jp.getArgs()[0];
+			auditTrail.setStoreId(e.getStoreKeyword().getStoreId());
+			auditTrail.setKeyword(e.getStoreKeyword().getKeywordId());
+			auditTrail.setReferenceId(e.getMemberId());
+		}
+		
+		StringBuilder message = null;
+		
+		switch (auditable.operation()) {
+			case add:
+				message = new StringBuilder("Adding ID[%1$s]");
+				
+				if(e.getLocation() != null){
+					message.append(" to position [%4$s]");
+				}
+				
+				if(e.getExpiryDate() != null){
+					message.append(" expiring on [%2$tF]");
+				}
+				
+				if(StringUtils.isNotBlank(e.getComment())){
+					message.append(" Comment [%3$s]");
+				}
+				break;
+			case update:
+				message = new StringBuilder("Demoting ID[%1$s] to position[%4$s]");
+				break;
+			case delete:
+				message = new StringBuilder("Removing demoted entry ID[%1$s]");
+				break;
+			case appendComment:
+				message = new StringBuilder("Appending comment [%3$s] for demoted entry ID[%1$s]");
+				break;
+			case updateComment:
+				message = new StringBuilder("Setting comment [%3$s] for demoted entry ID[%1$s]");
+				break;
+			case updateExpiryDate:
+				message = new StringBuilder();
+				if(e.getExpiryDate() != null)
+					message.append("Changing expiry date to [%2$tF] for demoted entry ID[%1$s]");
+				else
+					message.append("Removing expiry date for demoted entry ID[%1$s]");
+				break;
+			case clear:
+				message = new StringBuilder("Removing all demoted entries");
+				break;
+			default:
+				message = new StringBuilder();
+				return;
+		}
+		
+		if (auditable.operation().equals(Operation.clear)) {
+			auditTrail.setDetails(String.format(message.toString()));
+		}
+		else{
+			if(e.getCondition() != null){
+				message.append(" Condition[%5$s]");
+			}
+			auditTrail.setDetails(String.format(message.toString(),
+				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+		}
+		
 		logAuditTrail(auditTrail);
 	}
 	
