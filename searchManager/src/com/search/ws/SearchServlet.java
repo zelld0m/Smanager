@@ -175,7 +175,7 @@ public class SearchServlet extends HttpServlet {
 					} else {
 						excludeFacetValues.append(" OR ");
 					}
-					excludeFacetValues.append(exclude.getCondition().getConditionForSolr());
+					excludeFacetValues.append("(").append(exclude.getCondition().getConditionForSolr()).append(")");
 				}
 			}
 			if (edpFlag) {
@@ -205,7 +205,7 @@ public class SearchServlet extends HttpServlet {
 					} else {
 						elevateFacetValues.append(" OR ");
 					}
-					elevateFacetValues.append(elevate.getCondition().getConditionForSolr());
+					elevateFacetValues.append("(").append(elevate.getCondition().getConditionForSolr()).append(")");
 				}
 			}
 			if (edpFlag) {
