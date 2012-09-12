@@ -320,6 +320,8 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 		case 8:
 			return "RANKING_RULE";
 		case 9:
+			return "RULE_STATUS";
+		case 10:
 			return "DEMOTE";
 		default:
 			break;

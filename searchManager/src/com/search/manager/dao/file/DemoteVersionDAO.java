@@ -77,11 +77,11 @@ public class DemoteVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.ELEVATE.getCode());
+					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.DEMOTE.getCode());
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.ELEVATE.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.DEMOTE.getCode(), ruleId)));
 					m.marshal(demoteRuleXml, w);
 				} finally {
 					try {

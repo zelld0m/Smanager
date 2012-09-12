@@ -1026,4 +1026,49 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		}
 		return map;
 	}
+
+	@Override
+	public boolean publishDemoteRules(String store, List<String> list) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> publishDemoteRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean recallDemoteRules(String store, List<String> list) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> recallDemoteRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean loadDemoteRules(String store) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean unpublishDemoteRules(String store, List<String> list) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> unpublishDemoteRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

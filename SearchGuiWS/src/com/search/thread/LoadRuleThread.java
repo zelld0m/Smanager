@@ -35,6 +35,9 @@ public class LoadRuleThread extends Thread{
 			case EXCLUDE:	
 				deploymentRuleService.loadExcludeRules(store);
 				break;
+			case DEMOTE:	
+				deploymentRuleService.loadDemoteRules(store);
+				break;
 			case KEYWORD: 
 				break;
 			case STORE_KEYWORD: 

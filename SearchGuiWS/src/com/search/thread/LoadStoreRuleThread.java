@@ -20,11 +20,13 @@ public class LoadStoreRuleThread extends Thread{
 			LoadRuleThread th2 = new LoadRuleThread(this.store, RuleEntity.EXCLUDE);
 			LoadRuleThread th3 = new LoadRuleThread(this.store, RuleEntity.QUERY_CLEANING);
 			LoadRuleThread th4 = new LoadRuleThread(this.store, RuleEntity.RANKING_RULE);
+			LoadRuleThread th5 = new LoadRuleThread(this.store, RuleEntity.DEMOTE);
 			
 			th1.start();
 			th2.start();
 			th3.start();
 			th4.start();
+			th5.start();
 			
 			while(true){
 				if(!th1.isAlive() && !th2.isAlive() && !th3.isAlive() && !th4.isAlive()){

@@ -71,6 +71,7 @@ public class SolrConstants {
 	// params submitted by simulator
 	public final static String SOLR_PARAM_DISABLE_ELEVATE = "disableElevate";
 	public final static String SOLR_PARAM_DISABLE_EXCLUDE = "disableExclude";
+	public final static String SOLR_PARAM_DISABLE_DEMOTE = "disableDemote";
 	public final static String SOLR_PARAM_DISABLE_REDIRECT = "disableRedirect";
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
 	// returned as part of solr response

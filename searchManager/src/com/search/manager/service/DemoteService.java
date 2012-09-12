@@ -40,7 +40,7 @@ public class DemoteService{
 
 	@Autowired private DaoService daoService;
 
-	@RemoteMethod
+	/*@RemoteMethod
 	public int updateDemoteItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
 		
@@ -74,10 +74,10 @@ public class DemoteService{
 		}
 		
 		return changes;
-	}
+	}*/
 
 	@RemoteMethod
-	public int updateDemoteFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
+	public int updateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
 		DemoteResult demote = new DemoteResult();
@@ -96,7 +96,7 @@ public class DemoteService{
 		}
 		
 		if (position!=demote.getLocation()){
-			changes += ((updateDemote(keyword, memberId, position, null) > 0)? 1 : 0);
+			changes += ((update(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
@@ -104,12 +104,12 @@ public class DemoteService{
 				addComment(comment,demote);
 				changes++;
 			} catch (DaoException e) {
-				logger.error("Error adding comment in updateDemoteFacet()",e);
+				logger.error("Error adding comment in updateFacet()",e);
 			}
 		}
 		
 		if (!rrCondition.getCondition().equals(demote.getCondition().getCondition())){
-			changes += ((updateDemote(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
+			changes += ((update(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
 		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), demote.getExpiryDate()))) {
@@ -119,7 +119,7 @@ public class DemoteService{
 		return changes;
 	}
 	
-	@RemoteMethod
+	/*@RemoteMethod
 	public int addDemote(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
 		int result = -1;
 		try {
@@ -149,7 +149,7 @@ public class DemoteService{
 		}
 		return result;
 
-	}
+	}*/
 
 	@RemoteMethod
 	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
@@ -291,7 +291,7 @@ public class DemoteService{
 	}
 
 	@RemoteMethod
-	public int updateDemote(String keyword, String memberId, int sequence, String condition) {
+	public int update(String keyword, String memberId, int sequence, String condition) {
 		try {
 			logger.info(String.format("%s %s %d", keyword, memberId, sequence));
 			DemoteResult demote = new DemoteResult();
@@ -320,13 +320,13 @@ public class DemoteService{
 	public RecordSet<DemoteProduct> getProducts(String filter, String keyword, int page, int itemsPerPage) {
 
 		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter))
-			return getAllDemotedProducts(keyword, page, itemsPerPage);
+			return getAllProducts(keyword, page, itemsPerPage);
 
 		if (StringUtils.equalsIgnoreCase("active", filter))
-			return getActiveDemotedProducts(keyword, page, itemsPerPage);
+			return getActiveProducts(keyword, page, itemsPerPage);
 
 		if (StringUtils.equalsIgnoreCase("expired", filter))
-			return getExpiredDemotedProducts(keyword, page, itemsPerPage);
+			return getExpiredProducts(keyword, page, itemsPerPage);
 
 		return null;
 	}
@@ -334,7 +334,7 @@ public class DemoteService{
 	@RemoteMethod
 	public DemoteProduct getProductByEdp(String keyword, String edp) {
 
-		RecordSet<DemoteProduct> products = getAllDemotedProducts(keyword, 0, 100);
+		RecordSet<DemoteProduct> products = getAllProducts(keyword, 0, 100);
 		DemoteProduct product = null;
 		for (DemoteProduct  prod: products.getList()) {
 			if (prod.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && prod.getEdp().equals(StringUtils.trim(edp))) {
@@ -346,7 +346,7 @@ public class DemoteService{
 	}
 
 	@RemoteMethod
-	public RecordSet<DemoteProduct> getAllDemotedProducts(String keyword, int page,int itemsPerPage) {
+	public RecordSet<DemoteProduct> getAllProducts(String keyword, int page,int itemsPerPage) {
 		RecordSet<DemoteProduct> result = null;
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
@@ -364,7 +364,7 @@ public class DemoteService{
 	}
 
 	@RemoteMethod
-	public RecordSet<DemoteProduct> getAllDemotedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+	public RecordSet<DemoteProduct> getAllProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
@@ -381,7 +381,7 @@ public class DemoteService{
 	}
 	
 	@RemoteMethod
-	public RecordSet<DemoteProduct> getActiveDemotedProducts(String keyword, int page,int itemsPerPage) {
+	public RecordSet<DemoteProduct> getActiveProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
@@ -391,13 +391,13 @@ public class DemoteService{
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, new Date(), null,  page, itemsPerPage);
 			return daoService.getDemotedProducts(server, criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getActiveDemotedProducts()",e);
+			logger.error("Failed during getActiveProducts()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
-	public RecordSet<DemoteProduct> getExpiredDemotedProducts(String keyword, int page,int itemsPerPage) {
+	public RecordSet<DemoteProduct> getExpiredProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
@@ -407,13 +407,13 @@ public class DemoteService{
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
 			return daoService.getDemotedProducts(server, criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getExpiredDemotedProducts()",e);
+			logger.error("Failed during getExpiredProducts()",e);
 		}
 		return null;
 	}
 
 	@RemoteMethod
-	public RecordSet<DemoteProduct> getNoExpiryDemotedProducts(String keyword, int page,int itemsPerPage) {
+	public RecordSet<DemoteProduct> getNoExpiryProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
@@ -423,7 +423,7 @@ public class DemoteService{
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, null,  page, itemsPerPage);
 			return daoService.getNoExpiryDemotedProducts(server, criteria);
 		} catch (DaoException e) {
-			logger.error("Failed during getNoExpiryDemotedProducts()",e);
+			logger.error("Failed during getNoExpiryProducts()",e);
 		}
 		return null;
 	}
@@ -444,7 +444,7 @@ public class DemoteService{
 	}
 
 	@RemoteMethod
-	public DemoteProduct getDemotedProduct(String keyword, String memberId) {
+	public DemoteProduct getProduct(String keyword, String memberId) {
 		try {
 			logger.info(String.format("%s %s", keyword, memberId));
 			String server = UtilityService.getServerName();
@@ -461,7 +461,7 @@ public class DemoteService{
 
 	@RemoteMethod
 	public String getComment(String keyword, String memberId) {
-		DemoteProduct demotedProduct = getDemotedProduct(keyword, memberId);
+		DemoteProduct demotedProduct = getProduct(keyword, memberId);
 		if (demotedProduct == null)
 			return StringUtils.EMPTY;
 
@@ -492,7 +492,7 @@ public class DemoteService{
 		com.setComment(comment);
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
-		com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+		com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
 		daoService.addComment(com);
 		return com;
 	}
@@ -517,7 +517,7 @@ public class DemoteService{
 				com.setComment(pComment);
 				com.setUsername(UtilityService.getUsername());
 				com.setReferenceId(demote.getMemberId());
-				com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+				com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
 				result = daoService.addComment(com);
 			}
 		} catch (DaoException e) {

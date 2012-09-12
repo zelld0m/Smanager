@@ -349,6 +349,17 @@
 					}
 				});
 				break;
+			case "Demote": 
+				$content.html($("#previewTemplate1").html());
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
+				$content.find("#requestType").text(ruleStatus["updateStatus"]);
+
+				DemoteServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
+					callback: function(data){
+						populateItemTable("Demote", $content, ruleStatus, data);
+					}
+				});
+				break;
 			case "Query Cleaning": 
 				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});

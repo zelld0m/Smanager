@@ -129,6 +129,11 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
+	public RecordSet<AuditTrail> getDemoteItemTrail(String keyword, String productId, int page,int itemsPerPage) {
+		return getProductTrail(Entity.demote, keyword, productId, page, itemsPerPage);
+	}
+	
+	@RemoteMethod
 	public RecordSet<AuditTrail> getElevateActivity(int page,int itemsPerPage) {
 		return getActivityTrail(Entity.elevate, page, itemsPerPage);
 	}

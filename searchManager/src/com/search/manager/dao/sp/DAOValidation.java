@@ -87,7 +87,7 @@ public class DAOValidation {
     public static void checkDemotePK(DemoteResult demote) throws DaoException {
     	checkObjectNotNull(demote, ERROR_MESSAGE_NO_DEMOTE_VALUE);
     	checkStoreKeywordPK(demote.getStoreKeyword());    	
-//		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_EXCLUDE_VALUE);
+//		checkStringNotEmpty(exclude.getEdp(), ERROR_MESSAGE_NO_DEMOTE_VALUE);
     }
 
     public static void checkRelevancy(Relevancy relevancy) throws DaoException {

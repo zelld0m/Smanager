@@ -21,6 +21,7 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
@@ -45,6 +46,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Autowired private KeywordCacheDao keywordCacheDao;
 	@Autowired private ElevateCacheDao elevateCacheDao;
 	@Autowired private ExcludeCacheDao excludeCacheDao;
+	@Autowired private DemoteCacheDao demoteCacheDao;
 	@Autowired private RedirectCacheDao redirectCacheDao;
 	@Autowired private RelevancyCacheDao relevancyCacheDao;
 	@Autowired private UserCacheDao userCacheDao;
@@ -388,6 +390,34 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public RecordSet<UserDetailsImpl> getAllLoggedInUser() throws DaoException, DataException {
 		List<UserDetailsImpl> users = getLoggedInUsers();
 		return new RecordSet<UserDetailsImpl>(users, CollectionUtils.size(users));
+	}
+
+	@Override
+	public boolean loadDemoteRules(Store store) throws DaoException,
+			DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean updateDemoteRules(DemoteResult demoteResult)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean resetDemoteRule(StoreKeyword storeKeyword)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

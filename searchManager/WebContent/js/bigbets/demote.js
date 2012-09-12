@@ -8,7 +8,7 @@
 			selectedRuleStatus: null,
 
 			rulePage: 1,
-			rulePageSize: 15,
+			rulePageSize: 5,
 			ruleItemPageSize: 6,
 			ruleFilterText: "",
 			dateMinDate: 0,
@@ -147,7 +147,7 @@
 								item: e.data.item,
 								showPosition: true,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
-									DemoteServiceJS.updateDemoteFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
+									DemoteServiceJS.updateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
 											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 											self.populateRuleItem(self.selectedRulePage);
@@ -221,7 +221,7 @@
 								});
 							},
 							itemAddComment: function(base, comment){
-								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
+								DemoteServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
 										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
@@ -655,7 +655,7 @@
 				var self = this;
 				var $item = item;
 
-				DemoteServiceJS.updateDemote(self.selectedRule["ruleName"], $item["memberId"], position, null, {
+				DemoteServiceJS.update(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
 						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
 						self.populateRuleItem();

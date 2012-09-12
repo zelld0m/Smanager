@@ -76,6 +76,12 @@ public class Main{
 //			System.out.println(back.getDateCreated());
 //		}
 		
+		/** DEMOTE RULES */
+		
+		List<String> demoteKeyList = new ArrayList<String>();
+		demoteKeyList.add("apple");
+		demoteKeyList.add("ipod");
+		
 		/** QUERY CLEANING **/
 		List<String> queryList = new ArrayList<String>();
 		queryList.add("testadd");

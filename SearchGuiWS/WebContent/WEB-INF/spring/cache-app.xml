@@ -28,6 +28,12 @@
 		<beans:property name="cacheService" ref="cacheService"/>
 	</beans:bean>
 	
+	<beans:bean name="demoteCacheDao" class="com.search.manager.cache.dao.DemoteCacheDao" scope="singleton">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="keywordCacheDao" ref="keywordCacheDao"/>
+		<beans:property name="cacheService" ref="cacheService"/>
+	</beans:bean>
+	
 	<beans:bean name="redirectCacheDao" class="com.search.manager.cache.dao.RedirectCacheDao" scope="singleton">
 		<beans:property name="daoService" ref="daoService"/>
 		<beans:property name="keywordCacheDao" ref="keywordCacheDao"/>

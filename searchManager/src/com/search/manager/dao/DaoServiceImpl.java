@@ -600,30 +600,30 @@ public class DaoServiceImpl implements DaoService {
 	/* Demote */
 	@Override
 	public int addDemoteResult(DemoteResult demote) throws DaoException {
-		return demoteDAO.addDemote(demote);
+		return demoteDAO.add(demote);
 	}
 
 	
 	@Override
 	public RecordSet<DemoteResult> getDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
-		RecordSet<DemoteResult> list = demoteDAO.getDemote(criteria);
+		RecordSet<DemoteResult> list = demoteDAO.getResultList(criteria);
 		return list;
 	}
 
 	@Override
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
-		return demoteDAO.getDemoteNoExpiry(criteria);
+		return demoteDAO.getNoExpiry(criteria);
 	}
 
 	@Override
-	public DemoteResult getDemoteItem(DemoteResult elevate) throws DaoException {
-		return demoteDAO.getDemoteItem(elevate);
+	public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException {
+		return demoteDAO.getItem(demote);
 	}
 
 	@Override
 	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		Map<String, DemoteResult> map = new LinkedHashMap<String, DemoteResult>();
-		RecordSet<DemoteResult> set = demoteDAO.getDemote(criteria);
+		RecordSet<DemoteResult> set = demoteDAO.getResultList(criteria);
 		for (DemoteResult e: set.getList()) {
 			map.put(e.getEdp(), e);
 		}
@@ -632,32 +632,32 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteDemoteResult(DemoteResult elevate) throws DaoException {
-		return demoteDAO.removeDemote(elevate);
+		return demoteDAO.remove(elevate);
 	}
 
 	@Override
 	public int clearDemoteResult(StoreKeyword keyword) throws DaoException {
-		return demoteDAO.clearDemote(keyword);
+		return demoteDAO.clear(keyword);
 	}
 	
 	@Override
-	public int updateDemoteResult(DemoteResult elevate) throws DaoException {
-		return demoteDAO.updateDemote(elevate);
+	public int updateDemoteResult(DemoteResult demote) throws DaoException {
+		return demoteDAO.update(demote);
 	}
 	
 	@Override
-	public int updateDemoteResultExpiryDate(DemoteResult elevate) throws DaoException {
-		return demoteDAO.updateDemoteExpiryDate(elevate);
+	public int updateDemoteResultExpiryDate(DemoteResult demote) throws DaoException {
+		return demoteDAO.updateExpiryDate(demote);
 	}
 
 	@Override
-	public int updateDemoteResultComment(DemoteResult elevate) throws DaoException {
-		return demoteDAO.updateDemoteComment(elevate);
+	public int updateDemoteResultComment(DemoteResult demote) throws DaoException {
+		return demoteDAO.updateComment(demote);
 	}
 
 	@Override
-	public int appendDemoteResultComment(DemoteResult elevate) throws DaoException {
-		return demoteDAO.appendDemoteComment(elevate);
+	public int appendDemoteResultComment(DemoteResult demote) throws DaoException {
+		return demoteDAO.appendComment(demote);
 	}
 	
 	@Override

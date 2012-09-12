@@ -5,6 +5,7 @@ import java.util.List;
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RedirectRule;
@@ -31,6 +32,12 @@ public interface DaoCacheService {
 	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public boolean updateExcludeRules(ExcludeResult excludeResult) throws DaoException, DataException;
 	public boolean resetExcludeRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	
+	/* Demote */
+	public boolean loadDemoteRules(Store store) throws DaoException, DataException;
+	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public boolean updateDemoteRules(DemoteResult demoteResult) throws DaoException, DataException;
+	public boolean resetDemoteRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 	/* Redirect */
 	public boolean loadRedirectRules(Store store) throws DaoException, DataException;

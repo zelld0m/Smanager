@@ -93,6 +93,8 @@ public class RuleVersioningService {
 			break;
 		case EXCLUDE:
 			break;
+		case DEMOTE:
+			break;
 		case QUERY_CLEANING:
 			break;
 		case RANKING_RULE:

@@ -3,16 +3,16 @@ package com.search.manager.report.model;
 import org.apache.commons.lang.StringUtils;
 
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.model.ElevateProduct;
+import com.search.manager.model.DemoteProduct;
 import com.search.manager.report.annotation.ReportField;
 
-public class DemoteReportBean extends ReportBean<ElevateProduct> {
+public class DemoteReportBean extends ReportBean<DemoteProduct> {
 
-	public DemoteReportBean(ElevateProduct model) {
+	public DemoteReportBean(DemoteProduct model) {
 		super(model);
 	}
 
-	@ReportField(label="Elevation", size=20, sortOrder=1)
+	@ReportField(label="Demote", size=20, sortOrder=1)
 	public String getElevation(){
 		return String.valueOf(model.getLocation());
 	}

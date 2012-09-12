@@ -17,13 +17,13 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BackupInfo;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.thoughtworks.xstream.XStream;
@@ -56,6 +56,13 @@ public class FileServiceImpl implements FileService{
 				break;
 			case EXCLUDE:
 				xml = getXmlObjectForExcludeRule(store, ruleId);
+				if(xml != null){
+					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+					success = true;
+				}
+				break;
+			case DEMOTE:
+				xml = getXmlObjectForElevatedRule(store, ruleId);
 				if(xml != null){
 					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
 					success = true;
@@ -96,6 +103,12 @@ public class FileServiceImpl implements FileService{
 				break;
 			case EXCLUDE:
 				list_ = convertToObjectList(getExcludeResultFromFile(getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE)));
+				
+					if(CollectionUtils.isNotEmpty(list_))
+						map.put(ruleId, list_);
+				break;
+			case DEMOTE:
+				list_ = convertToObjectList(getDemoteResultFromFile(getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE)));
 				
 					if(CollectionUtils.isNotEmpty(list_))
 						map.put(ruleId, list_);
@@ -218,6 +231,26 @@ public class FileServiceImpl implements FileService{
 				xstream.alias("exclude", ExcludeResult.class);
 				xstream.alias("list", List.class);
 				list = (List<ExcludeResult>)xstream.fromXML(object.toString());
+				if(list != null && list.size() > 0)
+					return list;
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return Collections.EMPTY_LIST;
+	}
+	
+	private List<DemoteResult> getDemoteResultFromFile(String filePath){
+		XStream xstream = null;
+		List<DemoteResult> list = null;
+		try {
+			if(FileUtil.isExist(filePath.toString())){
+				
+				Object object = FileUtil.fileStream(filePath.toString());
+				xstream = new XStream();
+				xstream.alias("demote", DemoteResult.class);
+				xstream.alias("list", List.class);
+				list = (List<DemoteResult>)xstream.fromXML(object.toString());
 				if(list != null && list.size() > 0)
 					return list;
 			}

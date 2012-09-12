@@ -52,6 +52,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.publishElevateRules(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.publishExcludeRules(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.publishDemoteRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -89,6 +91,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.recallElevateRules(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.recallExcludeRules(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.recallDemoteRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -125,6 +129,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.unpublishElevateRules(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.unpublishExcludeRules(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.unpublishDemoteRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -162,6 +168,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.publishElevateRulesMap(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.publishExcludeRulesMap(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.publishDemoteRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -199,6 +207,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.recallElevateRulesMap(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.recallExcludeRulesMap(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.recallDemoteRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -235,6 +245,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.unpublishElevateRulesMap(list.getStore(), ruleList);
 					case EXCLUDE:
 						return deploymentRuleService.unpublishExcludeRulesMap(list.getStore(), ruleList);
+					case DEMOTE:
+						return deploymentRuleService.unpublishDemoteRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 

@@ -35,6 +35,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import com.search.manager.cache.dao.DaoCacheService;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
@@ -126,6 +127,36 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
+	private static void generateDemoteList(StringBuilder demoteValues, StringBuilder demoteFacetValues, Collection<DemoteResult> demoteList) {
+		boolean edpFlag = false;
+		boolean facetFlag = false;
+		if (!(demoteList == null || demoteList.isEmpty())) {
+			for (DemoteResult demote: demoteList) {
+				if (demote.getDemoteEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (!edpFlag) {
+						demoteValues.append("EDP:(");
+						edpFlag = true;
+					}
+					demoteValues.append(" ").append(demote.getEdp());
+				} else {
+					if (!facetFlag) {
+						demoteFacetValues.insert(0, "(");
+						facetFlag = true;
+					} else {
+						demoteFacetValues.append(" OR ");
+					}
+					demoteFacetValues.append(demote.getCondition().getConditionForSolr());
+				}
+			}
+			if (edpFlag) {
+				demoteValues.append(")");
+			}
+			if (facetFlag) {
+				demoteFacetValues.append(")");
+			}
+		}
+	}
+	
 	private static void generateExcludeList(StringBuilder excludeValues, StringBuilder excludeFacetValues, Collection<ExcludeResult> excludeList) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
@@ -309,6 +340,7 @@ public class SearchServlet extends HttpServlet {
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
 			boolean disableElevate    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_ELEVATE) != null;
 			boolean disableExclude    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_EXCLUDE) != null;
+			boolean disableDemote    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_DEMOTE) != null;
 			boolean disableRedirect   = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) != null;
 			boolean disableRedirectIdPresent = StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
 			String  disableRedirectId = disableRedirect ? getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";

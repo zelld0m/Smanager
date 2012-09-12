@@ -36,29 +36,29 @@ public class DemoteDAO {
 	
 	@Autowired
 	public DemoteDAO(JdbcTemplate jdbcTemplate) {
-    	addSP = new AddDemoteStoredProcedure(jdbcTemplate);
+    	addSP = new AddStoredProcedure(jdbcTemplate);
     	getSP = new GetDemoteStoredProcedure(jdbcTemplate);
-    	getItemSP = new GetDemoteItemStoredProcedure(jdbcTemplate);
-    	getNoExpirySP = new GetNoExpiryDemoteStoredProcedure(jdbcTemplate);
-    	updateSP = new UpdateDemoteStoredProcedure(jdbcTemplate);
-    	updateExpiryDateSP = new UpdateDemoteExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateDemoteCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendDemoteCommentStoredProcedure(jdbcTemplate);
-    	deleteSP = new DeleteDemoteStoredProcedure(jdbcTemplate);
+    	//getItemSP = new GetItemStoredProcedure(jdbcTemplate);
+    	getNoExpirySP = new GetNoExpiryStoredProcedure(jdbcTemplate);
+    	updateSP = new UpdateStoredProcedure(jdbcTemplate);
+    	updateExpiryDateSP = new UpdateExpiryDateStoredProcedure(jdbcTemplate);
+    	updateCommentSP = new UpdateCommentStoredProcedure(jdbcTemplate);
+    	appendCommentSP = new AppendCommentStoredProcedure(jdbcTemplate);
+    	deleteSP = new DeleteStoredProcedure(jdbcTemplate);
     }
 	
-	private AddDemoteStoredProcedure addSP;
+	private AddStoredProcedure addSP;
 	private GetDemoteStoredProcedure getSP;
-	private GetDemoteItemStoredProcedure getItemSP;
-	private GetNoExpiryDemoteStoredProcedure getNoExpirySP;
-	private UpdateDemoteStoredProcedure updateSP;
-	private UpdateDemoteExpiryDateStoredProcedure updateExpiryDateSP;
-	private UpdateDemoteCommentStoredProcedure updateCommentSP;
-	private AppendDemoteCommentStoredProcedure appendCommentSP;
-	private DeleteDemoteStoredProcedure deleteSP;
+	//private GetItemStoredProcedure getItemSP;
+	private GetNoExpiryStoredProcedure getNoExpirySP;
+	private UpdateStoredProcedure updateSP;
+	private UpdateExpiryDateStoredProcedure updateExpiryDateSP;
+	private UpdateCommentStoredProcedure updateCommentSP;
+	private AppendCommentStoredProcedure appendCommentSP;
+	private DeleteStoredProcedure deleteSP;
 
-	private class AddDemoteStoredProcedure extends CUDStoredProcedure {
-	    public AddDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class AddStoredProcedure extends CUDStoredProcedure {
+	    public AddStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_ADD_DEMOTE);
 	    }
 
@@ -115,9 +115,10 @@ public class DemoteDAO {
 		}
 	}
 
-	private class GetDemoteItemStoredProcedure extends StoredProcedure {
-	    public GetDemoteItemStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE_ITEM);
+	@SuppressWarnings("unused")
+	private class GetItemStoredProcedure extends StoredProcedure {
+	    public GetItemStoredProcedure(JdbcTemplate jdbcTemplate) {
+	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE);
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<DemoteResult>() {
 	            public DemoteResult mapRow(ResultSet rs, int rowNum) throws SQLException
 	            {
@@ -143,8 +144,8 @@ public class DemoteDAO {
 	    }
 	}
 	
-	private class GetNoExpiryDemoteStoredProcedure extends GetStoredProcedure {
-	    public GetNoExpiryDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class GetNoExpiryStoredProcedure extends GetStoredProcedure {
+	    public GetNoExpiryStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_DEMOTE);
 	    }
 
@@ -179,8 +180,8 @@ public class DemoteDAO {
 		}
 	}
 	
-	private class UpdateDemoteStoredProcedure extends CUDStoredProcedure {
-	    public UpdateDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class UpdateStoredProcedure extends CUDStoredProcedure {
+	    public UpdateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE);
 	    }
 
@@ -195,8 +196,8 @@ public class DemoteDAO {
 		}
 	}
 	
-	private class UpdateDemoteExpiryDateStoredProcedure extends CUDStoredProcedure {
-	    public UpdateDemoteExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class UpdateExpiryDateStoredProcedure extends CUDStoredProcedure {
+	    public UpdateExpiryDateStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE_EXPIRY_DATE);
 	    }
 
@@ -208,8 +209,8 @@ public class DemoteDAO {
 		}
 	}
 	
-	private class UpdateDemoteCommentStoredProcedure extends CUDStoredProcedure {
-	    public UpdateDemoteCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class UpdateCommentStoredProcedure extends CUDStoredProcedure {
+	    public UpdateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE_COMMENT);
 	    }
 
@@ -221,8 +222,8 @@ public class DemoteDAO {
 		}
 	}
 
-	private class AppendDemoteCommentStoredProcedure extends CUDStoredProcedure {
-	    public AppendDemoteCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class AppendCommentStoredProcedure extends CUDStoredProcedure {
+	    public AppendCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_APPEND_DEMOTE_COMMENT);
 	    }
 
@@ -234,8 +235,8 @@ public class DemoteDAO {
 		}
 	}
 	
-	private class DeleteDemoteStoredProcedure extends CUDStoredProcedure {
-	    public DeleteDemoteStoredProcedure(JdbcTemplate jdbcTemplate) {
+	private class DeleteStoredProcedure extends CUDStoredProcedure {
+	    public DeleteStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_DELETE_DEMOTE);
 	    }
 
@@ -248,7 +249,7 @@ public class DemoteDAO {
 	}
 	
 	@Audit(entity = Entity.demote, operation = Operation.add)
-    public int addDemote(DemoteResult demote) throws DaoException {
+    public int add(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
     		String keyword = DAOUtils.getKeywordId(demote.getStoreKeyword());
@@ -287,7 +288,7 @@ public class DemoteDAO {
     	}
     }
     
-	public RecordSet<DemoteResult> getDemote(SearchCriteria<DemoteResult> criteria) throws DaoException {
+	public RecordSet<DemoteResult> getResultList(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		try {
 			DemoteResult demote = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -304,19 +305,19 @@ public class DemoteDAO {
     	}
     }
 
-    public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException {
+    public DemoteResult getItem(DemoteResult demote) throws DaoException {
     	try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-	    	return DAOUtils.getItem(getItemSP.execute(inputs));
+	    	return DAOUtils.getItem(getSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during getDemoteItem()", e);
     	}
     }
     
-    public RecordSet<DemoteResult> getDemoteNoExpiry(SearchCriteria<DemoteResult> criteria) throws DaoException {
+    public RecordSet<DemoteResult> getNoExpiry(SearchCriteria<DemoteResult> criteria) throws DaoException {
 		try {
 			DemoteResult demote = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -331,7 +332,7 @@ public class DemoteDAO {
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.update)
-    public int updateDemote(DemoteResult demote) throws DaoException {
+    public int update(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -354,7 +355,7 @@ public class DemoteDAO {
     }
 
 	@Audit(entity = Entity.demote, operation = Operation.updateExpiryDate)
-    public int updateDemoteExpiryDate(DemoteResult demote) throws DaoException {
+    public int updateExpiryDate(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -368,7 +369,7 @@ public class DemoteDAO {
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.updateComment)
-    public int updateDemoteComment(DemoteResult demote) throws DaoException {
+    public int updateComment(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -382,7 +383,7 @@ public class DemoteDAO {
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.appendComment)
-    public int appendDemoteComment(DemoteResult demote) throws DaoException {
+    public int appendComment(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -396,7 +397,7 @@ public class DemoteDAO {
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.delete)
-    public int removeDemote(DemoteResult demote) throws DaoException {
+    public int remove(DemoteResult demote) throws DaoException {
 		try {
     		DAOValidation.checkDemotePK(demote);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -410,7 +411,7 @@ public class DemoteDAO {
     }
 
 	@Audit(entity = Entity.demote, operation = Operation.clear)
-    public int clearDemote(StoreKeyword storeKeyword) throws DaoException {
+    public int clear(StoreKeyword storeKeyword) throws DaoException {
 		try {
     		DAOValidation.checkStoreKeywordPK(storeKeyword);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
