@@ -6,21 +6,19 @@
 			var links = [];
 			$(self.target).empty();
 
-			var q = self.manager.store.values('q'); 
-
-			if ($.isBlank(q)) return;
+			var keyword = self.manager.store.values('q'); 
 			
-			for (var i = 0, l = q.length; i < l; i++) {
-				links.push(AjaxSolr.theme('createLink', 'Search keyword: ' + q[i], self.removeKeyword(q[i])));
-			}
-
+			if ($.isBlank(keyword)) return;
+			
+			links.push(AjaxSolr.theme('createLink', 'Search keyword: ' + keyword, self.removeKeyword(keyword)));
+			
 			var fq = self.manager.store.values('fq');
 			var searchWithin = self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"];
 			var dynamicAttr = self.manager.widgets['dynamicAttribute'].attribMap;
 			
 			for (var i = 0, l = fq.length; i < l; i++) {
-				if (fq[i] == searchWithin) {
-					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeSearchWithin(fq[i])));
+				if (fq[i] === searchWithin) {
+					links.push(AjaxSolr.theme('createLink', "Search Within: " + fq[i], self.removeFacet(fq[i])));
 				}else if($.startsWith(fq[i],GLOBAL_storeFacetTemplateName)){ // Facet Template Name / Or Find By display
 					var facetTempVal = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
 					links.push(AjaxSolr.theme('createLink', "Or Find By: " + facetTempVal, self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(item) + 1)), "level" + (parseInt(item) + 1)));
@@ -36,11 +34,19 @@
 				else {
 					var displayString = fq[i];
 					var inDoubleQuote = false;
-					var filterName = displayString.substr(0, displayString.indexOf(':'));
-					var isDynamicAttr = dynamicAttr && dynamicAttr[filterName];
+					var filterFieldName = displayString.substr(0, displayString.indexOf(':'));
+					var filterFieldValue = displayString.substr(displayString.indexOf(':') + 1, displayString.length);
+					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
+					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
+					var regX = /("[^"]+")|(\b\w+\b)/g;
+					var arrSelection = filterFieldValue.match(regX);
+					
+					if(isMultipleSelection){
+						links.push(AjaxSolr.theme('createLink', "Remove All " + filterFieldName, self.removeFacet(fq[i])));
+					}
 					
 					if(isDynamicAttr){	// TODO Dynamic Attribute
-						var displayName = dynamicAttr[filterName].attributeDisplayName;
+						var displayName = dynamicAttr[filterFieldName].attributeDisplayName;
 						var displayValue = displayString.substr(displayString.indexOf(':')); 
 
 						for (var currIndex = displayValue.indexOf(':'); currIndex < displayValue.length; currIndex++) {
@@ -48,30 +54,14 @@
 								displayValue = displayValue.substr(0, currIndex-2) + displayValue.substr(currIndex + 1);
 								currIndex = currIndex - 2;
 							}
-							if (displayValue.charAt(currIndex) === ' ' && !inDoubleQuote) {
-								displayValue = displayValue.substr(0, currIndex) + ', ' + displayValue.substr(currIndex + 1);
-								currIndex++;
-							}
-							else if (displayValue.charAt(currIndex) === '"') {
-								inDoubleQuote = !inDoubleQuote;
-							}
 						}
 						
 						links.push(AjaxSolr.theme('createLink', displayName + displayValue, self.removeFacet(fq[i])));
-						continue;
-					}
-					
-					for (var currIndex = displayString.indexOf(':'); currIndex < displayString.length; currIndex++) {
-						if (displayString.charAt(currIndex) === ' ' && !inDoubleQuote) {
-							displayString = displayString.substr(0, currIndex) + ', ' + displayString.substr(currIndex + 1);
-							currIndex++;
+					}else{
+						for(var i=0; i < arrSelection.length; i++){
+							links.push(AjaxSolr.theme('createLink', arrSelection[i],  self.removeFacet(fq[i])));
 						}
-						else if (displayString.charAt(currIndex) === '"') {
-							inDoubleQuote = !inDoubleQuote;
-						} 
 					}
-					
-					links.push(AjaxSolr.theme('createLink', displayString, self.removeSearchWithin(fq[i])));
 				}
 			}
 
@@ -89,14 +79,14 @@
 
 		},
 
-		removeSearchWithin: function (searchWithin) {
+		removeFacet: function (facetValue) {
 			var self = this;
 			return function () {
-				if (self.manager.store.removeByValue('fq', searchWithin)) {
-					if (searchWithin === self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"]) {
+				if (self.manager.store.removeByValue('fq', facetValue)) {
+					if (facetValue === self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"]) {
 						self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
-						self.manager.doRequest(0);
 					}
+					self.manager.doRequest(0);
 				}
 				return false;
 			};
@@ -139,7 +129,6 @@
 		removeAllFilters: function() { 
 			var self = this;
 			return function () {
-				$.cookie('searchWithin', '', {expires: 1});
 				self.manager.store.remove('fq');
 				self.manager.doRequest(0);
 				return false;
