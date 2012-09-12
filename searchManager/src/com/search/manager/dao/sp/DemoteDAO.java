@@ -38,7 +38,6 @@ public class DemoteDAO {
 	public DemoteDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddStoredProcedure(jdbcTemplate);
     	getSP = new GetDemoteStoredProcedure(jdbcTemplate);
-    	//getItemSP = new GetItemStoredProcedure(jdbcTemplate);
     	getNoExpirySP = new GetNoExpiryStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateStoredProcedure(jdbcTemplate);
     	updateExpiryDateSP = new UpdateExpiryDateStoredProcedure(jdbcTemplate);
@@ -49,7 +48,6 @@ public class DemoteDAO {
 	
 	private AddStoredProcedure addSP;
 	private GetDemoteStoredProcedure getSP;
-	//private GetItemStoredProcedure getItemSP;
 	private GetNoExpiryStoredProcedure getNoExpirySP;
 	private UpdateStoredProcedure updateSP;
 	private UpdateExpiryDateStoredProcedure updateExpiryDateSP;
@@ -310,6 +308,10 @@ public class DemoteDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(demote.getStoreKeyword()));
 	        inputs.put(DAOConstants.PARAM_KEYWORD, DAOUtils.getKeywordId(demote.getStoreKeyword()));
+	        inputs.put(DAOConstants.PARAM_START_DATE, null);
+	        inputs.put(DAOConstants.PARAM_END_DATE, null);
+	        inputs.put(DAOConstants.PARAM_START_ROW, null);
+	        inputs.put(DAOConstants.PARAM_END_ROW, null);
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
 	    	return DAOUtils.getItem(getSP.execute(inputs));
 		} catch (Exception e) {
