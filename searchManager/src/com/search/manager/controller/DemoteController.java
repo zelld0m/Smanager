@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.cache.dao.DaoCacheService;
-import com.search.manager.model.ElevateProduct;
+import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.RecordSet;
-import com.search.manager.report.model.ElevateReportBean;
-import com.search.manager.report.model.ElevateReportModel;
+import com.search.manager.report.model.DemoteReportBean;
+import com.search.manager.report.model.DemoteReportModel;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.service.DownloadService;
-import com.search.manager.service.ElevateService;
+import com.search.manager.service.DemoteService;
 import com.search.manager.service.UtilityService;
 
 @Controller
@@ -38,14 +38,14 @@ public class DemoteController {
 	private static final Logger logger = Logger.getLogger(DemoteController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
-	@Autowired private ElevateService elevateService;
+	@Autowired private DemoteService demoteService;
 	@Autowired private DownloadService downloadService;
 
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model,@PathVariable String store){
 		model.addAttribute("store", store);
 		try {
-			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Elevate");
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Demote");
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
@@ -76,7 +76,7 @@ public class DemoteController {
 		logger.debug(String.format("Received request to download report as an XLS: %s %s %s %s %s %s", keyword, type, filter, page, itemsPerPage, filename));
 		
 		if (StringUtils.isBlank(filename)) {
-			filename = "elevate";
+			filename = "demote";
 		}
 
 		int nPage = 0;
@@ -91,14 +91,14 @@ public class DemoteController {
 			} catch (Exception e) {
 			}
 		}
-		RecordSet<ElevateProduct> elevateProducts = elevateService.getProducts(filter, keyword, nPage, nItemsPerPage);
+		RecordSet<DemoteProduct> demoteProducts = demoteService.getProducts(filter, keyword, nPage, nItemsPerPage);
 		
-		List<ElevateReportBean> list = new ArrayList<ElevateReportBean>();
-		for (ElevateProduct p: elevateProducts.getList()) {
-			list.add(new ElevateReportBean(p));
+		List<DemoteReportBean> list = new ArrayList<DemoteReportBean>();
+		for (DemoteProduct p: demoteProducts.getList()) {
+			list.add(new DemoteReportBean(p));
 		}
 		
-		String subTitle = "List of %%Filter%%Elevated Items for [" + keyword + "]";
+		String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
 		if ("active".equalsIgnoreCase(filter)) {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
 		}
@@ -110,7 +110,7 @@ public class DemoteController {
 		}
 		
 		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
-		ReportModel<ElevateReportBean> reportModel = new ElevateReportModel(reportHeader, list);
+		ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, list);
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
 		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
