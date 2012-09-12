@@ -319,9 +319,6 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			
 			int currItem = 1;
 			for (ElevateResult e : elevatedList) {
-				if (e.isForceAdd()) {
-					continue; //disregard force add
-				}
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
 				BasicNameValuePair excludeFacetNVP = null;
@@ -329,12 +326,12 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				StringBuilder elevateFacetValues = new StringBuilder();
 				if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + e.getEdp());
-					if (e.isForceAdd() && kwNvp!=null) {
-						requestParams.remove(kwNvp);
-					}
 				} 
 				else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().getConditionForSolr());
+				}
+				if (e.isForceAdd() && kwNvp!=null) {
+					requestParams.remove(kwNvp);
 				}
 				
 				generateElevateList(elevateValues, elevateFacetValues, elevatedList, currItem++);
@@ -383,11 +380,10 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 					docList.add(doc);
 					explainMap.put(edp, tmpExplain);
+					if (docList.size() >= size) {
+						break;
+					}
 				}
-				if (docList.size() >= size) {
-					break;
-				}
-				
 			}
 			
 			// sort the edps
