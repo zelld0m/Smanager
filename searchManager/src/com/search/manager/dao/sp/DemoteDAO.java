@@ -41,8 +41,6 @@ public class DemoteDAO {
     	getNoExpirySP = new GetNoExpiryStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateStoredProcedure(jdbcTemplate);
     	updateExpiryDateSP = new UpdateExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendCommentStoredProcedure(jdbcTemplate);
     	deleteSP = new DeleteStoredProcedure(jdbcTemplate);
     }
 	
@@ -51,8 +49,6 @@ public class DemoteDAO {
 	private GetNoExpiryStoredProcedure getNoExpirySP;
 	private UpdateStoredProcedure updateSP;
 	private UpdateExpiryDateStoredProcedure updateExpiryDateSP;
-	private UpdateCommentStoredProcedure updateCommentSP;
-	private AppendCommentStoredProcedure appendCommentSP;
 	private DeleteStoredProcedure deleteSP;
 
 	private class AddStoredProcedure extends CUDStoredProcedure {
@@ -207,31 +203,8 @@ public class DemoteDAO {
 		}
 	}
 	
-	private class UpdateCommentStoredProcedure extends CUDStoredProcedure {
-	    public UpdateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_DEMOTE_COMMENT);
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-		}
-	}
-
-	private class AppendCommentStoredProcedure extends CUDStoredProcedure {
-	    public AppendCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_APPEND_DEMOTE_COMMENT);
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-		}
-	}
+	
+	
 	
 	private class DeleteStoredProcedure extends CUDStoredProcedure {
 	    public DeleteStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -372,30 +345,12 @@ public class DemoteDAO {
     
 	@Audit(entity = Entity.demote, operation = Operation.updateComment)
     public int updateComment(DemoteResult demote) throws DaoException {
-		try {
-    		DAOValidation.checkDemotePK(demote);
-	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-	        inputs.put(DAOConstants.PARAM_COMMENT, demote.getComment());
-	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, demote.getLastModifiedBy());
-	        return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
-		} catch (Exception e) {
-    		throw new DaoException("Failed during updateDemoteComment()", e);
-    	}
+		return 1;
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.appendComment)
     public int appendComment(DemoteResult demote) throws DaoException {
-		try {
-    		DAOValidation.checkDemotePK(demote);
-	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_MEMBER_ID, demote.getMemberId());
-	        inputs.put(DAOConstants.PARAM_COMMENT, demote.getComment());
-	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, demote.getLastModifiedBy());
-	        return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
-		} catch (Exception e) {
-			throw new DaoException("Failed during appendDemoteComment()", e);
-		}
+		return 1;
     }
     
 	@Audit(entity = Entity.demote, operation = Operation.delete)

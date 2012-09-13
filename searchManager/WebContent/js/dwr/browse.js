@@ -23,6 +23,14 @@ function handleAddElevateError(){
 	jAlert("Unable to process request. Please try again later","Simulator");
 }
 
+function handleAddDemoteSuccess(data){
+	jAlert("Request successfully processed","Simulator");
+}
+
+function handleAddDemoteError(){
+	jAlert("Unable to process request. Please try again later","Simulator");
+}
+
 function handleRemoveElevateSuccess(data){
 	jAlert("Request successfully processed","Simulator");
 }

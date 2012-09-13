@@ -37,6 +37,7 @@
 						case "ranking rule": checkboxId="disableRelevancy"; break;
 						case "query cleaning": checkboxId="disableRedirect"; break;
 						case "elevate": checkboxId="disableElevate"; break;
+						case "demote": checkboxId="disableDemote"; break;
 						case "exclude": checkboxId="disableExclude"; break;
 					}
 					

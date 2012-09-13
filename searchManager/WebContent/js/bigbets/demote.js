@@ -8,7 +8,7 @@
 			selectedRuleStatus: null,
 
 			rulePage: 1,
-			rulePageSize: 5,
+			rulePageSize: 15,
 			ruleItemPageSize: 6,
 			ruleFilterText: "",
 			dateMinDate: 0,

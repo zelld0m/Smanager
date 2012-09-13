@@ -375,30 +375,12 @@ public class ElevateDAO {
     
 	@Audit(entity = Entity.elevate, operation = Operation.updateComment)
     public int updateElevateComment(ElevateResult elevate) throws DaoException {
-		try {
-    		DAOValidation.checkElevatePK(elevate);
-	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-	        inputs.put(DAOConstants.PARAM_COMMENT, elevate.getComment());
-	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
-	        return DAOUtils.getUpdateCount(updateCommentSP.execute(inputs));
-		} catch (Exception e) {
-    		throw new DaoException("Failed during updateElevateComment()", e);
-    	}
+		return 1;
     }
     
 	@Audit(entity = Entity.elevate, operation = Operation.appendComment)
     public int appendElevateComment(ElevateResult elevate) throws DaoException {
-		try {
-    		DAOValidation.checkElevatePK(elevate);
-	    	Map<String, Object> inputs = new HashMap<String, Object>();
-	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
-	        inputs.put(DAOConstants.PARAM_COMMENT, elevate.getComment());
-	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
-	        return DAOUtils.getUpdateCount(appendCommentSP.execute(inputs));
-		} catch (Exception e) {
-			throw new DaoException("Failed during appendElevateComment()", e);
-		}
+		return 1;
     }
     
 	@Audit(entity = Entity.elevate, operation = Operation.delete)
