@@ -160,45 +160,55 @@ public class AuditInterceptor {
 				message = new StringBuilder("Adding ID[%1$s]");
 				
 				if(e.getLocation() != null){
-					message.append(" to position[%4$s]");
+					message.append(" to position [%4$s]");
 				}
 				
 				if(e.getExpiryDate() != null){
-					message.append(" expiring on[%2$tF]");
+					message.append(" expiring on [%2$tF]");
 				}
 				
 				if(StringUtils.isNotBlank(e.getComment())){
-					message.append(" Comment[%3$s]");
+					message.append(" Comment [%3$s]");
 				}
 				break;
 			case update:
-				message = new StringBuilder("Elevated ID[%1$s] to position[%2$s]");
+				message = new StringBuilder("Elevating ID[%1$s] to position[%4$s]");
 				break;
 			case delete:
-				message = new StringBuilder("Removed elevated entry ID[%1$s]");
+				message = new StringBuilder("Removing elevated entry ID[%1$s]");
 				break;
 			case appendComment:
 				message = new StringBuilder("Appending comment [%3$s] for elevated entry ID[%1$s]");
 				break;
 			case updateComment:
-				message = new StringBuilder("Setting comment [%2$s] for elevated entry ID[%1$s]");
+				message = new StringBuilder("Setting comment [%3$s] for elevated entry ID[%1$s]");
 				break;
 			case updateExpiryDate:
-				message = new StringBuilder("Changing expiry date to [%2$tF] for elevated entry ID[%1$s]");
+				message = new StringBuilder();
+				if(e.getExpiryDate() != null)
+					message.append("Changing expiry date to [%2$tF] for elevated entry ID[%1$s]");
+				else
+					message.append("Removing expiry date for elevated entry ID[%1$s]");
 				break;
 			case clear:
-				message = new StringBuilder("Removed all elevated entries");
+				message = new StringBuilder("Removing all elevated entries");
 				break;
 			default:
+				message = new StringBuilder();
 				return;
 		}
 		
-		if(e.getCondition() != null){
-			message.append(" Condition[%5$s]");
+		if (auditable.operation().equals(Operation.clear)) {
+			auditTrail.setDetails(String.format(message.toString()));
 		}
-		
-		auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+		else{
+			if(e.getCondition() != null){
+				message.append(" Condition[%5$s]");
+			}
+
+			auditTrail.setDetails(String.format(message.toString(),
+				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+		}
 		
 		logAuditTrail(auditTrail);
 	}
@@ -225,67 +235,47 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding ID[%1$s]");
-				if (e.getExpiryDate() != null || e.getComment() != null) {
-					if (e.getExpiryDate() != null) {
-						message.append(" Expiry Date[%2$s]");						
-					}
-					if (e.getComment() != null) {
-						message.append(" Comment[%3$s]");
-					}
+				if(e.getExpiryDate() != null){
+					message.append(" expiring on [%2$tF]");
 				}
 				
-				auditTrail.setDetails(String.format(message.toString(),
-						auditTrail.getReferenceId(),e.getExpiryDate(), e.getComment()));
-
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Adding EDP[%1$s]. Comment[%2$s]",
-							e.getEdp(),e.getExpiryDate(), e.getComment()));
-				} else {
-					auditTrail.setDetails(String.format("Adding ID[%1$s]. Condition[%2$s] expiring on[%3$tF]. Comment[%4$s]",
-							auditTrail.getReferenceId(),e.getCondition() != null ? e.getCondition().getReadableString() : "", e.getExpiryDate(), e.getComment()));
+				if(StringUtils.isNotBlank(e.getComment())){
+					message.append(" Comment [%3$s]");
 				}
-
 				break;
 			case delete:
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Removed excluded entry ID[%1$s]",
-							auditTrail.getReferenceId()));
-				} else {
-					auditTrail.setDetails(String.format("Removed excluded entry ID[%1$s] Condition[%2$s]",
-							auditTrail.getReferenceId(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
-				}
+				message = new StringBuilder("Removing excluded entry ID[%1$s]");
 				break;
 			case appendComment:
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
-				} else {
-					auditTrail.setDetails(String.format("Appending comment [%2$s] for excluded entry ID[%1$s] Condition[%3$s]",
-							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
-				}
+				message = new StringBuilder("Appending comment [%3$s] for excluded entry ID[%1$s]");
 				break;
 			case updateComment:
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getComment()));
-				} else {
-					auditTrail.setDetails(String.format("Setting comment [%2$s] for excluded entry ID[%1$s] Condition[%3$s]",
-							auditTrail.getReferenceId(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
-				}
+				message = new StringBuilder("Setting comment [%3$s] for excluded entry ID[%1$s]");
 				break;
 			case updateExpiryDate:
-				if (e.getExcludeEntity() == MemberTypeEntity.PART_NUMBER) {
-					auditTrail.setDetails(String.format("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]",
-							auditTrail.getReferenceId(), e.getExpiryDate()));
-				} else {
-					auditTrail.setDetails(String.format("Changing expiry date to [%1$tF] for elevated entry ID[%1$s]",
-							e.getExpiryDate(), e.getMemberId()));
-				}
+				message = new StringBuilder();
+				if(e.getExpiryDate() != null)
+					message.append("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]");
+				else
+					message.append("Removing expiry date for excluded entry ID[%1$s]");
 				break;
 			case clear:
-				auditTrail.setDetails(String.format("Removed all excluded entries"));				
+				message = new StringBuilder("Removing all excluded entries");
+				break;
 			default:
+				message = new StringBuilder();
 				return;
+		}
+		
+		if (auditable.operation().equals(Operation.clear)) {
+			auditTrail.setDetails(String.format(message.toString()));
+		}
+		else{
+			if(e.getCondition() != null){
+				message.append(" Condition[%4$s]");
+			}
+			auditTrail.setDetails(String.format(message.toString(),
+				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		logAuditTrail(auditTrail);
 	}
