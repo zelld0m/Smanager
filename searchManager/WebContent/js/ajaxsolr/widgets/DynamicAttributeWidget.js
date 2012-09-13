@@ -41,17 +41,6 @@
 			}
 		},
 		
-		clickHandler: function (field, value, fieldLabel) {
-		    var self = this, meth = this.multivalue ? 'add' : 'set';
-		    return function () {
-		      self.manager.store.removeByValue('fq', new RegExp('^-?' + field + ':')); // Custom
-		      if (self[meth].call(self, field, value)) {
-		        self.manager.doRequest(0);
-		      }
-		      return false;
-		    };
-		},
-		
 		getSelectedFacetTemplateName: function(fq){
 			var facetTemplateName = "";
 			for (var i = 0, l = fq.length; i < l; i++) {
@@ -412,7 +401,7 @@
 				var count = objectedItems[i].count;
 				
 				if ($.isNotBlank(facet)){
-					AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i, facetField, delimiter ? facet.split(delimiter)[1] : facet, count, this.clickHandler(facetField, facet));
+					AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i, facetField, delimiter ? facet.split(delimiter)[1] : facet, count, this.clickHandler(facetField, this.escapeValue(facet)));
 					if (i == l-1 && isKeywordIncluded){
 						AjaxSolr.theme('createFacetMoreOptionsLink', $.formatAsId(facetField), facetValues, '[+] More Options', this.moreOptionsHandler(facetField, facetValues, facetFieldLabel, delimiter));
 					}
