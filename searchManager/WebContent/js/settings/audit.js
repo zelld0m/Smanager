@@ -33,13 +33,16 @@
 			callback: function(data){
 				totalSize = data.totalSize;
 				var audits = data.list;
+				var referenceId = ""; 
 				$("#resultsBody").find("tr:gt(0)").remove();
 
 				
 				if (audits.length > 0) {
 					for (var i = 0; i < audits.length; i++) {
 						audit = audits[i];
-						$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\"><p class="breakWord w100">' + audit.referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
+						referenceId = audit.referenceId !=null? audit.referenceId : "";
+						
+						$('#resultsBody').append('<tr><td class=\"txtAC\">' + $.format.date(audit.date, "MM-dd-yyyy HH:mm") + '</td><td class=\"txtAC\"><p class="breakWord w100">' + referenceId + '</p></td><td class=\"txtAC\">' + audit.username + '</td>' +
 								'<td class=\"txtAC\"><p class="breakWord w80">' + audit.entity + '</p></td><td class=\"txtAC\"><p class="breakWord w90">' + audit.operation + '</p></td><td class=\"txtAC\">' + $.trimToEmpty(audit.keyword) + '</td><td><p class="breakWord w135">' + audit.details + '</p></td></tr>');
 					}
 					
