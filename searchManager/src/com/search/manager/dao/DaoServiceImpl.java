@@ -169,22 +169,13 @@ public class DaoServiceImpl implements DaoService {
 		RecordSet<ElevateResult> set = getElevateResultList(criteria);
 		LinkedHashMap<String, ElevateProduct> map = new LinkedHashMap<String, ElevateProduct>();
 		StoreKeyword sk = criteria.getModel().getStoreKeyword();
+		
 		String storeId = DAOUtils.getStoreId(sk);
 		String keyword = DAOUtils.getKeywordId(sk);
+		
 		for (ElevateResult e: set.getList()) {
-			ElevateProduct ep = new ElevateProduct();
-			ep.setEdp(e.getEdp());
-			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
-			ep.setComment(e.getComment());
-			ep.setLastModifiedBy(e.getLastModifiedBy());
-			ep.setCreatedBy(e.getCreatedBy());
+			ElevateProduct ep = new ElevateProduct(e);
 			ep.setStore(storeId);
-			ep.setCondition(e.getCondition());
-			ep.setMemberTypeEntity(e.getElevateEntity());
-			ep.setMemberId(e.getMemberId());
 			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 				map.put(UUID.randomUUID().toString(), ep);
 			} else {

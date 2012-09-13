@@ -1,8 +1,8 @@
 package com.search.manager.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -31,6 +31,7 @@ public class Product extends ModelBean {
 	private MemberTypeEntity memberTypeEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;
+	private Boolean forceAdd;
 
 	public Product() {
 		super();
@@ -56,8 +57,6 @@ public class Product extends ModelBean {
 		this.createdBy = createdBy;
 	}
 	
-	
-
 	public String getDpNo() {
 		return dpNo;
 	}
@@ -226,5 +225,17 @@ public class Product extends ModelBean {
 
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
+	}
+
+	public Boolean getForceAdd() {
+		return forceAdd;
+	}
+
+	public void setForceAdd(Boolean forceAdd) {
+		this.forceAdd = forceAdd;
+	}
+	
+	public boolean isForceAdd(){
+		return BooleanUtils.isTrue(getForceAdd());
 	}
 }

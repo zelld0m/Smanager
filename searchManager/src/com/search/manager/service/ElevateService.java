@@ -258,9 +258,7 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setMemberId(memberId);
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
 			e = daoService.getElevateItem(e);
 			if (e != null) {
 				e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
@@ -284,9 +282,7 @@ public class ElevateService{
 				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
 			}
 			
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setMemberId(memberId);
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			return daoService.appendElevateResultComment(e);
@@ -301,9 +297,7 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s", keyword, memberId));
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setMemberId(memberId);
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e = daoService.getElevateItem(e);
 			return daoService.deleteElevateResult(e);
@@ -317,9 +311,8 @@ public class ElevateService{
 	public int updateElevate(String keyword, String memberId, int sequence, String condition) {
 		try {
 			logger.info(String.format("%s %s %d", keyword, memberId, sequence));
-			ElevateResult elevate = new ElevateResult();
-			elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
-			elevate.setMemberId(memberId);
+			ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreName(), keyword), memberId);
+		
 			try {
 				elevate = daoService.getElevateItem(elevate);
 			} catch (DaoException e) {
@@ -376,8 +369,7 @@ public class ElevateService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
 			result  = daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
@@ -393,8 +385,7 @@ public class ElevateService{
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
 
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
 			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
@@ -409,8 +400,7 @@ public class ElevateService{
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
@@ -425,8 +415,7 @@ public class ElevateService{
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
 		} catch (DaoException e) {
@@ -441,8 +430,7 @@ public class ElevateService{
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null,  page, itemsPerPage);
 			return daoService.getNoExpiryElevatedProducts(server, criteria);
 		} catch (DaoException e) {
@@ -456,8 +444,7 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s", keyword));
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, null, null, null);
 			return daoService.getElevateResultCount(criteria);
 		} catch (DaoException e) {
@@ -472,8 +459,7 @@ public class ElevateService{
 			logger.info(String.format("%s %s", keyword, memberId));
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
 			return daoService.getElevatedProduct(server, e);
 		} catch (DaoException e) {
@@ -500,14 +486,6 @@ public class ElevateService{
 			logger.error("Failed during clearRule()",e);
 		}
 		return -1;
-	}
-
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
 	}
 
 	private Comment addComment(String comment, ElevateResult e) throws DaoException {
@@ -547,5 +525,13 @@ public class ElevateService{
 			logger.error("Failed during addRuleItemComment()",e);
 		}
 		return result;
+	}
+	
+	public DaoService getDaoService() {
+		return daoService;
+	}
+
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
 	}
 }

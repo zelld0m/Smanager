@@ -24,6 +24,21 @@ public class ElevateProduct extends Product {
 		this.location = location;
 	}
 	
+	public ElevateProduct(ElevateResult e){
+		super.setEdp(e.getEdp());
+		super.setExpiryDate(e.getExpiryDate());
+		super.setCreatedDate(e.getCreatedDate());
+		super.setLastModifiedDate(e.getLastModifiedDate());
+		super.setComment(e.getComment());
+		super.setLastModifiedBy(e.getLastModifiedBy());
+		super.setCreatedBy(e.getCreatedBy());
+		super.setCondition(e.getCondition());
+		super.setMemberTypeEntity(e.getElevateEntity());
+		super.setMemberId(e.getMemberId());
+		super.setForceAdd(e.getForceAdd());
+		this.setLocation(e.getLocation());
+	}
+	
 	public Integer getLocation() {
 		return location;
 	}

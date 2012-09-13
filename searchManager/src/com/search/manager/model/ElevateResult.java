@@ -18,6 +18,16 @@ public class ElevateResult extends ModelBean {
 	private Boolean forceAdd;
 	
 	public ElevateResult() {
+		super();
+	}
+	
+	public ElevateResult(StoreKeyword storeKeyword) {
+		this.storeKeyword = storeKeyword;
+	}
+	
+	public ElevateResult(StoreKeyword storeKeyword, String memberId) {
+		this.storeKeyword = storeKeyword;
+		this.memberId = memberId;
 	}
 	
 	public ElevateResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId, boolean forceAdd) {
@@ -103,6 +113,10 @@ public class ElevateResult extends ModelBean {
 
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
+	}
+	
+	public Boolean getForceAdd() {
+		return forceAdd;
 	}
 
 	public Boolean isForceAdd() {
