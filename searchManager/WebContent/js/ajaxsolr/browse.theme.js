@@ -201,8 +201,8 @@
 
 		var altclass ="";
 
-		if (i % 2 ==1)
-			altclass=" alt-bgGray";
+		if (i % 2 ==1) altclass=" alt-bgGray";
+		if (doc["ForceAdd"] != undefined) altclass=" forceAddClass";
 
 		var output = '<li id="resultItem_' + doc.EDP + '" class="handle' + altclass + '">';
 		output += '<table width="100%" border="0" cellpadding="0" cellspacing="0" class="farial fsize12 fDGray marT10 ">';
