@@ -431,7 +431,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					} else {
 						elevateFacetValues.append(" OR ");
 					}
-					elevateFacetValues.append(elevate.getCondition().getConditionForSolr());
+					elevateFacetValues.append("(").append(elevate.getCondition().getConditionForSolr()).append(")");
 				}
 			}
 			if (edpFlag) {
