@@ -161,6 +161,9 @@ public class SearchServlet extends HttpServlet {
 		boolean facetFlag = false;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
+				if (elevate.isForceAdd()) {
+					continue;
+				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
 						elevateValues.append("EDP:(");
