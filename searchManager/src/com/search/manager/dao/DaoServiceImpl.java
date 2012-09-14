@@ -207,6 +207,7 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberId(e.getMemberId());
 			ep.setMemberTypeEntity(e.getElevateEntity());
 			ep.setCondition(e.getCondition());
+			ep.setForceAdd(e.isForceAdd());
 			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 				map.put(UUID.randomUUID().toString(), ep);
 			} else {
@@ -237,6 +238,7 @@ public class DaoServiceImpl implements DaoService {
 		ep.setStore(elevate.getStoreKeyword().getStoreId());
 		ep.setCondition(e.getCondition());
 		ep.setMemberTypeEntity(e.getElevateEntity());
+		ep.setForceAdd(e.isForceAdd());
 		if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 			map.put(UUID.randomUUID().toString(), ep);
 		} else {
@@ -266,6 +268,7 @@ public class DaoServiceImpl implements DaoService {
 			ep.setStore(storeId);
 			ep.setCondition(e.getCondition());
 			ep.setMemberTypeEntity(e.getElevateEntity());
+			ep.setForceAdd(e.isForceAdd());
 			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 				map.put(UUID.randomUUID().toString(), ep);
 			} else {
