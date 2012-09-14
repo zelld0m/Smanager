@@ -187,12 +187,16 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
-	private static void generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList) {
+	private static boolean generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList) {
+		boolean withFacetFlag = false;
 		boolean edpFlag = false;
 		boolean facetFlag = false;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
 				if (elevate.isForceAdd()) {
+					if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+						withFacetFlag = true;
+					}
 					continue;
 				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
@@ -215,9 +219,11 @@ public class SearchServlet extends HttpServlet {
 				elevateValues.append(")");
 			}
 			if (facetFlag) {
+				withFacetFlag = true;
 				elevateFacetValues.append(")");
 			}
 		}
+		return withFacetFlag;
 	}
 
 	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
@@ -284,7 +290,6 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(nvp);
 			}
 
-			StringBuffer fqBuffer = new StringBuffer();
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
@@ -549,7 +554,6 @@ public class SearchServlet extends HttpServlet {
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
-			boolean withElevateFacet = false;
 			boolean bestMatchFlag = configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 
 			if (keywordPresent) {
@@ -696,16 +700,7 @@ public class SearchServlet extends HttpServlet {
 			// collate elevate list
 			StringBuilder elevateValues = new StringBuilder();
 			StringBuilder elevateFacetValues = new StringBuilder();
-			generateElevateList(elevateValues, elevateFacetValues, elevatedList);
-			withElevateFacet = elevateFacetValues.length() > 0;
-			if (!withElevateFacet && forceAddList.size() > 0) {
-				for (ElevateResult e : forceAddList) {
-					if (e.getElevateEntity() ==  MemberTypeEntity.FACET) {
-						withElevateFacet = true;
-						break;
-					}
-				}
-			}
+			boolean withFacetFlag = generateElevateList(elevateValues, elevateFacetValues, elevatedList);
 			
 			BasicNameValuePair elevateNvp = null;
 			BasicNameValuePair elevateFacetNvp = null;
@@ -855,7 +850,7 @@ public class SearchServlet extends HttpServlet {
 					// retrieve the elevate list
 					// TASK 2A
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
-					if (withElevateFacet) {
+					if (withFacetFlag) {
 						final List<ElevateResult> fElevatedList = elevatedList;
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override
@@ -864,7 +859,6 @@ public class SearchServlet extends HttpServlet {
 							}
 						});
 					} else {
-						getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString()));
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
