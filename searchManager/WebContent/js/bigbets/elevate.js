@@ -221,7 +221,7 @@
 								});
 							},
 							itemAddComment: function(base, comment){
-								CommentServiceJS.addRuleItemComment(self.moduleName, e.data.item["memberId"], comment, {
+								ElevateServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
 									callback: function(data){
 										showActionResponse(data, "add comment", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
 										if(data==1){
@@ -249,7 +249,7 @@
 				
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
-						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];
+						var itemId = e.data.item["memberId"];
 						$(e.currentTarget).viewaudit({
 							itemDataCallback: function(base, page){
 								AuditServiceJS.getElevateItemTrail(self.selectedRule["ruleId"], itemId, base.options.page, base.options.pageSize, {
@@ -338,7 +338,7 @@
 					if (PART_NUMBER){
 						if ($.isBlank($item["dpNo"])){
 							$li.find(".itemImg").prop("src",GLOBAL_contextPath + '/images/padlock_img.jpg'); 
-							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>Not available in the search server</p>');
+							$li.find(".name").html('<p><font color="red">Product Id:</font> ' + item["edp"] + '<br/>This is no longer available in the search server you are connected</p>');
 							$li.find(".manufacturer").html(self.lockedItemDisplayText);
 							$li.find(".sku, .mfrpn").html("Unavailable");
 							return;
