@@ -282,10 +282,10 @@
 		}
 		
 		if ($.isNotBlank(doc.Elevate)){		  
-			var displayText = "Elevated at position " + doc["Elevate"];
+			var displayText = (doc["ForceAdd"]!=undefined? "Force add": "Elevated") + " at position " + doc["Elevate"];
 			
 			if(doc["ElevateType"] === "FACET")
-				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> elevated at position '+ doc["Elevate"];
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> ' + (doc["ForceAdd"]!=undefined? "force add": "elevated") + ' at position '+ doc["Elevate"];
 
 			secObj.find("div#elevatePosition").html(displayText);
 			secObj.find("div#elevatePosition a").off().on({
