@@ -840,7 +840,7 @@ public class SearchServlet extends HttpServlet {
 				paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
 				nameValuePairs.remove(nvp);
 				// TODO: retrieve EDP list from task 1B, then just pass those that fit the criteria as fq
-				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(numElevateFound));
+				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(numElevateFound > requestedRows ?requestedRows:numElevateFound));
 				nameValuePairs.add(nvp);
 				addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
 
