@@ -334,7 +334,11 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			}
 			
 			int currItem = 1;
+			int ctr = 0;
 			for (ElevateResult e : elevatedList) {
+				if (docList.size() >= requestedRows) {
+					break;
+				}
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
 				BasicNameValuePair excludeFacetNVP = null;
@@ -383,28 +387,27 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 					tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 				}
 				for (int j = 0, length = docs.size(); j < length; j++) {
-					JSONObject doc = (JSONObject)docs.get(j);
-					String edp = doc.getString("EDP");
-					doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
-					doc.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
-					if (e.getElevateEntity() == MemberTypeEntity.FACET) {
-						doc.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+					if (++ctr >= startRow) {
+						JSONObject doc = (JSONObject)docs.get(j);
+						String edp = doc.getString("EDP");
+						doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
+						doc.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
+						if (e.getElevateEntity() == MemberTypeEntity.FACET) {
+							doc.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
+						}
+						if (expiredElevatedEDPs.contains(edp)) {
+							doc.element(SolrConstants.TAG_EXPIRED,"");
+						}
+						if (e.isForceAdd()) {
+							doc.element(SolrConstants.TAG_FORCE_ADD,"");
+						}
+						doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
+						docList.add(doc);
+						explainMap.put(edp, tmpExplain);
+						if (docList.size() >= requestedRows) {
+							break;
+						}
 					}
-					if (expiredElevatedEDPs.contains(edp)) {
-						doc.element(SolrConstants.TAG_EXPIRED,"");
-					}
-					if (e.isForceAdd()) {
-						doc.element(SolrConstants.TAG_FORCE_ADD,"");
-					}
-					doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
-					docList.add(doc);
-					explainMap.put(edp, tmpExplain);
-					if (docList.size() >= size) {
-						break;
-					}
-				}
-				if (docList.size() >= size) {
-					break;
 				}
 			}
 			

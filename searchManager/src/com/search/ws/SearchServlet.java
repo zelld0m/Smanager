@@ -848,6 +848,11 @@ public class SearchServlet extends HttpServlet {
 				if (bestMatchFlag && numElevateFound > startRow) {
 					// retrieve the elevate list
 					// TASK 2A
+					nvp = paramMap.get(SolrConstants.SOLR_PARAM_START).get(0);
+					nameValuePairs.remove(nvp);
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow));
+					nameValuePairs.add(nvp);
+
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					if (withFacetFlag) {
 						final List<ElevateResult> fElevatedList = elevatedList;
