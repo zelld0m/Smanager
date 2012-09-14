@@ -31,6 +31,25 @@
 		return template;
 	};
 	
+	AjaxSolr.theme.prototype.productForceAdd = function(){
+		var template = '';
+		template += '<div>';
+		template += '	<div>';
+		template += '		<ul class="listItemInfo">';
+		template += '			<li><label class="floatL fbold title">SKU #: </label><span id="sku"></span></li>';
+		template += '			<li><label class="floatL fbold title">Keyword: </label><input type="text" id="keyword"></li>';
+		template += '			<li><label class="floatL fbold title">Valid Until: </label><input type="text" id="validityDate" style="width:65px"></li>';
+		template += '			<li><label class="floatL fbold title">Comments:</label><textarea id="comment"></textarea></li>';
+		template += '		</ul>';
+		template += '	</div>';
+		template += '	<div class="marB10 txtAC">';
+		template += '		<a class="buttons btnGray clearfix" href="javascript:void(0);" id="addBtn"><div class="buttons fontBold">Force Add</div></a>';
+		template += '		<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
+		template += '	</div>';
+		template += '</div>';
+		return template;
+	};
+	
 	AjaxSolr.theme.prototype.cnetFacets = function () {
 		var output  = '<div class="clearB floatL w240">';
 		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Category</div>';
@@ -197,7 +216,7 @@
 		return stockText;
 	};
 
-	AjaxSolr.theme.prototype.result = function (i, hasKeyword, doc, snippet, auditHandler, docHandler, debugHandler, featureHandler, elevateHandler, excludeHandler, demoteHandler) {
+	AjaxSolr.theme.prototype.result = function (i, hasKeyword, doc, snippet, auditHandler, docHandler, debugHandler, featureHandler, elevateHandler, excludeHandler, demoteHandler, forceAddHandler) {
 
 		var altclass ="";
 
@@ -212,18 +231,17 @@
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';
+		output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '			</div>';
-		output += '			<div class="floatR marR5">';
-		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
-		output += '			</div>';
-		output += '        <div class="floatR ruleOptionHolder marR5">'; 
-		output += '			<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
+		output += '         <div class="floatR ruleOptionHolder marR5">'; 
+		output += '				<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
 		//output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
-		output += '			<div id="elevateHolder" class="iconHolder"></div>';
-		output += '			<div id="demoteHolder" class="iconHolder"></div>';
-		output += '			<div id="excludeHolder" class="iconHolder"></div>';
+		output += '				<div id="forceAddHolder" class="iconHolder"></div>';
+		output += '				<div id="elevateHolder" class="iconHolder"></div>';
+		output += '				<div id="demoteHolder" class="iconHolder"></div>';
+		output += '				<div id="excludeHolder" class="iconHolder"></div>';
 		output += '        </div>';
 		output += '      </td>';
 		output += '	</tr>';
@@ -285,7 +303,7 @@
 			var displayText = (doc["ForceAdd"]!=undefined? "Force add": "Elevated") + " at position " + doc["Elevate"];
 			
 			if(doc["ElevateType"] === "FACET")
-				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule Item</span></a> ' + (doc["ForceAdd"]!=undefined? "force add": "elevated") + ' at position '+ doc["Elevate"];
+				displayText = 'Included in <a href="javascript:void(0);"><span class="fgray">Facet Rule</span></a> ' + (doc["ForceAdd"]!=undefined? "force add": "elevated") + ' at position '+ doc["Elevate"];
 
 			secObj.find("div#elevatePosition").html(displayText);
 			secObj.find("div#elevatePosition a").off().on({
@@ -317,15 +335,17 @@
 
 		//Add Elevate Button if search has keyword
 		if (hasKeyword){
+			var forceAddIcon = 'images/icon_forceAdd_disable.png';
 			var elevateIcon = 'images/icon_elevate_disable.png';
 			var excludeIcon = 'images/icon_exclude_disable.png';
 			var demoteIcon = 'images/icon_demote_disable.png';
 			var featureIcon = 'images/icon_starGray.png';
 
-			var featureHover = "Feature";
+			var forceAddHover = "Force Add";
 			var elevateHover = "Elevate";
 			var excludeHover = "Exclude";
 			var demoteHover = "Demote";
+			var featureHover = "Feature";
 
 			if (doc.Elevate != undefined){
 				elevateIcon = 'images/icon_elevate.png';
@@ -339,7 +359,7 @@
 			
 			if (doc.ForceAdd != undefined){
 				forceAddIcon = 'images/icon_forceAdd.png'; 
-				forceAddHover = "Update Demote";
+				forceAddHover = "Force Add";
 			}
 			
 			if (doc.Feature != undefined){
@@ -351,6 +371,10 @@
 			//secObj.find("div #featureHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
 			//secObj.find("div #featureHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', featureicon) + '" alt="' + feaHover + '" title="' + feaHover + '">');
 
+			//Add Force Add Button
+			secObj.find("div#forceAddHolder").append(AjaxSolr.theme('createLink', '', forceAddHandler));
+			secObj.find("div#forceAddHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', forceAddIcon) + '" alt="' + forceAddHover + '" title="' + forceAddHover + '">');
+			
 			//Add Elevate Button
 			secObj.find("div#elevateHolder").append(AjaxSolr.theme('createLink', '', elevateHandler));
 			secObj.find("div#elevateHolder a").append('<img src="' + AjaxSolr.theme('getAbsoluteLoc', elevateIcon) + '" alt="' + elevateHover + '" title="' + elevateHover + '">');
@@ -510,7 +534,7 @@
 		output += '</div>';
 		output += '</div>';
 		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
-		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">Current Elevations</h2></div >';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Elevated</h2></div >';
 		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
 		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 
@@ -570,7 +594,7 @@
 		output += '</div>';
 		output += '</div>';
 		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
-		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">Current Elevations</h2></div >';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Demoted</h2></div >';
 		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
 		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 

@@ -133,16 +133,18 @@ public class ElevateService{
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
+			
 			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
 				e.setEdp(value);
 				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
 			} else {
 				e.setCondition(new RedirectRuleCondition(value));
 				e.setElevateEntity(MemberTypeEntity.FACET);
-				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
-				if (e.isForceAdd()) {
-					result = 2;
-				}
+			}
+
+			e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
+			if (e.isForceAdd()) {
+				result = 2;
 			}
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			result  = daoService.addElevateResult(e);

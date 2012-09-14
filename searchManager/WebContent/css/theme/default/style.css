@@ -281,7 +281,7 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 
 .cssReset .alt-bgGray 			{ background:#f3f2f2 }
 .cssReset .searchList ul		{ list-style:none; }
-.cssReset .searchList li		{ padding:7px 5px; list-style:none; }
+.cssReset .searchList li		{ padding:7px 5px; list-style:none; margin-top:2px;}
 .cssReset .searchList li.forceAddClass 			{ 
 	background: #f7efc1; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

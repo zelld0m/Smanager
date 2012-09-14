@@ -1,6 +1,9 @@
 (function ($) {
 
 	AjaxSolr.SearchResultWidget = AjaxSolr.AbstractWidget.extend({
+		expDateMinDate: 0,
+		expDateMaxDate: "+1Y",
+		
 		beforeRequest: function () {
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
 		},
@@ -20,7 +23,7 @@
 					for (var i = 0, l = self.manager.response.response.docs.length; i < l; i++) {
 						var doc = self.manager.response.response.docs[i];
 						var debug = self.manager.response.debug.explain[doc.EDP]; 
-						$(self.target).append(AjaxSolr.theme('result', i, hasKeyword,doc, AjaxSolr.theme('snippet', doc), self.auditHandler(doc), self.docHandler(doc), self.debugHandler(doc), self.featureHandler(keyword,doc), self.elevateHandler(keyword,doc), self.excludeHandler(keyword,doc), self.demoteHandler(keyword,doc)));
+						$(self.target).append(AjaxSolr.theme('result', i, hasKeyword,doc, AjaxSolr.theme('snippet', doc), self.auditHandler(doc), self.docHandler(doc), self.debugHandler(doc), self.featureHandler(keyword,doc), self.elevateHandler(keyword,doc), self.excludeHandler(keyword,doc), self.demoteHandler(keyword,doc),self.forceAddHandler(doc)));
 
 						if (doc.Expired != undefined)
 							$(this.target).find("li#resultItem_" + doc.EDP + " div#expiredHolder").attr("style","display:float");
@@ -122,6 +125,67 @@
 			};
 		},
 
+		forceAddHandler: function (doc) {
+			var self = this;
+			var selector  = "#resultItem_" + doc["EDP"] + " div#forceAddHolder";
+			var title = "Force Add SKU#: " + doc["DPNo"];
+
+			return function () {
+				$(selector).qtip({
+					content: {
+						text: $('<div/>'),
+						title: {
+							text: title,
+							button: true
+						}
+					},
+					position: {
+						my: 'bottom center',
+						at: 'top center'
+					},
+					events: {
+						render: function(event, api) {
+							var content = $('div', api.elements.content);
+							content.html(AjaxSolr.theme('productForceAdd'));
+							
+							content.find('#sku').text(doc["DPNo"]);
+							
+							content.find('#validityDate').datepicker({
+								showOn: "both",
+								minDate: self.expDateMinDate,
+								maxDate: self.expDateMaxDate,
+								buttonText: "Expiration Date",
+								buttonImage: "../images/icon_calendar.png",
+								buttonImageOnly: true
+							});
+							
+							content.find('#addBtn').off().on({
+								click: function(e){
+									var keyword = $.trim(e.data.content.find('#keyword').val());
+									var validityDate = $.trim(e.data.content.find('#validityDate').val());
+									var comment = $.trim(e.data.content.find('#comment').val());
+									
+									if(validateGeneric("Keyword", keyword, 2)){
+										ElevateServiceJS.addElevate(keyword, "PART_NUMBER", e.data.doc["EDP"], 1, validityDate, comment, {
+											callback:function(data){
+												
+											}
+										});
+									}
+								}
+							},{content: content, doc: doc});
+							
+							content.find('#cancelBtn').off().on({
+								click: function(e){
+									api.destroy();
+								}
+							});
+						}
+					}
+				}).click(function(event) { event.preventDefault(); });	 
+			};
+		},
+		
 		docHandler: function (doc) {
 			var self = this;
 
@@ -271,6 +335,12 @@
 								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
 
 								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
+								
+								if (list[i]["forceAdd"]){
+									contentHolder.find("#listItemsPattern" + id).removeClass("alt");
+									contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
+								} 
+								
 								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
 								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
