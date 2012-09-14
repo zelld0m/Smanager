@@ -194,12 +194,12 @@ public class SearchServlet extends HttpServlet {
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
 				if (elevate.isForceAdd()) {
-					if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (elevate.getElevateEntity() == MemberTypeEntity.FACET) {
 						withFacetFlag = true;
 					}
 					continue;
 				}
-				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+				if (elevate.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
 					if (!edpFlag) {
 						elevateValues.append("EDP:(");
 						edpFlag = true;
@@ -830,7 +830,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			numElevateFound += numForceAddFound;
 
-			if (requestedRows != 0 && numFound != 0) {
+			if (requestedRows != 0 && (numFound + numElevateFound) != 0) {
 
 				Future<Integer> getElevatedItems = null;
 				Future<Integer> getNonElevatedItems = null;
