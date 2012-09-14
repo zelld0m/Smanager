@@ -124,6 +124,10 @@
 				var FACET = $item["memberTypeEntity"] === "FACET";
 				var id = $.formatAsId($item["memberId"]);
 
+				if($item["forceAdd"]){
+					$li.addClass("forceAddClass");
+				}
+					
 				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);
 
