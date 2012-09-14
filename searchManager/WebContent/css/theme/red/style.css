@@ -156,6 +156,12 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a.btnLStyA div:hover,
 .cssReset a.btnLStyA div:active  { background-position: right -25px; color:#fff}
 
+.cssReset a.btnAddGreen_disable	{ background-position: -39px -3px; height: 12px; width: 0 !important; flaot:right; padding:7px 16px; cursor:default; margin-left:5px; position:relative  }
+.cssReset a.btnAddGrayMid_disable,
+.qtip a.btnAddGrayMid_disable	{ background-position: -24px -578px; height: 18px; width: 18px !important; flaot:right; cursor:default; margin-left:5px; position:relative  }
+.cssReset a div.btnAddGray_disable		{ background-position: -30px -62px; height: 20px; width: 22px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
+.cssReset a div.btnAddGrayL_disable		{ background-position: -35px -181px; height: 24px; width: 27px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
+
 .cssReset a.btnAddGreen			{ background-position: -3px -3px; height: 12px; width: 0 !important; flaot:right; padding:7px 16px; cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnAddGreen:hover	{ background-position: -3px -32px;  }
 .cssReset a div.btnAddGray		{ background-position: -4px -62px; height: 20px; width: 22px; padding:0; cursor:pointer; margin:-4px 10px 0 5px  }
@@ -276,6 +282,19 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 .cssReset .alt-bgGray 			{ background:#f3f2f2 }
 .cssReset .searchList ul		{ list-style:none; }
 .cssReset .searchList li		{ padding:7px 5px; list-style:none; }
+.cssReset .searchList li.forceAddClass 			{ 
+	background: #f7efc1; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2Y3ZWZjMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmOGY0ZDkiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #f7efc1 0%, #f8f4d9 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7efc1), color-stop(100%,#f8f4d9)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f7efc1 0%,#f8f4d9 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f7efc1 0%,#f8f4d9 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f7efc1 0%,#f8f4d9 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f7efc1 0%,#f8f4d9 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7efc1', endColorstr='#f8f4d9',GradientType=0 ); /* IE6-8 */
+	border:2px solid #f7e99b;
+}
 .cssReset .itemImg				{ background:#fff }
 
 .cssReset .GraytopLine			{ background:url(images/bgSort.jpg) repeat-x; padding-top:5px; margin-top:8px }
