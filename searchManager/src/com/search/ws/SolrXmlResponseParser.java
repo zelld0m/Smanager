@@ -263,6 +263,19 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	public int getElevatedItems(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
 		try {
+			StringBuilder elevatedEdps = new StringBuilder();
+			generateEdpElevateList(elevatedEdps, elevatedList);
+			generateEdpElevateList(elevatedEdps, forceAddedList);
+			if (elevatedEdps.length() > 0) {
+				elevatedEdps.append(")");
+			}
+			for (NameValuePair nameValuePair : requestParams) {
+				if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
+					requestParams.remove(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD,nameValuePair.getValue()));
+					break;
+				}
+			}
+			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY,elevatedEdps.toString()));
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document elevateDoc = docBuilder.parse(solrResponse.getEntity().getContent());
@@ -553,5 +566,16 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 		this.forceAddedList = forceAddedList;
 	}
 
-
+	private static void generateEdpElevateList(StringBuilder elevateValues, Collection<ElevateResult> elevateList) {
+		if (!(elevateList == null || elevateList.isEmpty())) {
+			for (ElevateResult elevate: elevateList) {
+				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
+					if (elevateValues.length() == 0) {
+						elevateValues.append("EDP:(");
+					}
+					elevateValues.append(" ").append(elevate.getEdp());
+				} 
+			}
+		}
+	}
 }
