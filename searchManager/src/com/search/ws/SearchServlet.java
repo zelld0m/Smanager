@@ -192,6 +192,9 @@ public class SearchServlet extends HttpServlet {
 		boolean facetFlag = false;
 		if (!(elevateList == null || elevateList.isEmpty())) {
 			for (ElevateResult elevate: elevateList) {
+				if (elevate.isForceAdd()) {
+					continue;
+				}
 				if (elevate.getElevateEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
 						elevateValues.append("EDP:(");
@@ -695,6 +698,14 @@ public class SearchServlet extends HttpServlet {
 			StringBuilder elevateFacetValues = new StringBuilder();
 			generateElevateList(elevateValues, elevateFacetValues, elevatedList);
 			withElevateFacet = elevateFacetValues.length() > 0;
+			if (!withElevateFacet && forceAddList.size() > 0) {
+				for (ElevateResult e : forceAddList) {
+					if (e.getElevateEntity() ==  MemberTypeEntity.FACET) {
+						withElevateFacet = true;
+						break;
+					}
+				}
+			}
 			
 			BasicNameValuePair elevateNvp = null;
 			BasicNameValuePair elevateFacetNvp = null;
