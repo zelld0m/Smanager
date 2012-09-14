@@ -215,7 +215,7 @@
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '			</div>';
-		output += '			<div class="floatR marR5 marTn2">';
+		output += '			<div class="floatR marR5">';
 		output += '		    	<div id="auditHolder" class="iconHolder"></div>';
 		output += '			</div>';
 		output += '        <div class="floatR ruleOptionHolder marR5">'; 
