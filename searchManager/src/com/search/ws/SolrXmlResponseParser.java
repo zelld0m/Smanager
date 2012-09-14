@@ -134,6 +134,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			int size = startRow + requestedRows;
 			
 			int currItem = 1;
+			int ctr = 0;
 			for (ElevateResult elevateResult : elevatedList) {
 				BasicNameValuePair nvp = null;
 				BasicNameValuePair excludeEDPNVP = null;
@@ -172,6 +173,12 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				NodeList children = elevateDoc.getElementsByTagName(SolrConstants.TAG_DOC);
 	
 				for (int j = 0, length = children.getLength(); j < length; j++) {
+					if (ctr++ < startRow) {
+						continue;
+					}
+					else if (ctr > size){
+						break;
+					}
 					Node docNode = children.item(j);
 					if (docNode.getParentNode() == tmpResultNode) {
 						// get the EDPs
@@ -198,7 +205,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				
 			}
 
-			int ctr = startRow;
+			ctr = startRow;
 			int resultSize = nodeMap.size();
 			for (Map.Entry<String, Node> entry : nodeMap.entrySet()) {
 	        	resultNode.insertBefore(mainDoc.importNode(entry.getValue(), true), placeHolderNode);

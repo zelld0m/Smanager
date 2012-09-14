@@ -201,7 +201,7 @@ public class AuditInterceptor {
 				message = new StringBuilder();
 				return;
 		}
-		
+			
 		if (auditable.operation().equals(Operation.clear)) {
 			auditTrail.setDetails(String.format(message.toString()));
 		}
@@ -209,6 +209,7 @@ public class AuditInterceptor {
 			if(e.getCondition() != null){
 				message.append(" Condition[%5$s]");
 			}
+
 			auditTrail.setDetails(String.format(message.toString(),
 				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
@@ -238,7 +239,6 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding ID[%1$s]");
-				
 				if(e.getExpiryDate() != null){
 					message.append(" expiring on [%2$tF]");
 				}
@@ -281,6 +281,7 @@ public class AuditInterceptor {
 			auditTrail.setDetails(String.format(message.toString(),
 				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
+
 		logAuditTrail(auditTrail);
 	}
 	
