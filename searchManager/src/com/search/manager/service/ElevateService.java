@@ -336,13 +336,13 @@ public class ElevateService{
 	public RecordSet<ElevateProduct> getProducts(String filter, String keyword, int page, int itemsPerPage) {
 
 		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter))
-			return getAllElevatedProducts(keyword, page, itemsPerPage);
+			return getAllElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
 
 		if (StringUtils.equalsIgnoreCase("active", filter))
-			return getActiveElevatedProducts(keyword, page, itemsPerPage);
+			return getActiveElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
 
 		if (StringUtils.equalsIgnoreCase("expired", filter))
-			return getExpiredElevatedProducts(keyword, page, itemsPerPage);
+			return getExpiredElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
 
 		return null;
 	}
@@ -410,6 +410,21 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
+	public RecordSet<ElevateProduct> getActiveElevatedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, new Date(), null,  page, itemsPerPage);
+			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getActiveElevatedProducts()",e);
+		}
+		return null;
+	}
+
+	@RemoteMethod
 	public RecordSet<ElevateProduct> getExpiredElevatedProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
@@ -418,6 +433,21 @@ public class ElevateService{
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
 			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
 			return daoService.getElevatedProducts(server, criteria);
+		} catch (DaoException e) {
+			logger.error("Failed during getExpiredElevatedProducts()",e);
+		}
+		return null;
+	}
+
+	@RemoteMethod
+	public RecordSet<ElevateProduct> getExpiredElevatedProductsIgnoreKeyword(String keyword, int page,int itemsPerPage) {
+		try {
+			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
+			String server = UtilityService.getServerName();
+			String store = UtilityService.getStoreName();
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
+			return daoService.getElevatedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredElevatedProducts()",e);
 		}
