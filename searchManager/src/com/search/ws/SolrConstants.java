@@ -49,6 +49,7 @@ public class SolrConstants {
 	public final static String TAG_REDIRECT_ID = "Redirect_Id";
 	public final static String TAG_REDIRECT_PARAM = "Redirect_Param";
 	public final static String TAG_INCLUDE_KEYWORD = "Include_Keyword";
+	public final static String TAG_FORCE_ADD = "ForceAdd";
 		
 	public final static String TAG_FACET_COUNTS = "facet_counts";
 	public final static String TAG_FACET_FIELDS = "facet_fields";
