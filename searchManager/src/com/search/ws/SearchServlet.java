@@ -563,7 +563,6 @@ public class SearchServlet extends HttpServlet {
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					}
 					if (!disableElevate) {
-						String sort = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT);
 						if (bestMatchFlag) {
 							ElevateResult elevateFilter = new ElevateResult();
 							elevateFilter.setStoreKeyword(sk);
