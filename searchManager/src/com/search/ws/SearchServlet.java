@@ -836,30 +836,31 @@ public class SearchServlet extends HttpServlet {
 				Future<Integer> getNonElevatedItems = null;
 
 				logger.debug("number of elevated found:" + numElevateFound);
-				nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
-				paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
-				nameValuePairs.remove(nvp);
-				// TODO: retrieve EDP list from task 1B, then just pass those that fit the criteria as fq
-				nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(numElevateFound > requestedRows ?requestedRows:numElevateFound));
-				nameValuePairs.add(nvp);
-				addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
 
 				// check if elevateList is to be included in this batch
 				if (bestMatchFlag && numElevateFound > startRow) {
-					// retrieve the elevate list
-					// TASK 2A
+
+					nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
+					paramMap.remove(SolrConstants.SOLR_PARAM_ROWS);
+					nameValuePairs.remove(nvp);
+
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(startRow + requestedRows));
+					nameValuePairs.add(nvp);
+					addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_ROWS, nvp);
+
 					nvp = paramMap.get(SolrConstants.SOLR_PARAM_START).get(0);
 					nameValuePairs.remove(nvp);
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow));
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0));
 					nameValuePairs.add(nvp);
-
+					
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					if (withFacetFlag) {
 						final List<ElevateResult> fElevatedList = elevatedList;
+						final int numElevate = numElevateFound - startRow > requestedRows? requestedRows:numElevateFound - startRow;
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getElevatedItems(getElevatedItemsParams, fElevatedList);
+								return solrHelper.getElevatedItems(getElevatedItemsParams, fElevatedList, numElevate);
 							}
 						});
 					} else {
