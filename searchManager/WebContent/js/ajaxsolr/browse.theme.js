@@ -637,8 +637,11 @@
 			var classSelector = id + i;
 			selection.append($('<div class="' + classSelector + ' farial fsize12 fDGray w220 padTB5 borderB wordwrap"><span class="lnk">'));
 			selection.find('.' + classSelector + ' span.lnk').append(items[i]);
-			selection.find('.' + classSelector + ' span.lnk a:not(#removeAll)').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
-			selection.find('.' + classSelector + ' span.lnk a#removeAll').addClass("fbold");
+			selection.find('.' + classSelector + ' span.lnk a:not(#removeAll):not(#removeMultiple)').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/btn_delete_big.jpg') + '" width="10" height="10" style="margin-right:5px">');
+			selection.find('.' + classSelector + ' span.lnk a#removeMultiple').prepend('<img src="' + AjaxSolr.theme('getAbsoluteLoc', 'images/icon_deleteFilter.png') + '" width="10" height="10" style="margin-right:5px">').addClass("fbold");
+			selection.find('.' + classSelector + ' span.lnk a#removeMultiple').parents('div.' + classSelector).addClass("alt marT5 borderT");
+			selection.find('.' + classSelector + ' span.lnk a#single').parents('div.' + classSelector).addClass("alt marT5 borderT");
+			selection.find('.' + classSelector + ' span.lnk a#multiple').addClass("padL10");
 		}
 
 		// For aesthetic, need to tag the last item
