@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.CNetFacetTemplate;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -229,16 +230,16 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	}
 
 	@Override
-	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException {
-		int numElevateFound = -1;
+	public int getCount(List<NameValuePair> requestParams) throws SearchException {
+		int numFound = -1;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			JSON tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			numElevateFound = ((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			numFound = ((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get number of elevated items" ,e);
+			throw new SearchException("Error occured while trying to get number of items" ,e);
 		}
-		return numElevateFound;
+		return numFound;
 	}
 
 	@Override
@@ -659,4 +660,25 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			}
 		}
 	}
+	
+	// TODO: implement
+	private List<DemoteResult> demotedList = null;
+	private List<String> expiredDemotedEDPs = null;
+	
+	@Override
+	public void setDemotedItems(List<DemoteResult> list) throws SearchException {
+		demotedList = list;
+	}
+	
+	@Override
+	public void setExpiredDemotedEDPs(List<String> list) throws SearchException {
+		expiredDemotedEDPs = list;
+	}
+
+	@Override
+	public int getDemotedItems(List<NameValuePair> requestParams, List<DemoteResult> demotedList, int reqRows) throws SearchException {
+		int addedRecords = 0;
+		return addedRecords;
+	}
+	
 }

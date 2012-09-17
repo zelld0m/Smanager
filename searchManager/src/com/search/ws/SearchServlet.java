@@ -815,7 +815,7 @@ public class SearchServlet extends HttpServlet {
 						getElevatedCount = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getElevatedCount(getElevatedCountParams);
+								return solrHelper.getCount(getElevatedCountParams);
 							}
 						});
 						tasks++;
@@ -834,7 +834,7 @@ public class SearchServlet extends HttpServlet {
 						getFacetElevatedCount = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getElevatedCount(getElevatedFacetCountParams);
+								return solrHelper.getCount(getElevatedFacetCountParams);
 							}
 						});
 						if (elevateValues.length() > 0) {

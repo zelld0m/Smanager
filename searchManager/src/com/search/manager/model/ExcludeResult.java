@@ -4,87 +4,24 @@ import java.util.Date;
 
 import com.search.manager.enums.MemberTypeEntity;
 
-public class ExcludeResult extends ModelBean {
+public class ExcludeResult extends SearchResult {
 
 	private static final long serialVersionUID = 6843636825614943522L;
-	
-	private StoreKeyword storeKeyword;
-	private String edp;
-	private Date expiryDate;
-	private MemberTypeEntity excludeEntity;
-	private RedirectRuleCondition condition;
-	private String memberId;
 	
 	public ExcludeResult() {
 	}
 	
-	public ExcludeResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
-		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
-			excludeEntity = MemberTypeEntity.FACET;
-			condition = new RedirectRuleCondition(edp);
-			if (storeKeyword != null) {
-				condition.setStoreId(storeKeyword.getStoreId());
-			}
-			this.edp = "";
-		} else {
-			excludeEntity = MemberTypeEntity.PART_NUMBER;
-			this.edp = edp;
-		}
-		this.storeKeyword= storeKeyword;
-		this.comment = comment;
-		this.createdBy = createdBy;
-		this.lastModifiedBy = lastModifiedBy;
-		this.expiryDate = expiryDate;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
-		this.memberId = memberId;
+	public ExcludeResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, 
+			Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
+		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDate, createdDate, lastModifiedDate, memberTypeId, memberId);
 	}
 	
-	public StoreKeyword getStoreKeyword() {
-		return storeKeyword;
-	}
-	
-	public void setStoreKeyword(StoreKeyword storeKeyword) {
-		this.storeKeyword = storeKeyword;
-	}
-
-	public Date getExpiryDate() {
-		return expiryDate;
-	}
-
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
-	}
-
-	public String getEdp() {
-		return edp;
-	}
-	
-	public void setEdp(String edp) {
-		this.edp = edp;
-	}
-
 	public MemberTypeEntity getExcludeEntity() {
-		return excludeEntity;
+		return getEntity();
 	}
 
 	public void setExcludeEntity(MemberTypeEntity excludeEntity) {
-		this.excludeEntity = excludeEntity;
+		setEntity(excludeEntity);
 	}
 
-	public RedirectRuleCondition getCondition() {
-		return condition;
-	}
-
-	public void setCondition(RedirectRuleCondition condition) {
-		this.condition = condition;
-	}
-
-	public String getMemberId() {
-		return memberId;
-	}
-
-	public void setMemberId(String memberId) {
-		this.memberId = memberId;
-	}
 }

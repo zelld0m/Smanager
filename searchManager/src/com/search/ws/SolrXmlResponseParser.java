@@ -23,6 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -108,19 +109,19 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 	}
 
 	@Override
-	public int getElevatedCount(List<NameValuePair> requestParams) throws SearchException {
-		int numElevateFound = -1;
+	public int getCount(List<NameValuePair> requestParams) throws SearchException {
+		int numFound = -1;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document elevateDoc = docBuilder.parse(solrResponse.getEntity().getContent());
 			// locate the result node and get the numFound attribute
-			numElevateFound = Integer.parseInt(elevateDoc.getElementsByTagName(SolrConstants.TAG_RESULT).item(0)
+			numFound = Integer.parseInt(elevateDoc.getElementsByTagName(SolrConstants.TAG_RESULT).item(0)
 					.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).getNodeValue());
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get number of elevated items" ,e);
+			throw new SearchException("Error occured while trying to get number of items" ,e);
 		}
-		return numElevateFound;
+		return numFound;
 	}
 
 	@Override
@@ -554,6 +555,26 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				} 
 			}
 		}
+	}
+
+	// TODO: implement
+	private List<DemoteResult> demotedList = null;
+	private List<String> expiredDemotedEDPs = null;
+	
+	@Override
+	public void setDemotedItems(List<DemoteResult> list) throws SearchException {
+		demotedList = list;
+	}
+	
+	@Override
+	public void setExpiredDemotedEDPs(List<String> list) throws SearchException {
+		expiredDemotedEDPs = list;
+	}
+
+	@Override
+	public int getDemotedItems(List<NameValuePair> requestParams, List<DemoteResult> demotedList, int reqRows) throws SearchException {
+		int addedRecords = 0;
+		return addedRecords;
 	}
 
 }
