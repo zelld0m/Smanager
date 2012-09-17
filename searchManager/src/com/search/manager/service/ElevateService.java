@@ -137,12 +137,13 @@ public class ElevateService{
 			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
 				e.setEdp(value);
 				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
+				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, "EDP:"+StringUtils.trim(value)) < 1);
 			} else {
 				e.setCondition(new RedirectRuleCondition(value));
 				e.setElevateEntity(MemberTypeEntity.FACET);
+				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
 			}
 
-			e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
 			if (e.isForceAdd()) {
 				result = 2;
 			}
