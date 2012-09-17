@@ -128,7 +128,8 @@
 								paramString += "&" + name + "=" + params[name][param];
 							}
 						}else{
-							paramString += "&" + name + "=" + params[name];
+							if(name.toLowerCase() !== "sort".toLowerCase())
+								paramString += "&" + name + "=" + params[name];
 						}
 					}
 
