@@ -184,25 +184,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	private int getForceAddCount(List<NameValuePair> requestParams) throws Exception {
 		HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 		JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
-		int forceAddCount = ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-		if (forceAddCount > 0) {
-			JSONArray facetNames = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).names();
-			for (int i = 0; i < facetNames.size(); i++) {
-				String facet = facetNames.getString(i);
-				JSONArray facetValues = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).names();
-				for (int j = 0; j < facetValues.size(); j++) {
-					String facetValue = facetValues.getString(j);
-					int origFacetCount = 0;
-					int facetCount = jsonResponse.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
-					try {
-						origFacetCount = initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).getInt(facetValue);
-					} catch (Exception ex) {
-					}
-					initialJson.getJSONObject(SolrConstants.TAG_FACET_COUNTS).getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(facet).put(facetValue, origFacetCount + facetCount);
-				}
-			}
-		}
-		return forceAddCount;
+		return ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
 	}
 	
 	@Override
@@ -213,7 +195,6 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
 			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
 			requestParams.add(new BasicNameValuePair("defType", "dismax"));
-			int numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
 			StringBuffer edpBuffer = new StringBuffer("EDP:(");
 			for (ElevateResult e : forceAddedList) {
 				if (MemberTypeEntity.PART_NUMBER == e.getElevateEntity()) {
@@ -225,7 +206,6 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, edpBuffer.toString());
 				requestParams.add(edpNvp);
 				forceAddCount = getForceAddCount(requestParams);
-				numFound += forceAddCount;
 				result += forceAddCount;
 				requestParams.remove(edpNvp);
 			}
@@ -239,11 +219,9 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 				BasicNameValuePair facetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
 				requestParams.add(facetNvp);
 				forceAddCount = getForceAddCount(requestParams);
-				numFound += forceAddCount;
 				result += forceAddCount;
 				requestParams.remove(facetNvp);
 			}
-			((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.ATTR_NUM_FOUND, numFound);
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get template counts" ,e);
 		}

@@ -19,7 +19,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -456,38 +455,7 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 		Document doc = docBuilder.parse(solrResponse.getEntity().getContent());
 		Node resultNode2 = locateElementNode(locateElementNode(doc, SolrConstants.TAG_RESPONSE),
 				SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
-		int forceAddCount = Integer.parseInt(resultNode2.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).getNodeValue());
-		if (forceAddCount > 0) {
-			Node facetFields = locateElementNode(locateElementNode(locateElementNode(doc,SolrConstants.TAG_RESPONSE),
-												SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS),
-													SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS);
-			if (facetFields != null) {
-				NodeList children = facetFields.getChildNodes();
-				for (int i = 0, size = children.getLength(); i < size; i++) {
-					Node currentNode = children.item(i);
-					String facet = currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
-					Node origFacetNode = locateElementNode(locateElementNode(locateElementNode(locateElementNode(mainDoc,SolrConstants.TAG_RESPONSE), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS),
-							SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS),SolrConstants.TAG_LIST,facet);
-					NodeList facetChildren = currentNode.getChildNodes();
-					for (int j = 0, size2 = facetChildren.getLength(); j < size2; j++) {
-						Node curNode = facetChildren.item(j);
-						String facetVal =curNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
-						int curFacetCnt = Integer.parseInt(curNode.getTextContent());
-						Node origFacet = locateElementNode(origFacetNode,SolrConstants.TAG_INT, facetVal);
-						if (origFacet == null) {
-							Element element = mainDoc.createElement(SolrConstants.TAG_INT);
-							element.setAttribute(SolrConstants.TAG_INT, facetVal);
-							element.setTextContent(String.valueOf(curFacetCnt));
-							origFacetNode.appendChild(element);
-						} else {
-							int origFacetCnt = Integer.parseInt(origFacet.getTextContent());
-							origFacet.setTextContent(String.valueOf(curFacetCnt + origFacetCnt));
-						}
-					}
-				}
-			}
-		}
-		return forceAddCount;
+		return Integer.parseInt(resultNode2.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).getNodeValue());
 	}
 	@Override
 	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
@@ -497,7 +465,6 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
 			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
 			requestParams.add(new BasicNameValuePair("defType", "dismax"));
-			int numFound = Integer.parseInt(resultNode.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).getNodeValue());
 			StringBuffer edpBuffer = new StringBuffer("EDP:(");
 			for (ElevateResult e : forceAddedList) {
 				if (MemberTypeEntity.PART_NUMBER == e.getElevateEntity()) {
@@ -510,7 +477,6 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, edpBuffer.toString());
 				requestParams.add(edpNvp);
 				forceAddCount = getForceAddCount(requestParams);
-				numFound += forceAddCount;
 				result += forceAddCount;
 				requestParams.remove(edpNvp);
 			}
@@ -524,11 +490,9 @@ public class SolrXmlResponseParser implements SolrResponseParser {
 				BasicNameValuePair facetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
 				requestParams.add(facetNvp);
 				forceAddCount = getForceAddCount(requestParams);
-				numFound += forceAddCount;
 				result += forceAddCount;
 				requestParams.remove(facetNvp);
 			}
-			resultNode.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).setNodeValue(String.valueOf(numFound));
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get template counts" ,e);
 		}

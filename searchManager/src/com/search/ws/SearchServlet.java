@@ -717,6 +717,33 @@ public class SearchServlet extends HttpServlet {
 			
 			solrHelper.setActiveRules(activeRules);
 
+
+			StringBuffer fqBuff = new StringBuffer();
+			NameValuePair fqJoinQueryNvp = null;
+			NameValuePair kwBackupNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
+			NameValuePair kwJoinQueryNvp = null;
+			if (forceAddList.size() > 0) {
+				for (ElevateResult e : forceAddList) {
+					if (fqBuff.length() > 0) {
+						fqBuff.append(" OR ");
+					}
+					if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+						fqBuff.append("EDP:").append(e.getEdp());
+					} else {
+						fqBuff.append(e.getCondition().getConditionForSolr());
+					}
+				}
+				nameValuePairs.remove(dtNvp);
+				nameValuePairs.remove(fqNvp);
+				fqJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, fqNvp.getValue() + " OR " + fqBuff.toString());
+				nameValuePairs.add(fqJoinQueryNvp);
+				nameValuePairs.remove(kwBackupNvp);
+				NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
+				StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
+				kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+				nameValuePairs.add(kwJoinQueryNvp);
+			}
+
 			// TASK 1A
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {
@@ -737,29 +764,12 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			if (forceAddList.size() > 0) {
-				Future<Integer> getForceAddTemplateCount = null;
-				NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
-				nameValuePairs.remove(kwNvp);
-				final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-				getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
-					@Override
-					public Integer call() throws Exception {
-						return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
-					}
-				});
-				tasks++;
-				if (kwNvp != null) {
-					nameValuePairs.add(kwNvp);
-				}
-
-				while (tasks > 0) {
-					Future<Integer> completed = completionService.take();
-					if  (completed.equals(getForceAddTemplateCount)) {
-						numForceAddFound = completed.get();
-						logger.debug("Results found: " + numFound);
-					}
-					tasks--;
-				}
+				nameValuePairs.remove(fqJoinQueryNvp);
+				nameValuePairs.remove(kwJoinQueryNvp);
+				nameValuePairs.add(kwBackupNvp);
+				nameValuePairs.add(dtNvp);
+				nameValuePairs.add(fqNvp);
+				
 			}
 
 			// TODO: optional remove the spellcheck parameters for succeeding requests
@@ -767,6 +777,30 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
 			if (bestMatchFlag) {
+				if (forceAddList.size() > 0) {
+					Future<Integer> getForceAddTemplateCount = null;
+					nameValuePairs.remove(kwBackupNvp);
+					final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+					getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
+						@Override
+						public Integer call() throws Exception {
+							return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
+						}
+					});
+					tasks++;
+					if (kwBackupNvp != null) {
+						nameValuePairs.add(kwBackupNvp);
+					}
+
+					while (tasks > 0) {
+						Future<Integer> completed = completionService.take();
+						if  (completed.equals(getForceAddTemplateCount)) {
+							numForceAddFound = completed.get();
+							logger.debug("Results found: " + numFound);
+						}
+						tasks--;
+					}
+				}
 				Future<Integer> getElevatedCount = null;
 				Future<Integer> getFacetElevatedCount = null;
 				if (requestedRows != 0 && (elevateValues.length() > 0 || elevateFacetValues.length() > 0)) {
@@ -912,28 +946,16 @@ public class SearchServlet extends HttpServlet {
 					nameValuePairs.add(nvp);
 					
 					if (!bestMatchFlag) {
-						StringBuffer fqBuff = new StringBuffer();
 						if (forceAddList.size() > 0) {
-							for (ElevateResult e : forceAddList) {
-								if (fqBuff.length() > 0) {
-									fqBuff.append(" OR ");
-								}
-								if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
-									fqBuff.append("EDP:").append(e.getEdp());
-								} else {
-									fqBuff.append(e.getCondition().getConditionForSolr());
-								}
-							}
 							nameValuePairs.remove(dtNvp);
 							nameValuePairs.remove(fqNvp);
 							fqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, fqNvp.getValue() + " OR " + fqBuff.toString());
 							nameValuePairs.add(fqNvp);
-							NameValuePair kwNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
-							nameValuePairs.remove(kwNvp);
+							nameValuePairs.remove(kwBackupNvp);
 							NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
-							StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v=").append(kwNvp.getValue()).append("}\"");
-							kwNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
-							nameValuePairs.add(kwNvp);
+							StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
+							kwBackupNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+							nameValuePairs.add(kwBackupNvp);
 						}
 					}
 
