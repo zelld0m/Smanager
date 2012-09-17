@@ -72,6 +72,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleVersioningServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/LinguisticsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
