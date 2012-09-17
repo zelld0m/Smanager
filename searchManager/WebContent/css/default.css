@@ -146,7 +146,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .padT20, .padT20		{padding-top:20px !important}
 .cssReset .padT35, .padT35		{padding-top:35px !important}
 .cssReset .padT40, .padT40		{padding-top:40px !important}
-.cssReset .padTB2				{padding:2px 0}
+.cssReset .padTB2, .padTB2		{padding:2px 0}
 .cssReset .padTB4				{padding:4px 0}
 .cssReset .padTB5				{padding:5px 0}
 .cssReset .padTB7				{padding:7px 0}

@@ -33,16 +33,17 @@
 	
 	AjaxSolr.theme.prototype.productForceAdd = function(){
 		var template = '';
-		template += '<div>';
+		template += '<div class="w250">';
 		template += '	<div>';
 		template += '		<ul class="listItemInfo">';
-		template += '			<li><label class="floatL fbold title">SKU #: </label><span id="sku"></span></li>';
-		template += '			<li><label class="floatL fbold title">Keyword: </label><input type="text" id="keyword"></li>';
-		template += '			<li><label class="floatL fbold title">Valid Until: </label><input type="text" id="validityDate" style="width:65px"></li>';
-		template += '			<li><label class="floatL fbold title">Comments:</label><textarea id="comment"></textarea></li>';
+		template += '			<li><label class="floatL fbold title w100 padTB2">SKU #: </label><label class="floatL w100 padTB2"><span id="sku"></span></label></li>';
+		template += '			<li><label class="floatL fbold title w100 padTB2">Keyword: </label><label class="floatL w100 padTB2"><input type="text" id="keyword"></label></li>';
+		template += '			<li><label class="floatL fbold title w100 padTB2">Valid Until: </label><label class="floatL w100 padTB2"><input type="text" id="validityDate" style="width:65px"></label></li>';
+		template += '			<li><label class="floatL fbold title padTB2">Comments:</label><label class="floatL padTB2"><textarea id="comment" class="w240"></textarea></label></li>';
 		template += '		</ul>';
+		template += '		<div class="clearB"></div>';
 		template += '	</div>';
-		template += '	<div class="marB10 txtAC">';
+		template += '	<div class="marT10 marB10 txtAR">';
 		template += '		<a class="buttons btnGray clearfix" href="javascript:void(0);" id="addBtn"><div class="buttons fontBold">Force Add</div></a>';
 		template += '		<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
 		template += '	</div>';
