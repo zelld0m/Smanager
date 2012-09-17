@@ -48,5 +48,7 @@ ul.ui-widget-content			{ margin-left:0 !important }
 .ui-widget-content  { background: #fff !important }
 .ui-button			{ border:1px solid #d3d3d3 !important; top:0; left:-1px }
 
+.listItemInfo li img.ui-datepicker-trigger { margin-left:5px; position:relative; top:3px }
+
 
 
