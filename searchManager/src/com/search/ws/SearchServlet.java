@@ -280,7 +280,7 @@ public class SearchServlet extends HttpServlet {
 			// default parameters for the core
 			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(coreName)) {
 				if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
-					if(pair.getName().equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+					if(fqNvp == null && pair.getName().equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
 						fqNvp = pair;
 					} 
 					nameValuePairs.add(pair);
@@ -315,8 +315,8 @@ public class SearchServlet extends HttpServlet {
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			// redirect 
+			RedirectRule redirect = null;
 			try {
-				RedirectRule redirect = null;
 				List<String> keywordHistory = new ArrayList<String>();
 				while (true) { // look for change keyword
 					if (StringUtils.isBlank(keyword)) {
@@ -395,8 +395,8 @@ public class SearchServlet extends HttpServlet {
 						if (builder.length() > 0) {
 							builder.delete(builder.length() - 4, builder.length());
 						}
-						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-						nameValuePairs.add(nvp);
+						fqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+						nameValuePairs.add(fqNvp);
 						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
@@ -704,6 +704,7 @@ public class SearchServlet extends HttpServlet {
 
 
 			StringBuffer fqBuff = new StringBuffer();
+			StringBuffer kwBuff = null;
 			NameValuePair fqJoinQueryNvp = null;
 			NameValuePair kwBackupNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 			NameValuePair kwJoinQueryNvp = null;
@@ -724,8 +725,13 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(fqJoinQueryNvp);
 				nameValuePairs.remove(kwBackupNvp);
 				NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
-				StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
-				kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+				if (redirect !=null && redirect.isRedirectFilter()) {
+					kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+					kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString() + " OR " + fqNvp.getValue());
+				} else {
+					kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+					kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+				}
 				nameValuePairs.add(kwJoinQueryNvp);
 			}
 
@@ -766,6 +772,9 @@ public class SearchServlet extends HttpServlet {
 				if (forceAddList.size() > 0) {
 					Future<Integer> getForceAddTemplateCount = null;
 					nameValuePairs.remove(kwBackupNvp);
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.remove(fqNvp);
+					}
 					final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 					getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
 						@Override
@@ -776,6 +785,9 @@ public class SearchServlet extends HttpServlet {
 					tasks++;
 					if (kwBackupNvp != null) {
 						nameValuePairs.add(kwBackupNvp);
+					}
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.add(fqNvp);
 					}
 
 					while (tasks > 0) {
@@ -867,6 +879,10 @@ public class SearchServlet extends HttpServlet {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0));
 					nameValuePairs.add(nvp);
 					
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.remove(fqNvp);
+					}
+
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					if (withFacetFlag) {
 						final List<ElevateResult> fElevatedList = elevatedList;
@@ -884,6 +900,9 @@ public class SearchServlet extends HttpServlet {
 								return solrHelper.getElevatedItems(getElevatedItemsParams);
 							}
 						});
+					}
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.add(fqNvp);
 					}
 					tasks++;
 					requestedRows -= (numElevateFound - startRow);
@@ -931,9 +950,14 @@ public class SearchServlet extends HttpServlet {
 							nameValuePairs.add(fqNvp);
 							nameValuePairs.remove(kwBackupNvp);
 							NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
-							StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
-							kwBackupNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
-							nameValuePairs.add(kwBackupNvp);
+							if (redirect !=null && redirect.isRedirectFilter()) {
+								kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+								kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString() + " OR " + fqNvp.getValue());
+							} else {
+								kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+								kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+							}
+							nameValuePairs.add(kwJoinQueryNvp);
 						}
 					}
 
