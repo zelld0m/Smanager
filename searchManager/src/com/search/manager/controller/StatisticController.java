@@ -44,4 +44,15 @@ public class StatisticController {
 		}
 		return "statistic/zeroresult";
 	}
+	
+	@RequestMapping(value="/reportgenerator/{store}")
+	public String reportGenerator(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+		model.addAttribute("store", store);
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Report Generator");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		return "statistic/reportgenerator";
+	}
 }

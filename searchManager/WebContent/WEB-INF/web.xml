@@ -170,6 +170,7 @@
 				com.search.manager.service.MigratorService,
 				com.search.manager.service.RedirectService,
 				com.search.manager.service.RelevancyService,
+				com.search.manager.service.ReportGeneratorService,
 				com.search.manager.service.SynonymService,
 				com.search.manager.service.StatisticService,
 				com.search.manager.service.StoreKeywordService,
