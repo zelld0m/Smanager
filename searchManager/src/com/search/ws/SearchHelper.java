@@ -193,11 +193,16 @@ public class SearchHelper {
 			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
 			int size = productList.size();
-			StringBuilder edps = new StringBuilder("EDP:(");
+			StringBuilder edps = new StringBuilder();
 			for (Product product: productList.values()) {
 				edps.append(" ").append(product.getEdp());
 			}
-			edps.append(")");
+
+			if (edps.toString().trim().length() == 0) {
+				return;
+			} else {
+				edps.insert(0, "EDP:(").append(")");
+			}
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q", edps.toString()));
@@ -211,7 +216,7 @@ public class SearchHelper {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
 				}
 			}
-
+			
 			/* JSON */
 			JSONObject initialJson = null;
 			JsonSlurper slurper = null;
