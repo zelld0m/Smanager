@@ -268,7 +268,7 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 .cssReset .tblAlpha th.hl 		{ background:url(images/bg_thBlue.gif) repeat-x #0560a6; }
 .cssReset .tblAlpha td 			{ border:1px solid #bdbdbd; font-size:11px; padding:8px 5px 5px 5px; border-bottom:1px solid #c7c7c7; color:#44444; vertical-align:top}
 .cssReset .tblAlpha td.alt, 
-.cssReset .alt, .alt			{ background:#ebebeb }
+.cssReset .alt, .alt 			{ background:#ebebeb }
 .cssReset .tblAlpha td.hl		{ background:#e0f1fb }
 .cssReset .tblAlpha td.graph	{ padding:-3px 5px 8px 5px; }
 .cssReset .tblAlpha td.vtop 	{ vertical-align:top; }

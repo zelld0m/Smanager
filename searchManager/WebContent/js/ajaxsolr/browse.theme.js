@@ -9,7 +9,7 @@
 		template += '	<img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="' + GLOBAL_contextPath + '/js/ajaxsolr/images/btn_GO.png">';
 		template += '</a> '; 
 		template += '<div class="searchBoxHolder w150 floatR marT1 marR8">';
-		template += '	<input type="text" class="farial fsize12 fgray pad3 w150" id="keyword" name="keyword">';
+		template += '	<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">';
 		template += '</div>'; 
 		template += '<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none">';
 		template += '	<input id="keepRefinement" name="keepRefinement" type="checkbox">';
@@ -52,15 +52,14 @@
 	};
 	
 	AjaxSolr.theme.prototype.cnetFacets = function () {
-		var output  = '<div class="clearB floatL w240">';
-		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-top:27px; margin-bottom:8px">Category</div>';
+		var output  = '<div class="clearB floatL w240 marB27">';
+		output += '<div class="facetHeader farial fsize16 fwhite" style="padding-left:10px; padding-top:7px; margin-bottom:8px">Category</div>';
 		output += '<div class="clearB w230 padL10"></div>';  
-		output += '</div>';
-
 		output +='<div style="width:220px; margin:5px auto">';
 		output +='	<ul id="facetHierarchy" class="itemCatList">';
 		output +='</ul>';
 		output +='</div>';
+		output += '</div>';
 
 		return $(output);
 	};
