@@ -148,6 +148,9 @@ public class ElevateService{
 			result  = daoService.addElevateResult(e);
 			if (result > 0 && !StringUtils.isBlank(comment)) {
 				addComment(comment, e);
+				if (e.isForceAdd()) {
+					result = 2;
+				}
 			}
 			if (e.isForceAdd()) {
 				result = 2;
