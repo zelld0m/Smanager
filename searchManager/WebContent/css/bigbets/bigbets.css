@@ -239,5 +239,5 @@ div.listView ul li div.validityDate { float:left; width:33% }
 
 
 /* check box style alignment */
-.checkBoxAlignment .firerift-style { margin-top:-3px !important; margin-left:4px !important }
+.normal-forceadd .firerift-style { margin-top:-3px !important; margin-left:4px !important; width: 80px !important }
 
