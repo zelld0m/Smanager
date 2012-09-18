@@ -3,6 +3,7 @@ package com.search.manager.aop;
 import java.util.Date;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
-import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
@@ -177,6 +177,11 @@ public class AuditInterceptor {
 				break;
 			case update:
 				message = new StringBuilder("Elevating ID[%1$s] to position[%4$s]");
+			
+				if (e.isForceAdd()!=null){
+					message.append(BooleanUtils.isTrue(e.getForceAdd())? "; set to force add" : "; remove force add");
+				}
+				
 				break;
 			case delete:
 				message = new StringBuilder("Removing elevated entry ID[%1$s]");
