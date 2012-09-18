@@ -63,6 +63,7 @@ public interface DaoCacheService {
 	public boolean setForceReload(Store store);
 	public boolean setForceReloadElevate(Store store);
 	public boolean setForceReloadExclude(Store store);
+	public boolean setForceReloadDemote(Store store);
 	public boolean setForceReloadRedirect(Store store);
 	public boolean setForceReloadRelevancy(Store store);
 	

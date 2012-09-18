@@ -688,6 +688,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(new BasicNameValuePair("gui", "1"));
 			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
