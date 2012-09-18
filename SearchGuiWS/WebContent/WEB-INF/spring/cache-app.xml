@@ -53,6 +53,7 @@
 		<beans:property name="keywordCacheDao" ref="keywordCacheDao"/>
 		<beans:property name="elevateCacheDao" ref="elevateCacheDao"/>
 		<beans:property name="excludeCacheDao" ref="excludeCacheDao"/>
+		<beans:property name="demoteCacheDao" ref="demoteCacheDao"/>
 		<beans:property name="redirectCacheDao" ref="redirectCacheDao"/>
 		<beans:property name="relevancyCacheDao" ref="relevancyCacheDao"/>
     </beans:bean>

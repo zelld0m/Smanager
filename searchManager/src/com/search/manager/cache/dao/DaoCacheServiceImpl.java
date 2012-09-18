@@ -66,6 +66,10 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	public void setExcludeCacheDao(ExcludeCacheDao excludeCacheDao) {
 		this.excludeCacheDao = excludeCacheDao;
 	}
+	
+	public void setDemoteCacheDao(DemoteCacheDao demoteCacheDao) {
+		this.demoteCacheDao = demoteCacheDao;
+	}
 
 	public void setRedirectCacheDao(RedirectCacheDao redirectCacheDao) {
 		this.redirectCacheDao = redirectCacheDao;
