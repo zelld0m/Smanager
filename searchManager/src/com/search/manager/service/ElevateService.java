@@ -44,7 +44,7 @@ public class ElevateService{
 	@RemoteMethod
 	public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
-		
+
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		elevate.setMemberId(memberId);
@@ -57,30 +57,30 @@ public class ElevateService{
 		if(elevate==null){
 			return changes;
 		}
-		
+
 		if (position!=elevate.getLocation()){
 			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
-		
+
 		if (StringUtils.isNotBlank(comment)){
 			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
 		}
-		
+
 		if (StringUtils.isNotBlank(condition)){
 			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
-		
+
 		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
-		
+
 		return changes;
 	}
 
 	@RemoteMethod
 	public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
-		
+
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		elevate.setMemberId(memberId);
@@ -95,11 +95,11 @@ public class ElevateService{
 		if(elevate==null){
 			return changes;
 		}
-		
+
 		if (position!=elevate.getLocation()){
 			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
-		
+
 		if (StringUtils.isNotBlank(comment)){
 			try {
 				addComment(comment,elevate);
@@ -108,43 +108,36 @@ public class ElevateService{
 				logger.error("Error adding comment in updateElevateFacet()",e);
 			}
 		}
-		
+
 		if (!rrCondition.getCondition().equals(elevate.getCondition().getCondition())){
 			changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
-		
+
 		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
-		
+
 		return changes;
 	}
-	
-	@RemoteMethod
-	public int addElevate(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
+
+	public int addProductItem(String keyword, String edp, int sequence, String expiryDate, String comment, boolean forceAdd) {
 		int result = -1;
 		try {
-			logger.info(String.format("%s %s %s %d %s %s", keyword, memberTypeId, value, sequence, expiryDate, comment));
+			logger.info(String.format("%s %s %d %s %s", keyword, edp, sequence, expiryDate, comment));
 			String store = UtilityService.getStoreName();
 
-			ElevateResult e = new ElevateResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
+
+			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
+
 			e.setLocation(sequence);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
-			
-			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
-				e.setEdp(value);
-				e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
-				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, "EDP:"+StringUtils.trim(value)) < 1);
-			} else {
-				e.setCondition(new RedirectRuleCondition(value));
-				e.setElevateEntity(MemberTypeEntity.FACET);
-				e.setForceAdd(daoService.getFacetCount(UtilityService.getServerName(), store, keyword, StringUtils.trim(value)) < 1);
-			}
+			e.setEdp(edp);
+			e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
+			e.setForceAdd(forceAdd);
 
-			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 			result  = daoService.addElevateResult(e);
 			if (result > 0) {
 				if (!StringUtils.isBlank(comment)) {
@@ -155,15 +148,26 @@ public class ElevateService{
 				}
 			}
 		} catch (DaoException e) {
-			logger.error("Failed during addElevate()",e);
+			logger.error("Failed during addProductItem()",e);
 		}
 		return result;
 
 	}
 
+
+	@RemoteMethod
+	public int addProductItemForceAdd(String keyword, String edp, int sequence, String expiryDate, String comment) {
+		return addProductItem(keyword, edp, sequence, expiryDate, comment, true);
+	}
+
+	@RemoteMethod
+	public int addProductItem(String keyword, String edp, int sequence, String expiryDate, String comment) {
+		return addProductItem(keyword, edp, sequence, expiryDate, comment, false);
+	}
+
 	@RemoteMethod
 	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, int sequence, String expiryDate, String comment, String[] partNumbers) {
-		
+
 		logger.info(String.format("%s %s %d", keyword, partNumbers, sequence));
 		HashMap<String, List<String>> resultMap = new HashMap<String, List<String>>();
 
@@ -174,14 +178,14 @@ public class ElevateService{
 		resultMap.put("PASSED", passedList);
 		resultMap.put("FORCED", forcedList);
 		resultMap.put("FAILED", failedList);
-		
+
 		String server = UtilityService.getServerName();
 		String store = UtilityService.getStoreName();
-		
+
 		int count = 0;
 		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
 		comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
-			
+
 		sequence = (sequence==0)? 1: sequence;
 		for(String partNumber: partNumbers){
 			count = 0;
@@ -210,7 +214,7 @@ public class ElevateService{
 						}
 					}
 				} else {
-					
+
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
@@ -231,7 +235,7 @@ public class ElevateService{
 
 	@RemoteMethod
 	public String addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		
+
 		String result = "FAILED";
 		try {
 			String server = UtilityService.getServerName();
@@ -286,12 +290,12 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, comment));
 			String store = UtilityService.getStoreName();
-			
+
 			if(StringUtils.isNotBlank(comment)){
 				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
 				comment = comment.replaceAll("%%commentor%%", UtilityService.getUsername());
 			}
-			
+
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
@@ -322,7 +326,7 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %d", keyword, memberId, sequence));
 			ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreName(), keyword), memberId);
-		
+
 			try {
 				elevate = daoService.getElevateItem(elevate);
 			} catch (DaoException e) {
@@ -347,7 +351,7 @@ public class ElevateService{
 		try {
 			logger.info(String.format("%s %s %b", keyword, memberId, forceAddFlag));
 			ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreName(), keyword), memberId);
-		
+
 			try {
 				elevate = daoService.getElevateItem(elevate);
 			} catch (DaoException e) {
@@ -425,7 +429,7 @@ public class ElevateService{
 		}
 		return null;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getActiveElevatedProducts(String keyword, int page,int itemsPerPage) {
 		try {
@@ -588,7 +592,7 @@ public class ElevateService{
 		}
 		return result;
 	}
-	
+
 	public DaoService getDaoService() {
 		return daoService;
 	}

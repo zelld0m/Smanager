@@ -161,20 +161,28 @@
 							
 							content.find('#addBtn').off().on({
 								click: function(e){
+									var currKeyword = $.trim(self.manager.store.values('q'));
 									var keyword = $.trim(e.data.content.find('#keyword').val());
 									var validityDate = $.trim(e.data.content.find('#validityDate').val());
 									var comment = $.trim(e.data.content.find('#comment').val());
 									
-									if(validateGeneric("Keyword", keyword, 2)){
-										ElevateServiceJS.addElevate(keyword, "PART_NUMBER", e.data.doc["EDP"], 1, validityDate, comment, {
-											callback:function(data){
-												showActionResponse(data, "add", "SKU#: " + e.data.doc["DPNo"] + " in " + keyword);
-											},
-											postHook: function(){
-												self.manager.doRequest();
-											}
-										});
+									if(!validateGeneric("Keyword", keyword, 2)){
+										return
 									}
+									
+									if (e.data.doc["ElevateType"] === "PART_NUMBER" && keyword.toLowerCase() === currKeyword.toLowerCase()){
+										jAlert("SKU# " + e.data.doc["DPNo"] + " is already elevated at position " + e.data.doc["Elevate"]);
+										return
+									}
+									
+									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["EDP"], 1, validityDate, comment, {
+										callback:function(data){
+											showActionResponse(data, "force add", "SKU#: " + e.data.doc["DPNo"] + " in " + keyword);
+										},
+										postHook: function(){
+											self.manager.doRequest();
+										}
+									});
 								}
 							},{content: content, doc: doc});
 							
@@ -596,7 +604,7 @@
 											});
 									}else{
 										//add elevation
-										ElevateServiceJS.addElevate(keyword, 'PART_NUMBER', doc.EDP, position, expiryDate, comment, {
+										ElevateServiceJS.addProductItem(keyword, doc.EDP, position, expiryDate, comment, {
 											callback : function(event){
 												maxPosition++;
 												needRefresh = true;
