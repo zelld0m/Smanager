@@ -127,10 +127,10 @@
 				$li.find('.firerift-style').removeClass("off").removeClass("on");
 				
 				if($item["forceAdd"]) {
-					$li.find('input#setForceAdd').prop({checked:true});
+					$li.find('input#setForceAdd').checked=true;
 					$li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
 				}else{
-					$li.find('input#setForceAdd').prop({checked:false});
+					$li.find('input#setForceAdd').checked=false;
 					$li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
 				}
 				
@@ -140,10 +140,19 @@
 							e.preventDefault();
 							return;
 						}
-						console.log(e.data.li.find('input#setForceAdd').is(":checked"));
+					
+						ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], e.data.item["memberId"], e.data.li.find('input#setForceAdd').is(":checked"), {
+							callback:function(data){
+								showActionResponse(data, "update force add", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+								self.populateRuleItem(self.selectedRulePage);
+							},
+							preHook:function(){
+								self.preShowRuleContent();
+							}
+						});
 					},
 					mouseenter: showHoverInfo
-				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, li: $li});
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item, li: $li});
 				
 				// Force Add Color Coding
 				if($item["foundFlag"] && !$item["forceAdd"]){
