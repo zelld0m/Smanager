@@ -24,7 +24,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
+import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.SolrRequestDispatcher;
 
 public class SearchHelper {
@@ -458,6 +460,163 @@ public class SearchHelper {
 		return edp;
 	}
 
+	public static void getProductViaSim(String server, String storeId, String keyword, ElevateProduct product) {
+		String edp = product.getEdp();
+		try {
+			ConfigManager configManager = ConfigManager.getInstance();
+
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+			String core = configManager.getStoreParameter(storeId, "core");
+			List<NameValuePair> params = configManager.getDefaultSolrParameters(core);
+			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
+
+			// TODO: replace qt with relevancy
+			String qt = configManager.getStoreParameter(storeId, "qt");
+			if (StringUtils.isEmpty(qt)) {
+				qt = "standard";
+			}
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?").replace("http://",PropsUtils.getValue("browsejssolrurl"));
+
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			NameValuePair nvp = new BasicNameValuePair("q", keyword); 
+			nameValuePairs.add(nvp);
+			nameValuePairs.add(new BasicNameValuePair("fl", fields));
+			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("fq", "EDP:" + edp));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(params.get(0));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p: nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+
+			/* JSON */
+			JSONObject initialJson = null;
+			JsonSlurper slurper = null;
+			JSONArray resultArray = null;
+
+			// send solr request
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+			slurper = new JsonSlurper(jsonConfig);
+			initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+
+			// locate the result node
+			resultArray = ((JSONObject)initialJson).getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
+			if (resultArray.size() > 0) {
+				product.setFoundFlag(true);
+			} else {
+				product.setFoundFlag(false);
+				nameValuePairs.remove(nvp);
+				nvp = new BasicNameValuePair("q", "");
+				nameValuePairs.add(nvp);
+				solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+				jsonConfig = new JsonConfig();
+				jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+				slurper = new JsonSlurper(jsonConfig);
+				initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+
+				// locate the result node
+				resultArray = ((JSONObject)initialJson).getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
+			}
+			if (resultArray.size() > 0) {
+				JSONObject json = resultArray.getJSONObject(0);
+				@SuppressWarnings("unchecked")
+				Set<String> keys = (Set<String>)json.keySet();
+				for (String key: keys) {
+					String value = json.getString(key);
+					if ("DPNo".equals(key)) {
+						product.setDpNo(value);
+					}
+					else if ("MfrPN".equals(key)) {
+						product.setMfrPN(value);
+					}
+					else if ("Manufacturer".equals(key)) {
+						product.setManufacturer(value);
+					}
+					else if ("ImagePath".equals(key)) {
+						product.setImagePath(value);
+					}
+					else if (key.matches("(.*)_Name$")) {
+						product.setName(value);
+					}
+					else if (key.matches("(.*)_Description$")) {
+						product.setDescription(value);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr" , t);
+		}
+		
+	}
+
+	public static String getEdpViaSim(String server, String storeId, String keyword, String partNumber) {
+		String edp = "";
+		if (StringUtils.isEmpty(partNumber)) {
+			return edp;
+		}
+		try {
+			ConfigManager configManager = ConfigManager.getInstance();
+
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+			String core = configManager.getStoreParameter(storeId, "core");
+			List<NameValuePair> params = configManager.getDefaultSolrParameters(core);
+
+			// TODO: replace qt with relevancy
+			String qt = configManager.getStoreParameter(storeId, "qt");
+			if (StringUtils.isEmpty(qt)) {
+				qt = "standard";
+			}
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?").replace("http://",PropsUtils.getValue("browsejssolrurl"));
+
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("q", keyword));
+			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
+			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("fq", "DPNo:" + partNumber));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(params.get(0));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p: nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+
+			/* JSON */
+			JSONObject initialJson = null;
+			JsonSlurper slurper = null;
+			JSONArray resultArray = null;
+
+			// send solr request
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			JsonConfig jsonConfig = new JsonConfig();
+			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+			slurper = new JsonSlurper(jsonConfig);
+			initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+
+			// locate the result node
+			resultArray = ((JSONObject)initialJson)
+			.getJSONObject(SolrConstants.TAG_RESPONSE)
+			.getJSONArray(SolrConstants.TAG_DOCS);
+			if (resultArray.size() > 0) {
+				JSONObject json = resultArray.getJSONObject(0);
+				return json.getString("EDP");
+			}
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr" , t);
+		}
+		return edp;
+	}
+	
 	public static int getFacetCount(String server, String storeId, String keyword, String fqCondition) {
 		int count = 0;
 		try {
@@ -480,6 +639,56 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			if (logger.isDebugEnabled()) {
+				for (NameValuePair p: nameValuePairs) {
+					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
+				}
+			}
+			
+            /* JSON */
+            JSONObject initialJson = null;
+            JsonSlurper slurper = null;
+            
+            // send solr request
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+            JsonConfig jsonConfig = new JsonConfig();
+            jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
+    		slurper = new JsonSlurper(jsonConfig);
+    		initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+    		
+    		count = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+		} catch (Throwable t) {
+			logger.error("Error while retrieving from Solr" , t);
+		}
+		return count;
+	}
+
+	public static int getFacetCountViaSim(String server, String storeId, String keyword, String fqCondition) {
+		int count = 0;
+		try {
+			ConfigManager configManager = ConfigManager.getInstance();
+
+			// build the query
+			String facetName = configManager.getStoreParameter(storeId, "facet-name");
+
+			String core = configManager.getStoreParameter(storeId, "core");
+			List<NameValuePair> params = configManager.getDefaultSolrParameters(core);
+			// TODO: replace qt with relevancy
+			String qt = configManager.getStoreParameter(storeId, "qt");
+			if (StringUtils.isEmpty(qt)) {
+				qt = "standard";
+			}
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?").replace("http://",PropsUtils.getValue("browsejssolrurl"));
+			
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("q", keyword));
+			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
+			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
+			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());

@@ -10,6 +10,7 @@ public class ElevateResult extends SearchResult {
 
 	private Integer location;
 	private Boolean forceAdd;
+	private Boolean foundFlag;
 	
 	public ElevateResult() {
 		super();
@@ -64,4 +65,14 @@ public class ElevateResult extends SearchResult {
 	public void setForceAdd(Boolean forceAdd) {
 		this.forceAdd = forceAdd;
 	}
+
+	public Boolean getFoundFlag() {
+		return foundFlag;
+	}
+
+
+	public void setFoundFlag(Boolean foundFlag) {
+		this.foundFlag = foundFlag;
+	}
+
 }
