@@ -7,5 +7,5 @@
 	<classpathentry kind="lib" path="lib/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/searchManager.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container/searchManager"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
