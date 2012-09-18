@@ -211,7 +211,7 @@ public class DaoServiceImpl implements DaoService {
 			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
 				SearchHelper.getProductViaSim(serverName, storeId, keyword, ep);
 			} else {
-				e.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
+				ep.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
 			}
 			elevateList.add(ep);
 		}
