@@ -213,6 +213,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
@@ -487,6 +488,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fq", "EDP:" + edp));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
+			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
 			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
@@ -583,6 +585,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 			nameValuePairs.add(new BasicNameValuePair("fq", "DPNo:" + partNumber));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
+			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
