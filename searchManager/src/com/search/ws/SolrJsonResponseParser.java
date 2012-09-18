@@ -295,7 +295,7 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	}
 
 	@Override
-	public int getElevatedItems(List<NameValuePair> requestParams, List<ElevateResult> elevatedList, int reqRows) throws SearchException {
+	public int getElevatedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			JSONObject tmpExplain = null;
@@ -676,7 +676,13 @@ public class SolrJsonResponseParser implements SolrResponseParser {
 	}
 
 	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams, List<DemoteResult> demotedList, int reqRows) throws SearchException {
+	public int getDemotedItems(List<NameValuePair> requestParams) throws SearchException {
+		int addedRecords = 0;
+		return addedRecords;
+	}
+
+	@Override
+	public int getDemotedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException {
 		int addedRecords = 0;
 		return addedRecords;
 	}

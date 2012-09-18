@@ -395,29 +395,53 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Override
 	public boolean loadDemoteRules(Store store) throws DaoException,
 			DataException {
-		// TODO Auto-generated method stub
-		return false;
+		return demoteCacheDao.reload(store);
 	}
 
 	@Override
 	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+			//if(hasExactMatchKey(storeKeyword)){
+				CacheModel<DemoteResult> cache = demoteCacheDao.getCachedObject(storeKeyword);
+				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+					return cache.getList();					
+				}
+			//}
+		}catch (Exception e) {
+			logger.error(e,e);
+		}
+		return Collections.emptyList();
 	}
 
 	@Override
 	public boolean updateDemoteRules(DemoteResult demoteResult)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
+		try {	
+			return demoteCacheDao.reload(demoteResult);
+		}catch (Exception e) {
+			logger.error("Failed to update demoteResult", e);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean resetDemoteRule(StoreKeyword storeKeyword)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
-		return false;
+		return demoteCacheDao.reset(storeKeyword);
+	}
+
+	@Override
+	public boolean setForceReloadDemote(Store store) {
+		boolean result = demoteCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of demote rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of demote rules for : " + store);
+		}
+		return result;
 	}
 
 }

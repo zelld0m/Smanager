@@ -14,6 +14,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.RecordSet;
@@ -1029,46 +1030,208 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 
 	@Override
 	public boolean publishDemoteRules(String store, List<String> list) {
-		// TODO Auto-generated method stub
-		return false;
+		List<DemoteResult> demotedList = null;
+		DemoteResult demoteFilter = new DemoteResult();
+		boolean success = false;
+		
+			try {
+				// Create backup
+				fileService.createBackup(store,list,RuleEntity.DEMOTE);		
+				
+				for(String key : list){
+					DemoteResult delEl = new DemoteResult();
+					StoreKeyword sk = new StoreKeyword(store, key);
+					delEl.setStoreKeyword(sk);
+					daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+					
+					// retrieve staging data then push to prod
+					daoService.addKeyword(sk);
+					demoteFilter.setStoreKeyword(sk);
+					SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
+					demotedList = daoServiceStg.getDemoteResultList(criteria).getList();
+					
+					if(demotedList != null && demotedList.size() > 0){
+						for(DemoteResult e : demotedList){
+							daoService.addDemoteResult((DemoteResult) e);
+						}
+					}
+					// clear cache data to force a reload
+					daoCacheService.resetDemoteRule(sk); // prod
+				}
+				
+				Store s = new Store(store);
+				daoCacheService.reloadAllKeywords(s);
+				daoCacheService.setForceReloadDemote(s);
+				success = true;
+				
+			} catch (Exception e) {
+				logger.error(e,e);
+				success = false;
+			}
+			return success;
 	}
 
 	@Override
 	public Map<String, Boolean> publishDemoteRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String,Boolean> map = getKLMap(list);
+		List<DemoteResult> demotedList = null;
+		DemoteResult demoteFilter = new DemoteResult();
+		
+			try {
+				// Create backup
+				fileService.createBackup(store,list,RuleEntity.DEMOTE);		
+				
+				for(String key : list){
+					ElevateResult delEl = new ElevateResult();
+					StoreKeyword sk = new StoreKeyword(store, key);
+					delEl.setStoreKeyword(sk);
+					daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
+					
+					// retrieve staging data then push to prod
+					daoService.addKeyword(sk);
+					demoteFilter.setStoreKeyword(sk);
+					SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
+					demotedList = daoServiceStg.getDemoteResultList(criteria).getList();
+					
+					if(demotedList != null && demotedList.size() > 0){
+						for(DemoteResult e : demotedList){
+							daoService.addDemoteResult((DemoteResult) e);
+						}
+					}
+					// clear cache data to force a reload
+					daoCacheService.resetElevateRule(sk); // prod
+					map.put(key, true);
+				}
+				
+				Store s = new Store(store);
+				daoCacheService.reloadAllKeywords(s);
+				daoCacheService.setForceReloadElevate(s);
+				
+			} catch (Exception e) {
+				logger.error(e,e);
+			}
+			return map;
 	}
 
 	@Override
 	public boolean recallDemoteRules(String store, List<String> list) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success = false;
+		
+		try {	
+			Map<String,List<Object>> backUp = fileService.readBackup(store, list, RuleEntity.DEMOTE);
+			
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+						DemoteResult addEl = new DemoteResult();
+						addEl.setStoreKeyword(new StoreKeyword(store, key));
+						daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+						fileService.removeBackup(store, key, RuleEntity.DEMOTE);
+						success = true;
+						
+						try{
+							for(Object e : backUp.get(key)){	
+								daoService.addDemoteResult((DemoteResult) e);
+							}
+						}catch (Exception e) {logger.error(e,e);}
+						
+						daoCacheService.updateDemoteRules(addEl); // prod
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+			success = false;
+		}
+		return success;
 	}
 
 	@Override
 	public Map<String, Boolean> recallDemoteRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String,Boolean> map = getKLMap(list);
+		
+		try {	
+			Map<String,List<Object>> backUp = fileService.readBackup(store, list, RuleEntity.DEMOTE);
+			
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+					DemoteResult addEl = new DemoteResult();
+						addEl.setStoreKeyword(new StoreKeyword(store, key));
+						daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+						fileService.removeBackup(store, key, RuleEntity.DEMOTE);
+						
+						try{
+							for(Object e : backUp.get(key)){	
+								daoService.addDemoteResult((DemoteResult) e);
+							}
+						}catch (Exception e) {logger.error(e,e);}
+						
+						daoCacheService.updateDemoteRules(addEl); // prod
+						map.put(key, true);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return map;
 	}
 
 	@Override
 	public boolean loadDemoteRules(String store) {
-		// TODO Auto-generated method stub
+		try {
+			daoCacheService.setForceReloadDemote(new Store(store));
+			return daoCacheService.loadDemoteRules(new Store(store));
+		} catch (DataException e) {
+			logger.equals(e);
+		} catch (DaoException e) {
+			logger.equals(e);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean unpublishDemoteRules(String store, List<String> list) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success = false;
+		
+		try {	
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+						StoreKeyword sk = new StoreKeyword(store, key);
+						DemoteResult addEl = new DemoteResult();
+						addEl.setStoreKeyword(sk);
+						daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+						daoCacheService.resetDemoteRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadDemote(new Store(store));
+						success = true;
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+			success = false;
+		}
+		return success;
 	}
 
 	@Override
 	public Map<String, Boolean> unpublishDemoteRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String,Boolean> map = getKLMap(list);
+		
+		try {	
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+						StoreKeyword sk = new StoreKeyword(store, key);
+						DemoteResult addEl = new DemoteResult();
+						addEl.setStoreKeyword(sk);
+						daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+						daoCacheService.resetDemoteRule(sk); // clear sk entry in cache
+						daoCacheService.setForceReloadDemote(new Store(store));
+						map.put(key, true);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return map;
 	}
 }
