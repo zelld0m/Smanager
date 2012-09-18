@@ -43,9 +43,12 @@
 		
 		getSelectedFacetTemplateName: function(fq){
 			var facetTemplateName = "";
-			for (var i = 0, l = fq.length; i < l; i++) {
-				if(fq[i].indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
-					facetTemplateName = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
+			
+			if ($.isNotBlank(fq)){
+				for (var i = 0, l = fq.length; i < l; i++) {
+					if(fq[i].indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
+						facetTemplateName = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
+					}
 				}
 			}
 			
