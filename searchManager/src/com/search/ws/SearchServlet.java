@@ -187,6 +187,12 @@ public class SearchServlet extends HttpServlet {
 		return activeRule;
 	}
 	
+	private void addNameValuePairToList(List<NameValuePair> list, NameValuePair nvp) {
+		if (nvp != null) {
+			list.add(nvp);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
@@ -752,13 +758,15 @@ public class SearchServlet extends HttpServlet {
 
 			// TASK 1A - get total number of items
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-			getTemplateCountParams.remove(dtNvp);
-			getTemplateCountParams.remove(fqNvp);
-			getTemplateCountParams.add(forceAddFqNVP);
-			getTemplateCountParams.add(forceAddKeywordNVP);
-			getTemplateCountParams.remove(origKeywordNVP);
-			if (redirect !=null && redirect.isRedirectFilter()) {
-				getTemplateCountParams.remove(redirectFqNvp);
+			if (forceAddList.size() > 0) {
+				getTemplateCountParams.remove(dtNvp);
+				getTemplateCountParams.remove(fqNvp);
+				addNameValuePairToList(getTemplateCountParams, forceAddFqNVP);
+				addNameValuePairToList(getTemplateCountParams, forceAddKeywordNVP);
+				getTemplateCountParams.remove(origKeywordNVP);
+				if (redirect !=null && redirect.isRedirectFilter()) {
+					getTemplateCountParams.remove(redirectFqNvp);
+				}				
 			}
 			
 			getTemplateCount = completionService.submit(new Callable<Integer>() {
@@ -830,9 +838,9 @@ public class SearchServlet extends HttpServlet {
 							if (redirect != null && redirect.isRedirectFilter()) {
 								getDemotedCountParams.remove(redirectFqNvp);
 							}
-							getDemotedCountParams.add(forceAddFqNVP);
+							addNameValuePairToList(getDemotedCountParams, forceAddFqNVP);
+							addNameValuePairToList(getDemotedCountParams, forceAddKeywordNVP);
 							getDemotedCountParams.remove(origKeywordNVP);
-							getDemotedCountParams.add(forceAddKeywordNVP);
 						}
 						
 						getDemotedCount = completionService.submit(new Callable<Integer>() {
@@ -946,9 +954,9 @@ public class SearchServlet extends HttpServlet {
 						if (redirect != null && redirect.isRedirectFilter()) {
 							getNormalItemsParams.remove(redirectFqNvp);
 						}
-						getNormalItemsParams.add(forceAddFqNVP);
+						addNameValuePairToList(getNormalItemsParams, forceAddFqNVP);
+						addNameValuePairToList(getNormalItemsParams, forceAddKeywordNVP);
 						getNormalItemsParams.remove(origKeywordNVP);
-						getNormalItemsParams.add(forceAddKeywordNVP);
 					}
 
 					getNormalItems = completionService.submit(new Callable<Integer>() {
@@ -983,9 +991,9 @@ public class SearchServlet extends HttpServlet {
 						if (redirect != null && redirect.isRedirectFilter()) {
 							getDemotedItemsParams.remove(redirectFqNvp);
 						}
-						getDemotedItemsParams.add(forceAddFqNVP);
+						addNameValuePairToList(getDemotedItemsParams, forceAddFqNVP);
+						addNameValuePairToList(getDemotedItemsParams, forceAddKeywordNVP);
 						getDemotedItemsParams.remove(origKeywordNVP);
-						getDemotedItemsParams.add(forceAddKeywordNVP);
 					}
 					// TODO: insert force add parameters
 					
