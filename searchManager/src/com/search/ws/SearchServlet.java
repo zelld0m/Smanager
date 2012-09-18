@@ -280,7 +280,7 @@ public class SearchServlet extends HttpServlet {
 			// default parameters for the core
 			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(coreName)) {
 				if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
-					if(fqNvp == null && pair.getName().equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
+					if(pair.getName().equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELD_QUERY)) {
 						fqNvp = pair;
 					} 
 					nameValuePairs.add(pair);
@@ -725,13 +725,13 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(fqJoinQueryNvp);
 				nameValuePairs.remove(kwBackupNvp);
 				NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
+				kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+				kwBuff.append(" OR ").append(fqBuff);
 				if (redirect !=null && redirect.isRedirectFilter()) {
-					kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
-					kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString() + " OR " + fqNvp.getValue());
-				} else {
-					kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
-					kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
-				}
+					kwBuff.append(" OR ").append(fqNvp.getValue());
+				} 
+
+				kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString());
 				nameValuePairs.add(kwJoinQueryNvp);
 			}
 
@@ -950,13 +950,12 @@ public class SearchServlet extends HttpServlet {
 							nameValuePairs.add(fqNvp);
 							nameValuePairs.remove(kwBackupNvp);
 							NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
+							kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+							kwBuff.append(" OR ").append(fqBuff);
 							if (redirect !=null && redirect.isRedirectFilter()) {
-								kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
-								kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString() + " OR " + fqNvp.getValue());
-							} else {
-								kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
-								kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
-							}
+								kwBuff.append(" OR ").append(fqNvp.getValue());
+							} 
+							kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString());
 							nameValuePairs.add(kwJoinQueryNvp);
 						}
 					}
