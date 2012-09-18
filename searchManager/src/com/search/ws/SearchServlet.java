@@ -917,10 +917,6 @@ public class SearchServlet extends HttpServlet {
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(startRow + requestedRows)));
 					getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0)));
-					// TODO: Check. This seems incorrect, this will allow all elevated items to be added to search results
-					if (redirect != null && redirect.isRedirectFilter()) {
-						getElevatedItemsParams.remove(redirectFqNvp);
-					}
 
 					if (withFacetFlag) {
 						final int numElevate = numElevateFound - startRow > requestedRows? requestedRows:numElevateFound - startRow;
