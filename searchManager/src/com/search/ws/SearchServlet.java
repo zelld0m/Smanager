@@ -735,24 +735,20 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(kwJoinQueryNvp);
 			}
 
+			Future<Integer> getTemplateCount = null;
+			Future<Integer> getForceAddTemplateCount = null;
+			Future<Integer> getElevatedCount = null;
+			Future<Integer> getDemotedCount = null;
+
 			// TASK 1A - get total number of items
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {
+			getTemplateCount = completionService.submit(new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
 					return solrHelper.getTemplateCounts(getTemplateCountParams);
 				}
 			});
 			tasks++;
-
-			while (tasks > 0) {
-				Future<Integer> completed = completionService.take();
-				if (completed.equals(getTemplateCount)) {
-					numFound = completed.get();
-					logger.debug("Results found: " + numFound);
-				}
-				tasks--;
-			}
 
 			// TASK 1B - get count of force added items (should be merged with task 1A) 
 			if (forceAddList.size() > 0) {
@@ -768,9 +764,18 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
+			// exclude demoted items
+			if (demoteFilters.length() > 0) {
+				demoteFilters.insert(0, "-");
+			}
+			NameValuePair excludeDemoteNameValuePair = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()); 
+			if (demoteFilters.length() > 0) {
+				demoteFilters.deleteCharAt(0);
+			}
+
 			if (bestMatchFlag) {
+				nameValuePairs.add(excludeDemoteNameValuePair);
 				if (forceAddList.size() > 0) {
-					Future<Integer> getForceAddTemplateCount = null;
 					nameValuePairs.remove(kwBackupNvp);
 					if (redirect != null && redirect.isRedirectFilter()) {
 						nameValuePairs.remove(fqNvp);
@@ -789,19 +794,7 @@ public class SearchServlet extends HttpServlet {
 					if (redirect != null && redirect.isRedirectFilter()) {
 						nameValuePairs.add(fqNvp);
 					}
-
-					while (tasks > 0) {
-						Future<Integer> completed = completionService.take();
-						if  (completed.equals(getForceAddTemplateCount)) {
-							numForceAddFound = completed.get();
-							logger.debug("Results found: " + numFound);
-						}
-						tasks--;
-					}
 				}
-				
-				Future<Integer> getElevatedCount = null;
-				Future<Integer> getDemotedCount = null;
 				
 				if (requestedRows != 0 && (elevateValues.length() > 0 || elevateFacetValues.length() > 0)) {
 					/* Second Request */
@@ -810,11 +803,6 @@ public class SearchServlet extends HttpServlet {
 					if (elevateFilters.length() > 0) {
 						final ArrayList<NameValuePair> getElevatedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 						getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilters.toString()));
-						if (demoteFilters.length() > 0) {
-							demoteFilters.insert(0, "-");
-							getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));								
-							demoteFilters.deleteCharAt(0);
-						}
 						getElevatedCount = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
@@ -827,6 +815,7 @@ public class SearchServlet extends HttpServlet {
 					// TASK 1D - get count of demoted items
 					if (demoteFilters.length() > 0) {
 						final ArrayList<NameValuePair> getDemotedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+						getDemotedCountParams.remove(excludeDemoteNameValuePair);
 						getDemotedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));
 						getDemotedCount = completionService.submit(new Callable<Integer>() {
 							@Override
@@ -839,23 +828,30 @@ public class SearchServlet extends HttpServlet {
 				
 					
 				}
-
-				while (tasks > 0) {
-					Future<Integer> completed = completionService.take();
-					if (completed.equals(getElevatedCount)) {
-						numElevateFound += completed.get();
-						logger.debug("Elevate result size: " + numElevateFound);
-					}
-					else if (completed.equals(getDemotedCount)) {
-						numDemoteFound = completed.get();
-						logger.debug("Demote result size: " + numDemoteFound);
-					}
-					tasks--;
+			}
+			
+			while (tasks > 0) {
+				Future<Integer> completed = completionService.take();
+				if (completed.equals(getTemplateCount)) {
+					numFound = completed.get();
+					logger.debug("Results found: " + numFound);
 				}
-
+				else if (getForceAddTemplateCount != null && completed.equals(getForceAddTemplateCount)) {
+					numForceAddFound = completed.get();
+					logger.debug("Results found: " + numForceAddFound);
+				}
+				else if (getElevatedCount!= null && completed.equals(getElevatedCount)) {
+					numElevateFound += completed.get();
+					logger.debug("Elevate result size: " + numElevateFound);
+				}
+				else if (getDemotedCount != null && completed.equals(getDemotedCount)) {
+					numDemoteFound = completed.get();
+					logger.debug("Demote result size: " + numDemoteFound);
+				}
+				tasks--;
 			}
 			numElevateFound += numForceAddFound;
-
+			
 			if (requestedRows != 0 && (numFound + numElevateFound) != 0) {
 
 				Future<Integer> getElevatedItems = null;
