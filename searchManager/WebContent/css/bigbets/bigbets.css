@@ -237,5 +237,7 @@ div.listView ul li div.validityDate { float:left; width:33% }
 .validityDate label img:hover { cursor:pointer; border:0 }
 #commentIcon img:hover { cursor:pointer; border:0 }
 
+
+/* check box style alignment */
 .checkBoxAlignment .firerift-style { margin-top:-3px !important; margin-left:4px !important }
 
