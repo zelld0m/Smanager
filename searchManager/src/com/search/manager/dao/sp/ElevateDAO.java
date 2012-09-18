@@ -197,6 +197,7 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SEQUENCE_NUM, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FORCE_ADD, Types.VARCHAR));
 		}
 	}
 	
@@ -353,6 +354,7 @@ public class ElevateDAO {
 	        inputs.put(DAOConstants.PARAM_SEQUENCE_NUM, elevate.getLocation());
 	        inputs.put(DAOConstants.PARAM_MODIFIED_BY, elevate.getLastModifiedBy());
 	        inputs.put(DAOConstants.PARAM_MEMBER_ID, elevate.getMemberId());
+	        inputs.put(DAOConstants.PARAM_FORCE_ADD, elevate.isForceAdd()!=null && elevate.isForceAdd()?1:0);
 	        return DAOUtils.getUpdateCount(updateSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during updateElevate()", e);

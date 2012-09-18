@@ -53,6 +53,7 @@
 			var imageLabel = "check-default.png";
 			
 			if ($(this).hasClass("active-locked")) imageLabel = "check-active-locked.png";
+			if ($(this).hasClass("normal-forceadd")) imageLabel = "check-normalForceadd.png";
 
 			$(this).siblings("div." + setClass).css("background", "url('" + GLOBAL_contextPath + "/js/jquery/checkbox/" + imageLabel + "') no-repeat ").triggerHandler("click");
 				

@@ -187,16 +187,17 @@ public class ElevateService{
 			count = 0;
 			ElevateResult e = new ElevateResult();
 			try {
-				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
+				String edp = SearchHelper.getEdpViaSim(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isBlank(edp)) {
 					edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
-					e.setForceAdd(true);
+					e.setFoundFlag(false);
 				} else {
-					e.setForceAdd(false);
+					e.setFoundFlag(true);
 				}
 				if (StringUtils.isNotBlank(edp)) {
 					e.setStoreKeyword(new StoreKeyword(store, keyword));
 					e.setEdp(edp);
+					e.setForceAdd(false);
 					e.setLocation(sequence++);
 					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
 					e.setCreatedBy(UtilityService.getUsername());
@@ -215,7 +216,7 @@ public class ElevateService{
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
 			if (count > 0) {
-				if (e.isForceAdd()) {
+				if (e.getFoundFlag()) {
 					forcedList.add(StringUtils.trim(partNumber));						
 				} else {
 					passedList.add(StringUtils.trim(partNumber));						
@@ -229,9 +230,9 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+	public String addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		
-		int count = 0;
+		String result = "FAILED";
 		try {
 			String server = UtilityService.getServerName();
 			String store = UtilityService.getStoreName();
@@ -245,16 +246,20 @@ public class ElevateService{
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
-			int facetCount = SearchHelper.getFacetCount(server, store, keyword, e.getCondition().getConditionForSolr());
-			e.setForceAdd(facetCount == 0);
-			count = daoService.addElevateResult(e);
-			if (!StringUtils.isBlank(comment)) {
-				addComment(comment, e);
+			int facetCount = SearchHelper.getFacetCountViaSim(server, store, keyword, e.getCondition().getConditionForSolr());
+			e.setForceAdd(false);
+			e.setFoundFlag(facetCount > 0);
+			int count = daoService.addElevateResult(e);
+			if (count > 0) {
+				result = e.getFoundFlag()?"PASSED":"FORCED";
+				if (!StringUtils.isBlank(comment)) {
+					addComment(comment, e);
+				}
 			}
 		} catch (DaoException de) {
 			logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 		}
-		return count;
+		return result;
 	}
 
 	@RemoteMethod
@@ -328,6 +333,28 @@ public class ElevateService{
 					elevate.setCondition(new RedirectRuleCondition((condition)));
 				}
 				elevate.setLocation(sequence);
+				elevate.setLastModifiedBy(UtilityService.getUsername());
+				return daoService.updateElevateResult(elevate);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during updateElevate()",e);
+		}
+		return -1;
+	}
+
+	@RemoteMethod
+	public int updateElevateForceAdd(String keyword, String memberId, boolean forceAddFlag) {
+		try {
+			logger.info(String.format("%s %s %b", keyword, memberId, forceAddFlag));
+			ElevateResult elevate = new ElevateResult(new StoreKeyword(UtilityService.getStoreName(), keyword), memberId);
+		
+			try {
+				elevate = daoService.getElevateItem(elevate);
+			} catch (DaoException e) {
+				elevate = null;
+			}
+			if (elevate!=null) {
+				elevate.setForceAdd(forceAddFlag);
 				elevate.setLastModifiedBy(UtilityService.getUsername());
 				return daoService.updateElevateResult(elevate);
 			}
