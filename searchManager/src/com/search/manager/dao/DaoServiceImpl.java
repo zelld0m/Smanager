@@ -189,10 +189,10 @@ public class DaoServiceImpl implements DaoService {
 	/* retrieve data from both Solr and DB */
 	public RecordSet<ElevateProduct> getElevatedProductsIgnoreKeyword(String serverName, SearchCriteria<ElevateResult> criteria) throws DaoException{
 		RecordSet<ElevateResult> set = getElevateResultList(criteria);
-		LinkedHashMap<String, ElevateProduct> map = new LinkedHashMap<String, ElevateProduct>();
 		StoreKeyword sk = criteria.getModel().getStoreKeyword();
 		String storeId = DAOUtils.getStoreId(sk);
 		String keyword = DAOUtils.getKeywordId(sk);
+		ArrayList<ElevateProduct> elevateList = new ArrayList<ElevateProduct>();
 		for (ElevateResult e: set.getList()) {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
@@ -208,14 +208,14 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberTypeEntity(e.getElevateEntity());
 			ep.setCondition(e.getCondition());
 			ep.setForceAdd(e.isForceAdd());
-			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
-				map.put(UUID.randomUUID().toString(), ep);
+			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+				SearchHelper.getProductViaSim(serverName, storeId, keyword, ep);
 			} else {
-				map.put(e.getEdp(), ep);
+				e.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
 			}
+			elevateList.add(ep);
 		}
-		SearchHelper.getProductsIgnoreKeyword(map, storeId, serverName, keyword);
-		return new RecordSet<ElevateProduct>(new ArrayList<ElevateProduct>(map.values()),set.getTotalSize());
+		return new RecordSet<ElevateProduct>(elevateList,set.getTotalSize());
 	}
 	
 	

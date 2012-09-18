@@ -11,6 +11,7 @@ public class ElevateProduct extends Product {
 	private static final long serialVersionUID = -4043292541092899423L;
 
 	private Integer location;
+	private Boolean foundFlag;
 	
 	public ElevateProduct(){
 		super();
@@ -45,6 +46,14 @@ public class ElevateProduct extends Product {
 	
 	public void setLocation(Integer location) {
 		this.location = location;
+	}
+
+	public Boolean getFoundFlag() {
+		return foundFlag;
+	}
+
+	public void setFoundFlag(Boolean foundFlag) {
+		this.foundFlag = foundFlag;
 	}
 
 }
