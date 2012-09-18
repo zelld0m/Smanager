@@ -39,6 +39,7 @@ showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
 	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
+	case  2: jAlert("Successful force " + action + " request for " + param, "Successful Request"); break;
 	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };
@@ -46,18 +47,23 @@ showActionResponse = function(code, action, param){
 showActionResponseFromMap = function(code, action, param, additionalFailMessage){
 	var message = "";
 	
+	if (code["FORCED"].length > 0) {
+		message += "Successful force " + action + " request for " + code["FORCED"] + ".";
+	}
+	
 	if (code["PASSED"].length > 0) {
+		if ($.isNotBlank(message)) message += "\n\n";
 		message += "Successful " + action + " request for " + code["PASSED"] + ".";
 	}
-	if (message !== "") {
-		message += "\n\n";
-	}
+	
 	if (code["FAILED"].length > 0) {
+		if ($.isNotBlank(message)) message += "\n\n";
 		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
 		if (additionalFailMessage) {
 			message += "\n" + additionalFailMessage;
 		}
 	}
+	
 	jAlert(message,"Multiple Rule Item Add"); 
 };
 

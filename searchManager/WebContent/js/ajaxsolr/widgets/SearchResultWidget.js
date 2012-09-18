@@ -168,7 +168,10 @@
 									if(validateGeneric("Keyword", keyword, 2)){
 										ElevateServiceJS.addElevate(keyword, "PART_NUMBER", e.data.doc["EDP"], 1, validityDate, comment, {
 											callback:function(data){
-												
+												showActionResponse(data, "add", "SKU#: " + e.data.doc["DPNo"] + " in " + keyword);
+											},
+											postHook: function(){
+												self.manager.doRequest();
 											}
 										});
 									}

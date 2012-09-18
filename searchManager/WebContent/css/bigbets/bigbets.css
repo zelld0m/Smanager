@@ -138,6 +138,14 @@ div.tileView ul.boxContainer li.forceAddClass div.bgShade {
  background: transparent;
 }
 
+div.tileView ul.boxContainer li.forceAddClass  { 
+	background: #ff9b9b;
+	border:2px solid #ff9b9b; padding:0 !important; float:left; display: inline; width:224px; margin:10px 7px; }
+
+div.tileView ul.boxContainer li.forceAddClass div.bgShade { 
+ background: transparent;
+}
+
 div.tileView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
 div.tileView ul.boxContainer li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px;  }
 div.tileView ul.boxContainer li div.picArea img { border:1px solid #f2f2f2 }
@@ -187,6 +195,13 @@ background: -ms-linear-gradient(top,  #f7efc1 0%,#f8f4d9 100%); /* IE10+ */
 background: linear-gradient(to bottom,  #f7efc1 0%,#f8f4d9 100%); /* W3C */
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7efc1', endColorstr='#f8f4d9',GradientType=0 ); /* IE6-8 */
 border:2px solid #f7e99b; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
+div.listView ul.boxContainer li.forceAddClass div.bgShade { 
+	background:transparent;
+	height: 20px; margin:0 !important; padding:8px;
+}
+
+div.listView ul.boxContainer li.forceAddClass  { background: #ff9b9b;
+border:2px solid #ff9b9b; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
 div.listView ul.boxContainer li.forceAddClass div.bgShade { 
 	background:transparent;
 	height: 20px; margin:0 !important; padding:8px;

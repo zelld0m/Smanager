@@ -47,6 +47,7 @@ import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.service.UtilityService;
@@ -127,105 +128,56 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
-	private static void generateDemoteList(StringBuilder demoteValues, StringBuilder demoteFacetValues, Collection<DemoteResult> demoteList) {
-		boolean edpFlag = false;
-		boolean facetFlag = false;
-		if (!(demoteList == null || demoteList.isEmpty())) {
-			for (DemoteResult demote: demoteList) {
-				if (demote.getDemoteEntity().equals(MemberTypeEntity.PART_NUMBER)) {
-					if (!edpFlag) {
-						demoteValues.append("EDP:(");
-						edpFlag = true;
-					}
-					demoteValues.append(" ").append(demote.getEdp());
-				} else {
-					if (!facetFlag) {
-						demoteFacetValues.insert(0, "(");
-						facetFlag = true;
-					} else {
-						demoteFacetValues.append(" OR ");
-					}
-					demoteFacetValues.append(demote.getCondition().getConditionForSolr());
-				}
-			}
-			if (edpFlag) {
-				demoteValues.append(")");
-			}
-			if (facetFlag) {
-				demoteFacetValues.append(")");
-			}
-		}
-	}
 	
-	private static void generateExcludeList(StringBuilder excludeValues, StringBuilder excludeFacetValues, Collection<ExcludeResult> excludeList) {
-		boolean edpFlag = false;
-		boolean facetFlag = false;
-		if (!(excludeList == null || excludeList.isEmpty())) {
-			for (ExcludeResult exclude: excludeList) {
-				if (exclude.getExcludeEntity().equals(MemberTypeEntity.PART_NUMBER)) {
-					if (!edpFlag) {
-						excludeValues.append("EDP:(");
-						edpFlag = true;
-					}
-					excludeValues.append(" ").append(exclude.getEdp());
-				} else {
-					if (!facetFlag) {
-						excludeFacetValues.insert(0, "(");
-						facetFlag = true;
-					} else {
-						excludeFacetValues.append(" OR ");
-					}
-					excludeFacetValues.append("(").append(exclude.getCondition().getConditionForSolr()).append(")");
-				}
-			}
-			if (edpFlag) {
-				excludeValues.append(")");
-			}
-			if (facetFlag) {
-				excludeFacetValues.append(")");
-			}
-		}
-	}
-
-	private static boolean generateElevateList(StringBuilder elevateValues, StringBuilder elevateFacetValues, Collection<ElevateResult> elevateList) {
+	private static boolean generateFilterList(StringBuilder edpValues, StringBuilder facetValues, StringBuilder allValues, Collection<? extends SearchResult> list) {
 		boolean withFacetFlag = false;
 		boolean edpFlag = false;
 		boolean facetFlag = false;
-		if (!(elevateList == null || elevateList.isEmpty())) {
-			for (ElevateResult elevate: elevateList) {
-				if (elevate.isForceAdd()) {
-					if (elevate.getElevateEntity() == MemberTypeEntity.FACET) {
+		if (!(list == null || list.isEmpty())) {
+			for (SearchResult result: list) {
+				if (result instanceof ElevateResult && ((ElevateResult)result).isForceAdd()) {
+					if (result.getEntity() == MemberTypeEntity.FACET) {
 						withFacetFlag = true;
 					}
 					continue;
 				}
-				if (elevate.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
-						elevateValues.append("EDP:(");
+						edpValues.append("EDP:(");
 						edpFlag = true;
 					}
-					elevateValues.append(" ").append(elevate.getEdp());
+					edpValues.append(" ").append(result.getEdp());
 				} else {
 					if (!facetFlag) {
-						elevateFacetValues.insert(0, "(");
+						facetValues.insert(0, "(");
 						facetFlag = true;
 					} else {
-						elevateFacetValues.append(" OR ");
+						facetValues.append(" OR ");
 					}
-					elevateFacetValues.append("(").append(elevate.getCondition().getConditionForSolr()).append(")");
+					facetValues.append("(").append(result.getCondition().getConditionForSolr()).append(")");
 				}
 			}
-			if (edpFlag) {
-				elevateValues.append(")");
-			}
-			if (facetFlag) {
-				withFacetFlag = true;
-				elevateFacetValues.append(")");
+			
+			if (edpFlag || facetFlag) {
+				allValues.append("(");
+				if (edpFlag) {
+					edpValues.append(")");
+					allValues.append(edpValues);
+				}
+				if (facetFlag) {
+					withFacetFlag = true;
+					if (edpFlag) {
+						allValues.append(" OR ");
+					}
+					facetValues.append(")");
+					allValues.append(facetValues);					
+				}
+				allValues.append(")");
 			}
 		}
 		return withFacetFlag;
 	}
-
+	
 	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
 		Map<String,String> activeRule = new HashMap<String,String>();
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
@@ -363,8 +315,8 @@ public class SearchServlet extends HttpServlet {
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			// redirect 
+			RedirectRule redirect = null;
 			try {
-				RedirectRule redirect = null;
 				List<String> keywordHistory = new ArrayList<String>();
 				while (true) { // look for change keyword
 					if (StringUtils.isBlank(keyword)) {
@@ -443,8 +395,8 @@ public class SearchServlet extends HttpServlet {
 						if (builder.length() > 0) {
 							builder.delete(builder.length() - 4, builder.length());
 						}
-						nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-						nameValuePairs.add(nvp);
+						fqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+						nameValuePairs.add(fqNvp);
 						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
@@ -553,6 +505,8 @@ public class SearchServlet extends HttpServlet {
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
+			List<DemoteResult> demoteList = null;
+			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			boolean bestMatchFlag = configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 
@@ -561,6 +515,7 @@ public class SearchServlet extends HttpServlet {
 					if (daoService.getKeyword(sk.getStoreId(), sk.getKeywordId()) != null) {
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
 					}
 					if (!disableElevate) {
 						if (bestMatchFlag) {
@@ -569,11 +524,11 @@ public class SearchServlet extends HttpServlet {
 							SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
 							SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
 			
-							if (keywordPresent && configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT))) {
+							if (keywordPresent) {
 								elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
 								List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
 								if (logger.isDebugEnabled()) {
-									logger.debug("Expired List: ");
+									logger.debug("Expired Elevated List: ");
 								}
 								for (ElevateResult expired: expiredList) {
 									if (logger.isDebugEnabled()) {
@@ -592,6 +547,31 @@ public class SearchServlet extends HttpServlet {
 						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
 					}
 					
+					if (!disableDemote) {
+						if (bestMatchFlag) {
+							DemoteResult demoteFilter = new DemoteResult();
+							demoteFilter.setStoreKeyword(sk);
+							SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(demoteFilter,new Date(),null,0,0);
+							SearchCriteria<DemoteResult> expiredDemoteCriteria = new SearchCriteria<DemoteResult>(demoteFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
+			
+							if (keywordPresent) {
+								demoteList = daoService.getDemoteResultList(demoteCriteria).getList();
+								List<DemoteResult> expiredList = daoService.getDemoteResultList(expiredDemoteCriteria).getList();
+								if (logger.isDebugEnabled()) {
+									logger.debug("Expired Demoted List: ");
+								}
+								for (DemoteResult expired: expiredList) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("\t" + expired.getEdp());
+									}
+									if (MemberTypeEntity.PART_NUMBER.equals(expired.getDemoteEntity())) {
+										expiredDemotedList.add(expired.getEdp());
+									}
+								}
+							}
+						}
+					}
+					
 					if (!disableExclude) {
 						ExcludeResult excludeFilter  = new ExcludeResult();
 						excludeFilter.setStoreKeyword(sk);
@@ -602,8 +582,9 @@ public class SearchServlet extends HttpServlet {
 				else {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
-					if (!disableElevate) {
-						if (keywordPresent) {
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
+					if (keywordPresent) {
+						if (!disableElevate) {
 							elevatedList = daoCacheService.getElevateRules(sk);			
 							for (ElevateResult elevateResult : elevatedList) {
 								if (elevateResult.isForceAdd()) {
@@ -614,9 +595,12 @@ public class SearchServlet extends HttpServlet {
 								elevatedList = new ArrayList<ElevateResult>();
 							}	
 						}
-					}
-					if (!disableExclude) {
-						excludeList = daoCacheService.getExcludeRules(sk);						
+						if (!disableDemote && bestMatchFlag) {
+							demoteList = daoCacheService.getDemoteRules(sk);			
+						}
+						if (!disableExclude) {
+							excludeList = daoCacheService.getExcludeRules(sk);						
+						}
 					}
 				}			
 			}
@@ -681,17 +665,11 @@ public class SearchServlet extends HttpServlet {
 
 			// collate exclude list
 			if (excludeList != null && !excludeList.isEmpty()) {
-				StringBuilder excludeValues = new StringBuilder();
-				StringBuilder excludeFacetValues = new StringBuilder();
-				generateExcludeList(excludeValues, excludeFacetValues, excludeList);
-				if (excludeValues.length() > 0) {
-					excludeValues.insert(0, "-");
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeValues.toString());
-					nameValuePairs.add(nvp);
-				}
-				if (excludeFacetValues.length() > 0) {
-					excludeFacetValues.insert(0, "-");
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFacetValues.toString());
+				StringBuilder excludeFilters = new StringBuilder();
+				generateFilterList(new StringBuilder(), new StringBuilder(), excludeFilters, excludeList);
+				if (excludeFilters.length() > 0) {
+					excludeFilters.insert(0, "-");
+					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilters.toString());
 					nameValuePairs.add(nvp);
 				}
 			}
@@ -699,13 +677,20 @@ public class SearchServlet extends HttpServlet {
 			// collate elevate list
 			StringBuilder elevateValues = new StringBuilder();
 			StringBuilder elevateFacetValues = new StringBuilder();
-			boolean withFacetFlag = generateElevateList(elevateValues, elevateFacetValues, elevatedList);
+			StringBuilder elevateFilters = new StringBuilder();
+			boolean withFacetFlag = generateFilterList(elevateValues, elevateFacetValues, elevateFilters, elevatedList);
 			
-			BasicNameValuePair elevateNvp = null;
-			BasicNameValuePair elevateFacetNvp = null;
+			// collate demoted list
+			StringBuilder demoteValues = new StringBuilder();
+			StringBuilder demoteFacetValues = new StringBuilder();
+			StringBuilder demoteFilters = new StringBuilder();
+			generateFilterList(demoteValues, demoteFacetValues, demoteFilters, demoteList);
+			boolean withDemoteFacet = demoteFacetValues.length() > 0;
+
 			Integer numFound = 0;
 			Integer numForceAddFound = 0;
 			Integer numElevateFound = 0;
+			Integer numDemoteFound = 0;
 
 			// send solr request
 
@@ -719,6 +704,7 @@ public class SearchServlet extends HttpServlet {
 
 
 			StringBuffer fqBuff = new StringBuffer();
+			StringBuffer kwBuff = null;
 			NameValuePair fqJoinQueryNvp = null;
 			NameValuePair kwBackupNvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD);
 			NameValuePair kwJoinQueryNvp = null;
@@ -739,12 +725,17 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(fqJoinQueryNvp);
 				nameValuePairs.remove(kwBackupNvp);
 				NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
-				StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
-				kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
+				kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+				kwBuff.append(" OR ").append(fqBuff);
+				if (redirect !=null && redirect.isRedirectFilter()) {
+					kwBuff.append(" OR ").append(fqNvp.getValue());
+				} 
+
+				kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString());
 				nameValuePairs.add(kwJoinQueryNvp);
 			}
 
-			// TASK 1A
+			// TASK 1A - get total number of items
 			final ArrayList<NameValuePair> getTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 			Future<Integer> getTemplateCount = completionService.submit(new Callable<Integer>() {
 				@Override
@@ -763,6 +754,7 @@ public class SearchServlet extends HttpServlet {
 				tasks--;
 			}
 
+			// TASK 1B - get count of force added items (should be merged with task 1A) 
 			if (forceAddList.size() > 0) {
 				nameValuePairs.remove(fqJoinQueryNvp);
 				nameValuePairs.remove(kwJoinQueryNvp);
@@ -780,6 +772,9 @@ public class SearchServlet extends HttpServlet {
 				if (forceAddList.size() > 0) {
 					Future<Integer> getForceAddTemplateCount = null;
 					nameValuePairs.remove(kwBackupNvp);
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.remove(fqNvp);
+					}
 					final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
 					getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
 						@Override
@@ -791,6 +786,9 @@ public class SearchServlet extends HttpServlet {
 					if (kwBackupNvp != null) {
 						nameValuePairs.add(kwBackupNvp);
 					}
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.add(fqNvp);
+					}
 
 					while (tasks > 0) {
 						Future<Integer> completed = completionService.take();
@@ -801,52 +799,46 @@ public class SearchServlet extends HttpServlet {
 						tasks--;
 					}
 				}
+				
 				Future<Integer> getElevatedCount = null;
-				Future<Integer> getFacetElevatedCount = null;
+				Future<Integer> getDemotedCount = null;
+				
 				if (requestedRows != 0 && (elevateValues.length() > 0 || elevateFacetValues.length() > 0)) {
 					/* Second Request */
 					// set filter to exclude & include elevated list only
-					if (elevateValues.length() > 0) {
-						elevateNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString());
-						nameValuePairs.add(elevateNvp);
-
-						// TASK 1B
+					// TASK 1C - get count of elevated items (sans excluded items)
+					if (elevateFilters.length() > 0) {
 						final ArrayList<NameValuePair> getElevatedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+						getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilters.toString()));
+						if (demoteFilters.length() > 0) {
+							demoteFilters.insert(0, "-");
+							getElevatedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));								
+							demoteFilters.deleteCharAt(0);
+						}
 						getElevatedCount = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getElevatedCount(getElevatedCountParams);
+								return solrHelper.getCount(getElevatedCountParams);
 							}
 						});
 						tasks++;
-						nameValuePairs.remove(elevateNvp);
 					}
 
-					if (elevateFacetValues.length() > 0) {
-						elevateFacetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFacetValues.toString());
-						nameValuePairs.add(elevateFacetNvp);
-						BasicNameValuePair elevateFNvp = null;
-						if (elevateValues.length() > 0) {
-							elevateFNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "-" + elevateValues.toString());
-							nameValuePairs.add(elevateFNvp);
-						}
-						final ArrayList<NameValuePair> getElevatedFacetCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-						getFacetElevatedCount = completionService.submit(new Callable<Integer>() {
+					// TASK 1D - get count of demoted items
+					if (demoteFilters.length() > 0) {
+						final ArrayList<NameValuePair> getDemotedCountParams = new ArrayList<NameValuePair>(nameValuePairs);
+						getDemotedCountParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilters.toString()));
+						getDemotedCount = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getElevatedCount(getElevatedFacetCountParams);
+								return solrHelper.getCount(getDemotedCountParams);
 							}
 						});
-						if (elevateValues.length() > 0) {
-							nameValuePairs.remove(elevateFNvp);
-						}
-
 						tasks++;
-						nameValuePairs.remove(elevateFacetNvp);
 					}
-
+				
+					
 				}
-
 
 				while (tasks > 0) {
 					Future<Integer> completed = completionService.take();
@@ -854,9 +846,9 @@ public class SearchServlet extends HttpServlet {
 						numElevateFound += completed.get();
 						logger.debug("Elevate result size: " + numElevateFound);
 					}
-					else if (completed.equals(getFacetElevatedCount)) {
-						numElevateFound += completed.get();
-						logger.debug("Elevate result size: " + numElevateFound);
+					else if (completed.equals(getDemotedCount)) {
+						numDemoteFound = completed.get();
+						logger.debug("Demote result size: " + numDemoteFound);
 					}
 					tasks--;
 				}
@@ -887,6 +879,10 @@ public class SearchServlet extends HttpServlet {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0));
 					nameValuePairs.add(nvp);
 					
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.remove(fqNvp);
+					}
+
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					if (withFacetFlag) {
 						final List<ElevateResult> fElevatedList = elevatedList;
@@ -905,6 +901,9 @@ public class SearchServlet extends HttpServlet {
 							}
 						});
 					}
+					if (redirect != null && redirect.isRedirectFilter()) {
+						nameValuePairs.add(fqNvp);
+					}
 					tasks++;
 					requestedRows -= (numElevateFound - startRow);
 				}
@@ -917,13 +916,11 @@ public class SearchServlet extends HttpServlet {
 					// grab all the doc nodes <doc>
 					if (elevateValues.length() > 0) {
 						elevateValues.insert(0, "-");
-						elevateNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString());
-						nameValuePairs.add(elevateNvp);
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateValues.toString()));
 					}
 					if (elevateFacetValues.length() > 0) {
 						elevateFacetValues.insert(0, "-");
-						elevateFacetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFacetValues.toString());
-						nameValuePairs.add(elevateFacetNvp);
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFacetValues.toString()));
 					}
 
 					nvp = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_ROWS);
@@ -953,9 +950,13 @@ public class SearchServlet extends HttpServlet {
 							nameValuePairs.add(fqNvp);
 							nameValuePairs.remove(kwBackupNvp);
 							NameValuePair qfNvp = getNameValuePairFromMap(paramMap, "qf");
-							StringBuffer kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp.getValue()).append("'}\"");
-							kwBackupNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString() + " OR " + fqBuff.toString());
-							nameValuePairs.add(kwBackupNvp);
+							kwBuff = new StringBuffer("_query_:\"{!dismax qf='").append(qfNvp.getValue()).append("' v='").append(kwBackupNvp != null?kwBackupNvp.getValue():originalKeyword).append("'}\"");
+							kwBuff.append(" OR ").append(fqBuff);
+							if (redirect !=null && redirect.isRedirectFilter()) {
+								kwBuff.append(" OR ").append(fqNvp.getValue());
+							} 
+							kwJoinQueryNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, kwBuff.toString());
+							nameValuePairs.add(kwJoinQueryNvp);
 						}
 					}
 

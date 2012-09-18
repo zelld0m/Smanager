@@ -85,6 +85,7 @@ public class SolrConstants {
 	// rule types
 	public final static String TAG_VALUE_RULE_TYPE_ELEVATE = "Elevate";
 	public final static String TAG_VALUE_RULE_TYPE_EXCLUDE = "Exclude";
+	public final static String TAG_VALUE_RULE_TYPE_DEMOTE  = "Demote";
 	public final static String TAG_VALUE_RULE_TYPE_REDIRECT = "Query Cleaning";
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
 
