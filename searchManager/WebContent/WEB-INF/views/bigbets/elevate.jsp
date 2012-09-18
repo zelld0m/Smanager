@@ -98,7 +98,7 @@
 		  					<label>
 		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
 		  					</label>
-		  					<label><input type="checkbox" id="setForceAdd" class="firerift-style-checkbox"></label>
+		  					<label class="checkBoxAlignment"><input type="checkbox" id="setForceAdd" class="firerift-style-checkbox marTn3 marL3"></label>
 		  				</div>
 					
 		  				<div class="validityDate padT3">

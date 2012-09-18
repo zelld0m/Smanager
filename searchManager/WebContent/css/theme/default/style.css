@@ -310,7 +310,7 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 }
 
 .cssReset .searchList li.forceAddErrorClass, .cssReset .forceAddErrorClass, .forceAddErrorClass		{  background:#ff9b9b }
-.cssReset .forceAddBorderErrorClass, .cssReset { border: 2px solid #ff9b9b !important }
+.cssReset .forceAddBorderErrorClass, .forceAddBorderErrorClass { border: 2px solid #f38a8a !important }
 
 .cssReset .itemImg				{ background:#fff }
 
