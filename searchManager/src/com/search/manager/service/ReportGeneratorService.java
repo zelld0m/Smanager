@@ -43,20 +43,24 @@ import com.search.ws.ConfigManager;
 public class ReportGeneratorService {
 		
 	private static final Logger logger = Logger.getLogger(ReportGeneratorService.class);
-	private final String[] topKeywordHeader = {"Search Terms","Searches","Number of Search Results","First SKU"};
+	private final String[] topKeywordHeader = {"Search Terms","First SKU","Number of Search Results","Searches"};
 	private final String[] zeroResultsHeader = {"Search Terms","Searches"};
 	@Autowired ReportNotificationMailService reportNotificationMailService;	
 	
 	@RemoteMethod
-	public FileTransfer generateZeroResults(String content,String format) throws IOException  {
+	public Object generateZeroResults(String content,String format) throws IOException  {
 		
 		String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreName())+"e&wt=xml";
 	    String url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(), "url")
 		.replace("(store)", UtilityService.getStoreName()).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
-	    
+	    HashMap<String, KeyValuePair> map = processFile(content,format);
+        
+        if(map.containsKey("error"))
+        	return map.get("error").getValue();
+        
 	    ZeroResults zero = new ZeroResults(url);
 		
-	    List<KeyValuePair> valuesZero = zero.processKeywords(processFile(content,format), url);
+	    List<KeyValuePair> valuesZero = zero.processKeywords(map, url);
     	    	
     	if (valuesZero.size() > 0) {		
   		
@@ -88,14 +92,19 @@ public class ReportGeneratorService {
 	
 	
 	@RemoteMethod
-	public FileTransfer generateTopKeywords(String content,String format) throws IOException  {
+	public Object generateTopKeywords(String content,String format) throws IOException  {
 		
         String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreName())+"e&wt=xml";
     	String url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(), "url")
 		.replace("(store)", UtilityService.getStoreName()).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
     	 
         TopKeywords top = new TopKeywords(url);
-		List<String[]> valuesTop = top.processKeywords(processFile(content,format), url);
+        HashMap<String, KeyValuePair> map = processFile(content,format);
+        
+        if(map.containsKey("error"))
+        	return map.get("error").getValue();
+        
+		List<String[]> valuesTop = top.processKeywords(map, url);
 	
     	if (valuesTop.size() > 0) {	
     		CSVWriter writer = null;
@@ -137,13 +146,28 @@ public class ReportGeneratorService {
 				while ((entries = reader.readNext()) != null){
 					if(entries[0].contains("#") || StringUtils.isBlank(entries[0]))
 			        	continue;
-			        if(format.equalsIgnoreCase("Search Manager") && StringUtils.isNumeric(entries[0])){
-			        	noOfSearches = Integer.parseInt(entries[0]);
-			        	keyword = entries[1];
-			        }
-			        else if(format.equalsIgnoreCase("Adobe") && StringUtils.isNumeric(entries[2])){
-			        	noOfSearches = Integer.parseInt(entries[2]);
-			        	keyword = StringEscapeUtils.unescapeHtml(entries[1]);
+				
+					if(format.equalsIgnoreCase("Search Manager")){
+						if(entries.length < 3){
+							if(StringUtils.isNumeric(entries[0])){
+					        	noOfSearches = Integer.parseInt(entries[0]);
+					        	keyword = entries[1];
+					        }
+						}else{
+							map.put("error", new KeyValuePair("Invalid format for Search Manager.",1));
+							break;
+						}
+					}
+			        else if(format.equalsIgnoreCase("Adobe") ){
+			        	if(entries.length > 3){
+			        		if(StringUtils.isNumeric(entries[2])){
+					        	noOfSearches = Integer.parseInt(entries[2]);
+					        	keyword = StringEscapeUtils.unescapeHtml(entries[1]);
+			        		}
+			        	}else{
+							map.put("error", new KeyValuePair("Invalid format for Adobe.",1));
+							break;
+						}
 			        }
 			        else
 			        	continue;

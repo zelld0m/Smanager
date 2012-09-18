@@ -138,6 +138,14 @@ div.tileView ul.boxContainer li.forceAddClass div.bgShade {
  background: transparent;
 }
 
+div.tileView ul.boxContainer li.forceAddErrorClass  { 
+	background: #ff9b9b;
+	border:2px solid #f38a8a; padding:0 !important; float:left; display: inline; width:224px; margin:10px 7px; }
+
+div.tileView ul.boxContainer li.forceAddErrorClass div.bgShade { 
+ background: transparent;
+}
+
 div.tileView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
 div.tileView ul.boxContainer li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px;  }
 div.tileView ul.boxContainer li div.picArea img { border:1px solid #f2f2f2 }
@@ -192,6 +200,12 @@ div.listView ul.boxContainer li.forceAddClass div.bgShade {
 	height: 20px; margin:0 !important; padding:8px;
 }
 
+div.listView ul.boxContainer li.forceAddErrorClass  { background: #ff9b9b; border:2px solid #f38a8a; padding:0 !important; float:left; display: inline; width:99%; margin:10px auto; }
+div.listView ul.boxContainer li.forceAddErrorClass div.bgShade { 
+	background:transparent;
+	height: 20px; margin:0 !important; padding:8px;
+}
+
 div.listView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
 div.listView ul.boxContainer li div.picInfo { float:left; margin-left:10px }
 div.listView ul.boxContainer li div.picArea { height: 100px; overflow: hidden; margin:17px 10px 10px 10px; float:left }
@@ -222,4 +236,8 @@ div.listView ul li div.validityDate { float:left; width:33% }
 .listIcons img:hover { cursor:pointer; border:0 }
 .validityDate label img:hover { cursor:pointer; border:0 }
 #commentIcon img:hover { cursor:pointer; border:0 }
+
+
+/* check box style alignment */
+.normal-forceadd .firerift-style { margin-top:-3px !important; margin-left:4px !important; width: 80px !important }
 

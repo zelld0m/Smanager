@@ -2,28 +2,26 @@
 
 	var ReportGenerator = {
 			
-			generateZeroResults: function(){
+			generateZeroResults: function(file,format){
 				
-				var file = dwr.util.getValue('keywordFile');
-				var $selectFormat = $("select#fileFormat");
-				
-				ReportGeneratorServiceJS.generateZeroResults(file,$selectFormat.val(),{
+				ReportGeneratorServiceJS.generateZeroResults(file,format,{
 					callback: function(data){
-						if(data!=null)
+						if(typeof(data) === "number")
+							jAlert("Invalid format for " + format + ".","Report Generator");
+						else if(typeof(data) === "string")
 							dwr.engine.openInDownload(data);
 						else
 							jAlert("No zero result found.","Report Generator");
 					}
 				});
 			},
-			generateTopKeywords: function(){
+			generateTopKeywords: function(file,format){
 				
-				var file = dwr.util.getValue('keywordFile');
-				var $selectFormat = $("select#fileFormat");
-				
-				ReportGeneratorServiceJS.generateTopKeywords(file,$selectFormat.val(),{
+				ReportGeneratorServiceJS.generateTopKeywords(file,format,{
 					callback: function(data){
-						if(data!=null)
+						if(typeof(data) === "number")
+							jAlert("Invalid format for " + format + ".","Report Generator");
+						else if(typeof(data) === "string")
 							dwr.engine.openInDownload(data);
 						else
 							jAlert("No top keyword found.","Report Generator");
@@ -45,10 +43,31 @@
 					
 				$("#generateBtn").on({
 					click: function(){
-						if($selectReport.val()=="Zero Resuts")
-							self.generateZeroResults();
-						if($selectReport.val()=="Top Keywords")
-							self.generateTopKeywords();
+						var file = dwr.util.getValue('file');
+						var $selectFormat = $("select#fileFormat");
+						var $selectReport = $("select#reportType");
+						var $fileName = $("input#file");
+						var error = "";
+						var parts = $fileName.val().split('.');
+							
+						if($fileName.val()=="")
+							error = error + "Please input file.\n";
+						else if(parts[parts.length - 1].toLowerCase() != "csv")
+							error = error + "Invalid file type. Please choose a .csv file.\n";
+						if($selectFormat.val()=="")
+							error = error + "Please choose file format.\n";
+						if($selectReport.val()=="")
+							error = error + "Please choose report.";
+						
+						
+						if(error!="")
+							jAlert(error,"Report Generator");
+						else{						
+							if($selectReport.val()=="Zero Resuts")
+								self.generateZeroResults(file,$selectFormat.val());
+							if($selectReport.val()=="Top Keywords")
+								self.generateTopKeywords(file,$selectFormat.val());
+						}
 					}
 				});
 			}

@@ -30,7 +30,7 @@
 		<label class="floatL w100 padTB7">File Format : </label>
 		<label class="padTB7 padL10">
 			<select id="fileFormat" class="w215"> 
-				<option>Select a File Format</option>
+				<option value="">Select a File Format</option>
 			</select>
 		</label>
 		<div class="clearB"></div>
@@ -38,13 +38,13 @@
 		<label  class="floatL w100 padTB7">Report :</label>
 		<label class="padTB7 padL10">
 			<select id="reportType" class="w215">
-				<option>Select a Report</option>
+				<option value="">Select a Report</option>
 			</select>
 		</label>
 		<div class="clearB"></div>
 		
 		<label  class="floatL w100 padTB7">Browse :</label>
-		<label class="padTB7"><input type="file" id="keywordFile" class="w120 marL20"/></label>
+		<label class="padTB7"><input type="file" id="file" class="w120 marL20"/></label>
 		<div class="clearB"></div>
 		
 		<label class="floatL w340 padTB2 txtAR">
