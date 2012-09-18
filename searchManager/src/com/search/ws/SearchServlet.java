@@ -645,6 +645,9 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setElevatedItems(elevatedList);
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
 			solrHelper.setForceAddedList(forceAddList);
+			solrHelper.setDemotedItems(demoteList);
+			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
+			
 			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
 				solrHelper.setChangeKeyword(keyword);				
 			}

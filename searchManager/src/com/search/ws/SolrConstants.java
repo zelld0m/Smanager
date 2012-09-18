@@ -42,6 +42,12 @@ public class SolrConstants {
 	public final static String TAG_ELEVATE_TYPE = "ElevateType";
 	public final static String TAG_ELEVATE_ID = "ElevateId";
 	public final static String TAG_ELEVATE_CONDITION = "ElevateCondition";
+	
+	public final static String TAG_DEMOTE = "Demote";
+	public final static String TAG_DEMOTE_TYPE = "DemoteType";
+	public final static String TAG_DEMOTE_ID = "DemoteId";
+	public final static String TAG_DEMOTE_CONDITION = "DemoteCondition";
+	
 	public final static String TAG_EXPIRED = "Expired";
 	public final static String TAG_EXCLUDE = "Exclude";
 	public final static String TAG_REDIRECT = "Redirect";
