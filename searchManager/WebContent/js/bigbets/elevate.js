@@ -127,12 +127,23 @@
 				$li.find('.firerift-style').removeClass("off").removeClass("on");
 				
 				if($item["forceAdd"]) {
-					$li.find('input#setForceAdd').checked = true;
+					$li.find('input#setForceAdd').prop({checked:true});
 					$li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
 				}else{
-					$li.find('input#setForceAdd').checked = false;
+					$li.find('input#setForceAdd').prop({checked:false});
 					$li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
 				}
+				
+				$li.find('.firerift-style').on({
+					click:function(e){
+						if (e.data.locked){
+							e.preventDefault();
+							return;
+						}
+						console.log(e.data.li.find('input#setForceAdd').is(":checked"));
+					},
+					mouseenter: showHoverInfo
+				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, li: $li});
 				
 				// Force Add Color Coding
 				if($item["foundFlag"] && !$item["forceAdd"]){
@@ -144,7 +155,7 @@
 				}else if(!$item["foundFlag"] && !$item["forceAdd"]){
 					$li.addClass("forceAddErrorClass");
 				}
-					
+									
 				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);
 
@@ -157,7 +168,6 @@
 				}
 
 				if(FACET){
-
 					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
@@ -213,22 +223,6 @@
 						}
 					}
 				});
-
-				$li.find('.firerift-style').on({
-					click:function(e){
-						if(e.data.li.find('.firerift-style').hasClass("off")) {
-							e.data.li.find("input#setForceAdd").checked = true;
-							e.data.li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
-						} else {
-							e.data.li.find("input#setForceAdd").checked = false;
-							e.data.li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
-						}
-						
-						//TODO:
-						console.log(e.data.li.find("input#setForceAdd").is(":checked"));
-							
-					}
-				}, {li: $li});
 				
 				$li.find('.clearDate').off().on({
 					click: function(e){
@@ -282,7 +276,6 @@
 						});
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
-				
 				
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
