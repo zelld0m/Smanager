@@ -234,6 +234,7 @@
 		output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
+		output += '				<div id="demotePosition" class="floatL"></div>';
 		output += '			</div>';
 		output += '         <div class="floatR ruleOptionHolder marR5">'; 
 		output += '				<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
