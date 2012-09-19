@@ -1000,6 +1000,7 @@ public class SearchServlet extends HttpServlet {
 					final ArrayList<NameValuePair> getDemotedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
 					getDemotedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
 					getDemotedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
+					getDemotedItemsParams.remove(excludeDemoteNameValuePair);
 					if (forceAddList.size() > 0) {
 						// demote the force added items
 						getDemotedItemsParams.remove(dtNvp);
@@ -1022,10 +1023,12 @@ public class SearchServlet extends HttpServlet {
 							}
 						});
 					} else {
+						final int nStart = startRow;
+						final int nRequested = requestedRows;
 						getDemotedItems = completionService.submit(new Callable<Integer>() {
 							@Override
 							public Integer call() throws Exception {
-								return solrHelper.getDemotedItems(getDemotedItemsParams);
+								return solrHelper.getDemotedItems(getDemotedItemsParams, nStart, nRequested);
 							}
 						});
 					}

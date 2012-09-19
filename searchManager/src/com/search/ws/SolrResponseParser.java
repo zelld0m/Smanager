@@ -30,7 +30,7 @@ public abstract class SolrResponseParser {
 	public abstract int getElevatedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException;
 	public abstract void setDemotedItems(List<DemoteResult> list) throws SearchException;
 	public abstract void setExpiredDemotedEDPs(List<String> list) throws SearchException;
-	public abstract int getDemotedItems(List<NameValuePair> requestParams) throws SearchException;
+	public abstract int getDemotedItems(List<NameValuePair> requestParams, int startRow, int requestedRows) throws SearchException;
 	public abstract int getDemotedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException;
 	public abstract int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException;
 	public abstract boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException;

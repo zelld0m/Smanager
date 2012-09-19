@@ -42,7 +42,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	private String wrf = "";
 	private String changedKeyword;
 	private List<Map<String,String>> activeRules;
-	private List<JSONObject> demotedResults;
+	private List<JSONObject> demotedResults = new ArrayList<JSONObject>();
 	private List<DemoteResult> demotedList = null;
 	private List<String> expiredDemotedEDPs = null;
 	
@@ -636,15 +636,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 	
 	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams) throws SearchException {
+	public int getDemotedItems(List<NameValuePair> requestParams, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			StringBuilder demotedEdps = new StringBuilder();
 			generateEdpList(demotedEdps, demotedList);
-			
-			if (demotedEdps.length() > 0) {
-				demotedEdps.append(")");
-			}
 			
 			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demotedEdps.toString()));
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);

@@ -13,6 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -49,7 +51,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	
 	private List<DemoteResult> demotedList = null;
 	private List<String> expiredDemotedEDPs = null;
-	private List<Node> demotedEntries = null;
+	private List<Node> demotedEntries = new ArrayList<Node>();
 
 
 	@Override
@@ -524,7 +526,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams) throws SearchException {
+	public int getDemotedItems(List<NameValuePair> requestParams, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			StringBuilder demotedEdps = new StringBuilder();
