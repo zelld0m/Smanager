@@ -39,22 +39,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	private JSONObject explainObject  = null; // DOCS entry
 	private JSONObject facetTemplate  = null; // Facet Template
 	private JSONObject responseHeader = null;
-	private String wrf = "";
-	private String changedKeyword;
-	private List<Map<String,String>> activeRules;
 	private List<JSONObject> demotedResults = new ArrayList<JSONObject>();
-	private List<DemoteResult> demotedList = null;
-	private List<String> expiredDemotedEDPs = null;
 	
-	private String requestPath;
-	private int startRow;
-	private int requestedRows;
+	private String wrf = "";
 
 	private static Logger logger = Logger.getLogger(SolrJsonResponseParser.class);
-
-	private List<ElevateResult> elevatedList = null;
-	private List<String> expiredElevatedEDPs = null;
-	private List<ElevateResult> forceAddedList = null;
 
 	public SolrJsonResponseParser() {
 		JsonConfig jsonConfig = new JsonConfig();
@@ -62,21 +51,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		slurper = new JsonSlurper(jsonConfig);
 	}
 
-	@Override
-	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
-		this.activeRules = activeRules;
-	}
-
-	@Override
-	public void setElevatedItems(List<ElevateResult> list) throws SearchException {
-		elevatedList = list;
+	public void setSolrQueryParameters(HashMap<String, List<NameValuePair>> paramMap) throws SearchException {
+		wrf = SearchServlet.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
 	}
 	
-	@Override
-	public void setExpiredElevatedEDPs(List<String> list) throws SearchException {
-		expiredElevatedEDPs = list;
-	}
-
 	private List<JSONObject> sortElevateEntries(Map<String, JSONObject> nodeMap){
 		JSONObject node;
 		ArrayList<JSONObject> sortedElevateList = new ArrayList<JSONObject>();
@@ -326,12 +304,13 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				} 
 				else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().getConditionForSolr());
-					generateExcludeFilterList(excludeProcessedValues, elevatedList, currItem);
 					if (excludeProcessedValues.length() > 0) {
 						excludeNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeProcessedValues.toString());
 						requestParams.add(excludeNVP);
 					}
 				}
+				generateExcludeFilterList(excludeProcessedValues, elevatedList, currItem, false);
+
 				if (e.isForceAdd() && kwNvp!=null) {
 					requestParams.remove(kwNvp);
 				}
@@ -575,74 +554,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	public void setSolrUrl(String solrUrl) {
-		requestPath= solrUrl;
-	}
-
-	@Override
-	public void setSolrQueryParameters(HashMap<String, List<NameValuePair>> paramMap) throws SearchException {
-		wrf = SearchServlet.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
-	}
-
-	@Override
-	public void setRequestRows(int startRow, int requestedRows) throws SearchException {
-		this.startRow = startRow;
-		this.requestedRows = requestedRows;
-	}
-
-	@Override
-	public void setChangeKeyword(String changedKeyword) throws SearchException {
-		this.changedKeyword = changedKeyword;
-	}
-
-	public List<ElevateResult> getForceAddedList() {
-		return forceAddedList;
-	}
-
-	public void setForceAddedList(List<ElevateResult> forceAddedList) {
-		this.forceAddedList = forceAddedList;
-	}
-	
-	@Override
-	public void setDemotedItems(List<DemoteResult> list) throws SearchException {
-		demotedList = list;
-	}
-	
-	@Override
-	public void setExpiredDemotedEDPs(List<String> list) throws SearchException {
-		expiredDemotedEDPs = list;
-	}
-
-	private List<JSONObject> sortDemoteEntries(Map<String, JSONObject> nodeMap){
-		JSONObject node;
-		ArrayList<JSONObject> sortedDemotedList = new ArrayList<JSONObject>();
-		for (DemoteResult e: demotedList) {
-			String edp = e.getEdp();
-			node = nodeMap.get(edp);
-			if (node != null) {
-				node.element(SolrConstants.TAG_DEMOTE, String.valueOf(e.getLocation()));
-				node.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(e.getEntity()));
-				if (e.getDemoteEntity() == MemberTypeEntity.FACET) {
-					node.element(SolrConstants.TAG_DEMOTE_CONDITION, e.getCondition().getReadableString());						
-				}
-				if (expiredDemotedEDPs.contains(edp)) {
-					node.element(SolrConstants.TAG_EXPIRED,"");
-				}
-				node.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(e.getMemberId()));
-				sortedDemotedList.add(node);
-			}
-		}
-		return sortedDemotedList;
-	}
-	
-	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams, int startRow, int requestedRows) throws SearchException {
+	protected int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
 		try {
-			StringBuilder demotedEdps = new StringBuilder();
-			generateEdpList(demotedEdps, demotedList);
-			
-			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demotedEdps.toString()));
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
 			// locate the result node and get the numFound attribute
@@ -661,15 +575,27 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 
 			// sort the edps
-			List<JSONObject> docList = sortDemoteEntries(demotedEntries);
-			logger.debug("****************" + Math.min(startRow + requestedRows, docList.size()) + ";" + startRow + ";" + requestedRows);
-			for (int i = Math.min(startRow + requestedRows, docList.size()) - 1; i >= startRow; i--) {
-				addedRecords++;
-				// insert the demote results to the docs entry
-				demotedResults.add(0, docList.get(i));
-				if (explainObject != null) {
-					String edp = docList.get(i).getString("EDP");
-					explainObject.put(edp, tmpExplain.getString(edp));
+			JSONObject node;
+			for (DemoteResult e: demotedList) {
+				String edp = e.getEdp();
+				node = demotedEntries.get(edp);
+				if (node != null) {
+					node.element(SolrConstants.TAG_DEMOTE, String.valueOf(e.getLocation()));
+					node.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(e.getEntity()));
+					if (e.getDemoteEntity() == MemberTypeEntity.FACET) {
+						node.element(SolrConstants.TAG_DEMOTE_CONDITION, e.getCondition().getReadableString());						
+					}
+					if (expiredDemotedEDPs.contains(edp)) {
+						node.element(SolrConstants.TAG_EXPIRED,"");
+					}
+					node.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(e.getMemberId()));
+
+					addedRecords++;
+					// insert the demote results to the docs entry
+					demotedResults.add(node);
+					if (explainObject != null) {
+						explainObject.put(edp, tmpExplain.getString(edp));
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -679,84 +605,35 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException {
+	protected int getDemotedFacet(List<NameValuePair> requestParams, DemoteResult demoteFacet) throws SearchException {
 		int addedRecords = 0;
 		try {
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
-			Map<String, JSONObject> explainMap = new HashMap<String, JSONObject>();
-			List<JSONObject> docList = new ArrayList<JSONObject>();
-			int size = startRow + requestedRows;
-			
-			int currItem = 0;
-			for (DemoteResult e : demotedList) {
-				if (docList.size() >= size) {
-					break;
-				}
-				BasicNameValuePair nvp = null;
-				BasicNameValuePair excludeNVP = null;
-				StringBuilder demoteFilter = new StringBuilder();
-				currItem++;
-				
-				if (e.getEntity() == MemberTypeEntity.PART_NUMBER) {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + e.getEdp());
-				} 
-				else {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, e.getCondition().getConditionForSolr());
-				}
-				generateExcludeFilterList(demoteFilter, demotedList, currItem);
-				if (demoteFilter.length() > 0) {
-					excludeNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilter.toString());
-					requestParams.add(excludeNVP);
-				}
-				
-				requestParams.add(nvp);
-				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-				requestParams.remove(nvp);
-				requestParams.remove(excludeNVP);
-
-				JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-
-				JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
-				
-				if (explainObject != null) {
-					tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-				}
-				for (int j = 0, length = docs.size(); j < length; j++) {
-					JSONObject doc = (JSONObject)docs.get(j);
-					String edp = doc.getString("EDP");
-					doc.element(SolrConstants.TAG_DEMOTE, String.valueOf(e.getLocation()));
-					doc.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(e.getEntity()));
-					if (e.getEntity() == MemberTypeEntity.FACET) {
-						doc.element(SolrConstants.TAG_DEMOTE_CONDITION, e.getCondition().getReadableString());						
-					}
-					if (expiredDemotedEDPs.contains(edp)) {
-						doc.element(SolrConstants.TAG_EXPIRED,"");
-					}
-					doc.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(e.getMemberId()));
-					docList.add(doc);
-					explainMap.put(edp, tmpExplain);
-					if (docList.size() >= size) {
-						break;
-					}
-				}
+			if (explainObject != null) {
+				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 			}
-			
-			// sort the edps
-			// "debug":{ "explain":{ "6230888":
-			// for (int i = startRow, size = startRow + requestedRows, resultSize = docList.size(); i < size && i < resultSize; i++) {
-			logger.debug("****************" + Math.min(size, docList.size()) + ";" + startRow + ";" + requestedRows);
-			for (int i = Math.min(size, docList.size()) - 1; i >= startRow; i--) {
-				addedRecords++;
-				// insert the demote results to the docs entry
-				demotedResults.add(0, docList.get(i));
-				if (explainObject != null) {
-					String edp = docList.get(i).getString("EDP");
-					explainObject.put(edp, explainMap.get(edp).getString(edp));
+			for (int j = 0, length = docs.size(); j < length; j++) {
+				JSONObject doc = (JSONObject)docs.get(j);
+				String edp = doc.getString("EDP");
+				doc.element(SolrConstants.TAG_DEMOTE, String.valueOf(demoteFacet.getLocation()));
+				doc.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(demoteFacet.getEntity()));
+				if (demoteFacet.getEntity() == MemberTypeEntity.FACET) {
+					doc.element(SolrConstants.TAG_DEMOTE_CONDITION, demoteFacet.getCondition().getReadableString());						
 				}
-				if (addedRecords == reqRows) {
-					break;
+				if (expiredDemotedEDPs.contains(edp)) {
+					doc.element(SolrConstants.TAG_EXPIRED,"");
 				}
+				doc.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(demoteFacet.getMemberId()));
 				
+				// insert the demote results to the docs entry
+				addedRecords++;
+				demotedResults.add(doc);
+				if (explainObject != null) {
+					explainObject.put(edp, tmpExplain.getString(edp));
+				}
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get demoted items" ,e);

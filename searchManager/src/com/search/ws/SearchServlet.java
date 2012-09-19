@@ -722,7 +722,6 @@ public class SearchServlet extends HttpServlet {
 			StringBuilder demoteFacetValues = new StringBuilder();
 			StringBuilder demoteFilters = new StringBuilder();
 			generateFilterList(demoteValues, demoteFacetValues, demoteFilters, demoteList);
-			boolean withDemoteFacet = demoteFacetValues.length() > 0;
 
 			Integer numFound = 0;
 			Integer numForceAddFound = 0;
@@ -949,7 +948,7 @@ public class SearchServlet extends HttpServlet {
 				
 				logger.debug("[Normal items]start row:" + startRow);
 				logger.debug("[Normal items]requested rows:" + requestedRows);
-				if (requestedRows > 0) {
+				if (requestedRows > 0 && numNormalFound > startRow) {
 					/* Third Request */
 					// set filter to not include elevate and exclude list
 					// set rows parameter to original number requested minus results returned in second request
@@ -984,8 +983,12 @@ public class SearchServlet extends HttpServlet {
 					tasks++;
 					
 					requestedRows -= (numNormalFound - startRow);
+					if (requestedRows < 0) {
+						requestedRows = 0;
+					}
 				}
 
+				
 				// TASK 2C - get demoted items
 				if (numFound > 0) {
 					startRow -= numNormalFound;
@@ -998,8 +1001,6 @@ public class SearchServlet extends HttpServlet {
 				if (bestMatchFlag && requestedRows > 0 && numDemoteFound > 0) {
 					
 					final ArrayList<NameValuePair> getDemotedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
-					getDemotedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
-					getDemotedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
 					getDemotedItemsParams.remove(excludeDemoteNameValuePair);
 					if (forceAddList.size() > 0) {
 						// demote the force added items
@@ -1014,24 +1015,14 @@ public class SearchServlet extends HttpServlet {
 					}
 					// TODO: insert force add parameters
 					
-					if (withFacetFlag) {
-						final int numDemote = numDemoteFound - startRow > requestedRows? requestedRows:numElevateFound - startRow;
-						getDemotedItems = completionService.submit(new Callable<Integer>() {
-							@Override
-							public Integer call() throws Exception {
-								return solrHelper.getDemotedItems(getDemotedItemsParams, numDemote);
-							}
-						});
-					} else {
-						final int nStart = startRow;
-						final int nRequested = requestedRows;
-						getDemotedItems = completionService.submit(new Callable<Integer>() {
-							@Override
-							public Integer call() throws Exception {
-								return solrHelper.getDemotedItems(getDemotedItemsParams, nStart, nRequested);
-							}
-						});
-					}
+					final int nStart = startRow;
+					final int nRequested = requestedRows;
+					getDemotedItems = completionService.submit(new Callable<Integer>() {
+						@Override
+						public Integer call() throws Exception {
+							return solrHelper.getDemotedItems(getDemotedItemsParams, nStart, nRequested);
+						}
+					});
 					tasks++;
 				}
 				

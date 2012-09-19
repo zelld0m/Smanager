@@ -13,8 +13,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -39,35 +37,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private Node qtimeNode = null;
 	private Node placeHolderNode = null;
 
-	private String requestPath;
-	private int startRow;
-	private int requestedRows;
-	private String changedKeyword;
-
-	private List<ElevateResult> elevatedList = null;
-	private List<String> expiredElevatedEDPs = null;
-	private List<Map<String,String>> activeRules;
-	private List<ElevateResult> forceAddedList = null;
-	
-	private List<DemoteResult> demotedList = null;
-	private List<String> expiredDemotedEDPs = null;
 	private List<Node> demotedEntries = new ArrayList<Node>();
-
-
-	@Override
-	public void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
-		this.activeRules = activeRules;
-	}
-
-	@Override
-	public void setElevatedItems(List<ElevateResult> list) throws SearchException {
-		elevatedList= list;
-	}
-
-	@Override
-	public void setExpiredElevatedEDPs(List<String> list) throws SearchException {
-		expiredElevatedEDPs = list;
-	}
 
 	private static Node locateElementNode(Node startingNode, String nodeName) throws SearchException {
 		return locateElementNode(startingNode, nodeName, null);
@@ -159,12 +129,13 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + elevateResult.getEdp());
 				} else {
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().getConditionForSolr());
-					generateExcludeFilterList(excludeFilter, elevatedList, currItem);
 					if (excludeFilter.length() > 0) {
 						excludeNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilter.toString());
 						requestParams.add(excludeNVP);
 					}
 				}
+				generateExcludeFilterList(excludeFilter, elevatedList, currItem, false);
+				
 				if (elevateResult.isForceAdd() && kwNvp!=null) {
 					requestParams.remove(kwNvp);
 				}
@@ -472,66 +443,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		return success;
 	}
 
-	@Override
-	public void setSolrUrl(String solrUrl) throws SearchException {
-		requestPath= solrUrl;
-	}
-
-	@Override
-	public void setSolrQueryParameters(HashMap<String, List<NameValuePair>> paramMap) throws SearchException {
-	}
-
-	@Override
-	public void setRequestRows(int startRow, int requestedRows) throws SearchException {
-		this.startRow = startRow;
-		this.requestedRows = requestedRows;
-	}
-
-	@Override
-	public void setChangeKeyword(String changedKeyword) throws SearchException {
-		this.changedKeyword = changedKeyword;
-	}
-
-	public List<ElevateResult> getForceAddedList() {
-		return forceAddedList;
-	}
-
-	public void setForceAddedList(List<ElevateResult> forceAddedList) {
-		this.forceAddedList = forceAddedList;
-	}
-
-	@Override
-	public void setDemotedItems(List<DemoteResult> list) throws SearchException {
-		demotedList = list;
-	}
-	
-	@Override
-	public void setExpiredDemotedEDPs(List<String> list) throws SearchException {
-		expiredDemotedEDPs = list;
-	}
-
-	private List<Node> sortDemoteList(Document document, Map<String, Node> nodeMap) throws SearchException{
-		Node node;
-		ArrayList<Node> sortedDemoteList = new ArrayList<Node>();
-		for (DemoteResult result: demotedList) {
-			node = nodeMap.get(result.getEdp());
-			if (node != null) {
-				Node demoteNode = document.createElement(SolrConstants.TAG_DEMOTE);
-				demoteNode.appendChild(document.createTextNode(String.valueOf(result.getLocation())));
-				node.appendChild(demoteNode);
-				sortedDemoteList.add(node);
-			}
-		}
-		return sortedDemoteList;
-	}
-
-	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams, int startRow, int requestedRows) throws SearchException {
+	protected int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
 		try {
-			StringBuilder demotedEdps = new StringBuilder();
-			generateEdpList(demotedEdps, demotedList);
-			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demotedEdps.toString()));
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document demoteDoc = docBuilder.parse(solrResponse.getEntity().getContent());
@@ -560,19 +474,23 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				}
 			}
 
-			// sort the edps
-			List<Node> nodeList = sortDemoteList(demoteDoc, demoteDocuments);
-			//<lst name="debug"> <lst name="explain"> <str name="6230888">
 			Node demoteExplainNode = locateElementNode(locateElementNode(locateElementNode(demoteDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-
-			for (int i = startRow, size = startRow + requestedRows, resultSize = nodeList.size(); i < size && i < resultSize; i++) {
-				addedRecords++;
-				demotedEntries.add(mainDoc.importNode(nodeList.get(i), true));
-				if (explainNode != null) {
-					explainNode.appendChild(mainDoc.importNode(locateElementNode(demoteExplainNode, SolrConstants.TAG_STR,
-							locateElementNode(nodeList.get(i), SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent()), true));
+			
+			// sort the edps
+			for (DemoteResult result: demotedList) {
+				String edp = result.getEdp();
+				Node node = demoteDocuments.get(edp);
+				if (node != null) {
+					Node demoteNode = demoteDoc.createElement(SolrConstants.TAG_DEMOTE);
+					demoteNode.appendChild(demoteDoc.createTextNode(String.valueOf(result.getLocation())));
+					node.appendChild(demoteNode);
+					addedRecords++;
+					demotedEntries.add(mainDoc.importNode(node, true));
+					if (explainNode != null) {
+						explainNode.appendChild(mainDoc.importNode(locateElementNode(demoteExplainNode, SolrConstants.TAG_STR, edp), true));
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -582,86 +500,47 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	public int getDemotedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException {
+	protected int getDemotedFacet(List<NameValuePair> requestParams, DemoteResult demoteFacet) throws SearchException {
 		int addedRecords = 0;
 		try {
-			Map<String, Node> explainMap = new HashMap<String, Node>();
-			Map<String, Node> nodeMap = new LinkedHashMap<String, Node>();
-			Document demoteDoc = null;
-			int size = startRow + requestedRows;
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document demoteDoc  = docBuilder.parse(solrResponse.getEntity().getContent());
 			
-			int currItem = 0;			
-			for (DemoteResult demoteResult : demotedList) {
-				BasicNameValuePair nvp = null;
-				BasicNameValuePair excludeNVP = null;
-				StringBuilder excludeFilter = new StringBuilder();
-				currItem++;
-				if (demoteResult.getEntity() == MemberTypeEntity.PART_NUMBER) {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, "EDP:" + demoteResult.getEdp());
-				} 
-				else {
-					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteResult.getCondition().getConditionForSolr());
-					generateExcludeFilterList(excludeFilter, demotedList, currItem);
-					if (excludeFilter.length() > 0) {
-						excludeNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilter.toString());
-						requestParams.add(excludeNVP);
-					}
-				}
-				
-				requestParams.add(nvp);
-				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-				requestParams.remove(nvp);
-				requestParams.remove(excludeNVP);
-				
-				DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				demoteDoc  = docBuilder.parse(solrResponse.getEntity().getContent());
-				// <result> tag that is parent node for all the <doc> tags
-				Node tmpResultNode = locateElementNode(locateElementNode(demoteDoc, SolrConstants.TAG_RESPONSE),
-						SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
-	
-				NodeList children = demoteDoc.getElementsByTagName(SolrConstants.TAG_DOC);
-	
-				for (int j = 0, length = children.getLength(); j < length; j++) {
-					Node docNode = children.item(j);
-					if (docNode.getParentNode() == tmpResultNode) {
-						// get the EDPs
-						NodeList docNodes = docNode.getChildNodes();
-						for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
-							Node kNode = docNodes.item(k);
-							if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT) &&
-									kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
-									.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
-								String edp = kNode.getTextContent();
-								nodeMap.put(edp, docNode);
-								explainMap.put(edp, locateElementNode(locateElementNode(locateElementNode(demoteDoc, SolrConstants.TAG_RESPONSE),
-												SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
-												SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN));
-								break;
+			// <result> tag that is parent node for all the <doc> tags
+			Node tmpResultNode = locateElementNode(locateElementNode(demoteDoc, SolrConstants.TAG_RESPONSE),
+					SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
+			
+			Node demoteExplainNode = locateElementNode(locateElementNode(locateElementNode(demoteDoc, SolrConstants.TAG_RESPONSE),
+					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
+					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
+
+			NodeList children = demoteDoc.getElementsByTagName(SolrConstants.TAG_DOC);
+
+			for (int j = 0, length = children.getLength(); j < length; j++) {
+				Node docNode = children.item(j);
+				if (docNode.getParentNode() == tmpResultNode) {
+					// get the EDPs
+					NodeList docNodes = docNode.getChildNodes();
+					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
+						Node kNode = docNodes.item(k);
+						if (kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_INT) &&
+								kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
+								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
+							String edp = kNode.getTextContent();
+							Node demoteNode = demoteDoc.createElement(SolrConstants.TAG_DEMOTE);
+							demoteNode.appendChild(demoteDoc.createTextNode(String.valueOf(demoteFacet.getLocation())));
+							docNode.appendChild(demoteNode);
+							demotedEntries.add(mainDoc.importNode(docNode, true));
+							addedRecords++;
+							if (explainNode != null) {
+								explainNode.appendChild(mainDoc.importNode(locateElementNode(demoteExplainNode, SolrConstants.TAG_STR, edp), true));
 							}
 						}
 					}
-					if (nodeMap.size() >= size) {
-						break;
-					}
-				}
-				if (nodeMap.size() >= size) {
-					break;
 				}
 			}
-
-			int ctr = 0;
-			for (Map.Entry<String, Node> entry : nodeMap.entrySet()) {
-				if (ctr++ >= startRow) {
-					demotedEntries.add(mainDoc.importNode(entry.getValue(), true));
-					if (explainNode != null) {
-						explainNode.appendChild(mainDoc.importNode(locateElementNode(explainMap.get(entry.getKey()), SolrConstants.TAG_STR,
-								locateElementNode(entry.getValue(), SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent()), true));
-					}
-					if (++addedRecords >= reqRows) {
-						break;
-					}
-				}
-	        }
+			
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get demoted items" ,e);
 		}
@@ -670,7 +549,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 
 	private void addDemotedEntries() {
 		for (Node node: demotedEntries) {
-			resultNode.appendChild(mainDoc.importNode(node, true));
+			resultNode.appendChild(node);
 		}
 	}
 	
