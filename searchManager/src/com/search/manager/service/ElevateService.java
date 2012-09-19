@@ -120,7 +120,7 @@ public class ElevateService{
 		return changes;
 	}
 
-	public int addProductItem(String keyword, String edp, int sequence, String expiryDate, String comment, boolean forceAdd) {
+	public int addItem(String keyword, String edp, int sequence, String expiryDate, String comment, boolean forceAdd) {
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %d %s %s", keyword, edp, sequence, expiryDate, comment));
@@ -157,12 +157,12 @@ public class ElevateService{
 
 	@RemoteMethod
 	public int addProductItemForceAdd(String keyword, String edp, int sequence, String expiryDate, String comment) {
-		return addProductItem(keyword, edp, sequence, expiryDate, comment, true);
+		return addItem(keyword, edp, sequence, expiryDate, comment, true);
 	}
 
 	@RemoteMethod
 	public int addProductItem(String keyword, String edp, int sequence, String expiryDate, String comment) {
-		return addProductItem(keyword, edp, sequence, expiryDate, comment, false);
+		return addItem(keyword, edp, sequence, expiryDate, comment, false);
 	}
 
 	@RemoteMethod
