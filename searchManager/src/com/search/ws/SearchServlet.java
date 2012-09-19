@@ -922,6 +922,14 @@ public class SearchServlet extends HttpServlet {
 					getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0)));
 
 					if (withFacetFlag) {
+						if (forceAddList.size() > 0 && redirect !=null && redirect.isRedirectFilter()) {
+							getElevatedItemsParams.remove(dtNvp);
+							removeNameValuePairFromList(getElevatedItemsParams, SolrConstants.SOLR_PARAM_FIELD_QUERY);
+							addNameValuePairToList(getElevatedItemsParams, forceAddFqNVP);
+							addNameValuePairToList(getElevatedItemsParams, forceAddKeywordNVP);
+							getElevatedItemsParams.remove(origKeywordNVP);
+							getElevatedItemsParams.remove(redirectFqNvp);
+						}						
 						final int numElevate = numElevateFound - startRow > requestedRows? requestedRows:numElevateFound - startRow;
 						getElevatedItems = completionService.submit(new Callable<Integer>() {
 							@Override

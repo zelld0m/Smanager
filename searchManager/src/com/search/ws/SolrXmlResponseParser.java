@@ -140,6 +140,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			int size = startRow + requestedRows;
 			
 			BasicNameValuePair kwNvp = null;
+			NameValuePair dtNvp = new BasicNameValuePair("defType", "dismax");
 			if (forceAddedList.size() > 0) {
 				for (NameValuePair nameValuePair : requestParams) {
 					if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
@@ -167,6 +168,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				}
 				if (elevateResult.isForceAdd() && kwNvp!=null) {
 					requestParams.remove(kwNvp);
+					requestParams.add(dtNvp);
 				}
 				requestParams.add(nvp);
 				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -174,6 +176,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				
 				if (elevateResult.isForceAdd() && kwNvp!=null) {
 					requestParams.add(kwNvp);
+					requestParams.remove(dtNvp);
 				}
 				requestParams.remove(excludeNVP);
 				
