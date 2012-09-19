@@ -18,7 +18,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.SearchResult;
 
 public abstract class SolrResponseParser {
-
+ 
 	/* Sends the original Solr Query Parameters, in case implementation needs to do something with it. Example JSON implemenation would need to get wrf parameter */
 	public abstract int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
