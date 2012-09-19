@@ -152,7 +152,14 @@
 							base.populateItemTable("Exclude", $content, data);
 						}
 					});
-					break; 
+					break;
+				case "demote": 
+					DemoteServiceJS.getAllProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
+						callback: function(data){
+							base.populateItemTable("Demote", $content, data);
+						}
+					});
+					break;
 				case "query cleaning": 
 					$content.find(".infoTabs").tabs({});
 				
@@ -324,7 +331,8 @@
 
 			switch(base.options.ruleType.toLowerCase()){
 				case "elevate": 
-				case "exclude": 
+				case "exclude":
+				case "demote":
 					template += '<div id="previewTemplate1">';
 					template += '	<div class="w600 mar0 pad0">';
 					template += '		<table class="tblItems w100p marT5">';
@@ -348,8 +356,8 @@
 					template += '					<td width="60px" class="txtAC" id="itemImage"><img src="" width="50"/></td>';
 					template += '					<td width="94px" class="txtAC" id="itemMan"></td>';
 					template += '					<td width="70px" class="txtAC" id="itemDPNo"></td>';
-					template += '					<td width="162px" class="txtAC" id="itemName"></td>';
-					template += '					<td class="txtAC">';
+					template += '					<td width="160px" class="txtAC" id="itemName"></td>';
+					template += '					<td width="90px" class="txtAC">';
 					template += '						<div id="itemValidity"></div>';
 					template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
 					template +='					</td>';

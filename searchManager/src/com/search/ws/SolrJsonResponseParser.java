@@ -281,6 +281,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			List<JSONObject> docList = new ArrayList<JSONObject>();
 			int size = startRow + requestedRows;
 			BasicNameValuePair kwNvp = null;
+			NameValuePair dtNvp = new BasicNameValuePair("defType", "dismax");
 			if (forceAddedList.size() > 0) {
 				for (NameValuePair nameValuePair : requestParams) {
 					if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
@@ -313,6 +314,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 
 				if (e.isForceAdd() && kwNvp!=null) {
 					requestParams.remove(kwNvp);
+					requestParams.add(dtNvp);
 				}
 				
 				requestParams.add(nvp);
@@ -321,6 +323,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				requestParams.remove(nvp);
 				if (e.isForceAdd()  && kwNvp!=null) {
 					requestParams.add(kwNvp);
+					requestParams.remove(dtNvp);
 				}
 				requestParams.remove(excludeNVP);
 
