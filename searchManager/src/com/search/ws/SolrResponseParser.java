@@ -22,8 +22,6 @@ public abstract class SolrResponseParser {
 	/* Sends the original Solr Query Parameters, in case implementation needs to do something with it. Example JSON implemenation would need to get wrf parameter */
 	public abstract int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
-	public abstract int getElevatedItems(List<NameValuePair> requestParams) throws SearchException;
-	public abstract int getElevatedItems(List<NameValuePair> requestParams, int reqRows) throws SearchException;
 	public abstract int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException;
 	public abstract boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException;
 	public abstract int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
@@ -41,6 +39,7 @@ public abstract class SolrResponseParser {
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
 
+	/* public setters and getters */
 	public final void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
 		this.activeRules = activeRules;
 	}
@@ -85,7 +84,9 @@ public abstract class SolrResponseParser {
 		expiredDemotedEDPs = list;
 	}
 	
-	protected static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> ... list) {
+	
+	/* Used by both elevate and demote */
+	private static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> ... list) {
 		for (Collection<? extends SearchResult> listEntry: list) {
 			if (CollectionUtils.isNotEmpty(listEntry)) {
 				for (SearchResult result: listEntry) {
@@ -154,6 +155,106 @@ public abstract class SolrResponseParser {
 		}
 	}
 	
+	/* For elevate */
+	protected abstract int getElevatedEdps(List<NameValuePair> requestParams) throws SearchException;
+	protected abstract int getElevatedFacet(List<NameValuePair> requestParams, ElevateResult elevateFacet) throws SearchException;
+
+	// TODO: merge getElevatedItems and getDemotedItems
+	
+	public final int getElevatedItems(List<NameValuePair> requestParams,  int startRow, int requestedRows) throws SearchException {
+		int addedRecords = 0;
+		try {
+			int currItem = 1;
+			List<NameValuePair> currentRequestParams = new ArrayList<NameValuePair>();
+			BasicNameValuePair zeroRowNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
+			List<ElevateResult> elevateEdps = new ArrayList<ElevateResult>();
+			int elevatedRecords = elevatedList.size();
+			
+			// TODO: check if needed for force add
+			BasicNameValuePair kwNvp = null;
+//			NameValuePair dtNvp = new BasicNameValuePair("defType", "dismax");
+//			if (forceAddedList.size() > 0) {
+//				for (NameValuePair nameValuePair : requestParams) {
+//					if (SolrConstants.SOLR_PARAM_KEYWORD.equals(nameValuePair.getName())) {
+//						kwNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD,nameValuePair.getValue());
+//						break;
+//					} 
+//				}
+//			}
+			
+			for (int i = 0; i < elevatedRecords; i++) {
+				
+				ElevateResult elevateResult = elevatedList.get(i);
+				
+				StringBuilder elevateFilter = new StringBuilder();
+				boolean isEdpList = false;
+				elevateEdps.clear();
+				
+				currentRequestParams.clear();
+				currentRequestParams.addAll(requestParams);
+				currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
+				currentRequestParams.add(zeroRowNVP);
+				
+				if (elevateResult.getEntity() == MemberTypeEntity.PART_NUMBER) {
+					isEdpList = true;
+					elevateEdps.add(elevateResult);
+					for (int j = i+1; j < elevatedRecords; j++) {
+						ElevateResult e2 = elevatedList.get(j);
+						if (e2.getEntity() == MemberTypeEntity.PART_NUMBER) {
+							elevateEdps.add(e2);
+							i++;
+							currItem++;
+						}
+					}
+					StringBuilder builder = new StringBuilder();
+					generateEdpList(builder, elevateEdps);
+					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString()));
+				}
+				else {
+					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().getConditionForSolr()));
+				}
+				
+				generateExcludeFilterList(elevateFilter, elevatedList, currItem++, false);
+				if (elevateFilter.length() > 0) {
+					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilter.toString()));
+				}
+				
+				// TODO: check if needed for force add
+//				if (e.isForceAdd() && kwNvp!=null) {
+//					requestParams.remove(kwNvp);
+//					requestParams.add(dtNvp);
+//				}
+				
+				// check if current elevate result contains any matches
+				int numFound = getCount(currentRequestParams);
+				if (numFound > 0) { // match found let's get the necessary entries
+					if (numFound > startRow) {
+						currentRequestParams.remove(zeroRowNVP);
+						currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
+						if (isEdpList) {
+							requestedRows -= getElevatedEdps(currentRequestParams);
+						}
+						else {
+							requestedRows -= getElevatedFacet(currentRequestParams, elevateResult);
+						}
+					}
+					startRow -= numFound;
+					if (startRow < 0) {
+						startRow = 0;
+					}
+				}
+				
+				if (requestedRows <= 0) {
+					break;
+				}
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get elevated items" ,e);
+		}
+		return addedRecords;
+	}
+	
+	/* For demote */
 	protected abstract int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException;
 	protected abstract int getDemotedFacet(List<NameValuePair> requestParams, DemoteResult demoteFacet) throws SearchException;
 

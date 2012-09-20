@@ -547,9 +547,9 @@ public class SearchServlet extends HttpServlet {
 			if (keywordPresent) {
 				if (fromSearchGui) {
 					if (daoService.getKeyword(sk.getStoreId(), sk.getKeywordId()) != null) {
-						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					}
 					if (!disableElevate) {
 						if (bestMatchFlag) {
@@ -574,11 +574,13 @@ public class SearchServlet extends HttpServlet {
 								}
 							}
 						}
-						ElevateResult forceAddFilter = new ElevateResult();
-						forceAddFilter.setStoreKeyword(sk);
-						forceAddFilter.setForceAdd(true);
-						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
-						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
+						
+						// disable force add
+//						ElevateResult forceAddFilter = new ElevateResult();
+//						forceAddFilter.setStoreKeyword(sk);
+//						forceAddFilter.setForceAdd(true);
+//						SearchCriteria<ElevateResult> forceAddCriteria = new SearchCriteria<ElevateResult>(forceAddFilter,new Date(),null,0,0);
+//						forceAddList = daoService.getElevateResultList(forceAddCriteria).getList();
 					}
 					
 					if (!disableDemote) {
@@ -614,17 +616,18 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				else {
-					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					if (keywordPresent) {
 						if (!disableElevate) {
-							elevatedList = daoCacheService.getElevateRules(sk);			
-							for (ElevateResult elevateResult : elevatedList) {
-								if (elevateResult.isForceAdd()) {
-									forceAddList.add(elevateResult);
-								}
-							}
+							elevatedList = daoCacheService.getElevateRules(sk);
+							// disable force add
+//							for (ElevateResult elevateResult : elevatedList) {
+//								if (elevateResult.isForceAdd()) {
+//									forceAddList.add(elevateResult);
+//								}
+//							}
 							if (!bestMatchFlag) {
 								elevatedList = new ArrayList<ElevateResult>();
 							}	
@@ -917,9 +920,6 @@ public class SearchServlet extends HttpServlet {
 					logger.debug("total number of elevated found including force added items:" + numElevateFound);
 					
 					final ArrayList<NameValuePair> getElevatedItemsParams = new ArrayList<NameValuePair>(nameValuePairs);
-					getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(startRow + requestedRows)));
-					getElevatedItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(0)));
-
 					if (withFacetFlag) {
 						if (forceAddList.size() > 0 && redirect !=null && redirect.isRedirectFilter()) {
 							getElevatedItemsParams.remove(dtNvp);
@@ -928,22 +928,17 @@ public class SearchServlet extends HttpServlet {
 							addNameValuePairToList(getElevatedItemsParams, forceAddKeywordNVP);
 							getElevatedItemsParams.remove(origKeywordNVP);
 							getElevatedItemsParams.remove(redirectFqNvp);
-						}						
-						final int numElevate = numElevateFound - startRow > requestedRows? requestedRows:numElevateFound - startRow;
-						getElevatedItems = completionService.submit(new Callable<Integer>() {
-							@Override
-							public Integer call() throws Exception {
-								return solrHelper.getElevatedItems(getElevatedItemsParams, numElevate);
-							}
-						});
-					} else {
-						getElevatedItems = completionService.submit(new Callable<Integer>() {
-							@Override
-							public Integer call() throws Exception {
-								return solrHelper.getElevatedItems(getElevatedItemsParams);
-							}
-						});
+						}
 					}
+					
+					final int nStart = startRow;
+					final int nRequested = requestedRows;
+					getElevatedItems = completionService.submit(new Callable<Integer>() {
+						@Override
+						public Integer call() throws Exception {
+							return solrHelper.getElevatedItems(getElevatedItemsParams, nStart, nRequested);
+						}
+					});
 					tasks++;
 					requestedRows -= (numElevateFound - startRow);
 				}
