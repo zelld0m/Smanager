@@ -208,11 +208,11 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberTypeEntity(e.getElevateEntity());
 			ep.setCondition(e.getCondition());
 			ep.setForceAdd(e.isForceAdd());
-			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
-				SearchHelper.getProductViaSim(serverName, storeId, keyword, ep);
-			} else {
-				ep.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
-			}
+//			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
+//				SearchHelper.getProductViaSim(serverName, storeId, keyword, ep);
+//			} else {
+//				ep.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
+//			}
 			elevateList.add(ep);
 		}
 		return new RecordSet<ElevateProduct>(elevateList,set.getTotalSize());

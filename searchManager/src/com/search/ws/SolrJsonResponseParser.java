@@ -70,9 +70,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				if (expiredElevatedEDPs.contains(edp)) {
 					node.element(SolrConstants.TAG_EXPIRED,"");
 				}
-				if (e.isForceAdd()) {
-					node.element(SolrConstants.TAG_FORCE_ADD,"");
-				}
+//				if (e.isForceAdd()) {
+//					node.element(SolrConstants.TAG_FORCE_ADD,"");
+//				}
 				node.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 				sortedElevateList.add(node);
 			}
@@ -345,9 +345,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 					if (expiredElevatedEDPs.contains(edp)) {
 						doc.element(SolrConstants.TAG_EXPIRED,"");
 					}
-					if (e.isForceAdd()) {
-						doc.element(SolrConstants.TAG_FORCE_ADD,"");
-					}
+//					if (e.isForceAdd()) {
+//						doc.element(SolrConstants.TAG_FORCE_ADD,"");
+//					}
 					doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 					docList.add(doc);
 					explainMap.put(edp, tmpExplain);
