@@ -469,7 +469,6 @@ public class SearchHelper {
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
 			String core = configManager.getStoreParameter(storeId, "core");
-			List<NameValuePair> params = configManager.getDefaultSolrParameters(core);
 			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
 
 			// TODO: replace qt with relevancy
@@ -490,7 +489,6 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
-			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
@@ -512,9 +510,9 @@ public class SearchHelper {
 			// locate the result node
 			resultArray = ((JSONObject)initialJson).getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			if (resultArray.size() > 0) {
-				product.setFoundFlag(true);
+//				product.setFoundFlag(true);
 			} else {
-				product.setFoundFlag(false);
+//				product.setFoundFlag(false);
 				nameValuePairs.remove(nvp);
 				nvp = new BasicNameValuePair("q", "");
 				nameValuePairs.add(nvp);
@@ -570,7 +568,6 @@ public class SearchHelper {
 			// build the query
 			String facetName = configManager.getStoreParameter(storeId, "facet-name");
 			String core = configManager.getStoreParameter(storeId, "core");
-			List<NameValuePair> params = configManager.getDefaultSolrParameters(core);
 
 			// TODO: replace qt with relevancy
 			String qt = configManager.getStoreParameter(storeId, "qt");
@@ -589,7 +586,6 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
-			nameValuePairs.add(params.get(0));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
@@ -683,19 +679,22 @@ public class SearchHelper {
 			if (StringUtils.isEmpty(qt)) {
 				qt = "standard";
 			}
+			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
+
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?").replace("http://",PropsUtils.getValue("browsejssolrurl"));
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
-			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
+			nameValuePairs.add(new BasicNameValuePair("fl", fields));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
+			nameValuePairs.add(new BasicNameValuePair("facet", "true"));
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
-			nameValuePairs.add(params.get(0));
+			nameValuePairs.add(new BasicNameValuePair("sort", configManager.getStoreParameter(core, "sort")));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());
