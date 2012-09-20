@@ -80,7 +80,7 @@
 			}
 			return false;
 		};
-		
+
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
@@ -149,7 +149,7 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
-							
+
 							//TODO: Get delete details from file
 							if (list[i]["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
@@ -173,9 +173,9 @@
 						checkSelectHandler();
 						checkSelectAllHandler();
 						approvalHandler();
-						
+
 						if (data.totalSize==1) $(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
-						
+
 					}else{
 						$(tabSelected).find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 						$(tabSelected).find('th#selectAll > input[type="checkbox"]').remove();
@@ -213,9 +213,9 @@
 		var populateItemTable = function(ruleType, content, ruleStatus, data){
 			var $content = content;
 			var list = data.list;
-			
+
 			var $table = $content.find("table#item");
-			
+
 			$table.find("tr:not(#itemPattern)").remove();
 
 			if (data.totalSize==0){
@@ -224,7 +224,7 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
-				
+
 				var setImage = function(tr, imagePath){
 					setTimeout(function(){	
 						tr.find("td#itemImage > img").attr("src",imagePath).off().on({
@@ -234,7 +234,7 @@
 						});
 					},10);
 				};
-				
+
 				var getFacetItemType = function(item){
 					var $condition = item.condition;
 					var type = "";
@@ -248,30 +248,30 @@
 					}
 					return type;
 				};
-				
+
 				for (var i = 0; i < data.totalSize; i++) {
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
-					
+
 //					if (ruleType.toLowerCase() === "elevate"){
-//						// Force Add Color Coding
-//						if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//						
-//						}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-//							$tr.addClass("forceAddBorderErrorClass");
-//						}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-//							$tr.addClass("forceAddClass");
-//						}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//							$tr.addClass("forceAddErrorClass");
-//						}
+//					// Force Add Color Coding
+//					if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
+
+//					}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
+//					$tr.addClass("forceAddBorderErrorClass");
+//					}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
+//					$tr.addClass("forceAddClass");
+//					}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//					$tr.addClass("forceAddErrorClass");
 //					}
-					
+//					}
+
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
-					
+
 					if(FACET){
 						var imagePath = list[i]["imagePath"];
-						
+
 						if($.isBlank(imagePath)){
 							imagePath = GLOBAL_contextPath + '/images/';
 							switch(getFacetItemType(list[i])){
@@ -280,13 +280,19 @@
 							case "facet" : imagePath += "facet_img.jpg"; break;
 							}
 						}
-						
+
 						setImage($tr,imagePath);
 						$tr.find("td#itemMan").html(list[i].condition["readableString"])
-							.prop("colspan",3)
-							.removeClass("txtAC")
-							.addClass("txtAL");
-						$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						.prop("colspan",3)
+						.removeClass("txtAC")
+						.addClass("txtAL")
+						.attr("width", "363px");
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						
+						if ($.isBlank(list[i]["isExpired"])){
+							$tr.find("#itemValidityDaysExpired").remove();
+						}
+						
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
@@ -295,16 +301,21 @@
 							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("td#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 						}else{
 							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-													.prop("colspan",5)
-													.removeClass("txtAC")
-													.addClass("txtAL");
-							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+							.prop("colspan",4)
+							.removeClass("txtAC")
+							.addClass("txtAL")
+							.attr("width", "369px");
+							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
+						}
+						
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+						if ($.isBlank(list[i]["isExpired"])){
+							$tr.find("#itemValidityDaysExpired").remove();
+						}
 					}
-					}
-					
+
 					$tr.appendTo($table);
 				};
 			}
@@ -312,11 +323,11 @@
 			// Alternate row style
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
-			
+
 		};
 
 		var populatePreview = function(api, $content, ruleStatus){
-			
+
 			var populateKeywordInRule = function(data){
 				var list = data.list;
 				var $table = $content.find("div.ruleKeyword table#item");
@@ -335,10 +346,10 @@
 						$tr.appendTo($table);
 					}	
 				}
-				
+
 				$table.find("tr:even").addClass("alt");
 			};
-			
+
 			switch(tabSelectedText){
 			case "Elevate": 
 				$content.html($("#previewTemplate1").html());
@@ -355,7 +366,7 @@
 				$content.html($("#previewTemplate1").html());
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-				
+
 				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
 					callback: function(data){
 						populateItemTable("Exclude", $content, ruleStatus, data);
@@ -382,7 +393,7 @@
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
-				
+
 				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
 					callback: function(data){
 
@@ -407,27 +418,27 @@
 						$table.find("tr:even").addClass("alt");
 						$content.find("#description").html(data["description"]);
 						switch (data["redirectTypeId"]) {
-							case "1":
-								$content.find("#redirectType").html("Filter");
-								break;
-							case "2":
-								$content.find("#redirectType").html("Replace Keyword");
-								break;
-							case "3":
-								$content.find("#redirectType").html("Direct Hit");
-								break;
-							default:
-								$content.find("#redirectType").html("");
-								break;									
+						case "1":
+							$content.find("#redirectType").html("Filter");
+							break;
+						case "2":
+							$content.find("#redirectType").html("Replace Keyword");
+							break;
+						case "3":
+							$content.find("#redirectType").html("Direct Hit");
+							break;
+						default:
+							$content.find("#redirectType").html("");
+						break;									
 						}
-						
+
 						if ($.isNotBlank(data["changeKeyword"])){
 							$content.find("div#ruleChange > div#hasChangeKeyword").show();
 							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
 						}else{
 							$content.find("div#ruleChange > #noChangeKeyword").show();
 						}
-						
+
 						var includeKeywordText = "Include keyword in search: <b>NO</b>";
 						if($.isNotBlank(data["includeKeyword"])){
 							includeKeywordText = "Include keyword in search: ";
@@ -454,9 +465,9 @@
 			case "Ranking Rule": 
 				$content.html($("#previewTemplate2").html());
 				$content.find(".infoTabs").tabs({
-					
+
 				});
-				
+
 				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
@@ -468,14 +479,14 @@
 
 						var $table = $content.find("div.ruleField table#item");
 						$table.find("tr:not(#itemPattern)").remove();
-						
+
 						for(var field in data.parameters){
 							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html(field);
 							$tr.find("td#fieldValue").html(data.parameters[field]);
 							$tr.appendTo($table);
 						}	
-						
+
 						$table.find("tr:even").addClass("alt");
 					}
 				});

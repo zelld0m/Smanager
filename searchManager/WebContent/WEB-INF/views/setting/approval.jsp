@@ -136,8 +136,12 @@
 							<td width="60px" class="txtAC" id="itemImage"><img src="" width="50"/></td>
 							<td width="94px" class="txtAC" id="itemMan"></td>
 							<td width="70px" class="txtAC" id="itemDPNo"></td>
-							<td width="162px" class="txtAC" id="itemName"></td>
-							<td class="txtAC" id="itemValidity"></td>
+							<td width="160px" class="txtAC" id="itemName"></td>
+							<td class="txtAC">
+								<div id="itemValidity" class="w74 wordwrap"></div>
+								<div id="itemValidityDaysExpired"><img src="<spring:url value="/images/expired_stamp50x16.png" />"/>
+								</div>
+							</td>
 						</tr>
 						<tr>
 							<td colspan="6" class="txtAC">

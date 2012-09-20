@@ -95,7 +95,8 @@
 						$tr.find("td#itemMan").html(list[i].condition["readableString"])
 							.prop("colspan",3)
 							.removeClass("txtAC")
-							.addClass("txtAL");
+							.addClass("txtAL")
+							.attr("width", "363px");
 						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 						
 						if ($.isBlank(list[i]["isExpired"])){
@@ -110,16 +111,17 @@
 							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
-							$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
 						}
 						else{
 							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
 													.prop("colspan",4)
 													.removeClass("txtAC")
-													.addClass("txtAL");
-							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+													.addClass("txtAL")
+													.attr("width", "369px");
+							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
 						}
 						
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
 						}
@@ -357,8 +359,8 @@
 					template += '					<td width="94px" class="txtAC" id="itemMan"></td>';
 					template += '					<td width="70px" class="txtAC" id="itemDPNo"></td>';
 					template += '					<td width="160px" class="txtAC" id="itemName"></td>';
-					template += '					<td width="90px" class="txtAC">';
-					template += '						<div id="itemValidity"></div>';
+					template += '					<td width="auto" class="txtAC">';
+					template += '						<div id="itemValidity" class="w74 wordwrap"></div>';
 					template += '						<div id="itemValidityDaysExpired"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div>';
 					template +='					</td>';
 					template += '				</tr>';
@@ -560,7 +562,7 @@
 					template += '						<td id="fieldValue" class="wAuto"></td>';
 					template += '					</tr>';
 					template += '					<tr>';
-					template += '						<td colspan="2" class="itemRow  txtAC">';
+					template += '						<td colspan="2" class="itemRow txtAC">';
 					template += '							<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">	';
 					template += '						</td>';
 					template += '					</tr>';
