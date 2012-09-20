@@ -253,18 +253,18 @@
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 					
-					if (ruleType.toLowerCase() === "elevate"){
-						// Force Add Color Coding
-						if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-						
-						}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-							$tr.addClass("forceAddBorderErrorClass");
-						}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-							$tr.addClass("forceAddClass");
-						}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-							$tr.addClass("forceAddErrorClass");
-						}
-					}
+//					if (ruleType.toLowerCase() === "elevate"){
+//						// Force Add Color Coding
+//						if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//						
+//						}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
+//							$tr.addClass("forceAddBorderErrorClass");
+//						}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
+//							$tr.addClass("forceAddClass");
+//						}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//							$tr.addClass("forceAddErrorClass");
+//						}
+//					}
 					
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";

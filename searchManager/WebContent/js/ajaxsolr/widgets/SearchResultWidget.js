@@ -348,15 +348,15 @@
 								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
 								
 								// Force Add Color Coding
-								if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-								
-								}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-									contentHolder.find("#listItemsPattern" + id).addClass("forceAddBorderErrorClass");
-								}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-									contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
-								}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-									contentHolder.find("#listItemsPattern" + id).addClass("forceAddErrorClass");
-								}
+//								if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//								
+//								}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
+//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddBorderErrorClass");
+//								}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
+//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
+//								}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddErrorClass");
+//								}
 								
 								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
