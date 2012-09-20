@@ -760,7 +760,7 @@ html.gecko .endingTxt							{ font-size:11px }
 .cssReset .imageIcon:hover, .imageIcon:hover { cursor:pointer }
 
 /* dashboard */
-.tblItems						{ border:1px solid #cfcfcf; border-collapse: collapse; margin:15px; }
+.cssReset .tblItems, .tblItems						{ border:1px solid #cfcfcf; border-collapse: collapse; /*margin:15px;*/ }
 .tblItems th					{ /*border:1px solid #cfcfcf; border-collapse: collapse;*/ padding:8px; color:#464646; font:bold 12px arial; text-align:center; 
 background: #f2f1f1; /* Old browsers */
 background: -moz-linear-gradient(top,  #f2f1f1 0%, #d6d6d6 100%); /* FF3.6+ */
