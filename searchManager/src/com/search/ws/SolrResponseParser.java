@@ -205,6 +205,9 @@ public abstract class SolrResponseParser {
 							i++;
 							currItem++;
 						}
+						else {
+							break;
+						}
 					}
 					StringBuilder builder = new StringBuilder();
 					generateEdpList(builder, elevateEdps);
@@ -288,6 +291,9 @@ public abstract class SolrResponseParser {
 							demotedEdps.add(e2);
 							i++;
 							currItem++;
+						}
+						else {
+							break;
 						}
 					}
 					StringBuilder builder = new StringBuilder();
