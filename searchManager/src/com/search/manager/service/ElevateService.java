@@ -173,10 +173,10 @@ public class ElevateService{
 
 		ArrayList<String> passedList = new ArrayList<String>();
 		ArrayList<String> failedList = new ArrayList<String>();
-		ArrayList<String> forcedList = new ArrayList<String>();
+//		ArrayList<String> forcedList = new ArrayList<String>();
 
 		resultMap.put("PASSED", passedList);
-		resultMap.put("FORCED", forcedList);
+//		resultMap.put("FORCED", forcedList);
 		resultMap.put("FAILED", failedList);
 
 		String server = UtilityService.getServerName();
@@ -220,11 +220,11 @@ public class ElevateService{
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
 			if (count > 0) {
-				if (e.getFoundFlag()) {
-					forcedList.add(StringUtils.trim(partNumber));						
-				} else {
+//				if (e.getFoundFlag()) {
+//					forcedList.add(StringUtils.trim(partNumber));						
+//				} else {
 					passedList.add(StringUtils.trim(partNumber));						
-				}
+//				}
 			}
 			else {
 				failedList.add(StringUtils.trim(partNumber));
@@ -250,12 +250,14 @@ public class ElevateService{
 			e.setCreatedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
-			int facetCount = SearchHelper.getFacetCountViaSim(server, store, keyword, e.getCondition().getConditionForSolr());
+//			int facetCount = SearchHelper.getFacetCountViaSim(server, store, keyword, e.getCondition().getConditionForSolr());
 			e.setForceAdd(false);
-			e.setFoundFlag(facetCount > 0);
+//			e.setFoundFlag(facetCount > 0);
 			int count = daoService.addElevateResult(e);
 			if (count > 0) {
-				result = e.getFoundFlag()?"PASSED":"FORCED";
+//				result = e.getFoundFlag()?"PASSED":"FORCED";
+				result = "PASSED";
+				//e.getFoundFlag()?"PASSED":"FORCED";
 				if (!StringUtils.isBlank(comment)) {
 					addComment(comment, e);
 				}

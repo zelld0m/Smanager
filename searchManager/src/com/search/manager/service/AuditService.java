@@ -144,6 +144,11 @@ public class AuditService {
 	}
 	
 	@RemoteMethod
+	public RecordSet<AuditTrail> getDemoteActivity(int page,int itemsPerPage) {
+		return getActivityTrail(Entity.demote, page, itemsPerPage);
+	}
+	
+	@RemoteMethod
 	public RecordSet<AuditTrail> getAuditTrail(String userName, String operation, String entity, String keyword, String referenceId, String startDate, String endDate, int page,int itemsPerPage) {
 		String store = UtilityService.getStoreName();
 		AuditTrail auditTrail = new AuditTrail();
@@ -198,6 +203,11 @@ public class AuditService {
 						break;
 					case exclude:
 						for(Object opt: Arrays.asList(AuditTrailConstants.excludeOperations)){
+							ddList.add(opt.toString());
+						}
+						break;
+					case demote:
+						for(Object opt: Arrays.asList(AuditTrailConstants.demoteOperations)){
 							ddList.add(opt.toString());
 						}
 						break;
