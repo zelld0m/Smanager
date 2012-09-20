@@ -153,15 +153,15 @@
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item, li: $li});
 				
 				// Force Add Color Coding
-				if($item["foundFlag"] && !$item["forceAdd"]){
+//				if($item["foundFlag"] && !$item["forceAdd"]){
 					$li.find('.firerift-style').remove();
-				}else if($item["foundFlag"] && $item["forceAdd"]){
-					$li.addClass("forceAddBorderErrorClass");
-				}else if(!$item["foundFlag"] && $item["forceAdd"]){
-					$li.addClass("forceAddClass");
-				}else if(!$item["foundFlag"] && !$item["forceAdd"]){
-					$li.addClass("forceAddErrorClass");
-				}
+//				}else if($item["foundFlag"] && $item["forceAdd"]){
+//					$li.addClass("forceAddBorderErrorClass");
+//				}else if(!$item["foundFlag"] && $item["forceAdd"]){
+//					$li.addClass("forceAddClass");
+//				}else if(!$item["foundFlag"] && !$item["forceAdd"]){
+//					$li.addClass("forceAddErrorClass");
+//				}
 									
 				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);

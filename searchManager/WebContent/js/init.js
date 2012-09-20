@@ -47,16 +47,16 @@ showActionResponse = function(code, action, param){
 showActionResponseFromMap = function(code, action, param, additionalFailMessage){
 	var message = "";
 	
-	if (code["FORCED"].length > 0) {
+	if (code["FORCED"] && code["FORCED"].length > 0) {
 		message += "Successful force " + action + " request for " + code["FORCED"] + ".";
 	}
 	
-	if (code["PASSED"].length > 0) {
+	if (code["PASSED"] && code["PASSED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
 		message += "Successful " + action + " request for " + code["PASSED"] + ".";
 	}
 	
-	if (code["FAILED"].length > 0) {
+	if (code["FAILED"] && code["FAILED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
 		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
 		if (additionalFailMessage) {

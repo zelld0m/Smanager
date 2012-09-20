@@ -63,18 +63,18 @@
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
 
-					if (ruleType.toLowerCase() === "elevate"){
-						// Force Add Color Coding
-						if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-						
-						}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-							$tr.addClass("forceAddBorderErrorClass");
-						}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-							$tr.addClass("forceAddClass");
-						}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-							$tr.addClass("forceAddErrorClass");
-						}
-					}
+//					if (ruleType.toLowerCase() === "elevate"){
+//						// Force Add Color Coding
+//						if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//						
+//						}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
+//							$tr.addClass("forceAddBorderErrorClass");
+//						}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
+//							$tr.addClass("forceAddClass");
+//						}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
+//							$tr.addClass("forceAddErrorClass");
+//						}
+//					}
 					
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
@@ -98,7 +98,7 @@
 							.addClass("txtAL");
 						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 						
-						if (!list[i]["isExpired"]){
+						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
 						}
 						
@@ -111,10 +111,6 @@
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
 							$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
-							
-							if (!list[i]["isExpired"]){
-								$tr.find("#itemValidityDaysExpired").remove();
-							}
 						}
 						else{
 							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
@@ -122,6 +118,10 @@
 													.removeClass("txtAC")
 													.addClass("txtAL");
 							$tr.find("td#itemDPNo,td#itemMan,td#itemName,td#itemValidity").remove();
+						}
+						
+						if ($.isBlank(list[i]["isExpired"])){
+							$tr.find("#itemValidityDaysExpired").remove();
 						}
 					}
 					
