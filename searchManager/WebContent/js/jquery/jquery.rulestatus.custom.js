@@ -69,6 +69,10 @@
 
 					base.addSubmitForApprovalListener();
 					base.options.afterRuleStatusRequest(ruleStatus);
+
+					if ($.endsWith(base.options.rule["ruleId"], "_default")){
+						base.$el.empty();
+					}
 				}
 			});	
 		};
@@ -76,7 +80,6 @@
 		base.init = function(){
 			base.options = $.extend({},$.rulestatus.defaultOptions, options);
 			base.$el.empty();
-
 			base.options.beforeRuleStatusRequest();
 			base.getRuleStatus();
 		};
