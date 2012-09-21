@@ -636,7 +636,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
 			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
-			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("rows", "0"));
 			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
@@ -687,14 +687,13 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
 			nameValuePairs.add(new BasicNameValuePair("fl", fields));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
-			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("rows", "0"));
 			nameValuePairs.add(new BasicNameValuePair("fq", fqCondition));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
-			nameValuePairs.add(new BasicNameValuePair("facet", "true"));
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
-			nameValuePairs.add(new BasicNameValuePair("sort", configManager.getStoreParameter(core, "sort")));
+			nameValuePairs.add(new BasicNameValuePair("disableDemote", ""));
 			if (logger.isDebugEnabled()) {
 				for (NameValuePair p: nameValuePairs) {
 					logger.debug("Parameter: " + p.getName() + "=" + p.getValue());

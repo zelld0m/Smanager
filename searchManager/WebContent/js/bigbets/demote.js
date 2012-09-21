@@ -249,7 +249,7 @@
 				
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
-						var itemId = e.data.item["memberTypeEntity"] === "PART_NUMBER"? e.data.item["edp"] : e.data.item["memberId"];
+						var itemId = e.data.item["memberId"];
 						$(e.currentTarget).viewaudit({
 							itemDataCallback: function(base, page){
 								AuditServiceJS.getDemoteItemTrail(self.selectedRule["ruleId"], itemId, base.options.page, base.options.pageSize, {
