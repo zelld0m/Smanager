@@ -1118,11 +1118,14 @@
 			afterSubmitForApprovalRequest:function(ruleStatus){
 				selectedRuleStatus = ruleStatus;
 				showRelevancy();
+				console.log("afterSubmitForApprovalRequest");
 			},
 			beforeRuleStatusRequest: function(){
 				prepareRelevancy();
+				console.log("beforeRuleStatusRequest");
 			},
 			afterRuleStatusRequest: function(ruleStatus){
+				console.log("start afterRuleStatusRequest");
 				resetInputFields("#relevancy");
 
 				$("#preloader").hide();
@@ -1225,6 +1228,7 @@
 						});
 					}
 				});
+				console.log("after afterRuleStatusRequest");
 			}
 		});
 	};

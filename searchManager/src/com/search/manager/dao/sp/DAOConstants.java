@@ -42,6 +42,15 @@ public class DAOConstants {
 	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 	
+	// FACET SORT
+	public static final String SP_ADD_FACET_SORT 					= "usp_Add_Facet_Sort";
+	public static final String SP_DELETE_FACET_SORT 				= "usp_Delete_Facet_Sort";
+	public static final String SP_GET_FACET_SORT 					= "usp_Get_Facet_Sort";
+	public static final String SP_UPDATE_FACET_SORT_SORT_TYPE		= "usp_Update_Facet_Sort_Sort_Type";
+	public static final String SP_ADD_FACET_GROUP_ITEM				= "usp_Add_Facet_Group_Item";
+	public static final String SP_UPDATE_FACET_GROUP_ITEM_SEQ 		= "usp_Update_Facet_Group_Item_Sequence";
+	public static final String SP_UPDATE_FACET_GROUP_SORT_TYPE		= "usp_Update_Facet_Group_Sort_Type";
+	
 	// CAMPAIGN
 	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";
 	public static final String SP_GET_CAMPAIGN 						= "usp_Get_Campaign";
