@@ -1083,10 +1083,10 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.DEMOTE);		
 				
 				for(String key : list){
-					ElevateResult delEl = new ElevateResult();
+					DemoteResult delEl = new DemoteResult();
 					StoreKeyword sk = new StoreKeyword(store, key);
 					delEl.setStoreKeyword(sk);
-					daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
+					daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
 					
 					// retrieve staging data then push to prod
 					daoService.addKeyword(sk);
@@ -1100,13 +1100,13 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						}
 					}
 					// clear cache data to force a reload
-					daoCacheService.resetElevateRule(sk); // prod
+					daoCacheService.resetDemoteRule(sk); // prod
 					map.put(key, true);
 				}
 				
 				Store s = new Store(store);
 				daoCacheService.reloadAllKeywords(s);
-				daoCacheService.setForceReloadElevate(s);
+				daoCacheService.setForceReloadDemote(s);
 				
 			} catch (Exception e) {
 				logger.error(e,e);
