@@ -74,7 +74,7 @@
 		<div id="ruleSelected" style="display:none">
 	  		<ul id="ruleItemHolder" class="boxContainer">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
-	  				<div class="bgShade pad8 height66">	
+	  				<div class="bgShade pad8 heightFix">	
 	  					<div class="iconGroup">
 	  						<label class="iconGroupW floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
