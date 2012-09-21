@@ -94,7 +94,7 @@
 	  					</div>
 	  				
 		  				<div class="sortOrder">
-		  					<label class="w90">Elevation : </label>
+		  					<label class="w90">Position : </label>
 		  					<label>
 		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
 		  					</label>
