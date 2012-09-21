@@ -559,9 +559,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	
 	private void addElevatedEntries() {
 		if (elevatedResults != null) {
+			int i = 0;
 			for (JSONObject object: elevatedResults) {
 				// insert the elevate results to the docs entry
-				resultArray.add(object);
+				resultArray.add(i++, object);
 			}
 		}
 	}

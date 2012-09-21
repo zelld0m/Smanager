@@ -40,7 +40,7 @@
 
 			if (base.options.showPosition){
 				template  += '		<div class="floatL marT5" style="width: 97px">';
-				template  += '			<label class="floatL marL5 padT5 w60">Elevation:</label>';
+				template  += '			<label class="floatL marL5 padT5 w60">Position:</label>';
 				template  += '			<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '		</div>';
 				template  += '		<div class="clearB"></div>';
@@ -327,7 +327,7 @@
 
 			if (base.options.showPosition){
 				template  += '						<div class="floatL marT5" style="width: 97px">';
-				template  += '							<label class="floatL marL5 padT5 w60">Elevation:</label>';
+				template  += '							<label class="floatL marL5 padT5 w60">Position:</label>';
 				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
