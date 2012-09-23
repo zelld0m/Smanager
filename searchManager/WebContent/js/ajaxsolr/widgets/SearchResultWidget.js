@@ -3,7 +3,7 @@
 	AjaxSolr.SearchResultWidget = AjaxSolr.AbstractWidget.extend({
 		expDateMinDate: 0,
 		expDateMaxDate: "+1Y",
-		
+
 		beforeRequest: function () {
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
 		},
@@ -147,9 +147,9 @@
 						render: function(event, api) {
 							var content = $('div', api.elements.content);
 							content.html(AjaxSolr.theme('productForceAdd'));
-							
+
 							content.find('#sku').text(doc["DPNo"]);
-							
+
 							content.find('#validityDate').datepicker({
 								showOn: "both",
 								minDate: self.expDateMinDate,
@@ -158,23 +158,23 @@
 								buttonImage: "../images/icon_calendar.png",
 								buttonImageOnly: true
 							});
-							
+
 							content.find('#addBtn').off().on({
 								click: function(e){
 									var currKeyword = $.trim(self.manager.store.values('q'));
 									var keyword = $.trim(e.data.content.find('#keyword').val());
 									var validityDate = $.trim(e.data.content.find('#validityDate').val());
 									var comment = $.trim(e.data.content.find('#comment').val());
-									
+
 									if(!validateGeneric("Keyword", keyword, 2)){
 										return
 									}
-									
+
 									if (e.data.doc["ElevateType"] === "PART_NUMBER" && keyword.toLowerCase() === currKeyword.toLowerCase()){
 										jAlert("SKU# " + e.data.doc["DPNo"] + " is already elevated at position " + e.data.doc["Elevate"]);
 										return
 									}
-									
+
 									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["EDP"], 1, validityDate, comment, {
 										callback:function(data){
 											showActionResponse(data, "force add", "SKU#: " + e.data.doc["DPNo"] + " in " + keyword);
@@ -185,7 +185,7 @@
 									});
 								}
 							},{content: content, doc: doc});
-							
+
 							content.find('#cancelBtn').off().on({
 								click: function(e){
 									api.destroy();
@@ -196,7 +196,7 @@
 				}).click(function(event) { event.preventDefault(); });	 
 			};
 		},
-		
+
 		docHandler: function (doc) {
 			var self = this;
 
@@ -299,7 +299,7 @@
 						errorHandler: handleAddElevateError 
 					});
 				};
-				
+
 				prepareElevateResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
 					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
@@ -335,7 +335,7 @@
 							};
 
 							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
-							
+
 							for (var i=0; i<data.totalSize; i++){
 								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
@@ -346,18 +346,18 @@
 								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
 
 								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
-								
+
 								// Force Add Color Coding
 //								if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//								
+
 //								}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddBorderErrorClass");
+//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddBorderErrorClass");
 //								}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
+//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
 //								}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//									contentHolder.find("#listItemsPattern" + id).addClass("forceAddErrorClass");
+//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddErrorClass");
 //								}
-								
+
 								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
 
 								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
@@ -437,22 +437,28 @@
 							prepareElevateResult(contentHolder);
 						},
 						postHook: function() {
-							var updatedPosition = parseInt($.trim(contentHolder.find("li#elevatePosition_" + doc.EDP).html()));
-							var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + doc.EDP).html());
-							var stampVisible = contentHolder.find("img#stampExpired_" + doc.EDP).is(":visible");
 
-							if(updatedPosition != "" && updatedPosition > 0){
-								contentHolder.find("#aElevatePosition_"+doc.EDP).val(updatedPosition);
-								contentHolder.find("a#removeBtn").attr("style","display:float");
-							}
+							var $li = contentHolder.find("ul.listItemInfo >li:contains(" + doc["DPNo"] + ")");
 
-							if(updatedExpiryDate !== "Indefinite")
-								contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
+							if ($li.length){
+								var id = $li.attr("id").substring($li.attr("id").indexOf("_") + 1);
 
-							if (stampVisible){
-								contentHolder.find("#aStampExpired_" + doc.EDP).show();
-							}else{
-								contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								var updatedPosition = parseInt($.trim(contentHolder.find("li#elevatePosition_" + id).html()));
+								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + id).html());
+								var stampVisible = contentHolder.find("img#stampExpired_" + id).is(":visible");
+
+								if(updatedPosition != "" && updatedPosition > 0){
+									contentHolder.find("#aElevatePosition_" + doc.EDP).val(updatedPosition);
+									contentHolder.find("a#removeBtn").attr("style","display:float");
+								}
+
+								contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate !== "Indefinite" && $.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
+
+								if (stampVisible){
+									contentHolder.find("#aStampExpired_" + doc.EDP).show();
+								}else{
+									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								}
 							}
 
 							//Disable
@@ -502,7 +508,7 @@
 									}	
 								}
 							});
-							
+
 							if(contentHolder.find("div#current").is('not(:visible)')){
 								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
 							}else{
@@ -644,7 +650,7 @@
 									postHook: function() { 
 										updateElevateResult(contentHolder, doc, keyword); 
 										populateSelectedProduct(contentHolder);
-										}
+									}
 								});
 							});
 
@@ -821,7 +827,7 @@
 						errorHandler: handleAddDemoteError 
 					});
 				};
-				
+
 				prepareDemoteResult = function (contentHolder){
 					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
 					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
@@ -857,7 +863,7 @@
 							};
 
 							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
-							
+
 							for (var i=0; i<data.totalSize; i++){
 								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
@@ -947,22 +953,27 @@
 							prepareDemoteResult(contentHolder);
 						},
 						postHook: function() {
-							var updatedPosition = parseInt($.trim(contentHolder.find("li#demotePosition_" + doc.EDP).html()));
-							var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + doc.EDP).html());
-							var stampVisible = contentHolder.find("img#stampExpired_" + doc.EDP).is(":visible");
+							var $li = contentHolder.find("ul.listItemInfo >li:contains(" + doc["DPNo"] + ")");
 
-							if(updatedPosition != "" && updatedPosition > 0){
-								contentHolder.find("#aDemotePosition_"+doc.EDP).val(updatedPosition);
-								contentHolder.find("a#removeBtn").attr("style","display:float");
-							}
+							if ($li.length){
+								var id = $li.attr("id").substring($li.attr("id").indexOf("_") + 1);
 
-							if(updatedExpiryDate !== "Indefinite")
-								contentHolder.find("#aExpiryDate_" + doc.EDP).val($.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
+								var updatedPosition = parseInt($.trim(contentHolder.find("li#demotePosition_" + id).html()));
+								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + id).html());
+								var stampVisible = contentHolder.find("img#stampExpired_" + id).is(":visible");
 
-							if (stampVisible){
-								contentHolder.find("#aStampExpired_" + doc.EDP).show();
-							}else{
-								contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								if(updatedPosition != "" && updatedPosition > 0){
+									contentHolder.find("#aDemotePosition_" + doc.EDP).val(updatedPosition);
+									contentHolder.find("a#removeBtn").attr("style","display:float");
+								}
+
+								contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate !== "Indefinite" && $.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
+
+								if (stampVisible){
+									contentHolder.find("#aStampExpired_" + doc.EDP).show();
+								}else{
+									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
+								}
 							}
 
 							//Disable
@@ -1012,7 +1023,7 @@
 									}	
 								}
 							});
-							
+
 							if(contentHolder.find("div#current").is('not(:visible)')){
 								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
 							}else{
@@ -1153,7 +1164,7 @@
 									postHook: function() { 
 										updateDemoteResult(contentHolder, doc, keyword); 
 										populateSelectedProduct(contentHolder);
-										}
+									}
 								});
 							});
 
