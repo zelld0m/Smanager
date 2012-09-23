@@ -171,7 +171,7 @@
 									}
 
 									if (e.data.doc["ElevateType"] === "PART_NUMBER" && keyword.toLowerCase() === currKeyword.toLowerCase()){
-										jAlert("SKU# " + e.data.doc["DPNo"] + " is already elevated at position " + e.data.doc["Elevate"]);
+										jAlert("SKU# " + e.data.doc["DPNo"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
 										return
 									}
 
@@ -591,10 +591,10 @@
 								if (position>0 && position <= maxPosition){
 
 									if(!isXSSSafe(comment)){
-										alert("Invalid comment. HTML/XSS is not allowed.");
+										jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 									}
 									else if(today.getTime() > new Date(expiryDate).getTime()){
-										alert("Expiry date cannot be earlier than today");
+										jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 									}else if (elevated){
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
@@ -622,7 +622,7 @@
 												updateElevateResult(contentHolder, doc, keyword); 
 												populateSelectedProduct(contentHolder);
 											},
-											errorHandler: function(message){ alert(message); }
+											errorHandler: function(message){ jAlert(message,"Search Simulator"); }
 										});
 
 									}
@@ -630,7 +630,7 @@
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
 
 								}else{
-									alert("Please specify elevate position. Max allowed elevation is " + maxPosition);
+									jAlert("Please specify elevate position. Max allowed elevation is " + maxPosition, "Search Simulator");
 									contentHolder.find("#aElevatePosition_" + doc.EDP ).focus();
 								}
 
@@ -736,10 +736,10 @@
 								today.setHours(0,0,0,0);
 
 								if(!isXSSSafe(comment)){
-									alert("Invalid comment. HTML/XSS is not allowed.");
+									jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 								}
 								else if(today.getTime() > new Date(expiryDate).getTime()){
-									alert("Expiry date cannot be earlier than today");
+									jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 								}else{
 									ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', parseInt(doc.EDP), expiryDate, comment, {
 										callback : function(data) {
@@ -1106,10 +1106,10 @@
 								if (position>0 && position <= maxPosition){
 
 									if(!isXSSSafe(comment)){
-										alert("Invalid comment. HTML/XSS is not allowed.");
+										jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 									}
 									else if(today.getTime() > new Date(expiryDate).getTime()){
-										alert("Expiry date cannot be earlier than today");
+										jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 									}else if (demoted){
 										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
 										//TODO: add more restriction
@@ -1137,7 +1137,7 @@
 												updateDemoteResult(contentHolder, doc, keyword); 
 												populateSelectedProduct(contentHolder);
 											},
-											errorHandler: function(message){ alert(message); }
+											errorHandler: function(message){ jAlert(message, "Search Simulator"); }
 										});
 
 									}
@@ -1145,7 +1145,7 @@
 									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
 
 								}else{
-									alert("Please specify demote position. Max allowed demote is " + maxPosition);
+									jAlert("Please specify demote position. Max allowed demote is " + maxPosition, "Search Simulator");
 									contentHolder.find("#aDemotePosition_" + doc.EDP ).focus();
 								}
 							});
