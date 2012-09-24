@@ -18,97 +18,133 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27">
     <div class="floatL w730 titlePlacer">
-      <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">Facet Rule</div>
+      <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">Facet Sorting </div>
     </div>
+    <div class="clearB"></div>
     
-    <div class="AlphaCont bgboxAlpha w46p minHeight155 floatL marT20 fsize12">
-    	<h3 class="borderB padB8">Lorem ipsum dolor</h3>
-    	
-    	<label class="floatL w100">Name :</label> 
-    	<label class="floatL"> <input type="text" class="w190"> </label>
-    	
-    	<div class="clearB"></div>
-    	
-    	<label class="floatL w100">Lorem ipsum:</label>
-    	<label class="floatL w100"> 
-    		<select class="mar0">
-    			<option>Alphabetical<option>
-    		</select>
-    	</label>
-    	<label class="floatL w100"> 
-    		<select class="mar0">
-    			<option>Ascending</option>
-    		</select>
-    	</label>
+    <div class="w700 border pad10 marT20 fsize12 verticalTabs"><!--  start horizontal tab -->
+    <div>
+    	<img src="<spring:url value="/images/icon_keyword.png" />" class="marR5 posRel top3" /><span class="fLblue fbold">Computer</span> Categories Elevated : Computer, Keyboard, Cables, Mouse, Router
+    	<a href=""><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleItemIcon pointer"></a>
     </div>
+    <div class="clearB"></div>
     
-    <div class="AlphaCont bgboxAlpha w46p minHeight155 floatL marT20 marL20 fsize12">
-    	<h3 class="borderB padB8">Using this Rule 
-    		<div class="floatR"> <input type="text" class="searchBoxIconLBg posRel topn4"> 
-    		<a href="#"><img src="<spring:url value="/images/icon_addField2.png" />" class="posRel top2"></a>
-    		</div>
-    	</h3>
-    	
+    <div class="sort marT10">
     	<ul>
-    		<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> Lorem dolor sit amet</li>
-    		<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a>item sample</li>
-    		<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a>sample item </li>
+    		<li><a href="">All</a> &nbsp; |</li>
+    		<li>Sort Order</li>
+    		<li>
+    			<select class="posRel topn3">
+    				<option>A-Z</option>
+    			</select>
+    		</li>
     	</ul>
     </div>
     <div class="clearB"></div>
-     
-    <div class="landingCont bgboxGray marB10 txtAL marT20 w97p fsize12 clearfix padT10">
-    	<div class="w32p floatL">
-    		<h3 class="fsize14">Select Facet</h3>
-    		<div class="colTop topRed" >
-    			<select class="w185 posRel top2">
-    				<option> sample </option>
-    				<option> lorem ipsum </option>
-    			</select> <a href="#"><img src="<spring:url value="/images/icon_addField2.png" />" class="posRel bottomn7"></a>
-    		</div>
-    			<ul class="facetList marT10">
-					<li> dddddd <a href="">(100)</a> </li>
-					<li> adfasfasfasfasfsdf <a href="">(0)</a></li>
-					<li> rrrasfasfasfasdffs <a href="">(20)</a></li>
-					<li> wfrwfsdfsfsd <a href="">(5)</a></li>
-					<li> saffsdf <a href="">(7)</a></li>
-					<li> dddd <a href="">(33)</a></li>
+    
+    <div id="monitool" class="tabs marT10">
+		<ul>
+			<li><a href="#categories"><span>Categories</span></a></li>
+			<li><a href="#manufacturer"><span>Manufacturer</span></a></li>
+		</ul>
+		
+		<div id="categories">
+			<div class="catValueTop floatL w38p">
+				<p class="fbold">Elevated Category Values</p>
+				<ul>
+					<li>
+						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+						<label>
+							<select class="w180">
+								<option>Computer</option>								
+							</select>
+						</label>
+						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+					</li>
+					<li>
+						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+						<label>
+							<select class="w180">
+								<option>Keyboard</option>								
+							</select>
+						</label>
+						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+					</li>
+					<li>
+						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+						<label>
+							<select class="w180">
+								<option>Cables</option>								
+							</select>
+						</label>
+						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+					</li>					
+					<li>
+						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+						<label>
+							<select class="w180">
+								<option>CAT3</option>								
+							</select>
+						</label>
+						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+					</li>
+					<li>
+						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+						<label>
+							<select class="w180">
+								<option>Mouse</option>								
+							</select>
+						</label>
+						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+					</li>
 				</ul>
-    	</div>
-    	<div class="floatL w68p">
-    		<h3 class="fsize14">Facet Value</h3>
-    		<div class="w49p floatL">
-				<div class="colTop topBlue posRel">
-					<img src="<spring:url value="../css/theme/default/images/redBlue_Arrow.png" />" class="posAbs"> 
-					<h3 class="padL25 fsize14 padT8">Available</h3>
+				<div class="fsize11 txtAR"><a href="">[ add new category value ]</a></div>
+			</div><!-- end category value -->
+			
+			<div class="catValueList floatL w60p">
+				<p class="fbold">Select  Category Values</p>
+				<div class="searchBoxHolder w150 marT1 marR8">
+					<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">
 				</div>
-				<ul class="marT10">
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> dddddd <a href=""></a> </li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> adfasfasfasfasfsdf <a href=""></a></li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> rrrasfasfasfasdffs <a href=""> </a></li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> wfrwfsdfsfsd <a href=""></a></li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_addField.png" />" class="iconBtn"></a> saffsdf <a href=""></a></li>
-				</ul>
-				
-			</div>
-    		<div class="w50p floatL">
-				<div class="colTop topGreen">
-					<img src="<spring:url value="../css/theme/default/images/bluegreen_Arrow.png" />" class="posAbs">
-					<h3 class="padL25 fsize14 padT8">Selected</h3>
+				<div class="clearB"></div>
+				<div style="overflow-y:auto; height: 200px">
+					<ul>
+						<li>Computer <span class="fLblue">(5)</span> <span class="fsize10 fLgray">elevate</span> </li>
+						<li>Keyboard <span class="fLblue">(6)</span> </li>
+						<li>Cables <span class="fLblue">(33)</span> </li>
+						<li>CAT3 <span class="fLblue">(25)</span> <span class="fsize10 fLgray">elevate</span></li>
+						<li>Mouse <span class="fLblue">(4)</span> </li>
+						<li>Router <span class="fLblue">(6)</span> <span class="fsize10 fLgray">elevate</span></li>
+						<li>Keyboard <span class="fLblue">(10)</span> </li>
+						<li>Cables <span class="fLblue">(24)</span> </li>
+						<li>CAT3 <span class="fLblue">(1)</span> </li>
+						<li>Mouse <span class="fLblue">(3)</span> <span class="fsize10 fLgray">elevate</span></li>
+						<li>Router <span class="fLblue">(6)</span> <span class="fsize10 fLgray">elevate</span></li>
+						<li>Keyboard <span class="fLblue">(10)</span> </li>
+						<li>Cables <span class="fLblue">(24)</span> </li>
+						<li>CAT3 <span class="fLblue">(1)</span> </li>
+						<li>Mouse <span class="fLblue">(3)</span> <span class="fsize10 fLgray">elevate</span></li>
+					</ul>
 				</div>
-				<div style="overflow-y:scroll; max-height: 123px">
-				<ul class="marT10">
-					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> dddddd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> adfasfasfasfasfsdf</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> rrrasfasfasfasdffs</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> wfrwfsdfsfsd</li>
-					<li><a href="#"><img src="<spring:url value="/images/icon_delete2.png" />" class="delete"></a> <input type="text" class="w30"> saffsdf</li>
-				</ul>				
-			</div>
-    	</div>
+			</div><!--  end category values list -->
+			<div class="clearB"></div>
+		</div><!--  end categories content -->
+		
+		<div id="manufacturer">
+			manufacturer content
+		</div><!--  end manufacturer content -->
+		
+		<div class="marT10 txtAR">
+			<a class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Save</div></a>
+			<a class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Cancel</div></a>
+		</div>
+	</div>
+</div><!--  end horizontal tab -->
+    
+    
+    
     	
-    </div>
-  </div>  
+ 
     
     
     <div class="clearB"></div>

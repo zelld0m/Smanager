@@ -23,3 +23,11 @@
 .cssReset .topGreen			{ background: url(../theme/default/images/btTopGreen.png) repeat-x; }
 
 .facetList li				{ padding:3px 2px 4px 2px !important; color:#282828 }
+
+.verticalTabs { color:#282828 }
+.sort { float:right; }
+.sort ul { list-style: none}
+.sort ul li { float:left; margin-left:10px;  }
+
+.catValueList ul { list-style: none; line-height: 18px; margin-top:15px; margin-left:10px }
+.catValueTop ul { list-style: none; }

@@ -123,6 +123,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w47p, .w47p			{ width:47% }
 .cssReset .w45p, .w45p			{ width:45% }
 .cssReset .w45p83p, .w45p83		{ width:45.83% }
+.cssReset .w38p, .w38p			{ width:38% }
 .cssReset .w32p, .w32p			{ width:32% }
 .cssReset .w10p, .w10p 			{ width:10% }
 
@@ -416,6 +417,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .fgray 				{ color:#666 }
 .cssReset .fLgray 				{ color:#999 }
 .cssReset .fLgray2 				{ color:#cbcbcb }
+
 .cssReset .fLblue, .fLblue,
 .qtip .fLblue					{ color:#3B79C2 }
 .cssReset .fLblue2, .fLblue2, 
