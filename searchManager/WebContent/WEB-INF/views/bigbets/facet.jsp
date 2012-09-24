@@ -5,6 +5,7 @@
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/bigbets/facet.css" />">
+<script type="text/javascript" src="<spring:url value="/js/bigbets/facet.js" />"></script>
   
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -42,7 +43,7 @@
     </div>
     <div class="clearB"></div>
     
-    <div id="monitool" class="tabs marT10">
+    <div id="facetsort" class="tabvs marT10">
 		<ul>
 			<li><a href="#categories"><span>Categories</span></a></li>
 			<li><a href="#manufacturer"><span>Manufacturer</span></a></li>
@@ -135,8 +136,8 @@
 		</div><!--  end manufacturer content -->
 		
 		<div class="marT10 txtAR">
-			<a class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Save</div></a>
-			<a class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Cancel</div></a>
+			<a id="saveBtn" class="buttons btnGray clearfix" href="javascript:void(0);"><div class="buttons fontBold">Save</div></a>
+			<a id="" class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Cancel</div></a>
 		</div>
 	</div>
 </div><!--  end horizontal tab -->

@@ -1,23 +1,45 @@
 (function($){
 
-	$(selector).sidepanel({
-		fieldId: "keywordId",
-		fieldName: "keyword",
-		headerText : headerText,
-		searchText : searchText,
-		page: itemPage,
-		pageSize: itemPageSize,
+	var FacetSort = {
+			tabSelectedId: 1,
+			
+			showFacetSort : function(){
+				var self = this;
+				
+				self.addTabListener();
+			},
+			
+			setActivetab: function(){
+				switch(parseInt(self.tabSelectedId)){
+				case 1: break;
+				case 2: break;
+				};
+			},
+			
+			addTabListener: function(){
+				var self = this;
+				
+				$("#facetsort").tabs("destroy").tabs({
+					show: function(event, ui){
+						var tabNumber = ui.index;
+						self.tabSelectedId = tabNumber + 1;
+						self.setActiveTab();
+						switch(self.tabSelectedId){
+							case 1: break;
+							case 2: break;
+						}
+					}
+				});
+			},
+			
+			init : function() {
+				var self = this;
+				self.showFacetSort();
+			}
+	};
+	
 
-		itemNameCallback: showItem,
-		itemDataCallback: function(base, keyword, page){
-			StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
-				callback: function(data){
-					base.populateList(data);
-					base.addPaging(keyword, page, data.totalSize);
-				},
-				preHook: function(){ base.prepareList(); }
-			});
-		}
+	$(document).ready(function() {
+		FacetSort.init();
 	});
-
 })(jQuery);	
