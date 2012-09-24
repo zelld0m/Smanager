@@ -1626,10 +1626,29 @@
 		};
 
 		base.promptRuleItemDetails = function(target, type){
+			
+			var typeLabel = '';
+			switch(type){
+			case "product":
+				typeLabel = 'Product Item';
+				break;
+			case "ims":
+				typeLabel = 'IMS Categories';
+				break;
+			case "cnet":
+				typeLabel = 'Facet Template Categories';
+				break;
+			case "facet":
+				typeLabel = 'Facets';
+				break;
+			default:
+				break;
+			}
+			
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
-					title: { text: type==="product"? 'Product Item' : 'Facet Item', button: true }
+					title: {text: typeLabel, button: true }
 				},
 				position: {
 					my: 'center',
