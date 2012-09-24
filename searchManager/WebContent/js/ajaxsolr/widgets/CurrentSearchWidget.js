@@ -21,7 +21,9 @@
 				var filterFieldName = facetValue.substr(0, facetValue.indexOf(':'));
 				var filterFieldValue = facetValue.substr(facetValue.indexOf(':') + 1);
 				
-				if(GLOBAL_storeFacetTemplate === filterFieldName){ // Facet Hierarchical display
+				if (facetValue === searchWithin){
+					links.push(AjaxSolr.theme('createLink', "Search Within: " + facetValue  , self.removeFacetTemplate(facetValue), "single"));
+				}else if(GLOBAL_storeFacetTemplate === filterFieldName){ // Facet Hierarchical display
 					var facetTempVal = facetValue.substr(GLOBAL_storeFacetTemplate.length + 1);
 					var facetTempArr = facetTempVal.split("?|?");
 
@@ -37,9 +39,7 @@
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					
-					if (facetValue === searchWithin){
-						displayFieldName = "Search Within";
-					}else if($.startsWith(facetValue, GLOBAL_storeFacetTemplateName)){
+					if($.startsWith(facetValue, GLOBAL_storeFacetTemplateName)){
 						displayFieldName = "Or Find By";
 					}
 					else if(isDynamicAttr){
