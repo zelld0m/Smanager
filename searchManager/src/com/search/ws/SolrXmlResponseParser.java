@@ -133,7 +133,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	protected int getElevatedEdps(List<NameValuePair> requestParams) throws SearchException {
+	protected int getElevatedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -173,10 +173,13 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				String edp = result.getEdp();
 				Node node = elevateDocuments.get(edp);
 				if (node != null) {
+					if (addedRecords + 1 > requestedRows) {
+						break;
+					}
+					addedRecords++;
 					Node elevateNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE);
 					elevateNode.appendChild(elevateDoc.createTextNode(String.valueOf(result.getLocation())));
 					node.appendChild(elevateNode);
-					addedRecords++;
 		        	resultNode.insertBefore(mainDoc.importNode(node, true), placeHolderNode);
 					if (explainNode != null) {
 						explainNode.appendChild(mainDoc.importNode(locateElementNode(elevateExplainNode, SolrConstants.TAG_STR, edp), true));
@@ -366,7 +369,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		return success;
 	}
 
-	protected int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException {
+	protected int getDemotedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -406,10 +409,13 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				String edp = result.getEdp();
 				Node node = demoteDocuments.get(edp);
 				if (node != null) {
+					if (addedRecords + 1 > requestedRows) {
+						break;
+					}
+					addedRecords++;
 					Node demoteNode = demoteDoc.createElement(SolrConstants.TAG_DEMOTE);
 					demoteNode.appendChild(demoteDoc.createTextNode(String.valueOf(result.getLocation())));
 					node.appendChild(demoteNode);
-					addedRecords++;
 					demotedEntries.add(mainDoc.importNode(node, true));
 					if (explainNode != null) {
 						explainNode.appendChild(mainDoc.importNode(locateElementNode(demoteExplainNode, SolrConstants.TAG_STR, edp), true));

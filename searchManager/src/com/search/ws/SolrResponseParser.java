@@ -156,7 +156,7 @@ public abstract class SolrResponseParser {
 	}
 	
 	/* For elevate */
-	protected abstract int getElevatedEdps(List<NameValuePair> requestParams) throws SearchException;
+	protected abstract int getElevatedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException;
 	protected abstract int getElevatedFacet(List<NameValuePair> requestParams, ElevateResult elevateFacet) throws SearchException;
 
 	// TODO: merge getElevatedItems and getDemotedItems
@@ -195,15 +195,17 @@ public abstract class SolrResponseParser {
 				currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
 				currentRequestParams.add(zeroRowNVP);
 				
+				int numEdpAdded = 0;
 				if (elevateResult.getEntity() == MemberTypeEntity.PART_NUMBER) {
 					isEdpList = true;
 					elevateEdps.add(elevateResult);
+					numEdpAdded++;
 					for (int j = i+1; j < elevatedRecords; j++) {
 						ElevateResult e2 = elevatedList.get(j);
 						if (e2.getEntity() == MemberTypeEntity.PART_NUMBER) {
 							elevateEdps.add(e2);
 							i++;
-							currItem++;
+							numEdpAdded++;
 						}
 						else {
 							break;
@@ -218,6 +220,10 @@ public abstract class SolrResponseParser {
 				}
 				
 				generateExcludeFilterList(elevateFilter, elevatedList, currItem++, false);
+				if (isEdpList) {
+					currItem += numEdpAdded - 1; // - 1 to compensate for currItem++ in above line
+				}
+				
 				if (elevateFilter.length() > 0) {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilter.toString()));
 				}
@@ -233,9 +239,10 @@ public abstract class SolrResponseParser {
 				if (numFound > 0) { // match found let's get the necessary entries
 					if (numFound > startRow) {
 						currentRequestParams.remove(zeroRowNVP);
-						currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
+						currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, 
+								String.valueOf(isEdpList ? numEdpAdded : requestedRows)));
 						if (isEdpList) {
-							requestedRows -= getElevatedEdps(currentRequestParams);
+							requestedRows -= getElevatedEdps(currentRequestParams, requestedRows);
 						}
 						else {
 							requestedRows -= getElevatedFacet(currentRequestParams, elevateResult);
@@ -258,7 +265,7 @@ public abstract class SolrResponseParser {
 	}
 	
 	/* For demote */
-	protected abstract int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException;
+	protected abstract int getDemotedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException;
 	protected abstract int getDemotedFacet(List<NameValuePair> requestParams, DemoteResult demoteFacet) throws SearchException;
 
 	public final int getDemotedItems(List<NameValuePair> requestParams,  int startRow, int requestedRows) throws SearchException {
@@ -281,16 +288,18 @@ public abstract class SolrResponseParser {
 				currentRequestParams.addAll(requestParams);
 				currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
 				currentRequestParams.add(zeroRowNVP);
-				
+
+				int numEdpAdded = 0;
 				if (demoteResult.getEntity() == MemberTypeEntity.PART_NUMBER) {
 					isEdpList = true;
 					demotedEdps.add(demoteResult);
+					numEdpAdded++;
 					for (int j = i+1; j < demotedRecords; j++) {
 						DemoteResult e2 = demotedList.get(j);
 						if (e2.getEntity() == MemberTypeEntity.PART_NUMBER) {
 							demotedEdps.add(e2);
 							i++;
-							currItem++;
+							numEdpAdded++;
 						}
 						else {
 							break;
@@ -304,7 +313,9 @@ public abstract class SolrResponseParser {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteResult.getCondition().getConditionForSolr()));
 				}
 				
-				
+				if (isEdpList) {
+					currItem += numEdpAdded - 1; // -1 to compensate for currItem++ in line below
+				}
 				generateExcludeFilterList(demoteFilter, demotedList, currItem++, true);
 				if (demoteFilter.length() > 0) {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilter.toString()));
@@ -315,9 +326,9 @@ public abstract class SolrResponseParser {
 				if (numFound > 0) { // match found let's get the necessary entries
 					if (numFound > startRow) {
 						currentRequestParams.remove(zeroRowNVP);
-						currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
+						currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(isEdpList ? numEdpAdded : requestedRows)));
 						if (isEdpList) {
-							requestedRows -= getDemotedEdps(currentRequestParams);
+							requestedRows -= getDemotedEdps(currentRequestParams, requestedRows);
 						}
 						else {
 							requestedRows -= getDemotedFacet(currentRequestParams, demoteResult);

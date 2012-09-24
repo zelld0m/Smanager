@@ -198,7 +198,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	public int getElevatedEdps(List<NameValuePair> requestParams) throws SearchException {
+	public int getElevatedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -224,6 +224,12 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				String edp = e.getEdp();
 				node = elevateEntries.get(edp);
 				if (node != null) {
+					
+					if (addedRecords + 1 > requestedRows) {
+						break;
+					}
+					addedRecords++;
+
 					node.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
 					node.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
 					if (e.getElevateEntity() == MemberTypeEntity.FACET) {
@@ -237,7 +243,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 					}
 					node.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
 
-					addedRecords++;
 					// insert the elevate results to the docs entry
 					elevatedResults.add(node);
 					if (explainObject != null) {
@@ -470,7 +475,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 
 	@Override
-	protected int getDemotedEdps(List<NameValuePair> requestParams) throws SearchException {
+	protected int getDemotedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -496,6 +501,12 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				String edp = e.getEdp();
 				node = demotedEntries.get(edp);
 				if (node != null) {
+					
+					if (addedRecords + 1 > requestedRows) {
+						break;
+					}
+					addedRecords++;
+
 					node.element(SolrConstants.TAG_DEMOTE, String.valueOf(e.getLocation()));
 					node.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(e.getEntity()));
 					if (e.getDemoteEntity() == MemberTypeEntity.FACET) {
@@ -506,7 +517,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 					}
 					node.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(e.getMemberId()));
 
-					addedRecords++;
 					// insert the demote results to the docs entry
 					demotedResults.add(node);
 					if (explainObject != null) {
