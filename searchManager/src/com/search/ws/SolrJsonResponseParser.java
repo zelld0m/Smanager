@@ -21,13 +21,13 @@ import net.sf.json.groovy.JsonSlurper;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.SearchResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
@@ -137,53 +137,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		return numFound;
 	}
 
-	private int getForceAddCount(List<NameValuePair> requestParams) throws Exception {
-		HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-		JSONObject jsonResponse = (JSONObject)parseJsonResponse(slurper, solrResponse);
-		return ((JSONObject)((JSONObject)jsonResponse).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-	}
-	
-	@Override
-	public int getForceAddTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
-		int result = 0;
-		try {
-			int forceAddCount = 0;
-			requestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, ""));
-			requestParams.add(new BasicNameValuePair("q.alt", "*:*"));
-			requestParams.add(new BasicNameValuePair("defType", "dismax"));
-			StringBuffer edpBuffer = new StringBuffer("EDP:(");
-			for (ElevateResult e : forceAddedList) {
-				if (MemberTypeEntity.PART_NUMBER == e.getElevateEntity()) {
-					edpBuffer.append(e.getEdp()).append(" ");
-				}
-			}			
-			edpBuffer.append(")");
-			if (edpBuffer.length() > 8) {
-				BasicNameValuePair edpNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, edpBuffer.toString());
-				requestParams.add(edpNvp);
-				forceAddCount = getForceAddCount(requestParams);
-				result += forceAddCount;
-				requestParams.remove(edpNvp);
-			}
-			for (ElevateResult e : forceAddedList) {
-				StringBuffer buffer = new StringBuffer("");
-				if (MemberTypeEntity.FACET == e.getElevateEntity()) {
-					buffer.append(e.getCondition().getConditionForSolr());
-				} else {
-					continue;
-				}
-				BasicNameValuePair facetNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, buffer.toString());
-				requestParams.add(facetNvp);
-				forceAddCount = getForceAddCount(requestParams);
-				result += forceAddCount;
-				requestParams.remove(facetNvp);
-			}
-		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get template counts" ,e);
-		}
-		return result;
-	}
-
 	@Override
 	public int getCount(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
@@ -197,67 +150,88 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		return numFound;
 	}
 
+	private void tagSearchResult(JSONObject resultObject, String edp, SearchResult result) {
+		if (result instanceof ElevateResult) {
+			resultObject.element(SolrConstants.TAG_ELEVATE, String.valueOf(((ElevateResult)result).getLocation()));
+			resultObject.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(result.getEntity()));
+			if (result.getEntity() == MemberTypeEntity.FACET) {
+				resultObject.element(SolrConstants.TAG_ELEVATE_CONDITION, result.getCondition().getReadableString());						
+			}
+			if (expiredElevatedEDPs.contains(edp)) {
+				resultObject.element(SolrConstants.TAG_EXPIRED,"");
+			}
+			if (((ElevateResult)result).isForceAdd()) {
+				resultObject.element(SolrConstants.TAG_FORCE_ADD,"");
+			}
+			resultObject.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(result.getMemberId()));
+		}
+		else if (result instanceof DemoteResult) {
+			resultObject.element(SolrConstants.TAG_DEMOTE, String.valueOf(((DemoteResult)result).getLocation()));
+			resultObject.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(result.getEntity()));
+			if (result.getEntity() == MemberTypeEntity.FACET) {
+				resultObject.element(SolrConstants.TAG_DEMOTE_CONDITION, result.getCondition().getReadableString());						
+			}
+			if (expiredDemotedEDPs.contains(edp)) {
+				resultObject.element(SolrConstants.TAG_EXPIRED,"");
+			}
+			resultObject.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(result.getMemberId()));
+		}
+	}
+	
 	@Override
-	public int getElevatedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
+	protected int getEdps(List<NameValuePair> requestParams, List<? extends SearchResult> edpList, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			// locate the result node and get the numFound attribute
-			// <result> tag that is parent node for all the <doc> tags
 			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
 			if (explainObject != null) {
 				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 			}
 			
-			Map<String, JSONObject> elevateEntries = new HashMap<String, JSONObject>();
+			Map<String, JSONObject> entries = new HashMap<String, JSONObject>();
 			for (int j = 0, length = docs.size(); j < length; j++) {
 				JSONObject doc = (JSONObject)docs.get(j);
 				String edp = doc.getString("EDP");
-				elevateEntries.put(edp, doc);
+				entries.put(edp, doc);
 			}
 
 			// sort the entries
 			JSONObject node;
-			for (ElevateResult e: elevatedList) {
-				String edp = e.getEdp();
-				node = elevateEntries.get(edp);
+			int currRow = 0;
+			for (SearchResult result: edpList) {
+				String edp = result.getEdp();
+				node = entries.get(edp);
 				if (node != null) {
-					
+					if (currRow++ < startRow) {
+						continue;
+					}
 					if (addedRecords + 1 > requestedRows) {
 						break;
 					}
 					addedRecords++;
-
-					node.element(SolrConstants.TAG_ELEVATE, String.valueOf(e.getLocation()));
-					node.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(e.getElevateEntity()));
-					if (e.getElevateEntity() == MemberTypeEntity.FACET) {
-						node.element(SolrConstants.TAG_ELEVATE_CONDITION, e.getCondition().getReadableString());						
-					}
-					if (expiredElevatedEDPs.contains(edp)) {
-						node.element(SolrConstants.TAG_EXPIRED,"");
-					}
-					if (e.isForceAdd()) {
-						node.element(SolrConstants.TAG_FORCE_ADD,"");
-					}
-					node.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(e.getMemberId()));
-
+					tagSearchResult(node, edp, result);
 					// insert the elevate results to the docs entry
-					elevatedResults.add(node);
+					if (result instanceof ElevateResult) {
+						elevatedResults.add(node);
+					}
+					else if (result instanceof DemoteResult) {
+						demotedResults.add(node);
+					}
 					if (explainObject != null) {
 						explainObject.put(edp, tmpExplain.getString(edp));
 					}
 				}
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get elevated items" ,e);
+			throw new SearchException("Error occured while trying to get items" ,e);
 		}
 		return addedRecords;
 	}
 
 	@Override
-	public int getElevatedFacet(List<NameValuePair> requestParams, ElevateResult elevateFacet) throws SearchException {
+	protected int getFacet(List<NameValuePair> requestParams, SearchResult facet) throws SearchException {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
@@ -270,28 +244,21 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			for (int j = 0, length = docs.size(); j < length; j++) {
 				JSONObject doc = (JSONObject)docs.get(j);
 				String edp = doc.getString("EDP");
-				doc.element(SolrConstants.TAG_ELEVATE, String.valueOf(elevateFacet.getLocation()));
-				doc.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(elevateFacet.getElevateEntity()));
-				if (elevateFacet.getElevateEntity() == MemberTypeEntity.FACET) {
-					doc.element(SolrConstants.TAG_ELEVATE_CONDITION, elevateFacet.getCondition().getReadableString());						
-				}
-				if (expiredElevatedEDPs.contains(edp)) {
-					doc.element(SolrConstants.TAG_EXPIRED,"");
-				}
-				if (elevateFacet.isForceAdd()) {
-					doc.element(SolrConstants.TAG_FORCE_ADD,"");
-				}
-				doc.element(SolrConstants.TAG_ELEVATE_ID, String.valueOf(elevateFacet.getMemberId()));
-				
 				// insert the demote results to the docs entry
 				addedRecords++;
-				elevatedResults.add(doc);
+				tagSearchResult(doc, edp, facet);
+				if (facet instanceof ElevateResult) {
+					elevatedResults.add(doc);
+				}
+				else if (facet instanceof DemoteResult) {
+					demotedResults.add(doc);
+				}
 				if (explainObject != null) {
 					explainObject.put(edp, tmpExplain.getString(edp));
 				}
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get elevated items" ,e);
+			throw new SearchException("Error occured while trying to get items" ,e);
 		}
 		return addedRecords;
 	}
@@ -474,99 +441,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		return success;
 	}
 
-	@Override
-	protected int getDemotedEdps(List<NameValuePair> requestParams, int requestedRows) throws SearchException {
-		int addedRecords = 0;
-		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			// locate the result node and get the numFound attribute
-			// <result> tag that is parent node for all the <doc> tags
-			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
-			JSONObject tmpExplain = null;
-			if (explainObject != null) {
-				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-			}
-			
-			Map<String, JSONObject> demotedEntries = new HashMap<String, JSONObject>();
-			for (int j = 0, length = docs.size(); j < length; j++) {
-				JSONObject doc = (JSONObject)docs.get(j);
-				String edp = doc.getString("EDP");
-				demotedEntries.put(edp, doc);
-			}
-
-			// sort the edps
-			JSONObject node;
-			for (DemoteResult e: demotedList) {
-				String edp = e.getEdp();
-				node = demotedEntries.get(edp);
-				if (node != null) {
-					
-					if (addedRecords + 1 > requestedRows) {
-						break;
-					}
-					addedRecords++;
-
-					node.element(SolrConstants.TAG_DEMOTE, String.valueOf(e.getLocation()));
-					node.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(e.getEntity()));
-					if (e.getDemoteEntity() == MemberTypeEntity.FACET) {
-						node.element(SolrConstants.TAG_DEMOTE_CONDITION, e.getCondition().getReadableString());						
-					}
-					if (expiredDemotedEDPs.contains(edp)) {
-						node.element(SolrConstants.TAG_EXPIRED,"");
-					}
-					node.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(e.getMemberId()));
-
-					// insert the demote results to the docs entry
-					demotedResults.add(node);
-					if (explainObject != null) {
-						explainObject.put(edp, tmpExplain.getString(edp));
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get demoted items" ,e);
-		}
-		return addedRecords;
-	}
-
-	@Override
-	protected int getDemotedFacet(List<NameValuePair> requestParams, DemoteResult demoteFacet) throws SearchException {
-		int addedRecords = 0;
-		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
-			JSONObject tmpExplain = null;
-			if (explainObject != null) {
-				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-			}
-			for (int j = 0, length = docs.size(); j < length; j++) {
-				JSONObject doc = (JSONObject)docs.get(j);
-				String edp = doc.getString("EDP");
-				doc.element(SolrConstants.TAG_DEMOTE, String.valueOf(demoteFacet.getLocation()));
-				doc.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(demoteFacet.getEntity()));
-				if (demoteFacet.getEntity() == MemberTypeEntity.FACET) {
-					doc.element(SolrConstants.TAG_DEMOTE_CONDITION, demoteFacet.getCondition().getReadableString());						
-				}
-				if (expiredDemotedEDPs.contains(edp)) {
-					doc.element(SolrConstants.TAG_EXPIRED,"");
-				}
-				doc.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(demoteFacet.getMemberId()));
-				
-				// insert the demote results to the docs entry
-				addedRecords++;
-				demotedResults.add(doc);
-				if (explainObject != null) {
-					explainObject.put(edp, tmpExplain.getString(edp));
-				}
-			}
-		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get demoted items" ,e);
-		}
-		return addedRecords;
-	}
-	
 	private void addElevatedEntries() {
 		if (elevatedResults != null) {
 			int i = 0;
