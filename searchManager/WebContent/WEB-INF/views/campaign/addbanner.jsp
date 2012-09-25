@@ -28,7 +28,7 @@
      		<tbody id="keywordBody">
      			<tr id="kDispPattern" style="display:none;">
      			<td class="borderB">
-		        	<a href="#"> <img src="<spring:url value="/images/btn_delete_big.jpg" />" width="10" height="10"></a>		        	
+		        	<a href="#"> <img src="<spring:url value="/images/btn_delete_big.png" />" width="10" height="10"></a>		        	
 		        </td> 
      			</td>
      			<td class="borderB">
