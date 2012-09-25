@@ -30,9 +30,9 @@
     </div>
     <div class="clearB"></div>
     
-    <div class="sort marT10">
+    <div class="sort marT10 fgray">
     	<ul>
-    		<li><a href="">All</a> &nbsp; |</li>
+    		<li class="square"><a href="">All</a> &nbsp; |</li>
     		<li>Sort Order</li>
     		<li>
     			<select class="posRel topn3">
@@ -50,9 +50,9 @@
 		</ul>
 		
 		<div id="categories">
-			 <div class="sort marT10">
+			 <div class="sort marT10 fgray">
 		    	<ul>
-		    		<li><a href="">All</a> &nbsp; |</li>
+		    		<li class="square"><a href="">All</a> &nbsp; |</li>
 		    		<li>Sort Order</li>
 		    		<li>
 		    			<select class="posRel topn3">

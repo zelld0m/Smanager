@@ -28,6 +28,8 @@
 .sort { float:right; }
 .sort ul { list-style: none}
 .sort ul li { float:left; margin-left:10px;  }
+.sort ul li a { color:#3B79C2 }
+.sort ul li.square { list-style-type: square !important; color:#3B79C2 }
 
 
 .catValueList, .catValueTop { margin-top:8px !important }
