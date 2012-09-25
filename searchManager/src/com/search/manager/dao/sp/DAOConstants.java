@@ -43,13 +43,17 @@ public class DAOConstants {
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 	
 	// FACET SORT
-	public static final String SP_ADD_FACET_SORT 					= "usp_Add_Facet_Sort";
-	public static final String SP_DELETE_FACET_SORT 				= "usp_Delete_Facet_Sort";
-	public static final String SP_GET_FACET_SORT 					= "usp_Get_Facet_Sort";
-	public static final String SP_UPDATE_FACET_SORT_SORT_TYPE		= "usp_Update_Facet_Sort_Sort_Type";
+	public static final String SP_ADD_FACET_SORT 					= "usp_Add_Facet_Sort_Rule";
+	public static final String SP_DELETE_FACET_SORT 				= "usp_Delete_Facet_Sort_Rule";
+	public static final String SP_GET_FACET_SORT 					= "usp_Get_Facet_Sort_Rule";
+	public static final String SP_UPDATE_FACET_SORT    				= "usp_Update_Facet_Sort_Rule";
+	public static final String SP_ADD_FACET_GROUP					= "usp_Add_Facet_Group";
+	public static final String SP_UPDATE_FACET_GROUP				= "usp_Update_Facet_Group";
+	public static final String SP_DELETE_FACET_GROUP				= "usp_Delete_Facet_Group";
 	public static final String SP_ADD_FACET_GROUP_ITEM				= "usp_Add_Facet_Group_Item";
-	public static final String SP_UPDATE_FACET_GROUP_ITEM_SEQ 		= "usp_Update_Facet_Group_Item_Sequence";
-	public static final String SP_UPDATE_FACET_GROUP_SORT_TYPE		= "usp_Update_Facet_Group_Sort_Type";
+	public static final String SP_UPDATE_FACET_GROUP_ITEM			= "usp_Update_Facet_Group_Item";
+	public static final String SP_DELETE_FACET_GROUP_ITEM			= "usp_Delete_Facet_Group_Item";
+	public static final String SP_CLEAR_FACET_GROUP_ITEM			= "usp_Clear_Facet_Group_Item";
 	
 	// CAMPAIGN
 	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";

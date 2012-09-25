@@ -16,6 +16,7 @@ public class FacetSort implements Serializable {
 	private String id;
 	private String name;
 	private SortType sortType;
+	private Store store;
 	private List<FacetGroup> facetGroups;
 	
 	public FacetSort() {}
@@ -67,6 +68,14 @@ public class FacetSort implements Serializable {
 	
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 
 	public List<FacetGroup> getFacetGroups() {
