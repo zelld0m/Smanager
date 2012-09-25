@@ -50,65 +50,78 @@
 		</ul>
 		
 		<div id="categories">
-			<div class="catValueTop floatL w38p">
+			 <div class="sort marT10">
+		    	<ul>
+		    		<li><a href="">All</a> &nbsp; |</li>
+		    		<li>Sort Order</li>
+		    		<li>
+		    			<select class="posRel topn3">
+		    				<option>A-Z</option>
+		    			</select>
+		    		</li>
+		    	</ul>
+    		</div>
+    		<div class="clearB"></div>
+			
+			<div class="catValueTop floatL w47p">
 				<p class="fbold">Elevated Category Values</p>
-				<ul>
+				<ul class="marT8">
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 						<label>
-							<select class="w180">
+							<select class="w195">
 								<option>Computer</option>								
 							</select>
 						</label>
-						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 						<label>
-							<select class="w180">
+							<select class="w195">
 								<option>Keyboard</option>								
 							</select>
 						</label>
-						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 						<label>
-							<select class="w180">
+							<select class="w195">
 								<option>Cables</option>								
 							</select>
 						</label>
-						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
 					</li>					
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 						<label>
-							<select class="w180">
+							<select class="w195">
 								<option>CAT3</option>								
 							</select>
 						</label>
-						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 						<label>
-							<select class="w180">
+							<select class="w195">
 								<option>Mouse</option>								
 							</select>
 						</label>
-						<label><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
 					</li>
 				</ul>
 				<div class="fsize11 txtAR"><a href="">[ add new category value ]</a></div>
 			</div><!-- end category value -->
 			
-			<div class="catValueList floatL w60p">
+			<div class="catValueList floatL w46p marL20 borderL padL15">
 				<p class="fbold">Select  Category Values</p>
-				<div class="searchBoxHolder w150 marT1 marR8">
-					<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">
+				<div class="searchBoxHolder w175 marT10 marR8">
+					<input type="text" class="farial fsize12 fgray pad3 w160" id="keyword" name="keyword">
 				</div>
 				<div class="clearB"></div>
-				<div style="overflow-y:auto; height: 200px">
+				<div style="overflow-y:auto; height: 190px">
 					<ul>
 						<li>Computer <span class="fLblue">(5)</span> <span class="fsize10 fLgray">elevate</span> </li>
 						<li>Keyboard <span class="fLblue">(6)</span> </li>

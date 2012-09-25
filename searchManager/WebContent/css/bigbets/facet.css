@@ -29,5 +29,9 @@
 .sort ul { list-style: none}
 .sort ul li { float:left; margin-left:10px;  }
 
-.catValueList ul { list-style: none; line-height: 18px; margin-top:15px; margin-left:10px }
+
+.catValueList, .catValueTop { margin-top:8px !important }
+.catValueList ul { list-style: none; line-height: 18px; margin-top:10px; margin-left:10px }
+.catValueList ul li { padding:2px 0 }
 .catValueTop ul { list-style: none; }
+.catValueTop ul li { line-height: 29px }
