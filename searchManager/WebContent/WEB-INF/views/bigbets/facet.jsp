@@ -73,7 +73,7 @@
 								<option>Computer</option>								
 							</select>
 						</label>
-						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
@@ -82,7 +82,7 @@
 								<option>Keyboard</option>								
 							</select>
 						</label>
-						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
@@ -91,7 +91,7 @@
 								<option>Cables</option>								
 							</select>
 						</label>
-						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 					</li>					
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
@@ -100,7 +100,7 @@
 								<option>CAT3</option>								
 							</select>
 						</label>
-						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 					</li>
 					<li>
 						<label><img src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
@@ -109,7 +109,7 @@
 								<option>Mouse</option>								
 							</select>
 						</label>
-						<label class="marL5"><img src="<spring:url value="/images/iconDelete.png" />" class="posRel top3" /></label>
+						<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 					</li>
 				</ul>
 				<div class="fsize11 txtAR"><a href="">[ add new category value ]</a></div>
