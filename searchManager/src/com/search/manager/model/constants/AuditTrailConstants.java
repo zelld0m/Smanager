@@ -33,9 +33,9 @@ public class AuditTrailConstants {
 		// for campaign only
 		addBanner,
 		removeBanner,
-		// for elevate and exclude only
-		updateExpiryDate,
+		// for elevate, demote and exclude only
 		clear,
+		updateExpiryDate,
 		// for banner only
 		addToCampaign,
 		removeFromCampaign,
@@ -60,6 +60,7 @@ public class AuditTrailConstants {
 		Operation.add,
 		Operation.update,
 		Operation.delete,
+		Operation.clear,
 		Operation.updateExpiryDate,
 		Operation.updateComment,
 		Operation.appendComment };
@@ -68,6 +69,7 @@ public class AuditTrailConstants {
 		Operation.add,
 		Operation.update,
 		Operation.delete,
+		Operation.clear,
 		Operation.updateExpiryDate,
 		Operation.updateComment,
 		Operation.appendComment };
@@ -76,6 +78,7 @@ public class AuditTrailConstants {
 		Operation.add,
 		Operation.update,
 		Operation.delete,
+		Operation.clear,
 		Operation.updateExpiryDate,
 		Operation.updateComment,
 		Operation.appendComment };

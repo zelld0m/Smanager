@@ -74,7 +74,7 @@
 		<div id="ruleSelected" style="display:none">
 	  		<ul id="ruleItemHolder" class="boxContainer">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
-	  				<div class="bgShade pad8 height66">	
+	  				<div class="bgShade pad8 heightFix">	
 	  					<div class="iconGroup">
 	  						<label class="iconGroupW floatL fsize11">
 	  							<span class="validityDays fLblue fbold"></span>
@@ -94,7 +94,7 @@
 	  					</div>
 	  				
 		  				<div class="sortOrder">
-		  					<label class="w90">Elevation : </label>
+		  					<label class="w90">Position : </label>
 		  					<label>
 		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
 		  					</label>

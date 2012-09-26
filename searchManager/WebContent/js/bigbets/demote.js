@@ -309,14 +309,14 @@
 							var destinationIndex = $.trim($(this).val());
 							if($.isNumeric(destinationIndex) && currentIndex!=destinationIndex){
 								if(destinationIndex > self.selectedRuleItemTotal){
-									jAlert("Elevation value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
+									jAlert("Position value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
 								}else{
 									self.setRuleItemPosition(e.data.item, destinationIndex);
 								}
 							}
 						}else{
 							if (((code==48 || code==96) && $.isBlank($(e.target).val())) || (code > 31 && (code < 48 || code > 57))){
-								jAlert("Elevation value should be a number from 1 - " + self.selectedRuleItemTotal + ".", "Invalid Input Type");
+								jAlert("Position value should be a number from 1 - " + self.selectedRuleItemTotal + ".", "Invalid Input Type");
 								return false;
 							}
 						}
@@ -324,7 +324,7 @@
 					},
 					focus:function(e){
 						if (e.data.locked) return; 
-						showMessage(this, "Press <strong>ENTER</strong> to update<br/><strong>Elevation Range:</strong> 1 - " + self.selectedRuleItemTotal);
+						showMessage(this, "Press <strong>ENTER</strong> to update<br/><strong>Position Range:</strong> 1 - " + self.selectedRuleItemTotal);
 						if (parseInt($(this).val()) == parseInt(e.data.item["location"])) $(this).val("");
 					},
 					blur:function(e){
