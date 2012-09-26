@@ -247,10 +247,11 @@ public class FacetSortDAO {
     	}
     }
 	
+	@SuppressWarnings("rawtypes")
 	public Object searchFacet(SearchCriteria criteria, MatchType matchType) throws DaoException {
-//		try {
-//			DAOValidation.checkSearchCriteria(criteria);
-//			Map<String, Object> inputs = new HashMap<String, Object>();
+		try {
+			DAOValidation.checkSearchCriteria(criteria);
+			Map<String, Object> inputs = new HashMap<String, Object>();
 //			Object model = criteria.getModel();
 //			
 //			if(model instanceof FacetSort){
@@ -271,12 +272,10 @@ public class FacetSortDAO {
 //	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
 //	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
 //	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-//	        return DAOUtils.getRecordSet(getFacetSortSP.execute(inputs));
-//		} catch (Exception e) {
-//    		throw new DaoException("Failed during searchRelevancy(): " + e.getMessage(), e);
-//    	}
-		
-		return null;
+	        return DAOUtils.getRecordSet(getFacetSortSP.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during searchFacet(): " + e.getMessage(), e);
+    	}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -390,11 +389,11 @@ public class FacetSortDAO {
     	}
     }	
     
-    public int clearFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException {
+    public int clearFacetGroupItem(FacetGroup facetGroup) throws DaoException {
 		try {
-    		DAOValidation.checkFacetGroupItemPK(facetGroupItem);
+    		DAOValidation.checkFacetGroupPK(facetGroup);
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
-            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroupItem.getId());
+            inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroup.getId());
         	return DAOUtils.getUpdateCount(clearFacetGroupItemSP.execute(inputs));
 		} catch (Exception e) {
     		throw new DaoException("Failed during clearFacetGroupItem(): " + e.getMessage(), e);

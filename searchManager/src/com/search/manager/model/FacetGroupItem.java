@@ -1,12 +1,10 @@
 package com.search.manager.model;
 
-import java.io.Serializable;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class FacetGroupItem implements Serializable{
+public class FacetGroupItem extends ModelBean{
 
 	private static final long serialVersionUID = -5244368611365335448L;
 
@@ -17,13 +15,25 @@ public class FacetGroupItem implements Serializable{
 	
 	public FacetGroupItem() {}
 
-	public FacetGroupItem(String memberId, String facetGroupId, String name,
+	public FacetGroupItem(String facetGroupId, String memberId, String name,
 			Integer sequence) {
 		super();
 		this.memberId = memberId;
 		this.facetGroupId = facetGroupId;
 		this.name = name;
 		this.sequence = sequence;
+	}
+	
+	public FacetGroupItem(String memberId, String name,	Integer sequence) {
+		super();
+		this.memberId = memberId;
+		this.name = name;
+		this.sequence = sequence;
+	}
+	
+	public FacetGroupItem(String memberId) {
+		super();
+		this.memberId = memberId;
 	}
 
 	public String getId() {

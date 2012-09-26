@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +63,6 @@ import com.search.ws.SearchHelper;
 
 @Service("daoService")
 public class DaoServiceImpl implements DaoService {
-
-	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
 
 	@Autowired private KeywordDAO 		keywordDAO;
 	@Autowired private StoreKeywordDAO 	storeKeywordDAO;
@@ -1301,6 +1298,7 @@ public class DaoServiceImpl implements DaoService {
 		return groupsDAO.getGroupPermission(groupId);
 	}
 
+	/* Facet Sort */
 	@Override
 	public int addFacetSort(FacetSort facetSort) throws DaoException {
 		return facetSortDAO.addFacetSort(facetSort);
@@ -1347,8 +1345,7 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<FacetGroup> searchFacetGroup(
 			SearchCriteria<FacetGroup> criteria, MatchType matchType)
 			throws DaoException {
-		// TODO Auto-generated method stub
-		return null;
+		return facetSortDAO.searchFacetGroup(criteria, matchType);
 	}
 
 	@Override
@@ -1370,15 +1367,15 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int clearFacetGroupItem(FacetGroupItem facetGroupItem)
+	public int clearFacetGroupItem(FacetGroup facetGroup)
 			throws DaoException {
-		return facetSortDAO.clearFacetGroupItem(facetGroupItem);
+		return facetSortDAO.clearFacetGroupItem(facetGroup);
 	}
 
 	@Override
 	public RecordSet<FacetGroupItem> searchFacetGroupItem(
 			SearchCriteria<FacetGroupItem> criteria, MatchType matchType)
 			throws DaoException {
-		return null;
+		return facetSortDAO.searchFacetGroupItem(criteria, matchType);
 	}
 }

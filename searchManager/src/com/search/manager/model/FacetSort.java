@@ -49,13 +49,16 @@ public class FacetSort extends ModelBean{
 	}
 	
 	public FacetSort(String id, String name, String store) {
+		super();
 		this.id = id;
 		this.name = name;
 		this.store = new Store(store);
 	}
 	
 	public FacetSort(String id, String store) {
-		this(id, "", store);
+		super();
+		this.id = id;
+		this.store = new Store(store);
 	}
 
 	public String getId() {
