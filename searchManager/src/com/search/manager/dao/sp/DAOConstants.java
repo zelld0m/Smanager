@@ -236,6 +236,10 @@ public class DAOConstants {
 	public static final String PARAM_FACET_NAME						= "facet_name";
 	public static final String PARAM_FORCE_ADD						= "force_add";
 
+	public static final String PARAM_FACET_GROUP_ID					= "facet_group_id";
+	public static final String PARAM_RULE_TYPE			 			= "rule_type";
+	public static final String PARAM_SORT_TYPE			 			= "sort_type";
+	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
 	public static final String COLUMN_PROD_KEYWORD_ID   			= "prod_keyword_id";
