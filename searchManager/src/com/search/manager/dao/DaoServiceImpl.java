@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,7 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
+import com.search.manager.dao.sp.FacetSortDAO;
 import com.search.manager.dao.sp.GroupsDAO;
 import com.search.manager.dao.sp.KeywordDAO;
 import com.search.manager.dao.sp.RedirectRuleDAO;
@@ -40,6 +40,9 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetGroupItem;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
@@ -61,8 +64,6 @@ import com.search.ws.SearchHelper;
 @Service("daoService")
 public class DaoServiceImpl implements DaoService {
 
-	private Logger logger = Logger.getLogger(DaoServiceImpl.class);
-
 	@Autowired private KeywordDAO 		keywordDAO;
 	@Autowired private StoreKeywordDAO 	storeKeywordDAO;
 	@Autowired private ElevateDAO 		elevateDAO;
@@ -77,6 +78,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private CommentDAO		commentDAO;
 	@Autowired private UsersDAO			usersDAO;
 	@Autowired private GroupsDAO		groupsDAO;
+	@Autowired private FacetSortDAO		facetSortDAO;
 
 	private DaoServiceImpl instance;
 	
@@ -1295,5 +1297,85 @@ public class DaoServiceImpl implements DaoService {
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException {
 		return groupsDAO.getGroupPermission(groupId);
 	}
-	
+
+	/* Facet Sort */
+	@Override
+	public int addFacetSort(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.addFacetSort(facetSort);
+	}
+
+	@Override
+	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.addFacetSortAndGetId(facetSort);
+	}
+
+	@Override
+	public int deleteFacetSort(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.deleteFacetSort(facetSort);
+	}
+
+	@Override
+	public int updateFacetSort(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.updateFacetSort(facetSort);
+	}
+
+	@Override
+	public RecordSet<FacetSort> searchFacetSort(
+			SearchCriteria<FacetSort> criteria, MatchType matchType)
+			throws DaoException {
+		return facetSortDAO.searchFacetSort(criteria, matchType);
+	}
+
+	@Override
+	public int addFacetGroup(FacetGroup facetGroup) throws DaoException {
+		return facetSortDAO.addFacetGroup(facetGroup);
+	}
+
+	@Override
+	public int deleteFacetGroup(FacetGroup facetGroup) throws DaoException {
+		return facetSortDAO.deleteFacetGroup(facetGroup);
+	}
+
+	@Override
+	public int updateFacetGroup(FacetGroup facetGroup) throws DaoException {
+		return facetSortDAO.updateFacetGroup(facetGroup);
+	}
+
+	@Override
+	public RecordSet<FacetGroup> searchFacetGroup(
+			SearchCriteria<FacetGroup> criteria, MatchType matchType)
+			throws DaoException {
+		return facetSortDAO.searchFacetGroup(criteria, matchType);
+	}
+
+	@Override
+	public int addFacetGroupItem(FacetGroupItem facetGroupItem)
+			throws DaoException {
+		return facetSortDAO.addFacetGroupItem(facetGroupItem);
+	}
+
+	@Override
+	public int deleteFacetGroupItem(FacetGroupItem facetGroupItem)
+			throws DaoException {
+		return facetSortDAO.deleteFacetGroupItem(facetGroupItem);
+	}
+
+	@Override
+	public int updateFacetGroupItem(FacetGroupItem facetGroupItem)
+			throws DaoException {
+		return facetSortDAO.updateFacetGroupItem(facetGroupItem);
+	}
+
+	@Override
+	public int clearFacetGroupItem(FacetGroup facetGroup)
+			throws DaoException {
+		return facetSortDAO.clearFacetGroupItem(facetGroup);
+	}
+
+	@Override
+	public RecordSet<FacetGroupItem> searchFacetGroupItem(
+			SearchCriteria<FacetGroupItem> criteria, MatchType matchType)
+			throws DaoException {
+		return facetSortDAO.searchFacetGroupItem(criteria, matchType);
+	}
 }
