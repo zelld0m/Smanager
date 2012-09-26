@@ -549,16 +549,17 @@ body .tabvs .tabs .ui-widget-content	{ border:1px solid #d3d3d3; margin-top:1px;
 /* side tabs */
 .tabvs .ui-tabs-nav				{ background:none !important; border:none !important;  list-style: none; width: 204px; z-index:100 }
 .tabvs .ui-tabs-nav li			{ -webkit-border-radius: 0 !important; -moz-border-radius: 1px !important; border-radius: 1px !important; border-right:1px solid #d3d3d3 !important; border-bottom:1px solid #d3d3d3 !important }
-.tabvs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 205px}
+.tabvs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 128px}
 .tabvs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
 .tabvs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important }				{ }
-body .tabvs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:700px; margin-left:229px; top:-35px; min-height: 400px; z-index:50 }
+body .tabvs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:525px; margin-left:151px; top:-35px; min-height: 400px; z-index:50 }
 .tabvs .ui-tabs-panel			{ padding:3px 10px !important;  }
 .tabvs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .tabvs .ui-tabs-panel h3		{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .tabvs .ui-widget-content label	{ vertical-align: top; }
 
 .tabvs table td					{ padding:4px }
+
 
 
 /*native tabs */

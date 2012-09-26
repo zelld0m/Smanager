@@ -29,7 +29,7 @@
 		        <tr>
 		        	<td class="borderB padTB5">
 			        	<span class="lnk"><a href="#">
-			        	<img src="<spring:url value="/images/btn_delete_big.jpg" />" width="10" height="10" class="marR3"> Catalog ${i}</a>
+			        	<img src="<spring:url value="/images/btn_delete_big.png" />" width="10" height="10" class="marR3"> Catalog ${i}</a>
 			        	</span>
 		        	</td>
 		            <td class="borderB padTB5 txtAR scorelink">

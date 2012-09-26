@@ -119,10 +119,12 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w60p, .w60p			{ width:60% }
 .cssReset .w50p, .w50p			{ width:50% }
 .cssReset .w49p, .w49p			{ width:49% }
+.cssReset .w48p, .w48p			{ width:48% }
 .cssReset .w46p, .w46p			{ width:46% }
 .cssReset .w47p, .w47p			{ width:47% }
 .cssReset .w45p, .w45p			{ width:45% }
 .cssReset .w45p83p, .w45p83		{ width:45.83% }
+.cssReset .w38p, .w38p			{ width:38% }
 .cssReset .w32p, .w32p			{ width:32% }
 .cssReset .w10p, .w10p 			{ width:10% }
 
@@ -161,7 +163,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .padL9				{padding-left:9px}
 .cssReset .padL10				{padding-left:10px}
 .cssReset .padL13, .padL13		{padding-left:13px}
-.cssReset .padL15, .padL15		{padding-left:15px}
+.cssReset .padL15, .padL15		{padding-left:15px !important}
 .cssReset .padL25				{padding-left:25px}
 .cssReset .padL55				{padding-left:55px}
 .cssReset .padL100, .padL100	{padding-left:100px !important}
@@ -416,6 +418,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .fgray 				{ color:#666 }
 .cssReset .fLgray 				{ color:#999 }
 .cssReset .fLgray2 				{ color:#cbcbcb }
+
 .cssReset .fLblue, .fLblue,
 .qtip .fLblue					{ color:#3B79C2 }
 .cssReset .fLblue2, .fLblue2, 
