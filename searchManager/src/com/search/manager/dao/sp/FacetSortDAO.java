@@ -34,6 +34,7 @@ public class FacetSortDAO {
 	private DeleteFacetSortStoredProcedure deleteFacetSortSP;
 	private GetFacetSortStoredProcedure getFacetSortSP;
 	private UpdateFacetSortStoredProcedure updateFacetSortSP;
+
 	private AddFacetGroupStoredProcedure addFacetGroupSP;
 	private DeleteFacetGroupStoredProcedure deleteFacetGroupSP;
 	private UpdateFacetGroupStoredProcedure updateFacetGroupSP;
