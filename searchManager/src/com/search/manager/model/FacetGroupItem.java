@@ -10,38 +10,44 @@ public class FacetGroupItem implements Serializable{
 
 	private static final long serialVersionUID = -5244368611365335448L;
 
-	private FacetSort facetSort;
-	private FacetGroup facetGroup;
+	private String memberId;
+	private String facetGroupId;
 	private String name;
 	private Integer sequence;
 	
 	public FacetGroupItem() {}
-	
-	public FacetGroupItem(FacetSort facetSort, FacetGroup facetGroup,
-			String name, Integer sequence) {
+
+	public FacetGroupItem(String memberId, String facetGroupId, String name,
+			Integer sequence) {
 		super();
-		this.facetSort = facetSort;
-		this.facetGroup = facetGroup;
+		this.memberId = memberId;
+		this.facetGroupId = facetGroupId;
 		this.name = name;
 		this.sequence = sequence;
 	}
 
-	public FacetSort getFacetSort() {
-		return facetSort;
+	public String getId() {
+		return memberId;
 	}
 
-
-	public void setFacetSort(FacetSort facetSort) {
-		this.facetSort = facetSort;
+	public void setId(String id) {
+		this.memberId = id;
 	}
 
-
-	public FacetGroup getFacetGroup() {
-		return facetGroup;
+	public String getMemberId() {
+		return memberId;
 	}
 
-	public void setFacetGroup(FacetGroup facetGroup) {
-		this.facetGroup = facetGroup;
+	public void setMemberId(String memberId) {
+		this.memberId = memberId;
+	}
+
+	public String getFacetGroupId() {
+		return facetGroupId;
+	}
+
+	public void setFacetGroupId(String facetGroupId) {
+		this.facetGroupId = facetGroupId;
 	}
 
 	public String getName() {

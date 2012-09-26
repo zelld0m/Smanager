@@ -143,6 +143,16 @@ public class DAOValidation {
 		checkStringNotEmpty(facetSort.getRuleId(), ERROR_MESSAGE_NO_FACET_SORT_ID);
     }
     
+    public static void checkFacetGroupPK(FacetGroup facetGroup) throws DaoException {
+		checkObjectNotNull(facetGroup, ERROR_MESSAGE_NO_FACET_GROUP);
+		checkStringNotEmpty(facetGroup.getId(), ERROR_MESSAGE_NO_FACET_GROUP_ID);
+    }
+    
+    public static void checkFacetGroupItemPK(FacetGroupItem facetGroupItem) throws DaoException {
+		checkObjectNotNull(facetGroupItem, ERROR_MESSAGE_NO_FACET_GROUP_ITEM);
+		checkStringNotEmpty(facetGroupItem.getId(), ERROR_MESSAGE_NO_FACET_GROUP_ITEM_ID);
+    }
+    
     @SuppressWarnings({"rawtypes"})
     public static void checkSearchCriteria(SearchCriteria criteria) throws DaoException {
 		DAOValidation.checkObjectNotNull(criteria, DAOValidation.ERROR_MESSAGE_NO_SEARCH_CRITERIA);

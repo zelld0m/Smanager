@@ -12,21 +12,70 @@ import com.search.manager.enums.SortType;
 public class FacetGroup extends ModelBean {
 
 	private static final long serialVersionUID = -5244368611365335448L;
-
-	private FacetSort facetSort;
+	
+	private String ruleId;
+	private String id;
+	private String name;
 	private FacetGroupType facetGroupType;
 	private SortType sortType;
+	private Integer sequence;
 	private List<FacetGroupItem> facetGroupItems;
 	
 	public FacetGroup() {}
 	
-	public FacetGroup(FacetSort facetSort, FacetGroupType facetGroupType,
-			SortType sortType, List<FacetGroupItem> facetGroupItems) {
+	public FacetGroup(String ruleId, String id, String name,
+			FacetGroupType facetGroupType, SortType sortType, Integer sequence,
+			List<FacetGroupItem> facetGroupItems) {
 		super();
-		this.facetSort = facetSort;
+		this.ruleId = ruleId;
+		this.id = id;
+		this.name = name;
 		this.facetGroupType = facetGroupType;
 		this.sortType = sortType;
+		this.sequence = sequence;
 		this.facetGroupItems = facetGroupItems;
+	}
+	
+	public FacetGroup(String ruleId, String id, String name,
+			FacetGroupType facetGroupType, SortType sortType, Integer sequence) {
+		this(ruleId, id, name, facetGroupType, sortType, sequence, null);
+	}
+	
+	public FacetGroup(String ruleId, String name,
+			String facetGroupType, String sortType, Integer sequence) {
+		this(ruleId, "", name, FacetGroupType.valueOf(facetGroupType), SortType.valueOf(sortType), sequence, null);
+	}
+
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
+
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(String ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<FacetGroupItem> getFacetGroupItems() {
@@ -35,14 +84,6 @@ public class FacetGroup extends ModelBean {
 
 	public void setFacetGroupItems(List<FacetGroupItem> facetGroupItems) {
 		this.facetGroupItems = facetGroupItems;
-	}
-
-	public FacetSort getFacetSort() {
-		return facetSort;
-	}
-
-	public void setFacetSort(FacetSort facetSort) {
-		this.facetSort = facetSort;
 	}
 
 	public FacetGroupType getFacetGroupType() {

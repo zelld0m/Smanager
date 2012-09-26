@@ -13,6 +13,9 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetGroupItem;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
@@ -134,6 +137,22 @@ public interface DaoService {
 	public RecordSet<DemoteResult> getNoExpireDemoteResultList(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public Map<String, DemoteResult> getDemoteResultMap(SearchCriteria<DemoteResult> criteria) throws DaoException;
 	public DemoteResult getDemoteItem(DemoteResult demote) throws DaoException;
+	
+	/* Facet Sort */
+	public int addFacetSort(FacetSort facetSort) throws DaoException;
+	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException;
+	public int deleteFacetSort(FacetSort facetSort) throws DaoException;
+	public int updateFacetSort(FacetSort facetSort) throws DaoException;
+	public RecordSet<FacetSort> searchFacetSort(SearchCriteria<FacetSort> criteria, MatchType matchType) throws DaoException;
+	public int addFacetGroup(FacetGroup facetGroup) throws DaoException;
+	public int deleteFacetGroup(FacetGroup facetGroup) throws DaoException;
+	public int updateFacetGroup(FacetGroup facetGroup) throws DaoException;
+	public RecordSet<FacetGroup> searchFacetGroup(SearchCriteria<FacetGroup> criteria, MatchType matchType) throws DaoException;
+	public int addFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
+	public int deleteFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
+	public int updateFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
+	public int clearFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
+	public RecordSet<FacetGroupItem> searchFacetGroupItem(SearchCriteria<FacetGroupItem> criteria, MatchType matchType) throws DaoException;
 	
 	/* Big Bets */
 	public RecordSet<Product> getExcludedProducts(String serverName, SearchCriteria<ExcludeResult> criteria) throws DaoException;
