@@ -115,32 +115,8 @@
 				<div class="fsize11 txtAR"><a href="">[ add new category value ]</a></div>
 			</div><!-- end category value -->
 			
-			<div class="catValueList floatL w46p marL20 borderL padL15">
-				<p class="fbold">Select  Category Values</p>
-				<div class="searchBoxHolder w175 marT10 marR8">
-					<input type="text" class="farial fsize12 fgray pad3 w160" id="keyword" name="keyword">
-				</div>
-				<div class="clearB"></div>
-				<div style="overflow-y:auto; height: 190px">
-					<ul>
-						<li>Computer <span class="fLblue">(5)</span> <span class="fsize10 fLgray">elevate</span> </li>
-						<li>Keyboard <span class="fLblue">(6)</span> </li>
-						<li>Cables <span class="fLblue">(33)</span> </li>
-						<li>CAT3 <span class="fLblue">(25)</span> <span class="fsize10 fLgray">elevate</span></li>
-						<li>Mouse <span class="fLblue">(4)</span> </li>
-						<li>Router <span class="fLblue">(6)</span> <span class="fsize10 fLgray">elevate</span></li>
-						<li>Keyboard <span class="fLblue">(10)</span> </li>
-						<li>Cables <span class="fLblue">(24)</span> </li>
-						<li>CAT3 <span class="fLblue">(1)</span> </li>
-						<li>Mouse <span class="fLblue">(3)</span> <span class="fsize10 fLgray">elevate</span></li>
-						<li>Router <span class="fLblue">(6)</span> <span class="fsize10 fLgray">elevate</span></li>
-						<li>Keyboard <span class="fLblue">(10)</span> </li>
-						<li>Cables <span class="fLblue">(24)</span> </li>
-						<li>CAT3 <span class="fLblue">(1)</span> </li>
-						<li>Mouse <span class="fLblue">(3)</span> <span class="fsize10 fLgray">elevate</span></li>
-					</ul>
-				</div>
-			</div><!--  end category values list -->
+			<div id="facetvaluelist"></div>
+			<!--  end category values list -->
 			<div class="clearB"></div>
 		</div><!--  end categories content -->
 		

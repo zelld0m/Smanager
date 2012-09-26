@@ -6,9 +6,6 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
-import com.search.manager.model.FacetGroup;
-import com.search.manager.model.FacetGroupItem;
-import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -40,14 +37,6 @@ public class DAOValidation {
     public final static String ERROR_MESSAGE_NO_RELEVANCY_FIELD			= "No relevancy field provided";
     public final static String ERROR_MESSAGE_NO_RELEVANCY_FIELD_NAME	= "No relevancy field name provided";
     public final static String ERROR_MESSAGE_NO_RELEVANCY_KEYWORD 		= "No relevancy keyword provided";
-    // FACET
-    public final static String ERROR_MESSAGE_NO_FACET_SORT 				= "No facet sort provided";
-    public final static String ERROR_MESSAGE_NO_FACET_SORT_ID			= "No facet sort id provided";
-    public final static String ERROR_MESSAGE_NO_FACET_GROUP 			= "No facet group provided";
-    public final static String ERROR_MESSAGE_NO_FACET_GROUP_ID 			= "No facet group id provided";
-    public final static String ERROR_MESSAGE_NO_FACET_GROUP_ITEM		= "No facet group item provided";
-    public final static String ERROR_MESSAGE_NO_FACET_GROUP_ITEM_ID		= "No facet group item id provided";
-    
     // SEARCH CRITERIA
     public final static String ERROR_MESSAGE_NO_SEARCH_CRITERIA			= "No search criteria provided";
     public final static String ERROR_MESSAGE_NO_SEARCH_CRITERIA_MODEL	= "No search criteria model provided";
@@ -126,36 +115,10 @@ public class DAOValidation {
 		DAOValidation.checkKeywordId(relevancyKeyword.getKeyword());
     }
     
-    public static void checkFacetSort(FacetSort facetSort) throws DaoException {
-		checkObjectNotNull(facetSort, ERROR_MESSAGE_NO_FACET_SORT);
-    }
-    
-    public static void checkFacetGroup(FacetGroup facetGroup) throws DaoException {
-    	checkObjectNotNull(facetGroup, ERROR_MESSAGE_NO_FACET_GROUP);
-    }
-    
-    public static void checkFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException {
-    	checkObjectNotNull(facetGroupItem, ERROR_MESSAGE_NO_FACET_GROUP_ITEM);
-    }
-    
-    public static void checkFacetSortPK(FacetSort facetSort) throws DaoException {
-		checkObjectNotNull(facetSort, ERROR_MESSAGE_NO_FACET_SORT);
-		checkStringNotEmpty(facetSort.getRuleId(), ERROR_MESSAGE_NO_FACET_SORT_ID);
-    }
-    
-    public static void checkFacetGroupPK(FacetGroup facetGroup) throws DaoException {
-		checkObjectNotNull(facetGroup, ERROR_MESSAGE_NO_FACET_GROUP);
-		checkStringNotEmpty(facetGroup.getId(), ERROR_MESSAGE_NO_FACET_GROUP_ID);
-    }
-    
-    public static void checkFacetGroupItemPK(FacetGroupItem facetGroupItem) throws DaoException {
-		checkObjectNotNull(facetGroupItem, ERROR_MESSAGE_NO_FACET_GROUP_ITEM);
-		checkStringNotEmpty(facetGroupItem.getId(), ERROR_MESSAGE_NO_FACET_GROUP_ITEM_ID);
-    }
-    
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings("unchecked")
     public static void checkSearchCriteria(SearchCriteria criteria) throws DaoException {
 		DAOValidation.checkObjectNotNull(criteria, DAOValidation.ERROR_MESSAGE_NO_SEARCH_CRITERIA);
 		DAOValidation.checkObjectNotNull(criteria.getModel(), DAOValidation.ERROR_MESSAGE_NO_SEARCH_CRITERIA_MODEL);
     }
+    
 }
