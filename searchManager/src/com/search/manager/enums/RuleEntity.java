@@ -18,7 +18,8 @@ public enum RuleEntity {
 	QUERY_CLEANING(7, "Query Cleaning"),
 	RANKING_RULE(8, "Ranking Rule"),
 	RULE_STATUS(9, "Rule Status"),
-	DEMOTE(10, "Demote");
+	DEMOTE(10, "Demote"),
+	FACET_SORT(11, "Facet Sort");
 
 	private final int code;
 	private final List<String> values;

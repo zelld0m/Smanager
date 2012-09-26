@@ -19,7 +19,8 @@ public class AuditTrailConstants {
 		queryCleaning,
 		relevancy,
 		ruleStatus,
-		security
+		security,
+		facetSort
 	}
 	
 	public enum Operation {
