@@ -103,6 +103,13 @@
 						'json.nl':'map'
 				};
 
+				var storeparams = self.manager.store.params;
+				//merge params
+				for(var name in storeparams){
+					if(params[storeparams[name].name] === undefined)
+						params[storeparams[name].name] = storeparams[name].value;
+				}
+				
 				for (var name in params) {
 					if ($.isArray(params[name])){
 						for (var param in params[name]){
