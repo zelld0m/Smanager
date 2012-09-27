@@ -52,6 +52,9 @@
 
 			var $field = content.find('#fieldSelected' + $.formatAsId(fieldValue) + ' input[type="text"]');
 
+			$field.val($field.val().replace(/^\./,'0.')); // insert leading 0 before .
+			$field.val($field.val().replace(/\.$/,'')); // remove trailing .
+			
 			if ($field.val() > relFieldMaxValue){
 				$field.val(relFieldMaxValue);
 			}
@@ -484,6 +487,9 @@
 
 			var $field = content.find('#fieldSelected_' + fieldName+ ' input[type="text"]');
 
+			$field.val($field.val().replace(/^\./,'0.')); // insert leading 0 before .
+			$field.val($field.val().replace(/\.$/,'')); // remove trailing .
+			
 			if ($field.val() > relFieldMaxValue){
 				$field.val(relFieldMaxValue);
 			}

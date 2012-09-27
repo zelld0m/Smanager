@@ -61,6 +61,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/StoreKeywordServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ExcludeServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ElevateServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/FacetSortServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DemoteServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RelevancyServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DeploymentServiceJS.js"/>"></script>
@@ -83,6 +84,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.viewaudit.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.comment.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.viewfacetvalues.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.preview.custom.js" />" ></script>

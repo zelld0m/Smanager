@@ -42,6 +42,19 @@ public class DAOConstants {
 	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
 	
+	// FACET SORT
+	public static final String SP_ADD_FACET_SORT 					= "usp_Add_Facet_Sort_Rule";
+	public static final String SP_DELETE_FACET_SORT 				= "usp_Delete_Facet_Sort_Rule";
+	public static final String SP_GET_FACET_SORT 					= "usp_Get_Facet_Sort_Rule";
+	public static final String SP_UPDATE_FACET_SORT    				= "usp_Update_Facet_Sort_Rule";
+	public static final String SP_ADD_FACET_GROUP					= "usp_Add_Facet_Group";
+	public static final String SP_UPDATE_FACET_GROUP				= "usp_Update_Facet_Group";
+	public static final String SP_DELETE_FACET_GROUP				= "usp_Delete_Facet_Group";
+	public static final String SP_ADD_FACET_GROUP_ITEM				= "usp_Add_Facet_Group_Item";
+	public static final String SP_UPDATE_FACET_GROUP_ITEM			= "usp_Update_Facet_Group_Item";
+	public static final String SP_DELETE_FACET_GROUP_ITEM			= "usp_Delete_Facet_Group_Item";
+	public static final String SP_CLEAR_FACET_GROUP_ITEM			= "usp_Clear_Facet_Group_Item";
+	
 	// CAMPAIGN
 	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";
 	public static final String SP_GET_CAMPAIGN 						= "usp_Get_Campaign";
@@ -223,6 +236,10 @@ public class DAOConstants {
 	public static final String PARAM_FACET_NAME						= "facet_name";
 	public static final String PARAM_FORCE_ADD						= "force_add";
 
+	public static final String PARAM_FACET_GROUP_ID					= "facet_group_id";
+	public static final String PARAM_RULE_TYPE			 			= "rule_type";
+	public static final String PARAM_SORT_TYPE			 			= "sort_type";
+	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
 	public static final String COLUMN_PROD_KEYWORD_ID   			= "prod_keyword_id";

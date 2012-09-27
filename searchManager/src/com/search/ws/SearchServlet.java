@@ -273,7 +273,6 @@ public class SearchServlet extends HttpServlet {
 				nameValuePairs.add(nvp);
 			}
 
-			StringBuilder fqBuffer = new StringBuilder();
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
@@ -727,7 +726,6 @@ public class SearchServlet extends HttpServlet {
 			generateFilterList(demoteValues, demoteFacetValues, demoteFilters, demoteList);
 
 			Integer numFound = 0;
-			Integer numForceAddFound = 0;
 			Integer numElevateFound = 0;
 			Integer numNormalFound = 0;
 			Integer numDemoteFound = 0;
@@ -777,7 +775,6 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			Future<Integer> getTemplateCount = null;
-			Future<Integer> getForceAddTemplateCount = null;
 			Future<Integer> getElevatedCount = null;
 			Future<Integer> getDemotedCount = null;
 
@@ -818,20 +815,6 @@ public class SearchServlet extends HttpServlet {
 
 			if (bestMatchFlag) {
 				nameValuePairs.add(excludeDemoteNameValuePair);
-				if (forceAddList.size() > 0) {
-					final ArrayList<NameValuePair> getForceAddTemplateCountParams = new ArrayList<NameValuePair>(nameValuePairs);
-					getForceAddTemplateCountParams.remove(origKeywordNVP);
-					if (redirect != null && redirect.isRedirectFilter()) {
-						getForceAddTemplateCountParams.remove(redirectFqNvp);
-					}
-					getForceAddTemplateCount = completionService.submit(new Callable<Integer>() {
-						@Override
-						public Integer call() throws Exception {
-							return solrHelper.getForceAddTemplateCounts(getForceAddTemplateCountParams);
-						}
-					});
-					tasks++;
-				}
 				
 				if (requestedRows != 0 && (elevateFilters.length() > 0)) {
 					/* Second Request */
@@ -885,10 +868,6 @@ public class SearchServlet extends HttpServlet {
 					numFound = completed.get();
 					logger.debug("Results found: " + numFound);
 				}
-				else if (getForceAddTemplateCount != null && completed.equals(getForceAddTemplateCount)) {
-					numForceAddFound = completed.get();
-					logger.debug("Results found: " + numForceAddFound);
-				}
 				else if (getElevatedCount!= null && completed.equals(getElevatedCount)) {
 					numElevateFound += completed.get();
 					logger.debug("Elevate result size: " + numElevateFound);
@@ -900,7 +879,6 @@ public class SearchServlet extends HttpServlet {
 				tasks--;
 			}
 
-			numElevateFound += numForceAddFound;
 			numNormalFound = numFound - numElevateFound - numDemoteFound;
 			
 			// cleanup request parameters, remove start and row
@@ -965,7 +943,7 @@ public class SearchServlet extends HttpServlet {
 						elevateFilters.insert(0, "-");
 						getNormalItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateFilters.toString()));
 					}
-					getNormalItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(startRow + requestedRows)));
+					getNormalItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, String.valueOf(requestedRows)));
 					getNormalItemsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_START, String.valueOf(startRow)));
 					
 					// if not best match, insert force added items

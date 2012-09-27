@@ -523,7 +523,7 @@
 		output += '	<div>';
 		output += '		<ul class="listProd">';
 		output += '			<li><label class="fbold title">SKU #: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
-		output += '			<li><label class="fbold title">Elevate: </label><input type="text" id="aElevatePosition' + idSuffix + '" style="width:30px"></li>';
+		output += '			<li><label class="fbold title">Position: </label><input type="text" id="aElevatePosition' + idSuffix + '" style="width:30px"></li>';
 		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
 		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
 		output += '		</ul>';
@@ -535,7 +535,7 @@
 		output += '</div>';
 		output += '</div>';
 		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
-		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Elevated</h2></div >';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Elevated Items</h2></div >';
 		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
 		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 
@@ -546,7 +546,7 @@
 		//output += '				<div id="stampExpired" class="posAbs" style="top:30px; display:none"><img src="../images/expired_stamp60x28.png" class="noborder"></div>';	
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
-		output += '						<li class="label">Elevation:</li><li class="value" id="elevatePosition">1</li>';
+		output += '						<li class="label">Position:</li><li class="value" id="elevatePosition">1</li>';
 		output += '						<li class="label partNoLabel">SKU #:</li><li class="value" id="partNo">846896</li>'; 
 		output += '						<li class="label mfrNoLabel">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
 		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
@@ -583,7 +583,7 @@
 		output += '	<div>';
 		output += '		<ul class="listProd">';
 		output += '			<li><label class="fbold title">SKU #: </label><span id="aPartNo' + idSuffix + '">' + doc.DPNo + '</span></li>';
-		output += '			<li><label class="fbold title">Demote: </label><input type="text" id="aDemotePosition' + idSuffix + '" style="width:30px"></li>';
+		output += '			<li><label class="fbold title">Position: </label><input type="text" id="aDemotePosition' + idSuffix + '" style="width:30px"></li>';
 		output += '			<li><label class="fbold title">Valid Until: </label><input type="text" id="aExpiryDate' + idSuffix + '" style="width:65px"></li>';
 		output += '			<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="aStampExpired' + idSuffix + '" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="aComment' + idSuffix + '"></textarea></li>';
 		output += '		</ul>';
@@ -595,7 +595,7 @@
 		output += '</div>';
 		output += '</div>';
 		output += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
-		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Demoted</h2></div >';
+		output += '<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Demoted Items</h2></div >';
 		output += '<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
 		output += '		<ul id="listItems' + idSuffix + '" class="listItems">';
 		output += '			<li id="listItemsPattern" class="clearfix" style="display:none">'; 
@@ -606,7 +606,7 @@
 		//output += '				<div id="stampExpired" class="posAbs" style="top:30px; display:none"><img src="../images/expired_stamp60x28.png" class="noborder"></div>';	
 		output += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
 		output += '				  	<ul class="listItemInfo">';
-		output += '						<li class="label">Demote:</li><li class="value" id="demotePosition">1</li>';
+		output += '						<li class="label">Position:</li><li class="value" id="demotePosition">1</li>';
 		output += '						<li class="label partNoLabel">SKU #:</li><li class="value" id="partNo">846896</li>'; 
 		output += '						<li class="label mfrNoLabel">Mfr Part #:</li><li class="value" id="mfrNo">ERgt129</label>';
 		output += '						<li id="validityText" class="label"></li><li class="value" id="expiryDate">02/21/2010</li>';
