@@ -565,6 +565,7 @@ body .tabs .ui-widget-content			{ border:1px solid #d3d3d3; margin-top:1px; padd
 .tabs .ui-widget-content label	{ vertical-align: middle; }
 
 .tabvs .tabs .ui-tabs-nav				{ background: none !important; border:none !important; }
+.tabvs .ui-tabs-nav li.ui-state-default  			{ border-bottom:1px solid #d3d3d3 !important }
 .tabvs .tabs .ui-tabs-nav li a			{ padding:8px 10px !important; font-size:12px; font-weight: bold; width:auto !important; }
 .tabvs .tabs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
 body .tabvs .tabs .ui-widget-content	{ border:1px solid #d3d3d3; margin-top:1px; padding:15px; position:relative }	
@@ -579,7 +580,7 @@ body .tabvs .tabs .ui-widget-content	{ border:1px solid #d3d3d3; margin-top:1px;
 .tabvs .ui-tabs-nav li			{ -webkit-border-radius: 0 !important; -moz-border-radius: 1px !important; border-radius: 1px !important; border-right:1px solid #d3d3d3 !important; border-bottom:1px solid #d3d3d3 !important }
 .tabvs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 128px}
 .tabvs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
-.tabvs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important }				{ }
+.tabvs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important; border-bottom:1px solid #aaaaaa !important }				
 body .tabvs .ui-widget-content	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:525px; margin-left:151px; top:-35px; min-height: 400px; z-index:50 }
 .tabvs .ui-tabs-panel			{ padding:3px 10px !important;  }
 .tabvs .ui-tabs					{ padding:0 !important; margin:0 !important;  }

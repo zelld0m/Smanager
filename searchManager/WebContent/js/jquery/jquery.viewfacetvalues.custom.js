@@ -182,8 +182,8 @@
 			}
 
 			content+= '<div class="clearB"></div>';
-			content+= '<div style="overflow-y:auto; height: 190px">';
-			content+= 	'<ul id="facetValues">';
+			content+= '<div style="overflow-y:auto; height: 190px" class="marT10">';
+			content+= 	'<ul id="facetValues" class="facetList">';
 			content+= 		'<li id="facetValuePattern" style="display: none">';
 			content+= 			'<span id="facetName"></span>';
 			content+= 			'<span id="facetCount" class="fLblue"></span>';
