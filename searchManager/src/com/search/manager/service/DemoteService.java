@@ -57,6 +57,8 @@ public class DemoteService{
 			return changes;
 		}
 		
+		DemoteProduct demoteProduct = new DemoteProduct(demote);
+		
 		if (position!=demote.getLocation()){
 			changes += ((update(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
@@ -69,7 +71,7 @@ public class DemoteService{
 			changes += ((update(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), demote.getExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(demoteProduct.getFormattedExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
@@ -95,6 +97,8 @@ public class DemoteService{
 			return changes;
 		}
 		
+		DemoteProduct demoteProduct = new DemoteProduct(demote);
+		
 		if (position!=demote.getLocation()){
 			changes += ((update(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
@@ -112,7 +116,7 @@ public class DemoteService{
 			changes += ((update(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), demote.getExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(demoteProduct.getFormattedExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		

@@ -26,17 +26,19 @@ public class ElevateProduct extends Product {
 	}
 	
 	public ElevateProduct(ElevateResult e){
-		super.setEdp(e.getEdp());
-		super.setExpiryDate(e.getExpiryDate());
-		super.setCreatedDate(e.getCreatedDate());
-		super.setLastModifiedDate(e.getLastModifiedDate());
-		super.setComment(e.getComment());
-		super.setLastModifiedBy(e.getLastModifiedBy());
-		super.setCreatedBy(e.getCreatedBy());
-		super.setCondition(e.getCondition());
-		super.setMemberTypeEntity(e.getElevateEntity());
-		super.setMemberId(e.getMemberId());
-		super.setForceAdd(e.getForceAdd());
+		super();
+		this.setEdp(e.getEdp());
+		this.setExpiryDate(e.getExpiryDate());
+		this.setCreatedDate(e.getCreatedDate());
+		this.setLastModifiedDate(e.getLastModifiedDate());
+		this.setComment(e.getComment());
+		this.setLastModifiedBy(e.getLastModifiedBy());
+		this.setCreatedBy(e.getCreatedBy());
+		this.setCondition(e.getCondition());
+		this.setMemberTypeEntity(e.getElevateEntity());
+		this.setMemberId(e.getMemberId());
+		this.setForceAdd(e.getForceAdd());
+		this.setStore(e.getStoreKeyword().getStoreId());
 		this.setLocation(e.getLocation());
 	}
 	
