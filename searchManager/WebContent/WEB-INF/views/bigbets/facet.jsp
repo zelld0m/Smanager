@@ -21,13 +21,134 @@
 
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27">
-	<div class="floatL w730 titlePlacer">
-		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+    <div class="floatL w730 titlePlacer">
+      <div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 			<span id="titleText"></span> <span id="titleHeader"
 				class="fLblue fnormal"></span>
 		</div>
+    </div>
+    <div class="clearB"></div>
+    
+	<div id="facetsorting"
+		class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
+		<!--  start horizontal tab -->
+    <div>
+			<img src="<spring:url value="/images/icon_keyword.png" />"
+				class="marR5 posRel top3" /><span class="fLblue fbold">Computer</span>
+			Categories Elevated : Computer, Keyboard, Cables, Mouse, Router <a
+				href=""><img src="/searchManager/images/icon_delete2.png"
+				class="posRel floatR deleteRuleItemIcon pointer">
+			</a>
+    </div>
+    <div class="clearB"></div>
+    
+    <div class="sort marT10 fgray">
+    	<ul>
+    		<li class="square"><a href="">All</a> &nbsp; |</li>
+    		<li>Sort Order</li>
+				<li><select class="posRel topn3">
+    				<option>A-Z</option>
+				</select></li>
+    	</ul>
+    </div>
+    <div class="clearB"></div>
+    
+    <div id="facetsort" class="tabvs marT10">
+		<ul>
+				<li><a href="#category"><span>Categories</span>
+				</a>
+				</li>
+				<li><a href="#manufacturer"><span>Manufacturer</span>
+				</a>
+				</li>
+		</ul>
+		
+			<div id="category"></div>
+			<!--  end categories content -->
+		
+			<div id="manufacturer"></div>
+			<!--  end manufacturer content -->
+		
+		<div id="facetTabPattern" style="display: none">
+			 <div class="sort marT10 fgray">
+		    	<ul>
+		    		<li class="square"><a href="">All</a> &nbsp; |</li>
+		    		<li>Sort Order</li>
+						<li><select class="posRel topn3">
+		    				<option>A-Z</option>
+		    				<option>Z-A</option>
+						</select></li>
+		    	</ul>
+    		</div>
+    		<div class="clearB"></div>
+			
+			<div class="catValueTop floatL w47p">
+					<p class="fbold">
+						<span id="addFacetSortTitleHeader"></span>
+					</p>
+				<ul class="marT8">
+						<li id="addFacetValuePattern" style="display: none"><label><img
+								src="<spring:url value="/images/icon_move.png" />"
+								class="posRel top3" />
+						</label> <label> <select class="w195">
+								<option>Computer</option>								
+							</select> </label> <label class="marL5"><img
+								src="<spring:url value="/images/btn_delete_big.png" />"
+								class="posRel top3" />
+						</label></li>
+				</ul>
+				<div class="fsize11 txtAR">
+					<a id="addNewFacetValue" href="javascript:void(0);"><span
+						id="addNewLink"></span>
+					 </a>
+				</div>
+			</div>
+			<!-- end category value -->
+			
+			<div id="facetvaluelist"></div>
+			<!--  end category values list -->
+			<div class="clearB"></div>
+			</div>
+			<!--  end categories content -->
+		
+		<div class="marT10 txtAR">
+				<a id="saveBtn" class="buttons btnGray clearfix"
+					href="javascript:void(0);"><div class="buttons fontBold">Save</div>
+				</a> <a id="" class="buttons btnGray clearfix"
+					href="javascript:void(0);" id=""><div class="buttons fontBold">Cancel</div>
+				</a>
+			</div>
+		</div>
 	</div>
-	<div class="clearB"></div>
+
+</div><!--  end horizontal tab -->
+    
+    <div class="clearB"></div>
+    
+    <div id="addFacetSortTemplate" style="display:none">
+		<div class="w282 padT10 newFacetSort">
+			<label class="w72 txtLabel">Rule Type </label>
+			<select name="select" id="popType" class="mar0 w168 floatR marT6" title="Select Rule Type" >
+				<option value="templateNameType">Template Name</option>
+				<option value="keywordType">Keyword</option>
+			</select>
+			<div class="clearB"></div>
+			<label class="w72 txtLabel">Template List </label>
+			<select name="select" id="popTemplateList" class="mar0 w168 floatR marT6" title="Select Rule Type" >
+				<option value="templateNameType">Cables</option>
+				<option value="keywordType">Notebook Computers</option>
+			</select>
+			<div class="clearB"></div>
+			<label class="w72 txtLabel">Sort Order</label>
+			<select name="select" id="popSortOrder" class="mar0 w168 floatR marT6" title="Select Sort Order" >
+			</select>
+			<div class="clearB"></div>
+			<label class="w72 txtLabel">Name </label> <label><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>
+			
+			<div class="txtAR pad3"><a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Save</div></a> <a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"><div class="buttons fontBold">Clear</div></a></div>
+		</div>
+	</div>
+</div> 
 
 	<div id="facetsorting"
 		class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">

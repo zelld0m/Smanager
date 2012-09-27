@@ -228,9 +228,12 @@ public class FacetSortDAO {
 				ruleId = DAOUtils.generateUniqueId();
 			}
 
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, ruleId);
-			inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(facetSort.getRuleName()));
-			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(facetSort.getStore()));
+			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
+			inputs.put(DAOConstants.PARAM_RULE_NAME, StringUtils.trimToEmpty(facetSort.getRuleName()));
+			inputs.put(DAOConstants.PARAM_RULE_TYPE, facetSort.getRuleType());
+			inputs.put(DAOConstants.PARAM_STORE_ID, facetSort.getStore().getStoreId());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetSort.getSortType());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetSortSP.execute(inputs));
 		}
