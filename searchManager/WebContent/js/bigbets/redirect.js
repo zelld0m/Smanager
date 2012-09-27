@@ -1873,11 +1873,9 @@
 
 							switch($("select#filterGroup option:selected").val()){
 							case "cnet": 
-								$divItem.find("div.ims").remove();
 								$divItem.find("div.cnet, div.facet, div.dynamicAttribute").show();
 								break;
 							case "ims": 
-								$divItem.find("div.cnet").remove();
 								$divItem.find("div.ims, div.facet, div.dynamicAttribute").show();
 
 								var $table = $divItem.find("table.imsFields");
@@ -1893,7 +1891,6 @@
 
 								break;
 							case "facet": 
-								$divItem.find("div.ims, div.cnet").remove();
 								$divItem.find("div.facet, div.dynamicAttribute").show();
 								break;
 							}
