@@ -44,6 +44,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w188, .w188			{width:188px}
 .cssReset .w185, .w185			{width:185px}
 .cssReset .w190, .w190			{width:190px !important}
+.cssReset .w191, .w191			{width:191px !important}
 .cssReset .w195, .w195			{width:195px !important}
 .cssReset .w200, .w200			{width:200px !important}
 .cssReset .w205, .w205			{width:205px !important}
@@ -286,6 +287,8 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .minHeight400, 
 .minHeight400	  				{ min-height:400px; }
 
+
+.cssReset .height8, .height8	{ height:8px }
 .cssReset .height15				{ height:15px }
 .cssReset .height23, .height23	{ height:23px }
 .cssReset .height24, .height24	{ height:24px }
