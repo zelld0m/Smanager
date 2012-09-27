@@ -37,3 +37,5 @@
 .catValueList ul li { padding:2px 0 }
 .catValueTop ul { list-style: none; }
 .catValueTop ul li { line-height: 29px }
+
+.newFacetSort label.txtLabel {padding-top:4px }
