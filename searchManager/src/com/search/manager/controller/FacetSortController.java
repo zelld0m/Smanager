@@ -21,7 +21,7 @@ public class FacetSortController {
 	
 	@Autowired private DaoCacheService daoCacheService;
 
-	@RequestMapping(value="/facet/{store}")
+	@RequestMapping(value="facet/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
 		try {

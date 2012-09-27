@@ -27,15 +27,15 @@
 			};
 			
 			content.find('input#searchField').val('');
-			addRecordCount(content.find('.resultTable tr'), content.find('.searchCount'));
+			addRecordCount(content.find('li#facetValue'), content.find('.searchCount'));
 
-			content.find('.resultTable tbody tr').hover(function(){  
+			/*content.find('#facetValue tbody tr').hover(function(){  
 				$(this).find('td').addClass('hovered');  
 			}, function(){  
 				$(this).find('td').removeClass('hovered');  
-			}); 
+			});*/ 
 
-			content.find('.resultTable tbody tr').addClass('visible');  
+			content.find('#facetValue').addClass('visible');  
 
 			content.find('input#searchField').keyup(function(event) {  
 				//if esc is pressed or nothing is entered  
@@ -46,7 +46,7 @@
 
 					//we want each row to be visible because if nothing  
 					//is entered then all rows are matched.  
-					content.find('.resultTable tbody tr').removeClass('visible').show().addClass('visible');  
+					content.find('li#facetValue').removeClass('visible').show().addClass('visible');  
 				}  
 
 				//if there is text, lets filter  
@@ -55,12 +55,12 @@
 					query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
 					query = query.replace(/ /gi, '|'); //add OR for regex query  
 
-					content.find('.resultTable tbody tr').each(function() {  
+					content.find('li#facetValue').each(function() {  
 						($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');  
 					}); 
 				}  
 
-				addRecordCount(content.find('.resultTable tr.visible'), content.find('.searchCount'));
+				addRecordCount(content.find('li#facetValue.visible'), content.find('.searchCount'));
 			});
 		};
 
@@ -131,6 +131,9 @@
 					var facetValues = facetFields[base.options.facetField];
 
 					for (var facetValue in facetValues) {
+						if($.isBlank(facetValue))
+							continue;
+						
 						var $li = $ul.find("li#facetValuePattern").clone();
 						var count = parseInt(facetValues[facetValue]);
 						
@@ -141,9 +144,9 @@
 						$li.find("span#facetCount").text('(' + count + ')');
 						
 						//TODO is facet selected
-						 if(selectedList && $.inArray(facetValue, selectedList)){
-						  $li.find("span#selectedIcon").show();
-						 	$li.find("span#selectedIcon").text(base.options.selectedIconText);
+						 if(selectedList && ($.inArray(facetValue, selectedList) >= 0)){
+							 $li.find("span#selectedIcon").show();
+							 $li.find("span#selectedIcon").text(base.options.selectedIconText);
 						 }
 						
 						$ul.append($li);
@@ -174,6 +177,7 @@
 			if (base.options.showSearch){
 				content+= '<div class="searchBoxHolder w175 marT10 marR8">';
 				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w160" id="searchField" name="searchField">';
+				content+= 	'<div class="searchCount fsize12"></div>';
 				content+= '</div>';
 			}
 
@@ -229,7 +233,7 @@
 			facetField: "Category",
 			displayType: "Scrollable",
 			sortOrder: "asc",
-			selectedIconText : "elevate",
+			selectedIconText : "elevated",
 			selectedList : [""]
 	};
 
