@@ -67,6 +67,21 @@
 				});
 			},
 			
+			populateSortOrderList : function(contentHolder){
+				FacetSortServiceJS.getSortOrderList({
+					callback: function(data){
+						var list = data;
+
+						for(var i=0; i<list.length; i++){
+							contentHolder.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook: function(){
+						contentHolder.find("option").remove();
+					}
+				});
+			},
+			
 			getFacetSortRuleList : function(page) { 
 				var self = this;
 
@@ -83,6 +98,7 @@
 					itemDataCallback: function(base, keyword, page){
 						self.rulePage = page;
 						self.ruleFilterText = keyword;
+						//TODO
 						RedirectServiceJS.getAllRule(keyword, page, base.options.pageSize, {
 							callback: function(data){
 								base.populateList(data);
@@ -93,29 +109,86 @@
 					},
 
 					itemAddCallback: function(base, name){
-						jAlert("Adding " + name, "Facet Sort");
-						//TODO
-						/*FacetSortServiceJS.checkForRuleNameDuplicate("", name, {
-							callback: function(data){
-								if (data==true){
-									jAlert("Another facet sorting rule is already using the name provided.","Facet Sort");
-								}else{
-									RedirectServiceJS.addRuleAndGetModel(name, {
-										callback: function(data){
-											if (data!=null){
-												base.getList(name, 1);
-												self.selectedRule = data;
-												self.setFacetSort(data);
-											}else{
+						$("a#addButton").qtip({
+							id: "add-facetsort",
+							content: {
+								text: $('<div/>'),
+								title: { text: 'New Facet Sort', button: true }
+							},
+							position: {
+								target: $("a#addButton")
+							},
+							show: {
+								ready: true
+							},
+							style: {width: 'auto'},
+							events: { 
+								show: function(e, api){
+									var $contentHolder = $("div", api.elements.content).html($("#addFacetSortTemplate").html());
+									var $select = $("select#sortOrder");
+									//populate sort order dropdown list
+									self.populateSortOrderList($select);
+									
+									//$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
+
+									if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val(name);
+									
+
+									$contentHolder.find('a#addButton').off().on({
+										click: function(e){
+											var popName = $.trim($contentHolder.find('input[id="popName"]').val());
+											var popType = $.trim($contentHolder.find('select[id="popType"]').val());
+											var sortType = $.trim($contentHolder.find('select[id="sortType"]').val());
+
+											if ($.isBlank(popName)){
+												jAlert("Ranking rule name is required.",self.moduleName);
 											}
-										},
-										preHook: function(){ 
-											base.prepareList(); 
+											else if (!isAllowedName(popName)) {
+												jAlert(ruleNameErrorText,self.moduleName);
+											}
+											else {
+												//TODO
+												FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
+													callback: function(data){
+														if (data==true){
+															jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
+														}else{
+															//TODO
+															FacetSortServiceJS.addRule(popName, popType, sortType, {
+																callback: function(data){
+																	if (data!=null){
+																		setFacetSort(data);
+																		showActionResponse(1, "add", popName);
+																	}else{
+																		setFacetSort(selectedRule);
+																	}
+																},
+																preHook: function(){ 
+																	base.prepareList(); 
+																	prepareFacetSort();
+																}
+															});
+														}
+													}
+												});
+											}
 										}
 									});
+
+									$contentHolder.find('a#clearButton').off().on({
+										click: function(e){
+											//TODO
+											//$contentHolder.find('input[type="text"], textarea').val("");
+										}
+									});
+								},
+								hide: function (e, api){
+									sfExcFields = new Array();
+									api.destroy();
 								}
 							}
-						});*/
+						});
+
 					},
 
 					itemOptionCallback: function(base, id, name, model){
@@ -140,6 +213,7 @@
 							}
 						});
 
+						//TODO
 						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
 							callback:function(data){
 								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	

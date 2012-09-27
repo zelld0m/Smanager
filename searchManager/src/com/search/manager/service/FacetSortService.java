@@ -1,5 +1,10 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,12 +18,17 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.FacetGroupType;
+import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.utility.CatCodeUtil;
+import com.search.manager.utility.CatCodeUtil.Attribute;
 
 @Service(value = "facetSortService")
 @RemoteProxy(
@@ -53,6 +63,17 @@ public class FacetSortService {
 	}
 
 	@RemoteMethod
+	public static List<String> getSortOrderList(){
+		List<String> sortOrderList = new ArrayList<String>();
+		
+		for (SortType st: SortType.values()) {
+			sortOrderList.add(st.name());
+		}
+		
+		return sortOrderList;
+	}  
+	
+	@RemoteMethod
 	public int deleteRule(String ruleId) {
 		int result = -1;
 
@@ -86,6 +107,12 @@ public class FacetSortService {
 		return result;
 	}
 
+	@RemoteMethod
+	public boolean checkForRuleNameDuplicate(String ruleId, String ruleType, String ruleName) throws DaoException {
+		//TODO
+		return false;
+	}
+	
 	@RemoteMethod
 	public RecordSet<FacetSort> getAllRule(String name, int page, int itemsPerPage){
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
