@@ -115,7 +115,7 @@
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
 					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap' or store eq 'sbn'}">
-					<option value="cnet">Facet Template Categories</option>
+					<option value="cnet">Site Taxonomy</option>
 					</c:if>
 					<option value="facet">Facets</option>
 				</select>
