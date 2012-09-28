@@ -590,21 +590,23 @@ public class ElevateService{
 	}
 	
 	@RemoteMethod
-	public boolean isRequireForceAdd(String keyword, String memberId) {
-		boolean found = false;
+	public Map<String, Boolean> isRequireForceAdd(String keyword, List<String> memberIds) {
 		String storeName = UtilityService.getStoreName();
-		ElevateResult elevate = new ElevateResult(new StoreKeyword(storeName, keyword), memberId);
+		Map<String, Boolean> map = new HashMap<String, Boolean>();
 		try {
-			elevate = daoService.getElevateItem(elevate);
-			if (elevate != null) {
-				String condition = elevate.getEntity() == MemberTypeEntity.FACET ? elevate.getCondition().getConditionForSolr() 
-							: String.format("EDP:%s", elevate.getEdp());
-				found = SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition);
+			for (String memberId: memberIds) {
+				ElevateResult elevate = new ElevateResult(new StoreKeyword(storeName, keyword), memberId);
+				elevate = daoService.getElevateItem(elevate);
+				if (elevate != null) {
+					String condition = elevate.getEntity() == MemberTypeEntity.FACET ? elevate.getCondition().getConditionForSolr() 
+								: String.format("EDP:%s", elevate.getEdp());
+					map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+				}
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleItemComment()",e);
 		}
-		return found;
+		return map;
 	}
 
 }
