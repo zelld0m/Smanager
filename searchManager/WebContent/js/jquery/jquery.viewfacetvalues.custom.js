@@ -12,8 +12,8 @@
 		base.$el.data("viewfacetvalues", base);
 		
 		// Added search functionality to list
-		base.SearchableList = function(content){
-			
+		base.searchableList = function(){
+			var content = base.$el.find(".facetValueList");
 			addRecordCount = function(selector, target){ 
 				var count = $(selector).length;  
 				if (count==0){
@@ -37,7 +37,8 @@
 
 			content.find('#facetValue').addClass('visible');  
 
-			content.find('input#searchField').keyup(function(event) {  
+			content.find('input#searchField').keyup(
+					function(event) {  
 				//if esc is pressed or nothing is entered  
 
 				if (event.keyCode == 27 || $(this).val() == '') {  
@@ -137,6 +138,7 @@
 						var $li = $ul.find("li#facetValuePattern").clone();
 						var count = parseInt(facetValues[facetValue]);
 						
+						if(selectedList && ($.inArray(facetValue, selectedList) < 0)){
 						$li.prop({id: 'facetValue'});
 						$li.show();
 
@@ -144,16 +146,15 @@
 						$li.find("span#facetCount").text('(' + count + ')');
 						
 						//TODO is facet selected
-						 if(selectedList && ($.inArray(facetValue, selectedList) >= 0)){
-							 $li.find("span#selectedIcon").show();
-							 $li.find("span#selectedIcon").text(base.options.selectedIconText);
+						//$li.find("span#selectedIcon").show();
+						//$li.find("span#selectedIcon").text(base.options.selectedIconText);
 						 }
 						
 						$ul.append($li);
 					}
 				}
 				
-				base.SearchableList($ul);
+				base.searchableList();
 			};
 
 			$.getJSON(
@@ -173,11 +174,14 @@
 			content+= '<p class="fbold">';
 			content+= base.options.headerText;
 			content+= '</p>';
+			content+= '<div class="clearB"></div>';
 
 			if (base.options.showSearch){
-				content+= '<div class="searchBoxHolder w175 marT10 marR8">';
-				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w160" id="searchField" name="searchField">';
-				content+= 	'<div class="searchCount fsize12"></div>';
+				content+= '<div>';
+				content+= '<div class="searchBoxHolder w120 marT10 marR8 floatL">';
+				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w100" id="searchField" name="searchField">';				
+				content+= '</div>';
+				content+= 	'<div class="floatL fsize11 searchCount marT10 w80 padT8 fLgray"></div>';
 				content+= '</div>';
 			}
 
