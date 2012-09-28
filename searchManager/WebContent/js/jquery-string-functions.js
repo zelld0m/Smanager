@@ -65,7 +65,9 @@ jQuery.extend(
 							replace(/\./g,"_").
 							replace(/\&/g,"_").
 							replace(/\,/g,"_").
-							replace(/\//g,"_")
+							replace(/\//g,"_").
+							replace(/\(/g,"_").
+							replace(/\)/g,"_")
 					);
 				},
 				

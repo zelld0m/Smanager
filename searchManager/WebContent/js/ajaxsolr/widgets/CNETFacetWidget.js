@@ -7,15 +7,18 @@
 
 			var indices = self.manager.store.find("fq", new RegExp('^' + GLOBAL_storeFacetTemplate + ':'));
 			var currFacetTemplate = "";
-
+			
 			if ($.isNotBlank(indices) && indices.length > 0){
 				currFacetTemplate = self.manager.store.findByIndex("fq", indices[0]);
 				self.manager.store.remove("fq", indices[0]);
 			}
 
 			var escapeValue = function(text){
-				if($.isNotBlank(text))
-					return ("" + text).replace(/\s/g,"?");
+				if($.isNotBlank(text)) // Dependency: CurrentSearchWidget.js - display text
+					return ("" + text).replace(/\s/g,"?").
+							replace(/\(/g,"\\(").
+							replace(/\)/g,"\\)");
+				
 				return text;
 			};
 
