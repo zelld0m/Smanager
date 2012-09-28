@@ -33,7 +33,6 @@ public abstract class SolrResponseParser {
 	protected List<ElevateResult> elevatedList = null;
 	protected List<String> expiredElevatedEDPs = null;
 	protected List<Map<String,String>> activeRules;
-	protected List<ElevateResult> forceAddedList = null;
 	
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
@@ -66,14 +65,6 @@ public abstract class SolrResponseParser {
 	public final void setChangeKeyword(String changedKeyword) throws SearchException {
 		this.changedKeyword = changedKeyword;
 	}
-
-	public final List<ElevateResult> getForceAddedList() {
-		return forceAddedList;
-	}
-
-	public final void setForceAddedList(List<ElevateResult> forceAddedList) {
-		this.forceAddedList = forceAddedList;
-	}
 	
 	public final void setDemotedItems(List<DemoteResult> list) throws SearchException {
 		demotedList = list;
@@ -82,7 +73,6 @@ public abstract class SolrResponseParser {
 	public final void setExpiredDemotedEDPs(List<String> list) throws SearchException {
 		expiredDemotedEDPs = list;
 	}
-	
 	
 	/* Used by both elevate and demote */
 	private static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> list) {
