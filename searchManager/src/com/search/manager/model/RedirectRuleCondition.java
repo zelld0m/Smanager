@@ -110,13 +110,13 @@ public class RedirectRuleCondition extends ModelBean {
 			map = getCNetFilters();
 			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
 				String value = map.get("Level1Category").get(0);
-				builder.append("PCMall_FacetTemplate:").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+				builder.append("PCMall_FacetTemplate:").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 				if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
 					value = map.get("Level2Category").get(0);
-					builder.append(forSolr ? "\\ |\\ " : " | ").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+					builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 					if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
 						value = map.get("Level3Category").get(0);
-						builder.append(forSolr ? "\\ |\\ " : " | ").append(forSolr ? value.replaceAll(" ", "\\\\ ") : value);
+						builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 					}
 				}
 				builder.append(forSolr ? "*" : "").append(" AND ");
@@ -671,10 +671,10 @@ public class RedirectRuleCondition extends ModelBean {
 //				"CatCode:31* AND Manufacturer:\"BlackBerry\"",
 //				"CatCode:3F* AND OpenBox_Flag:1 AND InStock:0 AND Platform:\"Windows\s"",
 //				"Name:bag ivory AND Description:bag ivory",
-				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
+//				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
 //				"PCMall_FacetTemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5",
 //				"Clearance_Flag:1 AND Licence_Flag:0",
-//				"Manufacturer:\"Apple\"",
+				"Manufacturer:Apple AND PCMall_FacetTemplate:Data Storage | Network Attached Storage (NAS) AND Description:netbook",
 //				""
 		};
 		
@@ -690,6 +690,8 @@ public class RedirectRuleCondition extends ModelBean {
 			System.out.println("cnet filter: " + rr.getCNetFilters());
 			System.out.println("facets: " + rr.getFacets());
 			System.out.println("dynamic attributes: " + rr.getDynamicAttributes());
+			System.out.println("IMS filter: " + rr.isIMSFilter());
+			System.out.println("CNET filter: " + rr.isCNetFilter());
 		}
 	}
 
