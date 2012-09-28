@@ -470,12 +470,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	@Override
 	public String getEdpByPartNumber(String serverName, String storeId, String keyword, String partNumber) {
-		return SearchHelper.getEdpByPartNumber(serverName, storeId, keyword, partNumber);
-	}
-
-	@Override
-	public int getFacetCount(String serverName, String storeId, String keyword, String fqCondition) {
-		return SearchHelper.getFacetCount(serverName, storeId, keyword, fqCondition);
+		return SearchHelper.getEdpByPartNumber(serverName, storeId, partNumber);
 	}
 
 	/* Keywords */
