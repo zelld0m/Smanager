@@ -113,6 +113,19 @@ public class CategoryService {
 	}
 	
 	@RemoteMethod
+	public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
+		if("macmall".equalsIgnoreCase(storeId)) {
+			return getIMSTemplateNames();
+		}else if("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "sbn".equalsIgnoreCase(storeId)) {
+			return getCNETTemplateNames();			
+		}else if("onsale".equalsIgnoreCase(storeId)) {
+			return null;			
+		}else {
+			throw new DataException("Unrecognized Store: " + storeId);
+		}
+	}
+	
+	@RemoteMethod
 	public static List<String> getIMSTemplateNames() throws DataException {
 		return CatCodeUtil.getAllIMSTemplates();
 	}
