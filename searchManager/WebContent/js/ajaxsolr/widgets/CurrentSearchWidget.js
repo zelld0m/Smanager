@@ -28,7 +28,7 @@
 					var facetTempArr = facetTempVal.split("?|?");
 
 					for(var j=0; j < facetTempArr.length; j++){
-						var trimmed = $.trim(facetTempArr[j].replace(/\*/g,'?').replace(/\?/g,' '));
+						var trimmed = $.trim(facetTempArr[j].replace(/\*/g,'?').replace(/\?/g,' ').replace(/\\\(/g,"\(").replace(/\\\)/g,"\)")); // Dependency: CNetFacetWidget.js - escape function
 						links.push(AjaxSolr.theme('createLink', j==0? "Category: " + trimmed : trimmed , self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(j) + 1)), "level" + (parseInt(j) + 1)));
 					}
 				}

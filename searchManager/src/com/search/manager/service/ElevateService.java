@@ -48,15 +48,18 @@ public class ElevateService{
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		elevate.setMemberId(memberId);
+		
 		try {
 			elevate = daoService.getElevateItem(elevate);
 		} catch (DaoException e) {
 			elevate = null;
 		}
-
+		
 		if(elevate==null){
 			return changes;
 		}
+		
+		ElevateProduct elevateProduct = new ElevateProduct(elevate);
 
 		if (position!=elevate.getLocation()){
 			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
@@ -70,7 +73,7 @@ public class ElevateService{
 			changes += ((updateElevate(keyword, memberId, position, condition) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(elevateProduct.getFormattedExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 
@@ -96,6 +99,8 @@ public class ElevateService{
 			return changes;
 		}
 
+		ElevateProduct elevateProduct = new ElevateProduct(elevate);
+		
 		if (position!=elevate.getLocation()){
 			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
@@ -113,7 +118,7 @@ public class ElevateService{
 			changes += ((updateElevate(keyword, memberId, position, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), elevate.getExpiryDate()))) {
+		if (!StringUtils.equalsIgnoreCase(StringUtils.trimToEmpty(expiryDate), StringUtils.trimToEmpty(elevateProduct.getFormattedExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 

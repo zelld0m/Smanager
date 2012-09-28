@@ -24,6 +24,21 @@ public class DemoteProduct extends Product {
 		this.location = location;
 	}
 	
+	public DemoteProduct(DemoteResult e){
+		super();
+		this.setEdp(e.getEdp());
+		this.setExpiryDate(e.getExpiryDate());
+		this.setCreatedDate(e.getCreatedDate());
+		this.setLastModifiedDate(e.getLastModifiedDate());
+		this.setComment(e.getComment());
+		this.setLastModifiedBy(e.getLastModifiedBy());
+		this.setCreatedBy(e.getCreatedBy());
+		this.setCondition(e.getCondition());
+		this.setMemberId(e.getMemberId());
+		this.setStore(e.getStoreKeyword().getStoreId());
+		this.setLocation(e.getLocation());
+	}
+	
 	public Integer getLocation() {
 		return location;
 	}
