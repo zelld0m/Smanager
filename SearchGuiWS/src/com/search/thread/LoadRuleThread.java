@@ -38,6 +38,9 @@ public class LoadRuleThread extends Thread{
 			case DEMOTE:	
 				deploymentRuleService.loadDemoteRules(store);
 				break;
+			case FACET_SORT:	
+				deploymentRuleService.loadFacetSortRules(store);
+				break;
 			case KEYWORD: 
 				break;
 			case STORE_KEYWORD: 

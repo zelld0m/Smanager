@@ -8,6 +8,7 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
@@ -39,6 +40,12 @@ public interface DaoCacheService {
 	public boolean updateDemoteRules(DemoteResult demoteResult) throws DaoException, DataException;
 	public boolean resetDemoteRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
+	/* Facet Sort */
+	public boolean loadFacetSortRules(Store store) throws DaoException, DataException;
+	public List<FacetSort> getFacetSortRules(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public boolean updateFacetSortRules(FacetSort facetSort) throws DaoException, DataException;
+	public boolean resetFacetSortRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	
 	/* Redirect */
 	public boolean loadRedirectRules(Store store) throws DaoException, DataException;
 	public boolean updateRedirectRule(RedirectRule redirectRule) throws DaoException, DataException;
@@ -64,6 +71,7 @@ public interface DaoCacheService {
 	public boolean setForceReloadElevate(Store store);
 	public boolean setForceReloadExclude(Store store);
 	public boolean setForceReloadDemote(Store store);
+	public boolean setForceReloadFacetSort(Store store);
 	public boolean setForceReloadRedirect(Store store);
 	public boolean setForceReloadRelevancy(Store store);
 	

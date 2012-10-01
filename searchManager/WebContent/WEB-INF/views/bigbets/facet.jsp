@@ -27,6 +27,9 @@
 		</div>
 	</div>
 	<div class="clearB"></div>
+	<div id="submitForApproval"></div>
+	
+	<div class="clearB"></div>
 
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
 		<!--  start horizontal tab -->

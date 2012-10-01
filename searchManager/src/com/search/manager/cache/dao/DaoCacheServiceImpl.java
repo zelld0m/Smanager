@@ -24,6 +24,7 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
@@ -47,6 +48,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Autowired private ElevateCacheDao elevateCacheDao;
 	@Autowired private ExcludeCacheDao excludeCacheDao;
 	@Autowired private DemoteCacheDao demoteCacheDao;
+	@Autowired private FacetSortCacheDao facetSortCacheDao;
 	@Autowired private RedirectCacheDao redirectCacheDao;
 	@Autowired private RelevancyCacheDao relevancyCacheDao;
 	@Autowired private UserCacheDao userCacheDao;
@@ -69,6 +71,10 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	
 	public void setDemoteCacheDao(DemoteCacheDao demoteCacheDao) {
 		this.demoteCacheDao = demoteCacheDao;
+	}
+	
+	public void setFacetSortCacheDao(FacetSortCacheDao facetSortCacheDao) {
+		this.facetSortCacheDao = facetSortCacheDao;
 	}
 
 	public void setRedirectCacheDao(RedirectCacheDao redirectCacheDao) {
@@ -446,6 +452,40 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			logger.error("Failed to force reload of demote rules for : " + store);
 		}
 		return result;
+	}
+
+	@Override
+	public boolean loadFacetSortRules(Store store) throws DaoException,
+			DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<FacetSort> getFacetSortRules(StoreKeyword storeKeyword)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean updateFacetSortRules(FacetSort facetSort)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean resetFacetSortRule(StoreKeyword storeKeyword)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean setForceReloadFacetSort(Store store) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

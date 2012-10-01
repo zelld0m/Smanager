@@ -29,8 +29,75 @@
 					return;
 				}
 				
+				$("#submitForApproval").rulestatus({
+					moduleName: self.moduleName,
+					rule: self.selectedRule,
+					authorizeRuleBackup: true,
+					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+					afterSubmitForApprovalRequest:function(ruleStatus){
+						self.selectedRuleStatus = ruleStatus;
+						self.showFacetSort();
+					},
+					beforeRuleStatusRequest: function(){
+						self.prepareFacetSort();	
+					},
+					afterRuleStatusRequest: function(ruleStatus){
+						$("#submitForApproval").show();
+						$("#preloader").hide();
+						$("#titleText").html(self.moduleName + " for ");
+						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						self.selectedRuleStatus = ruleStatus;
+						$("#facetsorting").show();
+						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
+
+						$("#name").val(self.selectedRule["ruleName"]);
+						$("#description").val(self.selectedRule["description"]);
+
+						self.addTabListener();
+						//TODO
+						//self.addSaveRuleListener();
+						//self.addDeleteRuleListener();
+						//self.addDownloadListener();
+
+						$('#auditIcon').off().on({
+							click: function(e){
+								$(e.currentTarget).viewaudit({
+									itemDataCallback: function(base, page){
+										//TODO
+										AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+											callback: function(data){
+												var total = data.totalSize;
+												base.populateList(data);
+												base.addPaging(base.options.page, total);
+											},
+											preHook: function(){
+												base.prepareList();
+											}
+										});
+									}
+								});
+							}
+						});
+						
+						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
+
+						$("div#keyword").find("#changeKeywordBtn").off().on({
+							mouseenter: showHoverInfo,
+							click: function(evt){
+								if (!evt.data.locked){
+									$('div#keyword').find('#activerules').hide();
+									$('div#keyword').find('#activerules > .alert > #rules').empty();
+									self.updateChangeKeyword();
+								}
+							}
+						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+					}
+				});
+				
 				$("#facetsorting").show();
 				self.addTabListener();
+				
+				
 			},
 			
 			setFacetSort : function(rule){

@@ -7,6 +7,7 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetSort extends ModelBean{
@@ -123,5 +124,19 @@ public class FacetSort extends ModelBean{
 
 	public void setFacetGroups(List<FacetGroup> facetGroups) {
 		this.facetGroups = facetGroups;
+	}
+
+	public String getStoreName(){
+		if(getStore() != null)
+			getStore().getStoreName();
+		return "";
+	}
+	
+	public String getFormattedCreatedDate() {
+		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreName(), getCreatedDate());
+	}
+	
+	public String getFormattedLastModifiedDate() {
+		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreName(), getLastModifiedDate());
 	}
 }
