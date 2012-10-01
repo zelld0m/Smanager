@@ -580,17 +580,9 @@ public class ElevateService{
 		}
 		return result;
 	}
-
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
 	
 	@RemoteMethod
-	public Map<String, Boolean> isRequireForceAdd(String keyword, List<String> memberIds) {
+	public Map<String, Boolean> isRequireForceAdd(String keyword, String[] memberIds) {
 		String storeName = UtilityService.getStoreName();
 		Map<String, Boolean> map = new HashMap<String, Boolean>();
 		try {
@@ -608,5 +600,4 @@ public class ElevateService{
 		}
 		return map;
 	}
-
 }

@@ -6,6 +6,7 @@
 			selectedRuleItemPage: 1,
 			selectedRuleItemTotal: 0,
 			selectedRuleStatus: null,
+			selectedRuleItem:null,
 
 			rulePage: 1,
 			rulePageSize: 15,
@@ -124,45 +125,7 @@
 				var FACET = $item["memberTypeEntity"] === "FACET";
 				var id = $.formatAsId($item["memberId"]);
 
-				$li.find('.firerift-style').removeClass("off").removeClass("on");
-				
-				if($item["forceAdd"]) {
-					$li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
-				}else{
-					$li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
-				}
-				
-				$li.find('.firerift-style').on({
-					click:function(e){
-						if (e.data.locked){
-							e.preventDefault();
-							return;
-						}
-					
-						ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], e.data.item["memberId"], !$item["forceAdd"], {
-							callback:function(data){
-								showActionResponse(data, "update force add", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-								self.populateRuleItem(self.selectedRulePage);
-							},
-							preHook:function(){
-								self.preShowRuleContent();
-							}
-						});
-					},
-					mouseenter: showHoverInfo
-				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item, li: $li});
-				
-				// Force Add Color Coding
-//				if($item["foundFlag"] && !$item["forceAdd"]){
-					$li.find('.firerift-style').remove();
-//				}else if($item["foundFlag"] && $item["forceAdd"]){
-//					$li.addClass("forceAddBorderErrorClass");
-//				}else if(!$item["foundFlag"] && $item["forceAdd"]){
-//					$li.addClass("forceAddClass");
-//				}else if(!$item["foundFlag"] && !$item["forceAdd"]){
-//					$li.addClass("forceAddErrorClass");
-//				}
-									
+
 				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);
 
@@ -230,7 +193,7 @@
 						}
 					}
 				});
-				
+
 				$li.find('.clearDate').off().on({
 					click: function(e){
 						if (e.data.locked) return;
@@ -283,7 +246,7 @@
 						});
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
-				
+
 				$li.find('.auditRuleItemIcon').off().on({
 					click: function(e){
 						var itemId = e.data.item["memberId"];
@@ -441,6 +404,75 @@
 				});
 			},
 
+			updateForceAdd: function(){
+				var self = this;
+				var arrItem = new Array();
+				var arrMemberIds = new Array();
+
+				if(self.selectedRuleItem!=null){
+					$.each(self.selectedRuleItem, function(index, item){
+						arrItem[item["memberId"]] = item;
+						arrMemberIds.push(item["memberId"]);
+					});
+				}
+
+				if(arrMemberIds){
+					var $ul = $("ul#ruleItemHolder");
+					ElevateServiceJS.isRequireForceAdd(self.selectedRule["ruleId"], arrMemberIds, {
+						callback:function(data){
+							for(var mapKey in data){
+								var $li = $ul.find('li#' + $.formatAsId(mapKey));
+								var $item = arrItem[mapKey];
+								$ul.find('.firerift-style').show();
+								$li.find('.firerift-style').removeClass("off").removeClass("on");
+								
+								if($item["forceAdd"]) {
+									$li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
+								}else{
+									$li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
+								}
+								
+								// Force Add Color Coding
+								if(data[mapKey] && !$item["forceAdd"]){
+									$li.find('.firerift-style').remove();
+								}else if(data[mapKey] && $item["forceAdd"]){
+									$li.addClass("forceAddBorderErrorClass");
+								}else if(!data[mapKey] && $item["forceAdd"]){
+									$li.addClass("forceAddClass");
+								}else if(!data[mapKey] && !$item["forceAdd"]){
+									$li.addClass("forceAddErrorClass");
+								}
+								
+								$li.find('.firerift-style').off("click").on({
+									click:function(e){
+										if (e.data.locked){
+											e.preventDefault();
+											return;
+										}
+
+										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], e.data.item["memberId"], !$item["forceAdd"], {
+											callback:function(data){
+												showActionResponse(data, "update force add", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+												self.populateRuleItem(self.selectedRulePage);
+											},
+											preHook:function(){
+												self.preShowRuleContent();
+											}
+										});
+									},
+									mouseenter: showHoverInfo
+								}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item, li: $li});
+								
+								$li.find('#preloaderForceAdd').remove();	
+							}
+						},
+						preHook:function(){
+							$ul.find('.firerift-style').hide();
+						}
+					});
+				}
+			},
+
 			populateRuleItem: function(page){
 				var self = this;
 				self.selectedRuleItemPage = page;
@@ -472,16 +504,15 @@
 
 						ElevateServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
 							callback: function(data){
+								self.selectedRuleItem = data.list;
 								self.selectedRuleItemTotal = data.totalSize;
 								$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
-
-								var list = data.list;
 
 								if(self.getRuleItemFilter()==="all"){
 									var totalText = self.selectedRuleItemTotal==0? self.zeroCountHTMLCode:  "(" + self.selectedRuleItemTotal + ")";
 									$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemLink a').html(totalText);
 								}
-								
+
 								if(self.selectedRuleItemTotal == 0 && self.getRuleItemFilter()==="all"){
 									$('#ruleItemDisplayOptions').hide(); 
 								}else{
@@ -509,7 +540,7 @@
 								});
 
 								for (var i = 0; i < self.selectedRuleItemTotal; i++) {
-									var $item = list[i];
+									var $item = self.selectedRuleItem[i];
 									if($item != null){
 										var $li = $ul.find('li#ruleItemPattern').clone();
 										self.setRuleItemValues($li, $item);
@@ -524,42 +555,47 @@
 							},
 							postHook: function(){
 								self.postShowRuleContent();
-								$("a#addRuleItemIcon").off().on({
-									click:function(e){
-										$(this).addproduct({
-											type: $('select#selectRuleItemType').val(),
-											locked: self.selectedRuleStatus["locked"] || !allowModify,
-											showPosition: true,
-											addProductItemCallback:function(position, expiryDate, comment, skus){
-												ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
-													callback : function(code){
-														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-														self.populateRuleItem(self.selectedRulePage);
-													},
-													preHook: function(){ 
-														self.preShowRuleContent();
-													}
-												});		
-											},
-											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
-												ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
-													callback: function(data){
-														showActionResponse(data, "add", "New Rule Facet Item");
-														self.populateRuleItem();
-													},
-													preHook: function(){ 
-														self.preShowRuleContent();
-													}
-												});
-											}
-										});
-									}
-								});
+								self.addRuleItemListener();
+								self.updateForceAdd();
 							}
 						});
 
 					}
 				});	
+			},
+
+			addRuleItemListener:function(){
+				$("a#addRuleItemIcon").off().on({
+					click:function(e){
+						$(this).addproduct({
+							type: $('select#selectRuleItemType').val(),
+							locked: self.selectedRuleStatus["locked"] || !allowModify,
+							showPosition: true,
+							addProductItemCallback:function(position, expiryDate, comment, skus){
+								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
+									callback : function(code){
+										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+										self.populateRuleItem(self.selectedRulePage);
+									},
+									preHook: function(){ 
+										self.preShowRuleContent();
+									}
+								});		
+							},
+							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
+								ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
+									callback: function(data){
+										showActionResponse(data, "add", "New Rule Facet Item");
+										self.populateRuleItem();
+									},
+									preHook: function(){ 
+										self.preShowRuleContent();
+									}
+								});
+							}
+						});
+					}
+				});
 			},
 
 			addRuleItemOptionListener: function(){
