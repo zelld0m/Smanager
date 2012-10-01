@@ -98,7 +98,10 @@
 		  					<label>
 		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
 		  					</label>
-		  					<label class="normal-forceadd"><input type="checkbox" id="setForceAdd" class="firerift-style-checkbox normal-forceadd marTn3 marL3"></label>
+		  					<label class="normal-forceadd">
+		  						<img id="preloaderForceAdd" src="<spring:url value="/images/horizontalPreloaderBlue.gif" />" class="marL5">
+		  						<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox normal-forceadd marTn3 marL3" style="display:none">
+		  					</label>
 		  				</div>
 					
 		  				<div class="validityDate padT3">
