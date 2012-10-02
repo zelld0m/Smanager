@@ -391,7 +391,7 @@
 										imagePath = GLOBAL_contextPath + '/images/';
 										switch(getFacetItemType(list[i])){
 										case "ims" : imagePath += "ims_img.jpg"; break;
-										case "cnet" : imagePath += "siteTaxonomy_img.jpg"; break;
+										case "cnet" : imagePath += "productSiteTaxonomy_img.jpg"; break;
 										case "facet" : imagePath += "facet_img.jpg"; break;
 										}
 									}
@@ -907,7 +907,7 @@
 										imagePath = GLOBAL_contextPath + '/images/';
 										switch(getFacetItemType(list[i])){
 										case "ims" : imagePath += "ims_img.jpg"; break;
-										case "cnet" : imagePath += "siteTaxonomy_img.jpg"; break;
+										case "cnet" : imagePath += "productSiteTaxonomy_img.jpg"; break;
 										case "facet" : imagePath += "facet_img.jpg"; break;
 										}
 									}

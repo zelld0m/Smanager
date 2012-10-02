@@ -27,7 +27,7 @@
 				<option value="product">Product Item</option>
 				<option value="ims">IMS Categories</option>
 				<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
-					<option value="cnet">Site Taxonomy</option>
+					<option value="cnet">Product Site Taxonomy</option>
 				</c:if>
 				<option value="facet">Facets</option>
 			</select>

@@ -356,7 +356,7 @@
 
 						switch(self.getFacetItemType($item)){
 						case "ims" : imagePath = "ims_img.jpg"; break;
-						case "cnet" : imagePath = "siteTaxonomy_img.jpg"; break;
+						case "cnet" : imagePath = "productSiteTaxonomy_img.jpg"; break;
 						case "facet" : imagePath = "facet_img.jpg"; break;
 						}
 
