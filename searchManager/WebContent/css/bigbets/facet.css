@@ -39,3 +39,6 @@
 .catValueTop ul li { line-height: 29px }
 
 .newFacetSort label.txtLabel {padding-top:4px }
+
+#addFacetSortTemplate .selectCombo { border:1px solid #333 !important; background: #fff !important }
+.qtip .ui-widget-content { margin-top:1px !important; border-top:1px solid #9c9c9c !important; border-left:1px solid #9c9c9c !important; border-bottom:1px solid #c5c4c4 !important; border-right:1px solid #c5c4c4 !important; background: #fff !important }
