@@ -43,7 +43,7 @@ public class FacetGroup extends ModelBean {
 	
 	public FacetGroup(String ruleId, String name,
 			String facetGroupType, String sortType, Integer sequence) {
-		this(ruleId, "", name, FacetGroupType.valueOf(facetGroupType), SortType.valueOf(sortType), sequence, null);
+		this(ruleId, "", name, FacetGroupType.get(facetGroupType), SortType.get(sortType), sequence, null);
 	}
 	
 	public FacetGroup(String ruleId, String id) {

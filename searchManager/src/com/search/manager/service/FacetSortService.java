@@ -1,9 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,12 +21,8 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.MatchType;
-import com.search.manager.utility.CatCodeUtil;
-import com.search.manager.utility.CatCodeUtil.Attribute;
 
 @Service(value = "facetSortService")
 @RemoteProxy(
@@ -43,7 +37,7 @@ public class FacetSortService {
 
 	@RemoteMethod
 	public int addRule(String ruleName, String ruleType, String sortType) {
-		int result = 0;
+		int result = -1;
 
 		try {
 			String store = UtilityService.getStoreName();

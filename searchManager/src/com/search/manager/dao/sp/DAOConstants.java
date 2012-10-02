@@ -8,7 +8,7 @@ public class DAOConstants {
 	public static final String RESULT_SET_3 						= "#result-set-3";
 	public static final String RESULT_SET_TOTAL 					= "#result-set-total";
 	public static final String RESULT_SET_RESULT					= "#result-set-result";
-	
+
 	/* Stored Procedure Names */
 	// KEYWORD
 	public static final String SP_ADD_KEYWORD 						= "usp_Add_Keyword";
@@ -41,7 +41,7 @@ public class DAOConstants {
 	public static final String SP_UPDATE_DEMOTE 					= "usp_Update_Demote";
 	public static final String SP_UPDATE_DEMOTE_EXPIRY_DATE 		= "usp_Update_Demote_Expiry_Date";
 	public static final String SP_DELETE_DEMOTE 					= "usp_Delete_Demote";
-	
+
 	// FACET SORT
 	public static final String SP_ADD_FACET_SORT 					= "usp_Add_Facet_Sort_Rule";
 	public static final String SP_DELETE_FACET_SORT 				= "usp_Delete_Facet_Sort_Rule";
@@ -54,7 +54,7 @@ public class DAOConstants {
 	public static final String SP_UPDATE_FACET_GROUP_ITEM			= "usp_Update_Facet_Group_Item";
 	public static final String SP_DELETE_FACET_GROUP_ITEM			= "usp_Delete_Facet_Group_Item";
 	public static final String SP_CLEAR_FACET_GROUP_ITEM			= "usp_Clear_Facet_Group_Item";
-	
+
 	// CAMPAIGN
 	public static final String SP_ADD_CAMPAIGN 						= "usp_Add_Campaign";
 	public static final String SP_GET_CAMPAIGN 						= "usp_Get_Campaign";
@@ -127,10 +127,10 @@ public class DAOConstants {
 	public static final String SP_UPDATE_COMMENT					= "usp_Update_Comment_Status";
 	public static final String SP_DELETE_COMMENT					= "usp_Delete_Comment_Status";
 	public static final String SP_GET_COMMENT						= "usp_Get_Comment_Status";
-	
+
 	//CATEGORY
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
-	
+
 	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
 	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
 	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
@@ -228,7 +228,7 @@ public class DAOConstants {
 	public static final String PARAM_END_DATE2 						= "EndDate";
 	public static final String PARAM_START_ROW2 					= "StartRow";
 	public static final String PARAM_END_ROW2 						= "EndRow";
-	
+
 	public static final String PARAM_GROUP_ID			 	 		= "group_id";
 	public static final String PARAM_PERMISSION_ID		 			= "Permission_ID";
 	public static final String PARAM_ADMIN				 			= "admin";
@@ -237,9 +237,12 @@ public class DAOConstants {
 	public static final String PARAM_FORCE_ADD						= "force_add";
 
 	public static final String PARAM_FACET_GROUP_ID					= "facet_group_id";
+	public static final String PARAM_FACET_GROUP_NAME				= "facet_group_name";
+	public static final String PARAM_FACET_GROUP_TYPE				= "facet_group_type";
+	public static final String PARAM_FACET_GROUP_SEQUENCE			= "facet_group_sequence";
 	public static final String PARAM_RULE_TYPE			 			= "rule_type";
 	public static final String PARAM_SORT_TYPE			 			= "sort_type";
-	
+
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
 	public static final String COLUMN_PROD_KEYWORD_ID   			= "prod_keyword_id";
@@ -280,7 +283,7 @@ public class DAOConstants {
 	public static final String COLUMN_PRODUCT_CATEGORY_ID  			= "product_category_id";
 	public static final String COLUMN_CATEGORY_NAME 	 			= "category_name";
 	public static final String COLUMN_MANUFACTURER	 	 			= "manufacturer";
-	
+
 	public static final String COLUMN_RULE_ID						= "rule_id";
 	public static final String COLUMN_SEARCH_TERM	 	 			= "search_term";
 	public static final String COLUMN_CHANGE_KEYWORD 	 			= "change_keyword";
@@ -304,7 +307,7 @@ public class DAOConstants {
 
 	public static final String COLUMN_GROUP_ID				 		= "group_id";
 	public static final String COLUMN_PERMISSION_ID		 			= "permission_id";
-	
+
 	public static final String COLUMN_FULL_NAME			 	 		= "full_name";
 	public static final String COLUMN_CURRENT_PASSWORD	 	 		= "current_password";
 	public static final String COLUMN_EMAIL				 	 		= "email";
@@ -313,17 +316,17 @@ public class DAOConstants {
 	public static final String COLUMN_LAST_ACCESS_DATE	 	 		= "last_access_date";
 	public static final String COLUMN_IP				 	 		= "internet_protocol";
 	public static final String COLUMN_THRU_DATE			 	 		= "thru_date";
-	
+
 	public static final String COLUMN_MEMBER_TYPE_ID	 	 		= "member_type_id";
 	public static final String COLUMN_MEMBER_ID 					= "member_id";
 	public static final String COLUMN_FORCE_ADD 					= "force_add";
-	
+
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
-	
+
 	// ADD/UPDATE/DELETE* SPs total size
 	public static final String COLUMN_RESULT 						= "RESULT";
-	
+
 	// will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
 	public static final String MEMBER_TYPE_PART 					= "PART_NUMBER";
 

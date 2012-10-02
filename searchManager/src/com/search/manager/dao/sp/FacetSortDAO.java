@@ -230,9 +230,9 @@ public class FacetSortDAO {
 
 			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
 			inputs.put(DAOConstants.PARAM_RULE_NAME, StringUtils.trimToEmpty(facetSort.getRuleName()));
-			inputs.put(DAOConstants.PARAM_RULE_TYPE, facetSort.getRuleType());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE, facetSort.getRuleType().toString());
 			inputs.put(DAOConstants.PARAM_STORE_ID, facetSort.getStore().getStoreId());
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetSort.getSortType());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetSort.getSortType().toString());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetSortSP.execute(inputs));
@@ -322,8 +322,12 @@ public class FacetSortDAO {
 				facetGroupId = DAOUtils.generateUniqueId();
 			}
 
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroupId);
-			inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(facetGroup.getName()));
+			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.trimToEmpty(facetGroup.getRuleId()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, StringUtils.trimToEmpty(facetGroup.getId()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_NAME, StringUtils.trimToEmpty(facetGroup.getName()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_TYPE, facetGroup.getFacetGroupType().toString());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, facetGroup.getSequence());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(facetGroup.getCreatedBy()));
 
 			return DAOUtils.getUpdateCount(addFacetGroupSP.execute(inputs));
 		}

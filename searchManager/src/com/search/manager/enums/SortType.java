@@ -1,7 +1,10 @@
 package com.search.manager.enums;
 
 import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.EnumConverter;
@@ -16,10 +19,18 @@ public enum SortType {
 	private final String displayText;
 	private final String description;
 	
+	private static final Map<String,SortType> lookup 
+    = new HashMap<String,SortType>();
+	
 	SortType(String displayText, String description){
 		this.displayText = displayText;
 		this.description = description;
 	}
+	
+	static {
+         for(SortType s : EnumSet.allOf(SortType.class))
+              lookup.put(s.getDisplayText(), s);
+    }
 	
 	public String getDisplayText() {
 		return displayText;
@@ -33,8 +44,12 @@ public enum SortType {
 		return Arrays.asList(SortType.values());
 	}
 	
+	public static SortType get(String displayText) { 
+         return lookup.get(displayText); 
+    }
+	
 	@Override
 	public String toString() {
-		return String.valueOf(ordinal());
+		return String.valueOf(ordinal()+1);
 	}
 }
