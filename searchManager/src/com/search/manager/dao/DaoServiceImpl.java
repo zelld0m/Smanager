@@ -195,7 +195,6 @@ public class DaoServiceImpl implements DaoService {
 		StoreKeyword sk = criteria.getModel().getStoreKeyword();
 		String storeId = DAOUtils.getStoreId(sk);
 		String keyword = DAOUtils.getKeywordId(sk);
-//		ArrayList<ElevateProduct> elevateList = new ArrayList<ElevateProduct>();
 		for (ElevateResult e: set.getList()) {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
@@ -210,13 +209,7 @@ public class DaoServiceImpl implements DaoService {
 			ep.setMemberId(e.getMemberId());
 			ep.setMemberTypeEntity(e.getElevateEntity());
 			ep.setCondition(e.getCondition());
-//			ep.setForceAdd(e.isForceAdd());
-//			if (e.getElevateEntity() == MemberTypeEntity.PART_NUMBER) {
-//				SearchHelper.getProductViaSim(serverName, storeId, keyword, ep);
-//			} else {
-//				ep.setFoundFlag(SearchHelper.getFacetCountViaSim(serverName, storeId, keyword, e.getCondition().getConditionForSolr()) > 0);
-//			}
-//			elevateList.add(ep);
+			ep.setForceAdd(e.isForceAdd());
 			if (ep.getMemberTypeEntity() == MemberTypeEntity.FACET) {
 				map.put(UUID.randomUUID().toString(), ep);
 			} else {
