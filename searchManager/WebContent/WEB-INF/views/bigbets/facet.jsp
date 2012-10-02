@@ -24,6 +24,8 @@
 		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
 			<span id="titleText"></span>
 			<span id="titleHeader" class="fLblue fnormal"></span>
+			<img src="<spring:url value="/images/icon_keyword.png" />" class="marR5 posRel top3" />
+			<span class="fLblue fbold">Computer</span>
 		</div>
 	</div>
 	<div class="clearB"></div>
@@ -34,10 +36,9 @@
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
 		<!--  start horizontal tab -->
 		<div>
-			<img src="<spring:url value="/images/icon_keyword.png" />" class="marR5 posRel top3" />
-			<span class="fLblue fbold">Computer</span>
+			
 				Categories Elevated : Computer, Keyboard, Cables, Mouse, Router
-			<a href=""><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleItemIcon pointer"></a>
+			<a href="javascript:void(0);"><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleIcon pointer"></a>
 		</div>
 		<div class="clearB"></div>
 
@@ -121,14 +122,14 @@
 	  		<label class="floatL w80 txtLabel">Rule Type </label>
 		   	<label class="floatL">
 		    	<select name="select" id="popType" class="mar0 w191 floatR marT6" title="Select Rule Type" >
-		     		<option value="keywordType">Keyword</option>
-		     		<option value="templateNameType">Template Name</option>
+		     		<option value="Keyword">Keyword</option>
+		     		<option value="Template">Template</option>
 		    	</select>
 		    </label>
 		   	<div class="clearB height8"></div>
 		   	
 		   	<div id="keywordinput">
-	  		<label class="floatL w80 txtLabel">Name </label> 
+	  		<label class="floatL w80 txtLabel">Keyword </label> 
 			<label class="floatL"><input id="popName" type="text" class="w185" maxlength="100"></label>
 			</div>
 			<div class="clearB"></div>

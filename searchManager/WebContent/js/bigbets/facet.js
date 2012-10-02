@@ -140,7 +140,7 @@
 						var list = data;
 
 						$.each(list, function(sortName, sortDisplayText) { 
-							contentHolder.append($("<option>", {value: sortName}).text(sortDisplayText));
+							contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
 						});
 					},
 					preHook: function(){
@@ -225,12 +225,12 @@
 											$divKeyword = $contentHolder.find('div#keywordinput');
 											$divTemplate = $contentHolder.find('div#templatelist');
 											
-											switch(selectedType){
-												case "keywordType": 
+											switch(selectedType.toLowerCase()){
+												case "keyword": 
 													$divTemplate.hide();
 													$divKeyword.show();
 													break;
-												case "templateNameType" :
+												case "template" :
 													$divTemplate.show();
 													$divKeyword.hide();
 													self.populateTemplateNameList($divTemplate);
@@ -243,10 +243,17 @@
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
-											var popName = $.trim($contentHolder.find('input[id="popName"]').val());
+											var popName = "";
 											var popType = $.trim($contentHolder.find('select[id="popType"]').val());
 											var sortType = $.trim($contentHolder.find('select[id="popSortOrder"]').val());
 
+											if($contentHolder.find('input[id="popName"]').is(":visible")){
+												popName = $.trim($contentHolder.find('input[id="popName"]').val());
+											}
+											else if($contentHolder.find('select[id="popName"]').is(":visible")){
+												popName = $.trim($contentHolder.find('select[id="popName"]').val());
+											}
+											
 											if ($.isBlank(popName)){
 												jAlert("Ranking rule name is required.",self.moduleName);
 											}
