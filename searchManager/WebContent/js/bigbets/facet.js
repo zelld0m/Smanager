@@ -14,6 +14,7 @@
 				$("#preloader").show();
 				$("#submitForApproval, #facetsorting, #noSelected").hide();
 				$("#titleHeader").html("");
+				$("#ruleTypeIcon").attr("src", "");
 			},
 			
 			showFacetSort : function(){
@@ -35,7 +36,6 @@
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){
-						self.selectedRuleStatus = ruleStatus;
 						self.showFacetSort();
 					},
 					beforeRuleStatusRequest: function(){
@@ -46,12 +46,13 @@
 						$("#preloader").hide();
 						$("#titleText").html(self.moduleName + " for ");
 						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						
+						//TODO
+						$("#ruleTypeIcon").attr("src", "../images/icon_keyword.png");
+						
 						self.selectedRuleStatus = ruleStatus;
 						$("#facetsorting").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
-
-						$("#name").val(self.selectedRule["ruleName"]);
-						$("#description").val(self.selectedRule["description"]);
 
 						self.addTabListener();
 						//TODO
@@ -78,19 +79,6 @@
 								});
 							}
 						});
-						
-						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
-
-						$("div#keyword").find("#changeKeywordBtn").off().on({
-							mouseenter: showHoverInfo,
-							click: function(evt){
-								if (!evt.data.locked){
-									$('div#keyword').find('#activerules').hide();
-									$('div#keyword').find('#activerules > .alert > #rules').empty();
-									self.updateChangeKeyword();
-								}
-							}
-						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 					}
 				});
 				
@@ -140,7 +128,7 @@
 						var list = data;
 
 						$.each(list, function(sortName, sortDisplayText) { 
-							contentHolder.append($("<option>", {value: sortName}).text(sortDisplayText));
+							contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
 						});
 					},
 					preHook: function(){
@@ -151,10 +139,6 @@
 			
 			populateTemplateNameList: function(contentHolder){
 				$select = contentHolder.find('select[id="popName"]');
-				
-				$select.combobox({
-					
-				});
 				
 				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_store, {
 					callback: function(data){
@@ -217,7 +201,29 @@
 									//populate sort order dropdown list
 									self.populateSortOrderList($select);
 									
-									if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val(name);
+									if ($.isNotBlank(name)) $contentHolder.find('input[id="popKeywordName"]').val(name);
+									
+									$contentHolder.find("select.selectCombo").combobox({
+										selected: function(e, u){
+											switch($(this).attr("id").toLowerCase()){
+											case "poptype":
+												var selectedType = e.target.text;
+												$divTemplate = $contentHolder.find('div#templatelist');
+												$contentHolder.find('div#keywordinput, div#templatelist').hide();
+												
+												switch(selectedType.toLowerCase()){
+													case "keyword": 
+														$contentHolder.find('div#keywordinput').show();
+														break;
+													case "template":
+														$contentHolder.find('div#templatelist').show();
+														self.populateTemplateNameList($divTemplate);
+														break;
+												}
+												break;
+											}
+										}
+									});
 									
 									$contentHolder.find('select[id="popType"]').off().on({
 										change: function(e){
@@ -225,14 +231,14 @@
 											$divKeyword = $contentHolder.find('div#keywordinput');
 											$divTemplate = $contentHolder.find('div#templatelist');
 											
-											switch(selectedType){
-												case "keywordType": 
-													$divTemplate.hide();
+											switch(selectedType.toLowerCase()){
+												case "keyword": 
+													$divTemplate.remove();
 													$divKeyword.show();
 													break;
-												case "templateNameType" :
+												case "template":
 													$divTemplate.show();
-													$divKeyword.hide();
+													$divKeyword.remove();
 													self.populateTemplateNameList($divTemplate);
 													break;
 												default:
@@ -243,41 +249,54 @@
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
-											var popName = $.trim($contentHolder.find('input[id="popName"]').val());
-											var popType = $.trim($contentHolder.find('select[id="popType"]').val());
-											var sortType = $.trim($contentHolder.find('select[id="popSortOrder"]').val());
+											var popName = "";
+											//var popType = $.trim($contentHolder.find('select[id="popType"]').val());
+											//var sortType = $.trim($contentHolder.find('select[id="popSortOrder"]').val());
 
+											var ruleType = $.trim($contentHolder.find("input#popType").val());
+											var sortType = $.trim($contentHolder.find("input#popSortOrder").val());
+											
+											if($contentHolder.find('div#keywordinput').is(":visible")){
+												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
+											}
+											else if($contentHolder.find('div#templatelist').is(":visible")){
+												popName = $.trim($contentHolder.find("select#popName").val());
+											}
+											
 											if ($.isBlank(popName)){
-												jAlert("Ranking rule name is required.",self.moduleName);
+												jAlert("Facet Sort rule name is required.",self.moduleName);
 											}
 											else if (!isAllowedName(popName)) {
 												jAlert(ruleNameErrorText,self.moduleName);
 											}
+											else if ($.isBlank(ruleType)){
+												jAlert("Facet Sort rule type is required.",self.moduleName);
+											}
+											else if ($.isBlank(sortType)){
+												jAlert("Facet Sort order is required.",self.moduleName);
+											}
 											else {
 												//TODO
-												FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
-													callback: function(data){
-														if (data==true){
-															jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
-														}else{
-															//TODO
-															FacetSortServiceJS.addRule(popName, popType, sortType, {
+												//FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
+													//callback: function(data){
+														//if (data==true){
+															//jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
+														//}else{
+															FacetSortServiceJS.addRule(popName, ruleType, sortType, {
 																callback: function(data){
 																	if (data!=null){
-																		setFacetSort(data);
 																		showActionResponse(1, "add", popName);
-																	}else{
-																		setFacetSort(selectedRule);
+																		self.getFacetSortRuleList(1);
+																		self.setFacetSort(data);
 																	}
 																},
 																preHook: function(){ 
 																	base.prepareList(); 
-																	prepareFacetSort();
 																}
 															});
-														}
-													}
-												});
+														//}
+													//}
+												//});
 											}
 										}
 									});
@@ -305,8 +324,7 @@
 						//FacetSortServiceJS.getTotalKeywordInRule(id, {
 						RedirectServiceJS.getTotalKeywordInRule(id,{
 							callback: function(count){
-
-								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
+								var totalText = "&#133;"; 
 								base.$el.find(selector + ' div.itemLink a').html(totalText);
 
 								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({

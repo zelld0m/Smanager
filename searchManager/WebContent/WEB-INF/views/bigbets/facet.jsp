@@ -22,6 +22,7 @@
 <div class="floatL w730 marL10 marT27">
 	<div class="floatL w730 titlePlacer">
 		<div class="w535 padT10 padL10 floatL fsize20 fnormal breakWord">
+			<img id="ruleTypeIcon" src="" class="ruleTypeIcon marR5 posRel top3" />
 			<span id="titleText"></span>
 			<span id="titleHeader" class="fLblue fnormal"></span>
 		</div>
@@ -34,10 +35,9 @@
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
 		<!--  start horizontal tab -->
 		<div>
-			<img src="<spring:url value="/images/icon_keyword.png" />" class="marR5 posRel top3" />
-			<span class="fLblue fbold">Computer</span>
+			
 				Categories Elevated : Computer, Keyboard, Cables, Mouse, Router
-			<a href=""><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleItemIcon pointer"></a>
+			<a href="javascript:void(0);"><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleIcon pointer"></a>
 		</div>
 		<div class="clearB"></div>
 
@@ -69,7 +69,7 @@
 			<div id="facetTabPattern" style="display: none">
 				<div class="sort marT10 fgray">
 					<ul>
-						<li class="square"><a href="">All</a> &nbsp; |</li>
+						<li class="square"><a href=""><input type="checkbox"/></li>
 						<li>Sort Order</li>
 						<li><select id="facetSortPattern" class="posRel topn3">
 								<option>A-Z</option>
@@ -120,30 +120,30 @@
 	  	<div class="w282 padT10 newFacetSort">
 	  		<label class="floatL w80 txtLabel">Rule Type </label>
 		   	<label class="floatL">
-		    	<select name="select" id="popType" class="mar0 w191 floatR marT6" title="Select Rule Type" >
-		     		<option value="keywordType">Keyword</option>
-		     		<option value="templateNameType">Template Name</option>
+		    	<select name="select" id="popType" class="selectCombo mar0 w168 floatR marT6" title="Select Rule Type" >
+		     		<option value="Keyword">Keyword</option>
+		     		<option value="Template">Template</option>
 		    	</select>
 		    </label>
 		   	<div class="clearB height8"></div>
 		   	
 		   	<div id="keywordinput">
-	  		<label class="floatL w80 txtLabel">Name </label> 
-			<label class="floatL"><input id="popName" type="text" class="w185" maxlength="100"></label>
+	  		<label class="floatL w80 txtLabel">Keyword </label> 
+			<label class="floatL"><input id="popKeywordName" type="text" class="w188" maxlength="100"></label>
 			</div>
 			<div class="clearB"></div>
 			
 			<div id="templatelist" style="display: none;">
-		   		<span class="floatL w80 txtLabel">Template Name</span>
-		   		<span class="floatL w190">
+		   		<label class="floatL w80 txtLabel">Template Name</label>
+		   		<label class="floatL w195">
 		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
-		   		</span>
+		   		</label>
 		   	</div>
 		   	<div class="clearB"></div>
 		   	
-		   	<label class="floatL w80 txtLabel">Sort Order</label>
-		   	<label class="floatL">
-		   		<select name="select" id="popSortOrder" class="mar0 w191 floatR marT6" title="Select Sort Order" ></select>
+		   	<label class="floatL w80 txtLabel marT8">Sort Order</label>
+		   	<label class="floatL marT8">
+		   		<select name="select" id="popSortOrder" class="selectCombo mar0 w168 floatR marT6" title="Select Sort Order" ></select>
 		   	</label>
 			<div class="clearB"></div>
 			

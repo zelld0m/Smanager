@@ -21,6 +21,7 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -102,6 +103,9 @@ public class AuditInterceptor {
 				break;
 			case demote:
 				logDemote(jp, auditable, auditTrail);
+				break;
+			case facetSort:
+				logFacetSort(jp, auditable, auditTrail);
 				break;
 			case queryCleaning:
 				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
@@ -363,6 +367,63 @@ public class AuditInterceptor {
 				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
+		logAuditTrail(auditTrail);
+	}
+	
+	private void logFacetSort(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		
+		FacetSort e = null;
+		e = (FacetSort)jp.getArgs()[0];
+		auditTrail.setReferenceId(e.getRuleId());
+				
+		StringBuilder message = null;
+		
+		switch (auditable.operation()) {
+			case add:
+				message = new StringBuilder("Adding ID[%1$s]");		
+				
+				if(StringUtils.isNotBlank(e.getRuleName())){
+					message.append(" Rule Name [%2$s]");
+				}
+				
+				if(e.getRuleType() != null){
+					message.append(" Rule Type [%3$s]");
+				}
+				
+				if(e.getSortType() != null){
+					message.append(" Sort Order [%4$s]");
+				}
+				break;
+			case update:
+				message = new StringBuilder("Updating ID[%1$s]");
+				if(StringUtils.isNotBlank(e.getRuleName())){
+					message.append(" Rule Name [%2$s]");
+				}
+				
+				if(e.getRuleType() != null){
+					message.append(" Rule Type [%3$s]");
+				}
+				
+				if(e.getSortType() != null){
+					message.append(" Sort Order [%4$s]");
+				}
+				break;
+			case delete:
+				message = new StringBuilder("Removing ID[%1$s]");
+				break;
+			default:
+				message = new StringBuilder();
+				return;
+		}
+		
+		auditTrail.setDetails(
+				String.format(message.toString(),
+						auditTrail.getReferenceId(), e.getRuleName(), 
+						e.getRuleType() != null ? e.getRuleType().getDisplayText():"",
+						e.getSortType() != null ? e.getSortType().getDisplayText():""
+				)
+		);
+				
 		logAuditTrail(auditTrail);
 	}
 	
