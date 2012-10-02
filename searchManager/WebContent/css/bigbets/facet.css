@@ -38,7 +38,10 @@
 .catValueTop ul { list-style: none; }
 .catValueTop ul li { line-height: 29px }
 
-.newFacetSort label.txtLabel {padding-top:4px }
+.newFacetSort label.txtLabel { padding-top:6px }
 
 #addFacetSortTemplate .selectCombo { border:1px solid #333 !important; background: #fff !important }
 .qtip .ui-widget-content { margin-top:1px !important; border-top:1px solid #9c9c9c !important; border-left:1px solid #9c9c9c !important; border-bottom:1px solid #c5c4c4 !important; border-right:1px solid #c5c4c4 !important; background: #fff !important }
+
+.qtip #facetItem .ui-widget .ui-menu		 	{ list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
+.ui-autocomplete { list-style:none !important; margin-left:0; padding-left:10px }
