@@ -34,23 +34,29 @@ public class FacetSortService {
 	private static final Logger logger = Logger.getLogger(FacetSortService.class);
 
 	@Autowired private DaoService daoService;
-
+	
 	@RemoteMethod
 	public int addRule(String ruleName, String ruleType, String sortType) {
 		int result = -1;
+		String ruleId = "";
+		String store = UtilityService.getStoreName();
+		String username = UtilityService.getUsername();
 
 		try {
-			String store = UtilityService.getStoreName();
-			String username = UtilityService.getUsername();
 			FacetSort rule = new FacetSort(ruleName, ruleType, sortType, store);
 			rule.setCreatedBy(username);
-			String ruleId = daoService.addFacetSortAndGetId(rule);
+			ruleId = daoService.addFacetSortAndGetId(rule);
 
 			if (StringUtils.isNotBlank(ruleId)){
 				result = addAllFacetGroup(ruleId);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRule()",e);
+			try {
+				daoService.deleteFacetSort(new FacetSort(ruleId, store));
+			} catch (DaoException de) {
+				logger.error("Unable to complete process, need to manually delete rule", de);
+			}
 		}
 
 		return result;
@@ -122,14 +128,13 @@ public class FacetSortService {
 	}
 
 	public int addAllFacetGroup(String ruleId) {
-		int result = -1;
+		int facetGroupAdded = 0;
 
 		for(FacetGroupType facetGroupType : FacetGroupType.values()){
-			result = (result == -1) ? result = 0: result;
-			result += addFacetGroup(ruleId, facetGroupType.getDisplayText(), facetGroupType.name(), null, facetGroupType.ordinal());
+			facetGroupAdded += addFacetGroup(ruleId, facetGroupType.getDisplayText(), facetGroupType.getDisplayText(), null, Integer.parseInt(facetGroupType.toString())) > 0 ? 1 : 0;
 		}
 
-		return result;
+		return facetGroupAdded;
 	}
 
 	@RemoteMethod

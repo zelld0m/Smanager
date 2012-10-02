@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.RuleType;
+import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -136,10 +138,16 @@ public class FacetSortDAO {
 		public AddFacetGroupStoredProcedure(JdbcTemplate jdbcTemplate) {
 			super(jdbcTemplate, DAOConstants.SP_ADD_FACET_GROUP);
 		}
-
+		
 		@Override
 		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_SORT_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -230,9 +238,9 @@ public class FacetSortDAO {
 
 			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
 			inputs.put(DAOConstants.PARAM_RULE_NAME, StringUtils.trimToEmpty(facetSort.getRuleName()));
-			inputs.put(DAOConstants.PARAM_RULE_TYPE, facetSort.getRuleType().toString());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE, RuleType.getDefaultIfBlank(facetSort.getRuleType()).toString());
 			inputs.put(DAOConstants.PARAM_STORE_ID, facetSort.getStore().getStoreId());
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetSort.getSortType().toString());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(facetSort.getSortType()).toString());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetSortSP.execute(inputs));
@@ -247,7 +255,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetSortPK(facetSort);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetSort.getRuleId());
+			inputs.put(DAOConstants.PARAM_RULE_ID, facetSort.getRuleId());
 			return DAOUtils.getUpdateCount(deleteFacetSortSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during deleteFacetSort(): " + e.getMessage(), e);
@@ -326,6 +334,7 @@ public class FacetSortDAO {
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, StringUtils.trimToEmpty(facetGroup.getId()));
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_NAME, StringUtils.trimToEmpty(facetGroup.getName()));
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_TYPE, facetGroup.getFacetGroupType().toString());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(facetGroup.getSortType()).toString());
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, facetGroup.getSequence());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(facetGroup.getCreatedBy()));
 
