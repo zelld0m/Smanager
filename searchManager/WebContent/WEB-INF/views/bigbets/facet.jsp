@@ -135,10 +135,10 @@
 			<div class="clearB"></div>
 			
 			<div id="templatelist" style="display: none;">
-		   	<label class="floatL w80 txtLabel">Template Name</label>
-		   	<label class="floatL">
-		   		<select name="select" id="popName" class="selectCombo mar0 w191 floatR marT6" title="Select Template Name" ></select>
-		   	</label>
+		   		<span class="floatL w80 txtLabel">Template Name</span>
+		   		<span class="floatL w190">
+		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
+		   		</span>
 		   	</div>
 		   	<div class="clearB"></div>
 		   	
