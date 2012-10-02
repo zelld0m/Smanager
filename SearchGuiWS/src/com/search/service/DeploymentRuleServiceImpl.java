@@ -17,6 +17,7 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -1070,7 +1071,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			}
 			return success;
 	}
-
+	
 	@Override
 	public Map<String, Boolean> publishDemoteRulesMap(String store,
 			List<String> list) {
@@ -1233,5 +1234,89 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			logger.error(e,e);
 		}
 		return map;
+	}
+
+	@Override
+	public boolean publishFacetSortRules(String store, List<String> list) {
+		/*List<FacetSort> facetSortList = null;
+		FacetSort facetSortFilter = new FacetSort();
+		boolean success = false;
+		
+			try {
+				// Create backup
+				fileService.createBackup(store,list,RuleEntity.FACET_SORT);		
+				
+				for(String key : list){
+					FacetSort delFs = new FacetSort();
+					StoreKeyword sk = new StoreKeyword(store, key);
+					delFs.setStoreKeyword(sk);
+					daoService.clearFacetSort(new StoreKeyword(store, key)); // prod
+					
+					// retrieve staging data then push to prod
+					daoService.addKeyword(sk);
+					facetSortFilter.setStoreKeyword(sk);
+					SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter,null,null,0,0);
+					facetSortList = daoServiceStg.getFacetSortList(criteria).getList();
+					
+					if(facetSortList != null && facetSortList.size() > 0){
+						for(FacetSort e : facetSortList){
+							daoService.addFacetSort((FacetSort) e);
+						}
+					}
+					// clear cache data to force a reload
+					daoCacheService.resetDemoteRule(sk); // prod
+				}
+				
+				Store s = new Store(store);
+				daoCacheService.reloadAllKeywords(s);
+				daoCacheService.setForceReloadFacetSort(s);
+				success = true;
+				
+			} catch (Exception e) {
+				logger.error(e,e);
+				success = false;
+			}
+			return success;*/
+		//TODO
+		return false;
+	}
+	
+	@Override
+	public Map<String, Boolean> publishFacetSortRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean recallFacetSortRules(String store, List<String> list) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> recallFacetSortRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean loadFacetSortRules(String store) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean unpublishFacetSortRules(String store, List<String> list) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> unpublishFacetSortRulesMap(String store,
+			List<String> list) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

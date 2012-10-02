@@ -54,6 +54,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.publishExcludeRules(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.publishDemoteRules(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.publishFacetSortRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -93,6 +95,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.recallExcludeRules(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.recallDemoteRules(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.recallFacetSortRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -131,6 +135,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.unpublishExcludeRules(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.unpublishDemoteRules(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.unpublishFacetSortRules(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -170,6 +176,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.publishExcludeRulesMap(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.publishDemoteRulesMap(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.publishFacetSortRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -209,6 +217,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.recallExcludeRulesMap(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.recallDemoteRulesMap(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.recallFacetSortRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 
@@ -247,6 +257,8 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 						return deploymentRuleService.unpublishExcludeRulesMap(list.getStore(), ruleList);
 					case DEMOTE:
 						return deploymentRuleService.unpublishDemoteRulesMap(list.getStore(), ruleList);
+					case FACET_SORT:
+						return deploymentRuleService.unpublishFacetSortRulesMap(list.getStore(), ruleList);
 					case KEYWORD: 
 						break;
 					case STORE_KEYWORD: 

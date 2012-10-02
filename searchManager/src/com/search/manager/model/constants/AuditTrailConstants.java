@@ -116,6 +116,12 @@ public class AuditTrailConstants {
 		Operation.delete,
 	};
 	
+	public static Operation[] facetSortOperations = {
+		Operation.add,
+		Operation.update,
+		Operation.delete,
+	};
+	
 	public static Operation[] queryCleaningKeywordOperations = {
 		Operation.mapKeyword,
 		Operation.unmapKeyword,
@@ -168,6 +174,7 @@ public class AuditTrailConstants {
 		entityOperationMap.put(Entity.storeKeyword, storeKeywordOperations);
 		entityOperationMap.put(Entity.campaign, campaignOperations);
 		entityOperationMap.put(Entity.banner, bannerOperations);
+		entityOperationMap.put(Entity.facetSort, facetSortOperations);
 		ArrayList<Operation> queryCleaningOperationList = new ArrayList<Operation>();
 		CollectionUtils.mergeArrayIntoCollection(queryCleaningOperations, queryCleaningOperationList);
 		CollectionUtils.mergeArrayIntoCollection(queryCleaningKeywordOperations, queryCleaningOperationList);

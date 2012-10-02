@@ -4,10 +4,9 @@
 <c:set var="submenu" value="facet" />
 <%@ include file="/WEB-INF/includes/menu.jsp"%>
 
-<link type="text/css" rel="stylesheet"
-	href="<spring:url value="/css/bigbets/facet.css" />">
-<script type="text/javascript"
-	src="<spring:url value="/js/bigbets/facet.js" />"></script>
+<!-- page specific dependencies -->
+<link type="text/css" rel="stylesheet" href="<spring:url value="/css/bigbets/facet.css" />">
+<script type="text/javascript" src="<spring:url value="/js/bigbets/facet.js" />"></script>
 
 <!-- Start Left Side -->
 <div class="clearB floatL minW240 sideMenuArea">
@@ -27,6 +26,9 @@
 			<span id="titleHeader" class="fLblue fnormal"></span>
 		</div>
 	</div>
+	<div class="clearB"></div>
+	<div id="submitForApproval"></div>
+	
 	<div class="clearB"></div>
 
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
@@ -69,7 +71,7 @@
 					<ul>
 						<li class="square"><a href="">All</a> &nbsp; |</li>
 						<li>Sort Order</li>
-						<li><select class="posRel topn3">
+						<li><select id="facetSortPattern" class="posRel topn3">
 								<option>A-Z</option>
 								<option>Z-A</option>
 								<option>0-9</option>
@@ -87,7 +89,7 @@
 						<li id="addFacetValuePattern" style="display: none">
 							<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 							<label>
-								<select class="w195">
+								<select id="facetValuesPattern" class="w195">
 									<option>Computer</option>
 								</select>
 							</label>
@@ -116,35 +118,35 @@
 
 	<div id="addFacetSortTemplate" style="display:none">
 	  	<div class="w282 padT10 newFacetSort">
-		   	<label class="floatL w80 txtLabel">Rule Type </label>
+	  		<label class="floatL w80 txtLabel">Rule Type </label>
 		   	<label class="floatL">
 		    	<select name="select" id="popType" class="mar0 w191 floatR marT6" title="Select Rule Type" >
-		     		<option value="templateNameType">Template Name</option>
 		     		<option value="keywordType">Keyword</option>
+		     		<option value="templateNameType">Template Name</option>
 		    	</select>
 		    </label>
-		   	<div class="clearB"></div>
+		   	<div class="clearB height8"></div>
 		   	
-		   	<label class="floatL w80 txtLabel">Template List </label>
+		   	<div id="keywordinput">
+	  		<label class="floatL w80 txtLabel">Name </label> 
+			<label class="floatL"><input id="popName" type="text" class="w185" maxlength="100"></label>
+			</div>
+			<div class="clearB"></div>
+			
+			<div id="templatelist" style="display: none;">
+		   	<label class="floatL w80 txtLabel">Template Name</label>
 		   	<label class="floatL">
-		   		<select name="select" id="popTemplateList" class="mar0 w191 floatR marT6" title="Select Rule Type" >
-		     		<option value="templateNameType">Cables</option>
-		     		<option value="keywordType">Notebook Computers</option>
-		    	</select>
+		   		<select name="select" id="popName" class="selectCombo mar0 w191 floatR marT6" title="Select Template Name" ></select>
 		   	</label>
+		   	</div>
 		   	<div class="clearB"></div>
 		   	
 		   	<label class="floatL w80 txtLabel">Sort Order</label>
 		   	<label class="floatL">
-		   		<select name="select" id="popSortOrder" class="mar0 w191 floatR marT6" title="Select Sort Order" >
-		    	</select>
+		   		<select name="select" id="popSortOrder" class="mar0 w191 floatR marT6" title="Select Sort Order" ></select>
 		   	</label>
-			<div class="clearB height8"></div>
-		
-			<label class="floatL w80 txtLabel">Name </label> 
-			<label class="floatL"><input id="popName" type="text" class="w185" maxlength="100"></label><div class="clearB"></div>
 			<div class="clearB"></div>
-		
+			
 			<div class="txtAR pad3 marT10">
 				<a id="addButton" href="javascript:void;" class="buttons btnGray clearfix"> <div class="buttons fontBold">Save</div> </a> 
 				<a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"> <div class="buttons fontBold">Clear</div> </a>

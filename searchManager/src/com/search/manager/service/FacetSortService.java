@@ -1,7 +1,7 @@
 package com.search.manager.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -57,11 +57,11 @@ public class FacetSortService {
 	}
 
 	@RemoteMethod
-	public static List<String> getSortOrderList(){
-		List<String> sortOrderList = new ArrayList<String>();
+	public static Map<String, String> getSortOrderList(){
+		Map<String, String> sortOrderList = new LinkedHashMap<String, String>();
 		
 		for (SortType st: SortType.values()) {
-			sortOrderList.add(st.name());
+			sortOrderList.put(st.name(), st.getDisplayText());
 		}
 		
 		return sortOrderList;

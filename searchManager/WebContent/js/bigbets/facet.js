@@ -29,8 +29,75 @@
 					return;
 				}
 				
+				$("#submitForApproval").rulestatus({
+					moduleName: self.moduleName,
+					rule: self.selectedRule,
+					authorizeRuleBackup: true,
+					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+					afterSubmitForApprovalRequest:function(ruleStatus){
+						self.selectedRuleStatus = ruleStatus;
+						self.showFacetSort();
+					},
+					beforeRuleStatusRequest: function(){
+						self.prepareFacetSort();	
+					},
+					afterRuleStatusRequest: function(ruleStatus){
+						$("#submitForApproval").show();
+						$("#preloader").hide();
+						$("#titleText").html(self.moduleName + " for ");
+						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						self.selectedRuleStatus = ruleStatus;
+						$("#facetsorting").show();
+						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
+
+						$("#name").val(self.selectedRule["ruleName"]);
+						$("#description").val(self.selectedRule["description"]);
+
+						self.addTabListener();
+						//TODO
+						//self.addSaveRuleListener();
+						//self.addDeleteRuleListener();
+						//self.addDownloadListener();
+
+						$('#auditIcon').off().on({
+							click: function(e){
+								$(e.currentTarget).viewaudit({
+									itemDataCallback: function(base, page){
+										//TODO
+										AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+											callback: function(data){
+												var total = data.totalSize;
+												base.populateList(data);
+												base.addPaging(base.options.page, total);
+											},
+											preHook: function(){
+												base.prepareList();
+											}
+										});
+									}
+								});
+							}
+						});
+						
+						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
+
+						$("div#keyword").find("#changeKeywordBtn").off().on({
+							mouseenter: showHoverInfo,
+							click: function(evt){
+								if (!evt.data.locked){
+									$('div#keyword').find('#activerules').hide();
+									$('div#keyword').find('#activerules > .alert > #rules').empty();
+									self.updateChangeKeyword();
+								}
+							}
+						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
+					}
+				});
+				
 				$("#facetsorting").show();
 				self.addTabListener();
+				
+				
 			},
 			
 			setFacetSort : function(rule){
@@ -72,12 +139,33 @@
 					callback: function(data){
 						var list = data;
 
-						for(var i=0; i<list.length; i++){
-							contentHolder.append($("<option>", {value: list[i]}).text(list[i]));
-						}
+						$.each(list, function(sortName, sortDisplayText) { 
+							contentHolder.append($("<option>", {value: sortName}).text(sortDisplayText));
+						});
 					},
 					preHook: function(){
 						contentHolder.find("option").remove();
+					}
+				});
+			},
+			
+			populateTemplateNameList: function(contentHolder){
+				$select = contentHolder.find('select[id="popName"]');
+				
+				$select.combobox({
+					
+				});
+				
+				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_store, {
+					callback: function(data){
+						var list = data;
+
+						for(var i=0; i<list.length; i++){
+							$select.append($("<option>", {value: list[i]}).text(list[i]));
+						}
+					},
+					preHook: function(){
+						$select.find("option").remove();
 					}
 				});
 			},
@@ -125,20 +213,39 @@
 							events: { 
 								show: function(e, api){
 									var $contentHolder = $("div", api.elements.content).html($("#addFacetSortTemplate").html());
-									var $select = $("select#sortOrder");
+									var $select = $("select#popSortOrder");
 									//populate sort order dropdown list
 									self.populateSortOrderList($select);
 									
-									//$contentHolder.find('input, textarea').each(function(index, value){ $(this).val("");});
-
 									if ($.isNotBlank(name)) $contentHolder.find('input[id="popName"]').val(name);
 									
+									$contentHolder.find('select[id="popType"]').off().on({
+										change: function(e){
+											var selectedType = e.target.value;
+											$divKeyword = $contentHolder.find('div#keywordinput');
+											$divTemplate = $contentHolder.find('div#templatelist');
+											
+											switch(selectedType){
+												case "keywordType": 
+													$divTemplate.hide();
+													$divKeyword.show();
+													break;
+												case "templateNameType" :
+													$divTemplate.show();
+													$divKeyword.hide();
+													self.populateTemplateNameList($divTemplate);
+													break;
+												default:
+													break;
+											}
+										}
+									});
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
 											var popName = $.trim($contentHolder.find('input[id="popName"]').val());
 											var popType = $.trim($contentHolder.find('select[id="popType"]').val());
-											var sortType = $.trim($contentHolder.find('select[id="sortType"]').val());
+											var sortType = $.trim($contentHolder.find('select[id="popSortOrder"]').val());
 
 											if ($.isBlank(popName)){
 												jAlert("Ranking rule name is required.",self.moduleName);

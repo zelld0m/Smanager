@@ -18,6 +18,7 @@ import com.search.manager.model.BackupInfo;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.DemoteResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
@@ -62,7 +63,14 @@ public class FileServiceImpl implements FileService{
 				}
 				break;
 			case DEMOTE:
-				xml = getXmlObjectForElevatedRule(store, ruleId);
+				xml = getXmlObjectForDemoteRule(store, ruleId);
+				if(xml != null){
+					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+					success = true;
+				}
+				break;
+			case FACET_SORT:
+				xml = getXmlObjectForFacetSortRule(store, ruleId);
 				if(xml != null){
 					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
 					success = true;
@@ -436,6 +444,58 @@ public class FileServiceImpl implements FileService{
 		}catch (Exception e) {
 			logger.error(e,e);
 		} 
+		return null;	
+	}
+	
+	private Object getXmlObjectForDemoteRule(String storeName, String ruleId){
+		
+		DemoteResult demoteFilter = new DemoteResult();
+		List<DemoteResult> demoteList = null;
+		
+		try{
+			StoreKeyword sk = new StoreKeyword(storeName, ruleId);
+			demoteFilter.setStoreKeyword(sk); 
+			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
+			
+			demoteList = daoService.getDemoteResultList(criteria).getList();	
+			
+			if(CollectionUtils.isNotEmpty(demoteList)){
+				XStream xstream = new XStream();
+				xstream.alias("demote", DemoteResult.class);
+				xstream.alias("list", List.class);
+
+			    String xml = xstream.toXML(demoteList);
+			    return xml;
+			}
+		}catch (Exception e) {
+			logger.error(e,e);
+		} 
+		return null;	
+	}
+	
+	private Object getXmlObjectForFacetSortRule(String storeName, String ruleId){
+		//TODO
+		/*FacetSort facetSortFilter = new FacetSort();
+		List<FacetSort> facetSortList = null;
+		
+		try{
+			StoreKeyword sk = new StoreKeyword(storeName, ruleId);
+			facetSortFilter.setStoreKeyword(sk); 
+			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter,null,null,0,0);
+			
+			facetSortList = daoService.getFacetSortResultList(criteria).getList();	
+			
+			if(CollectionUtils.isNotEmpty(facetSortList)){
+				XStream xstream = new XStream();
+				xstream.alias("facetsort", FacetSort.class);
+				xstream.alias("list", List.class);
+
+			    String xml = xstream.toXML(facetSortList);
+			    return xml;
+			}
+		}catch (Exception e) {
+			logger.error(e,e);
+		}*/ 
 		return null;	
 	}
 	

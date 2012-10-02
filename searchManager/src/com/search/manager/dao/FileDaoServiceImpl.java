@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.file.DemoteVersionDAO;
 import com.search.manager.dao.file.ElevateVersionDAO;
 import com.search.manager.dao.file.ExcludeVersionDAO;
+import com.search.manager.dao.file.FacetSortVersionDAO;
 import com.search.manager.dao.file.QueryCleaningVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RuleVersionUtil;
@@ -21,6 +22,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BackupInfo;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.ElevateProduct;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
@@ -34,6 +36,7 @@ public class FileDaoServiceImpl implements FileDaoService{
 	@Autowired private ElevateVersionDAO elevateVersionDAO;
 	@Autowired private ExcludeVersionDAO excludeVersionDAO;
 	@Autowired private DemoteVersionDAO demoteVersionDAO;
+	@Autowired private FacetSortVersionDAO facetSortVersionDAO;
 	@Autowired private QueryCleaningVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 	
@@ -51,6 +54,9 @@ public class FileDaoServiceImpl implements FileDaoService{
 			break;
 		case DEMOTE:
 			success = demoteVersionDAO.createDemoteRuleVersion(store, ruleId, name, reason);
+			break;
+		case FACET_SORT:
+			success = facetSortVersionDAO.createFacetSortRuleVersion(store, ruleId, name, reason);
 			break;
 		case QUERY_CLEANING:
 			success = queryCleaningVersionDAO.createQueryCleaningRuleVersion(store, ruleId, name, reason);
@@ -82,6 +88,12 @@ public class FileDaoServiceImpl implements FileDaoService{
 		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.DEMOTE.getCode(), StringUtil.escapeKeyword(ruleId), version);
 		return demoteVersionDAO.readDemotedVersion(filePath, store, server);
 	}
+	
+	@Override
+	public List<FacetSort> readFacetSortRuleVersion(String store, String ruleId, int version, String server) {
+		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.FACET_SORT.getCode(), StringUtil.escapeKeyword(ruleId), version);
+		return facetSortVersionDAO.readFacetSortVersion(filePath, store, server);
+	}
 
 	@Override
 	public RedirectRule readQueryCleaningRuleVersion(String store, String ruleId, int version) {
@@ -101,6 +113,10 @@ public class FileDaoServiceImpl implements FileDaoService{
 		case ELEVATE:
 			break;
 		case EXCLUDE:
+			break;
+		case DEMOTE:
+			break;
+		case FACET_SORT:
 			break;
 		case QUERY_CLEANING:
 			break;
@@ -137,6 +153,9 @@ public class FileDaoServiceImpl implements FileDaoService{
 					break;
 				case DEMOTE:
 					demoteVersionDAO.readDemotedVersion(file, backup);
+					break;
+				case FACET_SORT:
+					facetSortVersionDAO.readFacetSortVersion(file, backup);
 					break;
 				case QUERY_CLEANING:
 					queryCleaningVersionDAO.readQueryCleaningVersion(file, backup);
