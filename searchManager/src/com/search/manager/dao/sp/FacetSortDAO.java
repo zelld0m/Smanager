@@ -3,9 +3,13 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,10 +26,9 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
-import com.search.manager.model.Relevancy;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.Store;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
 
@@ -39,9 +42,12 @@ public class FacetSortDAO {
 
 	private AddFacetGroupStoredProcedure addFacetGroupSP;
 	private DeleteFacetGroupStoredProcedure deleteFacetGroupSP;
+	private GetFacetGroupStoredProcedure getFacetGroupSP;
 	private UpdateFacetGroupStoredProcedure updateFacetGroupSP;
+	
 	private AddFacetGroupItemStoredProcedure addFacetGroupItemSP;
 	private DeleteFacetGroupItemStoredProcedure deleteFacetGroupItemSP;
+	private GetFacetGroupItemStoredProcedure getFacetGroupItemSP;
 	private UpdateFacetGroupItemStoredProcedure updateFacetGroupItemSP;
 	private ClearFacetGroupItemStoredProcedure clearFacetGroupItemSP;
 
@@ -53,11 +59,15 @@ public class FacetSortDAO {
 		deleteFacetSortSP = new DeleteFacetSortStoredProcedure(jdbcTemplate);
 		getFacetSortSP = new GetFacetSortStoredProcedure(jdbcTemplate);
 		updateFacetSortSP = new UpdateFacetSortStoredProcedure(jdbcTemplate);
+		
 		addFacetGroupSP = new AddFacetGroupStoredProcedure(jdbcTemplate);
 		deleteFacetGroupSP = new DeleteFacetGroupStoredProcedure(jdbcTemplate);
+		getFacetGroupSP = new GetFacetGroupStoredProcedure(jdbcTemplate);
 		updateFacetGroupSP = new UpdateFacetGroupStoredProcedure(jdbcTemplate);
+		
 		addFacetGroupItemSP = new AddFacetGroupItemStoredProcedure(jdbcTemplate);
 		deleteFacetGroupItemSP = new DeleteFacetGroupItemStoredProcedure(jdbcTemplate);
+		getFacetGroupItemSP = new GetFacetGroupItemStoredProcedure(jdbcTemplate);
 		updateFacetGroupItemSP = new UpdateFacetGroupItemStoredProcedure(jdbcTemplate);
 		clearFacetGroupItemSP = new ClearFacetGroupItemStoredProcedure(jdbcTemplate); ;
 	}
@@ -97,25 +107,75 @@ public class FacetSortDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_START_ROW2, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_END_ROW2, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MATCH_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_SORT_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RETURN_OPTION, Types.INTEGER));
 		}
 
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
-			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<Relevancy>() {
-				public Relevancy mapRow(ResultSet rs, int rowNum) throws SQLException
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetSort>() {
+				public FacetSort mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					return new Relevancy(
-							rs.getString(DAOConstants.COLUMN_RELEVANCY_ID),
-							rs.getString(DAOConstants.COLUMN_NAME),
-							rs.getString(DAOConstants.COLUMN_DESCRIPTION),
+					List<FacetGroup> facetGroups = new ArrayList<FacetGroup>();
+					String ruleId = rs.getString(DAOConstants.COLUMN_RULE_ID);
+					String[] arrGroupId = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_ID_LIST), ""), '|');
+					String[] arrGroupName = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), ""), '|');
+
+					//TODO: build connection to Facet Group & Item
+					
+					FacetSort facetSort = new FacetSort(
+							ruleId,
+							rs.getString(DAOConstants.COLUMN_RULE_NAME),
+							RuleType.get(rs.getInt(DAOConstants.COLUMN_RULE_TYPE)),
+							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							rs.getDate(DAOConstants.COLUMN_START_DATE),
-							rs.getDate(DAOConstants.COLUMN_END_DATE),
-							rs.getString(DAOConstants.COLUMN_COMMENT),
-							rs.getString(DAOConstants.COLUMN_CREATED_BY),
-							rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-							rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-							rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+							facetGroups
+					);
+					
+					facetSort.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+					facetSort.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+					facetSort.setCreatedDate(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP));
+					facetSort.setLastModifiedDate(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+			
+					return facetSort;
+				}
+			}));
+		}
+	}
+	
+	private class GetFacetGroupStoredProcedure extends GetFacetSortStoredProcedure {
+		public GetFacetGroupStoredProcedure(JdbcTemplate jdbcTemplate) {
+			super(jdbcTemplate);
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetGroup>() {
+				public FacetGroup mapRow(ResultSet rs, int rowNum) throws SQLException
+				{
+					return new FacetGroup();
+				}
+			}));
+		}
+	}
+	
+	private class GetFacetGroupItemStoredProcedure extends GetFacetSortStoredProcedure {
+		public GetFacetGroupItemStoredProcedure(JdbcTemplate jdbcTemplate) {
+			super(jdbcTemplate);
+		}
+
+		@Override
+		protected void declareSqlReturnResultSetParameters() {
+			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetGroupItem>() {
+				public FacetGroupItem mapRow(ResultSet rs, int rowNum) throws SQLException
+				{
+					return new FacetGroupItem();
 				}
 			}));
 		}
@@ -262,50 +322,34 @@ public class FacetSortDAO {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Object searchFacet(SearchCriteria criteria, MatchType matchType) throws DaoException {
+	public RecordSet<FacetSort> searchFacetSort(SearchCriteria<FacetSort> criteria, MatchType matchType) throws DaoException {
 		try {
 			DAOValidation.checkSearchCriteria(criteria);
+			FacetSort model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			//			Object model = criteria.getModel();
-			//			
-			//			if(model instanceof FacetSort){
-			//				model = (FacetSort) model;
-			//				inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(((FacetSort) model).getStore()));
-			//				inputs.put(DAOConstants.PARAM_RELEVANCY, (matchType == null) ?
-			//						null : (matchType.equals(MatchType.MATCH_ID) ?
-			//								model.getRuleId() : model.getRuleName()));
-			//				inputs.put(DAOConstants.PARAM_MATCH_TYPE_RELEVANCY, (matchType == null) ?
-			//			}else if(model instanceof FacetGroup){
-			//				model = (FacetGroup) model;
-			//			}else if(model instanceof FacetGroupItem){
-			//				model = (FacetGroupItem) model;
-			//			}
-			//			
-			//	        		null : matchType.getIntValue());
-			//	        inputs.put(DAOConstants.PARAM_START_DATE, criteria.getStartDate());
-			//	        inputs.put(DAOConstants.PARAM_END_DATE, criteria.getEndDate());
-			//	        inputs.put(DAOConstants.PARAM_START_ROW, criteria.getStartRow());
-			//	        inputs.put(DAOConstants.PARAM_END_ROW, criteria.getEndRow());
-			return DAOUtils.getRecordSet(getFacetSortSP.execute(inputs));
+	    	
+	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
+	        inputs.put(DAOConstants.PARAM_RULE_TYPE, RuleType.getDefaultIfBlank(model.getRuleType()));
+	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
+	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? null : matchType.getIntValue());
+	        inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(model.getSortType()));
+	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 0);
+	        
+	        return DAOUtils.getRecordSet(getFacetSortSP.execute(inputs));
 		} catch (Exception e) {
-			throw new DaoException("Failed during searchFacet(): " + e.getMessage(), e);
-		}
+    		throw new DaoException("Failed during searchFacetSort(): " + e.getMessage(), e);
+    	}
 	}
 
-	@SuppressWarnings("unchecked")
-	public RecordSet<FacetSort> searchFacetSort(SearchCriteria<FacetSort> criteria, MatchType matchType) throws DaoException {
-		return (RecordSet<FacetSort>) searchFacet(criteria, matchType);
-	}
-
-	@SuppressWarnings("unchecked")
 	public RecordSet<FacetGroup> searchFacetGroup(SearchCriteria<FacetGroup> criteria, MatchType matchType) throws DaoException {
-		return (RecordSet<FacetGroup>) searchFacet(criteria, matchType);
+		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public RecordSet<FacetGroupItem> searchFacetGroupItem(SearchCriteria<FacetGroupItem> criteria, MatchType matchType) throws DaoException {
-		return (RecordSet<FacetGroupItem>) searchFacet(criteria, matchType);
+		return null;
 	}
 
 	@Audit(entity = Entity.facetSort, operation = Operation.update)
@@ -326,12 +370,12 @@ public class FacetSortDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			String facetGroupId = facetGroup.getId();
 
-			if (StringUtils.isEmpty(facetGroupId)) {
+			if (StringUtils.isBlank(facetGroupId)) {
 				facetGroupId = DAOUtils.generateUniqueId();
 			}
 
 			inputs.put(DAOConstants.PARAM_RULE_ID, StringUtils.trimToEmpty(facetGroup.getRuleId()));
-			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, StringUtils.trimToEmpty(facetGroup.getId()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroupId);
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_NAME, StringUtils.trimToEmpty(facetGroup.getName()));
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_TYPE, facetGroup.getFacetGroupType().toString());
 			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(facetGroup.getSortType()).toString());

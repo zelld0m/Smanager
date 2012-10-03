@@ -57,9 +57,7 @@ public class FacetSort extends ModelBean{
 	}
 	
 	public FacetSort(String id, String store) {
-		super();
-		this.id = id;
-		this.store = new Store(store);
+		this(id, "", store);
 	}
 
 	public String getId() {
