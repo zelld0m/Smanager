@@ -57,11 +57,9 @@
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
 						self.addTabListener();
-
-						//TODO
-						//self.addSaveRuleListener();
-						//self.addDeleteRuleListener();
-						//self.addDownloadListener();
+						self.addSaveRuleListener();
+						self.addDeleteRuleListener();
+						self.addDownloadListener();
 
 						$('#auditIcon').off().on({
 							click: function(e){
@@ -86,9 +84,6 @@
 				});
 				
 				$("#facetsorting").show();
-				self.addTabListener();
-				
-				
 			},
 			
 			setFacetSort : function(rule){
@@ -158,15 +153,57 @@
 				$facetTab.find("span#addFacetSortTitleHeader").text("Elevated " + facetName + " Values");
 				
 				var $selectedValuesUL = $('ul#selectedFacetValueList');
-				
-				//TODO: populate elevated values
-				//self.populateSelectedValues($selectedValuesUL, facetNameLower, '');
+				self.populateSelectedValues($selectedValuesUL, facetNameLower, '');
 
-				//TODO: add new link listener
 				self.addNewFacetValueListener($facetTab);
 				
 				$facetTab.find("span#addNewLink").text("[add new " + facetNameLower + " value]");
 				$facetTab.find("div#facetvaluelist").prop({id : facetNameLower +'list'});
+				
+				$('ul#selectedFacetValueList').sortable();
+				
+				// TODO add draggable feature
+				/*$selectedValuesUL.sortable({ 
+					handle : 'li.handle',
+					cursor : 'move',
+					start: function(event, ui) {
+						ui.item.data('start_pos', ui.item.index());
+					},     
+					change: function(event, ui) {
+						var index = ui.placeholder.index();
+						if (ui.item.data('start_pos') < index){
+							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(' + index + ')').addClass('sortableHighlights');
+						}else{
+							contentHolder.find('#listItems_' + doc.EDP + ' > li:eq(' + (index + 1) + ')').addClass('sortableHighlights');
+						}
+					},
+					update: function(event, ui) {
+						var ref = ui.item.attr("id").split('_')[1];
+						contentHolder.find('#listItems_' + doc.EDP + ' > li').removeClass('sortableHighlights');
+						contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
+						contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
+					},
+					stop: function(event, ui) {
+						var sourceIndex = (ui.item.data('start_pos')+1) ;
+						var destinationIndex = (ui.item.index()+1);
+
+						// Update demote position
+						if(sourceIndex != destinationIndex){
+							var memberId = ui.item.attr("id").split('_')[1];
+
+							DemoteServiceJS.update(keyword,memberId,destinationIndex,{
+								callback : function(event){
+									needRefresh = true;
+									populateSelectedProduct(contentHolder);
+								},
+								preHook: function() { prepareDemoteResult(contentHolder); },
+								postHook: function() { updateDemoteResult(contentHolder, doc, keyword); }
+							});
+						}	 
+					}
+				});*/
+				
+				
 				
 				$facet.append($facetTab);
 			},
@@ -195,18 +232,21 @@
 				});
 			},
 			
+			//TODO
 			populateSelectedValues : function(content, facet, ruleId){
 				var self = this;
 				
-				//TODO
+				content.find("li:not(#addFacetValuePattern)").remove();
 				for(var i=0; i < 3; i++){
 					var $li = $('li#addFacetValuePattern').clone();
 					$li.show();
-					$li.prop({id : 'facetValue' + i});
-					content.append($li);
-					
+					$li.prop({id : ''});
 					$li.find("select#facetValuesPattern").prop({id: 'facetValues' + i});
+					
+					content.append($li);
 				}
+				
+				content.find("select.selectCombo").combobox({});
 			},
 			
 			populateSortOrderList : function(contentHolder){
@@ -247,21 +287,22 @@
 				$("#keywordSidePanel").sidepanel({
 					fieldId: "ruleId",
 					fieldName: "ruleName",
-					page: self.rulePage,
+					page: page,
 					pageSize: self.rulePageSize,
 					headerText : "Facet Sorting Rule",
 					searchText : "Enter Keyword",
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,
 
-					itemDataCallback: function(base, keyword, page){
+					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
-						self.ruleFilterText = keyword;
+						self.ruleFilterText = ruleName;
 						//TODO
-						RedirectServiceJS.getAllRule(keyword, page, base.options.pageSize, {
+						FacetSortServiceJS.getAllRule(ruleName, page, base.options.pageSize, {
+						//RedirectServiceJS.getAllRule(ruleName, page, base.options.pageSize, {
 							callback: function(data){
 								base.populateList(data);
-								base.addPaging(keyword, page, data.totalSize);
+								base.addPaging(ruleName, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }
 						});
@@ -337,8 +378,6 @@
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
 											var popName = "";
-											//var popType = $.trim($contentHolder.find('select[id="popType"]').val());
-											//var sortType = $.trim($contentHolder.find('select[id="popSortOrder"]').val());
 
 											var ruleType = $.trim($contentHolder.find("input#popType").val());
 											var sortType = $.trim($contentHolder.find("input#popSortOrder").val());
@@ -347,7 +386,7 @@
 												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
 											}
 											else if($contentHolder.find('div#templatelist').is(":visible")){
-												popName = $.trim($contentHolder.find("select#popName").val());
+												popName = $.trim($contentHolder.find("input#popName").val());
 											}
 											
 											if ($.isBlank(popName)){
@@ -364,11 +403,11 @@
 											}
 											else {
 												//TODO
-												//FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
-													//callback: function(data){
-														//if (data==true){
-															//jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
-														//}else{
+												FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
+													callback: function(data){
+														if (data==true){
+															jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
+														}else{
 															FacetSortServiceJS.addRule(popName, ruleType, sortType, {
 																callback: function(data){
 																	if (data!=null){
@@ -381,17 +420,18 @@
 																	base.prepareList(); 
 																}
 															});
-														//}
-													//}
-												//});
+														}
+													}
+												});
 											}
 										}
 									});
 
 									$contentHolder.find('a#clearButton').off().on({
 										click: function(e){
-											//TODO
-											//$contentHolder.find('input[type="text"], textarea').val("");
+											$contentHolder.find('input#popKeywordName').val("");
+											$contentHolder.find("input#popSortOrder").val("");
+											$contentHolder.find("input#popName").val("");
 										}
 									});
 								},
@@ -407,21 +447,11 @@
 					itemOptionCallback: function(base, id, name, model){
 						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
 
-						//TODO
-						//FacetSortServiceJS.getTotalKeywordInRule(id, {
-						RedirectServiceJS.getTotalKeywordInRule(id,{
-							callback: function(count){
-								var totalText = "&#133;"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
-									click: function(e){
-										self.setFacetSort(model);
-									}
-								});
-							},
-							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						var totalText = "&#133;"; 
+						base.$el.find(selector + ' div.itemLink a').html(totalText);
+						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
+							click: function(e){
+								self.setFacetSort(model);
 							}
 						});
 
@@ -480,7 +510,7 @@
 						if (e.data.locked) return;
 
 						if (self.checkIfUpdateAllowed()){
-							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
+							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], {
 								callback: function(data){
 									response = data;
 									showActionResponse(response, "update", ruleName);
@@ -490,19 +520,64 @@
 								},
 								postHook: function(){
 									if(response==1){
-										RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
+										FacetSortServiceJS.getRule(self.selectedRule["ruleId"],{
 											callback: function(data){
-												self.setRedirect(data);
+												self.setFacetSort(data);
 											},
 											preHook: function(){
-												self.prepareRedirect();
+												self.prepareFacetSort();
 											}
 										});
 									}
 									else{
-										self.setRedirect(self.selectedRule);
+										self.setFacetSort(self.selectedRule);
 									}
 
+								}
+							});
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
+			},
+			
+			addDownloadListener: function(){
+				var self = this;
+				$("a#downloadIcon").download({
+					headerText:"Download Facet Sort",
+					requestCallback:function(e){
+						var params = new Array();
+						var url = document.location.pathname + "/xls";
+						var urlParams = "";
+						var count = 0;
+						params["id"] = self.selectedRule["ruleId"];
+						params["filename"] = e.data.filename;
+						params["type"] = e.data.type;
+						params["clientTimezone"] = +new Date();
+
+						for(var key in params){
+							if (count>0) urlParams +='&';
+							urlParams += (key + '=' + params[key]);
+							count++;
+						};
+
+						document.location.href = url + '?' + urlParams;
+					}
+				});
+			},
+			
+			addDeleteRuleListener: function(){
+				var self = this;
+
+				$("#deleteBtn").off().on({
+					click: function(e){
+						if (!e.data.locked && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
+							FacetSortServiceJS.deleteRule(self.selectedRule["ruleId"],{
+								callback: function(code){
+									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
+									if(code==1) {
+										self.setFacetSort(null);
+									}
 								}
 							});
 						}
