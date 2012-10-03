@@ -3,7 +3,6 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +24,7 @@ import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -188,6 +188,7 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
@@ -232,6 +233,7 @@ public class DeploymentService {
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
@@ -291,12 +293,15 @@ public class DeploymentService {
 	public int addComment(String pComment, String ...ruleStatusId) {
 		int result = -1;
 		try {
+			String store = UtilityService.getStoreName();
+			
 			for(String rsId: ruleStatusId){
 				Comment comment = new Comment();
 				comment.setReferenceId(rsId);
 				comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
 				comment.setUsername(UtilityService.getUsername());
 				comment.setComment(pComment);
+				comment.setStore(new Store(store));
 				daoService.addComment(comment);
 			}
 		} catch (DaoException e) {
