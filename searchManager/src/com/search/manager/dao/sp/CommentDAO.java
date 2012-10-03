@@ -138,6 +138,7 @@ public class CommentDAO {
 			inputs.put(DAOConstants.PARAM_COMMENT, comment.getComment());
 			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, comment.getRuleTypeId());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, comment.getUsername());
+			inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(comment.getStore()));
 			result = DAOUtils.getUpdateCount(addCommentStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
