@@ -47,6 +47,10 @@ public enum SortType {
 	public static SortType get(String displayText) { 
          return lookup.get(displayText); 
     }
+	
+	public static SortType get(Integer intValue) { 
+        return SortType.values()[intValue-1];
+    }
 		
 	public static SortType getDefaultIfBlank(SortType sortType) {
 		if(sortType==null)

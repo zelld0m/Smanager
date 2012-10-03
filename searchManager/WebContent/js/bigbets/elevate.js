@@ -565,6 +565,7 @@
 			},
 
 			addRuleItemListener:function(){
+				var self = this;
 				$("a#addRuleItemIcon").off().on({
 					click:function(e){
 						$(this).addproduct({

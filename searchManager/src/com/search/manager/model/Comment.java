@@ -21,9 +21,9 @@ private static final long serialVersionUID = 1L;
 	private String referenceId;
 	private Date createdDate;
 	private Integer ruleTypeId;
+	private Store store;
 	
-	public Comment() {
-	}
+	public Comment() {}
 
 	public Comment(Integer commentId, String referenceId, String comment, String username, Date createdDate, Integer ruleTypeId) {
 		super();
@@ -89,6 +89,14 @@ private static final long serialVersionUID = 1L;
 
 	public void setRuleTypeId(Integer ruleTypeId) {
 		this.ruleTypeId = ruleTypeId;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 
 	public String getFormatDateTimeUsingConfig(){

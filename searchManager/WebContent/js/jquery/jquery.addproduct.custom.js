@@ -75,7 +75,7 @@
 			template  += '	<div id="tabHeight" style="height:29.5px" class="borderB marT20">';
 			template  += '	<ul>';
 			template  += '		<li><a href="#ims"><span>IMS Categories/Manufacturer</span></a></li>';
-			template  += '		<li><a href="#cnet"><span>Facet Template/Manufacturer</span></a></li>';
+			template  += '		<li><a href="#cnet"><span>Product Site Taxonomy/Manufacturer</span></a></li>';
 			template  += '		<li><a href="#dynamicAttribute"><span>Dynamic Attributes</span></a></li>';
 			template  += '		<li><a href="#facet"><span>Facets</span></a></li>';
 			template  += '	</ul>';
@@ -1636,7 +1636,7 @@
 				typeLabel = 'IMS Categories';
 				break;
 			case "cnet":
-				typeLabel = 'Facet Template Categories';
+				typeLabel = 'Product Site Taxonomy';
 				break;
 			case "facet":
 				typeLabel = 'Facets';

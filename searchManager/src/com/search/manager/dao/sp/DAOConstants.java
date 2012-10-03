@@ -242,6 +242,8 @@ public class DAOConstants {
 	public static final String PARAM_FACET_GROUP_SEQUENCE			= "facet_group_sequence";
 	public static final String PARAM_RULE_TYPE			 			= "rule_type";
 	public static final String PARAM_SORT_TYPE			 			= "sort_type";
+	public static final String PARAM_MATCH_TYPE			 			= "match_type";
+	public static final String PARAM_RETURN_OPTION			 		= "return_option";
 
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
@@ -320,6 +322,13 @@ public class DAOConstants {
 	public static final String COLUMN_MEMBER_TYPE_ID	 	 		= "member_type_id";
 	public static final String COLUMN_MEMBER_ID 					= "member_id";
 	public static final String COLUMN_FORCE_ADD 					= "force_add";
+
+	public static final String COLUMN_GROUP_ID_LIST 				= "group_id_list";
+	public static final String COLUMN_GROUP_NAME_LIST 				= "group_name_list";
+	public static final String COLUMN_ITEM_NAME_LIST 				= "item_name_list";
+	public static final String COLUMN_RULE_NAME 					= "rule_name";
+	public static final String COLUMN_SORT_TYPE 					= "sort_type";
+	public static final String COLUMN_RULE_TYPE 					= "rule_type";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

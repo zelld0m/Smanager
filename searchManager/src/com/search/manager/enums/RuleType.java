@@ -38,6 +38,10 @@ public enum RuleType {
 	public static RuleType get(String displayText) { 
 		return lookup.get(displayText); 
 	}
+	
+	public static RuleType get(Integer intValue) { 
+        return RuleType.values()[intValue-1];
+    }
 
 	public static RuleType getDefaultIfBlank(RuleType ruleType) {
 		if(ruleType==null)
