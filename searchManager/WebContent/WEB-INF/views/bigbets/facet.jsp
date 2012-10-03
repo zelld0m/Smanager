@@ -35,8 +35,7 @@
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
 		<!--  start horizontal tab -->
 		<div>
-			
-				Categories Elevated : Computer, Keyboard, Cables, Mouse, Router
+			Categories Elevated : Computer, Keyboard, Cables, Mouse, Router
 			<a href="javascript:void(0);"><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleIcon pointer"></a>
 		</div>
 		<div class="clearB"></div>
@@ -69,7 +68,7 @@
 			<div id="facetTabPattern" style="display: none">
 				<div class="sort marT10 fgray">
 					<ul>
-						<li class="square"><a href=""><input type="checkbox"/></li>
+						<li class="square"><input type="checkbox"/></li>
 						<li>Sort Order</li>
 						<li><select id="facetSortPattern" class="posRel topn3">
 								<option>A-Z</option>
@@ -85,13 +84,11 @@
 					<p class="fbold">
 						<span id="addFacetSortTitleHeader"></span>
 					</p>
-					<ul class="marT8">
-						<li id="addFacetValuePattern" style="display: none">
+					<ul id="selectedFacetValueList" class="marT8">
+						<li id="addFacetValuePattern">
 							<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 							<label>
-								<select id="facetValuesPattern" class="w195">
-									<option>Computer</option>
-								</select>
+								<select id="facetValuesPattern" class="w195"></select>
 							</label>
 							<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 						</li>
