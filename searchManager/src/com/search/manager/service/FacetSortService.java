@@ -152,11 +152,11 @@ public class FacetSortService {
 	@RemoteMethod
 	public RecordSet<FacetGroup> getAllFacetGroup(String ruleId){
 		try {
-			FacetGroup facetGroup = new FacetGroup(ruleId);
+			FacetGroup facetGroup = new FacetGroup(ruleId, "");
 			SearchCriteria<FacetGroup> criteria = new SearchCriteria<FacetGroup>(facetGroup);
 			return daoService.searchFacetGroup(criteria, MatchType.MATCH_ID);
 		} catch (DaoException e) {
-			logger.error("Failed during getAllRule()",e);
+			logger.error("Failed during getAllFacetGroup()",e);
 		}
 		return null;
 	}
