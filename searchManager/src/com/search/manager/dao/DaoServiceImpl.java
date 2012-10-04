@@ -1293,11 +1293,6 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException {
-		return facetSortDAO.addFacetSortAndGetId(facetSort);
-	}
-
-	@Override
 	public int deleteFacetSort(FacetSort facetSort) throws DaoException {
 		return facetSortDAO.deleteFacetSort(facetSort);
 	}
@@ -1307,6 +1302,11 @@ public class DaoServiceImpl implements DaoService {
 		return facetSortDAO.updateFacetSort(facetSort);
 	}
 
+	@Override
+	public FacetSort getFacetSort(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.searchFacetSort(facetSort);
+	}
+	
 	@Override
 	public RecordSet<FacetSort> searchFacetSort(
 			SearchCriteria<FacetSort> criteria, MatchType matchType)
@@ -1365,5 +1365,10 @@ public class DaoServiceImpl implements DaoService {
 			SearchCriteria<FacetGroupItem> criteria, MatchType matchType)
 			throws DaoException {
 		return facetSortDAO.searchFacetGroupItem(criteria, matchType);
+	}
+
+	@Override
+	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException {
+		return facetSortDAO.addFacetSortAndGetId(facetSort);
 	}
 }

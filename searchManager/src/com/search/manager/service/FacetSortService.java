@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.FacetGroupType;
+import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
@@ -23,6 +24,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.Store;
 
 @Service(value = "facetSortService")
 @RemoteProxy(
@@ -34,9 +36,9 @@ public class FacetSortService {
 	private static final Logger logger = Logger.getLogger(FacetSortService.class);
 
 	@Autowired private DaoService daoService;
-	
+
 	@RemoteMethod
-	public int addRule(String ruleName, String ruleType, String sortType) {
+	public FacetSort addRule(String ruleName, String ruleType, String sortType) {
 		int result = -1;
 		String ruleId = "";
 		String store = UtilityService.getStoreName();
@@ -50,6 +52,10 @@ public class FacetSortService {
 			if (StringUtils.isNotBlank(ruleId)){
 				result = addAllFacetGroup(ruleId);
 			}
+
+			if (result>0){
+				return getRuleById(ruleId);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRule()",e);
 			try {
@@ -59,20 +65,20 @@ public class FacetSortService {
 			}
 		}
 
-		return result;
+		return null;
 	}
 
 	@RemoteMethod
 	public static Map<String, String> getSortOrderList(){
 		Map<String, String> sortOrderList = new LinkedHashMap<String, String>();
-		
+
 		for (SortType st: SortType.values()) {
 			sortOrderList.put(st.name(), st.getDisplayText());
 		}
-		
+
 		return sortOrderList;
 	}  
-	
+
 	@RemoteMethod
 	public int deleteRule(String ruleId) {
 		int result = -1;
@@ -91,7 +97,7 @@ public class FacetSortService {
 	}
 
 	@RemoteMethod
-	public int updateRule(String ruleId, String sortType, Map<String, String[]> facetSortType, Map<String, String[]> facetItems) {
+	public int updateRule(String ruleId, String sortType, Map<String, String[]> facetGroupItems, Map<String, String>  sortOrders) {
 		int result = -1;
 
 		try {
@@ -99,16 +105,6 @@ public class FacetSortService {
 			String username = UtilityService.getUsername();
 			FacetSort rule = new FacetSort(ruleId, store);
 			rule.setLastModifiedBy(username);
-			
-			//TODO set rule sortType
-			
-			if(facetSortType != null){
-				//TODO
-			}
-				
-			if(facetItems != null){
-				//TODO
-			}
 				
 			return daoService.updateFacetSort(rule);
 		} catch (DaoException e) {
@@ -118,12 +114,6 @@ public class FacetSortService {
 		return result;
 	}
 
-	@RemoteMethod
-	public boolean checkForRuleNameDuplicate(String ruleId, String ruleType, String ruleName) throws DaoException {
-		//TODO
-		return false;
-	}
-	
 	@RemoteMethod
 	public RecordSet<FacetSort> getAllRule(String name, int page, int itemsPerPage){
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
@@ -136,6 +126,27 @@ public class FacetSortService {
 			logger.error("Failed during getAllRule()",e);
 		}
 		return null;
+	}
+
+	public FacetSort getRule(FacetSort facetSort)  {
+		try {
+			return daoService.getFacetSort(facetSort);
+		} catch (DaoException e) {
+			logger.error("Failed during getRule()",e);
+		}
+		return null;
+	}
+
+	@RemoteMethod
+	public FacetSort getRuleById(String ruleId) {
+		String store = UtilityService.getStoreName();
+		return getRule(new FacetSort(ruleId, store));
+	}
+	
+	@RemoteMethod
+	public FacetSort getRuleByNameAndType(String ruleName, String ruleType) {
+		String store = UtilityService.getStoreName();
+		return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(store)));
 	}
 
 	public int addAllFacetGroup(String ruleId) {
@@ -244,10 +255,4 @@ public class FacetSortService {
 
 		return result;
 	}
-
-	@RemoteMethod
-	public FacetSort getRule(String ruleId) {
-		// TODO Auto-generated method stub
-		return null;
-	}	
 }

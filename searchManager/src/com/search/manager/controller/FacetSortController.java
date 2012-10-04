@@ -71,7 +71,7 @@ public class FacetSortController {
 			filename = "ranking rule";
 		}
 
-		FacetSort facetSortRule = facetSortService.getRule(ruleId);
+		FacetSort facetSortRule = facetSortService.getRuleById(ruleId);
 		
 		List<FacetSortReportBean> list = new ArrayList<FacetSortReportBean>();
 		list.add(new FacetSortReportBean(facetSortRule));

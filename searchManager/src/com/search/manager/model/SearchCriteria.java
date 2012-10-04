@@ -54,6 +54,10 @@ public class SearchCriteria<T> implements Serializable {
 		this.itemsPerPage = itemsPerPage;
 	}
 	
+	public SearchCriteria(T model, Integer pageNumber, Integer itemsPerPage) {
+		this(model, null, null, pageNumber, itemsPerPage);
+	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}

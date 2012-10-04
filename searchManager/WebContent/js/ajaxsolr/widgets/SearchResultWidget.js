@@ -244,424 +244,64 @@
 			};
 		},
 
-		elevateHandler: function (keyword,doc) {
-			if (!allowModify) return;
+		elevateHandler: function (keyword, doc) {
 			var self = this;
-			var selector  = "#resultItem_" + doc.EDP + " div#elevateHolder";
-			var title = "Elevate Product";
-			var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Elevate Info</h2>"); 
-			var needRefresh = false;
-			var elevated = doc["ElevateType"] === "PART_NUMBER" || doc["Expired"] != undefined;
-			var maxPosition = 0;
-			var currentExpiryDate = "";
-			var currentPosition = 0;
-			var expiredDateSelected = false;
-			var idSuffix = "_" + doc.EDP;
-			var noExpiryDateText = "Indefinite";
-			var expDateMinDate = 0;
-			var expDateMaxDate = "+1Y";
-
-			return function () {
-
-				setProductImage = function(contentHolder, item){
-					setTimeout(function(){		
-						// Product is no longer visible in the setting
-						var id = "_" + item["memberId"];
-
-						if ($.isBlank(item["dpNo"])){
-							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));
-							var $selector = contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo");
-							$selector.find("li#partNo" + id + ", li#mfrNo" + id + ", li#expiryDate" + id).html("Unavailable");
-						}
-						else{
-							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", item["imagePath"]).off().on({
-								error:function(){ 
-									$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
-								}
-							});
-						}
-					},10);
-				};
-
-				populateSelectedProduct = function(contentHolder){
-					ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
-						callback : function(item){
-							if(item!=null){
-								doc["ElevateId"] = item["memberId"];
-								setTimeout(function(){	
-									contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
-									contentHolder.find("input#aElevatePosition_" + doc["EDP"]).val(item["location"]);
-								},1);
-							}else{
-								elevated = false;
+			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["EDP"]);
+			
+			return function(){
+				$(selector).ruleitem({
+					moduleName: "Elevate",
+					doc: doc,
+					locked: !allowModify,
+					keyword: keyword,
+					enableSortable: true,
+					
+					itemDataCallback: function(base){
+						ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
+							callback: function(data){
+								base.populateList(data);
+							},
+							preHook: function() { 
+								base.prepareList(); 
 							}
-						},
-						errorHandler: handleAddElevateError 
-					});
-				};
-
-				prepareElevateResult = function (contentHolder){
-					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
-					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
-				};
-
-				updateElevateResult = function(contentHolder, doc, keyword){
-					ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
-						callback: function(data){
-							var list = data.list;
-
-							var setImage = function(contentHolder, id, imagePath){
-								setTimeout(function(){	
-									contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", imagePath).off().on({
-										error:function(){ 
-											$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
-										}
-									});
-								},10);
-							};
-
-							var getFacetItemType = function(item){
-								var $condition = item.condition;
-								var type = "";
-
-								if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-									type="facet";
-								}else if($condition["CNetFilter"]){
-									type="cnet";
-								}else if($condition["IMSFilter"]){
-									type="ims";
-								}
-								return type;
-							};
-
-							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
-
-							for (var i=0; i<data.totalSize; i++){
-								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
-								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
-
-								var id = "_" + list[i]["memberId"];
-
-								dwr.util.cloneNode("listItemsPattern", {idSuffix: id});
-								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
-
-								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
-
-								// Force Add Color Coding
-//								if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-
-//								}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddBorderErrorClass");
-//								}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddClass");
-//								}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//								contentHolder.find("#listItemsPattern" + id).addClass("forceAddErrorClass");
-//								}
-
-								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
-
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#elevatePosition" + id).html(list[i].location);
-
-								var expiryDate = list[i].formattedExpiryDate;
-								if (list[i].isExpired){
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html('<img id="stampExpired' + id + '" src="../images/expired_stamp50x16.png">');
-								}else{
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html("Validity:");
-								}
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
-
-
-								if(FACET){
-									var readableStr = list[i].condition['readableString'];
-
-									if(readableStr.length > 100){
-										readableStr = readableStr.substring(0,100);
-										readableStr += "...";
-									}
-
-									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).html(readableStr);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.partNoLabel").remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.mfrNoLabel").remove();
-
-									var imagePath = list[i]["imagePath"];
-
-									if($.isBlank(imagePath)){
-										imagePath = GLOBAL_contextPath + '/images/';
-										switch(getFacetItemType(list[i])){
-										case "ims" : imagePath += "ims_img.jpg"; break;
-										case "cnet" : imagePath += "productSiteTaxonomy_img.jpg"; break;
-										case "facet" : imagePath += "facet_img.jpg"; break;
-										}
-									}
-
-									setImage(contentHolder, id, imagePath);
-								}
-								else if(PART_NUMBER){
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
-									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).remove();
-
-									setProductImage(contentHolder, list[i]);
-								}
-
-								// delete icon is clicked
-								contentHolder.find("#listItemsPattern" + id + " > div > div > a.deleteIcon").click({item: list[i]},function(e){
-									if (confirm("Continue?")){
-										ElevateServiceJS.deleteItemInRule(keyword, e.data.item["memberId"], {
-											callback : function(data){
-												if (e.data.item["memberTypeEntity"]==="PART_NUMBER"){
-													contentHolder.find("a#removeBtn").attr("style","display:none");
-													contentHolder.find("#aElevatePosition_" + e.data.item["EDP"]).val("");
-													contentHolder.find("#aExpiryDate_" + e.data.item["EDP"]).val("");
-												}
-
-												maxPosition--;
-												needRefresh = true;
-											},
-											preHook: function() { prepareElevateResult(contentHolder); },
-											postHook: function() { 
-												updateElevateResult(contentHolder, doc, keyword);
-												populateSelectedProduct(contentHolder);
-											}
-										});
-									}
-								});
-							}
-
-							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
-							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
-						},
-						preHook: function() {
-							prepareElevateResult(contentHolder);
-						},
-						postHook: function() {
-
-							var $li = contentHolder.find("ul.listItemInfo >li:contains(" + doc["DPNo"] + ")");
-
-							if ($li.length){
-								var id = $li.attr("id").substring($li.attr("id").indexOf("_") + 1);
-
-								var updatedPosition = parseInt($.trim(contentHolder.find("li#elevatePosition_" + id).html()));
-								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + id).html());
-								var stampVisible = contentHolder.find("img#stampExpired_" + id).is(":visible");
-
-								if(updatedPosition != "" && updatedPosition > 0){
-									contentHolder.find("#aElevatePosition_" + doc.EDP).val(updatedPosition);
-									contentHolder.find("a#removeBtn").attr("style","display:float");
-								}
-
-								contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate !== "Indefinite" && $.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
-
-								if (stampVisible){
-									contentHolder.find("#aStampExpired_" + doc.EDP).show();
-								}else{
-									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
-								}
-							}
-
-							//Disable
-							DeploymentServiceJS.getRuleStatus("Elevate", keyword, {
-								callback:function(ruleStatus){
-									if(ruleStatus!=null && $.inArray(ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0){
-										contentHolder.find("#removeBtn,#saveBtn, .deleteIcon").hide();
-										contentHolder.find("#listItems_" + doc.EDP).sortable("option", "disabled", true);
-										contentHolder.find("#aExpiryDate_"+ doc.EDP).datepicker("option", "disabled", true);
-									}
-								}
-							});
-
-						}
-					});
-				};
-
-				$(selector).qtip({
-					content: {
-						text: $('<div/>'),
-						title: { text: title, button: true }
+						});
 					},
-					position: {
-						my: 'left center',
-						at: 'top center'
-					},
-					style: {
-						width: "auto"
-					},
-					show: {
-						modal:  true
-					},
-					events: {
-						show: function(event, api) {
-							var contentHolder = $('div', api.elements.content);
-
-							contentHolder.html(content);
-
-							// Set maximum elevate position
-							ElevateServiceJS.getTotalProductInRule(keyword, {
-								callback: function(count){
-									switch(count){
-									case 0:
-									case 1:
-									default:
-										maxPosition = count > 0 ? (count+1): 1;	
-									}	
-								}
-							});
-
-							if(contentHolder.find("div#current").is('not(:visible)')){
-								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
-							}else{
-								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleHide.png");
-
-								needRefresh = updateElevateResult(contentHolder, doc, keyword) || needRefresh;
-
-								// add draggable feature
-								contentHolder.find("#listItems_" + doc.EDP).sortable({ 
-									handle : '.handle',
-									cursor : 'move',
-									start: function(event, ui) {
-										ui.item.data('start_pos', ui.item.index());
-									},     
-									change: function(event, ui) {
-										var index = ui.placeholder.index();
-										if (ui.item.data('start_pos') < index){
-											contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(' + index + ')').addClass('sortableHighlights');
-										}else{
-											contentHolder.find('#listItems_' + doc.EDP + ' > li:eq(' + (index + 1) + ')').addClass('sortableHighlights');
-										}
-									},
-									update: function(event, ui) {
-										var ref = ui.item.attr("id").split('_')[1];
-										contentHolder.find('#listItems_' + doc.EDP + ' > li').removeClass('sortableHighlights');
-										contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
-										contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
-									},
-									stop: function(event, ui) {
-										var sourceIndex = (ui.item.data('start_pos')+1) ;
-										var destinationIndex = (ui.item.index()+1);
-
-										// Update elevate position
-										if(sourceIndex != destinationIndex){
-											var memberId = ui.item.attr("id").split('_')[1];
-
-											ElevateServiceJS.updateElevate(keyword,memberId,destinationIndex,{
-												callback : function(event){
-													needRefresh = true;
-													populateSelectedProduct(contentHolder);
-												},
-												preHook: function() { prepareElevateResult(contentHolder); },
-												postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
-											});
-										}	 
-									}
-								});
+					
+					itemSelectedItemCallback:function(base){
+						ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
+							callback : function(item){
+								base.populateSelectedItem(item);
+							},
+							preHook: function() { 
+								
 							}
-
-							// button display control
-							contentHolder.find("a#removeBtn").attr("style", elevated? "display:float" : "display:none"); 
-							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
-
-							contentHolder.find("#aExpiryDate_" + doc["EDP"]).datepicker({
-								showOn: "both",
-								minDate: expDateMinDate,
-								maxDate: expDateMaxDate,
-								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendar.png",
-								buttonImageOnly: true,
-								onSelect: function(dateText, inst) {
-									var today = new Date();
-									var selDate = Date.parse(dateText);
-									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
-									expiredDateSelected = (selDate < today)? true : false;
-								}
-							});
-
-							if (elevated){
-								populateSelectedProduct(contentHolder);
+						});
+					},
+					
+					itemDeleteCallback:function(base, memberId){
+						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
+							callback : function(data){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
 							}
-
-							contentHolder.find("#saveBtn").click(function(){
-								var position = parseInt($.trim(contentHolder.find("#aElevatePosition_"+doc.EDP).val()));
-								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
-								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
-								var today = new Date();
-								//ignore time of current date 
-								today.setHours(0,0,0,0);
-								if (position>0 && position <= maxPosition){
-
-									if(!isXSSSafe(comment)){
-										jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
-									}
-									else if(today.getTime() > new Date(expiryDate).getTime()){
-										jAlert("Expiry date cannot be earlier than today", "Search Simulator");
-									}else if (elevated){
-										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
-										//TODO: add more restriction
-										if (position != currentPosition || comment.length > 0 || expiryDate !== currentExpiryDate) 
-											ElevateServiceJS.updateElevateItem(keyword, doc["ElevateId"], position, comment, expiryDate, {
-												callback : function(data){
-													if(data>0){
-														needRefresh = true;
-													}
-												},
-												preHook: function() { prepareElevateResult(contentHolder); },
-												postHook: function() { updateElevateResult(contentHolder, doc, keyword); }
-											});
-									}else{
-										//add elevation
-										ElevateServiceJS.addProductItem(keyword, doc.EDP, position, expiryDate, comment, {
-											callback : function(event){
-												maxPosition++;
-												needRefresh = true;
-												elevated = true;
-												content.find("a#removeBtn").attr("style","display:float"); 
-											},
-											preHook: function() { prepareElevateResult(contentHolder); },
-											postHook: function() {
-												updateElevateResult(contentHolder, doc, keyword); 
-												populateSelectedProduct(contentHolder);
-											},
-											errorHandler: function(message){ jAlert(message,"Search Simulator"); }
-										});
-
-									}
-
-									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
-
-								}else{
-									jAlert("Please specify elevate position. Max allowed elevation is " + maxPosition, "Search Simulator");
-									contentHolder.find("#aElevatePosition_" + doc.EDP ).focus();
-								}
-
-							});
-
-							contentHolder.find("#removeBtn").click(function(){								
-								ElevateServiceJS.deleteItemInRule(keyword, doc["ElevateId"],{
-									callback : function(event){
-										contentHolder.find("a#removeBtn").attr("style","display:none");
-										contentHolder.find("#aElevatePosition_"+doc["EDP"]).val("");
-										contentHolder.find("#aExpiryDate_"+doc["EDP"]).val("");
-										needRefresh = true;
-										elevated = false;
-										maxPosition--;
-									},
-									preHook: function() { prepareElevateResult(contentHolder); },
-									postHook: function() { 
-										updateElevateResult(contentHolder, doc, keyword); 
-										populateSelectedProduct(contentHolder);
-									}
-								});
-							});
-
-						},
-						hide: function(event, api) {
-							$("#aExpiryDate_"+doc.EDP).datepicker('destroy');
-							api.destroy();
-							if (needRefresh) self.manager.doRequest();
-						}
+						});
+					},
+					
+					itemMovePositionCallback: function(base, memberId, destinationIndex){
+						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
+							callback : function(event){
+								base.populateSelectedItem();
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
 					}
-				}).click(function(event) { event.preventDefault(); });	  
+
+				});
 			};
 		},
 
