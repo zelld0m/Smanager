@@ -150,17 +150,14 @@ public class FacetSortDAO {
 		protected void declareSqlReturnResultSetParameters() {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetGroup>() {
 				public FacetGroup mapRow(ResultSet rs, int rowNum) throws SQLException
-				{
-					List<FacetGroupItem> facetGroupItems = new ArrayList<FacetGroupItem>();
-					
+				{	
 					FacetGroup facetGroup = new FacetGroup(
 							rs.getString(DAOConstants.COLUMN_RULE_ID),
 							rs.getString(DAOConstants.COLUMN_FACET_GROUP_ID),
 							rs.getString(DAOConstants.COLUMN_FACET_GROUP_NAME),
 							FacetGroupType.get(rs.getInt(DAOConstants.COLUMN_FACET_GROUP_TYPE)),
 							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
-							rs.getInt(DAOConstants.COLUMN_FACET_GROUP_SEQUENCE),
-							facetGroupItems
+							rs.getInt(DAOConstants.COLUMN_FACET_GROUP_SEQUENCE)
 					);
 					
 					facetGroup.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
@@ -388,7 +385,7 @@ public class FacetSortDAO {
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
 	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
-	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? null : matchType.getIntValue());
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? matchType : matchType.getIntValue());
 	        inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType: sortType.toString());
 	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 1);
 	        

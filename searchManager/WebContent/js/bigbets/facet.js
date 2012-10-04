@@ -11,6 +11,9 @@
 			facetFields : ["Category", "Manufacturer"],
 			facetValueList: null,
 			
+			keywordIconPath: "../images/icon_keyword.png",
+			templateIconPath:"../images/icon_template.png",
+			
 			prepareFacetSort : function(){
 				clearAllQtip();
 				$("#preloader").show();
@@ -48,14 +51,23 @@
 						$("#preloader").hide();
 						$("#titleText").html(self.moduleName + " for ");
 						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						$("#readableString").html(self.selectedRule["readableString"]);
 						
-						//TODO
-						$("#ruleTypeIcon").attr("src", "../images/icon_keyword.png");
+						switch(self.selectedRule["ruleType"].toLowerCase()){
+						case "keyword":	$("#ruleTypeIcon").attr("src", self.keywordIconPath); break;
+						case "template": $("#ruleTypeIcon").attr("src", self.templateIconPath); break;
+						}
+						
+						var $facetSortOrder = $('#facetSortOrder');
+						self.populateSortOrderList($facetSortOrder, self.selectedRule["sortType"]);
 						
 						self.selectedRuleStatus = ruleStatus;
 						$("#facetsorting").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
+						//create tabs for facet groups
+						self.createFacetGroupTabs();
+						
 						self.addTabListener();
 						self.addSaveRuleListener();
 						self.addDeleteRuleListener();
@@ -84,6 +96,44 @@
 				});
 				
 				$("#facetsorting").show();
+			},
+			
+			createFacetGroupTabs : function(){
+				var self = this;
+				var $ul = $("ul#facetGroupTab"); 
+				var $div = $("div#facetGroupTabContent");
+				
+				FacetSortServiceJS.getAllFacetGroup(self.selectedRule["ruleId"], {
+					callback: function(data){
+						var facetGroups = data.list;
+						for(var index in facetGroups){
+							var facetGroup = facetGroups[index];
+							var $li = $ul.find("li#facetGroupTabPattern").clone();
+							$li.prop({id : "#"+facetGroup["name"]});
+							
+							$li.find("span#facetGroupNamePattern").html(facetGroup["name"]);
+							$ul.append($li);
+							
+							var $facetDiv = $ul.find("div#facetTabPattern").clone();
+							var $facetSort = $facetDiv.find("select#facetSortGroupOrderPattern");
+							
+							$facetDiv.prop({id : facetGroup["name"]});
+							$facetSort.prop({id : "facetGroupSortOrder_" + facetGroup["name"]});
+							
+							self.populateSortOrderList($facetSort, facetGroup["sortType"]);
+							
+							$div.append($facetDiv);
+						}
+					},
+					preHook: function(){
+						$ul.find("li:not('#facetGroupTabPattern')").remove();
+						$div.find("div:not('#facetTabPattern')").remove();
+					},
+					postHook: function(){
+						$ul.find("li:not('#facetGroupTabPattern')").show();
+						$div.find("div:not('#facetTabPattern')").show();
+					}
+				});
 			},
 			
 			setFacetSort : function(rule){
@@ -249,13 +299,13 @@
 				content.find("select.selectCombo").combobox({});
 			},
 			
-			populateSortOrderList : function(contentHolder){
+			populateSortOrderList : function(contentHolder, selectedOrder){
 				FacetSortServiceJS.getSortOrderList({
 					callback: function(data){
 						var list = data;
 
 						$.each(list, function(sortName, sortDisplayText) { 
-							contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
+							contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
 						});
 					},
 					preHook: function(){
@@ -297,9 +347,7 @@
 					itemDataCallback: function(base, ruleName, page){
 						self.rulePage = page;
 						self.ruleFilterText = ruleName;
-						//TODO
 						FacetSortServiceJS.getAllRule(ruleName, page, base.options.pageSize, {
-						//RedirectServiceJS.getAllRule(ruleName, page, base.options.pageSize, {
 							callback: function(data){
 								base.populateList(data);
 								base.addPaging(ruleName, page, data.totalSize);
@@ -403,10 +451,10 @@
 											}
 											else {
 												//TODO
-												FacetSortServiceJS.checkForRuleNameDuplicate('', popType, popName, {
+												FacetSortServiceJS.getRuleByNameAndType(popName, ruleType, {
 													callback: function(data){
-														if (data==true){
-															jAlert("Another facet sorting rule is already using the name provided.",self.moduleName);
+														if (data != null){
+															jAlert("Another facet sorting rule is already using the name and type provided.",self.moduleName);
 														}else{
 															FacetSortServiceJS.addRule(popName, ruleType, sortType, {
 																callback: function(data){
@@ -446,8 +494,19 @@
 
 					itemOptionCallback: function(base, id, name, model){
 						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-
-						var totalText = "&#133;"; 
+						var totalText = "&#133;";
+						var ruleType = model["ruleType"];
+						
+						
+						switch(ruleType.toLowerCase()){
+						case "keyword":
+							base.$el.find(selector + ' div.itemIcon img').attr("src", self.keywordIconPath);
+							break;
+						case "template":
+							base.$el.find(selector + ' div.itemIcon img').attr("src", self.templateIconPath);
+							break;
+						}
+						
 						base.$el.find(selector + ' div.itemLink a').html(totalText);
 						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
 							click: function(e){
@@ -455,7 +514,6 @@
 							}
 						});
 
-						//TODO
 						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
 							callback:function(data){
 								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
