@@ -240,6 +240,8 @@ public class DAOConstants {
 	public static final String PARAM_FACET_GROUP_NAME				= "facet_group_name";
 	public static final String PARAM_FACET_GROUP_TYPE				= "facet_group_type";
 	public static final String PARAM_FACET_GROUP_SEQUENCE			= "facet_group_sequence";
+	public static final String PARAM_FACET_GROUP_ITEM_NAME			= "group_item_name";
+	public static final String PARAM_FACET_GROUP_ITEM_SEQUENCE		= "group_item_sequence";
 	public static final String PARAM_RULE_TYPE			 			= "rule_type";
 	public static final String PARAM_SORT_TYPE			 			= "sort_type";
 	public static final String PARAM_MATCH_TYPE			 			= "match_type";

@@ -143,6 +143,7 @@ public interface DaoService {
 	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException;
 	public int deleteFacetSort(FacetSort facetSort) throws DaoException;
 	public int updateFacetSort(FacetSort facetSort) throws DaoException;
+	public FacetSort getFacetSort(FacetSort facetSort) throws DaoException;
 	public RecordSet<FacetSort> searchFacetSort(SearchCriteria<FacetSort> criteria, MatchType matchType) throws DaoException;
 	public int addFacetGroup(FacetGroup facetGroup) throws DaoException;
 	public int deleteFacetGroup(FacetGroup facetGroup) throws DaoException;

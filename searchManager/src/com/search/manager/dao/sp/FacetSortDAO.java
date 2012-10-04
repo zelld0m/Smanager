@@ -4,12 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -124,6 +122,7 @@ public class FacetSortDAO {
 				{
 					List<FacetGroup> facetGroups = new ArrayList<FacetGroup>();
 					String ruleId = rs.getString(DAOConstants.COLUMN_RULE_ID);
+					
 					String[] arrGroupId = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_ID_LIST), ""), '|');
 					String[] arrGroupName = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), ""), '|');
 
@@ -183,14 +182,15 @@ public class FacetSortDAO {
 
 	private class UpdateFacetSortStoredProcedure extends CUDStoredProcedure {
 		public UpdateFacetSortStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, DAOConstants.SP_ADD_FACET_SORT);
+			super(jdbcTemplate, DAOConstants.SP_UPDATE_FACET_SORT);
 		}
 
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_SORT_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -224,23 +224,30 @@ public class FacetSortDAO {
 
 	private class UpdateFacetGroupStoredProcedure extends CUDStoredProcedure {
 		public UpdateFacetGroupStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, DAOConstants.SP_DELETE_FACET_GROUP);
+			super(jdbcTemplate, DAOConstants.SP_UPDATE_FACET_GROUP);
 		}
 
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_SORT_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
 	private class AddFacetGroupItemStoredProcedure extends CUDStoredProcedure {
 		public AddFacetGroupItemStoredProcedure(JdbcTemplate jdbcTemplate) {
-			super(jdbcTemplate, DAOConstants.SP_DELETE_FACET_GROUP);
+			super(jdbcTemplate, DAOConstants.SP_ADD_FACET_GROUP_ITEM);
 		}
 
 		@Override
 		protected void declareParameters() {
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ITEM_SEQUENCE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -251,7 +258,7 @@ public class FacetSortDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 		}
 	}
 
@@ -262,7 +269,10 @@ public class FacetSortDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ITEM_SEQUENCE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 
@@ -273,10 +283,10 @@ public class FacetSortDAO {
 
 		@Override
 		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_RELEVANCY_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
 		}
 	}
-
+	
 	@Audit(entity = Entity.facetSort, operation = Operation.add)
 	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException {
 		String id = DAOUtils.generateUniqueId();
@@ -304,6 +314,7 @@ public class FacetSortDAO {
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetSortSP.execute(inputs));
+		
 		}
 		catch (Exception e) {
 			throw new DaoException("Failed during addFacetSort(): " + e.getMessage(), e);
@@ -321,7 +332,12 @@ public class FacetSortDAO {
 			throw new DaoException("Failed during deleteFacetSort(): " + e.getMessage(), e);
 		}
 	}
-
+	
+	public FacetSort searchFacetSort(FacetSort facetSort) throws DaoException {
+    	RecordSet<FacetSort> rules = searchFacetSort(new SearchCriteria<FacetSort>(facetSort, 1, 1), StringUtils.isBlank(facetSort.getRuleId())? MatchType.MATCH_NAME : MatchType.MATCH_ID);
+    	return (rules.getTotalSize() > 0 ? rules.getList().get(0): null);
+    }
+	
 	public RecordSet<FacetSort> searchFacetSort(SearchCriteria<FacetSort> criteria, MatchType matchType) throws DaoException {
 		try {
 			DAOValidation.checkSearchCriteria(criteria);
@@ -357,7 +373,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetSortPK(facetSort);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetSort.getRuleId());
+			inputs.put(DAOConstants.PARAM_RULE_ID, facetSort.getRuleId());
 			return DAOUtils.getUpdateCount(updateFacetSortSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetSort(): " + e.getMessage(), e);
@@ -393,10 +409,10 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroup.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroup.getId());
 			return DAOUtils.getUpdateCount(deleteFacetGroupSP.execute(inputs));
 		} catch (Exception e) {
-			throw new DaoException("Failed during addFacetGroup(): " + e.getMessage(), e);
+			throw new DaoException("Failed during deleteFacetGroup(): " + e.getMessage(), e);
 		}
 	}
 
@@ -404,7 +420,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroup.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroup.getId());
 			return DAOUtils.getUpdateCount(updateFacetGroupSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroup(): " + e.getMessage(), e);
@@ -421,8 +437,11 @@ public class FacetSortDAO {
 				facetGroupItemId = DAOUtils.generateUniqueId();
 			}
 
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroupItemId);
-			inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(facetGroupItem.getName()));
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, facetGroupItemId);
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroupItem.getFacetGroupId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, StringUtils.trimToEmpty(facetGroupItem.getName()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_SEQUENCE, facetGroupItem.getSequence());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetGroupItem.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetGroupItemSP.execute(inputs));
 		}
@@ -435,7 +454,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupItemPK(facetGroupItem);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroupItem.getId());
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, facetGroupItem.getId());
 			return DAOUtils.getUpdateCount(deleteFacetGroupItemSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during deleteFacetGroupItem(): " + e.getMessage(), e);
@@ -446,7 +465,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupItemPK(facetGroupItem);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroupItem.getId());
+			inputs.put(DAOConstants.PARAM_MEMBER_ID, facetGroupItem.getId());
 			return DAOUtils.getUpdateCount(updateFacetGroupItemSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroupItem(): " + e.getMessage(), e);
@@ -457,7 +476,7 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RELEVANCY_ID, facetGroup.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroup.getId());
 			return DAOUtils.getUpdateCount(clearFacetGroupItemSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during clearFacetGroupItem(): " + e.getMessage(), e);
