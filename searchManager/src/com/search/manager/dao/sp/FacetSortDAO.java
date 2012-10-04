@@ -345,15 +345,17 @@ public class FacetSortDAO {
 			DAOValidation.checkSearchCriteria(criteria);
 			FacetSort model = criteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-	    	
+	    	RuleType ruleType = model.getRuleType();
+	    	SortType sortType = model.getSortType();
+			
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
-	        inputs.put(DAOConstants.PARAM_RULE_TYPE, RuleType.getDefaultIfBlank(model.getRuleType()));
+	        inputs.put(DAOConstants.PARAM_RULE_TYPE, (ruleType==null)? ruleType: ruleType.toString());
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
 	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
 	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? null : matchType.getIntValue());
-	        inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(model.getSortType()));
+	        inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType: sortType.toString());
 	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 0);
 	        
 	        return DAOUtils.getRecordSet(getFacetSortSP.execute(inputs));
@@ -387,6 +389,7 @@ public class FacetSortDAO {
 			DAOValidation.checkFacetGroup(facetGroup);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			String facetGroupId = facetGroup.getId();
+			SortType sortType = facetGroup.getSortType();
 
 			if (StringUtils.isBlank(facetGroupId)) {
 				facetGroupId = DAOUtils.generateUniqueId();
@@ -396,7 +399,7 @@ public class FacetSortDAO {
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroupId);
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_NAME, StringUtils.trimToEmpty(facetGroup.getName()));
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_TYPE, facetGroup.getFacetGroupType().toString());
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(facetGroup.getSortType()).toString());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, sortType==null ? sortType: sortType.toString());
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, facetGroup.getSequence());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(facetGroup.getCreatedBy()));
 

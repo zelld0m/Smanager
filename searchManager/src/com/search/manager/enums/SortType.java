@@ -51,16 +51,6 @@ public enum SortType {
 	public static SortType get(Integer intValue) { 
         return SortType.values()[intValue-1];
     }
-		
-	public static SortType getDefaultIfBlank(SortType sortType) {
-		if(sortType==null)
-			return SortType.ASC_ALPHABETICALLY;
-		return sortType;
-	}
-	
-	public static SortType getDefaultIfBlank(String sortType) {
-		return getDefaultIfBlank(get(sortType));
-	}
 	
 	@Override
 	public String toString() {

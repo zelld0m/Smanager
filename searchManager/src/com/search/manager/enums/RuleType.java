@@ -43,16 +43,6 @@ public enum RuleType {
         return RuleType.values()[intValue-1];
     }
 
-	public static RuleType getDefaultIfBlank(RuleType ruleType) {
-		if(ruleType==null)
-			return RuleType.KEYWORD;
-		return ruleType;
-	}
-
-	public static RuleType getDefaultIfBlank(String ruleType) {
-		return getDefaultIfBlank(get(ruleType));
-	}
-
 	@Override
 	public String toString() {
 		return String.valueOf(ordinal()+1);
