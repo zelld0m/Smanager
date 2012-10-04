@@ -301,6 +301,8 @@ public class FacetSortDAO {
 			DAOValidation.checkStoreId(facetSort.getStore());
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			String ruleId = facetSort.getRuleId();
+			RuleType ruleType = facetSort.getRuleType();
+			SortType sortType = facetSort.getSortType();
 
 			if (StringUtils.isEmpty(ruleId)) {
 				ruleId = DAOUtils.generateUniqueId();
@@ -308,9 +310,9 @@ public class FacetSortDAO {
 
 			inputs.put(DAOConstants.PARAM_RULE_ID, ruleId);
 			inputs.put(DAOConstants.PARAM_RULE_NAME, StringUtils.trimToEmpty(facetSort.getRuleName()));
-			inputs.put(DAOConstants.PARAM_RULE_TYPE, RuleType.getDefaultIfBlank(facetSort.getRuleType()).toString());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE,  (ruleType==null)? sortType : ruleType.toString());
 			inputs.put(DAOConstants.PARAM_STORE_ID, facetSort.getStore().getStoreId());
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.getDefaultIfBlank(facetSort.getSortType()).toString());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType : sortType.toString());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getCreatedBy());
 
 			return DAOUtils.getUpdateCount(addFacetSortSP.execute(inputs));
