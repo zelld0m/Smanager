@@ -97,7 +97,7 @@ public class FacetSortService {
 	}
 
 	@RemoteMethod
-	public int updateRule(String ruleId, Map<String, String> facetGroupItems, Map<String, String>  sortOrders) {
+	public int updateRule(String ruleId, String sortType, Map<String, String[]> facetGroupItems, Map<String, String>  sortOrders) {
 		int result = -1;
 
 		try {
@@ -105,6 +105,7 @@ public class FacetSortService {
 			String username = UtilityService.getUsername();
 			FacetSort rule = new FacetSort(ruleId, store);
 			rule.setLastModifiedBy(username);
+				
 			return daoService.updateFacetSort(rule);
 		} catch (DaoException e) {
 			logger.error("Failed during updateRule()",e);
@@ -253,5 +254,5 @@ public class FacetSortService {
 		}
 
 		return result;
-	}	
+	}
 }

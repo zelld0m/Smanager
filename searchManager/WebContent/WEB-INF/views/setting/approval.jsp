@@ -35,6 +35,7 @@
 		        <li><a href="#demoteTab"><span>Demote</span></a></li>
 		        <li><a href="#queryCleaningTab"><span>Query Cleaning</span></a></li>
 		        <li><a href="#rankingRuleTab"><span>Ranking Rule</span></a></li>
+		        <li><a href="#facetRuleTab"><span>Facet Sort</span></a></li>
 		    </ul>
 		   
 			<div class="minHeight400" id="elevateTab"></div>
@@ -42,6 +43,7 @@
 			<div class="minHeight400" id="demoteTab"></div>
 			<div class="minHeight400" id="queryCleaningTab"></div>
 			<div class="minHeight400" id="rankingRuleTab"></div>
+			<div class="minHeight400" id="facetRuleTab"></div>
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">

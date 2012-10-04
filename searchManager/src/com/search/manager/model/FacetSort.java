@@ -137,4 +137,8 @@ public class FacetSort extends ModelBean{
 	public String getFormattedLastModifiedDate() {
 		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreName(), getLastModifiedDate());
 	}
+	
+	public String getReadableString(){
+		return "";
+	}
 }
