@@ -55,3 +55,6 @@
 #popup_prompt {
 	margin: .5em 0em;
 }
+
+/* additional */
+.popup_message_wrapper  { height:55px; width:375px; overflow-y:auto; margin:5px auto }
