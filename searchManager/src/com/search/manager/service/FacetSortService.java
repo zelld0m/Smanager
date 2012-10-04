@@ -187,6 +187,18 @@ public class FacetSortService {
 		return result;
 	}
 
+	@RemoteMethod
+	public RecordSet<FacetGroupItem> getAllFacetGroupItem(String ruleId, String facetGroupId){
+		try {
+			FacetGroupItem facetGroupItem = new FacetGroupItem(ruleId, facetGroupId);
+			SearchCriteria<FacetGroupItem> criteria = new SearchCriteria<FacetGroupItem>(facetGroupItem);
+			return daoService.searchFacetGroupItem(criteria, MatchType.MATCH_ID);
+		} catch (DaoException e) {
+			logger.error("Failed during getAllFacetGroup()",e);
+		}
+		return null;
+	}
+	
 	public int addFacetGroupItem(FacetGroupItem facetGroupItem) {
 		int result = -1;
 		try {

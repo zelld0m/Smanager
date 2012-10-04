@@ -335,6 +335,8 @@ public class DAOConstants {
 	public static final String COLUMN_RULE_NAME 					= "rule_name";
 	public static final String COLUMN_SORT_TYPE 					= "sort_type";
 	public static final String COLUMN_RULE_TYPE 					= "rule_type";
+	public static final String COLUMN_FACET_GROUP_ITEM_NAME 		= "facet_group_item_name";
+	public static final String COLUMN_FACET_GROUP_ITEM_SEQUENCE		= "facet_group_item_seq";
 
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";

@@ -3,9 +3,7 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -181,7 +179,19 @@ public class FacetSortDAO {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetGroupItem>() {
 				public FacetGroupItem mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					return new FacetGroupItem();
+					FacetGroupItem facetGroupItem = new FacetGroupItem(
+							rs.getString(DAOConstants.COLUMN_FACET_GROUP_ID),
+							rs.getString(DAOConstants.COLUMN_MEMBER_ID),
+							rs.getString(DAOConstants.COLUMN_FACET_GROUP_ITEM_NAME),
+							rs.getInt(DAOConstants.COLUMN_FACET_GROUP_ITEM_SEQUENCE)
+					);
+					
+					facetGroupItem.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+					facetGroupItem.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+					facetGroupItem.setCreatedDate(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP));
+					facetGroupItem.setLastModifiedDate(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+					
+					return facetGroupItem;
 				}
 			}));
 		}
@@ -396,7 +406,25 @@ public class FacetSortDAO {
 	}
 
 	public RecordSet<FacetGroupItem> searchFacetGroupItem(SearchCriteria<FacetGroupItem> criteria, MatchType matchType) throws DaoException {
-		return null;
+		try {
+			DAOValidation.checkSearchCriteria(criteria);
+			FacetGroupItem model = criteria.getModel();
+			Map<String, Object> inputs = new HashMap<String, Object>();
+	    	
+	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
+	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
+	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
+	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? matchType : matchType.getIntValue());
+	        inputs.put(DAOConstants.PARAM_SORT_TYPE, "");
+	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 2);
+	        
+	        return DAOUtils.getRecordSet(getFacetGroupItemSP.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during searchFacetGroupItem(): " + e.getMessage(), e);
+    	}
 	}
 
 	@Audit(entity = Entity.facetSort, operation = Operation.update)
