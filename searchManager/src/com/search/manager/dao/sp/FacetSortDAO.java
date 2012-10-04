@@ -388,7 +388,7 @@ public class FacetSortDAO {
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
 	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
-	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType);
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? null : matchType.getIntValue());
 	        inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType: sortType.toString());
 	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 1);
 	        
