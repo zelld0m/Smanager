@@ -19,7 +19,6 @@ public class FacetGroup extends ModelBean {
 	private FacetGroupType facetGroupType;
 	private SortType sortType;
 	private Integer sequence;
-	private List<FacetGroupItem> facetGroupItems;
 	
 	public FacetGroup() {}
 	
@@ -33,7 +32,6 @@ public class FacetGroup extends ModelBean {
 		this.facetGroupType = facetGroupType;
 		this.sortType = sortType;
 		this.sequence = sequence;
-		this.facetGroupItems = facetGroupItems;
 	}
 	
 	public FacetGroup(String ruleId, String id, String name,
@@ -88,14 +86,6 @@ public class FacetGroup extends ModelBean {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public List<FacetGroupItem> getFacetGroupItems() {
-		return facetGroupItems;
-	}
-
-	public void setFacetGroupItems(List<FacetGroupItem> facetGroupItems) {
-		this.facetGroupItems = facetGroupItems;
 	}
 
 	public FacetGroupType getFacetGroupType() {

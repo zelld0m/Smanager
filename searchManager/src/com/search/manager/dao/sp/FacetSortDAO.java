@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
@@ -120,21 +121,13 @@ public class FacetSortDAO {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetSort>() {
 				public FacetSort mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					List<FacetGroup> facetGroups = new ArrayList<FacetGroup>();
-					String ruleId = rs.getString(DAOConstants.COLUMN_RULE_ID);
-					
-					String[] arrGroupId = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_ID_LIST), ""), '|');
-					String[] arrGroupName = StringUtils.split(StringUtils.defaultIfBlank(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), ""), '|');
-
-					//TODO: build connection to Facet Group & Item
 					
 					FacetSort facetSort = new FacetSort(
-							ruleId,
+							rs.getString(DAOConstants.COLUMN_RULE_ID),
 							rs.getString(DAOConstants.COLUMN_RULE_NAME),
 							RuleType.get(rs.getInt(DAOConstants.COLUMN_RULE_TYPE)),
 							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
-							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							facetGroups
+							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID))
 					);
 					
 					facetSort.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
@@ -158,7 +151,24 @@ public class FacetSortDAO {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetGroup>() {
 				public FacetGroup mapRow(ResultSet rs, int rowNum) throws SQLException
 				{
-					return new FacetGroup();
+					List<FacetGroupItem> facetGroupItems = new ArrayList<FacetGroupItem>();
+					
+					FacetGroup facetGroup = new FacetGroup(
+							rs.getString(DAOConstants.COLUMN_RULE_ID),
+							rs.getString(DAOConstants.COLUMN_FACET_GROUP_ID),
+							rs.getString(DAOConstants.COLUMN_FACET_GROUP_NAME),
+							FacetGroupType.get(rs.getInt(DAOConstants.COLUMN_FACET_GROUP_TYPE)),
+							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
+							rs.getInt(DAOConstants.COLUMN_FACET_GROUP_SEQUENCE),
+							facetGroupItems
+					);
+					
+					facetGroup.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
+					facetGroup.setLastModifiedBy(rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY));
+					facetGroup.setCreatedDate(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP));
+					facetGroup.setLastModifiedDate(rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP));
+					
+					return facetGroup;
 				}
 			}));
 		}
@@ -365,7 +375,27 @@ public class FacetSortDAO {
 	}
 
 	public RecordSet<FacetGroup> searchFacetGroup(SearchCriteria<FacetGroup> criteria, MatchType matchType) throws DaoException {
-		return null;
+		try {
+			DAOValidation.checkSearchCriteria(criteria);
+			FacetGroup model = criteria.getModel();
+			Map<String, Object> inputs = new HashMap<String, Object>();
+	    	
+	    	SortType sortType = model.getSortType();
+			
+	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
+	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
+	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
+	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
+	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, matchType);
+	        inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType: sortType.toString());
+	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 1);
+	        
+	        return DAOUtils.getRecordSet(getFacetGroupSP.execute(inputs));
+		} catch (Exception e) {
+    		throw new DaoException("Failed during searchFacetSort(): " + e.getMessage(), e);
+    	}
 	}
 
 	public RecordSet<FacetGroupItem> searchFacetGroupItem(SearchCriteria<FacetGroupItem> criteria, MatchType matchType) throws DaoException {

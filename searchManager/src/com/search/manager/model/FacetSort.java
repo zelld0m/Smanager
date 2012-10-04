@@ -1,7 +1,5 @@
 package com.search.manager.model;
 
-import java.util.List;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -19,24 +17,17 @@ public class FacetSort extends ModelBean{
 	private RuleType ruleType;
 	private SortType sortType;
 	private Store store;
-	private List<FacetGroup> facetGroups;
 	
 	public FacetSort() {}
 	
 	public FacetSort(String id, String name, RuleType ruleType, 
-			SortType sortType, Store store, List<FacetGroup> facetGroups) {
+			SortType sortType, Store store) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.sortType = sortType;
 		this.ruleType = ruleType;
 		this.store = store;
-		this.facetGroups = facetGroups;
-	}
-	
-	public FacetSort(String id, String name, RuleType ruleType,
-			SortType sortType, Store store) {
-		this(id,name, ruleType, sortType, store, null);
 	}
 	
 	public FacetSort(String name, RuleType ruleType,
@@ -114,14 +105,6 @@ public class FacetSort extends ModelBean{
 
 	public void setRuleType(RuleType ruleType) {
 		this.ruleType = ruleType;
-	}
-
-	public List<FacetGroup> getFacetGroups() {
-		return facetGroups;
-	}
-
-	public void setFacetGroups(List<FacetGroup> facetGroups) {
-		this.facetGroups = facetGroups;
 	}
 
 	public String getStoreName(){

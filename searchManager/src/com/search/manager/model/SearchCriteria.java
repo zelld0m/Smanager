@@ -58,6 +58,10 @@ public class SearchCriteria<T> implements Serializable {
 		this(model, null, null, pageNumber, itemsPerPage);
 	}
 	
+	public SearchCriteria(T model) {
+		this(model, null, null, 0, 0);
+	}
+	
 	public Date getStartDate() {
 		return startDate;
 	}

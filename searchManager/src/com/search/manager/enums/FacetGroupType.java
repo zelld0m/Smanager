@@ -39,6 +39,10 @@ public enum FacetGroupType {
 		return lookup.get(displayText); 
 	}
 
+	public static FacetGroupType get(Integer intValue) { 
+        return FacetGroupType.values()[intValue-1];
+    }
+	
 	@Override
 	public String toString() {
 		return String.valueOf(ordinal()+1);
