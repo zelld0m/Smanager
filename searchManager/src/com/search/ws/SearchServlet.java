@@ -230,7 +230,12 @@ public class SearchServlet extends HttpServlet {
 							origKeyword = "";
 						}
 						
-						paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[\\p{Cntrl}]", "");
+						if (StringUtils.equals("*:*", paramValue)) {
+							paramValue = "";
+						}
+						else {
+							paramValue = StringUtils.trimToEmpty(paramValue).replaceAll("[\\p{Cntrl}]", "");
+						}
 						
 						String convertedKeyword = paramValue;
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
