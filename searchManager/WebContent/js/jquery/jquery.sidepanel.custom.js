@@ -119,6 +119,7 @@
 			content+= '			<td class="padR10 padL10">';
 			content+= '				<div class="itemHolder clearfix">';	
 			content+= '					<div style="width:155px; float:left;">';
+			content+= '						<div class="itemIcon lnk"><a href="javascript:void(0);"></a><img class="itemIcon" src=""/></div>';
 			content+= '						<div class="itemText lnk"><a href="javascript:void(0);"></a></div>';
 			content+= '						<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
 			content+= '					</div>';
