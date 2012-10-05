@@ -15,7 +15,8 @@
 		base.init = function(){
 			base.options = $.extend({},$.ruleitem.defaultOptions, options);
 			base.doc = base.options.doc;
-			base.isMember = base.doc[base.options.memberTypeTag] === "PART_NUMBER" || base.doc[base.options.memberExpiredTag] != undefined;
+			base.isItemMember = false;
+			base.maxItemPosition = 0;
 			base.showItems();
 		};
 
@@ -26,7 +27,7 @@
 		base.updateForceAddStatus = function(data){
 			for(var mapKey in data){
 				var $li = base.contentHolder.find('li#item' + $.formatAsId(mapKey));
-				var $item = base.items[mapKey];
+				var $item = base.memberIdToItem[mapKey];
 				
 				base.contentHolder.find('.firerift-style').show();
 
@@ -54,7 +55,30 @@
 		};
 
 		base.updateSelectedItem = function(){
+			
 			base.contentHolder.find("#selItemPosition").prop({readonly:base.options.locked});
+			
+			base.contentHolder.find("#selItemValidityDate").datepicker({
+				showOn: "both",
+				disabled: base.options.locked,
+				minDate: base.options.validityDateMinDate,
+				maxDate: base.options.validityDateMaxDate,
+				buttonText: "Validity Date",
+				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
+				buttonImageOnly: true
+			});
+
+			//TODO: Expired tag should have date
+			if(base.doc[base.options.memberExpiredTag]!=undefined){
+				base.contentHolder.find("#selItemStampExpired").show();
+			}
+			
+			if (base.options.locked){
+				base.contentHolder.find("#btnHolder").hide();
+			}else{
+				base.contentHolder.find("#btnHolder").show();
+				base.addButtonListener();
+			}
 		};
 
 		base.getItemType = function(item){
@@ -99,6 +123,7 @@
 
 		base.prepareList = function(){
 			base.contentHolder.find("#preloaderItem").show();
+			base.contentHolder.find("#btnHolder").hide();
 			base.contentHolder.find("ul#itemList > li:not(#itemPattern)").remove();
 		};
 
@@ -110,8 +135,10 @@
 			$li.find("#position").html(item["location"]);
 
 			if(isPartNumber){
-				if (item["dpNo"] === base.doc["DPNo"])
+				if (item["dpNo"] === base.doc["DPNo"]){
+					base.isItemMember = true;
 					$li.addClass("selected");
+				}
 
 				$li.find("#conditionText").remove();
 				$li.find("#partNo").html(item["dpNo"]);
@@ -140,11 +167,16 @@
 		base.populateList = function(data){
 			var list = data.list;
 			var $ul = base.contentHolder.find("ul#itemList");
-			base.items = new Array; 
+			base.selectedItem = null;
 			var memberIds = new Array();
+			base.memberIdToItem = new Array; 
+			base.maxItemPosition = list.length;
 			
+			// make it available
 			for (var itm in list){
-				base.items[list[itm]["memberId"]] = list[itm];
+				base.memberIdToItem[list[itm]["memberId"]] = list[itm];
+				if(base.doc["EDP"] === list[itm]["edp"] )
+					base.selectedItem = list[itm];
 			}
 			
 			base.contentHolder.find("#preloaderItem").hide();
@@ -214,38 +246,52 @@
 		};
 
 		base.getList = function(){
-			base.options.itemDataCallback(base);
+			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.keyword, {
+				callback:function(ruleStatus){
+					base.ruleStatus = ruleStatus;
+					base.options.locked = base.options.locked || (base.ruleStatus!=null && $.inArray(base.ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0);
+				},
+				preHook: function(){
+					base.prepareList();
+				},
+				postHook:function(){
+					base.options.itemDataCallback(base);
+				}
+			});
 		};
 
 		base.getTemplate = function(){
 			var template = "";
 
 			template += '<div>';
-			template += '	<div id="dialog-confirm" title="This is a header title" class="farial" style="float:left; width:225px">';
-			template += '		<div class="marB10"><span>This is a confirm message</span></div>';
-			template += '		<div><center><img id="selItemProductImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg" class="border" style="width:116px; height:100px"></center></div>';
-			template += '		<div><center><span id="selItemManufacturer" class="fbold"></span></div>';
+			template += '	<div id="dialog-confirm" class="farial" style="float:left; width:225px">';
+			template += '		<div class="marT10"><center><img id="selItemProductImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg" class="border" style="width:116px; height:100px"></center></div>';
+			template += '		<div><center><span id="selItemManufacturer" class="fbold">' + base.doc["Manufacturer"] + '</span></center></div>';
 			template += ' 		<div style="position:absolute; float:right; top:50px; left:224px">';
-			template += '			<a href="javascript:void(0);" id="toggleCurrent"><img src="../images/btnTonggleShow.png"></a>';
+			template += '			<a href="javascript:void(0);" id="toggleHideCurrent"><img src="' + GLOBAL_contextPath + '/images/btnTonggleHide.png"></a>';
 			template += '		</div>';
 			template += '	<div>';
 			template += '	<ul class="listProd">';
 			template += '		<li><label class="fbold title">SKU #: </label><span id="selItemPartNo">' + base.doc["DPNo"] + '</span></li>';
 			template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
 			template += '		<li><label class="fbold title">Valid Until: </label><input type="text" id="selItemValidityDate" style="width:65px"></li>';
-			template += '		<li><label class="fbold title">Comments:</label><div id="aStampExpired"><img id="selItemStampExpired" src="../images/expired_stamp50x16.png" style="display:none"></div><textarea id="selItemComment"></textarea></li>';
+			template += '		<li><label class="fbold title">Comments:</label><div id="selItemStampExpired" style="display:none"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div><textarea id="selItemComment"></textarea></li>';
 			template += '	</ul>';
 			template += '</div>';
 
 			template += '<div id="btnHolder" class="marB10 txtAC">';
-			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="saveBtn"><div class="buttons fontBold">Save</div></a>';
-			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="removeBtn"><div class="buttons fontBold">Remove</div></a>';
+			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="saveBtn"><div class="buttons fontBold">Update</div></a>';
+			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="deleteBtn"><div class="buttons fontBold">Delete</div></a>';
+			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
 			template += '</div>';
-
+		return template;
+		};
+			base.getItemListTemplate = function(){
+				var template = "";
 			template += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
 			template += '	<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Elevated Items</h2></div >';
 			template += '	<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
-			template += '	<div id="preloaderItem" style="display:none"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif' + '"/></div>';
+			template += '		<div id="preloaderItem" style="display:none"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif' + '"/></div>';
 			template += '		<ul id="itemList" class="listItems">';
 			template += '			<li id="itemPattern" class="clearfix" style="display:none">'; 
 			template += '				<div class="handle">';
@@ -273,38 +319,54 @@
 			template += '		</ul>';
 			template += '	</div>';
 			template += '</div>';
-
+			
 			return template;
 		};
 
-		base.getStatus = function(){
-			DeploymentServiceJS.getRuleStatus(base.options.moduleName, base.options.keyword, {
-				callback:function(ruleStatus){
-					base.ruleStatus = ruleStatus;
-					base.options.locked = base.options.locked || (base.ruleStatus!=null && $.inArray(base.ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0);
-				},
-				preHook: function(){
-					base.prepareList();
-				},
-				postHook:function(){
-					base.getList();
-					base.contentHolder.find("#selItemValidityDate").datepicker({
-						showOn: "both",
-						disabled: base.options.locked,
-						minDate: base.options.validityDateMinDate,
-						maxDate: base.options.validityDateMaxDate,
-						buttonText: "Validity Date",
-						buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
-						buttonImageOnly: true
-					});
-
-					if (base.options.locked){
-						base.contentHolder.find("#btnHolder").hide();
+		base.addButtonListener = function(){
+			if(base.selectedItem==null){
+				base.contentHolder.find("#saveBtn >div").text(base.options.moduleName);
+				
+				base.contentHolder.find("#deleteBtn").on().off({
+					click: function(e){
+						
+					}
+				});
+				
+			}else{
+				base.contentHolder.find("#deleteBtn").hide();
+			}
+			
+			base.contentHolder.find("#saveBtn").off().on({
+				click: function(e){
+					var position = parseInt($.trim(base.contentHolder.find("#selItemPosition").val()));
+					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
+					var validityDate = $.trim(contentHolder.find("#selItemValidityDate").val());
+					var today = new Date();
+					today.setHours(0,0,0,0); //ignore time of current date 
+					
+					if (position>0 && position <= base.maxItemPosition){
+						jAlert("Please specify elevate position. Max allowed elevation is " + base.maxItemPosition, "Search Simulator");
+						base.contentHolder.find("#selItemPosition").focus();
+					}else if(!isXSSSafe(comment)){
+						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
+					}else if(today.getTime() > new Date(validityDate).getTime()){
+						jAlert("Expiry date cannot be earlier than today", "Search Simulator");
+					}else if(base.selectedItem==null){
+					
+					}else if(base.selectedItem!=null){
+						
 					}
 				}
 			});
+			
+			base.contentHolder.find("#cancelBtn").off().on({
+				click: function(e){
+					base.api.destroy();
+				}
+			});
 		};
-
+		
 		base.showItems = function(){
 			$(base.$el).qtip({
 				content: {
@@ -312,22 +374,22 @@
 					title: { text: base.options.moduleName + " Item", button: true }
 				},
 				position: {
-					my: 'right center',
-					at: 'top center'
+					my: 'left center',
+					at: 'top center',
 				},
 				style: {
 					width: "auto"
 				},
 				show: {
-					ready: true,
-					modal:  true
+					ready: true
 				},
 				events: { 
 					show: function(event, api){
 						base.api = api;
 						base.contentHolder = $("div", api.elements.content);
 						base.contentHolder.html(base.getTemplate());
-						base.getStatus();
+						base.contentHolder.find("#dialog-confirm").after(base.getHalfTemplate());
+						base.getList();
 					},
 					hide: function(event, api){
 						api.destroy();
@@ -375,7 +437,6 @@
 			itemForceAddStatusCallback: function(base, memberIds){},
 			itemUpdateForceAddStatusCallback: function(base, memberId, status){},
 			itemDataCallback: function(base){},
-			itemSelectedItemCallback: function(base){},
 			itemDeleteCallback: function(base){},
 			itemMovePositionCallback: function(base, memberId, destinationIndex){}
 	};

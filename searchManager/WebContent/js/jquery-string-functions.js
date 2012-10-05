@@ -19,7 +19,7 @@ jQuery.extend(
 				},
 				
 				isBlank: function(obj){
-					return(!obj || $.trim(obj) === "" || obj == null || obj == undefined);
+					return(!obj || $.trim(obj) === "" || obj == null);
 				},
 
 				isNotBlank: function(obj){

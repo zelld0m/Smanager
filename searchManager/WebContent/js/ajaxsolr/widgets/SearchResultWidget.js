@@ -250,13 +250,13 @@
 
 			return function(){
 				$(selector).ruleitem({
-					moduleName: "Elevate",
 					doc: doc,
+					moduleName: "Elevate",
 					locked: !allowModify,
 					keyword: keyword,
 					enableSortable: true,
 					enableForceAddStatus: true,
-
+					memberExpiredTag: "Expired",
 					itemForceAddStatusCallback: function(base, memberIds){
 						ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
 							callback:function(data){
@@ -290,17 +290,6 @@
 						});
 					},
 
-					itemSelectedItemCallback:function(base){
-						ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
-							callback : function(item){
-								base.populateSelectedItem(item);
-							},
-							preHook: function() { 
-
-							}
-						});
-					},
-
 					itemDeleteCallback:function(base, memberId){
 						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
@@ -315,7 +304,6 @@
 					itemMovePositionCallback: function(base, memberId, destinationIndex){
 						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
 							callback : function(event){
-								base.populateSelectedItem();
 								base.getList();
 							},
 							preHook: function() { 
