@@ -256,6 +256,7 @@
 					keyword: keyword,
 					enableSortable: true,
 					enableForceAddStatus: true,
+					memberPositionTag: "Elevate",
 					memberExpiredTag: "Expired",
 					itemForceAddStatusCallback: function(base, memberIds){
 						ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
@@ -267,7 +268,7 @@
 							}
 						});
 					},
-					
+
 					itemUpdateForceAddStatusCallback: function(base, memberId, status){
 						ElevateServiceJS.updateElevateForceAdd(keyword, memberId, status, {
 							callback:function(data){
@@ -290,7 +291,29 @@
 						});
 					},
 
-					itemDeleteCallback:function(base, memberId){
+					itemAddItemCallback:function(base, productId, position, validityDate, comment){
+						ElevateServiceJS.addProductItem(keyword, productId, position, validityDate, comment, {
+							callback : function(event){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
+					},
+
+					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
+						ElevateServiceJS.updateElevateItem(keyword, memberId, position, comment, validityDate, {
+							callback : function(data){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
+					},
+
+					itemDeleteItemCallback:function(base, memberId){
 						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
 								base.getList();
@@ -301,7 +324,7 @@
 						});
 					},
 
-					itemMovePositionCallback: function(base, memberId, destinationIndex){
+					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
 						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
 							callback : function(event){
 								base.getList();
@@ -310,8 +333,11 @@
 								base.prepareList(); 
 							}
 						});
+					},
+					
+					afterClose: function(){
+						//self.manager.doRequest();
 					}
-
 				});
 			};
 		},
@@ -424,409 +450,78 @@
 		},
 
 		demoteHandler: function (keyword,doc) {
-			if (!allowModify) return;
 			var self = this;
-			var selector  = "#resultItem_" + doc.EDP + " div#demoteHolder";
-			var title = "Demote Product";
-			var content = AjaxSolr.theme('createDemoteConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Demote Info</h2>"); 
-			var needRefresh = false;
-			var demoted = doc["DemoteType"] === "PART_NUMBER" || doc["Expired"] != undefined;
-			var maxPosition = 0;
-			var currentExpiryDate = "";
-			var currentPosition = 0;
-			var expiredDateSelected = false;
-			var idSuffix = "_" + doc.EDP;
-			var noExpiryDateText = "Indefinite";
-			var expDateMinDate = 0;
-			var expDateMaxDate = "+1Y";
+			var selector  = "#resultItem_EDP div#demoteHolder".replace("EDP", doc["EDP"]);
 
-			return function () {
-
-				setProductImage = function(contentHolder, item){
-					setTimeout(function(){		
-						// Product is no longer visible in the setting
-						var id = "_" + item["memberId"];
-
-						if ($.isBlank(item["dpNo"])){
-							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/padlock_img60x60.jpg'));
-							var $selector = contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo");
-							$selector.find("li#partNo" + id + ", li#mfrNo" + id + ", li#expiryDate" + id).html("Unavailable");
-						}
-						else{
-							contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", item["imagePath"]).off().on({
-								error:function(){ 
-									$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
-								}
-							});
-						}
-					},10);
-				};
-
-				populateSelectedProduct = function(contentHolder){
-					DemoteServiceJS.getProductByEdp(keyword, doc["EDP"], {
-						callback : function(item){
-							if(item!=null){
-								doc["DemoteId"] = item["memberId"];
-								setTimeout(function(){	
-									contentHolder.find("input#aExpiryDate_" + doc["EDP"]).val(item["formattedExpiryDate"]);
-									contentHolder.find("input#aDemotePosition_" + doc["EDP"]).val(item["location"]);
-								},1);
-							}else{
-								demoted = false;
+			return function(){
+				$(selector).ruleitem({
+					doc: doc,
+					moduleName: "Demote",
+					locked: !allowModify,
+					keyword: keyword,
+					enableSortable: true,
+					memberPositionTag: "Demote",
+					memberExpiredTag: "Expired",
+					
+					itemDataCallback: function(base){
+						DemoteServiceJS.getAllProductsIgnoreKeyword(keyword, 0, 0,{
+							callback: function(data){
+								base.populateList(data);
+							},
+							preHook: function() { 
+								base.prepareList(); 
 							}
-						},
-						errorHandler: handleAddDemoteError 
-					});
-				};
-
-				prepareDemoteResult = function (contentHolder){
-					contentHolder.find("#toggleItems > ul.listItems > :not(#listItemsPattern)").remove();
-					contentHolder.find("#toggleItems > ul.listItems").append(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
-				};
-
-				updateDemoteResult = function(contentHolder, doc, keyword){
-					DemoteServiceJS.getAllProductsIgnoreKeyword(keyword, 0, 0,{
-						callback: function(data){
-							var list = data.list;
-
-							var setImage = function(contentHolder, id, imagePath){
-								setTimeout(function(){	
-									contentHolder.find("#listItemsPattern" + id + " > div > img#productImage" + id).prop("src", imagePath).off().on({
-										error:function(){ 
-											$(this).unbind("error").prop("src", AjaxSolr.theme('getAbsoluteLoc', 'images/no-image60x60.jpg')); 
-										}
-									});
-								},10);
-							};
-
-							var getFacetItemType = function(item){
-								var $condition = item.condition;
-								var type = "";
-
-								if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-									type="facet";
-								}else if($condition["CNetFilter"]){
-									type="cnet";
-								}else if($condition["IMSFilter"]){
-									type="ims";
-								}
-								return type;
-							};
-
-							contentHolder.find("#toggleItems > ul#listItems_" + doc.EDP + " > :not(#listItemsPattern)").remove();
-
-							for (var i=0; i<data.totalSize; i++){
-								var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
-								var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
-
-								var id = "_" + list[i]["memberId"];
-
-								dwr.util.cloneNode("listItemsPattern", {idSuffix: id});
-								contentHolder.find("#listItemsPattern" + id).attr("style", "display:block");
-
-								if (i%2==0) contentHolder.find("#listItemsPattern" + id).addClass("alt");
-								if (list[i].dpNo == contentHolder.find("#aPartNo_" + doc.EDP).html()) contentHolder.find("#listItemsPattern" + id).addClass("selected");
-
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#demotePosition" + id).html(list[i].location);
-
-								var expiryDate = list[i].formattedExpiryDate;
-								if (list[i].isExpired){
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html('<img id="stampExpired' + id + '" src="../images/expired_stamp50x16.png">');
-								}else{
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#validityText" + id).html("Validity:");
-								}
-								contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#expiryDate" + id).html($.isBlank(expiryDate)? noExpiryDateText : expiryDate);
-
-
-								if(FACET){
-									var readableStr = list[i].condition['readableString'];
-
-									if(readableStr.length > 100){
-										readableStr = readableStr.substring(0,100);
-										readableStr += "...";
-									}
-
-									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).html(readableStr);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.partNoLabel").remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).remove();
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li.mfrNoLabel").remove();
-
-									var imagePath = list[i]["imagePath"];
-
-									if($.isBlank(imagePath)){
-										imagePath = GLOBAL_contextPath + '/images/';
-										switch(getFacetItemType(list[i])){
-										case "ims" : imagePath += "ims_img.jpg"; break;
-										case "cnet" : imagePath += "productSiteTaxonomy_img.jpg"; break;
-										case "facet" : imagePath += "facet_img.jpg"; break;
-										}
-									}
-
-									setImage(contentHolder, id, imagePath);
-								}
-								else if(PART_NUMBER){
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#partNo" + id).html(list[i].dpNo);
-									contentHolder.find("#listItemsPattern" + id + " > div > div > ul.listItemInfo > li#mfrNo" + id).html(list[i].mfrPN);
-									contentHolder.find("#listItemsPattern" + id + " > div > div#readableStr" + id).remove();
-
-									setProductImage(contentHolder, list[i]);
-								}
-
-								// delete icon is clicked
-								contentHolder.find("#listItemsPattern" + id + " > div > div > a.deleteIcon").click({item: list[i]},function(e){
-									if (confirm("Continue?")){
-										DemoteServiceJS.deleteItemInRule(keyword, e.data.item["memberId"], {
-											callback : function(data){
-												if (e.data.item["memberTypeEntity"]==="PART_NUMBER"){
-													contentHolder.find("a#removeBtn").attr("style","display:none");
-													contentHolder.find("#aDemotePosition_" + e.data.item["EDP"]).val("");
-													contentHolder.find("#aExpiryDate_" + e.data.item["EDP"]).val("");
-												}
-
-												maxPosition--;
-												needRefresh = true;
-											},
-											preHook: function() { prepareDemoteResult(contentHolder); },
-											postHook: function() { 
-												updateDemoteResult(contentHolder, doc, keyword);
-												populateSelectedProduct(contentHolder);
-											}
-										});
-									}
-								});
-							}
-
-							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
-							contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
-						},
-						preHook: function() {
-							prepareDemoteResult(contentHolder);
-						},
-						postHook: function() {
-							var $li = contentHolder.find("ul.listItemInfo >li:contains(" + doc["DPNo"] + ")");
-
-							if ($li.length){
-								var id = $li.attr("id").substring($li.attr("id").indexOf("_") + 1);
-
-								var updatedPosition = parseInt($.trim(contentHolder.find("li#demotePosition_" + id).html()));
-								var updatedExpiryDate = $.trim(contentHolder.find("li#expiryDate_" + id).html());
-								var stampVisible = contentHolder.find("img#stampExpired_" + id).is(":visible");
-
-								if(updatedPosition != "" && updatedPosition > 0){
-									contentHolder.find("#aDemotePosition_" + doc.EDP).val(updatedPosition);
-									contentHolder.find("a#removeBtn").attr("style","display:float");
-								}
-
-								contentHolder.find("#aExpiryDate_" + doc.EDP).val(updatedExpiryDate !== "Indefinite" && $.isDate(updatedExpiryDate) ? updatedExpiryDate : "");
-
-								if (stampVisible){
-									contentHolder.find("#aStampExpired_" + doc.EDP).show();
-								}else{
-									contentHolder.find("#aStampExpired_" + doc.EDP).hide();
-								}
-							}
-
-							//Disable
-							DeploymentServiceJS.getRuleStatus("Demote", keyword, {
-								callback:function(ruleStatus){
-									if(ruleStatus!=null && $.inArray(ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0){
-										contentHolder.find("#removeBtn,#saveBtn, .deleteIcon").hide();
-										contentHolder.find("#listItems_" + doc.EDP).sortable("option", "disabled", true);
-										contentHolder.find("#aExpiryDate_"+ doc.EDP).datepicker("option", "disabled", true);
-									}
-								}
-							});
-
-						}
-					});
-				};
-
-				$(selector).qtip({
-					content: {
-						text: $('<div/>'),
-						title: { text: title, button: true }
+						});
 					},
-					position: {
-						my: 'left center',
-						at: 'top center'
-					},
-					style: {
-						width: "auto"
-					},
-					show: {
-						modal:  true
-					},
-					events: {
-						show: function(event, api) {
-							var contentHolder = $('div', api.elements.content);
 
-							contentHolder.html(content);
-
-							// Set maximum demote position
-							DemoteServiceJS.getTotalProductInRule(keyword, {
-								callback: function(count){
-									switch(count){
-									case 0:
-									case 1:
-									default:
-										maxPosition = count > 0 ? (count+1): 1;	
-									}	
-								}
-							});
-
-							if(contentHolder.find("div#current").is('not(:visible)')){
-								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleShow.png");
-							}else{
-								contentHolder.find("a#toggleCurrent>img").attr("src", "../images/btnTonggleHide.png");
-
-								needRefresh = updateDemoteResult(contentHolder, doc, keyword) || needRefresh;
-
-								// add draggable feature
-								contentHolder.find("#listItems_" + doc.EDP).sortable({ 
-									handle : '.handle',
-									cursor : 'move',
-									start: function(event, ui) {
-										ui.item.data('start_pos', ui.item.index());
-									},     
-									change: function(event, ui) {
-										var index = ui.placeholder.index();
-										if (ui.item.data('start_pos') < index){
-											contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(' + index + ')').addClass('sortableHighlights');
-										}else{
-											contentHolder.find('#listItems_' + doc.EDP + ' > li:eq(' + (index + 1) + ')').addClass('sortableHighlights');
-										}
-									},
-									update: function(event, ui) {
-										var ref = ui.item.attr("id").split('_')[1];
-										contentHolder.find('#listItems_' + doc.EDP + ' > li').removeClass('sortableHighlights');
-										contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(even)').addClass("alt");
-										contentHolder.find('#listItems_' + doc.EDP + ' > li:nth-child(odd)').removeClass("alt");
-									},
-									stop: function(event, ui) {
-										var sourceIndex = (ui.item.data('start_pos')+1) ;
-										var destinationIndex = (ui.item.index()+1);
-
-										// Update demote position
-										if(sourceIndex != destinationIndex){
-											var memberId = ui.item.attr("id").split('_')[1];
-
-											DemoteServiceJS.update(keyword,memberId,destinationIndex,{
-												callback : function(event){
-													needRefresh = true;
-													populateSelectedProduct(contentHolder);
-												},
-												preHook: function() { prepareDemoteResult(contentHolder); },
-												postHook: function() { updateDemoteResult(contentHolder, doc, keyword); }
-											});
-										}	 
-									}
-								});
+					itemAddItemCallback:function(base, productId, position, validityDate, comment){
+						DemoteServiceJS.add(keyword, 'PART_NUMBER', productId, position, validityDate, comment, {
+							callback : function(event){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
 							}
+						});
+					},
 
-							// button display control
-							contentHolder.find("a#removeBtn").attr("style", demoted? "display:float" : "display:none"); 
-							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
-
-							contentHolder.find("#aExpiryDate_" + doc["EDP"]).datepicker({
-								showOn: "both",
-								minDate: expDateMinDate,
-								maxDate: expDateMaxDate,
-								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendar.png",
-								buttonImageOnly: true,
-								onSelect: function(dateText, inst) {
-									var today = new Date();
-									var selDate = Date.parse(dateText);
-									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
-									expiredDateSelected = (selDate < today)? true : false;
-								}
-							});
-
-							if (demoted){
-								populateSelectedProduct(contentHolder);
+					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
+						DemoteServiceJS.updateItem(keyword, memberId, position, comment, validityDate, {
+							callback : function(data){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
 							}
+						});
+					},
 
-							contentHolder.find("#saveBtn").click(function(){
-								var position = parseInt($.trim(contentHolder.find("#aDemotePosition_"+doc.EDP).val()));
-								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
-								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
-								var today = new Date();
-								//ignore time of current date 
-								today.setHours(0,0,0,0);
-								if (position>0 && position <= maxPosition){
+					itemDeleteItemCallback:function(base, memberId){
+						DemoteServiceJS.deleteItemInRule(keyword, memberId, {
+							callback : function(data){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
+					},
 
-									if(!isXSSSafe(comment)){
-										jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
-									}
-									else if(today.getTime() > new Date(expiryDate).getTime()){
-										jAlert("Expiry date cannot be earlier than today", "Search Simulator");
-									}else if (demoted){
-										//TODO: why not one sql call? -> should sp append to existing comment instead of replacing existing comments.
-										//TODO: add more restriction
-										if (position != currentPosition || comment.length > 0 || expiryDate !== currentExpiryDate) 
-											DemoteServiceJS.updateItem(keyword, doc["DemoteId"], position, comment, expiryDate, {
-												callback : function(data){
-													if(data>0){
-														needRefresh = true;
-													}
-												},
-												preHook: function() { prepareDemoteResult(contentHolder); },
-												postHook: function() { updateDemoteResult(contentHolder, doc, keyword); }
-											});
-									}else{
-										//add demote
-										DemoteServiceJS.add(keyword, 'PART_NUMBER', doc.EDP, position, expiryDate, comment, {
-											callback : function(event){
-												maxPosition++;
-												needRefresh = true;
-												demoted = true;
-												content.find("a#removeBtn").attr("style","display:float"); 
-											},
-											preHook: function() { prepareDemoteResult(contentHolder); },
-											postHook: function() {
-												updateDemoteResult(contentHolder, doc, keyword); 
-												populateSelectedProduct(contentHolder);
-											},
-											errorHandler: function(message){ jAlert(message, "Search Simulator"); }
-										});
-
-									}
-
-									contentHolder.find("#aStampExpired_"+doc.EDP).attr("style", expiredDateSelected? "display:float" : "display:none");
-
-								}else{
-									jAlert("Please specify demote position. Max allowed demote is " + maxPosition, "Search Simulator");
-									contentHolder.find("#aDemotePosition_" + doc.EDP ).focus();
-								}
-							});
-
-							contentHolder.find("#removeBtn").click(function(){								
-								DemoteServiceJS.deleteItemInRule(keyword, doc["DemoteId"],{
-									callback : function(event){
-										contentHolder.find("a#removeBtn").attr("style","display:none");
-										contentHolder.find("#aDemotePosition_"+doc["EDP"]).val("");
-										contentHolder.find("#aExpiryDate_"+doc["EDP"]).val("");
-										needRefresh = true;
-										demoted = false;
-										maxPosition--;
-									},
-									preHook: function() { prepareDemoteResult(contentHolder); },
-									postHook: function() { 
-										updateDemoteResult(contentHolder, doc, keyword); 
-										populateSelectedProduct(contentHolder);
-									}
-								});
-							});
-
-						},
-						hide: function(event, api) {
-							$("#aExpiryDate_"+doc.EDP).datepicker('destroy');
-							api.destroy();
-							if (needRefresh) self.manager.doRequest();
-						}
+					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
+						DemoteServiceJS.update(keyword, memberId, destinationIndex,{
+							callback : function(event){
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
+					},
+					
+					afterClose: function(){
+						//self.manager.doRequest();
 					}
-				}).click(function(event) { event.preventDefault(); });	  
+				});
 			};
 		}
 
