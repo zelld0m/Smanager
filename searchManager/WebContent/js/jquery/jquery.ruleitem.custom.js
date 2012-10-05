@@ -279,7 +279,7 @@
 			template += '			</li>';
 			template += '		</ul>';
 			template += '	</div>';
-			//template += '</div>';
+			template += '</div>';
 
 			return template;
 		};
