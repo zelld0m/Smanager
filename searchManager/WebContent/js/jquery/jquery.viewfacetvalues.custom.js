@@ -102,6 +102,7 @@
 						'q': base.options.keyword,
 						'facet.field': base.options.facetField,
 						'rows': 0,
+						'fq' : base.options.fq,
 						'facet.mincount': 1,
 						'facet.limit': -1,
 						'facet.sort':'HEX',
@@ -163,8 +164,9 @@
 						if (textStatus!=="success"){
 							api.destroy();
 						}
-
+						
 						handleResponse(json); 
+						base.options.afterSolrRequestCallback(json);
 					}
 			);
 		};
@@ -234,11 +236,13 @@
 			headerText: "",
 			showSearch: true,
 			keyword: "",
+			fq: "",
 			facetField: "Category",
 			displayType: "Scrollable",
 			sortOrder: "asc",
 			selectedIconText : "elevated",
-			selectedList : [""]
+			selectedList : [""],
+			afterSolrRequestCallback: function(json){}
 	};
 
 	$.fn.viewfacetvalues = function(options){

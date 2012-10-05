@@ -35,8 +35,7 @@
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
 		<!--  start horizontal tab -->
 		<div>
-			<div id="readableString">Categories Elevated : Computer, Keyboard, Cables, Mouse, Router</div>
-			<!-- a href="javascript:void(0);"><img src="/searchManager/images/icon_delete2.png" class="posRel floatR deleteRuleIcon pointer"></a-->
+			<div id="readableString"></div>
 			<div class="floatR">
 				<span class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></span>
 				<span class="floatR"><img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History"></span>
@@ -76,12 +75,14 @@
 					</p>
 					<div>
 						<ul id="selectedFacetValueList" class="marT8">
-							<li id="addFacetValuePattern" class="handle">
+							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
 								<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 								<label>
-									<select id="facetValuesPattern" class="w195"></select>
+									<select id="facetValuesPattern" class="selectCombo mar0 w195 marT6">
+										<option value="all">Test</option>
+									</select>
 								</label>
-								<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								<label class="marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 							</li>
 						</ul>
 					</div>
