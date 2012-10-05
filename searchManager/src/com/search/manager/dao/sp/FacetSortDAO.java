@@ -154,7 +154,7 @@ public class FacetSortDAO {
 							rs.getString(DAOConstants.COLUMN_FACET_GROUP_ID),
 							rs.getString(DAOConstants.COLUMN_FACET_GROUP_NAME),
 							FacetGroupType.get(rs.getInt(DAOConstants.COLUMN_FACET_GROUP_TYPE)),
-							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
+							StringUtils.isBlank(rs.getString(DAOConstants.COLUMN_SORT_TYPE))? null: SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)) ,
 							rs.getInt(DAOConstants.COLUMN_FACET_GROUP_SEQUENCE)
 					);
 					
