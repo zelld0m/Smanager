@@ -239,6 +239,11 @@
 			base.contentHolder.find("ul#itemList").sortable("destroy").sortable({ 
 				handle : '.handle',
 				cursor : 'move',
+				axis: 'y',
+				tolerance: 'intersect',
+				placeholder: 'ui-state-highlight', 
+				forceHelperSize: true,
+				forcePlaceholderSize: true,
 				disabled: base.options.locked,
 				start: function(event, ui) {
 					ui.item.data('start_pos', ui.item.index());

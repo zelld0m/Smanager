@@ -26,37 +26,41 @@
 			var thisClass	= base.$el.attr('class');
 			var setClass	= thisClass.substring(0, thisClass.indexOf("-checkbox"));
 			var imagePath	= base.getImage();
-		
+
 			var divClass = imagePath.substring(imagePath.indexOf('-')+1, imagePath.lastIndexOf('.'));
-			
+
 			base.$el.addClass('hidden');
 
 			base.$el.attr({"checked":base.options.initOn});
 
-			base.$el.after('<div class="'+ setClass + (base.$el.is(":checked")? " on " : " off ") + divClass + '" rel="'+ thisID +'"/>');
+			if(base.$el.siblings("div." + setClass).length==0)
+				base.$el.after('<div class="' + setClass + '" rel="'+ thisID +'"/>');
 
-			base.$el.siblings("div." + setClass).css("background", "url('" + imagePath + "') no-repeat")
-			.css("background-position", base.options.initOn? "0% 100%": "100% 0%")
-			.off().on({
-				click:function(e){
-					var $slideCheckbox = $(e.currentTarget);
-					var checkboxID = '#' + $slideCheckbox.attr('rel');
-
-					$(checkboxID).attr({"checked":e.data.initOn});
-
-					if(!$(checkboxID).is(":checked")) {
-						$(checkboxID).attr({"checked":true});
-						$slideCheckbox.removeClass('off').addClass('on');
-						$slideCheckbox.css("background-position", "0% 100%");
-					}else{
-						$(checkboxID).attr({"checked":false});
-						$slideCheckbox.removeClass('on').addClass('off');
-						$slideCheckbox.css("background-position", "100% 0%");
-					}
-
-					base.options.changeStatusCallback(e.data.id, $(checkboxID).is(":checked"));
-				}
-			},{initOn: base.options.initOn, id: base.options.id});
+			base.$el.siblings("div." + setClass)
+					.addClass(base.$el.is(":checked")? "on":"off")
+					.addClass(divClass)
+					.css("background", "url('" + imagePath + "') no-repeat")
+					.css("background-position", base.options.initOn? "0% 100%": "100% 0%")
+					.off().on({
+						click:function(e){
+							var $slideCheckbox = $(e.currentTarget);
+							var checkboxID = '#' + $slideCheckbox.attr('rel');
+		
+							$(checkboxID).attr({"checked":e.data.initOn});
+		
+							if(!$(checkboxID).is(":checked")) {
+								$(checkboxID).attr({"checked":true});
+								$slideCheckbox.removeClass('off').addClass('on');
+								$slideCheckbox.css("background-position", "0% 100%");
+							}else{
+								$(checkboxID).attr({"checked":false});
+								$slideCheckbox.removeClass('on').addClass('off');
+								$slideCheckbox.css("background-position", "100% 0%");
+							}
+		
+							base.options.changeStatusCallback(e.data.id, $(checkboxID).is(":checked"));
+						}
+					},{initOn: base.options.initOn, id: base.options.id});
 		};
 
 		base.init = function(){
