@@ -16,21 +16,26 @@
 
 			if (base.$el.hasClass("active-locked")) imageLabel = "check-active-locked.png";
 			if (base.$el.hasClass("normal-forceadd")) imageLabel = "check-normal-forceadd.png";
+			if (base.$el.hasClass("small-normal-forceadd")) imageLabel = "check-small-normal-forceadd.png";
 
 			return GLOBAL_contextPath + "/js/jquery/checkbox/" + imageLabel;
 		};
 
 		base.transformCheckbox = function(){
-			thisID		= base.$el.attr('id');
-			thisClass	= base.$el.attr('class');
-			setClass	= thisClass.substring(0, thisClass.indexOf("-checkbox"));
+			var thisID		= base.$el.attr('id');
+			var thisClass	= base.$el.attr('class');
+			var setClass	= thisClass.substring(0, thisClass.indexOf("-checkbox"));
+			var imagePath	= base.getImage();
+		
+			var divClass = imagePath.substring(imagePath.indexOf('-')+1, imagePath.lastIndexOf('.'));
+			
 			base.$el.addClass('hidden');
 
 			base.$el.attr({"checked":base.options.initOn});
 
-			base.$el.after('<div class="'+ setClass + (base.$el.is(":checked")? " on" : " off") + '" rel="'+ thisID +'"/>');
+			base.$el.after('<div class="'+ setClass + (base.$el.is(":checked")? " on " : " off ") + divClass + '" rel="'+ thisID +'"/>');
 
-			base.$el.siblings("div." + setClass).css("background", "url('" + base.getImage() + "') no-repeat")
+			base.$el.siblings("div." + setClass).css("background", "url('" + imagePath + "') no-repeat")
 			.css("background-position", base.options.initOn? "0% 100%": "100% 0%")
 			.off().on({
 				click:function(e){
