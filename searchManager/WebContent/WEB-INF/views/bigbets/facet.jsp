@@ -57,47 +57,46 @@
 
 		<div id="facetsort" class="tabvs marT10">
 			<ul id="facetGroupTab">
-				<li id="facetGroupTabPattern" style="display:none;"><a href="#"><span id="facetGroupNamePattern"></span></a></li>
+				<li class="facetGroupTabPattern" style="display:none;"><a href="#"><span class="facetGroupName"></span></a></li>
 			</ul>
 
-			<div id="facetGroupTabContent">
-				<div id="facetTabPattern" style="display: none">
-					<div class="sort marT10 fgray">
-						<ul>
-							<li><input type="checkbox"/></li>
-							<li>Sort Order</li>
-							<li><select id="facetGroupSortOrderPattern" class="posRel topn3"></select></li>
+			<div class="facetTabPattern" style="display:none;">
+				<div class="sort marT10 fgray">
+					<ul>
+						<li><input type="checkbox"/></li>
+						<li>Sort Order</li>
+						<li><select class="facetGroupSortOrder posRel topn3"></select></li>
+					</ul>
+				</div>
+				<div class="clearB"></div>
+
+				<div class="catValueTop floatL w47p">
+					<p class="fbold">
+						<span id="addFacetSortTitleHeader"></span>
+					</p>
+					<div>
+						<ul id="selectedFacetValueList" class="marT8">
+							<li id="addFacetValuePattern" class="handle">
+								<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+								<label>
+									<select id="facetValuesPattern" class="w195"></select>
+								</label>
+								<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+							</li>
 						</ul>
 					</div>
-					<div class="clearB"></div>
-	
-					<div class="catValueTop floatL w47p">
-						<p class="fbold">
-							<span id="addFacetSortTitleHeader"></span>
-						</p>
-						<div>
-							<ul id="selectedFacetValueList" class="marT8">
-								<li id="addFacetValuePattern" class="handle">
-									<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-									<label>
-										<select id="facetValuesPattern" class="w195"></select>
-									</label>
-									<label class="marL5"><img src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
-								</li>
-							</ul>
-						</div>
-						<div class="fsize11 txtAR">
-							<a id="addNewFacetValue" href="javascript:void(0);"><span id="addNewLink"></span></a>
-						</div>
+					<div class="fsize11 txtAR">
+						<a id="addNewFacetValue" href="javascript:void(0);"><span id="addNewLink"></span></a>
 					</div>
-					<!-- end category value -->
-	
-					<div id="facetvaluelist"></div>
-					<!--  end category values list -->
-					<div class="clearB"></div>
 				</div>
-				<!--  end categories content -->
+				<!-- end category value -->
+
+				<div id="facetvaluelist"></div>
+				<!--  end category values list -->
+				<div class="clearB"></div>
 			</div>
+			<!--  end categories content -->
+			
 			<div class="marT10 txtAR">
 				<a id="saveBtn" class="buttons btnGray clearfix" href="javascript:void(0);"><div class="buttons fontBold">Save</div></a>
 				<a id="deleteBtn" class="buttons btnGray clearfix" href="javascript:void(0);" id=""><div class="buttons fontBold">Delete</div></a>

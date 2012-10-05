@@ -10,6 +10,7 @@
 			
 			facetFields : ["Category", "Manufacturer"],
 			facetValueList: null,
+			sortOrderList: null,
 			
 			keywordIconPath: "../images/icon_keyword.png",
 			templateIconPath:"../images/icon_template.png",
@@ -101,37 +102,39 @@
 			createFacetGroupTabs : function(){
 				var self = this;
 				var $ul = $("ul#facetGroupTab"); 
-				var $div = $("div#facetGroupTabContent");
 				
 				FacetSortServiceJS.getAllFacetGroup(self.selectedRule["ruleId"], {
 					callback: function(data){
 						var facetGroups = data.list;
 						for(var index in facetGroups){
 							var facetGroup = facetGroups[index];
-							var $li = $ul.find("li#facetGroupTabPattern").clone();
-							$li.prop({id : "#"+facetGroup["name"]});
-							
-							$li.find("span#facetGroupNamePattern").html(facetGroup["name"]);
+							var facetGroupName = (facetGroup["name"]).toLowerCase(); 
+							var $li = $ul.find("li.facetGroupTabPattern").clone();
+							$li.show();
+							$li.removeClass("facetGroupTabPattern");
+							$li.find("span.facetGroupName").html(facetGroup["name"]);
+							$li.find("a").prop({href: "#"+facetGroupName});
 							$ul.append($li);
 							
-							var $facetDiv = $ul.find("div#facetTabPattern").clone();
-							var $facetSort = $facetDiv.find("select#facetSortGroupOrderPattern");
+							var $facetDiv = $("div.facetTabPattern").clone();
+							$facetDiv.show();
+							$facetDiv.prop({id : facetGroupName});
+							$facetDiv.removeClass("facetTabPattern");
+							$facetDiv.addClass("facetTab");
 							
-							$facetDiv.prop({id : facetGroup["name"]});
-							$facetSort.prop({id : "facetGroupSortOrder_" + facetGroup["name"]});
-							
+							var $facetSort = $facetDiv.find("select.facetGroupSortOrder");
 							self.populateSortOrderList($facetSort, facetGroup["sortType"]);
 							
-							$div.append($facetDiv);
+							$("div.facetTabPattern").before($facetDiv);
 						}
 					},
 					preHook: function(){
-						$ul.find("li:not('#facetGroupTabPattern')").remove();
-						$div.find("div:not('#facetTabPattern')").remove();
+						$ul.find("li:not('.facetGroupTabPattern')").remove();
+						$div.html("div.facetTab").remove();
 					},
 					postHook: function(){
-						$ul.find("li:not('#facetGroupTabPattern')").show();
-						$div.find("div:not('#facetTabPattern')").show();
+						$ul.find("li:not('.facetGroupTabPattern')").show();
+						$div.find("div.facetTab").show();
 					}
 				});
 			},
@@ -142,6 +145,7 @@
 				//initialize facet value list
 				self.getFacetValueDropdownList();
 				self.showFacetSort();
+				self.getSortOrderList();
 			},
 			
 			getFacetValueDropdownList : function () {
@@ -299,19 +303,22 @@
 				content.find("select.selectCombo").combobox({});
 			},
 			
-			populateSortOrderList : function(contentHolder, selectedOrder){
+			getSortOrderList : function(){
+				var self = this;
 				FacetSortServiceJS.getSortOrderList({
 					callback: function(data){
-						var list = data;
-
-						$.each(list, function(sortName, sortDisplayText) { 
-							contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
-						});
-					},
-					preHook: function(){
-						contentHolder.find("option").remove();
+						self.sortOrderList = data;
 					}
 				});
+			},
+			
+			populateSortOrderList : function(contentHolder, selectedOrder){
+				var self = this;
+				contentHolder.find("option").remove();
+				$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+					contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+				});
+				
 			},
 			
 			populateTemplateNameList: function(contentHolder){
