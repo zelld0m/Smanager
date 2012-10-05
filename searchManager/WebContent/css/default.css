@@ -249,6 +249,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marTB10, .marTB10	{margin-top:10px !important; margin-bottom:10px !important}
 .cssReset .marTB20, .marTB20	{margin-top:20px !important; margin-bottom:20px !important}
 
+.cssReset .marT0, .marT0		{margin-top:0}
 .cssReset .marTn1, .marTn1		{margin-top:-1px}
 .cssReset .marTn2, .marTn2		{margin-top:-2px}
 .cssReset .marTn3, .marTn3		{margin-top:-3px}
@@ -256,6 +257,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marTn5, .marTn5		{margin-top:-5px}
 .cssReset .marTn7, .marTn7		{margin-top:-7px}
 .cssReset .marTn8, .marTn8		{margin-top:-8px}
+.cssReset .marTn12, .marTn12		{margin-top:-12px}
 .cssReset .marBn3, .marBn3		{margin-bottom:-3px}
 .cssReset .marBn4, .marBn4		{margin-bottom:-4px}
 .cssReset .marBn5, .marBn5		{margin-bottom:-5px}
@@ -289,6 +291,7 @@ body 							{ margin: 0px; min-width:1200px }
 .minHeight400	  				{ min-height:400px; }
 
 
+.cssReset .height6, .height6	{ height:6px }
 .cssReset .height8, .height8	{ height:8px }
 .cssReset .height15				{ height:15px }
 .cssReset .height23, .height23	{ height:23px }
@@ -315,6 +318,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .topn2, .topn2		{ top:-2px; }
 .cssReset .topn3, .topn3		{ top:-3px; }
 .cssReset .topn4, .topn4		{ top:-4px; }
+.cssReset .topn13, .topn13		{ top:-13px; }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .right4				{ right:4px }
 .cssReset .leftn2				{ left:-2px !important }

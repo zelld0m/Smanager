@@ -245,21 +245,28 @@
 			template += '<div id="current" style="float:left; margin-left:7px" class="toggleDiv">';
 			template += '	<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of Elevated Items</h2></div >';
 			template += '	<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px">';
-			template += '	<div id="preloaderItem" style="display:none"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif' + '"/></div>';
+			template += '	<div id="preloaderItem" style="display:none" class="circlePreloader"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif' + '"/></div>';
 			template += '		<ul id="itemList" class="listItems">';
 			template += '			<li id="itemPattern" class="clearfix" style="display:none">'; 
 			template += '				<div class="handle">';
-			template += ' 					<div class="floatR posRel padR10" style="z-index:1; top:-8px">';
+			template += '                   <div class="borderB height8">';
+			template += ' 					<div class="floatR w10 posRel padR10" style="z-index:1; top:-8px">';
 			template += '						<a id="deleteIcon" class="deleteIcon" href="javascript:void(0);">';
 			template += '					  		<img src="' + GLOBAL_contextPath + '/images/iconDelete.png">';
-			template += '						</a>';
+			template += '						</a>';			
 			template += '					</div>';
+			template += '                   <div class="floatL w100 marTn12">';
+			template += '					  	<div class="floatL w20" style="display:block"><img src="' + GLOBAL_contextPath + '/images/icon_move.png"></div>';
+			template += '                   	<div>';
+			template += '							<img id="preloaderForceAdd" class="preloaderForceAdd" src="' + GLOBAL_contextPath + '/images/horizontalPreloaderBlue.gif">';
+			template += '							<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox small-normal-forceadd" style="display:none; margin-top:0">';
+			template += '						</div>';
+			template += '					</div>';
+			template += '					</div>';
+			template += '					<div class="clearB"></div>';
+			
 			template += '					<img id="productImage" src="' + GLOBAL_contextPath + '/images/no-image60x60.jpg" class="border floatL" width="60px" >';
-			template += '					<div class="floatR marB10 marT10">';
-			template += '						<img id="preloaderForceAdd" class="preloaderForceAdd" src="' + GLOBAL_contextPath + '/images/horizontalPreloaderBlue.gif">';
-			template += '						<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox normal-forceadd" style="display:none">';
-			template += '					</div>';
-			template += '					<div class="w125 floatL marL8 posRel" style="top:-8px">';
+			template += '					<div class="w125 floatL marL8 posRel">';
 			template += '				  		<ul class="listItemInfo">';
 			template += '							<li class="label">Position:</li><li class="value" id="position"></li>';
 			template += '							<li id="validityText" class="label"><img id="stampExpired" src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></li><li class="value" id="validityDate"></li>';
@@ -272,7 +279,7 @@
 			template += '			</li>';
 			template += '		</ul>';
 			template += '	</div>';
-			template += '</div>';
+			//template += '</div>';
 
 			return template;
 		};
