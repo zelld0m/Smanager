@@ -8,20 +8,27 @@ public class FacetGroupItem extends ModelBean{
 
 	private static final long serialVersionUID = -5244368611365335448L;
 
-	private String memberId;
+	private String ruleId;
 	private String facetGroupId;
+	private String memberId;
 	private String name;
 	private Integer sequence;
 	
 	public FacetGroupItem() {}
 
-	public FacetGroupItem(String facetGroupId, String memberId, String name,
+	public FacetGroupItem(String ruleId, String facetGroupId, String memberId, String name,
 			Integer sequence) {
 		super();
-		this.memberId = memberId;
+		this.ruleId = ruleId;
 		this.facetGroupId = facetGroupId;
+		this.memberId = memberId;
 		this.name = name;
 		this.sequence = sequence;
+	}
+	
+	public FacetGroupItem(String facetGroupId, String memberId, String name,
+			Integer sequence) {
+		this("", facetGroupId, memberId, name, sequence);
 	}
 	
 	public FacetGroupItem(String memberId, String name,	Integer sequence) {
@@ -29,6 +36,12 @@ public class FacetGroupItem extends ModelBean{
 		this.memberId = memberId;
 		this.name = name;
 		this.sequence = sequence;
+	}
+	
+	public FacetGroupItem(String ruleId, String facetGroupId) {
+		super();
+		this.ruleId = ruleId;
+		this.facetGroupId = facetGroupId;
 	}
 	
 	public FacetGroupItem(String memberId) {
@@ -50,6 +63,14 @@ public class FacetGroupItem extends ModelBean{
 
 	public void setMemberId(String memberId) {
 		this.memberId = memberId;
+	}
+
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(String ruleId) {
+		this.ruleId = ruleId;
 	}
 
 	public String getFacetGroupId() {

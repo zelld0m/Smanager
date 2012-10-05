@@ -128,7 +128,7 @@
 
 				$li.attr("id", id);
 				$li.find(".sortOrderTextBox").val($item["location"]);
-
+				
 				if(PART_NUMBER){
 					$li.find(".manufacturer").html($item["manufacturer"]);
 					$li.find(".name").html($item["name"]);
@@ -424,13 +424,22 @@
 								var $li = $ul.find('li#' + $.formatAsId(mapKey));
 								var $item = arrItem[mapKey];
 								$ul.find('.firerift-style').show();
-								$li.find('.firerift-style').removeClass("off").removeClass("on");
 								
-								if($item["forceAdd"]) {
-									$li.find('.firerift-style').addClass("on").css({backgroundPosition: "0% 100%"});
-								}else{
-									$li.find('.firerift-style').addClass("off").css({backgroundPosition: "100% 0%"});
-								}
+								$li.find('input.firerift-style-checkbox').slidecheckbox({
+									id:  $item["memberId"],
+									initOn: $item["forceAdd"],
+									changeStatusCallback: function(memberId, status){
+										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], memberId, status, {
+											callback:function(data){
+												showActionResponse(data, "update force add", ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+												self.populateRuleItem(self.selectedRulePage);
+											},
+											preHook:function(){
+												self.preShowRuleContent();
+											}
+										});
+									}
+								});
 								
 								// Force Add Color Coding
 								if(data[mapKey] && !$item["forceAdd"]){
@@ -442,27 +451,7 @@
 								}else if(!data[mapKey] && !$item["forceAdd"]){
 									$li.addClass("forceAddErrorClass");
 								}
-								
-								$li.find('.firerift-style').off("click").on({
-									click:function(e){
-										if (e.data.locked){
-											e.preventDefault();
-											return;
-										}
-
-										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], e.data.item["memberId"], !$item["forceAdd"], {
-											callback:function(data){
-												showActionResponse(data, "update force add", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-												self.populateRuleItem(self.selectedRulePage);
-											},
-											preHook:function(){
-												self.preShowRuleContent();
-											}
-										});
-									},
-									mouseenter: showHoverInfo
-								}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item:$item, li: $li});
-								
+															
 								$li.find('#preloaderForceAdd').remove();	
 							}
 						},

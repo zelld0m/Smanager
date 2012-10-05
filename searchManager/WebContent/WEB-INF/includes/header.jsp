@@ -93,6 +93,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.rulestatus.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ruleitem.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.addproduct.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.slidecheckbox.custom.js" />" ></script>
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
@@ -109,7 +110,6 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.validation.js" />" ></script>
   <!--[if lt IE 9]><script type="text/javascript" src="<spring:url value="/js/jquery/canvas/excanvas.js" />"></script><![endif]-->
   <script type="text/javascript" src="<spring:url value="/js/jquery/canvas/jquery.tagcanvas-1.13.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/checkbox/jquery.checkbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ticker.custom.js" />" ></script>
 
   <!--  scroller  -->

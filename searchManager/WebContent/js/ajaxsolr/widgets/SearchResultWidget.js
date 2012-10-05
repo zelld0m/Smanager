@@ -247,7 +247,7 @@
 		elevateHandler: function (keyword, doc) {
 			var self = this;
 			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["EDP"]);
-			
+
 			return function(){
 				$(selector).ruleitem({
 					moduleName: "Elevate",
@@ -255,7 +255,30 @@
 					locked: !allowModify,
 					keyword: keyword,
 					enableSortable: true,
+					enableForceAddStatus: true,
+
+					itemForceAddStatusCallback: function(base, memberIds){
+						ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
+							callback:function(data){
+								base.updateForceAddStatus(data);
+							},
+							preHook: function(){
+								base.prepareForceAddStatus();
+							}
+						});
+					},
 					
+					itemUpdateForceAddStatusCallback: function(base, memberId, status){
+						ElevateServiceJS.updateElevateForceAdd(keyword, memberId, status, {
+							callback:function(data){
+								base.getList(); 
+							},
+							preHook:function(){
+								base.prepareList(); 
+							}
+						});
+					},
+
 					itemDataCallback: function(base){
 						ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(keyword, 0, 0,{
 							callback: function(data){
@@ -266,18 +289,18 @@
 							}
 						});
 					},
-					
+
 					itemSelectedItemCallback:function(base){
 						ElevateServiceJS.getProductByEdp(keyword, doc["EDP"], {
 							callback : function(item){
 								base.populateSelectedItem(item);
 							},
 							preHook: function() { 
-								
+
 							}
 						});
 					},
-					
+
 					itemDeleteCallback:function(base, memberId){
 						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
@@ -288,7 +311,7 @@
 							}
 						});
 					},
-					
+
 					itemMovePositionCallback: function(base, memberId, destinationIndex){
 						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
 							callback : function(event){
