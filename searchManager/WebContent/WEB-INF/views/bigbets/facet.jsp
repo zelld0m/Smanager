@@ -79,7 +79,7 @@
 								<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 								<label>
 									<select id="facetValuesPattern" class="selectCombo mar0 w195 marT6">
-										<option value="all">Test</option>
+										<option class="valuePattern" value="all"></option>
 									</select>
 								</label>
 								<label class="marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
