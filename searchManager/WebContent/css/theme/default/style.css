@@ -234,7 +234,7 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset .fgray				{ color:#8d8d8d}
 
 #ajaxloader, .circlePreloader	{ text-align:center; padding:40px !important}
-
+.loadingWrapper { background:#eeeeee; padding:3px 5px; vertical-align: middle; border:1px solid #d8d8d8 }
 
 /* table layout, forms */
 .cssReset .tblRules 			{ border:1px solid #c7c7c7; border-collapse:collapse; margin:20px auto; width:98% }

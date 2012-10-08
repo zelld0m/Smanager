@@ -392,7 +392,7 @@
 			case "elevate": 
 			case "exclude":
 			case "demote":
-				template += '<div id="forceAdd" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">Retrieving Force Add Status</div>';
+				template += '<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>';
 				template += '<div id="previewTemplate1">';
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';

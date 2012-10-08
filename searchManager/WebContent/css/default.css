@@ -333,7 +333,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .fsize10, .fsize10	{ font-size:10px !important }
 .cssReset .fsize11, .fsize11	{ font-size:11px }
 .cssReset .fsize12, .fsize12 	{ font-size:12px !important }
-.cssReset .fsize13 				{ font-size:13px }
+.cssReset .fsize13, .fsize13	{ font-size:13px }
 .cssReset .fsize14, .fsize14 	{ font-size:14px }
 .cssReset .fsize15 				{ font-size:15px }
 .cssReset .fsize16 				{ font-size:16px }
