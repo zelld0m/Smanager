@@ -39,6 +39,7 @@
 			base.$el.siblings("div." + setClass)
 					.addClass(base.$el.is(":checked")? "on":"off")
 					.addClass(divClass)
+					.show()
 					.css("background", "url('" + imagePath + "') no-repeat")
 					.css("background-position", base.options.initOn? "0% 100%": "100% 0%")
 					.off().on({
@@ -61,6 +62,10 @@
 							base.options.changeStatusCallback(e.data.id, $(checkboxID).is(":checked"));
 						}
 					},{initOn: base.options.initOn, id: base.options.id});
+			
+			if(base.options.locked){
+				base.$el.siblings("div." + setClass).remove();
+			}
 		};
 
 		base.init = function(){
@@ -75,6 +80,7 @@
 	$.slidecheckbox.defaultOptions = {
 			id: "",
 			initOn: false,
+			locked: false,
 			changeStatusCallback: function(status){}
 	};
 

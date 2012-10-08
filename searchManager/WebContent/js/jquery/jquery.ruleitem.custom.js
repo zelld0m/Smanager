@@ -21,7 +21,7 @@
 		};
 
 		base.prepareForceAddStatus = function(){
-			base.contentHolder.find('div.forceAdd').show();
+			base.contentHolder.find('.forceAdd').show();
 		};
 
 		base.updateForceAddStatus = function(data){
@@ -29,11 +29,10 @@
 				var $li = base.contentHolder.find('li#item' + $.formatAsId(mapKey));
 				var $item = base.memberIdToItem[mapKey];
 
-				base.contentHolder.find('.firerift-style').show();
-
 				$li.find('input.firerift-style-checkbox').slidecheckbox({
 					id: $item["memberId"],
 					initOn: $item["forceAdd"],
+					locked: base.options.locked,
 					changeStatusCallback: function(memberId, status){
 						base.options.itemUpdateForceAddStatusCallback(base, memberId, status);
 					}

@@ -123,7 +123,7 @@
 
 				var PART_NUMBER = $item["memberTypeEntity"] === "PART_NUMBER";
 				var FACET = $item["memberTypeEntity"] === "FACET";
-				var id = $.formatAsId($item["memberId"]);
+				var id = "item" + $.formatAsId($item["memberId"]);
 
 
 				$li.attr("id", id);
@@ -421,13 +421,13 @@
 					ElevateServiceJS.isRequireForceAdd(self.selectedRule["ruleId"], arrMemberIds, {
 						callback:function(data){
 							for(var mapKey in data){
-								var $li = $ul.find('li#' + $.formatAsId(mapKey));
+								var $li = $ul.find('li#item' + $.formatAsId(mapKey));
 								var $item = arrItem[mapKey];
-								$ul.find('.firerift-style').show();
 								
 								$li.find('input.firerift-style-checkbox').slidecheckbox({
 									id:  $item["memberId"],
 									initOn: $item["forceAdd"],
+									locked: self.selectedRuleStatus["locked"] || !allowModify,
 									changeStatusCallback: function(memberId, status){
 										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], memberId, status, {
 											callback:function(data){
@@ -452,11 +452,11 @@
 									$li.addClass("forceAddErrorClass");
 								}
 															
-								$li.find('#preloaderForceAdd').remove();	
+								$li.find('#preloaderForceAdd').hide();	
 							}
 						},
 						preHook:function(){
-							$ul.find('.firerift-style').hide();
+							$ul.find('.forceAdd').show();
 						}
 					});
 				}
