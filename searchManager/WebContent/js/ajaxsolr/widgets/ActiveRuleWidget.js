@@ -13,7 +13,7 @@
 		afterRequest: function () {
 			var self = this;
 			$(self.target).empty();
-			var keyword = self.manager.store.values('q');
+			var keyword = $.isArray(self.manager.store.values('q'))? self.manager.store.values('q')[0]: self.manager.store.values('q');
 			
 			if($.isNotBlank(keyword)){
 				$(self.target).html(AjaxSolr.theme('activeRule'));
@@ -66,8 +66,20 @@
 					
 					$li.find("label.imageIcon > img").preview({
 						ruleType: rule["type"],
-						ruleId: rule["id"]
+						ruleId: rule["id"],
+						itemForceAddStatusCallback: function(base, memberIds){
+							if (rule["type"].toLowerCase() === "elevate")
+							ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
+								callback:function(data){
+									base.updateForceAddStatus(data);
+								},
+								preHook: function(){
+									base.prepareForceAddStatus();
+								}
+							});
+						}
 					});
+					
 					$li.show();
 					$ul.append($li);
 				}
