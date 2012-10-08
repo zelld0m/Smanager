@@ -128,10 +128,14 @@
 			populateTabContent : function(){
 				var self = this;
 				var facetTabId = self.tabSelectedId;
-				//var facet = self.tabSelectedName;
 				var keyword = "";
 				var fq = "";
 				var tabContainer = $("#"+facetTabId);
+				
+				//if there exists tempItems, tab is already populated, do not refresh
+				if(tabContainer.find("li.tempItem").length > 0){
+					return;
+				}
 				
 				tabContainer.show();
 				tabContainer.find("span#addFacetSortTitleHeader").text("Elevated " + self.tabSelectedName + " Values");
@@ -159,7 +163,6 @@
 				});
 			},
 			
-			//TODO
 			populateSelectedValues : function(facetDiv, facetGroupId){
 				var self = this;
 				var $ul = facetDiv.find("ul#selectedFacetValueList");
@@ -172,7 +175,8 @@
 							var itemName = item["name"];
 							
 							var $li = $('div#facetsort div.facetTabPattern li#addFacetValuePattern').clone();
-							$li.show(); $li.removeClass("addFacetValuePattern");
+							$li.show();
+							$li.removeClass("addFacetValuePattern");
 							$li.prop({id : "facetGroupId_"+item["facetGroupId"]});
 							
 							//TODO
@@ -467,6 +471,7 @@
 						self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
 						
 						self.populateTabContent();
+						
 					}
 				});
 			},
@@ -480,7 +485,7 @@
 						var $li = $('div#facetsort div.facetTabPattern li#addFacetValuePattern').clone();
 						
 						$li.show();
-						$li.prop("id", "addFacetValue");
+						$li.removeClass("addFacetValuePattern");
 						$li.addClass("tempItem");
 						ul.append($li);
 						

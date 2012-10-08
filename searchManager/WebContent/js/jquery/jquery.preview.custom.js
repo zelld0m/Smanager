@@ -162,6 +162,41 @@
 						}
 					});
 					break;
+				case "facet sort": 
+					$content.find(".infoTabs").tabs({});
+					
+					$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
+					$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
+					$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
+					
+					FacetSortServiceJS.getRuleById(base.options.ruleId, {
+						callback: function(data){
+
+							var $table = $content.find("div.ruleFilter table#item");
+							$table.find("tr:not(#itemPattern)").remove();
+
+							if(data.readableConditions.length==0){
+								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
+								$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
+								$tr.find("td#fieldValue").remove();
+								$tr.appendTo($table);
+
+							}else{
+								for(var field in data.readableConditions){
+									$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+									$tr.find("td#fieldName").html(parseInt(field)+1);
+									$tr.find("td#fieldValue").html(data.readableConditions[field]);
+									$tr.appendTo($table);
+								}	
+							}
+
+							$table.find("tr:even").addClass("alt");
+							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+							$content.find("#description").html(data["description"]);
+							
+							base.populateKeywordInRule($content, data["searchTerms"]);
+						}
+					});
 				case "query cleaning": 
 					$content.find(".infoTabs").tabs({});
 				
@@ -471,6 +506,7 @@
 					template += '	</div>';
 					template += '</div>';
 					break;
+				case "facet sort":
 				case "query cleaning": 
 					template += '<div id="queryCleaningTemplate">';
 					template += '	<div class="rulePreview w590 marB20">';
