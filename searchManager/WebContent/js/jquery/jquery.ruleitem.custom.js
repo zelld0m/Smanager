@@ -241,7 +241,7 @@
 				cursor : 'move',
 				axis: 'y',
 				tolerance: 'intersect',
-				placeholder: 'ui-state-highlight', 
+				placeholder: 'placeHolder', 
 				forceHelperSize: true,
 				forcePlaceholderSize: true,
 				disabled: base.options.locked,
@@ -328,7 +328,7 @@
 		base.getItemListTemplate = function(){
 			var template = "";
 
-			template += '<div id="current" style="float:left; margin-left:7px; width:225px" class="toggleDiv">';
+			template += '<div id="current" style="float:left; margin-left:7px; width:226px" class="toggleDiv">';
 			template += '	<div class="fsize16 titleToggle" style="margin:0 "><h2 style="padding-top:8px; margin:0 10px">List of ' + base.options.moduleName + ' Items</h2></div >';
 			template += '	<div id="toggleItems" style="overflow:auto; overflow-y:auto; overflow-x:hidden; height:340px; width:220px; padding-right:5px">';
 			template += '	<div id="preloaderItem" style="display:none" class="circlePreloader"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif' + '"/></div>';
