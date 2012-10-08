@@ -104,6 +104,7 @@ public class FacetSortDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_ID, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_NAME, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
@@ -366,6 +367,7 @@ public class FacetSortDAO {
 	    	SortType sortType = model.getSortType();
 			
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, "");
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, model.getRuleName());
 	        inputs.put(DAOConstants.PARAM_RULE_TYPE, (ruleType==null)? ruleType: ruleType.toString());
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
@@ -390,6 +392,7 @@ public class FacetSortDAO {
 	    	SortType sortType = model.getSortType();
 			
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, "");
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
 	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
@@ -412,6 +415,7 @@ public class FacetSortDAO {
 			Map<String, Object> inputs = new HashMap<String, Object>();
 	    	
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
+	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, model.getFacetGroupId());
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
 	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
