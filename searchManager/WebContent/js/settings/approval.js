@@ -384,6 +384,7 @@
 					}
 				});
 				break;
+			case "Facet Sort":
 			case "Query Cleaning": 
 				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});

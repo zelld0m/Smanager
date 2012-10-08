@@ -59,7 +59,7 @@
 				<li class="facetGroupTabPattern" style="display:none;"><a href="#"><span class="facetGroupName"></span></a></li>
 			</ul>
 
-			<div class="facetTabPattern" style="display:none;">
+			<div class="facetTabPattern contentWrapper" style="display:none;">
 				<div class="sort marT10 fgray">
 					<ul>
 						<li><input type="checkbox"/></li>
@@ -75,17 +75,22 @@
 					</p>
 					<div>
 						<ul id="selectedFacetValueList" class="marT8">
-							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
-								<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-								<label>
-									<select id="facetValuesPattern" class="selectCombo mar0 w195 marT6">
-										<option value="all">Test</option>
-									</select>
-								</label>
-								<label class="marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">								
+								<div class="w225 floatL">
+									<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+									<label>
+										<select id="facetValuesPattern" class="selectCombo mar0 w180 marT6">
+											<option class="valuePattern" value="all"></option>
+										</select>
+									</label>
+								</div>
+								<div class="floatL w20">
+									<label class="marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								</div>
 							</li>
 						</ul>
 					</div>
+					<div class="clearB"></div>
 					<div class="fsize11 txtAR">
 						<a id="addNewFacetValue" href="javascript:void(0);"><span id="addNewLink"></span></a>
 					</div>

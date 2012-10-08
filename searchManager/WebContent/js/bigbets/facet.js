@@ -106,33 +106,40 @@
 				self.getSortOrderList();
 			},
 			
-			populateFacetListDropdown: function(facetField, selectedFacet){
+			populateFacetListDropdown: function(selectedFacet){
 				var self = this;
-
-				var $facetSortDiv = $("div#facetsort");
-				var $facetDiv = $facetSortDiv.find('div.facetTabPattern');
-				var $select = $facetDiv.find('select#facetValuesPattern');
+				var $select = $("div#facetsort div.facetTabPattern select#facetValuesPattern");
+				
+				$select.find("option.not:('valuePattern')").remove();
 				
 				if(self.facetValueList){
-					var facetValues = self.facetValueList[facetField];
+					console.log("facetValuesList not null.");
+					var facetValues = self.facetValueList[self.tabSelectedName];
 
 					for (var facetValue in facetValues){
 						$select.append($("<option>", {value: facetValue, selected: facetValue===selectedFacet}).text(facetValue));
 					}
 				}
+				else{
+					console.log("facetValuesList is null.");
+				}
 			},
 			
 			populateTabContent : function(){
 				var self = this;
-				var facetId = self.tabSelectedId;
-				var facet = self.tabSelectedName;
+				var facetTabId = self.tabSelectedId;
 				var keyword = "";
 				var fq = "";
-				var tabContainer = $("#"+facetId);
+				var tabContainer = $("#"+facetTabId);
+				
+				//if there exists tempItems, tab is already populated, do not refresh
+				if(tabContainer.find("li.tempItem").length > 0){
+					return;
+				}
 				
 				tabContainer.show();
-				tabContainer.find("span#addFacetSortTitleHeader").text("Elevated " + facet + " Values");
-				tabContainer.find("div#facetvaluelist").prop({id : facetId +'_list'});
+				tabContainer.find("span#addFacetSortTitleHeader").text("Elevated " + self.tabSelectedName + " Values");
+				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
 				
 				if(self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
@@ -143,23 +150,21 @@
 					}
 				}
 				
-				$("#"+facetId+"_list").viewfacetvalues({
+				$("#"+facetTabId+"_list").viewfacetvalues({
 					keyword: keyword,
-					facetField: facet,
+					facetField: self.tabSelectedName,
 					fq: fq,
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
-						self.populateFacetListDropdown(facet);
-						self.populateSelectedValues(tabContainer, self.selectedRule["ruleId"], facetId.split("_")[1]);
+						self.populateFacetListDropdown();
+						self.populateSelectedValues(tabContainer, facetTabId.split("_")[1]);
 						self.addNewFacetValueListener(tabContainer);
 					}
 				});
 			},
 			
-			//TODO
-			populateSelectedValues : function(facetDiv, facet, facetGroupId){
+			populateSelectedValues : function(facetDiv, facetGroupId){
 				var self = this;
-				
 				var $ul = facetDiv.find("ul#selectedFacetValueList");
 				
 				FacetSortServiceJS.getAllFacetGroupItem(self.selectedRule["ruleId"], facetGroupId, {
@@ -169,8 +174,9 @@
 							var item = facetGroupItems[index];
 							var itemName = item["name"];
 							
-							var $li = $ul.find('li.addFacetValuePattern').clone();
-							$li.show(); $li.removeClass("addFacetValuePattern");
+							var $li = $('div#facetsort div.facetTabPattern li#addFacetValuePattern').clone();
+							$li.show();
+							$li.removeClass("addFacetValuePattern");
 							$li.prop({id : "facetGroupId_"+item["facetGroupId"]});
 							
 							//TODO
@@ -465,6 +471,7 @@
 						self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
 						
 						self.populateTabContent();
+						
 					}
 				});
 			},
@@ -475,10 +482,10 @@
 				
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
-						var $li = content.find('li#addFacetValuePattern').clone();
+						var $li = $('div#facetsort div.facetTabPattern li#addFacetValuePattern').clone();
 						
 						$li.show();
-						$li.prop("id", "addFacetValue");
+						$li.removeClass("addFacetValuePattern");
 						$li.addClass("tempItem");
 						ul.append($li);
 						
