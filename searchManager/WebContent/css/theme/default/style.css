@@ -914,5 +914,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 }
 
 .cssReset .placeHolder, .qtip .placeHolder, .placeHolder { border:3px dashed #dedede; background:url(../../../images/bg_dropItemHere.png) center center no-repeat !important; }
+.cssReset .placeHolder_small, .qtip .placeHolder_small, .placeHolder_small { border:2px dashed #dedede; background:url(../../../images/bg_dropItemHere_small.png) center center no-repeat !important; }
 
 
