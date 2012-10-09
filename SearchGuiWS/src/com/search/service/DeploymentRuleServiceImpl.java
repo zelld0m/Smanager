@@ -55,7 +55,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		fileService = fileService_;
 	}
 
-	@Override
+	/*@Override
 	public boolean publishElevateRules(String store, List<String> list) {
 		
 		List<ElevateResult> elevatedList = null;
@@ -97,7 +97,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> publishElevateRulesMap(String store, List<String> list) {
@@ -141,7 +141,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			return map;
 	}
 
-	@Override
+	/*@Override
 	public boolean publishExcludeRules(String store, List<String> list) {
 		
 		List<ExcludeResult> excludeList = null;
@@ -184,7 +184,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 		return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> publishExcludeRulesMap(String store, List<String> list) {
@@ -230,7 +230,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean publishRedirectRules(String store, List<String> list) {
 		
 		boolean success = false;
@@ -292,7 +292,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> publishRedirectRulesMap(String store, List<String> list) {
@@ -357,7 +357,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean publishRankingRules(String store, List<String> list) {
 	
 		boolean success = false;
@@ -417,7 +417,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> publishRankingRulesMap(String store, List<String> list) {
@@ -481,7 +481,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	}
 
 
-	@Override
+	/*@Override
 	public boolean recallElevateRules(String store, List<String> list) {
 		
 		boolean success = false;
@@ -511,7 +511,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> recallElevateRulesMap(String store, List<String> list) {
@@ -544,7 +544,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean recallExcludeRules(String store, List<String> list) {
 		
 		boolean success = false;
@@ -574,7 +574,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> recallExcludeRulesMap(String store, List<String> list) {
@@ -607,18 +607,18 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean recallRedirectRules(String store, List<String> list) {
 		// TODO: implement
 		return false;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> recallRedirectRulesMap(String store, List<String> list) {
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public boolean recallRankingRules(String store, List<String> list) {
 		// TODO: fix
 		boolean success = false;
@@ -683,7 +683,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> recallRankingRulesMap(String store, List<String> list) {
@@ -802,8 +802,21 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		}
 		return false;
 	}
-
+	
 	@Override
+	public boolean loadFacetSortRules(String store) {
+		try {
+			daoCacheService.setForceReloadFacetSort(new Store(store));
+			return daoCacheService.loadFacetSortRules(new Store(store));
+		} catch (DataException e) {
+			logger.equals(e);
+		} catch (DaoException e) {
+			logger.equals(e);
+		}
+		return false;
+	}
+
+	/*@Override
 	public boolean unpublishElevateRules(String store, List<String> list) {
 		boolean success = false;
 		
@@ -824,7 +837,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 
 	@Override
 	public Map<String,Boolean> unpublishElevateRulesMap(String store, List<String> list) {
@@ -848,7 +861,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean unpublishExcludeRules(String store, List<String> list) {
 		boolean success = false;
 		
@@ -869,7 +882,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> unpublishExcludeRulesMap(String store, List<String> list) {
@@ -893,7 +906,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return map;
 	}
 	
-	@Override
+	/*@Override
 	public boolean unpublishRedirectRules(String store, List<String> list) {
 		boolean success = false;
 
@@ -926,7 +939,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> unpublishRedirectRulesMap(String store, List<String> list) {
@@ -962,7 +975,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return map;
 	}
 
-	@Override
+	/*@Override
 	public boolean unpublishRankingRules(String store, List<String> list) {
 		boolean success = false;
 		try {	
@@ -990,7 +1003,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> unpublishRankingRulesMap(String store, List<String> list) {
@@ -1029,7 +1042,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return map;
 	}
 
-	@Override
+	/*@Override
 	public boolean publishDemoteRules(String store, List<String> list) {
 		List<DemoteResult> demotedList = null;
 		DemoteResult demoteFilter = new DemoteResult();
@@ -1070,7 +1083,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				success = false;
 			}
 			return success;
-	}
+	}*/
 	
 	@Override
 	public Map<String, Boolean> publishDemoteRulesMap(String store,
@@ -1115,7 +1128,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			return map;
 	}
 
-	@Override
+	/*@Override
 	public boolean recallDemoteRules(String store, List<String> list) {
 		boolean success = false;
 		
@@ -1144,7 +1157,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 
 	@Override
 	public Map<String, Boolean> recallDemoteRulesMap(String store,
@@ -1190,7 +1203,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		return false;
 	}
 
-	@Override
+	/*@Override
 	public boolean unpublishDemoteRules(String store, List<String> list) {
 		boolean success = false;
 		
@@ -1211,7 +1224,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			success = false;
 		}
 		return success;
-	}
+	}*/
 
 	@Override
 	public Map<String, Boolean> unpublishDemoteRulesMap(String store,
@@ -1237,86 +1250,138 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 	}
 
 	@Override
-	public boolean publishFacetSortRules(String store, List<String> list) {
-		/*List<FacetSort> facetSortList = null;
-		FacetSort facetSortFilter = new FacetSort();
-		boolean success = false;
-		
-			try {
-				// Create backup
-				fileService.createBackup(store,list,RuleEntity.FACET_SORT);		
-				
-				for(String key : list){
-					FacetSort delFs = new FacetSort();
-					StoreKeyword sk = new StoreKeyword(store, key);
-					delFs.setStoreKeyword(sk);
-					daoService.clearFacetSort(new StoreKeyword(store, key)); // prod
-					
-					// retrieve staging data then push to prod
-					daoService.addKeyword(sk);
-					facetSortFilter.setStoreKeyword(sk);
-					SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter,null,null,0,0);
-					facetSortList = daoServiceStg.getFacetSortList(criteria).getList();
-					
-					if(facetSortList != null && facetSortList.size() > 0){
-						for(FacetSort e : facetSortList){
-							daoService.addFacetSort((FacetSort) e);
-						}
-					}
-					// clear cache data to force a reload
-					daoCacheService.resetDemoteRule(sk); // prod
-				}
-				
-				Store s = new Store(store);
-				daoCacheService.reloadAllKeywords(s);
-				daoCacheService.setForceReloadFacetSort(s);
-				success = true;
-				
-			} catch (Exception e) {
-				logger.error(e,e);
-				success = false;
-			}
-			return success;*/
-		//TODO
-		return false;
-	}
-	
-	@Override
 	public Map<String, Boolean> publishFacetSortRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		Map<String,Boolean> map = getKLMap(list);
+		try {
+			// Create backup
+			fileService.createBackup(store,list,RuleEntity.FACET_SORT);		
+			
+			for(String key : list){
 
-	@Override
-	public boolean recallFacetSortRules(String store, List<String> list) {
-		// TODO Auto-generated method stub
-		return false;
+				FacetSort delFs = new FacetSort();
+				delFs.setRuleId(key);
+				delFs.setStore(new Store(store));
+				daoService.deleteFacetSort(delFs); // prod
+
+				// retrieve staging data then push to prod
+				FacetSort addFs = new FacetSort();
+				delFs.setRuleId(key);
+				delFs.setStore(new Store(store));
+				addFs = daoServiceStg.getFacetSort(delFs);
+								
+				if(addFs != null) {
+					daoService.addFacetSort(addFs); // prod 
+				}
+				
+				map.put(key, true);
+			}
+			
+			Store s = new Store(store);
+			daoCacheService.reloadAllKeywords(s);
+			daoCacheService.setForceReloadRedirect(s); // invalidates all cached data to force a reload and prevent stale data
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return map;
 	}
 
 	@Override
 	public Map<String, Boolean> recallFacetSortRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean loadFacetSortRules(String store) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean unpublishFacetSortRules(String store, List<String> list) {
-		// TODO Auto-generated method stub
-		return false;
+		Map<String,Boolean> map = getKLMap(list);
+		
+		try {	
+			Map<String,List<Object>> backUp = fileService.readBackup(store, list, RuleEntity.FACET_SORT);
+			
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+						FacetSort addFs = new FacetSort();
+						addFs.setStore(new Store(store));
+						addFs.setRuleId(key);
+						
+						fileService.removeBackup(store, key, RuleEntity.FACET_SORT);
+						
+						try{
+							for(Object e : backUp.get(key)){	
+								daoService.addFacetSort((FacetSort) e);
+							}
+						}catch (Exception e) {logger.error(e,e);}
+						
+						daoCacheService.updateFacetSortRule(addFs); // prod
+						map.put(key, true);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return map;
 	}
 
 	@Override
 	public Map<String, Boolean> unpublishFacetSortRulesMap(String store,
 			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String,Boolean> map = getKLMap(list);
+		
+		try {	
+			if(CollectionUtils.isNotEmpty(list)){
+				for(String key : list){
+						FacetSort delFs = new FacetSort();
+						delFs.setRuleId(key);
+						delFs.setStore(new Store(store));
+						daoService.deleteFacetSort(delFs); // prod
+						daoCacheService.setForceReloadFacetSort(new Store(store));
+						map.put(key, true);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return map;
 	}
+	
+	/*@Override
+	public boolean publishFacetSortRules(String store, List<String> list) {
+		boolean success = false;
+		try {
+			// Create backup
+			fileService.createBackup(store,list,RuleEntity.FACET_SORT);		
+			
+			for(String key : list){
+
+				FacetSort delRel = new FacetSort();
+				delRel.setRuleId(key);
+				delRel.setStore(new Store(store));
+				daoService.deleteFacetSort(delRel); // prod
+
+				// retrieve staging data then push to prod
+				FacetSort addRel = daoServiceStg.getFacetSort(delRel);
+								
+				if(addRel != null) {
+					daoService.addFacetSort(addRel); // prod 
+				}					
+				success = true;
+			}
+			
+			Store s = new Store(store);
+			daoCacheService.reloadAllKeywords(s);
+			daoCacheService.setForceReloadFacetSort(s); // invalidates all cached data to force a reload and prevent stale data
+			success = true;	
+			
+		} catch (Exception e) {
+			logger.error(e,e);
+			success = false;
+		}
+		return success;
+	}*/
+	
+	/*@Override
+	public boolean recallFacetSortRules(String store, List<String> list) {
+		return false;
+	}*/
+	
+	/*@Override
+	public boolean unpublishFacetSortRules(String store, List<String> list) {
+		return false;
+	}*/
 }
