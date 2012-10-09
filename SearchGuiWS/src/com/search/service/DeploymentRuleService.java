@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Map;
 
 public interface DeploymentRuleService {
-	public boolean publishElevateRules(String store, List<String> list);
+	/*public boolean publishElevateRules(String store, List<String> list);
 	public boolean publishExcludeRules(String store, List<String> list);
 	public boolean publishDemoteRules(String store, List<String> list);
 	public boolean publishFacetSortRules(String store, List<String> list);
 	public boolean publishRedirectRules(String store, List<String> list);
-	public boolean publishRankingRules(String store, List<String> list);
+	public boolean publishRankingRules(String store, List<String> list);*/
 	
 	public Map<String,Boolean> publishElevateRulesMap(String store, List<String> list);
 	public Map<String,Boolean> publishExcludeRulesMap(String store, List<String> list);
@@ -18,12 +18,12 @@ public interface DeploymentRuleService {
 	public Map<String,Boolean> publishRedirectRulesMap(String store, List<String> list);
 	public Map<String,Boolean> publishRankingRulesMap(String store, List<String> list);
 	
-	public boolean recallElevateRules(String store, List<String> list);
+	/*public boolean recallElevateRules(String store, List<String> list);
 	public boolean recallExcludeRules(String store, List<String> list);
 	public boolean recallDemoteRules(String store, List<String> list);
 	public boolean recallFacetSortRules(String store, List<String> list);
 	public boolean recallRedirectRules(String store, List<String> list);
-	public boolean recallRankingRules(String store, List<String> list);
+	public boolean recallRankingRules(String store, List<String> list);*/
 	
 	public Map<String,Boolean> recallElevateRulesMap(String store, List<String> list);
 	public Map<String,Boolean> recallExcludeRulesMap(String store, List<String> list);
@@ -39,12 +39,12 @@ public interface DeploymentRuleService {
 	public boolean loadRedirectRules(String store);
 	public boolean loadRankingRules(String store);
 	
-	public boolean unpublishElevateRules(String store, List<String> list);
+	/*public boolean unpublishElevateRules(String store, List<String> list);
 	public boolean unpublishExcludeRules(String store, List<String> list);
 	public boolean unpublishDemoteRules(String store, List<String> list);
 	public boolean unpublishFacetSortRules(String store, List<String> list);
 	public boolean unpublishRedirectRules(String store, List<String> list);
-	public boolean unpublishRankingRules(String store, List<String> list);
+	public boolean unpublishRankingRules(String store, List<String> list);*/
 	
 	public Map<String,Boolean> unpublishElevateRulesMap(String store, List<String> list);
 	public Map<String,Boolean> unpublishExcludeRulesMap(String store, List<String> list);

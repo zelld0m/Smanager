@@ -38,7 +38,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 		}
 	}
 
-	@Override
+	/*@Override
 	public boolean deployRules(TransportList list) {
 		
 		try {
@@ -158,7 +158,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 			logger.error(e,e);
 		}
 		return false;
-	}
+	}*/
 	
 	@Override
 	public Map<String,Boolean> deployRulesMap(TransportList list) {
