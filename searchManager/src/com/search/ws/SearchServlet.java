@@ -700,7 +700,7 @@ public class SearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (redirect != null && BooleanUtils.isTrue(redirect.getIncludeKeyword()) && keywordNvp != null) {
+				if (keywordNvp != null) {
 					nameValuePairs.remove(defTypeNVP);
 					nameValuePairs.remove(keywordNvp);
 					StringBuilder newQuery = new StringBuilder();
