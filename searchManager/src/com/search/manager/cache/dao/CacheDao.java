@@ -13,6 +13,7 @@ import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -42,6 +43,7 @@ public abstract class CacheDao<T> {
 	 * @throws DataException
 	 */
 	protected abstract String getCacheKey(StoreKeyword storeKeyword) throws DataException;
+	protected abstract String getCacheKey(Store store, String name) throws DataException;
 	protected abstract String getCacheKeyInitials() throws DataException;
 	protected abstract CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException;
 	public abstract boolean reload(T bean) throws DataException, DaoException;
@@ -112,6 +114,12 @@ public abstract class CacheDao<T> {
 		return cache;
 	}
 	
+	public CacheModel<T> getCachedObject(Store store, String name) throws DataException {
+		String key = getCacheKey(store, name);
+		
+		return cacheService.get(key);
+	}
+	
 	public CacheModel<T> getCachedObject(String key) throws DataException {
 		return cacheService.get(key);
 	}
@@ -162,6 +170,20 @@ public abstract class CacheDao<T> {
 			return true;
 		} catch (Exception e) {
 			logger.error("Failed to reset " + storeKeyword, e);
+		}
+		return false;
+	}
+	
+	/**
+	 * Clear the cache entry for facetSort.
+	 */
+	public boolean reset(Store store, String name) {
+		try {
+			String key = getCacheKey(store, name);
+			cacheService.reset(key);
+			return true;
+		} catch (Exception e) {
+			logger.error("Failed to reset store: " + store + " , name: " + name, e);
 		}
 		return false;
 	}

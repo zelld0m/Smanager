@@ -42,11 +42,11 @@ public interface DaoCacheService {
 	
 	/* Facet Sort */
 	public boolean loadFacetSortRules(Store store) throws DaoException, DataException;
-	public List<FacetSort> getFacetSortRules(StoreKeyword storeKeyword) throws DaoException, DataException;
-	public boolean updateFacetSortRules(FacetSort facetSort) throws DaoException, DataException;
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public boolean updateFacetSortRule(FacetSort facetSort) throws DaoException, DataException;
 	public boolean resetFacetSortRule(StoreKeyword storeKeyword) throws DaoException, DataException;
-	public List<FacetSort> getFacetSortRules(Store store, String templateName) throws DaoException, DataException;
-	public boolean resetFacetSortRule(Store store, String templateName) throws DaoException, DataException;
+	public FacetSort getFacetSortRule(Store store, String name) throws DaoException, DataException;
+	public boolean resetFacetSortRule(Store store, String name) throws DaoException, DataException;
 	
 	/* Redirect */
 	public boolean loadRedirectRules(Store store) throws DaoException, DataException;

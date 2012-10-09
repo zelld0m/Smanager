@@ -42,6 +42,8 @@ public class DAOValidation {
     public final static String ERROR_MESSAGE_NO_RELEVANCY_KEYWORD 		= "No relevancy keyword provided";
     // FACET
     public final static String ERROR_MESSAGE_NO_FACET_SORT 				= "No facet sort provided";
+    public final static String ERROR_MESSAGE_NO_FACET_SORT_STORE		= "No facet sort store provided";
+    public final static String ERROR_MESSAGE_NO_FACET_SORT_NAME 		= "No facet sort name provided";
     public final static String ERROR_MESSAGE_NO_FACET_SORT_ID			= "No facet sort id provided";
     public final static String ERROR_MESSAGE_NO_FACET_GROUP 			= "No facet group provided";
     public final static String ERROR_MESSAGE_NO_FACET_GROUP_ID 			= "No facet group id provided";
@@ -141,6 +143,11 @@ public class DAOValidation {
     public static void checkFacetSortPK(FacetSort facetSort) throws DaoException {
 		checkObjectNotNull(facetSort, ERROR_MESSAGE_NO_FACET_SORT);
 		checkStringNotEmpty(facetSort.getRuleId(), ERROR_MESSAGE_NO_FACET_SORT_ID);
+    }
+    
+    public static void checkFacetSortPK(Store store, String name) throws DaoException {
+		checkObjectNotNull(store, ERROR_MESSAGE_NO_FACET_SORT_STORE);
+		checkStringNotEmpty(name, ERROR_MESSAGE_NO_FACET_SORT_NAME);
     }
     
     public static void checkFacetGroupPK(FacetGroup facetGroup) throws DaoException {
