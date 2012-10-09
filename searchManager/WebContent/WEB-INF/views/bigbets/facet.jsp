@@ -31,8 +31,8 @@
 	<div id="submitForApproval"></div>
 	
 	<div class="clearB"></div>
-
-	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs">
+	<div id="preloader" class="circlePreloader" style="display:none"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
+	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs" style="display:none">
 		<!--  start horizontal tab -->
 		<div>
 			<div id="readableString"></div>
@@ -68,7 +68,9 @@
 					</ul>
 				</div>
 				<div class="clearB"></div>
-
+				
+				<div id="facetvaluelist"></div>
+				
 				<div class="catValueTop floatL w47p">
 					<p class="fbold">
 						<span id="addFacetSortTitleHeader"></span>
@@ -95,7 +97,7 @@
 				</div>
 				<!-- end category value -->
 
-				<div id="facetvaluelist"></div>
+				
 				<!--  end category values list -->
 				<div class="clearB"></div>
 			</div>

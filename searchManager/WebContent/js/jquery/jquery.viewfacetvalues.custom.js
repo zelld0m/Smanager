@@ -132,11 +132,11 @@
 						$ulSelected.append($li);
 					}
 				}
-				
+
 				$ul.append($ulSelected.html());
 				$ul.append($ulNotSelected.html());
 			}
-			
+
 			base.searchableList();
 		};
 		
