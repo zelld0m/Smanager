@@ -558,6 +558,9 @@ public class FacetSortDAO {
 			DAOValidation.checkFacetGroupItemPK(facetGroupItem);
 			Map<String, Object> inputs = new HashMap<String, Object>();
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, facetGroupItem.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, facetGroupItem.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_SEQUENCE, facetGroupItem.getId());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetGroupItem.getId());
 			return DAOUtils.getUpdateCount(updateFacetGroupItemSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroupItem(): " + e.getMessage(), e);
