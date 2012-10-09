@@ -62,7 +62,7 @@
 			<div class="facetTabPattern contentWrapper" style="display:none;">
 				<div class="sort marT10 fgray">
 					<ul>
-						<li><input type="checkbox"/></li>
+						<li><input id="facetGroupCheckbox" type="checkbox"/></li>
 						<li>Sort Order</li>
 						<li><select class="facetGroupSortOrder posRel topn3"></select></li>
 					</ul>

@@ -14,6 +14,7 @@
 			facetFields : ["Category", "Manufacturer"],
 			facetValueList: null,
 			sortOrderList: null,
+			facetGroupIdList: null,
 			
 			keywordIconPath: "../images/icon_keyword.png",
 			templateIconPath:"../images/icon_template.png",
@@ -79,7 +80,6 @@
 							click: function(e){
 								$(e.currentTarget).viewaudit({
 									itemDataCallback: function(base, page){
-										//TODO
 										AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
 											callback: function(data){
 												var total = data.totalSize;
@@ -113,6 +113,7 @@
 				var $select = $facetDiv.find("select#facetValuesPattern");
 				
 				$select.find("option.not:('valuePattern')").remove();
+				$select.prop({id : "_items"+self.tabSelectedId});
 				
 				if(self.facetValueList){
 					var facetValues = self.facetValueList[self.tabSelectedName];
@@ -193,10 +194,10 @@
 							var $li = facetDiv.find('li#addFacetValuePattern').clone();
 							$li.show();
 							$li.removeClass("addFacetValuePattern");
-							$li.prop({id : "facetGroupItems_"+item["facetGroupId"]});
+							$li.prop({id : ""});
 							
 							var $select = $li.find("select.selectCombo");
-							$select.prop({id: item["memberId"]});
+							$select.prop({id: "_items_"+facetGroupId});
 							
 							$select.combobox({
 								selected: function(e, u){
@@ -441,6 +442,8 @@
 				$ul.find("li:not('.facetGroupTabPattern')").remove();
 				$facetSortDiv.find("div.facetTab").remove();
 				
+				self.facetGroupIdList = new Array();
+				
 				FacetSortServiceJS.getAllFacetGroup(self.selectedRule["ruleId"], {
 					callback: function(data){
 						var facetGroups = data.list;
@@ -449,6 +452,7 @@
 							var facetGroupId = $.formatAsId(facetGroup["id"]);
 							var $li = $ul.find("li.facetGroupTabPattern").clone();
 							
+							self.facetGroupIdList[index] = facetGroup["id"];
 							
 							$li.show();
 							$li.removeClass("facetGroupTabPattern");
@@ -531,19 +535,55 @@
 				},{locked:self.selectedRule["locked"] || !allowModify});
 			},
 			
-			//TODO
+			buildFacetGroupItemsMap: function(){
+				var self = this;
+				
+				var itemMap = new Object();
+				
+				for(var facetGroupId in self.facetGroupIdList){
+					var facetItems = new Array();
+					var items = $("input#_items_"+self.facetGroupIdList[facetGroupId]);
+					
+					for(var i = 0; i < items.length; i++){
+						facetItems[i] = $(items[i]).val();
+					}
+					itemMap[self.facetGroupIdList[facetGroupId]] = facetItems;
+				}
+				
+				return itemMap;
+			},
+			
+			buildFacetGroupSortTypeMap: function(){
+				var self = this;
+				
+				var itemMap = new Object();
+				
+				for(var facetGroupId in self.facetGroupIdList){
+					var sortType = null;
+					var isChecked = $("div#_"+self.facetGroupIdList[facetGroupId] +" input#facetGroupCheckbox").is(":checked");
+					
+					if(isChecked){
+						sortType = $("div#_"+self.facetGroupIdList[facetGroupId] +" select.facetGroupSortOrder option:selected").val();
+					}
+					itemMap[self.facetGroupIdList[facetGroupId]] = sortType;
+				}
+				
+				return itemMap;
+			},
+			
 			addSaveRuleListener: function(){
 				var self = this;
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
 
-						var sortType = "";
-						var facetGroupItems = new Object(); //Map<String, String[]> facetGroupItems
-						var sortOrders = new Object(); //Map<String, String>  sortOrders
+						var sortType = $("select#facetSortOrder option:selected").val();
+						var facetGroupItems = self.buildFacetGroupItemsMap();
+						var sortOrders = self.buildFacetGroupSortTypeMap();
 						
 						//if (self.checkIfUpdateAllowed()){
-							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], sortType, facetGroupItems, sortOrders,  {
+							var response = 0;
+							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], sortType, self.selectedRule["ruleName"], facetGroupItems, sortOrders,  {
 								callback: function(data){
 									response = data;
 									showActionResponse(response, "update", ruleName);
