@@ -360,7 +360,7 @@ public class DemoteService{
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, null,  page, itemsPerPage);
-			result  = daoService.getDemotedProducts(server, criteria);
+			result  = daoService.getDemotedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllDemotedProducts()",e);
 		}
@@ -393,7 +393,7 @@ public class DemoteService{
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, new Date(), null,  page, itemsPerPage);
-			return daoService.getDemotedProducts(server, criteria);
+			return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveProducts()",e);
 		}
@@ -409,7 +409,7 @@ public class DemoteService{
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
-			return daoService.getDemotedProducts(server, criteria);
+			return daoService.getDemotedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredProducts()",e);
 		}

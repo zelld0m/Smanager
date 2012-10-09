@@ -234,7 +234,7 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, null,  page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllExcludedProducts()",e);
 		}
@@ -267,7 +267,7 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, new Date(), null, page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getActiveExcludedProducts()",e);
 		}
@@ -283,7 +283,7 @@ public class ExcludeService {
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
-			return daoService.getExcludedProducts(server, criteria);
+			return daoService.getExcludedProductsIgnoreKeyword(server, criteria);
 		} catch (DaoException e) {
 			logger.error("Failed during getExpiredExcludedProducts()",e);
 		}
