@@ -107,31 +107,40 @@
 			var $ul = base.$el.find("ul#facetValues");
 			var selectedList = base.options.selectedList;
 
-			if(facetFields){
-				var facetValues = facetFields[base.options.facetField];
-
-				for (var facetValue in facetValues) {
-					if($.isBlank(facetValue))
-						continue;
-
-					var $li = $ul.find("li#facetValuePattern").clone();
-					var count = parseInt(facetValues[facetValue]);
-
-					if(selectedList && ($.inArray(facetValue, selectedList) < 0)){
-						$li.prop({id: 'facetValue'})
-						   .show();
-
-						$li.find("span#facetName").text(facetValue);
-						$li.find("span#facetCount").text('(' + count + ')');
-
-						//TODO is facet selected
-						//$li.find("span#selectedIcon").show();
-						//$li.find("span#selectedIcon").text(base.options.selectedIconText);
-					}
-
-					$ul.append($li);
+			if (base.options.facetField === "Category" && (GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn")){
+				facetValues = data.FacetTemplate.Level1;
+			}
+			else{
+				facetValues = facetFields[base.options.facetField];
+			}
+			
+			var $ulSelected = $('<ul></ul>');
+			var $ulNotSelected = $('<ul></ul>');
+			
+			for (var facetValue in facetValues) {
+				if($.isBlank(facetValue))
+					continue;
+				
+				var $li = $ul.find("li#facetValuePattern").clone();
+				var count = parseInt(facetValues[facetValue]);
+				
+				$li.show();
+				$li.prop({id: 'facetValue'});
+				$li.find("span#facetName").text(facetValue);
+				$li.find("span#facetCount").text('(' + count + ')');
+				
+				//TODO is facet selected
+				if(selectedList && ($.inArray(facetValue, selectedList) < 0)){
+					$ulNotSelected.append($li);
+				}
+				else{
+					$ulSelected.append($li);
 				}
 			}
+
+			$ul.append($ulSelected.html());
+			$ul.append($ulNotSelected.html());
+			
 
 			base.searchableList();
 		};
