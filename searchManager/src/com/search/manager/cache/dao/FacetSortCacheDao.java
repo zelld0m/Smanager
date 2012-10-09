@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,21 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 	@Override
 	protected String getCacheKeyInitials() throws DataException {
 		return CacheConstants.FACET_SORT_KEYWORD_LIST_CACHE_KEY;
+	}
+	
+	@Override
+	public boolean forceUpdateCache(Store store) {
+		try{
+			String storeId = store.getStoreId();
+			if (StringUtils.isNotBlank(storeId)) {
+				cacheService.put(CacheConstants.getCacheKey(storeId, CacheConstants.FORCE_UPDATE_CACHE_KEY, CacheConstants.FACET_SORT_KEYWORD_LIST_CACHE_KEY), new CacheModel<Object>());
+				cacheService.put(CacheConstants.getCacheKey(storeId, CacheConstants.FORCE_UPDATE_CACHE_KEY, CacheConstants.FACET_SORT_TEMPLATE_LIST_CACHE_KEY), new CacheModel<Object>());
+				return true;
+			}
+		} catch (Exception e) {
+			logger.error("Failed to set force update cache date for  " + store, e);
+		}
+		return false;
 	}
 	
 	@Override
