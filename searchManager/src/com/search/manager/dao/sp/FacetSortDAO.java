@@ -3,9 +3,13 @@ package com.search.manager.dao.sp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -115,6 +119,19 @@ public class FacetSortDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RETURN_OPTION, Types.INTEGER));
 		}
 
+		private Map<String, List<String>> getItems(String facetGroup, String facetGroupItems){
+			Map<String, List<String>> items = new HashMap<String, List<String>>();
+			
+			String[] arrGroupName = StringUtils.split(facetGroup, ',');
+			String[] arrGroupItem = StringUtils.split(facetGroupItems, "&&");
+			
+			for (int i=0; i< ArrayUtils.getLength(arrGroupName); i++){
+				items.put(arrGroupName[i],  (i+1)> ArrayUtils.getLength(arrGroupItem)? new ArrayList<String>(): Arrays.asList(ArrayUtils.nullToEmpty(StringUtils.split(arrGroupItem[i], "||"))));
+			}
+			
+			return items;
+		}
+		
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetSort>() {
@@ -126,7 +143,8 @@ public class FacetSortDAO {
 							rs.getString(DAOConstants.COLUMN_RULE_NAME),
 							RuleType.get(rs.getInt(DAOConstants.COLUMN_RULE_TYPE)),
 							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
-							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID))
+							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
+							getItems(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), rs.getString(DAOConstants.COLUMN_ITEM_NAME_LIST))
 					);
 					
 					facetSort.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));
