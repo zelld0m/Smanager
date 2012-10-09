@@ -126,7 +126,7 @@ public class FacetSortDAO {
 			String[] arrGroupItem = StringUtils.split(facetGroupItems, "&&");
 			
 			for (int i=0; i< ArrayUtils.getLength(arrGroupName); i++){
-				items.put(arrGroupName[i],  (i+1)> ArrayUtils.getLength(arrGroupItem)? new ArrayList<String>(): Arrays.asList(ArrayUtils.nullToEmpty(StringUtils.split(arrGroupItem[i], "||"))));
+				items.put(arrGroupName[i], (i+1)> ArrayUtils.getLength(arrGroupItem)? new ArrayList<String>(): Arrays.asList(ArrayUtils.nullToEmpty(StringUtils.split(arrGroupItem[i], "||"))));
 			}
 			
 			return items;
