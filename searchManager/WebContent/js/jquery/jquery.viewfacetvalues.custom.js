@@ -10,7 +10,7 @@
 
 		// Add a reverse reference to the DOM object
 		base.$el.data("viewfacetvalues", base);
-		
+
 		// Added search functionality to list
 		base.searchableList = function(){
 			var content = base.$el.find(".facetValueList");
@@ -25,7 +25,7 @@
 					$(target).append(count == 1 ? "Record" : "Records");
 				}
 			};
-			
+
 			content.find('input#searchField').val('');
 			addRecordCount(content.find('li#facetValue'), content.find('.searchCount'));
 
@@ -39,138 +39,127 @@
 
 			content.find('input#searchField').keyup(
 					function(event) {  
-				//if esc is pressed or nothing is entered  
+						//if esc is pressed or nothing is entered  
 
-				if (event.keyCode == 27 || $(this).val() == '') {  
-					//if esc is pressed we want to clear the value of search box  
-					$(this).val('');  
+						if (event.keyCode == 27 || $(this).val() == '') {  
+							//if esc is pressed we want to clear the value of search box  
+							$(this).val('');  
 
-					//we want each row to be visible because if nothing  
-					//is entered then all rows are matched.  
-					content.find('li#facetValue').removeClass('visible').show().addClass('visible');  
-				}  
+							//we want each row to be visible because if nothing  
+							//is entered then all rows are matched.  
+							content.find('li#facetValue').removeClass('visible').show().addClass('visible');  
+						}  
 
-				//if there is text, lets filter  
-				else {  
-					query = $.trim($(this).val()); //trim white space  
-					query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
-					query = query.replace(/ /gi, '|'); //add OR for regex query  
+						//if there is text, lets filter  
+						else {  
+							query = $.trim($(this).val()); //trim white space  
+							query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
+							query = query.replace(/ /gi, '|'); //add OR for regex query  
 
-					content.find('li#facetValue').each(function() {  
-						($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');  
-					}); 
-				}  
+							content.find('li#facetValue').each(function() {  
+								($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');  
+							}); 
+						}  
 
-				addRecordCount(content.find('li#facetValue.visible'), content.find('.searchCount'));
-			});
+						addRecordCount(content.find('li#facetValue.visible'), content.find('.searchCount'));
+					});
 		};
 
 		base.init = function(){
 			base.options = $.extend({},$.viewfacetvalues.defaultOptions, options);
-			base.populateTemplate();
+			base.prepareFacetValueList();
 			base.getFacetValueList();
 		};
 
-		base.getFacetValueList = function () {
-			var self = this;
 
-			var getFacetSelected = function() {
-				var i = 0;
-				var selectedItems = [];
+		base.getFacetParams = function (keyword){
+			var paramString = "";
 
-				$('.firerift-style').each(function() {
-					if ($(this).hasClass("on")){
-						var sel = $.trim($('#' + $(this).attr('rel')).val());
-						if ($.isNotBlank(sel)){
-							i++;
-							selectedItems.push(self.escapeValue(sel));
-						}
-					}
-				});
-
-				if (selectedItems.length == 0) {
-					return "";
-				}
-				return "(" + selectedItems.join(" ") + ")";
+			var params = {
+					'facet': true,
+					'q': base.options.keyword,
+					'facet.field': base.options.facetField,
+					'rows': 0,
+					'fq' : base.options.fq,
+					'facet.mincount': 1,
+					'facet.limit': -1,
+					'facet.sort':'HEX',
+					'gui': true,
+					'json.nl':'map'
 			};
 
-			var	getFacetParams = function (keyword){
-				var paramString = "";
-
-				var params = {
-						'facet': true,
-						'q': base.options.keyword,
-						'facet.field': base.options.facetField,
-						'rows': 0,
-						'fq' : base.options.fq,
-						'facet.mincount': 1,
-						'facet.limit': -1,
-						'facet.sort':'HEX',
-						'gui': true,
-						'json.nl':'map'
-				};
-
-				for (var name in params) {
-					if ($.isArray(params[name])){
-						for (var param in params[name]){
-							paramString += "&" + name + "=" + params[name][param];
-						}
-					}else{
-						if(name.toLowerCase() !== "sort".toLowerCase())
-							paramString += "&" + name + "=" + params[name];
+			for (var name in params) {
+				if ($.isArray(params[name])){
+					for (var param in params[name]){
+						paramString += "&" + name + "=" + params[name][param];
 					}
+				}else{
+					if(name.toLowerCase() !== "sort".toLowerCase())
+						paramString += "&" + name + "=" + params[name];
 				}
+			}
 
-				return paramString;
-			};
+			return paramString;
+		};
 
-			var handleResponse = function (data){
-				var facetFields = data.facet_counts.facet_fields;
-				var $ul = base.$el.find("ul#facetValues");
-				var selectedList = base.options.selectedList;
+		base.handleResponse = function (data){
+			var facetFields = data.facet_counts.facet_fields;
+			var $ul = base.$el.find("ul#facetValues");
+			var selectedList = base.options.selectedList;
 
-				if(facetFields){
-					var facetValues = facetFields[base.options.facetField];
-
-					for (var facetValue in facetValues) {
-						if($.isBlank(facetValue))
-							continue;
-						
-						var $li = $ul.find("li#facetValuePattern").clone();
-						var count = parseInt(facetValues[facetValue]);
-						
-						if(selectedList && ($.inArray(facetValue, selectedList) < 0)){
-						$li.prop({id: 'facetValue'});
-						$li.show();
-
-						$li.find("span#facetName").text(facetValue);
-						$li.find("span#facetCount").text('(' + count + ')');
-						
-						//TODO is facet selected
-						//$li.find("span#selectedIcon").show();
-						//$li.find("span#selectedIcon").text(base.options.selectedIconText);
-						 }
-						
-						$ul.append($li);
+			if(facetFields){
+				var facetValues = facetFields[base.options.facetField];
+				var $ulSelected = $('<ul></ul>');
+				var $ulNotSelected = $('<ul></ul>');
+				
+				for (var facetValue in facetValues) {
+					if($.isBlank(facetValue))
+						continue;
+					
+					var $li = $ul.find("li#facetValuePattern").clone();
+					var count = parseInt(facetValues[facetValue]);
+					
+					$li.show();
+					$li.prop({id: 'facetValue'});
+					$li.find("span#facetName").text(facetValue);
+					$li.find("span#facetCount").text('(' + count + ')');
+					
+					//TODO is facet selected
+					if(selectedList && ($.inArray(facetValue, selectedList) < 0)){
+						$ulNotSelected.append($li);
+					}
+					else{
+						$ulSelected.append($li);
 					}
 				}
 				
-				base.searchableList();
-			};
-
+				$ul.append($ulSelected.html());
+				$ul.append($ulNotSelected.html());
+			}
+			
+			base.searchableList();
+		};
+		
+		base.getFacetValueList = function () {
+			var self = this;
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_store + '/select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
+					GLOBAL_solrUrl + GLOBAL_store + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();
 						}
 						
-						handleResponse(json); 
+						base.$el.html(base.populateTemplate());
+						base.handleResponse(json); 
 						base.options.afterSolrRequestCallback(json);
 					}
 			);
 		};
 
+		base.prepareFacetValueList = function(){
+			base.$el.html('<img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif"/>');
+		};
+		
 		base.populateTemplate = function(){
 			var content = '<div class="facetValueList floatL w46p marL20 borderL padL15">';
 			content+= '<p class="fbold">';
@@ -199,7 +188,7 @@
 			content+= '</div>';
 			content+= '</div>';
 
-			base.$el.append(content);
+			return content;
 		};
 
 		base.populateList = function(data){
@@ -246,7 +235,6 @@
 	};
 
 	$.fn.viewfacetvalues = function(options){
-
 		if (this.length) {
 			return this.each(function() {
 				$(this).empty();
