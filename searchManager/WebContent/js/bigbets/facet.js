@@ -7,6 +7,8 @@
 
 			tabSelectedId: 1,
 			tabSelectedName: "",
+			keyword: "",
+			fq: "",
 
 			rulePage: 1,
 			rulePageSize: 5,
@@ -100,6 +102,18 @@
 			setFacetSort : function(rule){
 				var self = this;
 				self.selectedRule = rule;
+				self.keyword = "";
+				self.fq = "";
+				
+				if(self.selectedRule["ruleType"]){
+					if("KEYWORD" === self.selectedRule["ruleType"]){
+						self.keyword = self.selectedRule["ruleName"];
+					}
+					else if("TEMPLATE" === self.selectedRule["ruleType"]){
+						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + self.selectedRule["ruleName"] + "\"";
+					}
+				}
+				
 				self.showFacetSort();
 			},
 
@@ -125,8 +139,6 @@
 			populateTabContent : function(){
 				var self = this;
 				var facetTabId = self.tabSelectedId;
-				var keyword = "";
-				var fq = "";
 				var tabContainer = $("#"+facetTabId);
 
 				//if there exists tempItems, tab is already populated, do not refresh
@@ -136,20 +148,12 @@
 				tabContainer.find("span#addFacetSortTitleHeader").text("Elevated " + self.tabSelectedName + " Values");
 				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
 
-				if(self.selectedRule["ruleType"]){
-					if("KEYWORD" === self.selectedRule["ruleType"]){
-						keyword = self.selectedRule["ruleName"];
-					}
-					else if("TEMPLATE" === self.selectedRule["ruleType"]){
-						fq = GLOBAL_storeFacetTemplateName + ":\"" + self.selectedRule["ruleName"] + "\"";
-					}
-				}
 
 				$("#"+facetTabId+"_list").viewfacetvalues({
 					headerText: "Facet Preview of " + self.tabSelectedName,
-					keyword: keyword,
+					keyword: self.keyword,
 					facetField: self.tabSelectedName,
-					fq: fq,
+					fq: self.fq,
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
 						self.populateFacetListDropdown();
@@ -161,7 +165,6 @@
 			},
 
 			addSortableOption : function(contentHolder){
-				//contentHolder.find('ul#selectedFacetValueList').sortable();
 				contentHolder.find('ul#selectedFacetValueList').sortable("destroy").sortable({
 					//handle : '.handle',
 					cursor : 'move',
@@ -199,9 +202,8 @@
 					
 								}
 							});
-
-							$li.find("input#"+item["memberId"]).val(itemName);
-							$li.find("select#"+item["memberId"]).prop("selectedText", itemName);
+							$li.find("input#_items_"+facetGroupId).val(itemName);
+							$li.find("select#_items_"+facetGroupId).prop("selectedText", itemName);
 
 							$ul.append($li);
 							self.addDeleteFacetValueListener($li);
@@ -518,7 +520,6 @@
 				});
 
 				content.find("span#addNewLink").text("[add new " + self.tabSelectedName.toLowerCase() + " value]");
-				//ul.sortable();
 			},
 
 			addDeleteFacetValueListener : function(contentHolder){
