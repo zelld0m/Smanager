@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.cache.dao.DaoCacheService;
-import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleType;
@@ -53,7 +52,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
@@ -255,8 +253,8 @@ public class SearchServlet extends HttpServlet {
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
-			if (fromSearchGui && StringUtils.isNotBlank(UtilityService.getStoreFacetTemplate())) {
-				nvp = new BasicNameValuePair("facet.field", UtilityService.getStoreFacetTemplate());
+			if (fromSearchGui && StringUtils.isNotBlank(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))) {
+				nvp = new BasicNameValuePair("facet.field", configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
 				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
 					nameValuePairs.add(nvp);
 				}
@@ -751,9 +749,9 @@ public class SearchServlet extends HttpServlet {
 			}
 			
 			if (facetSort != null) {
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), disableFacetSort));				
+				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), !disableFacetSort));				
 				if (!disableFacetSort && applyFacetSort) {
-					// TODO: set solrHelper facetSort
+					solrHelper.setFacetSortRule(facetSort);
 				}
 			}
 			
@@ -772,7 +770,6 @@ public class SearchServlet extends HttpServlet {
 			tasks++;
 
 			// TASK 1B - get count of force added items (should be merged with task 1A) 
-			// TODO: optional remove the spellcheck parameters for succeeding requests
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
@@ -845,7 +842,6 @@ public class SearchServlet extends HttpServlet {
 			nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_START).get(0));
 			nameValuePairs.remove(paramMap.get(SolrConstants.SOLR_PARAM_ROWS).get(0));
 
-			// TODO FIX: numFound should contain force added items
 			if (requestedRows != 0 && (numFound + numElevateFound) != 0) {
 
 				Future<Integer> getElevatedItems = null;
