@@ -34,6 +34,12 @@
 		<beans:property name="cacheService" ref="cacheService"/>
 	</beans:bean>
 	
+	<beans:bean name="facetSortCacheDao" class="com.search.manager.cache.dao.FacetSortCacheDao" scope="singleton">
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="keywordCacheDao" ref="keywordCacheDao"/>
+		<beans:property name="cacheService" ref="cacheService"/>
+	</beans:bean>
+	
 	<beans:bean name="redirectCacheDao" class="com.search.manager.cache.dao.RedirectCacheDao" scope="singleton">
 		<beans:property name="daoService" ref="daoService"/>
 		<beans:property name="keywordCacheDao" ref="keywordCacheDao"/>
@@ -54,6 +60,7 @@
 		<beans:property name="elevateCacheDao" ref="elevateCacheDao"/>
 		<beans:property name="excludeCacheDao" ref="excludeCacheDao"/>
 		<beans:property name="demoteCacheDao" ref="demoteCacheDao"/>
+		<beans:property name="facetSortCacheDao" ref="facetSortCacheDao"/>
 		<beans:property name="redirectCacheDao" ref="redirectCacheDao"/>
 		<beans:property name="relevancyCacheDao" ref="relevancyCacheDao"/>
     </beans:bean>

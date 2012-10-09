@@ -47,6 +47,9 @@
 	<beans:bean name="demoteDao" id="demoteDAO" class="com.search.manager.dao.sp.DemoteDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
+	<beans:bean name="facetSortDao" id="facetSortDAO" class="com.search.manager.dao.sp.FacetSortDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplate" />
+	</beans:bean>
 	<beans:bean name="keywordDao" id="keywordDAO" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
@@ -85,6 +88,7 @@
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
 		<beans:property name="excludeDAO" ref="excludeDAO"/>
 		<beans:property name="demoteDAO" ref="demoteDAO"/>
+		<beans:property name="facetSortDAO" ref="facetSortDAO"/>
 		<beans:property name="keywordDAO" ref="keywordDAO"/>
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAO"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAO"/>
@@ -109,6 +113,9 @@
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
 	<beans:bean name="demoteDaoStg" id="demoteDAOStg" class="com.search.manager.dao.sp.DemoteDAO" scope="singleton">
+		<beans:constructor-arg ref="jdbcTemplateStg" />
+	</beans:bean>
+	<beans:bean name="facetSortDaoStg" id="facetSortDAOStg" class="com.search.manager.dao.sp.FacetSortDAO" scope="singleton">
 		<beans:constructor-arg ref="jdbcTemplateStg" />
 	</beans:bean>
 	<beans:bean name="keywordDaoStg" id="keywordDAOStg" class="com.search.manager.dao.sp.KeywordDAO" scope="singleton">
@@ -150,6 +157,7 @@
 		<beans:property name="elevateDAO" ref="elevateDAOStg"/>
 		<beans:property name="excludeDAO" ref="excludeDAOStg"/>
 		<beans:property name="demoteDAO" ref="demoteDaoStg"/>
+		<beans:property name="facetSortDAO" ref="facetSortDAOStg"/>
 		<beans:property name="keywordDAO" ref="keywordDAOStg"/>
 		<beans:property name="storeKeywordDAO" ref="storeKeywordDAOStg"/>	
 		<beans:property name="relevancyDAO" ref="relevancyDAOStg"/>
