@@ -15,6 +15,7 @@ import org.apache.http.message.BasicNameValuePair;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.SearchResult;
 
 public abstract class SolrResponseParser {
@@ -38,6 +39,8 @@ public abstract class SolrResponseParser {
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
 
+	protected FacetSort facetSortRule;
+	
 	/* public setters and getters */
 	public final void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
 		this.activeRules = activeRules;
@@ -73,6 +76,10 @@ public abstract class SolrResponseParser {
 	
 	public final void setExpiredDemotedEDPs(List<String> list) throws SearchException {
 		expiredDemotedEDPs = list;
+	}
+	
+	public final void setFacetSortRule(FacetSort facetSortRule) throws SearchException {
+		this.facetSortRule = facetSortRule;
 	}
 	
 	/* Used by both elevate and demote */

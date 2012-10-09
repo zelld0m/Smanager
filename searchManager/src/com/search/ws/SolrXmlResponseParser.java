@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -19,8 +20,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.search.manager.enums.SortType;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -34,6 +37,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private Node explainNode = null;
 	private Node qtimeNode = null;
 	private Node placeHolderNode = null;
+	private Node facetFieldsNode = null;
 
 	private List<Node> demotedEntries = new ArrayList<Node>();
 	private List<Node> elevatedEntries = new ArrayList<Node>();
@@ -280,7 +284,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			explainNode = locateElementNode(locateElementNode(locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_DEBUG),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
-
+			facetFieldsNode = locateElementNode(locateElementNode(locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE),
+					SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS);
+			
 			// insert a temp node, that will separate elevated items from non-elevated items
 			placeHolderNode = mainDoc.createElement("tmp-node");
 			resultNode.appendChild(placeHolderNode);
@@ -337,6 +343,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		try {
 			addElevatedEntries();
 			addDemotedEntries();
+			applyFacetSort();
 			resultNode.removeChild(placeHolderNode);
 			qtimeNode.setTextContent(String.valueOf(totalTime));
 			response.setContentType("text/xml;charset=UTF-8");
@@ -361,6 +368,68 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		}
 	}
 
+	private void applyFacetSort() {
+		if (facetSortRule == null || facetFieldsNode == null) {
+			return;
+		}
+
+		for (String key: facetSortRule.getItems().keySet()) {
+			
+			boolean isFacetTemplate = false;
+			SortType sortType = facetSortRule.getGroupSortType().get(key);
+			if (sortType == null) {
+				sortType = facetSortRule.getSortType();
+			}
+			List<String> elevatedValues = facetSortRule.getItems().get(key);
+			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId())) {
+				key = ConfigManager.getInstance().getParameterByCore(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+				isFacetTemplate = true;
+			}
+
+			facetFieldsNode.getChildNodes();
+			NodeList children = facetFieldsNode.getChildNodes();
+			for (int i = 0, size = children.getLength(); i < size; i++) {
+				Node currentNode = children.item(i);
+				if (currentNode.getNodeType() == Node.ELEMENT_NODE && StringUtils.equals(key, 
+						currentNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue())) {
+					
+					List<FacetEntry> entries = new ArrayList<FacetEntry>();
+					NodeList facetFieldValues = currentNode.getChildNodes();
+					
+					Map<String, Node> nodeMap = new HashMap<String, Node>();
+					for (int j = 0; j < facetFieldValues.getLength(); j++) {
+						Node facetFieldValue = facetFieldValues.item(j);
+						String name = facetFieldValue.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
+						String count = facetFieldValue.getTextContent();
+						entries.add(new FacetEntry(name, Long.parseLong(count)));
+						nodeMap.put(name, facetFieldValue);
+					}
+
+					// clear everything
+					Node tmpNode = currentNode.getFirstChild();
+					while (tmpNode != null) {
+						currentNode.removeChild(tmpNode);
+						tmpNode = currentNode.getFirstChild();
+					}
+
+					// sort
+					if (isFacetTemplate) {
+						FacetEntry.sortFacetTemplateEntries(entries, sortType, elevatedValues);
+					}
+					else {
+						FacetEntry.sortEntries(entries, sortType, elevatedValues);
+					}
+					
+					// insert everything in sorted order
+					for (FacetEntry entry: entries) {
+						currentNode.appendChild(mainDoc.importNode(nodeMap.get(entry.getLabel()), true));
+					}
+					break;
+				}
+			}
+		}
+	}
+	
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
@@ -368,11 +437,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = docBuilder.parse(solrResponse.getEntity().getContent());
-			Node node0 = locateElementNode(document, SolrConstants.TAG_RESPONSE);
-			Node node1 = locateElementNode(node0, SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS);
-			Node node2 = locateElementNode(node1, SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS);
-			Node node3 = locateElementNode(node2, SolrConstants.TAG_LIST, templateNameField);
-			NodeList templateNames = node3.getChildNodes();
+			NodeList templateNames = locateElementNode(locateElementNode(locateElementNode(locateElementNode(document, SolrConstants.TAG_RESPONSE),
+							SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS),
+							SolrConstants.TAG_LIST, templateNameField).getChildNodes();
 			if (templateNames.getLength() == 1) {
 				templateName = templateNames.item(0).getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
 			}

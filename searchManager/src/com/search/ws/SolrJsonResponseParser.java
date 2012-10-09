@@ -17,15 +17,18 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.SortType;
 import com.search.manager.model.CNetFacetTemplate;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
 import com.search.manager.utility.SolrRequestDispatcher;
 
@@ -37,6 +40,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	private JSONArray resultArray  = null; // DOCS entry
 	private JSONObject explainObject  = null; // DOCS entry
 	private JSONObject facetTemplate  = null; // Facet Template
+	private JSONObject facetFields  = null; // Facet Sort
 	private JSONObject responseHeader = null;
 	private List<JSONObject> elevatedResults = new ArrayList<JSONObject>();
 	private List<JSONObject> demotedResults = new ArrayList<JSONObject>();
@@ -115,6 +119,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 			// TODO: make this get value from solr.xml
 			facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", "PCMall_FacetTemplate"});
+			facetFields = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"});
 			
 			if (activeRules != null) {
 				JSONArray searchRules = new JSONArray();
@@ -366,9 +371,28 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
-			for (String lvl1Key: root.getFacets()) {
-				CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
-				lvl1Map.put(lvl1Key, lvl1.getCount());
+			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || 
+					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId())) {
+				for (String lvl1Key: root.getFacets()) {
+					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
+					lvl1Map.put(lvl1Key, lvl1.getCount());
+				}
+			}
+			else {
+				facetSortRule.getItems().containsKey("Category");
+				List<FacetEntry> entries = new ArrayList<FacetEntry>();
+				for (String lvl1Key: root.getFacets()) {
+					entries.add(new FacetEntry(lvl1Key, root.getFacet(lvl1Key).getCount()));
+				}
+				SortType sortType = facetSortRule.getGroupSortType().get("Category");
+				if (sortType == null) {
+					sortType = facetSortRule.getSortType();
+				}
+				FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get("Category"));
+				
+				for (FacetEntry entry: entries) {
+					lvl1Map.put(entry.getLabel(), entry.getCount());
+				}
 			}
 		}
 		else {
@@ -402,7 +426,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				}
 			}
 		}
-		
+
 		if (!lvl1Map.isEmpty()) {
 			facets.element("Level1", lvl1Map);
 		}
@@ -423,6 +447,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			addElevatedEntries();
 			addDemotedEntries();
 			getFacetTemplates();
+			applyFacetSort();
 			responseHeader.put(SolrConstants.ATTR_NAME_VALUE_QTIME, totalTime);
 			boolean wrfPresent = !StringUtils.isEmpty(wrf);
 			response.setContentType("application/json;charset=UTF-8");
@@ -462,13 +487,48 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 
+	private void applyFacetSort() {
+		if (facetSortRule == null || facetFields == null) {
+			return;
+		}
+
+		for (String key: facetSortRule.getItems().keySet()) {
+			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId()))) {
+				
+				// grab a copy of the fields
+				List<FacetEntry> entries = new ArrayList<FacetEntry>();
+				
+				JSONObject facetField = facetFields.getJSONObject(key);
+				for (String facetValue: (Set<String>)facetField.keySet()) {
+					entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
+				}
+				
+				// remove the facet field
+				facetFields.remove(key);
+				
+				SortType sortType = facetSortRule.getGroupSortType().get(key);
+				if (sortType == null) {
+					sortType = facetSortRule.getSortType();
+				}
+				FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get(key));
+				
+				// add back the facet field 
+				JSONObject facets = new JSONObject();
+				for (FacetEntry entry: entries) {
+					facets.element(entry.getLabel(), entry.getCount());
+				}
+				facetFields.element(key, facets);
+			}
+		}
+	}
+	
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject facetFields = parseJsonResponse(slurper, solrResponse).getJSONObject(SolrConstants.TAG_FACET_COUNTS)
-										.getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(templateNameField);
+			JSONObject facetFields = locateJSONObject(parseJsonResponse(slurper, solrResponse), 
+					new String[] { SolrConstants.TAG_FACET_COUNTS, SolrConstants.TAG_FACET_FIELDS, templateNameField });
 			Set<String> set = facetFields.keySet();
 			if (set.size() == 1) {
 				templateName = set.toArray(new String[0])[0];
