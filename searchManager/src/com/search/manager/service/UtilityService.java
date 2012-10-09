@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.utility.PropsUtils;
 import com.search.ws.ConfigManager;
+import com.search.ws.SolrConstants;
 
 @Service(value = "utilityService")
 @RemoteProxy(
@@ -178,7 +179,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplateName = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplateName = cm.getParameterByCore(getStoreName(), "facet-template-name");
+			storeFacetTemplateName = cm.getParameterByCore(getStoreName(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
 		}
 		
 		return storeFacetTemplateName;
