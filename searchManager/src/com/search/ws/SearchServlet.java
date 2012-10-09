@@ -713,9 +713,7 @@ public class SearchServlet extends HttpServlet {
 
 
 			
-			FacetSort facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
-					: daoCacheService.getFacetSortRule(sk);
-			
+			FacetSort facetSort = null;
 			boolean applyFacetSort = false;
 			String templateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
 			final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
@@ -739,6 +737,10 @@ public class SearchServlet extends HttpServlet {
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
 
+			if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
+				facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
+						: daoCacheService.getFacetSortRule(sk);
+			}
 			if (facetSort == null) {
 				// get facetSortRule based on template name
 				templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
