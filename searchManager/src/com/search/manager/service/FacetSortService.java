@@ -3,6 +3,7 @@ package com.search.manager.service;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -97,16 +98,32 @@ public class FacetSortService {
 	}
 
 	@RemoteMethod
-	public int updateRule(String ruleId, String sortType, Map<String, String[]> facetGroupItems, Map<String, String>  sortOrders) {
+	public int updateRule(String ruleId, String name, String sortType, Map<String, String[]> facetGroupItems, Map<String, String>  sortOrders) {
 		int result = -1;
 
 		try {
 			String store = UtilityService.getStoreName();
 			String username = UtilityService.getUsername();
-			FacetSort rule = new FacetSort(ruleId, store);
+			FacetSort rule = new FacetSort(ruleId, name, "", sortType, store);
 			rule.setLastModifiedBy(username);
+			
+			if(MapUtils.isNotEmpty(facetGroupItems)){
+				FacetGroup facetGroup = new FacetGroup();
 				
-			return daoService.updateFacetSort(rule);
+				for(Map.Entry<String, String[]> entry: facetGroupItems.entrySet()){
+					String facetGroupId = entry.getKey();
+					String[] arrFacetGroupItems = entry.getValue();
+					
+					facetGroup.setId(facetGroupId);
+					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
+					daoService.updateFacetGroup(facetGroup);
+				
+					for(String itemName: arrFacetGroupItems){
+						addAllFacetGroupItem(facetGroupId, itemName);
+					}					
+				}
+			}
+		
 		} catch (DaoException e) {
 			logger.error("Failed during updateRule()",e);
 		}

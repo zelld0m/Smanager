@@ -454,7 +454,12 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetSortPK(facetSort);
 			Map<String, Object> inputs = new HashMap<String, Object>();
+			
 			inputs.put(DAOConstants.PARAM_RULE_ID, facetSort.getRuleId());
+			inputs.put(DAOConstants.PARAM_RULE_NAME, facetSort.getName());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.get(facetSort.getSortType().toString()));
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getLastModifiedBy());
+			
 			return DAOUtils.getUpdateCount(updateFacetSortSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetSort(): " + e.getMessage(), e);
@@ -502,7 +507,12 @@ public class FacetSortDAO {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
 			Map<String, Object> inputs = new HashMap<String, Object>();
+		
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroup.getId());
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, facetGroup.getSequence()!=null ? facetGroup.getSequence(): "");
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetGroup.getSortType());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetGroup.getLastModifiedBy());
+			
 			return DAOUtils.getUpdateCount(updateFacetGroupSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroup(): " + e.getMessage(), e);

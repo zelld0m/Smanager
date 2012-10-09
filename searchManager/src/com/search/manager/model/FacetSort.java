@@ -49,6 +49,11 @@ public class FacetSort extends ModelBean{
 		this(name, RuleType.get(ruleType), SortType.get(sortType), new Store(store));
 	}
 	
+	public FacetSort(String id, String name, String ruleType, 
+			String sortType, String store) {
+		this(id, name, RuleType.get(ruleType), SortType.get(sortType), new Store(store));
+	}
+	
 	public FacetSort(String id, String name, String store) {
 		super();
 		this.id = id;
