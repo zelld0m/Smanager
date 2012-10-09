@@ -417,6 +417,51 @@
 				});
 				break;
 			case "Facet Sort":
+				$content.html($("#facetSortTemplate").html());
+				var $table = $content.find("table#item");
+				var $ruleInfo = $content.find("div#ruleInfo");
+				
+				FacetSortServiceJS.getRuleById(ruleStatus["ruleRefId"], {
+					callback: function(data){
+						$ruleInfo.find("#ruleName").text(data.name);
+						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+						
+						for(var facetGroup in data.items){
+							var facetName = facetGroup;
+							var facetValue = data.items[facetGroup];
+							var highlightedItems = "";
+							var $tr = $table.find("tr#itemPattern").clone();
+							$tr.prop({id: $.formatAsId(facetName)});
+							$tr.find("#itemName").text(facetName);
+							
+							if($.isArray(facetValue)){
+								for(var i=0; i < facetValue.length; i++){
+									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
+								}
+							}
+							$tr.find("#itemHighlightedItem").html(highlightedItems);
+
+							var sortTypeDisplay = "";
+							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
+							
+							switch(sortType){
+								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							}
+							
+							$tr.find("#itemSortType").text(sortTypeDisplay);
+							$tr.show();
+							$table.append($tr);
+						};						
+					},
+					postHook:function(){
+						$table.find("tr#preloader").hide();
+					}
+				});
+				
+				break;
 			case "Query Cleaning": 
 				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});

@@ -177,6 +177,48 @@
 			</div>
 		</div>
 		
+		<div id="facetSortTemplate" style="display: none">
+			<div id="ruleInfo">
+				<label class="w70 floatL fbold">Rule Name:</label>
+				<label class="wAuto floatL" id="ruleName">
+					<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">
+				 </label>
+				 	    <div class="clearB"></div>
+				 <label class="w70 floatL fbold">Rule Type:</label>
+				 <label class="wAuto floatL" id="ruleType">
+				 	<img id="preloader" alt="Retrieving" src="../images/ajax-loader-rect.gif">
+				 </label>
+				 	</div>
+				 	<div class="clearB"></div>
+				 	<div class="w600 mar0 pad0">
+				 <table class="tblItems w100p marT5">
+				 	<tbody>
+				 		<tr>
+				 			<th width="60px">Facet Name</th>
+				 			<th width="84px">Highlighted Items</th>
+				 			<th width="50px">Sorting of Other Items</th>
+				 		</tr>
+				 	<tbody>
+				 </table>
+				 	</div>
+				 	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">
+				 <table id="item" class="tblItems w100p">
+				 	<tbody>
+				 		<tr id="itemPattern" class="itemRow" style="display: none">
+				 			<td width="60px" class="txtAC" id="itemName"></td>
+				 			<td width="84px" class="txtAL" id="itemHighlightedItem"></td>
+				 			<td width="50px" class="txtAC" id="itemSortType"></td>
+				 		</tr>
+				 		<tr id="preloader">
+				 			<td colspan="6" class="txtAC">
+				 				<img alt="Retrieving" src="../images/ajax-loader-rect.gif">	
+				 			</td>
+				 		</tr>
+				 	</tbody>
+				 </table>
+				</div>
+		</div>		
+				
 		<div id="queryCleaningTemplate" style="display: none;">
 			<div class="rulePreview w590 marB20">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>

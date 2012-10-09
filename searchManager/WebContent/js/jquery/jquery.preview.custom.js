@@ -227,6 +227,7 @@
 						$table.find("tr#preloader").hide();
 					}
 				});
+				break;
 			case "query cleaning": 
 				$content.find(".infoTabs").tabs({});
 
