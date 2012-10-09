@@ -216,7 +216,7 @@
 					</div>
 					
 					<div class="cnet">
-	        				<h3 class="marT10">Facet Template / Manufacturers</h3>	        		
+	        				<h3 class="marT10">Product Site Taxonomy / Manufacturers</h3>	        		
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="cnetFields">							
 								<tr class="catName" id="level1Cat">

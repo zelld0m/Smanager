@@ -336,7 +336,7 @@
 					},
 					
 					afterClose: function(){
-						//self.manager.doRequest();
+						self.manager.doRequest();
 					}
 				});
 			};
@@ -519,7 +519,7 @@
 					},
 					
 					afterClose: function(){
-						//self.manager.doRequest();
+						self.manager.doRequest();
 					}
 				});
 			};
