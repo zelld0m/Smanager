@@ -32,6 +32,7 @@
 				self.prepareFacetSort();
 				$("#preloader").hide();
 				self.getFacetSortRuleList(1);
+				self.getSortOrderList();
 				
 				if(self.selectedRule==null){
 					$("#noSelected").show();
@@ -103,7 +104,6 @@
 				var self = this;
 				self.selectedRule = rule;
 				self.showFacetSort();
-				self.getSortOrderList();
 			},
 			
 			populateFacetListDropdown: function(){
@@ -171,7 +171,9 @@
 					cursor : 'move',
 					axis: 'y',
 					tolerance: 'intersect',
-					placeholder: 'placeHolder_small'
+					placeholder: 'placeHolder_small',
+					forceHelperSize: true,
+					forcePlaceholderSize: true
 				});
 			},
 			
