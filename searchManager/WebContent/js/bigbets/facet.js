@@ -4,6 +4,7 @@
 			moduleName: "Facet Sort",
 			selectedRule:  null,
 			selectedRuleStatus: null,
+			maxHighlightedFacet: 5,
 
 			tabSelectedId: 1,
 			tabSelectedName: "",
@@ -11,9 +12,9 @@
 			fq: "",
 
 			rulePage: 1,
-			rulePageSize: 5,
+			rulePageSize: 10,
 
-			facetFields : ["Category", "Manufacturer"],
+			facetFields : ["Category", "Manufacturer"],	//TODO This might be retrieved from a lookup table
 			facetValueList: null,
 			sortOrderList: null,
 			facetGroupIdList: null,
@@ -67,8 +68,10 @@
 
 						var $facetSortOrder = $('#facetSortOrder');
 						self.populateSortOrderList($facetSortOrder, self.selectedRule["sortType"]);
-
 						self.selectedRuleStatus = ruleStatus;
+						
+						$facetSortOrder.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
+						
 						$("#facetsorting").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
@@ -145,9 +148,10 @@
 				if(tabContainer.find("li.tempItem").length > 0) return;
 				
 				tabContainer.show();
-				tabContainer.find("span#addFacetSortTitleHeader").text("Elevated " + self.tabSelectedName + " Values");
 				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
-
+				tabContainer.find("span#addFacetSortTitleHeader").text("");
+				tabContainer.find("span#addNewLink").text("");
+				tabContainer.find("ul#selectedFacetValueList li:not(#addFacetValuePattern)").remove();
 
 				$("#"+facetTabId+"_list").viewfacetvalues({
 					headerText: "Facet Preview of " + self.tabSelectedName,
@@ -163,8 +167,10 @@
 						
 						self.populateFacetListDropdown();
 						self.populateSelectedValues(tabContainer, facetTabId.split("_")[1]);
-						self.addNewFacetValueListener(tabContainer);
+						self.addNewFacetValueListener(tabContainer, facetTabId.split("_")[1]);
 						self.addSortableOption(tabContainer);
+						
+						tabContainer.find("span#addFacetSortTitleHeader").text("Highlighted " + self.tabSelectedName + " Values");
 					}
 				});
 			},
@@ -180,12 +186,30 @@
 					forcePlaceholderSize: true
 				});
 			},
+			
+			checkDuplicateFacet : function (target, e, u, facetGroupId){
+				var self = this;
+				var selectedFacetName = "";
+				var itemId = $(target).attr("id");
+				
+				if(u.item){
+					selectedFacetName = u.item.text;
+					var selectedFacetMap = self.buildFacetGroupItemsMap();
+					var selectedFacets = selectedFacetMap[facetGroupId];
+					
+					//check duplicate
+					if($.isNotBlank(u.item.text)){
+						if($.inArray(u.item.text, selectedFacets) >= 0){
+							jAlert(selectedFacetName + " is already selected.", self.moduleName);
+							// TODO (($(target)[0]).parent()).find("input#"+itemId).val("");
+						}
+					}
+				}
+			},
 
 			populateSelectedValues : function(facetDiv, facetGroupId){
 				var self = this;
 				var $ul = facetDiv.find("ul#selectedFacetValueList");
-
-				$ul.find("li#not:('addFacetValuePattern')").remove();
 
 				FacetSortServiceJS.getAllFacetGroupItem(self.selectedRule["ruleId"], facetGroupId, {
 					callback: function(data){
@@ -203,8 +227,11 @@
 							$select.prop({id: "_items_"+facetGroupId});
 
 							$select.combobox({
+								change: function(e, u){
+									self.checkDuplicateFacet(this, e, u, facetGroupId);
+								},
 								selected: function(e, u){
-					
+									self.checkDuplicateFacet(this, e, u, facetGroupId);
 								}
 							});
 							$li.find("input#_items_"+facetGroupId).val(itemName);
@@ -477,8 +504,21 @@
 							$facetDiv.removeClass("facetTabPattern");
 							$facetDiv.prop({id : facetGroupId});
 							$facetDiv.addClass("facetTab");
+							
+							$facetDiv.find("input#facetGroupCheckbox").prop({checked: (facetGroup["sortType"] != null), disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
+								click:function(e){
+									if (e.data.locked) return;
+									
+									var $this = e.data.ui;
+						            if ($this.attr('disabled')) $this.removeAttr('disabled');
+						            else $this.attr('disabled', 'disabled');
+								},
+								mouseenter: showHoverInfo
+							}, {locked: self.selectedRuleStatus["locked"] || !allowModify, ui : $facetSort});
 
 							self.populateSortOrderList($facetSort, facetGroup["sortType"]);
+							$facetSort.prop({disabled: (facetGroup["sortType"] == null || (self.selectedRuleStatus["locked"] || !allowModify))});
+							
 							$("div.facetTabPattern").before($facetDiv);
 						}
 					},
@@ -501,28 +541,44 @@
 				});
 			},
 
-			addNewFacetValueListener : function(content){
+			addNewFacetValueListener : function(content, facetGroupId){
 				var self = this;
 				var ul = content.find('ul#selectedFacetValueList');
 
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
-						var $li = content.find('li#addFacetValuePattern').clone();
-
-						$li.show();
-						$li.removeClass("addFacetValuePattern");
-						$li.addClass("tempItem");
-						$li.prop({id: ""});
-						ul.append($li);
-
-						$li.find("select.selectCombo").combobox({
-							selected: function(e, u){
+						if (!e.data.locked){
+							//TODO check if reached max
+							var items = self.buildFacetGroupItemsMap();
+							var conditionCount = (items && items[facetGroupId]) ? items[facetGroupId].length : 0;
+							if (conditionCount >= self.maxHighlightedFacet) {
+								jAlert("Maximum allowed number of highlighted facet values is "+self.maxHighlightedFacet+"!",self.moduleName);
+								return;
 							}
-						});
-
-						self.addDeleteFacetValueListener($li);
-					}
-				});
+							
+							var $li = content.find('li#addFacetValuePattern').clone();
+	
+							$li.show();
+							$li.removeClass("addFacetValuePattern");
+							$li.addClass("tempItem");
+							$li.prop({id: ""});
+							
+							ul.append($li);
+	
+							$li.find("select.selectCombo").combobox({
+								change: function(e, u){
+									self.checkDuplicateFacet(this, e, u, facetGroupId);
+								},
+								selected: function(e, u){
+									self.checkDuplicateFacet(this, e, u, facetGroupId);
+								}
+							});
+	
+							self.addDeleteFacetValueListener($li);
+						}
+					},
+					mouseenter: showHoverInfo
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 
 				content.find("span#addNewLink").text("[add new " + self.tabSelectedName.toLowerCase() + " value]");
 			},
@@ -537,7 +593,7 @@
 						}
 					},
 					mouseenter: showHoverInfo
-				},{locked:self.selectedRule["locked"] || !allowModify});
+				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
 			buildFacetGroupItemsMap: function(){

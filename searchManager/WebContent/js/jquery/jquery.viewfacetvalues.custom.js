@@ -114,7 +114,7 @@
 				facetValues = facetFields[base.options.facetField];
 			}
 			
-			var $ulSelected = $('<ul></ul>');
+			var selectedFacetMap = new Object();
 			var $ulNotSelected = $('<ul></ul>');
 			
 			for (var facetValue in facetValues) {
@@ -134,9 +134,33 @@
 					$ulNotSelected.append($li);
 				}
 				else{
+					//add to Array
+					selectedFacetMap[facetValue] = count;
+				}
+			}
+			
+			//loop selected items
+			var $ulSelected = $('<ul></ul>');
+			if(selectedList){
+				for (var index in selectedList) {
+					var facetName = selectedList[index];
+					
+					if($.isBlank(facetName))
+						continue;
+					
+					var $li = $ul.find("li#facetValuePattern").clone();
+					var count = selectedFacetMap[facetName];
+					
+					$li.show();
+					$li.prop({id: 'facetValue'});
+					$li.find("span#facetName").text(facetName);
+					$li.find("span#facetCount").text('(' + count + ')');
+				
 					$ulSelected.append($li);
 				}
 			}
+			
+			$ulSelected.append($li);
 
 			$ul.append($ulSelected.html());
 			$ul.append($ulNotSelected.html());
@@ -162,7 +186,7 @@
 		};
 
 		base.prepareFacetValueList = function(){
-			base.$el.html('<img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif"/>');
+			base.$el.html('<div align="center"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif"/></div>');
 		};
 		
 		base.populateTemplate = function(){
@@ -234,8 +258,8 @@
 			facetField: "Category",
 			displayType: "Scrollable",
 			sortOrder: "asc",
-			selectedIconText : "elevated",
-			selectedList : [""],
+			selectedIconText : "highlighted",
+			selectedList : [],
 			afterSolrRequestCallback: function(json){}
 	};
 
