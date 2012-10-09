@@ -37,18 +37,19 @@ public class SolrConstants {
 	public final static String TAG_DOCS = "docs";
 	public final static String TAG_INT = "int";
 	public final static String TAG_ARR = "arr";
-	
+
 	public final static String TAG_ELEVATE = "Elevate";
 	public final static String TAG_ELEVATE_TYPE = "ElevateType";
 	public final static String TAG_ELEVATE_ID = "ElevateId";
 	public final static String TAG_ELEVATE_CONDITION = "ElevateCondition";
+	public final static String TAG_ELEVATE_EXPIRED = "ElevateExpired";
 	
 	public final static String TAG_DEMOTE = "Demote";
 	public final static String TAG_DEMOTE_TYPE = "DemoteType";
 	public final static String TAG_DEMOTE_ID = "DemoteId";
 	public final static String TAG_DEMOTE_CONDITION = "DemoteCondition";
+	public final static String TAG_DEMOTE_EXPIRED = "DemoteExpired";
 	
-	public final static String TAG_EXPIRED = "Expired";
 	public final static String TAG_EXCLUDE = "Exclude";
 	public final static String TAG_REDIRECT = "Redirect";
 	public final static String TAG_BANNER = "Banner";
@@ -60,6 +61,8 @@ public class SolrConstants {
 	public final static String TAG_FACET_COUNTS = "facet_counts";
 	public final static String TAG_FACET_FIELDS = "facet_fields";
 	public final static String TAG_FACET_FIELD = "facet.field";
+	public final static String TAG_FACET_MINCOUNT = "facet.mincount";
+	public final static String TAG_FACET = "facet";
 	
 	public final static String ATTR_NUM_FOUND = "numFound";
 	public final static String ATTR_MAX_SCORE = "maxScore";
@@ -81,6 +84,11 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_DEMOTE = "disableDemote";
 	public final static String SOLR_PARAM_DISABLE_REDIRECT = "disableRedirect";
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
+	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
+	
+	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
+	public final static String SOLR_PARAM_FACET_TEMPLATE_NAME 	= "facet-template-name";
+	
 	// returned as part of solr response
 	public final static String TAG_SEARCH_RULES = "search_rules";
 	public final static String TAG_RULE = "rule";
@@ -94,6 +102,7 @@ public class SolrConstants {
 	public final static String TAG_VALUE_RULE_TYPE_DEMOTE  = "Demote";
 	public final static String TAG_VALUE_RULE_TYPE_REDIRECT = "Query Cleaning";
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
+	public final static String TAG_VALUE_RULE_TYPE_FACET_SORT = "Facet Sort";
 
 	
 	

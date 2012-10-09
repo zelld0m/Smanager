@@ -33,11 +33,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.cache.dao.DaoCacheService;
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.RuleType;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -290,6 +293,7 @@ public class SearchServlet extends HttpServlet {
 			boolean disableRedirectIdPresent = StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
 			String  disableRedirectId = disableRedirect ? getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
 			boolean disableRelevancy  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
+			boolean disableFacetSort  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			
@@ -709,6 +713,50 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 
+
+			
+			FacetSort facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
+					: daoCacheService.getFacetSortRule(sk);
+			
+			boolean applyFacetSort = false;
+			String templateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
+			for (NameValuePair param: nameValuePairs) {
+				if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 
+					StringUtils.equals(SolrConstants.TAG_FACET, param.getName()) || 
+					StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName())){
+					getTemplateNameParams.remove(param);
+				}
+				else if (StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())) {
+					if (StringUtils.equals("Manufacturer", param.getValue()) ||
+						StringUtils.equals("Category", param.getValue()) ||
+						StringUtils.equals(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE), param.getValue())) {
+						// apply facet sort only if facet.field contains Manufacturer or Category or PCMall_FacetTemplate
+						applyFacetSort = true;
+					}
+					getTemplateNameParams.remove(param);
+				}
+			}
+			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
+			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
+			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
+
+			if (facetSort == null) {
+				// get facetSortRule based on template name
+				templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
+				if (StringUtils.isNotBlank(templateName)) {
+					facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore())) 
+							: daoCacheService.getFacetSortRule(sk.getStore(), templateName);					
+				}
+			}
+			
+			if (facetSort != null) {
+				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), disableFacetSort));				
+				if (!disableFacetSort && applyFacetSort) {
+					// TODO: set solrHelper facetSort
+				}
+			}
+			
 			Future<Integer> getTemplateCount = null;
 			Future<Integer> getElevatedCount = null;
 			Future<Integer> getDemotedCount = null;

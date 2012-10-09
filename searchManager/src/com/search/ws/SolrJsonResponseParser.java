@@ -12,7 +12,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
@@ -56,7 +55,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		wrf = SearchServlet.getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION);
 	}
 	
-	private static JSON parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
+	private static JSONObject parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
 		BufferedReader reader = null;
 		try {
 			String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
@@ -72,7 +71,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Json response" + jsonText.toString());
 			}
-			return slurper.parseText(jsonText.toString());
+			return (JSONObject)slurper.parseText(jsonText.toString());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -100,17 +99,17 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int numFound = -1;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			initialJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
+			initialJson = parseJsonResponse(slurper, solrResponse);
 			// locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
 			// results will be added here
-			resultArray = (JSONArray)((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
+			resultArray = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			// explain values are added here
 			explainObject = locateJSONObject(initialJson, new String[]{SolrConstants.ATTR_NAME_VALUE_DEBUG, SolrConstants.ATTR_NAME_VALUE_EXPLAIN});
 			// number of records
-			numFound = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
-			((JSONObject)((JSONObject)initialJson).get(SolrConstants.TAG_RESPONSE)).put(SolrConstants.SOLR_PARAM_START, startRow);
+			numFound = initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).getInt(SolrConstants.ATTR_NUM_FOUND);
+			initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).put(SolrConstants.SOLR_PARAM_START, startRow);
 			// put back rows in header
-			responseHeader = ((JSONObject)((JSONObject)initialJson).get(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER));
+			responseHeader = initialJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 			if (StringUtils.isNotEmpty(changedKeyword)) {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
 			}
@@ -128,7 +127,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				responseHeader.element(SolrConstants.TAG_SEARCH_RULES, searchRules);
 			}
 			
-			JSONObject paramsHeader = (JSONObject)(responseHeader.get(SolrConstants.ATTR_NAME_VALUE_PARAMS));
+			JSONObject paramsHeader = responseHeader.getJSONObject(SolrConstants.ATTR_NAME_VALUE_PARAMS);
 			paramsHeader.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
 			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);
 		} catch (Exception e) {
@@ -142,8 +141,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int numFound = -1;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSON tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			numFound = ((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND);
+			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
+			numFound = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getInt(SolrConstants.ATTR_NUM_FOUND);
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get number of items" ,e);
 		}
@@ -151,14 +150,17 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	}
 
 	private void tagSearchResult(JSONObject resultObject, String edp, SearchResult result) {
+		if (expiredElevatedEDPs.contains(edp)) {
+			resultObject.element(SolrConstants.TAG_ELEVATE_EXPIRED,"");
+		}
+		if (expiredDemotedEDPs.contains(edp)) {
+			resultObject.element(SolrConstants.TAG_DEMOTE_EXPIRED,"");
+		}
 		if (result instanceof ElevateResult) {
 			resultObject.element(SolrConstants.TAG_ELEVATE, String.valueOf(((ElevateResult)result).getLocation()));
 			resultObject.element(SolrConstants.TAG_ELEVATE_TYPE, String.valueOf(result.getEntity()));
 			if (result.getEntity() == MemberTypeEntity.FACET) {
 				resultObject.element(SolrConstants.TAG_ELEVATE_CONDITION, result.getCondition().getReadableString());						
-			}
-			if (expiredElevatedEDPs.contains(edp)) {
-				resultObject.element(SolrConstants.TAG_EXPIRED,"");
 			}
 			if (((ElevateResult)result).isForceAdd()) {
 				resultObject.element(SolrConstants.TAG_FORCE_ADD,"");
@@ -171,9 +173,6 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			if (result.getEntity() == MemberTypeEntity.FACET) {
 				resultObject.element(SolrConstants.TAG_DEMOTE_CONDITION, result.getCondition().getReadableString());						
 			}
-			if (expiredDemotedEDPs.contains(edp)) {
-				resultObject.element(SolrConstants.TAG_EXPIRED,"");
-			}
 			resultObject.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(result.getMemberId()));
 		}
 	}
@@ -183,11 +182,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
+			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
+			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
 			if (explainObject != null) {
-				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
+				tmpExplain = tmpJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_DEBUG).getJSONObject(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 			}
 			
 			Map<String, JSONObject> entries = new HashMap<String, JSONObject>();
@@ -235,11 +234,11 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
+			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
+			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
 			if (explainObject != null) {
-				tmpExplain = (JSONObject)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.ATTR_NAME_VALUE_DEBUG)).get(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
+				tmpExplain = tmpJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_DEBUG).getJSONObject(SolrConstants.ATTR_NAME_VALUE_EXPLAIN);
 			}
 			for (int j = 0, length = docs.size(); j < length; j++) {
 				JSONObject doc = (JSONObject)docs.get(j);
@@ -268,8 +267,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		try {
 			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			JSONObject tmpJson = (JSONObject)parseJsonResponse(slurper, solrResponse);
-			JSONArray docs = (JSONArray)((JSONObject)((JSONObject)tmpJson).get(SolrConstants.TAG_RESPONSE)).get(SolrConstants.TAG_DOCS);
+			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
+			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
 			if (explainObject != null) {
 				tmpExplain = locateJSONObject(tmpJson, new String[]{SolrConstants.ATTR_NAME_VALUE_DEBUG, SolrConstants.ATTR_NAME_VALUE_EXPLAIN});
@@ -281,7 +280,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				JSONObject doc = (JSONObject)docs.get(j);
 				String edp = doc.getString("EDP");
 				if (expiredElevatedEDPs.contains(edp)) {
-					doc.element(SolrConstants.TAG_EXPIRED,"");
+					doc.element(SolrConstants.TAG_ELEVATE_EXPIRED,"");
+				}
+				if (expiredDemotedEDPs.contains(edp)) {
+					doc.element(SolrConstants.TAG_DEMOTE_EXPIRED,"");
 				}
 
 				resultArray.add(doc);
@@ -458,6 +460,23 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				resultArray.add(object);
 			}
 		}
+	}
+
+	@Override
+	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
+		String templateName = "";
+		try {
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			JSONObject facetFields = parseJsonResponse(slurper, solrResponse).getJSONObject(SolrConstants.TAG_FACET_COUNTS)
+										.getJSONObject(SolrConstants.TAG_FACET_FIELDS).getJSONObject(templateNameField);
+			Set<String> set = facetFields.keySet();
+			if (set.size() == 1) {
+				templateName = set.toArray(new String[0])[0];
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get common template name" ,e);
+		}
+		return templateName;
 	}
 	
 }

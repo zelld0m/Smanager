@@ -244,7 +244,11 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						if (docNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_DOC)) {
 							String edp = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent();
 							if (expiredElevatedEDPs.contains(edp)) {
-								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_EXPIRED);
+								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE_EXPIRED);
+								docNode.appendChild(expiredNode);
+							}
+							if (expiredDemotedEDPs.contains(edp)) {
+								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_DEMOTE_EXPIRED);
 								docNode.appendChild(expiredNode);
 							}
 							resultNode.appendChild(mainDoc.importNode(docNode, true));
@@ -355,6 +359,27 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		for (Node node: demotedEntries) {
 			resultNode.appendChild(node);
 		}
+	}
+
+	@Override
+	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
+		String templateName = "";
+		try {
+			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			Document document = docBuilder.parse(solrResponse.getEntity().getContent());
+			Node node0 = locateElementNode(document, SolrConstants.TAG_RESPONSE);
+			Node node1 = locateElementNode(node0, SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS);
+			Node node2 = locateElementNode(node1, SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS);
+			Node node3 = locateElementNode(node2, SolrConstants.TAG_LIST, templateNameField);
+			NodeList templateNames = node3.getChildNodes();
+			if (templateNames.getLength() == 1) {
+				templateName = templateNames.item(0).getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue();
+			}
+		} catch (Exception e) {
+			throw new SearchException("Error occured while trying to get common template name" ,e);
+		}
+		return templateName;
 	}
 	
 }
