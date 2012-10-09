@@ -292,6 +292,10 @@ public class SearchServlet extends HttpServlet {
 			boolean disableRelevancy  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
+			
+			if (StringUtils.equals("pcmallcap", coreName)) {
+				coreName = "pcmall";
+			}
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			// redirect 

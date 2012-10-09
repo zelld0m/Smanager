@@ -120,7 +120,7 @@ public class FacetSortService {
 		try {
 			String store = UtilityService.getStoreName();
 			FacetSort facetSort = new FacetSort("", name, store);
-			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSort, null, null, page, itemsPerPage);
+			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSort, page, itemsPerPage);
 			return daoService.searchFacetSort(criteria, MatchType.LIKE_NAME);
 		} catch (DaoException e) {
 			logger.error("Failed during getAllRule()",e);

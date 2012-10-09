@@ -116,6 +116,7 @@
 			</div>
 			<div class="clearB"></div>
 			
+			<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="../images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>
 			<div class="w600 mar0 pad0">
 				<table class="tblItems w100p marT5">
 					<tbody>
