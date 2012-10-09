@@ -1,11 +1,13 @@
 (function($){
-
+//Pending optimization and class style
 	$(document).ready(function(){
 		var entityName = "";
 		var tabSelected = "";
 		var tabSelectedText = "";
 		var refresh = false;
-
+		var memberIdToItem = new Array();
+		var memberIds = new Array();
+		
 		var getSelectedItems = function(){
 			var selectedItems = [];
 			$(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
@@ -209,6 +211,70 @@
 				getApprovalList();
 			}
 		});
+ 
+		
+
+		var getItemType = function(item){
+			var $condition = item.condition;
+			var type = "unknown";
+
+			if($.isBlank($condition)){
+				return type;
+			}
+
+			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+				type="facet";
+			}else if($condition["CNetFilter"]){
+				type="cnet";
+			}else if($condition["IMSFilter"]){
+				type="ims";
+			}
+
+			return type;
+		};
+		
+		var setImage = function(tr, item){
+			var imagePath = item["imagePath"];
+			switch(getItemType(item)){
+			case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+			case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+			case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+			}
+
+			if($.isNotBlank(imagePath)){
+				setTimeout(function(){	
+					tr.find("td#itemImage > img").attr("src",imagePath).off().on({
+						error:function(){ 
+							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+						}
+					});
+				},10);
+			}
+		};
+
+		var prepareForceAddStatus = function(){
+			$('div#forceAdd').show();
+		};
+
+		var updateForceAddStatus = function(data){
+			for(var mapKey in data){
+				var $tr = $('tr#item' + $.formatAsId(mapKey));
+				var $item = memberIdToItem[mapKey];
+
+				// Force Add Color Coding
+				if(data[mapKey] && !$item["forceAdd"]){
+
+				}else if(data[mapKey] && $item["forceAdd"]){
+					$tr.addClass("forceAddBorderErrorClass");
+				}else if(!data[mapKey] && $item["forceAdd"]){
+					$tr.addClass("forceAddClass");
+				}else if(!data[mapKey] && !$item["forceAdd"]){
+					$tr.addClass("forceAddErrorClass");
+				}
+			}
+
+			$('div#forceAdd').hide();
+		};
 
 		var populateItemTable = function(ruleType, content, ruleStatus, data){
 			var $content = content;
@@ -224,80 +290,34 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
-
-				var setImage = function(tr, imagePath){
-					setTimeout(function(){	
-						tr.find("td#itemImage > img").attr("src",imagePath).off().on({
-							error:function(){ 
-								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
-							}
-						});
-					},10);
-				};
-
-				var getFacetItemType = function(item){
-					var $condition = item.condition;
-					var type = "";
-
-					if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-						type="facet";
-					}else if($condition["CNetFilter"]){
-						type="cnet";
-					}else if($condition["IMSFilter"]){
-						type="ims";
-					}
-					return type;
-				};
-
 				for (var i = 0; i < data.totalSize; i++) {
-					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["edp"])).show();	
+					memberIdToItem[list[i]["memberId"]] = list[i];
+					memberIds.push(list[i]["memberId"]);
+					
+					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
-
-//					if (ruleType.toLowerCase() === "elevate"){
-//					// Force Add Color Coding
-//					if(list[i]["foundFlag"] && !list[i]["forceAdd"]){
-
-//					}else if(list[i]["foundFlag"] && list[i]["forceAdd"]){
-//					$tr.addClass("forceAddBorderErrorClass");
-//					}else if(!list[i]["foundFlag"] && list[i]["forceAdd"]){
-//					$tr.addClass("forceAddClass");
-//					}else if(!list[i]["foundFlag"] && !list[i]["forceAdd"]){
-//					$tr.addClass("forceAddErrorClass");
-//					}
-//					}
 
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
 
 					if(FACET){
-						var imagePath = list[i]["imagePath"];
-
-						if($.isBlank(imagePath)){
-							imagePath = GLOBAL_contextPath + '/images/';
-							switch(getFacetItemType(list[i])){
-							case "ims" : imagePath += "ims_img.jpg"; break;
-							case "cnet" : imagePath += "productSiteTaxonomy_img.jpg"; break;
-							case "facet" : imagePath += "facet_img.jpg"; break;
-							}
-						}
-
-						setImage($tr,imagePath);
+						setImage($tr,list[i]);
 						$tr.find("td#itemMan").html(list[i].condition["readableString"])
 						.prop("colspan",3)
 						.removeClass("txtAC")
 						.addClass("txtAL")
 						.attr("width", "363px");
 						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-						
+
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
 						}
-						
+
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
 						if($.isNotBlank(list[i]["dpNo"])){
-							setImage($tr,list[i]["imagePath"]);
+							setImage($tr,list[i]);
 							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
 							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
 							$tr.find("td#itemName").html(list[i]["name"]);
@@ -309,7 +329,7 @@
 							.attr("width", "369px");
 							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
 						}
-						
+
 						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
 						if ($.isBlank(list[i]["isExpired"])){
 							$tr.find("#itemValidityDaysExpired").remove();
@@ -318,6 +338,18 @@
 
 					$tr.appendTo($table);
 				};
+				
+				if (tabSelectedText === "Elevate" && memberIds.length>0){
+					ElevateServiceJS.isRequireForceAdd(ruleStatus["ruleRefId"], memberIds, {
+						callback:function(data){
+							updateForceAddStatus(data);
+						},
+						preHook: function(){
+							prepareForceAddStatus();
+						}
+					});
+				} 
+
 			}
 
 			// Alternate row style
