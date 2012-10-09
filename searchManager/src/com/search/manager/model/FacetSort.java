@@ -1,8 +1,12 @@
 package com.search.manager.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -32,6 +36,7 @@ public class FacetSort extends ModelBean{
 		this.sortType = sortType;
 		this.ruleType = ruleType;
 		this.store = store;
+		this.items = items;
 	}
 	
 	public FacetSort(String id, String name, RuleType ruleType, 
@@ -150,6 +155,21 @@ public class FacetSort extends ModelBean{
 	}
 
 	public String getReadableString(){
-		return "";
+		Map<String, List<String>> selectedItems = getItems();
+		StringBuilder sb = new StringBuilder();
+		List<String> selectedItemList = new ArrayList<String>(); 
+		
+		if(MapUtils.isNotEmpty(selectedItems)){
+			for(Map.Entry<String, List<String>> facet: selectedItems.entrySet()){
+				selectedItemList = new ArrayList<String>(facet.getValue());
+				if(sb.length()>0) sb.append("; ");
+				if(CollectionUtils.isNotEmpty(selectedItemList))
+					sb.append("<strong>").append(facet.getKey()).append("</strong>").append(": ").append(StringUtils.join(selectedItemList.toArray(), " | "));
+			}
+			
+			return sb.toString(); 
+		}
+		
+		return "No Elevated Facet";
 	}
 }
