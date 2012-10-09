@@ -23,7 +23,7 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 
 	@Override
 	protected String getCacheKeyInitials() throws DataException {
-		return CacheConstants.FACET_SORT_LIST_CACHE_KEY;
+		return CacheConstants.FACET_SORT_KEYWORD_LIST_CACHE_KEY;
 	}
 	
 	@Override
@@ -33,7 +33,7 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 		} catch (Exception e) {
 			throw new DataException(e);
 		}
-		return CacheConstants.getCacheKey(storeKeyword.getStoreId(), CacheConstants.FACET_SORT_LIST_CACHE_KEY, storeKeyword.getKeywordId());
+		return CacheConstants.getCacheKey(storeKeyword.getStoreId(), CacheConstants.FACET_SORT_KEYWORD_LIST_CACHE_KEY, storeKeyword.getKeywordId());
 	}
 
 	@Override

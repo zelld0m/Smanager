@@ -488,4 +488,18 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		return false;
 	}
 
+	@Override
+	public List<FacetSort> getFacetSortRules(Store store, String templateName)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean resetFacetSortRule(Store store, String templateName)
+			throws DaoException, DataException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

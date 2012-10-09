@@ -538,8 +538,12 @@
 					click: function(e){
 						if (e.data.locked) return;
 
-						if (self.checkIfUpdateAllowed()){
-							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], {
+						var sortType = "";
+						var facetGroupItems = new Object(); //Map<String, String[]> facetGroupItems
+						var sortOrders = new Object(); //Map<String, String>  sortOrders
+						
+						//if (self.checkIfUpdateAllowed()){
+							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], sortType, facetGroupItems, sortOrders,  {
 								callback: function(data){
 									response = data;
 									showActionResponse(response, "update", ruleName);
@@ -564,7 +568,7 @@
 
 								}
 							});
-						}
+						//}
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});

@@ -109,8 +109,14 @@ public class FacetSort extends ModelBean{
 
 	public String getStoreName(){
 		if(getStore() != null)
-			getStore().getStoreName();
+			return getStore().getStoreName();
 		return "";
+	}
+	
+	public String getStoreId(){
+		if(getStore() != null)
+			return getStore().getStoreId();
+		return null;
 	}
 	
 	public String getFormattedCreatedDate() {

@@ -8,7 +8,8 @@ public class CacheConstants {
 	public static final String ELEVATED_LIST_CACHE_KEY 			= "EL";
 	public static final String DEMOTED_LIST_CACHE_KEY 			= "DL";
 	public static final String EXCLUDED_LIST_CACHE_KEY 			= "EXL";
-	public static final String FACET_SORT_LIST_CACHE_KEY 		= "FS";
+	public static final String FACET_SORT_KEYWORD_LIST_CACHE_KEY	= "FSK";
+	public static final String FACET_SORT_TEMPLATE_LIST_CACHE_KEY 	= "FST";
 	public static final String RELEVANCY_LIST_CACHE_KEY 		= "RL";
 	public static final String RELEVANCY_DEFAULT_CACHE_KEY 		= "RD";
 	public static final String KEYWORDS_CACHE_KEY 				= "KW";

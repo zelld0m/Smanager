@@ -375,6 +375,7 @@ public class AuditInterceptor {
 		FacetSort e = null;
 		e = (FacetSort)jp.getArgs()[0];
 		auditTrail.setReferenceId(e.getRuleId());
+		auditTrail.setStoreId(e.getStoreId());
 				
 		StringBuilder message = null;
 		
