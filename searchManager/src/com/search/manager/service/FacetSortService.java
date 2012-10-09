@@ -26,6 +26,7 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
 
 @Service(value = "facetSortService")
 @RemoteProxy(
@@ -51,6 +52,9 @@ public class FacetSortService {
 			ruleId = daoService.addFacetSortAndGetId(rule);
 
 			if (StringUtils.isNotBlank(ruleId)){
+				if(RuleType.KEYWORD.getDisplayText().equalsIgnoreCase(ruleType))
+					daoService.addKeyword(new StoreKeyword(store, ruleName));
+				
 				result = addAllFacetGroup(ruleId);
 			}
 
