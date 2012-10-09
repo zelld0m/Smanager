@@ -257,7 +257,7 @@
 					enableSortable: true,
 					enableForceAddStatus: true,
 					memberPositionTag: "Elevate",
-					memberExpiredTag: "Expired",
+					memberExpiredTag: "ElevateExpired",
 					itemForceAddStatusCallback: function(base, memberIds){
 						ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
 							callback:function(data){
@@ -461,7 +461,7 @@
 					keyword: keyword,
 					enableSortable: true,
 					memberPositionTag: "Demote",
-					memberExpiredTag: "Expired",
+					memberExpiredTag: "DemoteExpired",
 					
 					itemDataCallback: function(base){
 						DemoteServiceJS.getAllProductsIgnoreKeyword(keyword, 0, 0,{
