@@ -21,8 +21,11 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.BackupInfo;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ElevatedSkuXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.FileUtil;
@@ -73,8 +76,23 @@ public class FacetSortVersionDAO {
 	}
 	
 	public List<FacetSort> readFacetSortVersion(String filePath, String store, String server){
-		//TODO
-		return null;
+		List<FacetSort> list = Collections.emptyList();
+		try {
+			try {
+				JAXBContext context = JAXBContext.newInstance(FacetSortRuleXml.class);
+				Unmarshaller um = context.createUnmarshaller();
+				LinkedHashMap<String, FacetSort> map = new LinkedHashMap<String, FacetSort>();
+				
+				//TODO
+				
+				list = new ArrayList<FacetSort>(map.values());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} catch (Exception e) {
+			logger.error(e,e);
+		}
+		return list;
 	}
 	
 	public void readFacetSortVersion(File file, BackupInfo backup){

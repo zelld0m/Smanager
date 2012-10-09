@@ -13,7 +13,9 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 @Repository("excludeCacheDao")
@@ -28,6 +30,17 @@ public class ExcludeCacheDao extends CacheDao<ExcludeResult> {
 
 	@Override
 	public String getCacheKey(StoreKeyword storeKeyword) throws DataException {
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+		} catch (Exception e) {
+			throw new DataException(e);
+		}
+		return CacheConstants.getCacheKey(storeKeyword.getStoreId(), CacheConstants.EXCLUDED_LIST_CACHE_KEY, storeKeyword.getKeywordId());
+	}
+	
+	@Override
+	protected String getCacheKey(Store store, String name) throws DataException {
+		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 		} catch (Exception e) {

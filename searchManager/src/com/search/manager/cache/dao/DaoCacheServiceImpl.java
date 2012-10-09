@@ -457,49 +457,73 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	@Override
 	public boolean loadFacetSortRules(Store store) throws DaoException,
 			DataException {
-		// TODO Auto-generated method stub
-		return false;
+		return facetSortCacheDao.reload(store);
 	}
 
 	@Override
-	public List<FacetSort> getFacetSortRules(StoreKeyword storeKeyword)
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
+		try {
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+			//if(hasExactMatchKey(storeKeyword)){
+				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(storeKeyword);
+				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+					return cache.getObj();					
+				}
+			//}
+		}catch (Exception e) {
+			logger.error(e,e);
+		}
+		return null;
+	}
+	
+	@Override
+	public FacetSort getFacetSortRule(Store store, String name)
+			throws DaoException, DataException {
+		try {
+			DAOValidation.checkFacetSortPK(store, name);
+				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(store, name);
+				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+					return cache.getObj();					
+				}
+		}catch (Exception e) {
+			logger.error(e,e);
+		}
 		return null;
 	}
 
 	@Override
-	public boolean updateFacetSortRules(FacetSort facetSort)
+	public boolean updateFacetSortRule(FacetSort facetSort)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
+		try {	
+			return facetSortCacheDao.reload(facetSort);
+		}catch (Exception e) {
+			logger.error("Failed to update facetSort", e);
+		}
 		return false;
 	}
 
 	@Override
 	public boolean resetFacetSortRule(StoreKeyword storeKeyword)
 			throws DaoException, DataException {
-		// TODO Auto-generated method stub
-		return false;
+		return facetSortCacheDao.reset(storeKeyword);
+	}
+	
+	@Override
+	public boolean resetFacetSortRule(Store store, String name)
+			throws DaoException, DataException {
+		return facetSortCacheDao.reset(store, name);
 	}
 
 	@Override
 	public boolean setForceReloadFacetSort(Store store) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean result = facetSortCacheDao.forceUpdateCache(store);
+		if (result) {
+			logger.info("Forcing reload of facet sort rules for : " + store);
+		}
+		else {
+			logger.error("Failed to force reload of facet sort rules for : " + store);
+		}
+		return result;
 	}
-
-	@Override
-	public List<FacetSort> getFacetSortRules(Store store, String templateName)
-			throws DaoException, DataException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean resetFacetSortRule(Store store, String templateName)
-			throws DaoException, DataException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

@@ -14,6 +14,7 @@ import com.search.manager.dao.sp.DAOValidation;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
 @Repository("facetSortCacheDao")
@@ -35,33 +36,41 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 		}
 		return CacheConstants.getCacheKey(storeKeyword.getStoreId(), CacheConstants.FACET_SORT_KEYWORD_LIST_CACHE_KEY, storeKeyword.getKeywordId());
 	}
-
+	
+	@Override
+	protected String getCacheKey(Store store, String name) throws DataException {
+		try {
+			DAOValidation.checkFacetSortPK(store, name);
+		} catch (Exception e) {
+			throw new DataException(e);
+		}
+		return CacheConstants.getCacheKey(store.getStoreId(), CacheConstants.FACET_SORT_TEMPLATE_LIST_CACHE_KEY, name);
+	}
+	
 	@Override
 	public CacheModel<FacetSort> getDatabaseObject(StoreKeyword storeKeyword)throws DaoException {
-		//TODO
-		/*FacetSort facetSortFilter = new FacetSort();
-		facetSortFilter.setStoreKeyword(storeKeyword);
+		FacetSort facetSortFilter = new FacetSort();
+		facetSortFilter.setStore(storeKeyword.getStore());
+		facetSortFilter.setName(storeKeyword.getKeywordTerm());
 		// load only non-expired items
 		SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter, new Date(), null, 0, 0);
-		List<FacetSort> facetSortList = daoService.getFacetSortList(criteria).getList();
+		List<FacetSort> facetSortList = daoService.searchFacetSort(criteria, null).getList();
 		if (facetSortList == null) {
 			facetSortList = new ArrayList<FacetSort>();
 		}
-		return new CacheModel<FacetSort>(facetSortList);*/
-		return null;
+		return new CacheModel<FacetSort>(facetSortList);
+		
 	}
 
 	@Override
 	public boolean reload(FacetSort facetSort) throws DataException, DaoException {
-		/*try {
-			DAOValidation.checkStoreKeywordPK(facetSort.getStoreKeyword());
+		try {
+			DAOValidation.checkFacetSortPK(facetSort);
 		} catch (Exception e) {
 			logger.error("Error during loading of facet sort list to cache - Keyword ", e);
 			throw new DataException(e);
 		}
-		return reload(facetSort.getStoreKeyword());*/
-		//TODO
-		return true;
+		return reload(facetSort);
 	}
 
 	@Override
@@ -77,5 +86,4 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 		}
 		return result;
 	}
-
 }
