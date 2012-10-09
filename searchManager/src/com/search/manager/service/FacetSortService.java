@@ -118,6 +118,7 @@ public class FacetSortService {
 					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
 					daoService.updateFacetGroup(facetGroup);
 				
+					clearFacetGroupItem(facetGroupId);
 					for(int i=0; i < ArrayUtils.getLength(arrFacetGroupItems); i++){
 						addSingleFacetGroupItem(facetGroupId, arrFacetGroupItems[i], i+1);
 					}					
