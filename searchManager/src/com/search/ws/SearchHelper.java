@@ -412,15 +412,11 @@ public class SearchHelper {
 			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
-			String qt = configManager.getStoreParameter(storeId, "qt");
-			if (StringUtils.isEmpty(qt)) {
-				qt = "standard";
-			}
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?");
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
-			nameValuePairs.add(new BasicNameValuePair("qt", qt));
+			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
 			nameValuePairs.add(new BasicNameValuePair("q", "DPNo:" + partNumber));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
