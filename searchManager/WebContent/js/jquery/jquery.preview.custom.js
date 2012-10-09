@@ -185,38 +185,46 @@
 				});
 				break;
 			case "facet sort": 
-				$content.find(".infoTabs").tabs({});
-
-				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
-				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
-				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
-
+				var $table = $content.find("table#item");
+				var $ruleInfo = $content.find("div#ruleInfo");
+				
 				FacetSortServiceJS.getRuleById(base.options.ruleId, {
 					callback: function(data){
+						$ruleInfo.find("#ruleName").text(data.name);
+						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+						
+						for(var facetGroup in data.items){
+							var facetName = facetGroup;
+							var facetValue = data.items[facetGroup];
+							var highlightedItems = "";
+							var $tr = $table.find("tr#itemPattern").clone();
+							$tr.prop({id: $.formatAsId(facetName)});
+							$tr.find("#itemName").text(facetName);
+							
+							if($.isArray(facetValue)){
+								for(var i=0; i < facetValue.length; i++){
+									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
+								}
+							}
+							$tr.find("#itemHighlightedItem").html(highlightedItems);
 
-						var $table = $content.find("div.ruleFilter table#item");
-						$table.find("tr:not(#itemPattern)").remove();
-
-						if(data.readableConditions.length==0){
-							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
-							$tr.find("td#fieldValue").remove();
-							$tr.appendTo($table);
-
-						}else{
-							for(var field in data.readableConditions){
-								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
-								$tr.find("td#fieldName").html(parseInt(field)+1);
-								$tr.find("td#fieldValue").html(data.readableConditions[field]);
-								$tr.appendTo($table);
-							}	
-						}
-
-						$table.find("tr:even").addClass("alt");
-						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
-						$content.find("#description").html(data["description"]);
-
-						base.populateKeywordInRule($content, data["searchTerms"]);
+							var sortTypeDisplay = "";
+							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
+							
+							switch(sortType){
+								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							}
+							
+							$tr.find("#itemSortType").text(sortTypeDisplay);
+							$tr.show();
+							$table.append($tr);
+						};						
+					},
+					postHook:function(){
+						$table.find("tr#preloader").hide();
 					}
 				});
 			case "query cleaning": 
@@ -432,6 +440,47 @@
 				template += '	</div>';
 				template += '</div>';
 				break;
+			case "facet sort":
+				template += '	<div id="ruleInfo">';
+				template += '		<label class="w70 floatL fbold">Rule Name:</label>';
+				template += '		<label class="wAuto floatL" id="ruleName">';
+				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '		</label>';
+				template += '	    <div class="clearB"></div>';
+				template += '		<label class="w70 floatL fbold">Rule Type:</label>';
+				template += '		<label class="wAuto floatL" id="ruleType">';
+				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '		</label>';
+				template += '	</div>';
+				template += '	<div class="clearB"></div>';
+				template += '	<div class="w600 mar0 pad0">';
+				template += '		<table class="tblItems w100p marT5">';
+				template += '			<tbody>';
+				template += '				<tr>';
+				template += '					<th width="60px">Facet Name</th>';
+				template += '					<th width="84px">Highlighted Items</th>';
+				template += '					<th width="50px">Sorting of Other Items</th>';
+				template += '				</tr>';
+				template += '			<tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				template += '	<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+				template += '		<table id="item" class="tblItems w100p">';
+				template += '			<tbody>';
+				template += '				<tr id="itemPattern" class="itemRow" style="display: none">';
+				template += '					<td width="60px" class="txtAC" id="itemName"></td>';
+				template += '					<td width="84px" class="txtAL" id="itemHighlightedItem"></td>';
+				template += '					<td width="50px" class="txtAC" id="itemSortType"></td>';
+				template += '				</tr>';
+				template += '				<tr id="preloader">';
+				template += '					<td colspan="6" class="txtAC">';
+				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+				template += '					</td>';
+				template += '				</tr>';
+				template += '			</tbody>';
+				template += '		</table>';
+				template += '	</div>';
+				break;
 			case "ranking rule": 
 				template += '<div id="previewTemplate2">';
 				template += '	<div class="rulePreview w590 marB20">';
@@ -529,7 +578,6 @@
 				template += '	</div>';
 				template += '</div>';
 				break;
-			case "facet sort":	
 			case "query cleaning": 
 				template += '<div id="queryCleaningTemplate">';
 				template += '	<div class="rulePreview w590 marB20">';
