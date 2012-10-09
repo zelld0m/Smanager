@@ -332,6 +332,7 @@ public class DAOConstants {
 	public static final String COLUMN_GROUP_ID_LIST 				= "group_id_list";
 	public static final String COLUMN_GROUP_NAME_LIST 				= "group_name_list";
 	public static final String COLUMN_ITEM_NAME_LIST 				= "item_name_list";
+	public static final String COLUMN_SORT_ID_LIST 					= "sort_id_list";
 	public static final String COLUMN_RULE_NAME 					= "rule_name";
 	public static final String COLUMN_SORT_TYPE 					= "sort_type";
 	public static final String COLUMN_RULE_TYPE 					= "rule_type";

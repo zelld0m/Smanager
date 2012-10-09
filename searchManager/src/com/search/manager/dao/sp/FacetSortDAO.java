@@ -132,6 +132,19 @@ public class FacetSortDAO {
 			return items;
 		}
 		
+		private Map<String, SortType> getGroupSortType(String facetGroup, String groupSortType){
+			Map<String, SortType> sortTypes = new HashMap<String, SortType>();
+			
+			String[] arrGroupName = StringUtils.split(facetGroup, ',');
+			String[] arrGroupSortType = StringUtils.split(groupSortType, ',');
+			
+			for (int i=0; i< ArrayUtils.getLength(arrGroupName); i++){
+				sortTypes.put(arrGroupName[i], (i+1)> ArrayUtils.getLength(arrGroupSortType) || "NULL".equalsIgnoreCase(arrGroupSortType[i])? null: SortType.get(Integer.valueOf(arrGroupSortType[i])));
+			}
+			
+			return sortTypes;
+		}
+		
 		@Override
 		protected void declareSqlReturnResultSetParameters() {
 			declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<FacetSort>() {
@@ -144,7 +157,8 @@ public class FacetSortDAO {
 							RuleType.get(rs.getInt(DAOConstants.COLUMN_RULE_TYPE)),
 							SortType.get(rs.getInt(DAOConstants.COLUMN_SORT_TYPE)),
 							new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-							getItems(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), rs.getString(DAOConstants.COLUMN_ITEM_NAME_LIST))
+							getItems(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), rs.getString(DAOConstants.COLUMN_ITEM_NAME_LIST)),
+							getGroupSortType(rs.getString(DAOConstants.COLUMN_GROUP_NAME_LIST), rs.getString(DAOConstants.COLUMN_SORT_ID_LIST))
 					);
 					
 					facetSort.setCreatedBy(rs.getString(DAOConstants.COLUMN_CREATED_BY));

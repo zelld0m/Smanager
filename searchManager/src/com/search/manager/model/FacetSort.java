@@ -25,11 +25,12 @@ public class FacetSort extends ModelBean{
 	private SortType sortType;
 	private Store store;
 	private Map<String, List<String>> items;
+	private Map<String, SortType> groupSortType;
 	
 	public FacetSort() {}
 	
 	public FacetSort(String id, String name, RuleType ruleType, 
-			SortType sortType, Store store, Map<String, List<String>> items) {
+			SortType sortType, Store store, Map<String, List<String>> items, Map<String, SortType> groupSortType) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -37,6 +38,12 @@ public class FacetSort extends ModelBean{
 		this.ruleType = ruleType;
 		this.store = store;
 		this.items = items;
+		this.groupSortType = groupSortType;
+	}
+	
+	public FacetSort(String id, String name, RuleType ruleType, 
+			SortType sortType, Store store, Map<String, List<String>> items) {
+		this(id, name, ruleType, sortType, store, items, null);
 	}
 	
 	public FacetSort(String id, String name, RuleType ruleType, 
@@ -152,6 +159,14 @@ public class FacetSort extends ModelBean{
 
 	public void setItems(Map<String, List<String>> items) {
 		this.items = items;
+	}
+	
+	public Map<String, SortType> getGroupSortType() {
+		return groupSortType;
+	}
+
+	public void setGroupSortType(Map<String, SortType> groupSortType) {
+		this.groupSortType = groupSortType;
 	}
 
 	public String getReadableString(){
