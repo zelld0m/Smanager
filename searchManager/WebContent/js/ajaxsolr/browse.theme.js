@@ -239,7 +239,7 @@
 		output += '         <div class="floatR ruleOptionHolder marR5">'; 
 		output += '				<div id="expiredHolder" class="elevTxtHolder" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/expired_stamp50x16.png") + '"></div>';
 		//output += '			<div id="featureHolder" class="iconHolder" style="margin-top:-1px; margin-left:3px"></div>';
-		//output += '				<div id="forceAddHolder" class="iconHolder"></div>';
+		output += '				<div id="forceAddHolder" class="iconHolder"></div>';
 		output += '				<div id="elevateHolder" class="iconHolder"></div>';
 		output += '				<div id="demoteHolder" class="iconHolder"></div>';
 		output += '				<div id="excludeHolder" class="iconHolder"></div>';
