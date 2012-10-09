@@ -541,7 +541,7 @@
 				var itemMap = new Object();
 				
 				for(var facetGroupId in self.facetGroupIdList){
-					var facetItems = new Array();
+					var facetItems = [];
 					var items = $("input#_items_"+self.facetGroupIdList[facetGroupId]);
 					
 					for(var i = 0; i < items.length; i++){

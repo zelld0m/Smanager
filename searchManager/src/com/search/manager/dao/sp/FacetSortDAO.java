@@ -266,7 +266,7 @@ public class FacetSortDAO {
 		@Override
 		protected void declareParameters() {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_SORT_TYPE, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}

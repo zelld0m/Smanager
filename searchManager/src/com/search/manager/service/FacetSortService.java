@@ -118,8 +118,8 @@ public class FacetSortService {
 					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
 					daoService.updateFacetGroup(facetGroup);
 				
-					for(String itemName: arrFacetGroupItems){
-						addAllFacetGroupItem(facetGroupId, itemName);
+					for(int i=0; i < ArrayUtils.getLength(arrFacetGroupItems); i++){
+						addSingleFacetGroupItem(facetGroupId, arrFacetGroupItems[i], i+1);
 					}					
 				}
 			}
@@ -236,7 +236,7 @@ public class FacetSortService {
 		if (arrFacetGroupItemSize > 0){
 			clearFacetGroupItem(facetGroupId);
 			for (int i=0; i<arrFacetGroupItemSize ; i++){
-				addFacetGroupItem(new FacetGroupItem("", facetGroupId, arrFacetGroupItem[i], i+1));
+				addFacetGroupItem(new FacetGroupItem(facetGroupId, "" , arrFacetGroupItem[i], i+1));
 			}
 		}
 		return result;
