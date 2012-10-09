@@ -76,13 +76,15 @@
 					<div>
 						<ul id="selectedFacetValueList" class="marT8">
 							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
-								<label><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-								<label>
-									<select id="facetValuesPattern" class="selectCombo mar0 w195 marT6">
+								<label class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
+								<label class="floatL marL5">
+									<div class="w207">
+									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6">
 										<option value="all"></option>
 									</select>
+									</div>
 								</label>
-								<label class="marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								<label class="floatL marL5"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 							</li>
 						</ul>
 					</div>
