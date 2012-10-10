@@ -110,6 +110,9 @@ public class DaoServiceImpl implements DaoService {
 		this.demoteDAO = demoteDAO;
 	}
 
+	public void setFacetSortDAO(FacetSortDAO facetSortDAO) {
+		this.facetSortDAO = facetSortDAO;
+	}
 
 	public void setAuditTrailDAO(AuditTrailDAO auditTrailDAO) {
 		this.auditTrailDAO = auditTrailDAO;
