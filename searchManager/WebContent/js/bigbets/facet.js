@@ -13,6 +13,8 @@
 
 			rulePage: 1,
 			rulePageSize: 10,
+			
+			removeFacetGroupItemConfirmText: "Delete facet value?",
 
 			facetFields : ["Category", "Manufacturer"],	//TODO This might be retrieved from a lookup table
 			facetValueList: null,
@@ -588,9 +590,11 @@
 
 				contentHolder.find("img.delFacetValueIcon").off().on({
 					click: function(e){
-						if (!e.data.locked && confirm("Delete facet value?")){
-							contentHolder.remove();
-						}
+						if (e.data.locked) return;
+
+						jConfirm(self.removeFacetGroupItemConfirmText, self.moduleName, function(result){
+							if(result) contentHolder.remove();
+						});
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
@@ -704,16 +708,20 @@
 				var self = this;
 				$("#deleteBtn").off().on({
 					click: function(e){
-						if (!e.data.locked && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
-							FacetSortServiceJS.deleteRule(self.selectedRule["ruleId"],{
-								callback: function(code){
-									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
-									if(code==1) {
-										self.setFacetSort(null);
+						if (e.data.locked) return;
+
+						jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", self.moduleName, function(result){
+							if(result){
+								FacetSortServiceJS.deleteRule(self.selectedRule["ruleId"],{
+									callback: function(code){
+										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
+										if(code==1) {
+											self.setFacetSort(null);
+										}
 									}
-								}
-							});
-						}
+								});
+							}
+						});
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
