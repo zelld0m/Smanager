@@ -62,6 +62,7 @@ public class SolrConstants {
 	public final static String TAG_FACET_FIELDS = "facet_fields";
 	public final static String TAG_FACET_FIELD = "facet.field";
 	public final static String TAG_FACET_MINCOUNT = "facet.mincount";
+	public final static String TAG_FACET_LIMIT = "facet.limit";
 	public final static String TAG_FACET = "facet";
 	
 	public final static String ATTR_NUM_FOUND = "numFound";

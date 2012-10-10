@@ -255,6 +255,7 @@ public class SearchServlet extends HttpServlet {
 
 			if (fromSearchGui && StringUtils.isNotBlank(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))) {
 				nvp = new BasicNameValuePair("facet.field", configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+				nameValuePairs.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
 				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
 					nameValuePairs.add(nvp);
 				}
