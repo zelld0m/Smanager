@@ -471,7 +471,7 @@ public class FacetSortDAO {
 			
 			inputs.put(DAOConstants.PARAM_RULE_ID, facetSort.getRuleId());
 			inputs.put(DAOConstants.PARAM_RULE_NAME, facetSort.getName());
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, SortType.get(facetSort.getSortType().toString()));
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetSort.getSortType().toString());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetSort.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateFacetSortSP.execute(inputs));

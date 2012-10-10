@@ -112,7 +112,7 @@ public class FacetSortService {
 			facetSort.setLastModifiedBy(username);
 			result = daoService.updateFacetSort(facetSort);
 			
-			if(result==1 && MapUtils.isNotEmpty(facetGroupItems)){
+			if(MapUtils.isNotEmpty(facetGroupItems)){
 				FacetGroup facetGroup = new FacetGroup();
 				
 				for(Map.Entry<String, String[]> entry: facetGroupItems.entrySet()){
@@ -121,11 +121,11 @@ public class FacetSortService {
 					
 					facetGroup.setId(facetGroupId);
 					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
-					daoService.updateFacetGroup(facetGroup);
+					result += daoService.updateFacetGroup(facetGroup);
 				
 					clearFacetGroupItem(facetGroupId);
 					for(int i=0; i < ArrayUtils.getLength(arrFacetGroupItems); i++){
-						addSingleFacetGroupItem(facetGroupId, arrFacetGroupItems[i], i+1);
+						result += addSingleFacetGroupItem(facetGroupId, arrFacetGroupItems[i], i+1);
 					}					
 				}
 			}

@@ -648,7 +648,7 @@
 
 						//if (self.checkIfUpdateAllowed()){
 						var response = 0;
-						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], sortType, self.selectedRule["ruleName"], facetGroupItems, sortOrders,  {
+						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
 							callback: function(data){
 								response = data;
 								showActionResponse(response, "update", ruleName);
@@ -657,8 +657,8 @@
 								self.prepareFacetSort();
 							},
 							postHook: function(){
-								if(response==1){
-									FacetSortServiceJS.getRule(self.selectedRule["ruleId"],{
+								if(response>0){
+									FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
 										callback: function(data){
 											self.setFacetSort(data);
 										},
