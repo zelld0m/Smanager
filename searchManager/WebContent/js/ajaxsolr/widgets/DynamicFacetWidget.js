@@ -47,10 +47,6 @@
 							counter++;
 						}
 
-						objectedItems.sort(function (a, b) {
-							return a.facet < b.facet ? -1 : 1;
-						});
-
 						for (var i = 0, l = objectedItems.length; i < l; i++) {
 							var facet = objectedItems[i].facet;
 							var count = objectedItems[i].count;
