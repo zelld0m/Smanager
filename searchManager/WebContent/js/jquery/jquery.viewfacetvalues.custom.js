@@ -159,8 +159,6 @@
 					$ulSelected.append($li);
 				}
 			}
-			
-			$ulSelected.append($li);
 
 			$ul.append($ulSelected.html());
 			$ul.append($ulNotSelected.html());
