@@ -186,7 +186,7 @@
 		};
 
 		base.prepareFacetValueList = function(){
-			base.$el.html('<div align="center"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif"/></div>');
+			base.$el.html('<div class="circlePreloader" align="center"><img src="' + GLOBAL_contextPath +  '/images/ajax-loader-circ.gif"/></div>');
 		};
 		
 		base.populateTemplate = function(){

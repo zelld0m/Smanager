@@ -45,3 +45,8 @@
 
 .qtip #facetItem .ui-widget .ui-menu		 	{ list-style: none !important; margin-left:-25px !important; padding: 8px 0 0 0 !important}
 .ui-autocomplete { list-style:none !important; margin-left:0; padding-left:10px }
+
+.ie .ui-autocomplete-input { padding:4px !important }
+#selectedFacetValueList .ui-combobox .ui-button { position:relative; top:4px; left:-20px }
+#selectedFacetValueList .deleteIcon  { float:left; width:15px; margin-left:0; position:relative; left:218px }
+.ie #selectedFacetValueList .deleteIcon  { float:left; width:15px; margin-left:0; position:relative; left:204px }

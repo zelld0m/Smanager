@@ -56,7 +56,7 @@
 
 		<div id="facetsort" class="tabvs marT10">
 			<ul id="facetGroupTab">
-				<li class="facetGroupTabPattern" style="display:none;"><a href="#"><span class="facetGroupName"></span></a></li>
+				<li class="facetGroupTabPattern" style="display:none;"><a href="#noTab"><span class="facetGroupName"></span></a></li>
 			</ul>
 
 			<div class="facetTabPattern contentWrapper" style="display:none;">
@@ -68,8 +68,7 @@
 					</ul>
 				</div>
 				<div class="clearB"></div>
-				
-				<div id="facetvaluelist"></div>
+								
 				
 				<div class="catValueTop floatL w47p">
 					<p class="fbold">
@@ -79,14 +78,12 @@
 						<ul id="selectedFacetValueList" class="marT8">
 							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
 								<label class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-								<label class="floatL marL5">
-									<div class="w214">
+								<label class="marL5 w207 posRel" style="left:-13px">
 									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6">
 										<option value="all"></option>
-									</select>
-									</div>
+									</select>						
 								</label>
-								<label class="floatL marL0"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								<label class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 							</li>
 						</ul>
 					</div>
@@ -97,6 +94,7 @@
 				</div>
 				<!-- end category value -->
 
+				<div id="facetvaluelist" class="marT8"></div>
 				
 				<!--  end category values list -->
 				<div class="clearB"></div>
