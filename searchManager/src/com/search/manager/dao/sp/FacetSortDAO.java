@@ -122,11 +122,11 @@ public class FacetSortDAO {
 		private Map<String, List<String>> getItems(String facetGroup, String facetGroupItems){
 			Map<String, List<String>> items = new HashMap<String, List<String>>();
 			
-			String[] arrGroupName = StringUtils.split(facetGroup, ',');
-			String[] arrGroupItem = StringUtils.split(facetGroupItems, "&&");
+			String[] arrGroupName = StringUtils.splitByWholeSeparatorPreserveAllTokens(facetGroup, ",");
+			String[] arrGroupItem = StringUtils.splitByWholeSeparatorPreserveAllTokens(facetGroupItems, "&&");
 			
 			for (int i=0; i< ArrayUtils.getLength(arrGroupName); i++){
-				items.put(arrGroupName[i], (i+1)> ArrayUtils.getLength(arrGroupItem)? new ArrayList<String>(): Arrays.asList(ArrayUtils.nullToEmpty(StringUtils.split(arrGroupItem[i], "||"))));
+				items.put(arrGroupName[i], (i+1)> ArrayUtils.getLength(arrGroupItem)? new ArrayList<String>(): Arrays.asList(ArrayUtils.nullToEmpty(StringUtils.splitByWholeSeparatorPreserveAllTokens(arrGroupItem[i], "||"))));
 			}
 			
 			return items;
@@ -135,8 +135,8 @@ public class FacetSortDAO {
 		private Map<String, SortType> getGroupSortType(String facetGroup, String groupSortType){
 			Map<String, SortType> sortTypes = new HashMap<String, SortType>();
 			
-			String[] arrGroupName = StringUtils.split(facetGroup, ',');
-			String[] arrGroupSortType = StringUtils.split(groupSortType, ',');
+			String[] arrGroupName = StringUtils.splitByWholeSeparatorPreserveAllTokens(facetGroup, ",");
+			String[] arrGroupSortType = StringUtils.splitByWholeSeparatorPreserveAllTokens(groupSortType, ",");
 			
 			for (int i=0; i< ArrayUtils.getLength(arrGroupName); i++){
 				sortTypes.put(arrGroupName[i], (i+1)> ArrayUtils.getLength(arrGroupSortType) || "NULL".equalsIgnoreCase(arrGroupSortType[i])? null: SortType.get(Integer.valueOf(arrGroupSortType[i])));
