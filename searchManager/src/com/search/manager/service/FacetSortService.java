@@ -108,10 +108,11 @@ public class FacetSortService {
 		try {
 			String store = UtilityService.getStoreName();
 			String username = UtilityService.getUsername();
-			FacetSort rule = new FacetSort(ruleId, name, "", sortType, store);
-			rule.setLastModifiedBy(username);
+			FacetSort facetSort = new FacetSort(ruleId, name, "", sortType, store);
+			facetSort.setLastModifiedBy(username);
+			result = daoService.updateFacetSort(facetSort);
 			
-			if(MapUtils.isNotEmpty(facetGroupItems)){
+			if(result==1 && MapUtils.isNotEmpty(facetGroupItems)){
 				FacetGroup facetGroup = new FacetGroup();
 				
 				for(Map.Entry<String, String[]> entry: facetGroupItems.entrySet()){
