@@ -323,6 +323,8 @@ public class SearchGuiClientServiceImpl implements SearchGuiClientService{
 			return "RULE_STATUS";
 		case 10:
 			return "DEMOTE";
+		case 11:
+			return "FACET_SORT";
 		default:
 			break;
 		}
