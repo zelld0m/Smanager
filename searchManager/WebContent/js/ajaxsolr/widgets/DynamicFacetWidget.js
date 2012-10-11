@@ -21,9 +21,7 @@
 					}
 
 					$(this.target).empty();
-
-					var output= '';
-
+				
 					for (var facetField in facetFields) {
 						var maxCount = 0;
 						var objectedItems = [];
@@ -177,9 +175,9 @@
 										if (indices && AjaxSolr.isArray(indices) && indices.length===1) {
 
 											var currFacet = self.manager.store.values('fq')[indices[0]];
-											currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1))
+											currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1));
 											
-											if ($.startsWith(currFacet,"\(") && $.endsWith(currFacet,"\)")){
+											if ($.startsWith(currFacet,"(") && $.endsWith(currFacet,")")){
 												currFacet = currFacet.substr(1,currFacet.length-2);
 											}
 

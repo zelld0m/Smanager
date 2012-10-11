@@ -7,10 +7,9 @@
 
 			if(self.manager.response.response["numFound"] > 0 && $.isNotBlank(self.manager.store.values('q'))){
 				$(this.target).empty();
-				var output= '';
 				var facetFields = this.manager.response.facet_counts.facet_fields;
 				var selectedFacetTemplateName = "";
-				
+
 				//Display Or Find By
 				if(GLOBAL_storeFacetTemplateName !== ''){
 					var items = self.asObjectedItems(facetFields, GLOBAL_storeFacetTemplateName);
@@ -18,7 +17,7 @@
 					var objectedItems = items[0].objectedItems;
 
 					selectedFacetTemplateName = self.getSelectedFacetTemplateName(this.manager.response.responseHeader.params.fq);
-					
+
 					if(counter == 1 && (selectedFacetTemplateName === "" || selectedFacetTemplateName.indexOf(objectedItems[0].facet) != -1)){
 						selectedFacetTemplateName = objectedItems[0].facet;
 					}
@@ -26,7 +25,7 @@
 						self.displayFacet('Or Find By', GLOBAL_storeFacetTemplateName, objectedItems, $.isNotBlank(self.manager.store.values('q')));
 					}
 				}
-				
+
 				/* If facet template name is selected, display dynamic attributes */
 				if($.isNotBlank(selectedFacetTemplateName)){
 					switch(GLOBAL_storeFacetTemplateName){
@@ -40,10 +39,10 @@
 				}
 			}
 		},
-		
+
 		getSelectedFacetTemplateName: function(fq){
 			var facetTemplateName = "";
-			
+
 			if ($.isNotBlank(fq)){
 				for (var i = 0, l = fq.length; i < l; i++) {
 					if(fq[i].indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
@@ -51,17 +50,17 @@
 					}
 				}
 			}
-			
+
 			return facetTemplateName;
 		},
-		
+
 		escapeValue: function (value) {
-			  return '"' + value + '"';
+			return '"' + value + '"';
 		},
-		
+
 		displayDynamicAttributes: function (facetFields, list) {
 			var self = this;
-						
+
 			var getFacetSelected = function() {
 				var i = 0;
 				var selectedItems = [];
@@ -85,7 +84,7 @@
 			var	getFacetParams = function (){
 				var paramString = "";
 				var keyword = $.trim(self.manager.store.values('q'));
-				
+
 				var relId = $("select#relevancy").val();
 				if (relId == undefined || selectedRelevancy === "keyword_default") {
 					relId = "";
@@ -109,7 +108,7 @@
 					if(params[storeparams[name].name] === undefined)
 						params[storeparams[name].name] = storeparams[name].value;
 				}
-				
+
 				for (var name in params) {
 					if ($.isArray(params[name])){
 						for (var param in params[name]){
@@ -126,34 +125,34 @@
 
 			var handleResponse = function (data){
 				var facetFields = data.facet_counts.facet_fields;
-				
+
 				//display dynamic attribute values
 				for(facetField in facetFields){
 					var items = self.asObjectedItems(facetFields, facetField);
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
-					
+
 					if(counter){
 						self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
 					}
 				}
 			};
-				
+
 			$.getJSON(
-				self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
-				function (json, textStatus) { 
-					if (textStatus!=="success"){
-						api.destroy();
+					self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
+					function (json, textStatus) { 
+						if (textStatus!=="success"){
+							api.destroy();
+						}
+
+						handleResponse(json); 
 					}
-					
-					handleResponse(json); 
-				}
 			);
 		},
-		
+
 		populateIMSTemplateAttributes: function(templateName){
 			var self =this;
-			
+
 			if($.isNotBlank(templateName)){
 				CategoryServiceJS.getIMSTemplateAttributes(templateName, {
 					callback: function(data){
@@ -165,10 +164,10 @@
 				});
 			}
 		},
-		
+
 		populateCNETTemplateAttributes: function(templateName){
 			var self =this;
-			
+
 			if($.isNotBlank(templateName)){
 				CategoryServiceJS.getCNETTemplateAttributes(templateName, {
 					callback: function(data){
@@ -176,15 +175,15 @@
 							self.attribMap = data;
 							self.displayDynamicAttributes(Object.keys(data), data);
 						}
-						
+
 					}
 				});
 			}
 		},
-		
+
 		moreOptionsHandler: function (facetField, facetValues, facetFieldLabel, delimiter) {
 			var self = this;
-			
+
 			return function () {
 
 				getFacetSelected = function() {
@@ -210,7 +209,7 @@
 				getFacetParams = function (){
 					var paramString = "";
 					var keyword = $.trim(self.manager.store.values('q'));
-					
+
 					var relId = $("select#relevancy").val();
 					if (relId == undefined || selectedRelevancy === "keyword_default") {
 						relId = "";
@@ -234,7 +233,7 @@
 						if(params[storeparams[name].name] === undefined)
 							params[storeparams[name].name] = storeparams[name].value;
 					}
-					
+
 					for (var name in params) {
 						if ($.isArray(params[name])){
 							for (var param in params[name]){
@@ -276,16 +275,16 @@
 					events: {
 						show: function(event, api) {
 							contentHolder = $('div', api.elements.content);
-							
+
 							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
-							
+
 							$.getJSON(
 									self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
 									function (json, textStatus) { 
 										if (textStatus!=="success"){
 											api.destroy();
 										}
-										
+
 										handleResponse(contentHolder, json); 
 										// If there is existing filter to this facet field
 										var indices = self.manager.store.find('fq', new RegExp('^-?' + facetField + ':'));
@@ -293,9 +292,10 @@
 										if (indices && AjaxSolr.isArray(indices) && indices.length===1) {
 
 											var currFacet = self.manager.store.values('fq')[indices[0]];
+											currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1));
 
 											if ($.startsWith(currFacet,"(") && $.endsWith(currFacet,")")){
-												currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1));
+												currFacet = currFacet.substr(1,currFacet.length-2);
 											}
 
 											var splitArray = currFacet.match(/\w+|"[^"*"]+"/g);  
@@ -303,8 +303,8 @@
 											for(var par in splitArray){
 												var cBoxId = $('input[value="'+ splitArray[par].replace(/\"/g,'') +'"]').attr("id");
 												$('div[rel="'+ cBoxId +'"]').removeClass("off")
-																			.addClass("on")
-												                            .css("background-position", "0% 100%");
+												.addClass("on")
+												.css("background-position", "0% 100%");
 											}
 
 										}
@@ -331,7 +331,7 @@
 				}).click(function(event) { event.preventDefault(); });	  
 			};		
 		},
-		
+
 		asObjectedItems: function(facetFields, facetField){
 			var items = [];
 			var maxCount = 0;
@@ -339,7 +339,7 @@
 			var limit = this.limit;
 			var counter = 0;
 			var facetValues = facetFields[facetField];
-			
+
 			for (var facetValue in facetValues) {
 				if (counter == limit) break;
 
@@ -350,24 +350,24 @@
 				objectedItems.push({ facet: facetValue, count: count });
 				counter++;
 			}
-			
+
 			items.push({ count: counter, objectedItems: objectedItems});
-			
+
 			return items;
 		},
-		
+
 		displayFacet: function (facetFieldLabel, facetField, objectedItems, isKeywordIncluded, delimiter){
 			$(this.target).append(AjaxSolr.theme('createFacetHolder', facetFieldLabel, facetField));
-			
+
 			objectedItems.sort(function (a, b) {
 				return a.facet < b.facet ? -1 : 1;
 			});
 
 			for (var i = 0, l = objectedItems.length; i < l; i++) {
 				var facet = objectedItems[i].facet;
-				
+
 				var count = objectedItems[i].count;
-				
+
 				if ($.isNotBlank(facet)){
 					AjaxSolr.theme('createFacetLink', $.formatAsId(facetField) + i, facetField, delimiter ? facet.split(delimiter)[1] : facet, count, this.clickHandler(facetField, this.escapeValue(facet)));
 					if (i == l-1 && isKeywordIncluded){
