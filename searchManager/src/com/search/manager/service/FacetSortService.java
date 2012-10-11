@@ -121,6 +121,7 @@ public class FacetSortService {
 					
 					facetGroup.setId(facetGroupId);
 					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
+					facetGroup.setLastModifiedBy(username);
 					result += daoService.updateFacetGroup(facetGroup);
 				
 					clearFacetGroupItem(facetGroupId);
