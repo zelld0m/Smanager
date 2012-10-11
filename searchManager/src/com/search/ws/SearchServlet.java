@@ -707,8 +707,9 @@ public class SearchServlet extends HttpServlet {
 					nameValuePairs.remove(defTypeNVP);
 					nameValuePairs.remove(keywordNvp);
 					StringBuilder newQuery = new StringBuilder();
-					newQuery.append("(_query_:\"{!dismax v='").append(keyword).append("'}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
+					newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
 					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
+					nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
 				}
 			}
 
