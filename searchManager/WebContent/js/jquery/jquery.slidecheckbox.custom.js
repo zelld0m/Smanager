@@ -46,17 +46,17 @@
 						click:function(e){
 							var $slideCheckbox = $(e.currentTarget);
 							var checkboxID = '#' + $slideCheckbox.attr('rel');
-		
-							$(checkboxID).attr({"checked":e.data.initOn});
-		
+					
 							if(!$(checkboxID).is(":checked")) {
 								$(checkboxID).attr({"checked":true});
-								$slideCheckbox.removeClass('off').addClass('on');
-								$slideCheckbox.css("background-position", "0% 100%");
+								$slideCheckbox.removeClass('off')
+											  .addClass('on')
+											  .css("background-position", "0% 100%");
 							}else{
 								$(checkboxID).attr({"checked":false});
-								$slideCheckbox.removeClass('on').addClass('off');
-								$slideCheckbox.css("background-position", "100% 0%");
+								$slideCheckbox.removeClass('on')
+								              .addClass('off')
+								              .css("background-position", "100% 0%");
 							}
 		
 							base.options.changeStatusCallback(e.data.id, $(checkboxID).is(":checked"));

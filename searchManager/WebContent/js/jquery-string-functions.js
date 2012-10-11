@@ -49,7 +49,7 @@ jQuery.extend(
 				},
 
 				endsWith: function(str, suffix) {
-					return $.isBlank(suffix) ? false: str.match(suffix+"$")==suffix;  
+					return $.isBlank(suffix) ? false: str.indexOf(suffix)>=0 && str.substring(str.length-suffix.length)===suffix;  
 				},
 
 				escapeQuotes: function(id) {
