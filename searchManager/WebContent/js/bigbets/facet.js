@@ -21,8 +21,8 @@
 			sortOrderList: null,
 			facetGroupIdList: null,
 
-			keywordIconPath: "../images/icon_keyword.png",
-			templateIconPath:"../images/icon_template.png",
+			keywordIconPath: "<img class='itemIcon' src='../images/icon_keyword.png'/>",
+			templateIconPath:"<img class='itemIcon' src='../images/icon_template.png'/>",
 
 			prepareFacetSort : function(){
 				clearAllQtip();
@@ -30,7 +30,7 @@
 				$("#submitForApproval").hide();
 				$("#facetsorting").hide();
 				$("#titleHeader").empty();
-				$("#ruleTypeIcon").attr("src", "");
+				$("#ruleTypeIcon").html("");
 			},
 
 			showFacetSort : function(){
@@ -64,8 +64,8 @@
 						$("#readableString").html(self.selectedRule["readableString"]);
 
 						switch(self.selectedRule["ruleType"].toLowerCase()){
-						case "keyword":	$("#ruleTypeIcon").attr("src", self.keywordIconPath); break;
-						case "template": $("#ruleTypeIcon").attr("src", self.templateIconPath); break;
+						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
+						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
 						}
 
 						var $facetSortOrder = $('#facetSortOrder');
@@ -450,8 +450,8 @@
 						var ruleType = model["ruleType"];
 
 						switch(ruleType.toLowerCase()){
-						case "keyword": base.$el.find(selector + ' div.itemIcon img').attr("src", self.keywordIconPath); break;
-						case "template": base.$el.find(selector + ' div.itemIcon img').attr("src", self.templateIconPath); break;
+						case "keyword": base.$el.find(selector + ' div.itemIcon').append(self.keywordIconPath); break;
+						case "template": base.$el.find(selector + ' div.itemIcon').append(self.templateIconPath); break;
 						}
 
 						base.$el.find(selector + ' div.itemLink a').html(totalText);
