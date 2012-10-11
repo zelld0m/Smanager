@@ -336,7 +336,7 @@
 										selected: function(e, u){
 											switch($(this).attr("id").toLowerCase()){
 											case "poptype":
-												var selectedType = e.target.text;
+												var selectedType = u.item.text;
 												var $divTemplate = $contentHolder.find('div#templatelist');
 												$contentHolder.find('div#keywordinput, div#templatelist').show();
 
