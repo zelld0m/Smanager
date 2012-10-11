@@ -524,7 +524,7 @@ public class FacetSortDAO {
 		
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroup.getId());
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_SEQUENCE, facetGroup.getSequence()!=null ? facetGroup.getSequence(): "");
-			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetGroup.getSortType());
+			inputs.put(DAOConstants.PARAM_SORT_TYPE, facetGroup.getSortType()!=null? facetGroup.getSortType().toString(): null);
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetGroup.getLastModifiedBy());
 			
 			return DAOUtils.getUpdateCount(updateFacetGroupSP.execute(inputs));
