@@ -1,41 +1,57 @@
 package com.search.manager.report.model;
 
-import com.search.manager.model.FacetSort;
+import com.search.manager.model.FacetGroup;
 import com.search.manager.report.annotation.ReportField;
+import com.search.manager.utility.DateAndTimeUtils;
 
-public class FacetSortReportBean extends ReportBean<FacetSort> {
+public class FacetSortReportBean extends ReportBean<FacetGroup> {
 
-	public FacetSortReportBean(FacetSort model) {
+	private String ruleName;
+	private String ruleType;
+	private String highlightedFacets;
+	private String sortType;
+	
+	public FacetSortReportBean(FacetGroup model) {
 		super(model);
 	}
-
-	@ReportField(label="Rule Name", size=60, sortOrder=2)
-	public String getRuleName(){
-		return model.getRuleName();
+	
+	public FacetSortReportBean(FacetGroup model, String highlightedFacets) {
+		super(model);
+		this.highlightedFacets = highlightedFacets;
 	}
 	
-	@ReportField(label="Rule Type", size=60, sortOrder=2)
-	public String getRuleType(){
-		return model.getRuleType() != null ? model.getRuleType().getDisplayText() : "";
+	@ReportField(label="Facet Name", size=20, sortOrder=1)
+	public String getFacetName(){
+		return model.getName();
+	}
+	
+	@ReportField(label="Highlighted Facets", size=40, sortOrder=2)
+	public String getHighlightedFacets(){
+		return highlightedFacets;
 	}
 
-	@ReportField(label="Created By", size=20, sortOrder=6)
+	@ReportField(label="Sorting of Other Facets", size=30, sortOrder=3)
+	public String getSortType(){
+		return model.getSortType() != null ? model.getSortType().getDisplayText() : sortType;
+	}
+	
+	@ReportField(label="Created By", size=20, sortOrder=4)
 	public String getCreatedBy(){
 		return model.getCreatedBy();
 	}
 
-	@ReportField(label="Created Date", size=20, sortOrder=7)
+	@ReportField(label="Created Date", size=20, sortOrder=5)
 	public String getCreatedDate(){
-		return model.getFormattedCreatedDate();
+		return DateAndTimeUtils.formatMMddyyyy(model.getCreatedDate());
 	}
 
-	@ReportField(label="Modified By", size=20, sortOrder=8)
+	/*@ReportField(label="Modified By", size=20, sortOrder=6)
 	public String getModifiedBy(){
 		return model.getLastModifiedBy();
 	}
 	
-	@ReportField(label="Modified Date", size=20, sortOrder=9)
+	@ReportField(label="Modified Date", size=20, sortOrder=7)
 	public String getModifiedDate(){
-		return model.getFormattedLastModifiedDate();
-	}
+		return DateAndTimeUtils.formatMMddyyyy(model.getLastModifiedDate());
+	}*/
 }
