@@ -11,6 +11,22 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("sidepanel", base);
 
+		
+		base.addAddButtonListener = function(){
+			base.$el.find("#addButton").on({
+				click: function(e){
+					var name = $.trim(base.$el.find('input[type="text"]').val());
+					if(($.isBlank(name) || name === base.options.searchText) && !base.options.allowBlankText){
+						jAlert("Please specify a valid input");
+					}else if (base.options.allowBlankText || (isAllowedName(name) && name !== base.options.searchText)){
+						base.options.itemAddCallback(base, name.toLowerCase()!==base.options.searchText.toLowerCase()? name: ""); 
+					}else{
+						jAlert("Field contains invalid character");
+					}
+				}
+			});
+		};
+		
 		base.init = function(){
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
@@ -28,14 +44,26 @@
 				}
 			};
 			
+			var $addButton = base.$el.find("#addButton");
+				
 			base.sendRequest = function(event){
 				setTimeout(function(){
 					base.newSearch = $.trim($(event.target).val());
+					
 					if (base.newSearch === base.options.searchText) {
 						base.newSearch = "";
 					};
+
+					$addButton.off()
+							  .removeClass("btnAddGreen")
+							  .removeClass("btnAddGreen_disable")
+							  .addClass($.isBlank(base.newSearch) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
 					
-					if (base.oldSearch != base.newSearch) {
+					if($addButton.hasClass("btnAddGreen")){
+						base.addAddButtonListener();
+					}
+					
+					if (base.oldSearch !== base.newSearch) {
 						base.getList(base.newSearch, 1);
 						base.oldSearch = base.newSearch;
 						base.sendRequest(event);
@@ -64,19 +92,10 @@
 					},
 				keyup: base.timeout
 			});
-
-			base.$el.find('a#addButton').on({
-				click: function(e){
-					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if (isAllowedName(name) && name !== base.options.searchText){
-						base.options.itemAddCallback(base, name); 
-					}else if($.isBlank(name) || name === base.options.searchText){
-						alert("Please specify a valid input");
-					}else{
-						alert("Field contains invalid character");
-					}
-				}
-			});
+			
+			if($addButton.hasClass("btnAddGreen")){
+				base.addAddButtonListener();
+			}
 		};
 
 		base.populateTemplate = function(){
@@ -103,7 +122,7 @@
 				}
 
 				if (base.options.showAddButton){
-					content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
+					content+= '<a id="addButton" class="btnGraph ' + (!base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen")  + ' floatR" href="javascript:void(0);"></a>';
 				}
 
 				content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
@@ -228,6 +247,7 @@
 			maxCharacter: 50,
 			showAddButton: true,
 			showSearch: true,
+			allowBlankText: false,
 			itemDataCallback: function(e){},
 			itemOptionCallback: function(e){},
 			itemNameCallback: function(e){},
