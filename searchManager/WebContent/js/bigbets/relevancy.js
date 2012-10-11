@@ -1136,16 +1136,6 @@
 				$("#relevancy").show();
 				selectedRuleStatus = ruleStatus;
 
-				$("div#versions").version({
-					ruleType: "Ranking Rule",
-					ruleId: selectedRule["ruleId"],
-					buttonHolderId: "#versionHolder",
-					locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-					restoreCallback: function(rankingRule){
-						setRelevancy(rankingRule);
-					}
-				});
-
 				$("#titleText").html(moduleName + " for ");
 				$("#titleHeader").html(selectedRule.ruleName);
 

@@ -375,6 +375,7 @@
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
+					enableVersion:true,
 					authorizeRuleBackup: true,
 					viewAuditCallback: function(target){
 						$(target).viewaudit({
