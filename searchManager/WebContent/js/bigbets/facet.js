@@ -21,8 +21,8 @@
 			sortOrderList: null,
 			facetGroupIdList: null,
 
-			keywordIconPath: "<img class='itemIcon' src='../images/icon_keyword.png'/>",
-			templateIconPath:"<img class='itemIcon' src='../images/icon_template.png'/>",
+			keywordIconPath: "<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_keyword.png'/>",
+			templateIconPath:"<img class='itemIcon' src='"+ GLOBAL_contextPath +"/images/icon_template.png'/>",
 
 			prepareFacetSort : function(){
 				clearAllQtip();
@@ -203,7 +203,7 @@
 					if($.isNotBlank(u.item.text)){
 						if($.inArray(u.item.text, selectedFacets) >= 0){
 							jAlert(selectedFacetName + " is already selected.", self.moduleName);
-							// TODO (($(target)[0]).parent()).find("input#"+itemId).val("");
+							// TODO set input text to empty string
 						}
 					}
 				}
@@ -337,14 +337,16 @@
 											switch($(this).attr("id").toLowerCase()){
 											case "poptype":
 												var selectedType = e.target.text;
-												$divTemplate = $contentHolder.find('div#templatelist');
-												$contentHolder.find('div#keywordinput, div#templatelist').hide();
+												var $divTemplate = $contentHolder.find('div#templatelist');
+												$contentHolder.find('div#keywordinput, div#templatelist').show();
 
 												switch(selectedType.toLowerCase()){
 												case "keyword": 
+													$contentHolder.find('div#templatelist').hide();
 													$contentHolder.find('div#keywordinput').show();
 													break;
 												case "template":
+													$contentHolder.find('div#keywordinput').hide();
 													$contentHolder.find('div#templatelist').show();
 													self.populateTemplateNameList($divTemplate);
 													break;
@@ -532,11 +534,12 @@
 				var self = this;
 
 				$("#facetsort").tabs("destroy").tabs({
+					cookie: {
+						expires: 0
+						},
 					show: function(event, ui){
-						var tabNumber = ui.index;
 						self.tabSelectedId = ui.panel.id;
 						self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
-
 						self.populateTabContent();
 
 					}
@@ -550,7 +553,6 @@
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
 						if (!e.data.locked){
-							//TODO check if reached max
 							var items = self.buildFacetGroupItemsMap();
 							var conditionCount = (items && items[facetGroupId]) ? items[facetGroupId].length : 0;
 							if (conditionCount >= self.maxHighlightedFacet) {
@@ -651,7 +653,7 @@
 						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
 							callback: function(data){
 								response = data;
-								showActionResponse(response, "update", ruleName);
+								showActionResponse(response, "update", self.selectedRule["ruleName"]);
 							},
 							preHook: function(){
 								self.prepareFacetSort();

@@ -185,6 +185,6 @@ public class FacetSort extends ModelBean{
 			return sb.toString(); 
 		}
 		
-		return "No Elevated Facet";
+		return "No Highlighted Facet";
 	}
 }

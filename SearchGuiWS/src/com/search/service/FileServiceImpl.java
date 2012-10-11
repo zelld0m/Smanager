@@ -474,28 +474,21 @@ public class FileServiceImpl implements FileService{
 	}
 	
 	private Object getXmlObjectForFacetSortRule(String storeName, String ruleId){
-		//TODO
-		/*FacetSort facetSortFilter = new FacetSort();
-		List<FacetSort> facetSortList = null;
+		FacetSort facetSort = new FacetSort(ruleId, storeName);
 		
 		try{
-			StoreKeyword sk = new StoreKeyword(storeName, ruleId);
-			facetSortFilter.setStoreKeyword(sk); 
-			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter,null,null,0,0);
+			facetSort = daoService.getFacetSort(facetSort);	
 			
-			facetSortList = daoService.getFacetSortResultList(criteria).getList();	
-			
-			if(CollectionUtils.isNotEmpty(facetSortList)){
+			if(facetSort != null){
 				XStream xstream = new XStream();
 				xstream.alias("facetsort", FacetSort.class);
-				xstream.alias("list", List.class);
 
-			    String xml = xstream.toXML(facetSortList);
+			    String xml = xstream.toXML(facetSort);
 			    return xml;
 			}
 		}catch (Exception e) {
 			logger.error(e,e);
-		}*/ 
+		}
 		return null;	
 	}
 	

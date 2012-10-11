@@ -5,6 +5,7 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetGroup extends ModelBean {
@@ -94,5 +95,13 @@ public class FacetGroup extends ModelBean {
 	
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+	
+	public String getFormattedCreatedDate() {
+		return DateAndTimeUtils.formatMMddyyyy(getCreatedDate());
+	}
+	
+	public String getFormattedLastModifiedDate() {
+		return DateAndTimeUtils.formatMMddyyyy(getLastModifiedDate());
 	}
 }
