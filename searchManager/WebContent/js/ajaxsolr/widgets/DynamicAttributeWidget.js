@@ -249,59 +249,9 @@
 				};
 
 				handleResponse = function (contentHolder, data){
-
 					contentHolder.html(AjaxSolr.theme('displayFacetMoreOptions',facetField,facetFieldLabel,data.facet_counts.facet_fields[facetField], delimiter));
-
 					SearchableList(contentHolder);
-					
-					contentHolder.find(".iphone-style").on("click", function(e) {
-						checkboxID = '#' + $(this).attr('rel');
-
-						if($(checkboxID)[0].checked == false) {
-							$(this).animate({backgroundPosition: '0% 100%'});
-							$(checkboxID)[0].checked = true;
-							$(this).removeClass('off').addClass('on');
-						} else {
-							$(this).animate({backgroundPosition: '100% 0%'});
-							$(checkboxID)[0].checked = false;
-							$(this).removeClass('on').addClass('off');
-						}
-					});
-
-					contentHolder.find(".firerift-style").on("click", function(e) {
-						checkboxID = '#' + $(this).attr('rel');
-
-						if($(checkboxID)[0].checked == false) {
-							$(checkboxID)[0].checked = true;
-							$(this).removeClass('off').addClass('on');
-						} else {
-							$(checkboxID)[0].checked = false;
-							$(this).removeClass('on').addClass('off');
-						}
-					});
-
-					contentHolder.find('.iphone-style-checkbox, .firerift-style-checkbox').each(function() {
-
-						thisID		= $(this).attr('id');
-						thisClass	= $(this).attr('class');
-
-						switch(thisClass) {
-						case "iphone-style-checkbox":
-							setClass = "iphone-style";
-							break;
-						case "firerift-style-checkbox":
-							setClass = "firerift-style";
-							break;
-						}
-
-						$(this).addClass('hidden');
-
-						if($(this)[0].checked == true)
-							$(this).after('<div class="'+ setClass +' on" rel="'+ thisID +'">&nbsp;</div>');
-						else
-							$(this).after('<div class="'+ setClass +' off" rel="'+ thisID +'">&nbsp;</div>');
-					});
-
+					contentHolder.find('.firerift-style-checkbox').slidecheckbox();
 				};
 
 				$('#more' + $.formatAsId(facetField) + " .lnk").qtip({
@@ -319,8 +269,12 @@
 					style:{
 						width: 'auto'
 					},
+					show:{
+						ready: true,
+						modal: true
+					},
 					events: {
-						render: function(event, api) {
+						show: function(event, api) {
 							contentHolder = $('div', api.elements.content);
 							
 							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
@@ -348,8 +302,9 @@
 
 											for(var par in splitArray){
 												var cBoxId = $('input[value="'+ splitArray[par].replace(/\"/g,'') +'"]').attr("id");
-												$('div[rel="'+ cBoxId +'"]').removeClass("off");
-												$('div[rel="'+ cBoxId +'"]').addClass("on");
+												$('div[rel="'+ cBoxId +'"]').removeClass("off")
+																			.addClass("on")
+												                            .css("background-position", "0% 100%");
 											}
 
 										}
@@ -368,7 +323,9 @@
 										});
 									}
 							);
-
+						},
+						hide: function(event, api){
+							api.destroy();
 						}
 					}
 				}).click(function(event) { event.preventDefault(); });	  

@@ -133,15 +133,9 @@
 				};
 
 				handleResponse = function (contentHolder, data){
-
 					contentHolder.html(AjaxSolr.theme('displayFacetMoreOptions',facetField,facetField,data.facet_counts.facet_fields[facetField]));
-
 					SearchableList(contentHolder);
-					
-					contentHolder.find('.firerift-style-checkbox').slidecheckbox({
-						
-					});
-
+					contentHolder.find('.firerift-style-checkbox').slidecheckbox();
 				};
 
 				$('#more' + $.formatAsId(facetField) + " .lnk").qtip({
