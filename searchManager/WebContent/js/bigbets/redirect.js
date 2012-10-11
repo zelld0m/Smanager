@@ -51,17 +51,20 @@
 
 				$("#deleteBtn").off().on({
 					click: function(e){
-						if (!e.data.locked && confirm("Delete " + self.selectedRule["ruleName"] + "'s rule?")){
-							RedirectServiceJS.deleteRule(self.selectedRule,{
-								callback: function(code){
-									showActionResponse(code, "delete", self.selectedRule["ruleName"]);
-									if(code==1) {
-										self.selectedRule = null;
-										self.setRedirect(null);
+						if(e.data.locked) return;
+						jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", "Delete Rule Condition", function(result){
+							if(result){
+								RedirectServiceJS.deleteRule(self.selectedRule,{
+									callback: function(code){
+										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
+										if(code==1) {
+											self.selectedRule = null;
+											self.setRedirect(null);
+										}
 									}
-								}
-							});
-						}
+								});
+							}
+						});
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
@@ -249,15 +252,20 @@
 
 						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).off().on({
 							click: function(e){
-								if (!e.data.locked && confirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?'))
-									RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
-										callback:function(code){
-											showActionResponse(code, "delete", name);
-											self.getKeywordInRuleList(1);
-											self.getRedirectRuleList(1);
-										},
-										preHook: function(){ base.prepareList(); }
-									});
+								if (e.data.locked) return;
+								
+								jConfirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?', "Delete Keyword", function(result){
+									if(result){
+										RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
+											callback:function(code){
+												showActionResponse(code, "delete", name);
+												self.getKeywordInRuleList(1);
+												self.getRedirectRuleList(1);
+											},
+											preHook: function(){ base.prepareList(); }
+										});
+									}
+								});					
 							},
 							mouseenter: showHoverInfo
 						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
@@ -1636,10 +1644,12 @@
 
 				ui.find("img.deleteAttrIcon").off().on({
 					click: function(e){
+						if (e.data.locked) return;
 						var $item = $(this).parents(".dynamicAttributeItem");
-						if (!e.data.locked && confirm("Delete attribute?")){
-							$item.remove();
-						}
+						var attributeName = $item.find("#dynamicAttributeLabel").text();
+						jConfirm("Delete " + attributeName.substr(0,attributeName.length-1) + " attribute?", "Delete Item Attribute", function(result){
+							if (result) $item.remove();
+						});
 					},
 					mouseenter: showHoverInfo
 				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});
@@ -1924,30 +1934,35 @@
 
 				ui.find("img.deleteIcon,a.deleteBtn").off().on({
 					click: function(e){
+						if(e.data.locked) return;
+						
 						var $item = $(this).parents(".conditionItem");
 						var readableString = $.isNotBlank(e.data.condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
-						if (!e.data.locked && confirm("Delete rule condition: \n" + readableString)){
-							if ($item.hasClass("tempConditionItem")){
-								$item.remove();
-								self.showEmptyFilterGroup();
-							}else{
-								RedirectServiceJS.deleteConditionInRule(self.selectedRule["ruleId"], $item.attr("id"),{
-									callback:function(code){
-										showActionResponse(code, "delete", readableString);
-										if(code==1){
-											$item.remove();
-											self.showEmptyFilterGroup();
+						
+						jConfirm("Delete " + readableString, "Delete Rule Condition", function(result){
+							if(result){
+								if ($item.hasClass("tempConditionItem")){
+									$item.remove();
+									self.showEmptyFilterGroup();
+								}else{
+									RedirectServiceJS.deleteConditionInRule(self.selectedRule["ruleId"], $item.attr("id"),{
+										callback:function(code){
+											showActionResponse(code, "delete", readableString);
+											if(code==1){
+												$item.remove();
+												self.showEmptyFilterGroup();
+											}
+										},
+										preHook:function(){
+											$item.find("img#preloaderUpdating").show();
+										},
+										postHook:function(){
+											$item.find("img#preloaderUpdating").hide();
 										}
-									},
-									preHook:function(){
-										$item.find("img#preloaderUpdating").show();
-									},
-									postHook:function(){
-										$item.find("img#preloaderUpdating").hide();
-									}
-								});
+									});
+								}
 							}
-						}
+						});
 					},
 					mouseenter: showHoverInfo
 				},{condition: condition, locked:self.selectedRuleStatus["locked"] || !allowModify});	
