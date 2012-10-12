@@ -18,7 +18,7 @@
 <!-- cross-browser css compatibility util -->
 <script type="text/javascript" src="<spring:url value="/js/oscss.js" />"></script>
 
-<script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
+<script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-string-functions.js" />" ></script>
 
 <script type="text/javascript" src="<spring:url value="login.js" />"></script>
 

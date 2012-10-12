@@ -78,8 +78,9 @@
 						base.$el.find("#versionIcon, #backupBtn").on({
 							click: function(e){
 								$("#versionIcon").version({
-									moduleName: "Ranking Rule",
-//								ruleId: selectedRule["ruleId"],
+									moduleName: base.options.moduleName,
+									ruleType: base.options.ruleType,  
+									ruleId: base.options.rule["ruleId"],
 //								buttonHolderId: "#versionHolder",
 //								locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 //								restoreCallback: function(rankingRule){
@@ -191,6 +192,7 @@
 			rule: null,
 			ruleStatus: null,
 			moduleName: "",
+			ruleType: "",
 			enableVersion: false,
 			authorizeRuleBackup: false,
 			authorizeSubmitForApproval: false,

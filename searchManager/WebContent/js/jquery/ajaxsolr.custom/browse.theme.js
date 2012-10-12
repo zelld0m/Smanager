@@ -6,7 +6,7 @@
 		template += '	<img align="absmiddle" class="marR3 marT5 floatR  posRel" src="' + GLOBAL_contextPath + '/images/icon_statistics.png">';
 		template += '</a>'; 
 		template += '<a id="searchBtn" href="javascript:void(0);">';
-		template += '	<img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="' + GLOBAL_contextPath + '/js/ajaxsolr/images/btn_GO.png">';
+		template += '	<img align="absmiddle" class="marR5 marLn4 marT1 floatR  posRel" src="' + AjaxSolr.theme('getAbsoluteLoc', "images/btn_GO.png") + '">';
 		template += '</a> '; 
 		template += '<div class="searchBoxHolder w150 floatR marT1 marR8">';
 		template += '	<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">';
@@ -586,7 +586,7 @@
 	};
 
 	AjaxSolr.theme.prototype.getAbsoluteLoc = function (filename){
-		return "../js/ajaxsolr/" + filename;
+		return GLOBAL_contextPath + "/js/jquery/ajaxsolr.custom/" + filename;
 	};
 
 	AjaxSolr.theme.prototype.buildHTML = function(tag, html, attrs) {

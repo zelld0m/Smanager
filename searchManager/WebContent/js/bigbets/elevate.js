@@ -469,6 +469,7 @@
 
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
+					ruleType: "Elevate",
 					rule: self.selectedRule,
 					enableVersion:true,
 					authorizeRuleBackup: true,

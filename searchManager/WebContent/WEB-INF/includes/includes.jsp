@@ -1,4 +1,4 @@
-<%@ taglib prefix="joda" tagdir="/WEB-INF/tlds/joda.tld"%>
+<%@ taglib prefix="joda" tagdir="/WEB-INF/tags/joda.tld"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
