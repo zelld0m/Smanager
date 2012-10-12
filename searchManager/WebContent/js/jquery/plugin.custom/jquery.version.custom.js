@@ -122,7 +122,7 @@
 						$tr.show();
 						$table.append($tr);
 					}
-
+					$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
 				},
 				preHook:function(){
 
