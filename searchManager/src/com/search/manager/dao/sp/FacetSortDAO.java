@@ -424,7 +424,7 @@ public class FacetSortDAO {
 	    	SortType sortType = model.getSortType();
 			
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
-	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, "");
+	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, model.getId());
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
 	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");

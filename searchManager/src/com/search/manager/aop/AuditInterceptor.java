@@ -505,7 +505,7 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case updateGroupItem:
 				message = new StringBuilder("Updating ID[%1$s]");
-				if(StringUtils.isNotBlank(facetGroupId)){
+				if(StringUtils.isNotBlank(facetGroupName)){
 					message.append(" Facet Name [%2$s]");
 				}
 				

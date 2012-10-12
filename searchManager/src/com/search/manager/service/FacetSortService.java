@@ -114,8 +114,6 @@ public class FacetSortService {
 			facetSort.setLastModifiedBy(username);
 			result = daoService.updateFacetSort(facetSort);
 			
-			
-			
 			if(MapUtils.isNotEmpty(facetGroupItems)){
 				FacetGroup facetGroup = new FacetGroup();
 				
@@ -132,10 +130,15 @@ public class FacetSortService {
 					
 					FacetGroup updatedFacetGroup = new FacetGroup(ruleId, facetGroupId);
 					SearchCriteria<FacetGroup> criteria = new SearchCriteria<FacetGroup>(updatedFacetGroup);
-					updatedFacetGroup = daoService.searchFacetGroup(criteria, MatchType.MATCH_ID).getList().get(0);
 					
-					clearFacetGroupItem(facetGroupId);
-					result += addFacetGroupItems(ruleId, updatedFacetGroup, arrFacetGroupItems);	
+					//TODO create daoService getFacetGroup by ruleId and facetGroupId
+					RecordSet<FacetGroup> facets = daoService.searchFacetGroup(criteria, MatchType.MATCH_ID);
+			
+					if(facets != null && facets.getTotalSize() > 0){
+						updatedFacetGroup = facets.getList().get(0);
+						clearFacetGroupItem(facetGroupId);
+						result += addFacetGroupItems(ruleId, updatedFacetGroup, arrFacetGroupItems);
+					}
 				}
 			}
 		} catch (DaoException e) {
