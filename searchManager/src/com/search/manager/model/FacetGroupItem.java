@@ -13,6 +13,8 @@ public class FacetGroupItem extends ModelBean{
 	private String memberId;
 	private String name;
 	private Integer sequence;
+	private String storeId;
+	private FacetGroup facetGroup;
 	
 	public FacetGroupItem() {}
 
@@ -96,4 +98,34 @@ public class FacetGroupItem extends ModelBean{
 	public void setSequence(Integer sequence) {
 		this.sequence = sequence;
 	}
+
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
+	public FacetGroup getFacetGroup() {
+		return facetGroup;
+	}
+
+	public void setFacetGroup(FacetGroup facetGroup) {
+		this.facetGroup = facetGroup;
+	}
+	
+	public String getFacetGroupName(){
+		if(getFacetGroup() != null)
+			return getFacetGroup().getName();
+		return null;
+	}
+	
+	public String getFacetGroupSortOrder(){
+		if(getFacetGroup() != null && getFacetGroup().getSortType() != null)
+			return getFacetGroup().getSortType().getDisplayText();
+		return null;
+	}
+	
+	
 }
