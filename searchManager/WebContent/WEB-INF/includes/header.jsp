@@ -77,23 +77,23 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
-  <script type="text/javascript" src="<spring:url value="/js/jquery-array-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-string-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery-store-functions.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.pagination.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.viewaudit.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.comment.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.sidepanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.viewfacetvalues.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.auditpanel.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.download.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.preview.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.activerule.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.version.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.rulestatus.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.ruleitem.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.addproduct.custom.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.slidecheckbox.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-array-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-string-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/utility.custom/jquery-store-functions.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.pagination.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.viewaudit.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.comment.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.sidepanel.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.viewfacetvalues.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.auditpanel.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.download.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.preview.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.activerule.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.version.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rulestatus.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.ruleitem.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.addproduct.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
@@ -106,7 +106,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/qTip/jquery.qtip.common.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.cookie-1.0.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/utility.custom/jquery.cookie-1.0.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.validation.js" />" ></script>
   <!--[if lt IE 9]><script type="text/javascript" src="<spring:url value="/js/jquery/canvas/excanvas.js" />"></script><![endif]-->
   <script type="text/javascript" src="<spring:url value="/js/jquery/canvas/jquery.tagcanvas-1.13.js" />" ></script>

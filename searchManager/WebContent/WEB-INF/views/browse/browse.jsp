@@ -23,37 +23,37 @@
 	<script type="text/javascript" src="<spring:url value="/js/dwr/browse.js" />"></script>
 	
   <!-- Ajax Solr Dependencies -->
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/Core.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/AbstractManager.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/managers/Manager.jquery.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/Parameter.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/ParameterStore.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/helpers/jquery/ajaxsolr.theme.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/helpers/ajaxsolr.support.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/helpers/ajaxsolr.theme.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/Core.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractManager.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/managers/Manager.jquery.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/Parameter.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/ParameterStore.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/helpers/jquery/ajaxsolr.theme.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/helpers/ajaxsolr.support.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/helpers/ajaxsolr.theme.js" />"></script>
   
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/AbstractWidget.js" />"></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/core/AbstractFacetWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/lib/widgets/jquery/PagerWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractWidget.js" />"></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractFacetWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/widgets/jquery/PagerWidget.js" />" ></script>
 
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.theme.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchResultWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/CurrentSearchWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SortResultWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchKeywordWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicFacetWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/DynamicAttributeWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/SearchWithinWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ProductAttributeFilterWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/ActiveRuleWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/AnimatedTagCloudWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/RuleSelectorWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/widgets/CNETFacetWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentSearchWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicFacetWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicAttributeWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchWithinWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ProductAttributeFilterWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ActiveRuleWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AnimatedTagCloudWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/RuleSelectorWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CNETFacetWidget.js" />" ></script>
   
-  <script type="text/javascript" src="<spring:url value="/js/ajaxsolr/browse.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.js" />" ></script>
   
   <link type="text/css" rel="stylesheet" href="<spring:url value="/css/search/search.css" />">
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/ajaxsolr/css/browse.css" />">
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/ajaxsolr.custom/css/browse.css" />">
 	
     <!-- Start Left Side -->	   
 	<div class="clearB floatL minW240 sideMenuArea">

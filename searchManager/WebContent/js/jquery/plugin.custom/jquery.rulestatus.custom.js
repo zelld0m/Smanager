@@ -73,6 +73,22 @@
 					if ($.endsWith(base.options.rule["ruleId"], "_default")){
 						base.$el.empty();
 					}
+
+					if (base.options.enableVersion){
+						base.$el.find("#versionIcon, #backupBtn").on({
+							click: function(e){
+								$("#versionIcon").version({
+									moduleName: "Ranking Rule",
+//								ruleId: selectedRule["ruleId"],
+//								buttonHolderId: "#versionHolder",
+//								locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+//								restoreCallback: function(rankingRule){
+//									setRelevancy(rankingRule);
+//								}
+								});
+							}
+						});
+					}
 				}
 			});	
 		};
