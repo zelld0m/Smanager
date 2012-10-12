@@ -396,9 +396,6 @@
 											if ($.isBlank(popName)){
 												jAlert("Facet Sort rule name is required.",self.moduleName);
 											}
-											else if (!isAllowedName(popName)) {
-												jAlert("Please provide a valid Facet Sort rule name.",self.moduleName);
-											}
 											else if ($.isBlank(ruleType)){
 												jAlert("Facet Sort rule type is required.",self.moduleName);
 											}
