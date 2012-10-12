@@ -53,7 +53,10 @@ public class AuditTrailConstants {
 		addCondition,
 		updateCondition,
 		removeCondition, 
-		resetPassword		
+		resetPassword,
+		//for facet sort only
+		updateGroup,
+		updateGroupItem
 	}
 
 	public static Operation[] elevateOperations = {
@@ -119,9 +122,17 @@ public class AuditTrailConstants {
 	public static Operation[] facetSortOperations = {
 		Operation.add,
 		Operation.update,
-		Operation.delete,
+		Operation.delete
 	};
 	
+	public static Operation[] facetSortGroupOperations = {
+		Operation.updateGroup
+	};
+	
+	public static Operation[] facetSortGroupItemOperations = {
+		Operation.updateGroupItem
+	};
+		
 	public static Operation[] queryCleaningKeywordOperations = {
 		Operation.mapKeyword,
 		Operation.unmapKeyword,

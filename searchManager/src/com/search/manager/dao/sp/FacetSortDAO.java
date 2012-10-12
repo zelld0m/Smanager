@@ -517,6 +517,7 @@ public class FacetSortDAO {
 		}
 	}
 
+	@Audit(entity = Entity.facetSort, operation = Operation.updateGroup)
 	public int updateFacetGroup(FacetGroup facetGroup) throws DaoException {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
@@ -530,6 +531,21 @@ public class FacetSortDAO {
 			return DAOUtils.getUpdateCount(updateFacetGroupSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroup(): " + e.getMessage(), e);
+		}
+	}
+	
+	@Audit(entity = Entity.facetSort, operation = Operation.updateGroupItem)
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems) throws DaoException {
+		int response = 0;
+		try{
+			for(FacetGroupItem facetGroupItem : facetGroupItems){
+				response += addFacetGroupItem(facetGroupItem);
+			}
+			
+			return response;
+		}
+		catch (Exception e) {
+			throw new DaoException("Failed during addFacetGroupItems(): " + e.getMessage(), e);
 		}
 	}
 

@@ -1,7 +1,12 @@
 package com.search.manager.aop;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +26,8 @@ import com.search.manager.model.AuditTrail;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
@@ -105,7 +112,16 @@ public class AuditInterceptor {
 				logDemote(jp, auditable, auditTrail);
 				break;
 			case facetSort:
-				logFacetSort(jp, auditable, auditTrail);
+				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
+					logFacetSort(jp, auditable, auditTrail);
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.facetSortGroupOperations, auditable.operation())) {
+					logFacetGroup(jp, auditable, auditTrail);
+				}
+				else if (ArrayUtils.contains(AuditTrailConstants.facetSortGroupItemOperations, auditable.operation())) {
+					logFacetGroupItem(jp, auditable, auditTrail);
+				}
+				
 				break;
 			case queryCleaning:
 				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
@@ -381,8 +397,7 @@ public class AuditInterceptor {
 		
 		switch (auditable.operation()) {
 			case add:
-				message = new StringBuilder("Adding ID[%1$s]");		
-				
+				message = new StringBuilder("Adding ID[%1$s]");	
 				if(StringUtils.isNotBlank(e.getRuleName())){
 					message.append(" Rule Name [%2$s]");
 				}
@@ -422,6 +437,92 @@ public class AuditInterceptor {
 						auditTrail.getReferenceId(), e.getRuleName(), 
 						e.getRuleType() != null ? e.getRuleType().getDisplayText():"",
 						e.getSortType() != null ? e.getSortType().getDisplayText():""
+				)
+		);
+				
+		logAuditTrail(auditTrail);
+	}
+	
+	
+	private void logFacetGroup(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		FacetGroup e = null;
+		e = (FacetGroup)jp.getArgs()[0];
+		auditTrail.setReferenceId(e.getRuleId());
+		auditTrail.setStoreId(e.getStoreId());
+				
+		StringBuilder message = null;
+		
+		switch (auditable.operation()) {
+			case updateGroup:
+				message = new StringBuilder("Updating ID[%1$s]");
+				if(StringUtils.isNotBlank(e.getId())){
+					message.append(" Facet ID [%2$s]");
+				}
+				
+				message.append(" Sort Order [%3$s]");
+				
+				break;
+			default:
+				message = new StringBuilder();
+				return;
+		}
+		
+		auditTrail.setDetails(
+				String.format(message.toString(),
+						auditTrail.getReferenceId(),
+						e.getId(), 
+						e.getSortType() != null ? e.getSortType().getDisplayText():"Using Rule's General Sort Order"
+				)
+		);
+				
+		logAuditTrail(auditTrail);
+	}
+	
+	private void logFacetGroupItem(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		List<FacetGroupItem> e = (ArrayList<FacetGroupItem>)jp.getArgs()[0];
+		
+		String facetGroupId = "";
+		String facetGroupName = "";
+		String facetSortOrder = "";
+		String highlightedFacets = "";
+		List<String> selectedItemList = new ArrayList<String>();
+		
+		if(CollectionUtils.isNotEmpty(e)){
+			auditTrail.setReferenceId(e.get(0).getRuleId());
+			auditTrail.setStoreId(e.get(0).getStoreId());
+			facetGroupName = e.get(0).getFacetGroupName();
+			facetSortOrder = e.get(0).getFacetGroupSortOrder();
+			
+			for(FacetGroupItem item : e){
+				selectedItemList.add(item.getName());
+			}
+
+			highlightedFacets = StringUtils.join(selectedItemList.toArray(), " | ");
+		}
+				
+		StringBuilder message = null;
+		
+		switch (auditable.operation()) {
+			case updateGroupItem:
+				message = new StringBuilder("Updating ID[%1$s]");
+				if(StringUtils.isNotBlank(facetGroupId)){
+					message.append(" Facet Name [%2$s]");
+				}
+				
+				message.append(" Highlighted Facets [%4$s]");
+				
+				break;
+			default:
+				message = new StringBuilder();
+				return;
+		}
+		
+		auditTrail.setDetails(
+				String.format(message.toString(),
+						auditTrail.getReferenceId(), 
+						facetGroupName,
+						facetSortOrder,
+						(StringUtils.isNotBlank(highlightedFacets) ? highlightedFacets : "No Highlighted Facet")
 				)
 		);
 				

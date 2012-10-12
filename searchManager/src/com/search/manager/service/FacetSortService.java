@@ -1,6 +1,8 @@
 package com.search.manager.service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.MapUtils;
@@ -112,6 +114,8 @@ public class FacetSortService {
 			facetSort.setLastModifiedBy(username);
 			result = daoService.updateFacetSort(facetSort);
 			
+			
+			
 			if(MapUtils.isNotEmpty(facetGroupItems)){
 				FacetGroup facetGroup = new FacetGroup();
 				
@@ -122,15 +126,18 @@ public class FacetSortService {
 					facetGroup.setId(facetGroupId);
 					facetGroup.setSortType(SortType.get(sortOrders.get(facetGroupId)));
 					facetGroup.setLastModifiedBy(username);
+					facetGroup.setStoreId(facetSort.getStoreId());
+					facetGroup.setRuleId(ruleId);
 					result += daoService.updateFacetGroup(facetGroup);
-				
+					
+					FacetGroup updatedFacetGroup = new FacetGroup(ruleId, facetGroupId);
+					SearchCriteria<FacetGroup> criteria = new SearchCriteria<FacetGroup>(updatedFacetGroup);
+					updatedFacetGroup = daoService.searchFacetGroup(criteria, MatchType.MATCH_ID).getList().get(0);
+					
 					clearFacetGroupItem(facetGroupId);
-					for(int i=0; i < ArrayUtils.getLength(arrFacetGroupItems); i++){
-						result += addSingleFacetGroupItem(facetGroupId, arrFacetGroupItems[i], i+1);
-					}					
+					result += addFacetGroupItems(ruleId, updatedFacetGroup, arrFacetGroupItems);	
 				}
 			}
-		
 		} catch (DaoException e) {
 			logger.error("Failed during updateRule()",e);
 		}
@@ -138,6 +145,27 @@ public class FacetSortService {
 		return result;
 	}
 
+	public int addFacetGroupItems(String ruleId, FacetGroup facetGroup, String[] arrFacetGroupItems){
+		try {
+		List<FacetGroupItem> facetGroupItems = new ArrayList<FacetGroupItem>();
+		for(int i=0; i < ArrayUtils.getLength(arrFacetGroupItems); i++){
+			FacetGroupItem facetGroupItem = new FacetGroupItem(facetGroup.getId(), "" , arrFacetGroupItems[i], i+1);
+			facetGroupItem.setCreatedBy(UtilityService.getUsername());
+			facetGroupItem.setFacetGroupId(facetGroup.getId());
+			facetGroupItem.setStoreId(UtilityService.getStoreName());
+			facetGroupItem.setRuleId(ruleId);
+			facetGroupItem.setFacetGroup(facetGroup);
+			
+			facetGroupItems.add(facetGroupItem);
+		}
+		
+		return daoService.addFacetGroupItems(facetGroupItems);
+		} catch (DaoException e) {
+			logger.error("Failed during addFacetGroupItems()",e);
+		}
+		return -1;
+	}
+	
 	@RemoteMethod
 	public RecordSet<FacetSort> getAllRule(String name, int page, int itemsPerPage){
 		logger.info(String.format("%s %d %d", name, page, itemsPerPage));
