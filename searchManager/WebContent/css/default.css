@@ -6,7 +6,8 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w15, .w15			{ width: 15px }
 .cssReset .w20, .w20			{ width: 20px }
 .cssReset .w30, .w30			{ width: 30px }
-.cssReset .w45, .w45			{ width: 45px } 
+.cssReset .w45, .w45			{ width: 45px }
+.cssReset .w46, .w46			{ width: 46px } 
 .cssReset .w55, .w55			{ width: 55px !important } 
 .cssReset .w60, .w60			{ width: 60px !important }  
 .cssReset .w65, .w65			{width: 65px}
@@ -14,6 +15,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w70, .w70			{width: 70px}
 .cssReset .w72, .w72			{width: 72px !important}
 .cssReset .w74, .w74			{width: 74px !important}
+.cssReset .w76, .w76			{width: 76px !important}
 .cssReset .w80, .w80			{width: 80px !important}
 .cssReset .w83, .w83			{width: 83px}
 .cssReset .w85, .w85			{width: 85px}
@@ -70,7 +72,9 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w250, .w250			{width:250px !important}
 .cssReset .w255, .w255			{width:255px !important}
 .cssReset .w251, .w251			{width:251px !important}
+.cssReset .w260, .w260			{width:260px !important}
 .cssReset .w278, .w278			{width:278px !important}
+.cssReset .w280, .w280			{width:280px !important}
 .cssReset .w282, .w282			{width:282px !important}
 .cssReset .w300, .w300			{width:300px}
 .cssReset .w310, .w310			{width:310px}
@@ -81,6 +85,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w350, .w350			{width:350px}
 .cssReset .w360					{width:360px}
 .cssReset .w355					{width:355px}
+.cssReset .w380, .w380			{width:380px}
 .cssReset .w390, .w390			{width:390px}
 .cssReset .w400, .w400			{width:400px}
 .cssReset .w405, .w405			{width:405px}

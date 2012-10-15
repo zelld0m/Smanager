@@ -41,6 +41,7 @@
 						base.api = api;
 						base.contentHolder = $("div", api.elements.content);
 						base.contentHolder.html(base.getTemplate());
+						base.contentHolder.find("#versionWrapper").before(base.getItemListTemplate());
 						base.getAvailableVersion();
 						base.addButtonListener();
 					},
@@ -136,26 +137,27 @@
 		base.getTemplate = function(){
 			var template  = '';
 
-			template += '<div>';
+			template += '<div style="width:700px">';
+			template += '<div id="versionWrapper" style="floatL w400">';
 			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';
 			
-			template += '	<div id="version">';
-			template += '		<div class="w600 mar0 pad0">';
+			template += '	<div id="version" class="floatL w400">';
+			template += '		<div class="w400 mar0 pad0">';
 			template += '			<table class="tblItems w100p marT5">';
 			template += '				<tbody>';
 			template += '					<tr>';
-			template += '						<th width="20px">';
+			template += '						<th class="displayBlock w60">';
 			template += ' 	                  	<input id="selectAll" type="checkbox"/>';
 			template += '						</th>';
-			template += '						<th width="20px">#</th>';
-			template += '						<th width="100px">Name</th>';
-			template += '						<th width="180px">Date</th>';
-			template += '						<th width="100px"></th>';
+			//template += '						<th width="20px">#</th>';
+			template += '						<th class="w160">Name</th>';
+			template += '						<th class="w135">Date</th>';
+			template += '						<th class="w55"></th>';
 			template += '					</tr>';
 			template += '				<tbody>';
 			template += '			</table>';
 			template += '		</div>';
-			template += '		<div class="w600 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
+			template += '		<div class="w400 mar0 pad0" style="max-height:180px; overflow-y:auto;">';
 			template += '			<table id="versionList" class="tblItems w100p">';
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
@@ -164,11 +166,11 @@
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
-			template +=	'							<p id="name" class="breakWord fbold"></p>';
-			template +=	'							<p id="notes" class="fsize11 breakWord"></p>';
+			template +=	'							<p id="name" class="w120 breakWord fbold"></p>';
+			template +=	'							<p id="notes" class="w120 fsize11 breakWord"></p>';
 			template += '						</td>';
-			template += '						<td width="220px" class="txtAC" id="itemDate"></td>';
-			template += '						<td width="auto" class="txtAC">';
+			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
+			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
 			template += '							<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
 			template += '							<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
@@ -181,10 +183,10 @@
 			template += '				</tbody>';
 			template += '			</table>';
 			template += '		</div>';
-			template += '	</div>';
+			template += '	</div>'; //end version
 
 			template += '	<div id="addVersion">';
-			template += '		<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w580 marB20" style="background: #f3f3f3;">';
+			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border pad10 w380 marB20" style="background: #f3f3f3;">';
 			template += '			<h3 style="border:none;">Rule Version</h3>';
 			template += '			<div class="fgray padL10 padR10 padB15 fsize11">';
 			template += '			<p align="justify">';
@@ -195,14 +197,14 @@
 
 			template += '		<div>';
 			template += '			<label class="floatL padL13 w100 marT5"><span class="fred">*</span>Name:</label>';
-			template += '			<label class="floatL w400 marT5"><input type="text" id="name" class="w450"></label>';
+			template += '			<label class="floatL w260 marT5"><input type="text" id="name" class="w260"></label>';
 			template += '			<div class="clearB"></div>';
 			template += '			<label class="floatL padL13 marT5 w100"><span class="fred">*</span>Notes:</label>';
-			template += '			<label class="floatL w400 marT5"><textarea id="notes" class="w450" style="height:32px"></textarea></label>';
+			template += '			<label class="floatL w260 marT5"><textarea id="notes" class="w260" style="height:32px"></textarea></label>';
 			template += '		</div>';
 
 			template += '		<div class="clearB"></div>';
-			template += '		<div align="right" class="padR15 marT10">';
+			template += '		<div align="right" class="marT10">';
 			template += '			<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '				<div class="buttons fontBold">Create Version</div>';
 			template += '			</a>';
@@ -210,17 +212,24 @@
 			template += '				<div class="buttons fontBold">Cancel</div>';
 			template += '			</a>';
 			template += '		</div>';
-			template += '	</div>';
-			
-			template += '	<div>';
-			//TODO: insert right section here
-			template += '	</div>';
-
-			template += '</div>';
+			template += '	</div>'; // end addVersion
+			template += '	</div>';	// end w400		
+			template += '</div>'; // end w700
 
 			return template;
 		};
 
+		
+		base.getItemListTemplate =function(){
+			var template  = '';
+			
+			template += '	<div class="w280 floatR border" style="height:500px">';
+			template += '		<div> lorem ipsum dolor sit amet </div>';
+			template += '	</div>';
+			
+			return template;
+		};
+		
 		// Run initializer
 		base.init();
 	};
