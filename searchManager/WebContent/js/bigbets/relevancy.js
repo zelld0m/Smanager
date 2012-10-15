@@ -54,7 +54,7 @@
 
 			$field.val($field.val().replace(/^\./,'0.')); // insert leading 0 before .
 			$field.val($field.val().replace(/\.$/,'')); // remove trailing .
-			
+
 			if ($field.val() > relFieldMaxValue){
 				$field.val(relFieldMaxValue);
 			}
@@ -489,7 +489,7 @@
 
 			$field.val($field.val().replace(/^\./,'0.')); // insert leading 0 before .
 			$field.val($field.val().replace(/\.$/,'')); // remove trailing .
-			
+
 			if ($field.val() > relFieldMaxValue){
 				$field.val(relFieldMaxValue);
 			}
@@ -1007,7 +1007,7 @@
 		var description = $.trim($('div#relevancy textarea[id="description"]').val()); 
 		var startDate = $.trim($('div#relevancy input[name="startDate"]').val());
 		var endDate = $.trim($('div#relevancy input[name="endDate"]').val());
-		
+
 		var isRelevancyFieldsValid = true;
 
 		if (!$.isEmptyObject(unSaved)){
@@ -1015,7 +1015,7 @@
 				isRelevancyFieldsValid = addRuleFieldValue(index, value);
 			}); 
 		}
-		
+
 		if (checkIfUpdateAllowed() && isRelevancyFieldsValid){
 			var response = 0;
 			if ($.isBlank(ruleName)){
@@ -1077,7 +1077,7 @@
 			}
 		}
 
-		
+
 	};
 
 	var deleteRule = function(e) { 
@@ -1127,6 +1127,12 @@
 			},
 			beforeRuleStatusRequest: function(){
 				prepareRelevancy();
+			},
+			preRestoreCallback: function(){
+
+			},
+			postRestoreCallback: function(base, rule){
+				setRelevancy(rule);
 			},
 			afterRuleStatusRequest: function(ruleStatus){
 				resetInputFields("#relevancy");
