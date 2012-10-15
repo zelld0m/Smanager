@@ -150,6 +150,9 @@
 				if(tabContainer.find("li.tempItem").length > 0) return;
 				
 				tabContainer.show();
+				if(!tabContainer.hasClass("isShown")){
+					tabContainer.addClass("isShown");
+				}
 				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
 				tabContainer.find("span#addFacetSortTitleHeader").text("");
 				tabContainer.find("span#addNewLink").text("");
@@ -536,10 +539,11 @@
 						expires: 0
 						},
 					show: function(event, ui){
-						self.tabSelectedId = ui.panel.id;
-						self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
-						self.populateTabContent();
-
+						if(ui.panel){
+							self.tabSelectedId = ui.panel.id;
+							self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
+							self.populateTabContent();
+						}
 					}
 				});
 			},
@@ -605,14 +609,17 @@
 
 				var itemMap = new Object();
 
-				for(var facetGroupId in self.facetGroupIdList){
+				for(var index in self.facetGroupIdList){
 					var facetItems = [];
-					var items = $("input#_items_"+self.facetGroupIdList[facetGroupId]);
-
-					for(var i = 0; i < items.length; i++){
-						facetItems[i] = $(items[i]).val();
+					
+					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
+						var items = $("input#_items_"+self.facetGroupIdList[index]);
+	
+						for(var i = 0; i < items.length; i++){
+							facetItems[i] = $(items[i]).val();
+						}
+						itemMap[self.facetGroupIdList[index]] = facetItems;
 					}
-					itemMap[self.facetGroupIdList[facetGroupId]] = facetItems;
 				}
 
 				return itemMap;
@@ -623,14 +630,16 @@
 
 				var itemMap = new Object();
 
-				for(var facetGroupId in self.facetGroupIdList){
-					var sortType = null;
-					var isChecked = $("div#_"+self.facetGroupIdList[facetGroupId] +" input#facetGroupCheckbox").is(":checked");
-
-					if(isChecked){
-						sortType = $("div#_"+self.facetGroupIdList[facetGroupId] +" select.facetGroupSortOrder option:selected").val();
+				for(var index in self.facetGroupIdList){
+					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
+						var sortType = null;
+						var isChecked = $("div#_"+self.facetGroupIdList[index] +" input#facetGroupCheckbox").is(":checked");
+	
+						if(isChecked){
+							sortType = $("div#_"+self.facetGroupIdList[index] +" select.facetGroupSortOrder option:selected").val();
+						}
+						itemMap[self.facetGroupIdList[index]] = sortType;
 					}
-					itemMap[self.facetGroupIdList[facetGroupId]] = sortType;
 				}
 
 				return itemMap;
