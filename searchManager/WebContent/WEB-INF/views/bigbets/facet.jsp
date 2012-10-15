@@ -128,7 +128,7 @@
 			
 			<div id="templatelist" style="display: none;">
 		   		<label class="floatL w80 txtLabel">Template Name</label>
-		   		<label class="floatL w195">
+		   		<label class="floatL">
 		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
 		   		</label>
 		   	</div>
