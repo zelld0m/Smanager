@@ -244,3 +244,5 @@ div.listView ul li div.validityDate { float:left; width:33% }
 /* check box style alignment */
 .normal-forceadd .firerift-style { margin-top:-3px !important; margin-left:4px !important; width: 80px !important }
 
+
+.tblItems td p { margin:0; padding:3 }
