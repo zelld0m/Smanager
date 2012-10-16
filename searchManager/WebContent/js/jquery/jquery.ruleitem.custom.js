@@ -449,6 +449,7 @@
 			base.contentHolder.find("#saveBtn").off().on({
 				click: function(e){
 					var position = parseInt($.trim(base.contentHolder.find("#selItemPosition").val()));
+					position = isNaN(position) ? base.options.defaultPosition : position;
 					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
 					var today = new Date();
@@ -552,6 +553,7 @@
 			enableSortable: false,
 			enableForceAddStatus: false,
 			promptPosition:true,
+			defaultPosition: 1, 
 			itemForceAddStatusCallback: function(base, memberIds){},
 			itemUpdateForceAddStatusCallback: function(base, memberId, status){},
 			itemDataCallback: function(base){},
