@@ -373,7 +373,7 @@
 				base.contentHolder.find("#deleteBtn").hide();
 				base.contentHolder.find("#saveBtn >div").text(base.options.moduleName);
 			}else{
-				base.contentHolder.find("#deleteBtn").show().on().off({
+				base.contentHolder.find("#deleteBtn").off().on({
 					click: function(e){
 						var itemName = "";
 
@@ -387,7 +387,7 @@
 						});
 
 					}
-				}, {item: base.selectedItem});
+				}, {item: base.selectedItem}).show();
 			}
 
 			base.contentHolder.find("#saveBtn").off().on({
@@ -398,8 +398,11 @@
 					var today = new Date();
 					today.setHours(0,0,0,0); //ignore time of current date 
 
-					if (position > base.maxItemPosition){
-						jAlert("Please specify elevate position. Max allowed elevation is " + base.maxItemPosition, "Search Simulator");
+					if (base.selectedItem!=null && position > base.maxItemPosition){
+						jAlert("Please specify position. Max allowed position is " + base.maxItemPosition, "Search Simulator");
+						base.contentHolder.find("#selItemPosition").focus();
+					}else if (base.selectedItem==null && position > (base.maxItemPosition + 1)){
+						jAlert("Please specify position. Max allowed position is " + (base.maxItemPosition + 1), "Search Simulator");
 						base.contentHolder.find("#selItemPosition").focus();
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
