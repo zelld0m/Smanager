@@ -432,12 +432,13 @@
 					click: function(e){
 						var itemName = "";
 
+						var positionInfo = base.options.promptPosition? " at position " + e.data.item["location"] + "?": "?";
 						switch(e.data.item["memberTypeEntity"]){
-						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + " at position " + e.data.item["location"]; break;
-						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"]  + " at position " + e.data.item["location"]; break;
+						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + positionInfo; break;
+						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"] + positionInfo; break;
 						}
 
-						jConfirm("Delete " + itemName + "?", "Delete Item", function(result){
+						jConfirm("Delete " + itemName, "Delete Item", function(result){
 							if(result) base.options.itemDeleteItemCallback(base, e.data.item["memberId"]);
 						});
 
