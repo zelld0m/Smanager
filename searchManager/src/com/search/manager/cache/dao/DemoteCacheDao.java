@@ -61,6 +61,21 @@ public class DemoteCacheDao extends CacheDao<DemoteResult> {
 		}
 		return new CacheModel<DemoteResult>(demotedList);
 	}
+	
+	@Override
+	protected CacheModel<DemoteResult> getDatabaseObject(Store store,
+			String name) throws DaoException {
+		DemoteResult demoteFilter = new DemoteResult();
+		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
+		demoteFilter.setStoreKeyword(storeKeyword);
+		// load only non-expired items
+		SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter, new Date(), null, 0, 0);
+		List<DemoteResult> demotedList = daoService.getDemoteResultList(criteria).getList();
+		if (demotedList == null) {
+			demotedList = new ArrayList<DemoteResult>();
+		}
+		return new CacheModel<DemoteResult>(demotedList);
+	}
 
 	@Override
 	public boolean reload(DemoteResult demote) throws DataException, DaoException {

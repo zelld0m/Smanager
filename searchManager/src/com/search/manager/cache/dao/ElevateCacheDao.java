@@ -61,6 +61,20 @@ public class ElevateCacheDao extends CacheDao<ElevateResult> {
 		}
 		return new CacheModel<ElevateResult>(elevatedList);
 	}
+	
+	@Override
+	public CacheModel<ElevateResult> getDatabaseObject(Store store, String name)throws DaoException {
+		ElevateResult elevateFilter = new ElevateResult();
+		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
+		elevateFilter.setStoreKeyword(storeKeyword);
+		// load only non-expired items
+		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter, new Date(), null, 0, 0);
+		List<ElevateResult> elevatedList = daoService.getElevateResultList(criteria).getList();
+		if (elevatedList == null) {
+			elevatedList = new ArrayList<ElevateResult>();
+		}
+		return new CacheModel<ElevateResult>(elevatedList);
+	}
 
 	@Override
 	public boolean reload(ElevateResult elevate) throws DataException, DaoException {

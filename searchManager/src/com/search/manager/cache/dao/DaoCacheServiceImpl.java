@@ -138,7 +138,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 			//if(hasExactMatchKey(storeKeyword)){
 				CacheModel<ElevateResult> cache = elevateCacheDao.getCachedObject(storeKeyword);
-				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+				if (cache != null && CollectionUtils.isNotEmpty(cache.getList())) {
 					return cache.getList();					
 				}
 			//}
@@ -164,7 +164,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 			//if(hasExactMatchKey(storeKeyword)){ // quick fix temp
 				CacheModel<ExcludeResult> cache = excludeCacheDao.getCachedObject(storeKeyword);
-				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+				if (cache != null && CollectionUtils.isNotEmpty(cache.getList())) {
 					return cache.getList();					
 				}
 			//}
@@ -415,7 +415,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 			//if(hasExactMatchKey(storeKeyword)){
 				CacheModel<DemoteResult> cache = demoteCacheDao.getCachedObject(storeKeyword);
-				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+				if (cache != null && CollectionUtils.isNotEmpty(cache.getList())) {
 					return cache.getList();					
 				}
 			//}
@@ -467,7 +467,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
 			//if(hasExactMatchKey(storeKeyword)){
 				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(storeKeyword);
-				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+				if (cache != null) {
 					return cache.getObj();					
 				}
 			//}
