@@ -162,7 +162,7 @@
 								});
 
 								contentHolder.find("#adexp").attr("id", "adexp_1");		
-								contentHolder.find("#adexp_1").datepicker({
+								contentHolder.find("#adexp_1").prop({readonly: true}).datepicker({
 									showOn: "both",
 									minDate: sec.dateMinDate,
 									maxDate: sec.dateMaxDate,
@@ -264,7 +264,7 @@
 								
 								contentHolder.find("#shexp_1").val(formattedThruDate);
 
-								contentHolder.find("#shexp_1").datepicker({
+								contentHolder.find("#shexp_1").prop({readonly: true}).datepicker({
 									showOn: "both",
 									minDate: sec.dateMinDate,
 									maxDate: sec.dateMaxDate,
@@ -422,7 +422,7 @@
 						click: sec.showAdd
 					});
 
-					$('#refmem').datepicker({
+					$('#refmem').prop({readonly: true}).datepicker({
 						showOn: "both",
 						buttonText: "Member Since",
 						buttonImage: "../images/icon_calendar.png",

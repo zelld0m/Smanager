@@ -920,7 +920,7 @@
 					$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 					$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-					var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({			
+					var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: true}).datepicker({			
 						minDate: 0,
 						maxDate: '+1Y',			
 						showOn: "both",
@@ -1155,7 +1155,7 @@
 				$("#endDate").val(selectedRule.formattedEndDate);
 				$("#startDate, #endDate").datepicker("destroy");
 
-				var dates = $("#startDate, #endDate").datepicker({
+				var dates = $("#startDate, #endDate").prop({readonly: true}).datepicker({
 					minDate: 0,
 					maxDate: '+1Y',
 					showOn: "both",
@@ -1276,7 +1276,7 @@
 							$contentHolder.find('input[name="popStartDate"]').attr('id', 'popStartDate');
 							$contentHolder.find('input[name="popEndDate"]').attr('id', 'popEndDate');
 
-							var popDates = $contentHolder.find("#popStartDate, #popEndDate").datepicker({
+							var popDates = $contentHolder.find("#popStartDate, #popEndDate").prop({readonly: true}).datepicker({
 								minDate: 0,
 								maxDate: '+1Y',	
 								showOn: "both",

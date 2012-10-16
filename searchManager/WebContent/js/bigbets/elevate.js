@@ -179,7 +179,7 @@
 					$li.find(".clearDate").show();
 				};
 
-				$li.find(".validityDateTextBox").datepicker({
+				$li.find(".validityDateTextBox").prop({readonly: true}).datepicker({
 					showOn: "both",
 					minDate: self.dateMinDate,
 					maxDate: self.dateMaxDate,
