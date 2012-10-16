@@ -199,8 +199,10 @@
 			template += '			<table class="tblItems w100p marT5">';
 			template += '				<tbody>';
 			template += '					<tr>';
-			template += '						<th class="displayBlock w60">&nbsp';
-			//TODO: Compare image here
+			template += '						<th class="displayBlock w60">';
+			template += '							<a id="compareBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '								<div class="buttons fontBold">Compare</div>';
+			template += '							</a>';
 			template += '						</th>';
 			template += '						<th class="w160">Name</th>';
 			template += '						<th class="w135">Date</th>';
