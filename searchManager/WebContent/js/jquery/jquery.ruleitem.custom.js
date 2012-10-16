@@ -62,14 +62,17 @@
 				base.contentHolder.find("#selItemComment").attr({"style":"resize:none; max-height: 100px;"});
 			}
 
-			base.contentHolder.find("#selItemValidityDate").datepicker({
+			base.contentHolder.find("#selItemValidityDate").prop({readonly: true}).datepicker({
 				showOn: "both",
 				disabled: base.options.locked,
 				minDate: base.options.validityDateMinDate,
 				maxDate: base.options.validityDateMaxDate,
 				buttonText: "Validity Date",
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
-				buttonImageOnly: true
+				buttonImageOnly: true,
+				onSelect: function(dateText, inst) {
+					base.contentHolder.find("#deleteCalendarIcon").show();
+				}
 			});
 
 			var imagePath = base.selectedItem!=null ? base.selectedItem["imagePath"]: base.doc["ImagePath"];
@@ -87,6 +90,13 @@
 			if(base.selectedItem!=null){
 				base.contentHolder.find("#selItemPosition").val(base.selectedItem["location"]);
 				base.contentHolder.find("#selItemValidityDate").val(base.selectedItem["formattedExpiryDate"]);
+				
+				if($.isNotBlank(base.selectedItem["formattedExpiryDate"]) && !base.options.locked){
+					base.contentHolder.find("#deleteCalendarIcon").show();
+				}
+			}else{
+				base.contentHolder.find("#selItemPosition, #selItemValidityDate").val("");
+				base.contentHolder.find("#deleteCalendarIcon").hide();
 			}
 
 			//TODO: Expired tag should have date
@@ -103,7 +113,6 @@
 			
 			base.contentHolder.find("#selItemPosition").off().on({
 				keydown:function(event){
-					console.log(event.keyCode);
 					// Allow: backspace, delete, tab, escape, and enter
 			        if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
 			             // Allow: Ctrl+A
@@ -119,6 +128,13 @@
 			                event.preventDefault(); 
 			            }   
 			        }
+				}
+			});
+			
+			base.contentHolder.find("#deleteCalendarIcon").off().on({
+				click:function(event){
+					$(event.currentTarget).hide();
+					base.contentHolder.find("#selItemValidityDate").val("");
 				}
 			});
 		};
@@ -253,13 +269,15 @@
 
 		base.addSortableOption = function(){
 
-			if (base.options.enableSortable && !base.options.locked)
+			if (base.options.enableSortable && !base.options.locked && base.maxItemPosition > 1){
 				base.contentHolder.find("div.handle").show();
+			}else{
+				base.contentHolder.find("div.handle").hide();
+			}
 
 			base.contentHolder.find("ul#itemList").sortable("destroy").sortable({ 
 				handle : '.handle',
 				cursor : 'move',
-				axis: 'y',
 				tolerance: 'intersect',
 				placeholder: 'placeHolder', 
 				forceHelperSize: true,
@@ -331,7 +349,7 @@
 			template += '	<ul class="listProd">';
 			template += '		<li><label class="fbold title">SKU #: </label><span id="selItemPartNo">' + base.doc["DPNo"] + '</span></li>';
 			template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
-			template += '		<li><label class="fbold title">Valid Until: </label><input type="text" id="selItemValidityDate" style="width:65px"></li>';
+			template += '		<li><label class="fbold title">Valid Until: </label><input type="text" id="selItemValidityDate" style="width:65px"><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></li>';
 			template += '		<li><label class="fbold title">Comments:</label><div id="selItemStampExpired" style="display:none"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div><textarea id="selItemComment"></textarea></li>';
 			template += '	</ul>';
 			template += '</div>';
