@@ -246,7 +246,7 @@
 
 		elevateHandler: function (keyword, doc) {
 			var self = this;
-			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["EDP"]);
+			var selector  = "#resultItem_EDP div#elevateHolder".replace("EDP", doc["EDP"]);
 
 			return function(){
 				$(selector).ruleitem({
@@ -272,6 +272,7 @@
 					itemUpdateForceAddStatusCallback: function(base, memberId, status){
 						ElevateServiceJS.updateElevateForceAdd(keyword, memberId, status, {
 							callback:function(data){
+								if (data==1) base.hasChanges++;
 								base.getList(); 
 							},
 							preHook:function(){
@@ -293,7 +294,8 @@
 
 					itemAddItemCallback:function(base, productId, position, validityDate, comment){
 						ElevateServiceJS.addProductItem(keyword, productId, position, validityDate, comment, {
-							callback : function(event){
+							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -305,6 +307,7 @@
 					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
 						ElevateServiceJS.updateElevateItem(keyword, memberId, position, comment, validityDate, {
 							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -316,6 +319,7 @@
 					itemDeleteItemCallback:function(base, memberId){
 						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -326,7 +330,8 @@
 
 					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
 						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
-							callback : function(event){
+							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -343,109 +348,77 @@
 		},
 
 		excludeHandler: function (keyword,doc) {
-			if (!allowModify) return;
 			var self = this;
-			var needRefresh = false;
-			var idSuffix = "_" + doc.EDP;
-			var expDateMinDate = 0;
-			var expDateMaxDate = "+1Y";
+			var selector  = "#resultItem_EDP div#excludeHolder".replace("EDP", doc["EDP"]);
 
-			return function () {
-				var selector  = "#resultItem_" + doc.EDP + " div#excludeHolder";
-				var title = "Exclude Product";
-				var content = AjaxSolr.theme('createConfirmDialog', doc, title, "<h2 class='confirmTitle'>Review Exclude Info</h2>"); 
-
-				$(selector).qtip({
-					content: {
-						text: $('<div/>'),
-						title: { text: title, button: true }
+			return function(){
+				$(selector).ruleitem({
+					doc: doc,
+					moduleName: "Exclude",
+					locked: !allowModify,
+					keyword: keyword,
+					enableSortable: true,
+					enableForceAddStatus: true,
+					promptPosition: false,
+					itemDataCallback: function(base){
+						ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(keyword, 0, 0,{
+							callback: function(data){
+								base.populateList(data);
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
 					},
-					position: {
-						my: 'left center',
-						at: 'top center'
+
+					itemAddItemCallback:function(base, productId, position, validityDate, comment){
+						ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', productId, validityDate, comment, {
+							callback : function(data){
+								if (data==1) base.hasChanges++;
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
 					},
-					style: {
-						width: "auto"
+
+					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
+						//TODO: optimize and update exclude method name
+						ExcludeServiceJS.updateExpiryDate(keyword, memberId, validityDate, {
+							callback : function(data){
+								if (data==1) base.hasChanges++;
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+								if($.isNotBlank(comment)){
+									ExcludeServiceJS.addComment(keyword, memberId, comment, {
+										callback : function(data){
+											if (data==1) base.hasChanges++;
+										}
+									});
+								}
+							}
+						});
 					},
-					show: {
-						modal:  true
+
+					itemDeleteItemCallback:function(base, memberId){
+						ExcludeServiceJS.deleteItemInRule(keyword, memberId, {
+							callback : function(data){
+								if (data==1) base.hasChanges++;
+								base.getList();
+							},
+							preHook: function() { 
+								base.prepareList(); 
+							}
+						});
 					},
-					events: {
-						render: function(event, api) {
-							$('div', api.elements.content).html(content);
 
-							contentHolder = $('div', api.elements.content);
-
-							// Remove other elements
-							contentHolder.find("#saveBtn").remove();
-							contentHolder.find("a#toggleCurrent").remove();
-							contentHolder.find("div#current").remove();
-							contentHolder.find("#aElevatePosition" + idSuffix).parent("li").remove();
-							//contentHolder.find("#aExpiryDate" + idSuffix).parent("li").remove();
-							contentHolder.find("#removeBtn > div").html("Exclude");
-							contentHolder.find("a#cancelBtn").click(function(event){api.hide();}); 
-
-							contentHolder.find("img#productImage").error(function(){
-								$(this).unbind("error").attr("src", AjaxSolr.theme('getAbsoluteLoc', '../images/no-image.jpg'));
-							});
-
-							contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker({
-								showOn: "both",
-								minDate: expDateMinDate,
-								maxDate: expDateMaxDate,
-								buttonText: "Expiration Date",
-								buttonImage: "../images/icon_calendar.png",
-								buttonImageOnly: true,
-								onSelect: function(dateText, inst) {
-									var today = new Date();
-									var selDate = Date.parse(dateText);
-									today = Date.parse(today.getMonth()+1+'/'+today.getDate()+'/'+today.getFullYear());
-									expiredDateSelected = (selDate < today)? true : false;
-								}
-							});
-
-							contentHolder.find("#removeBtn").click(function(){
-								var expiryDate = $.trim(contentHolder.find("#aExpiryDate_" + doc.EDP).val());
-								var comment = $.trim(contentHolder.find("#aComment_" + doc.EDP).val());
-
-								var today = new Date();
-								//ignore time of current date 
-								today.setHours(0,0,0,0);
-
-								if(!isXSSSafe(comment)){
-									jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
-								}
-								else if(today.getTime() > new Date(expiryDate).getTime()){
-									jAlert("Expiry date cannot be earlier than today", "Search Simulator");
-								}else{
-									ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', parseInt(doc.EDP), expiryDate, comment, {
-										callback : function(data) {
-											needRefresh = true;
-											api.hide();
-										},
-										preHook: function() {},
-										postHook: function() {}
-									});	
-								}
-							});
-
-							//Disable
-							DeploymentServiceJS.getRuleStatus("Exclude", keyword, {
-								callback:function(ruleStatus){
-									if(ruleStatus!=null && $.inArray(ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0){
-										contentHolder.find("#removeBtn,#saveBtn").hide();
-										contentHolder.find("#aExpiryDate_"+doc.EDP).datepicker("option", "disabled", true);
-									}
-								}
-							});
-
-						},
-						hide: function(event, api) {
-							api.destroy();
-							if (needRefresh) self.manager.doRequest();
-						}
+					afterClose: function(){
+						self.manager.doRequest();
 					}
-				}).click(function(event) { event.preventDefault(); });	  
+				});
 			};
 		},
 
@@ -476,7 +449,8 @@
 
 					itemAddItemCallback:function(base, productId, position, validityDate, comment){
 						DemoteServiceJS.add(keyword, 'PART_NUMBER', productId, position, validityDate, comment, {
-							callback : function(event){
+							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -488,6 +462,7 @@
 					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
 						DemoteServiceJS.updateItem(keyword, memberId, position, comment, validityDate, {
 							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -499,6 +474,7 @@
 					itemDeleteItemCallback:function(base, memberId){
 						DemoteServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -509,7 +485,8 @@
 
 					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
 						DemoteServiceJS.update(keyword, memberId, destinationIndex,{
-							callback : function(event){
+							callback : function(data){
+								if (data==1) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 

@@ -17,6 +17,7 @@
 			base.doc = base.options.doc;
 			base.isItemMember = false;
 			base.maxItemPosition = 0;
+			base.hasChanges = 0;
 			base.showItems();
 		};
 
@@ -55,11 +56,70 @@
 
 		base.updateSelectedItem = function(){
 
-			base.contentHolder.find("#selItemPosition").prop({readonly:base.options.locked});
+			if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").prop({readonly:base.options.locked});
 			base.contentHolder.find("#selItemComment").prop({readonly:base.options.locked});
-			
+
 			if (base.options.locked){
 				base.contentHolder.find("#selItemComment").attr({"style":"resize:none; max-height: 100px;"});
+			}
+			
+			var imagePath = base.selectedItem!=null ? base.selectedItem["imagePath"]: base.doc["ImagePath"];
+
+			if($.isNotBlank(imagePath)){
+				setTimeout(function(){	
+					base.contentHolder.find("img#selItemProductImage").prop("src", imagePath).off().on({
+						error:function(){ 
+							$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image.jpg'); 
+						}
+					});
+				},10);
+			}
+
+			if(base.selectedItem!=null){
+				if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").val(base.selectedItem["location"]);
+				base.contentHolder.find("#selItemValidityDate").val(base.selectedItem["formattedExpiryDate"]);
+
+				if($.isNotBlank(base.selectedItem["formattedExpiryDate"]) && !base.options.locked){
+					base.contentHolder.find("#deleteCalendarIcon").show();
+				}
+			}else{
+				if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").val("");
+				base.contentHolder.find("#selItemValidityDate").val("");
+				base.contentHolder.find("#deleteCalendarIcon").hide();
+			}
+
+			//TODO: Expired tag should have date
+			if(base.doc[base.options.memberExpiredTag]!=undefined){
+				base.contentHolder.find("#selItemStampExpired").show();
+			}
+
+			if (base.options.locked){
+				base.contentHolder.find("#btnHolder").hide();
+			}else{
+				base.contentHolder.find("#btnHolder").show();
+				base.addButtonListener();
+			}
+
+			if(base.options.promptPosition){
+				base.contentHolder.find("#selItemPosition").off().on({
+					keydown:function(event){
+						// Allow: backspace, delete, tab, escape, and enter
+						if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
+								// Allow: Ctrl+A
+								(event.keyCode == 65 && event.ctrlKey === true) || 
+								// Allow: home, end, left, right
+								(event.keyCode >= 35 && event.keyCode <= 39)) {
+							// let it happen, don't do anything
+							return;
+						}
+						else {
+							// Ensure that it is a number and stop the keypress
+							if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+								event.preventDefault(); 
+							}   
+						}
+					}
+				});
 			}
 
 			base.contentHolder.find("#selItemValidityDate").prop({readonly: true}).datepicker({
@@ -75,62 +135,6 @@
 				}
 			});
 
-			var imagePath = base.selectedItem!=null ? base.selectedItem["imagePath"]: base.doc["ImagePath"];
-
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					base.contentHolder.find("img#selItemProductImage").prop("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image.jpg'); 
-						}
-					});
-				},10);
-			}
-
-			if(base.selectedItem!=null){
-				base.contentHolder.find("#selItemPosition").val(base.selectedItem["location"]);
-				base.contentHolder.find("#selItemValidityDate").val(base.selectedItem["formattedExpiryDate"]);
-				
-				if($.isNotBlank(base.selectedItem["formattedExpiryDate"]) && !base.options.locked){
-					base.contentHolder.find("#deleteCalendarIcon").show();
-				}
-			}else{
-				base.contentHolder.find("#selItemPosition, #selItemValidityDate").val("");
-				base.contentHolder.find("#deleteCalendarIcon").hide();
-			}
-
-			//TODO: Expired tag should have date
-			if(base.doc[base.options.memberExpiredTag]!=undefined){
-				base.contentHolder.find("#selItemStampExpired").show();
-			}
-
-			if (base.options.locked){
-				base.contentHolder.find("#btnHolder").hide();
-			}else{
-				base.contentHolder.find("#btnHolder").show();
-				base.addButtonListener();
-			}
-			
-			base.contentHolder.find("#selItemPosition").off().on({
-				keydown:function(event){
-					// Allow: backspace, delete, tab, escape, and enter
-			        if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || 
-			             // Allow: Ctrl+A
-			            (event.keyCode == 65 && event.ctrlKey === true) || 
-			             // Allow: home, end, left, right
-			            (event.keyCode >= 35 && event.keyCode <= 39)) {
-			                 // let it happen, don't do anything
-			                 return;
-			        }
-			        else {
-			        	// Ensure that it is a number and stop the keypress
-			        	if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-			                event.preventDefault(); 
-			            }   
-			        }
-				}
-			});
-			
 			base.contentHolder.find("#deleteCalendarIcon").off().on({
 				click:function(event){
 					$(event.currentTarget).hide();
@@ -321,7 +325,7 @@
 					base.options.locked = base.options.locked || (base.ruleStatus!=null && $.inArray(base.ruleStatus["approvalStatus"],["PENDING","APPROVED"])>=0);
 					var statusText = getRuleNameSubTextStatus(base.ruleStatus);
 					base.contentHolder.find("#rulestatus").html(statusText);
-					
+
 					if (!(statusText === "Setup a Rule" || statusText === "Action Required")) 
 						base.contentHolder.find("#rulestatus").show();
 				},
@@ -348,8 +352,16 @@
 			template += '	<div>';
 			template += '	<ul class="listProd">';
 			template += '		<li><label class="fbold title">SKU #: </label><span id="selItemPartNo">' + base.doc["DPNo"] + '</span></li>';
-			template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
-			template += '		<li><label class="fbold title">Valid Until: </label><input type="text" id="selItemValidityDate" style="width:65px"><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></li>';
+
+			if(base.options.promptPosition){
+				template += '		<li><label class="fbold title">Position: </label><input type="text" id="selItemPosition" style="width:30px"></li>';
+			}
+
+			template += '		<li>';
+			template += '			<label class="fbold title">Valid Until: </label>';
+			template += '			<span><input type="text" id="selItemValidityDate" style="width:65px">';
+			template += ' 			<span><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></span>';
+			template += '		</li>';
 			template += '		<li><label class="fbold title">Comments:</label><div id="selItemStampExpired" style="display:none"><img src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></div><textarea id="selItemComment"></textarea></li>';
 			template += '	</ul>';
 			template += '</div>';
@@ -359,7 +371,7 @@
 			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="deleteBtn"><div class="buttons fontBold">Delete</div></a>';
 			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
 			template += '</div>';
-			
+
 			return template;
 		};
 
@@ -392,7 +404,11 @@
 			template += '					<img id="productImage" src="' + GLOBAL_contextPath + '/images/no-image60x60.jpg" class="border floatL" width="60px" >';
 			template += '					<div class="w125 floatL marL8 posRel">';
 			template += '				  		<ul class="listItemInfo">';
-			template += '							<li class="label">Position:</li><li class="value" id="position"></li>';
+
+			if(base.options.promptPosition){
+				template += '							<li class="label">Position:</li><li class="value" id="position"></li>';
+			}
+
 			template += '							<li id="validityText" class="label"><img id="stampExpired" src="' + GLOBAL_contextPath + '/images/expired_stamp50x16.png"></li><li class="value" id="validityDate"></li>';
 			template += '							<li id="partNoLabel" class="label">SKU #:</li><li class="value" id="partNo"></li>'; 
 			template += '							<li id="mfrNoLabel" class="label">Mfr Part #:</li><li class="value" id="mfrNo"></label>';
@@ -439,10 +455,10 @@
 
 					if (base.selectedItem!=null && position > base.maxItemPosition){
 						jAlert("Please specify position. Max allowed position is " + base.maxItemPosition, "Search Simulator");
-						base.contentHolder.find("#selItemPosition").focus();
+						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
 					}else if (base.selectedItem==null && position > (base.maxItemPosition + 1)){
 						jAlert("Please specify position. Max allowed position is " + (base.maxItemPosition + 1), "Search Simulator");
-						base.contentHolder.find("#selItemPosition").focus();
+						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 					}else if(today.getTime() > new Date(validityDate).getTime()){
@@ -457,7 +473,7 @@
 
 			base.contentHolder.find("#cancelBtn").off().on({
 				click: function(e){
-					base.options.afterClose();
+					if(base.hasChanges > 0) base.options.afterClose();
 					base.api.destroy();
 				}
 			});
@@ -489,7 +505,7 @@
 						base.getList();
 					},
 					hide: function(event, api){
-						base.options.afterClose();
+						if(base.hasChanges > 0) base.options.afterClose();
 						api.destroy();
 					}
 				}
@@ -504,12 +520,13 @@
 					if (!e.data.locked){
 						var itemName = "";
 
+						var positionInfo = base.options.promptPosition? " at position " + e.data.item["location"] + "?": "?";
 						switch(e.data.item["memberTypeEntity"]){
-						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + " at position " + e.data.item["location"]; break;
-						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"]  + " at position " + e.data.item["location"]; break;
+						case "PART_NUMBER": itemName = " product item with SKU#: " + e.data.item["dpNo"] + positionInfo; break;
+						case "FACET": itemName = " facet item with condition " + e.data.item.condition["readableString"]  + positionInfo; break;
 						}
 
-						jConfirm("Delete " + itemName + "?", "Delete Item", function(result){
+						jConfirm("Delete " + itemName, "Delete Item", function(result){
 							if(result) base.options.itemDeleteItemCallback(base, e.data.item["memberId"]);
 						});
 					}
@@ -533,6 +550,7 @@
 			memberExpiredTag: "",
 			enableSortable: false,
 			enableForceAddStatus: false,
+			promptPosition:true,
 			itemForceAddStatusCallback: function(base, memberIds){},
 			itemUpdateForceAddStatusCallback: function(base, memberId, status){},
 			itemDataCallback: function(base){},
