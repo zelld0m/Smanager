@@ -297,7 +297,7 @@
 					pageSize: self.rulePageSize,
 					headerText : "Facet Sorting Rule",
 					searchText : "Enter Keyword",
-					allowBlankText: true,
+					customAddRule: true,
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,
 

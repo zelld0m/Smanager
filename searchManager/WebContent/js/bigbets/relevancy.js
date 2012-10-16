@@ -1246,6 +1246,7 @@
 			fieldName: "relevancyName",
 			page: rulePage,
 			pageSize: rulePageSize,
+			customAddRule: true,
 			headerText : "Ranking Rule",
 			searchText : "Enter Name",
 			showAddButton: allowModify,
@@ -1415,6 +1416,7 @@
 		$("#ruleKeywordPanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
+			itemTitle: "New Keyword",
 			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
 			headerText : "Ranking Rule Keyword",

@@ -11,40 +11,85 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("sidepanel", base);
 
-		
 		base.addAddButtonListener = function(){
 			base.$el.find("#addButton").on({
 				click: function(e){
 					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if(($.isBlank(name) || name === base.options.searchText) && !base.options.allowBlankText){
-						jAlert("Please specify a valid input");
-					}else if (base.options.allowBlankText || (isAllowedName(name) && name !== base.options.searchText)){
+					if (base.options.customAddRule){
 						base.options.itemAddCallback(base, name.toLowerCase()!==base.options.searchText.toLowerCase()? name: ""); 
 					}else{
-						jAlert("Field contains invalid character");
+						base.getDefaultAddRule(name.toLowerCase()!==base.options.searchText.toLowerCase()? name: "");
+					}
+				}
+			});
+		};
+
+		base.getDefaultAddRuleTemplate = function(){
+			var template ='';
+			
+			template += '<div>';
+			template += '	<input id="ruleName">';
+			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="addBtn"><div class="buttons fontBold">Add</div></a>';
+			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
+			template += '</div>';
+			
+			return template;
+		};
+		
+		base.addDefaultAddRuleButtonListener = function(){
+			base.contentHolder.find("#addBtn,#cancelBtn").off().on({
+				click: function(e){
+					switch($(e.currentTarget).attr("id").toLowerCase()){
+					case "addbtn": 
+						base.options.itemAddCallback(base, base.contentHolder.find("input#ruleName").val()); 
+						break;
+					case "cancelbtn": base.api.destroy(); break;
 					}
 				}
 			});
 		};
 		
+		base.getDefaultAddRule =function(name){
+			base.$el.find("a#addButton").qtip({
+				content: {
+					text: $('<div/>'),
+					title: { text: base.options.itemTitle, button: true }
+				},
+				position: {
+					target: base.$el.find("a#addButton")
+				},
+				show: {
+					ready: true
+				},
+				style: {width: 'auto'},
+				events: { 
+					show: function(e, api){
+						base.api = api;
+						base.contentHolder = $("div", api.elements.content);
+						base.contentHolder.html(base.getDefaultAddRuleTemplate());
+						
+						if($.isNotBlank(name))
+							base.contentHolder.find("input#ruleName").val(name);
+						
+						base.addDefaultAddRuleButtonListener();
+					},
+					hide: function(e, api){
+						api.destroy();
+					}
+				}
+			});	
+		};
+		
 		base.sendRequest = function(event){
-			var $addButton = base.$el.find("#addButton");
 			setTimeout(function(){
 				base.newSearch = $.trim($(event.target).val());
-				
+
 				if (base.newSearch === base.options.searchText) {
 					base.newSearch = "";
 				};
 
-				$addButton.off()
-						  .removeClass("btnAddGreen")
-						  .removeClass("btnAddGreen_disable")
-						  .addClass($.isBlank(base.newSearch) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
-				
-				if($addButton.hasClass("btnAddGreen")){
-					base.addAddButtonListener();
-				}
-				
+				base.addAddButtonListener();
+
 				if (base.oldSearch !== base.newSearch) {
 					base.getList(base.newSearch, 1);
 					base.oldSearch = base.newSearch;
@@ -52,7 +97,7 @@
 					base.newSearch = "";
 				}
 				else {
-				    base.searchActivated = false;
+					base.searchActivated = false;
 				}
 			}, base.options.reloadRate);  
 		};
@@ -63,7 +108,7 @@
 				base.sendRequest(event);
 			}
 		};
-		
+
 		base.init = function(){
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
@@ -73,35 +118,27 @@
 			base.searchActivated = false;
 			base.oldSearch = "";
 			base.newSearch = "";			
-			
-			var $addButton = base.$el.find("#addButton");
-			
+
 			if($.isNotBlank(base.options.filterText)){
 				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
-				$addButton.off()
-				  .removeClass("btnAddGreen")
-				  .removeClass("btnAddGreen_disable")
-				  .addClass($.isBlank(base.options.filterText) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
 			}
-			
+
 			base.$el.find('input[id="searchTextbox"]').on({
 				// TODO: this does not detect when entries are pasted
 				blur: function(e){
 					if ($.trim($(e.target).val()).length == 0) 
 						$(e.target).val(base.options.searchText);
-						base.timeout(e);
-					},
+					base.timeout(e);
+				},
 				focus: function(e){
 					if ($.trim($(e.target).val()) == base.options.searchText)
 						$(e.target).val("");
-						base.timeout(e);
-					},
+					base.timeout(e);
+				},
 				keyup: base.timeout
 			});
-			
-			if($addButton.hasClass("btnAddGreen")){
-				base.addAddButtonListener();
-			}
+
+			base.addAddButtonListener();
 		};
 
 		base.populateTemplate = function(){
@@ -113,9 +150,9 @@
 			content+= base.options.headerText;
 			content+= '<img src="../images/corner_bl.png" class="curveBL"/>';
 			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
-			
+
 			content+= '</div>';
-			
+
 			if (base.options.showSearch){
 				content+= '<div class="sideSearch">';
 				content+= '<span style="padding-top:7px">';
@@ -128,7 +165,7 @@
 				}
 
 				if (base.options.showAddButton){
-					content+= '<a id="addButton" class="btnGraph ' + (!base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen")  + ' floatR" href="javascript:void(0);"></a>';
+					content+= '<a id="addButton" class="btnGraph btnAddGreen floatR" href="javascript:void(0);"></a>';
 				}
 
 				content+= '<div class="searchBoxHolder ' + textClass + '"><input id="searchTextbox" maxlength="' + base.options.maxCharacter + '" class="farial fsize12 fgray w99p" type="text" value="' + base.options.searchText + '"></div><div class="clearB"></div>';
@@ -136,7 +173,7 @@
 				content+= '</span>';
 				content+= '</div>';
 			}
-			
+
 			content+= '<div id="sideContent" class="sideContent">';
 			content+= '<table width="100%">';
 			content+= '	<tbody id="itemListing">';
@@ -191,11 +228,11 @@
 
 				base.$el.find("tr#itemPattern").clone().appendTo("tbody#itemListing").attr("id","itemPattern" + suffixId);
 				suffixId = $.escapeQuotes(suffixId);
-				
+
 				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').html(name);
 				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id, model:list[i]});
 				base.$el.find('#itemPattern' + suffixId).show();
-				
+
 				base.options.itemOptionCallback(base, id, name, list[i]);
 
 			}
@@ -251,9 +288,10 @@
 			searchLabel: "",
 			filterText:"",
 			maxCharacter: 50,
+			customAddRule: false,
+			itemTitle: "New Rule",
 			showAddButton: true,
 			showSearch: true,
-			allowBlankText: false,
 			itemDataCallback: function(e){},
 			itemOptionCallback: function(e){},
 			itemNameCallback: function(e){},

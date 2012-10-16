@@ -226,6 +226,7 @@
 				$("#keywordInRulePanel").sidepanel({
 					fieldId: "keywordId",
 					fieldName: "keyword",
+					itemTitle: "New Keyword",
 					page: page,
 					region: "content",
 					pageStyle: "style2",
