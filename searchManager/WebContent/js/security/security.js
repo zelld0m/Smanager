@@ -133,7 +133,9 @@
 									contentHolder.find("#adrole").append($("<option>", { value : roleList.list[i]["id"]}).text(roleList.list[i]["rolename"]));
 								}
 
-								contentHolder.find('div[rel="adlck"]').removeClass("on").removeClass("off").addClass("on").css("background-position", "0% 100%");
+								contentHolder.find('input#adlck').slidecheckbox({
+									initOn: true
+								});
 								
 								contentHolder.find("#adgen").on({
 									click: function(e){	
@@ -238,14 +240,10 @@
 									contentHolder.find("#shrole").append($option);
 								}
 
-								contentHolder.find('div[rel="shlck"]').removeClass("on").removeClass("off");
+								contentHolder.find('input#shlck').slidecheckbox({
+									initOn: data.isAccountNonLocked
+								});
 							
-								if (data.isAccountNonLocked){
-									contentHolder.find('div[rel="shlck"]').addClass("on").css("background-position", "0% 100%");
-								}else{
-									contentHolder.find('div[rel="shlck"]').addClass("off").css("background-position", "100% 0%");
-								}
-
 								contentHolder.find("#view-profile").tabs({
 									cookie: {
 										expires: 1,
