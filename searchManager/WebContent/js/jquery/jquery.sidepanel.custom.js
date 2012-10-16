@@ -27,6 +27,43 @@
 			});
 		};
 		
+		base.sendRequest = function(event){
+			var $addButton = base.$el.find("#addButton");
+			setTimeout(function(){
+				base.newSearch = $.trim($(event.target).val());
+				
+				if (base.newSearch === base.options.searchText) {
+					base.newSearch = "";
+				};
+
+				$addButton.off()
+						  .removeClass("btnAddGreen")
+						  .removeClass("btnAddGreen_disable")
+						  .addClass($.isBlank(base.newSearch) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
+				
+				if($addButton.hasClass("btnAddGreen")){
+					base.addAddButtonListener();
+				}
+				
+				if (base.oldSearch !== base.newSearch) {
+					base.getList(base.newSearch, 1);
+					base.oldSearch = base.newSearch;
+					base.sendRequest(event);
+					base.newSearch = "";
+				}
+				else {
+				    base.searchActivated = false;
+				}
+			}, base.options.reloadRate);  
+		};
+
+		base.timeout = function(event){
+			if (!base.searchActivated) {
+				base.searchActivated = true;
+				base.sendRequest(event);
+			}
+		};
+		
 		base.init = function(){
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
@@ -36,47 +73,16 @@
 			base.searchActivated = false;
 			base.oldSearch = "";
 			base.newSearch = "";			
-
-			base.timeout = function(event){
-				if (!base.searchActivated) {
-					base.searchActivated = true;
-					base.sendRequest(event);
-				}
-			};
 			
 			var $addButton = base.$el.find("#addButton");
-				
-			base.sendRequest = function(event){
-				setTimeout(function(){
-					base.newSearch = $.trim($(event.target).val());
-					
-					if (base.newSearch === base.options.searchText) {
-						base.newSearch = "";
-					};
-
-					$addButton.off()
-							  .removeClass("btnAddGreen")
-							  .removeClass("btnAddGreen_disable")
-							  .addClass($.isBlank(base.newSearch) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
-					
-					if($addButton.hasClass("btnAddGreen")){
-						base.addAddButtonListener();
-					}
-					
-					if (base.oldSearch !== base.newSearch) {
-						base.getList(base.newSearch, 1);
-						base.oldSearch = base.newSearch;
-						base.sendRequest(event);
-						base.newSearch = "";
-					}
-					else {
-					    base.searchActivated = false;
-					}
-				}, base.options.reloadRate);  
-			};
 			
-			if($.isNotBlank(base.options.filterText))
+			if($.isNotBlank(base.options.filterText)){
 				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
+				$addButton.off()
+				  .removeClass("btnAddGreen")
+				  .removeClass("btnAddGreen_disable")
+				  .addClass($.isBlank(base.options.filterText) && !base.options.allowBlankText ? "btnAddGreen_disable": "btnAddGreen");
+			}
 			
 			base.$el.find('input[id="searchTextbox"]').on({
 				// TODO: this does not detect when entries are pasted
