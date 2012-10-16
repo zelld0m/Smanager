@@ -1416,7 +1416,6 @@
 		$("#ruleKeywordPanel").sidepanel({
 			fieldId: "keywordId",
 			fieldName: "keyword",
-			itemTitle: "New Keyword",
 			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
 			headerText : "Ranking Rule Keyword",
@@ -1539,6 +1538,7 @@
 			fieldId: "keywordId",
 			fieldName: "keyword",
 			page: page,
+			itemTitle: "New Keyword",
 			region: "content",
 			pageStyle: "style2",
 			pageSize: keywordInRulePageSize,
