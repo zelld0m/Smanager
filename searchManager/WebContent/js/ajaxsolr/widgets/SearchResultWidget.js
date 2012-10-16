@@ -150,7 +150,7 @@
 
 							content.find('#sku').text(doc["DPNo"]);
 
-							content.find('#validityDate').datepicker({
+							content.find('#validityDate').prop({readonly:true}).datepicker({
 								showOn: "both",
 								minDate: self.expDateMinDate,
 								maxDate: self.expDateMaxDate,
