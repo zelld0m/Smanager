@@ -110,7 +110,7 @@
 				self.keyword = "";
 				self.fq = "";
 				
-				if(self.selectedRule["ruleType"]){
+				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
 						self.keyword = self.selectedRule["ruleName"];
 					}
