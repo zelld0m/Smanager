@@ -72,7 +72,7 @@ public class FacetSortController {
 		logger.debug(String.format("Received request to download report as an XLS: %s %s", ruleId, filename));
 		
 		if (StringUtils.isBlank(filename)) {
-			filename = "ranking rule";
+			filename = "sort facet rule";
 		}
 
 		FacetSort facetSortRule = facetSortService.getRuleById(ruleId);
@@ -94,6 +94,9 @@ public class FacetSortController {
 			String highlightedFacets = sb.toString();
 			if(StringUtils.isNotBlank(highlightedFacets)){
 				highlightedFacets = highlightedFacets.substring(0, highlightedFacets.length()-1);
+			}
+			else{
+				highlightedFacets = "No Highlighted Facets";
 			}
 			
 			FacetSortReportBean reportBean = new FacetSortReportBean(group, highlightedFacets);

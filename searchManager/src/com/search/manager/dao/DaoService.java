@@ -150,6 +150,7 @@ public interface DaoService {
 	public int updateFacetGroup(FacetGroup facetGroup) throws DaoException;
 	public RecordSet<FacetGroup> searchFacetGroup(SearchCriteria<FacetGroup> criteria, MatchType matchType) throws DaoException;
 	public int addFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems) throws DaoException;
 	public int deleteFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
 	public int updateFacetGroupItem(FacetGroupItem facetGroupItem) throws DaoException;
 	public int clearFacetGroupItem(FacetGroup facetGroup) throws DaoException;

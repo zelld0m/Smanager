@@ -10,8 +10,10 @@ isXSSSafe = function(text){
 };
 
 isAllowedName = function(text){
-	var alphaNumRegex= /^[a-zA-Z0-9_&.\s-\"\']*$/;
-	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
+//	var alphaNumRegex= /^[a-zA-Z0-9_&.\s-\"\']*$/;
+//	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
+	return isXSSSafe(text) && isAscii(text) && $.isNotBlank(text);
+
 };
 
 isDigit = function(text){

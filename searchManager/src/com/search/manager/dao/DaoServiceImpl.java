@@ -1374,4 +1374,10 @@ public class DaoServiceImpl implements DaoService {
 	public String addFacetSortAndGetId(FacetSort facetSort) throws DaoException {
 		return facetSortDAO.addFacetSortAndGetId(facetSort);
 	}
+
+	@Override
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems)
+			throws DaoException {
+		return facetSortDAO.addFacetGroupItems(facetGroupItems);
+	}
 }
