@@ -374,6 +374,7 @@
 
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
+					ruleType: "Exclude",
 					rule: self.selectedRule,
 					enableVersion:true,
 					authorizeRuleBackup: true,

@@ -81,7 +81,6 @@
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
 									ruleId: base.options.rule["ruleId"],
-//									buttonHolderId: "#versionHolder",
 //									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
@@ -203,7 +202,8 @@
 			afterSubmitForApprovalRequest: function(status){}, 
 			beforeRuleStatusRequest: function(){}, 
 			afterRuleStatusRequest: function(status){},
-			preRestoreCallback: function(base){}
+			preRestoreCallback: function(base){},
+			postRestoreCallback: function(base, rule){}
 	};
 
 	$.fn.rulestatus = function(options){
