@@ -13,7 +13,6 @@ import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.exception.DataException;
-import com.search.manager.model.FacetSort;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -46,6 +45,7 @@ public abstract class CacheDao<T> {
 	protected abstract String getCacheKey(Store store, String name) throws DataException;
 	protected abstract String getCacheKeyInitials() throws DataException;
 	protected abstract CacheModel<T> getDatabaseObject(StoreKeyword storeKeyword) throws DaoException;
+	protected abstract CacheModel<T> getDatabaseObject(Store store, String name) throws DaoException;
 	public abstract boolean reload(T bean) throws DataException, DaoException;
 	public abstract boolean reload(List<T> list) throws DataException, DaoException;
 
@@ -160,6 +160,10 @@ public abstract class CacheDao<T> {
 		return pushToCache(storeKeyword, getDatabaseObject(storeKeyword));
 	}
 	
+	public boolean reload(Store store, String name) throws DataException, DaoException {
+		return pushToCache(store, name, getDatabaseObject(store, name));
+	}
+	
 	/**
 	 * Clear the cache entry for storeKeyword.
 	 */
@@ -195,6 +199,18 @@ public abstract class CacheDao<T> {
 			}
 		} catch (Exception e) {
 			logger.error("Failed to cache key for storeKeyword " + storeKeyword, e);
+			throw new DataException(e);
+		}
+		return false;
+	}
+	
+	protected boolean pushToCache(Store store, String name, CacheModel<T> t) throws DataException {
+		try{
+			if (t != null) {
+				return cacheObject(getCacheKey(store, name), t);
+			}
+		} catch (Exception e) {
+			logger.error("Failed to cache key for store: " + store + " name: " + name, e);
 			throw new DataException(e);
 		}
 		return false;
