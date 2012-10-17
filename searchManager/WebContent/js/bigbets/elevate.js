@@ -572,10 +572,10 @@
 									}
 								});		
 							},
-							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
+							addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){
 								ElevateServiceJS.addFacetRule(self.selectedRule["ruleId"], position, expiryDate, comment, selectedFacetFieldValues, {
 									callback: function(data){
-										showActionResponse(data, "add", "New Rule Facet Item");
+										showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
 										self.populateRuleItem();
 									},
 									preHook: function(){ 

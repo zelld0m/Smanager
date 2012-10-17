@@ -1538,7 +1538,7 @@
 
 					if (valid){
 						if (base.options.newRecord){
-							base.options.addFacetItemCallback(position, expiryDate, comment, condMap);
+							base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
 						}else{
 							base.api.destroy();
 							base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
@@ -1625,25 +1625,25 @@
 			});
 		};
 
-		base.promptRuleItemDetails = function(target, type){
-			
-			var typeLabel = '';
+		base.getTypeLabel = function(type){
 			switch(type){
 			case "product":
-				typeLabel = 'Product Item';
-				break;
+				return 'Product Item';
 			case "ims":
-				typeLabel = 'IMS Categories';
-				break;
+				return 'IMS Categories';
 			case "cnet":
-				typeLabel = 'Product Site Taxonomy';
-				break;
+				return 'Product Site Taxonomy';
 			case "facet":
-				typeLabel = 'Facets';
-				break;
+				return 'Facets';
 			default:
-				break;
+				return '';
 			}
+		};
+		
+		base.promptRuleItemDetails = function(target, type){
+			
+			var typeLabel = base.getTypeLabel(type);
+			
 			
 			$(target).qtip("destroy").qtip({
 				content: {
@@ -1702,7 +1702,7 @@
 			defaultIMSType: "CatCode",
 			showPosition:false,
 			addProductItemCallback: function(position, expiryDate, comment, skus){},
-			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){},
+			addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){},
 			updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){}
 	};
 
