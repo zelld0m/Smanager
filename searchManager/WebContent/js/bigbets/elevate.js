@@ -424,11 +424,12 @@
 								$li.find('input.firerift-style-checkbox').slidecheckbox({
 									id:  $item["memberId"],
 									initOn: $item["forceAdd"],
+									item: $item,
 									locked: self.selectedRuleStatus["locked"] || !allowModify,
-									changeStatusCallback: function(memberId, status){
-										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], memberId, status, {
+									changeStatusCallback: function(base, dt){
+										ElevateServiceJS.updateElevateForceAdd(self.selectedRule["ruleId"], dt.id, dt.status, {
 											callback:function(data){
-												showActionResponse(data, "update force add", ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+												showActionResponse(data, "update force add", (dt.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + dt.item.condition["readableString"] : $.isBlank(dt.item["dpNo"])? "Product Id#: " + dt.item["edp"] : "SKU#: " + dt.item["dpNo"]));
 												self.populateRuleItem(self.selectedRulePage);
 											},
 											preHook:function(){

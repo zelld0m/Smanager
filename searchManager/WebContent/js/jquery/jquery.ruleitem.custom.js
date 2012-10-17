@@ -33,9 +33,10 @@
 				$li.find('input.firerift-style-checkbox').slidecheckbox({
 					id: $item["memberId"],
 					initOn: $item["forceAdd"],
+					item: $item,
 					locked: base.options.locked,
-					changeStatusCallback: function(memberId, status){
-						base.options.itemUpdateForceAddStatusCallback(base, memberId, status);
+					changeStatusCallback: function(base, dt){
+						base.options.itemUpdateForceAddStatusCallback(base, dt.id, dt.status);
 					}
 				});
 
