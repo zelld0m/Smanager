@@ -25,6 +25,7 @@ import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 
@@ -451,6 +452,7 @@ public class ExcludeService {
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+		com.setStore(new Store(UtilityService.getStoreName()));
 		daoService.addComment(com);
 		return com;
 	}
@@ -458,9 +460,10 @@ public class ExcludeService {
 	@RemoteMethod
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
+		String store = UtilityService.getStoreName();
 		try {
 			ExcludeResult exclude = new ExcludeResult();
-			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setStoreKeyword(new StoreKeyword(store, keyword));
 			exclude.setMemberId(memberId);
 			try {
 				exclude = daoService.getExcludeItem(exclude);
@@ -476,6 +479,7 @@ public class ExcludeService {
 				com.setUsername(UtilityService.getUsername());
 				com.setReferenceId(exclude.getMemberId());
 				com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
+				com.setStore(new Store(store));
 				result = daoService.addComment(com);
 			}
 		} catch (DaoException e) {
