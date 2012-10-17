@@ -61,85 +61,23 @@
 		displayDynamicAttributes: function (facetFields, list) {
 			var self = this;
 
-			var getFacetSelected = function() {
-				var i = 0;
-				var selectedItems = [];
-
-				$('.firerift-style').each(function() {
-					if ($(this).hasClass("on")){
-						var sel = $.trim($('#' + $(this).attr('rel')).val());
-						if ($.isNotBlank(sel)){
-							i++;
-							selectedItems.push(self.escapeValue(sel));
-						}
-					}
-				});
-
-				if (selectedItems.length == 0) {
-					return "";
-				}
-				return "(" + selectedItems.join(" ") + ")";
-			};
-
-			var	getFacetParams = function (){
-				var paramString = "";
-				var keyword = $.trim(self.manager.store.values('q'));
-
-				var relId = $("select#relevancy").val();
-				if (relId == undefined || selectedRelevancy === "keyword_default") {
-					relId = "";
-				}
-				var params = {
-						'facet': true,
-						'q': keyword,
-						'facet.field': facetFields,
-						'rows': 0,
-						'relevancyId': relId,
-						'facet.mincount': 1,
-						'facet.limit': -1,
-						'facet.sort':'HEX',
-						'gui': true,
-						'json.nl':'map'
-				};
-
-				var storeparams = self.manager.store.params;
-				//merge params
-				for(var name in storeparams){
-					if(params[storeparams[name].name] === undefined)
-						params[storeparams[name].name] = storeparams[name].value;
-				}
-
-				for (var name in params) {
-					if ($.isArray(params[name])){
-						for (var param in params[name]){
-							paramString += "&" + name + "=" + params[name][param];
-						}
-					}else{
-						if(name.toLowerCase() !== "sort".toLowerCase())
-							paramString += "&" + name + "=" + params[name];
-					}
-				}
-
-				return paramString;
-			};
-
 			var handleResponse = function (data){
-				var facetFields = data.facet_counts.facet_fields;
-
+				var facetFieldsRes = data.facet_counts.facet_fields;
+				
 				//display dynamic attribute values
-				for(facetField in facetFields){
-					var items = self.asObjectedItems(facetFields, facetField);
+				for(facetField in facetFieldsRes){
+					var items = self.asObjectedItems(facetFieldsRes, facetField);
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
 
-					if(counter){
+					if(counter && list[facetField]){
 						self.displayFacet(list[facetField].attributeDisplayName, facetField, objectedItems, $.isNotBlank(self.manager.store.values('q')), "|");
 					}
 				}
 			};
 
 			$.getJSON(
-					self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
+					self.manager.solrUrl + 'select' + '?' + self.getFacetParams(facetFields) + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();
@@ -148,6 +86,87 @@
 						handleResponse(json); 
 					}
 			);
+		},
+		
+		getFacetSelected : function() {
+			var self = this;
+			var i = 0;
+			var selectedItems = [];
+
+			$('.firerift-style').each(function() {
+				if ($(this).hasClass("on")){
+					var sel = $.trim($('#' + $(this).attr('rel')).val());
+					if ($.isNotBlank(sel)){
+						i++;
+						selectedItems.push(self.escapeValue(sel));
+					}
+				}
+			});
+
+			if (selectedItems.length == 0) {
+				return "";
+			}
+			return "(" + selectedItems.join(" ") + ")";
+		},
+		
+		getFacetParams: function (facetFields){
+			var self = this;
+			var paramString = "";
+			var keyword = $.trim(self.manager.store.values('q'));
+
+			var relId = $("select#relevancy").val();
+			if (relId == undefined || selectedRelevancy === "keyword_default") {
+				relId = "";
+			}
+			var params = {
+					'facet': true,
+					'q': keyword,
+					'facet.field': facetFields,
+					'rows': 0,
+					'relevancyId': relId,
+					'facet.mincount': 1,
+					'facet.limit': -1,
+					'facet.sort':'HEX',
+					'gui': true,
+					'json.nl':'map'
+			};
+
+			var storeparams = self.manager.store.params;
+			//merge params
+			for(var name in storeparams){
+				if(!params[name]){
+					if ($.isArray(storeparams[name])){
+						params[name] = storeparams[name];
+					}
+					else{
+						params[name] = storeparams[name].value;
+					}
+				}
+			}
+
+			for (var name in params) {
+				if ($.isArray(params[name])){
+					for (var param in params[name]){
+						var paramVal = "";
+						
+						if(params[name][param].value){ //if Object
+							paramVal = params[name][param].value;
+						}
+						else if(params[name][param]){
+							paramVal = params[name][param];
+						}
+						else{
+							continue;
+						}
+						paramString += "&" + name + "=" + paramVal;
+					}
+				}else{
+					if(name.toLowerCase() !== "sort".toLowerCase())
+						paramString += "&" + name + "=" + params[name];
+				}
+			}
+
+			return paramString;
 		},
 
 		populateIMSTemplateAttributes: function(templateName){
@@ -185,68 +204,6 @@
 			var self = this;
 
 			return function () {
-
-				getFacetSelected = function() {
-					var i = 0;
-					var selectedItems = [];
-
-					$('.firerift-style').each(function() {
-						if ($(this).hasClass("on")){
-							var sel = $.trim($('#' + $(this).attr('rel')).val());
-							if ($.isNotBlank(sel)){
-								i++;
-								selectedItems.push(self.escapeValue(sel));
-							}
-						}
-					});
-
-					if (selectedItems.length == 0) {
-						return "";
-					}
-					return "(" + selectedItems.join(" ") + ")";
-				};
-
-				getFacetParams = function (){
-					var paramString = "";
-					var keyword = $.trim(self.manager.store.values('q'));
-
-					var relId = $("select#relevancy").val();
-					if (relId == undefined || selectedRelevancy === "keyword_default") {
-						relId = "";
-					}
-					var params = {
-							'facet': true,
-							'q': keyword,
-							'facet.field': [facetField],
-							'rows': 0,
-							'relevancyId': relId,
-							'facet.mincount': 1,
-							'facet.limit': -1,
-							'facet.sort':'HEX',
-							'gui': true,
-							'json.nl':'map'
-					};
-
-					var storeparams = self.manager.store.params;
-					//merge params
-					for(var name in storeparams){
-						if(params[storeparams[name].name] === undefined)
-							params[storeparams[name].name] = storeparams[name].value;
-					}
-
-					for (var name in params) {
-						if ($.isArray(params[name])){
-							for (var param in params[name]){
-								paramString += "&" + name + "=" + params[name][param];
-							}
-						}else{
-							paramString += "&" + name + "=" + params[name];
-						}
-					}
-
-					return paramString;
-				};
-
 				handleResponse = function (contentHolder, data){
 					contentHolder.html(AjaxSolr.theme('displayFacetMoreOptions',facetField,facetFieldLabel,data.facet_counts.facet_fields[facetField], delimiter));
 					SearchableList(contentHolder);
@@ -279,7 +236,7 @@
 							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
 
 							$.getJSON(
-									self.manager.solrUrl + 'select' + '?' + getFacetParams() + '&wt=json&json.wrf=?', 
+									self.manager.solrUrl + 'select' + '?' + self.getFacetParams([facetField]) + '&wt=json&json.wrf=?', 
 									function (json, textStatus) { 
 										if (textStatus!=="success"){
 											api.destroy();
@@ -311,8 +268,8 @@
 
 										contentHolder.find('#continueBtn').click(function(e){
 											self.manager.store.removeByValue('fq', new RegExp('^-?' + facetField + ':'));
-											if ($.isNotBlank(getFacetSelected())) {
-												self.manager.store.addByValue('fq', self.fq(facetField, getFacetSelected()));												
+											if ($.isNotBlank(self.getFacetSelected())) {
+												self.manager.store.addByValue('fq', self.fq(facetField, self.getFacetSelected()));												
 											}
 											self.manager.store.addByValue('relevancyId', $("select#relevancy").val());
 											self.manager.doRequest(0);
