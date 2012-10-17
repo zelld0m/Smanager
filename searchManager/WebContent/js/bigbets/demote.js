@@ -204,16 +204,18 @@
 							showAddComment: true,
 							locked: e.data.locked,
 							itemDataCallback: function(base, page){
-								CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
-									callback: function(data){
-										var total = data.totalSize;
-										base.populateList(data);
-										base.addPaging(base.options.page, total);
-									},
-									preHook: function(){
-										base.prepareList();
-									}
-								});
+								if(e.data){
+									CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
+										callback: function(data){
+											var total = data.totalSize;
+											base.populateList(data);
+											base.addPaging(base.options.page, total);
+										},
+										preHook: function(){
+											base.prepareList();
+										}
+									});
+								}
 							},
 							itemAddComment: function(base, comment){
 								DemoteServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
