@@ -35,7 +35,7 @@
 					initOn: $item["forceAdd"],
 					item: $item,
 					locked: base.options.locked,
-					changeStatusCallback: function(base, dt){
+					changeStatusCallback: function(bs, dt){
 						base.options.itemUpdateForceAddStatusCallback(base, dt.id, dt.status);
 					}
 				});
