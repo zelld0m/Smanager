@@ -12,7 +12,7 @@
 			fq: "",
 
 			rulePage: 1,
-			rulePageSize: 10,
+			rulePageSize: 15,
 			
 			removeFacetGroupItemConfirmText: "Delete facet value?",
 
@@ -291,12 +291,11 @@
 				var self = this;
 
 				$("#keywordSidePanel").sidepanel({
-					fieldId: "ruleId",
+					moduleName: self.moduleName,
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
 					headerText : "Facet Sorting Rule",
-					searchText : "Enter Keyword",
 					customAddRule: true,
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,
@@ -446,29 +445,20 @@
 						});
 
 					},
-
-					itemOptionCallback: function(base, id, name, model){
-						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-						var totalText = "&#133;";
-						var ruleType = model["ruleType"];
-
-						switch(ruleType.toLowerCase()){
-						case "keyword": base.$el.find(selector + ' div.itemIcon').append(self.keywordIconPath); break;
-						case "template": base.$el.find(selector + ' div.itemIcon').append(self.templateIconPath); break;
+					
+					itemNameCallback: function(base, item){
+						self.setFacetSort(item.model);
+					},
+					
+					itemOptionCallback: function(base, item){
+						var iconPath = "";
+						
+						item.ui.find("#itemLinkValue").empty();
+						switch(item.model["ruleType"].toLowerCase()){
+							case "keyword": iconPath = self.keywordIconPath; break;
+							case "template": iconPath = self.templateIconPath; break;
 						}
-
-						base.$el.find(selector + ' div.itemLink a').html(totalText);
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
-							click: function(e){
-								self.setFacetSort(e.data.model);
-							}
-						},{model: model});
-
-						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
-							callback:function(data){
-								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
-							}
-						});
+						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
 					}
 				});
 			},

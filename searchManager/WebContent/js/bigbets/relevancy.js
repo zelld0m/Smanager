@@ -1242,13 +1242,13 @@
 
 	var getRelevancyRuleList = function(page){
 		$("#rulePanel").sidepanel({
-			fieldId: "relevancyId",
+			moduleName: moduleName,
 			fieldName: "relevancyName",
 			page: rulePage,
 			pageSize: rulePageSize,
 			customAddRule: true,
 			headerText : "Ranking Rule",
-			searchText : "Enter Name",
+			searchText : "Search Name",
 			showAddButton: allowModify,
 			filterText: ruleFilterText,
 
@@ -1376,18 +1376,18 @@
 				});
 			},
 
-			itemOptionCallback: function(base, id, name, model){
-				var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-
-				RelevancyServiceJS.getTotalKeywordInRule(id,{
+			itemNameCallback: function(base, item){
+				setRelevancy(item.model);
+			},
+			
+			itemOptionCallback: function(base, item){
+				RelevancyServiceJS.getTotalKeywordInRule(item.model["ruleId"],{
 					callback: function(count){
-
-						var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
-						base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
+						if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
+						
+						item.ui.find("#itemLinkValue").on({
 							click: function(e){
-								RelevancyServiceJS.getRule(model.ruleId, {
+								RelevancyServiceJS.getRule(item.model["ruleId"], {
 									callback:function(data){
 										setRelevancy(data);
 									},
@@ -1399,13 +1399,12 @@
 						});
 					},
 					preHook: function(){ 
-						base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-					}
-				});
-
-				DeploymentServiceJS.getRuleStatus(moduleName, id, {
-					callback:function(data){
-						base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+						item.ui.find("#itemLinkValue").hide();
+						item.ui.find("#itemLinkPreloader").show();
+					},
+					postHook: function(){ 
+						item.ui.find("#itemLinkValue").show();
+						item.ui.find("#itemLinkPreloader").hide();
 					}
 				});
 			}
@@ -1414,13 +1413,12 @@
 
 	var getRelevancyRuleKeywordList = function(page){
 		$("#ruleKeywordPanel").sidepanel({
-			fieldId: "keywordId",
 			fieldName: "keyword",
 			page: keywordPage,
 			pageSize: ruleKeywordPageSize,
 			headerText : "Ranking Rule Keyword",
-			searchText : "Enter Keyword",
 			showAddButton: false,
+			showStatus: false,
 			filterText: keywordFilterText,
 			itemDataCallback: function(base, keyword, page){
 				keywordFilterText = keyword;
@@ -1433,79 +1431,93 @@
 					preHook: function(){ base.prepareList(); }
 				});
 			},
-			itemOptionCallback: function(base, id, name){
-				var suffixId = $.escapeQuotes($.formatAsId(id));
+			
+			itemOptionCallback: function(base, item){
+				RelevancyServiceJS.getTotalRuleUsedByKeyword(item.name, {
+					callback: function(count){
+						if (count == 0) return;
 
-				RelevancyServiceJS.getTotalRuleUsedByKeyword(name, {
-					callback: function(data){
-						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').html((data == 0) ? "-" :(data == 1) ? "1 Item" : data + " Items");
+						item.ui.find("#itemLinkValue").html("(" + count + ")").on({
+							click: function(e){
+								$(e.currentTarget).qtip({
+									content: {
+										text: $('<div/>'),
+										title: { text: 'Ranking Rule for ' + item.name, button: true }
+									},
+									show: { 
+										ready: true,
+										modal: true 
+									},
+									events: { 
+										show: function(rEvt, api){
+											var $content = $("div", api.elements.content).html($("#sortRulePriorityTemplate").html());
 
-						if (data > 0)
-							base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
-								content: {
-									text: $('<div/>'),
-									title: { text: 'Ranking Rule for ' + name, button: true }
-								},
-								show: { modal: true },
-								events: { 
-									render: function(rEvt, api){
-										var $content = $("div", api.elements.content).html($("#sortRulePriorityTemplate").html());
+											RelevancyServiceJS.getAllRuleUsedByKeyword(item.name, {
+												callback: function(data){
+													var list = data.list;
 
-										RelevancyServiceJS.getAllRuleUsedByKeyword(name, {
-											callback: function(data){
-												var list = data.list;
+													$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
 
-												$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
-
-												for(var i=0; i < data.totalSize; i++){
-													var rule = list[i].relevancy;
-													var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
-													$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
-													$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
-												}
-
-												$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
-
-												$content.find("ul#ruleListing").sortable({ 
-													handle : '.handle',
-													cursor : 'move',
-													start: function(e, ui) {
-														ui.item.data('start_pos', ui.item.index());
-													},     
-													change: function(e, ui) {
-														var index = ui.placeholder.index();
-														if (ui.item.data('start_pos') < index ) {
-															$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
-														} else {
-															$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
-														}		    
-													},
-													update: function(e, ui) {
-														$(this).find('li div').removeClass('highlight');
-														$(this).find('li').removeClass("alt");
-														$(this).find('li:nth-child(even)').addClass("alt");
-													},
-													stop: function(e, ui) {
-														var sourceIndex = (ui.item.data('start_pos'));
-														var destinationIndex = (ui.item.index());
-
-														var relId = ui.item.find("span").attr("id");
-
-														RelevancyServiceJS.updateRulePriority(relId, name, destinationIndex, {
-															callback: function(data){
-
-															}
-														});
+													for(var i=0; i < data.totalSize; i++){
+														var rule = list[i].relevancy;
+														var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
+														$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
+														$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
 													}
-												});
-											}
-										});
+
+													$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
+
+													$content.find("ul#ruleListing").sortable({ 
+														handle : '.handle',
+														cursor : 'move',
+														start: function(e, ui) {
+															ui.item.data('start_pos', ui.item.index());
+														},     
+														change: function(e, ui) {
+															var index = ui.placeholder.index();
+															if (ui.item.data('start_pos') < index ) {
+																$(this).find('li:nth-child(' + index + ') div').addClass('highlight');
+															} else {
+																$(this).find('li:eq(' + (index + 1) + ') div').addClass('highlight');
+															}		    
+														},
+														update: function(e, ui) {
+															$(this).find('li div').removeClass('highlight');
+															$(this).find('li').removeClass("alt");
+															$(this).find('li:nth-child(even)').addClass("alt");
+														},
+														stop: function(e, ui) {
+															var sourceIndex = (ui.item.data('start_pos'));
+															var destinationIndex = (ui.item.index());
+
+															var relId = ui.item.find("span").attr("id");
+
+															RelevancyServiceJS.updateRulePriority(relId, item.name, destinationIndex, {
+																callback: function(data){
+
+																}
+															});
+														}
+													});
+												}
+											});
+										},
+										hide: function(e, api){
+											api.destroy();
+										}
 									}
-								}
-							});
+								});
+							}
+						});
+							
 					},
 					preHook: function(){ 
-						base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+						item.ui.find("#itemLinkValue").hide();
+						item.ui.find("#itemLinkPreloader").show();
+					},
+					postHook: function(){ 
+						item.ui.find("#itemLinkValue").show();
+						item.ui.find("#itemLinkPreloader").hide();
 					}
 				});
 
@@ -1535,7 +1547,6 @@
 	};
 	var getKeywordInRuleList = function(page){
 		$("#keywordInRulePanel").sidepanel({
-			fieldId: "keywordId",
 			fieldName: "keyword",
 			page: page,
 			itemTitle: "New Keyword",
@@ -1545,6 +1556,7 @@
 			headerText : "Using This Rule",
 			searchText : "Enter Keyword",
 			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId , "_default") && allowModify,
+			showStatus: false,
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
@@ -1554,29 +1566,32 @@
 					preHook: function(){ base.prepareList(); }
 				});
 			},
-			itemOptionCallback: function(base, id, name){
-				var icon = "";
-				var suffixId = $.escapeQuotes($.formatAsId(id));
+			
+			itemOptionCallback: function(base, item){
+				var icon = '<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></a>';
 
-				icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
-				base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
-
-				base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).on({
+				item.ui.find(".itemLink").html($(icon)).off().on({
 					click: function(e){
-						if (!e.data.locked && allowModify && confirm('Delete "' + name + '" in ' + selectedRule.ruleName  + '?'))
-							RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
-								callback:function(code){
-									showActionResponse(code, "delete", name);
-									getKeywordInRuleList(1);
-									getRelevancyRuleList(1);
-									getRelevancyRuleKeywordList(1);
-								},
-								preHook: function(){ base.prepareList(); }
-							});
+						if (e.data.locked) return;
+
+						jConfirm('Delete "' + item.name + '" in ' + selectedRule.ruleName  + '?', "Delete Keyword", function(result){
+							if(result){
+								RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
+									callback:function(code){
+										showActionResponse(code, "delete", name);
+										getKeywordInRuleList(1);
+										getRelevancyRuleList(1);
+										getRelevancyRuleKeywordList(1);
+									},
+									preHook: function(){ base.prepareList(); }
+								});
+							}
+						});			
 					},
 					mouseenter: showHoverInfo
 				},{locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify});
 			},
+			
 			itemAddCallback: function(base, keyword){
 				RelevancyServiceJS.addKeywordToRule(selectedRule.ruleId, keyword, {
 					callback: function(code){

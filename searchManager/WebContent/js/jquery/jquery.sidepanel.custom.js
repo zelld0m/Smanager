@@ -175,9 +175,8 @@
 			}
 
 			content+= '<div id="sideContent" class="sideContent">';
-			content+= '<table width="100%">';
-			content+= '	<tbody id="itemListing">';
-			content+= '		<tr id="itemPattern" style="display:none;">';
+			content+= '	<table width="100%" id="itemListing">';
+			content+= '		<tr id="itemPattern" class="itemRow" style="display:none;">';
 			content+= '			<td class="padR10 padL10">';
 			content+= '				<div class="itemHolder clearfix">';	
 			content+= '					<div style="width:155px; float:left;">';
@@ -187,12 +186,21 @@
 			content+= '							<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
 			content+= '						</div>';
 			content+= '					</div>';
-			content+= '					<div class="itemLink"><a href="javascript:void(0);"></a></div>';
+			content+= '					<div class="itemLink">';
+			content+= '						<img id="itemLinkPreloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display:none">';
+			content+= '						<a id="itemLinkValue" href="javascript:void(0);">&#133;</a>';
+			content+= '					</div>';
 			content+= '				</div>';		
 			content+= '			</td>';
 			content+= '		</tr>';
-			content+= '	</tbody>';
-			content+= '</table>'; 
+			content+= '		<tr id="sideContentItemPreloader">';
+			content+= '			<td>';
+			content+= '				<div class="pad10 txtAC w200" style="padding:10px; text-align:center; width:200px;">';
+			content+= '					<img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+			content+= '				</div>';
+			content+= '			</td>';
+			content+= '		</tr>';
+			content+= '	</table>'; 
 			content+= '</div>'; 
 
 			content+= '<div id="sideFooter" class="sideFooter" >';
@@ -208,37 +216,54 @@
 		};
 
 		base.prepareList = function(){
-			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
-			base.$el.find("#itemListing").prepend('<tr><td><div class="pad10 txtAC w200" style="padding:10px; text-align:center; width:200px;"><img src="../images/ajax-loader-rect.gif"></div></td></tr>'); 
-			base.$el.find("#sideBottomPaging").attr("style", "display:none");
+			var $table = base.$el.find("table#itemListing");
+			$table.find("tr.itemRow:not(#itemPattern)").remove();
+			$table.find("tr#sideContentItemPreloader").show();
+			base.$el.find("#sideBottomPaging").hide();
 		};
 
 		base.populateList = function(data){
+			var name = "";
+			var id = "";
+			var $tr = null;
 			var list = data.list;
-
+			var $table = base.$el.find("table#itemListing");
+			
+			$table.find("tr#sideContentItemPreloader").hide();
+			
 			// Delete all the rows except for the "pattern" row
-			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
+			$table.find("tr.itemRow:not(#itemPattern)").remove();
 
 			// populate list
-			//dwr.engine.beginBatch(); 
 			for (var i = 0; i < data.list.length; i++) {
-				var id = list[i][base.options.fieldId]==undefined? i+1 : list[i][base.options.fieldId];
-				var name = list[i][base.options.fieldName];
-				var suffixId = $.formatAsId(id);
-
-				base.$el.find("tr#itemPattern").clone().appendTo("tbody#itemListing").attr("id","itemPattern" + suffixId);
-				suffixId = $.escapeQuotes(suffixId);
-
-				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').html(name);
-				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id, model:list[i]});
-				base.$el.find('#itemPattern' + suffixId).show();
-
-				base.options.itemOptionCallback(base, id, name, list[i]);
-
+				name = list[i][base.options.fieldName];
+				id = "item" + $.formatAsId(i+1);
+				
+				$tr = $table.find("tr#itemPattern").clone();
+				$tr.attr("id", id).show();
+				$table.append($tr);
+				
+				$tr.find(".itemText > a").html(name).on({
+					click: function(e){
+						base.options.itemNameCallback(e.data.base, e.data);	
+					}
+				},{base: base, ui: $tr, name:name, id:id, model:list[i]});
+				
+				base.options.itemOptionCallback(base, {ui:$tr, name:name, id:id, model:list[i]});
+				
+				if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
 			}
-			//dwr.engine.endBatch();
 		};
 
+		base.getRuleStatus = function(tr, item){
+			var $tr = tr;
+			DeploymentServiceJS.getRuleStatus(base.options.moduleName, item["ruleId"], {
+				callback:function(data){
+					$tr.find('.itemSubText').html(getRuleNameSubTextStatus(data));
+				}
+			});
+		};
+		
 		base.addPaging = function(keyword, page, total){
 			base.$el.find("#sideBottomPaging").paginate({
 				type: 'short',
@@ -283,8 +308,8 @@
 			pageSize: 10,
 			region: "left",
 			pageStyle: "style1",
-			headerText: "",
-			searchText: "",
+			headerText: "Keyword",
+			searchText: "Search Keyword",
 			searchLabel: "",
 			filterText:"",
 			maxCharacter: 50,
@@ -292,9 +317,10 @@
 			itemTitle: "New Rule",
 			showAddButton: true,
 			showSearch: true,
+			showStatus: true,
 			itemDataCallback: function(e){},
-			itemOptionCallback: function(e){},
-			itemNameCallback: function(e){},
+			itemOptionCallback: function(base, item){},
+			itemNameCallback: function(base, item){},
 			itemAddCallback: function(e){},
 			pageChangeCallback: function(e){},
 			reloadRate: 2000
