@@ -14,7 +14,6 @@
 			ruleFilterText: "",
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
-			zeroCountHTMLCode: "&#133;",
 			defaultRuleItemDisplay: "tileView",
 			lockedItemDisplayText: "Item is locked",
 
@@ -26,10 +25,8 @@
 				var self = this;
 
 				$("#rulePanel").sidepanel({
-					fieldId: "keywordId",
+					moduleName: self.moduleName,
 					fieldName: "keyword",
-					headerText : "Keyword",
-					searchText : "Enter Keyword",
 					showAddButton: allowModify,
 					page: self.rulePage,
 					pageSize: self.rulePageSize,
@@ -47,30 +44,28 @@
 						});
 					},
 
-					itemOptionCallback: function(base, id, name, model){
-
-						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-
-						ElevateServiceJS.getTotalProductInRule(id,{
+					itemNameCallback: function(base, item){
+						self.setRule(item.model);
+					},
+					
+					itemOptionCallback: function(base, item){
+						ElevateServiceJS.getTotalProductInRule(item.model["ruleId"],{
 							callback: function(count){
-
-								var totalText = (count == 0) ? self.zeroCountHTMLCode: "(" + count + ")"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+								if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
+								
+								item.ui.find("#itemLinkValue").on({
 									click: function(e){
-										self.setRule(model);
+										self.setRule(item.model);
 									}
 								});
 							},
 							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-							}
-						});
-
-						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
-							callback:function(data){
-								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+								item.ui.find("#itemLinkValue").hide();
+								item.ui.find("#itemLinkPreloader").show();
+							},
+							postHook: function(){ 
+								item.ui.find("#itemLinkValue").show();
+								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
 					},

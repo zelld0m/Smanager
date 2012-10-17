@@ -204,7 +204,7 @@
 								});
 							}
 						});
-						
+
 						$("div#keyword").find('input[type="text"]#changeKeyword').val($.trim(self.selectedRule["changeKeyword"]));
 
 						$("div#keyword").find("#changeKeywordBtn").off().on({
@@ -224,7 +224,6 @@
 			getKeywordInRuleList : function(page){
 				var self = this;
 				$("#keywordInRulePanel").sidepanel({
-					fieldId: "keywordId",
 					fieldName: "keyword",
 					itemTitle: "New Keyword",
 					page: page,
@@ -232,9 +231,9 @@
 					pageStyle: "style2",
 					pageSize: self.keywordInRulePageSize,
 					headerText : "Using This Rule",
-					searchText : "Enter Keyword",
-
 					showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
+					showStatus: false,
+
 					itemDataCallback: function(base, keyword, page){
 						RedirectServiceJS.getAllKeywordInRule(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
 							callback: function(data){
@@ -244,26 +243,25 @@
 							preHook: function(){ base.prepareList(); }
 						});
 					},
-					itemOptionCallback: function(base, id, name){
-						var icon = "";
-						var suffixId = $.escapeQuotes($.formatAsId(id));
 
-						icon = '<a id="delete' + suffixId + '" href="javascript:void(0);"><img src="../images/icon_delete2.png"></a>';
-						base.$el.find('#itemPattern' + suffixId + ' div.itemLink').html($(icon));
+					itemOptionCallback: function(base, item){
+						var icon = '<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></a>';
 
-						base.$el.find('#itemPattern' + suffixId + ' div.itemLink a#delete' + suffixId).off().on({
+						item.ui.find(".itemLink").html($(icon)).off().on({
 							click: function(e){
 								if (e.data.locked) return;
-								
-								jConfirm('Delete "' + name + '" in ' + self.selectedRule["ruleName"]  + '?', "Delete Keyword", function(result){
+
+								jConfirm('Delete "' + item.name + '" in ' + self.selectedRule["ruleName"]  + '?', "Delete Keyword", function(result){
 									if(result){
-										RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], name,{
+										RedirectServiceJS.deleteKeywordInRule(self.selectedRule["ruleId"], item.name,{
 											callback:function(code){
-												showActionResponse(code, "delete", name);
+												showActionResponse(code, "delete", item.name);
 												self.getKeywordInRuleList(1);
 												self.getRedirectRuleList(1);
 											},
-											preHook: function(){ base.prepareList(); }
+											preHook: function(){ 
+												base.prepareList(); 
+											}
 										});
 									}
 								});					
@@ -271,6 +269,7 @@
 							mouseenter: showHoverInfo
 						},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 					},
+
 					itemAddCallback: function(base, keyword){
 						if (!self.selectedRuleStatus["locked"] && allowModify){
 							RedirectServiceJS.addKeywordToRule(self.selectedRule["ruleId"], keyword, {
@@ -288,14 +287,14 @@
 
 			getRedirectRuleKeywordList : function(page){
 				var self = this;
+
 				$("#ruleKeywordPanel").sidepanel({
-					fieldId: "keywordId",
 					fieldName: "keyword",
 					page: self.ruleKeywordPage,
 					pageSize: self.ruleKeywordPageSize,
 					headerText : "Query Cleaning Keyword",
-					searchText : "Enter Keyword",
 					showAddButton: false,
+					showStatus: false,
 					filterText: self.ruleKeywordFilterText,
 
 					itemDataCallback: function(base, keyword, page){
@@ -310,46 +309,58 @@
 						});
 					},
 
-					itemOptionCallback: function(base, id, name){
-						var suffixId = $.escapeQuotes($.formatAsId(id));
+					itemOptionCallback: function(base, item){
+						RedirectServiceJS.getTotalRuleUsedByKeyword(item.name, {
+							callback: function(count){
+								if (count == 0) return;
 
-						RedirectServiceJS.getTotalRuleUsedByKeyword(name, {
-							callback: function(data){
-								base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').html((data == 0) ? "-" :(data == 1) ? "1 Item" : data + " Items");
+								item.ui.find("#itemLinkValue").html("(" + count + ")").on({
+									click: function(e){
+										$(e.currentTarget).qtip({
+											content: {
+												text: $('<div/>'),
+												title: { text: 'Query Cleaning for ' + item.name, button: true }
+											},
+											show: { 
+												ready: true,
+												modal: true 
+											},
+											events: { 
+												show: function(e, api){
+													var $content = $("div", api.elements.content).html($("#sortRulePriorityTemplate").html());
 
-								if (data > 0)
-									base.$el.find('#itemPattern' + suffixId + ' div.itemLink a').qtip({
-										content: {
-											text: $('<div/>'),
-											title: { text: 'Query Cleaning for ' + name, button: true }
-										},
-										show: { modal: true },
-										events: { 
-											render: function(rEvt, api){
-												var $content = $("div", api.elements.content).html($("#sortRulePriorityTemplate").html());
+													RedirectServiceJS.getAllRuleUsedByKeyword(item.name, {
+														callback: function(data){
+															var list = data.list;
 
-												RedirectServiceJS.getAllRuleUsedByKeyword(name, {
-													callback: function(data){
-														var list = data.list;
+															$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
 
-														$content.find("ul#ruleListing > li:not(#rulePattern)").remove();
+															for(var i=0; i<data.totalSize; i++){
+																var rule = list[i];
+																var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
+																$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
+																$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
+															}
 
-														for(var i=0; i<data.totalSize; i++){
-															var rule = list[i];
-															var suffixId = $.escapeQuotes($.formatAsId(rule["ruleId"]));
-															$content.find("li#rulePattern").clone().appendTo("ul#ruleListing").attr("id", "rule" + suffixId).show();
-															$content.find("li#rule" + suffixId + " span.ruleName").attr("id", rule["ruleId"]).html(rule["ruleName"]);
+															$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
 														}
-
-														$content.find("ul#ruleListing > li:nth-child(even)").addClass("alt");
-													}
-												});
+													});
+												},
+												hide: function(e, api){
+													api.destroy();
+												}
 											}
-										}
-									});
+										});
+									}
+								});
 							},
 							preHook: function(){ 
-								base.$el.find('#itemPattern' + $.escapeQuotes($.formatAsId(id)) + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
+								item.ui.find("#itemLinkValue").hide();
+								item.ui.find("#itemLinkPreloader").show();
+							},
+							postHook: function(){ 
+								item.ui.find("#itemLinkValue").show();
+								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
 
@@ -367,7 +378,7 @@
 				var self = this;
 
 				$("#rulePanel").sidepanel({
-					fieldId: "ruleId",
+					moduleName: "Query Cleaning",
 					fieldName: "ruleName",
 					page: self.rulePage,
 					pageSize: self.rulePageSize,
@@ -412,29 +423,27 @@
 						});
 					},
 
-					itemOptionCallback: function(base, id, name, model){
-						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
+					itemNameCallback: function(base, item){
+						self.setRedirect(item.model);
+					},
 
-						RedirectServiceJS.getTotalKeywordInRule(id,{
+					itemOptionCallback: function(base, item){
+						RedirectServiceJS.getTotalKeywordInRule(item.model["ruleId"],{
 							callback: function(count){
-
-								var totalText = (count == 0) ? "&#133;": "(" + count + ")"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
+								if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
+								item.ui.find("#itemLinkValue").on({
 									click: function(e){
-										self.setRedirect(model);
+										self.setRedirect(item.model);
 									}
 								});
 							},
 							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-							}
-						});
-
-						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
-							callback:function(data){
-								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+								item.ui.find("#itemLinkValue").hide();
+								item.ui.find("#itemLinkPreloader").show();
+							},
+							postHook: function(){ 
+								item.ui.find("#itemLinkValue").show();
+								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
 					}
@@ -506,7 +515,7 @@
 				var self = this;
 
 				$('input[type="checkbox"].activate').prop({checked:false, disabled: false });
-			
+
 				$('input[type="checkbox"].activate').prop({disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 					click:function(e){
 						if (e.data.locked) return;
@@ -514,7 +523,7 @@
 					},
 					mouseenter: showHoverInfo
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify});
-				
+
 				switch(parseInt(self.selectedRule["redirectTypeId"])){
 				case 1: $("div#filter").find('input#activate').prop({checked:true, disabled: true }); break;
 				case 2: $("div#keyword").find('input#activate').prop({checked:true, disabled: true }); break;
@@ -1417,11 +1426,11 @@
 				}
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					ui.find("div.ims, div.dynamicAttribute").show();
-					
+
 					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'sbn'){
 						ui.find("div.dynamicAttribute").hide();
 					}
-					
+
 					self.addIMSFieldListener(ui, condition);
 					self.addFacetTemplateFieldListener(ui, condition);
 
@@ -1544,7 +1553,7 @@
 				var level2Cat = new Array();
 				var level3Cat = new Array();
 				var cnetManufacturer = new Array();
-				
+
 
 				if (ui.find("div.ims").is(":visible")){
 					catCode[0] = $.trim(ui.find("input#catcode").val());
@@ -1936,10 +1945,10 @@
 				ui.find("img.deleteIcon,a.deleteBtn").off().on({
 					click: function(e){
 						if(e.data.locked) return;
-						
+
 						var $item = $(this).parents(".conditionItem");
 						var readableString = $.isNotBlank(e.data.condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
-						
+
 						jConfirm("Delete " + readableString, "Delete Rule Condition", function(result){
 							if(result){
 								if ($item.hasClass("tempConditionItem")){
@@ -2013,15 +2022,15 @@
 
 			addTabListener: function(){
 				var self = this;
-				
+
 				$("#redirect-type").tabs("destroy").tabs({
 					show: function(event, ui){
 						var tabNumber = ui.index;
 						self.tabSelectedTypeId = tabNumber + 1;
 						self.setActiveRedirectType();
 						switch(self.tabSelectedTypeId){
-							case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
-							case 2: self.getChangeKeywordActiveRules(); break;
+						case 1: self.showRuleCondition(); self.setIncludeKeyword(); break;
+						case 2: self.getChangeKeywordActiveRules(); break;
 						}
 					}
 				});
