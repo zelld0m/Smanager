@@ -251,7 +251,7 @@
 											var currFacet = self.manager.store.values('fq')[indices[0]];
 											currFacet = currFacet.substr(facetField.length+1,currFacet.length-(facetField.length+1));
 
-											if ($.startsWith(currFacet,"\(") && $.endsWith(currFacet,"\)")){
+											if ($.startsWith(currFacet,"(") && $.endsWith(currFacet,")")){
 												currFacet = currFacet.substr(1,currFacet.length-2);
 											}
 
