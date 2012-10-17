@@ -1076,30 +1076,31 @@
 				});
 			}
 		}
-
-		
 	};
 
 	var deleteRule = function(e) { 
-		if (!e.data.locked && allowModify && confirm(deleteRuleConfirmText)){
-			RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
-				callback: function(code){
-					if (code > 0) {
-						jAlert(selectedRule.ruleName + " was successfully deleted.","Ranking Rule");
+		if (e.data.locked) return;
+		
+		jConfirm(deleteRuleConfirmText, "Delete Rule", function(result){
+			if(result){
+				RelevancyServiceJS.deleteRule(selectedRule.ruleId,{
+					callback: function(code){
+						if (code > 0) {
+							jAlert(selectedRule.ruleName + " was successfully deleted.","Ranking Rule");
+						}
+						if(code==1) setRelevancy(null);
 					}
-					if(code==1) setRelevancy(null);
-				}
-			});
-		}
+				});
+			}
+		});
 	};
 
 	var prepareRelevancy = function(){
 		clearAllQtip();
 		$("#preloader").show();
-		$("#noSelected").hide();
-		$("#relevancy").hide();
+		$("#submitForApproval, #relevancy, #noSelected").hide();
 		$("#titleText").html(moduleName);
-		$("#versions").empty();
+		$("#versions,#titleHeader").empty();
 	};
 
 	var showRelevancy = function(){
@@ -1112,6 +1113,7 @@
 			$("#noSelected").show();
 			$("#titleText").html(moduleName);
 			$("#titleHeader").html("");
+			$("#submitForApproval").hide();
 			return;
 		}
 
