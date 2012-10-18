@@ -397,7 +397,7 @@
 
 				$selector.fadeIn("slow", function(){
 					$("#titleText").html(self.moduleName + " for ");
-					$("#titleHeader").html(self.selectedRule["ruleName"]);
+					$("#titleHeader").text(self.selectedRule["ruleName"]);
 				});
 			},
 

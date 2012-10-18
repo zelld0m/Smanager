@@ -41,7 +41,16 @@
 				click: function(e){
 					switch($(e.currentTarget).attr("id").toLowerCase()){
 					case "addbtn": 
-						base.options.itemAddCallback(base, base.contentHolder.find("input#ruleName").val()); 
+						var ruleName = base.contentHolder.find("input#ruleName").val();
+						
+						if ($.isBlank(ruleName)){
+							jAlert(base.options.headerText + " is required.", base.options.headerText);
+						}else if (!isAllowedName(ruleName)){
+							jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
+						}else{
+							base.options.itemAddCallback(base, ruleName); 
+						}
+						
 						break;
 					case "cancelbtn": base.api.destroy(); break;
 					}
@@ -243,7 +252,7 @@
 				$tr.attr("id", id).show();
 				$table.append($tr);
 				
-				$tr.find(".itemText > a").html(name).on({
+				$tr.find(".itemText > a").text(name).on({
 					click: function(e){
 						base.options.itemNameCallback(e.data.base, e.data);	
 					}
