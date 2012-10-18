@@ -60,7 +60,7 @@
 						$("#preloader").hide();
 						$("#submitForApproval").show();
 						$("#titleText").html(self.moduleName + " for ");
-						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						$("#readableString").html(self.selectedRule["readableString"]);
 
 						switch(self.selectedRule["ruleType"].toLowerCase()){

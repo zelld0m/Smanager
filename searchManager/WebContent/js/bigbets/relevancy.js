@@ -1149,7 +1149,7 @@
 				});
 
 				$("#titleText").html(moduleName + " for ");
-				$("#titleHeader").html(selectedRule.ruleName);
+				$("#titleHeader").text(selectedRule.ruleName);
 
 				$("#name").val(selectedRule.ruleName);
 				$("#description").val(selectedRule.description);

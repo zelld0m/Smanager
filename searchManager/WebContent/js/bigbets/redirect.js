@@ -139,7 +139,7 @@
 				clearAllQtip();
 				$("#preloader").show();
 				$("#submitForApproval, #redirect, #noSelected").hide();
-				$("#titleHeader").html("");
+				$("#titleHeader").empty();
 			},
 
 			showRedirect : function(){
@@ -172,7 +172,7 @@
 						$("#submitForApproval").show();
 						$("#preloader").hide();
 						$("#titleText").html(self.moduleName + " for ");
-						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						self.selectedRuleStatus = ruleStatus;
 						$("#redirect").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
