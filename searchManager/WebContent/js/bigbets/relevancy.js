@@ -244,15 +244,49 @@
 								}
 							});
 
-							$content.find('input[id="searchBoxField"]').val(bqSearchText).on({
-								blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(bqSearchText);},
-								focus: function(e){if ($.trim($(e.target).val()) == bqSearchText) $(e.target).val("");},
-								keyup: function(e){ 
-									setTimeout(function(){ 
-										bqSearchKeyword = $(e.target).val();
+							var searchActivated = false;
+							var newSearch = "";
+							var oldSearch = "";
+							
+							var sendRequest = function(event){
+								setTimeout(function(){
+									bqSearchKeyword = newSearch = $.trim($(event.target).val());
+
+									if (newSearch === bqSearchText) {
+										newSearch = "";
+									};
+
+									if (oldSearch !== newSearch) {
 										populateFieldValues($content, 1);
-									}, reloadRate);  	
+										oldSearch = newSearch;
+										sendRequest(event);
+										newSearch = "";
+									}
+									else {
+										searchActivated = false;
+									}
+								}, reloadRate);  
+							};
+
+							var timeout = function(event){
+								if (!searchActivated) {
+									searchActivated = true;
+									sendRequest(event);
 								}
+							};
+							
+							$content.find('input[id="searchBoxField"]').val(bqSearchText).on({
+								blur: function(e){
+									if ($.trim($(e.target).val()).length == 0) 
+										$(e.target).val(bqSearchText);
+									timeout(e);
+								},
+								focus: function(e){
+									if ($.trim($(e.target).val()) == bqSearchText) 
+										$(e.target).val("");
+									timeout(e);
+								},
+								keyup: timeout
 							});
 
 							$content.find('select[id="facetName"]').on({
@@ -655,16 +689,50 @@
 							$('div[id="' + field.id + '"] input[type="text"]').val(finalVal);
 						}
 					});
+					
+					var searchActivated = false;
+					var newSearch = "";
+					var oldSearch = "";
+					
+					var sendRequest = function(event){
+						setTimeout(function(){
+							sfSearchKeyword = newSearch = $.trim($(event.target).val());
+
+							if (newSearch === schemaFieldsSearchText) {
+								newSearch = "";
+							};
+
+							if (oldSearch !== newSearch) {
+								populateSchemaFields($contentHolder,1);
+								oldSearch = newSearch;
+								sendRequest(event);
+								newSearch = "";
+							}
+							else {
+								searchActivated = false;
+							}
+						}, reloadRate);  
+					};
+
+					var timeout = function(event){
+						if (!searchActivated) {
+							searchActivated = true;
+							sendRequest(event);
+						}
+					};
 
 					$contentHolder.find('input[id="searchBoxField"]').val(schemaFieldsSearchText).on({
-						blur: function(e){if ($.trim($(e.target).val()).length == 0) $(e.target).val(schemaFieldsSearchText);},
-						focus: function(e){if ($.trim($(e.target).val()) == schemaFieldsSearchText) $(e.target).val("");},
-						keyup: function(e){ 
-							setTimeout(function(){ 
-								sfSearchKeyword = $(e.target).val();
-								populateSchemaFields($contentHolder,1);
-							}, reloadRate);  	
-						}
+						blur: function(e){
+							if ($.trim($(e.target).val()).length == 0) 
+								$(e.target).val(schemaFieldsSearchText);
+							timeout(e);
+						},
+						focus: function(e){
+							if ($.trim($(e.target).val()) == schemaFieldsSearchText) 
+								$(e.target).val("");
+							timeout(e);
+						},
+						keyup: timeout 
 					});
 
 				},
@@ -675,7 +743,7 @@
 
 		});
 	};
-
+	
 	var setRuleFieldValue = function(){
 
 		for (var field in selectedRule.parameters){
@@ -1149,7 +1217,7 @@
 				});
 
 				$("#titleText").html(moduleName + " for ");
-				$("#titleHeader").html(selectedRule.ruleName);
+				$("#titleHeader").text(selectedRule.ruleName);
 
 				$("#name").val(selectedRule.ruleName);
 				$("#description").val(selectedRule.description);
