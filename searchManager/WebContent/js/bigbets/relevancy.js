@@ -14,7 +14,7 @@
 	var relFieldMaxValue = 10;
 	var sfExcFields = new Array();
 	var sfSearchKeyword = "";
-	var reloadRate = 500;
+	var reloadRate = 1000;
 
 	var bqExcFields = new Array();
 	var bqSearchKeyword = "";
