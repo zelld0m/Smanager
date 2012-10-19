@@ -359,7 +359,7 @@
 			}
 
 			template += '		<li>';
-			template += '			<label class="fbold title">Valid Until: </label>';
+			template += '			<label class="fbold title padT3">Valid Until: </label>';
 			template += '			<span><input type="text" id="selItemValidityDate" style="width:65px">';
 			template += ' 			<span><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></span>';
 			template += '		</li>';

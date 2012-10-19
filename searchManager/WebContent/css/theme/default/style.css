@@ -316,6 +316,8 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 
 .cssReset .GraytopLine			{ background:url(images/bgSort.jpg) repeat-x; padding-top:5px; margin-top:8px }
 .cssReset .iconHolder			{ float:left; display:inline; width:11px; margin-left:5px }
+.cssReset .deleteIcon, a img,
+.cssReset a.deleteIcons			{ border:0; }
 .cssReset .elevTxtHolder		{ float:left; display:inline; width:auto; margin:-3px 7px 0 5px font-size:11px; color:red; text-align:right; font-weight: normal }
 
 /*.cssReset .bluebgTitle			{ background:url(images/bgLeftMenu.jpg); width:230px; height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }*/
@@ -500,6 +502,8 @@ ul.topmenu li.submenu:hover ul li:hover { }
 .listItemInfo li.value			{ float:left; padding:0; width:60px; text-align:left }
 
 .listProd li					{ text-align:left }
+.ie .listProd #deleteCalendarIcon { position:relative; bottom:-4px }
+.listProd #deleteCalendarIcon, .listProd span .ui-datepicker-trigger { cursor: pointer }
 
 .toggleDiv						{ border:2px solid #3e3e3e }
 .titleToggle					{ background:url(images/bg_titleGray.png) repeat-x; height: 34px; }
