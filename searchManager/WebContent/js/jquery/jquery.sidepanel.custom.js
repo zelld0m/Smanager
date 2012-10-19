@@ -12,83 +12,25 @@
 		base.$el.data("sidepanel", base);
 
 		base.addAddButtonListener = function(){
-			base.$el.find("#addButton").on({
+			base.$el.find("#addButton").off().on({
 				click: function(e){
-					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if (base.options.customAddRule){
-						base.options.itemAddCallback(base, name.toLowerCase()!==base.options.searchText.toLowerCase()? name: ""); 
-					}else{
-						base.getDefaultAddRule(name.toLowerCase()!==base.options.searchText.toLowerCase()? name: "");
+					var ruleName = $.trim(base.$el.find('input[type="text"]').val());
+
+					if(base.options.customAddRule){
+						//Skip validation
+					}else if ($.isBlank(ruleName) ||  ruleName.toLowerCase() === base.options.searchText.toLowerCase()){
+						jAlert(base.options.headerText + " is required.", base.options.headerText);
+						return
+					}else if (!isAllowedName(ruleName)){
+						jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
+						return
 					}
+
+					base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? ruleName: ""); 
 				}
 			});
 		};
 
-		base.getDefaultAddRuleTemplate = function(){
-			var template ='';
-			
-			template += '<div>';
-			template += '	<input id="ruleName">';
-			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="addBtn"><div class="buttons fontBold">Add</div></a>';
-			template += '	<a class="buttons btnGray clearfix" href="javascript:void(0);" id="cancelBtn"><div class="buttons fontBold">Cancel</div></a>';
-			template += '</div>';
-			
-			return template;
-		};
-		
-		base.addDefaultAddRuleButtonListener = function(){
-			base.contentHolder.find("#addBtn,#cancelBtn").off().on({
-				click: function(e){
-					switch($(e.currentTarget).attr("id").toLowerCase()){
-					case "addbtn": 
-						var ruleName = base.contentHolder.find("input#ruleName").val();
-						
-						if ($.isBlank(ruleName)){
-							jAlert(base.options.headerText + " is required.", base.options.headerText);
-						}else if (!isAllowedName(ruleName)){
-							jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
-						}else{
-							base.options.itemAddCallback(base, ruleName); 
-						}
-						
-						break;
-					case "cancelbtn": base.api.destroy(); break;
-					}
-				}
-			});
-		};
-		
-		base.getDefaultAddRule =function(name){
-			base.$el.find("a#addButton").qtip({
-				content: {
-					text: $('<div/>'),
-					title: { text: base.options.itemTitle, button: true }
-				},
-				position: {
-					target: base.$el.find("a#addButton")
-				},
-				show: {
-					ready: true
-				},
-				style: {width: 'auto'},
-				events: { 
-					show: function(e, api){
-						base.api = api;
-						base.contentHolder = $("div", api.elements.content);
-						base.contentHolder.html(base.getDefaultAddRuleTemplate());
-						
-						if($.isNotBlank(name))
-							base.contentHolder.find("input#ruleName").val(name);
-						
-						base.addDefaultAddRuleButtonListener();
-					},
-					hide: function(e, api){
-						api.destroy();
-					}
-				}
-			});	
-		};
-		
 		base.sendRequest = function(event){
 			setTimeout(function(){
 				base.newSearch = $.trim($(event.target).val());
@@ -237,9 +179,9 @@
 			var $tr = null;
 			var list = data.list;
 			var $table = base.$el.find("table#itemListing");
-			
+
 			$table.find("tr#sideContentItemPreloader").hide();
-			
+
 			// Delete all the rows except for the "pattern" row
 			$table.find("tr.itemRow:not(#itemPattern)").remove();
 
@@ -247,19 +189,19 @@
 			for (var i = 0; i < data.list.length; i++) {
 				name = list[i][base.options.fieldName];
 				id = "item" + $.formatAsId(i+1);
-				
+
 				$tr = $table.find("tr#itemPattern").clone();
 				$tr.attr("id", id).show();
 				$table.append($tr);
-				
+
 				$tr.find(".itemText > a").text(name).on({
 					click: function(e){
 						base.options.itemNameCallback(e.data.base, e.data);	
 					}
 				},{base: base, ui: $tr, name:name, id:id, model:list[i]});
-				
+
 				base.options.itemOptionCallback(base, {ui:$tr, name:name, id:id, model:list[i]});
-				
+
 				if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
 			}
 		};
@@ -272,7 +214,7 @@
 				}
 			});
 		};
-		
+
 		base.addPaging = function(keyword, page, total){
 			base.$el.find("#sideBottomPaging").paginate({
 				type: 'short',
