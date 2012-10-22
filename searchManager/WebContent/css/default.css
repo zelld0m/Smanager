@@ -20,6 +20,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .w83, .w83			{width: 83px}
 .cssReset .w85, .w85			{width: 85px}
 .cssReset .w90, .w90			{width:90px !important}
+.cssReset .w93, .w93			{width:93px !important}
 .cssReset .w95, .w95			{width:95px}
 .cssReset .w100, .w100			{width:100px}
 .cssReset .w110, .w110			{width:110px}
@@ -219,6 +220,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marT30, .marT30		{margin-top:30px !important}
 .cssReset .marT40, .marT40		{margin-top:40px !important}
 .cssReset .marR0, .marR0		{margin-right:0px !important;}
+.cssReset .marR2, .marR2		{margin-right:2px}
 .cssReset .marR3, .marR3		{margin-right:3px}
 .cssReset .marR4, .marR4		{margin-right:4px}
 .cssReset .marR5, .marR5		{margin-right:5px}

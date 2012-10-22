@@ -188,7 +188,7 @@
 		};
 		
 		base.populateTemplate = function(){
-			var content = '<div class="facetValueList floatL w46p marL20 borderL padL15">';
+			var content = '<div class="facetValueList floatL w46p marL20 borderL padL10">';
 			content+= '<p class="fbold">';
 			content+= base.options.headerText;
 			content+= '</p>';
@@ -196,10 +196,10 @@
 
 			if (base.options.showSearch){
 				content+= '<div>';
-				content+= '<div class="searchBoxHolder w120 marT10 marR8 floatL">';
+				content+= '<div class="searchBoxHolder w120 marT10 marR2 floatL">';
 				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w100" id="searchField" name="searchField">';				
 				content+= '</div>';
-				content+= 	'<div class="floatL fsize11 searchCount marT10 w80 padT8 fLgray"></div>';
+				content+= 	'<div class="floatL fsize11 searchCount marT10 w90 txtAR padT8 fLgray marL0"></div>';
 				content+= '</div>';
 			}
 
