@@ -25,7 +25,6 @@ public class RedirectServlet extends HttpServlet {
      */
     public RedirectServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public void init() throws ServletException {
@@ -44,9 +43,9 @@ public class RedirectServlet extends HttpServlet {
     	if (matcher.find()) {
     		store = matcher.group(1);
     	}
-    	StringBuilder rurl = new StringBuilder(solrUrl).append(store).append("/select?").append(request.getQueryString());		
+    	// TODO: get solrUrl from request and not a hard-coded value
+    	StringBuilder rurl = new StringBuilder(solrUrl).append(store).append("/select?").append(request.getQueryString());
 		URL url = new URL(rurl.toString());
-
 		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		String inputLine;
 
@@ -62,7 +61,8 @@ public class RedirectServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		// TODO get post body as parameters. test in BD...
+		doGet(request, response);
 	}
 
 }
