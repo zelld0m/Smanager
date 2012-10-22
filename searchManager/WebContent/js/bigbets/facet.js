@@ -203,8 +203,16 @@
 					var selectedFacets = selectedFacetMap[facetGroupId];
 					
 					//check duplicate
-					if($.isNotBlank(u.item.text)){
-						if($.inArray(u.item.text, selectedFacets) >= 0){
+					if($.isNotBlank(selectedFacetName)){
+						//count
+						var count = 0;
+						for(var i in selectedFacets){
+							if(selectedFacets[i] === selectedFacetName){
+								count++;
+							}
+						}
+						
+						if(count > 1){
 							jAlert(selectedFacetName + " is already selected.", self.moduleName);
 							// TODO set input text to empty string
 						}
@@ -384,19 +392,25 @@
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
 											var popName = "";
+											var ruleNameLabel = "Name";
 
 											var ruleType = $.trim($contentHolder.find("input#popType").val());
 											var sortType = $.trim($contentHolder.find("input#popSortOrder").val());
 
 											if($contentHolder.find('div#keywordinput').is(":visible")){
 												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
+												ruleNameLabel = "Keyword";
 											}
 											else if($contentHolder.find('div#templatelist').is(":visible")){
 												popName = $.trim($contentHolder.find("input#popName").val());
+												ruleNameLabel = "Template Name";
 											}
 
 											if ($.isBlank(popName)){
 												jAlert("Facet Sort rule name is required.",self.moduleName);
+											}
+											else if (!isAllowedName(popName)){
+												jAlert(ruleNameLabel + " contains invalid value.",self.moduleName);
 											}
 											else if ($.isBlank(ruleType)){
 												jAlert("Facet Sort rule type is required.",self.moduleName);
@@ -438,7 +452,6 @@
 									});
 								},
 								hide: function (e, api){
-									sfExcFields = new Array();
 									api.destroy();
 								}
 							}
@@ -606,7 +619,9 @@
 						var items = $("input#_items_"+self.facetGroupIdList[index]);
 	
 						for(var i = 0; i < items.length; i++){
-							facetItems[i] = $(items[i]).val();
+							if($.isNotBlank($(items[i]).val()) && isXSSSafe($(items[i]).val())){
+								facetItems[i] = $(items[i]).val();
+							}
 						}
 						itemMap[self.facetGroupIdList[index]] = facetItems;
 					}

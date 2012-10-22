@@ -106,9 +106,11 @@
 			var facetFields = data.facet_counts.facet_fields;
 			var $ul = base.$el.find("ul#facetValues");
 			var selectedList = base.options.selectedList;
+			var facetValues = [];
 
 			if (base.options.facetField === "Category" && (GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn")){
-				facetValues = data.FacetTemplate.Level1;
+				if(data.FacetTemplate)
+					facetValues = data.FacetTemplate.Level1;
 			}
 			else{
 				facetValues = facetFields[base.options.facetField];
