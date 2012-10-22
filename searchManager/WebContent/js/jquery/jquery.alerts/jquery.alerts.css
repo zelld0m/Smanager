@@ -32,8 +32,10 @@
 }
 
 #popup_content.alert {
-	background-image: url(images/info.gif);
+	background-image: url(images/info.gif); z-index:1500; ;
 }
+
+#popup_content #popup_panel input[type=button] { }
 
 #popup_content.confirm {
 	background-image: url(images/important.gif);

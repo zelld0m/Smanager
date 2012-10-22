@@ -13,7 +13,6 @@
 			ruleFilterText: "",
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
-			zeroCountHTMLCode: "&#133;",
 			defaultRuleItemDisplay: "tileView",
 			lockedItemDisplayText: "Item is locked",
 
@@ -25,10 +24,8 @@
 				var self = this;
 
 				$("#rulePanel").sidepanel({
-					fieldId: "keywordId",
+					moduleName: self.moduleName,
 					fieldName: "keyword",
-					headerText : "Keyword",
-					searchText : "Enter Keyword",
 					showAddButton: allowModify,
 					page: self.rulePage,
 					pageSize: self.rulePageSize,
@@ -45,31 +42,28 @@
 							preHook: function(){ base.prepareList(); }
 						});
 					},
+					
+					itemNameCallback: function(base, item){
+						self.setRule(item.model);
+					},
 
-					itemOptionCallback: function(base, id, name, model){
-
-						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-
-						ExcludeServiceJS.getTotalProductInRule(id,{
+					itemOptionCallback: function(base, item){
+						ExcludeServiceJS.getTotalProductInRule(item.model["ruleId"],{
 							callback: function(count){
-
-								var totalText = (count == 0) ? self.zeroCountHTMLCode: "(" + count + ")"; 
-								base.$el.find(selector + ' div.itemLink a').html(totalText);
-
-								base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').on({
+								if (count > 0) item.ui.find("#itemLinkValue").html("(" + count + ")");
+								item.ui.find("#itemLinkValue").on({
 									click: function(e){
-										self.setRule(model);
+										self.setRule(item.model);
 									}
 								});
 							},
 							preHook: function(){ 
-								base.$el.find(selector + ' div.itemLink a').html('<img src="../images/ajax-loader-rect.gif">'); 
-							}
-						});
-
-						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
-							callback:function(data){
-								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
+								item.ui.find("#itemLinkValue").hide();
+								item.ui.find("#itemLinkPreloader").show();
+							},
+							postHook: function(){ 
+								item.ui.find("#itemLinkValue").show();
+								item.ui.find("#itemLinkPreloader").hide();
 							}
 						});
 					},
@@ -177,7 +171,7 @@
 					$li.find(".clearDate").show();
 				};
 
-				$li.find(".validityDateTextBox").datepicker({
+				$li.find(".validityDateTextBox").prop({readonly: true}).datepicker({
 					showOn: "both",
 					minDate: self.dateMinDate,
 					maxDate: self.dateMaxDate,
@@ -208,16 +202,18 @@
 							showAddComment: true,
 							locked: e.data.locked,
 							itemDataCallback: function(base, page){
-								CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
-									callback: function(data){
-										var total = data.totalSize;
-										base.populateList(data);
-										base.addPaging(base.options.page, total);
-									},
-									preHook: function(){
-										base.prepareList();
-									}
-								});
+								if(e.data){
+									CommentServiceJS.getComment(self.moduleName, e.data.item["memberId"], base.options.page, base.options.pageSize, {
+										callback: function(data){
+											var total = data.totalSize;
+											base.populateList(data);
+											base.addPaging(base.options.page, total);
+										},
+										preHook: function(){
+											base.prepareList();
+										}
+									});
+								}
 							},
 							itemAddComment: function(base, comment){
 								ExcludeServiceJS.addRuleComment(self.selectedRule["ruleId"], e.data.item["memberId"], comment, {
@@ -363,7 +359,7 @@
 				
 				$selector.fadeIn("slow", function(){
 					$("#titleText").html(self.moduleName + " for ");
-					$("#titleHeader").html(self.selectedRule["ruleName"]);
+					$("#titleHeader").text(self.selectedRule["ruleName"]);
 				});
 			},
 
@@ -468,10 +464,10 @@
 													}
 												});		
 											},
-											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues){
+											addFacetItemCallback: function(position, expiryDate, comment, selectedFacetFieldValues, ruleType){
 												ExcludeServiceJS.addFacetRule(self.selectedRule["ruleId"], expiryDate, comment, selectedFacetFieldValues, {
 													callback: function(data){
-														showActionResponse(data, "add", "New Rule Facet Item");
+														showActionResponse(data, "add", "New Rule "+ ruleType +" Item");
 														self.populateRuleItem();
 													},
 													preHook: function(){ 

@@ -70,6 +70,29 @@ public class RedirectCacheDao extends CacheDao<RedirectRule> {
 		}
 		return new CacheModel<RedirectRule>();
 	}
+	
+	@Override
+	protected CacheModel<RedirectRule> getDatabaseObject(Store store, String name) throws DaoException {
+		try {
+			StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
+			
+			DAOValidation.checkStoreKeywordPK(storeKeyword);
+			RedirectRule redirectRule = new RedirectRule();
+			redirectRule.setStoreId(storeKeyword.getStoreId());
+			redirectRule.setSearchTerm(storeKeyword.getKeywordId());
+			RecordSet<RedirectRule> rules = daoService.getRedirectRules(new SearchCriteria<RedirectRule>(redirectRule, null, null, 0, 0));
+			if (rules.getTotalSize() > 0) {
+				redirectRule = rules.getList().get(0);
+				if (rules.getTotalSize() > 1) {
+					logger.warn("Multiple keyword mappings detected for storeKeyword: " + storeKeyword);
+				}
+				return new CacheModel<RedirectRule>(redirectRule);
+			}
+		} catch (Exception e) {
+			logger.error("Failed to get redirect database object for store:" + store + ", name:" + name, e);
+		}
+		return new CacheModel<RedirectRule>();
+	}
 
 	public CacheModel<RedirectRule> getDatabaseObject(String ruleId) throws DaoException {
 		if (StringUtils.isNotBlank(ruleId)) {

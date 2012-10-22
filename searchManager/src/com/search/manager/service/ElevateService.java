@@ -25,6 +25,7 @@ import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.ws.SearchHelper;
@@ -548,6 +549,7 @@ public class ElevateService{
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+		com.setStore(new Store(UtilityService.getStoreName()));
 		daoService.addComment(com);
 		return com;
 	}
@@ -555,9 +557,11 @@ public class ElevateService{
 	@RemoteMethod
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
+		String store = UtilityService.getStoreName();
+		
 		try {
 			ElevateResult elevate = new ElevateResult();
-			elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			elevate.setStoreKeyword(new StoreKeyword(store, keyword));
 			elevate.setMemberId(memberId);
 			try {
 				elevate = daoService.getElevateItem(elevate);
@@ -573,6 +577,7 @@ public class ElevateService{
 				com.setUsername(UtilityService.getUsername());
 				com.setReferenceId(elevate.getMemberId());
 				com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
+				com.setStore(new Store(store));
 				result = daoService.addComment(com);
 			}
 		} catch (DaoException e) {

@@ -61,6 +61,20 @@ public class ExcludeCacheDao extends CacheDao<ExcludeResult> {
 		}
 		return new CacheModel<ExcludeResult>(excludedList);
 	}
+	
+	@Override
+	public CacheModel<ExcludeResult> getDatabaseObject(Store store, String name)throws DaoException {
+		ExcludeResult excludeFilter = new ExcludeResult();
+		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
+		excludeFilter.setStoreKeyword(storeKeyword);
+		// load only non-expired items
+		SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter, new Date(), null, 0, 0);
+		List<ExcludeResult> excludedList = daoService.getExcludeResultList(criteria).getList();
+		if (excludedList == null) {
+			excludedList = new ArrayList<ExcludeResult>();
+		}
+		return new CacheModel<ExcludeResult>(excludedList);
+	}
 
 	@Override
 	public boolean reload(ExcludeResult exclude) throws DataException, DaoException {

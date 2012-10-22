@@ -4,10 +4,11 @@
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
-.cssReset a:visited 			{ color:#9a1200; text-decoration:none }
-.cssReset a:hover 				{ color:#cf493f; text-decoration:underline }
+.cssReset a:visited 			{ color:#3B79C2; text-decoration:none; cursor:pointer }
+.cssReset a:hover 				{ color:#64ade3; text-decoration:underline }
 .cssReset .fLALink, 
-.cssReset .fLALink a			{ color:#ff7e69 }
+.cssReset .fLALink a			{ color:#60c3e0 }
+.cssReset span a, span a 		{ cursor:pointer; }
 
 /* layout */
 .cssReset .bgTopHeader 			{ width:100%; background:#3a3a3a; padding:8px 0; z-index:10 }

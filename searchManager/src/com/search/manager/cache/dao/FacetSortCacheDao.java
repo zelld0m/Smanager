@@ -1,7 +1,6 @@
 package com.search.manager.cache.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,11 +11,14 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
+import com.search.manager.enums.RuleType;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.SearchCriteria.MatchType;
 
 @Repository("facetSortCacheDao")
 public class FacetSortCacheDao extends CacheDao<FacetSort> {
@@ -44,6 +46,41 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 	}
 	
 	@Override
+	public boolean reload(Store store) throws DataException, DaoException {
+		String storeId = store.getStoreId();
+		try {
+			//reload facet sort rule of type: keyword
+			List<String> kwList = keywordCacheDao.getAllKeywords(store);
+			for(String kw : kwList){
+				StoreKeyword storeKeyword = new StoreKeyword(storeId, kw);
+				reload(storeKeyword);
+			}
+			
+			//reload facet sort rule of type: template name
+			FacetSort facetSort = new FacetSort();
+			facetSort.setStore(store);
+			facetSort.setRuleType(RuleType.TEMPLATE);
+			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSort);
+			RecordSet<FacetSort> facetSortList = daoService.searchFacetSort(criteria, null);
+			
+			if(facetSortList != null){
+				List<FacetSort> tnList = facetSortList.getList();
+				
+				for(FacetSort tn : tnList){
+					reload(store, tn.getName());
+				}
+			}
+			
+			return true;
+		} catch (DaoException e) {
+			logger.error(e,e);			
+		} catch (DataException e) {
+			logger.error(e,e);
+		}
+		return false;		
+	}
+	
+	@Override
 	public String getCacheKey(StoreKeyword storeKeyword) throws DataException {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
@@ -65,17 +102,16 @@ public class FacetSortCacheDao extends CacheDao<FacetSort> {
 	
 	@Override
 	public CacheModel<FacetSort> getDatabaseObject(StoreKeyword storeKeyword)throws DaoException {
-		FacetSort facetSortFilter = new FacetSort();
-		facetSortFilter.setStore(storeKeyword.getStore());
-		facetSortFilter.setName(storeKeyword.getKeywordTerm());
-		// load only non-expired items
-		SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(facetSortFilter, new Date(), null, 0, 0);
-		List<FacetSort> facetSortList = daoService.searchFacetSort(criteria, null).getList();
-		if (facetSortList == null) {
-			facetSortList = new ArrayList<FacetSort>();
-		}
-		return new CacheModel<FacetSort>(facetSortList);
-		
+		FacetSort facetSortFilter = new FacetSort(storeKeyword.getKeywordTerm(), RuleType.KEYWORD, null, storeKeyword.getStore());
+		FacetSort facetSort = daoService.getFacetSort(facetSortFilter);
+		return new CacheModel<FacetSort>(facetSort);
+	}
+	
+	@Override
+	public CacheModel<FacetSort> getDatabaseObject(Store store, String name)throws DaoException {
+		FacetSort facetSortFilter = new FacetSort(name, RuleType.TEMPLATE, null,store);
+		FacetSort facetSort = daoService.getFacetSort(facetSortFilter);
+		return new CacheModel<FacetSort>(facetSort);
 	}
 
 	@Override
