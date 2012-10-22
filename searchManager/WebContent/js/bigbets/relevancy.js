@@ -1443,7 +1443,14 @@
 			},
 
 			itemNameCallback: function(base, item){
-				setRelevancy(item.model);
+				RelevancyServiceJS.getRule(item.model["ruleId"], {
+					callback:function(data){
+						setRelevancy(data);
+					},
+					preHook:function(){
+						prepareRelevancy();
+					}
+				});
 			},
 			
 			itemOptionCallback: function(base, item){
