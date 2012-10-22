@@ -96,6 +96,8 @@
 						jAlert("Please select rule","Push to Prod");
 					}else if ($.isBlank(comment)){
 						jAlert("Please add comment","Push to Prod");
+					}else if(!isXSSSafe(comment)){
+						jAlert("Invalid comment. HTML/XSS is not allowed.","Push to Prod");
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						switch($(evt.currentTarget).attr("id")){

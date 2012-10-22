@@ -187,7 +187,7 @@
 		});		
 
 	
-		var dates = $("#startDate, #endDate").datepicker({
+		var dates = $("#startDate, #endDate").prop({readonly: true}).datepicker({
 			defaultDate: "+1w",
 			showOn: "both",
 			buttonImage: "../images/icon_calendar.png",

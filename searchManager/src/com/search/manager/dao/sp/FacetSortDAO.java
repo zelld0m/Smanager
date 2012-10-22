@@ -405,7 +405,7 @@ public class FacetSortDAO {
 	        inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(model.getStore()));
 	        inputs.put(DAOConstants.PARAM_START_ROW2, criteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW2, criteria.getEndRow());
-	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? null : matchType.getIntValue());
+	        inputs.put(DAOConstants.PARAM_MATCH_TYPE, (matchType == null) ? "" : matchType.getIntValue());
 	        inputs.put(DAOConstants.PARAM_SORT_TYPE, (sortType==null)? sortType: sortType.toString());
 	        inputs.put(DAOConstants.PARAM_RETURN_OPTION, 0);
 	        
@@ -424,7 +424,7 @@ public class FacetSortDAO {
 	    	SortType sortType = model.getSortType();
 			
 	    	inputs.put(DAOConstants.PARAM_RULE_ID, model.getRuleId());
-	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, "");
+	    	inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, model.getId());
 	    	inputs.put(DAOConstants.PARAM_RULE_NAME, "");
 	        inputs.put(DAOConstants.PARAM_RULE_TYPE, "");
 	        inputs.put(DAOConstants.PARAM_STORE_ID, "");
@@ -517,6 +517,7 @@ public class FacetSortDAO {
 		}
 	}
 
+	@Audit(entity = Entity.facetSort, operation = Operation.updateGroup)
 	public int updateFacetGroup(FacetGroup facetGroup) throws DaoException {
 		try {
 			DAOValidation.checkFacetGroupPK(facetGroup);
@@ -530,6 +531,21 @@ public class FacetSortDAO {
 			return DAOUtils.getUpdateCount(updateFacetGroupSP.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during updateFacetGroup(): " + e.getMessage(), e);
+		}
+	}
+	
+	@Audit(entity = Entity.facetSort, operation = Operation.updateGroupItem)
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems) throws DaoException {
+		int response = 0;
+		try{
+			for(FacetGroupItem facetGroupItem : facetGroupItems){
+				response += addFacetGroupItem(facetGroupItem);
+			}
+			
+			return response;
+		}
+		catch (Exception e) {
+			throw new DaoException("Failed during addFacetGroupItems(): " + e.getMessage(), e);
 		}
 	}
 

@@ -11,6 +11,55 @@
 		// Add a reverse reference to the DOM object
 		base.$el.data("sidepanel", base);
 
+		base.addAddButtonListener = function(){
+			base.$el.find("#addButton").off().on({
+				click: function(e){
+					var ruleName = $.trim(base.$el.find('input[type="text"]').val());
+
+					if(base.options.customAddRule){
+						//Skip validation
+					}else if ($.isBlank(ruleName) ||  ruleName.toLowerCase() === base.options.searchText.toLowerCase()){
+						jAlert(base.options.headerText + " is required.", base.options.headerText);
+						return
+					}else if (!isAllowedName(ruleName)){
+						jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
+						return
+					}
+
+					base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? ruleName: ""); 
+				}
+			});
+		};
+
+		base.sendRequest = function(event){
+			setTimeout(function(){
+				base.newSearch = $.trim($(event.target).val());
+
+				if (base.newSearch === base.options.searchText) {
+					base.newSearch = "";
+				};
+
+				base.addAddButtonListener();
+
+				if (base.oldSearch !== base.newSearch) {
+					base.getList(base.newSearch, 1);
+					base.oldSearch = base.newSearch;
+					base.sendRequest(event);
+					base.newSearch = "";
+				}
+				else {
+					base.searchActivated = false;
+				}
+			}, base.options.reloadRate);  
+		};
+
+		base.timeout = function(event){
+			if (!base.searchActivated) {
+				base.searchActivated = true;
+				base.sendRequest(event);
+			}
+		};
+
 		base.init = function(){
 			base.options = $.extend({},$.sidepanel.defaultOptions, options);
 
@@ -21,62 +70,26 @@
 			base.oldSearch = "";
 			base.newSearch = "";			
 
-			base.timeout = function(event){
-				if (!base.searchActivated) {
-					base.searchActivated = true;
-					base.sendRequest(event);
-				}
-			};
-			
-			base.sendRequest = function(event){
-				setTimeout(function(){
-					base.newSearch = $.trim($(event.target).val());
-					if (base.newSearch === base.options.searchText) {
-						base.newSearch = "";
-					};
-					
-					if (base.oldSearch != base.newSearch) {
-						base.getList(base.newSearch, 1);
-						base.oldSearch = base.newSearch;
-						base.sendRequest(event);
-						base.newSearch = "";
-					}
-					else {
-					    base.searchActivated = false;
-					}
-				}, base.options.reloadRate);  
-			};
-			
-			if($.isNotBlank(base.options.filterText))
+			if($.isNotBlank(base.options.filterText)){
 				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
-			
+			}
+
 			base.$el.find('input[id="searchTextbox"]').on({
 				// TODO: this does not detect when entries are pasted
 				blur: function(e){
 					if ($.trim($(e.target).val()).length == 0) 
 						$(e.target).val(base.options.searchText);
-						base.timeout(e);
-					},
+					base.timeout(e);
+				},
 				focus: function(e){
 					if ($.trim($(e.target).val()) == base.options.searchText)
 						$(e.target).val("");
-						base.timeout(e);
-					},
+					base.timeout(e);
+				},
 				keyup: base.timeout
 			});
 
-			base.$el.find('a#addButton').on({
-				click: function(e){
-					var name = $.trim(base.$el.find('input[type="text"]').val());
-					if (isAllowedName(name) && name !== base.options.searchText){
-						base.options.itemAddCallback(base, name); 
-					}else if($.isBlank(name) || name === base.options.searchText){
-						alert("Please specify a valid input");
-					}else{
-						alert("Field contains invalid character");
-					}
-				}
-			});
+			base.addAddButtonListener();
 		};
 
 		base.populateTemplate = function(){
@@ -88,9 +101,9 @@
 			content+= base.options.headerText;
 			content+= '<img src="../images/corner_bl.png" class="curveBL"/>';
 			content+= '<img src="../images/corner_br.png" class="curveBR"/>';
-			
+
 			content+= '</div>';
-			
+
 			if (base.options.showSearch){
 				content+= '<div class="sideSearch">';
 				content+= '<span style="padding-top:7px">';
@@ -111,11 +124,10 @@
 				content+= '</span>';
 				content+= '</div>';
 			}
-			
+
 			content+= '<div id="sideContent" class="sideContent">';
-			content+= '<table width="100%">';
-			content+= '	<tbody id="itemListing">';
-			content+= '		<tr id="itemPattern" style="display:none;">';
+			content+= '	<table width="100%" id="itemListing">';
+			content+= '		<tr id="itemPattern" class="itemRow" style="display:none;">';
 			content+= '			<td class="padR10 padL10">';
 			content+= '				<div class="itemHolder clearfix">';	
 			content+= '					<div style="width:155px; float:left;">';
@@ -125,12 +137,21 @@
 			content+= '							<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
 			content+= '						</div>';
 			content+= '					</div>';
-			content+= '					<div class="itemLink"><a href="javascript:void(0);"></a></div>';
+			content+= '					<div class="itemLink">';
+			content+= '						<img id="itemLinkPreloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display:none">';
+			content+= '						<a id="itemLinkValue" href="javascript:void(0);">&#133;</a>';
+			content+= '					</div>';
 			content+= '				</div>';		
 			content+= '			</td>';
 			content+= '		</tr>';
-			content+= '	</tbody>';
-			content+= '</table>'; 
+			content+= '		<tr id="sideContentItemPreloader">';
+			content+= '			<td>';
+			content+= '				<div class="pad10 txtAC w200" style="padding:10px; text-align:center; width:200px;">';
+			content+= '					<img src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+			content+= '				</div>';
+			content+= '			</td>';
+			content+= '		</tr>';
+			content+= '	</table>'; 
 			content+= '</div>'; 
 
 			content+= '<div id="sideFooter" class="sideFooter" >';
@@ -146,35 +167,52 @@
 		};
 
 		base.prepareList = function(){
-			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
-			base.$el.find("#itemListing").prepend('<tr><td><div class="pad10 txtAC w200" style="padding:10px; text-align:center; width:200px;"><img src="../images/ajax-loader-rect.gif"></div></td></tr>'); 
-			base.$el.find("#sideBottomPaging").attr("style", "display:none");
+			var $table = base.$el.find("table#itemListing");
+			$table.find("tr.itemRow:not(#itemPattern)").remove();
+			$table.find("tr#sideContentItemPreloader").show();
+			base.$el.find("#sideBottomPaging").hide();
 		};
 
 		base.populateList = function(data){
+			var name = "";
+			var id = "";
+			var $tr = null;
 			var list = data.list;
+			var $table = base.$el.find("table#itemListing");
+
+			$table.find("tr#sideContentItemPreloader").hide();
 
 			// Delete all the rows except for the "pattern" row
-			base.$el.find("tbody#itemListing").children().not("#itemPattern").remove();
+			$table.find("tr.itemRow:not(#itemPattern)").remove();
 
 			// populate list
-			//dwr.engine.beginBatch(); 
 			for (var i = 0; i < data.list.length; i++) {
-				var id = list[i][base.options.fieldId]==undefined? i+1 : list[i][base.options.fieldId];
-				var name = list[i][base.options.fieldName];
-				var suffixId = $.formatAsId(id);
+				name = list[i][base.options.fieldName];
+				id = "item" + $.formatAsId(i+1);
 
-				base.$el.find("tr#itemPattern").clone().appendTo("tbody#itemListing").attr("id","itemPattern" + suffixId);
-				suffixId = $.escapeQuotes(suffixId);
-				
-				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').html(name);
-				base.$el.find('#itemPattern' + suffixId + ' div.itemText a').on({click:base.options.itemNameCallback},{name:name, id:id, model:list[i]});
-				base.$el.find('#itemPattern' + suffixId).show();
-				
-				base.options.itemOptionCallback(base, id, name, list[i]);
+				$tr = $table.find("tr#itemPattern").clone();
+				$tr.attr("id", id).show();
+				$table.append($tr);
 
+				$tr.find(".itemText > a").text(name).on({
+					click: function(e){
+						base.options.itemNameCallback(e.data.base, e.data);	
+					}
+				},{base: base, ui: $tr, name:name, id:id, model:list[i]});
+
+				base.options.itemOptionCallback(base, {ui:$tr, name:name, id:id, model:list[i]});
+
+				if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
 			}
-			//dwr.engine.endBatch();
+		};
+
+		base.getRuleStatus = function(tr, item){
+			var $tr = tr;
+			DeploymentServiceJS.getRuleStatus(base.options.moduleName, item["ruleId"], {
+				callback:function(data){
+					$tr.find('.itemSubText').html(getRuleNameSubTextStatus(data));
+				}
+			});
 		};
 
 		base.addPaging = function(keyword, page, total){
@@ -221,16 +259,19 @@
 			pageSize: 10,
 			region: "left",
 			pageStyle: "style1",
-			headerText: "",
-			searchText: "",
+			headerText: "Keyword",
+			searchText: "Search Keyword",
 			searchLabel: "",
 			filterText:"",
 			maxCharacter: 50,
+			customAddRule: false,
+			itemTitle: "New Rule",
 			showAddButton: true,
 			showSearch: true,
+			showStatus: true,
 			itemDataCallback: function(e){},
-			itemOptionCallback: function(e){},
-			itemNameCallback: function(e){},
+			itemOptionCallback: function(base, item){},
+			itemNameCallback: function(base, item){},
 			itemAddCallback: function(e){},
 			pageChangeCallback: function(e){},
 			reloadRate: 2000

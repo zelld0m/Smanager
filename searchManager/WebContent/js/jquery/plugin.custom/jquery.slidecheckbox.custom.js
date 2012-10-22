@@ -59,9 +59,9 @@
 								              .css("background-position", "100% 0%");
 							}
 		
-							base.options.changeStatusCallback(e.data.id, $(checkboxID).is(":checked"));
+							base.options.changeStatusCallback(base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked")});
 						}
-					},{initOn: base.options.initOn, id: base.options.id});
+					},{initOn: base.options.initOn, id: base.options.id, item: base.options.item});
 			
 			if(base.options.locked){
 				base.$el.siblings("div." + setClass).remove();
@@ -79,9 +79,10 @@
 
 	$.slidecheckbox.defaultOptions = {
 			id: "",
+			item: null,
 			initOn: false,
 			locked: false,
-			changeStatusCallback: function(status){}
+			changeStatusCallback: function(base, data){}
 	};
 
 	$.fn.slidecheckbox = function(options){

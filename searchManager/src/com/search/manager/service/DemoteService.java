@@ -25,6 +25,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 
@@ -497,6 +498,7 @@ public class DemoteService{
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
+		com.setStore(new Store(UtilityService.getStoreName()));
 		daoService.addComment(com);
 		return com;
 	}
@@ -504,9 +506,10 @@ public class DemoteService{
 	@RemoteMethod
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
+		String store = UtilityService.getStoreName();
 		try {
 			DemoteResult demote = new DemoteResult();
-			demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			demote.setStoreKeyword(new StoreKeyword(store, keyword));
 			demote.setMemberId(memberId);
 			try {
 				demote = daoService.getDemoteItem(demote);
@@ -522,6 +525,7 @@ public class DemoteService{
 				com.setUsername(UtilityService.getUsername());
 				com.setReferenceId(demote.getMemberId());
 				com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
+				com.setStore(new Store(store));
 				result = daoService.addComment(com);
 			}
 		} catch (DaoException e) {

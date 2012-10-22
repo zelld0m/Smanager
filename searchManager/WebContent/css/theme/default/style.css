@@ -4,10 +4,11 @@
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
-.cssReset a:visited 			{ color:#3B79C2; text-decoration:none }
+.cssReset a:visited 			{ color:#3B79C2; text-decoration:none; cursor:pointer }
 .cssReset a:hover 				{ color:#64ade3; text-decoration:underline }
 .cssReset .fLALink, 
 .cssReset .fLALink a			{ color:#60c3e0 }
+.cssReset span a, span a 		{ cursor:pointer; }
 
 /* layout */
 .cssReset .bgTopHeader 			{ width:100%; background:#3a3a3a; padding:8px 0; z-index:10 }
@@ -27,6 +28,7 @@ ul.dropdown ul.subMenu li.active a	{ color:#0087c7 }
 .cssReset .sideMenuArea			{ width: 240px; position:relative; /*border-top: 3px solid #009eda;*/ margin-top:0; z-index:200 }
 
 .cssReset .sideMenuArea img.ui-datepicker-trigger { margin-bottom:-4px; margin-left:3px}
+img.ui-datepicker-trigger { cursor:pointer }
 
 
 .qtip .security img.ui-datepicker-trigger { margin-bottom:-3px; margin-left:3px}
@@ -316,6 +318,8 @@ font:bold 12px Arial, Helvetica, sans-serif; color:#313131; padding:12px 3px; }
 
 .cssReset .GraytopLine			{ background:url(images/bgSort.jpg) repeat-x; padding-top:5px; margin-top:8px }
 .cssReset .iconHolder			{ float:left; display:inline; width:11px; margin-left:5px }
+.cssReset .deleteIcon, a img,
+.cssReset a.deleteIcons			{ border:0; }
 .cssReset .elevTxtHolder		{ float:left; display:inline; width:auto; margin:-3px 7px 0 5px font-size:11px; color:red; text-align:right; font-weight: normal }
 
 /*.cssReset .bluebgTitle			{ background:url(images/bgLeftMenu.jpg); width:230px; height:27px; vertical-align:middle; padding-left:10px; padding-top:7px; margin-top:27px }*/
@@ -500,6 +504,8 @@ ul.topmenu li.submenu:hover ul li:hover { }
 .listItemInfo li.value			{ float:left; padding:0; width:60px; text-align:left }
 
 .listProd li					{ text-align:left }
+.ie .listProd #deleteCalendarIcon { position:relative; bottom:-4px }
+.listProd #deleteCalendarIcon, .listProd span .ui-datepicker-trigger { cursor: pointer }
 
 .toggleDiv						{ border:2px solid #3e3e3e }
 .titleToggle					{ background:url(images/bg_titleGray.png) repeat-x; height: 34px; }
@@ -582,7 +588,7 @@ body .tabvs .tabs .ui-widget-content	{ border:1px solid #d3d3d3; margin-top:1px;
 .tabvs .ui-tabs-nav li a		{ padding:8px 10px !important; font-size:12px; font-weight: bold; width: 128px}
 .tabvs .ui-tabs-nav li a:hover 	{ cursor: pointer; }
 .tabvs .ui-tabs-nav li.ui-state-active { border-right:3px solid #fff !important; border-bottom:1px solid #aaaaaa !important }				
-body .tabvs .ui-widget-content.contentWrapper	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:525px; margin-left:151px; top:-35px; min-height: 400px; z-index:50 }
+body .tabvs .ui-widget-content.contentWrapper	{ border:1px solid #bdbdbd; margin-top:1px; padding:15px 20px; position:relative; width:525px; margin-left:151px; top:-35px; min-height: 320px; z-index:50 }
 .tabvs .ui-tabs-panel			{ padding:3px 10px !important;  }
 .tabvs .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .tabvs .ui-tabs-panel h3		{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
@@ -904,6 +910,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }
 
 
+/*div.sideSearch input:focus,*/
 .searchBoxHolder:focus, div.searchBoxHolder:focus, select:focus, textarea:focus, .pagingArrow input:focus, .boxContainer input:focus, label input:focus, 
 .tblCatalog input:focus, .bannerContent input:focus, .highlight input:focus
  { 

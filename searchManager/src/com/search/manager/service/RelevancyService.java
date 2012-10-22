@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -435,9 +434,10 @@ public class RelevancyService {
 
 		for (String string: excludedFields) {
 			Field field = schema.getField(string);
-			List<Field> relatedFields = field.getRelatedFields();
 			excludeFieldList.add(field);
-			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
+			// do not remove related fields
+//			List<Field> relatedFields = field.getRelatedFields();
+//			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
 		}
 
 		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(keyword, excludeFieldList));

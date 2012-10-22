@@ -81,11 +81,13 @@
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
 									ruleId: base.options.rule["ruleId"],
-//								buttonHolderId: "#versionHolder",
-//								locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-//								restoreCallback: function(rankingRule){
-//									setRelevancy(rankingRule);
-//								}
+//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+									preRestoreCallback: function(el){
+										base.options.preRestoreCallback(el);
+									},
+									postRestoreCallback: function(el, rule){
+										base.options.postRestoreCallback(el, rule);
+									}
 								});
 							}
 						});
@@ -199,7 +201,9 @@
 			beforeSubmitForApprovalRequest: function(){}, 
 			afterSubmitForApprovalRequest: function(status){}, 
 			beforeRuleStatusRequest: function(){}, 
-			afterRuleStatusRequest: function(status){}
+			afterRuleStatusRequest: function(status){},
+			preRestoreCallback: function(base){},
+			postRestoreCallback: function(base, rule){}
 	};
 
 	$.fn.rulestatus = function(options){

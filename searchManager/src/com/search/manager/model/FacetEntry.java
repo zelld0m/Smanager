@@ -125,67 +125,69 @@ public class FacetEntry {
 	 * For Facet Template Name facets. Special processing.
 	 */
 	public static void sortFacetTemplateEntries(List<FacetEntry> entries, final SortType sortType, List<String> elevatedValues) {
-		if (sortType == SortType.ASC_ALPHABETICALLY || sortType == SortType.DESC_ALPHABETICALLY) {
-			sortEntries(entries, sortType, elevatedValues);
-		}
-		else {
-			
-			// collate values
-			Map<String, FacetEntry> catMap = new HashMap<String, FacetEntry>();
-			for (FacetEntry entry: entries) {
-				String key = getFirstLevelCategory(entry.getLabel());
-				FacetEntry catMapEntry = catMap.get(key);
-				if (catMapEntry == null) {
-					catMapEntry = new FacetEntry(key, 0);
-					catMap.put(key, catMapEntry);
-				}
-				catMapEntry.addCount(entry.getCount());
+		// collate values
+		Map<String, FacetEntry> catMap = new HashMap<String, FacetEntry>();
+		for (FacetEntry entry: entries) {
+			String key = getFirstLevelCategory(entry.getLabel());
+			FacetEntry catMapEntry = catMap.get(key);
+			if (catMapEntry == null) {
+				catMapEntry = new FacetEntry(key, 0);
+				catMap.put(key, catMapEntry);
 			}
-			
-			// sort 1st level by count
-			final List<FacetEntry> mapEntries = new ArrayList<FacetEntry>();
-			mapEntries.addAll(catMap.values());
-			sortEntries(mapEntries, sortType, elevatedValues);
-			
-			final List<String> sortedMapEntries = new ArrayList<String>();
-			for (FacetEntry entry: mapEntries) {
-				sortedMapEntries.add(entry.getLabel());
-			}
-			
-			// sort entries
-			Collections.sort(entries, new Comparator<FacetEntry>() {
-				@Override
-				public int compare(FacetEntry entry1, FacetEntry entry2) {
-					int val = 0;
-					int val1 = sortedMapEntries.indexOf(getFirstLevelCategory(entry1.getLabel()));
-					int val2 = sortedMapEntries.indexOf(getFirstLevelCategory(entry2.getLabel()));
-					if (val1 == val2) {
-						val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
-						if (val == 0) {
-							val = entry1.getLabel().compareTo(entry2.getLabel());
-						}
-					}
-					else {
-						val = val1 - val2;
-					}
-					return val;
-				}
-			});
+			catMapEntry.addCount(entry.getCount());
 		}
+		
+		// sort 1st level by count
+		final List<FacetEntry> mapEntries = new ArrayList<FacetEntry>();
+		mapEntries.addAll(catMap.values());
+		sortEntries(mapEntries, sortType, elevatedValues);
+		
+		final List<String> sortedMapEntries = new ArrayList<String>();
+		for (FacetEntry entry: mapEntries) {
+			sortedMapEntries.add(entry.getLabel());
+		}
+		
+		// sort entries
+		Collections.sort(entries, new Comparator<FacetEntry>() {
+			@Override
+			public int compare(FacetEntry entry1, FacetEntry entry2) {
+				int val = 0;
+				int val1 = sortedMapEntries.indexOf(getFirstLevelCategory(entry1.getLabel()));
+				int val2 = sortedMapEntries.indexOf(getFirstLevelCategory(entry2.getLabel()));
+				if (val1 == val2) {
+					val = entry1.getLabel().compareToIgnoreCase(entry2.getLabel());
+					if (val == 0) {
+						val = entry1.getLabel().compareTo(entry2.getLabel());
+					}
+				}
+				else {
+					val = val1 - val2;
+				}
+				return val;
+			}
+		});
+
 	}
 	
 	public static void main(String[] args) {
 		List<String> elevatedValues = new ArrayList<String>();
 		elevatedValues.add("Software");
-		elevatedValues.add("Data Storage");
+		elevatedValues.add("Office Equipment & Supplies");
+		elevatedValues.add("Services");
 		
 		List<FacetEntry> entries = new ArrayList<FacetEntry>();
-		entries.add(new FacetEntry("Software | Database & Business Intelligence Software", 6));
-		entries.add(new FacetEntry("Software | Software Media Kits & Documentation", 3));
+		entries.add(new FacetEntry("Office Equipment & Supplies | Books | Hardware How-To Books", 2062));
+		entries.add(new FacetEntry("Software | Backup/Archive/Storage Software | Data Archive Software", 85));
+		entries.add(new FacetEntry("Services | 3rd Party Delivered Services", 6));
+		entries.add(new FacetEntry("Services | 3rd Party Delivered Services | Help Desk", 3));
+		entries.add(new FacetEntry("Computers", 2));
 		entries.add(new FacetEntry("Computers | All-In-One Computers", 700));
 		entries.add(new FacetEntry("Electronics | Tablets & Accessories | Tablet Cases/Covers", 494));
 		entries.add(new FacetEntry("Electronics | Cell/Smart Phones & Accessories | Cell/Smart Phone Cases & Holsters", 398));
+		entries.add(new FacetEntry("", 64));
+		entries.add(new FacetEntry("Office Equipment & Supplies | Books", 593));
 		entries.add(new FacetEntry("Electronics | MP3 Players & Accessories | MP3 Armbands/Cases/Covers", 390));
+		entries.add(new FacetEntry("Office Equipment & Supplies | Books | Hardware How-To Books", 21));
 		entries.add(new FacetEntry("Computer Accessories", 181));
 		entries.add(new FacetEntry("Electronics | MP3 Players & Accessories | MP3 Power Adapters/Chargers", 172));
 		entries.add(new FacetEntry("Computer Accessories | Notebook Accessories | Notebook Batteries", 124));
@@ -194,30 +196,42 @@ public class FacetEntry {
 		entries.add(new FacetEntry("Electronics | Video Camcorders & Accessories | Camcorder Accessories", 89));
 		entries.add(new FacetEntry("Data Storage", 1));
 		
-		sortEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues);
-		for (FacetEntry entry: entries) {
-			System.out.println(entry.getLabel() + ": " + entry.getCount());
-		}
-		System.out.println();
-
-		sortEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues);
-		for (FacetEntry entry: entries) {
-			System.out.println(entry.getLabel() + ": " + entry.getCount());
-		}
-		System.out.println();
-
-		sortEntries(entries, SortType.ASC_COUNT, elevatedValues);
-		for (FacetEntry entry: entries) {
-			System.out.println(entry.getLabel() + ": " + entry.getCount());
-		}
-		System.out.println();
-
-		sortEntries(entries, SortType.DESC_COUNT, elevatedValues);
+//		sortEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues);
+//		for (FacetEntry entry: entries) {
+//			System.out.println(entry.getLabel() + ": " + entry.getCount());
+//		}
+//		System.out.println();
+//
+//		sortEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues);
+//		for (FacetEntry entry: entries) {
+//			System.out.println(entry.getLabel() + ": " + entry.getCount());
+//		}
+//		System.out.println();
+//
+//		sortEntries(entries, SortType.ASC_COUNT, elevatedValues);
+//		for (FacetEntry entry: entries) {
+//			System.out.println(entry.getLabel() + ": " + entry.getCount());
+//		}
+//		System.out.println();
+//
+//		sortEntries(entries, SortType.DESC_COUNT, elevatedValues);
+//		for (FacetEntry entry: entries) {
+//			System.out.println(entry.getLabel() + ": " + entry.getCount());
+//		}
+//		System.out.println();
+		
+		sortFacetTemplateEntries(entries, SortType.ASC_ALPHABETICALLY, elevatedValues);
 		for (FacetEntry entry: entries) {
 			System.out.println(entry.getLabel() + ": " + entry.getCount());
 		}
 		System.out.println();
 		
+		sortFacetTemplateEntries(entries, SortType.DESC_ALPHABETICALLY, elevatedValues);
+		for (FacetEntry entry: entries) {
+			System.out.println(entry.getLabel() + ": " + entry.getCount());
+		}
+		System.out.println();
+
 		sortFacetTemplateEntries(entries, SortType.ASC_COUNT, elevatedValues);
 		for (FacetEntry entry: entries) {
 			System.out.println(entry.getLabel() + ": " + entry.getCount());

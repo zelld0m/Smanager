@@ -17,6 +17,8 @@ import com.search.manager.exception.DataException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -1255,26 +1257,54 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		Map<String,Boolean> map = getKLMap(list);
 		try {
 			// Create backup
-			fileService.createBackup(store,list,RuleEntity.FACET_SORT);		
+			fileService.createBackup(store,list,RuleEntity.FACET_SORT);
 			
 			for(String key : list){
-
-				FacetSort delFs = new FacetSort();
-				delFs.setRuleId(key);
-				delFs.setStore(new Store(store));
+				int result = -1;
+				FacetSort delFs = new FacetSort(key, store);
 				daoService.deleteFacetSort(delFs); // prod
 
 				// retrieve staging data then push to prod
-				FacetSort addFs = new FacetSort();
-				delFs.setRuleId(key);
-				delFs.setStore(new Store(store));
+				FacetSort addFs = new FacetSort(key, store);
 				addFs = daoServiceStg.getFacetSort(delFs);
 								
 				if(addFs != null) {
-					daoService.addFacetSort(addFs); // prod 
+					try{
+						result += daoService.addFacetSort(addFs); // prod 
+						
+						//add facet groups
+						FacetGroup facetGroup = new FacetGroup(key, "");
+						SearchCriteria<FacetGroup> criteria = new SearchCriteria<FacetGroup>(facetGroup);
+						RecordSet<FacetGroup> addFsGroups = daoServiceStg.searchFacetGroup(criteria, MatchType.MATCH_ID);
+						
+						if(addFsGroups != null){
+							List<FacetGroup> addFsGs = addFsGroups.getList();
+							
+							for(FacetGroup fg : addFsGs){
+								result += daoService.addFacetGroup(fg);	//prod
+							}
+						}
+						
+						//add facet group items
+						FacetGroupItem facetGroupItem = new FacetGroupItem(key, "");
+						SearchCriteria<FacetGroupItem> criteria2 = new SearchCriteria<FacetGroupItem>(facetGroupItem);
+						RecordSet<FacetGroupItem> addFsGroupItems = daoServiceStg.searchFacetGroupItem(criteria2, MatchType.MATCH_ID);
+						
+						if(addFsGroupItems != null){
+							result += daoService.addFacetGroupItems(addFsGroupItems.getList()); //prod
+						}
+						
+						map.put(key, (result > 0));
+					}
+					catch(DaoException e){
+						logger.error("Failed during addRule()",e);
+						try {
+							daoService.deleteFacetSort(new FacetSort(key, store));
+						} catch (DaoException de) {
+							logger.error("Unable to complete process, need to manually delete rule", de);
+						}
+					}
 				}
-				
-				map.put(key, true);
 			}
 			
 			Store s = new Store(store);
@@ -1326,12 +1356,14 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		try {	
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
+						int result = -1;
+					
 						FacetSort delFs = new FacetSort();
 						delFs.setRuleId(key);
 						delFs.setStore(new Store(store));
-						daoService.deleteFacetSort(delFs); // prod
+						result = daoService.deleteFacetSort(delFs); // prod
 						daoCacheService.setForceReloadFacetSort(new Store(store));
-						map.put(key, true);
+						map.put(key, (result > 0));
 				}
 			}
 		} catch (Exception e) {

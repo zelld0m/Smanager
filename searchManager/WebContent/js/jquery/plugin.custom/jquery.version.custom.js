@@ -43,7 +43,7 @@
 						base.contentHolder.html(base.getTemplate());
 						base.contentHolder.find("#versionWrapper").before(base.getItemListTemplate());
 						base.getAvailableVersion();
-						base.addButtonListener();
+						base.addSaveButtonListener();
 					},
 					hide: function(event, api){
 						base.options.afterClose();
@@ -53,7 +53,7 @@
 			});
 		};
 
-		base.addButtonListener = function(){
+		base.addSaveButtonListener = function(){
 			var $content = base.contentHolder;
 
 			$content.find("a#cancelBtn, a#saveBtn").on({
@@ -103,6 +103,54 @@
 			});
 		};
 
+		base.addDeleteVersionListener = function(tr, item){
+			var $tr = tr;
+			var $item = item;
+			
+			$tr.find(".deleteIcon").on({
+				click:function(e){
+					jConfirm("Delete restore point version " + $item["name"] + "?" , "Delete Version", function(result){
+						if(result){
+							RuleVersioningServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, $item["version"], {
+								callback:function(data){
+									base.getAvailableVersion();
+								}
+							});
+						}
+					});
+				}
+			});
+		};
+
+		base.addRestoreVersionListener = function(tr, item){
+			var $tr = tr;
+			var $item = item;
+			
+			$tr.find(".restoreIcon").on({
+				click:function(e){
+					jConfirm("Restore data to version " + $item["name"] + "?" , "Restore Version", function(result){
+						if(result){
+							RuleVersioningServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, $item["version"], {
+								callback:function(data){
+
+								},
+								preHook:function(){
+									base.options.preRestoreCallback(base);
+								},
+								postHook:function(){
+									RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, $item["version"], {
+										callback: function(data){
+											base.options.postRestoreCallback(base, data);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		};
+
 		base.getAvailableVersion = function(){
 			var $content = base.contentHolder;
 			var $table = $content.find("table#versionList");
@@ -110,6 +158,13 @@
 			RuleVersioningServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
 				callback: function(data){
 					$table.find("tr.itemRow:not(#itemPattern)").remove();
+					
+					if(data.length>0){
+						$table.find("tr#empty_row").hide();
+					}else{
+						$table.find("tr#empty_row").show();
+					}
+					
 					for (var i=0; i < data.length ; i++){
 						var item = data[i];
 						var $tr = $table.find("tr#itemPattern").clone();
@@ -119,14 +174,12 @@
 						$tr.find("td#itemDate").html(item["dateCreated"].toUTCString());
 						$tr.find("td#itemInfo > p#name").html(item["name"]);
 						$tr.find("td#itemInfo > p#notes").html(item["reason"]);
-
+						base.addDeleteVersionListener($tr, item);
+						base.addRestoreVersionListener($tr, item);
 						$tr.show();
 						$table.append($tr);
 					}
 					$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
-				},
-				preHook:function(){
-
 				},
 				postHook:function(){
 					$table.find("tr#preloader").remove();
@@ -139,7 +192,7 @@
 
 			template += '<div style="width:700px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
-			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';
+			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';			
 			
 			template += '	<div id="version" class="floatL w400">';
 			template += '		<div class="w400 mar0 pad0">';
@@ -147,9 +200,10 @@
 			template += '				<tbody>';
 			template += '					<tr>';
 			template += '						<th class="displayBlock w60">';
-			template += ' 	                  	<input id="selectAll" type="checkbox"/>';
+			template += '							<a id="compareBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '								<div class="buttons fontBold">Compare</div>';
+			template += '							</a>';
 			template += '						</th>';
-			//template += '						<th width="20px">#</th>';
 			template += '						<th class="w160">Name</th>';
 			template += '						<th class="w135">Date</th>';
 			template += '						<th class="w55"></th>';
@@ -178,6 +232,11 @@
 			template += '					<tr id="preloader">';
 			template += '						<td colspan="6" class="txtAC">';
 			template += '							<img id="preloader" alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
+			template += '						</td>';
+			template += '					</tr>';
+			template += '					<tr id="empty_row" style="display:none">';
+			template += '						<td colspan="6" class="txtAC">';
+			template += '							No available version for this rule';	
 			template += '						</td>';
 			template += '					</tr>';
 			template += '				</tbody>';
@@ -212,9 +271,11 @@
 			template += '				<div class="buttons fontBold">Cancel</div>';
 			template += '			</a>';
 			template += '		</div>';
+
 			template += '	</div>'; // end addVersion
 			template += '	</div>';	// end w400		
 			template += '</div>'; // end w700
+
 
 			return template;
 		};
@@ -243,7 +304,8 @@
 			locked: true,
 			beforeRequest: function(){},
 			afterRequest: function(){},
-			restoreCallback: function(rule){},
+			preRestoreCallback: function(base){},
+			postRestoreCallback: function(base, rule){},
 			afterClose:function(){}
 	};
 

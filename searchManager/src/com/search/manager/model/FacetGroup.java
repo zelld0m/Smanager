@@ -18,6 +18,7 @@ public class FacetGroup extends ModelBean {
 	private FacetGroupType facetGroupType;
 	private SortType sortType;
 	private Integer sequence;
+	private String storeId;
 	
 	public FacetGroup() {}
 	
@@ -45,6 +46,19 @@ public class FacetGroup extends ModelBean {
 		this(ruleId, id, null, null, null, null);
 	}
 	
+	public FacetGroup(String ruleId, String id, String name,
+			FacetGroupType facetGroupType, SortType sortType, Integer sequence,
+			String storeId) {
+		super();
+		this.ruleId = ruleId;
+		this.id = id;
+		this.name = name;
+		this.facetGroupType = facetGroupType;
+		this.sortType = sortType;
+		this.sequence = sequence;
+		this.storeId = storeId;
+	}
+
 	public FacetGroup(String id) {
 		this("", id);
 	}
@@ -97,6 +111,14 @@ public class FacetGroup extends ModelBean {
 		this.sortType = sortType;
 	}
 	
+	public String getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(String storeId) {
+		this.storeId = storeId;
+	}
+
 	public String getFormattedCreatedDate() {
 		return DateAndTimeUtils.formatMMddyyyy(getCreatedDate());
 	}

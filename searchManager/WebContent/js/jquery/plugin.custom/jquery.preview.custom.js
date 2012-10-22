@@ -187,12 +187,12 @@
 			case "facet sort": 
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
-				
+
 				FacetSortServiceJS.getRuleById(base.options.ruleId, {
 					callback: function(data){
 						$ruleInfo.find("#ruleName").text(data.name);
 						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
-						
+
 						for(var facetGroup in data.items){
 							var facetName = facetGroup;
 							var facetValue = data.items[facetGroup];
@@ -200,7 +200,7 @@
 							var $tr = $table.find("tr#itemPattern").clone();
 							$tr.prop({id: $.formatAsId(facetName)});
 							$tr.find("#itemName").text(facetName);
-							
+
 							if($.isArray(facetValue)){
 								for(var i=0; i < facetValue.length; i++){
 									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
@@ -210,14 +210,14 @@
 
 							var sortTypeDisplay = "";
 							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
-							
+
 							switch(sortType){
-								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
-								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
-								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
-								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+							case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+							case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+							case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
 							}
-							
+
 							$tr.find("#itemSortType").text(sortTypeDisplay);
 							$tr.show();
 							$table.append($tr);
@@ -392,6 +392,17 @@
 			}
 
 			$table.find("tr:even").addClass("alt");
+		};
+
+		base.getPreTemplate = function(){
+			var template = base.options.preTemplate;
+
+			if (base.options.enablePreTemplate && $.isBlank(base.options.preTemplate)){
+				template  = '<div>';
+				template += '</div>';
+			} 
+
+			return template;
 		};
 
 		base.getTemplate = function(){
@@ -686,6 +697,36 @@
 			return template;
 		};
 
+		base.getPostTemplate = function(){
+			var template = base.options.postTemplate;
+
+			if (base.options.enablePostTemplate && $.isBlank(base.options.postTemplate)){
+				template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
+				template += '	<h3 class="padL15" style="border:none">Approval Guidelines</h3>';
+				template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
+				template += '		<p align="justify">';
+				template += '			Before approving any rule, it is advisable to review rule details.<br/><br/>';
+				template += '			If the rule is ready to be pushed to production, click on <strong>Approve</strong>.';
+				template += '			If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.';
+				template += '		<p>';
+				template += '	</div>';
+				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
+				template += '	<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<div align="right" class="padR15 marT10">';
+				template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Approve</div>';
+				template += '		</a>';
+				template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Reject</div>';
+				template += '		</a>';
+				template += '	</div>';
+				template += '</div>';
+			} 
+
+			return template;
+		};
+
 		base.showPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -727,6 +768,10 @@
 			ruleType: "",
 			ruleId: "",
 			version: "",
+			enablePreTemplate: false,
+			enablePostTemplate: false,
+			preTemplate: "",
+			postTemplate: "",
 			itemForceAddStatusCallback: function(base, memberIds){}
 	};
 

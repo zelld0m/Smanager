@@ -178,6 +178,7 @@
 		</div>
 		
 		<div id="facetSortTemplate" style="display: none">
+			<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
 			<div id="ruleInfo">
 				<label class="w70 floatL fbold">Rule Name:</label>
 				<label class="wAuto floatL" id="ruleName">
@@ -217,6 +218,26 @@
 				 	</tbody>
 				 </table>
 				</div>
+				<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">
+				<h3 style="border:none">Approval Guidelines</h3>
+				<div class="fgray padL15 padR10 padB15 fsize11">
+					<p align="justify">
+					Before approving any rule, it is advisable to review rule details.<br/><br/>
+					If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.
+					<p>
+				</div>
+				<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>
+				<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea>	</label>
+				<div class="clearB"></div>
+				<div align="right" class="padR15 marT10">
+					<a id="approveBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Approve</div>
+					</a>
+					<a id="rejectBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a>
+				</div>
+			</div>
 		</div>		
 				
 		<div id="queryCleaningTemplate" style="display: none;">

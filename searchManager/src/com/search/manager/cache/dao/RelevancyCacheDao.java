@@ -68,6 +68,22 @@ public class RelevancyCacheDao extends CacheDao<Relevancy> {
 		return new CacheModel<Relevancy>();
 	}
 	
+	@Override
+	protected CacheModel<Relevancy> getDatabaseObject(Store store, String name) throws DaoException {
+		StoreKeyword storeKeyword = new StoreKeyword(store, new Keyword(name));
+		DAOValidation.checkStoreKeywordPK(storeKeyword);
+		Relevancy relevancy = new Relevancy("", "");
+		relevancy.setStore(new Store(storeKeyword.getStoreId()));
+		RecordSet<RelevancyKeyword> rk = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				MatchType.LIKE_NAME, ExactMatch.MATCH);
+		if (rk.getTotalSize() > 0) {
+			relevancy = daoService.getRelevancyDetails(rk.getList().get(0).getRelevancy());
+			return new CacheModel<Relevancy>(relevancy);
+		}
+		return new CacheModel<Relevancy>();
+	}
+	
 	public CacheModel<Relevancy> getDatabaseObject(String ruleId) throws DaoException {
 		try {
 			if (StringUtils.isNotBlank(ruleId)) {

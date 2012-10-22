@@ -92,6 +92,8 @@
 						jAlert("Please select rule","Approval");
 					}else if ($.isBlank(comment)){
 						jAlert("Please add comment.","Approval");
+					}else if(!isXSSSafe(comment)){
+						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":

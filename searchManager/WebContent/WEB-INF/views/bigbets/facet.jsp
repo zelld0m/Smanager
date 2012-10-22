@@ -35,22 +35,12 @@
 	<div id="facetsorting" class="facetsorting w700 border pad10 marT20 fsize12 verticalTabs" style="display:none">
 		<!--  start horizontal tab -->
 		<div>
-			<div id="readableString"></div>
-			<div class="floatR">
+			<div style="width:695px">
+				<span id="readableString" class="floatL"  style="width:60%"></span>
 				<span class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></span>
 				<span class="floatR"><img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History"></span>
+				<span class="floatR"><label>Sort Order</label><select id="facetSortOrder" class="posRel topn3 marR5"></select></span>
 			</div>
-		</div>
-		<div class="clearB"></div>
-
-		<div class="sort marT10 fgray">
-			<ul >
-				<li class="square"><a href="">All</a> &nbsp; |</li>
-				<li>Sort Order</li>
-				<li>
-					<select id="facetSortOrder" class="posRel topn3"></select>
-				</li>
-			</ul>
 		</div>
 		<div class="clearB"></div>
 
@@ -62,8 +52,7 @@
 			<div class="facetTabPattern contentWrapper" style="display:none;">
 				<div class="sort marT10 fgray">
 					<ul>
-						<li><input id="facetGroupCheckbox" type="checkbox"/></li>
-						<li>Sort Order</li>
+						<li><input id="facetGroupCheckbox" type="checkbox"/>Use this sort order for this group</li>
 						<li><select class="facetGroupSortOrder posRel topn3"></select></li>
 					</ul>
 				</div>
@@ -128,7 +117,7 @@
 			
 			<div id="templatelist" style="display: none;">
 		   		<label class="floatL w80 txtLabel">Template Name</label>
-		   		<label class="floatL w195">
+		   		<label class="floatL">
 		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
 		   		</label>
 		   	</div>

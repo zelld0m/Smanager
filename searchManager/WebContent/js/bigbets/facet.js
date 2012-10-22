@@ -12,7 +12,7 @@
 			fq: "",
 
 			rulePage: 1,
-			rulePageSize: 10,
+			rulePageSize: 15,
 			
 			removeFacetGroupItemConfirmText: "Delete facet value?",
 
@@ -48,6 +48,7 @@
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
+					ruleType: "Facet Sort",
 					enableVersion:true,
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
@@ -61,7 +62,7 @@
 						$("#preloader").hide();
 						$("#submitForApproval").show();
 						$("#titleText").html(self.moduleName + " for ");
-						$("#titleHeader").html(self.selectedRule["ruleName"]);
+						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						$("#readableString").html(self.selectedRule["readableString"]);
 
 						switch(self.selectedRule["ruleType"].toLowerCase()){
@@ -111,7 +112,7 @@
 				self.keyword = "";
 				self.fq = "";
 				
-				if(self.selectedRule["ruleType"]){
+				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
 						self.keyword = self.selectedRule["ruleName"];
 					}
@@ -151,6 +152,9 @@
 				if(tabContainer.find("li.tempItem").length > 0) return;
 				
 				tabContainer.show();
+				if(!tabContainer.hasClass("isShown")){
+					tabContainer.addClass("isShown");
+				}
 				tabContainer.find("div#facetvaluelist").prop({id : facetTabId +'_list'});
 				tabContainer.find("span#addFacetSortTitleHeader").text("");
 				tabContainer.find("span#addNewLink").text("");
@@ -289,12 +293,12 @@
 				var self = this;
 
 				$("#keywordSidePanel").sidepanel({
-					fieldId: "ruleId",
+					moduleName: self.moduleName,
 					fieldName: "ruleName",
 					page: page,
 					pageSize: self.rulePageSize,
 					headerText : "Facet Sorting Rule",
-					searchText : "Enter Keyword",
+					customAddRule: true,
 					showAddButton: allowModify,
 					filterText: self.ruleFilterText,
 
@@ -337,7 +341,7 @@
 										selected: function(e, u){
 											switch($(this).attr("id").toLowerCase()){
 											case "poptype":
-												var selectedType = e.target.text;
+												var selectedType = u.item.text;
 												var $divTemplate = $contentHolder.find('div#templatelist');
 												$contentHolder.find('div#keywordinput, div#templatelist').show();
 
@@ -396,9 +400,6 @@
 											if ($.isBlank(popName)){
 												jAlert("Facet Sort rule name is required.",self.moduleName);
 											}
-											else if (!isAllowedName(popName)) {
-												jAlert(ruleNameErrorText,self.moduleName);
-											}
 											else if ($.isBlank(ruleType)){
 												jAlert("Facet Sort rule type is required.",self.moduleName);
 											}
@@ -446,29 +447,20 @@
 						});
 
 					},
-
-					itemOptionCallback: function(base, id, name, model){
-						var selector = '#itemPattern' + $.escapeQuotes($.formatAsId(id));
-						var totalText = "&#133;";
-						var ruleType = model["ruleType"];
-
-						switch(ruleType.toLowerCase()){
-						case "keyword": base.$el.find(selector + ' div.itemIcon').append(self.keywordIconPath); break;
-						case "template": base.$el.find(selector + ' div.itemIcon').append(self.templateIconPath); break;
+					
+					itemNameCallback: function(base, item){
+						self.setFacetSort(item.model);
+					},
+					
+					itemOptionCallback: function(base, item){
+						var iconPath = "";
+						
+						item.ui.find("#itemLinkValue").empty();
+						switch(item.model["ruleType"].toLowerCase()){
+							case "keyword": iconPath = self.keywordIconPath; break;
+							case "template": iconPath = self.templateIconPath; break;
 						}
-
-						base.$el.find(selector + ' div.itemLink a').html(totalText);
-						base.$el.find(selector + ' div.itemLink a,' + selector + ' div.itemText a').off().on({
-							click: function(e){
-								self.setFacetSort(e.data.model);
-							}
-						},{model: model});
-
-						DeploymentServiceJS.getRuleStatus(self.moduleName, id, {
-							callback:function(data){
-								base.$el.find(selector + ' div.itemSubText').html(getRuleNameSubTextStatus(data));	
-							}
-						});
+						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
 					}
 				});
 			},
@@ -539,10 +531,11 @@
 						expires: 0
 						},
 					show: function(event, ui){
-						self.tabSelectedId = ui.panel.id;
-						self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
-						self.populateTabContent();
-
+						if(ui.panel){
+							self.tabSelectedId = ui.panel.id;
+							self.tabSelectedName = $(ui.tab).find("span.facetGroupName").text();
+							self.populateTabContent();
+						}
 					}
 				});
 			},
@@ -608,14 +601,17 @@
 
 				var itemMap = new Object();
 
-				for(var facetGroupId in self.facetGroupIdList){
+				for(var index in self.facetGroupIdList){
 					var facetItems = [];
-					var items = $("input#_items_"+self.facetGroupIdList[facetGroupId]);
-
-					for(var i = 0; i < items.length; i++){
-						facetItems[i] = $(items[i]).val();
+					
+					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
+						var items = $("input#_items_"+self.facetGroupIdList[index]);
+	
+						for(var i = 0; i < items.length; i++){
+							facetItems[i] = $(items[i]).val();
+						}
+						itemMap[self.facetGroupIdList[index]] = facetItems;
 					}
-					itemMap[self.facetGroupIdList[facetGroupId]] = facetItems;
 				}
 
 				return itemMap;
@@ -626,14 +622,16 @@
 
 				var itemMap = new Object();
 
-				for(var facetGroupId in self.facetGroupIdList){
-					var sortType = null;
-					var isChecked = $("div#_"+self.facetGroupIdList[facetGroupId] +" input#facetGroupCheckbox").is(":checked");
-
-					if(isChecked){
-						sortType = $("div#_"+self.facetGroupIdList[facetGroupId] +" select.facetGroupSortOrder option:selected").val();
+				for(var index in self.facetGroupIdList){
+					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
+						var sortType = null;
+						var isChecked = $("div#_"+self.facetGroupIdList[index] +" input#facetGroupCheckbox").is(":checked");
+	
+						if(isChecked){
+							sortType = $("div#_"+self.facetGroupIdList[index] +" select.facetGroupSortOrder option:selected").val();
+						}
+						itemMap[self.facetGroupIdList[index]] = sortType;
 					}
-					itemMap[self.facetGroupIdList[facetGroupId]] = sortType;
 				}
 
 				return itemMap;
