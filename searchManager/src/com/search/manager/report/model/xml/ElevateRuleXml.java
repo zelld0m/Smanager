@@ -55,6 +55,4 @@ public class ElevateRuleXml {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 }
-

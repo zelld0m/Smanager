@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.SearchCriteria;
@@ -38,7 +38,7 @@ public class DemoteVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createDemoteRuleVersion(String store, String ruleId, String name, String reason){
+	public boolean createDemoteRuleVersion(String store, String ruleId, String username, String name, String reason){
 		
 		boolean success = false;
 		DemoteResult demoteFilter = new DemoteResult();
@@ -77,11 +77,11 @@ public class DemoteVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.DEMOTE.getCode());
+					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.DEMOTE);
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.DEMOTE.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.DEMOTE, ruleId)));
 					m.marshal(demoteRuleXml, w);
 				} finally {
 					try {
@@ -128,7 +128,7 @@ public class DemoteVersionDAO {
 		return list;
 	}
 	
-	public void readDemotedVersion(File file, BackupInfo backup){
+	public void readDemotedVersion(File file, RuleVersionInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(DemoteRuleXml.class);

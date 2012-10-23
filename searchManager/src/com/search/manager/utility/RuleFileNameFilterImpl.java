@@ -14,7 +14,6 @@ public class RuleFileNameFilterImpl implements FilenameFilter {
 
 	@Override
 	public boolean accept(File dir, String name) {
-		return name.startsWith(ruleName + "__");
+		return name.startsWith(ruleName);
 	}
-
 }

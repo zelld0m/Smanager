@@ -20,15 +20,15 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ElevatedSkuXml;
-import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.FileUtil;
+import com.search.manager.utility.StringUtil;
 import com.search.ws.SearchHelper;
 
 @Repository(value="elevateVersionDAO")
@@ -38,8 +38,7 @@ public class ElevateVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createElevateRuleVersion(String store, String ruleId, String name, String reason){
-		
+	public boolean createElevateRuleVersion(String store, String ruleId, String username, String name, String reason){
 		boolean success = false;
 		ElevateResult elevateFilter = new ElevateResult();
 		List<ElevateResult> elevatedList = null;
@@ -47,7 +46,7 @@ public class ElevateVersionDAO {
 		try{
 			StoreKeyword sk = new StoreKeyword(store, ruleId);
 			elevateFilter.setStoreKeyword(sk); 
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
+			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter);
 			
 			elevatedList = daoService.getElevateResultList(criteria).getList();	
 			
@@ -77,11 +76,11 @@ public class ElevateVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.ELEVATE.getCode());
+					String dir = new StringBuffer(RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.ELEVATE)).append(File.separator).append(ruleId).toString();
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.ELEVATE.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.ELEVATE, ruleId)));
 					m.marshal(elevateRuleXml, w);
 				} finally {
 					try {
@@ -128,14 +127,14 @@ public class ElevateVersionDAO {
 		return list;
 	}
 	
-	public void readElevatedVersion(File file, BackupInfo backup){
+	public void readElevatedVersion(File file, RuleVersionInfo ruleVersion){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(ElevateRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				ElevateRuleXml elevateRule = (ElevateRuleXml) um.unmarshal(file);
-				backup.setReason(elevateRule.getReason());
-				backup.setName(elevateRule.getName());
+				ruleVersion.setReason(elevateRule.getReason());
+				ruleVersion.setName(elevateRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
@@ -143,6 +142,4 @@ public class ElevateVersionDAO {
 			logger.error(e,e);
 		}
 	}
-	
-
 }
