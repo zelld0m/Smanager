@@ -581,9 +581,12 @@ public final class StringUtil {
 		while (StringUtils.isNotBlank(str)) {
 			Matcher m = p.matcher(str);
 			if (m.matches()) {
+				if(builder.length()>1) 
+					builder.append(".");
+				
 				builder.append(m.group(1));
 				if (StringUtils.isNotBlank(m.group(2))) {
-					builder.append(".").append(Hex.encodeHexString(m.group(2).getBytes())).append(".");
+					builder.append(".").append(Hex.encodeHexString(m.group(2).getBytes()));
 				}
 				str = m.group(3);
 			}

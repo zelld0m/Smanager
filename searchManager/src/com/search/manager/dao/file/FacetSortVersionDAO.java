@@ -1,7 +1,6 @@
 package com.search.manager.dao.file;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -15,30 +14,20 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
-import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.report.model.xml.ElevateRuleXml;
-import com.search.manager.report.model.xml.ElevatedSkuXml;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
-import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.FileUtil;
-import com.search.ws.SearchHelper;
 
 @Repository(value="facetSortVersionDAO")
 public class FacetSortVersionDAO {
 	
 	private static Logger logger = Logger.getLogger(FacetSortVersionDAO.class);
 	
-	@Autowired private DaoService daoService;
-	
-	public boolean createFacetSortRuleVersion(String store, String ruleId, String name, String reason){
+	public boolean createFacetSortRuleVersion(String store, String ruleId, String username, String name, String reason){
 		
 		boolean success = false;
 		List<FacetSort> facetSortList = null;
@@ -55,11 +44,11 @@ public class FacetSortVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.FACET_SORT.getCode());
+					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.FACET_SORT);
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.FACET_SORT.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.FACET_SORT, ruleId)));
 					m.marshal(facetSortRuleXml, w);
 				} finally {
 					try {
@@ -83,7 +72,7 @@ public class FacetSortVersionDAO {
 				Unmarshaller um = context.createUnmarshaller();
 				LinkedHashMap<String, FacetSort> map = new LinkedHashMap<String, FacetSort>();
 				
-				//TODO
+				//TODO:
 				
 				list = new ArrayList<FacetSort>(map.values());
 			} catch (Exception e) {
@@ -95,7 +84,7 @@ public class FacetSortVersionDAO {
 		return list;
 	}
 	
-	public void readFacetSortVersion(File file, BackupInfo backup){
+	public void readFacetSortVersion(File file, RuleVersionInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(FacetSortRuleXml.class);

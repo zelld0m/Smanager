@@ -30,7 +30,7 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.ws.SearchHelper;
 
-@Service(value = "elevateService")
+@Service("elevateService")
 @RemoteProxy(
 		name = "ElevateServiceJS",
 		creator = SpringCreator.class,

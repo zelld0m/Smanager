@@ -70,7 +70,7 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/DAOCacheServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/SecurityServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/UserSettingServiceJS.js"/>"></script>
-  <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleVersioningServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleVersionServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/LinguisticsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  

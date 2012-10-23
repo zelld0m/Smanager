@@ -91,7 +91,7 @@
 		};
 
 		base.createVersion = function(name, notes){
-			RuleVersioningServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, name, notes, {
+			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, name, notes, {
 				callback: function(data){
 					if (data) {
 						jAlert("Successfully created back up!");
@@ -107,11 +107,11 @@
 			var $tr = tr;
 			var $item = item;
 			
-			$tr.find(".deleteIcon").on({
+			$tr.find(".deleteIcon").off().on({
 				click:function(e){
-					jConfirm("Delete restore point version " + $item["name"] + "?" , "Delete Version", function(result){
+					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
-							RuleVersioningServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, $item["version"], {
+							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
 								callback:function(data){
 									base.getAvailableVersion();
 								}
@@ -119,18 +119,18 @@
 						}
 					});
 				}
-			});
+			},{item: $item});
 		};
 
 		base.addRestoreVersionListener = function(tr, item){
 			var $tr = tr;
 			var $item = item;
 			
-			$tr.find(".restoreIcon").on({
+			$tr.find(".restoreIcon").off().on({
 				click:function(e){
-					jConfirm("Restore data to version " + $item["name"] + "?" , "Restore Version", function(result){
+					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
 						if(result){
-							RuleVersioningServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, $item["version"], {
+							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
 								callback:function(data){
 
 								},
@@ -138,7 +138,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-									RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, $item["version"], {
+									RuleVersionServiceJS.getRankingRuleVersion(base.options.ruleId, e.data.item["version"], {
 										callback: function(data){
 											base.options.postRestoreCallback(base, data);
 										}
@@ -148,14 +148,14 @@
 						}
 					});
 				}
-			});
+			},{item: $item});
 		};
 
 		base.getAvailableVersion = function(){
 			var $content = base.contentHolder;
 			var $table = $content.find("table#versionList");
 
-			RuleVersioningServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
+			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
 				callback: function(data){
 					$table.find("tr.itemRow:not(#itemPattern)").remove();
 					

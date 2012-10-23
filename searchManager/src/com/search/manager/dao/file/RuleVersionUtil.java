@@ -5,9 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -25,12 +27,16 @@ public class RuleVersionUtil {
 	private static final String PATH = PropsUtils.getValue("backuppath");
 	public static final String VERSION_COUNTER_PREFIX = "VERID";
 
-	public static File[] getBackupInfo(String store, int ruleType, String ruleId) {
+	public static File[] getRuleVersionInfo(String store, RuleEntity ruleEntity, String ruleId) {
 		String fileName = ruleId;
-		if (RuleEntity.ELEVATE.getCode() == ruleType || RuleEntity.ELEVATE.getCode() == ruleType) {
-			fileName = StringUtil.escapeKeyword(fileName);
+		
+		switch(ruleEntity){
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE: fileName = StringUtil.escapeKeyword(fileName); break;
 		}
-		File dir = new File(getFileDirectory(store, ruleType));
+		
+		File dir = new File(getRuleVersionFileDirectory(store, ruleEntity) + File.separator + StringUtil.escapeKeyword(ruleId));
 		File[] files = dir.listFiles(new RuleFileNameFilterImpl(fileName));
 
 		if (ArrayUtils.isNotEmpty(files)){
@@ -43,8 +49,8 @@ public class RuleVersionUtil {
 		return files;
 	}
 
-	public static boolean hasVersionCounter(String store, int ruleType, String ruleId){
-		File dir = new File(getFileDirectory(store, ruleType));
+	public static boolean hasVersionCounter(String store, RuleEntity ruleEntity, String ruleId){
+		File dir = new File(getRuleVersionFileDirectory(store, ruleEntity));
 		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
 		
 		if (ArrayUtils.isNotEmpty(verFiles)){
@@ -54,8 +60,8 @@ public class RuleVersionUtil {
 		return false;
 	}
 	
-	public static void addVersionCounterFile(String store, int ruleType, String ruleId, int count) throws Exception{
-		File dir = new File(getFileDirectory(store, ruleType));
+	public static void addVersionCounterFile(String store, RuleEntity ruleEntity, String ruleId, int count) throws Exception{
+		File dir = new File(getRuleVersionFileDirectory(store, ruleEntity));
 		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
 		
 		FileWriter file = null; 
@@ -84,8 +90,8 @@ public class RuleVersionUtil {
 		}
 	}
 
-	public static synchronized int getCurrentVersion(String store, int ruleType, String ruleId) {
-		File dir = new File(getFileDirectory(store, ruleType));
+	public static synchronized int getCurrentVersion(String store, RuleEntity ruleEntity, String ruleId) {
+		File dir = new File(getRuleVersionFileDirectory(store, ruleEntity));
 		File[] verFiles = dir.listFiles(new VersionFileNameFilterImpl(ruleId + VERSION_COUNTER_PREFIX));
 		File[] ruleFiles = dir.listFiles(new RuleFileNameFilterImpl(ruleId));
 
@@ -120,32 +126,30 @@ public class RuleVersionUtil {
 		return 0;
 	}
 
-	public static synchronized int getNextVersion(String store, int ruleType, String ruleId) {
-		return getCurrentVersion(store, ruleType, ruleId) + 1;
+	public static synchronized int getNextVersion(String store, RuleEntity ruleEntity, String ruleId) {
+		return getCurrentVersion(store, ruleEntity, ruleId) + 1;
 	}
 
-	public static void deleteFile(String storeName, String ruleId, int ruleType, int version) throws Exception{
+	public static void deleteFile(String storeName, String ruleId, RuleEntity ruleEntity, int version) throws Exception{
 		
-		if(!hasVersionCounter(storeName, ruleType, ruleId)){
-			int currVer = getCurrentVersion(storeName, ruleType, ruleId);
-			addVersionCounterFile(storeName, ruleType, ruleId, currVer);
+		if(!hasVersionCounter(storeName, ruleEntity, ruleId)){
+			int currVer = getCurrentVersion(storeName, ruleEntity, ruleId);
+			addVersionCounterFile(storeName, ruleEntity, ruleId, currVer);
 		}
 
-		deleteFile(getFileName(storeName, ruleType, ruleId, version));
+		deleteFile(getFileName(storeName, ruleEntity, ruleId, version));
 	}
 	
 	public static void deleteFile(String filepath) throws IOException{
 		File file = new File(filepath);
 
-		if(file.exists()){
-			if(!file.delete()){
+		if(file.exists() && !file.delete()){
 				file.deleteOnExit();
-			}
 		}
 	}
 
-	public static String getFileName(String store, int ruleType ,String ruleId, int version){
-		StringBuilder filePath = new StringBuilder(getFileDirectory(store, ruleType)).append(File.separator).append(ruleId).append("__").append(version).append(FileUtil.XML_FILE_TYPE);
+	public static String getFileName(String store, RuleEntity ruleEntity ,String ruleId, int version){
+		StringBuilder filePath = new StringBuilder(getRuleVersionFileDirectory(store, ruleEntity)).append(File.separator).append(ruleId).append(File.separator).append(ruleId).append("__").append(version).append(FileUtil.XML_FILE_TYPE);
 		return filePath.toString();
 	}
 
@@ -154,9 +158,11 @@ public class RuleVersionUtil {
 		return filePath.toString();
 	}
 
-	public static String getFileDirectory(String store, int ruleType){
-		StringBuilder dir = new StringBuilder();
-		dir.append(PATH).append(File.separator).append(store).append(File.separator).append(ruleType);
-		return dir.toString();
+	public static String getRuleVersionFileDirectory(String store, RuleEntity ruleEntity){
+		StringBuilder sb = new StringBuilder();
+		List<String> values = ruleEntity.getValues(); 
+		String directory = CollectionUtils.isNotEmpty(values)? values.get(0): ruleEntity.name();
+		sb.append(PATH).append(File.separator).append(store).append(File.separator).append(directory);
+		return sb.toString();
 	}
 }

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.report.model.xml.QueryCleaningRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
@@ -28,7 +28,7 @@ public class QueryCleaningVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createQueryCleaningRuleVersion(String store, String ruleId, String name, String reason) {
+	public boolean createQueryCleaningRuleVersion(String store, String ruleId, String username, String name, String reason) {
 
 		boolean success = false;
 
@@ -57,11 +57,11 @@ public class QueryCleaningVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.QUERY_CLEANING.getCode());
+					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.QUERY_CLEANING);
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.QUERY_CLEANING.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.QUERY_CLEANING, ruleId)));
 					m.marshal(qcrXml, w);
 				} finally {
 					try {
@@ -83,7 +83,7 @@ public class QueryCleaningVersionDAO {
 		try {
 			JAXBContext context = JAXBContext.newInstance(QueryCleaningRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
-			QueryCleaningRuleXml qcr = (QueryCleaningRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.QUERY_CLEANING.getCode(), ruleId, version)));
+			QueryCleaningRuleXml qcr = (QueryCleaningRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.QUERY_CLEANING, ruleId, version)));
 			rr.setRuleId(ruleId);
 			rr.setStoreId(store);
 			rr.setRuleName(qcr.getRuleName());
@@ -103,7 +103,7 @@ public class QueryCleaningVersionDAO {
 		return rr;
 	}
 
-	public void readQueryCleaningVersion(File file, BackupInfo backup){
+	public void readQueryCleaningVersion(File file, RuleVersionInfo backup){
 		
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);

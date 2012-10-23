@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
@@ -91,7 +91,7 @@ public class RankingRuleVersionDAO {
 		return success;
 	}
 	
-	public boolean createRankingRuleVersion(String store, String ruleId, String name, String reason){
+	public boolean createRankingRuleVersion(String store, String ruleId, String username, String name, String reason){
 		
 		boolean success = false;
 		
@@ -130,13 +130,13 @@ public class RankingRuleVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir =  RuleVersionUtil.getFileDirectory(store, RuleEntity.RANKING_RULE.getCode());
+					String dir =  RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.RANKING_RULE);
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					int nextVer = RuleVersionUtil.getNextVersion(store, RuleEntity.RANKING_RULE.getCode(), ruleId);
+					int nextVer = RuleVersionUtil.getNextVersion(store, RuleEntity.RANKING_RULE, ruleId);
 					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, nextVer));
-					RuleVersionUtil.addVersionCounterFile(store, RuleEntity.RANKING_RULE.getCode(), ruleId, nextVer);
+					RuleVersionUtil.addVersionCounterFile(store, RuleEntity.RANKING_RULE, ruleId, nextVer);
 					
 					m.marshal(rrXml, w);
 				} finally {
@@ -159,7 +159,7 @@ public class RankingRuleVersionDAO {
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
-			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.RANKING_RULE.getCode(), ruleId, version)));
+			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.RANKING_RULE, ruleId, version)));
 			relevancy.setRuleId(rr.getRuleId());
 			relevancy.setStore(new Store(store));
 			relevancy.setRuleName(rr.getRuleName());
@@ -193,7 +193,7 @@ public class RankingRuleVersionDAO {
 
 	}
 
-	public void readRankingRuleVersion(File file, BackupInfo backup){
+	public void readRankingRuleVersion(File file, RuleVersionInfo backup){
 		
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);

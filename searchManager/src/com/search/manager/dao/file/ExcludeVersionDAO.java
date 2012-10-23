@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.SearchCriteria;
@@ -39,7 +39,7 @@ public class ExcludeVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createExcludeRuleVersion(String store, String ruleId, String name, String reason){
+	public boolean createExcludeRuleVersion(String store, String ruleId, String username, String name, String reason){
 		
 		boolean success = false;
 		ExcludeResult excludeFilter = new ExcludeResult();
@@ -77,11 +77,11 @@ public class ExcludeVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = RuleVersionUtil.getFileDirectory(store, RuleEntity.EXCLUDE.getCode());
+					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.EXCLUDE);
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.EXCLUDE.getCode(), ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.EXCLUDE, ruleId)));
 					m.marshal(excludeRuleXml, w);
 				} finally {
 					try {
@@ -127,7 +127,7 @@ public class ExcludeVersionDAO {
 		return list;
 	}
 	
-	public void readExcludeRuleVersion(File file, BackupInfo backup){
+	public void readExcludeRuleVersion(File file, RuleVersionInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(ExcludeRuleXml.class);
