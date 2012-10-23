@@ -15,12 +15,12 @@ public class AuditTrailReportBean extends ReportBean<AuditTrail> {
 		return DateAndTimeUtils.formatMMddyyyyhhmmaa(model.getDate());
 	}
 
-	@ReportField(label="Ref Id", size=20, sortOrder=2)
+	@ReportField(label="Ref ID", size=20, sortOrder=2)
 	public String getReferenceId(){
 		return model.getReferenceId();
 	}
 	
-	@ReportField(label="User Name", size=20, sortOrder=3)
+	@ReportField(label="Username", size=20, sortOrder=3)
 	public String getUsername(){
 		return model.getUsername();
 	}
