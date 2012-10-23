@@ -28,7 +28,7 @@
     <servlet-class>com.mall.RedirectServlet</servlet-class>
     <init-param>
       <param-name>solrUrl</param-name>
-      <param-value>http://10.17.35.45/searchManager/search/10.17.35.36:8080/solr14/</param-value>
+      <param-value>http://10.17.12.122/searchManager/search/10.17.35.36:8080/solr14/</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
