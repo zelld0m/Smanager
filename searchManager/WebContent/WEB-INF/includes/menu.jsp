@@ -8,7 +8,7 @@
               <li ${topmenu eq 'relevancy'? 'class="active"': ''}><a href="<spring:url value="/relevancy/"/>${store}">Relevancy</a></li>
               <li ${topmenu eq 'synonyms'? 'class="active"': ''}><a href="<spring:url value="/synonyms/"/>${store}">Synonyms</a></li>
                -->
-              <li ${topmenu eq 'bigbets'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/"/>${store}">Search Rules</a></span></li>
+              <li ${topmenu eq 'rules'? 'class="active"': ''}><span><a href="<spring:url value="/elevate/"/>${store}">Search Rules</a></span></li>
               <li ${topmenu eq 'advertise'? 'class="active"': ''}><span><a href="<spring:url value="/campaign/"/>${store}">Search Ads</a></span></li>
               <li ${topmenu eq 'statistic'? 'class="active"': ''}><span><a href="<spring:url value="/topkeyword/"/>${store}">Statistics</a></span></li>
               <li ${topmenu eq 'lexicon'? 'class="active"': ''}><span><a href="<spring:url value="/synonym/"/>${store}">Linguistics</a></span></li>
@@ -34,7 +34,7 @@
 		       </ul-->
 	      </c:if>
 	      
-	      <c:if test="${topmenu eq 'bigbets'}">
+	      <c:if test="${topmenu eq 'rules'}">
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'elevate'? 'class="active"': ''}><a href="<spring:url value="/elevate/"/>${store}">Elevate</a></li>
 		      		<li ${submenu eq 'exclude'? 'class="active"': ''}><a href="<spring:url value="/exclude/"/>${store}">Exclude</a></li>
@@ -77,15 +77,19 @@
 		      		<sec:authorize access="hasRole('MANAGE_USER')">    		
 		      			<li ${submenu eq 'security'? 'class="active"': ''}><a href="<spring:url value="/security/"/>${store}">Security</a></li>
 		      		</sec:authorize>	      		
-		      		<li ${submenu eq 'sponsor'? 'class="active"': ''}><a href="<spring:url value="/sponsor/"/>${store}">Partners</a></li>	      		
 		      		<sec:authorize access="hasRole('APPROVE_RULE')">    		
 			      		<li ${submenu eq 'approval'? 'class="active"': ''}><a href="<spring:url value="/approval/"/>${store}">Pending Approval</a></li>
 		      		</sec:authorize>
 		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>
+		      		</sec:authorize>
+		      		<sec:authorize access="hasRole('APPROVE_RULE')">    		
+			      		<li ${submenu eq 'import'? 'class="active"': ''}><a href="<spring:url value="/import/"/>${store}">Import Rule</a></li>
+		      		</sec:authorize>
+		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
+			      		<li ${submenu eq 'export'? 'class="active"': ''}><a href="<spring:url value="/export/"/>${store}">Export Rule</a></li>
 		      		</sec:authorize>	      		
 		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>	      		
-		      		<li ${submenu eq 'template'? 'class="active"': ''}><a href="<spring:url value="/template/" />">Template</a></li>	      		
 		       </ul>
 	      </c:if>
 	          

@@ -1,13 +1,12 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="bigbets"/>
-<c:set var="submenu" value="exclude"/>
+<c:set var="topmenu" value="rules"/>
+<c:set var="submenu" value="elevate"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- Page specific file dependencies --> 
-<link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet">
-<script type="text/javascript" src="<spring:url value="/js/bigbets/bigbets.js" />"></script>   
-<script type="text/javascript" src="<spring:url value="/js/bigbets/exclude.js" />"></script>   
+<link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
+<script type="text/javascript" src="<spring:url value="/js/rules/elevate.js" />"></script>   
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
@@ -71,7 +70,7 @@
    	<!--Start Content Area -->
   	<div id="ruleItemContainer" class="listView">
   		<div id="preloader" class="circlePreloader"><img src="<spring:url value="/images/ajax-loader-circ.gif" />"></div>
-		<div id="noSelected"><img src="<spring:url value="/images/excludeRuleGuidelines.jpg" />"></div>
+		<div id="noSelected"><img src="<spring:url value="/images/elevateRuleGuidelines.jpg" />"></div>
 		<div id="ruleSelected" style="display:none">
 	  		<ul id="ruleItemHolder" class="boxContainer">
 	  			<li id="ruleItemPattern" class="ruleItem" style="display:none">
@@ -94,6 +93,17 @@
 			  				</label>
 	  					</div>
 	  				
+		  				<div class="sortOrder">
+		  					<label class="w90">Position : </label>
+		  					<label>
+		  						<input type="text" class="sortOrderTextBox txtBoxSmall w30">
+		  					</label>
+		  					<label class="forceAdd normal-forceadd">
+		  						<img id="preloaderForceAdd" src="<spring:url value="/images/horizontalPreloaderBlue.gif"/>" class="marL5">
+		  						<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox normal-forceadd marTn3 marL3" style="display:none">
+		  					</label>
+		  				</div>
+					
 		  				<div class="validityDate padT3">
 		  					<label class="w90">Valid Until : </label>
 		  					<label>

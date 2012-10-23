@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.RuleVersionDaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RuleVersionAccess;
 import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
@@ -22,16 +23,25 @@ import com.search.manager.model.RuleStatus;
 @Service("ruleVersionService")
 @RemoteProxy(
 		name = "RuleVersionServiceJS",
-	    creator = SpringCreator.class,
-	    creatorParams = @Param(name = "beanName", value = "ruleVersionService")
-	)
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "ruleVersionService")
+)
 public class RuleVersionService {
 
 	private static final Logger logger = Logger.getLogger(RuleVersionService.class);
-	
+
 	@Autowired private RuleVersionDaoService ruleversionDaoService;
 	@Autowired private DeploymentService deploymentService;
 	
+	public RuleVersionAccess getRuleVersionAccess(String ruleType, String ruleId, String name, String reason) {
+		try {
+			
+		} catch (Exception e) {
+			logger.error("Failed during createRuleVersion()",e);
+		}
+		return null;	
+	}
+
 	@RemoteMethod
 	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
 		boolean success = false;
@@ -56,35 +66,35 @@ public class RuleVersionService {
 
 	@RemoteMethod
 	public List<RuleVersionInfo> getRuleVersions(String ruleType, String ruleId) {
-		List<RuleVersionInfo> backUpList = null;
+		List<RuleVersionInfo> versionList = null;
 		try {
-			backUpList = ruleversionDaoService.getRuleVersionInfo(UtilityService.getStoreName(), ruleType, ruleId);
+			versionList = ruleversionDaoService.getRuleVersionInfo(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
 			logger.error("Failed during getRuleVersions()",e);
 		}
-		return backUpList;
+		return versionList;
 	}
-	
+
 	@RemoteMethod
 	public List<ElevateProduct> getElevateRuleVersion(String ruleId, int version) {
 		return ruleversionDaoService.readElevateRuleVersion(UtilityService.getStoreName(), ruleId, version, UtilityService.getServerName());
 	}
-	
+
 	@RemoteMethod
 	public List<Product> getExcludeRuleVersion(String ruleId, int version) {
 		return ruleversionDaoService.readExcludeRuleVersion(UtilityService.getStoreName(), ruleId, version, UtilityService.getServerName());
 	}
-	
+
 	@RemoteMethod
 	public RedirectRule getQueryCleaningRuleVersion(String ruleId, int version) {
 		return ruleversionDaoService.readQueryCleaningRuleVersion(UtilityService.getStoreName(), ruleId, version);
 	}
-	
+
 	@RemoteMethod
 	public Relevancy getRankingRuleVersion(String ruleId, int version) {
 		return ruleversionDaoService.readRankingRuleVersion(UtilityService.getStoreName(), ruleId, version);
 	}
-	
+
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
 		boolean success = ruleversionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, version);
@@ -94,6 +104,8 @@ public class RuleVersionService {
 		case EXCLUDE:
 			break;
 		case DEMOTE:
+			break;
+		case FACET_SORT:
 			break;
 		case QUERY_CLEANING:
 			break;

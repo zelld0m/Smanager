@@ -171,9 +171,7 @@ public class RankingRuleVersionDAO {
 			relevancy.setLastModifiedBy(rr.getModifiedBy());
 			relevancy.setCreatedBy(rr.getCreatedBy());
 			relevancy.setFields(rr.getRelevancyFields());
-			if (rr.getVersion() == 1L) {
-				// put code for backward compatibility e.g. provide default value for new properties added since ver 1
-			}
+			
 			if (rr.getKeywords() != null) {
 				List<RelevancyKeyword> relKwList = new ArrayList<RelevancyKeyword>();
 				for (int i = 0; i < rr.getKeywords().size(); i++) {

@@ -1,7 +1,5 @@
 package com.search.manager.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,8 +24,8 @@ import com.search.manager.report.model.DemoteReportBean;
 import com.search.manager.report.model.DemoteReportModel;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
-import com.search.manager.service.DownloadService;
 import com.search.manager.service.DemoteService;
+import com.search.manager.service.DownloadService;
 import com.search.manager.service.UtilityService;
 
 @Controller
@@ -49,7 +47,7 @@ public class DemoteController {
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
-		return "bigbets/demote";
+		return "rules/demote";
 	}
 
 	/**

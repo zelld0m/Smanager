@@ -93,10 +93,6 @@ public class QueryCleaningVersionDAO {
 			rr.setSearchTerm(qcr.getSearchTerm());
 			rr.setCondition(qcr.getCondition());
 			rr.setChangeKeyword(qcr.getChangeKeyword());
-			if (qcr.getSerVersion() == 1L) {
-				// put code for backward compatibility e.g. provide default value for new properties added since ver 1
-			}
-
 		}catch (Exception e) {
 			logger.error(e,e);
 		}

@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="bigbets"/>
+<c:set var="topmenu" value="rules"/>
 <c:set var="submenu" value="relevancy"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
@@ -24,7 +24,7 @@
 
 <script type="text/javascript" src="<spring:url value="/js/jquery/jSlider/jquery.dependClass.js"/>"></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/jSlider/jquery.slider.js"/>"></script>
-<script type="text/javascript" src="<spring:url value="/js/bigbets/relevancy.js" />"></script> 
+<script type="text/javascript" src="<spring:url value="/js/rules/relevancy.js" />"></script> 
 
 <style type="text/css" media="screen">
 .layout {padding: 50px;font-family: Georgia, serif;}

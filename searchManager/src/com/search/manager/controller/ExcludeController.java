@@ -47,7 +47,7 @@ public class ExcludeController {
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
-		return "bigbets/exclude";
+		return "rules/exclude";
 	}
 	
 	/**

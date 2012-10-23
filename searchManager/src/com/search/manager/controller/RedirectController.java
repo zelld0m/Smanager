@@ -53,7 +53,7 @@ public class RedirectController {
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
-		return "redirect/redirect";
+		return "rules/redirect";
 	}
 	
 	/**

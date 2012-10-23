@@ -73,7 +73,7 @@ public class RelevancyController {
 			logger.error("Failed to access local cache ", e);
 		}
 		
-		return "relevancy/relevancy";
+		return "rules/relevancy";
 	}
 	
 	/**

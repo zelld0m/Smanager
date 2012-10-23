@@ -1,7 +1,5 @@
 package com.search.manager.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,7 +47,7 @@ public class ElevateController {
 		} catch (Exception e) {
 			logger.error("Failed to access local cache ", e);
 		}
-		return "bigbets/elevate";
+		return "rules/elevate";
 	}
 
 	/**

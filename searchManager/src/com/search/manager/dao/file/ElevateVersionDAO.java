@@ -52,9 +52,11 @@ public class ElevateVersionDAO {
 			
 			if(CollectionUtils.isNotEmpty(elevatedList)){
 				ElevateRuleXml elevateRuleXml = new ElevateRuleXml();
+				elevateRuleXml.setVersion("Emielo");
 				elevateRuleXml.setKeyword(ruleId);
 				elevateRuleXml.setReason(reason);
 				elevateRuleXml.setName(name);
+				elevateRuleXml.setCreatedBy(username);
 				
 				List<ElevatedSkuXml> skuList = new ArrayList<ElevatedSkuXml>();
 				ruleId = StringUtil.escapeKeyword(ruleId);
@@ -76,7 +78,7 @@ public class ElevateVersionDAO {
 
 				Writer w = null;
 				try {
-					String dir = new StringBuffer(RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.ELEVATE)).append(File.separator).append(ruleId).toString();
+					String dir = new StringBuffer(RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.ELEVATE)).toString();
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}

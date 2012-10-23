@@ -154,7 +154,7 @@ public class RuleVersionUtil {
 	}
 
 	public static String getFileNameByDir(String dir, String ruleId, int version){
-		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append("__").append(version).append(FileUtil.XML_FILE_TYPE);
+		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
 		return filePath.toString();
 	}
 

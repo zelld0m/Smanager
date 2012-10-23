@@ -50,7 +50,6 @@ public class WorkflowController {
 		return "setting/approval";
 	}
 	
-	
 	@RequestMapping(value="/production/{store}")
 	public String pushToProd(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
@@ -60,6 +59,28 @@ public class WorkflowController {
 			logger.error("Failed to access local cache ", e);
 		}
 		return "setting/production";
+	}
+	
+	@RequestMapping(value="/import/{store}")
+	public String importRule(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+		model.addAttribute("store", store);
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Import Rule");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		return "setting/import";
+	}
+	
+	@RequestMapping(value="/export/{store}")
+	public String exportRule(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+		model.addAttribute("store", store);
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Export Rule");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		return "setting/export";
 	}
 
 	/**

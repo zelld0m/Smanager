@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="bigbets"/>
+<c:set var="topmenu" value="rules"/>
 <c:set var="submenu" value="redirect"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- page specific dependencies -->
 <link href="<spring:url value="/css/redirect/redirect.css" />" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="<spring:url value="/js/bigbets/redirect.js" />"></script>   
+<script type="text/javascript" src="<spring:url value="/js/rules/redirect.js" />"></script>   
 
 <!--Left Menu-->
 <div class="clearB floatL sideMenuArea">

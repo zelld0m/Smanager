@@ -1,12 +1,12 @@
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
-<c:set var="topmenu" value="bigbets"/>
+<c:set var="topmenu" value="rules"/>
 <c:set var="submenu" value="demote"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
 <!-- Page specific file dependencies --> 
 <link type="text/css" href="<spring:url value="/css/bigbets/bigbets.css" />" rel="stylesheet"> 
-<script type="text/javascript" src="<spring:url value="/js/bigbets/demote.js" />"></script>   
+<script type="text/javascript" src="<spring:url value="/js/rules/demote.js" />"></script>   
 
 <!-- Left Menu-->
 <div class="clearB floatL sideMenuArea">
