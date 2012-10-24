@@ -524,6 +524,10 @@
 			$field.val($field.val().replace(/^\./,'0.')); // insert leading 0 before .
 			$field.val($field.val().replace(/\.$/,'')); // remove trailing .
 
+			if($.isBlank($field.val())){
+				$field.val("0");
+			}
+			
 			if ($field.val() > relFieldMaxValue){
 				$field.val(relFieldMaxValue);
 			}
@@ -678,10 +682,12 @@
 							var finalVal = "";
 
 							$contentHolder.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
+								var fieldVal = $(value).find('input[type="text"]').val();
+								
 								if (index > 0) finalVal += " ";
 								finalVal += $(value).find(".txtHolder").html();
 								finalVal += '^';
-								finalVal += $(value).find('input[type="text"]').val();
+								finalVal += $.isBlank(fieldVal) ? "0" : fieldVal;
 							});
 
 							api.hide();
@@ -1649,9 +1655,9 @@
 
 						jConfirm('Delete "' + item.name + '" in ' + selectedRule.ruleName  + '?', "Delete Keyword", function(result){
 							if(result){
-								RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, name,{
+								RelevancyServiceJS.deleteKeywordInRule(selectedRule.ruleId, item.name,{
 									callback:function(code){
-										showActionResponse(code, "delete", name);
+										showActionResponse(code, "delete", item.name);
 										getKeywordInRuleList(1);
 										getRelevancyRuleList(1);
 										getRelevancyRuleKeywordList(1);
