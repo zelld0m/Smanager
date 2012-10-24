@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "rankingrule")
-public class RankingRuleXml extends BaseRuleVersionXml {
+public class RankingRuleXml extends RuleVersionXml {
 	
 	private static final long serialVersionUID = 1073476024072073843L;
 	private String ruleId;

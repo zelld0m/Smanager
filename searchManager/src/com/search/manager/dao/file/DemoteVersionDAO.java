@@ -26,7 +26,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteRuleXml;
-import com.search.manager.report.model.xml.DemotedSkuXml;
+import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.utility.FileUtil;
 import com.search.ws.SearchHelper;
@@ -38,7 +38,7 @@ public class DemoteVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createDemoteRuleVersion(String store, String ruleId, String username, String name, String reason){
+	public boolean createDemoteRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		DemoteResult demoteFilter = new DemoteResult();
@@ -54,13 +54,13 @@ public class DemoteVersionDAO {
 			if(CollectionUtils.isNotEmpty(demotedList)){
 				DemoteRuleXml demoteRuleXml = new DemoteRuleXml();
 				demoteRuleXml.setKeyword(ruleId);
-				demoteRuleXml.setReason(reason);
+				demoteRuleXml.setNotes(notes);
 				demoteRuleXml.setName(name);
 				
-				List<DemotedSkuXml> skuList = new ArrayList<DemotedSkuXml>();
+				List<DemoteItemXml> skuList = new ArrayList<DemoteItemXml>();
 				ruleId = StringUtil.escapeKeyword(ruleId);
 				for (DemoteResult demoteResult : demotedList) {
-					DemotedSkuXml sku = new DemotedSkuXml();
+					DemoteItemXml sku = new DemoteItemXml();
 					sku.setEdp(demoteResult.getEdp());
 					sku.setLocation(demoteResult.getLocation());
 					sku.setExpiryDate(demoteResult.getExpiryDate());
@@ -81,7 +81,7 @@ public class DemoteVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.DEMOTE, ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
 					m.marshal(demoteRuleXml, w);
 				} finally {
 					try {
@@ -105,7 +105,7 @@ public class DemoteVersionDAO {
 				Unmarshaller um = context.createUnmarshaller();
 				LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
 				DemoteRuleXml demoteRule = (DemoteRuleXml) um.unmarshal(new FileReader(filePath));
-				for (DemotedSkuXml e : demoteRule.getDemotedSku()) {
+				for (DemoteItemXml e : demoteRule.getDemotedSku()) {
 					DemoteProduct ep = new DemoteProduct();
 					ep.setEdp(e.getEdp());
 					ep.setLocation(e.getLocation());
@@ -134,7 +134,7 @@ public class DemoteVersionDAO {
 				JAXBContext context = JAXBContext.newInstance(DemoteRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				DemoteRuleXml demoteRule = (DemoteRuleXml) um.unmarshal(file);
-				backup.setReason(demoteRule.getReason());
+				backup.setNotes(demoteRule.getNotes());
 				backup.setName(demoteRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());

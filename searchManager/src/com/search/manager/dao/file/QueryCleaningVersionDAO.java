@@ -28,7 +28,7 @@ public class QueryCleaningVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createQueryCleaningRuleVersion(String store, String ruleId, String username, String name, String reason) {
+	public boolean createQueryCleaningRuleVersion(String store, String ruleId, String username, String name, String notes) {
 
 		boolean success = false;
 
@@ -48,7 +48,7 @@ public class QueryCleaningVersionDAO {
 				qcrXml.setSearchTerm(redirectRule.getSearchTerm());
 				qcrXml.setCondition(redirectRule.getCondition());
 				qcrXml.setChangeKeyword(redirectRule.getChangeKeyword());
-				qcrXml.setReason(reason);
+				qcrXml.setNotes(notes);
 				qcrXml.setName(name);
 				
 				JAXBContext context = JAXBContext.newInstance(QueryCleaningRuleXml.class);
@@ -61,7 +61,7 @@ public class QueryCleaningVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.QUERY_CLEANING, ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
 					m.marshal(qcrXml, w);
 				} finally {
 					try {
@@ -83,7 +83,7 @@ public class QueryCleaningVersionDAO {
 		try {
 			JAXBContext context = JAXBContext.newInstance(QueryCleaningRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
-			QueryCleaningRuleXml qcr = (QueryCleaningRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.QUERY_CLEANING, ruleId, version)));
+			QueryCleaningRuleXml qcr = (QueryCleaningRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.QUERY_CLEANING, ruleId)));
 			rr.setRuleId(ruleId);
 			rr.setStoreId(store);
 			rr.setRuleName(qcr.getRuleName());
@@ -105,7 +105,7 @@ public class QueryCleaningVersionDAO {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
 			QueryCleaningRuleXml rr = (QueryCleaningRuleXml)um.unmarshal(new FileReader(file));
-			backup.setReason(rr.getReason());
+			backup.setNotes(rr.getNotes());
 			backup.setName(rr.getName());
 		}catch (Exception e) {
 			logger.error(e,e);

@@ -2,34 +2,29 @@ package com.search.manager.report.model.xml;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "demote")
-public class DemoteRuleXml extends BaseRuleVersionXml {
+@XmlType(propOrder={"keyword", "demotedSku"})
+public class DemoteRuleXml extends RuleVersionXml {
 	
 	private static final long serialVersionUID = -7822668715298440691L;
 	private String keyword;
-	private String store;
-	private List<DemotedSkuXml> demotedSku;
+	private List<DemoteItemXml> demotedSku;
 	
 	public DemoteRuleXml() {
 		super(serialVersionUID);
 	}
 	
-	public List<DemotedSkuXml> getDemotedSku() {
+	@XmlElementRef(type=BaseRuleItemXml.class)
+	public List<DemoteItemXml> getDemotedSku() {
 		return demotedSku;
 	}
 	
-	public void setDemotedSku(List<DemotedSkuXml> demotedSku) {
+	public void setDemotedSku(List<DemoteItemXml> demotedSku) {
 		this.demotedSku = demotedSku;
-	}
-	
-	public String getStore() {
-		return store;
-	}
-	
-	public void setStore(String store) {
-		this.store = store;
 	}
 	
 	public String getKeyword() {

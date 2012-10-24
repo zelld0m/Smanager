@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.DemoteResult;
@@ -153,13 +153,13 @@ public class FileServiceImpl implements FileService{
 	}
 	
 	@Override
-	public List<BackupInfo> getBackupInfo(String store, List<String> list, RuleEntity ruleEntity) throws Exception {
+	public List<RuleVersionInfo> getBackupInfo(String store, List<String> list, RuleEntity ruleEntity) throws Exception {
 		
-		List<BackupInfo> backupList = new ArrayList<BackupInfo>();
-		BackupInfo backup = null;
+		List<RuleVersionInfo> backupList = new ArrayList<RuleVersionInfo>();
+		RuleVersionInfo backup = null;
 		
 		for(String ruleId : list){
-			backup = new BackupInfo();
+			backup = new RuleVersionInfo();
 			String path = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
 			
 			if(FileUtil.isExist(path)){

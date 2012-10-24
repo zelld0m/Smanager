@@ -91,7 +91,7 @@ public class RankingRuleVersionDAO {
 		return success;
 	}
 	
-	public boolean createRankingRuleVersion(String store, String ruleId, String username, String name, String reason){
+	public boolean createRankingRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		
@@ -110,7 +110,7 @@ public class RankingRuleVersionDAO {
 				rrXml.setLastModifiedDate(relevancy.getLastModifiedDate());
 				rrXml.setModifiedBy(relevancy.getLastModifiedBy());
 				rrXml.setCreatedBy(relevancy.getCreatedBy());
-				rrXml.setReason(reason);
+				rrXml.setNotes(notes);
 				rrXml.setName(name);
 				
 			    if(CollectionUtils.isNotEmpty(relevancy.getRelKeyword())){
@@ -134,10 +134,7 @@ public class RankingRuleVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					int nextVer = RuleVersionUtil.getNextVersion(store, RuleEntity.RANKING_RULE, ruleId);
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, nextVer));
-					RuleVersionUtil.addVersionCounterFile(store, RuleEntity.RANKING_RULE, ruleId, nextVer);
-					
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
 					m.marshal(rrXml, w);
 				} finally {
 					try {
@@ -159,7 +156,7 @@ public class RankingRuleVersionDAO {
 		try {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
-			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.RANKING_RULE, ruleId, version)));
+			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(RuleVersionUtil.getFileName(store, RuleEntity.RANKING_RULE, ruleId)));
 			relevancy.setRuleId(rr.getRuleId());
 			relevancy.setStore(new Store(store));
 			relevancy.setRuleName(rr.getRuleName());
@@ -197,7 +194,7 @@ public class RankingRuleVersionDAO {
 			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
 			Unmarshaller um = context.createUnmarshaller();
 			RankingRuleXml rr = (RankingRuleXml) um.unmarshal(new FileReader(file));
-			backup.setReason(rr.getReason());
+			backup.setNotes(rr.getNotes());
 			backup.setName(rr.getName());
 		}catch (Exception e) {
 			logger.error(e,e);

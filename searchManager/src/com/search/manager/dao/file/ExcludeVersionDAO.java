@@ -26,7 +26,7 @@ import com.search.manager.model.Product;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
-import com.search.manager.report.model.xml.ExcludedSkuXml;
+import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.StringUtil;
@@ -39,7 +39,7 @@ public class ExcludeVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createExcludeRuleVersion(String store, String ruleId, String username, String name, String reason){
+	public boolean createExcludeRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		ExcludeResult excludeFilter = new ExcludeResult();
@@ -55,13 +55,13 @@ public class ExcludeVersionDAO {
 			if(CollectionUtils.isNotEmpty(excludeList)){
 				ExcludeRuleXml excludeRuleXml = new ExcludeRuleXml();
 				excludeRuleXml.setKeyword(ruleId);
-				excludeRuleXml.setReason(reason);
+				excludeRuleXml.setNotes(notes);
 				excludeRuleXml.setName(name);
 				
-				List<ExcludedSkuXml> skuList = new ArrayList<ExcludedSkuXml>();
+				List<ExcludeItemXml> skuList = new ArrayList<ExcludeItemXml>();
 				ruleId = StringUtil.escapeKeyword(ruleId);
 				for (ExcludeResult excludeResult : excludeList) {
-					ExcludedSkuXml sku = new ExcludedSkuXml();
+					ExcludeItemXml sku = new ExcludeItemXml();
 					sku.setEdp(excludeResult.getEdp());
 					sku.setExpiryDate(excludeResult.getExpiryDate());
 					sku.setCreatedBy(excludeResult.getCreatedBy());
@@ -81,7 +81,7 @@ public class ExcludeVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.EXCLUDE, ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
 					m.marshal(excludeRuleXml, w);
 				} finally {
 					try {
@@ -105,7 +105,7 @@ public class ExcludeVersionDAO {
 				Unmarshaller um = context.createUnmarshaller();
 				LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 				ExcludeRuleXml excludeRule = (ExcludeRuleXml) um.unmarshal(new FileReader(filePath));
-				for (ExcludedSkuXml e : excludeRule.getExcludedSku()) {
+				for (ExcludeItemXml e : excludeRule.getExcludedSku()) {
 					Product product = new Product();
 					product.setEdp(e.getEdp());
 					product.setExpiryDate(e.getExpiryDate());
@@ -133,7 +133,7 @@ public class ExcludeVersionDAO {
 				JAXBContext context = JAXBContext.newInstance(ExcludeRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				ExcludeRuleXml excludeRule = (ExcludeRuleXml) um.unmarshal(file);
-				backup.setReason(excludeRule.getReason());
+				backup.setNotes(excludeRule.getNotes());
 				backup.setName(excludeRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());

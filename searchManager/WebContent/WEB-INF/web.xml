@@ -205,6 +205,7 @@
 				com.search.manager.model.RoleModel,
 				com.search.manager.model.RuleStatus,
 				com.search.manager.model.RuleVersionInfo,
+				com.search.manager.model.RuleVersionInfo$AccessControl,
 				com.search.manager.model.Store,
 				com.search.manager.model.StoreKeyword,
 				com.search.manager.model.TopKeyword,

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
-import com.search.manager.model.BackupInfo;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.utility.PropsUtils;
 import com.search.service.DeploymentRuleService;
 import com.search.service.FileService;
@@ -283,7 +283,7 @@ public class SearchGuiServiceImpl implements SearchGuiService{
 	}
 	
 	@Override
-	public List<BackupInfo> getBackupInfo(TransportList list){
+	public List<RuleVersionInfo> getBackupInfo(TransportList list){
 		
 		try {
 			if(isValidToken(list.getToken())){

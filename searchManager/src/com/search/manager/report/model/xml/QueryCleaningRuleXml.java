@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "querycleaning")
-public class QueryCleaningRuleXml extends BaseRuleVersionXml{
+public class QueryCleaningRuleXml extends RuleVersionXml{
 	
 	private static final long serialVersionUID = 5605017143398572331L;
 	private String ruleId;

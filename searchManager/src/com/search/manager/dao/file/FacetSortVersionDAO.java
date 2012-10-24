@@ -27,7 +27,7 @@ public class FacetSortVersionDAO {
 	
 	private static Logger logger = Logger.getLogger(FacetSortVersionDAO.class);
 	
-	public boolean createFacetSortRuleVersion(String store, String ruleId, String username, String name, String reason){
+	public boolean createFacetSortRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		List<FacetSort> facetSortList = null;
@@ -35,7 +35,7 @@ public class FacetSortVersionDAO {
 		try{
 			if(CollectionUtils.isNotEmpty(facetSortList)){
 				FacetSortRuleXml facetSortRuleXml = new FacetSortRuleXml();
-				facetSortRuleXml.setReason(reason);
+				facetSortRuleXml.setNotes(notes);
 				facetSortRuleXml.setName(name);
 				
 				JAXBContext context = JAXBContext.newInstance(FacetSortRuleXml.class);
@@ -48,7 +48,7 @@ public class FacetSortVersionDAO {
 					if (!FileUtil.isDirectoryExist(dir)) {
 						FileUtil.createDirectory(dir);
 					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId, RuleVersionUtil.getNextVersion(store, RuleEntity.FACET_SORT, ruleId)));
+					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
 					m.marshal(facetSortRuleXml, w);
 				} finally {
 					try {
@@ -90,7 +90,7 @@ public class FacetSortVersionDAO {
 				JAXBContext context = JAXBContext.newInstance(FacetSortRuleXml.class);
 				Unmarshaller um = context.createUnmarshaller();
 				FacetSortRuleXml facetSortRule = (FacetSortRuleXml) um.unmarshal(file);
-				backup.setReason(facetSortRule.getReason());
+				backup.setNotes(facetSortRule.getNotes());
 				backup.setName(facetSortRule.getName());
 			} catch (Exception e) {
 				logger.error(e.getMessage());

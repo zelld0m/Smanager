@@ -11,8 +11,30 @@ public class RuleVersionInfo {
 	private String ruleId;
 	private Date dateCreated;
 	private int version;
-	private String reason;
+	private String notes;
 	private String name;
+	
+	@DataTransferObject(converter = BeanConverter.class)
+	public static class AccessControl {
+		private String currentOwner;
+		private boolean locked;
+		
+		public String getCurrentOwner() {
+			return currentOwner;
+		}
+		
+		public void setCurrentOwner(String currentOwner) {
+			this.currentOwner = currentOwner;
+		}
+		
+		public boolean isLocked() {
+			return locked;
+		}
+		
+		public void setLocked(boolean locked) {
+			this.locked = locked;
+		}
+	}
 	
 	public String getRuleId() {
 		return ruleId;
@@ -38,14 +60,14 @@ public class RuleVersionInfo {
 		this.version = version;
 	}
 	
-	public String getReason() {
-		return reason;
+	public String getNotes() {
+		return notes;
 	}
-	
-	public void setReason(String reason) {
-		this.reason = reason;
+
+	public void setNotes(String notes) {
+		this.notes = notes;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

@@ -5,7 +5,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "facetsort")
-public class FacetSortRuleXml extends BaseRuleVersionXml {
+public class FacetSortRuleXml extends RuleVersionXml {
 	
 	private static final long serialVersionUID = -8031000176251148387L;
 	

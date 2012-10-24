@@ -12,10 +12,10 @@ import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 
 public interface RuleVersionDaoService {
-	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason) throws Exception;
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes) throws Exception;
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version) throws Exception;
 	public boolean restoreRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version);	
-	public List<RuleVersionInfo> getRuleVersionInfo(String store, String ruleType, String ruleId) throws Exception;
+	public List<RuleVersionInfo> getRuleVersionList(String store, String ruleType, String ruleId) throws Exception;
 	
 	public RedirectRule readQueryCleaningRuleVersion(String store, String ruleId, int version);
 	public Relevancy readRankingRuleVersion(String store, String ruleId, int version);

@@ -12,13 +12,12 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.RuleVersionDaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionAccess;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RuleStatus;
+import com.search.manager.model.RuleVersionInfo;
 
 @Service("ruleVersionService")
 @RemoteProxy(
@@ -32,15 +31,6 @@ public class RuleVersionService {
 
 	@Autowired private RuleVersionDaoService ruleversionDaoService;
 	@Autowired private DeploymentService deploymentService;
-	
-	public RuleVersionAccess getRuleVersionAccess(String ruleType, String ruleId, String name, String reason) {
-		try {
-			
-		} catch (Exception e) {
-			logger.error("Failed during createRuleVersion()",e);
-		}
-		return null;	
-	}
 
 	@RemoteMethod
 	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
@@ -68,7 +58,7 @@ public class RuleVersionService {
 	public List<RuleVersionInfo> getRuleVersions(String ruleType, String ruleId) {
 		List<RuleVersionInfo> versionList = null;
 		try {
-			versionList = ruleversionDaoService.getRuleVersionInfo(UtilityService.getStoreName(), ruleType, ruleId);
+			versionList = ruleversionDaoService.getRuleVersionList(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
 			logger.error("Failed during getRuleVersions()",e);
 		}
