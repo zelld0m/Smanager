@@ -108,7 +108,7 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	@Override
 	public List<ElevateProduct> readElevateRuleVersion(String store, String ruleId, int version, String server) {
 		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
-		return elevateVersionDAO.readElevatedVersion(filePath, store, server);
+		return elevateVersionDAO.readElevateVersion(filePath, store, server);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	@Override
 	public List<DemoteProduct> readDemoteRuleVersion(String store, String ruleId, int version, String server) {
 		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.DEMOTE, StringUtil.escapeKeyword(ruleId));
-		return demoteVersionDAO.readDemotedVersion(filePath, store, server);
+		return demoteVersionDAO.readDemoteVersion(filePath, store, server);
 	}
 
 	@Override

@@ -97,7 +97,7 @@ public class DemoteVersionDAO {
 		return success;	
 	}
 	
-	public List<DemoteProduct> readDemotedVersion(String filePath, String store, String server){
+	public List<DemoteProduct> readDemoteVersion(String filePath, String store, String server){
 		List<DemoteProduct> list = Collections.emptyList();
 		try {
 			try {
@@ -128,7 +128,7 @@ public class DemoteVersionDAO {
 		return list;
 	}
 	
-	public void readDemotedVersion(File file, RuleVersionInfo backup){
+	public void readDemoteVersion(File file, RuleVersionInfo backup){
 		try {
 			try {
 				JAXBContext context = JAXBContext.newInstance(DemoteRuleXml.class);
