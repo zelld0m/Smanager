@@ -483,7 +483,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		try {
 			DAOValidation.checkFacetSortPK(store, name);
 				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(store, name);
-				if (cache == null || CollectionUtils.isNotEmpty(cache.getList())) {
+				if (cache != null) {
 					return cache.getObj();					
 				}
 		}catch (Exception e) {

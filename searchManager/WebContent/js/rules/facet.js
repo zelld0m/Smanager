@@ -448,8 +448,11 @@
 									$contentHolder.find('a#clearButton').off().on({
 										click: function(e){
 											$contentHolder.find('input#popKeywordName').val("");
-											$contentHolder.find("input#popSortOrder").val("");
 											$contentHolder.find("input#popName").val("");
+											$contentHolder.find("input#popSortOrder").val(self.sortOrderList["ASC_ALPHABETICALLY"]);
+											$contentHolder.find("input#popType").val("Keyword");
+											$contentHolder.find('div#keywordinput').show();
+											$contentHolder.find('div#templatelist').hide();
 										}
 									});
 								},
