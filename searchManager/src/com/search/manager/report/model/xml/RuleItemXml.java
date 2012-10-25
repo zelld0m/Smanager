@@ -13,7 +13,7 @@ import com.search.manager.enums.MemberTypeEntity;
 	ExcludeItemXml.class,
 	DemoteItemXml.class	
 })
-public class BaseRuleItemXml implements Serializable{
+public class RuleItemXml implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	private String memberId;

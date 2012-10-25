@@ -15,8 +15,7 @@ public class SearchResult extends ModelBean {
 	protected RedirectRuleCondition condition;
 	protected String memberId;
 	
-	public SearchResult() {
-	}
+	public SearchResult() {}
 	
 	public SearchResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {
@@ -88,4 +87,11 @@ public class SearchResult extends ModelBean {
 		this.memberId = memberId;
 	}
 	
+	public MemberTypeEntity getMemberType() {
+		return this.entity;
+	}
+
+	public void setMemberType(MemberTypeEntity memberType) {
+		this.entity = memberType;
+	}
 }

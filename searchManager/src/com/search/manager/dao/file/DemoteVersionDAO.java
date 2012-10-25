@@ -2,33 +2,29 @@ package com.search.manager.dao.file;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.DemoteItemXml;
-import com.search.manager.utility.StringUtil;
-import com.search.manager.utility.FileUtil;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.ws.SearchHelper;
 
 @Repository(value="demoteVersionDAO")
@@ -38,63 +34,35 @@ public class DemoteVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
+	@SuppressWarnings("unchecked")
 	public boolean createDemoteRuleVersion(String store, String ruleId, String username, String name, String notes){
-		
-		boolean success = false;
-		DemoteResult demoteFilter = new DemoteResult();
-		List<DemoteResult> demotedList = null;
-		
-		try{
-			StoreKeyword sk = new StoreKeyword(store, ruleId);
-			demoteFilter.setStoreKeyword(sk); 
-			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
-			
-			demotedList = daoService.getDemoteResultList(criteria).getList();	
-			
-			if(CollectionUtils.isNotEmpty(demotedList)){
-				DemoteRuleXml demoteRuleXml = new DemoteRuleXml();
-				demoteRuleXml.setKeyword(ruleId);
-				demoteRuleXml.setNotes(notes);
-				demoteRuleXml.setName(name);
-				
-				List<DemoteItemXml> skuList = new ArrayList<DemoteItemXml>();
-				ruleId = StringUtil.escapeKeyword(ruleId);
-				for (DemoteResult demoteResult : demotedList) {
-					DemoteItemXml sku = new DemoteItemXml();
-					sku.setEdp(demoteResult.getEdp());
-					sku.setLocation(demoteResult.getLocation());
-					sku.setExpiryDate(demoteResult.getExpiryDate());
-					sku.setCreatedBy(demoteResult.getCreatedBy());
-					sku.setLastModifiedBy(demoteResult.getLastModifiedBy());
-					sku.setCreatedDate(demoteResult.getCreatedDate());
-					sku.setLastModifiedDate(demoteResult.getLastModifiedDate());
-					skuList.add(sku);
-				}
-				demoteRuleXml.setDemotedSku(skuList);
-				JAXBContext context = JAXBContext.newInstance(DemoteRuleXml.class);
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		RuleVersionListXml<DemoteRuleXml> ruleVersionListXml = (RuleVersionListXml<DemoteRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.DEMOTE, ruleId);
 
-				Writer w = null;
-				try {
-					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.DEMOTE);
-					if (!FileUtil.isDirectoryExist(dir)) {
-						FileUtil.createDirectory(dir);
-					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
-					m.marshal(demoteRuleXml, w);
-				} finally {
-					try {
-						w.close();
-					} catch (Exception e) {
-					}
+		if (ruleVersionListXml!=null){
+			long version = ruleVersionListXml.getNextVersion();
+			List<DemoteRuleXml> demoteRuleXmlList = ruleVersionListXml.getVersions();
+			List<DemoteItemXml> demoteItemXmlList = new ArrayList<DemoteItemXml>();
+
+			// Get all items
+			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(new DemoteResult(new StoreKeyword(store, ruleId)));
+
+			try {
+				List<DemoteResult> demoteItemList = daoService.getDemoteResultList(criteria).getList();
+				for (DemoteResult demoteResult : demoteItemList) {
+					demoteItemXmlList.add(new DemoteItemXml(demoteResult));
 				}
-				success = true;
-			}
-		}catch (Exception e) {
-			logger.error(e,e);
-		} 
-		return success;	
+			} catch (DaoException e) {
+				return false;
+			}	
+
+			demoteRuleXmlList.add(new DemoteRuleXml(store, version, name, notes, username, ruleId, demoteItemXmlList));
+
+			ruleVersionListXml.setVersions(demoteRuleXmlList);
+
+			return RuleVersionUtil.addRuleVersion(store, RuleEntity.DEMOTE, ruleId, ruleVersionListXml);
+		}
+
+		return false;
 	}
 	
 	public List<DemoteProduct> readDemoteVersion(String filePath, String store, String server){
@@ -105,7 +73,7 @@ public class DemoteVersionDAO {
 				Unmarshaller um = context.createUnmarshaller();
 				LinkedHashMap<String, DemoteProduct> map = new LinkedHashMap<String, DemoteProduct>();
 				DemoteRuleXml demoteRule = (DemoteRuleXml) um.unmarshal(new FileReader(filePath));
-				for (DemoteItemXml e : demoteRule.getDemotedSku()) {
+				for (DemoteItemXml e : demoteRule.getDemoteItem()) {
 					DemoteProduct ep = new DemoteProduct();
 					ep.setEdp(e.getEdp());
 					ep.setLocation(e.getLocation());
