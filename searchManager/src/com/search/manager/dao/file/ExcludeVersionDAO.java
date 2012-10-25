@@ -2,34 +2,30 @@ package com.search.manager.dao.file;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ExcludeItemXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.FileUtil;
-import com.search.manager.utility.StringUtil;
 import com.search.ws.SearchHelper;
 
 @Repository(value="excludeVersionDAO")
@@ -39,62 +35,35 @@ public class ExcludeVersionDAO {
 	
 	@Autowired private DaoService daoService;
 	
+	@SuppressWarnings("unchecked")
 	public boolean createExcludeRuleVersion(String store, String ruleId, String username, String name, String notes){
-		
-		boolean success = false;
-		ExcludeResult excludeFilter = new ExcludeResult();
-		List<ExcludeResult> excludeList = null;
-		
-		try{
-			StoreKeyword sk = new StoreKeyword(store, ruleId);
-			excludeFilter.setStoreKeyword(sk); 
-			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-			
-			excludeList = daoService.getExcludeResultList(criteria).getList();	
-			
-			if(CollectionUtils.isNotEmpty(excludeList)){
-				ExcludeRuleXml excludeRuleXml = new ExcludeRuleXml();
-				excludeRuleXml.setKeyword(ruleId);
-				excludeRuleXml.setNotes(notes);
-				excludeRuleXml.setName(name);
-				
-				List<ExcludeItemXml> skuList = new ArrayList<ExcludeItemXml>();
-				ruleId = StringUtil.escapeKeyword(ruleId);
-				for (ExcludeResult excludeResult : excludeList) {
-					ExcludeItemXml sku = new ExcludeItemXml();
-					sku.setEdp(excludeResult.getEdp());
-					sku.setExpiryDate(excludeResult.getExpiryDate());
-					sku.setCreatedBy(excludeResult.getCreatedBy());
-					sku.setLastModifiedBy(excludeResult.getLastModifiedBy());
-					sku.setCreatedDate(excludeResult.getCreatedDate());
-					sku.setLastModifiedDate(excludeResult.getLastModifiedDate());
-					skuList.add(sku);
-				}
-				excludeRuleXml.setExcludedSku(skuList);
-				JAXBContext context = JAXBContext.newInstance(ExcludeRuleXml.class);
-				Marshaller m = context.createMarshaller();
-				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.EXCLUDE, ruleId);
 
-				Writer w = null;
-				try {
-					String dir = RuleVersionUtil.getRuleVersionFileDirectory(store, RuleEntity.EXCLUDE);
-					if (!FileUtil.isDirectoryExist(dir)) {
-						FileUtil.createDirectory(dir);
-					}
-					w = new FileWriter(RuleVersionUtil.getFileNameByDir(dir, ruleId));
-					m.marshal(excludeRuleXml, w);
-				} finally {
-					try {
-						w.close();
-					} catch (Exception e) {
-					}
+		if (ruleVersionListXml!=null){
+			long version = ruleVersionListXml.getNextVersion();
+			List<ExcludeRuleXml> excludeRuleXmlList = ruleVersionListXml.getVersions();
+			List<ExcludeItemXml> excludeItemXmlList = new ArrayList<ExcludeItemXml>();
+
+			// Get all items
+			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(new StoreKeyword(store, ruleId)));
+
+			try {
+				List<ExcludeResult> excludeItemList = daoService.getExcludeResultList(criteria).getList();
+				for (ExcludeResult excludeResult : excludeItemList) {
+					excludeItemXmlList.add(new ExcludeItemXml(excludeResult));
 				}
-				success = true;
-			}
-		}catch (Exception e) {
-			logger.error(e,e);
-		} 
-		return success;	
+			} catch (DaoException e) {
+				return false;
+			}	
+
+			excludeRuleXmlList.add(new ExcludeRuleXml(store, version, name, notes, username, ruleId, excludeItemXmlList));
+
+			ruleVersionListXml.setVersions(excludeRuleXmlList);
+
+			return RuleVersionUtil.addRuleVersion(store, RuleEntity.EXCLUDE, ruleId, ruleVersionListXml);
+		}
+
+		return false;
 	}
 	
 	public List<Product> readExcludeRuleVersion(String filePath, String store, String server){
@@ -105,7 +74,7 @@ public class ExcludeVersionDAO {
 				Unmarshaller um = context.createUnmarshaller();
 				LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 				ExcludeRuleXml excludeRule = (ExcludeRuleXml) um.unmarshal(new FileReader(filePath));
-				for (ExcludeItemXml e : excludeRule.getExcludedSku()) {
+				for (ExcludeItemXml e : excludeRule.getExcludeItem()) {
 					Product product = new Product();
 					product.setEdp(e.getEdp());
 					product.setExpiryDate(e.getExpiryDate());

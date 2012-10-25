@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleVersionInfo;
@@ -22,62 +25,122 @@ import com.search.manager.utility.StringUtil;
 
 public class RuleVersionUtil {
 
+	private static Logger logger = Logger.getLogger(RuleVersionUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 
 	private static final String PATH = PropsUtils.getValue("backuppath");
-	
-	@SuppressWarnings("rawtypes")
-	public static RuleVersionListXml getRuleVersionFile(String store, RuleEntity ruleEntity, String ruleId) throws Exception {
+	private static final String ROLLBACK_PREFIX = "rpnv";
 
-		JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+	@SuppressWarnings("rawtypes")
+	public static RuleVersionListXml getRuleVersionFile(String store, RuleEntity ruleEntity, String ruleId){
+		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
 		String filename = ruleId;
 
 		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
 		}
 
-		Marshaller m = context.createMarshaller();
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-		if (!FileUtil.isDirectoryExist(dir)) {
-			FileUtil.createDirectory(dir);
-		}
+		File dirFile = new File(dir);
 		
-		if (!FileUtil.isExist(filename)){
-			m.marshal(new RuleVersionListXml(), new FileWriter(filename));
+		if (!dirFile.exists()) {
+			try {
+				FileUtils.forceMkdir(dirFile);
+			} catch (IOException e) {
+				logger.error("Unable to create directory", e);
+				return null;
+			}
 		}
 
-		Unmarshaller um = context.createUnmarshaller(); 
+		try {
+			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		
-		return (RuleVersionListXml) um.unmarshal(new FileReader(filename));
+			if (!new File(filename).exists()){
+				m.marshal(new RuleVersionListXml(), new FileWriter(filename));
+			}
+
+			Unmarshaller um = context.createUnmarshaller(); 
+			ruleVersionListXml = (RuleVersionListXml) um.unmarshal(new FileReader(filename));
+		
+		} catch (JAXBException e) {
+			logger.error("Unable to create marshaller/unmarshaller", e);
+			return null;
+		} catch (IOException e) {
+			logger.error("Unable to create marshaller/unmarshaller", e);
+			return null;
+		}
+
+		return ruleVersionListXml;
 	}
-	
+
 	public static List<RuleVersionInfo> getRuleVersionInfo(String store, RuleEntity ruleEntity, String ruleId) throws Exception {
 		return null;
 	}
 
+	public static boolean removeRollbackFile(String filename, long version){
+		File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
+		return FileUtils.deleteQuietly(rollbackFile);
+	}
+	
+	public static boolean createRollbackFile(String filename, long version){
+		try {
+			File file = new File(filename);
+			File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
+			
+			if (!rollbackFile.exists()){
+				FileUtils.copyFile(file, rollbackFile, true);
+				if (rollbackFile.exists()) return true;
+			}else{
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Unable to create rollback file", e);
+			return false;
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
+			return false;
+		} 
+		return false;
+	}
+
 	@SuppressWarnings("rawtypes")
-	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList) throws Exception {
-		JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
 		String filename = ruleId;
+		long nextVersion = ruleVersionList.getNextVersion();
 
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
 		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
 		}
-		
-		Marshaller m = context.createMarshaller();
-		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		
-		ruleVersionList.setNextVersion(ruleVersionList.getNextVersion() + 1);
-		m.marshal(ruleVersionList, new FileWriter(filename));
 
-		return false;
+		if (!createRollbackFile(filename, nextVersion)){
+			logger.error("Unable to create rollback file");
+			return false;
+		};
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			ruleVersionList.setNextVersion(nextVersion + 1);
+			m.marshal(ruleVersionList, new FileWriter(filename));
+			if (!removeRollbackFile(filename, nextVersion)){
+				logger.info(String.format("Failed to delete rollback file for next version %l", nextVersion));
+			};
+			return true;
+		} catch (JAXBException e) {
+			logger.error("Unable to create marshaller", e);
+			return false;
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
+			return false;
+		}
 	}
 
 	public static void deleteRuleVersionFile(String store, RuleEntity ruleEntity, String ruleId) throws IOException{

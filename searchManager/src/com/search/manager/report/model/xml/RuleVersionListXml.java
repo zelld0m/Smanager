@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public class RuleVersionListXml<T>{
 	
 	private List<T> versions;
-	private int nextVersion;
+	private long nextVersion;
 	
 	private RuleVersionListXml(List<T> versions, int nextVersion) {
 		super();
@@ -44,11 +44,11 @@ public class RuleVersionListXml<T>{
 	}
 	
 	@XmlAttribute
-	public int getNextVersion() {
+	public long getNextVersion() {
 		return nextVersion;
 	}
 	
-	public void setNextVersion(int nextVersion) {
+	public void setNextVersion(long nextVersion) {
 		this.nextVersion = nextVersion;
 	}
 }
