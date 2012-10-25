@@ -408,6 +408,7 @@
 
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
+					ruleType: "Demote",
 					rule: self.selectedRule,
 					enableVersion:true,
 					authorizeRuleBackup: true,

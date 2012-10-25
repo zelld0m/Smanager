@@ -165,15 +165,15 @@
 						$table.find("tr#empty_row").show();
 					}
 					
-					for (var i=0; i < data.length ; i++){
+					for (var i in data){
 						var item = data[i];
 						var $tr = $table.find("tr#itemPattern").clone();
-						$tr.prop("id", "item" + $.formatAsId(item["ruleId"]));
+						$tr.prop("id", "item" + $.formatAsId(item["version"]));
 
 						$tr.find("td#itemId").html(item["version"]);
-						$tr.find("td#itemDate").html(item["dateCreated"].toUTCString());
+						$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
 						$tr.find("td#itemInfo > p#name").html(item["name"]);
-						$tr.find("td#itemInfo > p#notes").html(item["reason"]);
+						$tr.find("td#itemInfo > p#notes").html(item["notes"]);
 						base.addDeleteVersionListener($tr, item);
 						base.addRestoreVersionListener($tr, item);
 						$tr.show();

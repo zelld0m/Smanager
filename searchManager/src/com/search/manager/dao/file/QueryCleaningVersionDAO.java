@@ -1,9 +1,9 @@
 package com.search.manager.dao.file;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -15,20 +15,19 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.QueryCleaningRuleXml;
-import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="queryCleaningVersionDAO")
-public class QueryCleaningVersionDAO {
+public class QueryCleaningVersionDAO implements RuleVersionDAO{
 	
 	private static Logger logger = Logger.getLogger(QueryCleaningVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean createQueryCleaningRuleVersion(String store, String ruleId, String username, String name, String notes) {
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 
 		boolean success = false;
 
@@ -99,17 +98,16 @@ public class QueryCleaningVersionDAO {
 		return rr;
 	}
 
-	public void readQueryCleaningVersion(File file, RuleVersionInfo backup){
-		
-		try {
-			JAXBContext context = JAXBContext.newInstance(RankingRuleXml.class);
-			Unmarshaller um = context.createUnmarshaller();
-			QueryCleaningRuleXml rr = (QueryCleaningRuleXml)um.unmarshal(new FileReader(file));
-			backup.setNotes(rr.getNotes());
-			backup.setName(rr.getName());
-		}catch (Exception e) {
-			logger.error(e,e);
-		}
+	@Override
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Override
+	public boolean restoreRuleVersion(String store, String ruleId,
+			String username, long version) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

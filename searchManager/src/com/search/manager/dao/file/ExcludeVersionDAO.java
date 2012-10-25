@@ -1,6 +1,5 @@
 package com.search.manager.dao.file;
 
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +9,9 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,14 +31,14 @@ import com.search.manager.service.UtilityService;
 import com.search.ws.SearchHelper;
 
 @Repository(value="excludeVersionDAO")
-public class ExcludeVersionDAO {
+public class ExcludeVersionDAO implements RuleVersionDAO{
 	
 	private static Logger logger = Logger.getLogger(ExcludeVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
 	
 	@SuppressWarnings("unchecked")
-	public boolean createExcludeRuleVersion(String store, String ruleId, String username, String name, String notes){
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.EXCLUDE, ruleId);
 
 		if (ruleVersionListXml!=null){
@@ -96,20 +98,31 @@ public class ExcludeVersionDAO {
 		return list;
 	}
 	
-	public void readExcludeRuleVersion(File file, RuleVersionInfo backup){
-		try {
-			try {
-				JAXBContext context = JAXBContext.newInstance(ExcludeRuleXml.class);
-				Unmarshaller um = context.createUnmarshaller();
-				ExcludeRuleXml excludeRule = (ExcludeRuleXml) um.unmarshal(file);
-				backup.setNotes(excludeRule.getNotes());
-				backup.setName(excludeRule.getName());
-			} catch (Exception e) {
-				logger.error(e.getMessage());
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
+		List<RuleVersionInfo> ruleVersionInfoList = new ArrayList<RuleVersionInfo>();
+		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.EXCLUDE, ruleId);
+
+		if (ruleVersionListXml!=null){
+			List<ExcludeRuleXml> excludeRuleXmlList = ruleVersionListXml.getVersions();
+			if(CollectionUtils.isNotEmpty(excludeRuleXmlList)){
+				ruleVersionInfoList = ListUtils.transformedList(excludeRuleXmlList, new Transformer() { 
+					  @Override
+				      public Object transform(Object o) {  
+				          return new RuleVersionInfo((ExcludeRuleXml) o);  
+				      }  
+				  });  
 			}
-		} catch (Exception e) {
-			logger.error(e,e);
 		}
+		
+		return ruleVersionInfoList;
 	}
 	
+	@Override
+	public boolean restoreRuleVersion(String store, String ruleId,
+			String username, long version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -32,13 +32,13 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="rankingRuleVersionDAO")
-public class RankingRuleVersionDAO {
+public class RankingRuleVersionDAO implements RuleVersionDAO{
 	
 	private static Logger logger = Logger.getLogger(RankingRuleVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
 	
-	public boolean restoreRankingRuleVersion(String store, String ruleId, int version) {
+	public boolean restoreVersion(String store, String ruleId, int version) {
 		boolean success = true;
 		Relevancy relevancyVersion = readRankingRuleVersion(store, ruleId, version);
 		try {
@@ -91,7 +91,7 @@ public class RankingRuleVersionDAO {
 		return success;
 	}
 	
-	public boolean createRankingRuleVersion(String store, String ruleId, String username, String name, String notes){
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		
@@ -213,5 +213,17 @@ public class RankingRuleVersionDAO {
 		}
 		return relevancy;
 	}
-	
+
+	@Override
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean restoreRuleVersion(String store, String ruleId,
+			String username, long version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

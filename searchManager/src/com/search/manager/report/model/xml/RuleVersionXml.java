@@ -16,6 +16,8 @@ public class RuleVersionXml implements Serializable {
 	private static final long serialVersionUID = -368623910806297877L;
 	
 	private String store;
+	private String ruleId;
+	private String ruleName;
 	private long version;
 	private String notes;
 	private String name;
@@ -73,6 +75,24 @@ public class RuleVersionXml implements Serializable {
 		this.createdDate = createdDate;
 	}
 	
+	@XmlAttribute(name="id")
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(String ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	@XmlAttribute(name="name")
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
+
 	@XmlAttribute
 	public long getSerial() {
 		return serial;
@@ -99,5 +119,4 @@ public class RuleVersionXml implements Serializable {
 	public long getVersion() {
 		return version;
 	}
-
 }

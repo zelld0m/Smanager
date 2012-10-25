@@ -2,10 +2,14 @@ package com.search.manager.report.model.xml;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateResult;
 
 @XmlRootElement(name="item")
+@DataTransferObject(converter = BeanConverter.class)
 public class ElevateItemXml extends RuleItemXml{
 	
 	private static final long serialVersionUID = 1L;

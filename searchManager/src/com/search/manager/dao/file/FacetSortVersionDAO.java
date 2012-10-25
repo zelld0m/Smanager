@@ -1,6 +1,5 @@
 package com.search.manager.dao.file;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="facetSortVersionDAO")
-public class FacetSortVersionDAO {
+public class FacetSortVersionDAO implements RuleVersionDAO{
 	
 	private static Logger logger = Logger.getLogger(FacetSortVersionDAO.class);
 	
-	public boolean createFacetSortRuleVersion(String store, String ruleId, String username, String name, String notes){
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
 		boolean success = false;
 		List<FacetSort> facetSortList = null;
@@ -84,21 +83,16 @@ public class FacetSortVersionDAO {
 		return list;
 	}
 	
-	public void readFacetSortVersion(File file, RuleVersionInfo backup){
-		try {
-			try {
-				JAXBContext context = JAXBContext.newInstance(FacetSortRuleXml.class);
-				Unmarshaller um = context.createUnmarshaller();
-				FacetSortRuleXml facetSortRule = (FacetSortRuleXml) um.unmarshal(file);
-				backup.setNotes(facetSortRule.getNotes());
-				backup.setName(facetSortRule.getName());
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-			}
-		} catch (Exception e) {
-			logger.error(e,e);
-		}
+	@Override
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	
 
+	@Override
+	public boolean restoreRuleVersion(String store, String ruleId,
+			String username, long version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

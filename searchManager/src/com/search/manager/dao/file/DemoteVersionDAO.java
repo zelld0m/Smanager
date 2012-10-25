@@ -1,6 +1,5 @@
 package com.search.manager.dao.file;
 
-import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +9,9 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
+import org.apache.commons.collections.Transformer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -28,14 +30,14 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.ws.SearchHelper;
 
 @Repository(value="demoteVersionDAO")
-public class DemoteVersionDAO {
+public class DemoteVersionDAO implements RuleVersionDAO{
 	
 	private static Logger logger = Logger.getLogger(DemoteVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
 	
 	@SuppressWarnings("unchecked")
-	public boolean createDemoteRuleVersion(String store, String ruleId, String username, String name, String notes){
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		RuleVersionListXml<DemoteRuleXml> ruleVersionListXml = (RuleVersionListXml<DemoteRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.DEMOTE, ruleId);
 
 		if (ruleVersionListXml!=null){
@@ -96,21 +98,31 @@ public class DemoteVersionDAO {
 		return list;
 	}
 	
-	public void readDemoteVersion(File file, RuleVersionInfo backup){
-		try {
-			try {
-				JAXBContext context = JAXBContext.newInstance(DemoteRuleXml.class);
-				Unmarshaller um = context.createUnmarshaller();
-				DemoteRuleXml demoteRule = (DemoteRuleXml) um.unmarshal(file);
-				backup.setNotes(demoteRule.getNotes());
-				backup.setName(demoteRule.getName());
-			} catch (Exception e) {
-				logger.error(e.getMessage());
-			}
-		} catch (Exception e) {
-			logger.error(e,e);
-		}
-	}
-	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
+		List<RuleVersionInfo> ruleVersionInfoList = new ArrayList<RuleVersionInfo>();
+		RuleVersionListXml<DemoteRuleXml> ruleVersionListXml = (RuleVersionListXml<DemoteRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.DEMOTE, ruleId);
 
+		if (ruleVersionListXml!=null){
+			List<DemoteRuleXml> demoteRuleXmlList = ruleVersionListXml.getVersions();
+			if(CollectionUtils.isNotEmpty(demoteRuleXmlList)){
+				ruleVersionInfoList = ListUtils.transformedList(demoteRuleXmlList, new Transformer() { 
+					  @Override
+				      public Object transform(Object o) {  
+				          return new RuleVersionInfo((DemoteRuleXml) o);  
+				      }  
+				  });  
+			}
+		}
+		
+		return ruleVersionInfoList;
+	}
+
+	@Override
+	public boolean restoreRuleVersion(String store, String ruleId,
+			String username, long version) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

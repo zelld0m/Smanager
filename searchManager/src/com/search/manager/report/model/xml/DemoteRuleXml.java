@@ -1,13 +1,18 @@
 package com.search.manager.report.model.xml;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 @XmlRootElement(name = "demote")
 @XmlType(propOrder={"keyword", "demoteItem"})
+@DataTransferObject(converter = BeanConverter.class)
 public class DemoteRuleXml extends RuleVersionXml {
 	
 	private static final long serialVersionUID = -7822668715298440691L;
@@ -16,10 +21,13 @@ public class DemoteRuleXml extends RuleVersionXml {
 	
 	public DemoteRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<DemoteItemXml> demoteItem) {
 		super(store, name, notes, createdBy);
+		this.setRuleId(keyword);
+		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.demoteItem = demoteItem;
+		this.setCreatedDate(new Date());
 	}
 	
 	public DemoteRuleXml() {

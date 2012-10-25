@@ -5,35 +5,28 @@ import java.util.Date;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.report.model.xml.RuleVersionXml;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class RuleVersionInfo {
 	
 	private String ruleId;
-	private Date dateCreated;
-	private int version;
+	private String ruleName;
+	private String createdBy;
+	private Date createdDate;
+	private long version;
 	private String notes;
 	private String name;
 	
-	@DataTransferObject(converter = BeanConverter.class)
-	public static class AccessControl {
-		private String currentOwner;
-		private boolean locked;
-		
-		public String getCurrentOwner() {
-			return currentOwner;
-		}
-		
-		public void setCurrentOwner(String currentOwner) {
-			this.currentOwner = currentOwner;
-		}
-		
-		public boolean isLocked() {
-			return locked;
-		}
-		
-		public void setLocked(boolean locked) {
-			this.locked = locked;
-		}
+	public RuleVersionInfo(RuleVersionXml xml){
+		super();
+		this.setRuleId(xml.getRuleId());
+		this.setRuleName(xml.getRuleName());
+		this.setName(xml.getName());
+		this.setNotes(xml.getNotes());
+		this.setVersion(xml.getVersion());
+		this.setCreatedBy(xml.getCreatedBy());
+		this.setCreatedDate(xml.getCreatedDate());
 	}
 	
 	public String getRuleId() {
@@ -44,19 +37,19 @@ public class RuleVersionInfo {
 		this.ruleId = ruleId;
 	}
 	
-	public Date getDateCreated() {
-		return dateCreated;
+	public Date getCreatedDate() {
+		return createdDate;
 	}
-	
-	public void setDateCreated(Date dateCreated) {
-		this.dateCreated = dateCreated;
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
 	}
-	
-	public int getVersion() {
+
+	public long getVersion() {
 		return version;
 	}
 	
-	public void setVersion(int version) {
+	public void setVersion(long version) {
 		this.version = version;
 	}
 	
@@ -74,5 +67,21 @@ public class RuleVersionInfo {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 }

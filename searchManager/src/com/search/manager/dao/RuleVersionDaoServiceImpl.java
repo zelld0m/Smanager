@@ -16,14 +16,7 @@ import com.search.manager.dao.file.QueryCleaningVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.DemoteProduct;
-import com.search.manager.model.ElevateProduct;
-import com.search.manager.model.FacetSort;
-import com.search.manager.model.Product;
-import com.search.manager.model.RedirectRule;
-import com.search.manager.model.Relevancy;
 import com.search.manager.model.RuleVersionInfo;
-import com.search.manager.utility.StringUtil;
 
 @Service("fileService")
 public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
@@ -38,37 +31,26 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 
 	@Override
-	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason) throws Exception {
-
-		boolean success = false;
-
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
 		switch (ruleEntity) {
 		case ELEVATE:
-			success = elevateVersionDAO.createElevateRuleVersion(store, ruleId, username, name, reason);
-			break;
+			return elevateVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		case EXCLUDE:
-			success = excludeVersionDAO.createExcludeRuleVersion(store, ruleId, username, name, reason);
-			break;
+			return excludeVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		case DEMOTE:
-			success = demoteVersionDAO.createDemoteRuleVersion(store, ruleId, username, name, reason);
-			break;
+			return demoteVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		case FACET_SORT:
-			success = facetSortVersionDAO.createFacetSortRuleVersion(store, ruleId, username, name, reason);
-			break;
+			return facetSortVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		case QUERY_CLEANING:
-			success = queryCleaningVersionDAO.createQueryCleaningRuleVersion(store, ruleId, username, name, reason);
-			break;
+			return queryCleaningVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		case RANKING_RULE:
-			success = rankingRuleVersionDAO.createRankingRuleVersion(store, ruleId, username, name, reason);
-			break;
-		default:
-			break;
+			return rankingRuleVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
 		}
-		return success;
+		return false;
 	}
 
 	@Override
-	public boolean deleteRuleVersion(String store, RuleEntity entity, String ruleId, int version) throws Exception{
+	public boolean deleteRuleVersion(String store, RuleEntity entity, String ruleId, String username, int version){
 		boolean success = false;
 		try {
 			RuleVersionUtil.deleteRuleVersionFile(store, entity, ruleId);
@@ -82,67 +64,54 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	}
 
 	@Override
-	public boolean restoreRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version) {
-		boolean success = false;
-
+	public boolean restoreRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version) {
+		
 		switch (ruleEntity) {
 		case ELEVATE:
-			break;
+			return elevateVersionDAO.restoreRuleVersion(store, ruleId, username, version);
+			
 		case EXCLUDE:
-			break;
+			return excludeVersionDAO.restoreRuleVersion(store, ruleId, username, version);
+			
 		case DEMOTE:
-			break;
+			return demoteVersionDAO.restoreRuleVersion(store, ruleId, username, version);
+			
 		case FACET_SORT:
-			break;
+			return facetSortVersionDAO.restoreRuleVersion(store, ruleId, username, version);
+			
 		case QUERY_CLEANING:
-			break;
+			return queryCleaningVersionDAO.restoreRuleVersion(store, ruleId, username, version);
+			
 		case RANKING_RULE:
-			success = rankingRuleVersionDAO.restoreRankingRuleVersion(store, ruleId, version);
-			break;
-		default:
-			break;
+			return rankingRuleVersionDAO.restoreRuleVersion(store, ruleId, username, version);
 		}
-		return success;
+		return false;
 	}
 
 	@Override
-	public List<ElevateProduct> readElevateRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
-		return elevateVersionDAO.readElevateVersion(filePath, store, server);
-	}
-
-	@Override
-	public List<Product> readExcludeRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE, StringUtil.escapeKeyword(ruleId));
-		return excludeVersionDAO.readExcludeRuleVersion(filePath, store, server);
-	}
-
-	@Override
-	public List<DemoteProduct> readDemoteRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.DEMOTE, StringUtil.escapeKeyword(ruleId));
-		return demoteVersionDAO.readDemoteVersion(filePath, store, server);
-	}
-
-	@Override
-	public List<FacetSort> readFacetSortRuleVersion(String store, String ruleId, int version, String server) {
-		String filePath = RuleVersionUtil.getFileName(store, RuleEntity.FACET_SORT, StringUtil.escapeKeyword(ruleId));
-		return facetSortVersionDAO.readFacetSortVersion(filePath, store, server);
-	}
-
-	@Override
-	public RedirectRule readQueryCleaningRuleVersion(String store, String ruleId, int version) {
-		return queryCleaningVersionDAO.readQueryCleaningVersion(store, ruleId, version);
-	}
-
-	@Override
-	public Relevancy readRankingRuleVersion(String store, String ruleId, int version) {
-		return rankingRuleVersionDAO.readRankingRuleVersion(store, ruleId, version);
-	}
-
-	@Override
-	public List<RuleVersionInfo> getRuleVersionList(String store, String ruleType, String ruleId) {
+	public List<RuleVersionInfo> getRuleVersions(String store, String ruleType, String ruleId) {
 		List<RuleVersionInfo> versionList = new ArrayList<RuleVersionInfo>();
 
+		switch (RuleEntity.find(ruleType)) {
+		case ELEVATE:
+			versionList = elevateVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		case EXCLUDE:
+			versionList = excludeVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		case DEMOTE:
+			versionList = demoteVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		case FACET_SORT:
+			versionList = facetSortVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		case QUERY_CLEANING:
+			versionList = queryCleaningVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		case RANKING_RULE:
+			versionList = rankingRuleVersionDAO.getRuleVersions(store, ruleId);
+			break;
+		}
 
 		return versionList;
 	}
