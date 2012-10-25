@@ -17,14 +17,20 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.FacetSort;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="facetSortVersionDAO")
-public class FacetSortVersionDAO implements RuleVersionDAO{
+public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 	
 	private static Logger logger = Logger.getLogger(FacetSortVersionDAO.class);
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public RuleVersionListXml<FacetSortRuleXml> getRuleVersionFile(String store, String ruleId) {
+		return (RuleVersionListXml<FacetSortRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.FACET_SORT, ruleId);
+	}
 	
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		
@@ -83,13 +89,6 @@ public class FacetSortVersionDAO implements RuleVersionDAO{
 		return list;
 	}
 	
-	@Override
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean restoreRuleVersion(String store, String ruleId,
 			String username, long version) {
 		// TODO Auto-generated method stub

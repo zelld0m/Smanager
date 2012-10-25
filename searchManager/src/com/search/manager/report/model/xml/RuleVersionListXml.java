@@ -15,6 +15,8 @@ public class RuleVersionListXml<T>{
 	
 	private List<T> versions;
 	private long nextVersion;
+	private String ruleId;
+	private String ruleName;
 	
 	private RuleVersionListXml(List<T> versions, int nextVersion) {
 		super();
@@ -50,5 +52,23 @@ public class RuleVersionListXml<T>{
 	
 	public void setNextVersion(long nextVersion) {
 		this.nextVersion = nextVersion;
+	}
+
+	@XmlAttribute(name="id")
+	public String getRuleId() {
+		return ruleId;
+	}
+
+	public void setRuleId(String ruleId) {
+		this.ruleId = ruleId;
+	}
+
+	@XmlAttribute(name="name")
+	public String getRuleName() {
+		return ruleName;
+	}
+
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
 	}
 }

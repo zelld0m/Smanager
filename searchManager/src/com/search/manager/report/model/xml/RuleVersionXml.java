@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlSeeAlso({
 	ElevateRuleXml.class,
@@ -75,7 +76,7 @@ public class RuleVersionXml implements Serializable {
 		this.createdDate = createdDate;
 	}
 	
-	@XmlAttribute(name="id")
+	@XmlTransient
 	public String getRuleId() {
 		return ruleId;
 	}
@@ -84,7 +85,7 @@ public class RuleVersionXml implements Serializable {
 		this.ruleId = ruleId;
 	}
 
-	@XmlAttribute(name="name")
+	@XmlTransient
 	public String getRuleName() {
 		return ruleName;
 	}

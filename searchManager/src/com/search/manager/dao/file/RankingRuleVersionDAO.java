@@ -21,22 +21,30 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.model.Store;
 import com.search.manager.report.model.xml.RankingRuleKeywordXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="rankingRuleVersionDAO")
-public class RankingRuleVersionDAO implements RuleVersionDAO{
+public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 	
 	private static Logger logger = Logger.getLogger(RankingRuleVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public RuleVersionListXml<RankingRuleXml> getRuleVersionFile(String store,
+			String ruleId) {
+		return (RuleVersionListXml<RankingRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.RANKING_RULE, ruleId);
+	}
 	
 	public boolean restoreVersion(String store, String ruleId, int version) {
 		boolean success = true;
@@ -212,12 +220,6 @@ public class RankingRuleVersionDAO implements RuleVersionDAO{
 			relevancy.setRelKeyword(relKWList);
 		}
 		return relevancy;
-	}
-
-	@Override
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

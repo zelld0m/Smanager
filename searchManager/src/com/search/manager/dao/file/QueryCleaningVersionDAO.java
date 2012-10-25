@@ -3,7 +3,6 @@ package com.search.manager.dao.file;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.Writer;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -16,16 +15,23 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.QueryCleaningRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.utility.FileUtil;
 
 @Repository(value="queryCleaningVersionDAO")
-public class QueryCleaningVersionDAO implements RuleVersionDAO{
+public class QueryCleaningVersionDAO extends RuleVersionDAO<QueryCleaningRuleXml>{
 	
 	private static Logger logger = Logger.getLogger(QueryCleaningVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public RuleVersionListXml<QueryCleaningRuleXml> getRuleVersionFile(
+			String store, String ruleId) {
+		return (RuleVersionListXml<QueryCleaningRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.QUERY_CLEANING, ruleId);
+	}
 	
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
 
@@ -96,12 +102,6 @@ public class QueryCleaningVersionDAO implements RuleVersionDAO{
 			logger.error(e,e);
 		}
 		return rr;
-	}
-
-	@Override
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

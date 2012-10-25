@@ -31,15 +31,20 @@ import com.search.manager.service.UtilityService;
 import com.search.ws.SearchHelper;
 
 @Repository(value="excludeVersionDAO")
-public class ExcludeVersionDAO implements RuleVersionDAO{
+public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 	
 	private static Logger logger = Logger.getLogger(ExcludeVersionDAO.class);
 	
 	@Autowired private DaoService daoService;
 	
+	@Override
 	@SuppressWarnings("unchecked")
+	public RuleVersionListXml<ExcludeRuleXml> getRuleVersionFile(String store, String ruleId) {
+		return (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.EXCLUDE, ruleId);
+	}
+	
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
-		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.EXCLUDE, ruleId);
+		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = getRuleVersionFile(store, ruleId);
 
 		if (ruleVersionListXml!=null){
 			long version = ruleVersionListXml.getNextVersion();
@@ -60,6 +65,8 @@ public class ExcludeVersionDAO implements RuleVersionDAO{
 
 			excludeRuleXmlList.add(new ExcludeRuleXml(store, version, name, notes, username, ruleId, excludeItemXmlList));
 
+			ruleVersionListXml.setRuleId(ruleId);
+			ruleVersionListXml.setRuleName(ruleId);
 			ruleVersionListXml.setVersions(excludeRuleXmlList);
 
 			return RuleVersionUtil.addRuleVersion(store, RuleEntity.EXCLUDE, ruleId, ruleVersionListXml);
@@ -120,8 +127,7 @@ public class ExcludeVersionDAO implements RuleVersionDAO{
 	}
 	
 	@Override
-	public boolean restoreRuleVersion(String store, String ruleId,
-			String username, long version) {
+	public boolean restoreRuleVersion(String store, String ruleId, String username, long version) {
 		// TODO Auto-generated method stub
 		return false;
 	}
