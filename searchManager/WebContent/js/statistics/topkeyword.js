@@ -35,14 +35,22 @@
 
 			loadItems: function($divList, list, start, noOfItems){
 				var listLen = list.length;
+				var isType2 = $("select#fileFilter").val().indexOf("-splunk") > 0;
+				var patternId = isType2 ? "div#itemPattern2" : "div#itemPattern1";
+
 				for (var i=start; i < start + noOfItems ; i++){
 					if(i == listLen)
 						break;
 
-					var $divItem = $divList.find("div#itemPattern").clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
+					var $divItem = $divList.find(patternId).clone().prop("id", "row" + $.formatAsId(parseInt(i)+1));
 					$divItem.find("label.iter").html(parseInt(i)+1);
 					$divItem.find("label.keyword").html(list[i]["keyword"]);
 					$divItem.find("label.count").html(list[i]["count"]);
+
+					if (isType2) {
+						$divItem.find("label.results").html(list[i]["resultCount"]);
+						$divItem.find("label.sku").html(list[i]["sku"]);
+					}
 
 					$divItem.find("a.toggle").text("Show Active Rule").on({
 						click:function(data){
@@ -77,6 +85,19 @@
 				$divList.find("div.items").removeClass("alt");
 				$divList.find("div.items:even").addClass("alt");
 			},
+			
+			resetHeader: function() {
+				var $divHeader1 = $("div#itemHeader1");
+				var $divHeader2 = $("div#itemHeader2");
+				
+				if ($("select#fileFilter").val().indexOf("-splunk") > 0) {
+					$divHeader1.hide();
+					$divHeader2.show();
+				} else {
+					$divHeader2.hide();
+					$divHeader1.show();
+				}
+			},
 
 			getKeywordList: function(){
 				var self = this;
@@ -85,9 +106,10 @@
 					callback: function(data){
 						var list = data.list;
 						var $divList = $("div#itemList");
-						$divList.find("div.items:not(#itemPattern)").remove();
+						$divList.find("div.items:not(#itemPattern1, #itemPattern2)").remove();
 
 						if (list.length > 0){
+							self.resetHeader();
 							self.loadItems($divList, list, self.startIndex, self.initialNoOfItems);
 							self.startIndex = self.initialNoOfItems;
 
