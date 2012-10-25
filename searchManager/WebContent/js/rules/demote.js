@@ -145,7 +145,7 @@
 									DemoteServiceJS.updateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
 											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
-											self.populateRuleItem(self.selectedRulePage);
+											self.populateRuleItem(self.selectedRuleItemPage);
 										},
 										preHook: function(){ 
 											self.preShowRuleContent();
@@ -370,7 +370,7 @@
 				DemoteServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
 						showActionResponse(code, "update", "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
-						if(code==1) self.populateRuleItem(self.selectedRulePage);
+						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
 			},
@@ -428,11 +428,11 @@
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
-						self.selectedRulePage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
+						self.selectedRuleItemPage = $.isNotBlank(page) && $.isNumeric(page) ? page : 1;
 						self.selectedRuleItemTotal = 0;
 						var $ul = $("ul#ruleItemHolder");
 
-						DemoteServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRulePage, self.ruleItemPageSize, {
+						DemoteServiceJS.getProducts(self.getRuleItemFilter(), self.selectedRule["ruleName"], self.selectedRuleItemPage, self.ruleItemPageSize, {
 							callback: function(data){
 								self.selectedRuleItemTotal = data.totalSize;
 								$ul.find('li.ruleItem:not(#ruleItemPattern)').remove();
@@ -496,7 +496,7 @@
 												DemoteServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
 														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
-														self.populateRuleItem(self.selectedRulePage);
+														self.populateRuleItem(self.selectedRuleItemPage);
 													},
 													preHook: function(){ 
 														self.preShowRuleContent();

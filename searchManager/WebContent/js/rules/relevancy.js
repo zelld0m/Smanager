@@ -1074,6 +1074,8 @@
 	};
 
 	var updateRule = function(e){
+		var self = this;
+		
 		if (e.data.locked || !allowModify) return;
 
 		var unSaved = getUnSavedRelevancyFields();
@@ -1093,33 +1095,33 @@
 		if (checkIfUpdateAllowed() && isRelevancyFieldsValid){
 			var response = 0;
 			if ($.isBlank(ruleName)){
-				showMessage("#name", "Rule name is required.");
+				jAlert("Rule name is required.", moduleName);
 			}
 			else if (!isAllowedName(ruleName)){
-				showMessage("#name", "Rule name contains invalid value.");
+				jAlert("Rule name contains invalid value.", moduleName);
 			}
 			else if (ruleName.length>100){
-				showMessage("#name","Name should not exceed 100 characters.");
+				jAlert("Name should not exceed 100 characters.", moduleName);
 			}
 			else if (!isAscii(description)) {
-				showMessage("textarea#description", "Description contains non-ASCII characters.");										
+				jAlert("Description contains non-ASCII characters.", moduleName);
 			}
 			else if (!isXSSSafe(description)){
-				showMessage("textarea#description", "Description contains XSS.");
+				jAlert("Description contains XSS.", moduleName);
 			}
 			else if (description.length>255){
-				showMessage("textarea#description","Description should not exceed 255 characters.");
+				jAlert("Description should not exceed 255 characters.", moduleName);
 			}
 			else if(($.isNotBlank(startDate) && !$.isDate(startDate)) || ($.isNotBlank(endDate) && !$.isDate(endDate))){
-				jAlert("Please provide a valid date range!","Ranking Rule");
+				jAlert("Please provide a valid date range!",moduleName);
 			} else if ($.isNotBlank(startDate) && $.isDate(startDate) && $.isNotBlank(endDate) && $.isDate(endDate) && (new Date(startDate).getTime() > new Date(endDate).getTime())) {
-				jAlert("End date cannot be earlier than start date!","Ranking Rule");
+				jAlert("End date cannot be earlier than start date!",moduleName);
 			}
 			else {
 				RelevancyServiceJS.checkForRuleNameDuplicate(selectedRule.ruleId, ruleName, {
 					callback: function(data){
 						if (data==true){
-							showMessage("#name", "Another ranking rule is already using the name provided.");
+							jAlert("Another ranking rule is already using the name provided.","Ranking Rule");
 						}else{
 							RelevancyServiceJS.updateRule(selectedRule.ruleId, ruleName, description, startDate, endDate, {
 								callback: function(data){
