@@ -165,6 +165,7 @@
 				com.search.manager.service.DemoteService,
 				com.search.manager.service.DeploymentService,
 				com.search.manager.service.ElevateService,
+				com.search.manager.service.EnumUtilityService,
 				com.search.manager.service.ExcludeService,
 				com.search.manager.service.FacetSortService,
 				com.search.manager.service.FeatureService,

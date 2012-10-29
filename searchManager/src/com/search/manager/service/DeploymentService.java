@@ -47,6 +47,44 @@ public class DeploymentService {
 	public void setDaoService(DaoService daoService) {
 		this.daoService = daoService;
 	}
+	
+	@RemoteMethod
+	public List<String> exportRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		List<String> result = exportRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return result;
+	}
+	
+	private List<String> exportRule(String ruleType, List<String> ruleRefIdList) {
+		List<String> result = new ArrayList<String>();
+		try {
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
+		return result;
+	}
+	
+	@RemoteMethod
+	public List<String> importRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+		// TODO: add transaction dependency handshake
+		List<String> result = importRule(ruleType, Arrays.asList(ruleRefIdList));
+		addComment( comment, ruleStatusIdList);
+		return result;
+	}
+	
+	private List<String> importRule(String ruleType, List<String> ruleRefIdList) {
+		List<String> result = new ArrayList<String>();
+		try {
+			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
+			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
+		} catch (DaoException e) {
+			logger.error("Failed during approveRule()",e);
+		}
+		return result;
+	}
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {

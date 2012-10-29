@@ -751,6 +751,7 @@
 						base.contentHolder.html(base.getTemplate());
 						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
 
+						base.contentHolder.append(base.getPostTemplate());
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
