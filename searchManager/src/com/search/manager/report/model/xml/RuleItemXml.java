@@ -1,6 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -11,9 +10,9 @@ import com.search.manager.enums.MemberTypeEntity;
 @XmlSeeAlso({
 	ElevateItemXml.class,
 	ExcludeItemXml.class,
-	DemoteItemXml.class	
+	DemoteItemXml.class
 })
-public class RuleItemXml implements Serializable{
+public class RuleItemXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = 1L;
 	private String memberId;
@@ -21,10 +20,6 @@ public class RuleItemXml implements Serializable{
 	private String edp;
 	private String condition;
 	private Date expiryDate;
-	private String createdBy;
-	private String lastModifiedBy;
-	private Date lastModifiedDate;
-	private Date createdDate;
 	
 	@XmlAttribute(name="id", required=true)
 	public String getMemberId() {
@@ -66,37 +61,5 @@ public class RuleItemXml implements Serializable{
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
-	}
-
-	public String getCreatedBy() {
-		return createdBy;
-	}
-	
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-	
-	public String getLastModifiedBy() {
-		return lastModifiedBy;
-	}
-	
-	public void setLastModifiedBy(String lastModifiedBy) {
-		this.lastModifiedBy = lastModifiedBy;
-	}
-	
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 }

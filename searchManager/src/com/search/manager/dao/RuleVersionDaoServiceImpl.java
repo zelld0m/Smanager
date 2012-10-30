@@ -1,10 +1,8 @@
 package com.search.manager.dao;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +12,11 @@ import com.search.manager.dao.file.ExcludeVersionDAO;
 import com.search.manager.dao.file.FacetSortVersionDAO;
 import com.search.manager.dao.file.QueryCleaningVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
-import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleVersionInfo;
 
 @Service("fileService")
 public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
-
-	private Logger logger = Logger.getLogger(RuleVersionDaoServiceImpl.class);
 
 	@Autowired private ElevateVersionDAO elevateVersionDAO;
 	@Autowired private ExcludeVersionDAO excludeVersionDAO;
@@ -50,17 +45,22 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	}
 
 	@Override
-	public boolean deleteRuleVersion(String store, RuleEntity entity, String ruleId, String username, int version){
-		boolean success = false;
-		try {
-			RuleVersionUtil.deleteRuleVersionFile(store, entity, ruleId);
-			success = true;
-		} catch (IOException e) {
-			logger.equals(e.getMessage());
-		} catch (Exception e) {
-			logger.equals(e.getMessage());
+	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version){
+		switch (ruleEntity) {
+		case ELEVATE:
+			return elevateVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		case EXCLUDE:
+			return excludeVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		case DEMOTE:
+			return demoteVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		case FACET_SORT:
+			return facetSortVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		case QUERY_CLEANING:
+			return queryCleaningVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		case RANKING_RULE:
+			return rankingRuleVersionDAO.deleteRuleVersion(store, ruleId, username, version);
 		}
-		return success;
+		return false;
 	}
 
 	@Override
