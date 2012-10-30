@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
@@ -73,22 +76,51 @@ public class TopKeywordService {
 		BufferedReader reader = null;
 		try {
 			try {
-				reader = new BufferedReader(new FileReader(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename));
-				String readline = null;
-				while ((readline = reader.readLine()) != null) {
-					String[] valueArray = readline.split(",",2);
-					list.add(new TopKeyword(valueArray[1], Integer.parseInt(valueArray[0])));
+				String filePath = PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename;
+				
+				if (filename.indexOf("-splunk") > 0) {
+					readCsvFile(filePath, list);
+				} else {
+					reader = new BufferedReader(new FileReader(filePath));
+					String readline = null;
+					while ((readline = reader.readLine()) != null) {
+						String[] valueArray = readline.split(",",2);
+						list.add(new TopKeyword(valueArray[1], Integer.parseInt(valueArray[0])));
+					}
 				}
-
 			} catch (FileNotFoundException e) {
 				logger.error(e.getMessage());
 			} finally {
-				reader.close();
+				if (reader != null) {
+					reader.close();
+				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return new RecordSet<TopKeyword>(list, list.size());
+	}
+
+	private void readCsvFile(String filePath, List<TopKeyword> list)
+			throws IOException {
+		CSVReader reader = null;
+
+		try {
+			reader = new CSVReader(new FileReader(filePath), ',', '\"', '\0', 0, true);
+			List<String[]> data = reader.readAll();
+
+			for (String[] col : data) {
+				list.add(new TopKeyword(col[1], Integer.parseInt(col[0]), Integer.parseInt(col[2]), col[3]));
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
+	}
+	
+	private String getFileHeader(String filename) {
+		return filename.contains("-splunk") ? "Count,Keyword,Result,SKU" : "Count,Keyword";
 	}
 
 	private File getFile(String filename){
@@ -103,7 +135,7 @@ public class TopKeywordService {
 		try {
 			try {
 				bis = new BufferedInputStream(new FileInputStream(file));
-				CombinedInputStream cis = new CombinedInputStream(new InputStream[]{new ByteArrayInputStream("Count,Keyword".getBytes()), bis});
+				CombinedInputStream cis = new CombinedInputStream(new InputStream[]{new ByteArrayInputStream(getFileHeader(filename).getBytes()), bis});
 				// FileTransfer auto-closes the stream
 				fileTransfer = new FileTransfer(StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", "application/csv", cis);
 			} catch (FileNotFoundException e) {
@@ -117,6 +149,6 @@ public class TopKeywordService {
 	
 	@RemoteMethod
 	public boolean sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
-		return reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients,new ByteArrayInputStream("Count,Keyword".getBytes()),"text/csv");
+		return reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients,new ByteArrayInputStream(getFileHeader(filename).getBytes()),"text/csv");
 	}
 }
