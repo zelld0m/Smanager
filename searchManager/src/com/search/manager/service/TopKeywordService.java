@@ -106,7 +106,7 @@ public class TopKeywordService {
 		CSVReader reader = null;
 
 		try {
-			reader = new CSVReader(new FileReader(filePath));
+			reader = new CSVReader(new FileReader(filePath), ',', '\"', '\0', 0, true);
 			List<String[]> data = reader.readAll();
 
 			for (String[] col : data) {
