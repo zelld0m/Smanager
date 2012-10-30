@@ -56,7 +56,7 @@
 		</div>
 	</div>	
 	<div id="itemList" class="w95p marRLauto padT0 marT0 fsize12" style="max-height:365px; overflow-y:auto">
-		<div id="itemPattern1" class="items pad5 borderB clearfix" style="display:none">
+		<div id="itemPattern1" class="items pad5 borderB mar0 clearfix" style="display:none">
 			<label class="iter floatL w80"></label>
 			<label class="count floatL w80"></label>
 			<label class="floatL w500">
@@ -67,16 +67,16 @@
 				<div class="rules" style="display:none"></div>
 			</label>
 		</div>
-		<div id="itemPattern2" class="items pad5 borderB clearfix" style="display:none">
+		<div id="itemPattern2" class="items pad5 borderB mar0 clearfix" style="display:none">
 			<label class="iter floatL w45"></label>
 			<label class="count floatL w70"></label>
 			<label class="floatL w320">
-				<label class="keyword floatL w320"></label> 
+				<label class="keyword floatL w310"></label> 
 				<div class="rules" style="display:none"></div>
 			</label>
 			<label class="results floatL w70"></label>
 			<label class="sku floatL w70"></label> 
-			<label class="floatR fsize11 w85">
+			<label class="floatR fsize11 w90 txtAC">
 				<a class="toggle" href="javascript:void(0);"></a>
 			</label>
 		</div>
