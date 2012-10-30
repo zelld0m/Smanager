@@ -17,6 +17,7 @@ public class RuleVersionInfo {
 	private long version;
 	private String notes;
 	private String name;
+	private boolean deleted;
 	
 	public RuleVersionInfo(RuleVersionXml xml){
 		super();
@@ -83,5 +84,13 @@ public class RuleVersionInfo {
 
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }

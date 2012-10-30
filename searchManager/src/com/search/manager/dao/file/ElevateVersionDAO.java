@@ -3,7 +3,6 @@ package com.search.manager.dao.file;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,22 +15,26 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.utility.StringUtil;
 
 @Repository(value="elevateVersionDAO")
 public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 
-	private static Logger logger = Logger.getLogger(ElevateVersionDAO.class);
-
 	@Autowired private DaoService daoService;
 	
 	@Override
+	public String getRuleVersionFilename(String store, String ruleId) {
+		return RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<ElevateRuleXml> getRuleVersionFile(String store, String ruleId) {
-		return (RuleVersionListXml<ElevateRuleXml>) RuleVersionUtil.getRuleVersionFile(store, RuleEntity.ELEVATE, ruleId);
+	public RuleVersionListXml<ElevateRuleXml> getRuleVersionList(String store, String ruleId) {
+		return (RuleVersionListXml<ElevateRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.ELEVATE, ruleId);
 	}
 	
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
-		RuleVersionListXml<ElevateRuleXml> ruleVersionListXml = getRuleVersionFile(store, ruleId);
+		RuleVersionListXml<ElevateRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
 
 		if (ruleVersionListXml!=null){
 			long version = ruleVersionListXml.getNextVersion();

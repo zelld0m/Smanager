@@ -1,97 +1,76 @@
 package com.search.manager.report.model.xml;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
+import com.search.manager.enums.RuleType;
+import com.search.manager.enums.SortType;
 
 @XmlRootElement(name = "facetsort")
+@XmlType(propOrder={"ruleType", "sortType", "item"})
+@DataTransferObject(converter = BeanConverter.class)
 public class FacetSortRuleXml extends RuleVersionXml {
 	
 	private static final long serialVersionUID = -8031000176251148387L;
 	
-	private String ruleId;
-	private String ruleName;
-	private String description;
-	private String ruleType;
-	private String sortType;
-	private String createdBy;
-	private String modifiedBy;
-	private Date createdDate;
-	private Date lastModifiedDate;
+	private RuleType ruleType;
+	private SortType sortType;
+	private List<FacetSortItemXml> item;
 	
 	public FacetSortRuleXml() {
 		super(serialVersionUID);
 	}
+	
+	public FacetSortRuleXml(String store, long version, String name, String notes, String username, RuleType ruleType, SortType sortType,
+			String ruleId, String ruleName, List<FacetSortItemXml> item) {
+		super(store, name, notes, username);
+		this.setRuleId(ruleId);
+		this.setRuleName(ruleName);
+		this.ruleType = ruleType;
+		this.sortType = sortType;
+		this.item = item;
+		setVersion(version);
+		setSerial(serialVersionUID);
+		this.setCreatedDate(new Date());
+	}
 
-	public String getCreatedBy() {
-		return createdBy;
+	public FacetSortRuleXml(String store, long version, String name, String notes, String username, String ruleType, String sortType,
+			String ruleId, String ruleName, List<FacetSortItemXml> item) {
+		this(store, version, name, notes, username, RuleType.get(ruleType), SortType.get(sortType), ruleId, ruleName, item);
 	}
-	
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-	
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
-	public String getRuleId() {
-		return ruleId;
-	}
-	
-	public void setRuleId(String ruleId) {
-		this.ruleId = ruleId;
-	}
-	
-	public String getRuleName() {
-		return ruleName;
-	}
-	
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
-	}
-	
-	public String getRuleType() {
+
+	@XmlAttribute(name="default-type")
+	public RuleType getRuleType() {
 		return ruleType;
 	}
-	
-	public void setRuleType(String ruleType) {
+
+	public void setRuleType(RuleType ruleType) {
 		this.ruleType = ruleType;
 	}
 	
-	public String getSortType() {
+	@XmlAttribute(name="default-sort")
+	public SortType getSortType() {
 		return sortType;
 	}
-	
-	public void setSortType(String sortType) {
+
+	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
 	}
-	
-	public Date getCreatedDate() {
-		return createdDate;
+
+	@XmlElementRef
+	public List<FacetSortItemXml> getItem() {
+		return item;
 	}
 	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setItem(List<FacetSortItemXml> item) {
+		this.item = item;
 	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-	
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}	
 }

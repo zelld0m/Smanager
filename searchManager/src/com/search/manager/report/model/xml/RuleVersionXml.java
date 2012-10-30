@@ -1,8 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -10,9 +7,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlSeeAlso({
 	ElevateRuleXml.class,
 	ExcludeRuleXml.class,
-	DemoteRuleXml.class
+	DemoteRuleXml.class,
+	FacetSortRuleXml.class
 })
-public class RuleVersionXml implements Serializable {
+public class RuleVersionXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = -368623910806297877L;
 	
@@ -22,9 +20,8 @@ public class RuleVersionXml implements Serializable {
 	private long version;
 	private String notes;
 	private String name;
-	private String createdBy;
-	private Date createdDate;
 	private long serial;
+	private boolean deleted;
 	
 	public RuleVersionXml() {
 		super();
@@ -41,7 +38,7 @@ public class RuleVersionXml implements Serializable {
 		this.store = store;
 		this.notes = notes;
 		this.name = name;
-		this.createdBy = createdBy;
+		setCreatedBy(createdBy);
 	}
 
 	public String getNotes() {
@@ -58,22 +55,6 @@ public class RuleVersionXml implements Serializable {
 	
 	public void setName(String name) {
 		this.name = name;
-	}
-	
-	public String getCreatedBy() {
-		return createdBy;
-	}
-
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 	
 	@XmlTransient
@@ -120,4 +101,13 @@ public class RuleVersionXml implements Serializable {
 	public long getVersion() {
 		return version;
 	}
+
+	@XmlAttribute
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}	
 }

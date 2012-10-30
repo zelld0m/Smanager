@@ -11,14 +11,19 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Node;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
@@ -32,19 +37,20 @@ public class RuleVersionUtil {
 	private static final String ROLLBACK_PREFIX = "rpnv";
 
 	@SuppressWarnings("rawtypes")
-	public static RuleVersionListXml getRuleVersionFile(String store, RuleEntity ruleEntity, String ruleId){
+	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
 		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
-		String filename = ruleId;
+		String filename = "";
 
 		switch(ruleEntity){
-			case ELEVATE:
-			case EXCLUDE:
-			case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
+		case ELEVATE:
+		case EXCLUDE:
+		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
+		case FACET_SORT: filename = getFileNameByDir(dir, ruleId); break;
 		}
 
 		File dirFile = new File(dir);
-		
+
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -58,14 +64,15 @@ public class RuleVersionUtil {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		
+			m.setEventHandler(new RuleVersionValidationEventHandler());
 			if (!new File(filename).exists()){
 				m.marshal(new RuleVersionListXml(), new FileWriter(filename));
 			}
 
 			Unmarshaller um = context.createUnmarshaller(); 
+			um.setEventHandler(new RuleVersionValidationEventHandler());
 			ruleVersionListXml = (RuleVersionListXml) um.unmarshal(new FileReader(filename));
-		
+
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
@@ -85,12 +92,12 @@ public class RuleVersionUtil {
 		File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
 		return FileUtils.deleteQuietly(rollbackFile);
 	}
-	
+
 	public static boolean createRollbackFile(String filename, long version){
 		try {
 			File file = new File(filename);
 			File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
-			
+
 			if (!rollbackFile.exists()){
 				FileUtils.copyFile(file, rollbackFile, true);
 				if (rollbackFile.exists()) return true;
@@ -110,13 +117,14 @@ public class RuleVersionUtil {
 	@SuppressWarnings("rawtypes")
 	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
-		String filename = ruleId;
+		String filename = "";
 		long nextVersion = ruleVersionList.getNextVersion();
 
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
 		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
+		case FACET_SORT: filename = getFileNameByDir(dir, ruleId); break;
 		}
 
 		if (!createRollbackFile(filename, nextVersion)){
@@ -141,10 +149,6 @@ public class RuleVersionUtil {
 			logger.error("Unknown error", e);
 			return false;
 		}
-	}
-
-	public static void deleteRuleVersionFile(String store, RuleEntity ruleEntity, String ruleId) throws IOException{
-		deleteFile(getFileName(store, ruleEntity, ruleId));
 	}
 
 	public static void deleteFile(String filepath) throws IOException{
