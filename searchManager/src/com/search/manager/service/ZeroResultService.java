@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
@@ -73,22 +76,47 @@ public class ZeroResultService {
 		BufferedReader reader = null;
 		try {
 			try {
-				reader = new BufferedReader(new FileReader(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreName() + File.separator + filename));
-				String readline = null;
-				while ((readline = reader.readLine()) != null) {
-					String[] valueArray = readline.split(",",2);
-					list.add(new ZeroResult(valueArray[1], Integer.parseInt(valueArray[0])));
+				String filePath = PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreName() + File.separator + filename;
+				
+				if (filename.indexOf("-splunk") > 0) {
+					readCsvFile(filePath, list);
+				} else {
+					reader = new BufferedReader(new FileReader(filePath));
+					String readline = null;
+					while ((readline = reader.readLine()) != null) {
+						String[] valueArray = readline.split(",",2);
+						list.add(new ZeroResult(valueArray[1], Integer.parseInt(valueArray[0])));
+					}
 				}
-
 			} catch (FileNotFoundException e) {
 				logger.error(e.getMessage());
 			} finally {
-				reader.close();
+				if (reader != null) {
+					reader.close();
+				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
 		return new RecordSet<ZeroResult>(list, list.size());
+	}
+
+	private void readCsvFile(String filePath, List<ZeroResult> list)
+			throws IOException {
+		CSVReader reader = null;
+
+		try {
+			reader = new CSVReader(new FileReader(filePath), ',', '\"', '\0', 0, true);
+			List<String[]> data = reader.readAll();
+
+			for (String[] col : data) {
+					list.add(new ZeroResult(col[1], Integer.parseInt(col[0])));
+			}
+		} finally {
+			if (reader != null) {
+				reader.close();
+			}
+		}
 	}
 
 	private File getFile(String filename){
