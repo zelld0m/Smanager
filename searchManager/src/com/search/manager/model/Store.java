@@ -24,6 +24,8 @@ public class Store implements Serializable {
 		this.storeName = storeId;
 	}
 	
+	public Store() {}
+	
 	@RemoteProperty
 	public String getStoreId() {
 		return storeId;
@@ -46,5 +48,4 @@ public class Store implements Serializable {
 	public String toString() {
 		return "(Store Id: " + storeId + "\tStore Name: " + storeName + ")";
 	}
-
 }

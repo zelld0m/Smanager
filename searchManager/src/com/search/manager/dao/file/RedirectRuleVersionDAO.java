@@ -2,27 +2,19 @@ package com.search.manager.dao.file;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RedirectRule;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.StoreKeyword;
-import com.search.manager.report.model.xml.ElevateItemXml;
-import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.utility.StringUtil;
 
 @Repository(value="queryCleaningVersionDAO")
 public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
-
-	private static Logger logger = Logger.getLogger(RedirectRuleVersionDAO.class);
 
 	@Autowired private DaoService daoService;
 
@@ -48,7 +40,6 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 
 			try {
 				RedirectRule redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
-				List<String> ruleKeyword = redirectRule.getSearchTerms();
 				
 				queryCleaningRuleXmlList.add(new RedirectRuleXml(store, version, name, notes, username, redirectRule));
 
@@ -58,8 +49,6 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 			} catch (DaoException e) {
 				return false;
 			}	
-
-
 
 			return RuleVersionUtil.addRuleVersion(store, RuleEntity.QUERY_CLEANING, ruleId, ruleVersionListXml);
 		}

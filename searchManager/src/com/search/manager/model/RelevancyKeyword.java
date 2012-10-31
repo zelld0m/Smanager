@@ -14,8 +14,7 @@ public class RelevancyKeyword extends ModelBean {
 	private Relevancy relevancy;
 	private Integer priority;
 	
-	public RelevancyKeyword() {
-	}
+	public RelevancyKeyword() {}
 	
 	public RelevancyKeyword(Keyword keyword, Relevancy relevancy) {
 		this.keyword = keyword;

@@ -25,19 +25,19 @@ public class RuleVersionService {
 
 	private static final Logger logger = Logger.getLogger(RuleVersionService.class);
 
-	@Autowired private RuleVersionDaoService ruleversionDaoService;
+	@Autowired private RuleVersionDaoService ruleVersionDaoService;
 	@Autowired private DeploymentService deploymentService;
 
 	@RemoteMethod
 	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
-		return ruleversionDaoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
+		return ruleVersionDaoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
 	}
 
 	@RemoteMethod
 	public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
 		boolean success = false;
 		try {
-			success = ruleversionDaoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+			success = ruleVersionDaoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
 		} catch (Exception e) {
 			logger.error("Failed during deleteRuleVersion()",e);
 		}
@@ -48,7 +48,7 @@ public class RuleVersionService {
 	public List<RuleVersionInfo> getRuleVersions(String ruleType, String ruleId) {
 		List<RuleVersionInfo> versionList = null;
 		try {
-			versionList = ruleversionDaoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
+			versionList = ruleVersionDaoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
 			logger.error("Failed during getRuleVersions()",e);
 		}
@@ -57,7 +57,7 @@ public class RuleVersionService {
 
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
-		boolean success = ruleversionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+		boolean success = ruleVersionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
 		switch (RuleEntity.find(ruleType)) {
 		case ELEVATE:
 			break;

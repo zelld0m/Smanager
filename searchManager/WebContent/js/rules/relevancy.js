@@ -1195,6 +1195,7 @@
 
 		$("#submitForApproval").rulestatus({
 			moduleName: moduleName,
+			ruleType: "Ranking Rule",
 			rule: selectedRule,
 			enableVersion: true,
 			authorizeRuleBackup: true,

@@ -37,7 +37,8 @@ public class RuleVersionListXml<T>{
 		@XmlElementRef(name="exclude", type=ExcludeRuleXml.class),
 		@XmlElementRef(name="demote", type=DemoteRuleXml.class),
 		@XmlElementRef(name="facetsort", type=FacetSortRuleXml.class),
-		@XmlElementRef(name="querycleaning", type=RedirectRuleXml.class)
+		@XmlElementRef(name="querycleaning", type=RedirectRuleXml.class),
+		@XmlElementRef(name="rankingrule", type=RankingRuleXml.class)
 	})
 	public List<T> getVersions() {
 		return versions;

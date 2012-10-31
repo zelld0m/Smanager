@@ -1,116 +1,84 @@
 package com.search.manager.report.model.xml;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.search.manager.model.Relevancy;
 
 @XmlRootElement(name = "rankingrule")
 public class RankingRuleXml extends RuleVersionXml {
-	
+
 	private static final long serialVersionUID = 1073476024072073843L;
-	private String ruleId;
-	private String ruleName;
 	private String description;
-	private String createdBy;
-	private String modifiedBy;
-	private Date createdDate;
-	private Date lastModifiedDate;
 	private Date startDate;
 	private Date endDate;
-	private Map<String,String> relevancyFields;
-	private List<RankingRuleKeywordXml> keywords;
+	private RuleKeywordXml ruleKeyword;
+	private Map<String, String> parameters;
 
 	public RankingRuleXml() {
 		super(serialVersionUID);
 	}
 
-	public String getRuleId() {
-		return ruleId;
+	public RankingRuleXml(String store, long version, String name, String notes, String username,
+			Relevancy rr) {
+		super(store, name, notes, username);
+
+		if(rr!=null){
+			this.setRuleId(rr.getRuleId());
+			this.setRuleName(rr.getRuleName());
+			this.setStartDate(rr.getStartDate());
+			this.setEndDate(rr.getEndDate());
+			this.setDescription(rr.getDescription());
+			this.setRuleKeyword(new RuleKeywordXml(rr.getKeywords()));
+			this.setParameters(rr.getParameters());
+		}
+
+		setVersion(version);
+		setSerial(serialVersionUID);
+		this.setCreatedDate(new Date());
 	}
-	
-	public void setRuleId(String ruleId) {
-		this.ruleId = ruleId;
-	}
-	
-	public String getRuleName() {
-		return ruleName;
-	}
-	
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
-	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public String getCreatedBy() {
-		return createdBy;
-	}
-	
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
-	}
-	
-	public String getModifiedBy() {
-		return modifiedBy;
-	}
-	
-	public void setModifiedBy(String modifiedBy) {
-		this.modifiedBy = modifiedBy;
-	}
-	
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-	
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
-	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
-	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	
+
 	public Date getEndDate() {
 		return endDate;
 	}
-	
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	
-	public Map<String, String> getRelevancyFields() {
-		return relevancyFields;
+
+	@XmlElementRef(type=RuleKeywordXml.class)
+	public RuleKeywordXml getRuleKeyword() {
+		return ruleKeyword;
 	}
-	
-	public void setRelevancyFields(Map<String, String> relevancyFields) {
-		this.relevancyFields = relevancyFields;
+
+	public void setRuleKeyword(RuleKeywordXml ruleKeyword) {
+		this.ruleKeyword = ruleKeyword;
 	}
-	
-	public List<RankingRuleKeywordXml> getKeywords() {
-		return keywords;
+
+	public Map<String, String> getParameters() {
+		return parameters;
 	}
-	
-	public void setKeywords(List<RankingRuleKeywordXml> keywords) {
-		this.keywords = keywords;
+
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
 	}
 }

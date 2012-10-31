@@ -29,6 +29,7 @@ public class Relevancy extends ModelBean {
 	private Date endDate;
 	private Map<String, String> fields = new HashMap<String, String>();
 	private List<RelevancyKeyword> relKeyword;
+	private List<String> keywords;
 	
 	@DataTransferObject(converter = EnumConverter.class)
 	public enum Parameter {
@@ -283,4 +284,11 @@ public class Relevancy extends ModelBean {
 		this.fields = fields;
 	}
 
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
 }
