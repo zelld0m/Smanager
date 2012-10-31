@@ -4,11 +4,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.search.manager.model.RedirectRule;
+
 @XmlSeeAlso({
 	ElevateRuleXml.class,
 	ExcludeRuleXml.class,
 	DemoteRuleXml.class,
-	FacetSortRuleXml.class
+	FacetSortRuleXml.class,
+	RedirectRule.class
 })
 public class RuleVersionXml extends BaseEntityXml{
 	
