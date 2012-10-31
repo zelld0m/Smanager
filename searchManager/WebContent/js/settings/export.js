@@ -4,10 +4,10 @@
 		moduleName : "Export Rule",	
 		tabSelected : "",
 		entityName : "",
-		refresh : false,
 		autoExport : false,
+		ruleEntityList : null,
 
-		addTabListener: function(){
+		populateTabContent: function(){
 			var self = this;
 
 			$("#export").tabs("destroy").tabs({
@@ -140,15 +140,16 @@
 		
 		getRuleType : function(ruleTypeId){
 			var self = this;
-			
-			return self.ruleEntityList[ruleTypeId];
+			if(self.ruleEntityList)
+				return self.ruleEntityList[ruleTypeId];
+			return "";
 		},
 		
 		getPostTemplate : function(){
 			var template = "";
 			
 			template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
-			template += '	<h3 class="padL15" style="border:none">Approval Guidelines</h3>';
+			template += '	<h3 class="padL15" style="border:none">Export Rule Guidelines</h3>';
 			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
 			template += '		<p align="justify">';
 			template += '			Before exporting any rule, it is advisable to review each one. Click on <strong>Preview Content</strong> to view the rule details.<br/><br/>';
@@ -261,7 +262,7 @@
 			var self = this;
 			$("#titleText").html(self.moduleName);
 			self.getRuleEntityList();
-			self.addTabListener();
+			self.populateTabContent();
 		}
 	};
 

@@ -12,6 +12,8 @@ public class TopKeyword implements Serializable {
 
 	private String keyword;
 	private int count;
+	private int resultCount;
+	private String sku;
 	
 	public TopKeyword(){
 	}
@@ -20,6 +22,14 @@ public class TopKeyword implements Serializable {
 		super();
 		this.keyword = keyword;
 		this.count = count;
+	}
+
+	public TopKeyword(String keyword, int count, int resultCount, String sku) {
+		super();
+		this.keyword = keyword;
+		this.count = count;
+		this.resultCount = resultCount;
+		this.sku = sku;
 	}
 
 	public String getKeyword() {
@@ -38,5 +48,19 @@ public class TopKeyword implements Serializable {
 		this.count = count;
 	}
 
+	public int getResultCount() {
+		return resultCount;
+	}
 
+	public void setResultCount(int resultCount) {
+		this.resultCount = resultCount;
+	}
+
+	public String getSku() {
+		return sku;
+	}
+
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
 }
