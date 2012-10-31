@@ -89,7 +89,7 @@ public class FacetSortController {
 			
 			if(CollectionUtils.isNotEmpty(facets)){
 				for(int i=0 ; i < facets.size(); i++){
-					sb.append((i+1) + " - " + facets.get(i) + "\012");    
+					sb.append((i+1) + " - " + facets.get(i) + (char)10);    
 				}
 			}
 
