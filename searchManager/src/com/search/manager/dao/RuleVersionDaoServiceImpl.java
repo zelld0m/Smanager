@@ -10,8 +10,8 @@ import com.search.manager.dao.file.DemoteVersionDAO;
 import com.search.manager.dao.file.ElevateVersionDAO;
 import com.search.manager.dao.file.ExcludeVersionDAO;
 import com.search.manager.dao.file.FacetSortVersionDAO;
-import com.search.manager.dao.file.QueryCleaningVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
+import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleVersionInfo;
 
@@ -22,7 +22,7 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	@Autowired private ExcludeVersionDAO excludeVersionDAO;
 	@Autowired private DemoteVersionDAO demoteVersionDAO;
 	@Autowired private FacetSortVersionDAO facetSortVersionDAO;
-	@Autowired private QueryCleaningVersionDAO queryCleaningVersionDAO;
+	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
 
 	@Override
@@ -85,6 +85,7 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 		case RANKING_RULE:
 			return rankingRuleVersionDAO.restoreRuleVersion(store, ruleId, username, version);
 		}
+		
 		return false;
 	}
 

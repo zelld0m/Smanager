@@ -748,6 +748,8 @@
 					show: function(event, api){
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
+						
+						base.contentHolder.append(base.getPreTemplate());
 						base.contentHolder.html(base.getTemplate());
 						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
 
