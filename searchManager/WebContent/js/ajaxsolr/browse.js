@@ -124,7 +124,7 @@
 		}
 
 		if ($("#select-server").is(":visible")){
-			$("#select-server").off().on({
+			$("#select-server").on({
 				change: function(event, data){
 					var reload = false;
 					if ($.isNotBlank(data)) {
