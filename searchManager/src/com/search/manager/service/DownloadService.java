@@ -129,6 +129,19 @@ public class DownloadService {
 		return cellStyle;
 	}
 	
+	private static short getNumberOfLines(String cellValue, int colunmWidth, Font font) {
+		// TODO: adjust line width based on font width
+		if (StringUtils.isBlank(cellValue)) {
+			return 1;
+		}
+		short lines = 0;
+		String[] data = StringUtils.split(cellValue, "\n\r");
+		for (String line: data) {
+			lines += 1 + (line.length() / ((colunmWidth / 256) - 1));
+		}
+		return lines;
+	}
+	
 	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel) {
 		
 		// Set column widths
@@ -150,12 +163,22 @@ public class DownloadService {
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
 
 			// Create report subtitle
-			cellStyleTitle = createCellStyle(workbook, createFont(workbook, (short)11, true), CellStyle.ALIGN_CENTER,
+			Font rowSubTitleFont = createFont(workbook, (short)11, true);
+			cellStyleTitle = createCellStyle(workbook, rowSubTitleFont, CellStyle.ALIGN_CENTER,
 					CellStyle.VERTICAL_CENTER, true);
 			HSSFRow rowSubTitle = createRow(worksheet, ++rowIndex, 25f);
-			createCell(rowSubTitle, 0, cellStyleTitle, model.getReportHeader().getSubReportName());
+			String subReportName = model.getReportHeader().getSubReportName();
+			createCell(rowSubTitle, 0, cellStyleTitle, subReportName);
 			// Create merged region for the report subtitle
-			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));			
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
+			short cellWidth = 0;
+			for (int i = 0; i < model.getColumnCount() ; i++) {
+				cellWidth += worksheet.getColumnWidth(i);
+			}
+			short numLines = getNumberOfLines(subReportName, cellWidth,rowSubTitleFont);
+			if (numLines > 1) {
+				rowSubTitle.setHeightInPoints(rowSubTitle.getHeightInPoints() * numLines);	
+			}
 
 
 			// empty line
@@ -191,12 +214,21 @@ public class DownloadService {
 		}
 		
 		/* Data */
-		HSSFCellStyle bodyCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, false), null, null,
+		Font bodyFont = createFont(workbook, (short)10, false);
+		HSSFCellStyle bodyCellStyle = createCellStyle(workbook, bodyFont, null, null,
 				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, null, null);
 		for (int i = 0; i < model.getNumberOfRecords(); i++) {
-			HSSFRow row = createRow(worksheet, ++rowIndex, 25f);
+			short lines = 1;
+			HSSFRow row = createRow(worksheet, ++rowIndex, 15f);
 			for (int j = 0; j < model.getColumnCount(); j++) {
-				createCell(row, j, bodyCellStyle, model.getCell(i,j));
+				HSSFCell cell = createCell(row, j, bodyCellStyle, model.getCell(i,j));
+				short numLines = getNumberOfLines(cell.getStringCellValue(), worksheet.getColumnWidth(j), bodyFont);
+				if (lines < numLines) {
+					lines = numLines;
+				}
+			}
+			if (lines > 1) {
+				row.setHeightInPoints(row.getHeightInPoints() * lines);			
 			}
 		}
 		
