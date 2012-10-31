@@ -36,14 +36,15 @@ public class RuleVersionUtil {
 	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
 		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
-		String filename = "";
+		String id = ruleId;
 
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
-		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
-		case FACET_SORT: filename = getFileNameByDir(dir, ruleId); break;
+		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
 		}
+		
+		String filename = getFileNameByDir(dir, id);
 
 		File dirFile = new File(dir);
 
@@ -113,15 +114,16 @@ public class RuleVersionUtil {
 	@SuppressWarnings("rawtypes")
 	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
 		String dir = getRuleVersionFileDirectory(store, ruleEntity);
-		String filename = "";
+		String id = ruleId;
 		long nextVersion = ruleVersionList.getNextVersion();
 
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
-		case DEMOTE: filename = getFileNameByDir(dir, StringUtil.escapeKeyword(ruleId)); break;
-		case FACET_SORT: filename = getFileNameByDir(dir, ruleId); break;
+		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
 		}
+		
+		String filename = getFileNameByDir(dir, id);
 
 		if (!createRollbackFile(filename, nextVersion)){
 			logger.error("Unable to create rollback file");

@@ -158,7 +158,9 @@
 
 				$("#submitForApproval").rulestatus({
 					moduleName: self.moduleName,
+					ruleType: "Query Cleaning",
 					rule: self.selectedRule,
+					enableVersion:true,
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){

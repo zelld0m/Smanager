@@ -1,8 +1,10 @@
 package com.search.manager.report.model.xml;
 
 import java.util.Date;
-import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.search.manager.model.RedirectRule;
@@ -13,9 +15,10 @@ public class RedirectRuleXml extends RuleVersionXml{
 	private static final long serialVersionUID = 5605017143398572331L;
 	private String description;
 	private String redirectType;
-	private String condition;
-	private String changeKeyword;
-	private List<String> ruleKeyword;
+	private String replacementKeyword;
+	private String directHit;
+	private RuleKeywordXml ruleKeyword;
+	private RuleConditionXml ruleCondition;
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
@@ -28,7 +31,11 @@ public class RedirectRuleXml extends RuleVersionXml{
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());
 			this.setRuleName(rr.getRuleName());
-			this.ruleKeyword = rr.getSearchTerms();
+			this.setDescription(rr.getDescription());
+			this.setReplacementKeyword(rr.getChangeKeyword());
+			this.setRedirectType(rr.getRedirectType().name());	
+			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
+			this.setRuleCondition(new RuleConditionXml(rr.getConditions()));
 		}
 		
 		setVersion(version);
@@ -36,6 +43,7 @@ public class RedirectRuleXml extends RuleVersionXml{
 		this.setCreatedDate(new Date());
 	}
 	
+	@XmlAttribute(name="type")
 	public String getRedirectType() {
 		return redirectType;
 	}
@@ -44,21 +52,13 @@ public class RedirectRuleXml extends RuleVersionXml{
 		this.redirectType = redirectType;
 	}
 
-
-	public String getCondition() {
-		return condition;
+	@XmlElement(name="replace-kw")
+	public String getReplacementKeyword() {
+		return replacementKeyword;
 	}
 
-	public void setCondition(String condition) {
-		this.condition = condition;
-	}
-
-	public String getChangeKeyword() {
-		return changeKeyword;
-	}
-
-	public void setChangeKeyword(String changeKeyword) {
-		this.changeKeyword = changeKeyword;
+	public void setReplacementKeyword(String replacementKeyword) {
+		this.replacementKeyword = replacementKeyword;
 	}
 
 	public String getDescription() {
@@ -69,11 +69,29 @@ public class RedirectRuleXml extends RuleVersionXml{
 		this.description = description;
 	}
 
-	public List<String> getRuleKeyword() {
+	public String getDirectHit() {
+		return directHit;
+	}
+
+	public void setDirectHit(String directHit) {
+		this.directHit = directHit;
+	}
+
+	@XmlElementRef(type=RuleKeywordXml.class)
+	public RuleKeywordXml getRuleKeyword() {
 		return ruleKeyword;
 	}
 
-	public void setRuleKeyword(List<String> ruleKeyword) {
+	public void setRuleKeyword(RuleKeywordXml ruleKeyword) {
 		this.ruleKeyword = ruleKeyword;
+	}
+
+	@XmlElementRef(type=RuleConditionXml.class)
+	public RuleConditionXml getRuleCondition() {
+		return ruleCondition;
+	}
+
+	public void setRuleCondition(RuleConditionXml ruleCondition) {
+		this.ruleCondition = ruleCondition;
 	}
 }
