@@ -10,6 +10,7 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.SortType;
 
@@ -48,5 +49,16 @@ public class EnumUtilityService {
 		}
 
 		return entityList;
+	}
+	
+	@RemoteMethod
+	public static Map<String, String> getImportTypeList(){
+		Map<String, String> importTypeList = new LinkedHashMap<String, String>();
+
+		for (ImportType it: ImportType.values()) {
+			importTypeList.put(it.toString(), it.getDisplayText());
+		}
+
+		return importTypeList;
 	}
 }
