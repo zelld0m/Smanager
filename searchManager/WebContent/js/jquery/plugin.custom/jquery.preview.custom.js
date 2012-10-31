@@ -92,7 +92,10 @@
 			base.memberIdToItem = new Array();
 
 			$table.find("tr:not(#itemPattern)").remove();
-
+			
+			$content.find("#ruleInfo").text($.trim(base.options.ruleInfo));
+			$content.find("#requestType").text(base.options.requestType);
+			
 			if (data.totalSize==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
@@ -398,22 +401,90 @@
 			var template = base.options.preTemplate;
 
 			if (base.options.enablePreTemplate && $.isBlank(base.options.preTemplate)){
-				template  = '<div>';
-				template += '</div>';
-			} 
+				switch(base.options.ruleType.toLowerCase()){
+				case "elevate": 
+				case "exclude":
+				case "demote":
+					template  = '<div class="rulePreview w600">';
+					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
+					template += '	<label class="wAuto floatL" id="requestType"></label>';					
+					template += '	<div class="clearB"></div>';
+					template += '</div>';
+					template += '<div class="clearB"></div>';
+					break;
+				case "facet sort":
+					template  = '<div class="rulePreview w600">';
+					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
+					template += '	<label class="wAuto floatL" id="ruleType"></label>';					
+					template += '	<div class="clearB"></div>';
+					template += '</div>';
+					template += '<div class="clearB"></div>';
+					break;
+				case "query cleaning":
+					template  = '<div class="rulePreview w590 marB20">';
+					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
+					template += '	<label class="wAuto floatL" id="description">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Active Type:</label>';
+					template += '	<label class="wAuto floatL" id="redirectType">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';							
+					template += '</div>';
+					break;
+				case "ranking rule":
+					template  = '<div class="rulePreview w590 marB20">';
+					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';
+					template += '	<label class="wAuto floatL" id="startDate">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">End Date:</label>';
+					template += '	<label class="wAuto floatL" id="endDate">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';
+					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
+					template += '	<label class="wAuto floatL" id="description">';
+					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+					template += '	</label>';
+					template += '	<div class="clearB"></div>';					
+					template += '</div>';
+					break;
+				default: template = '';
+				}
+			}
 
 			return template;
 		};
 
 		base.getTemplate = function(){
-			var template = '<div>';
+			var template = '';
+			//var template = '<div>';
 
 			switch(base.options.ruleType.toLowerCase()){
 			case "elevate": 
 			case "exclude":
 			case "demote":
 				template += '<div id="forceAdd" class="loadingWrapper" style="display:none"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ16x16.gif"><span class="fsize12 posRel topn3 padL5">Retrieving Force Add Status</span></div>';
-				template += '<div id="previewTemplate1">';
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
@@ -449,22 +520,9 @@
 				template += '				</tr>';
 				template += '			</tbody>';
 				template += '		</table>';
-				template += '	</div>';
 				template += '</div>';
 				break;
 			case "facet sort":
-				template += '	<div id="ruleInfo">';
-				template += '		<label class="w70 floatL fbold">Rule Name:</label>';
-				template += '		<label class="wAuto floatL" id="ruleName">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '	    <div class="clearB"></div>';
-				template += '		<label class="w70 floatL fbold">Rule Type:</label>';
-				template += '		<label class="wAuto floatL" id="ruleType">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '	</div>';
-				template += '	<div class="clearB"></div>';
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
@@ -494,29 +552,7 @@
 				template += '	</div>';
 				break;
 			case "ranking rule": 
-				template += '<div id="previewTemplate2">';
-				template += '	<div class="rulePreview w590 marB20">';
-				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">Start Date:</label>';
-				template += '		<label class="wAuto floatL" id="startDate">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">End Date:</label>';
-				template += '		<label class="wAuto floatL" id="endDate">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">Description:</label>';
-				template += '		<label class="wAuto floatL" id="description">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '	</div>';
+				
 
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 				template += '		<ul class="posRel top5" style="z-index:100">';
@@ -591,25 +627,6 @@
 				template += '</div>';
 				break;
 			case "query cleaning": 
-				template += '<div id="queryCleaningTemplate">';
-				template += '	<div class="rulePreview w590 marB20">';
-				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">Description:</label>';
-				template += '		<label class="wAuto floatL" id="description">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">Active Type:</label>';
-				template += '		<label class="wAuto floatL" id="redirectType">';
-				template += '			<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-				template += '		</label>';
-				template += '	<div class="clearB"></div>			';				
-				template += '</div>';
-
 				template += '<div id="rankingSummary" class="infoTabs marB20 tabs">';
 
 				template += '	<ul class="posRel top5" style="z-index:100">';
@@ -689,10 +706,8 @@
 				template += '			</table>';
 				template += '		</div>	';
 				template += '	</div>';
-				template += '</div>';
 				break;
 			}
-			template += '</div>';
 
 			return template;
 		};
@@ -749,11 +764,16 @@
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
 						
-						base.contentHolder.append(base.getPreTemplate());
-						base.contentHolder.html(base.getTemplate());
+						var $div = $('<div></div>');
+						$div.append(base.getPreTemplate());
+						$div.append(base.getTemplate());
+						$div.append(base.getPostTemplate());
+						
+						base.contentHolder.html($div);
+						base.contentHolder.html($div);
 						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
 
-						base.contentHolder.append(base.getPostTemplate());
+						
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
@@ -770,9 +790,12 @@
 			headerText:"Rule Preview",
 			ruleType: "",
 			ruleId: "",
+			ruleInfo: "",
+			requestType: "",
 			version: "",
 			enablePreTemplate: false,
 			enablePostTemplate: false,
+			enableImportPreview: false,
 			preTemplate: "",
 			postTemplate: "",
 			itemForceAddStatusCallback: function(base, memberIds){}

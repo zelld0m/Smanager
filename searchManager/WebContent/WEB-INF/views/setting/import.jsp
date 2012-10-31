@@ -54,7 +54,7 @@
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="30px"></th>
 							<th width="150px">Rule Info</th>
-							<th width="85px">Published Date</th>
+							<th width="50px">Published Date</th>
 							<th width="85px">Import Type</th>
 							<th width="85px">Import As</th>
 						</tr>
@@ -73,7 +73,7 @@
 								<p class="breakWord" id="ruleName"></p>
 								<p id="ruleId" class="fsize11 breakWord"></p>
 							</td>
-							<td width="85px" class="txtAL" id="publishDate">
+							<td width="50px" class="txtAL" id="publishDate">
 								<p id="publishDate" class="fsize11"></p>
 							</td>
 							<td width="85px" class="txtAC" id="type">

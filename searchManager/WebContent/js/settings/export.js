@@ -148,11 +148,11 @@
 		getPostTemplate : function(){
 			var template = "";
 			
-			template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
-			template += '	<h3 class="padL15" style="border:none">Export Rule Guidelines</h3>';
-			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
+			template  = '<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">';
+			template += '	<h3 style="border:none">Export Rule Guidelines</h3>';
+			template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 			template += '		<p align="justify">';
-			template += '			Before exporting any rule, it is advisable to review each one. Click on <strong>Preview Content</strong> to view the rule details.<br/><br/>';
+			template += '			Before exporting any rule, it is advisable to review rule details.<br/><br/>';
 			template += '			If the published rule is ready to be exported, click on <strong>Export</strong>. Provide notes in the <strong>Comment</strong> box.';
 			template += '		<p>';
 			template += '	</div>';
@@ -199,6 +199,9 @@
 								$tr.find("td#ruleOption > img.previewIcon").preview({
 									ruleType: self.getRuleType(rule["ruleTypeId"]),
 									ruleId: rule["ruleRefId"],
+									ruleInfo: rule["description"],
+									requestType: rule["updateStatus"],
+									enablePreTemplate: true,
 									enablePostTemplate: true,
 									postTemplate: self.getPostTemplate(),
 									itemForceAddStatusCallback: function(base, memberIds){

@@ -5,6 +5,8 @@
 		tabSelected : "",
 		entityName : "",
 		ruleEntityList : null,
+		importTypeList : null,
+		importAsList : null,
 		
 		populateTabContent: function(){
 			var self = this;
@@ -41,6 +43,15 @@
 			EnumUtilityServiceJS.getImportTypeList({
 				callback : function(data){
 					self.importTypeList = data;
+				}
+			});
+		},
+		
+		getImportAsList : function(){
+			var self = this;
+			DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+				callback : function(data){
+					self.importAsList = data;
 				}
 			});
 		},
@@ -123,7 +134,7 @@
 			});
 		},
 		
-		getPreTemplate : function(){
+		getPreTemplate : function(selectedType){
 			var template = '';
 			template  = '<div class="rulePreview w590 marB20">';
 			template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
@@ -132,7 +143,17 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
 			template += '	<label class="wAuto floatL" id="importType">';
-			template += '		<select id="importType"><option value="">-- Import Type --</option></select>';
+			template += '		<select id="importType">';
+			template += '			<option value="">-- Import Type --</option>';
+			
+			//import type
+			if(self.importTypeList){
+				for (var importType in self.importTypeList){
+					template += '<option value="' +importType +'" ' + importType === selectedType ? 'selected' : '' + '>'+ self.importTypeList[importType] +'</option>';
+				}
+			}
+			
+			template += '		</select>';
 			template += '	</label>';
 			template += '	<div class="clearB"></div>';
 			template += '</div>';
@@ -143,18 +164,19 @@
 		getPostTemplate : function(){
 			var template = "";
 			
-			template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
-			template += '	<h3 class="padL15" style="border:none">Import Rule Guidelines</h3>';
-			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
+			template  = '<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">';
+			template += '	<h3 style="border:none">Import Rule Guidelines</h3>';
+			template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 			template += '		<p align="justify">';
+			template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
 			template += '			If the published rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
 			template += '		<p>';
 			template += '	</div>';
 			template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-			template += '	<label class="floatL w480"><textarea id="importComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+			template += '	<label class="floatL w480"><textarea id="exportComment" rows="5" class="w460" style="height:32px"></textarea></label>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '		<a id="importBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '			<div class="buttons fontBold">Import</div>';
 			template += '		</a>';
 			template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
@@ -222,12 +244,12 @@
 								$tr.find("td#ruleOption > img.previewIcon").preview({
 									ruleType: self.getRuleType(rule["ruleTypeId"]),
 									ruleId: rule["ruleRefId"],
+									ruleInfo: rule["description"],
 									enablePreTemplate: true,
 									enablePostTemplate: true,
-									//enableRightPanel: true,
+									enableImportPreview: true,
 									postTemplate: self.getPostTemplate(),
-									preTemplate: self.getPreTemplate(),
-									//rightPanelTemplate: self.getRightPanelTemplate(),
+									preTemplate: self.getPreTemplate(rule["importType"]),
 									itemForceAddStatusCallback: function(base, memberIds){
 										if (rule["ruleTypeId"].toLowerCase() === "elevate")
 										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
@@ -282,7 +304,9 @@
 					}
 				},
 				preHook:function(){ 
-					self.prepareTabContent(); 
+					self.prepareTabContent();
+					self.getImportTypeList();
+					self.getImportAsList();
 				},
 				postHook:function(){ 
 					self.cleanUpTabContent(); 
@@ -293,7 +317,6 @@
 		init : function() {
 			var self = this;
 			$("#titleText").html(self.moduleName);
-			self.getImportTypeList();
 			self.getRuleEntityList();
 			self.populateTabContent();
 		}
