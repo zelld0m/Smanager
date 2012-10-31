@@ -226,9 +226,9 @@ public class ElevateService{
 	}
 
 	@RemoteMethod
-	public String addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
+	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
 
-		String result = "FAILED";
+		int result = -1;
 		try {
 			String store = UtilityService.getStoreName();
 			ElevateResult e = new ElevateResult();
@@ -242,12 +242,9 @@ public class ElevateService{
 			e.setComment(UtilityService.formatComment(comment));
 			e.setElevateEntity(MemberTypeEntity.FACET);
 			e.setForceAdd(false);
-			int count = daoService.addElevateResult(e);
-			if (count > 0) {
-				result = "PASSED";
-				if (!StringUtils.isBlank(comment)) {
-					addComment(comment, e);
-				}
+			result = daoService.addElevateResult(e);
+			if (result > 0 && !StringUtils.isBlank(comment)) {
+				addComment(comment, e);
 			}
 		} catch (DaoException de) {
 			logger.error("Failed during addItemToRuleUsingPartNumber()",de);
