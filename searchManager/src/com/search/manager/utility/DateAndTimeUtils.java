@@ -19,6 +19,7 @@ public final class DateAndTimeUtils {
 
 	/** The format for parsing dates without times. */
 	public static final String DATE_FORMAT_STRING_MM_DD_YYYY = "MM/dd/yyyy";
+	public static final String HYPHENED_DATE_FORMAT_STRING_MM_DD_YYYY = "MM-dd-yyyy";
 
 	/** A format for parsing offer dates with times. */
 	public static final String DATE_FORMAT_STRING_MM_DD_YYYY_hh_mm_aa = DATE_FORMAT_STRING_MM_DD_YYYY + " hh:mm aa";
@@ -104,6 +105,25 @@ public final class DateAndTimeUtils {
 		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING_MM_DD_YYYY);
 		String mmDdYyyy = formatter.format(date);
 		return mmDdYyyy;
+	}
+
+	public static String getHyphenedDateStringMMDDYYYY(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(HYPHENED_DATE_FORMAT_STRING_MM_DD_YYYY);
+		return formatter.format(date);
+	}
+
+	public static Date getDateHyphenedDateStringMMDDYYYY(String dateStr) {
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				HYPHENED_DATE_FORMAT_STRING_MM_DD_YYYY);
+		Date value = null;
+
+		try {
+			value = formatter.parse(dateStr);
+		} catch (ParseException ex) {
+			logger.error(ex.getMessage());
+		}
+
+		return value;
 	}
 
 	public static String getDateStringAmPm(Date date) {

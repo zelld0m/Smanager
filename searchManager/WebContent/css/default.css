@@ -457,5 +457,6 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .bgf6f6f6, .bgf6f6f6	{ background: #f6f6f6 }
 .cssReset .bgfff				{ background: #fff }
 
-
-
+#keyword-list .keyword-span { background-color: #9FD8F8;padding-left: 5px;padding-top: 2px;padding-bottom: 2px;margin: 5px;padding-right: 0px;border-radius: 3px; }
+#keyword-list .keywordIcons { position: relative; top: 5px; right: 5px; }
+#keyword-list .keywordIcons img { cursor: pointer; }

@@ -57,7 +57,8 @@
 	      <c:if test="${topmenu eq 'statistic'}">
 		       <ul class="subMenu floatL txtAL">
 		      		<li ${submenu eq 'topkeyword'? 'class="active"': ''}><a href="<spring:url value="/topkeyword/"/>${store}">Top Keyword</a></li> 		
-		      		<li ${submenu eq 'zeroresult'? 'class="active"': ''}><a href="<spring:url value="/zeroresult/"/>${store}">Zero Result</a></li> 		
+		      		<li ${submenu eq 'zeroresult'? 'class="active"': ''}><a href="<spring:url value="/zeroresult/"/>${store}">Zero Result</a></li> 	
+		      		<li ${submenu eq 'keywordtrends'? 'class="active"': ''}><a href="<spring:url value="/keywordtrends/"/>${store}">Keyword Trends</a></li> 		
 		       		<li ${submenu eq 'reportgenerator'? 'class="active"': ''}><a href="<spring:url value="/reportgenerator/"/>${store}">Report Generator</a></li>
 		       </ul>
 	      </c:if>
