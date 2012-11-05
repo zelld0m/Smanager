@@ -219,14 +219,14 @@
 			template  += '								<img src="' +  GLOBAL_contextPath + '/images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR4 marL5" alt="Delete Attribute" title="Delete Attribute">';
 
 			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
-			template  += '									<ul id="dynamicAttributeValues">';
-			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
+			template  += '									<div id="dynamicAttributeValues">';
+			template  += '										<div id="dynamicAttributeValuesPattern" style="display: none;">';
 			template  += '											<div class="w240">';
 			template  += '												<input type="checkbox" class="checkboxFilter">';
 			template  += '												<span id="attributeValueName"></span>';
 			template  += '											</div>';
-			template  += '										</li>';
-			template  += '									</ul>';
+			template  += '										</div>';
+			template  += '									</div>';
 			template  += '								</div>';
 			template  += '							</div>';
 			template  += '						</div>';
@@ -1071,7 +1071,7 @@
 				$.each($item.condition["dynamicAttributes"], function(attrName, attrData) { 
 					if(attrName !== "TemplateName" || attrName !== GLOBAL_storeFacetTemplateName){
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
-						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 						$ulAttributeValues.prop({id: $.formatAsId(attrName), title:attrName});
 						var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
@@ -1088,7 +1088,7 @@
 
 							if(attributeValues){
 								for(var i=0; i<attributeValues.length; i++){
-									var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+									var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 									$liAttributeValue.show();
 									$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 									$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
@@ -1244,7 +1244,7 @@
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 						var $input = $tab.find("input#dynamicAttributeList");
 						var inDynamicAttribute = $.trim($input.val());
-						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 						if($.isNotBlank(inDynamicAttribute)){
 							if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
@@ -1268,7 +1268,7 @@
 									var attributeValues = attributeMap[attrName].attributeValues;
 									if(attributeValues){
 										for(var i=0; i<attributeValues.length; i++){
-											var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+											var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 											$liAttributeValue.show();
 											$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 											$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});

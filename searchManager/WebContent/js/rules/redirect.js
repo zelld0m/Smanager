@@ -1005,7 +1005,7 @@
 					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
 						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
-							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 							$ulAttributeValues.prop({id:$.formatAsId(attrName), title:attrName});
 							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
@@ -1022,7 +1022,7 @@
 
 								if(attributeValues){
 									for(var i=0; i<attributeValues.length; i++){
-										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+										var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 										$liAttributeValue.show();
 										$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 										$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
@@ -1678,7 +1678,7 @@
 							var $input = ui.find("input#dynamicAttributeList");
 							var inDynamicAttribute = $.trim($input.val());
 							var inTemplateName = ui.find("input#templateNameList").val();
-							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 							if($.isNotBlank(inDynamicAttribute)){
 								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
@@ -1702,7 +1702,7 @@
 										var attributeValues = attributeMap[attrName].attributeValues;
 										if(attributeValues){
 											for(var i=0; i<attributeValues.length; i++){
-												var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+												var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 												$liAttributeValue.show();
 												$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 												$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});

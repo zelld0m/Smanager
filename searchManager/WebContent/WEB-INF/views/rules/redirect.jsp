@@ -281,14 +281,14 @@
 												<div class="w150 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>
 												<img src="../images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR8" alt="Delete Attribute" title="Delete Attribute">
 												<div class="w235 floatL marT8 border pad10" style="overflow-y:auto; max-height: 107px">													
-													<ul id="dynamicAttributeValues">
-														<li id="dynamicAttributeValuesPattern" style="display: none;">
+													<div id="dynamicAttributeValues">
+														<div id="dynamicAttributeValuesPattern" style="display: none;">
 															<div>
 																<input type="checkbox" class="checkboxFilter">
 																<span id="attributeValueName"></span>
 															</div>
-														</li>
-													</ul>
+														</div>
+													</div>
 												</div>
 											</div>
 										</div>
