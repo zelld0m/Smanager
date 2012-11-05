@@ -7,9 +7,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.model.RedirectRule;
 
 @XmlRootElement(name = "querycleaning")
+@DataTransferObject(converter = BeanConverter.class)
 public class RedirectRuleXml extends RuleVersionXml{
 
 	private static final long serialVersionUID = 5605017143398572331L;

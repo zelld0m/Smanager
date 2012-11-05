@@ -8,21 +8,18 @@ import org.directwebremoting.convert.BeanConverter;
 import com.search.manager.report.model.xml.RuleVersionXml;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class RuleVersionInfo {
-	
-	private String ruleId;
-	private String ruleName;
-	private String createdBy;
-	private Date createdDate;
+public class RuleVersionInfo extends ModelBean{
+
+	private static final long serialVersionUID = -569585037138251120L;
 	private long version;
 	private String notes;
 	private String name;
 	private boolean deleted;
+	private RuleVersionXml rule;
 	
 	public RuleVersionInfo(RuleVersionXml xml){
 		super();
-		this.setRuleId(xml.getRuleId());
-		this.setRuleName(xml.getRuleName());
+		setRule(xml);
 		this.setName(xml.getName());
 		this.setNotes(xml.getNotes());
 		this.setVersion(xml.getVersion());
@@ -30,13 +27,18 @@ public class RuleVersionInfo {
 		this.setCreatedDate(xml.getCreatedDate());
 	}
 	
+	public RuleVersionXml getRule() {
+		return rule;
+	}
+
+	public void setRule(RuleVersionXml rule) {
+		this.rule = rule;
+	}
+
 	public String getRuleId() {
-		return ruleId;
+		return getRule().getRuleId();
 	}
-	
-	public void setRuleId(String ruleId) {
-		this.ruleId = ruleId;
-	}
+
 	
 	public Date getCreatedDate() {
 		return createdDate;
@@ -71,11 +73,7 @@ public class RuleVersionInfo {
 	}
 
 	public String getRuleName() {
-		return ruleName;
-	}
-
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
+		return getRule().getRuleName();
 	}
 
 	public String getCreatedBy() {

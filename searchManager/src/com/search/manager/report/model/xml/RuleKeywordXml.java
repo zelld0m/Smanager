@@ -4,7 +4,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 @XmlRootElement(name="keywords")
+@DataTransferObject(converter = BeanConverter.class)
 public class RuleKeywordXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = -7421229784911639782L;

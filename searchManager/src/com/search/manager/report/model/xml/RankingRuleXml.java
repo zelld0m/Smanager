@@ -6,9 +6,13 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.model.Relevancy;
 
 @XmlRootElement(name = "rankingrule")
+@DataTransferObject(converter = BeanConverter.class)
 public class RankingRuleXml extends RuleVersionXml {
 
 	private static final long serialVersionUID = 1073476024072073843L;

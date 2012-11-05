@@ -5,8 +5,12 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 @XmlRootElement(name="conditions")
 @XmlType(propOrder={"includeKeyword","condition"})
+@DataTransferObject(converter = BeanConverter.class)
 public class RuleConditionXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = -7421229784911639782L;
