@@ -190,7 +190,7 @@
 		base.getTemplate = function(){
 			var template  = '';
 
-			template += '<div style="width:700px">';
+			template += '<div style="width:820px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
 			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';			
 			
@@ -200,8 +200,8 @@
 			template += '				<tbody>';
 			template += '					<tr>';
 			template += '						<th class="displayBlock w60">';
-			template += '							<a id="compareBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template += '								<div class="buttons fontBold">Compare</div>';
+			template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
+			template += '								<div class="btnGraph btnCompare"></div>';
 			template += '							</a>';
 			template += '						</th>';
 			template += '						<th class="w160">Name</th>';
@@ -284,8 +284,48 @@
 		base.getItemListTemplate =function(){
 			var template  = '';
 			
-			template += '	<div class="w280 floatR border" style="height:500px">';
-			template += '		<div> lorem ipsum dolor sit amet </div>';
+			template += '	<div class="w400 floatR border" style="height:500px">';
+			template += '		<div style="float:left; width:120px">';// label
+			template += '		<table class="tblItems w100p">';
+			template += '			<tr>';
+			template += '				<th> &nbsp; </th>';
+			template += '			</tr>';
+			template += '		</table>';
+			template += '			<table class="tblItems w100p">';
+			template += '				<tr>';
+			template += '					<td>Rule ID</td>';
+			template += '				</tr>';
+			template += '				<tr>';
+			template += '					<td>Rule Name</td>';
+			template += '				</tr>';
+			template += '				<tr>';
+			template += '					<td>Products</td>';
+			template += '				</tr>';
+			template += '			</table>';
+			template += '		</div>';// end label
+			
+			template += '		<div style="float:left; width:280px; overflow-x:hidden">';// content
+			template += '		<table class="tblItems w100p">';
+			template += '			<tr>';
+			template += '				<th><div class="w130">Ver 1</div></th>';
+			template += '				<th><div class="w130">Ver 2</div></th>';
+			template += '				<th><div class="w130">Ver 3</div></th>';
+			template += '				<th><div class="w130">Ver 4</div></th>';
+			template += '				<th><div class="w130">Ver 5</div></th>';
+			template += '			</tr>';
+			template += '		</table>';
+			template += '		<div style="overflow-y:auto; overflow-x:hidden; height:343px">';
+			template += '		<table class="tblItems w100p">';
+			template += '			<tr>';
+			template += '				<td><div class="w130">Ver 1</div></td>';
+			template += '				<td><div class="w130">Ver 2</div></td>';
+			template += '				<td><div class="w130">Ver 3</div></td>';
+			template += '				<td><div class="w130">Ver 4</div></td>';
+			template += '				<td><div class="w130">Ver 5</div></td>';
+			template += '			</tr>';
+			template += '		</table>';
+			template += '		</div>';// end scroll y
+			template += '		</div>';// end content
 			template += '	</div>';
 			
 			return template;
