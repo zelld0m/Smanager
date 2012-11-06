@@ -304,27 +304,19 @@
 			template += '			</table>';
 			template += '		</div>';// end label
 			
-			template += '		<div style="float:left; width:280px; overflow-x:hidden">';// content
-			template += '		<table class="tblItems w100p">';
-			template += '			<tr>';
-			template += '				<th><div class="w130">Ver 1</div></th>';
-			template += '				<th><div class="w130">Ver 2</div></th>';
-			template += '				<th><div class="w130">Ver 3</div></th>';
-			template += '				<th><div class="w130">Ver 4</div></th>';
-			template += '				<th><div class="w130">Ver 5</div></th>';
-			template += '			</tr>';
-			template += '		</table>';
-			template += '		<div style="overflow-y:auto; overflow-x:hidden; height:343px">';
-			template += '		<table class="tblItems w100p">';
-			template += '			<tr>';
-			template += '				<td><div class="w130">Ver 1</div></td>';
-			template += '				<td><div class="w130">Ver 2</div></td>';
-			template += '				<td><div class="w130">Ver 3</div></td>';
-			template += '				<td><div class="w130">Ver 4</div></td>';
-			template += '				<td><div class="w130">Ver 5</div></td>';
-			template += '			</tr>';
-			template += '		</table>';
-			template += '		</div>';// end scroll y
+			template += '		<div class="horizontalCont" style="float:left; width:280px; overflow-x:hidden; overflow-y:auto; height:343px">';// content
+			template += '			<ul>';
+			template += '				<li>';
+			template += '					<div class="title">version 1</div>';
+			template += '					<p>lorem ipsum</p>'; 
+			template += '					<p>dolor sit</p>'; 
+			template += '				</li>';
+			template += '				<li class="alt">';
+			template += '					<div class="title">version 2</div>';
+			template += '					<p>lorem ipsum</p>'; 
+			template += '					<p>dolor sit</p>'; 
+			template += '				</li>';
+			template += '			</ul>';
 			template += '		</div>';// end content
 			template += '	</div>';
 			
