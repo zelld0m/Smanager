@@ -59,7 +59,6 @@ public class RuleVersionXml extends BaseEntityXml{
 		this.name = name;
 	}
 	
-	@XmlTransient
 	public String getRuleId() {
 		return ruleId;
 	}
@@ -68,7 +67,6 @@ public class RuleVersionXml extends BaseEntityXml{
 		this.ruleId = ruleId;
 	}
 
-	@XmlTransient
 	public String getRuleName() {
 		return ruleName;
 	}
