@@ -4,6 +4,8 @@
 <c:set var="submenu" value="keywordtrends"/>
 <%@ include file="/WEB-INF/includes/menu.jsp" %>
 
+<link type="text/css" href="<spring:url value="/css/statistic/keywordTrends.css" />" rel="stylesheet">
+
 <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/plugins/jqplot.canvasTextRenderer.min.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/plugins/jqplot.canvasAxisTickRenderer.js" />"></script>
 <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/plugins/jqplot.dateAxisRenderer.min.js" />"></script>
@@ -60,14 +62,12 @@
 	
 	<div class="clearB"></div>
 	
-	<div class="filter padT5 fsize12 marT8 w95p marRLauto">
-		<div class="floatL w45 txtAR fbold padTB5 padR5">From</div>
-		<input type="text" id="fromDate" class="w80" readonly="readonly" style="border: none; text-decoration: underline; cursor: pointer;"/>
+	<div class="filter padT5 fsize12 marT1">
+		<div class="floatL w180 padTB5 padR5 marL20"><span class="fbold">From:</span> <input type="text" id="fromDate" class="dateLabel" readonly="readonly"/></div>
+		<div class="floatL w180 padTB5 padR5"><span class="fbold">To:</span> <input type="text" id="toDate" class="dateLabel" readonly="readonly"/></div>		
+		<div class="floatL marT4"><a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateDateBtn"><div class="buttons fontBold">Update Date Range</div></a></div>
 		<div class="clearB"></div>
-		<div class="floatL w45 txtAR fbold padTB5 padR5">To</div>
-		<input type="text" id="toDate" class="w80" readonly="readonly" style="border: none; text-decoration: underline; cursor: pointer;"/>
-		<div class="clearB"></div>
-		<button id="updateDateBtn">Update Date Range</button>
+		<!-- <button id="updateDateBtn">Update Date Range</button>  -->
 	</div>
 
 	<div class="clearB"></div>
