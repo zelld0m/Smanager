@@ -1,0 +1,3 @@
+.filter { background:#eee; padding:10px 20px }
+.dateLabel { text-decoration:underline; border: none !important; cursor: pointer; background: transparent; width: 80px; margin-left:5px; margin-bottom:4px }
+#chart2 .jqplot-xaxis-tick { font-size:8px !important }
