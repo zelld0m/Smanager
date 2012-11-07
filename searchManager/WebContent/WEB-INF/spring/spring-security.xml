@@ -40,7 +40,11 @@
     	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
      	<security:intercept-url pattern="/dwr/**" access="isAuthenticated()" />
-     	
+     	<security:intercept-url pattern="/topkeyword/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/zeroresult/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/keywordtrends/**" access="isAuthenticated()"/>
+     	<security:intercept-url pattern="/reportgenerator/**" access="isAuthenticated()"/>
+
         <!-- Make CSS and image resources to unsecured -->
         <security:intercept-url pattern="/css/**" access="permitAll" />
         <security:intercept-url pattern="/images/**" access="permitAll" />

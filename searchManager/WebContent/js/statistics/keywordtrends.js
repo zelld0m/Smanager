@@ -174,12 +174,20 @@
 					renderer : $.jqplot.DateAxisRenderer,
 					tickRenderer : $.jqplot.CanvasAxisTickRenderer,
 					tickOptions : {
-						formatString : '%m-%d-%Y',
-						angle : -60
+						formatString : '%m-%d-%Y  ',
+						angle : -60,
+						fontSize: '11px',
+						fontFamily: 'Arial',
+						labelPosition: 'end'
 					},
 					tickInterval : '1 day',
 					min : _effectiveFromDate,
 					max : _effectiveToDate
+				},
+				yaxis: {
+					tickOptions: {
+						formatString : '%s   ',
+					}
 				}
 			},
 			legend : {
@@ -244,6 +252,7 @@
 
 	var KeywordTrends = {
 		init : function() {
+			$("#tabs").tabs();
 			_initSideBar();
 			KeywordTrendsServiceJS.getMostRecentStatsDate({
 				callback : _initDateFields
