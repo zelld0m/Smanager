@@ -15,6 +15,7 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleVersionXml;
 
 @Repository(value="excludeVersionDAO")
 public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
@@ -63,9 +64,9 @@ public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 
 		return false;
 	}
-		
+
 	@Override
-	public boolean restoreRuleVersion(String store, String ruleId, String username, long version) {
+	public boolean restoreRuleVersion(RuleVersionXml xml) {
 		// TODO Auto-generated method stub
 		return false;
 	}

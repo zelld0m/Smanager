@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -15,7 +16,7 @@ import org.directwebremoting.convert.BeanConverter;
 @DataTransferObject(converter = BeanConverter.class)
 public class ElevateRuleXml extends RuleVersionXml{
 	
-	private static final long serialVersionUID = 3396383695675861472L;
+	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<ElevateItemXml> elevateItem;
 	
@@ -49,5 +50,10 @@ public class ElevateRuleXml extends RuleVersionXml{
 	
 	public void setElevateItem(List<ElevateItemXml> elevateItem) {
 		this.elevateItem = elevateItem;
+	}
+	
+	@XmlTransient
+	public List<ElevateItemXml> getItem() {
+		return elevateItem;
 	}
 }

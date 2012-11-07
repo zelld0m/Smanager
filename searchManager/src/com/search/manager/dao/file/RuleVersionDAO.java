@@ -34,7 +34,7 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 	public abstract String getRuleVersionFilename(String store, String ruleId);
 	public abstract RuleVersionListXml<T> getRuleVersionList(String store, String ruleId);
 	public abstract boolean createRuleVersion(String store, String ruleId, String username, String name, String notes);
-	public abstract boolean restoreRuleVersion(String store, String ruleId, String username, long version);
+	public abstract boolean restoreRuleVersion(RuleVersionXml xml);
 
 	@SuppressWarnings("unchecked")
 	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){

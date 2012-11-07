@@ -1,21 +1,29 @@
 package com.search.manager.dao.file;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
+import com.search.manager.model.Product;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
+import com.search.ws.SearchHelper;
 
 @Repository(value="elevateVersionDAO")
 public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
@@ -35,7 +43,8 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 	
 	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
 		RuleVersionListXml<ElevateRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
+		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
+		
 		if (ruleVersionListXml!=null){
 			long version = ruleVersionListXml.getNextVersion();
 			List<ElevateRuleXml> elevateRuleXmlList = ruleVersionListXml.getVersions();
@@ -46,8 +55,23 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 
 			try {
 				List<ElevateResult> elevateItemList = daoService.getElevateResultList(criteria).getList();
-				for (ElevateResult elevateResult : elevateItemList) {
-					elevateItemXmlList.add(new ElevateItemXml(elevateResult));
+				
+				
+				for (ElevateResult e:elevateItemList) {
+					ElevateProduct ep = new ElevateProduct(e);
+					ep.setStore(store);
+					if (e.getMemberType() == MemberTypeEntity.PART_NUMBER) {
+						map.put(e.getEdp(), ep);
+					} 
+				}
+				
+				if(MapUtils.isNotEmpty(map)){
+					SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
+				}
+				
+				for (ElevateResult er : elevateItemList) {
+					Product p = er.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(er.getEdp()): null;
+					elevateItemXmlList.add(new ElevateItemXml(er, p));
 				}
 			} catch (DaoException e) {
 				return false;
@@ -65,8 +89,19 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 		return false;
 	}
 
-	public boolean restoreRuleVersion(String store, String ruleId, String username, long version) {
-		// TODO Auto-generated method stub
+	@Override
+	public boolean restoreRuleVersion(RuleVersionXml xml) {
+		ElevateRuleXml elevateRuleXml = (ElevateRuleXml) xml;
+		StoreKeyword storeKeyword = new StoreKeyword(xml.getStore(), xml.getRuleId());
+		ElevateResult elevateResult = new ElevateResult(storeKeyword);
+
+		try {
+			RuleVersionUtil.backUpRule(xml.getStore(), RuleEntity.ELEVATE, xml.getRuleId(), daoService.getElevateResultList(new SearchCriteria<ElevateResult>(elevateResult)).getList());
+		} catch (DaoException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 		return false;
 	}
 }

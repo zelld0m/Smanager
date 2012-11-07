@@ -14,6 +14,7 @@ import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleVersionInfo;
+import com.search.manager.report.model.xml.RuleVersionXml;
 
 @Service("fileService")
 public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
@@ -24,7 +25,7 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	@Autowired private FacetSortVersionDAO facetSortVersionDAO;
 	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
-
+	
 	@Override
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
 		switch (ruleEntity) {
@@ -63,30 +64,8 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 		return false;
 	}
 
-	@Override
-	public boolean restoreRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version) {
-		
-		switch (ruleEntity) {
-		case ELEVATE:
-			return elevateVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-			
-		case EXCLUDE:
-			return excludeVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-			
-		case DEMOTE:
-			return demoteVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-			
-		case FACET_SORT:
-			return facetSortVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-			
-		case QUERY_CLEANING:
-			return queryCleaningVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-			
-		case RANKING_RULE:
-			return rankingRuleVersionDAO.restoreRuleVersion(store, ruleId, username, version);
-		}
-		
-		return false;
+	public boolean restoreRuleVersion(RuleVersionXml xml) {
+		return elevateVersionDAO.restoreRuleVersion(xml);
 	}
 
 	@Override

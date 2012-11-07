@@ -53,6 +53,117 @@
 			});
 		};
 
+		base.addCompareButtonListener = function(){
+			var $content = base.contentHolder;
+	
+			$content.find("a#compareBtn").on({
+				click: function(e){
+					base.selectedVersion = [];
+					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
+						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
+					});
+					
+					base.setCompare();
+				}
+			});
+			
+		};
+		
+		base.setCompare = function(){
+			var $content = base.contentHolder;
+			var index = 0;
+			var item, rule, $li = null;
+			var $ul = $content.find("ul#itemList");
+			var $pattern = $ul.find("li#itemPattern");
+			$ul.find("li.item:not(#itemPattern)").remove();
+			
+			for(var ver in base.selectedVersion){
+				index = base.selectedVersion[ver];
+				$li = $pattern.clone();
+				item = base.ruleMap[index];
+				rule = item["rule"];
+				
+				$li.attr("id","ver_" + index);
+				$li.find("#ver").text("Version " + item["version"]);
+				$li.find("#verCreatedBy").text(item["createdBy"]);
+				$li.find("#verDate").text(item["createdDate"].toUTCString());
+				$li.find("#verName").text(item["name"]);
+				$li.find("#verNote").text(item["notes"]);
+				$li.find("#ruleId").text(rule["ruleId"]);
+				$li.find("#ruleName").text(rule["ruleName"]);
+				
+				switch(base.options.ruleType){
+					case "Elevate": 
+					case "Exclude": 
+					case "Demote": base.setProductCompare($li, item); break; 
+				}
+				
+				$li.show();
+				$ul.append($li);
+			};
+		};
+		
+		
+		base.getItemType = function(item){
+			var $condition = item.condition;
+			var type = "unknown";
+
+			if($.isBlank($condition)){
+				return type;
+			}
+
+			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+				type="facet";
+			}else if($condition["CNetFilter"]){
+				type="cnet";
+			}else if($condition["IMSFilter"]){
+				type="ims";
+			}
+
+			return type;
+		};
+
+		base.setProductCompare = function(li, item){
+			var $li = li;
+			var rule = item["rule"];
+			var products = rule["item"];
+			
+			if(products.length){
+				var $ul = $li.find("ul#prodList");
+				var $pattern = $ul.find("li#prodPattern");
+				var $pLi = null;
+				
+				for (var pXml in products){
+					var product = products[pXml];
+					$pLi = $pattern.clone();
+					$pLi.attr("id", product["memberId"]);
+					
+					if(product["memberType"]==="FACET"){
+						var imagePath ="";
+						switch(base.getItemType(product)){
+							case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+							case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+							case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+						};
+						
+						if($.isNotBlank(imagePath))
+							$pLi.find("#prodImage").attr("src", imagePath);
+						
+						$pLi.find("#prodInfo").text(product["condition"]);
+					}else if(product["memberType"]==="PART_NUMBER"){
+						$pLi.find("#prodImage").attr("src", product["imagePath"]);
+						$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+						$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
+						$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrNo"]);
+					}
+					
+					$pLi.show();
+					$ul.append($pLi);
+				}
+			}
+			
+		};
+		
 		base.addSaveButtonListener = function(){
 			var $content = base.contentHolder;
 
@@ -165,11 +276,14 @@
 						$table.find("tr#empty_row").show();
 					}
 					
+					base.ruleMap = {};
 					for (var i in data){
 						var item = data[i];
+						var version = item["version"];
 						var $tr = $table.find("tr#itemPattern").clone();
-						$tr.prop("id", "item" + $.formatAsId(item["version"]));
-
+						
+						base.ruleMap[version] = item;
+						$tr.prop("id", "item" + $.formatAsId(version));
 						$tr.find("td#itemId").html(item["version"]);
 						$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
 						$tr.find("td#itemInfo > p#name").html(item["name"]);
@@ -183,6 +297,7 @@
 				},
 				postHook:function(){
 					$table.find("tr#preloader").remove();
+					base.addCompareButtonListener();
 				}
 			});
 		};
@@ -293,6 +408,18 @@
 			template += '		</table>';
 			template += '			<table class="tblItems w100p">';
 			template += '				<tr>';
+			template += '					<td>Created By</td>';
+			template += '				</tr>';
+			template += '				<tr>';
+			template += '					<td>Date</td>';
+			template += '				</tr>';
+			template += '				<tr>';
+			template += '					<td>Name</td>';
+			template += '				</tr>';
+			template += '				<tr>';
+			template += '					<td>Notes</td>';
+			template += '				</tr>';
+			template += '				<tr>';
 			template += '					<td>Rule ID</td>';
 			template += '				</tr>';
 			template += '				<tr>';
@@ -305,16 +432,32 @@
 			template += '		</div>';// end label
 			
 			template += '		<div class="horizontalCont" style="float:left; width:280px; overflow-x:hidden; overflow-y:auto; height:343px">';// content
-			template += '			<ul>';
-			template += '				<li>';
-			template += '					<div class="title">version 1</div>';
-			template += '					<p>lorem ipsum</p>'; 
-			template += '					<p>dolor sit</p>'; 
-			template += '				</li>';
-			template += '				<li class="alt">';
-			template += '					<div class="title">version 2</div>';
-			template += '					<p>lorem ipsum</p>'; 
-			template += '					<p>dolor sit</p>'; 
+			template += '			<ul id="itemList">';
+			template += '				<li id="itemPattern" class="item" style="display:none">';
+			template += '					<div id="ver" class="title"></div>';
+			template += '					<div>';
+			template += '						<a id="restoreBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '							<div class="buttons fontBold">Restore</div>';
+			template += '						</a>';
+			template += '					</div>';
+			template += '					<p id="verCreatedBy"></p>'; 
+			template += '					<p id="verDate"></p>';
+			template += '					<p id="verName"></p>'; 
+			template += '					<p id="verNote"></p>'; 
+			template += '					<p id="ruleId"></p>'; 
+			template += '					<p id="ruleName"></p>'; 
+			template += '					<div id="products">';
+			template += '						<ul id="prodList">';
+			template += '							<li id="prodPattern" class="prod" style="display:none">';
+			template += '								<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
+			template += '								<div id="prodInfo">';
+			template += '									<p id="prodSKU"></p>';
+			template += '									<p id="prodBrand"></p>';
+			template += '									<p id="prodMfrNo"></p>';
+			template += '								<div>';
+			template += '							</li>';
+			template += '						</ul>';
+			template += '					</div>';
 			template += '				</li>';
 			template += '			</ul>';
 			template += '		</div>';// end content

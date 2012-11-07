@@ -174,4 +174,31 @@ public class RuleVersionUtil {
 		sb.append(PATH).append(File.separator).append(store).append(File.separator).append(directory);
 		return sb.toString();
 	}
+	
+	public static boolean backUpRule(String store, RuleEntity ruleEntity, String ruleId, Object rule){
+		String dir = getRuleVersionFileDirectory(store, ruleEntity);
+		String id = ruleId;
+	
+		switch(ruleEntity){
+		case ELEVATE:
+		case EXCLUDE:
+		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
+		}
+		
+		String filename = getFileNameByDir(dir, id) + "_backup";
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.marshal(rule, new FileWriter(filename));
+			return true;
+		} catch (JAXBException e) {
+			logger.error("Unable to create marshaller", e);
+			return false;
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
+			return false;
+		}
+	}
 }

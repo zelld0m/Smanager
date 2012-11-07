@@ -16,7 +16,7 @@ import com.search.manager.model.RedirectRule;
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRuleXml extends RuleVersionXml{
 
-	private static final long serialVersionUID = 5605017143398572331L;
+	private static final long serialVersionUID = 1L;
 	private String description;
 	private String redirectType;
 	private String replacementKeyword;

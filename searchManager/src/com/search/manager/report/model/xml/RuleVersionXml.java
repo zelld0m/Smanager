@@ -2,7 +2,6 @@ package com.search.manager.report.model.xml;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.XmlTransient;
 
 @XmlSeeAlso({
 	ElevateRuleXml.class,
