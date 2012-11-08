@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -31,6 +32,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
+import com.search.manager.report.model.xml.RuleVersionXml;
 
 public interface DaoService {
 	
@@ -245,4 +247,10 @@ public interface DaoService {
 	public List<String> getGroups() throws DaoException;
 	public List<String> getAllPermissions() throws DaoException;
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException;
+	
+	/* Version */
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
+	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
+	public boolean restoreRuleVersion(RuleVersionXml xml);	
+	public List<RuleVersionXml> getRuleVersions(String store, String ruleType, String ruleId);
 }
