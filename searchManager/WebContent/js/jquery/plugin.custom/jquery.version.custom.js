@@ -192,6 +192,7 @@
 				var $pattern = $ul.find("li#prodPattern");
 				var $pLi = null;
 				
+				$ul.parent().show();
 				$rowLabelUl.find("li#products").text("Products").show();
 				
 				for (var pXml in products){
