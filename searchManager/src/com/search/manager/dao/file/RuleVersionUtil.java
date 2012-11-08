@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.utility.FileUtil;
@@ -79,10 +78,6 @@ public class RuleVersionUtil {
 		}
 
 		return ruleVersionListXml;
-	}
-
-	public static List<RuleVersionInfo> getRuleVersionInfo(String store, RuleEntity ruleEntity, String ruleId) throws Exception {
-		return null;
 	}
 
 	public static boolean removeRollbackFile(String filename, long version){

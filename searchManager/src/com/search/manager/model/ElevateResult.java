@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.ElevateItemXml;
-import com.search.manager.report.model.xml.ElevateRuleXml;
 
 public class ElevateResult extends SearchResult {
 	

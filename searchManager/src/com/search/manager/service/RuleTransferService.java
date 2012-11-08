@@ -1,7 +1,5 @@
 package com.search.manager.service;
 
-import java.util.List;
-
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
@@ -27,13 +25,5 @@ public class RuleTransferService {
 	
 	public RecordSet<RuleStatus> getImportList(String ruleType){
 		return null;
-	}
-	
-	/**
-	 * 
-	 * @return list of rule name of successfully rejected rule
-	 */
-	public List<String> rejectRuleForImport(){
-		
 	}
 }

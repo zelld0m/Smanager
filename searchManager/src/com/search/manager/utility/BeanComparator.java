@@ -18,7 +18,6 @@ public class BeanComparator implements Comparator<Object> {
 		this.comparator = comparator;
 	}
 
-	@SuppressWarnings("unchecked")
 	public int compare(Object o1, Object o2) throws IllegalArgumentException {
 
 		Object p1 = BeanUtil.getProperty(property, o1);

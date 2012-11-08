@@ -24,7 +24,9 @@ import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StatisticsUtil;
 
 @Service(value = "keywordTrendsService")
-@RemoteProxy(name = "KeywordTrendsServiceJS", creator = SpringCreator.class, creatorParams = @Param(name = "beanName", value = "keywordTrendsService"))
+@RemoteProxy(name = "KeywordTrendsServiceJS", 
+		creator = SpringCreator.class, 
+		creatorParams = @Param(name = "beanName", value = "keywordTrendsService"))
 public class KeywordTrendsService {
 
 	private static final Logger logger = Logger

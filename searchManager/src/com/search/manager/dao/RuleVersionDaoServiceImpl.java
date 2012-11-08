@@ -13,7 +13,6 @@ import com.search.manager.dao.file.FacetSortVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.RuleVersionXml;
 
 @Service("fileService")
@@ -69,8 +68,8 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 	}
 
 	@Override
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleType, String ruleId) {
-		List<RuleVersionInfo> versionList = new ArrayList<RuleVersionInfo>();
+	public List<RuleVersionXml> getRuleVersions(String store, String ruleType, String ruleId) {
+		List<RuleVersionXml> versionList = new ArrayList<RuleVersionXml>();
 
 		switch (RuleEntity.find(ruleType)) {
 		case ELEVATE:
