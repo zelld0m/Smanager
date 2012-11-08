@@ -116,10 +116,9 @@
 						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						
 						//TODO
-						alert(self.getSelectedRefId());
-						/*DeploymentServiceJS.importRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
+						RuleTransferServiceJS.importRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
 							callback: function(data){									
-								postMsg(data,true);	
+								//postMsg(data,true);	
 								self.getImportList();	
 							},
 							preHook:function(){ 
@@ -128,7 +127,7 @@
 							postHook:function(){ 
 								self.cleanUpTabContent(); 
 							}	
-						});*/
+						});
 					}
 				}
 			});
@@ -191,25 +190,27 @@
 		getRightPanelTemplate : function(){
 			var template = "";
 			
-			template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
-			template += '	<h3 class="padL15" style="border:none">Import Rule Guidelines</h3>';
-			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
-			template += '		<p align="justify">';
-			template += '			If the published rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
-			template += '		<p>';
+			template += '	<div class="rightPane w590 marB20">';
+			template += '		<div class="alert marB10">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>';
+			template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
+			template += '		<label class="wAuto floatL" id="importType">';
+			template += '			<select id="importType">';
+			template += '				<option value="">-- Import As New Rule --</option>';
+			
+			//import type
+			if(self.importAsList){
+				for (var rule in self.importAsList){
+					template += '<option value="' +rule["id"] +'">'+ rule["ruleName"] +'</option>';
+				}
+			}
+			
+			template += '			</select>';
+			template += '		</label>';
+			template += '		<div class="clearB"></div>';
+			template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
+			template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+			template += '		<div class="clearB"></div>';
 			template += '	</div>';
-			template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-			template += '	<label class="floatL w480"><textarea id="importComment" rows="5" class="w460" style="height:32px"></textarea></label>';
-			template += '	<div class="clearB"></div>';
-			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template += '			<div class="buttons fontBold">Import</div>';
-			template += '		</a>';
-			template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template += '			<div class="buttons fontBold">Reject</div>';
-			template += '		</a>';
-			template += '	</div>';
-			template += '</div>';
 			
 			return template;
 		},
@@ -218,38 +219,40 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected); 
 			
-			DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+			RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 				callback:function(data){
-					var list = data.list;
+					var list = data;
+					var totalSize = data.totalSize;
 
 					$selectedTab.html($("div#tabContentTemplate").html());
 
-					if (data.totalSize>0){
-						var totalSize = data.totalSize;
+					if (totalSize>0){
 						// Populate table row
 						for(var i=0; i < totalSize; i++){
 							var rule = list[i];
+							var ruleId = rule["ruleId"];
 							var $table = $selectedTab.find("table#rule");
-							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
+							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
-							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportDate"].toUTCString(): "";
-							var showId = rule["ruleRefId"] !== rule["description"];
+							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
+							var showId = ruleId !== rule["description"];
 
-							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
-							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleStatusId"]);
+							$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
+							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleName"]);
 
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
-								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
-								$tr.find("td#ruleOption > img.previewIcon").preview({
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
+								$tr.find("td#ruleOption > img.previewIcon").importpreview({
 									ruleType: self.getRuleType(rule["ruleTypeId"]),
-									ruleId: rule["ruleRefId"],
+									ruleId: ruleId,
 									ruleInfo: rule["description"],
 									enablePreTemplate: true,
 									enablePostTemplate: true,
-									enableImportPreview: true,
+									enableRightPanel: true,
 									postTemplate: self.getPostTemplate(),
 									preTemplate: self.getPreTemplate(rule["importType"]),
+									rightPanelTemplate: self.getRightPanelTemplate(),
 									itemForceAddStatusCallback: function(base, memberIds){
 										if (rule["ruleTypeId"].toLowerCase() === "elevate")
 										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
@@ -267,7 +270,7 @@
 							}
 
 							if(showId) 
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							

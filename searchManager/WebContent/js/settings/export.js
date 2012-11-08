@@ -111,8 +111,8 @@
 						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						
 						//TODO
-						alert(self.getSelectedRefId());
-						/*DeploymentServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
+						alert(self.getSelectedRefId() +"\n"+self.getSelectedStatusId());
+						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
 							callback: function(data){									
 								postMsg(data,true);	
 								self.getExportList();	
@@ -123,7 +123,7 @@
 							postHook:function(){ 
 								self.cleanUpTabContent(); 
 							}	
-						});*/
+						});
 					}
 				}
 			});
@@ -173,7 +173,7 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected); 
 			
-			DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+			RuleTransferServiceJS.getPublishedRules(self.entityName, {
 				callback:function(data){
 					var list = data.list;
 

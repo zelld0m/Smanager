@@ -16,6 +16,10 @@ public class DemoteResult extends SearchResult {
 		this.storeKeyword = storeKeyword;
 	}
 	
+	public DemoteResult(String memberId){
+		this.memberId = memberId;
+	}
+	
 	public DemoteResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDate, createdDate, lastModifiedDate, memberTypeId, memberId);
 		this.location = location;

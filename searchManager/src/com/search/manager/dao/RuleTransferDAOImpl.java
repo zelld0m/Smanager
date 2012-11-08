@@ -7,8 +7,6 @@ import com.search.webservice.model.RuleEntity;
 
 public class RuleTransferDAOImpl implements RuleTransferDAO {
 
-	private Deplo
-	
 	@Override
 	public RecordSet<RuleStatus> getExportList(String store,
 			RuleEntity ruleEntity, RuleStatusSortType sortType) {

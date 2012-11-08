@@ -1,5 +1,7 @@
 package com.search.manager.report.model.xml;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
@@ -24,6 +26,8 @@ public class RuleVersionXml extends BaseEntityXml{
 	private String name;
 	private long serial;
 	private boolean deleted;
+	private Date lastPublishedDate;
+	private Date lastExportedDate;
 	
 	public RuleVersionXml() {
 		super();
@@ -109,5 +113,23 @@ public class RuleVersionXml extends BaseEntityXml{
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}	
+	}
+
+	@XmlAttribute
+	public Date getLastPublishedDate() {
+		return lastPublishedDate;
+	}
+
+	public void setLastPublishedDate(Date lastPublishedDate) {
+		this.lastPublishedDate = lastPublishedDate;
+	}
+
+	@XmlAttribute
+	public Date getLastExportedDate() {
+		return lastExportedDate;
+	}
+
+	public void setLastExportedDate(Date lastExportedDate) {
+		this.lastExportedDate = lastExportedDate;
+	}
 }

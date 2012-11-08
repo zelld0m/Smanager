@@ -74,7 +74,8 @@
   <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleVersionServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/LinguisticsServiceJS.js"/>"></script>
   <script type="text/javascript" src="<spring:url value="/dwr/interface/TopKeywordServiceJS.js"/>"></script>
-  <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>  
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/ReportGeneratorServiceJS.js"/>"></script>
+  <script type="text/javascript" src="<spring:url value="/dwr/interface/RuleTransferServiceJS.js"/>"></script>  
   <script type="text/javascript" src="<spring:url value="/dwr/interface/ZeroResultServiceJS.js"/>"></script>
   
   <!-- jQuery custom plugin -->
@@ -89,6 +90,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.auditpanel.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.download.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.preview.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importpreview.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.activerule.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.version.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rulestatus.custom.js" />" ></script>

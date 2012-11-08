@@ -1,6 +1,6 @@
 (function($){
 
-	$.preview = function(el, options){
+	$.importpreview = function(el, options){
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
@@ -13,7 +13,7 @@
 		base.$el.data("preview", base);
 
 		base.init = function(){
-			base.options = $.extend({},$.preview.defaultOptions, options);
+			base.options = $.extend({},$.importpreview.defaultOptions, options);
 
 			base.$el.off().on({
 				click: base.showQtipPreview()
@@ -84,8 +84,7 @@
 			return type;
 		};
 
-		base.populateItemTable = function(ruleType, data){
-			var $content = base.contentHolder;
+		base.populateItemTable = function($content, ruleType, data){
 			var list = data.list;
 
 			var memberIds = new Array();
@@ -154,7 +153,7 @@
 					$tr.appendTo($table);
 				};
 
-				if (base.options.ruleType.toLowerCase() === "elevate" && memberIds.length>0) 
+				if (ruleType.toLowerCase() === "elevate" && memberIds.length>0) 
 					base.options.itemForceAddStatusCallback(base, memberIds);
 			}
 
@@ -163,28 +162,26 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
-		base.getDatabaseData = function(){
-			var $content = base.contentHolder;
-
-			switch(base.options.ruleType.toLowerCase()){
+		base.getDatabaseData = function($content, ruleType, ruleId){
+			switch(ruleType.toLowerCase()){
 			case "elevate": 
-				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(base.options.ruleId, 0, 0,{
+				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
 					callback: function(data){
-						base.populateItemTable("Elevate", data);
+						base.populateItemTable($content, "Elevate", data);
 					}
 				});
 				break;
 			case "exclude": 
-				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
+				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(ruleId , 0, 0,{
 					callback: function(data){
-						base.populateItemTable("Exclude", data);
+						base.populateItemTable($content, "Exclude", data);
 					}
 				});
 				break;
 			case "demote": 
-				DemoteServiceJS.getAllProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
+				DemoteServiceJS.getAllProductsIgnoreKeyword(ruleId , 0, 0,{
 					callback: function(data){
-						base.populateItemTable("Demote", data);
+						base.populateItemTable($content, "Demote", data);
 					}
 				});
 				break;
@@ -192,7 +189,7 @@
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
 
-				FacetSortServiceJS.getRuleById(base.options.ruleId, {
+				FacetSortServiceJS.getRuleById(ruleId, {
 					callback: function(data){
 						$ruleInfo.find("#ruleName").text(data.name);
 						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
@@ -239,7 +236,7 @@
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 
-				RedirectServiceJS.getRule(base.options.ruleId, {
+				RedirectServiceJS.getRule(ruleId, {
 					callback: function(data){
 
 						var $table = $content.find("div.ruleFilter table#item");
@@ -306,7 +303,7 @@
 			case "ranking rule": 
 				$content.find(".infoTabs").tabs({});
 
-				RelevancyServiceJS.getRule(base.options.ruleId, {
+				RelevancyServiceJS.getRule(ruleId, {
 					callback: function(data){
 						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
 						$content.find("#startDate").html(data["formattedStartDate"]);
@@ -749,7 +746,7 @@
 			return template;
 		};
 
-		base.getRightPanelTemplate = function(){
+		base.getRightPreTemplate = function(){
 			var template = '';
 
 			if (base.options.enableRightPanel && $.isBlank(base.options.rightPanelTemplate)){
@@ -775,11 +772,16 @@
 		};
 		
 		base.showRightPane = function(ruleId, ruleType){
-			var $div = $('<div id="rightPreview" class="floatR"></div>');
+			if(base.options.enableRightPanel){
+				var $div = $('<div id="rightPreview" class="floatR"></div>');
+				
+				$div.append(base.getRightPreTemplate());
+				$div.append(base.getTemplate());
+				
+				return $div;
+			}
 			
-			$div.append(base.getRightPanelTemplate());
-			
-			return $div;
+			return '';
 		};
 		
 		base.showQtipPreview = function(){
@@ -804,11 +806,13 @@
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
 						
-						base.contentHolder.append(base.showRightPane);
-						base.contentHolder.append(base.showLeftPane);
+						base.contentHolder.append(base.showRightPane());
+						base.contentHolder.append(base.showLeftPane());
 						
-						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
-
+						//$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
+						
+						base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+						base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType);
 						
 					},
 					hide:function(event, api){
@@ -822,7 +826,7 @@
 		base.init();
 	};
 
-	$.preview.defaultOptions = {
+	$.importpreview.defaultOptions = {
 			headerText:"Rule Preview",
 			ruleType: "",
 			ruleId: "",
@@ -840,10 +844,10 @@
 	
 	};
 
-	$.fn.preview = function(options){
+	$.fn.importpreview = function(options){
 		if (this.length) {
 			return this.each(function() {
-				(new $.preview(this, options));
+				(new $.importpreview(this, options));
 			});
 		};
 	};

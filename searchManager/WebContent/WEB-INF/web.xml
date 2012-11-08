@@ -175,6 +175,7 @@
 				com.search.manager.service.RelevancyService,
 				com.search.manager.service.ReportGeneratorService,
 				com.search.manager.service.RuleVersionService,
+				com.search.manager.service.RuleTransferService,
 				com.search.manager.service.SecurityService,
 				com.search.manager.service.StatisticService,
 				com.search.manager.service.StoreKeywordService,

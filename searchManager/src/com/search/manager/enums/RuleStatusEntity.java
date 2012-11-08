@@ -6,6 +6,8 @@ public enum RuleStatusEntity {
 	REJECTED,
 	PUBLISHED,
 	UNPUBLISHED,
+	EXPORTED,
+	IMPORTED,
 	ADD,
 	DELETE,
 	UPDATE;
