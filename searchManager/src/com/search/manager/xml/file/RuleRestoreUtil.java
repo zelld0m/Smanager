@@ -139,36 +139,34 @@ public class RuleRestoreUtil {
 		relevancy.setRelevancyId(ruleId);
 		relevancy.setStore(new Store(store));
 		relevancy = daoService.getRelevancyDetails(relevancy);
+		
 		if (relevancy != null) {
 			List<RelevancyKeyword> relKWList = daoService.getRelevancyKeywords(relevancy).getList();
 			relevancy.setRelKeyword(relKWList);
 		}
+		
 		return relevancy;
 	}
 
 	public static boolean restoreRule(RuleXml xml) {
-
+		boolean isRestored = false;
+		
 		if(xml==null){
 
 		}else if (xml instanceof ElevateRuleXml){
-			RuleRestoreUtil.restoreElevate(xml);
+			isRestored = RuleRestoreUtil.restoreElevate(xml);
 		}else if(xml instanceof DemoteRuleXml){
-			RuleRestoreUtil.restoreDemote(xml);
-
+			isRestored = RuleRestoreUtil.restoreDemote(xml);
 		}else if(xml instanceof ExcludeRuleXml){
-			RuleRestoreUtil.restoreExclude(xml);
-
+			isRestored = RuleRestoreUtil.restoreExclude(xml);
 		}else if(xml instanceof FacetSortRuleXml){
-			RuleRestoreUtil.restoreFacetSort(xml);
-
+			isRestored = RuleRestoreUtil.restoreFacetSort(xml);
 		}else if(xml instanceof RedirectRuleXml){
-			RuleRestoreUtil.restoreQueryCleaning(xml);
-
+			isRestored = RuleRestoreUtil.restoreQueryCleaning(xml);
 		}else if(xml instanceof RankingRuleXml){
-			RuleRestoreUtil.restoreRankingRule(xml);
-
+			isRestored = RuleRestoreUtil.restoreRankingRule(xml);
 		}
 
-		return false;
+		return isRestored;
 	}
 }

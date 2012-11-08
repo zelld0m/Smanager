@@ -69,17 +69,39 @@
 			
 		};
 		
+		base.getItemType = function(item){
+			var $condition = item.condition;
+			var type = "unknown";
+
+			if($.isBlank($condition)){
+				return type;
+			}
+
+			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+				type="facet";
+			}else if($condition["CNetFilter"]){
+				type="cnet";
+			}else if($condition["IMSFilter"]){
+				type="ims";
+			}
+
+			return type;
+		};
+		
 		base.setCompare = function(){
 			var $content = base.contentHolder;
 			var index = 0;
 			var item, $li, $vItem = null;
-			var $ul = $content.find("ul#itemList");
-			var $liPattern = $ul.find("li#itemPattern");
 			var $vDiv = $content.find("div#vHeaderList");
 			var $vPattern = $vDiv.find("div#vPattern");
+			var $ul = $content.find("ul#versionList");
+			var $liPattern = $ul.find("li#itemPattern");
 
+			var $rowLabelUl = $content.find("ul#rowLabel");
+			
 			$ul.find("li.item:not(#itemPattern)").remove();
 			$vDiv.find("div.vHeader:not(#vPattern)").remove();
+			$rowLabelUl.find("li.dynamic").remove();
 			
 			for(var ver in base.selectedVersion){
 				index = base.selectedVersion[ver];
@@ -102,44 +124,75 @@
 				$li.find("#ruleName").text(item["ruleName"]);
 				
 				switch(base.options.ruleType){
-					case "Elevate": 
-					case "Exclude": 
-					case "Demote": base.setProductCompare($li, item); break; 
+				case "Elevate": 
+				case "Exclude": 
+				case "Demote":
+					base.setProductCompare($li, $rowLabelUl, item); break; 
+				case "Facet Sort": 
+					$rowLabelUl.find("li.groups").show();
+					base.setFacetItemCompare($li, $rowLabelUl, item); break; 
+				case "Query Cleaning": base.setQueryCompare($li, item); break; 
 				}
-				
+
 				$li.show();
 				$ul.append($li);
+
 			};
 		};
 		
+		base.setFacetItemCompare = function(li, rowlabel, item){
+			var $li = li;
+			var groups = item["item"];
+			var $rowLabelUl = rowlabel;
+			var $group, $groupItems = null;
+			
+			var $groupUl = $li.find("ul#groupList");
+			var $groupLiPattern = $groupUl.find("li#groupPattern");
+			var groupItemName = "";
+			
+			if(groups.length){
+				$groupUl.parent().show();
+				$rowLabelUl.find("li#groups").text("Highlighted").show();
+				for (var idx in groups){
+					$group = groups[idx];
+					$groupItems = $group["groupItem"];
+					
+					$groupLi = $groupLiPattern.clone();
+					$groupLi.attr("id", $.formatAsId($group["groupName"]));
+					$groupLi.find("#groupName").text($group["groupName"]);
+					$groupLi.find("#groupSort").text($group["sortType"]);
+					$groupLi.show();
+					
+					$groupItemUl = $groupLi.find("ul#groupItemList");
+					$groupItemLiPattern = $groupItemUl.find("li#groupItemPattern"); 
+					
+					//Populate items
+					for (var itemIdx in $groupItems){
+						$groupItemLi = $groupItemLiPattern.clone();
+						groupItemName = $groupItems[itemIdx];
+						$groupItemLi.attr("id", $.formatAsId(groupItemName));
+						$groupItemLi.text(groupItemName);
+						$groupItemLi.show();
+						$groupItemUl.append($groupItemLi);
+					}
+					
+					$groupUl.append($groupLi);
+				}
+			}
 		
-		base.getItemType = function(item){
-			var $condition = item.condition;
-			var type = "unknown";
-
-			if($.isBlank($condition)){
-				return type;
-			}
-
-			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-				type="facet";
-			}else if($condition["CNetFilter"]){
-				type="cnet";
-			}else if($condition["IMSFilter"]){
-				type="ims";
-			}
-
-			return type;
 		};
-
-		base.setProductCompare = function(li, item){
+		
+		base.setProductCompare = function(li, rowlabel, item){
 			var $li = li;
 			var products = item["item"];
-			
+			var $rowLabelUl = rowlabel;
+
 			if(products.length){
 				var $ul = $li.find("ul#prodList");
 				var $pattern = $ul.find("li#prodPattern");
 				var $pLi = null;
+				
+				$rowLabelUl.find("li#products").text("Products").show();
 				
 				for (var pXml in products){
 					var product = products[pXml];
@@ -421,10 +474,10 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
 			template += '		<div style="float:left; width:120px">';// label
-			template += '		<table class="w100p" style="height:48px">';
-			template += '			<tr> <th> &nbsp; </th> </tr>';
-			template += '		</table>';
-			template += '			<ul class="w100p">';
+			template += '			<table class="w100p" style="height:48px">';
+			template += '				<tr><th> &nbsp; </th></tr>';
+			template += '			</table>';
+			template += '			<ul id="rowLabel" class="w100p">';
 			template += '				<li></li>';
 			template += '				<li>Created By</li>';
 			template += '				<li style="height:26px">Date</li>';
@@ -432,14 +485,15 @@
 			template += '				<li>Notes</li>';
 			template += '				<li>Rule ID</li>';
 			template += '				<li>Rule Name</li>';
-			template += '				<li class="last">Products</li>';
+			template += '				<li id="products" style="display:none"></li>';
+			template += '				<li id="groups" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
 			
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
-			template += '			<ul id="itemList">';
+			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none">';
-			template += '					<ul>';
+			template += '					<ul id="ruleDetails">';
 			template += '						<li><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy"></li>'; 
 			template += '						<li id="verDate"></li>';
@@ -447,19 +501,28 @@
 			template += '						<li id="verNote"></li>'; 
 			template += '						<li id="ruleId"></li>'; 
 			template += '						<li id="ruleName"></li>';
-			template += '						<li>';
-			template += '							<div id="products">';
-			template += '								<ul id="prodList">';
-			template += '									<li id="prodPattern" class="prod" style="display:none">';
-			template += '										<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
-			template += '										<div id="prodInfo">';
-			template += '											<p id="prodSKU"></p>';
-			template += '											<p id="prodBrand"></p>';
-			template += '											<p id="prodMfrNo"></p>';
-			template += '										<div>';
-			template += '									</li>';
-			template += '								</ul>';
-			template += '							</div>';
+			template += '						<li id="products" style="display:none">';
+			template += '							<ul id="prodList">';
+			template += '								<li id="prodPattern" class="prod" style="display:none">';
+			template += '									<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
+			template += '									<div id="prodInfo">';
+			template += '										<p id="prodSKU"></p>';
+			template += '										<p id="prodBrand"></p>';
+			template += '										<p id="prodMfrNo"></p>';
+			template += '									<div>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '						<li class="groups" style="display:none">';
+			template += '							<ul id="groupList">';
+			template += '								<li id="groupPattern" class="group" style="display:none">';
+			template += '									<p id="groupName"></p>';
+			template += '									<p id="groupSort"></p>';
+			template += '									<ul id="groupItemList">';
+			template += '										<li id="groupItemPattern" class="groupItem" style="display:none"></li>';
+			template += '									</ul>';
+			template += '								</li>';
+			template += '							</ul>';
 			template += '						</li>';
 			template += '					</ul>';
 			template += '				</li>';
