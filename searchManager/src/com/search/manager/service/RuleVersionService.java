@@ -10,7 +10,7 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.dao.RuleVersionDaoService;
+import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.RuleVersionXml;
@@ -25,19 +25,19 @@ public class RuleVersionService{
 
 	private static final Logger logger = Logger.getLogger(RuleVersionService.class);
 
-	@Autowired private RuleVersionDaoService ruleVersionDaoService;
+	@Autowired private DaoService daoService;
 	@Autowired private DeploymentService deploymentService;
 
 	@RemoteMethod
 	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
-		return ruleVersionDaoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
+		return daoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
 	}
 
 	@RemoteMethod
 	public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
 		boolean success = false;
 		try {
-			success = ruleVersionDaoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+			success = daoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
 		} catch (Exception e) {
 			logger.error("Failed during deleteRuleVersion()",e);
 		}
@@ -48,7 +48,7 @@ public class RuleVersionService{
 	public List<RuleVersionXml> getRuleVersions(String ruleType, String ruleId) {
 		List<RuleVersionXml> versionList = null;
 		try {
-			versionList = ruleVersionDaoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
+			versionList = daoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
 			logger.error("Failed during getRuleVersions()",e);
 		}
