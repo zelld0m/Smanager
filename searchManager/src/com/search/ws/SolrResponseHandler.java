@@ -13,6 +13,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+@Deprecated
+// Unused class. Will be deleted.
 public class SolrResponseHandler extends DefaultHandler {
 
 	private Writer out;

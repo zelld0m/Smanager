@@ -1,6 +1,8 @@
 package com.search.ws;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -21,6 +23,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
@@ -30,7 +38,6 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import com.search.manager.utility.SolrRequestDispatcher;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
 
@@ -61,12 +68,14 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	
 	private static JSONObject parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
 		BufferedReader reader = null;
+		InputStream in = null;
 		try {
 			String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
 			if (encoding == null) {
 				encoding = "UTF-8";
 			}
-			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
+			in = response.getEntity().getContent();
+			reader = new BufferedReader(new InputStreamReader(in, encoding));
 			String line = null;
 			StringBuilder jsonText = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
@@ -81,6 +90,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			e.printStackTrace();
 		}
 		finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
 			try { if (reader != null) reader.close(); } catch (Exception e) {}
 		}
 		return null;
@@ -101,8 +111,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			initialJson = parseJsonResponse(slurper, solrResponse);
 			// locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
 			// results will be added here
@@ -137,6 +157,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get template counts" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return numFound;
 	}
@@ -144,12 +173,31 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	public int getCount(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			numFound = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getInt(SolrConstants.ATTR_NUM_FOUND);
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get number of items" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}			
 		}
 		return numFound;
 	}
@@ -185,8 +233,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	protected int getEdps(List<NameValuePair> requestParams, List<? extends SearchResult> edpList, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -230,6 +288,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get items" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -237,8 +304,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	protected int getFacet(List<NameValuePair> requestParams, SearchResult facet) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -263,6 +340,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get items" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -270,8 +356,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	public int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -298,6 +394,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get non-elevated items" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}			
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -525,8 +630,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JSONObject facetFields = locateJSONObject(parseJsonResponse(slurper, solrResponse), 
 					new String[] { SolrConstants.TAG_FACET_COUNTS, SolrConstants.TAG_FACET_FIELDS, templateNameField });
 			Set<String> set = facetFields.keySet();
@@ -535,6 +650,15 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get common template name" ,e);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return templateName;
 	}

@@ -61,18 +61,31 @@
 	</div>  
 	
 	<div class="clearB"></div>
-	
-	<div class="filter padT5 fsize12 marT1">
+	<div id="tabs">
+	<ul>
+	    <li><a href="#tabs-1">Daily</a></li>
+	    <li><a href="#tabs-2">Weekly</a></li>
+	    <li><a href="#tabs-3">Monthly</a></li>
+	</ul>
+	<div id="tabs-1" class="filter padT5 fsize12 marT1">
 		<div class="floatL w180 padTB5 padR5 marL20"><span class="fbold">From:</span> <input type="text" id="fromDate" class="dateLabel" readonly="readonly"/></div>
 		<div class="floatL w180 padTB5 padR5"><span class="fbold">To:</span> <input type="text" id="toDate" class="dateLabel" readonly="readonly"/></div>		
 		<div class="floatL marT4"><a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateDateBtn"><div class="buttons fontBold">Update Date Range</div></a></div>
 		<div class="clearB"></div>
 		<!-- <button id="updateDateBtn">Update Date Range</button>  -->
-	</div>
 
-	<div class="clearB"></div>
-	
-	<div id="chart2" style="font-size: 12px;"></div>
+		<div class="clearB"></div>
+		<div id="chart2" style="font-size: 12px;"></div>
+	</div>
+	<div id="tabs-2" class="filter padT5 fsize12 marT1">
+	    <p>Weekly tab</p>
+	    <div class="clearB"></div>
+	</div>
+	<div id="tabs-3" class="filter padT5 fsize12 marT1">
+	    <p>Monthly tab</p>
+	    <div class="clearB"></div>
+	</div>
+	</div>
 </div> 
 
 <%@ include file="/WEB-INF/includes/footer.jsp" %>	

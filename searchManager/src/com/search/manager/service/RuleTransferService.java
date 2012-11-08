@@ -1,8 +1,11 @@
 package com.search.manager.service;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
+=======
+>>>>>>> refs/remotes/origin/sprint_rule_import_export
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -123,6 +126,7 @@ public class RuleTransferService {
 	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment){
 		//TODO
 		return null;
+<<<<<<< HEAD
 	}
 	
 	public boolean importRule(String ruleType, String ruleRefId, String comment){
@@ -143,5 +147,7 @@ public class RuleTransferService {
 	public boolean unimportRule(String ruleType, String ruleRefId, String comment){
 		//TODO
 		return false;
+=======
+>>>>>>> refs/remotes/origin/sprint_rule_import_export
 	}
 }

@@ -20,6 +20,7 @@ public final class DateAndTimeUtils {
 	/** The format for parsing dates without times. */
 	public static final String DATE_FORMAT_STRING_MM_DD_YYYY = "MM/dd/yyyy";
 	public static final String HYPHENED_DATE_FORMAT_STRING_MM_DD_YYYY = "MM-dd-yyyy";
+	public static final String DATE_FORMAT_STRING_YYYYMMDD = "yyyyMMdd";
 
 	/** A format for parsing offer dates with times. */
 	public static final String DATE_FORMAT_STRING_MM_DD_YYYY_hh_mm_aa = DATE_FORMAT_STRING_MM_DD_YYYY + " hh:mm aa";
@@ -112,9 +113,14 @@ public final class DateAndTimeUtils {
 		return formatter.format(date);
 	}
 
-	public static Date getDateHyphenedDateStringMMDDYYYY(String dateStr) {
+	public static String formatYYYYMMDD(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING_YYYYMMDD);
+		return formatter.format(date);
+	}
+
+	public static Date parseDateYYYYMMDD(String dateStr) {
 		SimpleDateFormat formatter = new SimpleDateFormat(
-				HYPHENED_DATE_FORMAT_STRING_MM_DD_YYYY);
+				DATE_FORMAT_STRING_YYYYMMDD);
 		Date value = null;
 
 		try {

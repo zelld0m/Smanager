@@ -13,10 +13,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.log4j.Logger;
 
+@Deprecated
 public class SolrRequestDispatcher {
 
 	private static Logger logger = Logger.getLogger(SolrRequestDispatcher.class);
 	
+	@Deprecated
+	// those creating the connection is responsible for releasing it. This class will be deleted.
 	public static HttpResponse dispatchRequest(String url, List<NameValuePair> parameters)
 		throws UnsupportedEncodingException, ClientProtocolException, IOException
 	{

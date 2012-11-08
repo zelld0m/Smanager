@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.search.manager.model.RuleVersionInfo;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionXml;
 
@@ -78,8 +77,8 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 		return false;
 	}
 
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
-		List<RuleVersionInfo> ruleVersionInfoList = new ArrayList<RuleVersionInfo>();
+	public List<RuleVersionXml> getRuleVersions(String store, String ruleId) {
+		List<RuleVersionXml> ruleVersionInfoList = new ArrayList<RuleVersionXml>();
 		RuleVersionListXml<T> ruleVersionListXml = (RuleVersionListXml<T>) getRuleVersionList(store, ruleId);
 
 		if (ruleVersionListXml!=null){
@@ -88,12 +87,12 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 			if(CollectionUtils.isNotEmpty(ruleXmlList)){
 				for(T ruleVersion: ruleXmlList){
 					if(!ruleVersion.isDeleted())
-						ruleVersionInfoList.add( new RuleVersionInfo(ruleVersion));
+						ruleVersionInfoList.add(ruleVersion);
 				}
 				
-				Collections.sort(ruleVersionInfoList, new Comparator<RuleVersionInfo>() {
+				Collections.sort(ruleVersionInfoList, new Comparator<RuleVersionXml>() {
 					@Override
-					public int compare(RuleVersionInfo r1, RuleVersionInfo r2) {
+					public int compare(RuleVersionXml r1, RuleVersionXml r2) {
 						return r2.getVersion() < r1.getVersion() ? 0 : 1;
 					}
 				});

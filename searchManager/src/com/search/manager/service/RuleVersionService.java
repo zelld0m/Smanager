@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.RuleVersionDaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
-import com.search.manager.model.RuleVersionInfo;
+import com.search.manager.report.model.xml.RuleVersionXml;
 
 @Service("ruleVersionService")
 @RemoteProxy(
@@ -45,8 +45,8 @@ public class RuleVersionService{
 	}
 
 	@RemoteMethod
-	public List<RuleVersionInfo> getRuleVersions(String ruleType, String ruleId) {
-		List<RuleVersionInfo> versionList = null;
+	public List<RuleVersionXml> getRuleVersions(String ruleType, String ruleId) {
+		List<RuleVersionXml> versionList = null;
 		try {
 			versionList = ruleVersionDaoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
@@ -57,7 +57,7 @@ public class RuleVersionService{
 
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
-		boolean success = ruleVersionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+		//boolean success = ruleVersionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
 		switch (RuleEntity.find(ruleType)) {
 		case ELEVATE:
 			break;
@@ -78,6 +78,6 @@ public class RuleVersionService{
 		default: break;
 		}
 
-		return success;
+		return true;
 	}	
 }

@@ -72,25 +72,34 @@
 		base.setCompare = function(){
 			var $content = base.contentHolder;
 			var index = 0;
-			var item, rule, $li = null;
+			var item, $li, $vItem = null;
 			var $ul = $content.find("ul#itemList");
-			var $pattern = $ul.find("li#itemPattern");
+			var $liPattern = $ul.find("li#itemPattern");
+			var $vDiv = $content.find("div#vHeaderList");
+			var $vPattern = $vDiv.find("div#vPattern");
+
 			$ul.find("li.item:not(#itemPattern)").remove();
+			$vDiv.find("div.vHeader:not(#vPattern)").remove();
 			
 			for(var ver in base.selectedVersion){
 				index = base.selectedVersion[ver];
-				$li = $pattern.clone();
+				$li = $liPattern.clone();
+				$vItem = $vPattern.clone();
 				item = base.ruleMap[index];
 				rule = item["rule"];
 				
+				$vItem.attr("id","vHeader_" + index);
+				$vItem.find("#ver").text("Version " + item["version"]);
+				$vItem.show();
+				$vDiv.append($vItem);
+				
 				$li.attr("id","ver_" + index);
-				$li.find("#ver").text("Version " + item["version"]);
 				$li.find("#verCreatedBy").text(item["createdBy"]);
 				$li.find("#verDate").text(item["createdDate"].toUTCString());
 				$li.find("#verName").text(item["name"]);
 				$li.find("#verNote").text(item["notes"]);
-				$li.find("#ruleId").text(rule["ruleId"]);
-				$li.find("#ruleName").text(rule["ruleName"]);
+				$li.find("#ruleId").text(item["ruleId"]);
+				$li.find("#ruleName").text(item["ruleName"]);
 				
 				switch(base.options.ruleType){
 					case "Elevate": 
@@ -125,8 +134,7 @@
 
 		base.setProductCompare = function(li, item){
 			var $li = li;
-			var rule = item["rule"];
-			var products = rule["item"];
+			var products = item["item"];
 			
 			if(products.length){
 				var $ul = $li.find("ul#prodList");
@@ -394,14 +402,19 @@
 
 			return template;
 		};
-
 		
 		base.getItemListTemplate =function(){
 			var template  = '';
 	
 			template += '	<div class="version w425 floatR border">';
-			template += '	<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
-			template += '	<div class="floatL titleVersion" style="padding:5px; width:129px;">sasasasasas</div>';
+			
+			template += '	<div id="vHeaderList">';
+			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
+			template += '		<div id="vPattern" class="vHeader" style="display:none">';
+			template += '			<div id="ver" class="floatL titleVersion" style="padding:5px; width:129px;"></div>';
+			template += '		</div>';
+			template += '	</div>';
+			
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
 			template += '		<div style="float:left; width:120px">';// label
@@ -423,7 +436,6 @@
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
 			template += '			<ul id="itemList">';
 			template += '				<li id="itemPattern" class="item" style="display:none">';
-			template += '					<div id="ver" class="title"></div>';
 			template += '					<ul>';
 			template += '						<li><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy"></li>'; 
