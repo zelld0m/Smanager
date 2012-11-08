@@ -21,42 +21,50 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
-import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.report.model.xml.RuleXml;
 
 public class RuleRestoreUtil {
-	
-	@Autowired DaoService daoService;
-	
-	private boolean restoreElevate(RuleVersionXml xml){
+
+	@Autowired static DaoService daoService;
+
+	private static boolean restoreElevate(RuleXml xml){
 		ElevateRuleXml elevateRuleXml = (ElevateRuleXml) xml;
 		StoreKeyword storeKeyword = new StoreKeyword(xml.getStore(), xml.getRuleId());
 		ElevateResult elevateResult = new ElevateResult(storeKeyword);
 
 		try {
-	
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		return false;
-	}
-	
-	private boolean restoreExclude(RuleVersionXml xml){
+
 		return false;
 	}
 
-	private boolean restoreDemote(RuleVersionXml xml){
+	private static boolean restoreExclude(RuleXml xml){
+		return false;
+	}
+
+	private static boolean restoreDemote(RuleXml xml){
 		return false;
 	}
 	
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
+	private static boolean restoreFacetSort(RuleXml xml){
+		return false;
+	}
+	
+	private static boolean restoreQueryCleaning(RuleXml xml){
+		return false;
+	}
+
+	private static boolean restoreRankingRule(RuleXml xml) {
 		Relevancy restoreVersion = new Relevancy((RankingRuleXml) xml);
 		String store = restoreVersion.getStore().toString();
 		RelevancyField rf = new RelevancyField();
 		boolean isRestored = true;
 
 		try {
-			Relevancy currentVersion = getRelevancy(store , restoreVersion.getRuleId());
+			Relevancy currentVersion = RuleRestoreUtil.getRelevancy(store , restoreVersion.getRuleId());
 			if (currentVersion == null && (isRestored &= daoService.addRelevancy(currentVersion) > 0)){
 
 				//TODO: Check for optimization
@@ -76,7 +84,7 @@ public class RuleRestoreUtil {
 				}
 
 				//TODO: Rollback if isRestored value becomes false
-				
+
 				return isRestored;
 			}
 
@@ -84,33 +92,33 @@ public class RuleRestoreUtil {
 			Map<String, String> restParams = restoreVersion.getParameters();
 
 			if (isRestored &= daoService.updateRelevancy(restoreVersion)>0){
-			
+
 				for (Map.Entry<String, String> entry : restParams.entrySet()) {
-					
+
 					if (currParams.get(entry.getKey()) == null) {
 						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
 								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
-						
+
 						isRestored &= daoService.addRelevancyField(rf) > 0;
-						
+
 					} else if (!currParams.get(entry.getKey()).equals(restParams.get(entry.getKey()))) {
-					
+
 						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
 								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
-						
-//						
-//						daoService.updateRelevancyField(new RelevancyField(relevancyVersion,entry.getKey(), entry.getValue(), relevancyVersion.getCreatedBy(), relevancyVersion.getLastModifiedBy(),
-//								relevancyVersion.getCreatedDate(), relevancyVersion.getLastModifiedDate()));
+
+						//						
+						//						daoService.updateRelevancyField(new RelevancyField(relevancyVersion,entry.getKey(), entry.getValue(), relevancyVersion.getCreatedBy(), relevancyVersion.getLastModifiedBy(),
+						//								relevancyVersion.getCreatedDate(), relevancyVersion.getLastModifiedDate()));
 					}
 				}
-				
+
 				if (CollectionUtils.isNotEmpty(currentVersion.getRelKeyword())) {
 					for (RelevancyKeyword keyword : currentVersion.getRelKeyword()) {
 						keyword.setRelevancy(currentVersion);
 						daoService.deleteRelevancyKeyword(keyword);
 					}
 				}
-				
+
 				if (CollectionUtils.isNotEmpty(restoreVersion.getRelKeyword())) {
 					for (RelevancyKeyword keyword : restoreVersion.getRelKeyword()) {
 						keyword.setRelevancy(restoreVersion);
@@ -118,15 +126,15 @@ public class RuleRestoreUtil {
 					}
 				}
 			}
-			
+
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}
-		
+
 		return false;
 	}
-	
-	private Relevancy getRelevancy(String store, String ruleId) throws DaoException {
+
+	private static Relevancy getRelevancy(String store, String ruleId) throws DaoException {
 		Relevancy relevancy = new Relevancy();
 		relevancy.setRelevancyId(ruleId);
 		relevancy.setStore(new Store(store));
@@ -137,25 +145,30 @@ public class RuleRestoreUtil {
 		}
 		return relevancy;
 	}
-	
-	public static boolean restoreRule(RuleVersionXml xml) {
-	
+
+	public static boolean restoreRule(RuleXml xml) {
+
 		if(xml==null){
-			
+
 		}else if (xml instanceof ElevateRuleXml){
-			
+			RuleRestoreUtil.restoreElevate(xml);
 		}else if(xml instanceof DemoteRuleXml){
-			
+			RuleRestoreUtil.restoreDemote(xml);
+
 		}else if(xml instanceof ExcludeRuleXml){
-			
+			RuleRestoreUtil.restoreExclude(xml);
+
 		}else if(xml instanceof FacetSortRuleXml){
-			
+			RuleRestoreUtil.restoreFacetSort(xml);
+
 		}else if(xml instanceof RedirectRuleXml){
-			
+			RuleRestoreUtil.restoreQueryCleaning(xml);
+
 		}else if(xml instanceof RankingRuleXml){
-			
+			RuleRestoreUtil.restoreRankingRule(xml);
+
 		}
-		
+
 		return false;
 	}
 }

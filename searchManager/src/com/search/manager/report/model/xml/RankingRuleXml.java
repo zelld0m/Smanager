@@ -13,7 +13,7 @@ import com.search.manager.model.Relevancy;
 
 @XmlRootElement(name = "rankingrule")
 @DataTransferObject(converter = BeanConverter.class)
-public class RankingRuleXml extends RuleVersionXml {
+public class RankingRuleXml extends RuleXml {
 
 	private static final long serialVersionUID = 1L;
 	private String description;

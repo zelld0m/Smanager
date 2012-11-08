@@ -14,7 +14,7 @@ import com.search.manager.model.RedirectRule;
 
 @XmlRootElement(name = "querycleaning")
 @DataTransferObject(converter = BeanConverter.class)
-public class RedirectRuleXml extends RuleVersionXml{
+public class RedirectRuleXml extends RuleXml{
 
 	private static final long serialVersionUID = 1L;
 	private String description;

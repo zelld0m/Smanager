@@ -17,7 +17,7 @@ import com.search.manager.enums.SortType;
 @XmlRootElement(name = "facetsort")
 @XmlType(propOrder={"ruleType", "sortType", "item"})
 @DataTransferObject(converter = BeanConverter.class)
-public class FacetSortRuleXml extends RuleVersionXml {
+public class FacetSortRuleXml extends RuleXml {
 	
 	private static final long serialVersionUID = 1L;
 	

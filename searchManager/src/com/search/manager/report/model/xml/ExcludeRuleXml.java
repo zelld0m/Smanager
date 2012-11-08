@@ -14,7 +14,7 @@ import org.directwebremoting.convert.BeanConverter;
 @XmlRootElement(name = "exclude")
 @XmlType(propOrder={"keyword", "excludeItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class ExcludeRuleXml extends RuleVersionXml {
+public class ExcludeRuleXml extends RuleXml {
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;

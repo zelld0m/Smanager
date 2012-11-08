@@ -14,7 +14,7 @@ import org.directwebremoting.convert.BeanConverter;
 @XmlRootElement(name = "elevate")
 @XmlType(propOrder={"keyword", "elevateItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class ElevateRuleXml extends RuleVersionXml{
+public class ElevateRuleXml extends RuleXml{
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;

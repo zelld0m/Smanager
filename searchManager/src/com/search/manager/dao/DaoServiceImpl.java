@@ -65,7 +65,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
-import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -1433,8 +1433,8 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public List<RuleVersionXml> getRuleVersions(String store, String ruleType, String ruleId) {
-		List<RuleVersionXml> versionList = new ArrayList<RuleVersionXml>();
+	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId) {
+		List<RuleXml> versionList = new ArrayList<RuleXml>();
 
 		switch (RuleEntity.find(ruleType)) {
 		case ELEVATE:
@@ -1461,7 +1461,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
+	public boolean restoreRuleVersion(RuleXml xml) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -32,7 +32,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
-import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.report.model.xml.RuleXml;
 
 public interface DaoService {
 	
@@ -251,6 +251,6 @@ public interface DaoService {
 	/* Version */
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
-	public boolean restoreRuleVersion(RuleVersionXml xml);	
-	public List<RuleVersionXml> getRuleVersions(String store, String ruleType, String ruleId);
+	public boolean restoreRuleVersion(RuleXml xml);	
+	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
 }

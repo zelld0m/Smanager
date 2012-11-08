@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 	RedirectRuleXml.class,
 	RankingRuleXml.class,
 })
-public class RuleVersionXml extends BaseEntityXml{
+public class RuleXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = -368623910806297877L;
 	
@@ -28,16 +28,16 @@ public class RuleVersionXml extends BaseEntityXml{
 	private Date lastPublishedDate;
 	private Date lastExportedDate;
 	
-	public RuleVersionXml() {
+	public RuleXml() {
 		super();
 	}
 
-	public RuleVersionXml(long serial) {
+	public RuleXml(long serial) {
 		super();
 		this.serial = serial;
 	}
 	
-	public RuleVersionXml(String store, String name, String notes,
+	public RuleXml(String store, String name, String notes,
 			String createdBy) {
 		super();
 		this.store = store;

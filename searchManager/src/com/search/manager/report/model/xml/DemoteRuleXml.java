@@ -14,7 +14,7 @@ import org.directwebremoting.convert.BeanConverter;
 @XmlRootElement(name = "demote")
 @XmlType(propOrder={"keyword", "demoteItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class DemoteRuleXml extends RuleVersionXml {
+public class DemoteRuleXml extends RuleXml {
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;
