@@ -131,13 +131,19 @@ public class DAOConstants {
 	//CATEGORY
 	public static final String SP_GET_CATEGORY_BY_FILTER			= "usp_Get_Product_Category_by_Filter";
 
+	//USER
 	public static final String SP_GET_USERS							= "usp_Get_Manager_Group_User";
 	public static final String SP_ADD_USERS							= "usp_Add_Manager_User";
 	public static final String SP_UPDATE_USERS						= "usp_Update_Manager_User";
 	public static final String SP_DELETE_USERS						= "usp_Delete_Manager_User";
-
 	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
 
+	//EXPORT_RULE_MAP
+	public static final String SP_GET_EXPORT_RULE_MAP				= "usp_Get_Export_Rule_Map";
+	public static final String SP_ADD_EXPORT_RULE_MAP				= "usp_Add_Export_Rule_Map";
+	public static final String SP_UPDATE_EXPORT_RULE_MAP			= "usp_Update_Export_Rule_Map";
+	public static final String SP_DELETE_EXPORT_RULE_MAP			= "usp_Delete_Export_Rule_Map";
+	
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
 	public static final String PARAM_KEYWORD_ID						= "keyword_id";
@@ -247,6 +253,25 @@ public class DAOConstants {
 	public static final String PARAM_MATCH_TYPE			 			= "match_type";
 	public static final String PARAM_RETURN_OPTION			 		= "return_option";
 
+	// additional rule status parameters
+	public static final String PARAM_REQUEST_BY						= "request_by";
+	public static final String PARAM_LAST_REQUEST_DATE				= "last_request_date";
+	public static final String PARAM_APPROVAL_BY					= "approval_by";
+	public static final String PARAM_LAST_APPROVAL_DATE				= "last_approval_date";
+	public static final String PARAM_PUBLISHED_BY					= "published_by";
+	public static final String PARAM_EXPORT_TYPE					= "export_type";
+	public static final String PARAM_EXPORT_BY						= "export_by";
+	public static final String PARAM_LAST_EXPORT_DATE				= "last_export_date";
+	public static final String PARAM_SORT_BY						= "sort_by";
+	
+	// export_rule_map_parameters
+	public static final String PARAM_PROD_STORE_ID_ORIGIN			= "store_id_origin";
+	public static final String PARAM_RULE_ID_ORIGIN   				= "rule_id_origin";
+	public static final String PARAM_RULE_NAME_ORIGIN     			= "rule_name_origin";
+	public static final String PARAM_PROD_STORE_ID_TARGET			= "store_id_target";
+	public static final String PARAM_RULE_ID_TARGET   				= "rule_id_target";
+	public static final String PARAM_RULE_NAME_TARGET     			= "rule_name_target";
+	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
 	public static final String COLUMN_PROD_KEYWORD_ID   			= "prod_keyword_id";
@@ -339,6 +364,23 @@ public class DAOConstants {
 	public static final String COLUMN_FACET_GROUP_ITEM_NAME 		= "facet_group_item_name";
 	public static final String COLUMN_FACET_GROUP_ITEM_SEQUENCE		= "facet_group_item_seq";
 
+	// additional rule status columns
+	public static final String COLUMN_REQUEST_BY					= "request_by";
+	public static final String COLUMN_LAST_REQUEST_DATE				= "last_request_date";
+	public static final String COLUMN_APPROVAL_BY					= "approval_by";
+	public static final String COLUMN_LAST_APPROVAL_DATE			= "last_approval_date";
+	public static final String COLUMN_PUBLISHED_BY					= "published_by";
+	public static final String COLUMN_EXPORT_TYPE					= "export_type";
+	public static final String COLUMN_EXPORT_BY						= "export_by";
+	public static final String COLUMN_LAST_EXPORT_DATE				= "last_export_date";
+
+	// export_rule_map_parameters
+	public static final String COLUMN_PROD_STORE_ID_ORIGIN			= "store_id_origin";
+	public static final String COLUMN_RULE_ID_ORIGIN   				= "rule_id_origin";
+	public static final String COLUMN_RULE_NAME_ORIGIN     			= "rule_name_origin";
+	public static final String COLUMN_PROD_STORE_ID_TARGET			= "store_id_target";
+	public static final String COLUMN_RULE_ID_TARGET   				= "rule_id_target";
+	public static final String COLUMN_RULE_NAME_TARGET     			= "rule_name_target";
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
 
@@ -348,4 +390,5 @@ public class DAOConstants {
 	// will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
 	public static final String MEMBER_TYPE_PART 					= "PART_NUMBER";
 
+	
 }

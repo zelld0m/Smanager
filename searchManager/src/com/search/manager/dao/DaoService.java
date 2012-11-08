@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
@@ -14,6 +15,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -221,6 +223,7 @@ public interface DaoService {
     public List<String> getRefIDs(String ent, String opt, String storeId) throws DaoException;
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public Map<String, Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
@@ -247,10 +250,17 @@ public interface DaoService {
 	public List<String> getGroups() throws DaoException;
 	public List<String> getAllPermissions() throws DaoException;
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException;
-	
+
 	/* Version */
 	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
 	public boolean restoreRuleVersion(RuleXml xml);	
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
+
+	/* Export Rule Map */
+    public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException;
+    public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	
 }

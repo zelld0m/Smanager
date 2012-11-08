@@ -26,12 +26,14 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
+import com.search.manager.dao.sp.ExportRuleMapDAO;
 import com.search.manager.dao.sp.FacetSortDAO;
 import com.search.manager.dao.sp.GroupsDAO;
 import com.search.manager.dao.sp.KeywordDAO;
 import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
+import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
 import com.search.manager.enums.MemberTypeEntity;
@@ -46,6 +48,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -92,6 +95,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private FacetSortVersionDAO facetSortVersionDAO;
 	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
 	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
+	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
 
 	private DaoServiceImpl instance;
 	
@@ -1166,7 +1170,12 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
-		return ruleStatusDAO.getRuleStatus(searchCriteria);
+		return ruleStatusDAO.getRuleStatus(searchCriteria, null);
+	}
+	
+	@Override
+	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException {
+		return ruleStatusDAO.getRuleStatus(searchCriteria, sortOrder);
 	}
 
 	@Override
@@ -1389,8 +1398,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems)
-			throws DaoException {
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems) throws DaoException {
 		return facetSortDAO.addFacetGroupItems(facetGroupItems);
 	}
 
@@ -1464,5 +1472,25 @@ public class DaoServiceImpl implements DaoService {
 	public boolean restoreRuleVersion(RuleXml xml) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.getExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.addExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
 	}
 }
