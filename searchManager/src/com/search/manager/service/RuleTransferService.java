@@ -1,5 +1,6 @@
 package com.search.manager.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +30,9 @@ import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
-import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.FileUtil;
+import com.search.manager.xml.file.RuleRestoreUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.SearchHelper;
 
@@ -44,14 +47,13 @@ public class RuleTransferService {
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DaoService daoService;
 	
-	
 	@RemoteMethod
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType){
 		return deploymentService.getDeployedRules(ruleType, "PUBLISHED");
 	}
 	
 	@RemoteMethod
-	public List<RuleVersionXml> getAllRulesToImport(String ruleType){
+	public List<RuleXml> getAllRulesToImport(String ruleType){
 		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreName(), ruleType);
 	}
 	
@@ -63,7 +65,7 @@ public class RuleTransferService {
 		
 		//create xml file
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
-			RuleVersionXml ruleXml = new RuleVersionXml();
+			RuleXml ruleXml = new RuleXml();
 			String keyword = ruleRefIdList[i];
 			StoreKeyword sk = new StoreKeyword(store, keyword);
 			String ruleId = "";
@@ -86,6 +88,7 @@ public class RuleTransferService {
 				}	
 				
 				ruleXml = new ElevateRuleXml(store, 0, null, null, null, keyword, elevateItemXmlList);
+				break;
 			case EXCLUDE:
 				ruleId = keyword;
 				SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(sk));
@@ -103,6 +106,7 @@ public class RuleTransferService {
 				}	
 				
 				ruleXml = new ExcludeRuleXml(store, 0, null, null, null, keyword, excludeItemXmlList);
+				break;
 			case DEMOTE: 
 				ruleId = keyword;
 				SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(new DemoteResult(sk));
@@ -112,12 +116,14 @@ public class RuleTransferService {
 					LinkedHashMap<String, Product> map = SearchHelper.getProducts(demoteItemList, store, ruleId);
 					for (DemoteResult result : demoteItemList) {
 						Product p = result.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(result.getEdp()): null;
+						//TODO pass Product p ItemXml constructor
 						demoteItemXmlList.add(new DemoteItemXml(result));
 					}
 				} catch (DaoException e) {
 					return null;
 				}	
 				ruleXml = new DemoteRuleXml(store, 0, null, null, null, keyword, demoteItemXmlList);
+				break;
 			}
 			
 			if(RuleTransferUtil.exportRuleAsXML(store, ruleEntity, ruleId, ruleXml)){
@@ -126,33 +132,62 @@ public class RuleTransferService {
 				successList.add(ruleId);
 			}
 		}
-		
 		return successList;
 	}
 	
 	@RemoteMethod
 	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment){
-		//TODO
-		return null;
+		List<String> successList = new ArrayList<String>();
+		String store = UtilityService.getStoreName();
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		
+		for(int i = 0 ; i < ruleRefIdList.length; i++){
+			String ruleId = ruleRefIdList[i];
+						
+			if(importRule(ruleEntity, store, ruleId, comment)){
+				successList.add(ruleId);
+			}
+		}
+		return successList;
 	}
 	
-	public boolean importRule(String ruleType, String ruleRefId, String comment){
-		//TODO
+	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
+		if(RuleRestoreUtil.restoreRule(RuleTransferUtil.getRule(store, ruleEntity, ruleId))){
+			deleteRule(ruleEntity, store, ruleId, comment);
+		}
+		
 		return false;
 	}
 	
 	/**
-	 * 
+	 * Deletes xml file of rejected rule
 	 * @return list of rule name of successfully rejected rule
 	 */
 	@RemoteMethod
 	public List<String> unimportRules(String ruleType, String[] ruleRefIdList, String comment){
-		//TODO
-		return null;
+		List<String> successList = new ArrayList<String>();
+		String store = UtilityService.getStoreName();
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		
+		for(int i = 0 ; i < ruleRefIdList.length; i++){
+			String ruleId = ruleRefIdList[i];
+						
+			if(deleteRule(ruleEntity, store, ruleId, comment)){
+				successList.add(ruleId);
+			}
+		}
+		return successList;
 	}
 	
-	public boolean unimportRule(String ruleType, String ruleRefId, String comment){
-		//TODO
-		return false;
+	public boolean deleteRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
+		String filepath = RuleTransferUtil.getFileName(store, ruleEntity, ruleId);
+		boolean success = false;
+		try {
+			FileUtil.deleteFile(filepath);
+			success = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return success;
 	}
 }
