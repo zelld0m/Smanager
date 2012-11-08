@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,7 @@ import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -33,6 +35,8 @@ import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
+import com.search.manager.model.SearchResult;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 
 public class SearchHelper {
@@ -76,6 +80,24 @@ public class SearchHelper {
 	public static boolean isEdpDetectableInKeyword(String url, String edp, String keyword) {
 		// TODO: implement this
 		return false;
+	}
+	
+	public static LinkedHashMap<String, Product> getProducts(List<?  extends SearchResult> itemList, String store, String ruleId){
+		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
+		
+		for (SearchResult e: itemList) {
+			Product ep = new Product(e);
+			ep.setStore(store);
+			if (e.getMemberType() == MemberTypeEntity.PART_NUMBER) {
+				map.put(e.getEdp(), ep);
+			} 
+		}
+		
+		if(MapUtils.isNotEmpty(map)){
+			SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
+		}
+		
+		return map;
 	}
 
 	public static void getProducts(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {

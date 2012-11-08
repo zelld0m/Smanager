@@ -23,11 +23,6 @@ public class Product extends ModelBean {
 	private String imagePath;
 	private String store;
 	private Date   expiryDate;
-	private Date   createdDate;
-	private Date   lastModifiedDate;
-	private String comment;
-	private String lastModifiedBy;
-	private String createdBy;
 	private MemberTypeEntity memberTypeEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;
@@ -55,6 +50,19 @@ public class Product extends ModelBean {
 		this.comment = comment;
 		this.lastModifiedBy = lastModifiedBy;
 		this.createdBy = createdBy;
+	}
+	
+	public Product(SearchResult e){
+		super();
+		this.setEdp(e.getEdp());
+		this.setExpiryDate(e.getExpiryDate());
+		this.setCreatedDate(e.getCreatedDate());
+		this.setLastModifiedDate(e.getLastModifiedDate());
+		this.setComment(e.getComment());
+		this.setLastModifiedBy(e.getLastModifiedBy());
+		this.setCreatedBy(e.getCreatedBy());
+		this.setMemberId(e.getMemberId());
+		this.setStore(e.getStoreKeyword().getStoreId());
 	}
 	
 	public String getDpNo() {
