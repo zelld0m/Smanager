@@ -3,6 +3,7 @@ package com.search.manager.utility;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,10 +33,13 @@ public class StatisticsUtil {
 		try {
 			if (file.exists()) {
 				lines = new ArrayList<String[]>();
-				reader = new CSVReader(new FileReader(file), ',', '\"', '\0');
+				reader = new CSVReader(new FileReader(file), ',', '\"', '\0',
+						1, false);
 				String[] data = reader.readNext();
 
 				while (lines.size() < keywords.size() && data != null) {
+					data[keyCol] = URLDecoder.decode(data[keyCol], "UTF-8")
+							.toLowerCase().trim();
 					if (keywords.indexOf(data[keyCol]) >= 0) {
 						lines.add(data);
 					}
@@ -64,7 +68,7 @@ public class StatisticsUtil {
 	public static Integer getCount(File file, String keyword, int keyCol,
 			int countCol) {
 		List<String[]> line = findInCSV(file, keyword, keyCol);
-		
+
 		if (line == null) {
 			return null;
 		}
@@ -86,7 +90,7 @@ public class StatisticsUtil {
 			// set proper value for those found
 			for (String[] col : lines) {
 				counts.put(col[keyCol], Integer.valueOf(col[countCol]));
-			}	
+			}
 		}
 
 		return counts;
@@ -99,12 +103,15 @@ public class StatisticsUtil {
 
 		try {
 			if (file.exists()) {
-				reader = new CSVReader(new FileReader(file), ',', '\"', '\0');
+				reader = new CSVReader(new FileReader(file), ',', '\"', '\0',
+						1, false);
 				String[] data = reader.readNext();
 
 				for (int i = 0; i < count && data != null; i++, data = reader
 						.readNext()) {
-					KeywordStats stats = new KeywordStats(data[keywordCol]);
+					KeywordStats stats = new KeywordStats(URLDecoder
+							.decode(data[keywordCol], "UTF-8").toLowerCase()
+							.trim());
 
 					stats.addStats(date, Integer.parseInt(data[countCol]));
 					top.add(stats);

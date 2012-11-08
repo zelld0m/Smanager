@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -53,37 +54,48 @@ public class KeywordTrendsService {
 	@RemoteMethod
 	public List<KeywordStats> getTopTenKeywords(Date fromDate, Date toDate) {
 		List<KeywordStats> list = StatisticsUtil.top(getFile(toDate), toDate,
-				10, 1, 0);
+				10, 0, 1);
 		retrieveStats(list, fromDate, DateUtils.addDays(toDate, -1));
 		return list;
 	}
 
 	@RemoteMethod
 	public Date getMostRecentStatsDate() {
-		File dir = new File(PropsUtils.getValue("topkwdir") + File.separator
+		File dir = new File(PropsUtils.getValue("splunkdir") + File.separator
 				+ UtilityService.getStoreName());
-		File[] files = dir.listFiles(new FilenameFilter() {
+		File[] files = dir.listFiles(new FileFilter() {
 			@Override
-			public boolean accept(File dir, String name) {
-				return name.contains("-splunk");
+			public boolean accept(File file) {
+				return file.isDirectory()
+						&& file.getName().matches("^[0-9]{6}$");
 			}
 		});
+		Comparator<File> comp = new Comparator<File>() {
+			public int compare(File f1, File f2) {
+				return -f1.getName().compareTo(f2.getName());
+			}
+		};
+		File[] csvs = null;
 
 		if (files != null) {
-			Arrays.sort(files, new Comparator<File>() {
-				public int compare(File f1, File f2) {
-					return -Long.valueOf(f1.lastModified()).compareTo(
-							f2.lastModified());
+			Arrays.sort(files, comp);
+			csvs = files[0].listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name) {
+					return name.endsWith(".csv");
 				}
 			});
+		}
+
+		if (csvs != null) {
+			Arrays.sort(csvs, comp);
 
 			try {
-				String path = files[0].getCanonicalPath();
+				String path = csvs[0].getCanonicalPath();
 				String dateStr = new MessageFormat(getFilePattern())
-						.parse(path)[0].toString();
+						.parse(path)[1].toString();
 
-				return DateAndTimeUtils
-						.getDateHyphenedDateStringMMDDYYYY(dateStr);
+				return DateAndTimeUtils.parseDateYYYYMMDD(dateStr);
 			} catch (IOException ex) {
 				logger.error(ex.getMessage());
 			} catch (ParseException e) {
@@ -94,24 +106,43 @@ public class KeywordTrendsService {
 		return null;
 	}
 
-	private String getFilePattern() {
-		return new StringBuilder().append(PropsUtils.getValue("topkwdir"))
-				.append(File.separator).append(UtilityService.getStoreName())
-				.append(File.separator).append(UtilityService.getStoreName())
-				.append("_summary_{0}-splunk.csv").toString();
-	}
-
+	/**
+	 * Get CSV file for the given date or null if non-existent.
+	 * 
+	 * @param date
+	 *            Date
+	 * @return CSV file for the given date
+	 */
 	private File getFile(Date date) {
+		String str = DateAndTimeUtils.formatYYYYMMDD(date);
 		return new File(MessageFormat.format(getFilePattern(),
-				DateAndTimeUtils.getHyphenedDateStringMMDDYYYY(date)));
+				str.substring(0, 6), str));
 	}
 
+	private String getFilePattern() {
+		return new StringBuilder().append(PropsUtils.getValue("splunkdir"))
+				.append(File.separator).append(UtilityService.getStoreName())
+				.append(File.separator).append("{0}").append(File.separator)
+				.append("{1}.csv").toString();
+	}
+
+	/**
+	 * Retrieve stats of the given list of keywords for the specified date
+	 * range.
+	 * 
+	 * @param list
+	 *            List of keywords
+	 * @param fromDate
+	 *            start of date range
+	 * @param toDate
+	 *            end of date range
+	 */
 	private void retrieveStats(List<KeywordStats> list, Date fromDate,
 			Date toDate) {
 		Date date = fromDate;
 
 		while (DateAndTimeUtils.compare(date, toDate) <= 0) {
-			StatisticsUtil.retrieveStats(list, getFile(date), date, 1, 0);
+			StatisticsUtil.retrieveStats(list, getFile(date), date, 0, 1);
 			date = DateUtils.addDays(date, 1);
 		}
 	}
