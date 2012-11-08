@@ -1,5 +1,7 @@
 package com.search.ws;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,13 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -25,11 +34,11 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import com.search.manager.utility.SolrRequestDispatcher;
 
 public class SolrXmlResponseParser extends SolrResponseParser {
 
 	// TODO: create a threadpool for this?
+	private static Logger logger = Logger.getLogger(SolrXmlResponseParser.class);
 
 	// Belongs to initial Solr XML response which will be used to generate the HTTP Response
 	private Document mainDoc = null;
@@ -75,15 +84,37 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public int getCount(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document elevateDoc = docBuilder.parse(solrResponse.getEntity().getContent());
+			in = solrResponse.getEntity().getContent();
+			Document elevateDoc = docBuilder.parse(in);
 			// locate the result node and get the numFound attribute
 			numFound = Integer.parseInt(elevateDoc.getElementsByTagName(SolrConstants.TAG_RESULT).item(0)
 					.getAttributes().getNamedItem(SolrConstants.ATTR_NUM_FOUND).getNodeValue());
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get number of items" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return numFound;
 	}
@@ -106,10 +137,23 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	protected int getFacet(List<NameValuePair> requestParams, SearchResult facet) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document currentDoc  = docBuilder.parse(solrResponse.getEntity().getContent());
+			in = solrResponse.getEntity().getContent();
+			Document currentDoc  = docBuilder.parse(in);
 			
 			// <result> tag that is parent node for all the <doc> tags
 			Node tmpResultNode = locateElementNode(locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE),
@@ -147,9 +191,18 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					}
 				}
 			}
-			
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get items" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -157,10 +210,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	protected int getEdps(List<NameValuePair> requestParams, List<? extends SearchResult> edpList, int startRow, int requestedRows) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document currentDocument = docBuilder.parse(solrResponse.getEntity().getContent());
+			in = solrResponse.getEntity().getContent();
+			Document currentDocument = docBuilder.parse(in);
 			// <result> tag that is parent node for all the <doc> tags
 			Node tmpResultNode = locateElementNode(locateElementNode(currentDocument, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_RESULT, SolrConstants.ATTR_NAME_VALUE_RESPONSE);
@@ -217,6 +282,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get items" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -224,10 +299,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException {
 		int addedRecords = 0;
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
+			in = solrResponse.getEntity().getContent();
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document elevateDoc = docBuilder.parse(solrResponse.getEntity().getContent());
+			Document elevateDoc = docBuilder.parse(in);
 			// locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
 			// results will be added here
 			NodeList children = elevateDoc.getChildNodes().item(0).getChildNodes();
@@ -266,6 +353,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get Non-Elevated items" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return addedRecords;
 	}
@@ -273,10 +370,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException {
 		int numFound = -1;
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
 		try {
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
-			mainDoc = docBuilder.parse(solrResponse.getEntity().getContent());
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
+			in = solrResponse.getEntity().getContent();
+			mainDoc = docBuilder.parse(in);
 			// locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
 			// results will be added here
 			resultNode = locateElementNode(locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE),
@@ -333,6 +442,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			qtimeNode = locateElementNode(responseHeaderNode,SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_QTIME);
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get template counts" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return numFound;
 	}
@@ -433,10 +552,22 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
+		HttpPost post = null;
+		HttpClient client  = null;
+		InputStream in = null;
 		try {
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(requestPath, requestParams);
+			client = new DefaultHttpClient();
+			post = new HttpPost(requestPath);
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document document = docBuilder.parse(solrResponse.getEntity().getContent());
+			in = solrResponse.getEntity().getContent();
+			Document document = docBuilder.parse(in);
 			NodeList templateNames = locateElementNode(locateElementNode(locateElementNode(locateElementNode(document, SolrConstants.TAG_RESPONSE),
 							SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_COUNTS), SolrConstants.TAG_LIST, SolrConstants.TAG_FACET_FIELDS),
 							SolrConstants.TAG_LIST, templateNameField).getChildNodes();
@@ -445,6 +576,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		} catch (Exception e) {
 			throw new SearchException("Error occured while trying to get common template name" ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return templateName;
 	}
