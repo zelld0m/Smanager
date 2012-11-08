@@ -12,6 +12,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 
+import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -93,6 +94,10 @@ public class Relevancy extends ModelBean {
 	}
 	
 	
+	public Relevancy(RankingRuleXml xml) {
+		// TODO Auto-generated constructor stub
+	}
+
 	public String getRuleId() {
 		return relevancyId;
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -15,7 +16,7 @@ import org.directwebremoting.convert.BeanConverter;
 @DataTransferObject(converter = BeanConverter.class)
 public class ExcludeRuleXml extends RuleVersionXml {
 	
-	private static final long serialVersionUID = 311146321055559058L;
+	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<ExcludeItemXml> excludeItem;
 	
@@ -34,6 +35,14 @@ public class ExcludeRuleXml extends RuleVersionXml {
 		this.setCreatedDate(new Date());
 	}
 
+	public String getKeyword() {
+		return keyword;
+	}
+	
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+
 	@XmlElementRef(type=RuleItemXml.class)
 	public List<ExcludeItemXml> getExcludeItem() {
 		return excludeItem;
@@ -43,11 +52,8 @@ public class ExcludeRuleXml extends RuleVersionXml {
 		this.excludeItem = excludeItem;
 	}
 	
-	public String getKeyword() {
-		return keyword;
-	}
-	
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+	@XmlTransient
+	public List<ExcludeItemXml> getItem() {
+		return excludeItem;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -15,7 +16,7 @@ import org.directwebremoting.convert.BeanConverter;
 @DataTransferObject(converter = BeanConverter.class)
 public class DemoteRuleXml extends RuleVersionXml {
 	
-	private static final long serialVersionUID = -7822668715298440691L;
+	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<DemoteItemXml> demoteItem;
 	
@@ -34,6 +35,14 @@ public class DemoteRuleXml extends RuleVersionXml {
 		super(serialVersionUID);
 	}
 	
+	public String getKeyword() {
+		return keyword;
+	}
+	
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+	
 	@XmlElementRef(type=RuleItemXml.class)
 	public List<DemoteItemXml> getDemoteItem() {
 		return demoteItem;
@@ -43,11 +52,8 @@ public class DemoteRuleXml extends RuleVersionXml {
 		this.demoteItem = demoteItem;
 	}
 	
-	public String getKeyword() {
-		return keyword;
-	}
-	
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+	@XmlTransient
+	public List<DemoteItemXml> getItem() {
+		return demoteItem;
 	}
 }

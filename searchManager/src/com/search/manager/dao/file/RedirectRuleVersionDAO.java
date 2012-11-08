@@ -11,6 +11,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleVersionXml;
 import com.search.manager.utility.StringUtil;
 
 @Repository(value="queryCleaningVersionDAO")
@@ -57,8 +58,7 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 	}
 
 	@Override
-	public boolean restoreRuleVersion(String store, String ruleId,
-			String username, long version) {
+	public boolean restoreRuleVersion(RuleVersionXml xml) {
 		// TODO Auto-generated method stub
 		return false;
 	}

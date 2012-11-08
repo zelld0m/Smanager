@@ -3,6 +3,8 @@ package com.search.manager.model;
 import java.util.Date;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.report.model.xml.ElevateItemXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
 
 public class ElevateResult extends SearchResult {
 	
@@ -31,6 +33,10 @@ public class ElevateResult extends SearchResult {
 		this.forceAdd = forceAdd;
 	}
 	
+	public ElevateResult(ElevateItemXml itemXml) {
+		
+	}
+
 	@Override
 	public String toString() {
 		return "(StoreKeyword: " + storeKeyword + "\tEDP: " + edp + "\tlocation: " + location + ")";

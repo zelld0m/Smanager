@@ -45,6 +45,17 @@ public class StatisticController {
 		return "statistic/zeroresult";
 	}
 	
+	@RequestMapping(value="/keywordtrends/{store}")
+	public String keywordTrends(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
+		model.addAttribute("store", store);
+		try {
+			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Keyword Trends");
+		} catch (Exception e) {
+			logger.error("Failed to access local cache ", e);
+		}
+		return "statistic/keywordtrends";
+	}
+	
 	@RequestMapping(value="/reportgenerator/{store}")
 	public String reportGenerator(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);

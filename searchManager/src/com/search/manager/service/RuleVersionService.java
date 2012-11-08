@@ -21,7 +21,7 @@ import com.search.manager.model.RuleVersionInfo;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "ruleVersionService")
 )
-public class RuleVersionService {
+public class RuleVersionService{
 
 	private static final Logger logger = Logger.getLogger(RuleVersionService.class);
 

@@ -15,7 +15,7 @@ import com.search.manager.model.Relevancy;
 @DataTransferObject(converter = BeanConverter.class)
 public class RankingRuleXml extends RuleVersionXml {
 
-	private static final long serialVersionUID = 1073476024072073843L;
+	private static final long serialVersionUID = 1L;
 	private String description;
 	private Date startDate;
 	private Date endDate;

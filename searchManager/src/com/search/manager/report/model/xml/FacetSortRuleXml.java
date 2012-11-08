@@ -19,7 +19,7 @@ import com.search.manager.enums.SortType;
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetSortRuleXml extends RuleVersionXml {
 	
-	private static final long serialVersionUID = -8031000176251148387L;
+	private static final long serialVersionUID = 1L;
 	
 	private RuleType ruleType;
 	private SortType sortType;

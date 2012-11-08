@@ -929,6 +929,12 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 /* version rule list */
 .qtip .horizontalCont ul { list-style: none; margin:0; padding:0 } 
-.qtip .horizontalCont li { float:left; display:inline; margin-right:1px; padding:5px; width:129px }
-.qtip .horizontalCont li .title { height: 16px; padding:4px; border-bottom:3px solid #666; color:#282828; font-weight:bold; margin:0 }
+.qtip .horizontalCont ul li { float:left; display:inline; margin-right:1px; padding:5px; width:129px; border-bottom:1px solid #eee }
+.qtip .horizontalCont li .title, .titleVersion { height: 16px; padding:4px; border-bottom:3px solid #666; color:#282828; font-weight:bold; margin:0 }
+
+/* version rule table */
+.qtip .version ul{ list-style:none; margin:0; padding:0 }
+.qtip .version li { padding:4px; border-bottom:1px solid #eee }
+.qtip .version li.last { border-bottom:none !important }
+.qtip .version li.2line { height: 26px !important }
 
