@@ -63,10 +63,6 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 		return false;
 	}
 
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
-		return elevateVersionDAO.restoreRuleVersion(xml);
-	}
-
 	@Override
 	public List<RuleVersionXml> getRuleVersions(String store, String ruleType, String ruleId) {
 		List<RuleVersionXml> versionList = new ArrayList<RuleVersionXml>();
@@ -93,5 +89,11 @@ public class RuleVersionDaoServiceImpl implements RuleVersionDaoService{
 		}
 
 		return versionList;
+	}
+
+	@Override
+	public boolean restoreRuleVersion(RuleVersionXml xml) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

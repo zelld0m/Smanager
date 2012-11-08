@@ -64,10 +64,4 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 
 		return false;
 	}
-
-	@Override
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

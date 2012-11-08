@@ -20,7 +20,6 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.report.model.xml.RuleVersionXml;
 import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.ws.SearchHelper;
@@ -86,22 +85,6 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 			return RuleVersionUtil.addRuleVersion(store, RuleEntity.ELEVATE, ruleId, ruleVersionListXml);
 		}
 
-		return false;
-	}
-
-	@Override
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
-		ElevateRuleXml elevateRuleXml = (ElevateRuleXml) xml;
-		StoreKeyword storeKeyword = new StoreKeyword(xml.getStore(), xml.getRuleId());
-		ElevateResult elevateResult = new ElevateResult(storeKeyword);
-
-		try {
-			RuleVersionUtil.backUpRule(xml.getStore(), RuleEntity.ELEVATE, xml.getRuleId(), daoService.getElevateResultList(new SearchCriteria<ElevateResult>(elevateResult)).getList());
-		} catch (DaoException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			
 		return false;
 	}
 }

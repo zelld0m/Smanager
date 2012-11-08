@@ -225,13 +225,16 @@
 		base.addDeleteVersionListener = function(tr, item){
 			var $tr = tr;
 			var $item = item;
-			
+			var $content = base.contentHolder;
+
 			$tr.find(".deleteIcon").off().on({
 				click:function(e){
 					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
 							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
 								callback:function(data){
+									$content.find("li#ver_" + e.data.item["version"]).remove();
+									$content.find("div#vHeader_" + e.data.item["version"]).remove();
 									base.getAvailableVersion();
 								}
 							});

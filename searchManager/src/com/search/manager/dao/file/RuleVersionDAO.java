@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.xml.file.RuleRestoreUtil;
 
 public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 	
@@ -33,7 +34,10 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 	public abstract String getRuleVersionFilename(String store, String ruleId);
 	public abstract RuleVersionListXml<T> getRuleVersionList(String store, String ruleId);
 	public abstract boolean createRuleVersion(String store, String ruleId, String username, String name, String notes);
-	public abstract boolean restoreRuleVersion(RuleVersionXml xml);
+	
+	public boolean restoreRuleVersion(T xml){
+		return RuleRestoreUtil.restoreRule(xml);
+	};
 
 	@SuppressWarnings("unchecked")
 	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){

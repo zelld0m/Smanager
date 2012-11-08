@@ -15,7 +15,6 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.report.model.xml.FacetSortItemXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.report.model.xml.RuleVersionXml;
 
 @Repository(value="facetSortVersionDAO")
 public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
@@ -69,11 +68,4 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 
 		return false;
 	}
-
-	@Override
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

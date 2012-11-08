@@ -56,10 +56,4 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 
 		return false;
 	}
-
-	@Override
-	public boolean restoreRuleVersion(RuleVersionXml xml) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }
