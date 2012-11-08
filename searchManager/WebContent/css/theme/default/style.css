@@ -1,6 +1,6 @@
 .companyLogoImg 				{ position:absolute; top:56px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
 .ie .companyLogoImg 				{ position:absolute; top:55px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
-
+     
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
