@@ -45,6 +45,33 @@ public class RuleStatusDAO {
 	private DeleteRuleStatusStoredProcedure deleteRuleStatusStoredProcedure;
 	private UpdateRuleStatusStoredProcedure updateRuleStatusStoredProcedure;
 	
+	public enum SortOrder {
+		DESCRIPTION_ASCENDING,
+		DESCRIPTION_DESCENDING,
+		LAST_PUBLISHED_DATE_ASCENDING,
+		LAST_PUBLISHED_DATE_DESCENDING,
+		LAST_EXPORT_DATE_ASCENDING,
+		LAST_EXPORT_DATE_DESCENDING;
+		
+		public int getIntValue() {
+			switch (this) {
+				case DESCRIPTION_ASCENDING:
+				default:
+					return 0;
+				case DESCRIPTION_DESCENDING:
+					return 1;
+				case LAST_PUBLISHED_DATE_ASCENDING:
+					return 2;
+				case LAST_PUBLISHED_DATE_DESCENDING:
+					return 3;
+				case LAST_EXPORT_DATE_ASCENDING:
+					return 4;
+				case LAST_EXPORT_DATE_DESCENDING:
+					return 5;
+			}
+		}
+	}
+	
 	private class GetRuleStatusStoredProcedure extends GetStoredProcedure {
 	    public GetRuleStatusStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_RULE_STATUS);
@@ -83,6 +110,36 @@ public class RuleStatusDAO {
 	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
 	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
 	                		);
+
+	                // TODO: check once schema is done
+//	                return new RuleStatus(
+//	                		rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
+//	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
+//	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
+//	                		rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
+//	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
+//	                		
+//	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
+//	                		rs.getString(DAOConstants.COLUMN_REQUEST_BY),
+//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE),
+//	                		
+//	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
+//	                		rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
+//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE),
+//	                		
+//	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
+//	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
+//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
+//	                		
+//	                		ExportType.get(rs.getInt(DAOConstants.COLUMN_EXPORT_TYPE)),
+//	                		rs.getString(DAOConstants.COLUMN_EXPORT_BY),
+//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE),
+//	                		
+//	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+//	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
+//	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
+//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
+//	                		);
 	        	}
 
 	        }));
@@ -104,6 +161,12 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        // TODO: uncomment after SP changes
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
 		}
 	}
 	
@@ -122,6 +185,15 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
+	        // TODO: uncomment after SP changes
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_BY, Types.VARCHAR));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
+//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
 		}
 	}
 
@@ -142,7 +214,7 @@ public class RuleStatusDAO {
         return DAOUtils.getUpdateCount(deleteRuleStatusStoredProcedure.execute(inputs));
     }	
 
-    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException {
 		try {
 			RuleStatus ruleStatus = searchCriteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -156,6 +228,10 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
+			
+			// TODO: uncomment after SP change
+//			inputs.put(DAOConstants.PARAM_SORT_BY, sortOrder != null ? sortOrder.getIntValue() : 0);
+			
 			return DAOUtils.getRecordSet(getRuleStatusStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getRuleStatus()", e);
@@ -175,6 +251,12 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
+			// TODO: uncomment after SP changes
+//			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
+//			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
+//			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+//			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
+//			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastApprovalDate());
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -196,6 +278,15 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
+			// TODO: uncomment after SP is updated
+//			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, ruleStatus.getLastExportDate());
+//			inputs.put(DAOConstants.PARAM_EXPORT_TYPE, ruleStatus.getExportType() != null ? ruleStatus.getExportType().toString() : null);
+//			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
+//			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
+//			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+//			inputs.put(DAOConstants.PARAM_EXPORT_BY, ruleStatus.getExportBy());
+//			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
+//			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastExportDate());
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -206,13 +297,13 @@ public class RuleStatusDAO {
 
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException {
 		RuleStatus result = null;
-		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
+		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1), SortOrder.DESCRIPTION_ASCENDING);
 		if (rSet.getList().size() > 0) {
 			result = rSet.getList().get(0);
 		}
 		return result;
 	}
-	
+
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) {
 		StringBuilder sBuilder = new StringBuilder(RS_SQL);
 		sBuilder.append(ruleTypeId).append(" AND (");

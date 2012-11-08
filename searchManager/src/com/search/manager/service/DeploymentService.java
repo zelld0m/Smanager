@@ -57,7 +57,7 @@ public class DeploymentService {
 			ruleStatus.setRuleTypeId(ruleTypeId);
 			ruleStatus.setStoreId(UtilityService.getStoreName());
 			if (includeApprovedFlag) {
-				ruleStatus.setApprovalStatus("PENDING,APPROVED");
+				ruleStatus.setApprovalStatus(RuleStatusEntity.getString(RuleStatusEntity.PENDING, RuleStatusEntity.APPROVED));
 			} else {
 				ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			}
