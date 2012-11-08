@@ -52,11 +52,6 @@ public enum RuleStatusEntity {
         return RuleStatusEntity.values()[intValue-1];
     }
 
-	@Override
-	public String toString() {
-		return String.valueOf(ordinal()+1);
-	}
-	
 	public static String getString(RuleStatusEntity ... entities) {
 		StringBuilder builder = new StringBuilder();
 		for (RuleStatusEntity entity: entities) {
