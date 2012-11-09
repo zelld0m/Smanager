@@ -32,8 +32,14 @@ public class ElevateResult extends SearchResult {
 		this.forceAdd = forceAdd;
 	}
 	
-	public ElevateResult(ElevateItemXml itemXml) {
-		
+	public ElevateResult(StoreKeyword storeKeyword, ElevateItemXml xml) {
+		this.memberId = xml.getMemberId();
+		this.storeKeyword = storeKeyword;
+		this.edp = xml.getEdp();
+		this.condition = xml.getRuleCondition();
+		this.expiryDate = xml.getExpiryDate();
+		this.entity = xml.getMemberType();
+		this.location = xml.getLocation();
 	}
 
 	@Override

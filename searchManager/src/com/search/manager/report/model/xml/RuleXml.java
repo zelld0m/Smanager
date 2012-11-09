@@ -2,7 +2,9 @@ package com.search.manager.report.model.xml;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 
 @XmlSeeAlso({
@@ -12,7 +14,8 @@ import com.search.manager.model.RuleStatus;
 	FacetSortRuleXml.class,
 	RedirectRuleXml.class,
 	RankingRuleXml.class,
-	RuleStatus.class
+	RuleStatus.class,
+	RuleEntity.class
 })
 public class RuleXml extends BaseEntityXml{
 	
@@ -21,6 +24,7 @@ public class RuleXml extends BaseEntityXml{
 	private String store;
 	private String ruleId;
 	private String ruleName;
+	private RuleEntity ruleEntity;
 	private long version;
 	private String notes;
 	private String name;
@@ -35,6 +39,7 @@ public class RuleXml extends BaseEntityXml{
 	public RuleXml(long serial) {
 		super();
 		this.serial = serial;
+		this.ruleEntity = getRuleEntity();
 	}
 	
 	public RuleXml(String store, String name, String notes,
@@ -44,6 +49,7 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
+		this.ruleEntity = getRuleEntity();
 	}
 
 	public RuleStatus getRuleStatus() {
@@ -120,5 +126,30 @@ public class RuleXml extends BaseEntityXml{
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@XmlTransient
+	public RuleEntity getRuleEntity() {
+		RuleEntity ruleEntity = null;
+		
+		if (this instanceof ElevateRuleXml){
+			ruleEntity = RuleEntity.ELEVATE;
+		}else if(this instanceof DemoteRuleXml){
+			ruleEntity = RuleEntity.DEMOTE;
+		}else if(this instanceof ExcludeRuleXml){
+			ruleEntity = RuleEntity.EXCLUDE;
+		}else if(this instanceof FacetSortRuleXml){
+			ruleEntity = RuleEntity.FACET_SORT;
+		}else if(this instanceof RedirectRuleXml){
+			ruleEntity = RuleEntity.QUERY_CLEANING;
+		}else if(this instanceof RankingRuleXml){
+			ruleEntity = RuleEntity.RANKING_RULE;
+		}
+		
+		return ruleEntity;
+	}
+
+	public void setRuleEntity(RuleEntity ruleEntity) {
+		this.ruleEntity = ruleEntity;
 	}
 }

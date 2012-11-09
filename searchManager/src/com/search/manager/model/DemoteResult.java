@@ -3,6 +3,7 @@ package com.search.manager.model;
 import java.util.Date;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.report.model.xml.DemoteItemXml;
 
 public class DemoteResult extends SearchResult {
 	
@@ -24,7 +25,17 @@ public class DemoteResult extends SearchResult {
 		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDate, createdDate, lastModifiedDate, memberTypeId, memberId);
 		this.location = location;
 	}
-
+	
+	public DemoteResult(StoreKeyword storeKeyword, DemoteItemXml xml) {
+		this.memberId = xml.getMemberId();
+		this.storeKeyword = storeKeyword;
+		this.edp = xml.getEdp();
+		this.condition = xml.getRuleCondition();
+		this.expiryDate = xml.getExpiryDate();
+		this.entity = xml.getMemberType();
+		this.location = xml.getLocation();
+	}
+	
 	@Override
 	public String toString() {
 		return "(StoreKeyword: " + storeKeyword + "\tEDP: " + edp + "\tlocation: " + location + ")";
@@ -45,5 +56,4 @@ public class DemoteResult extends SearchResult {
 	public void setDemoteEntity(MemberTypeEntity demoteEntity) {
 		setEntity(demoteEntity);
 	}
-
 }
