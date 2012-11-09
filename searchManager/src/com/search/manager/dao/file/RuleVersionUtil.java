@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
@@ -28,6 +30,20 @@ public class RuleVersionUtil {
 	private static final String PATH = PropsUtils.getValue("backuppath");
 	private static final String ROLLBACK_PREFIX = "rpnv";
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static RuleXml getRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version){
+		RuleVersionListXml ruleVersionListXml = RuleVersionUtil.getRuleVersionList(store, ruleEntity, ruleId);
+		List<RuleXml> ruleXmlList = (List<RuleXml>)ruleVersionListXml.getVersions();
+		
+		for(RuleXml xml: ruleXmlList){
+			if(xml.getVersion()== version){
+				return xml;
+			}
+		}
+		
+		return null;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
 		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();

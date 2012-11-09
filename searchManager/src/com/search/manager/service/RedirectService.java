@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -34,12 +35,17 @@ import com.search.manager.model.StoreKeyword;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "redirectService")
 )
-public class RedirectService {
+public class RedirectService extends RuleService{
 
 	private static final Logger logger = Logger.getLogger(RedirectService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.QUERY_CLEANING;
+	}
+	
 	public int addRule(String ruleName) {
 		int result = -1;
 		try {

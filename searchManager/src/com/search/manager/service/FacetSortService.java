@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.FacetGroupType;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
@@ -36,11 +37,16 @@ import com.search.manager.model.StoreKeyword;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "facetSortService")
 )
-public class FacetSortService {
+public class FacetSortService extends RuleService{
 	private static final Logger logger = Logger.getLogger(FacetSortService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.FACET_SORT;
+	}
+	
 	@RemoteMethod
 	public FacetSort addRule(String ruleName, String ruleType, String sortType) {
 		int result = -1;

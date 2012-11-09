@@ -36,12 +36,17 @@ import com.search.ws.SearchHelper;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "elevateService")
 )
-public class ElevateService{
+public class ElevateService extends RuleService{
 
 	private static final Logger logger = Logger.getLogger(ElevateService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.ELEVATE;
+	}
+	
 	@RemoteMethod
 	public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
