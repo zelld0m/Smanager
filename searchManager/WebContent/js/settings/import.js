@@ -8,6 +8,19 @@
 		importTypeList : null,
 		importAsList : null,
 		
+		postMsg : function(data,pub){
+			var self = this;
+			var msg_ = pub ? 'imported:' : 'rejected:';
+
+			var okmsg = 'Following rules were successfully ' + msg_;	
+
+			for(var i=0; i<data.length; i++){	
+				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+			}
+
+			jAlert(okmsg, self.entityName);
+		},
+		
 		populateTabContent: function(){
 			var self = this;
 
@@ -51,7 +64,7 @@
 			var self = this;
 			DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
 				callback : function(data){
-					self.importAsList = data;
+					self.importAsList = data.list;
 				}
 			});
 		},
@@ -70,6 +83,66 @@
 			if(self.ruleEntityList)
 				return self.ruleEntityList[ruleTypeId];
 			return "";
+		},
+		
+		getSelectedImportAsRefId : function(){
+			var self = this;
+			var selectedImportAsRefId = [];
+			var selectedItems = self.getSelectedItems();
+			for (var i in selectedItems){
+				selectedImportAsRefId.push(i); 
+			}
+			return selectedImportAsRefId;
+		}, 
+		
+		getSelectedImportType : function(){
+			var self = this;
+			var selectedItems = [];
+			var $selectedTab = $("#"+self.tabSelected);
+			
+			//TODO
+			$selectedTab.find("tr:not(#ruleItemPattern) >td#type > select#importTypeList > option:selected").each(function(index, value){
+				selectedItems.push($(this).text());
+			});
+			return selectedItems;
+		}, 
+		
+		getSelectedRuleName : function(){
+			var self = this;
+			var selectedRuleNames = [];
+			
+			//TODO
+			return self.getSelectedRefId();
+		},
+		
+		getSelectedItems : function(){
+			var self = this;
+			var selectedItems = [];
+			var $selectedTab = $("#"+self.tabSelected);
+			$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
+				selectedItems[$(this).attr("id")] = $(this).attr("name");
+			});
+			return selectedItems;
+		},
+		
+		getSelectedRefId : function(){
+			var self = this;
+			var selectedRefIds = [];
+			var selectedItems = self.getSelectedItems();
+			for (var i in selectedItems){
+				selectedRefIds.push(i); 
+			}
+			return selectedRefIds; 
+		},
+
+		getSelectedStatusId : function(){
+			var self = this;
+			var selectedStatusId = [];
+			var selectedItems = self.getSelectedItems();
+			for (var i in selectedItems){
+				selectedStatusId.push(selectedItems[i]); 
+			}
+			return selectedStatusId; 
 		},
 		
 		checkSelectHandler : function(){
@@ -102,7 +175,7 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#importBtn").on({
+			$selectedTab.find("a#importBtn, a#rejectBtn").on({
 				click: function(evt){
 					var comment = $.trim($selectedTab.find("#importComment").val());
 					
@@ -113,21 +186,37 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
-						
-						//TODO
-						RuleTransferServiceJS.importRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
-							callback: function(data){									
-								//postMsg(data,true);	
-								self.getImportList();	
-							},
-							preHook:function(){ 
-								self.prepareTabContent(); 
-							},
-							postHook:function(){ 
-								self.cleanUpTabContent(); 
-							}	
-						});
+						switch($(evt.currentTarget).attr("id")){
+						case "importBtn":
+							//TODO
+							RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
+								callback: function(data){									
+									self.postMsg(data,true);	
+									self.getImportList();	
+								},
+								preHook:function(){ 
+									self.prepareTabContent(); 
+								},
+								postHook:function(){ 
+									self.cleanUpTabContent(); 
+								}	
+							});
+							break;
+						case "rejectBtn": 
+							RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, {
+								callback: function(data){
+									self.postMsg(data,false);	
+									self.getImportList();
+								},
+								preHook:function(){ 
+									self.prepareTabContent(); 
+								},
+								postHook:function(){ 
+									//self.cleanUpTabContent(); 
+								}	
+							});
+							break;
+						}
 					}
 				}
 			});
@@ -143,7 +232,6 @@
 			template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
 			template += '	<label class="wAuto floatL" id="importType">';
 			template += '		<select id="importType">';
-			template += '			<option value="">-- Import Type --</option>';
 			
 			//import type
 			if(self.importTypeList){
@@ -197,10 +285,10 @@
 			template += '			<select id="importType">';
 			template += '				<option value="">-- Import As New Rule --</option>';
 			
-			//import type
+			//import as
 			if(self.importAsList){
-				for (var rule in self.importAsList){
-					template += '<option value="' +rule["id"] +'">'+ rule["ruleName"] +'</option>';
+				for (var index in self.importAsList){
+					template += '<option value="' + self.importAsList[index]["ruleRefId"] +'">'+ self.importAsList[index]["description"] +'</option>';
 				}
 			}
 			
@@ -222,7 +310,7 @@
 			RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 				callback:function(data){
 					var list = data;
-					var totalSize = data.totalSize;
+					var totalSize = data.length;
 
 					$selectedTab.html($("div#tabContentTemplate").html());
 
@@ -238,13 +326,13 @@
 							var showId = ruleId !== rule["description"];
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
-							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleName"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", rule["name"]);
 
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
 								$tr.find("td#ruleOption > img.previewIcon").importpreview({
-									ruleType: self.getRuleType(rule["ruleTypeId"]),
+									ruleType: self.getRuleType(rule["ruleEntity"]),
 									ruleId: ruleId,
 									ruleInfo: rule["description"],
 									enablePreTemplate: true,
@@ -254,7 +342,7 @@
 									preTemplate: self.getPreTemplate(rule["importType"]),
 									rightPanelTemplate: self.getRightPanelTemplate(),
 									itemForceAddStatusCallback: function(base, memberIds){
-										if (rule["ruleTypeId"].toLowerCase() === "elevate")
+										if (rule["ruleEntity"].toLowerCase() === "elevate")
 										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
 											callback:function(data){
 												base.updateForceAddStatus(data);
@@ -282,7 +370,15 @@
 							var $importTypeSelect = $tr.find("td#type > select#importTypeList");
 							if(self.importTypeList){
 								for (var importType in self.importTypeList){
-									$importTypeSelect.append($("<option>", {value: importType, selected: rule["importType"] === importType}).text(self.importTypeList[importType]));
+									$importTypeSelect.append($("<option>", {value: importType}).text(self.importTypeList[importType]));
+								}
+							}
+							
+							//import as
+							var $importAsSelect = $tr.find("td#importAs > select#importAsList");
+							if(self.importAsList){
+								for (var index in self.importAsList){
+									$importAsSelect.append($("<option>", {value: self.importAsList[index]["ruleRefId"]}).text(self.importAsList[index]["description"]));
 								}
 							}
 							
@@ -321,6 +417,8 @@
 			var self = this;
 			$("#titleText").html(self.moduleName);
 			self.getRuleEntityList();
+			self.getImportTypeList();
+			self.getImportAsList();
 			self.populateTabContent();
 		}
 	};

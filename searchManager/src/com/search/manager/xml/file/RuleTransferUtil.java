@@ -13,14 +13,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
 
@@ -29,6 +27,7 @@ public class RuleTransferUtil {
 	private static Logger logger = Logger.getLogger(RuleTransferUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
+	private static final String EXPORT_FILE_PATH = PropsUtils.getValue("exportfilepath");
 
 	
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
@@ -36,7 +35,7 @@ public class RuleTransferUtil {
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId){
-		return getRule(store, ruleEntity, new File(getFileName(store, ruleEntity, ruleId, IMPORT_FILE_PATH)), IMPORT_FILE_PATH);
+		return getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), IMPORT_FILE_PATH);
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
@@ -65,7 +64,7 @@ public class RuleTransferUtil {
 	@SuppressWarnings("rawtypes")
 	public static List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path){
 		List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
-		String dir = getFileDirectory(store, ruleEntity, path);
+		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
 
 		File dirFile = new File(dir);
 
@@ -96,7 +95,7 @@ public class RuleTransferUtil {
 	@SuppressWarnings("rawtypes")
 	public static RuleXml getImportRule(String store, RuleEntity ruleEntity, String ruleId){
 		RuleXml ruleXml = new RuleXml();
-		String dir = getFileDirectory(store, ruleEntity, IMPORT_FILE_PATH);
+		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
 		String id = ruleId;
 
 		switch(ruleEntity){
@@ -105,7 +104,7 @@ public class RuleTransferUtil {
 		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
 		}
 		
-		String filename = getFileNameByDir(dir, id);
+		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 
 		File dirFile = new File(dir);
 
@@ -144,7 +143,7 @@ public class RuleTransferUtil {
 
 	@SuppressWarnings("rawtypes")
 	public static boolean exportRuleAsXML(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
-		String dir = getFileDirectory(store, ruleEntity, IMPORT_FILE_PATH);
+		String dir = RuleXmlUtil.getRuleFileDirectory(EXPORT_FILE_PATH, store, ruleEntity);
 		String id = ruleId;
 		
 		switch(ruleEntity){
@@ -153,7 +152,7 @@ public class RuleTransferUtil {
 		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
 		}
 		
-		String filename = getFileNameByDir(dir, id);
+		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 		
 		File dirFile = new File(dir);
 
@@ -182,26 +181,7 @@ public class RuleTransferUtil {
 		}
 	}
 
-	public static String getFileName(String store, RuleEntity ruleEntity ,String ruleId){
-		StringBuilder filePath = new StringBuilder(getFileDirectory(store, ruleEntity, IMPORT_FILE_PATH)).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
-		return filePath.toString();
-	}
-	
-	public static String getFileName(String store, RuleEntity ruleEntity ,String ruleId, String path){
-		StringBuilder filePath = new StringBuilder(getFileDirectory(store, ruleEntity, path)).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
-		return filePath.toString();
-	}
-
-	public static String getFileNameByDir(String dir, String ruleId){
-		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
-		return filePath.toString();
-	}
-
-	public static String getFileDirectory(String store, RuleEntity ruleEntity, String path){
-		StringBuilder sb = new StringBuilder();
-		List<String> values = ruleEntity.getValues(); 
-		String directory = CollectionUtils.isNotEmpty(values)? values.get(0): ruleEntity.name();
-		sb.append(path).append(File.separator).append(store).append(File.separator).append(directory);
-		return sb.toString();
+	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
+		return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
 	}
 }

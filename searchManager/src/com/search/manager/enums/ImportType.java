@@ -9,8 +9,8 @@ import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter=EnumConverter.class)
 public enum ImportType {
-	FOR_APPROVAL("For Approval", "For Approval"),
 	FOR_REVIEW("For Review", "For Review"),
+	FOR_APPROVAL("For Approval", "For Approval"),
 	AUTO_PUBLISH("Auto-Publish", "Auto-Publish");
 
 	private final String displayText;

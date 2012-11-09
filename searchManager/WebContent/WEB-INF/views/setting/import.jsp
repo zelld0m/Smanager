@@ -52,11 +52,11 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="30px"></th>
+							<th width="30px">Content</th>
 							<th width="150px">Rule Info</th>
 							<th width="50px">Published Date</th>
 							<th width="85px">Import Type</th>
-							<th width="85px">Import As</th>
+							<th>Import As</th>
 						</tr>
 					<tbody>
 				</table>
@@ -78,12 +78,11 @@
 							</td>
 							<td width="85px" class="txtAC" id="type">
 								<select id="importTypeList">
-									<option value="">-- Import Type --</option>
 								</select>
 							</td>
-							<td width="85px" class="txtAL" id="importAs">
+							<td class="txtAL" id="importAs">
 								<select id="importAsList">
-									<option value="">-- Import as New Rule --</option>
+									<option value="">Import as New Rule</option>
 								</select>
 							</td>
 						</tr>

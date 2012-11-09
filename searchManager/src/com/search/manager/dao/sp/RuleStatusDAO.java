@@ -30,7 +30,7 @@ public class RuleStatusDAO {
 	// needed by spring AOP
 	public RuleStatusDAO(){}
 	
-	private static final String RS_SQL = "SELECT REFERENCE_ID FROM RULE_STATUS WHERE RULE_TYPE_ID = ";
+	private static final String RS_SQL = "SELECT REFERENCE_ID FROM RULE_STATUS WHERE";
 	
 	@Autowired
 	public RuleStatusDAO(JdbcTemplate jdbcTemplate) {
@@ -306,17 +306,24 @@ public class RuleStatusDAO {
 
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) {
 		StringBuilder sBuilder = new StringBuilder(RS_SQL);
-		sBuilder.append(ruleTypeId).append(" AND (");
 		int size = ruleRefIds.size();
 		boolean orFlag = size > 1;
-		for (int i = 0; i < ruleRefIds.size(); i++) {
-			String ruleRefId = ruleRefIds.get(i);
-			sBuilder.append("REFERENCE_ID = '").append(StringEscapeUtils.escapeSql(ruleRefId)).append("'");
-			if (orFlag && i != size-1) {
-				sBuilder.append(" OR ");
-			}
+		
+		if(ruleTypeId != null){
+			sBuilder.append(" RULE_TYPE_ID = ").append(ruleTypeId);
 		}
-		sBuilder.append(") ");
+		
+		if(size > 0){
+			sBuilder.append(" AND (");
+			for (int i = 0; i < size; i++) {
+				String ruleRefId = ruleRefIds.get(i);
+				sBuilder.append("REFERENCE_ID = '").append(StringEscapeUtils.escapeSql(ruleRefId)).append("'");
+				if (orFlag && i != size-1) {
+					sBuilder.append(" OR ");
+				}
+			}
+			sBuilder.append(") ");
+		}
 		if (!StringUtils.isBlank(pStatus)) {
 			sBuilder.append("AND PUBLISHED_STATUS = '").append(pStatus).append("'");
 		}
