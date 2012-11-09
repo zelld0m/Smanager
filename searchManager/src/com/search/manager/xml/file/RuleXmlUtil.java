@@ -1,15 +1,23 @@
 package com.search.manager.xml.file;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.model.ElevateResult;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
@@ -21,17 +29,22 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.FileUtil;
+import com.search.manager.utility.StringUtil;
 
-public class RuleRestoreUtil {
+public class RuleXmlUtil {
 
+	private static Logger logger = Logger.getLogger(RuleXmlUtil.class);
 	@Autowired static DaoService daoService;
 
 	private static boolean restoreElevate(RuleXml xml){
-		ElevateRuleXml elevateRuleXml = (ElevateRuleXml) xml;
 		StoreKeyword storeKeyword = new StoreKeyword(xml.getStore(), xml.getRuleId());
-		ElevateResult elevateResult = new ElevateResult(storeKeyword);
+		//ElevateResult elevateResult = new ElevateResult((ElevateRuleXml) xml);
 
+		//SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(model);
+//		daoService.getElevateResultList(criteria)
 		try {
 
 		} catch (Exception e) {
@@ -64,7 +77,7 @@ public class RuleRestoreUtil {
 		boolean isRestored = true;
 
 		try {
-			Relevancy currentVersion = RuleRestoreUtil.getRelevancy(store , restoreVersion.getRuleId());
+			Relevancy currentVersion = RuleXmlUtil.getRelevancy(store , restoreVersion.getRuleId());
 			if (currentVersion == null && (isRestored &= daoService.addRelevancy(currentVersion) > 0)){
 
 				//TODO: Check for optimization
@@ -154,19 +167,73 @@ public class RuleRestoreUtil {
 		if(xml==null){
 
 		}else if (xml instanceof ElevateRuleXml){
-			isRestored = RuleRestoreUtil.restoreElevate(xml);
+			isRestored = RuleXmlUtil.restoreElevate(xml);
 		}else if(xml instanceof DemoteRuleXml){
-			isRestored = RuleRestoreUtil.restoreDemote(xml);
+			isRestored = RuleXmlUtil.restoreDemote(xml);
 		}else if(xml instanceof ExcludeRuleXml){
-			isRestored = RuleRestoreUtil.restoreExclude(xml);
+			isRestored = RuleXmlUtil.restoreExclude(xml);
 		}else if(xml instanceof FacetSortRuleXml){
-			isRestored = RuleRestoreUtil.restoreFacetSort(xml);
+			isRestored = RuleXmlUtil.restoreFacetSort(xml);
 		}else if(xml instanceof RedirectRuleXml){
-			isRestored = RuleRestoreUtil.restoreQueryCleaning(xml);
+			isRestored = RuleXmlUtil.restoreQueryCleaning(xml);
 		}else if(xml instanceof RankingRuleXml){
-			isRestored = RuleRestoreUtil.restoreRankingRule(xml);
+			isRestored = RuleXmlUtil.restoreRankingRule(xml);
 		}
 
 		return isRestored;
+	}
+	
+	public static void deleteFile(String filepath) throws IOException{
+		File file = new File(filepath);
+
+		if(file.exists() && !file.delete()){
+			file.deleteOnExit();
+		}
+	}
+
+	public static String getFilename(String path, String store, RuleEntity ruleEntity ,String ruleId){
+		StringBuilder filePath = new StringBuilder(getRuleFileDirectory(path, store, ruleEntity)).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
+		return filePath.toString();
+	}
+
+	public static String getFilenameByDir(String dir, String ruleId){
+		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
+		return filePath.toString();
+	}
+	
+
+	public static String getRuleFileDirectory(String path, String store, RuleEntity ruleEntity){
+		StringBuilder sb = new StringBuilder();
+		List<String> values = ruleEntity.getValues(); 
+		String directory = CollectionUtils.isNotEmpty(values)? values.get(0): ruleEntity.name();
+		sb.append(path).append(File.separator).append(store).append(File.separator).append(directory);
+		return sb.toString();
+	}
+	
+	public static boolean backUpRule(String path, String store, RuleEntity ruleEntity, String ruleId, Object rule){
+		String dir = getRuleFileDirectory(path, store, ruleEntity);
+		String id = ruleId;
+	
+		switch(ruleEntity){
+		case ELEVATE:
+		case EXCLUDE:
+		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
+		}
+		
+		String filename = getFilenameByDir(dir, id) + "_backup";
+
+		try {
+			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			Marshaller m = context.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			m.marshal(rule, new FileWriter(filename));
+			return true;
+		} catch (JAXBException e) {
+			logger.error("Unable to create marshaller", e);
+			return false;
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
+			return false;
+		}
 	}
 }

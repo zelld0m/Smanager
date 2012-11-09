@@ -22,7 +22,7 @@ public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 
 	@Override
 	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.RANKING_RULE, ruleId);
+		return RuleVersionUtil.getFilename(store, RuleEntity.RANKING_RULE, ruleId);
 	}
 
 	@Override

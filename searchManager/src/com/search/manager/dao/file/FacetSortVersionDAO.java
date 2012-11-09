@@ -23,7 +23,7 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 	
 	@Override
 	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.FACET_SORT, ruleId);
+		return RuleVersionUtil.getFilename(store, RuleEntity.FACET_SORT, ruleId);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 	
 	@Override
 	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
+		return RuleVersionUtil.getFilename(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
 	}
 
 	@Override

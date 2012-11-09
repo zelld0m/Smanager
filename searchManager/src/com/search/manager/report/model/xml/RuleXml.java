@@ -1,7 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 

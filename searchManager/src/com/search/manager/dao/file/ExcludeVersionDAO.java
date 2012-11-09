@@ -23,7 +23,7 @@ public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 	
 	@Override
 	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.EXCLUDE, ruleId);
+		return RuleVersionUtil.getFilename(store, RuleEntity.EXCLUDE, ruleId);
 	}
 	
 	@Override

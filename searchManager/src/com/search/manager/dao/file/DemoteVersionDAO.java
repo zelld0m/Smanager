@@ -15,7 +15,6 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.report.model.xml.RuleXml;
 
 @Repository(value="demoteVersionDAO")
 public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
@@ -24,7 +23,7 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 	
 	@Override
 	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.DEMOTE, ruleId);
+		return RuleVersionUtil.getFilename(store, RuleEntity.DEMOTE, ruleId);
 	}
 	
 	@Override
