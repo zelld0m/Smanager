@@ -35,12 +35,17 @@ import com.search.manager.utility.DateAndTimeUtils;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "demoteService")
 )
-public class DemoteService{
+public class DemoteService extends RuleService{
 
 	private static final Logger logger = Logger.getLogger(DemoteService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.DEMOTE;
+	}
+	
 	@RemoteMethod
 	public int updateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;

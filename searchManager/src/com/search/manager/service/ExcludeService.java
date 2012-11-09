@@ -35,11 +35,15 @@ import com.search.manager.utility.DateAndTimeUtils;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "excludeService")
 )
-public class ExcludeService {
+public class ExcludeService extends RuleService{
 	private static final Logger logger = Logger.getLogger(ExcludeService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.EXCLUDE;
+	}
 
 	@RemoteMethod
 	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, String expiryDate, String comment, String[] partNumbers) {
@@ -487,5 +491,4 @@ public class ExcludeService {
 		}
 		return result;
 	}
-
 }

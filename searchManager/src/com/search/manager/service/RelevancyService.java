@@ -48,11 +48,16 @@ import com.search.ws.SearchHelper;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "relevancyService")
 )
-public class RelevancyService {
+public class RelevancyService extends RuleService{
 	private static final Logger logger = Logger.getLogger(RelevancyService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.RANKING_RULE;
+	}
+	
 	@RemoteMethod
 	public Relevancy getRule(String ruleId){
 		try {

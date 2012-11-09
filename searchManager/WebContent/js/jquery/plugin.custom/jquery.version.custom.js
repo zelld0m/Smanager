@@ -129,9 +129,11 @@
 				case "Demote":
 					base.setProductCompare($li, $rowLabelUl, item); break; 
 				case "Facet Sort": 
-					$rowLabelUl.find("li.groups").show();
 					base.setFacetItemCompare($li, $rowLabelUl, item); break; 
-				case "Query Cleaning": base.setQueryCompare($li, item); break; 
+				case "Query Cleaning": 
+					base.setQueryCleaningCompare($li, $rowLabelUl, item); break; 
+				case "Ranking Rule": 
+					base.setRankingRuleCompare($li, $rowLabelUl, item); break; 
 				}
 
 				$li.show();
