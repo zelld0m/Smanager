@@ -162,6 +162,92 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
+		base.populateRuleXmlTable = function($content, ruleType, data){
+			var list = data["item"];
+			
+			var memberIds = new Array();
+			var $table = $content.find("table#item");
+			base.memberIdToItem = new Array();
+
+			$table.find("tr:not(#itemPattern)").remove();
+			
+			$content.find("#ruleInfo").text($.trim(base.options.ruleInfo));
+			$content.find("#requestType").text(base.options.requestType);
+			
+			if (data.totalSize==0){
+				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
+				$tr.find("td:not(#itemPosition)").remove();
+				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
+				$tr.appendTo($table);
+			}else{
+
+				for (var i = 0; i < data.totalSize; i++) {
+					memberIds.push(list[i]["memberId"]);
+					base.memberIdToItem[list[i]["memberId"]] = list[i];
+
+					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
+
+					var PART_NUMBER = $.isNotBlank(list[i]["memberType"]) && list[i]["memberType"] === "PART_NUMBER";
+					var FACET = $.isNotBlank(list[i]["memberType"]) && list[i]["memberType"] === "FACET";
+
+					if(FACET){
+						base.setImage($tr,list[i]);
+						$tr.find("td#itemMan").html(list[i].condition)
+						.prop("colspan",3)
+						.removeClass("txtAC")
+						.addClass("txtAL")
+						.attr("width", "363px");
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
+
+						if ($.isBlank(list[i]["isExpired"])){
+							$tr.find("#itemValidityDaysExpired").remove();
+						}
+
+						$tr.find("td#itemDPNo,td#itemName").remove();
+					}
+					else if(PART_NUMBER){
+						if($.isNotBlank(list[i]["dpNo"])){
+							base.setImage($tr,list[i]);
+							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
+							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
+							$tr.find("td#itemName").html(list[i]["name"]);
+						}
+						else{
+							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
+							.prop("colspan",4)
+							.removeClass("txtAC")
+							.addClass("txtAL")
+							.attr("width", "369px");
+							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
+						}
+
+						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
+						if ($.isBlank(list[i]["isExpired"])){
+							$tr.find("#itemValidityDaysExpired").remove();
+						}
+					}
+
+					$tr.appendTo($table);
+				};
+
+				if (ruleType.toLowerCase() === "elevate" && memberIds.length>0) 
+					base.options.itemForceAddStatusCallback(base, memberIds);
+			}
+
+			// Alternate row style
+			$content.find("tr#itemPattern").hide();
+			$content.find("tr:not(#itemPattern):even").addClass("alt");
+		};
+		
+		base.getRuleXml = function($content, ruleType, ruleId){
+			RuleTransferServiceJS.getRuleToImport(ruleType, ruleId,{
+				callback: function(data){
+					base.populateRuleXmlTable($content, ruleType, data);
+				}
+			});
+		};
+		
 		base.getDatabaseData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
@@ -794,9 +880,9 @@
 					}
 				},
 				position:{
-					at: 'top center',
-					my: 'bottom center',
-					target: base.$el
+					at: 'center',
+					my: 'center',
+					target: $(window)
 				},
 				style: {
 					width: 'auto'
@@ -811,7 +897,7 @@
 						
 						//$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
 						
-						base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+						base.getRuleXml(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
 						base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType);
 						
 					},

@@ -6,6 +6,18 @@
 		entityName : "",
 		autoExport : false,
 		ruleEntityList : null,
+		
+		postMsg : function(data,msg_){
+			var self = this;
+
+			var okmsg = 'Following rules were successfully ' + msg_;	
+
+			for(var i=0; i<data.length; i++){	
+				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+			}
+
+			jAlert(okmsg, self.entityName);
+		},
 
 		populateTabContent: function(){
 			var self = this;
@@ -108,13 +120,9 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
-						
-						//TODO
-						alert(self.getSelectedRefId() +"\n"+self.getSelectedStatusId());
 						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
 							callback: function(data){									
-								postMsg(data,true);	
+								postMsg(data,"exported");	
 								self.getExportList();	
 							},
 							preHook:function(){ 
@@ -160,7 +168,7 @@
 			template += '	<label class="floatL w480"><textarea id="exportComment" rows="5" class="w460" style="height:32px"></textarea></label>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '		<a id="exportBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '			<div class="buttons fontBold">Export</div>';
 			template += '		</a>';
 			template += '	</div>';
@@ -224,13 +232,13 @@
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
-							$tr.find("td#type").html(list[i]["exportStatus"]);
+							$tr.find("td#type").html(list[i]["exportType"]);
 							
 							//TODO
 							$tr.find("td#publishDate > p#requestedBy").html(list[i]["publishedStatus"]);
 							$tr.find("td#publishDate > p#requestedDate").html(lastPublishedDate);
 							
-							$tr.find("td#exportDate > p#requestedBy").html(list[i]["exportStatus"]);
+							$tr.find("td#exportDate > p#requestedBy").html(list[i]["exportBy"]);
 							$tr.find("td#exportDate > p#requestedDate").html(lastExportedDate);
 							$tr.appendTo($table);
 						}

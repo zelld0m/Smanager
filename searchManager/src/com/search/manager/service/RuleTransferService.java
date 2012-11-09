@@ -1,10 +1,14 @@
 package com.search.manager.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -14,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.ImportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -31,9 +37,8 @@ import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.utility.FileUtil;
-import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.SearchHelper;
 
 @Service(value = "ruleTransferService")
@@ -55,6 +60,11 @@ public class RuleTransferService {
 	@RemoteMethod
 	public List<RuleXml> getAllRulesToImport(String ruleType){
 		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreName(), ruleType);
+	}
+	
+	@RemoteMethod
+	public RuleXml getRuleToImport(String ruleType, String ruleId){
+		return RuleTransferUtil.getRule(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId);
 	}
 	
 	@RemoteMethod
@@ -128,7 +138,8 @@ public class RuleTransferService {
 			
 			if(RuleTransferUtil.exportRuleAsXML(store, ruleEntity, ruleId, ruleXml)){
 				//TODO update rule status
-				
+				//TODO add Comment
+				//TODO add audit trail
 				successList.add(ruleId);
 			}
 		}
@@ -136,26 +147,73 @@ public class RuleTransferService {
 	}
 	
 	@RemoteMethod
-	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment){
+	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
 		List<String> successList = new ArrayList<String>();
+		Map<String, String> forApprovalIdList = new HashMap<String, String>();
+		Map<String, String> forPublishingIdList = new HashMap<String, String>();
+		
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
+			
+			ImportType importType = ImportType.get(importTypeList[i]);
+			String importAsId = importAsRefIdList[i];
+			String ruleName = ruleNameList[i];
+			String statusId = ruleStatusIdList[i];
+			
+			//if importAsId is null, generate a new id
+			if(StringUtils.isBlank(importAsId)){
+				switch(ruleEntity){
+				//TODO
+				case ELEVATE:
+				case EXCLUDE:
+				case DEMOTE:
+					importAsId = ruleId;
+					break;
+				case FACET_SORT:
+				case QUERY_CLEANING:
+				case RANKING_RULE:
+					importAsId = DAOUtils.generateUniqueId();
+					break;
+				default:
+					break;
+				}
+			}
 						
-			if(importRule(ruleEntity, store, ruleId, comment)){
+			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
+				switch(importType){
+				case AUTO_PUBLISH:
+					forPublishingIdList.put(importAsId, statusId);
+				case FOR_APPROVAL:
+					forApprovalIdList.put(importAsId, statusId);
+					break;
+				case FOR_REVIEW: //do nothing
+				default: break;
+				}
 				successList.add(ruleId);
 			}
 		}
+		
+		if(forApprovalIdList.size() > 0){
+			deploymentService.approveRule(ruleType, forApprovalIdList.keySet().toArray(new String[0]), comment, forApprovalIdList.values().toArray(new String[0]));
+		}
+		
+		if(forPublishingIdList.size() > 0){
+			deploymentService.publishRule(ruleType, forPublishingIdList.keySet().toArray(new String[0]), comment, forPublishingIdList.values().toArray(new String[0]));
+		}
+		
 		return successList;
 	}
 	
-	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
-		if(RuleXmlUtil.restoreRule(RuleTransferUtil.getRule(store, ruleEntity, ruleId))){
-			deleteRule(ruleEntity, store, ruleId, comment);
+	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
+		RuleXml ruleXml = RuleTransferUtil.getRule(store, ruleEntity, ruleId);
+		ruleXml.setRuleId(importAsRefId);
+		ruleXml.setRuleName(ruleName);
+		if(RuleXmlUtil.restoreRule(ruleXml)){
+			return deleteRule(ruleEntity, store, ruleId, comment);
 		}
-		
 		return false;
 	}
 	
@@ -182,14 +240,15 @@ public class RuleTransferService {
 	}
 	
 	public boolean deleteRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
-		String filepath = RuleTransferUtil.getFileName(store, ruleEntity, ruleId);
 		boolean success = false;
-		try {
-			FileUtil.deleteFile(filepath);
+		try{
+			RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, ruleId));
 			success = true;
-		} catch (IOException e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return success;
 	}
 }
