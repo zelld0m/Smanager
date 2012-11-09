@@ -50,8 +50,21 @@ public class RuleXmlUtil{
 	private static Logger logger = Logger.getLogger(RuleXmlUtil.class);
 	private static final String PREIMPORTPATH = PropsUtils.getValue("pre-importpath");
 	private static final String PRERESTOREPATH = PropsUtils.getValue("pre-restorepath");
-	private static DaoService daoService;
-	
+	@Autowired private static DaoService daoService;
+
+	private static RuleXmlUtil instance = null;
+
+	protected RuleXmlUtil() {
+		//Exists only to defeat instantiation.
+	}
+
+	public static RuleXmlUtil getInstance() {
+		if(instance == null) {
+			instance = new RuleXmlUtil();
+		}
+		return instance;
+	}
+
 	private static boolean rollBackToBackUpRuleXml(String path, String ruleId){
 		//TODO:
 		return true;
@@ -315,9 +328,9 @@ public class RuleXmlUtil{
 						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
 								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
 
-						//						
-						//						daoService.updateRelevancyField(new RelevancyField(relevancyVersion,entry.getKey(), entry.getValue(), relevancyVersion.getCreatedBy(), relevancyVersion.getLastModifiedBy(),
-						//								relevancyVersion.getCreatedDate(), relevancyVersion.getLastModifiedDate()));
+
+//						daoService.updateRelevancyField(new RelevancyField(relevancyVersion,entry.getKey(), entry.getValue(), relevancyVersion.getCreatedBy(), relevancyVersion.getLastModifiedBy(),
+//								relevancyVersion.getCreatedDate(), relevancyVersion.getLastModifiedDate()));
 					}
 				}
 
@@ -364,13 +377,14 @@ public class RuleXmlUtil{
 	public static boolean restoreRule(RuleXml xml, boolean isVersion) {
 		String path = isVersion ? PRERESTOREPATH : PREIMPORTPATH;
 		boolean isRestored = false;
+		RuleXmlUtil ruleXmlUtil = new RuleXmlUtil().getInstance();
 
 		if(xml== null){
 			return isRestored; 
 		}
 
 		if (xml instanceof ElevateRuleXml){
-			isRestored = RuleXmlUtil.restoreElevate(path, xml);
+			isRestored = RuleXmlUtil .restoreElevate(path, xml);
 		}else if(xml instanceof DemoteRuleXml){
 			isRestored = RuleXmlUtil.restoreDemote(path, xml);
 		}else if(xml instanceof ExcludeRuleXml){
@@ -440,12 +454,13 @@ public class RuleXmlUtil{
 		}
 	}
 
-	public static DaoService getDaoService() {
+	public DaoService getDaoService() {
 		return daoService;
 	}
 
-	@Autowired
-	public static void setDaoService(DaoService daoService) {
-		RuleXmlUtil.daoService = daoService;
+	public void setDaoService(DaoService daoService) {
+		this.daoService = daoService;
 	}
+
+
 }
