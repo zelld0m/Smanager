@@ -32,7 +32,7 @@ import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.FileUtil;
-import com.search.manager.xml.file.RuleRestoreUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.SearchHelper;
 
@@ -152,7 +152,7 @@ public class RuleTransferService {
 	}
 	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
-		if(RuleRestoreUtil.restoreRule(RuleTransferUtil.getRule(store, ruleEntity, ruleId))){
+		if(RuleXmlUtil.restoreRule(RuleTransferUtil.getRule(store, ruleEntity, ruleId))){
 			deleteRule(ruleEntity, store, ruleId, comment);
 		}
 		
@@ -160,7 +160,7 @@ public class RuleTransferService {
 	}
 	
 	/**
-	 * Deletes xml file of rejected rule
+	 * Deletes xml file of rejected rule  
 	 * @return list of rule name of successfully rejected rule
 	 */
 	@RemoteMethod
@@ -173,6 +173,8 @@ public class RuleTransferService {
 			String ruleId = ruleRefIdList[i];
 						
 			if(deleteRule(ruleEntity, store, ruleId, comment)){
+				//TODO addComment
+				//TODO addAuditTrail
 				successList.add(ruleId);
 			}
 		}
