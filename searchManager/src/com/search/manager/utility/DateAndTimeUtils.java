@@ -104,8 +104,7 @@ public final class DateAndTimeUtils {
 
 	public static String getDateStringMMDDYYYY(Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING_MM_DD_YYYY);
-		String mmDdYyyy = formatter.format(date);
-		return mmDdYyyy;
+		return formatter.format(date);
 	}
 
 	public static String getHyphenedDateStringMMDDYYYY(Date date) {
@@ -370,5 +369,9 @@ public final class DateAndTimeUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static Date getFirstDayOfMonth(Date date) {
+		return parseDateYYYYMMDD(formatYYYYMMDD(date).substring(0, 6) + "01");
 	}
 }

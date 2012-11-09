@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -33,28 +34,35 @@ public class KeywordTrendsService {
 
 	@RemoteMethod
 	public List<KeywordStats> getStats(List<String> keywords, Date fromDate,
-			Date toDate) {
+			Date toDate, String collation) {
 		List<KeywordStats> list = StatisticsUtil.createEmptyStats(keywords);
-		retrieveStats(list, fromDate, toDate);
+		retrieveStats(list, fromDate, toDate, collation);
 
 		return list;
 	}
 
 	@RemoteMethod
-	public KeywordStats getStats(String keyword, Date fromDate, Date toDate) {
+	public KeywordStats getStats(String keyword, Date fromDate, Date toDate,
+			String collation) {
 		List<KeywordStats> list = StatisticsUtil.createEmptyStats(Arrays
 				.asList(keyword));
-		retrieveStats(list, fromDate, toDate);
+		retrieveStats(list, fromDate, toDate, collation);
 
 		return list.get(0);
 	}
 
 	@RemoteMethod
-	public List<KeywordStats> getTopTenKeywords(Date fromDate, Date toDate) {
-		List<KeywordStats> list = StatisticsUtil.top(getFile(toDate), toDate,
+	public List<String> getTopTenKeywords() {
+		Date recent = getMostRecentStatsDate();
+		List<KeywordStats> list = StatisticsUtil.top(getFile(recent), recent,
 				10, 0, 1);
-		retrieveStats(list, fromDate, DateUtils.addDays(toDate, -1));
-		return list;
+		List<String> top = new ArrayList<String>();
+
+		for (KeywordStats stats : list) {
+			top.add(stats.getKeyword());
+		}
+
+		return top;
 	}
 
 	@RemoteMethod
@@ -136,11 +144,12 @@ public class KeywordTrendsService {
 	 *            end of date range
 	 */
 	private void retrieveStats(List<KeywordStats> list, Date fromDate,
-			Date toDate) {
+			Date toDate, String collation) {
 		Date date = fromDate;
 
 		while (DateAndTimeUtils.compare(date, toDate) <= 0) {
-			StatisticsUtil.retrieveStats(list, getFile(date), date, 0, 1);
+			StatisticsUtil.retrieveStats(list, getFile(date), date, 0, 1,
+					collation);
 			date = DateUtils.addDays(date, 1);
 		}
 	}

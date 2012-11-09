@@ -1,12 +1,239 @@
 (function($) {
-	var _seriesList = [];
-	var _effectiveFromDate = null;
-	var _effectiveToDate = null;
-	var _chart = null;
+	// Keywords
+	var Keywords = {};
 
-	/* Event Handlers */
+	// Tabs
+	var Tabs = {};
 
-	var SearchTextBoxFocusHandler = function(onFocus) {
+	// object containing utility methods
+	var Utils = {};
+	
+	// Event handlers
+	var Handler = {};
+
+	// keyword class
+	var Keyword = function(keyword) {
+		var k = {
+			el : $("#keywordWidgetTemplate").clone(),
+			keyword : keyword,
+			chartVisible : true,
+			init : function() {
+				// use self to refer to this object inside event handlers
+				var self = this;
+
+				this.el.attr("id", "keyword-" + keyword);
+				this.el.find(".keyword").html(keyword);
+				$("#keyword-list").append(this.el);
+
+				// add event listeners
+				this.el.find(".keyword-delete").click(function() {
+					self.destroy();
+				});
+				this.el.find(".active-chart").click(function() {
+					self.hideChart();
+				});
+				this.el.find(".inactive-chart").click(function() {
+					self.showChart();
+				});
+				this.show();
+			},
+			show : function() {
+				this.el.show();
+			},
+			hide : function() {
+				this.el.hide();
+			},
+			showChart : function() {
+				this.chartVisible = true;
+				this.el.find(".inactive-chart").hide();
+				this.el.find(".active-chart").show();
+				Utils.setChartVisible(keyword, true);
+			},
+			hideChart : function() {
+				this.chartVisible = false;
+				this.el.find(".active-chart").hide();
+				this.el.find(".inactive-chart").show();
+				Utils.setChartVisible(keyword, false);
+			},
+			destroy : function() {
+				for (tab in Tabs) {
+					var idx = -1;
+
+					for ( var i = 0; i < Tabs[tab].seriesList.length; i++) {
+						if (Tabs[tab].seriesList[i].label == keyword) {
+							idx = i;
+							break;
+						}
+					}
+
+					if (idx >= 0) {
+						Tabs[tab].seriesList.splice(idx, 1);
+						Utils.drawChart(Tabs[tab]);
+					}
+				}
+
+				this.el.remove();
+			}
+		};
+
+		k.init();
+
+		return k;
+	};
+
+	///////////////////////////////////////////////////////////
+	//                   Tab definitions                     //
+	///////////////////////////////////////////////////////////
+
+	/*
+	 * Tab object template.
+	 */
+	var TAB_TEMPLATE = {
+		seriesList : [],
+		chart : null,
+		ready : false,
+		fromDate : null,
+		toDate : null,
+		data : function() {
+			var data = [];
+
+			for ( var i = 0; i < this.seriesList.length; i++) {
+				data.push(this.seriesList[i].data);
+			}
+
+			return data;
+		},
+		setData: function(keyword, data) {
+			for ( var i = 0; i < this.seriesList.length; i++) {
+				if (keyword == this.seriesList[i].label) {
+					this.seriesList[i].data = Utils.filterData(data);
+					break;
+				}
+			}
+		}
+	};
+
+	/*
+	 * Daily tab.
+	 */
+	Tabs.daily = $.extend(true, {
+		el : $("#tabs-1"),
+		activator : $("#daily-link"),
+		isValid : function() {
+			var fromDate = $("#fromDate").datepicker("getDate");
+			var toDate = $("#toDate").datepicker("getDate");
+
+			if (fromDate >= toDate) {
+				jAlert("Invalid date range.");
+				return false;
+			} else {
+				this.fromDate = fromDate;
+				this.toDate = toDate;
+				return true;
+			}
+		},
+		collation : 'daily',
+		init: function() {
+			var self = this;
+			// initialize date pickers
+			$("#fromDate").datepicker({
+				constrainInput : true,
+				defaultDate : -9,
+				dateFormat : 'M d, yy'
+			}).datepicker("setDate", "-9");
+
+			$("#toDate").datepicker({
+				constrainInput : true,
+				defaultDate : 0,
+				dateFormat : 'M d, yy'
+			}).datepicker("setDate", "0");
+
+			this.fromDate = $("#fromDate").datepicker("getDate");
+			this.toDate = $("#toDate").datepicker("getDate");
+
+			$("#updateDateBtn").click(new Handler.UpdateHandler(this));
+		}
+	}, TAB_TEMPLATE);
+
+	/*
+	 * Weekly tab.
+	 */
+//	Tabs.weekly = $.extend(true, {
+//		el : $("#tabs-2"),
+//		activator : $("#weekly-link"),
+//		isValid : function() {
+//			return true;
+//		},
+//		collation : 'weekly'
+//	}, TAB_TEMPLATE);
+
+	/*
+	 * Monthly tab.
+	 */
+	Tabs.monthly = $.extend(true, {
+		el : $("#tabs-3"),
+		activator : $("#monthly-link"),
+		isValid : function() {
+			var fromYear = $("#fromYear").val();
+			var toYear = $("#toYear").val();
+			var fromMonth = $("#fromMonth").val();
+			var toMonth = $("#toMonth").val();
+
+			if (fromYear > toYear || fromYear === toYear
+					&& fromMonth >= toMonth) {
+				jAlert("Invalid date range.");
+				return false;
+			} else {
+				this.fromDate = new Date(fromYear + "/" + fromMonth + "/01");
+				this.toDate = Utils.getLastDayOfMonth(new Date(toYear + "/"
+						+ toMonth + "/01"));
+				return true;
+			}
+		},
+		collation : 'monthly',
+		init: function() {
+			var date = new Date();
+			var toMonth = date.getMonth() + 1;
+			var toYear = date.getFullYear();
+			
+			date.setMonth(date.getMonth() - 9);
+
+			var fromMonth = date.getMonth() + 1;
+			var fromYear = date.getFullYear();
+
+			$("#fromMonth").val(fromMonth < 10 ? "0" + fromMonth : fromMonth);
+			$("#fromYear").val(fromYear);
+			$("#toMonth").val(toMonth < 10 ? "0" + toMonth : toMonth);
+			$("#toYear").val(toYear);
+
+			this.fromDate = new Date(fromYear + "/" + fromMonth + "/01");
+			this.toDate = Utils.getLastDayOfMonth(new Date(toYear + "/" + toMonth + "/01"));
+
+			$("#updateMonthlyBtn").click(new Handler.UpdateHandler(this));
+		}
+	}, TAB_TEMPLATE);
+
+	/*
+	 * Series class containing series data and options for plotting.
+	 */
+	var Series = function(data) {
+		return {
+			data : Utils.filterData(data.stats),
+			label : data.keyword,
+			show : true,
+			highlighter: {formatString: '<div class="highlighter-tooltip-keyword">'
+				+ data.keyword + '</div><table class="highlighter-tooltip"><tr><th>Date</th><td>%s</td></tr><tr><th>Count</th><td>%s</td></tr></table>'}
+		};
+	};
+
+	////////////////////////////////////////////////////////////////
+	//                     Event Handlers                         //
+	////////////////////////////////////////////////////////////////
+
+	/*
+	 * Handler for search box focus/blur events.
+	 */
+	Handler.TextBoxFocusHandler = function(onFocus) {
 		return function() {
 			var obj = $("#searchTextbox");
 
@@ -17,155 +244,126 @@
 			}
 		};
 	};
-
-	var dateUpdateHandler = function() {
-		var fromDate = $("#fromDate").datepicker("getDate");
-		var toDate = $("#toDate").datepicker("getDate");
-
-		if (fromDate >= toDate) {
-			alert("Invalid date range.");
-		} else {
-			_effectiveFromDate = fromDate;
-			_effectiveToDate = toDate;
-
-			KeywordTrendsServiceJS.getStats(_getSelectedKeywords(),
-					_effectiveFromDate, _effectiveToDate, {
-						callback : function(data) {
-							for ( var i = 0; i < data.length; i++) {
-								_setNewData(data[i]);
-							}
-							_initChart();
-						}
-					});
-		}
+	
+	/*
+	 * Handler for add button click event.
+	 */
+	Handler.AddKeywordHandler = function() {
+		return function(e) {
+			Utils.addKeyword($("#searchTextbox").val());
+			$("#searchTextbox").val("Search Keyword");
+		};
 	};
 
-	var _setNewData = function(keywordStats) {
-		for ( var i = 0; i < _seriesList.length; i++) {
-			if (keywordStats.keyword == _seriesList[i].label) {
-				_seriesList[i].data = filterData(keywordStats.stats);
-				break;
+	/*
+	 * Handler for update chart button click event.
+	 */
+	Handler.UpdateHandler = function(tab) {
+		return function() {
+			if (tab.isValid()) {
+				Utils.updateAllStats(tab);
 			}
-		}
+		};
 	};
 
-	var _getSelectedKeywords = function() {
-		var keywords = [];
-		
-		for (var i = 0; i < _seriesList.length; i++) {
-			keywords.push(_seriesList[i].label);
-		}
-		
-		return keywords;
-	};
+	//////////////////////////////////////////////////////////////////
+	//                     Utility methods                          //
+	//////////////////////////////////////////////////////////////////
 
-	var _addKeywordHandler = function(e) {
-		var keyword = $("#searchTextbox").val().toLowerCase().trim();
-
-		if (keyword && keyword != "search keyword"
-				&& _getSelectedKeywords().indexOf(keyword) < 0) {
-			KeywordTrendsServiceJS.getStats(keyword, _effectiveFromDate,
-					_effectiveToDate, {
-						callback : function(data) {
-							var series = new Series(data, true);
-
-							_seriesList.push(series);
-							_initChart();
-						}
-					});
-		}
-
-		$("#searchTextbox").val("Search Keyword");
-	};
-
-	var filterData = function(stats) {
+	/*
+	 * Filter series data. Remove null values.
+	 */
+	Utils.filterData = function(data) {
 		var filteredData = [];
 
-		for (s in stats) {
-			if (stats[s] || stats[s] === 0) {
-				filteredData.push([ s, stats[s] ]);
+		for (i in data) {
+			if (data[i] || data[i] === 0) {
+				filteredData.push([ i, data[i] ]);
 			}
 		}
 
 		return filteredData;
 	};
 
-	// Series object containing functions needed for plotting graph
-	var Series = function(data) {
-		var stackElement = $("#keywordWidgetTemplate").clone();
-		stackElement.attr("id", "keyword-" + data.keyword);
-		stackElement.find(".keyword").html(data.keyword);
-		$("#keyword-list").append(stackElement);
+	/*
+	 * Get all listed keywords.
+	 */
+	Utils.getSelectedKeywords = function() {
+		var k = [];
 
-		var series = {
-			el : stackElement,
-			data : filterData(data.stats),
-			label : data.keyword,
-			show : true,
+		for (key in Keywords) {
+			k.push(key);
+		}
 
-			showHideStack : function(visible) {
-				if (visible === true) {
-					this.el.show();
-				} else {
-					this.el.hide();
-				}
-			},
+		return k;
+	};
 
-			showHideChart : function(visible) {
-				this.show = visible === true;
+	/*
+	 * Retrieve stats for all keywords for a given tab.
+	 */
+	Utils.updateAllStats = function(tab) {
+		// Get stats for all listed keywords
+		KeywordTrendsServiceJS.getStats(Utils.getSelectedKeywords(),
+				tab.fromDate, tab.toDate, tab.collation, {
+					callback : function(data) {
+						for ( var i = 0; i < data.length; i++) {
+							tab.setData(data[i].keyword, data[i].stats);
+						}
 
-				if (this.show) {
-					this.el.find(".inactive-chart").hide();
-					this.el.find(".active-chart").show();
-				} else {
-					this.el.find(".active-chart").hide();
-					this.el.find(".inactive-chart").show();
-				}
-			},
-
-			destroy : function() {
-				this.el.remove();
-				var idx = _seriesList.indexOf(this);
-
-				_seriesList.splice(idx, 1);
-				_initChart();
-			},
-		};
-
-		stackElement.find(".keyword-delete").click(function() {
-			series.destroy();
-		});
-		stackElement.find(".active-chart").click(function() {
-			series.showHideChart(false);
-			_initChart();
-		});
-		stackElement.find(".inactive-chart").click(function() {
-			series.showHideChart(true);
-			_initChart();
-		});
-
-		series.showHideChart(true);
-		stackElement.show();
-
-		return series;
+						// draw chart after data update
+						Utils.drawChart(tab);
+					}
+				});
 	};
 	
-	var _getSeriesData = function() {
-		var data = [];
+	/*
+	 * Add new keyword.
+	 */
+	Utils.addKeyword = function(keyword) {
+		keyword = keyword && keyword.toLowerCase().trim();
 
-		for ( var i = 0; i < _seriesList.length; i++) {
-			data.push(_seriesList[i].data);
+		if (keyword && keyword != "search keyword" && !Keywords[keyword]) {
+			Keywords[keyword] = new Keyword(keyword);
+
+			for (tab in Tabs) {
+				Utils.getStatsForNewKeyword(keyword, Tabs[tab]);
+			}
 		}
-		
-		return data;
 	};
 
-	var _initChart = function() {
-		if (_chart) {
-			_chart.destroy();
+	/*
+	 * Retrieve stats for newly added keyword.
+	 */
+	Utils.getStatsForNewKeyword = function(keyword, tab) {
+		KeywordTrendsServiceJS.getStats(keyword, tab.fromDate, tab.toDate,
+				tab.collation, {
+					callback : function(data) {
+						var series = new Series(data);
+
+						tab.seriesList.push(series);
+						Utils.drawChart(tab);
+					}
+				});
+	};
+	
+	Utils.drawChart = function(tab) {
+		if (!tab.visible) {
+			return;
 		}
 
-		_chart = $.jqplot('chart2', _getSeriesData(), {
+		var tickInterval = '1 day';
+		var min = tab.fromDate;
+		var max = tab.toDate;
+		var xaxisFormatString = "%Y-%m-%d   ";
+
+		if (tab.collation == 'monthly') {
+			tickInterval = '1 month';
+			max = new Date(tab.toDate);
+			max.setDate(1);
+			xaxisFormatString = "%b %Y   ";
+		}
+
+		var options = {
 			gridPadding : {
 				right : 35
 			},
@@ -174,18 +372,18 @@
 					renderer : $.jqplot.DateAxisRenderer,
 					tickRenderer : $.jqplot.CanvasAxisTickRenderer,
 					tickOptions : {
-						formatString : '%m-%d-%Y  ',
+						formatString : xaxisFormatString,
 						angle : -60,
-						fontSize: '11px',
-						fontFamily: 'Arial',
-						labelPosition: 'end'
+						fontSize : '11px',
+						fontFamily : 'Arial',
+						labelPosition : 'end'
 					},
-					tickInterval : '1 day',
-					min : _effectiveFromDate,
-					max : _effectiveToDate
+					tickInterval : tickInterval,
+					min : min,
+					max : max
 				},
-				yaxis: {
-					tickOptions: {
+				yaxis : {
+					tickOptions : {
 						formatString : '%s   ',
 					}
 				}
@@ -196,72 +394,104 @@
 			highlighter : {
 				show : true,
 				sizeAdjust : 7.5,
-				useAxesFormatters : false,
-				tooltipAxes : 'y'
+				useAxesFormatters : true,
+				tooltipAxes : 'xy',
 			},
-			series : _seriesList
+			series : tab.seriesList
+		};
+		
+		if (tab.chart) {
+			tab.chart.destroy();
+		}
+		
+		tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
+	};
+
+	/*
+	 * Set plot for given keyword visible/invisible on all charts.
+	 */
+	Utils.setChartVisible = function(keyword, visibility) {
+		for (tab in Tabs) {
+			for (var i = 0; i < Tabs[tab].seriesList.length; i++) {
+				if (Tabs[tab].seriesList[i].label == keyword) {
+					Tabs[tab].seriesList[i].show = visibility;
+					break;
+				}
+			}
+			
+			Utils.drawChart(Tabs[tab]);
+		}
+	};
+	
+	Utils.getLastDayOfMonth = function(date) {
+		var lastDayOfMonth = new Date(date);
+
+		lastDayOfMonth.setMonth(lastDayOfMonth.getMonth() + 1);
+		lastDayOfMonth.setDate(0);
+
+		return lastDayOfMonth;
+	};
+
+	///////////////////////////////////////////////////////
+	//              Initialization                       //
+	///////////////////////////////////////////////////////
+
+	/*
+	 * Initialize side bar.
+	 */
+	var initSideBar = function() {
+		$("#searchTextbox").focus(new Handler.TextBoxFocusHandler(true));
+		$("#searchTextbox").blur(new Handler.TextBoxFocusHandler(false));
+		
+		var addKeywordHandler = new Handler.AddKeywordHandler();
+		$("#addButton").click(addKeywordHandler);
+		$("#searchTextbox").keyup(function(e) {
+			if (e.which === 13) {
+				addKeywordHandler(e);
+			}
 		});
 	};
 
-	var _initSideBar = function() {
-		$("#addButton").click(_addKeywordHandler);
-		$("#searchTextbox").focus(new SearchTextBoxFocusHandler(true));
-		$("#searchTextbox").blur(new SearchTextBoxFocusHandler(false));
-	};
-
-	var _initDateFields = function(data) {
-
-		if (data) {
-			_effectiveToDate = data;
-			_effectiveFromDate = new Date(data - 1000 * 9 * 60 * 60 * 24);
+	/*
+	 * Initialize tabs.
+	 */
+	var initTabs = function() {
+		for (tab in Tabs) {
+			Tabs[tab].init();
 		}
 
-		// initialize date pickers
-		$("#fromDate").datepicker({
-			constrainInput : true,
-			defaultDate : _effectiveFromDate || -9,
-			dateFormat : 'M d, yy'
-		}).datepicker("setDate", _effectiveFromDate || "-9");
+		$("#tabs").tabs();
+		$("#tabs").bind("tabsshow", function(e, ui) {
+			for (tab in Tabs) {
+				Tabs[tab].visible = !Tabs[tab].el.hasClass("ui-tabs-hide");
+				Utils.drawChart(Tabs[tab]);
+			}
+		});
 
-		$("#toDate").datepicker({
-			constrainInput : true,
-			defaultDate : _effectiveToDate || 0,
-			dateFormat : 'M d, yy'
-		}).datepicker("setDate", _effectiveToDate || "0");
-
-		if (!data) {
-			_effectiveFromDate = $("#fromDate").datepicker("getDate");
-			_effectiveToDate = $("#toDate").datepicker("getDate");
-		}
-
-		KeywordTrendsServiceJS.getTopTenKeywords(_effectiveFromDate,
-				_effectiveToDate, {
-					callback : function(data) {
-						for ( var i = 0; i < data.length; i++) {
-							var series = new Series(data[i]);
-
-							_seriesList.push(series);
-						}
-
-						_initChart();
-					}
-				});
-
-		$("#updateDateBtn").click(dateUpdateHandler);
-	};
-
-	var KeywordTrends = {
-		init : function() {
-			$("#tabs").tabs();
-			_initSideBar();
-			KeywordTrendsServiceJS.getMostRecentStatsDate({
-				callback : _initDateFields
-			});
+		for (tab in Tabs) {
+			Tabs[tab].visible = !Tabs[tab].el.hasClass("ui-tabs-hide");
 		}
 	};
 
-	$(document).ready(function() {
-		KeywordTrends.init();
-	});
+	/*
+	 * Load top ten keywords from most recent log. 
+	 */
+	var loadInitialData = function() {
+		KeywordTrendsServiceJS.getTopTenKeywords({callback: function(list) {
+			for (var i = 0; i < list.length; i++) {
+				Utils.addKeyword(list[i]);
+			}
+		}});
+	};
 
+	/*
+	 * Main initialization function.
+	 */
+	var init = function() {
+		initSideBar();
+		initTabs();
+		loadInitialData();
+	};
+
+	$(document).ready(init);
 })(jQuery);

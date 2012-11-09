@@ -1,11 +1,19 @@
 .filter { background:#eee; padding:10px 20px }
 .dateLabel { text-decoration:underline; border: none !important; cursor: pointer; background: transparent; width: 80px; margin-left:5px; margin-bottom:4px }
-#chart2 .jqplot-xaxis-tick { font-size:8px !important }
+
+.chart {margin-left: 10px; width: 691px; }
+
 #tabs ul.ui-tabs-nav li a {font-size: 13px;}
 #tabs ul.ui-tabs-nav li {padding-left: 8px; padding-right: 8px; border-top-right-radius: 5px; border-top-left-radius: 5px;}
 #tabs ul.ui-tabs-nav {background: none; margin-bottom: -2px}
 #tabs > div {border: 1px solid #AAA; margin-left: 3px; border-top-right-radius: 3px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px;}
-#chart2 {margin-left: 10px}
+
+.jqplot-highlighter-tooltip {background-color: #FDFFC4; border-radius: 3px; border: 1px solid #919700 !important;}
+
+.highlighter-tooltip {background-color: #FDFFC4; margin: 5px !important;}
+.highlighter-tooltip-keyword {font-weight: bold; font-size:12px; text-align: center; border-bottom: 1px solid #919700 !important; padding: 3px !important; margin: 3px !important}
+.highlighter-tooltip th {font-weight: bold; text-align: left; font-size:11px;}
+.highlighter-tooltip td {text-align: left; font-size:11px; padding-left: 8px !important;}
 
 @-moz-document url-prefix() {
 	#tabs ul.ui-tabs-nav {background: none; margin-bottom: -1px}

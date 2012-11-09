@@ -135,12 +135,17 @@ public class StatisticsUtil {
 	}
 
 	public static void retrieveStats(List<KeywordStats> list, File file,
-			Date date, int keyCol, int countCol) {
+			Date date, int keyCol, int countCol, String collation) {
 		Map<String, Integer> counts = getCount(file, extractKeywords(list),
 				keyCol, countCol);
+		Date key = date;
+		
+		if ("monthly".equalsIgnoreCase(collation)) {
+			key = DateAndTimeUtils.getFirstDayOfMonth(date);
+		}
 
 		for (KeywordStats stats : list) {
-			stats.addStats(date, counts.get(stats.getKeyword()));
+			stats.addStats(key, counts.get(stats.getKeyword()));
 		}
 	}
 
