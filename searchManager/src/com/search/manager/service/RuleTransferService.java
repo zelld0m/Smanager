@@ -209,8 +209,9 @@ public class RuleTransferService {
 	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
 		RuleXml ruleXml = RuleTransferUtil.getRule(store, ruleEntity, ruleId);
+		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
-		if(RuleXmlUtil.restoreRule(importAsRefId, ruleXml)){
+		if(RuleXmlUtil.restoreRule(ruleXml)){
 			return deleteRule(ruleEntity, store, ruleId, comment);
 		}
 		return false;
