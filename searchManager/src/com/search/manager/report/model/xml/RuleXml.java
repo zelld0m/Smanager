@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import com.search.manager.model.RuleStatus;
+
 @XmlSeeAlso({
 	ElevateRuleXml.class,
 	ExcludeRuleXml.class,
@@ -12,6 +14,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 	FacetSortRuleXml.class,
 	RedirectRuleXml.class,
 	RankingRuleXml.class,
+	RuleStatus.class
 })
 public class RuleXml extends BaseEntityXml{
 	
@@ -25,8 +28,7 @@ public class RuleXml extends BaseEntityXml{
 	private String name;
 	private long serial;
 	private boolean deleted;
-	private Date lastPublishedDate;
-	private Date lastExportedDate;
+	private RuleStatus ruleStatus;
 	
 	public RuleXml() {
 		super();
@@ -44,6 +46,14 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
+	}
+
+	public RuleStatus getRuleStatus() {
+		return ruleStatus;
+	}
+
+	public void setRuleStatus(RuleStatus ruleStatus) {
+		this.ruleStatus = ruleStatus;
 	}
 
 	public String getNotes() {
@@ -112,23 +122,5 @@ public class RuleXml extends BaseEntityXml{
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-	}
-
-	@XmlAttribute
-	public Date getLastPublishedDate() {
-		return lastPublishedDate;
-	}
-
-	public void setLastPublishedDate(Date lastPublishedDate) {
-		this.lastPublishedDate = lastPublishedDate;
-	}
-
-	@XmlAttribute
-	public Date getLastExportedDate() {
-		return lastExportedDate;
-	}
-
-	public void setLastExportedDate(Date lastExportedDate) {
-		this.lastExportedDate = lastExportedDate;
 	}
 }
