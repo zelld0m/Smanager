@@ -475,13 +475,10 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
 			template += '		<div style="float:left; width:120px">';// label
-			template += '			<table class="w100p" style="height:48px">';
-			template += '				<tr><th> &nbsp; </th></tr>';
-			template += '			</table>';
-			template += '			<ul id="rowLabel" class="w100p">';
+			template += '			<ul id="rowLabel" class="w100p" style="margin-top:23px">';
 			template += '				<li></li>';
 			template += '				<li>Created By</li>';
-			template += '				<li style="height:26px">Date</li>';
+			template += '				<li style="height:24px">Date</li>';
 			template += '				<li>Name</li>';
 			template += '				<li>Notes</li>';
 			template += '				<li>Rule ID</li>';

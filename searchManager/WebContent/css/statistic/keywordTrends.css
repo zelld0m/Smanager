@@ -2,9 +2,9 @@
 .dateLabel { text-decoration:underline; border: none !important; cursor: pointer; background: transparent; width: 80px; margin-left:5px; margin-bottom:4px }
 #chart2 .jqplot-xaxis-tick { font-size:8px !important }
 #tabs ul.ui-tabs-nav li a {font-size: 13px;}
-#tabs ul.ui-tabs-nav li {padding-left: 8px; padding-right: 8px; border-top-right-radius: 5px; border-top-left-radius: 5px;}
+#tabs ul.ui-tabs-nav li {padding-left: 8px; padding-right: 8px; }
 #tabs ul.ui-tabs-nav {background: none; margin-bottom: -2px}
-#tabs > div {border: 1px solid #AAA; margin-left: 3px; border-top-right-radius: 3px; border-bottom-left-radius: 3px; border-bottom-right-radius: 3px;}
+#tabs > div {border: 1px solid #AAA; margin-left: 3px; }
 #chart2 {margin-left: 10px}
 
 @-moz-document url-prefix() {

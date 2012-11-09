@@ -890,7 +890,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .rulePreview								{ padding:0; margin:0; display:block }
 .rulePreview label							{ line-height: 14px; margin:3px 0 }
 
-/* elevate */
+/* qtip */
 .qtip #facetItem .ui-widget-content .ui-autocomplete-input { position:relative; bottom:-6.5px }
 .qtip #facetItem .holder a { color:#3B79C2; }
 .dynamicAttributeItem { padding-left:0 !important }
@@ -903,11 +903,11 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip .ui-tooltip-content { background: #fff !important }
 
 /* elevate for ie issue */
-.ie .qtip #facet .ui-button-icon { height:20px; top:1px }
+.ie .qtip #facet .ui-button-icon { height:20px; top:1px; position:relative }
 .ie .qtip .imsFields input[type='text'] { padding-top:2px }
 .ie .qtip #dynamicAttribute .ui-button-icon { position:relative; top:2px !important }
 .ie .qtip #ims .ui-autocomplete-input { padding-top:4px !important }
-.ie .qtip #ims .ui-button-icon { position:relative; top:0 !important }
+/*.ie .qtip #ims .ui-button-icon { position:relative; top:0 !important }*/
 .ie .qtip #cnet .ui-button-icon { height:20px !important;  }
 .ie .qtip #cnet .ui-autocomplete-input  { padding-top:4px !important }
 .ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }
@@ -934,7 +934,9 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 /* version rule table */
 .qtip .version ul{ list-style:none; margin:0; padding:0 }
-.qtip .version li { padding:4px; border-bottom:1px solid #eee }
+.qtip .version li { padding:5px 4px; border-bottom:1px solid #eee }
 .qtip .version li.last { border-bottom:none !important }
 .qtip .version li.2line { height: 26px !important }
+
+.qtip ul#groupList > li.group:even{  background:#ebebeb }
 
