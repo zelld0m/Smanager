@@ -390,5 +390,8 @@ public class DAOConstants {
 	// will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
 	public static final String MEMBER_TYPE_PART 					= "PART_NUMBER";
 
+
+	// used by settings
+	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
 	
 }

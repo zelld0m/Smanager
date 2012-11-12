@@ -1,14 +1,18 @@
 package com.search.ws;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
@@ -18,6 +22,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
+import com.search.manager.dao.sp.DAOConstants;
+
 public class ConfigManager {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -25,6 +31,9 @@ public class ConfigManager {
 	private XMLConfiguration xmlConfig;
     
     private static ConfigManager instance;
+    
+    //TODO: will eventually move out if settings is migrated to DB instead of file
+    private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
     
     private ConfigManager(String configPath) {
 		try {
@@ -34,7 +43,29 @@ public class ConfigManager {
 			xmlConfig.load(configPath);
 			xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 			logger.debug("Search Config Folder: " + xmlConfig.getFile().getAbsolutePath());
+			String configFolder = xmlConfig.getFile().getParent();
+			
+			// server settings
+			for (String coreName: getCoreNames()) {
+				File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, coreName));
+				if (!f.exists()) {
+					try {
+						f.createNewFile();
+					} catch (IOException e) {
+						logger.error("Unable to create settings file: " + f.getAbsolutePath(), e);
+					}
+				}
+				if (f.exists()) {
+					PropertiesConfiguration propConfig = new PropertiesConfiguration(f.getAbsolutePath());
+					propConfig.setAutoSave(true);
+					xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					serverSettingsMap.put(coreName, propConfig);
+					logger.info("Settings file for " + coreName + ": " + propConfig.getFileName());
+				}
+			}
+			
 		} catch (ConfigurationException ex) {
+			ex.printStackTrace();
 			logger.error(ex.getLocalizedMessage());
 		}
     }
@@ -50,6 +81,19 @@ public class ConfigManager {
     		}
     	}
     	return storeNames;
+    }
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getCoreNames() {
+    	List<String> coreNames = new ArrayList<String>();
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
+    	for (HierarchicalConfiguration hc: hcList) {
+    		String name = hc.getString("core");
+    		if (!StringUtils.isEmpty(name)) {
+        		coreNames.add(name);
+    		}
+    	}
+    	return coreNames;
     }
     
     public String getStoreParameter(String coreName, String param) {
@@ -136,6 +180,23 @@ public class ConfigManager {
     	return instance;
     }
     
+	public boolean setStoreSetting(String coreName, String field, String value) {
+		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+		if (config != null) {
+			config.setProperty(field, value);
+			return StringUtils.equals(config.getString(field), value);
+		}
+		return false;
+	}
+	
+	public String getStoreSetting(String coreName, String field) {
+		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+		if (config != null) {
+			return config.getString(field);
+		}
+		return null;
+	}
+	
     public static void main(String[] args) {
     	ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
 		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
@@ -157,6 +218,15 @@ public class ConfigManager {
 			System.out.println(key + "\t" + map.get(key));
 		}
 
+		for (String key: configManager.getCoreNames()) {
+			System.out.println("core: " + key);
+		}
+		
+		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+		
     }
     
-}
+ }

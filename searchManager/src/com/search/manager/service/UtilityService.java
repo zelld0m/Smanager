@@ -197,4 +197,13 @@ public class UtilityService {
 		return storeFacetTemplate;
 	}
 
+	
+	public static String getStoreSetting(String property) {
+		return ConfigManager.getInstance().getStoreSetting(getStoreName(), property);
+	}
+	
+	public static boolean setStoreSetting(String property, String value) {
+		return ConfigManager.getInstance().setStoreSetting(getStoreName(), property, value);
+	}
+
 }
