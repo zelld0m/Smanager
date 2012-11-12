@@ -396,6 +396,7 @@
 				sizeAdjust : 7.5,
 				useAxesFormatters : true,
 				tooltipAxes : 'xy',
+				tooltipLocation: 'ne'
 			},
 			series : tab.seriesList
 		};
