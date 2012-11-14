@@ -16,6 +16,8 @@ import com.search.manager.dao.DaoService;
 	    creatorParams = @Param(name = "beanName", value = "catalogService")
 	)
 public class CatalogService {
+	
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(CatalogService.class);
 	
 	@Autowired private DaoService daoService;

@@ -23,6 +23,7 @@ public class CatalogController {
 	private static final Logger logger = Logger.getLogger(CatalogController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired private CatalogService catalogService;
 	
 	@RequestMapping(value="/{store}")

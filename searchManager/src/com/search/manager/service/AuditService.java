@@ -23,7 +23,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.User;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
-import com.search.manager.model.constants.AuditTrailConstants.Operation;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "auditService")

@@ -15,18 +15,17 @@ import com.search.manager.schema.model.VerifiableModel;
 import com.search.manager.schema.model.bf.BoostFunctionModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
-import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
 
 public class SolrSchemaUtility {
 
 	private final static Logger logger = Logger.getLogger(SolrSchemaUtility.class);
 	
-	public static Schema getSchema() {
+	public static Schema getSchema(String serverName, String storeName) {
 		try {
 			HttpClient client = new DefaultHttpClient();
-			String url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(), "url")
-							.replace("(store)", UtilityService.getStoreName());
+			String url = ConfigManager.getInstance().getServerParameter(serverName, "url")
+							.replace("(store)", storeName);
 			logger.debug("url is: " + url);
 			HttpGet get = new HttpGet(url + "/admin/file/?file=solrconfig.xml");
 			HttpResponse response = client.execute(get);
@@ -151,7 +150,7 @@ public class SolrSchemaUtility {
 		
     	ConfigManager.getInstance("/home/solr/conf/solr.xml");
 		RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema("search", "pcmall");
 		for (Field field: schema.getFields()) {
 			logger.debug(field.getName() + " " + field.getGenericType());
 		}

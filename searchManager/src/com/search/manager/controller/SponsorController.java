@@ -23,6 +23,7 @@ public class SponsorController {
 	private static final Logger logger = Logger.getLogger(SponsorController.class);
 	
 	@Autowired DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired private SponsorService sponsorService;
 	
 	@RequestMapping(value="/{store}")

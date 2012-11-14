@@ -1,6 +1,5 @@
 package com.search.manager.cache.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +17,6 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.model.SearchCriteria.MatchType;
 
 @Repository("facetSortCacheDao")
 public class FacetSortCacheDao extends CacheDao<FacetSort> {

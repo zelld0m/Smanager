@@ -34,7 +34,7 @@ public class FileUtil {
 			if(StringUtils.isBlank(directoryName)) throw new Exception("directoryName is null.");
 			File newPath = new File(directoryName);
 			if(!newPath.exists()) {
-				boolean status = newPath.mkdirs();
+				newPath.mkdirs();
 			}
 		}catch(Exception e){
 			throw new Exception(e);

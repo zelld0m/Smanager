@@ -477,9 +477,9 @@ public class AuditInterceptor {
 	}
 	
 	private void logFacetGroupItem(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		@SuppressWarnings("unchecked")
 		List<FacetGroupItem> e = (ArrayList<FacetGroupItem>)jp.getArgs()[0];
 		
-		String facetGroupId = "";
 		String facetGroupName = "";
 		String facetSortOrder = "";
 		String highlightedFacets = "";

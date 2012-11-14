@@ -5,10 +5,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jxl.common.Logger;
-
 import org.apache.commons.lang.CharUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -22,6 +21,7 @@ import com.search.manager.schema.model.Schema;
 public class BoostFunctionModel implements FunctionModelComponent {
 
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(BoostFunctionModel.class);
 	
 	private FunctionQuery functionQuery;

@@ -16,6 +16,7 @@ import com.search.manager.dao.DaoService;
 	    creatorParams = @Param(name = "beanName", value = "stopwordService")
 	)
 public class StopwordService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(StopwordService.class);
 	
 	@Autowired private DaoService daoService;

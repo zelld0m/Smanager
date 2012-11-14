@@ -16,6 +16,7 @@ import com.search.manager.dao.DaoService;
 	    creatorParams = @Param(name = "beanName", value = "synonymService")
 	)
 public class SynonymService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(SynonymService.class);
 	
 	@Autowired private DaoService daoService;

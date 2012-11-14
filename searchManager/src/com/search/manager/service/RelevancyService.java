@@ -107,7 +107,7 @@ public class RelevancyService extends RuleService{
 			//bq post-processing
 			if (StringUtils.equalsIgnoreCase("bq", fieldName)){
 				try {
-					Schema schema = SolrSchemaUtility.getSchema();
+					Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 					BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
 					fieldValue = boostQueryModel.toString();
 				} catch (SchemaException e) {
@@ -119,7 +119,7 @@ public class RelevancyService extends RuleService{
 			//bf post-processing
 			if (StringUtils.equalsIgnoreCase("bf", fieldName)){
 				try {
-					Schema schema = SolrSchemaUtility.getSchema();
+					Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 					BoostFunctionModel.toModel(schema, fieldValue, true);
 				}catch (SchemaException e) {
 					logger.error("Failed during addOrUpdateRelevancyField()",e);
@@ -261,7 +261,7 @@ public class RelevancyService extends RuleService{
 	@RemoteMethod
 	public BoostQueryModel getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
 
 		try {
@@ -419,7 +419,7 @@ public class RelevancyService extends RuleService{
 		List<QueryField> qFieldList = new ArrayList<QueryField>();
 		logger.info(String.format("%s", fieldValue));
 		try {
-			Schema schema = SolrSchemaUtility.getSchema();
+			Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 			QueryFieldsModel qFieldModel = QueryFieldsModel.toModel(schema, fieldValue, true);
 			if (qFieldModel!=null) qFieldList = qFieldModel.getQueryFields();
 		} catch (SchemaException e) {
@@ -431,7 +431,7 @@ public class RelevancyService extends RuleService{
 
 	@RemoteMethod
 	public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String keyword, String[] excludedFields) {
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 
 		List<Field> excludeFieldList = new ArrayList<Field>();
 

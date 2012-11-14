@@ -15,9 +15,7 @@ public class RedirectRule extends ModelBean {
 
 	private static final long serialVersionUID = 4608433178597830828L;
 
-	private static final String DBL_PIPE_DELIM = "||";
 	private static final String ESCAPED_DBL_PIPE_DELIM = "\\|\\|";
-	private static final String OR = ") OR (";
 	private static final String COMMA = ",";
 
 	@DataTransferObject(converter = EnumConverter.class)

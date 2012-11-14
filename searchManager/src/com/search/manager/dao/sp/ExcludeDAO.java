@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
-import org.springframework.jdbc.object.StoredProcedure;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
@@ -37,21 +36,15 @@ public class ExcludeDAO {
 	public ExcludeDAO(JdbcTemplate jdbcTemplate) {
     	addSP = new AddExcludeStoredProcedure(jdbcTemplate);
     	getSP = new GetExcludeStoredProcedure(jdbcTemplate);
-    	getItemSP = new GetExcludeItemStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateExcludeStoredProcedure(jdbcTemplate);
     	deleteSP = new DeleteExcludeStoredProcedure(jdbcTemplate);
     	updateExpiryDateSP = new UpdateExcludeExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateExcludeCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendExcludeCommentStoredProcedure(jdbcTemplate);
     }
 	
 	private AddExcludeStoredProcedure addSP;
 	private GetExcludeStoredProcedure getSP;
-	private GetExcludeItemStoredProcedure getItemSP;
 	private UpdateExcludeStoredProcedure updateSP;
 	private DeleteExcludeStoredProcedure deleteSP;
-	private UpdateExcludeCommentStoredProcedure updateCommentSP;
-	private AppendExcludeCommentStoredProcedure appendCommentSP;
 	private UpdateExcludeExpiryDateStoredProcedure updateExpiryDateSP;
 
 	private class AddExcludeStoredProcedure extends CUDStoredProcedure {
@@ -110,33 +103,6 @@ public class ExcludeDAO {
 	    }
 	}
 
-	private class GetExcludeItemStoredProcedure extends StoredProcedure {
-	    public GetExcludeItemStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_EXCLUDE_ITEM);
-	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<ExcludeResult>() {
-	            public ExcludeResult mapRow(ResultSet rs, int rowNum) throws SQLException
-	            {
-	                return new ExcludeResult(
-	                		new StoreKeyword(new Store(rs.getString(DAOConstants.COLUMN_STORE_NAME)),
-	                						 new Keyword(rs.getString(DAOConstants.COLUMN_KEYWORD))),
-	                		rs.getString(DAOConstants.COLUMN_VALUE),
-	                		rs.getString(DAOConstants.COLUMN_COMMENT),
-	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getDate(DAOConstants.COLUMN_EXPIRY_DATE),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_TYPE_ID),
-                			rs.getString(DAOConstants.COLUMN_MEMBER_ID));
-	            }
-	        }));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
-	        compile();
-	    }
-	}
-	
 	private class UpdateExcludeStoredProcedure extends CUDStoredProcedure {
 	    public UpdateExcludeStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE);
@@ -163,35 +129,6 @@ public class ExcludeDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-		}
-	}
-	
-	private class UpdateExcludeCommentStoredProcedure extends CUDStoredProcedure {
-	    public UpdateExcludeCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_EXCLUDE_COMMENT);
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-		}
-	}
-
-	private class AppendExcludeCommentStoredProcedure extends CUDStoredProcedure {
-	    public AppendExcludeCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_APPEND_EXCLUDE_COMMENT);
-	        compile();
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_VALUE, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 	

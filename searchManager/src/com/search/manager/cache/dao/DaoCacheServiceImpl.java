@@ -270,28 +270,6 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		return relevancyCacheDao.reload(relevancy);
 	}
 
-	private void ObjectByteReader(Object obj){ // Use this method to get Object size
-		java.io.ObjectOutputStream outputStream = null;
-        try {
-            outputStream = new java.io.ObjectOutputStream(new java.io.FileOutputStream("C:\\Search Manager\\Test Ground\\test.txt"));
-            outputStream.writeObject(obj);
-        } catch (java.io.FileNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (java.io.IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            //Close the ObjectOutputStream
-            try {
-                if (outputStream != null) {
-                    outputStream.flush();
-                    outputStream.close();
-                }
-            } catch (java.io.IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-	}
-
 	@Override
 	public boolean loginUser(UserDetailsImpl userDetails) {
 		UserDetailsImpl user = new UserDetailsImpl();

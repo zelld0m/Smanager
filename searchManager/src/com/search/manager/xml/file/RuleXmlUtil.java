@@ -44,12 +44,13 @@ import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
 
 public class RuleXmlUtil{
 
+	private static final String XML_FILE_TYPE = ".xml";
+	
 	private static Logger logger = Logger.getLogger(RuleXmlUtil.class);
 	private static final String PREIMPORTPATH = PropsUtils.getValue("pre-importpath");
 	private static final String PRERESTOREPATH = PropsUtils.getValue("pre-restorepath");
@@ -447,12 +448,12 @@ public class RuleXmlUtil{
 	}
 
 	public static String getFilename(String path, String store, RuleEntity ruleEntity ,String ruleId){
-		StringBuilder filePath = new StringBuilder(getRuleFileDirectory(path, store, ruleEntity)).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
+		StringBuilder filePath = new StringBuilder(getRuleFileDirectory(path, store, ruleEntity)).append(File.separator).append(ruleId).append(XML_FILE_TYPE);
 		return filePath.toString();
 	}
 
 	public static String getFilenameByDir(String dir, String ruleId){
-		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(FileUtil.XML_FILE_TYPE);
+		StringBuilder filePath = new StringBuilder(dir).append(File.separator).append(ruleId).append(XML_FILE_TYPE);
 		return filePath.toString();
 	}
 
@@ -498,7 +499,7 @@ public class RuleXmlUtil{
 	}
 
 	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
+		RuleXmlUtil.daoService = daoService;
 	}
 
 

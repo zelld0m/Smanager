@@ -20,7 +20,6 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
-import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 public class RuleVersionUtil {

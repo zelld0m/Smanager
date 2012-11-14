@@ -23,6 +23,7 @@ public class ProtwordController {
 	private static final Logger logger = Logger.getLogger(ProtwordController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired private ProtwordService protwordService;
 	
 	@RequestMapping(value="/{store}")

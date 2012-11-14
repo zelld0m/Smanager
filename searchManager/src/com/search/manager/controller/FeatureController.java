@@ -23,6 +23,7 @@ public class FeatureController {
 	private static final Logger logger = Logger.getLogger(FeatureController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired private FeatureService featureService;
 	
 	

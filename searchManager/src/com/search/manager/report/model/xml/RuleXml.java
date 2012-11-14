@@ -39,7 +39,7 @@ public class RuleXml extends BaseEntityXml{
 	public RuleXml(long serial) {
 		super();
 		this.serial = serial;
-		this.ruleEntity = getRuleEntity();
+		this.ruleEntity = getRuleEntity(this);
 	}
 	
 	public RuleXml(String store, String name, String notes,
@@ -49,7 +49,7 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
-		this.ruleEntity = getRuleEntity();
+		this.ruleEntity = getRuleEntity(this);
 	}
 
 	public RuleStatus getRuleStatus() {
@@ -130,25 +130,34 @@ public class RuleXml extends BaseEntityXml{
 
 	@XmlTransient
 	public RuleEntity getRuleEntity() {
-		RuleEntity ruleEntity = null;
-		
-		if (this instanceof ElevateRuleXml){
-			ruleEntity = RuleEntity.ELEVATE;
-		}else if(this instanceof DemoteRuleXml){
-			ruleEntity = RuleEntity.DEMOTE;
-		}else if(this instanceof ExcludeRuleXml){
-			ruleEntity = RuleEntity.EXCLUDE;
-		}else if(this instanceof FacetSortRuleXml){
-			ruleEntity = RuleEntity.FACET_SORT;
-		}else if(this instanceof RedirectRuleXml){
-			ruleEntity = RuleEntity.QUERY_CLEANING;
-		}else if(this instanceof RankingRuleXml){
-			ruleEntity = RuleEntity.RANKING_RULE;
-		}
-		
 		return ruleEntity;
 	}
 
+	public static RuleEntity getRuleEntity(RuleXml ruleXml) {
+		RuleEntity ruleEntity = null;
+		if (ruleXml == null) {
+		}
+		else if (ruleXml instanceof ElevateRuleXml){
+			ruleEntity = RuleEntity.ELEVATE;
+		}
+		else if(ruleXml instanceof DemoteRuleXml){
+			ruleEntity = RuleEntity.DEMOTE;
+		}
+		else if(ruleXml instanceof ExcludeRuleXml){
+			ruleEntity = RuleEntity.EXCLUDE;
+		}
+		else if(ruleXml instanceof FacetSortRuleXml){
+			ruleEntity = RuleEntity.FACET_SORT;
+		}
+		else if(ruleXml instanceof RedirectRuleXml){
+			ruleEntity = RuleEntity.QUERY_CLEANING;
+		}
+		else if(ruleXml instanceof RankingRuleXml){
+			ruleEntity = RuleEntity.RANKING_RULE;
+		}
+		return ruleEntity;
+	}
+	
 	public void setRuleEntity(RuleEntity ruleEntity) {
 		this.ruleEntity = ruleEntity;
 	}

@@ -22,6 +22,7 @@ public class SynonymController {
 
 	private static final Logger logger = Logger.getLogger(SynonymController.class);
 	
+	@SuppressWarnings("unused")
 	@Autowired private SynonymService synonymService;
 	@Autowired DaoCacheService daoCacheService;
 	

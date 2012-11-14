@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,9 +32,6 @@ import com.search.manager.cache.model.CacheModel;
 import com.search.manager.cache.utility.CacheConstants;
 import com.search.manager.enums.CatCodes;
 import com.search.manager.exception.DataException;
-import com.search.manager.service.UtilityService;
-import com.search.ws.ConfigManager;
-import com.search.ws.SearchHelper;
 
 public class CatCodeUtil {
 	
@@ -48,7 +44,7 @@ public class CatCodeUtil {
 	private static final String CLASS_NAME = "Class Name";
 	private static final String STATUS_ACTIVE = "1";
 	private static final String ERROR_MSG = "Error while loading ";
-	private final static String VALUE_ATTRIBUTE = "_Value_Attrib";
+//	private final static String VALUE_ATTRIBUTE = "_Value_Attrib";
 	
 	@DataTransferObject(converter = BeanConverter.class)
 	public static class Attribute {
@@ -179,17 +175,17 @@ public class CatCodeUtil {
 		removeCache(CacheConstants.getCacheKey(CacheConstants.CATEGORY_CODES, cacheKey));
 	}
 	
-	/** Retrieve attribute template number by template name */
-	private static String getAttributeTemplateNo(String name) throws DataException{
-		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
-		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(name)){
-			for(String[] col : row){
-				if(name.equalsIgnoreCase(col[1]) && STATUS_ACTIVE.equals(getWholeNumber(col[2])))
-					return getWholeNumber(col[0]);
-			}
-		}
-		return "";
-	}
+//	/** Retrieve attribute template number by template name */
+//	private static String getAttributeTemplateNo(String name) throws DataException{
+//		Vector<String[]> row = getCatCodesFmCache(CatCodes.SOLR_TEMPLATE_MASTER.getCodeStr());
+//		if(CollectionUtils.isNotEmpty(row) && StringUtils.isNotEmpty(name)){
+//			for(String[] col : row){
+//				if(name.equalsIgnoreCase(col[1]) && STATUS_ACTIVE.equals(getWholeNumber(col[2])))
+//					return getWholeNumber(col[0]);
+//			}
+//		}
+//		return "";
+//	}
 	
 	/** Retrieve attribute template attributes by template name */
 	public static List<String[]> getAttributeTemplateAttribute(String template) throws DataException{
@@ -209,6 +205,7 @@ public class CatCodeUtil {
 		cache.put(key, v);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static <E> CacheModel<E> getCache(String key){
 		return (CacheModel<E>) cache.get(key);
 	}
@@ -358,7 +355,7 @@ public class CatCodeUtil {
 				}
 			}
 		}
-		SortUtil.sort(list);
+		Collections.sort(list);
 		return list;
 		
 	}
@@ -390,7 +387,7 @@ public class CatCodeUtil {
 						list.add(col[8]);
 			}
 		}
-		SortUtil.sort(list);
+		Collections.sort(list);
 		return list;
 	}
 	
@@ -713,11 +710,11 @@ public class CatCodeUtil {
 //		String strCategory = "";
 //		String strSubCategory = "";
 //		String strClass = "";
-		String template = "";
-		String attribute = "";
-		boolean repeat = true;
-		List<String> list = new ArrayList<String>();
-		List<String> listCNET = new ArrayList<String>();
+//		String template = "";
+//		String attribute = "";
+//		boolean repeat = true;
+//		List<String> list = new ArrayList<String>();
+//		List<String> listCNET = new ArrayList<String>();
 		
 		for (Template t: imsTemplateMap.values()) {
 			System.out.println(t.templateNumber + ":" + t.templateName);
