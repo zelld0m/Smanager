@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.ExportType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
@@ -95,51 +96,43 @@ public class RuleStatusDAO {
 		protected void declareSqlReturnResultSetParameters() {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<RuleStatus>() {
 	        	public RuleStatus mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        		
+	        		String exportTypeVal = rs.getString(DAOConstants.COLUMN_EXPORT_TYPE);
+	        		ExportType exportType = null;
+	        		if (StringUtils.isNumeric(exportTypeVal)) {
+	        			try {
+	        				exportType = ExportType.get(Integer.valueOf(exportTypeVal));
+	        			} catch (Exception e) {
+	        			}
+	        		}
 	                return new RuleStatus(
-	                		rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
-	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
-	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
-	                		rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
-	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
-	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
-	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
-	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
-	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
-	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
-	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
-	                		);
-
-	                // TODO: check once schema is done
-//	                return new RuleStatus(
-//	                		rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
-//	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
-//	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
-//	                		rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
-//	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
-//	                		
-//	                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
-//	                		rs.getString(DAOConstants.COLUMN_REQUEST_BY),
-//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE),
-//	                		
-//	                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
-//	                		rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
-//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE),
-//	                		
-//	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
-//	                		rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
-//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
-//	                		
-//	                		ExportType.get(rs.getInt(DAOConstants.COLUMN_EXPORT_TYPE)),
-//	                		rs.getString(DAOConstants.COLUMN_EXPORT_BY),
-//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE),
-//	                		
-//	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-//	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-//	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
-//	                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
-//	                		);
+                		rs.getString(DAOConstants.COLUMN_RULE_STATUS_ID), 
+                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID), 
+                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
+                		rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), 
+                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
+                		
+                		rs.getString(DAOConstants.COLUMN_EVENT_STATUS),
+                		rs.getString(DAOConstants.COLUMN_REQUEST_BY),
+                		rs.getTimestamp(DAOConstants.COLUMN_LAST_REQUEST_DATE),
+                		
+                		rs.getString(DAOConstants.COLUMN_APPROVED_STATUS),
+                		rs.getString(DAOConstants.COLUMN_APPROVAL_BY),
+                		rs.getTimestamp(DAOConstants.COLUMN_LAST_APPROVAL_DATE),
+                		
+                		rs.getString(DAOConstants.COLUMN_PUBLISHED_STATUS), 
+                		rs.getString(DAOConstants.COLUMN_PUBLISHED_BY),
+                		rs.getTimestamp(DAOConstants.COLUMN_LAST_PUBLISHED_DATE),
+                		
+                		exportType,
+                		rs.getString(DAOConstants.COLUMN_EXPORT_BY),
+                		rs.getTimestamp(DAOConstants.COLUMN_LAST_EXPORT_DATE),
+                		
+                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
+                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
+                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
+                		rs.getTimestamp(DAOConstants.COLUMN_LAST_UPDATED_STAMP)	                		
+                		);
 	        	}
 
 	        }));
@@ -161,12 +154,11 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-	        // TODO: uncomment after SP changes
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
 		}
 	}
 	
@@ -185,15 +177,14 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-	        // TODO: uncomment after SP changes
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
 		}
 	}
 
@@ -228,9 +219,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 			inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
-			
-			// TODO: uncomment after SP change
-//			inputs.put(DAOConstants.PARAM_SORT_BY, sortOrder != null ? sortOrder.getIntValue() : 0);
+			inputs.put(DAOConstants.PARAM_SORT_BY, sortOrder != null ? sortOrder.getIntValue() : 0);
 			
 			return DAOUtils.getRecordSet(getRuleStatusStoredProcedure.execute(inputs));
 		} catch (Exception e) {
@@ -251,12 +240,11 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, ruleStatus.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
-			// TODO: uncomment after SP changes
-//			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
-//			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
-//			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
-//			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
-//			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastApprovalDate());
+			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
+			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
+			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
+			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastApprovalDate());
 			result = DAOUtils.getUpdateCount(addRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -278,15 +266,14 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
-			// TODO: uncomment after SP is updated
-//			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, ruleStatus.getLastExportDate());
-//			inputs.put(DAOConstants.PARAM_EXPORT_TYPE, ruleStatus.getExportType() != null ? ruleStatus.getExportType().toString() : null);
-//			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
-//			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
-//			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
-//			inputs.put(DAOConstants.PARAM_EXPORT_BY, ruleStatus.getExportBy());
-//			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
-//			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastExportDate());
+			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, ruleStatus.getLastExportDate());
+			inputs.put(DAOConstants.PARAM_EXPORT_TYPE, ruleStatus.getExportType() != null ? ruleStatus.getExportType().toString() : null);
+			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
+			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());
+			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+			inputs.put(DAOConstants.PARAM_EXPORT_BY, ruleStatus.getExportBy());
+			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
+			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastExportDate());
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {

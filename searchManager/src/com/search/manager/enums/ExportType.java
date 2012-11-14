@@ -47,8 +47,8 @@ public enum ExportType {
          return lookup.get(displayText); 
     }
 	
-	public static ExportType get(Integer intValue) { 
-        return ExportType.values()[intValue-1];
+	public static ExportType get(Integer intValue) {
+        return intValue == null ? null : ExportType.values()[intValue-1];
     }
 	
 	@Override

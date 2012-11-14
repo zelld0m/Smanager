@@ -38,13 +38,15 @@ public class RuleTransferUtil {
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
+		FileWriter writer = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.setEventHandler(new RuleVersionValidationEventHandler());
 			if (!file.exists()){
-				m.marshal(new RuleXml(), new FileWriter(file));
+				writer = new FileWriter(file);
+				m.marshal(new RuleXml(), writer);
 			}
 
 			Unmarshaller um = context.createUnmarshaller(); 
@@ -57,6 +59,8 @@ public class RuleTransferUtil {
 		} catch (IOException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
 		}
 	}
 	
@@ -97,6 +101,8 @@ public class RuleTransferUtil {
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 
 		File dirFile = new File(dir);
+		FileWriter writer = null;
+		FileReader reader = null;
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -112,12 +118,14 @@ public class RuleTransferUtil {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.setEventHandler(new RuleVersionValidationEventHandler());
 			if (!new File(filename).exists()){
-				m.marshal(new RuleXml(), new FileWriter(filename));
+				writer = new FileWriter(filename); 
+				m.marshal(new RuleXml(), writer);
 			}
 
 			Unmarshaller um = context.createUnmarshaller(); 
 			um.setEventHandler(new RuleVersionValidationEventHandler());
-			ruleXml = (RuleXml) um.unmarshal(new FileReader(filename));
+			reader = new FileReader(filename);
+			ruleXml = (RuleXml) um.unmarshal(reader);
 
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
@@ -125,6 +133,9 @@ public class RuleTransferUtil {
 		} catch (IOException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
+			try { if (reader != null) reader.close(); } catch (Exception e) {}
 		}
 
 		return ruleXml;
@@ -134,7 +145,8 @@ public class RuleTransferUtil {
 		String dir = RuleXmlUtil.getRuleFileDirectory(EXPORT_FILE_PATH, store, ruleEntity);
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
-
+		FileWriter writer = null;
+		
 		File dirFile = new File(dir);
 		if (!dirFile.exists()) {
 			try {
@@ -149,7 +161,8 @@ public class RuleTransferUtil {
 			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(rule, new FileWriter(filename));
+			writer = new FileWriter(filename);
+			m.marshal(rule, writer);
 			
 			return true;
 		} catch (JAXBException e) {
@@ -158,6 +171,9 @@ public class RuleTransferUtil {
 		} catch (Exception e) {
 			logger.error("Unknown error", e);
 			return false;
+		}
+		finally {
+			try { if (writer != null) { writer.close(); } } catch (IOException e) { }
 		}
 	}
 

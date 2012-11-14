@@ -86,6 +86,7 @@ public class RuleXmlUtil{
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 
 		File dirFile = new File(dir);
+		FileWriter writer = null;
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -102,7 +103,8 @@ public class RuleXmlUtil{
 			m.setEventHandler(new RuleVersionValidationEventHandler());
 
 			if (!new File(filename).exists()){
-				m.marshal(new RuleXml(), new FileWriter(filename));
+				writer = new FileWriter(filename);
+				m.marshal(new RuleXml(), writer);
 			}
 
 			return true;
@@ -112,6 +114,8 @@ public class RuleXmlUtil{
 		} catch (IOException e) {
 			logger.error("Failed to create pre-import rule file", e);
 			return false;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
 		}
 	}
 
@@ -553,11 +557,13 @@ public class RuleXmlUtil{
 	public static boolean backUpRule(String path, String store, RuleEntity ruleEntity, String ruleId, Object rule){
 		String dir = getRuleFileDirectory(path, store, ruleEntity);
 		String filename = getFilenameByDir(dir, getRuleId(ruleEntity, ruleId)) + "_backup";
+		FileWriter writer = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(rule, new FileWriter(filename));
+			writer = new FileWriter(filename);
+			m.marshal(rule, writer);
 			return true;
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller", e);
@@ -565,6 +571,8 @@ public class RuleXmlUtil{
 		} catch (Exception e) {
 			logger.error("Unknown error", e);
 			return false;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
 		}
 	}
 
