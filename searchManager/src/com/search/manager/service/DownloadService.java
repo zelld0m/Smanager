@@ -1,7 +1,9 @@
 package com.search.manager.service;
 
+import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +19,6 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.report.Writer;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportModel;
 import com.search.manager.utility.DateAndTimeUtils;
@@ -271,6 +272,22 @@ public class DownloadService {
 		// Make sure to set the correct content type
 		response.setContentType("application/vnd.ms-excel");
 		// Write to the output stream
-		Writer.write(response, worksheet);
+		
+		logger.debug("Writing report to the stream");
+		ServletOutputStream outputStream  = null;
+		try {
+			// Retrieve the output stream
+			outputStream = response.getOutputStream();
+			// Write to the output stream
+			worksheet.getWorkbook().write(outputStream);
+			// Flush the stream
+			outputStream.flush();
+
+		} catch (Exception e) {
+			logger.error("Unable to write report to the output stream");
+		} finally {
+			try { if (outputStream != null) outputStream.close(); } catch (IOException e) { } 
+		}
+		
 	}
 }
