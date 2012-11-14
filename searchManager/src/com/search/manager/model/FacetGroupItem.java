@@ -19,18 +19,19 @@ public class FacetGroupItem extends ModelBean{
 	public FacetGroupItem() {}
 
 	public FacetGroupItem(String ruleId, String facetGroupId, String memberId, String name,
-			Integer sequence) {
+			Integer sequence, String modifiedBy) {
 		super();
 		this.ruleId = ruleId;
 		this.facetGroupId = facetGroupId;
 		this.memberId = memberId;
 		this.name = name;
 		this.sequence = sequence;
+		this.lastModifiedBy = modifiedBy;
 	}
 	
 	public FacetGroupItem(String facetGroupId, String memberId, String name,
 			Integer sequence) {
-		this("", facetGroupId, memberId, name, sequence);
+		this("", facetGroupId, memberId, name, sequence, null);
 	}
 	
 	public FacetGroupItem(String memberId, String name,	Integer sequence) {

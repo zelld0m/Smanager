@@ -3,6 +3,7 @@ package com.search.manager.xml.file;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,9 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetGroup;
+import com.search.manager.model.FacetGroupItem;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
@@ -37,6 +41,7 @@ import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.FacetSortItemXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
@@ -267,13 +272,80 @@ public class RuleXmlUtil{
 	}
 
 	private static boolean restoreFacetSort(String path, RuleXml xml){
+		//TODO: Verify correctness, old implementation
+		FacetSortRuleXml rxml = (FacetSortRuleXml) xml;
+		FacetSort restoreVersion = new FacetSort(rxml);
+		String store = DAOUtils.getStoreId(restoreVersion.getStore());
+		String ruleId = xml.getRuleId();
+
+		try {
+			FacetSort rule = new FacetSort();
+			rule.setRuleId(ruleId);
+			rule.setStore(new Store(store));
+			rule.setLastModifiedBy(xml.getLastModifiedBy());
+			rule = daoService.getFacetSort(rule);
+			
+			if(rule != null){
+				if (!RuleXmlUtil.createPreBackUpRuleXml(path, xml)){
+					logger.error("Failed to create pre-import rule");
+					return false;
+				};
+				daoService.deleteFacetSort(rule);
+			}
+			
+			if (daoService.addFacetSort(restoreVersion) > 0) {
+				if (CollectionUtils.isNotEmpty(rxml.getItem())) {
+					FacetGroup facetGroup = new FacetGroup();
+					facetGroup.setRuleId(ruleId);
+					facetGroup.setLastModifiedBy(xml.getLastModifiedBy());
+					List<FacetGroupItem> groupItems = new ArrayList<FacetGroupItem>();
+					
+					int processedItems = 0;
+					int totalItems = 0;
+					
+					for (FacetSortItemXml facetSort: rxml.getItem()) {
+						String groupId = DAOUtils.generateUniqueId();
+						facetGroup.setFacetGroupType(facetSort.getGroupType());
+						facetGroup.setName(facetSort.getGroupName());
+						facetGroup.setSortType(facetGroup.getSortType());
+						facetGroup.setSequence(facetGroup.getSequence());
+						facetGroup.setId(groupId);
+						totalItems++;
+						processedItems += daoService.addFacetGroup(facetGroup);
+						
+						groupItems.clear();
+						if (CollectionUtils.isNotEmpty(facetSort.getGroupItem())) {
+							int i = 0;
+							for (String item: facetSort.getGroupItem()) {
+								groupItems.add(new FacetGroupItem(ruleId, groupId, DAOUtils.generateUniqueId(), item, ++i, xml.getLastModifiedBy()));
+							}
+							totalItems += facetSort.getGroupItem().size();
+							processedItems += daoService.addFacetGroupItems(groupItems);
+						}
+					}
+					
+					if (processedItems == totalItems) {
+						return true;
+					}
+
+				}
+				else {
+					return true;
+				}
+			}
+				
+			if(!rollBackToBackUpRuleXml(path, ruleId)){
+				//TODO: add email notification for manual import
+				logger.error("Failed to rollback");
+			}
+		} catch (DaoException e) {
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	private static boolean restoreQueryCleaning(String path, RuleXml xml) {
-		// TODO: this is not usable by import. no way to define where to get the ruleId to use.
 		if (xml instanceof RedirectRuleXml) {
-			
 			RedirectRuleXml dXml = (RedirectRuleXml) xml;
 			String store = xml.getStore();
 			String ruleId = xml.getRuleId();
@@ -358,21 +430,24 @@ public class RuleXmlUtil{
 	}
 
 	private static boolean restoreRankingRule(String path, RuleXml xml){
-		// TODO: this is not usable by import. no way to define where to get the ruleId to use.
 		//TODO: Verify correctness, old implementation
 		Relevancy restoreVersion = new Relevancy((RankingRuleXml) xml);
 		String store = DAOUtils.getStoreId(restoreVersion.getStore());
 		String ruleId = xml.getRuleId();
 		RelevancyField rf = new RelevancyField();
 
-		// TODO: add the preimport/backup/restore contigency plan  copy from query cleaning
 		try {
 			Relevancy rule = new Relevancy();
 			rule.setRuleId(ruleId);
 			rule.setStore(new Store(store));
 			rule.setLastModifiedBy(xml.getLastModifiedBy());
 			rule = daoService.getRelevancy(rule);
-			if (rule != null) {
+			
+			if(rule != null){
+				if (!RuleXmlUtil.createPreBackUpRuleXml(path, xml)){
+					logger.error("Failed to create pre-import rule");
+					return false;
+				};
 				daoService.deleteRelevancy(rule);
 			}
 			
@@ -404,6 +479,11 @@ public class RuleXmlUtil{
 					}
 				}
 			}
+			
+			if(!rollBackToBackUpRuleXml(path, ruleId)){
+				//TODO: add email notification for manual import
+				logger.error("Failed to rollback");
+			}
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}
@@ -411,14 +491,18 @@ public class RuleXmlUtil{
 	}
 
 	public static boolean restoreRule(RuleXml xml) {
+		return RuleXmlUtil.restoreRule(xml, true);
+	}
+	
+	public static boolean importRule(RuleXml xml) {
 		return RuleXmlUtil.restoreRule(xml, false);
 	}
-
-	public static boolean restoreRule(RuleXml xml, boolean isVersion) {
+	
+	private static boolean restoreRule(RuleXml xml, boolean isVersion) {
 		String path = isVersion ? PRERESTOREPATH : PREIMPORTPATH;
 		boolean isRestored = false;
 
-		if(xml== null){
+		if(xml  == null){
 			return isRestored; 
 		}
 
