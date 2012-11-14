@@ -21,9 +21,8 @@ public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.EXCLUDE, ruleId);
+	static {
+		ruleEntity = RuleEntity.EXCLUDE;
 	}
 	
 	@Override

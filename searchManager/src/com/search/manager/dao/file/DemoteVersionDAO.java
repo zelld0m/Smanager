@@ -21,9 +21,8 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.DEMOTE, ruleId);
+	static {
+		ruleEntity = RuleEntity.DEMOTE;
 	}
 	
 	@Override

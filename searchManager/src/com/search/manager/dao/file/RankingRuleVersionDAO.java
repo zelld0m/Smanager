@@ -1,9 +1,7 @@
 package com.search.manager.dao.file;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -20,11 +18,10 @@ public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 
 	@Autowired private DaoService daoService;
 
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.RANKING_RULE, ruleId);
+	static {
+		ruleEntity = RuleEntity.RANKING_RULE;
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public RuleVersionListXml<RankingRuleXml> getRuleVersionList(String store, String ruleId) {
@@ -43,15 +40,7 @@ public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 			try {
 				Relevancy relevancy = daoService.getRelevancyDetails(new Relevancy(ruleId));
 				List<RelevancyKeyword> relevancyKeywords = daoService.getRelevancyKeywords(relevancy).getList();
-				List<String> keywords = new ArrayList<String>();
-
-				if(CollectionUtils.isNotEmpty(relevancyKeywords)){
-					for(RelevancyKeyword rk : relevancyKeywords){
-						keywords.add(rk.getKeyword().getKeyword());
-					}
-				}
-
-				relevancy.setKeywords(keywords);
+				relevancy.setRelKeyword(relevancyKeywords);
 
 				rankingRuleXmlList.add(new RankingRuleXml(store, version, name, notes, username, relevancy));
 

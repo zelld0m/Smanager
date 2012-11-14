@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.RuleXml;
@@ -57,27 +58,32 @@ public class RuleVersionService{
 
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
-		//boolean success = ruleVersionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
-		switch (RuleEntity.find(ruleType)) {
-		case ELEVATE:
-			break;
-		case EXCLUDE:
-			break;
-		case DEMOTE:
-			break;
-		case FACET_SORT:
-			break;
-		case QUERY_CLEANING:
-			break;
-		case RANKING_RULE:
-			RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
-			if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-				deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+		boolean success = false;
+		RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, version);
+		if (rule != null) {
+			success = daoService.restoreRuleVersion(rule);
+			switch (RuleEntity.find(ruleType)) {
+				case ELEVATE:
+					break;
+				case EXCLUDE:
+					break;
+				case DEMOTE:
+					break;
+				case FACET_SORT:
+					break;
+				case QUERY_CLEANING:
+					break;
+				case RANKING_RULE:
+					// what is this for?
+					RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
+					if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
+						deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+					}
+					break;
+				default: 
+					break;
 			}
-			break;
-		default: break;
 		}
-
-		return true;
+		return success;
 	}	
 }

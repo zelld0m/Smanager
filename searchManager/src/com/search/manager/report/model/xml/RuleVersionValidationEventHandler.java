@@ -17,13 +17,14 @@ public class RuleVersionValidationEventHandler implements ValidationEventHandler
         sb.append("\nMESSAGE:  " + event.getMessage());
         sb.append("\nLINKED EXCEPTION:  " + event.getLinkedException());
         sb.append("\nLOCATOR");
-        sb.append("\n    LINE NUMBER:  " + event.getLocator().getLineNumber());
-        sb.append("\n    COLUMN NUMBER:  " + event.getLocator().getColumnNumber());
-        sb.append("\n    OFFSET:  " + event.getLocator().getOffset());
-        sb.append("\n    OBJECT:  " + event.getLocator().getObject());
-        sb.append("\n    NODE:  " + event.getLocator().getNode());
-        sb.append("\n    URL:  " + event.getLocator().getURL());
-        
+        if (event.getLocator() != null) {
+            sb.append("\n    LINE NUMBER:  " + event.getLocator().getLineNumber());
+            sb.append("\n    COLUMN NUMBER:  " + event.getLocator().getColumnNumber());
+            sb.append("\n    OFFSET:  " + event.getLocator().getOffset());
+            sb.append("\n    OBJECT:  " + event.getLocator().getObject());
+            sb.append("\n    NODE:  " + event.getLocator().getNode());
+            sb.append("\n    URL:  " + event.getLocator().getURL());
+        }
         logger.error(sb.toString());
         return true;
 	}

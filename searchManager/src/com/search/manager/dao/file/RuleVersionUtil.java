@@ -33,14 +33,15 @@ public class RuleVersionUtil {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static RuleXml getRuleVersion(String store, RuleEntity ruleEntity, String ruleId, int version){
 		RuleVersionListXml ruleVersionListXml = RuleVersionUtil.getRuleVersionList(store, ruleEntity, ruleId);
-		List<RuleXml> ruleXmlList = (List<RuleXml>)ruleVersionListXml.getVersions();
-		
-		for(RuleXml xml: ruleXmlList){
-			if(xml.getVersion()== version){
-				return xml;
+		if (ruleVersionListXml != null) {
+			List<RuleXml> ruleXmlList = (List<RuleXml>)ruleVersionListXml.getVersions();
+			
+			for(RuleXml xml: ruleXmlList){
+				if(xml.getVersion()== version){
+					return xml;
+				}
 			}
 		}
-		
 		return null;
 	}
 	
@@ -48,18 +49,11 @@ public class RuleVersionUtil {
 	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
 		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();
 		String dir = RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity);
-		String id = ruleId;
-
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
-		}
-		
-		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
+		String filename = RuleXmlUtil.getFilenameByDir(
+				dir, 
+				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
 
 		File dirFile = new File(dir);
-
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -121,17 +115,10 @@ public class RuleVersionUtil {
 
 	@SuppressWarnings("rawtypes")
 	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
-		String dir = RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity);
-		String id = ruleId;
 		long nextVersion = ruleVersionList.getNextVersion();
-
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
-		}
-		
-		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
+		String filename = RuleXmlUtil.getFilenameByDir(
+				RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity), 
+				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
 
 		if (!createRollbackFile(filename, nextVersion)){
 			logger.error("Unable to create rollback file");

@@ -43,7 +43,7 @@ public class ExcludeRuleXml extends RuleXml {
 		this.keyword = keyword;
 	}
 
-	@XmlElementRef(type=RuleItemXml.class)
+	@XmlElementRef(type=ExcludeItemXml.class)
 	public List<ExcludeItemXml> getExcludeItem() {
 		return excludeItem;
 	}

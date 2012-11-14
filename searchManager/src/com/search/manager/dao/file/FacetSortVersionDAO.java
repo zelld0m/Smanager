@@ -21,11 +21,10 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.FACET_SORT, ruleId);
+	static {
+		ruleEntity = RuleEntity.FACET_SORT;
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public RuleVersionListXml<FacetSortRuleXml> getRuleVersionList(

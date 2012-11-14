@@ -21,7 +21,6 @@ import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.StringUtil;
 import com.search.ws.SearchHelper;
 
 @Repository(value="elevateVersionDAO")
@@ -29,11 +28,10 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 
 	@Autowired private DaoService daoService;
 	
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.ELEVATE, StringUtil.escapeKeyword(ruleId));
+	static {
+		ruleEntity = RuleEntity.ELEVATE;
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public RuleVersionListXml<ElevateRuleXml> getRuleVersionList(String store, String ruleId) {

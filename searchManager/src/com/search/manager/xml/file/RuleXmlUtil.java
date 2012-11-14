@@ -18,10 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
@@ -37,10 +40,10 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.FileUtil;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
@@ -73,18 +76,10 @@ public class RuleXmlUtil{
 	private static boolean createPreBackUpRuleXml(String path, RuleXml xml){
 		RuleEntity ruleEntity = xml.getRuleEntity();
 		String dir = RuleXmlUtil.getRuleFileDirectory(PREIMPORTPATH, xml.getStore(), ruleEntity);
-		String id = xml.getRuleId();
-
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(xml.getRuleId()); break;
-		}
-
+		String id = getRuleId(ruleEntity, xml.getRuleId());
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 
 		File dirFile = new File(dir);
-
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -116,7 +111,7 @@ public class RuleXmlUtil{
 
 	private static boolean restoreElevate(String path, RuleXml xml){
 		ElevateRuleXml eXml = (ElevateRuleXml) xml;
-		String store = UtilityService.getStoreName();
+		String store = xml.getStore();
 		String ruleId = xml.getRuleId();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
 
@@ -168,7 +163,7 @@ public class RuleXmlUtil{
 
 	private static boolean restoreExclude(String path, RuleXml xml){
 		ExcludeRuleXml eXml = (ExcludeRuleXml) xml;
-		String store = UtilityService.getStoreName();
+		String store = xml.getStore();
 		String ruleId = xml.getRuleId();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
 
@@ -220,7 +215,7 @@ public class RuleXmlUtil{
 
 	private static boolean restoreDemote(String path, RuleXml xml){
 		DemoteRuleXml dXml = (DemoteRuleXml) xml;
-		String store = UtilityService.getStoreName();
+		String store = xml.getStore();
 		String ruleId = xml.getRuleId();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
 
@@ -274,100 +269,144 @@ public class RuleXmlUtil{
 		return false;
 	}
 
-	private static boolean restoreQueryCleaning(String path, RuleXml xml){
+	private static boolean restoreQueryCleaning(String path, RuleXml xml) {
+		// TODO: this is not usable by import. no way to define where to get the ruleId to use.
+		if (xml instanceof RedirectRuleXml) {
+			
+			RedirectRuleXml dXml = (RedirectRuleXml) xml;
+			String store = xml.getStore();
+			String ruleId = xml.getRuleId();
+
+			try {
+				RedirectRule redirectRule = new RedirectRule();
+				redirectRule.setStoreId(store);
+				redirectRule.setRuleId(ruleId);
+				redirectRule = daoService.getRedirectRule(redirectRule);
+
+				if(redirectRule != null){
+					if (!RuleXmlUtil.createPreBackUpRuleXml(path, dXml)){
+						logger.error("Failed to create pre-import rule");
+						return false;
+					};
+
+					RedirectRule delRel = new RedirectRule();
+					delRel.setRuleId(ruleId);
+					delRel.setStoreId(store);
+					daoService.deleteRedirectRule(delRel);
+				}
+
+				int processedItem = 0;
+				
+				RuleKeywordXml keywordsXml = dXml.getRuleKeyword();
+				Boolean includeKeyword = null;
+				if (dXml.getRuleCondition() != null) {
+					includeKeyword = dXml.getRuleCondition().isIncludeKeyword();
+				}
+			
+				RedirectRule addRel = new RedirectRule(ruleId, dXml.getRedirectType(), dXml.getRuleName(), dXml.getDescription(), store,
+						(Integer)null, (String)null, (String)null, dXml.getCreatedBy(), dXml.getLastModifiedBy(),
+						dXml.getCreatedDate(), dXml.getLastModifiedDate(), dXml.getReplacementKeyword(), dXml.getDirectHit(), includeKeyword);
+
+				if (daoService.addRedirectRule(addRel) > 0) {
+
+					// add redirect keyword
+					RedirectRule rule = new RedirectRule();
+					rule.setRuleId(addRel.getRuleId());
+					rule.setStoreId(store);
+					rule.setLastModifiedBy(dXml.getLastModifiedBy());
+					for (String keyword: keywordsXml.getKeyword()) {
+						daoService.addKeyword(new StoreKeyword(store, keyword));
+						rule.setSearchTerm(keyword);
+						processedItem += daoService.addRedirectKeyword(rule);							
+					}
+
+					if (processedItem == CollectionUtils.size(keywordsXml.getKeyword())) {
+						processedItem = 0;
+						if (dXml.getRuleCondition() == null) {
+							return true;
+						}
+						else {
+							RedirectRuleCondition condition = new RedirectRuleCondition();
+							condition.setRuleId(ruleId);
+							condition.setStoreId(store);
+							condition.setLastModifiedBy(dXml.getLastModifiedBy());
+							for (String cond: dXml.getRuleCondition().getCondition()) {
+								condition.setCondition(cond);
+								// TODO: temporary workaround until SP is fixed. value being returned is > 1.
+								if (daoService.addRedirectCondition(condition) > 0) {
+									processedItem++;
+								}
+							}
+							if (processedItem ==  CollectionUtils.size(dXml.getRuleCondition().getCondition())) {
+								return true;
+							}
+						} 
+					}
+				}
+				
+				if(!rollBackToBackUpRuleXml(path, ruleId)){
+						//TODO: add email notification for manual import
+						logger.error("Failed to rollback");
+				};
+			} catch (Exception e) {
+				logger.error("Falied to restore query cleaning", e);
+				return false;
+			} 
+		}
 		return false;
 	}
 
 	private static boolean restoreRankingRule(String path, RuleXml xml){
+		// TODO: this is not usable by import. no way to define where to get the ruleId to use.
 		//TODO: Verify correctness, old implementation
 		Relevancy restoreVersion = new Relevancy((RankingRuleXml) xml);
-		String store = restoreVersion.getStore().toString();
+		String store = DAOUtils.getStoreId(restoreVersion.getStore());
+		String ruleId = xml.getRuleId();
 		RelevancyField rf = new RelevancyField();
-		boolean isRestored = true;
 
+		// TODO: add the preimport/backup/restore contigency plan  copy from query cleaning
 		try {
-			Relevancy currentVersion = RuleXmlUtil.getRelevancy(store , restoreVersion.getRuleId());
-			if (currentVersion == null && (isRestored &= daoService.addRelevancy(currentVersion) > 0)){
-
-				//TODO: Check for optimization
-				if (MapUtils.isNotEmpty(currentVersion.getParameters())) {
-					for (Map.Entry<String, String> entry : currentVersion.getParameters().entrySet()) {
-						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
-								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
-						isRestored &= daoService.addRelevancyField(rf) > 0;
-					}
-				}
-
-				if (CollectionUtils.isNotEmpty(currentVersion.getRelKeyword())) {
-					for (RelevancyKeyword keyword : currentVersion.getRelKeyword()) {
-						keyword.setRelevancy(currentVersion);
-						isRestored &= daoService.addRelevancyKeyword(keyword) > 0;
-					}
-				}
-
-				//TODO: Rollback if isRestored value becomes false
-
-				return isRestored;
+			Relevancy rule = new Relevancy();
+			rule.setRuleId(ruleId);
+			rule.setStore(new Store(store));
+			rule.setLastModifiedBy(xml.getLastModifiedBy());
+			rule = daoService.getRelevancy(rule);
+			if (rule != null) {
+				daoService.deleteRelevancy(rule);
 			}
-
-			Map<String, String> currParams = currentVersion.getParameters();
-			Map<String, String> restParams = restoreVersion.getParameters();
-
-			if (isRestored &= daoService.updateRelevancy(restoreVersion)>0){
-
-				for (Map.Entry<String, String> entry : restParams.entrySet()) {
-
-					if (currParams.get(entry.getKey()) == null) {
-						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
-								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
-
-						isRestored &= daoService.addRelevancyField(rf) > 0;
-
-					} else if (!currParams.get(entry.getKey()).equals(restParams.get(entry.getKey()))) {
-
-						rf = new RelevancyField(currentVersion,entry.getKey(), entry.getValue(), currentVersion.getCreatedBy(), currentVersion.getLastModifiedBy(),
-								currentVersion.getCreatedDate(), currentVersion.getLastModifiedDate());
-
-
-//						daoService.updateRelevancyField(new RelevancyField(relevancyVersion,entry.getKey(), entry.getValue(), relevancyVersion.getCreatedBy(), relevancyVersion.getLastModifiedBy(),
-//								relevancyVersion.getCreatedDate(), relevancyVersion.getLastModifiedDate()));
+			
+			int processedItem = 0;
+			
+			if (daoService.addRelevancy(restoreVersion) > 0) {
+				Map<String, String> parameters = restoreVersion.getParameters();
+				if (MapUtils.isNotEmpty(parameters)) {
+					for (String key: parameters.keySet()) {
+						rf = new RelevancyField(restoreVersion, key, parameters.get(key), restoreVersion.getCreatedBy(), restoreVersion.getLastModifiedBy(),
+								restoreVersion.getCreatedDate(), restoreVersion.getLastModifiedDate());
+						processedItem += daoService.addRelevancyField(rf);
 					}
-				}
-
-				if (CollectionUtils.isNotEmpty(currentVersion.getRelKeyword())) {
-					for (RelevancyKeyword keyword : currentVersion.getRelKeyword()) {
-						keyword.setRelevancy(currentVersion);
-						daoService.deleteRelevancyKeyword(keyword);
-					}
-				}
-
-				if (CollectionUtils.isNotEmpty(restoreVersion.getRelKeyword())) {
-					for (RelevancyKeyword keyword : restoreVersion.getRelKeyword()) {
-						keyword.setRelevancy(restoreVersion);
-						daoService.addRelevancyKeyword(keyword);
+					
+					if (processedItem == parameters.size()) {
+						processedItem = 0;
+						if (CollectionUtils.isNotEmpty(restoreVersion.getRelKeyword())) {
+							for (RelevancyKeyword keyword : restoreVersion.getRelKeyword()) {
+								keyword.setRelevancy(restoreVersion);
+								processedItem += daoService.addRelevancyKeyword(keyword);
+							}
+							if (processedItem == restoreVersion.getRelKeyword().size()) {
+								return true;							
+							}
+						}
+						else {
+							return true;
+						}
 					}
 				}
 			}
-
 		} catch (DaoException e) {
 			e.printStackTrace();
 		}
-
 		return false;
-	}
-
-	private static Relevancy getRelevancy(String store, String ruleId) throws DaoException {
-		Relevancy relevancy = new Relevancy();
-		relevancy.setRelevancyId(ruleId);
-		relevancy.setStore(new Store(store));
-		relevancy = daoService.getRelevancyDetails(relevancy);
-
-		if (relevancy != null) {
-			List<RelevancyKeyword> relKWList = daoService.getRelevancyKeywords(relevancy).getList();
-			relevancy.setRelKeyword(relKWList);
-		}
-
-		return relevancy;
 	}
 
 	public static boolean restoreRule(RuleXml xml) {
@@ -377,7 +416,6 @@ public class RuleXmlUtil{
 	public static boolean restoreRule(RuleXml xml, boolean isVersion) {
 		String path = isVersion ? PRERESTOREPATH : PREIMPORTPATH;
 		boolean isRestored = false;
-		RuleXmlUtil ruleXmlUtil = new RuleXmlUtil().getInstance();
 
 		if(xml== null){
 			return isRestored; 
@@ -429,16 +467,7 @@ public class RuleXmlUtil{
 
 	public static boolean backUpRule(String path, String store, RuleEntity ruleEntity, String ruleId, Object rule){
 		String dir = getRuleFileDirectory(path, store, ruleEntity);
-		String id = ruleId;
-
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
-		}
-
-		String filename = getFilenameByDir(dir, id) + "_backup";
-
+		String filename = getFilenameByDir(dir, getRuleId(ruleEntity, ruleId)) + "_backup";
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Marshaller m = context.createMarshaller();
@@ -454,6 +483,16 @@ public class RuleXmlUtil{
 		}
 	}
 
+	public static String getRuleId(RuleEntity ruleEntity, String ruleId) {
+		switch(ruleEntity) {
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE: 
+				return StringUtil.escapeKeyword(ruleId);
+		}
+		return ruleId;
+	}
+	
 	public DaoService getDaoService() {
 		return daoService;
 	}

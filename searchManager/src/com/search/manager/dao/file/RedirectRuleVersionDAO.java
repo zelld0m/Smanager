@@ -11,18 +11,16 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.utility.StringUtil;
 
 @Repository(value="queryCleaningVersionDAO")
 public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 
 	@Autowired private DaoService daoService;
 
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFilename(store, RuleEntity.QUERY_CLEANING, StringUtil.escapeKeyword(ruleId));
+	static {
+		ruleEntity = RuleEntity.QUERY_CLEANING;
 	}
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public RuleVersionListXml<RedirectRuleXml> getRuleVersionList(

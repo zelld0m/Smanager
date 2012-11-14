@@ -23,22 +23,28 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
 public abstract class RuleVersionDAO<T extends RuleXml>{
 	
 	private Logger logger = Logger.getLogger(RuleVersionDAO.class);
 	
-	public abstract String getRuleVersionFilename(String store, String ruleId);
 	public abstract RuleVersionListXml<T> getRuleVersionList(String store, String ruleId);
 	public abstract boolean createRuleVersion(String store, String ruleId, String username, String name, String notes);
+	protected static RuleEntity ruleEntity = null;
 	
 	public boolean restoreRuleVersion(T xml){
 		return RuleXmlUtil.restoreRule(xml);
 	};
 
+	public String getRuleVersionFilename(String store, String ruleId) {
+		return RuleVersionUtil.getFilename(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){
 

@@ -68,6 +68,12 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.RankingRuleXml;
+import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.ws.SearchHelper;
 
@@ -1470,7 +1476,39 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
-		// TODO Auto-generated method stub
+		RuleEntity ruleEntity = xml.getRuleEntity();
+		switch (ruleEntity) {
+			case ELEVATE:
+				if (xml instanceof ElevateRuleXml) {
+					return elevateVersionDAO.restoreRuleVersion((ElevateRuleXml)xml);
+				}
+				break;
+			case EXCLUDE:
+				if (xml instanceof ExcludeRuleXml) {
+					return excludeVersionDAO.restoreRuleVersion((ExcludeRuleXml)xml);
+				}
+				break;
+			case DEMOTE:
+				if (xml instanceof DemoteRuleXml) {
+					return demoteVersionDAO.restoreRuleVersion((DemoteRuleXml)xml);
+				}
+				break;
+			case FACET_SORT:
+				if (xml instanceof FacetSortRuleXml) {
+					return facetSortVersionDAO.restoreRuleVersion((FacetSortRuleXml)xml);
+				}
+				break;
+			case QUERY_CLEANING:
+				if (xml instanceof RedirectRuleXml) {
+					return queryCleaningVersionDAO.restoreRuleVersion((RedirectRuleXml)xml);
+				}
+				break;
+			case RANKING_RULE:
+				if (xml instanceof RankingRuleXml) {
+					return rankingRuleVersionDAO.restoreRuleVersion((RankingRuleXml)xml);
+				}
+				break;
+		}
 		return false;
 	}
 

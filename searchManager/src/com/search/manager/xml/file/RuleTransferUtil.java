@@ -20,7 +20,6 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
-import com.search.manager.utility.StringUtil;
 
 public class RuleTransferUtil {
 
@@ -61,7 +60,6 @@ public class RuleTransferUtil {
 		}
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public static List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path){
 		List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
 		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
@@ -92,22 +90,13 @@ public class RuleTransferUtil {
 		return ruleXmls;
 	}
 	
-	@SuppressWarnings("rawtypes")
 	public static RuleXml getImportRule(String store, RuleEntity ruleEntity, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
-		String id = ruleId;
-
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
-		}
-		
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 
 		File dirFile = new File(dir);
-
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -141,21 +130,12 @@ public class RuleTransferUtil {
 		return ruleXml;
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static boolean exportRuleAsXML(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
 		String dir = RuleXmlUtil.getRuleFileDirectory(EXPORT_FILE_PATH, store, ruleEntity);
-		String id = ruleId;
-		
-		switch(ruleEntity){
-		case ELEVATE:
-		case EXCLUDE:
-		case DEMOTE: id = StringUtil.escapeKeyword(ruleId); break;
-		}
-		
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
-		
-		File dirFile = new File(dir);
 
+		File dirFile = new File(dir);
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);

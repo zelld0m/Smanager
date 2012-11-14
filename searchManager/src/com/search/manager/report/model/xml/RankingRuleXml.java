@@ -1,15 +1,20 @@
 package com.search.manager.report.model.xml;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.RelevancyKeyword;
 
 @XmlRootElement(name = "rankingrule")
 @DataTransferObject(converter = BeanConverter.class)
@@ -36,7 +41,13 @@ public class RankingRuleXml extends RuleXml {
 			this.setStartDate(rr.getStartDate());
 			this.setEndDate(rr.getEndDate());
 			this.setDescription(rr.getDescription());
-			this.setRuleKeyword(new RuleKeywordXml(rr.getKeywords()));
+			List<String> keywords = new ArrayList<String>();
+			if (CollectionUtils.isNotEmpty(rr.getRelKeyword())) {
+				for (RelevancyKeyword keyword: rr.getRelKeyword()) {
+					keywords.add(DAOUtils.getKeywordId(keyword.getKeyword()));
+				}
+			}
+			this.setRuleKeyword(new RuleKeywordXml(keywords));
 			this.setParameters(rr.getParameters());
 		}
 
