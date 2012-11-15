@@ -87,6 +87,7 @@ public class RuleItemXml extends BaseEntityXml{
 		this.expiryDate = expiryDate;
 	}
 
+	@XmlTransient
 	public String getDpNo() {
 		return dpNo;
 	}
@@ -95,6 +96,7 @@ public class RuleItemXml extends BaseEntityXml{
 		this.dpNo = dpNo;
 	}
 
+	@XmlTransient
 	public String getImagePath() {
 		return imagePath;
 	}
@@ -103,6 +105,7 @@ public class RuleItemXml extends BaseEntityXml{
 		this.imagePath = imagePath;
 	}
 
+	@XmlTransient
 	public String getMfrNo() {
 		return mfrNo;
 	}
@@ -111,6 +114,7 @@ public class RuleItemXml extends BaseEntityXml{
 		this.mfrNo = mfrNo;
 	}
 
+	@XmlTransient
 	public String getManufacturer() {
 		return manufacturer;
 	}

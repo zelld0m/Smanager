@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.model.Product;
+
 @XmlRootElement(name = "elevate")
 @XmlType(propOrder={"keyword", "elevateItem"})
 @DataTransferObject(converter = BeanConverter.class)
@@ -19,22 +21,23 @@ public class ElevateRuleXml extends RuleXml{
 	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<ElevateItemXml> elevateItem;
+	private List<Product> products;
 	
-	public ElevateRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ElevateItemXml> elevateItem) {
+	public ElevateRuleXml() {
+		super(serialVersionUID);
+	}
+	
+	public ElevateRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ElevateItemXml> eItemXml) {
 		super(store, name, notes, createdBy);
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);
 		this.setVersion(version);
 		this.keyword = keyword;
-		this.elevateItem = elevateItem;
 		this.setCreatedDate(new Date());
+		setElevateItem(eItemXml);
 	}
-
-	public ElevateRuleXml() {
-		super(serialVersionUID);
-	}
-
+	
 	public String getKeyword() {
 		return keyword;
 	}
@@ -55,5 +58,14 @@ public class ElevateRuleXml extends RuleXml{
 	@XmlTransient
 	public List<ElevateItemXml> getItem() {
 		return elevateItem;
+	}
+
+	@XmlTransient
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
 	}
 }

@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.model.Product;
+
 @XmlRootElement(name = "demote")
 @XmlType(propOrder={"keyword", "demoteItem"})
 @DataTransferObject(converter = BeanConverter.class)
@@ -19,6 +21,7 @@ public class DemoteRuleXml extends RuleXml {
 	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<DemoteItemXml> demoteItem;
+	private List<Product> products;
 	
 	public DemoteRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<DemoteItemXml> demoteItem) {
 		super(store, name, notes, createdBy);
@@ -56,4 +59,13 @@ public class DemoteRuleXml extends RuleXml {
 	public List<DemoteItemXml> getItem() {
 		return demoteItem;
 	}
+
+	@XmlTransient
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}	
 }

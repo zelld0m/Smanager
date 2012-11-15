@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.Product;
 import com.search.manager.model.RuleStatus;
 
 @XmlSeeAlso({
@@ -15,7 +16,8 @@ import com.search.manager.model.RuleStatus;
 	RedirectRuleXml.class,
 	RankingRuleXml.class,
 	RuleStatus.class,
-	RuleEntity.class
+	RuleEntity.class,
+	Product.class
 })
 public class RuleXml extends BaseEntityXml{
 	

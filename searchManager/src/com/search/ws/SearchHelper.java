@@ -90,11 +90,13 @@ public class SearchHelper {
 			ep.setStore(store);
 			if (e.getMemberType() == MemberTypeEntity.PART_NUMBER) {
 				map.put(e.getEdp(), ep);
+			}else{
+				map.put(e.getMemberId(), ep);				
 			} 
 		}
 		
 		if(MapUtils.isNotEmpty(map)){
-			SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
+			SearchHelper.getProductsIgnoreKeyword(map, store, UtilityService.getServerName(), ruleId);
 		}
 		
 		return map;
@@ -122,9 +124,11 @@ public class SearchHelper {
 			int size = productList.size();
 			boolean isWithEDP = false;
 			StringBuilder edps = new StringBuilder("EDP:(");
+			String edp = "";
 			for (Product product: productList.values()) {
-				edps.append(" ").append(product.getEdp());
-				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER) {
+				edp = product.getEdp();
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && StringUtils.isNotBlank(edp)) {
+					edps.append(" ").append(edp);
 					isWithEDP = true;
 				}
 			}
@@ -248,8 +252,13 @@ public class SearchHelper {
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
 			int size = productList.size();
 			StringBuilder edps = new StringBuilder();
+			String edp = "";
+			
 			for (Product product: productList.values()) {
-				edps.append(" ").append(product.getEdp());
+				edp = product.getEdp();
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && StringUtils.isNotBlank(edp)) {
+					edps.append(" ").append(edp);
+				}
 			}
 
 			if (edps.toString().trim().length() == 0) {

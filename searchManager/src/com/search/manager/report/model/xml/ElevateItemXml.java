@@ -7,7 +7,6 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.ElevateResult;
-import com.search.manager.model.Product;
 
 @XmlRootElement(name="item")
 @DataTransferObject(converter = BeanConverter.class)
@@ -21,7 +20,7 @@ public class ElevateItemXml extends RuleItemXml{
 		super();
 	}
 	
-	public ElevateItemXml(ElevateResult er, Product p){
+	public ElevateItemXml(ElevateResult er){
 		super();
 		this.setMemberId(er.getMemberId());
 		this.setMemberType(er.getMemberType());
@@ -29,12 +28,6 @@ public class ElevateItemXml extends RuleItemXml{
 			this.setRuleCondition(er.getCondition());
 		}else{
 			this.setEdp(er.getEdp()) ;
-			if(p!=null){
-				this.setImagePath(p.getImagePath());
-				this.setDpNo(p.getDpNo());
-				this.setMfrNo(p.getMfrPN());
-				this.setManufacturer(p.getManufacturer());
-			}
 		}
 		this.setExpiryDate(er.getExpiryDate());
 		this.setCreatedBy(er.getCreatedBy());

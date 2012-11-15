@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.model.Product;
+
 @XmlRootElement(name = "exclude")
 @XmlType(propOrder={"keyword", "excludeItem"})
 @DataTransferObject(converter = BeanConverter.class)
@@ -19,6 +21,7 @@ public class ExcludeRuleXml extends RuleXml {
 	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<ExcludeItemXml> excludeItem;
+	private List<Product> products;
 	
 	public ExcludeRuleXml() {
 		super(serialVersionUID);
@@ -56,4 +59,13 @@ public class ExcludeRuleXml extends RuleXml {
 	public List<ExcludeItemXml> getItem() {
 		return excludeItem;
 	}
+
+	@XmlTransient
+	public List<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(List<Product> products) {
+		this.products = products;
+	}	
 }

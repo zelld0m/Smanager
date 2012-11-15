@@ -2,11 +2,9 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
@@ -91,7 +89,7 @@ public class RuleTransferService {
 					
 					for (ElevateResult elevateResult : elevateItemList) {
 						Product p = elevateResult.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(elevateResult.getEdp()): null;
-						elevateItemXmlList.add(new ElevateItemXml(elevateResult, p));
+						elevateItemXmlList.add(new ElevateItemXml(elevateResult));
 					}
 				} catch (DaoException e) {
 					return null;
