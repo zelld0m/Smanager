@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 
 @XmlRootElement(name = "demote")
@@ -36,6 +37,7 @@ public class DemoteRuleXml extends RuleXml {
 	
 	public DemoteRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.DEMOTE);
 	}
 	
 	public String getKeyword() {
@@ -68,4 +70,9 @@ public class DemoteRuleXml extends RuleXml {
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}	
+	
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.DEMOTE;
+	}
 }

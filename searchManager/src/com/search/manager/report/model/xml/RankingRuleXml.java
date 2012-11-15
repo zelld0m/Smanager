@@ -13,6 +13,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
 
@@ -29,6 +30,7 @@ public class RankingRuleXml extends RuleXml {
 
 	public RankingRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.RANKING_RULE);
 	}
 
 	public RankingRuleXml(String store, long version, String name, String notes, String username,

@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 
 @XmlRootElement(name = "elevate")
@@ -25,6 +26,7 @@ public class ElevateRuleXml extends RuleXml{
 	
 	public ElevateRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.ELEVATE);
 	}
 	
 	public ElevateRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ElevateItemXml> eItemXml) {
@@ -32,6 +34,7 @@ public class ElevateRuleXml extends RuleXml{
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);
+		this.setRuleEntity(RuleEntity.ELEVATE);
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.setCreatedDate(new Date());
