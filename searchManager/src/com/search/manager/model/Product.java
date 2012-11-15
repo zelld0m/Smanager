@@ -59,9 +59,11 @@ public class Product extends ModelBean {
 		this.setCreatedDate(e.getCreatedDate());
 		this.setLastModifiedDate(e.getLastModifiedDate());
 		this.setComment(e.getComment());
+		this.setCondition(e.getCondition());
 		this.setLastModifiedBy(e.getLastModifiedBy());
 		this.setCreatedBy(e.getCreatedBy());
 		this.setMemberId(e.getMemberId());
+		this.setMemberTypeEntity(e.getMemberType());
 		this.setStore(e.getStoreKeyword().getStoreId());
 	}
 	

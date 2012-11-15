@@ -17,6 +17,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
@@ -87,7 +91,13 @@ public class RuleTransferUtil {
 			RuleXml ruleXml = getRule(store, ruleEntity, file, path);
 			
 			if(ruleXml != null){
-				ruleXmls.add(ruleXml);
+				if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
+					ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
+					productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
+					ruleXmls.add((RuleXml) productDetailsAware);
+				}else{
+					ruleXmls.add(ruleXml);
+				}
 			}
 		}
 

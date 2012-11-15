@@ -16,7 +16,7 @@ import com.search.manager.model.Product;
 @XmlRootElement(name = "demote")
 @XmlType(propOrder={"keyword", "demoteItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class DemoteRuleXml extends RuleXml {
+public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;

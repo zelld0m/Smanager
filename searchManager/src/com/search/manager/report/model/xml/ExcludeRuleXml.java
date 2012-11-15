@@ -16,7 +16,7 @@ import com.search.manager.model.Product;
 @XmlRootElement(name = "exclude")
 @XmlType(propOrder={"keyword", "excludeItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class ExcludeRuleXml extends RuleXml {
+public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;

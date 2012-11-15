@@ -96,10 +96,19 @@ public class SearchHelper {
 		}
 		
 		if(MapUtils.isNotEmpty(map)){
-			SearchHelper.getProductsIgnoreKeyword(map, store, UtilityService.getServerName(), ruleId);
+			SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
 		}
 		
 		return map;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static LinkedHashMap<String, Product> getProductsIgnoreKeyword(Map<String, ? extends Product> map, String store, String ruleId){
+		if(MapUtils.isNotEmpty(map)){
+			SearchHelper.getProductsIgnoreKeyword(map, store, UtilityService.getServerName(), ruleId);
+		}
+		
+		return (LinkedHashMap<String, Product>) map;
 	}
 
 	public static void getProducts(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {

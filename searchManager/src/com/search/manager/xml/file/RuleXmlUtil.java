@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -27,12 +29,14 @@ import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteItemXml;
@@ -43,14 +47,17 @@ import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.FacetSortItemXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleItemXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
+import com.search.ws.SearchHelper;
 
 public class RuleXmlUtil{
 
@@ -74,6 +81,31 @@ public class RuleXmlUtil{
 		return instance;
 	}
 
+	public static List<Product> getProductDetails(RuleXml ruleXml){
+		
+		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
+		List<Product> productList = new ArrayList<Product>();
+		ProductDetailsAware prodDetails = (ProductDetailsAware) ruleXml;
+		List<? extends RuleItemXml> ruleItemList = prodDetails.getItem();
+		String mapKey = "";
+		String store = ruleXml.getStore();
+		String keyword = ruleXml.getRuleId();
+		
+		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
+		
+		for (RuleItemXml ruleItem : ruleItemList) {
+			mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
+			map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
+		}
+		
+		if (MapUtils.isNotEmpty(map)){
+			SearchHelper.getProductsIgnoreKeyword(map, store, keyword);
+			productList = new ArrayList<Product>(map.values());
+		}
+
+		return productList;
+	}
+	
 	private static boolean rollBackToBackUpRuleXml(String path, String ruleId){
 		//TODO:
 		return true;

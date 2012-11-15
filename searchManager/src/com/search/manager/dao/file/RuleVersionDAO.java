@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.bind.Binder;
@@ -19,25 +18,20 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.ElevateResult;
-import com.search.manager.model.Product;
-import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.DemoteRuleXml;
-import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
-import com.search.ws.SearchHelper;
 
 public abstract class RuleVersionDAO<T extends RuleXml>{
 	
@@ -101,28 +95,6 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return false;
 	}
 
-//	private List<Product>() getProducts(T xml){
-//		if(CollectionUtils.isNotEmpty(elevateItem)){
-//			StoreKeyword storeKeyword = new StoreKeyword(getStore(), keyword);
-//			LinkedHashMap<String, Product> map =  new LinkedHashMap<String, Product>();
-//			List<ElevateResult> itemList = new ArrayList<ElevateResult>();
-//			ElevateResult eResult = new ElevateResult();
-//			
-//			for(ElevateItemXml eItem:elevateItem){
-//				eResult = new ElevateResult(storeKeyword, eItem);
-//				itemList.add(eResult);
-//			}
-//
-//			map = SearchHelper.getProducts(itemList, getStore(), keyword);
-//			
-//			if(MapUtils.isNotEmpty(map)){
-//				return new ArrayList<Product>(map.values());
-//			}
-//		}
-//		
-//		return null;
-//	}
-//	
 	public List<RuleXml> getRuleVersions(String store, String ruleId) {
 		List<RuleXml> ruleVersionInfoList = new ArrayList<RuleXml>();
 		RuleVersionListXml<T> ruleVersionListXml = (RuleVersionListXml<T>) getRuleVersionList(store, ruleId);
@@ -133,19 +105,13 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			if(CollectionUtils.isNotEmpty(ruleXmlList)){
 				for(T ruleVersion: ruleXmlList){
 					if(!ruleVersion.isDeleted()){
-						
-						if(ruleVersion instanceof ElevateRuleXml){
-							
-							
-							//((ElevateRuleXml)ruleVersion).setProducts(products)
-						}else if(ruleVersion instanceof DemoteRuleXml){
-							
+						if(ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml){
+							ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
+							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion));
+							ruleVersionInfoList.add((RuleXml) productDetailsAware);
+						}else{
+							ruleVersionInfoList.add(ruleVersion);
 						}
-						else if(ruleVersion instanceof ExcludeRuleXml){
-							
-						}
-						
-						ruleVersionInfoList.add(ruleVersion);
 					}
 				}
 				
@@ -159,7 +125,5 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		}
 
 		return ruleVersionInfoList;
-	}
-	
-	
+	}	
 }

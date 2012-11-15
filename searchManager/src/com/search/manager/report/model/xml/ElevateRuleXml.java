@@ -16,7 +16,7 @@ import com.search.manager.model.Product;
 @XmlRootElement(name = "elevate")
 @XmlType(propOrder={"keyword", "elevateItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class ElevateRuleXml extends RuleXml{
+public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	
 	private static final long serialVersionUID = 1L;
 	private String keyword;
