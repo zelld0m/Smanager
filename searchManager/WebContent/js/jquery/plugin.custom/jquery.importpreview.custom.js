@@ -83,27 +83,43 @@
 
 			return type;
 		};
+		
+		base.populateImportAsList = function(data, contentHolder){
+			var list = data.list;
+			var $importTypeSelect = contentHolder.find("div.rulePreview > label#importAs > select#importAs");
+			
+			for (var index in list){
+				$importTypeSelect.append($("<option>", {value: list[index]["ruleRefId"]}).text(list[index]["description"]));
+			}
+		};
+		
+		base.populateImportTypeList = function(data, contentHolder){
+			var $importTypeSelect = contentHolder.find("div.rulePreview > label#importType > select#importType");
+			
+			for (var index in data){
+				$importTypeSelect.append($("<option>", {value: index}).text(data[index]));
+			}
+		};
 
 		base.populateItemTable = function($content, ruleType, data){
-			var list = data.list;
-
+			var list = data;
 			var memberIds = new Array();
 			var $table = $content.find("table#item");
 			base.memberIdToItem = new Array();
 
 			$table.find("tr:not(#itemPattern)").remove();
 			
-			$content.find("#ruleInfo").text($.trim(base.options.ruleInfo));
+			$content.find("#ruleInfo").text($.trim(base.options.rule["ruleName"]));
 			$content.find("#requestType").text(base.options.requestType);
 			
-			if (data.totalSize==0){
+			if (list.length==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
 
-				for (var i = 0; i < data.totalSize; i++) {
+				for (var i = 0; i < list.length; i++) {
 					memberIds.push(list[i]["memberId"]);
 					base.memberIdToItem[list[i]["memberId"]] = list[i];
 
@@ -161,117 +177,23 @@
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
-
-		base.populateRuleXmlTable = function($content, ruleType, data){
-			var list = data["item"];
-			
-			var memberIds = new Array();
-			var $table = $content.find("table#item");
-			base.memberIdToItem = new Array();
-
-			$table.find("tr:not(#itemPattern)").remove();
-			
-			$content.find("#ruleInfo").text($.trim(base.options.ruleInfo));
-			$content.find("#requestType").text(base.options.requestType);
-			
-			if (data.totalSize==0){
-				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
-				$tr.find("td:not(#itemPosition)").remove();
-				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
-				$tr.appendTo($table);
-			}else{
-
-				for (var i = 0; i < data.totalSize; i++) {
-					memberIds.push(list[i]["memberId"]);
-					base.memberIdToItem[list[i]["memberId"]] = list[i];
-
-					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
-					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
-
-					var PART_NUMBER = $.isNotBlank(list[i]["memberType"]) && list[i]["memberType"] === "PART_NUMBER";
-					var FACET = $.isNotBlank(list[i]["memberType"]) && list[i]["memberType"] === "FACET";
-
-					if(FACET){
-						base.setImage($tr,list[i]);
-						$tr.find("td#itemMan").html(list[i].condition)
-						.prop("colspan",3)
-						.removeClass("txtAC")
-						.addClass("txtAL")
-						.attr("width", "363px");
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-
-						if ($.isBlank(list[i]["isExpired"])){
-							$tr.find("#itemValidityDaysExpired").remove();
-						}
-
-						$tr.find("td#itemDPNo,td#itemName").remove();
-					}
-					else if(PART_NUMBER){
-						if($.isNotBlank(list[i]["dpNo"])){
-							base.setImage($tr,list[i]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-						}
-						else{
-							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-							.prop("colspan",4)
-							.removeClass("txtAC")
-							.addClass("txtAL")
-							.attr("width", "369px");
-							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
-						}
-
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]);
-						if ($.isBlank(list[i]["isExpired"])){
-							$tr.find("#itemValidityDaysExpired").remove();
-						}
-					}
-
-					$tr.appendTo($table);
-				};
-
-				if (ruleType.toLowerCase() === "elevate" && memberIds.length>0) 
-					base.options.itemForceAddStatusCallback(base, memberIds);
-			}
-
-			// Alternate row style
-			$content.find("tr#itemPattern").hide();
-			$content.find("tr:not(#itemPattern):even").addClass("alt");
-		};
 		
-		base.getRuleXml = function($content, ruleType, ruleId){
-			RuleTransferServiceJS.getRuleToImport(ruleType, ruleId,{
-				callback: function(data){
-					base.populateRuleXmlTable($content, ruleType, data);
-				}
-			});
+		base.getImportAsData = function($content, ruleType, ruleId){
+			
 		};
 		
 		base.getDatabaseData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
-				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
-					callback: function(data){
-						base.populateItemTable($content, "Elevate", data);
-					}
-				});
+				base.populateItemTable($content, "Elevate", base.options.rule["products"]);
 				break;
 			case "exclude": 
-				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(ruleId , 0, 0,{
-					callback: function(data){
-						base.populateItemTable($content, "Exclude", data);
-					}
-				});
+				base.populateItemTable($content, "Exclude", base.options.rule["products"]);
 				break;
 			case "demote": 
-				DemoteServiceJS.getAllProductsIgnoreKeyword(ruleId , 0, 0,{
-					callback: function(data){
-						base.populateItemTable($content, "Demote", data);
-					}
-				});
+				base.populateItemTable($content, "Demote", base.options.rule["products"]);
 				break;
-			case "facet sort": 
+			case "facetsort": 
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
 
@@ -315,7 +237,7 @@
 					}
 				});
 				break;
-			case "query cleaning": 
+			case "querycleaning": 
 				$content.find(".infoTabs").tabs({});
 
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
@@ -386,7 +308,7 @@
 				});
 
 				break;
-			case "ranking rule": 
+			case "rankingrule": 
 				$content.find(".infoTabs").tabs({});
 
 				RelevancyServiceJS.getRule(ruleId, {
@@ -420,7 +342,7 @@
 			var $content = base.contentHolder;
 
 			switch(base.options.ruleType.toLowerCase()){
-			case "ranking rule": 
+			case "rankingrule": 
 				$content.find(".infoTabs").tabs({});
 
 				RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
@@ -500,7 +422,7 @@
 					template += '</div>';
 					template += '<div class="clearB"></div>';
 					break;
-				case "facet sort":
+				case "facetsort":
 					template  = '<div class="rulePreview w600">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
@@ -512,7 +434,7 @@
 					template += '</div>';
 					template += '<div class="clearB"></div>';
 					break;
-				case "query cleaning":
+				case "querycleaning":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
@@ -530,7 +452,7 @@
 					template += '	<div class="clearB"></div>';							
 					template += '</div>';
 					break;
-				case "ranking rule":
+				case "rankingrule":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
@@ -609,7 +531,7 @@
 				template += '		</table>';
 				template += '</div>';
 				break;
-			case "facet sort":
+			case "facetsort":
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
 				template += '			<tbody>';
@@ -638,7 +560,7 @@
 				template += '		</table>';
 				template += '	</div>';
 				break;
-			case "ranking rule": 
+			case "rankingrule": 
 				
 
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
@@ -713,7 +635,7 @@
 				template += '	</div>';
 				template += '</div>';
 				break;
-			case "query cleaning": 
+			case "querycleaning": 
 				template += '<div id="rankingSummary" class="infoTabs marB20 tabs">';
 
 				template += '	<ul class="posRel top5" style="z-index:100">';
@@ -849,7 +771,7 @@
 		};
 		
 		base.showLeftPane = function(ruleId, ruleType){
-			var $div = $('<div id="leftPreview" class="floatL"></div>');
+			var $div = $('<div id="leftPreview" class="floatL pad5"></div>');
 			$div.append(base.getPreTemplate());
 			$div.append(base.getTemplate());
 			$div.append(base.getPostTemplate());
@@ -859,7 +781,7 @@
 		
 		base.showRightPane = function(ruleId, ruleType){
 			if(base.options.enableRightPanel){
-				var $div = $('<div id="rightPreview" class="floatR"></div>');
+				var $div = $('<div id="rightPreview" class="floatR pad5"></div>');
 				
 				$div.append(base.getRightPreTemplate());
 				$div.append(base.getTemplate());
@@ -892,14 +814,16 @@
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
 						
-						base.contentHolder.append(base.showRightPane());
+						//left pane
 						base.contentHolder.append(base.showLeftPane());
+						base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
 						
-						//$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
-						
-						base.getRuleXml(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
-						base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType);
-						
+						if(base.options.enableRightPanel){
+							base.contentHolder.append(base.showRightPane());
+							base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId);
+							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"));
+						}
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
@@ -917,6 +841,7 @@
 			ruleType: "",
 			ruleId: "",
 			ruleInfo: "",
+			rule: null,
 			requestType: "",
 			version: "",
 			enablePreTemplate: false,
@@ -926,6 +851,8 @@
 			postTemplate: "",
 			rightPanelTemplate: "",
 			itemForceAddStatusCallback: function(base, memberIds){},
+			itemImportTypeListCallback: function(base, contentHolder){},
+			itemImportAsListCallback: function(base, contentHolder){},
 			setSelectedOverwriteRulePreview: function(base, rulename){}
 	
 	};

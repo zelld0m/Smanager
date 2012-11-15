@@ -38,7 +38,13 @@ public class RuleTransferUtil {
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId){
-		return getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), IMPORT_FILE_PATH);
+		RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), IMPORT_FILE_PATH);
+		
+		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
+			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
+			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
+		}
+		return ruleXml;
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){

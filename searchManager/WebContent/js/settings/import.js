@@ -279,11 +279,11 @@
 		getRightPanelTemplate : function(){
 			var template = "";
 			
-			template += '	<div class="rightPane w590 marB20">';
+			template += '	<div class="rulePreview w590 marB20">';
 			template += '		<div class="alert marB10">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>';
 			template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-			template += '		<label class="wAuto floatL" id="importType">';
-			template += '			<select id="importType">';
+			template += '		<label class="wAuto floatL" id="importAs">';
+			template += '			<select id="importAs">';
 			template += '				<option value="">-- Import As New Rule --</option>';
 			
 			//import as
@@ -328,30 +328,45 @@
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
 							$tr.find("td#select > input[type='checkbox']").attr("name", rule["name"]);
-
+							
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
 								$tr.find("td#ruleOption > img.previewIcon").importpreview({
 									ruleType: self.entityName,
 									ruleId: ruleId,
-									ruleInfo: rule["description"],
+									rule: rule,
 									enablePreTemplate: true,
 									enablePostTemplate: true,
 									enableRightPanel: true,
 									postTemplate: self.getPostTemplate(),
 									preTemplate: self.getPreTemplate(rule["importType"]),
 									rightPanelTemplate: self.getRightPanelTemplate(),
-									itemForceAddStatusCallback: function(base, memberIds){
-										if (rule["ruleEntity"].toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
-											callback:function(data){
-												base.updateForceAddStatus(data);
-											},
-											preHook: function(){
-												base.prepareForceAddStatus();
+									itemImportAsListCallback: function(base, contentHolder){
+										DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+											callback : function(data){
+												base.populateImportAsList(data, contentHolder);
 											}
 										});
+									},
+									itemImportTypeListCallback: function(base, contentHolder){
+										EnumUtilityServiceJS.getImportTypeList({
+											callback : function(data){
+												base.populateImportTypeList(data, contentHolder);
+											}
+										});
+									},
+									itemForceAddStatusCallback: function(base, memberIds){
+										if (self.entityName === "elevate"){
+											ElevateServiceJS.isRequireForceAdd(ruleId, memberIds, {
+												callback:function(data){
+													base.updateForceAddStatus(data);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus();
+												}
+											});
+										}
 									}
 								});
 							}else{
