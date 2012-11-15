@@ -88,22 +88,24 @@
 		getSelectedImportAsRefId : function(){
 			var self = this;
 			var selectedImportAsRefId = [];
+			var $selectedTab = $("#"+self.tabSelected);
+			
 			var selectedItems = self.getSelectedItems();
-			for (var i in selectedItems){
-				selectedImportAsRefId.push(i); 
+			for (var id in selectedItems){
+				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+				selectedImportAsRefId.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].value); 
 			}
 			return selectedImportAsRefId;
 		}, 
 		
 		getSelectedImportType : function(){
 			var self = this;
-			var selectedItems = [];
 			var $selectedTab = $("#"+self.tabSelected);
-			
-			//TODO
-			$selectedTab.find("tr:not(#ruleItemPattern) >td#type > select#importTypeList > option:selected").each(function(index, value){
-				selectedItems.push($(this).text());
-			});
+			var selectedItems = self.getSelectedItems();
+			for (var id in selectedItems){
+				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+				selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text()); 
+			}
 			return selectedItems;
 		}, 
 		
@@ -112,7 +114,7 @@
 			var selectedRuleNames = [];
 			
 			//TODO
-			return self.getSelectedRefId();
+			return self.getSelectedImportAsRefId();
 		},
 		
 		getSelectedItems : function(){
@@ -188,7 +190,6 @@
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "importBtn":
-							//TODO
 							RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 								callback: function(data){									
 									self.postMsg(data,true);	
@@ -332,7 +333,7 @@
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
 								$tr.find("td#ruleOption > img.previewIcon").importpreview({
-									ruleType: self.getRuleType(rule["ruleEntity"]),
+									ruleType: self.entityName,
 									ruleId: ruleId,
 									ruleInfo: rule["description"],
 									enablePreTemplate: true,

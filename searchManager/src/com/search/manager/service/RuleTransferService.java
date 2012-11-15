@@ -157,28 +157,31 @@ public class RuleTransferService {
 			String ruleId = ruleRefIdList[i];
 			
 			ImportType importType = ImportType.get(importTypeList[i]);
-			String importAsId = importAsRefIdList[i];
 			String ruleName = ruleNameList[i];
+			String importAsId = importAsRefIdList[i];
 			String statusId = ruleStatusIdList[i];
 			
 			//if importAsId is null, generate a new id
-			if(StringUtils.isBlank(importAsId)){
-				switch(ruleEntity){
-				//TODO
-				case ELEVATE:
-				case EXCLUDE:
-				case DEMOTE:
+			switch(ruleEntity){
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE:
+				if(StringUtils.isBlank(importAsId)){
 					importAsId = ruleId;
-					break;
-				case FACET_SORT:
-				case QUERY_CLEANING:
-				case RANKING_RULE:
-					importAsId = DAOUtils.generateUniqueId();
-					break;
-				default:
-					break;
 				}
+				ruleName = importAsId;
+				break;
+			case FACET_SORT:
+			case QUERY_CLEANING:
+			case RANKING_RULE:
+				if(StringUtils.isBlank(importAsId)){
+					DAOUtils.generateUniqueId();
+				}
+				break;
+			default:
+				break;
 			}
+			
 						
 			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
 				switch(importType){
