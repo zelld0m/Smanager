@@ -42,17 +42,8 @@ public class RuleTransferUtil {
 	}
 	
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
-		FileWriter writer = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setEventHandler(new RuleVersionValidationEventHandler());
-			if (!file.exists()){
-				writer = new FileWriter(file);
-				m.marshal(new RuleXml(), writer);
-			}
-
 			Unmarshaller um = context.createUnmarshaller(); 
 			um.setEventHandler(new RuleVersionValidationEventHandler());
 			return (RuleXml) um.unmarshal(file);
@@ -60,11 +51,6 @@ public class RuleTransferUtil {
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
-		} catch (IOException e) {
-			logger.error("Unable to create marshaller/unmarshaller", e);
-			return null;
-		} finally {
-			try { if (writer != null) writer.close(); } catch (Exception e) {}
 		}
 	}
 	

@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 
@@ -27,6 +28,7 @@ public class FacetSortRuleXml extends RuleXml {
 	
 	public FacetSortRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.FACET_SORT);
 	}
 	
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, RuleType ruleType, SortType sortType,

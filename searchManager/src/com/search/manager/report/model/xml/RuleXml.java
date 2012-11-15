@@ -3,7 +3,6 @@ package com.search.manager.report.model.xml;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
-
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 import com.search.manager.model.RuleStatus;
@@ -41,7 +40,7 @@ public class RuleXml extends BaseEntityXml{
 	public RuleXml(long serial) {
 		super();
 		this.serial = serial;
-		this.ruleEntity = getRuleEntity(this);
+		this.ruleEntity = getRuleEntity();
 	}
 	
 	public RuleXml(String store, String name, String notes,
@@ -51,7 +50,7 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
-		this.ruleEntity = getRuleEntity(this);
+		this.ruleEntity = getRuleEntity();
 	}
 
 	public RuleStatus getRuleStatus() {
@@ -132,31 +131,6 @@ public class RuleXml extends BaseEntityXml{
 
 	@XmlTransient
 	public RuleEntity getRuleEntity() {
-		return ruleEntity;
-	}
-
-	public static RuleEntity getRuleEntity(RuleXml ruleXml) {
-		RuleEntity ruleEntity = null;
-		if (ruleXml == null) {
-		}
-		else if (ruleXml instanceof ElevateRuleXml){
-			ruleEntity = RuleEntity.ELEVATE;
-		}
-		else if(ruleXml instanceof DemoteRuleXml){
-			ruleEntity = RuleEntity.DEMOTE;
-		}
-		else if(ruleXml instanceof ExcludeRuleXml){
-			ruleEntity = RuleEntity.EXCLUDE;
-		}
-		else if(ruleXml instanceof FacetSortRuleXml){
-			ruleEntity = RuleEntity.FACET_SORT;
-		}
-		else if(ruleXml instanceof RedirectRuleXml){
-			ruleEntity = RuleEntity.QUERY_CLEANING;
-		}
-		else if(ruleXml instanceof RankingRuleXml){
-			ruleEntity = RuleEntity.RANKING_RULE;
-		}
 		return ruleEntity;
 	}
 	

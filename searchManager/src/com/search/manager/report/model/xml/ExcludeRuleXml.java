@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 
 @XmlRootElement(name = "exclude")
@@ -25,6 +26,7 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 	
 	public ExcludeRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.EXCLUDE);
 	}
 	
 	public ExcludeRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ExcludeItemXml> excludeItem) {
@@ -67,5 +69,10 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
-	}	
+	}
+	
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.EXCLUDE;
+	}
 }

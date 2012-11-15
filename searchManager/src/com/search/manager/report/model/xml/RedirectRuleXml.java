@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
 
 @XmlRootElement(name = "querycleaning")
@@ -26,6 +27,7 @@ public class RedirectRuleXml extends RuleXml{
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.QUERY_CLEANING);
 	}
 
 	public RedirectRuleXml(String store, long version, String name, String notes, String username,

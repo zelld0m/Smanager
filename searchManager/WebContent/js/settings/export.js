@@ -122,7 +122,7 @@
 					}else{
 						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
 							callback: function(data){									
-								postMsg(data,"exported");	
+								self.postMsg(data,"exported");	
 								self.getExportList();	
 							},
 							preHook:function(){ 
