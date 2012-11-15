@@ -1,6 +1,7 @@
 package com.search.manager.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,8 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.report.model.xml.FacetSortItemXml;
+import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -28,6 +31,26 @@ public class FacetSort extends ModelBean{
 	private Map<String, SortType> groupSortType;
 	
 	public FacetSort() {}
+	
+	public FacetSort(FacetSortRuleXml xml) {
+		this.name = xml.getRuleName();
+		this.id = xml.getRuleId();
+		this.store = new Store(xml.getStore());
+		this.sortType = xml.getSortType();
+		this.ruleType = xml.getRuleType();
+		this.createdBy = xml.getCreatedBy();
+		this.createdDate = xml.getCreatedDate();
+		
+		items = new HashMap<String, List<String>>();
+		groupSortType = new HashMap<String, SortType>(); 
+		
+		if (CollectionUtils.isNotEmpty(xml.getItem())) {
+			for (FacetSortItemXml facetSort: xml.getItem()) {
+				items.put(facetSort.getGroupName(), new ArrayList<String>(facetSort.getGroupItem()));
+				groupSortType.put(facetSort.getGroupName(), facetSort.getSortType());
+			}
+		}
+	}
 	
 	public FacetSort(String id, String name, RuleType ruleType, 
 			SortType sortType, Store store, Map<String, List<String>> items, Map<String, SortType> groupSortType) {

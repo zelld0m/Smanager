@@ -17,7 +17,7 @@ public abstract class RuleService {
 		RuleXml ruleXml = RuleVersionUtil.getRuleVersion(store, getRuleEntity(), ruleId, version);
 		
 		if (ruleXml!=null){
-			return RuleXmlUtil.restoreRule(ruleXml, true);
+			return RuleXmlUtil.restoreRule(ruleXml);
 		}
 		
 		return false;

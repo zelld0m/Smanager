@@ -365,13 +365,13 @@ public class DAOConstants {
 	public static final String COLUMN_FACET_GROUP_ITEM_SEQUENCE		= "facet_group_item_seq";
 
 	// additional rule status columns
-	public static final String COLUMN_REQUEST_BY					= "request_by";
+	public static final String COLUMN_REQUEST_BY					= "requested_by";
 	public static final String COLUMN_LAST_REQUEST_DATE				= "last_request_date";
-	public static final String COLUMN_APPROVAL_BY					= "approval_by";
+	public static final String COLUMN_APPROVAL_BY					= "approved_by";
 	public static final String COLUMN_LAST_APPROVAL_DATE			= "last_approval_date";
 	public static final String COLUMN_PUBLISHED_BY					= "published_by";
 	public static final String COLUMN_EXPORT_TYPE					= "export_type";
-	public static final String COLUMN_EXPORT_BY						= "export_by";
+	public static final String COLUMN_EXPORT_BY						= "exported_by";
 	public static final String COLUMN_LAST_EXPORT_DATE				= "last_export_date";
 
 	// export_rule_map_parameters

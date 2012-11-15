@@ -61,19 +61,23 @@ public class RuleVersionUtil {
 				return null;
 			}
 		}
-
+		
+		FileWriter writer = null;
+		FileReader reader = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			m.setEventHandler(new RuleVersionValidationEventHandler());
 			if (!new File(filename).exists()){
-				m.marshal(new RuleVersionListXml(), new FileWriter(filename));
+				writer = new FileWriter(filename);
+				m.marshal(new RuleVersionListXml(), writer);
 			}
 
 			Unmarshaller um = context.createUnmarshaller(); 
 			um.setEventHandler(new RuleVersionValidationEventHandler());
-			ruleVersionListXml = (RuleVersionListXml) um.unmarshal(new FileReader(filename));
+			reader = new FileReader(filename);
+			ruleVersionListXml = (RuleVersionListXml) um.unmarshal(reader);
 
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
@@ -81,6 +85,9 @@ public class RuleVersionUtil {
 		} catch (IOException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
+			try { if (reader != null) reader.close(); } catch (Exception e) {}
 		}
 
 		return ruleVersionListXml;
@@ -115,6 +122,7 @@ public class RuleVersionUtil {
 	@SuppressWarnings("rawtypes")
 	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
 		long nextVersion = ruleVersionList.getNextVersion();
+		FileWriter writer = null;
 		String filename = RuleXmlUtil.getFilenameByDir(
 				RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity), 
 				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
@@ -129,7 +137,8 @@ public class RuleVersionUtil {
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			ruleVersionList.setNextVersion(nextVersion + 1);
-			m.marshal(ruleVersionList, new FileWriter(filename));
+			writer = new FileWriter(filename);
+			m.marshal(ruleVersionList, writer);
 			if (!removeRollbackFile(filename, nextVersion)){
 				logger.info(String.format("Failed to delete rollback file for next version %l", nextVersion));
 			};
@@ -140,6 +149,8 @@ public class RuleVersionUtil {
 		} catch (Exception e) {
 			logger.error("Unknown error", e);
 			return false;
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
 		}
 	}
 	

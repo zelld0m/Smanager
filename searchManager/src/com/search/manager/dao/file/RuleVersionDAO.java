@@ -58,6 +58,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	@SuppressWarnings("unchecked")
 	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){
 
+		FileWriter writer = null;
 		try {
 			String filename = getRuleVersionFilename(store, ruleId);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -83,7 +84,8 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			prefsJaxb.setVersions(versions);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(prefsJaxb, new FileWriter(filename));
+			writer = new FileWriter(filename);
+			m.marshal(prefsJaxb, writer);
 
 		} catch (JAXBException e) {
 			logger.error("JAXBException");
@@ -93,7 +95,9 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			logger.error("SAXException");
 		} catch (IOException e) {
 			logger.error("IOException");
-		} 
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
+		}
 		return false;
 	}
 

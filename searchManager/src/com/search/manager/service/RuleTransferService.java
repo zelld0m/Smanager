@@ -209,8 +209,9 @@ public class RuleTransferService {
 		RuleXml ruleXml = RuleTransferUtil.getRule(store, ruleEntity, ruleId);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
-		if(RuleXmlUtil.restoreRule(ruleXml)){
-			return deleteRule(ruleEntity, store, ruleId, comment);
+		
+		if(RuleXmlUtil.importRule(ruleXml)){
+			return deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
 	}
@@ -228,7 +229,7 @@ public class RuleTransferService {
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
 						
-			if(deleteRule(ruleEntity, store, ruleId, comment)){
+			if(deleteRuleFile(ruleEntity, store, ruleId, comment)){
 				//TODO addComment
 				//TODO addAuditTrail
 				successList.add(ruleId);
@@ -237,7 +238,7 @@ public class RuleTransferService {
 		return successList;
 	}
 	
-	public boolean deleteRule(RuleEntity ruleEntity, String store, String ruleId, String comment){
+	public boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment){
 		boolean success = false;
 		try{
 			RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, ruleId));
