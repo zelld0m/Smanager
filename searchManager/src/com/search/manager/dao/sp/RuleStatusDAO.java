@@ -268,7 +268,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_LAST_EXPORT_DATE, ruleStatus.getLastExportDate());
 			inputs.put(DAOConstants.PARAM_LAST_REQUEST_DATE, ruleStatus.getLastRequestDate());
 			inputs.put(DAOConstants.PARAM_LAST_APPROVAL_DATE, ruleStatus.getLastExportDate());
-//			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
+			inputs.put(DAOConstants.PARAM_PUBLISHED_BY, ruleStatus.getPublishedBy());
 			result = DAOUtils.getUpdateCount(updateRuleStatusStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
