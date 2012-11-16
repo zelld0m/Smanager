@@ -247,7 +247,8 @@
 				com.search.manager.utility.CatCodeUtil$Attribute,
 				com.search.manager.utility.CatCodeUtil$Template,
 				com.search.manager.enums.FacetGroupType,				
-				com.search.manager.enums.MemberTypeEntity,				
+				com.search.manager.enums.MemberTypeEntity,		
+				com.search.manager.enums.RuleEntity,		
 				com.search.manager.enums.RuleType,				
 				com.search.manager.enums.SortType,				
 			</param-value>
