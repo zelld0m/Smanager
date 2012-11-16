@@ -50,7 +50,6 @@ import com.search.ws.SearchHelper;
 	)
 public class RuleTransferService {
 
-	private ConfigManager configManager = ConfigManager.getInstance();
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DaoService daoService;
 	
@@ -65,8 +64,22 @@ public class RuleTransferService {
 	}
 	
 	@RemoteMethod
+	public RuleXml getRuleToExport(String ruleType, String ruleId){   
+		List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
+		RuleXml latestVersion = null;
+		
+		for(RuleXml rule : ruleVersions){
+			if(latestVersion == null || rule.getVersion() > latestVersion.getVersion()){
+				latestVersion = rule;
+			}
+		}
+		
+		return latestVersion;
+	}
+	
+	@RemoteMethod
 	public RuleXml getRuleToImport(String ruleType, String ruleId){
-		return RuleTransferUtil.getRule(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId);
+		return RuleTransferUtil.getRuleToImport(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId);
 	}
 	
 	@RemoteMethod
@@ -75,70 +88,11 @@ public class RuleTransferService {
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		List<String> successList = new ArrayList<String>();
 		
-		//create xml file
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
-			RuleXml ruleXml = new RuleXml();
-			String keyword = ruleRefIdList[i];
-			StoreKeyword sk = new StoreKeyword(store, keyword);
-			String ruleId = "";
+			String ruleId = ruleRefIdList[i];
+			RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
 			
-			switch(ruleEntity){
-			case ELEVATE:
-				ruleId = keyword;
-				SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(new ElevateResult(sk));
-				List<ElevateItemXml> elevateItemXmlList = new ArrayList<ElevateItemXml>();
-				try {
-					List<ElevateResult> elevateItemList = daoService.getElevateResultList(elevateCriteria).getList();
-					LinkedHashMap<String, Product> map = SearchHelper.getProducts(elevateItemList, store, ruleId);
-					
-					for (ElevateResult elevateResult : elevateItemList) {
-						Product p = elevateResult.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(elevateResult.getEdp()): null;
-						elevateItemXmlList.add(new ElevateItemXml(elevateResult));
-					}
-				} catch (DaoException e) {
-					return null;
-				}	
-				
-				ruleXml = new ElevateRuleXml(store, 0, null, null, null, keyword, elevateItemXmlList);
-				break;
-			case EXCLUDE:
-				ruleId = keyword;
-				SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(sk));
-				List<ExcludeItemXml> excludeItemXmlList = new ArrayList<ExcludeItemXml>();
-				try {
-					List<ExcludeResult> excludeItemList = daoService.getExcludeResultList(excludeCriteria).getList();
-					LinkedHashMap<String, Product> map = SearchHelper.getProducts(excludeItemList, store, ruleId);
-					
-					for (ExcludeResult result : excludeItemList) {
-						Product p = result.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(result.getEdp()): null;
-						excludeItemXmlList.add(new ExcludeItemXml(result));
-					}
-				} catch (DaoException e) {
-					return null;
-				}	
-				
-				ruleXml = new ExcludeRuleXml(store, 0, null, null, null, keyword, excludeItemXmlList);
-				break;
-			case DEMOTE: 
-				ruleId = keyword;
-				SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(new DemoteResult(sk));
-				List<DemoteItemXml> demoteItemXmlList = new ArrayList<DemoteItemXml>();
-				try {
-					List<DemoteResult> demoteItemList = daoService.getDemoteResultList(demoteCriteria).getList();
-					LinkedHashMap<String, Product> map = SearchHelper.getProducts(demoteItemList, store, ruleId);
-					for (DemoteResult result : demoteItemList) {
-						Product p = result.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(result.getEdp()): null;
-						//TODO pass Product p ItemXml constructor
-						demoteItemXmlList.add(new DemoteItemXml(result));
-					}
-				} catch (DaoException e) {
-					return null;
-				}	
-				ruleXml = new DemoteRuleXml(store, 0, null, null, null, keyword, demoteItemXmlList);
-				break;
-			}
-			
-			if(RuleTransferUtil.exportRuleAsXML(store, ruleEntity, ruleId, ruleXml)){
+			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
 				//TODO update rule status
 				//TODO add Comment
 				//TODO add audit trail
@@ -213,7 +167,7 @@ public class RuleTransferService {
 	}
 	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
-		RuleXml ruleXml = RuleTransferUtil.getRule(store, ruleEntity, ruleId);
+		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, ruleId);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
 		
