@@ -81,6 +81,63 @@ public class RuleXmlUtil{
 		return instance;
 	}
 
+	public static RuleXml ruleToXml(String store, String ruleType, String ruleId){
+		RuleXml ruleXml = new RuleXml();
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		StoreKeyword sk = new StoreKeyword(store, ruleId);
+		
+		switch(ruleEntity){
+		case ELEVATE:
+			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(new ElevateResult(sk));
+			List<ElevateItemXml> elevateItemXmlList = new ArrayList<ElevateItemXml>();
+			try {
+				List<ElevateResult> elevateItemList = daoService.getElevateResultList(elevateCriteria).getList();
+				for (ElevateResult elevateResult : elevateItemList) {
+					elevateItemXmlList.add(new ElevateItemXml(elevateResult));
+				}
+			} catch (DaoException e) {
+				return null;
+			}	
+			
+			ruleXml = new ElevateRuleXml(store, 0, null, null, null, ruleId, elevateItemXmlList);
+			break;
+		case EXCLUDE:
+			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(sk));
+			List<ExcludeItemXml> excludeItemXmlList = new ArrayList<ExcludeItemXml>();
+			try {
+				List<ExcludeResult> excludeItemList = daoService.getExcludeResultList(excludeCriteria).getList();
+				for (ExcludeResult result : excludeItemList) {
+					excludeItemXmlList.add(new ExcludeItemXml(result));
+				}
+			} catch (DaoException e) {
+				return null;
+			}	
+			
+			ruleXml = new ExcludeRuleXml(store, 0, null, null, null, ruleId, excludeItemXmlList);
+			break;
+		case DEMOTE: 
+			SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(new DemoteResult(sk));
+			List<DemoteItemXml> demoteItemXmlList = new ArrayList<DemoteItemXml>();
+			try {
+				List<DemoteResult> demoteItemList = daoService.getDemoteResultList(demoteCriteria).getList();
+				for (DemoteResult result : demoteItemList) {
+					demoteItemXmlList.add(new DemoteItemXml(result));
+				}
+			} catch (DaoException e) {
+				return null;
+			}	
+			ruleXml = new DemoteRuleXml(store, 0, null, null, null, ruleId, demoteItemXmlList);
+			break;
+		case FACET_SORT: //TODO
+			break;
+		case QUERY_CLEANING:
+			break;
+		case RANKING_RULE:
+			break;
+		}
+		return ruleXml;
+	}
+	
 	public static List<Product> getProductDetails(RuleXml ruleXml){
 		
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
