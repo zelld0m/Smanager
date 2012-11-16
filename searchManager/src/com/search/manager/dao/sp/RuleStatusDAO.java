@@ -154,11 +154,6 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
 		}
 	}
 	
@@ -177,14 +172,14 @@ public class RuleStatusDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EVENT_STATUS, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_STORE_ID, Types.VARCHAR));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
-	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_REQUEST_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_APPROVAL_BY, Types.VARCHAR));
-//	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_PUBLISHED_BY, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_BY, Types.VARCHAR));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_EXPORT_TYPE, Types.VARCHAR));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_REQUEST_DATE, Types.TIMESTAMP));
 	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_APPROVAL_DATE, Types.TIMESTAMP));
+	        declareParameter(new SqlParameter(DAOConstants.PARAM_LAST_EXPORT_DATE, Types.TIMESTAMP));
 		}
 	}
 
