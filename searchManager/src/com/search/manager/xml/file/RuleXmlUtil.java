@@ -169,10 +169,12 @@ public class RuleXmlUtil{
 					return false;
 				};
 
-				if(!(daoService.clearElevateResult(storeKeyword)>0)){
-					logger.error("Failed to clear existing rule");
-					return false;
-				};
+				// TODO: add checking if empty list no need to clear
+				daoService.clearElevateResult(storeKeyword);
+//				if(!(daoService.clearElevateResult(storeKeyword)>0)){
+//					logger.error("Failed to clear existing rule");
+//					return false;
+//				};
 			}
 
 			daoService.addKeyword(storeKeyword);
@@ -183,7 +185,7 @@ public class RuleXmlUtil{
 
 			for (ElevateItemXml eItemXml : eItemXmlList){
 				elevateResult = new ElevateResult(storeKeyword, eItemXml);
-				processedItem += daoService.addElevateResult(elevateResult)==1? 1 : 0;
+				processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
 			}
 
 			if (processedItem == CollectionUtils.size(eItemXmlList)){
@@ -221,10 +223,12 @@ public class RuleXmlUtil{
 					return false;
 				};
 
-				if(!(daoService.clearExcludeResult(storeKeyword)>0)){
-					logger.error("Failed to clear existing rule");
-					return false;
-				};
+				// TODO: add checking if empty list no need to clear
+				daoService.clearExcludeResult(storeKeyword);
+//				if(!(daoService.clearExcludeResult(storeKeyword)>0)){
+//					logger.error("Failed to clear existing rule");
+//					return false;
+//				};
 			}
 
 			daoService.addKeyword(storeKeyword);
@@ -235,7 +239,7 @@ public class RuleXmlUtil{
 
 			for (ExcludeItemXml eItemXml : eItemXmlList){
 				excludeResult = new ExcludeResult(storeKeyword,eItemXml);
-				processedItem += daoService.addExcludeResult(excludeResult)==1? 1 : 0;
+				processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
 			}
 
 			if (processedItem == CollectionUtils.size(eItemXmlList)){
@@ -272,11 +276,13 @@ public class RuleXmlUtil{
 					logger.error("Failed to create pre-import rule");
 					return false;
 				};
-
-				if(!(daoService.clearExcludeResult(storeKeyword)>0)){
-					logger.error("Failed to clear existing rule");
-					return false;
-				};
+				
+				// TODO: add checking if empty list no need to clear
+				daoService.clearDemoteResult(storeKeyword);
+//				if(!(daoService.clearDemoteResult(storeKeyword)>0)){
+//					logger.error("Failed to clear existing rule");
+//					return false;
+//				};
 			}
 
 			daoService.addKeyword(storeKeyword);
@@ -287,7 +293,7 @@ public class RuleXmlUtil{
 
 			for (DemoteItemXml dItemXml : dItemXmlList){
 				demoteResult = new DemoteResult(storeKeyword, dItemXml);
-				processedItem += daoService.addDemoteResult(demoteResult)==1? 1 : 0;
+				processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
 			}
 
 			if (processedItem == CollectionUtils.size(dItemXmlList)){

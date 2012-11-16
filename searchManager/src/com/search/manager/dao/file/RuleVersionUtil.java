@@ -26,7 +26,8 @@ public class RuleVersionUtil {
 
 	private static Logger logger = Logger.getLogger(RuleVersionUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
-	private static final String PATH = PropsUtils.getValue("backuppath");
+	private static final String BACKUP_PATH = PropsUtils.getValue("backuppath");
+	private static final String PUBLISH_PATH = PropsUtils.getValue("publishedfilepath");
 	private static final String ROLLBACK_PREFIX = "rpnv";
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -45,9 +46,9 @@ public class RuleVersionUtil {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
+	private static RuleVersionListXml getRuleList(String store, RuleEntity ruleEntity, String ruleId, String location){
 		RuleVersionListXml ruleVersionListXml = new RuleVersionListXml();
-		String dir = RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity);
+		String dir = RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity);
 		String filename = RuleXmlUtil.getFilenameByDir(
 				dir, 
 				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
@@ -93,6 +94,16 @@ public class RuleVersionUtil {
 		return ruleVersionListXml;
 	}
 
+	@SuppressWarnings("rawtypes")
+	public static RuleVersionListXml getRuleVersionList(String store, RuleEntity ruleEntity, String ruleId){
+		return getRuleList(store, ruleEntity, ruleId, BACKUP_PATH);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static RuleVersionListXml getPublishedList(String store, RuleEntity ruleEntity, String ruleId){
+		return getRuleList(store, ruleEntity, ruleId, PUBLISH_PATH);
+	}
+	
 	public static boolean removeRollbackFile(String filename, long version){
 		File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
 		return FileUtils.deleteQuietly(rollbackFile);
@@ -120,11 +131,11 @@ public class RuleVersionUtil {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
+	private static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList, String location){
 		long nextVersion = ruleVersionList.getNextVersion();
 		FileWriter writer = null;
 		String filename = RuleXmlUtil.getFilenameByDir(
-				RuleXmlUtil.getRuleFileDirectory(PATH, store, ruleEntity), 
+				RuleXmlUtil.getRuleFileDirectory(location, store, ruleEntity), 
 				RuleXmlUtil.getRuleId(ruleEntity, ruleId));
 
 		if (!createRollbackFile(filename, nextVersion)){
@@ -154,7 +165,26 @@ public class RuleVersionUtil {
 		}
 	}
 	
-	public static String getFilename(String store, RuleEntity ruleEntity, String ruleId) {
-		return RuleXmlUtil.getFilename(PATH, store, ruleEntity, ruleId);
+	@SuppressWarnings("rawtypes")
+	public static boolean addRuleVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
+		return addRuleVersion(store, ruleEntity, ruleId, ruleVersionList, BACKUP_PATH);
 	}
+	
+	@SuppressWarnings("rawtypes")
+	public static boolean addPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, RuleVersionListXml ruleVersionList){
+		return addRuleVersion(store, ruleEntity, ruleId, ruleVersionList, PUBLISH_PATH);
+	}
+	
+	private static String getFilename(String store, RuleEntity ruleEntity, String ruleId, String location) {
+		return RuleXmlUtil.getFilename(location, store, ruleEntity, ruleId);
+	}
+	
+	public static String getRuleVersionFilename(String store, RuleEntity ruleEntity, String ruleId) {
+		return getFilename(store, ruleEntity, ruleId, BACKUP_PATH);
+	}
+	
+	public static String getPublishedFilename(String store, RuleEntity ruleEntity, String ruleId) {
+		return getFilename(store, ruleEntity, ruleId, PUBLISH_PATH);
+	}
+	
 }

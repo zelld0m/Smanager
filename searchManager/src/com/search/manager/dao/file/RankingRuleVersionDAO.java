@@ -18,42 +18,28 @@ public class RankingRuleVersionDAO extends RuleVersionDAO<RankingRuleXml>{
 
 	@Autowired private DaoService daoService;
 
-	static {
-		ruleEntity = RuleEntity.RANKING_RULE;
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<RankingRuleXml> getRuleVersionList(String store, String ruleId) {
-		return (RuleVersionListXml<RankingRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.RANKING_RULE, ruleId);
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.RANKING_RULE;
 	}
 
 	@Override
-	public boolean createRuleVersion(String store, String ruleId,
-			String username, String name, String notes) {
-		RuleVersionListXml<RankingRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<RankingRuleXml> eRuleXmlList = ((RuleVersionListXml<RankingRuleXml>)ruleVersionListXml).getVersions();
 			long version = ruleVersionListXml.getNextVersion();
-			List<RankingRuleXml> rankingRuleXmlList = ruleVersionListXml.getVersions();
-
 			try {
 				Relevancy relevancy = daoService.getRelevancyDetails(new Relevancy(ruleId));
 				List<RelevancyKeyword> relevancyKeywords = daoService.getRelevancyKeywords(relevancy).getList();
 				relevancy.setRelKeyword(relevancyKeywords);
-
-				rankingRuleXmlList.add(new RankingRuleXml(store, version, name, notes, username, relevancy));
-
+				eRuleXmlList.add(new RankingRuleXml(store, version, name, notes, username, relevancy));
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(relevancy.getRuleName());
-				ruleVersionListXml.setVersions(rankingRuleXmlList);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.RANKING_RULE, ruleId, ruleVersionListXml);
 		}
-
 		return false;
 	}
+
 }

@@ -21,48 +21,32 @@ public class ElevateVersionDAO extends RuleVersionDAO<ElevateRuleXml>{
 
 	@Autowired private DaoService daoService;
 	
-	static {
-		ruleEntity = RuleEntity.ELEVATE;
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.ELEVATE;
 	}
 	
-	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<ElevateRuleXml> getRuleVersionList(String store, String ruleId) {
-		return (RuleVersionListXml<ElevateRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.ELEVATE, ruleId);
-	}
-	
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
-		RuleVersionListXml<ElevateRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-		
-		if (ruleVersionListXml!=null){
-			long version = ruleVersionListXml.getNextVersion();
-			List<ElevateRuleXml> eRuleXmlList = ruleVersionListXml.getVersions();
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes){
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<ElevateRuleXml> eRuleXmlList = ((RuleVersionListXml<ElevateRuleXml>) ruleVersionListXml).getVersions();
 			List<ElevateItemXml> eItemXmlList = new ArrayList<ElevateItemXml>();
-
-			// Get all items
-			SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(new ElevateResult(new StoreKeyword(store, ruleId)));
+			long version = ruleVersionListXml.getNextVersion();
 
 			try {
+				// Get all items
+				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(new ElevateResult(new StoreKeyword(store, ruleId)));
 				List<ElevateResult> elevateItemList = daoService.getElevateResultList(criteria).getList();
-				
 				for (ElevateResult er : elevateItemList) {
 					eItemXmlList.add(new ElevateItemXml(er));
 				}
+				eRuleXmlList.add(new ElevateRuleXml(store, version, name, notes, username, ruleId, eItemXmlList));
+				ruleVersionListXml.setRuleId(ruleId);
+				ruleVersionListXml.setRuleName(ruleId);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-			
-			ElevateRuleXml eRuleXml = new ElevateRuleXml(store, version, name, notes, username, ruleId, eItemXmlList);
-
-			eRuleXmlList.add(eRuleXml);
-
-			ruleVersionListXml.setRuleId(ruleId);
-			ruleVersionListXml.setRuleName(ruleId);
-			ruleVersionListXml.setVersions(eRuleXmlList);
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.ELEVATE, ruleId, ruleVersionListXml);
 		}
-
 		return false;
 	}
+	
 }
