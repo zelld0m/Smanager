@@ -24,6 +24,8 @@
 	<div class="clearB"></div>
 
 	<div style="width: 95%" class="dashboard marT20 mar0">
+		<div id="autoExportStatus" class="info" style="display:none">Auto-export setting is currently set to <span id="autoExportValue"></span></div> 
+
 		<!-- tabs -->
 		<div id="production" class="tabs">
 			<ul>

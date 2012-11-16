@@ -241,6 +241,13 @@
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
 			entityName = tabSelected.substring(1, tabSelected.length-3);
 			getForProductionList("approved");
+			
+			RuleTransferServiceJS.getAutoExport({
+				callback:function(isAutoExport){
+					$('#autoExportValue').text(isAutoExport? 'ON':'OFF').parent('#autoExportStatus').show();
+				}
+			});
+			
 		};
 		
 		init();

@@ -21,7 +21,7 @@
 
 	<div class="floatL w730 titlePlacer breakWord">
 	  <div class="floatR padT7">
-	  	<span>Auto-Export: </span>
+	  	<span>Auto-export: </span>
 		<input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/>
       </div>
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
