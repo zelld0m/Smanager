@@ -16,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
+import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -31,14 +32,17 @@ public class RuleTransferUtil {
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
 	private static final String EXPORT_FILE_PATH = PropsUtils.getValue("exportfilepath");
-	private static final String AUTO_EXPORT_FILE = PropsUtils.getValue("autoexportfile");
 
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
 		return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
 	}
 
-	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId){
-		RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), IMPORT_FILE_PATH);
+	public static RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId){
+		return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
+	}
+	
+	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId, String path){
+		RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), path);
 
 		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
@@ -143,40 +147,8 @@ public class RuleTransferUtil {
 		return ruleXml;
 	}
 
-	public static boolean exportRuleAsXML(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
-		String dir = RuleXmlUtil.getRuleFileDirectory(EXPORT_FILE_PATH, store, ruleEntity);
-		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
-		FileWriter writer = null;
-
-		File dirFile = new File(dir);
-		if (!dirFile.exists()) {
-			try {
-				FileUtils.forceMkdir(dirFile);
-			} catch (IOException e) {
-				logger.error("Unable to create directory", e);
-				return false;
-			}
-		}
-
-		try {
-			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			writer = new FileWriter(filename);
-			m.marshal(rule, writer);
-
-			return true;
-		} catch (JAXBException e) {
-			logger.error("Unable to create marshaller", e);
-			return false;
-		} catch (Exception e) {
-			logger.error("Unknown error", e);
-			return false;
-		}
-		finally {
-			try { if (writer != null) { writer.close(); } } catch (IOException e) { }
-		}
+	public static boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
+		return RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 	}
 
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
