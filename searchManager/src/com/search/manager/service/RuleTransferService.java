@@ -260,11 +260,13 @@ public class RuleTransferService {
 	
 	@RemoteMethod
 	public boolean getAutoExport(){
-		return BooleanUtils.toBoolean(configManager.getStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT));
+		ConfigManager cm = ConfigManager.getInstance();
+		return BooleanUtils.toBoolean(cm.getStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT));
 	}
 	
 	@RemoteMethod
 	public boolean setAutoExport(boolean autoexport){
-		return configManager.setStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
+		ConfigManager cm = ConfigManager.getInstance();
+		return cm.setStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
 	}
 }
