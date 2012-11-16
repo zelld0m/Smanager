@@ -213,7 +213,6 @@
 				com.search.manager.model.TopKeyword,
 				com.search.manager.model.User,
 				com.search.manager.model.ZeroResult,
-				com.search.manager.report.model.xml.RuleVersionXml,
 				com.search.manager.report.model.xml.ElevateRuleXml,
 				com.search.manager.report.model.xml.ExcludeRuleXml,
 				com.search.manager.report.model.xml.DemoteRuleXml,

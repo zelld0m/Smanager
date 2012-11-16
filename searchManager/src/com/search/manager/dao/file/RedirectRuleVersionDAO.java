@@ -17,40 +17,26 @@ public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 
 	@Autowired private DaoService daoService;
 
-	static {
-		ruleEntity = RuleEntity.QUERY_CLEANING;
-	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<RedirectRuleXml> getRuleVersionList(
-			String store, String ruleId) {
-		return (RuleVersionListXml<RedirectRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.QUERY_CLEANING, ruleId);
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.QUERY_CLEANING;
 	}
 
 	@Override
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		RuleVersionListXml<RedirectRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<RedirectRuleXml> eRuleXmlList = ((RuleVersionListXml<RedirectRuleXml>)ruleVersionListXml).getVersions();
 			long version = ruleVersionListXml.getNextVersion();
-			List<RedirectRuleXml> queryCleaningRuleXmlList = ruleVersionListXml.getVersions();
-
 			try {
 				RedirectRule redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
-				
-				queryCleaningRuleXmlList.add(new RedirectRuleXml(store, version, name, notes, username, redirectRule));
-
+				eRuleXmlList.add(new RedirectRuleXml(store, version, name, notes, username, redirectRule));
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(redirectRule.getRuleName());
-				ruleVersionListXml.setVersions(queryCleaningRuleXmlList);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.QUERY_CLEANING, ruleId, ruleVersionListXml);
 		}
-
 		return false;
 	}
+
 }

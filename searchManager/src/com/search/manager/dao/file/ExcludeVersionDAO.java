@@ -21,45 +21,33 @@ public class ExcludeVersionDAO extends RuleVersionDAO<ExcludeRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
-	static {
-		ruleEntity = RuleEntity.EXCLUDE;
+	@Override
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.EXCLUDE;
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<ExcludeRuleXml> getRuleVersionList(String store, String ruleId) {
-		return (RuleVersionListXml<ExcludeRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.EXCLUDE, ruleId);
-	}
-	
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
-		RuleVersionListXml<ExcludeRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<ExcludeRuleXml> eRuleXmlList = ((RuleVersionListXml<ExcludeRuleXml>)ruleVersionListXml).getVersions();
+			List<ExcludeItemXml> eItemXmlList = new ArrayList<ExcludeItemXml>();
 			long version = ruleVersionListXml.getNextVersion();
-			List<ExcludeRuleXml> excludeRuleXmlList = ruleVersionListXml.getVersions();
-			List<ExcludeItemXml> excludeItemXmlList = new ArrayList<ExcludeItemXml>();
-
-			// Get all items
-			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(new StoreKeyword(store, ruleId)));
-
 			try {
+				// Get all items
+				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(new StoreKeyword(store, ruleId)));
 				List<ExcludeResult> excludeItemList = daoService.getExcludeResultList(criteria).getList();
 				for (ExcludeResult excludeResult : excludeItemList) {
-					excludeItemXmlList.add(new ExcludeItemXml(excludeResult));
+					eItemXmlList.add(new ExcludeItemXml(excludeResult));
 				}
+				eRuleXmlList.add(new ExcludeRuleXml(store, version, name, notes, username, ruleId, eItemXmlList));
+				ruleVersionListXml.setRuleId(ruleId);
+				ruleVersionListXml.setRuleName(ruleId);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			excludeRuleXmlList.add(new ExcludeRuleXml(store, version, name, notes, username, ruleId, excludeItemXmlList));
-
-			ruleVersionListXml.setRuleId(ruleId);
-			ruleVersionListXml.setRuleName(ruleId);
-			ruleVersionListXml.setVersions(excludeRuleXmlList);
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.EXCLUDE, ruleId, ruleVersionListXml);
 		}
-
 		return false;
 	}
+	
 }
