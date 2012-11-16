@@ -31,22 +31,22 @@ public class RuleTransferUtil {
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
 	private static final String EXPORT_FILE_PATH = PropsUtils.getValue("exportfilepath");
+	private static final String AUTO_EXPORT_FILE = PropsUtils.getValue("autoexportfile");
 
-	
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
 		return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
 	}
-	
+
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, String ruleId){
 		RuleXml ruleXml = getRule(store, ruleEntity, new File(getFilename(store, ruleEntity, ruleId)), IMPORT_FILE_PATH);
-		
+
 		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
 			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
 		}
 		return ruleXml;
 	}
-	
+
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
@@ -59,7 +59,7 @@ public class RuleTransferUtil {
 			return null;
 		}
 	}
-	
+
 	public static List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path){
 		List<RuleXml> ruleXmls = new ArrayList<RuleXml>();
 		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
@@ -78,10 +78,10 @@ public class RuleTransferUtil {
 
 		//retrieve all files from directory
 		File[] listOfFiles = dirFile.listFiles();
-		
+
 		for(File file : listOfFiles){
 			RuleXml ruleXml = getRule(store, ruleEntity, file, path);
-			
+
 			if(ruleXml != null){
 				if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 					ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
@@ -95,7 +95,7 @@ public class RuleTransferUtil {
 
 		return ruleXmls;
 	}
-	
+
 	public static RuleXml getImportRule(String store, RuleEntity ruleEntity, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
@@ -148,7 +148,7 @@ public class RuleTransferUtil {
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
 		FileWriter writer = null;
-		
+
 		File dirFile = new File(dir);
 		if (!dirFile.exists()) {
 			try {
@@ -165,7 +165,7 @@ public class RuleTransferUtil {
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			writer = new FileWriter(filename);
 			m.marshal(rule, writer);
-			
+
 			return true;
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller", e);
@@ -181,5 +181,40 @@ public class RuleTransferUtil {
 
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
 		return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
+	}
+
+	public static boolean getAutoExport(String store){
+		String filename = EXPORT_FILE_PATH + File.separator + store + File.separator + AUTO_EXPORT_FILE;
+		File file = new File(filename);
+		return file.exists();
+	}
+	
+	public static boolean setAutoExport(String store, boolean autoexport){
+		File dirFile = new File(EXPORT_FILE_PATH);
+		String filename = EXPORT_FILE_PATH + File.separator + store + File.separator + AUTO_EXPORT_FILE;
+		
+		if (!dirFile.exists()) {
+			try {
+				FileUtils.forceMkdir(dirFile);
+			} catch (IOException e) {
+				logger.error("Unable to create directory", e);
+				return false;
+			}
+		}
+
+		File file = new File(filename);
+
+		try {
+			if(autoexport){
+				FileUtils.touch(file);
+				return file.exists();
+			}else{
+				FileUtils.forceDelete(file);
+				return !file.exists();
+			}
+		} catch (IOException e) {
+			logger.error("Failed to set value of autoexport", e);
+			return false;
+		}
 	}
 }

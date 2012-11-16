@@ -228,6 +228,10 @@ public class Product extends ModelBean {
 	public void setMemberTypeEntity(MemberTypeEntity memberTypeEntity) {
 		this.memberTypeEntity = memberTypeEntity;
 	}
+	
+	public MemberTypeEntity getMemberType() {
+		return memberTypeEntity;
+	}
 
 	public String getMemberId() {
 		return memberId;
@@ -248,4 +252,6 @@ public class Product extends ModelBean {
 	public boolean isForceAdd(){
 		return BooleanUtils.isTrue(getForceAdd());
 	}
+	
+	
 }

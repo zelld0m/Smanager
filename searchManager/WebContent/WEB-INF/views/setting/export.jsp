@@ -20,7 +20,14 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 
 	<div class="floatL w730 titlePlacer breakWord">
-		<h1 id="titleText" class="padT7 padL15 fsize20 fnormal"></h1>
+	  <div class="floatR padT7">
+	  	<span>Auto-export: </span>
+		<input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/>
+      </div>
+	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
+	  </div>
 	</div>
 	
 	<div class="clearB"></div>

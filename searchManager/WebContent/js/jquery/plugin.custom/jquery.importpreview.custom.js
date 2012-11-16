@@ -84,6 +84,11 @@
 			return type;
 		};
 		
+		base.updateTable = function(target, e, u, contentHolder, ruleType){
+			var ruleId = u.item.value;
+			base.getDatabaseData(contentHolder, ruleType, ruleId );
+		};
+		
 		base.populateImportAsList = function(data, contentHolder){
 			var list = data.list;
 			var $importTypeSelect = contentHolder.find("div.rulePreview > label#importAs > select#importAs");
@@ -91,6 +96,15 @@
 			for (var index in list){
 				$importTypeSelect.append($("<option>", {value: list[index]["ruleRefId"]}).text(list[index]["description"]));
 			}
+			
+			$importTypeSelect.combobox({
+				change: function(e, u){
+					base.updateTable(this, e, u, contentHolder, base.options.ruleType);
+				},
+				selected: function(e, u){
+					base.updateTable(this, e, u, contentHolder, base.options.ruleType);
+				}
+			});
 		};
 		
 		base.populateImportTypeList = function(data, contentHolder){
@@ -178,13 +192,177 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 		
-		base.getImportAsData = function($content, ruleType, ruleId){
-			
-		};
-		
 		base.getDatabaseData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
+				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
+					callback: function(data){
+						base.populateItemTable($content, "Elevate", data.list);
+					}
+				});
+				break;
+			case "exclude": 
+				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(ruleId , 0, 0,{
+					callback: function(data){
+						base.populateItemTable($content, "Exclude", data.list);
+					}
+				});
+				break;
+			case "demote": 
+				DemoteServiceJS.getAllProductsIgnoreKeyword(ruleId , 0, 0,{
+					callback: function(data){
+						base.populateItemTable($content, "Demote", data.list);
+					}
+				});
+				break;
+			case "facet sort": 
+				var $table = $content.find("table#item");
+				var $ruleInfo = $content.find("div#ruleInfo");
+
+				FacetSortServiceJS.getRuleById(ruleId, {
+					callback: function(data){
+						$ruleInfo.find("#ruleName").text(data.name);
+						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+
+						for(var facetGroup in data.items){
+							var facetName = facetGroup;
+							var facetValue = data.items[facetGroup];
+							var highlightedItems = "";
+							var $tr = $table.find("tr#itemPattern").clone();
+							$tr.prop({id: $.formatAsId(facetName)});
+							$tr.find("#itemName").text(facetName);
+
+							if($.isArray(facetValue)){
+								for(var i=0; i < facetValue.length; i++){
+									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
+								}
+							}
+							$tr.find("#itemHighlightedItem").html(highlightedItems);
+
+							var sortTypeDisplay = "";
+							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
+
+							switch(sortType){
+							case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+							case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+							case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+							case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							}
+
+							$tr.find("#itemSortType").text(sortTypeDisplay);
+							$tr.show();
+							$table.append($tr);
+						};						
+					},
+					postHook:function(){
+						$table.find("tr#preloader").hide();
+					}
+				});
+				break;
+			case "query cleaning": 
+				$content.find(".infoTabs").tabs({});
+
+				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
+				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
+				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
+
+				RedirectServiceJS.getRule(ruleId, {
+					callback: function(data){
+
+						var $table = $content.find("div.ruleFilter table#item");
+						$table.find("tr:not(#itemPattern)").remove();
+
+						if(data.readableConditions.length==0){
+							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
+							$tr.find("td#fieldValue").remove();
+							$tr.appendTo($table);
+
+						}else{
+							for(var field in data.readableConditions){
+								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+								$tr.find("td#fieldName").html(parseInt(field)+1);
+								$tr.find("td#fieldValue").html(data.readableConditions[field]);
+								$tr.appendTo($table);
+							}	
+						}
+
+						$table.find("tr:even").addClass("alt");
+						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+						$content.find("#description").html(data["description"]);
+						switch (data["redirectTypeId"]) {
+						case "1":
+							$content.find("#redirectType").html("Filter");
+							break;
+						case "2":
+							$content.find("#redirectType").html("Replace Keyword");
+							break;
+						case "3":
+							$content.find("#redirectType").html("Direct Hit");
+							break;
+						default:
+							$content.find("#redirectType").html("");
+						break;									
+						}
+
+						if ($.isNotBlank(data["changeKeyword"])){
+							$content.find("div#ruleChange > div#hasChangeKeyword").show();
+							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
+						}else{
+							$content.find("div#ruleChange > #noChangeKeyword").show();
+						}
+
+						var includeKeywordText = "Include keyword in search: <b>NO</b>";
+						if($.isNotBlank(data["includeKeyword"])){
+							includeKeywordText = "Include keyword in search: ";
+							if(data["includeKeyword"]){
+								includeKeywordText += "<b>YES</b>";
+							}
+							else{
+								includeKeywordText += "<b>NO</b>";
+							}
+						}
+						$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
+
+						base.populateKeywordInRule($content, data["searchTerms"]);
+					}
+				});
+
+				break;
+			case "ranking rule": 
+				$content.find(".infoTabs").tabs({});
+
+				RelevancyServiceJS.getRule(ruleId, {
+					callback: function(data){
+						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+						$content.find("#startDate").html(data["formattedStartDate"]);
+						$content.find("#endDate").html(data["formattedEndDate"]);
+						$content.find("#description").html(data["description"]);
+
+						var $table = $content.find("div.ruleField table#item");
+						$table.find("tr:not(#itemPattern)").remove();
+
+						for(var field in data.parameters){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("td#fieldName").html(field);
+							$tr.find("td#fieldValue").html(data.parameters[field]);
+							$tr.appendTo($table);
+						}	
+
+						$table.find("tr:even").addClass("alt");
+
+						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
+					}
+				});
+
+				break;
+			}
+		};
+		
+		base.getRuleData = function($content, ruleType, ruleId){
+			switch(ruleType.toLowerCase()){
+			case "elevate":
 				base.populateItemTable($content, "Elevate", base.options.rule["products"]);
 				break;
 			case "exclude": 
@@ -336,6 +514,44 @@
 
 				break;
 			}
+			
+			$content.find("a#approveBtn, a#rejectBtn").off().on({
+				click: function(evt){
+					var comment = $content.find("#approvalComment").val();
+
+					if ($.isNotBlank(comment)){
+						switch($(evt.currentTarget).attr("id")){
+						case "approveBtn": 
+							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+								callback: function(data){
+									postMsg(data,true);	
+									getApprovalList();
+								},
+								preHook: function(){
+									api.destroy();
+								}
+							});break;
+
+						case "rejectBtn": 
+							if (checkIfDeleted()) {
+								jAlert("Deleted rules cannot be rejected!","Approval");
+								return;
+							}
+							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+								callback: function(data){
+									postMsg(data,false);	
+									getApprovalList();
+								},
+								preHook: function(){
+									api.destroy();
+								}
+							});break;
+						}	
+					}else{
+						jAlert("Please add comment.","Approval");
+					}
+				}
+			});
 		};
 
 		base.getFileData = function(){
@@ -816,7 +1032,7 @@
 						
 						//left pane
 						base.contentHolder.append(base.showLeftPane());
-						base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+						base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
 						
 						if(base.options.enableRightPanel){
