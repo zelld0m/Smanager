@@ -30,7 +30,7 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 	}
 	
 	public ExcludeRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ExcludeItemXml> excludeItem) {
-		super(store, name, notes, createdBy);
+		super(store, name == null ? keyword : name, notes, createdBy);
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);

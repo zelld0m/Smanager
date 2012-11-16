@@ -33,7 +33,7 @@ public class FacetSortRuleXml extends RuleXml {
 	
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, RuleType ruleType, SortType sortType,
 			String ruleId, String ruleName, List<FacetSortItemXml> item) {
-		super(store, name, notes, username);
+		super(store, name == null ? ruleName : name, notes, username);
 		this.setRuleId(ruleId);
 		this.setRuleName(ruleName);
 		this.ruleType = ruleType;

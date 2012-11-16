@@ -25,7 +25,7 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 	private List<Product> products;
 	
 	public DemoteRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<DemoteItemXml> demoteItem) {
-		super(store, name, notes, createdBy);
+		super(store, name == null ? keyword : name, notes, createdBy);
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);

@@ -46,52 +46,52 @@ public class FileServiceImpl implements FileService{
 		Object xml = null;
 		boolean success = false;
 		
-		for(String ruleId : list){		
-			switch (ruleEntity) {
-			case ELEVATE:
-				xml = getXmlObjectForElevatedRule(store, ruleId);
-				if(xml != null){
-					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
-					success = true;
-				}
-				break;
-			case EXCLUDE:
-				xml = getXmlObjectForExcludeRule(store, ruleId);
-				if(xml != null){
-					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
-					success = true;
-				}
-				break;
-			case DEMOTE:
-				xml = getXmlObjectForDemoteRule(store, ruleId);
-				if(xml != null){
-					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
-					success = true;
-				}
-				break;
-			case FACET_SORT:
-				xml = getXmlObjectForFacetSortRule(store, ruleId);
-				if(xml != null){
-					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
-					success = true;
-				}
-				break;
-			case KEYWORD: 
-				break;
-			case STORE_KEYWORD: 
-				break;
-			case CAMPAIGN:
-				break;
-			case BANNER:
-				break;
-			case QUERY_CLEANING:
-				return createBackupForRedirectRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
-			case RANKING_RULE:
-				return createBackupForRankingRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
-			default:
-				break;
-			}
-		}
+//		for(String ruleId : list){		
+//			switch (ruleEntity) {
+//			case ELEVATE:
+//				xml = getXmlObjectForElevatedRule(store, ruleId);
+//				if(xml != null){
+//					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+//					success = true;
+//				}
+//				break;
+//			case EXCLUDE:
+//				xml = getXmlObjectForExcludeRule(store, ruleId);
+//				if(xml != null){
+//					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+//					success = true;
+//				}
+//				break;
+//			case DEMOTE:
+//				xml = getXmlObjectForDemoteRule(store, ruleId);
+//				if(xml != null){
+//					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+//					success = true;
+//				}
+//				break;
+//			case FACET_SORT:
+//				xml = getXmlObjectForFacetSortRule(store, ruleId);
+//				if(xml != null){
+//					FileUtil.fileStream(xml, getFileDirectory(String.valueOf(ruleEntity.getCode()), ruleId), ruleId+FileUtil.XML_FILE_TYPE);
+//					success = true;
+//				}
+//				break;
+//			case KEYWORD: 
+//				break;
+//			case STORE_KEYWORD: 
+//				break;
+//			case CAMPAIGN:
+//				break;
+//			case BANNER:
+//				break;
+//			case QUERY_CLEANING:
+//				return createBackupForRedirectRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
+//			case RANKING_RULE:
+//				return createBackupForRankingRule(store, ruleId, String.valueOf(ruleEntity.getCode()));
+//			default:
+//				break;
+//			}
+//		}
 		return success;
 	}
 	
@@ -158,18 +158,18 @@ public class FileServiceImpl implements FileService{
 		List<RuleVersionInfo> backupList = new ArrayList<RuleVersionInfo>();
 		RuleVersionInfo backup = null;
 		
-		for(String ruleId : list){
-			backup = new RuleVersionInfo();
-			String path = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
-			
-			if(FileUtil.isExist(path)){
-				backup.setRuleId(ruleId);
-				backup.setFileSize(FileUtil.getSizeBytes(path));
-				backup.setHasBackup(true);
-				backup.setDateCreated(FileUtil.getLastModefied(path));
-				backupList.add(backup);
-			}
-		}
+//		for(String ruleId : list){
+//			backup = new RuleVersionInfo();
+//			String path = getFilePath(String.valueOf(ruleEntity.getCode()), ruleId, FileUtil.XML_FILE_TYPE);
+//			
+//			if(FileUtil.isExist(path)){
+//				backup.setRuleId(ruleId);
+//				backup.setFileSize(FileUtil.getSizeBytes(path));
+//				backup.setHasBackup(true);
+//				backup.setDateCreated(FileUtil.getLastModefied(path));
+//				backupList.add(backup);
+//			}
+//		}
 
 		return backupList;
 	}

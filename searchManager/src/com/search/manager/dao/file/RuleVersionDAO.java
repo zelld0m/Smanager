@@ -69,7 +69,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
 	}
 	
-	public boolean restoreRuleVersion(T xml){
+	public boolean restoreRuleVersion(RuleXml xml){
 		return RuleXmlUtil.restoreRule(xml);
 	};
 
@@ -124,10 +124,8 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RuleXml> getRuleVersions(String store, String ruleId) {
+	public List<RuleXml> getRuleVersions(RuleVersionListXml<?> ruleVersionListXml) {
 		List<RuleXml> ruleVersionInfoList = new ArrayList<RuleXml>();
-		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
 		if (ruleVersionListXml!=null){
 			List<?> ruleXmlList =  ruleVersionListXml.getVersions();
 
@@ -152,7 +150,15 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 				});
 			}
 		}
-
 		return ruleVersionInfoList;
+	}	
+	
+	
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
+		return getRuleVersions(getPublishedList(store, ruleId));
+	}	
+
+	public List<RuleXml> getRuleVersions(String store, String ruleId) {
+		return getRuleVersions(getRuleVersionList(store, ruleId));
 	}	
 }

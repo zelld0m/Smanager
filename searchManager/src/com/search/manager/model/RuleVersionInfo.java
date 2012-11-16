@@ -17,6 +17,9 @@ public class RuleVersionInfo extends ModelBean{
 	private boolean deleted;
 	private RuleXml rule;
 	
+	public RuleVersionInfo() {
+	}
+	
 	public RuleVersionInfo(RuleXml xml){
 		super();
 		setRule(xml);
