@@ -332,10 +332,10 @@
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
-								$tr.find("td#ruleOption > img.previewIcon").importpreview({
+								$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
 									ruleType: self.entityName,
 									ruleId: ruleId,
-									rule: rule,
+									ruleXml: rule,
 									enablePreTemplate: true,
 									enablePostTemplate: true,
 									enableRightPanel: true,

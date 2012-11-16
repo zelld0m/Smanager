@@ -1,6 +1,6 @@
 (function($){
 
-	$.importpreview = function(el, options){
+	$.xmlpreview = function(el, options){
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
@@ -13,7 +13,7 @@
 		base.$el.data("preview", base);
 
 		base.init = function(){
-			base.options = $.extend({},$.importpreview.defaultOptions, options);
+			base.options = $.extend({},$.xmlpreview.defaultOptions, options);
 
 			base.$el.off().on({
 				click: base.showQtipPreview()
@@ -123,7 +123,7 @@
 
 			$table.find("tr:not(#itemPattern)").remove();
 			
-			$content.find("#ruleInfo").text($.trim(base.options.rule["ruleName"]));
+			$content.find("#ruleInfo").text($.trim(base.options.ruleXml["ruleName"]));
 			$content.find("#requestType").text(base.options.requestType);
 			
 			if (list.length==0){
@@ -363,13 +363,13 @@
 		base.getRuleData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate":
-				base.populateItemTable($content, "Elevate", base.options.rule["products"]);
+				base.populateItemTable($content, "Elevate", base.options.ruleXml["products"]);
 				break;
 			case "exclude": 
-				base.populateItemTable($content, "Exclude", base.options.rule["products"]);
+				base.populateItemTable($content, "Exclude", base.options.ruleXml["products"]);
 				break;
 			case "demote": 
-				base.populateItemTable($content, "Demote", base.options.rule["products"]);
+				base.populateItemTable($content, "Demote", base.options.ruleXml["products"]);
 				break;
 			case "facetsort": 
 				var $table = $content.find("table#item");
@@ -1052,12 +1052,12 @@
 		base.init();
 	};
 
-	$.importpreview.defaultOptions = {
+	$.xmlpreview.defaultOptions = {
 			headerText:"Rule Preview",
 			ruleType: "",
 			ruleId: "",
 			ruleInfo: "",
-			rule: null,
+			ruleXml: null,
 			requestType: "",
 			version: "",
 			enablePreTemplate: false,
@@ -1073,10 +1073,10 @@
 	
 	};
 
-	$.fn.importpreview = function(options){
+	$.fn.xmlpreview = function(options){
 		if (this.length) {
 			return this.each(function() {
-				(new $.importpreview(this, options));
+				(new $.xmlpreview(this, options));
 			});
 		};
 	};
