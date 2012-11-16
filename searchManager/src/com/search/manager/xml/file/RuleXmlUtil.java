@@ -30,6 +30,7 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Product;
+import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
@@ -147,24 +148,28 @@ public class RuleXmlUtil{
 			
 			try {
 				redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
+				
 			} catch (DaoException e) {
 				logger.error("Failed convert query cleaning rule to rule xml", e);
 				return null;
 			}
 			
-			ruleXml = new RedirectRuleXml();
+			ruleXml = new RedirectRuleXml(store, redirectRule);
 			break;
 		case RANKING_RULE:
 			Relevancy relevancy = new Relevancy();
 			
 			try {
-				relevancy = daoService.getRelevancy(new Relevancy(ruleId));
+				relevancy = daoService.getRelevancyDetails(new Relevancy(ruleId));
+				RecordSet<RelevancyKeyword> relevancyKeywords = daoService.getRelevancyKeywords(relevancy);
+				relevancy.setRelKeyword(relevancyKeywords.getList());
+				
 			} catch (DaoException e) {
 				logger.error("Failed convert ranking rule to rule xml", e);
 				return null;
 			}
 
-			ruleXml = new RankingRuleXml();
+			ruleXml = new RankingRuleXml(store, relevancy);
 			break;
 		}
 		return ruleXml;
