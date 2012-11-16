@@ -253,4 +253,14 @@ public class RuleTransferService {
 		
 		return success;
 	}
+	
+	@RemoteMethod
+	public boolean getAutoExport(){
+		return RuleTransferUtil.getAutoExport(UtilityService.getStoreName());
+	}
+	
+	@RemoteMethod
+	public boolean setAutoExport(boolean autoexport){
+		return RuleTransferUtil.setAutoExport(UtilityService.getStoreName(), autoexport);
+	}
 }

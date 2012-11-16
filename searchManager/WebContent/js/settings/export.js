@@ -122,7 +122,7 @@
 					}else{
 						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
 							callback: function(data){									
-								self.postMsg(data,"exported");	
+								self.postMsg(data, "exported");	
 								self.getExportList();	
 							},
 							preHook:function(){ 
@@ -272,8 +272,26 @@
 		init : function() {
 			var self = this;
 			$("#titleText").html(self.moduleName);
+			
 			self.getRuleEntityList();
 			self.populateTabContent();
+
+			RuleTransferServiceJS.getAutoExport({
+				callback: function(isAutoExport){
+					$('.firerift-style-checkbox').slidecheckbox({
+						initOn: isAutoExport,
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							RuleTransferServiceJS.setAutoExport(dt.status, {
+								callback: function(set){
+									
+								}
+							});
+						}
+					});
+				}
+			});
+			
 		}
 	};
 
