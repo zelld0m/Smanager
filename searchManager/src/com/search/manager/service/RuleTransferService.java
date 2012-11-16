@@ -89,10 +89,8 @@ public class RuleTransferService {
 				List<ElevateItemXml> elevateItemXmlList = new ArrayList<ElevateItemXml>();
 				try {
 					List<ElevateResult> elevateItemList = daoService.getElevateResultList(elevateCriteria).getList();
-					LinkedHashMap<String, Product> map = SearchHelper.getProducts(elevateItemList, store, ruleId);
 					
 					for (ElevateResult elevateResult : elevateItemList) {
-						Product p = elevateResult.getMemberType()==MemberTypeEntity.PART_NUMBER ? map.get(elevateResult.getEdp()): null;
 						elevateItemXmlList.add(new ElevateItemXml(elevateResult));
 					}
 				} catch (DaoException e) {

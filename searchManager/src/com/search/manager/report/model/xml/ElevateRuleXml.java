@@ -42,6 +42,10 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		setElevateItem(eItemXml);
 	}
 	
+	public ElevateRuleXml(String store, String keyword, List<ElevateItemXml> elevateItem){
+		this(store, 0, "", "", "", keyword, elevateItem);
+	}
+	
 	public String getKeyword() {
 		return keyword;
 	}
@@ -62,6 +66,10 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	@XmlTransient
 	public List<ElevateItemXml> getItem() {
 		return elevateItem;
+	}
+	
+	public void setItem(List<ElevateItemXml> item) {
+		this.elevateItem = item;
 	}
 
 	@XmlTransient
