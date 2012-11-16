@@ -182,39 +182,4 @@ public class RuleTransferUtil {
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
 		return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
 	}
-
-	public static boolean getAutoExport(String store){
-		String filename = EXPORT_FILE_PATH + File.separator + store + File.separator + AUTO_EXPORT_FILE;
-		File file = new File(filename);
-		return file.exists();
-	}
-	
-	public static boolean setAutoExport(String store, boolean autoexport){
-		File dirFile = new File(EXPORT_FILE_PATH);
-		String filename = EXPORT_FILE_PATH + File.separator + store + File.separator + AUTO_EXPORT_FILE;
-		
-		if (!dirFile.exists()) {
-			try {
-				FileUtils.forceMkdir(dirFile);
-			} catch (IOException e) {
-				logger.error("Unable to create directory", e);
-				return false;
-			}
-		}
-
-		File file = new File(filename);
-
-		try {
-			if(autoexport){
-				FileUtils.touch(file);
-				return file.exists();
-			}else{
-				FileUtils.forceDelete(file);
-				return !file.exists();
-			}
-		} catch (IOException e) {
-			logger.error("Failed to set value of autoexport", e);
-			return false;
-		}
-	}
 }

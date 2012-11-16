@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.MemberTypeEntity;
@@ -37,6 +39,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
 
 @Service(value = "ruleTransferService")
@@ -47,6 +50,7 @@ import com.search.ws.SearchHelper;
 	)
 public class RuleTransferService {
 
+	private ConfigManager configManager = ConfigManager.getInstance();
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DaoService daoService;
 	
@@ -256,11 +260,11 @@ public class RuleTransferService {
 	
 	@RemoteMethod
 	public boolean getAutoExport(){
-		return RuleTransferUtil.getAutoExport(UtilityService.getStoreName());
+		return BooleanUtils.toBoolean(configManager.getStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT));
 	}
 	
 	@RemoteMethod
 	public boolean setAutoExport(boolean autoexport){
-		return RuleTransferUtil.setAutoExport(UtilityService.getStoreName(), autoexport);
+		return configManager.setStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
 	}
 }
