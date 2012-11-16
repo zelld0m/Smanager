@@ -64,14 +64,11 @@ public class RuleVersionService{
 			success = daoService.restoreRuleVersion(rule);
 			switch (RuleEntity.find(ruleType)) {
 				case ELEVATE:
-					break;
 				case EXCLUDE:
-					break;
 				case DEMOTE:
-					break;
 				case FACET_SORT:
-					break;
 				case QUERY_CLEANING:
+				default: 
 					break;
 				case RANKING_RULE:
 					// what is this for?
@@ -79,8 +76,6 @@ public class RuleVersionService{
 					if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
 						deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
 					}
-					break;
-				default: 
 					break;
 			}
 		}

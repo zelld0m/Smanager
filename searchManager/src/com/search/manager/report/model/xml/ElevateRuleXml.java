@@ -30,7 +30,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	}
 	
 	public ElevateRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ElevateItemXml> eItemXml) {
-		super(store, name, notes, createdBy);
+		super(store, name == null ? keyword : name, notes, createdBy);
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);

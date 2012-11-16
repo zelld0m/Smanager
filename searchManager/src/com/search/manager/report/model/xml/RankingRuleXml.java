@@ -33,9 +33,8 @@ public class RankingRuleXml extends RuleXml {
 		this.setRuleEntity(RuleEntity.RANKING_RULE);
 	}
 
-	public RankingRuleXml(String store, long version, String name, String notes, String username,
-			Relevancy rr) {
-		super(store, name, notes, username);
+	public RankingRuleXml(String store, long version, String name, String notes, String username, Relevancy rr) {
+		super(store, name == null ? rr.getRuleName() : name, notes, username);
 
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());

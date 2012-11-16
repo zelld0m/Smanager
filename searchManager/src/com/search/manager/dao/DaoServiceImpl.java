@@ -18,6 +18,7 @@ import com.search.manager.dao.file.ExcludeVersionDAO;
 import com.search.manager.dao.file.FacetSortVersionDAO;
 import com.search.manager.dao.file.RankingRuleVersionDAO;
 import com.search.manager.dao.file.RedirectRuleVersionDAO;
+import com.search.manager.dao.file.RuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
@@ -1408,106 +1409,97 @@ public class DaoServiceImpl implements DaoService {
 		return facetSortDAO.addFacetGroupItems(facetGroupItems);
 	}
 
-	@Override
-	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
+	private RuleVersionDAO<?> getRuleVersionDAO(RuleEntity ruleEntity) {
 		switch (ruleEntity) {
 		case ELEVATE:
-			return elevateVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return elevateVersionDAO;
 		case EXCLUDE:
-			return excludeVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return excludeVersionDAO;
 		case DEMOTE:
-			return demoteVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return demoteVersionDAO;
 		case FACET_SORT:
-			return facetSortVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return facetSortVersionDAO;
 		case QUERY_CLEANING:
-			return queryCleaningVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return queryCleaningVersionDAO;
 		case RANKING_RULE:
-			return rankingRuleVersionDAO.createRuleVersion(store, ruleId, username, name, reason);
+			return rankingRuleVersionDAO;
+		}
+		return null;
+	}
+	
+	private RuleVersionDAO<?> getRuleVersionDAO(RuleXml xml) {
+		// TODO: convert to map
+		if (xml instanceof ElevateRuleXml) {
+			return elevateVersionDAO;
+		}
+		else if (xml instanceof ExcludeRuleXml) {
+			return excludeVersionDAO;
+		}
+		else if (xml instanceof DemoteRuleXml) {
+			return demoteVersionDAO;
+		}
+		else if (xml instanceof FacetSortRuleXml) {
+			return facetSortVersionDAO;
+		}
+		else if (xml instanceof RedirectRuleXml) {
+			return queryCleaningVersionDAO;
+		}
+		else if (xml instanceof RankingRuleXml) {
+			return rankingRuleVersionDAO;
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.createPublishedRuleVersion(store, ruleId, username, name, notes);
+		}
+		return false;
+	}
+
+	@Override
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getPublishedRuleVersions(store, ruleId);
+		}
+		return new ArrayList<RuleXml>();
+	}
+	
+	@Override
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.createRuleVersion(store, ruleId, username, name, reason);
 		}
 		return false;
 	}
 
 	@Override
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version){
-		switch (ruleEntity) {
-		case ELEVATE:
-			return elevateVersionDAO.deleteRuleVersion(store, ruleId, username, version);
-		case EXCLUDE:
-			return excludeVersionDAO.deleteRuleVersion(store, ruleId, username, version);
-		case DEMOTE:
-			return demoteVersionDAO.deleteRuleVersion(store, ruleId, username, version);
-		case FACET_SORT:
-			return facetSortVersionDAO.deleteRuleVersion(store, ruleId, username, version);
-		case QUERY_CLEANING:
-			return queryCleaningVersionDAO.deleteRuleVersion(store, ruleId, username, version);
-		case RANKING_RULE:
-			return rankingRuleVersionDAO.deleteRuleVersion(store, ruleId, username, version);
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.deleteRuleVersion(store, ruleId, username, version);
 		}
 		return false;
 	}
 
 	@Override
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId) {
-		List<RuleXml> versionList = new ArrayList<RuleXml>();
-
-		switch (RuleEntity.find(ruleType)) {
-		case ELEVATE:
-			versionList = elevateVersionDAO.getRuleVersions(store, ruleId);
-			break;
-		case EXCLUDE:
-			versionList = excludeVersionDAO.getRuleVersions(store, ruleId);
-			break;
-		case DEMOTE:
-			versionList = demoteVersionDAO.getRuleVersions(store, ruleId);
-			break;
-		case FACET_SORT:
-			versionList = facetSortVersionDAO.getRuleVersions(store, ruleId);
-			break;
-		case QUERY_CLEANING:
-			versionList = queryCleaningVersionDAO.getRuleVersions(store, ruleId);
-			break;
-		case RANKING_RULE:
-			versionList = rankingRuleVersionDAO.getRuleVersions(store, ruleId);
-			break;
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getRuleVersions(store, ruleId);
 		}
-
-		return versionList;
+		return new ArrayList<RuleXml>();
 	}
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
-		RuleEntity ruleEntity = xml.getRuleEntity();
-		switch (ruleEntity) {
-			case ELEVATE:
-				if (xml instanceof ElevateRuleXml) {
-					return elevateVersionDAO.restoreRuleVersion((ElevateRuleXml)xml);
-				}
-				break;
-			case EXCLUDE:
-				if (xml instanceof ExcludeRuleXml) {
-					return excludeVersionDAO.restoreRuleVersion((ExcludeRuleXml)xml);
-				}
-				break;
-			case DEMOTE:
-				if (xml instanceof DemoteRuleXml) {
-					return demoteVersionDAO.restoreRuleVersion((DemoteRuleXml)xml);
-				}
-				break;
-			case FACET_SORT:
-				if (xml instanceof FacetSortRuleXml) {
-					return facetSortVersionDAO.restoreRuleVersion((FacetSortRuleXml)xml);
-				}
-				break;
-			case QUERY_CLEANING:
-				if (xml instanceof RedirectRuleXml) {
-					return queryCleaningVersionDAO.restoreRuleVersion((RedirectRuleXml)xml);
-				}
-				break;
-			case RANKING_RULE:
-				if (xml instanceof RankingRuleXml) {
-					return rankingRuleVersionDAO.restoreRuleVersion((RankingRuleXml)xml);
-				}
-				break;
+		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
+		if (dao != null) {
+			return dao.restoreRuleVersion(xml);
 		}
 		return false;
 	}
@@ -1531,4 +1523,5 @@ public class DaoServiceImpl implements DaoService {
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
 	}
+
 }

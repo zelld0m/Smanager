@@ -30,9 +30,8 @@ public class RedirectRuleXml extends RuleXml{
 		this.setRuleEntity(RuleEntity.QUERY_CLEANING);
 	}
 
-	public RedirectRuleXml(String store, long version, String name, String notes, String username,
-			RedirectRule rr) {
-		super(store, name, notes, username);
+	public RedirectRuleXml(String store, long version, String name, String notes, String username, RedirectRule rr) {
+		super(store, name == null ? rr.getRuleName() : name, notes, username);
 
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());

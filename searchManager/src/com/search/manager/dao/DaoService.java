@@ -256,6 +256,8 @@ public interface DaoService {
 	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
 	public boolean restoreRuleVersion(RuleXml xml);	
 	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
+	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId);
 
 	/* Export Rule Map */
     public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException;
