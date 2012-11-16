@@ -177,9 +177,9 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#importBtn, a#rejectBtn").on({
+			$selectedTab.find("a#approvalBtn, a#rejectBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#importComment").val());
+					var comment = $.trim($selectedTab.find("#approvalComment").val());
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
@@ -189,7 +189,7 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
 						switch($(evt.currentTarget).attr("id")){
-						case "importBtn":
+						case "approvalBtn":
 							RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 								callback: function(data){									
 									self.postMsg(data,true);	
@@ -264,7 +264,7 @@
 			template += '	<label class="floatL w480"><textarea id="exportComment" rows="5" class="w460" style="height:32px"></textarea></label>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="importBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '		<a id="approvalBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '			<div class="buttons fontBold">Import</div>';
 			template += '		</a>';
 			template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
