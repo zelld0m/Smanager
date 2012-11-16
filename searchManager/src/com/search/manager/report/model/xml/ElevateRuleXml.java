@@ -20,13 +20,14 @@ import com.search.manager.model.Product;
 public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	
 	private static final long serialVersionUID = 1L;
+	private static final RuleEntity RULE_ENTITY = RuleEntity.ELEVATE;
 	private String keyword;
 	private List<ElevateItemXml> elevateItem;
 	private List<Product> products;
 	
 	public ElevateRuleXml() {
 		super(serialVersionUID);
-		this.setRuleEntity(RuleEntity.ELEVATE);
+		this.setRuleEntity(RULE_ENTITY);
 	}
 	
 	public ElevateRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<ElevateItemXml> eItemXml) {
@@ -34,7 +35,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		this.setRuleId(keyword);
 		this.setRuleName(keyword);
 		this.setSerial(serialVersionUID);
-		this.setRuleEntity(RuleEntity.ELEVATE);
+		this.setRuleEntity(RULE_ENTITY);
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.setCreatedDate(new Date());

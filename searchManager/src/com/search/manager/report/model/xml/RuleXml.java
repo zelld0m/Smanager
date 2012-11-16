@@ -40,7 +40,6 @@ public class RuleXml extends BaseEntityXml{
 	public RuleXml(long serial) {
 		super();
 		this.serial = serial;
-		this.ruleEntity = getRuleEntity();
 	}
 	
 	public RuleXml(String store, String name, String notes,
@@ -50,7 +49,6 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
-		this.ruleEntity = getRuleEntity();
 	}
 
 	public RuleStatus getRuleStatus() {

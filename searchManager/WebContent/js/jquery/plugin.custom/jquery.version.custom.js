@@ -186,9 +186,11 @@
 		
 		base.setProductCompare = function(li, rowlabel, item){
 			var $li = li;
-			var products = item["item"];
+			var products = item["products"];
 			var $rowLabelUl = rowlabel;
 
+			console.log(item["products"]);
+			
 			if(products.length){
 				var $ul = $li.find("ul#prodList");
 				var $pattern = $ul.find("li#prodPattern");
@@ -213,12 +215,17 @@
 						if($.isNotBlank(imagePath))
 							$pLi.find("#prodImage").attr("src", imagePath);
 						
-						$pLi.find("#prodInfo").text(product["condition"]);
+						$pLi.find("#prodInfo").text(product["condition"]["condition"]);
 					}else if(product["memberType"]==="PART_NUMBER"){
-						$pLi.find("#prodImage").attr("src", product["imagePath"]);
-						$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
-						$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
-						$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrNo"]);
+						if($.isNotBlank(product["dpNo"])){
+							$pLi.find("#prodImage").attr("src", product["imagePath"]);
+							$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+							$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
+							$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
+						}else{
+							$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg');
+							$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
+						}
 					}
 					
 					$pLi.show();
@@ -316,11 +323,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-									RuleVersionServiceJS.getRankingRuleVersion(base.options.ruleId, e.data.item["version"], {
-										callback: function(data){
-											base.options.postRestoreCallback(base, data);
-										}
-									});
+									
 								}
 							});
 						}
@@ -457,7 +460,6 @@
 			template += '	</div>'; // end addVersion
 			template += '	</div>';	// end w400		
 			template += '</div>'; // end w700
-
 
 			return template;
 		};
