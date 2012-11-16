@@ -168,14 +168,13 @@ public class RuleXmlUtil{
 		return true;
 	}
 
-	private static boolean createPreBackUpRuleXml(String path, RuleXml xml){
-		RuleEntity ruleEntity = xml.getRuleEntity();
-		String dir = RuleXmlUtil.getRuleFileDirectory(PREIMPORTPATH, xml.getStore(), ruleEntity);
-		String id = getRuleId(ruleEntity, xml.getRuleId());
+	public static boolean ruleXmlToFile(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, String path){
+		String dir = RuleXmlUtil.getRuleFileDirectory(path, store, ruleEntity);
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
+		FileWriter writer = null;
 
 		File dirFile = new File(dir);
-		FileWriter writer = null;
 		if (!dirFile.exists()) {
 			try {
 				FileUtils.forceMkdir(dirFile);
@@ -186,25 +185,22 @@ public class RuleXmlUtil{
 		}
 
 		try {
-			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
+			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setEventHandler(new RuleVersionValidationEventHandler());
-
-			if (!new File(filename).exists()){
-				writer = new FileWriter(filename);
-				m.marshal(new RuleXml(), writer);
-			}
+			writer = new FileWriter(filename);
+			m.marshal(rule, writer);
 
 			return true;
 		} catch (JAXBException e) {
-			logger.error("Failed to marshall rule", e);
+			logger.error("Unable to create marshaller", e);
 			return false;
-		} catch (IOException e) {
-			logger.error("Failed to create pre-import rule file", e);
+		} catch (Exception e) {
+			logger.error("Unknown error", e);
 			return false;
-		} finally {
-			try { if (writer != null) writer.close(); } catch (Exception e) {}
+		}
+		finally {
+			try { if (writer != null) { writer.close(); } } catch (IOException e) { }
 		}
 	}
 
@@ -212,6 +208,7 @@ public class RuleXmlUtil{
 		ElevateRuleXml eXml = (ElevateRuleXml) xml;
 		String store = xml.getStore();
 		String ruleId = xml.getRuleId();
+		RuleEntity ruleEntity = xml.getRuleEntity();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
 
 		ElevateResult model = new ElevateResult(storeKeyword);
@@ -221,7 +218,7 @@ public class RuleXmlUtil{
 			List<ElevateResult> preImportlist = daoService.getElevateResultList(criteria).getList();
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
-				if (!RuleXmlUtil.createPreBackUpRuleXml(path, eXml)){
+				if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)){
 					logger.error("Failed to create pre-import rule");
 					return false;
 				};
