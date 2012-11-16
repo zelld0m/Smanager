@@ -179,8 +179,12 @@ public class DeploymentService {
 				
 				if(ruleMap != null && ruleMap.size() > 0){
 					if(ruleMap.containsKey(ruleId)){
-						if(ruleMap.get(ruleId))
+						if(ruleMap.get(ruleId)) {
 							deploy.setPublished(1);
+							daoService.createPublishedVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, 
+									UtilityService.getUsername(), null, comment);
+							// TODO: add auto-export
+						}
 					}	
 				}
 				deployList.add(deploy);
@@ -224,8 +228,9 @@ public class DeploymentService {
 			
 			if(ruleMap != null && ruleMap.size() > 0){
 				if(ruleMap.containsKey(ruleId)){
-					if(ruleMap.get(ruleId))
+					if(ruleMap.get(ruleId)) {
 						deploy.setPublished(1);
+					}
 				}	
 			}
 			deployList.add(deploy);
@@ -234,7 +239,7 @@ public class DeploymentService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
+	private Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
