@@ -46,7 +46,10 @@ public class FacetSort extends ModelBean{
 		
 		if (CollectionUtils.isNotEmpty(xml.getItem())) {
 			for (FacetSortItemXml facetSort: xml.getItem()) {
-				items.put(facetSort.getGroupName(), new ArrayList<String>(facetSort.getGroupItem()));
+				items.put(facetSort.getGroupName(), 
+						CollectionUtils.isEmpty(facetSort.getGroupItem())
+							? new ArrayList<String>() 
+							: facetSort.getGroupItem());
 				groupSortType.put(facetSort.getGroupName(), facetSort.getSortType());
 			}
 		}
