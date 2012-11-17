@@ -10,6 +10,8 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 
+import com.search.manager.report.model.xml.RedirectRuleXml;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRule extends ModelBean {
 
@@ -126,6 +128,32 @@ public class RedirectRule extends ModelBean {
 		this.changeKeyword = changeKeyword;
 		this.redirectUrl = redirectUrl;
 		this.includeKeyword = includeKeyword;
+	}
+	
+	
+	public RedirectRule(RedirectRuleXml xml) {
+		this.ruleId = xml.getRuleId();
+		this.ruleName = xml.getRuleName();
+		this.description = xml.getDescription();
+		setRedirectTypeId(xml.getRedirectType());
+		this.storeId = xml.getStore();
+
+		if(xml.getRuleKeyword()!=null){
+			this.searchTerm = StringUtils.join(xml.getRuleKeyword().getKeyword().toArray(), ","); ;
+		}
+		
+		if(xml.getRuleCondition()!=null){
+			this.condition = StringUtils.join(xml.getRuleCondition().getCondition().toArray(), ",");
+		}
+		
+		this.changeKeyword = xml.getReplacementKeyword();
+		if(xml.getRuleCondition()!=null)
+			this.includeKeyword = xml.getRuleCondition().isIncludeKeyword();
+		this.redirectUrl = xml.getDirectHit();
+		this.createdBy = xml.getCreatedBy();
+		this.createdDate = xml.getCreatedDate();
+		this.lastModifiedBy = xml.getLastModifiedBy();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 	
 	public String getRuleId() {

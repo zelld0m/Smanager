@@ -48,6 +48,10 @@ public class RedirectRuleXml extends RuleXml{
 		this.setCreatedDate(new Date());
 	}
 	
+	public RedirectRuleXml(String store, RedirectRule queryCleaning) {
+		this(store, 0, "", "", "", queryCleaning);
+	}
+	
 	@XmlAttribute(name="type")
 	public String getRedirectType() {
 		return redirectType;

@@ -75,7 +75,7 @@ public class RuleTransferService {
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
 			RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
-			
+
 			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
 				//TODO update rule status
 				//TODO add Comment

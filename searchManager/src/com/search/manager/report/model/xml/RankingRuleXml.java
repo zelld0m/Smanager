@@ -56,6 +56,10 @@ public class RankingRuleXml extends RuleXml {
 		setSerial(serialVersionUID);
 		this.setCreatedDate(new Date());
 	}
+	
+	public RankingRuleXml(String store, Relevancy relevancy) {
+		this(store, 0, "", "", "", relevancy);
+	}
 
 	public String getDescription() {
 		return description;

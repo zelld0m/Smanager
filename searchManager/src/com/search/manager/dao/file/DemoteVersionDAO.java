@@ -43,6 +43,7 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 				eRuleXmlList.add(new DemoteRuleXml(store, version, name, notes, username, ruleId, eItemXmlList));
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(ruleId);
+				return true;
 			} catch (DaoException e) {
 			}	
 		}
