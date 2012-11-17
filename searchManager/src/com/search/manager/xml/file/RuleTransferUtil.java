@@ -16,7 +16,6 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
-import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -31,12 +30,11 @@ public class RuleTransferUtil {
 	private static Logger logger = Logger.getLogger(RuleTransferUtil.class);
 	public static final Pattern PATTERN = Pattern.compile("__(.*).xml",Pattern.DOTALL);
 	private static final String IMPORT_FILE_PATH = PropsUtils.getValue("importfilepath");
-	private static final String EXPORT_FILE_PATH = PropsUtils.getValue("exportfilepath");
-
+	
 	public static List<RuleXml> getAllExportedRules(String store, String ruleType) {
 		return (ArrayList<RuleXml>) getRules(store, RuleEntity.find(ruleType), IMPORT_FILE_PATH);
 	}
-
+	
 	public static RuleXml getRuleToImport(String store, RuleEntity ruleEntity, String ruleId){
 		return getRule(store, ruleEntity, ruleId, IMPORT_FILE_PATH);
 	}

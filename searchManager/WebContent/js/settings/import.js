@@ -104,7 +104,7 @@
 			var selectedItems = self.getSelectedItems();
 			for (var id in selectedItems){
 				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
-				selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text()); 
+				selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text); 
 			}
 			return selectedItems;
 		}, 
@@ -112,9 +112,13 @@
 		getSelectedRuleName : function(){
 			var self = this;
 			var selectedRuleNames = [];
-			
-			//TODO
-			return self.getSelectedImportAsRefId();
+			var $selectedTab = $("#"+self.tabSelected);
+			var selectedItems = self.getSelectedItems();
+			for (var id in selectedItems){
+				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+				selectedRuleNames.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].text); 
+			}
+			return selectedRuleNames;
 		},
 		
 		getSelectedItems : function(){
@@ -177,9 +181,9 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#approvalBtn, a#rejectBtn").on({
+			$selectedTab.find("a#okBtn, a#rejectBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#approvalComment").val());
+					var comment = $.trim($selectedTab.find("#comment").val());
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
@@ -189,7 +193,7 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
 						switch($(evt.currentTarget).attr("id")){
-						case "approvalBtn":
+						case "okBtn":
 							RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 								callback: function(data){									
 									self.postMsg(data,true);	
@@ -435,8 +439,6 @@
 			var self = this;
 			$("#titleText").html(self.moduleName);
 			self.getRuleEntityList();
-			self.getImportTypeList();
-			self.getImportAsList();
 			self.populateTabContent();
 		}
 	};
