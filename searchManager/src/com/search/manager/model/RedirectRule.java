@@ -109,12 +109,12 @@ public class RedirectRule extends ModelBean {
 		this.searchTerm = searchTerm;
 	}
 	
-	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
+	public RedirectRule(String ruleId, RedirectType redirectType, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
 			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
 		super();
 		this.ruleId = ruleId;
-		setRedirectTypeId(redirectTypeId);
+		this.redirectType = redirectType;
 		this.ruleName = ruleName;
 		this.storeId = storeId;
 		this.description = description;
@@ -130,12 +130,18 @@ public class RedirectRule extends ModelBean {
 		this.includeKeyword = includeKeyword;
 	}
 	
+	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
+			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
+			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
+		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, dateCreated, dateModified, changeKeyword, redirectUrl, includeKeyword);
+	}
+	
 	
 	public RedirectRule(RedirectRuleXml xml) {
 		this.ruleId = xml.getRuleId();
 		this.ruleName = xml.getRuleName();
 		this.description = xml.getDescription();
-		setRedirectTypeId(xml.getRedirectType());
+		this.redirectType = xml.getRedirectType();
 		this.storeId = xml.getStore();
 
 		if(xml.getRuleKeyword()!=null){
