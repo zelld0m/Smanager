@@ -98,10 +98,10 @@
 					<p>
 				</div>
 				<label class="floatL padL13 w100"><span class="fred">*</span> Comment: </label>
-				<label class="floatL w480"><textarea id="importComment" class="w510" style="height:32px"></textarea></label>
+				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea></label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<a id="importBtn" href="javascript:void(0);"
+					<a id="okBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Import</div>
 					</a>
 					<a id="rejectBtn" href="javascript:void(0);"

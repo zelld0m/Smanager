@@ -109,9 +109,9 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#exportBtn").on({
+			$selectedTab.find("a#okBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#exportComment").val());
+					var comment = $.trim($selectedTab.find("#comment").val());
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
@@ -165,10 +165,10 @@
 			template += '		<p>';
 			template += '	</div>';
 			template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-			template += '	<label class="floatL w480"><textarea id="exportComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+			template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="exportBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '			<div class="buttons fontBold">Export</div>';
 			template += '		</a>';
 			template += '	</div>';
@@ -215,7 +215,7 @@
 									leftPanelSourceData: "xml",
 									postTemplate: self.getPostTemplate(),
 									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId){
-										RuleTransferServiceJS.getRuleToExport(self.entityName, rule["ruleRefId"],{
+										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
 											callback: function(xml){
 												base.options.ruleXml = xml;
 												base.getRuleData(contentHolder, ruleType, ruleId);

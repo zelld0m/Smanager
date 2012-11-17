@@ -376,46 +376,41 @@
 			case "facetsort": 
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
+				var xml = base.options.ruleXml;
+				$ruleInfo.find("#ruleName").text(xml.ruleName);
+				$ruleInfo.find("#ruleType").text(xml.ruleType.toLowerCase());
 
-				FacetSortServiceJS.getRuleById(ruleId, {
-					callback: function(data){
-						$ruleInfo.find("#ruleName").text(data.name);
-						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+				for(var index in xml.item){
+					var facetGroup = xml.item[index];
+					var facetName = facetGroup["groupName"];
+					var highlightedItems = "";
+					var $tr = $table.find("tr#itemPattern").clone();
+					$tr.prop({id: $.formatAsId(facetName)});
+					$tr.find("#itemName").text(facetName);
 
-						for(var facetGroup in data.items){
-							var facetName = facetGroup;
-							var facetValue = data.items[facetGroup];
-							var highlightedItems = "";
-							var $tr = $table.find("tr#itemPattern").clone();
-							$tr.prop({id: $.formatAsId(facetName)});
-							$tr.find("#itemName").text(facetName);
-
-							if($.isArray(facetValue)){
-								for(var i=0; i < facetValue.length; i++){
-									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
-								}
-							}
-							$tr.find("#itemHighlightedItem").html(highlightedItems);
-
-							var sortTypeDisplay = "";
-							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
-
-							switch(sortType){
-							case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
-							case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
-							case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
-							case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
-							}
-
-							$tr.find("#itemSortType").text(sortTypeDisplay);
-							$tr.show();
-							$table.append($tr);
-						};						
-					},
-					postHook:function(){
-						$table.find("tr#preloader").hide();
+					var facetGroupItems = facetGroup["groupItem"];
+					
+					if($.isArray(facetGroupItems)){
+						for(var i=0; i < facetGroupItems.length; i++){
+							highlightedItems += (i+1) + ' - ' + facetGroupItems[i] + '<br/>';
+						}
 					}
-				});
+					$tr.find("#itemHighlightedItem").html(highlightedItems);
+
+					var sortTypeDisplay = "";
+					var sortType = facetGroup["sortType"] == null ? xml.sortType : facetGroup["sortType"];
+
+					switch(sortType){
+					case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+					case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+					case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+					case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+					}
+
+					$tr.find("#itemSortType").text(sortTypeDisplay);
+					$tr.show();
+					$table.append($tr);
+				};						
 				break;
 			case "querycleaning": 
 				$content.find(".infoTabs").tabs({});
@@ -424,31 +419,36 @@
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 
-				RedirectServiceJS.getRule(ruleId, {
-					callback: function(data){
+				var xml = base.options.ruleXml;
+				
+				//RedirectServiceJS.getRule(ruleId, {
+				//	callback: function(data){
 
 						var $table = $content.find("div.ruleFilter table#item");
 						$table.find("tr:not(#itemPattern)").remove();
 
-						if(data.readableConditions.length==0){
+						if(xml["ruleCondition"]["condition"].length==0){
 							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 							$tr.find("td#fieldValue").remove();
 							$tr.appendTo($table);
 
 						}else{
-							for(var field in data.readableConditions){
+							for(var field in xml["ruleCondition"]["condition"]){
 								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 								$tr.find("td#fieldName").html(parseInt(field)+1);
-								$tr.find("td#fieldValue").html(data.readableConditions[field]);
+								$tr.find("td#fieldValue").html(xml["ruleCondition"]["condition"][field]);
 								$tr.appendTo($table);
 							}	
 						}
 
 						$table.find("tr:even").addClass("alt");
-						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+						$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
 						$content.find("#description").html(data["description"]);
-						switch (data["redirectTypeId"]) {
+						
+						$content.find("#redirectType").html(xml["redirectType"]);
+						
+						/*switch (data["redirectType"]) {
 						case "1":
 							$content.find("#redirectType").html("Filter");
 							break;
@@ -461,7 +461,7 @@
 						default:
 							$content.find("#redirectType").html("");
 						break;									
-						}
+						}*/
 
 						if ($.isNotBlank(data["changeKeyword"])){
 							$content.find("div#ruleChange > div#hasChangeKeyword").show();
@@ -484,8 +484,8 @@
 						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
 
 						base.populateKeywordInRule($content, data["searchTerms"]);
-					}
-				});
+				//	}
+				//});
 
 				break;
 			case "rankingrule": 
@@ -517,13 +517,13 @@
 				break;
 			}
 			
-			$content.find("a#approveBtn, a#rejectBtn").off().on({
+			$content.find("a#okBtn, a#rejectBtn").off().on({
 				click: function(evt){
-					var comment = $content.find("#approvalComment").val();
+					var comment = $content.find("#comment").val();
 
 					if ($.isNotBlank(comment)){
 						switch($(evt.currentTarget).attr("id")){
-						case "approveBtn": 
+						case "okBtn": 
 							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
 								callback: function(data){
 									postMsg(data,true);	
@@ -953,10 +953,10 @@
 				template += '		<p>';
 				template += '	</div>';
 				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-				template += '	<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
 				template += '	<div class="clearB"></div>';
 				template += '	<div align="right" class="padR15 marT10">';
-				template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 				template += '			<div class="buttons fontBold">Approve</div>';
 				template += '		</a>';
 				template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
