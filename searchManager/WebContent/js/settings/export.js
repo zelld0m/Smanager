@@ -204,18 +204,27 @@
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
+								
 								$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
-									ruleType: self.getRuleType(rule["ruleTypeId"]),
+									ruleType: self.entityName,
 									ruleId: rule["ruleRefId"],
-									ruleXml: rule,
 									ruleInfo: rule["description"],
 									requestType: rule["updateStatus"],
 									enablePreTemplate: true,
 									enablePostTemplate: true,
+									leftPanelSourceData: "xml",
 									postTemplate: self.getPostTemplate(),
+									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId){
+										RuleTransferServiceJS.getRuleToExport(self.entityName, rule["ruleRefId"],{
+											callback: function(xml){
+												base.options.ruleXml = xml;
+												base.getRuleData(contentHolder, ruleType, ruleId);
+											}
+										});
+									},
 									itemForceAddStatusCallback: function(base, memberIds){
-										if (rule["ruleTypeId"].toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
+										if (self.entityName.toLowerCase() === "elevate")
+										ElevateServiceJS.isRequireForceAdd(rule["ruleRefId"], memberIds, {
 											callback:function(data){
 												base.updateForceAddStatus(data);
 											},

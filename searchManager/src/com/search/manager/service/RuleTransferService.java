@@ -89,19 +89,14 @@ public class RuleTransferService {
 	@RemoteMethod
 	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
 		List<String> successList = new ArrayList<String>();
-		Map<String, String> forApprovalIdList = new HashMap<String, String>();
-		Map<String, String> forPublishingIdList = new HashMap<String, String>();
-		
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
-			
 			ImportType importType = ImportType.get(importTypeList[i]);
 			String ruleName = ruleNameList[i];
 			String importAsId = importAsRefIdList[i];
-			String statusId = ruleStatusIdList[i];
 			
 			//if importAsId is null, generate a new id
 			switch(ruleEntity){
@@ -123,30 +118,22 @@ public class RuleTransferService {
 			default:
 				break;
 			}
-			
 						
 			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
-				switch(importType){
-				case AUTO_PUBLISH:
-					forPublishingIdList.put(importAsId, statusId);
-				case FOR_APPROVAL:
-					forApprovalIdList.put(importAsId, statusId);
-					break;
-				case FOR_REVIEW: //do nothing
-				default: break;
+				if(ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType){
+					//submit rule for approval
+					RuleStatus ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
+
+					if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
+						//approve rule
+						deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
+						//publish rule
+						deploymentService.publishRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
+					}
 				}
 				successList.add(ruleId);
 			}
 		}
-		
-		if(forApprovalIdList.size() > 0){
-			deploymentService.approveRule(ruleType, forApprovalIdList.keySet().toArray(new String[0]), comment, forApprovalIdList.values().toArray(new String[0]));
-		}
-		
-		if(forPublishingIdList.size() > 0){
-			deploymentService.publishRule(ruleType, forPublishingIdList.keySet().toArray(new String[0]), comment, forPublishingIdList.values().toArray(new String[0]));
-		}
-		
 		return successList;
 	}
 	

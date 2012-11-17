@@ -10,13 +10,15 @@
 		base.el = el;
 
 		// Add a reverse reference to the DOM object
-		base.$el.data("preview", base);
+		base.$el.data("xmlpreview", base);
 
 		base.init = function(){
 			base.options = $.extend({},$.xmlpreview.defaultOptions, options);
 
 			base.$el.off().on({
-				click: base.showQtipPreview()
+				click: function(){
+					base.showQtipPreview();
+				} 
 			});
 			
 		};
@@ -115,7 +117,7 @@
 			}
 		};
 
-		base.populateItemTable = function($content, ruleType, data){
+		base.populateItemTable = function($content, ruleType, data, ruleName){
 			var list = data;
 			var memberIds = new Array();
 			var $table = $content.find("table#item");
@@ -123,7 +125,7 @@
 
 			$table.find("tr:not(#itemPattern)").remove();
 			
-			$content.find("#ruleInfo").text($.trim(base.options.ruleXml["ruleName"]));
+			$content.find("#ruleInfo").text($.trim(ruleName));
 			$content.find("#requestType").text(base.options.requestType);
 			
 			if (list.length==0){
@@ -197,21 +199,21 @@
 			case "elevate": 
 				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
 					callback: function(data){
-						base.populateItemTable($content, "Elevate", data.list);
+						base.populateItemTable($content, "Elevate", data.list, ruleId);
 					}
 				});
 				break;
 			case "exclude": 
 				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(ruleId , 0, 0,{
 					callback: function(data){
-						base.populateItemTable($content, "Exclude", data.list);
+						base.populateItemTable($content, "Exclude", data.list, ruleId);
 					}
 				});
 				break;
 			case "demote": 
 				DemoteServiceJS.getAllProductsIgnoreKeyword(ruleId , 0, 0,{
 					callback: function(data){
-						base.populateItemTable($content, "Demote", data.list);
+						base.populateItemTable($content, "Demote", data.list, ruleId);
 					}
 				});
 				break;
@@ -363,13 +365,13 @@
 		base.getRuleData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate":
-				base.populateItemTable($content, "Elevate", base.options.ruleXml["products"]);
+				base.populateItemTable($content, "Elevate", base.options.ruleXml["products"], ruleId);
 				break;
 			case "exclude": 
-				base.populateItemTable($content, "Exclude", base.options.ruleXml["products"]);
+				base.populateItemTable($content, "Exclude", base.options.ruleXml["products"], ruleId);
 				break;
 			case "demote": 
-				base.populateItemTable($content, "Demote", base.options.ruleXml["products"]);
+				base.populateItemTable($content, "Demote", base.options.ruleXml["products"], ruleId);
 				break;
 			case "facetsort": 
 				var $table = $content.find("table#item");
@@ -1030,14 +1032,41 @@
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
 						
-						//left pane
+						//left pane is shown by default
 						base.contentHolder.append(base.showLeftPane());
-						base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+						
+						if("xml" === base.options.leftPanelSourceData){
+							if(base.options.ruleXml == null){
+								//retrieve xml data first
+								base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+							}
+							else{
+								base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+							}
+						}
+						else if("database" === base.options.leftPanelSourceData){
+							if($.isNotBlank(base.options.ruleId)){
+								base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId);
+							}
+						}
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
+						
 						
 						if(base.options.enableRightPanel){
 							base.contentHolder.append(base.showRightPane());
-							base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId);
+							if("xml" === base.options.rightPanelSourceData){
+								if(base.options.ruleXml == null){
+									base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId);
+								}
+								else{
+									base.getRuleData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId);
+								}
+							}
+							else if("database" === base.options.leftPanelSourceData){
+								if($.isNotBlank(base.options.ruleId)){
+									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId);
+								}
+							}
 							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"));
 						}
 					},
@@ -1063,9 +1092,12 @@
 			enablePreTemplate: false,
 			enablePostTemplate: false,
 			enableRightPanel: false,
+			leftPanelSourceData: "database",	//"database" or "xml"
+			rightPanelSourceData: "database", //"database" or "xml"
 			preTemplate: "",
 			postTemplate: "",
 			rightPanelTemplate: "",
+			itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId){},
 			itemForceAddStatusCallback: function(base, memberIds){},
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
