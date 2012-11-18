@@ -63,23 +63,16 @@ public class RuleVersionUtil {
 			}
 		}
 		
-		FileWriter writer = null;
 		FileReader reader = null;
 		try {
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setEventHandler(new RuleVersionValidationEventHandler());
-			if (!new File(filename).exists()){
-				writer = new FileWriter(filename);
-				m.marshal(new RuleVersionListXml(), writer);
-			}
-
 			Unmarshaller um = context.createUnmarshaller(); 
 			um.setEventHandler(new RuleVersionValidationEventHandler());
-			reader = new FileReader(filename);
-			ruleVersionListXml = (RuleVersionListXml) um.unmarshal(reader);
-
+			File file = new File(filename);
+			if (file.exists()) {
+				reader = new FileReader(filename);
+				ruleVersionListXml = (RuleVersionListXml) um.unmarshal(reader);
+			}
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
@@ -87,7 +80,6 @@ public class RuleVersionUtil {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;
 		} finally {
-			try { if (writer != null) writer.close(); } catch (Exception e) {}
 			try { if (reader != null) reader.close(); } catch (Exception e) {}
 		}
 
@@ -115,7 +107,12 @@ public class RuleVersionUtil {
 			File rollbackFile = new File(filename + ROLLBACK_PREFIX + version);
 
 			if (!rollbackFile.exists()){
-				FileUtils.copyFile(file, rollbackFile, true);
+				if (file.exists()) {
+					FileUtils.copyFile(file, rollbackFile, true);
+				}
+				else {
+					FileUtils.write(rollbackFile, "");
+				}
 				if (rollbackFile.exists()) return true;
 			}else{
 				return false;
