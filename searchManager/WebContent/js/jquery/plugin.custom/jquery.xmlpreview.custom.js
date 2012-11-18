@@ -86,35 +86,44 @@
 			return type;
 		};
 		
-		base.updateTable = function(target, e, u, contentHolder, ruleType){
-			var ruleId = u.item.value;
+		base.updateTable = function(target, contentHolder, ruleType){
+			var ruleId = (target) ? target.value : "";
 			base.getDatabaseData(contentHolder, ruleType, ruleId );
 		};
 		
 		base.populateImportAsList = function(data, contentHolder){
-			var list = data.list;
-			var $importTypeSelect = contentHolder.find("div.rulePreview > label#importAs > select#importAs");
+			var $importAs = contentHolder.find("div.rulePreview > label#importAs");
+			var $select = $('<select></select>');
+			$select.attr("id", "importAs");
 			
-			for (var index in list){
-				$importTypeSelect.append($("<option>", {value: list[index]["ruleRefId"]}).text(list[index]["description"]));
+			$select.append($("<option>", {value: ""}).text("Import As New Rule"));
+			
+			for (var index in data.list){
+				$select.append($("<option>", {value: data.list[index]["ruleRefId"]}).text(data.list[index]["description"]));
 			}
 			
-			$importTypeSelect.combobox({
-				change: function(e, u){
-					base.updateTable(this, e, u, contentHolder, base.options.ruleType);
+			$importAs.html($select);
+			
+			$importAs.find("select#importAs").off().on({
+				change: function(e){
+					base.updateTable(this, contentHolder, base.options.ruleType);
 				},
-				selected: function(e, u){
-					base.updateTable(this, e, u, contentHolder, base.options.ruleType);
+				selected: function(e){
+					base.updateTable(this, contentHolder, base.options.ruleType);
 				}
 			});
 		};
 		
 		base.populateImportTypeList = function(data, contentHolder){
-			var $importTypeSelect = contentHolder.find("div.rulePreview > label#importType > select#importType");
+			var $importType= contentHolder.find("div.rulePreview > label#importType");
+			var $select = $('<select></select>');
+			$select.attr("id", "importType");
 			
 			for (var index in data){
-				$importTypeSelect.append($("<option>", {value: index}).text(data[index]));
+				$select.append($("<option>", {value: index}).text(data[index]));
 			}
+			
+			$importType.html($select);
 		};
 
 		base.populateItemTable = function($content, ruleType, data, ruleName){
@@ -255,9 +264,6 @@
 							$tr.show();
 							$table.append($tr);
 						};						
-					},
-					postHook:function(){
-						$table.find("tr#preloader").hide();
 					}
 				});
 				break;
@@ -759,11 +765,6 @@
 				template += '					<td width="60px" class="txtAC" id="itemName"></td>';
 				template += '					<td width="84px" class="txtAL" id="itemHighlightedItem"></td>';
 				template += '					<td width="50px" class="txtAC" id="itemSortType"></td>';
-				template += '				</tr>';
-				template += '				<tr id="preloader">';
-				template += '					<td colspan="6" class="txtAC">';
-				template += '						<img alt="Retrieving" src="'+ GLOBAL_contextPath +'/images/ajax-loader-rect.gif">';	
-				template += '					</td>';
 				template += '				</tr>';
 				template += '			</tbody>';
 				template += '		</table>';
