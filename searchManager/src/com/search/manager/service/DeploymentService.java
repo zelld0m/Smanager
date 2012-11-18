@@ -182,59 +182,47 @@ public class DeploymentService {
 		addComment( comment, ruleStatusIdList);
 		Map<String,Boolean> ruleMap = publishRule(ruleType, cleanList);
 
-			for(String ruleId : ruleRefIdList){	
-				DeploymentModel deploy = new DeploymentModel();
-				deploy.setRuleId(ruleId);
-				deploy.setPublished(0);
-				
-				if(ruleMap != null && ruleMap.size() > 0){
-					if(ruleMap.containsKey(ruleId)){
-						if(ruleMap.get(ruleId)) {
-							String store = UtilityService.getStoreName();
-							RuleEntity ruleEntity = RuleEntity.find(ruleType);
-							deploy.setPublished(1);
-							daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment);
-							if (export) {
-								RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId));
-								if (ruleXml != null) {
-									if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
-										// TODO: move to Util
-										RuleStatus ruleStatus = new RuleStatus();
-										ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
-										ruleStatus.setStoreId(store);
-										ruleStatus.setRuleRefId(ruleId);
-										SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-										RecordSet<RuleStatus> approvedRset;
-										try {
-											approvedRset = daoService.getRuleStatus(searchCriteria);
-											if (approvedRset.getTotalSize() > 0) {
-												ruleStatus = approvedRset.getList().get(0);
-											}
-											RuleStatus updateRuleStatus = new RuleStatus();
-											updateRuleStatus.setStoreId(ruleStatus.getStoreId());
-											updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
-											updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
-											updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
-											updateRuleStatus.setExportBy("SYSTEM");
-											updateRuleStatus.setExportType(ExportType.AUTOMATIC);
-											updateRuleStatus.setLastExportDate(new Date());
-											daoService.updateRuleStatus(updateRuleStatus);
-										} catch (DaoException e) {
-											logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
+		for(String ruleId : ruleRefIdList){	
+			DeploymentModel deploy = new DeploymentModel();
+			deploy.setRuleId(ruleId);
+			deploy.setPublished(0);
+			
+			if(ruleMap != null && ruleMap.size() > 0){
+				if(ruleMap.containsKey(ruleId)){
+					if(ruleMap.get(ruleId)) {
+						String store = UtilityService.getStoreName();
+						RuleEntity ruleEntity = RuleEntity.find(ruleType);
+						deploy.setPublished(1);
+						daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment);
+						if (export) {
+							RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId));
+							if (ruleXml != null) {
+								if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
+									RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
+									SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+									try {
+										RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+										if (approvedRset.getTotalSize() > 0) {
+											ruleStatus = approvedRset.getList().get(0);
+											daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
 										}
-										//TODO add Comment
-										//TODO add audit trail									
+										else {
+											logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+										}
+									} catch (DaoException e) {
+										logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
 									}
-									else {
-										logger.error("Failed to export " + ruleEntity + " : " + ruleId);
-									}
+								}
+								else {
+									logger.error("Failed to export " + ruleEntity + " : " + ruleId);
 								}
 							}
 						}
-					}	
+					}
 				}
-				deployList.add(deploy);
 			}
+			deployList.add(deploy);
+		}
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 	

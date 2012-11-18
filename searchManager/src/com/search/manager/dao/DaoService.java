@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
@@ -231,6 +232,7 @@ public interface DaoService {
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
 	
     /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
