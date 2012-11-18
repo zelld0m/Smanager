@@ -7,8 +7,10 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -16,6 +18,7 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @XmlRootElement(name = "rankingrule")
 @DataTransferObject(converter = BeanConverter.class)
@@ -100,5 +103,17 @@ public class RankingRuleXml extends RuleXml {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+	
+	@XmlTransient
+	public String getFormattedStartDate() {
+		if(getStore()==null) return StringUtils.EMPTY;
+		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getStartDate());
+	}
+	
+	@XmlTransient
+	public String getFormattedEndDate() {
+		if(getStore()==null) return StringUtils.EMPTY;
+		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getEndDate());
 	}
 }

@@ -201,9 +201,6 @@
 								},
 								preHook:function(){ 
 									self.prepareTabContent(); 
-								},
-								postHook:function(){ 
-									self.cleanUpTabContent(); 
 								}	
 							});
 							break;
@@ -215,9 +212,6 @@
 								},
 								preHook:function(){ 
 									self.prepareTabContent(); 
-								},
-								postHook:function(){ 
-									//self.cleanUpTabContent(); 
 								}	
 							});
 							break;
@@ -328,10 +322,10 @@
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
-							var showId = ruleId !== rule["description"];
+							var showId = ruleId !== rule["ruleName"];
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
-							$tr.find("td#select > input[type='checkbox']").attr("name", rule["name"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleName"]);
 							
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
@@ -382,7 +376,7 @@
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
-							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 							
 							//TODO
 							$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);

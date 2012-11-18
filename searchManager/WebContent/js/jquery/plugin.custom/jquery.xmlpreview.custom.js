@@ -421,98 +421,89 @@
 
 				var xml = base.options.ruleXml;
 				
-				//RedirectServiceJS.getRule(ruleId, {
-				//	callback: function(data){
+				var $table = $content.find("div.ruleFilter table#item");
+				$table.find("tr:not(#itemPattern)").remove();
 
-						var $table = $content.find("div.ruleFilter table#item");
-						$table.find("tr:not(#itemPattern)").remove();
+				if(xml["ruleCondition"]["condition"].length==0){
+					$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
+					$tr.find("td#fieldValue").remove();
+					$tr.appendTo($table);
 
-						if(xml["ruleCondition"]["condition"].length==0){
-							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
-							$tr.find("td#fieldValue").remove();
-							$tr.appendTo($table);
+				}else{
+					for(var field in xml["ruleCondition"]["condition"]){
+						$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
+						$tr.find("td#fieldName").html(parseInt(field)+1);
+						$tr.find("td#fieldValue").html(xml["ruleCondition"]["condition"][field]);
+						$tr.appendTo($table);
+					}	
+				}
 
-						}else{
-							for(var field in xml["ruleCondition"]["condition"]){
-								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
-								$tr.find("td#fieldName").html(parseInt(field)+1);
-								$tr.find("td#fieldValue").html(xml["ruleCondition"]["condition"][field]);
-								$tr.appendTo($table);
-							}	
-						}
+				$table.find("tr:even").addClass("alt");
+				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#description").html(xml["description"]);
+				
+				switch (xml["redirectType"]) {
+				case "FILTER":
+					$content.find("#redirectType").html("Filter");
+					break;
+				case "CHANGE_KEYWORD":
+					$content.find("#redirectType").html("Replace Keyword");
+					break;
+				case "DIRECT_HIT":
+					$content.find("#redirectType").html("Direct Hit");
+					break;
+				default:
+					$content.find("#redirectType").html("");
+				break;									
+				}
 
-						$table.find("tr:even").addClass("alt");
-						$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
-						$content.find("#description").html(data["description"]);
-						
-						$content.find("#redirectType").html(xml["redirectType"]);
-						
-						/*switch (data["redirectType"]) {
-						case "1":
-							$content.find("#redirectType").html("Filter");
-							break;
-						case "2":
-							$content.find("#redirectType").html("Replace Keyword");
-							break;
-						case "3":
-							$content.find("#redirectType").html("Direct Hit");
-							break;
-						default:
-							$content.find("#redirectType").html("");
-						break;									
-						}*/
+				if ($.isNotBlank(xml["replacementKeyword"])){
+					$content.find("div#ruleChange > div#hasChangeKeyword").show();
+					$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(xml["replacementKeyword"]);
+				}else{
+					$content.find("div#ruleChange > #noChangeKeyword").show();
+				}
 
-						if ($.isNotBlank(data["changeKeyword"])){
-							$content.find("div#ruleChange > div#hasChangeKeyword").show();
-							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
-						}else{
-							$content.find("div#ruleChange > #noChangeKeyword").show();
-						}
+				var includeKeywordText = "Include keyword in search: <b>NO</b>";
+				if($.isNotBlank(xml["includeKeyword"])){
+					includeKeywordText = "Include keyword in search: ";
+					if(xml["includeKeyword"]){
+						includeKeywordText += "<b>YES</b>";
+					}
+					else{
+						includeKeywordText += "<b>NO</b>";
+					}
+				}
+				$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
+				$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
 
-						var includeKeywordText = "Include keyword in search: <b>NO</b>";
-						if($.isNotBlank(data["includeKeyword"])){
-							includeKeywordText = "Include keyword in search: ";
-							if(data["includeKeyword"]){
-								includeKeywordText += "<b>YES</b>";
-							}
-							else{
-								includeKeywordText += "<b>NO</b>";
-							}
-						}
-						$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
-						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
-
-						base.populateKeywordInRule($content, data["searchTerms"]);
-				//	}
-				//});
+				base.populateKeywordInRule($content, xml["ruleKeyword"]["keyword"]);
 
 				break;
 			case "rankingrule": 
 				$content.find(".infoTabs").tabs({});
 
-				RelevancyServiceJS.getRule(ruleId, {
-					callback: function(data){
-						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
-						$content.find("#startDate").html(data["formattedStartDate"]);
-						$content.find("#endDate").html(data["formattedEndDate"]);
-						$content.find("#description").html(data["description"]);
+				var xml = base.options.ruleXml;
+				
+				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#startDate").html(xml["formattedStartDate"]);
+				$content.find("#endDate").html(xml["formattedEndDate"]);
+				$content.find("#description").html(xml["description"]);
 
-						var $table = $content.find("div.ruleField table#item");
-						$table.find("tr:not(#itemPattern)").remove();
+				var $table = $content.find("div.ruleField table#item");
+				$table.find("tr:not(#itemPattern)").remove();
 
-						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
-						}	
+				for(var field in xml.parameters){
+					$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("td#fieldName").html(field);
+					$tr.find("td#fieldValue").html(xml.parameters[field]);
+					$tr.appendTo($table);
+				}	
 
-						$table.find("tr:even").addClass("alt");
+				$table.find("tr:even").addClass("alt");
 
-						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
-					}
-				});
+				base.populateKeywordInRule($content, base.toStringArray(xml["relKeyword"]));
 
 				break;
 			}
