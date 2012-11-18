@@ -24,7 +24,6 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
-import com.search.ws.ConfigManager;
 
 @Service(value = "ruleTransferService")
 @RemoteProxy(
@@ -50,15 +49,7 @@ public class RuleTransferService {
 	@RemoteMethod
 	public RuleXml getRuleToExport(String ruleType, String ruleId){   
 		List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
-		RuleXml latestVersion = null;
-		
-		for(RuleXml rule : ruleVersions){
-			if(latestVersion == null || rule.getVersion() > latestVersion.getVersion()){
-				latestVersion = rule;
-			}
-		}
-		
-		return latestVersion;
+		return RuleXmlUtil.getLatestVersion(ruleVersions);
 	}
 	
 	@RemoteMethod
@@ -198,13 +189,11 @@ public class RuleTransferService {
 	
 	@RemoteMethod
 	public boolean getAutoExport(){
-		ConfigManager cm = ConfigManager.getInstance();
-		return BooleanUtils.toBoolean(cm.getStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT));
+		return BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
 	}
 	
 	@RemoteMethod
 	public boolean setAutoExport(boolean autoexport){
-		ConfigManager cm = ConfigManager.getInstance();
-		return cm.setStoreSetting(UtilityService.getStoreName(), DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
+		return UtilityService.setStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT, BooleanUtils.toStringTrueFalse(autoexport));
 	}
 }
