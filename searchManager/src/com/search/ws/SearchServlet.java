@@ -295,6 +295,16 @@ public class SearchServlet extends HttpServlet {
 			boolean disableFacetSort  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
+			// patch for rebates search
+			// sample: http://afs-pl-schmstr.afservice.org:8080/solr14/pcmall/select
+			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
+			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
+			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
+			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
+			boolean skipRelevancy = !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			if (skipRelevancy) {
+				disableRelevancy = true;
+			}
 			
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
@@ -469,7 +479,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			else {
 				// remove qt parameter
-				if (StringUtils.isBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
+				if (!skipRelevancy && StringUtils.isBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
 					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
 				}
