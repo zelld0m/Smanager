@@ -3,9 +3,11 @@ package com.search.manager.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
@@ -25,6 +29,9 @@ import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
+import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.xml.file.RuleTransferUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 import com.search.ws.client.SearchGuiClientService;
 import com.search.ws.client.SearchGuiClientServiceImpl;
 
@@ -163,6 +170,9 @@ public class DeploymentService {
 		//clean list, only approved rules should be published
 		List<String> cleanList = null;
 		List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
+		
+		String strExport = UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT);
+		boolean export = BooleanUtils.toBoolean(strExport);
 		try {
 			cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
 		} catch (DaoException e) {
@@ -180,10 +190,46 @@ public class DeploymentService {
 				if(ruleMap != null && ruleMap.size() > 0){
 					if(ruleMap.containsKey(ruleId)){
 						if(ruleMap.get(ruleId)) {
+							String store = UtilityService.getStoreName();
+							RuleEntity ruleEntity = RuleEntity.find(ruleType);
 							deploy.setPublished(1);
-							daoService.createPublishedVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, 
-									UtilityService.getUsername(), null, comment);
-							// TODO: add auto-export
+							daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment);
+							if (export) {
+								RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId));
+								if (ruleXml != null) {
+									if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
+										// TODO: move to Util
+										RuleStatus ruleStatus = new RuleStatus();
+										ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+										ruleStatus.setStoreId(store);
+										ruleStatus.setRuleRefId(ruleId);
+										SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+										RecordSet<RuleStatus> approvedRset;
+										try {
+											approvedRset = daoService.getRuleStatus(searchCriteria);
+											if (approvedRset.getTotalSize() > 0) {
+												ruleStatus = approvedRset.getList().get(0);
+											}
+											RuleStatus updateRuleStatus = new RuleStatus();
+											updateRuleStatus.setStoreId(ruleStatus.getStoreId());
+											updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
+											updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
+											updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
+											updateRuleStatus.setExportBy("SYSTEM");
+											updateRuleStatus.setExportType(ExportType.AUTOMATIC);
+											updateRuleStatus.setLastExportDate(new Date());
+											daoService.updateRuleStatus(updateRuleStatus);
+										} catch (DaoException e) {
+											logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
+										}
+										//TODO add Comment
+										//TODO add audit trail									
+									}
+									else {
+										logger.error("Failed to export " + ruleEntity + " : " + ruleId);
+									}
+								}
+							}
 						}
 					}	
 				}

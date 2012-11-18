@@ -78,11 +78,27 @@ public class RuleXmlUtil{
 
 	public static RuleXmlUtil getInstance() {
 		if(instance == null) {
-			instance = new RuleXmlUtil();
+			synchronized (RuleXmlUtil.class) {
+				if (instance == null) {
+					instance = new RuleXmlUtil();
+				}
+			}
 		}
 		return instance;
 	}
 
+	public static RuleXml getLatestVersion(List<RuleXml> ruleVersions) {
+		RuleXml latestVersion = null;
+		if (CollectionUtils.isNotEmpty(ruleVersions)) {
+			for(RuleXml rule : ruleVersions){
+				if(latestVersion == null || rule.getVersion() > latestVersion.getVersion()){
+					latestVersion = rule;
+				}
+			}
+		}
+		return latestVersion;
+	}
+	
 	public static RuleXml ruleToXml(String store, String ruleType, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);

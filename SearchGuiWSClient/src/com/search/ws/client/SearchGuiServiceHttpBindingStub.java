@@ -364,8 +364,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[0]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -398,8 +398,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[1]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -432,8 +432,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[2]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -466,8 +466,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[3]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -500,8 +500,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[4]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -534,8 +534,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[5]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
@@ -568,8 +568,8 @@ public class SearchGuiServiceHttpBindingStub extends org.apache.axis.client.Stub
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[6]);
-        _call.setUseSOAPAction(true);
-        _call.setSOAPActionURI("");
+//        _call.setUseSOAPAction(true);
+//        _call.setSOAPActionURI("");
         _call.setEncodingStyle(null);
         _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
         _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);

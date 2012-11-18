@@ -58,7 +58,7 @@ public class ConfigManager {
 				if (f.exists()) {
 					PropertiesConfiguration propConfig = new PropertiesConfiguration(f.getAbsolutePath());
 					propConfig.setAutoSave(true);
-					xmlConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
 					serverSettingsMap.put(coreName, propConfig);
 					logger.info("Settings file for " + coreName + ": " + propConfig.getFileName());
 				}
@@ -222,9 +222,9 @@ public class ConfigManager {
 			System.out.println("core: " + key);
 		}
 		
-		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
 		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
-		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
 		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
 		
     }
