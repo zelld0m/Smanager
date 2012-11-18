@@ -10,7 +10,7 @@
 		postMsg : function(data,msg_){
 			var self = this;
 
-			var okmsg = 'Following rules were successfully ' + msg_;	
+			var okmsg = 'Following rules were successfully ' + msg_ +':';	
 
 			for(var i=0; i<data.length; i++){	
 				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
@@ -120,7 +120,7 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
+						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
 							callback: function(data){									
 								self.postMsg(data, "exported");	
 								self.getExportList();	
@@ -206,6 +206,7 @@
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
 								
 								$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
+									transferType: "export",
 									ruleType: self.entityName,
 									ruleId: rule["ruleRefId"],
 									ruleInfo: rule["description"],
@@ -221,6 +222,9 @@
 												base.getRuleData(contentHolder, ruleType, ruleId);
 											}
 										});
+									},
+									postButtonClick: function(){
+										self.getExportList();
 									},
 									itemForceAddStatusCallback: function(base, memberIds){
 										if (self.entityName.toLowerCase() === "elevate")

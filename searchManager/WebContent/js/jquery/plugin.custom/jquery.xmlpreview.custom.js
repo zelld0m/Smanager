@@ -513,44 +513,6 @@
 
 				break;
 			}
-			
-			$content.find("a#okBtn, a#rejectBtn").off().on({
-				click: function(evt){
-					var comment = $content.find("#comment").val();
-
-					if ($.isNotBlank(comment)){
-						switch($(evt.currentTarget).attr("id")){
-						case "okBtn": 
-							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
-								callback: function(data){
-									postMsg(data,true);	
-									getApprovalList();
-								},
-								preHook: function(){
-									api.destroy();
-								}
-							});break;
-
-						case "rejectBtn": 
-							if (checkIfDeleted()) {
-								jAlert("Deleted rules cannot be rejected!","Approval");
-								return;
-							}
-							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
-								callback: function(data){
-									postMsg(data,false);	
-									getApprovalList();
-								},
-								preHook: function(){
-									api.destroy();
-								}
-							});break;
-						}	
-					}else{
-						jAlert("Please add comment.","Approval");
-					}
-				}
-			});
 		};
 
 		base.getFileData = function(){
@@ -586,6 +548,18 @@
 				break;
 			}
 		};
+		
+		base.postMsg = function(data,msg_){
+			var self = this;
+
+			var okmsg = 'Following rules were successfully ' + msg_ +':';	
+
+			for(var i=0; i<data.length; i++){	
+				okmsg += '\n-'+ data[i];	
+			}
+
+			jAlert(okmsg, base.options.transferType);
+		},
 
 		base.toStringArray = function(relKeyObj){
 			var keyList = new Array();
@@ -627,7 +601,7 @@
 				case "exclude":
 				case "demote":
 					template  = '<div class="rulePreview w600">';
-					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+					//template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
 					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
@@ -1061,6 +1035,65 @@
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"));
 						}
+						
+						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
+							click: function(evt){
+								var comment = base.contentHolder.find("#comment").val();
+								var importType = "";
+								var importAs = "";
+								var ruleName = "";
+								
+								if("import" === base.options.transferType.toLowerCase()){
+									importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected")[0].value;
+									importAs = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs > select#importAs > option:selected")[0].value;
+									ruleName = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs > select#importAs > option:selected")[0].text;
+								}
+
+								if ($.isNotBlank(comment)){
+									switch($(evt.currentTarget).attr("id")){
+									case "okBtn": 
+										switch(base.options.transferType.toLowerCase()){
+										case "export": 
+											RuleTransferServiceJS.exportRule(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
+												callback: function(data){									
+													base.api.hide();
+													base.postMsg(data, "exported");
+												}
+											});
+											break;
+										case "import": 
+											RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
+												callback: function(data){									
+													base.api.hide();
+													base.postMsg(data, "imported");
+												}	
+											});
+											break;
+										}
+										break;
+
+									case "rejectBtn": 
+										switch(base.options.transferType.toLowerCase()){
+										case "export": 
+											break;
+										case "import": 
+											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
+												callback: function(data){
+													base.api.hide();
+													base.postMsg(data, "rejected");
+												}	
+											});
+											break;
+										}
+										break;
+									}	
+									
+									base.options.postButtonClick(base);
+								}else{
+									jAlert("Please add comment.", base.options.transferType);
+								}
+							}
+						});
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
@@ -1075,6 +1108,7 @@
 
 	$.xmlpreview.defaultOptions = {
 			headerText:"Rule Preview",
+			transferType: "",
 			ruleType: "",
 			ruleId: "",
 			ruleInfo: "",
@@ -1093,8 +1127,8 @@
 			itemForceAddStatusCallback: function(base, memberIds){},
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
-			setSelectedOverwriteRulePreview: function(base, rulename){}
-	
+			setSelectedOverwriteRulePreview: function(base, rulename){},
+			postButtonClick: function(base){}
 	};
 
 	$.fn.xmlpreview = function(options){
