@@ -104,7 +104,7 @@
 			var selectedItems = self.getSelectedItems();
 			for (var id in selectedItems){
 				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
-				selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text()); 
+				selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text); 
 			}
 			return selectedItems;
 		}, 
@@ -112,9 +112,13 @@
 		getSelectedRuleName : function(){
 			var self = this;
 			var selectedRuleNames = [];
-			
-			//TODO
-			return self.getSelectedImportAsRefId();
+			var $selectedTab = $("#"+self.tabSelected);
+			var selectedItems = self.getSelectedItems();
+			for (var id in selectedItems){
+				var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+				selectedRuleNames.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].text); 
+			}
+			return selectedRuleNames;
 		},
 		
 		getSelectedItems : function(){
@@ -177,9 +181,9 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#approvalBtn, a#rejectBtn").on({
+			$selectedTab.find("a#okBtn, a#rejectBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#approvalComment").val());
+					var comment = $.trim($selectedTab.find("#comment").val());
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
@@ -189,7 +193,7 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
 						switch($(evt.currentTarget).attr("id")){
-						case "approvalBtn":
+						case "okBtn":
 							RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 								callback: function(data){									
 									self.postMsg(data,true);	
@@ -197,9 +201,6 @@
 								},
 								preHook:function(){ 
 									self.prepareTabContent(); 
-								},
-								postHook:function(){ 
-									self.cleanUpTabContent(); 
 								}	
 							});
 							break;
@@ -211,9 +212,6 @@
 								},
 								preHook:function(){ 
 									self.prepareTabContent(); 
-								},
-								postHook:function(){ 
-									//self.cleanUpTabContent(); 
 								}	
 							});
 							break;
@@ -324,10 +322,10 @@
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
-							var showId = ruleId !== rule["description"];
+							var showId = ruleId !== rule["ruleName"];
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
-							$tr.find("td#select > input[type='checkbox']").attr("name", rule["name"]);
+							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleName"]);
 							
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
@@ -338,7 +336,9 @@
 									ruleXml: rule,
 									enablePreTemplate: true,
 									enablePostTemplate: true,
+									leftPanelSourceData: "xml",
 									enableRightPanel: true,
+									rightPanelSourceData: "database",
 									postTemplate: self.getPostTemplate(),
 									preTemplate: self.getPreTemplate(rule["importType"]),
 									rightPanelTemplate: self.getRightPanelTemplate(),
@@ -376,7 +376,7 @@
 							if(showId) 
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
-							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
+							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 							
 							//TODO
 							$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
@@ -433,8 +433,6 @@
 			var self = this;
 			$("#titleText").html(self.moduleName);
 			self.getRuleEntityList();
-			self.getImportTypeList();
-			self.getImportAsList();
 			self.populateTabContent();
 		}
 	};

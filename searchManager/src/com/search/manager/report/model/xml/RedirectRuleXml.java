@@ -6,12 +6,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRule.RedirectType;
 
 @XmlRootElement(name = "querycleaning")
 @DataTransferObject(converter = BeanConverter.class)
@@ -19,7 +21,7 @@ public class RedirectRuleXml extends RuleXml{
 
 	private static final long serialVersionUID = 1L;
 	private String description;
-	private String redirectType;
+	private RedirectType redirectType;
 	private String replacementKeyword;
 	private String directHit;
 	private RuleKeywordXml ruleKeyword;
@@ -38,7 +40,7 @@ public class RedirectRuleXml extends RuleXml{
 			this.setRuleName(rr.getRuleName());
 			this.setDescription(rr.getDescription());
 			this.setReplacementKeyword(rr.getChangeKeyword());
-			this.setRedirectType(rr.getRedirectType().name());	
+			this.setRedirectType(rr.getRedirectType());	
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
 			this.setRuleCondition(new RuleConditionXml(rr.getConditions()));
 		}
@@ -53,11 +55,11 @@ public class RedirectRuleXml extends RuleXml{
 	}
 	
 	@XmlAttribute(name="type")
-	public String getRedirectType() {
+	public RedirectType getRedirectType() {
 		return redirectType;
 	}
 
-	public void setRedirectType(String redirectType) {
+	public void setRedirectType(RedirectType redirectType) {
 		this.redirectType = redirectType;
 	}
 
@@ -103,4 +105,12 @@ public class RedirectRuleXml extends RuleXml{
 	public void setRuleCondition(RuleConditionXml ruleCondition) {
 		this.ruleCondition = ruleCondition;
 	}
+	
+	@XmlTransient
+	public boolean isIncludeKeyword(){
+		if(ruleCondition != null)
+			return ruleCondition.isIncludeKeyword();
+		return false;
+	}
+	
 }
