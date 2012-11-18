@@ -47,6 +47,7 @@ public class RuleTransferUtil {
 
 		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
+			ruleXml.setStore(store);
 			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
 		}
 		return ruleXml;
@@ -90,6 +91,7 @@ public class RuleTransferUtil {
 			if(ruleXml != null){
 				if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 					ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
+					ruleXml.setStore(store);
 					productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
 					ruleXmls.add((RuleXml) productDetailsAware);
 				}else{
