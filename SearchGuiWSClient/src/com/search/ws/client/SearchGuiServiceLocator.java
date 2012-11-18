@@ -17,6 +17,7 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
     // Use to get a proxy class for SearchGuiServiceHttpPort
     private java.lang.String SearchGuiServiceHttpPort_address = "http://localhost:8081/SearchGuiWS/services/SearchGuiService";
 
+    @Override
     public java.lang.String getSearchGuiServiceHttpPortAddress() {
         return SearchGuiServiceHttpPort_address;
     }
@@ -32,6 +33,7 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
         SearchGuiServiceHttpPortWSDDServiceName = name;
     }
 
+    @Override
     public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
@@ -43,6 +45,7 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
         return getSearchGuiServiceHttpPort(endpoint);
     }
 
+    @Override
     public com.search.ws.client.SearchGuiServicePortType getSearchGuiServiceHttpPort(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
             com.search.ws.client.SearchGuiServiceHttpBindingStub _stub = new com.search.ws.client.SearchGuiServiceHttpBindingStub(portAddress, this);
@@ -63,6 +66,7 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
+    @Override
     public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         try {
             if (com.search.ws.client.SearchGuiServicePortType.class.isAssignableFrom(serviceEndpointInterface)) {
@@ -82,6 +86,7 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
      * If this service has no port for the given interface,
      * then ServiceException is thrown.
      */
+    @Override
     public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
         if (portName == null) {
             return getPort(serviceEndpointInterface);
@@ -97,39 +102,30 @@ public class SearchGuiServiceLocator extends org.apache.axis.client.Service impl
         }
     }
 
+    @Override
     public javax.xml.namespace.QName getServiceName() {
         return new javax.xml.namespace.QName("http://ws.search.com/client", "SearchGuiService");
     }
 
-    private java.util.HashSet ports = null;
-
-    public java.util.Iterator getPorts() {
-        if (ports == null) {
-            ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("http://ws.search.com/client", "SearchGuiServiceHttpPort"));
-        }
-        return ports.iterator();
-    }
-
     /**
     * Set the endpoint address for the specified port name.
     */
-    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-        
-if ("SearchGuiServiceHttpPort".equals(portName)) {
-            setSearchGuiServiceHttpPortEndpointAddress(address);
-        }
-        else 
-{ // Unknown Port Name
-            throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
-        }
-    }
+//    public void setEndpointAddress(java.lang.String portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+//        
+//if ("SearchGuiServiceHttpPort".equals(portName)) {
+//            setSearchGuiServiceHttpPortEndpointAddress(address);
+//        }
+//        else 
+//{ // Unknown Port Name
+//            throw new javax.xml.rpc.ServiceException(" Cannot set Endpoint Address for Unknown Port" + portName);
+//        }
+//    }
 
-    /**
-    * Set the endpoint address for the specified port name.
-    */
-    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
-        setEndpointAddress(portName.getLocalPart(), address);
-    }
+//    /**
+//    * Set the endpoint address for the specified port name.
+//    */
+//    public void setEndpointAddress(javax.xml.namespace.QName portName, java.lang.String address) throws javax.xml.rpc.ServiceException {
+//        setEndpointAddress(portName.getLocalPart(), address);
+//    }
 
 }
