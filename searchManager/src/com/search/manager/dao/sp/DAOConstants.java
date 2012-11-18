@@ -393,5 +393,6 @@ public class DAOConstants {
 
 	// used by settings
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
+	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
 	
 }
