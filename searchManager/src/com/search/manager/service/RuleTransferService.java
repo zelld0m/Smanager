@@ -1,12 +1,12 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -14,13 +14,16 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
+import com.search.manager.model.SearchCriteria;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
@@ -35,6 +38,7 @@ public class RuleTransferService {
 
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DaoService daoService;
+	private static final Logger logger = Logger.getLogger(RuleTransferService.class);
 	
 	@RemoteMethod
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType){
@@ -68,10 +72,21 @@ public class RuleTransferService {
 			RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
 
 			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
-				//TODO update rule status
-				//TODO add Comment
-				//TODO add audit trail
-				successList.add(ruleId);
+				RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
+				SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+				try {
+					RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+					if (approvedRset.getTotalSize() > 0) {
+						ruleStatus = approvedRset.getList().get(0);
+						daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
+						successList.add(ruleId);
+					}
+					else {
+						logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+					}
+				} catch (DaoException e) {
+					logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
+				}
 			}
 		}
 		return successList;

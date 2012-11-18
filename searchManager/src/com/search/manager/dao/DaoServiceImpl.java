@@ -37,6 +37,7 @@ import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
@@ -1522,6 +1523,29 @@ public class DaoServiceImpl implements DaoService {
 	@Override
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
+	}
+
+	private RuleStatus getRuleStatusPK(RuleStatus ruleStatus) {
+		RuleStatus updateRuleStatus = new RuleStatus();
+		updateRuleStatus.setStoreId(ruleStatus.getStoreId());
+		updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
+		updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
+		updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
+		return updateRuleStatus;
+	}
+	
+	@Override
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException {
+		if (ruleStatus != null) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setExportBy(exportBy);
+			updateRuleStatus.setExportType(exportType);
+			updateRuleStatus.setLastExportDate(exportDate);
+			//TODO add Comment
+			//TODO add audit trail									
+			return updateRuleStatus(updateRuleStatus);
+		}
+		return -1;
 	}
 
 }

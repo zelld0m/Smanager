@@ -48,6 +48,13 @@ public class RuleStatus extends ModelBean {
 		super();
 	}
 
+	public RuleStatus(Integer ruleTypeId, String storeId, String ruleRefId) {
+		super();
+		this.ruleTypeId = ruleTypeId;
+		this.ruleRefId = ruleRefId;
+		this.storeId = storeId;
+	}
+	
 	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description, String approvalStatus, String updateStatus,
 			String publishedStatus, Date lastPublishedDate, String createdBy, String modifiedBy, Date dateCreated, Date dateModified) {
 		super();
