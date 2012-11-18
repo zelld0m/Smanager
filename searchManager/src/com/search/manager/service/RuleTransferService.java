@@ -62,7 +62,7 @@ public class RuleTransferService {
 	}
 	
 	@RemoteMethod
-	public List<String> exportRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
+	public List<String> exportRule(String ruleType, String[] ruleRefIdList, String comment) {
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		List<String> successList = new ArrayList<String>();
@@ -93,7 +93,7 @@ public class RuleTransferService {
 	}
 	
 	@RemoteMethod
-	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
+	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
 		List<String> successList = new ArrayList<String>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
