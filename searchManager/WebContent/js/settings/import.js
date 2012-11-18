@@ -230,16 +230,7 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
 			template += '	<label class="wAuto floatL" id="importType">';
-			template += '		<select id="importType">';
-			
-			//import type
-			if(self.importTypeList){
-				for (var importType in self.importTypeList){
-					template += '<option value="' +importType +'" ' + importType === selectedType ? 'selected' : '' + '>'+ self.importTypeList[importType] +'</option>';
-				}
-			}
-			
-			template += '		</select>';
+			template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	</label>';
 			template += '	<div class="clearB"></div>';
 			template += '</div>';
@@ -279,23 +270,13 @@
 			
 			template += '	<div class="rulePreview w590 marB20">';
 			template += '		<div class="alert marB10">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>';
-			template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-			template += '		<label class="wAuto floatL" id="importAs">';
-			template += '			<select id="importAs">';
-			template += '				<option value="">-- Import As New Rule --</option>';
-			
-			//import as
-			if(self.importAsList){
-				for (var index in self.importAsList){
-					template += '<option value="' + self.importAsList[index]["ruleRefId"] +'">'+ self.importAsList[index]["description"] +'</option>';
-				}
-			}
-			
-			template += '			</select>';
-			template += '		</label>';
-			template += '		<div class="clearB"></div>';
 			template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
 			template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+			template += '		<div class="clearB"></div>';
+			template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
+			template += '		<label class="wAuto floatL" id="importAs">';
+			template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+			template += '		</label>';
 			template += '		<div class="clearB"></div>';
 			template += '	</div>';
 			

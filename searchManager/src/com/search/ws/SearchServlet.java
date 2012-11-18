@@ -296,9 +296,6 @@ public class SearchServlet extends HttpServlet {
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			
-			if (StringUtils.equals("pcmallcap", coreName)) {
-				coreName = "pcmall";
-			}
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 
 			// redirect 

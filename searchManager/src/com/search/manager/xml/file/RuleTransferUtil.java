@@ -15,7 +15,9 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.springframework.util.StringUtils;
 
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -23,6 +25,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 
 public class RuleTransferUtil {
@@ -146,7 +149,16 @@ public class RuleTransferUtil {
 	}
 
 	public static boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
-		return RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
+		String[] stores = StringUtils.tokenizeToStringArray(UtilityService.getStoreSetting(DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
+		
+		if(stores == null || stores.length <= 0)
+			return false;
+		
+		for(int i=0; i < stores.length; i++){
+			RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
+		}
+		
+		return true;
 	}
 
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){

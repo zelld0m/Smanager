@@ -310,23 +310,23 @@ public class RuleXmlUtil{
 		}
 
 		try {
-			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			writer = new FileWriter(filename);
-			m.marshal(rule, writer);
-
-			return true;
+			if (rule != null) {
+				JAXBContext context = JAXBContext.newInstance(RuleXml.class);
+				Marshaller m = context.createMarshaller();
+				m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				writer = new FileWriter(filename);
+				m.marshal(rule, writer);
+				return true;
+			}
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller", e);
-			return false;
 		} catch (Exception e) {
 			logger.error("Unknown error", e);
-			return false;
 		}
 		finally {
 			try { if (writer != null) { writer.close(); } } catch (IOException e) { }
 		}
+		return false;
 	}
 
 	private static boolean restoreElevate(String path, RuleXml xml, boolean createPreRestore){
