@@ -217,7 +217,7 @@
 			getPreTemplate : function(selectedType){
 				var template = '';
 				template  = '<div class="rulePreview w590 marB20">';
-				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+				template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
 				template += '	<label class="w110 floatL fbold">Rule Info:</label>';
 				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '	<div class="clearB"></div>';
@@ -239,7 +239,7 @@
 				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
-				template += '			If the published rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
+				template += '			If the rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
 				template += '		<p>';
 				template += '	</div>';
 				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
@@ -262,13 +262,17 @@
 				var template = "";
 
 				template += '	<div class="rulePreview w590 marB20">';
-				template += '		<div class="alert marB10">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>';
-				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
+				template += '		<div class="alert marB10">';
+				template += '			Selected rule below will be overwritten when import button is clicked.';
+				template += '			It is advisable to review both rules as this action cannot be undone.';
+				template += '		</div>';
 				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<label class="wAuto floatL" id="importAs">';
-				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '		<label class="wAuto floatL">';
+				template += '			<select id="importAs">';
+				template += '				<option>Import As New Rule</option>';
+				template += '    		</select>';
 				template += '		</label>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
@@ -296,15 +300,13 @@
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 								var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
-								var showId = ruleId !== rule["ruleName"];
-
-								$tr.find("td#select > input[type='checkbox']").attr("id", ruleId);
-								$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleName"]);
+								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								//TODO: Get delete details from file
 								if (rule["updateStatus"]!=="DELETE"){
-									$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
-									$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
+									$tr.find("td#ruleOption > img.previewIcon")
+									.attr("id", ruleId)
+									.xmlpreview({
 										transferType: "import",
 										ruleType: self.entityName,
 										ruleId: ruleId,
@@ -351,7 +353,7 @@
 									$tr.find("td#ruleOption > img.previewIcon").hide();
 								}
 
-								if(showId) 
+								if(ruleId !== rule["ruleName"])	
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
@@ -362,6 +364,7 @@
 
 								//import type
 								var $importTypeSelect = $tr.find("td#type > select#importTypeList");
+
 								if(self.importTypeList){
 									for (var importType in self.importTypeList){
 										$importTypeSelect.append($("<option>", {value: importType}).text(self.importTypeList[importType]));
@@ -370,10 +373,25 @@
 
 								//import as
 								var $importAsSelect = $tr.find("td#importAs > select#importAsList");
-								if(self.importAsList){
-									for (var index in self.importAsList){
-										$importAsSelect.append($("<option>", {value: self.importAsList[index]["ruleRefId"]}).text(self.importAsList[index]["description"]));
+								switch(list[i]["ruleEntity"]){
+								case "ELEVATE": 
+								case "EXCLUDE": 
+								case "DEMOTE": 
+								case "FACET_SORT": 
+									$importAsSelect.append($("<option>", {value: list[i]["ruleId"]})
+											.text(list[i]["ruleName"]))
+											.attr({
+												disabled: "disabled"
+											}).val(list[i]["ruleId"]);
+									break;
+								case "RANKING_RULE":	
+								case "QUERY_CLEANING":
+									if(self.importAsList){
+										for (var index in self.importAsList){
+											$importAsSelect.append($("<option>", {value: self.importAsList[index]["ruleRefId"]}).text(self.importAsList[index]["description"]));
+										}
 									}
+									break;
 								}
 
 								$tr.appendTo($table);
@@ -406,10 +424,9 @@
 				});
 			},
 
-
 			getImportAsList : function(){
 				var self = this;
-				
+
 				DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
 					callback : function(data){
 						self.importAsList = data.list;

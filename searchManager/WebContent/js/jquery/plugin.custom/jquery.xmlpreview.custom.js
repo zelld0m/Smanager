@@ -4,7 +4,6 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
-
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -15,10 +14,10 @@
 		base.init = function(){
 			base.options = $.extend({},$.xmlpreview.defaultOptions, options);
 
-			base.$el.off().on({
-				click: function(){
+			base.$el.on({
+				click: function(e){
 					base.showQtipPreview();
-				} 
+				}
 			});
 			
 		};
@@ -51,9 +50,9 @@
 
 			var imagePath = item["imagePath"];
 			switch(base.getItemType(item)){
-			case "ims" : imagePath = GLOBAL_contextPath + 'ims_img.jpg'; break;
-			case "cnet" : imagePath = GLOBAL_contextPath + 'productSiteTaxonomy_img.jpg'; break;
-			case "facet" : imagePath = GLOBAL_contextPath + 'facet_img.jpg'; break;
+			case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+			case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+			case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
 			}
 
 			if($.isNotBlank(imagePath)){
@@ -92,26 +91,36 @@
 		};
 		
 		base.populateImportAsList = function(data, contentHolder){
-			var $importAs = contentHolder.find("div.rulePreview > label#importAs");
-			var $select = $('<select></select>');
-			$select.attr("id", "importAs");
+			var $importAsSelect = contentHolder.find("select#importAs");
 			
-			$select.append($("<option>", {value: ""}).text("Import As New Rule"));
-			
-			for (var index in data.list){
-				$select.append($("<option>", {value: data.list[index]["ruleRefId"]}).text(data.list[index]["description"]));
-			}
-			
-			$importAs.html($select);
-			
-			$importAs.find("select#importAs").off().on({
-				change: function(e){
-					base.updateTable(this, contentHolder, base.options.ruleType);
-				},
-				selected: function(e){
-					base.updateTable(this, contentHolder, base.options.ruleType);
+			switch(base.options.ruleXml["ruleEntity"]){
+			case "ELEVATE": 
+			case "EXCLUDE": 
+			case "DEMOTE": 
+			case "FACET_SORT": 
+				$importAsSelect.append($("<option>", {value: base.options.ruleXml["ruleId"]}).text(base.options.ruleXml["ruleName"]))
+						.attr({
+							disabled: "disabled"
+						}).val(base.options.ruleXml["ruleId"]);
+				
+				base.updateTable($importAsSelect, contentHolder, base.options.ruleType);
+				break;
+			case "RANKING_RULE":	
+			case "QUERY_CLEANING":
+				for (var index in data.list){
+					$importAsSelect.append($("<option>", {value: data.list[index]["ruleRefId"]}).text(data.list[index]["description"]));
 				}
-			});
+
+				$importAsSelect.off().on({
+					change: function(e){
+						base.updateTable(this, contentHolder, base.options.ruleType);
+					},
+					selected: function(e){
+						base.updateTable(this, contentHolder, base.options.ruleType);
+					}
+				});
+				break;
+			}
 		};
 		
 		base.populateImportTypeList = function(data, contentHolder){
@@ -990,6 +999,10 @@
 					my: 'center',
 					target: $(window)
 				},
+				show:{
+					ready: true,
+					modal: true
+				},
 				style: {
 					width: 'auto'
 				},
@@ -1096,7 +1109,7 @@
 						});
 					},
 					hide:function(event, api){
-						$("div", api.elements.content).empty();
+						api.destroy();
 					}
 				}
 			});
