@@ -301,7 +301,7 @@ public class SearchServlet extends HttpServlet {
 			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
-			boolean skipRelevancy = !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
 			if (skipRelevancy) {
 				disableRelevancy = true;
 			}
