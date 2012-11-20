@@ -32,7 +32,7 @@
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
 							self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
-							self.getImportList();
+							self.getImportAsList();
 						}
 					}
 				});
@@ -85,7 +85,7 @@
 
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					selectedImportAsRefId.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].value); 
 				}
 				return selectedImportAsRefId;
@@ -96,7 +96,7 @@
 				var $selectedTab = $("#"+self.tabSelected);
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text); 
 				}
 				return selectedItems;
@@ -108,7 +108,7 @@
 				var $selectedTab = $("#"+self.tabSelected);
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					var $importAsSelect = $selectedTr.find("td#importAs > select#importAsList > option:selected");
 					
 					if($.isBlank($importAsSelect.val())){
@@ -304,17 +304,24 @@
 							// Populate table row
 							for(var i=0; i < totalSize; i++){
 								var rule = list[i];
-								var ruleId = rule["ruleName"];
+								var ruleId = rule["ruleId"];
+								
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 								var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
-								//TODO: Get delete details from file
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
+								
+								switch(self.entityName.toLowerCase()){
+								case "facetsort":
+									ruleId = rule["ruleName"]; //we will be getting facet sort rule by name in xmlpreview
+									break;
+								}
+								
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
-									.attr("id", ruleId)
 									.xmlpreview({
 										transferType: "import",
 										ruleType: self.entityName,
@@ -388,12 +395,12 @@
 								case "DEMOTE": 
 								case "FACET_SORT": 
 									$importAsSelect.find("option")
-										.remove().end()
-										.append($("<option>", {value: ""})
-											.text(list[i]["ruleName"]))
-											.attr({
-												disabled: "disabled"
-											}).val("");
+									.remove().end()
+									.append($("<option>", {value: ""})
+										.text(list[i]["ruleName"]))
+										.attr({
+											disabled: "disabled"
+										}).val(list[i]["ruleName"]);
 									break;
 								case "RANKING_RULE":	
 								case "QUERY_CLEANING":
@@ -444,7 +451,7 @@
 					},
 					postHook: function(){
 						self.getRuleEntityList();
-						self.populateTabContent();
+						self.getImportList();
 					}
 				});
 			},
@@ -452,7 +459,7 @@
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
-				self.getImportAsList();
+				self.populateTabContent();
 			}
 	};
 

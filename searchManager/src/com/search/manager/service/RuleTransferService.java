@@ -123,7 +123,10 @@ public class RuleTransferService {
 				break;
 			case FACET_SORT:
 				FacetSort facetSort = facetSortService.getRuleByName(ruleName);
-				importAsId = facetSort != null ? facetSort.getRuleId() : DAOUtils.generateUniqueId();
+				if(facetSort != null){
+					importAsId = facetSort.getRuleId();
+					ruleName = facetSort.getRuleName();
+				}
 			case QUERY_CLEANING:
 			case RANKING_RULE:
 				if(StringUtils.isBlank(importAsId)){
@@ -153,7 +156,8 @@ public class RuleTransferService {
 	}
 	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
-		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, ruleId);
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
+		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
