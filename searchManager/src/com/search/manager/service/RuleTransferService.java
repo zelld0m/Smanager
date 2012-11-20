@@ -149,7 +149,18 @@ public class RuleTransferService {
 						deploymentService.publishRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
 					}
 				}
-				successList.add(ruleId);
+				
+				switch(ruleEntity){
+				case ELEVATE:
+				case EXCLUDE:
+				case DEMOTE:
+					successList.add(ruleId);
+					break;
+				case FACET_SORT:
+				case QUERY_CLEANING:
+				case RANKING_RULE:
+					successList.add(ruleName);
+				}
 			}
 		}
 		return successList;
