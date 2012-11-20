@@ -109,13 +109,8 @@ public class CommentService {
 	public int addRuleItemComment(String ruleType, String memberId, String pComment) {
 		int result = 0;
 		try {
-			Comment comment = new Comment();
-			comment.setReferenceId(memberId);
-			comment.setRuleTypeId(RuleEntity.getId(ruleType));
-			comment.setUsername(UtilityService.getUsername());
-			comment.setComment(pComment);
+			Comment comment = new Comment(new Store(UtilityService.getStoreName()), memberId, RuleEntity.getId(ruleType), pComment, UtilityService.getUsername());
 			result = daoService.addComment(comment);
-
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleItemComment()",e);
 		}
