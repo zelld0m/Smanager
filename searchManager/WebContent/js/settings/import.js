@@ -280,7 +280,7 @@
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
 				template += '		<label id="importAs" class="wAuto floatL">';
 				template += '			<select id="importAs">';
-				template += '				<option>Import As New Rule</option>';
+				template += '				<option value="">Import As New Rule</option>';
 				template += '    		</select>';
 				template += '		</label>';
 				template += '		<div class="clearB"></div>';
@@ -304,7 +304,7 @@
 							// Populate table row
 							for(var i=0; i < totalSize; i++){
 								var rule = list[i];
-								var ruleId = rule["ruleId"];
+								var ruleId = rule["ruleName"];
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
@@ -331,10 +331,10 @@
 										postButtonClick: function(){
 											self.getImportList();
 										},
-										itemImportAsListCallback: function(base, contentHolder){
+										itemImportAsListCallback: function(base, contentHolder, sourceData){
 											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
 												callback : function(data){
-													base.populateImportAsList(data, contentHolder);
+													base.populateImportAsList(data, contentHolder, sourceData);
 												}
 											});
 										},
