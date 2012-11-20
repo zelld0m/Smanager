@@ -19,7 +19,7 @@
 					base.showQtipPreview();
 				}
 			});
-			
+
 		};
 
 		base.prepareForceAddStatus = function(){
@@ -84,25 +84,27 @@
 
 			return type;
 		};
-		
+
 		base.updateTable = function(target, contentHolder, ruleType){
 			var ruleId = (target) ? target.value : "";
 			base.getDatabaseData(contentHolder, ruleType, ruleId );
 		};
-		
+
 		base.populateImportAsList = function(data, contentHolder){
 			var $importAsSelect = contentHolder.find("select#importAs");
-			
+
 			switch(base.options.ruleXml["ruleEntity"]){
 			case "ELEVATE": 
 			case "EXCLUDE": 
 			case "DEMOTE": 
 			case "FACET_SORT": 
-				$importAsSelect.append($("<option>", {value: base.options.ruleXml["ruleId"]}).text(base.options.ruleXml["ruleName"]))
+				$importAsSelect.find("option")
+						.remove().end()
+						.append($("<option>", {value: ""}).text(base.options.ruleXml["ruleName"]))
 						.attr({
 							disabled: "disabled"
-						}).val(base.options.ruleXml["ruleId"]);
-				
+						}).val("");
+
 				base.updateTable($importAsSelect, contentHolder, base.options.ruleType);
 				break;
 			case "RANKING_RULE":	
@@ -122,16 +124,16 @@
 				break;
 			}
 		};
-		
+
 		base.populateImportTypeList = function(data, contentHolder){
 			var $importType= contentHolder.find("div.rulePreview > label#importType");
 			var $select = $('<select></select>');
 			$select.attr("id", "importType");
-			
+
 			for (var index in data){
 				$select.append($("<option>", {value: index}).text(data[index]));
 			}
-			
+
 			$importType.html($select);
 		};
 
@@ -142,10 +144,10 @@
 			base.memberIdToItem = new Array();
 
 			$table.find("tr:not(#itemPattern)").remove();
-			
+
 			$content.find("#ruleInfo").text($.trim(ruleName));
 			$content.find("#requestType").text(base.options.requestType);
-			
+
 			if (list.length==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
@@ -211,7 +213,7 @@
 			$content.find("tr#itemPattern").hide();
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
-		
+
 		base.getDatabaseData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
@@ -376,7 +378,7 @@
 				break;
 			}
 		};
-		
+
 		base.getRuleData = function($content, ruleType, ruleId){
 			switch(ruleType.toLowerCase()){
 			case "elevate":
@@ -404,7 +406,7 @@
 					$tr.find("#itemName").text(facetName);
 
 					var facetGroupItems = facetGroup["groupItem"];
-					
+
 					if($.isArray(facetGroupItems)){
 						for(var i=0; i < facetGroupItems.length; i++){
 							highlightedItems += (i+1) + ' - ' + facetGroupItems[i] + '<br/>';
@@ -435,7 +437,7 @@
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 
 				var xml = base.options.ruleXml;
-				
+
 				var $table = $content.find("div.ruleFilter table#item");
 				$table.find("tr:not(#itemPattern)").remove();
 
@@ -457,7 +459,7 @@
 				$table.find("tr:even").addClass("alt");
 				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
 				$content.find("#description").html(xml["description"]);
-				
+
 				switch (xml["redirectType"]) {
 				case "FILTER":
 					$content.find("#redirectType").html("Filter");
@@ -500,7 +502,7 @@
 				$content.find(".infoTabs").tabs({});
 
 				var xml = base.options.ruleXml;
-				
+
 				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
 				$content.find("#startDate").html(xml["formattedStartDate"]);
 				$content.find("#endDate").html(xml["formattedEndDate"]);
@@ -557,7 +559,7 @@
 				break;
 			}
 		};
-		
+
 		base.postMsg = function(data,msg_){
 			var self = this;
 
@@ -754,7 +756,7 @@
 				template += '	</div>';
 				break;
 			case "rankingrule": 
-				
+
 
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 				template += '		<ul class="posRel top5" style="z-index:100">';
@@ -962,29 +964,29 @@
 
 			return template;
 		};
-		
+
 		base.showLeftPane = function(ruleId, ruleType){
 			var $div = $('<div id="leftPreview" class="floatL pad5"></div>');
 			$div.append(base.getPreTemplate());
 			$div.append(base.getTemplate());
 			$div.append(base.getPostTemplate());
-			
+
 			return $div;
 		};
-		
+
 		base.showRightPane = function(ruleId, ruleType){
 			if(base.options.enableRightPanel){
 				var $div = $('<div id="rightPreview" class="floatR pad5"></div>');
-				
+
 				$div.append(base.getRightPreTemplate());
 				$div.append(base.getTemplate());
-				
+
 				return $div;
 			}
-			
+
 			return '';
 		};
-		
+
 		base.showQtipPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -1010,10 +1012,10 @@
 					show: function(event, api){
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
-						
+
 						//left pane is shown by default
 						base.contentHolder.append(base.showLeftPane());
-						
+
 						if("xml" === base.options.leftPanelSourceData){
 							if(base.options.ruleXml == null){
 								//retrieve xml data first
@@ -1029,8 +1031,8 @@
 							}
 						}
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
-						
-						
+
+
 						if(base.options.enableRightPanel){
 							base.contentHolder.append(base.showRightPane());
 							if("xml" === base.options.rightPanelSourceData){
@@ -1048,14 +1050,14 @@
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"));
 						}
-						
+
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
 								var comment = base.contentHolder.find("#comment").val();
 								var importType = "";
 								var importAs = "";
 								var ruleName = "";
-								
+
 								if("import" === base.options.transferType.toLowerCase()){
 									importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected")[0].value;
 									importAs = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs > select#importAs > option:selected")[0].value;
@@ -1100,7 +1102,7 @@
 										}
 										break;
 									}	
-									
+
 									base.options.postButtonClick(base);
 								}else{
 									jAlert("Please add comment.", base.options.transferType);

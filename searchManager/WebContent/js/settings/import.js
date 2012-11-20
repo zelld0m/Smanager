@@ -378,11 +378,13 @@
 								case "EXCLUDE": 
 								case "DEMOTE": 
 								case "FACET_SORT": 
-									$importAsSelect.append($("<option>", {value: list[i]["ruleId"]})
+									$importAsSelect.find("option")
+										.remove().end()
+										.append($("<option>", {value: ""})
 											.text(list[i]["ruleName"]))
 											.attr({
 												disabled: "disabled"
-											}).val(list[i]["ruleId"]);
+											}).val("");
 									break;
 								case "RANKING_RULE":	
 								case "QUERY_CLEANING":

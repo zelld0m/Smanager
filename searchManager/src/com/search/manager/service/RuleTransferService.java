@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -21,9 +22,11 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
@@ -115,10 +118,21 @@ public class RuleTransferService {
 				ruleName = importAsId;
 				break;
 			case FACET_SORT:
+				FacetSort fS = new FacetSort("", ruleName, UtilityService.getStoreName());
+				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(fS);
+				
+				try {
+					List<FacetSort> facetSortList = daoService.searchFacetSort(criteria, MatchType.MATCH_NAME).getList();
+					if(CollectionUtils.size(facetSortList)==1){
+						importAsId = facetSortList.get(0).getRuleId();
+					}
+				} catch (DaoException e) {
+					logger.error("Failed to fetch rule id for " + ruleEntity + " : "  + ruleName, e);
+				}
 			case QUERY_CLEANING:
 			case RANKING_RULE:
 				if(StringUtils.isBlank(importAsId)){
-					DAOUtils.generateUniqueId();
+					importAsId = DAOUtils.generateUniqueId();
 				}
 				break;
 			default:
