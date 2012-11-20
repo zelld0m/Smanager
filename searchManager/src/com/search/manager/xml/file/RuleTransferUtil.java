@@ -152,15 +152,16 @@ public class RuleTransferUtil {
 
 	public static boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
 		String[] stores = StringUtils.tokenizeToStringArray(UtilityService.getStoreSetting(DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
+		boolean exported = false;
 		
 		if(stores == null || stores.length <= 0)
 			return false;
 		
 		for(int i=0; i < stores.length; i++){
-			RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
+			exported = RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 		}
 		
-		return true;
+		return exported;
 	}
 
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
