@@ -118,7 +118,7 @@ public class RuleTransferService {
 			case QUERY_CLEANING:
 			case RANKING_RULE:
 				if(StringUtils.isBlank(importAsId)){
-					DAOUtils.generateUniqueId();
+					importAsId = DAOUtils.generateUniqueId();
 				}
 				break;
 			default:
@@ -179,8 +179,9 @@ public class RuleTransferService {
 	
 	public boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment){
 		boolean success = false;
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		try{
-			RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, ruleId));
+			RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, id));
 			success = true;
 		}
 		catch (Exception e) {

@@ -109,7 +109,15 @@
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
-					selectedRuleNames.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].text); 
+					var $importAsSelect = $selectedTr.find("td#importAs > select#importAsList > option:selected");
+					
+					if($.isBlank($importAsSelect.val())){
+						//TODO get from input name
+						selectedRuleNames.push("");
+					}else{
+						selectedRuleNames.push($importAsSelect.text());
+					}
+					 
 				}
 				return selectedRuleNames;
 			},
@@ -266,10 +274,11 @@
 				template += '			Selected rule below will be overwritten when import button is clicked.';
 				template += '			It is advisable to review both rules as this action cannot be undone.';
 				template += '		</div>';
+				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
 				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<label class="wAuto floatL">';
+				template += '		<label id="importAs" class="wAuto floatL">';
 				template += '			<select id="importAs">';
 				template += '				<option>Import As New Rule</option>';
 				template += '    		</select>';
