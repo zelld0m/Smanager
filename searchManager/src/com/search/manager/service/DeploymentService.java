@@ -299,9 +299,22 @@ public class DeploymentService {
 			ruleStatus.setStoreId(UtilityService.getStoreName());
 			result = daoService.getRuleStatus(ruleStatus);
 		} catch (DaoException e) {
-			logger.error("Failed during unpublishRule()",e);
+			logger.error("Failed during getRuleStatus()",e);
 		}
 		return result == null? new RuleStatus() : result;
+	}
+	
+	@RemoteMethod
+	public RecordSet<RuleStatus> getAllRuleStatus(String ruleType) {
+		try {
+			RuleStatus ruleStatus = new RuleStatus();
+			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
+			ruleStatus.setStoreId(UtilityService.getStoreName());
+			return daoService.getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus));
+		} catch (DaoException e) {
+			logger.error("Failed during getAllRuleStatus()",e);
+		}
+		return null;
 	}
 
 	@RemoteMethod
