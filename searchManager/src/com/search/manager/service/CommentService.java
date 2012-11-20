@@ -19,6 +19,7 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.Store;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @Service(value = "commentService")
@@ -95,11 +96,7 @@ public class CommentService {
 		int result = 0;
 		try {
 			for(String rsId: ruleId){
-				Comment comment = new Comment();
-				comment.setReferenceId(rsId);
-				comment.setRuleTypeId(RuleEntity.getId(ruleType));
-				comment.setUsername(UtilityService.getUsername());
-				comment.setComment(pComment);
+				Comment comment = new Comment(new Store(UtilityService.getStoreName()), rsId, RuleEntity.getId(ruleType), pComment, UtilityService.getUsername());
 				result = daoService.addComment(comment);
 			}
 		} catch (DaoException e) {
