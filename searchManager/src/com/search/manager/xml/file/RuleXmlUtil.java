@@ -205,9 +205,11 @@ public class RuleXmlUtil{
 
 		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 
-		for (RuleItemXml ruleItem : ruleItemList) {
-			mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
-			map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
+		if(CollectionUtils.isNotEmpty(ruleItemList)){
+			for (RuleItemXml ruleItem : ruleItemList) {
+				mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
+				map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
+			}
 		}
 
 		if (MapUtils.isNotEmpty(map)){
@@ -317,6 +319,9 @@ public class RuleXmlUtil{
 				writer = new FileWriter(filename);
 				m.marshal(rule, writer);
 				return true;
+			}
+			else{
+				logger.info("RuleXml is null. " + filename + " cannot be imported.");
 			}
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller", e);

@@ -10,10 +10,16 @@
 		postMsg : function(data,msg_){
 			var self = this;
 
-			var okmsg = 'Following rules were successfully ' + msg_ +':';	
+			var okmsg = '';	
 
-			for(var i=0; i<data.length; i++){	
-				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+			if(data.length > 0){
+				okmsg = 'Following rules were successfully ' + msg_ +':';
+				for(var i=0; i<data.length; i++){	
+					okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+				}
+			}
+			else{
+				okmsg = 'No rules were successfully ' + msg_ +'.';
 			}
 
 			jAlert(okmsg, self.entityName);
@@ -215,11 +221,11 @@
 									enablePostTemplate: true,
 									leftPanelSourceData: "xml",
 									postTemplate: self.getPostTemplate(),
-									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId){
+									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
 										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
 											callback: function(xml){
 												base.options.ruleXml = xml;
-												base.getRuleData(contentHolder, ruleType, ruleId);
+												base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
 											}
 										});
 									},

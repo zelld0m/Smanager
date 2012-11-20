@@ -73,6 +73,9 @@ public class RuleVersionUtil {
 				reader = new FileReader(filename);
 				ruleVersionListXml = (RuleVersionListXml) um.unmarshal(reader);
 			}
+			else{
+				logger.info("File not found: " + filename);
+			}
 		} catch (JAXBException e) {
 			logger.error("Unable to create marshaller/unmarshaller", e);
 			return null;

@@ -34,6 +34,7 @@
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	var GLOBAL_store = "${store}";
+	var GLOBAL_storeLogo = "${storeLogo}";
 	var GLOBAL_storeLabel = "${storeLabel}";
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
@@ -99,6 +100,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.ruleitem.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.addproduct.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
