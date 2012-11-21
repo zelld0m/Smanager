@@ -124,6 +124,10 @@ public class RuleTransferService {
 					importAsId = facetSort.getRuleId();
 					ruleName = facetSort.getRuleName();
 				}
+				else{
+					importAsId = DAOUtils.generateUniqueId();
+				}
+				break;
 			case QUERY_CLEANING:
 			case RANKING_RULE:
 				if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
