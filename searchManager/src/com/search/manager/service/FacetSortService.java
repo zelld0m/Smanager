@@ -209,6 +209,26 @@ public class FacetSortService extends RuleService{
 		String store = UtilityService.getStoreName();
 		return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(store)));
 	}
+	
+	@RemoteMethod
+	public FacetSort getRuleByName(String ruleName){
+		FacetSort facetSort = null;
+		StoreKeyword sk = new StoreKeyword(UtilityService.getStoreName(), ruleName);
+		
+		try {
+			if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
+				facetSort = daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) ;
+			}
+			
+			if(facetSort == null){
+				facetSort = daoService.getFacetSort(new FacetSort(ruleName, RuleType.TEMPLATE, null, sk.getStore()));
+			}
+		} catch (DaoException e) {
+			logger.error("Failed to fetch rule id for Facet Sort rule : "  + ruleName, e);
+		}
+		
+		return facetSort;
+	}
 
 	@RemoteMethod
 	public RecordSet<FacetGroup> getAllFacetGroup(String ruleId){

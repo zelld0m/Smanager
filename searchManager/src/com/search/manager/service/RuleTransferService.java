@@ -22,11 +22,13 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleType;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.model.StoreKeyword;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
@@ -41,6 +43,8 @@ public class RuleTransferService {
 
 	@Autowired private DeploymentService deploymentService;
 	@Autowired private DaoService daoService;
+	@Autowired private FacetSortService facetSortService;
+	
 	private static final Logger logger = Logger.getLogger(RuleTransferService.class);
 	
 	@RemoteMethod
@@ -118,16 +122,10 @@ public class RuleTransferService {
 				ruleName = importAsId;
 				break;
 			case FACET_SORT:
-				FacetSort fS = new FacetSort("", ruleName, UtilityService.getStoreName());
-				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(fS);
-				
-				try {
-					List<FacetSort> facetSortList = daoService.searchFacetSort(criteria, MatchType.MATCH_NAME).getList();
-					if(CollectionUtils.size(facetSortList)==1){
-						importAsId = facetSortList.get(0).getRuleId();
-					}
-				} catch (DaoException e) {
-					logger.error("Failed to fetch rule id for " + ruleEntity + " : "  + ruleName, e);
+				FacetSort facetSort = facetSortService.getRuleByName(ruleName);
+				if(facetSort != null){
+					importAsId = facetSort.getRuleId();
+					ruleName = facetSort.getRuleName();
 				}
 			case QUERY_CLEANING:
 			case RANKING_RULE:
@@ -151,14 +149,26 @@ public class RuleTransferService {
 						deploymentService.publishRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
 					}
 				}
-				successList.add(ruleId);
+				
+				switch(ruleEntity){
+				case ELEVATE:
+				case EXCLUDE:
+				case DEMOTE:
+					successList.add(ruleId);
+					break;
+				case FACET_SORT:
+				case QUERY_CLEANING:
+				case RANKING_RULE:
+					successList.add(ruleName);
+				}
 			}
 		}
 		return successList;
 	}
 	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
-		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, ruleId);
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
+		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);

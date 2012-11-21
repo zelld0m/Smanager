@@ -31,7 +31,7 @@
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
 							self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
-							self.getImportList();
+							self.getImportAsList();
 						}
 					}
 				});
@@ -59,8 +59,6 @@
 				});
 			},
 
-
-
 			getRuleEntityList : function(){
 				var self = this;
 				EnumUtilityServiceJS.getRuleEntityList({
@@ -84,7 +82,7 @@
 
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					selectedImportAsRefId.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].value); 
 				}
 				return selectedImportAsRefId;
@@ -95,7 +93,7 @@
 				var $selectedTab = $("#"+self.tabSelected);
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text); 
 				}
 				return selectedItems;
@@ -107,7 +105,7 @@
 				var $selectedTab = $("#"+self.tabSelected);
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem_"+id);
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
 					var $importAsSelect = $selectedTr.find("td#importAs > select#importAsList > option:selected");
 					
 					if($.isBlank($importAsSelect.val())){
@@ -279,7 +277,7 @@
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
 				template += '		<label id="importAs" class="wAuto floatL">';
 				template += '			<select id="importAs">';
-				template += '				<option>Import As New Rule</option>';
+				template += '				<option value="">Import As New Rule</option>';
 				template += '    		</select>';
 				template += '		</label>';
 				template += '		<div class="clearB"></div>';
@@ -304,16 +302,23 @@
 							for(var i=0; i < totalSize; i++){
 								var rule = list[i];
 								var ruleId = rule["ruleId"];
+								
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 								var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
-								//TODO: Get delete details from file
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
+								
+								switch(self.entityName.toLowerCase()){
+								case "facetsort":
+									ruleId = rule["ruleName"]; //we will be getting facet sort rule by name in xmlpreview
+									break;
+								}
+								
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
-									.attr("id", ruleId)
 									.xmlpreview({
 										transferType: "import",
 										ruleType: self.entityName,
@@ -330,10 +335,10 @@
 										postButtonClick: function(){
 											self.getImportList();
 										},
-										itemImportAsListCallback: function(base, contentHolder){
+										itemImportAsListCallback: function(base, contentHolder, sourceData){
 											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
 												callback : function(data){
-													base.populateImportAsList(data, contentHolder);
+													base.populateImportAsList(data, contentHolder, sourceData);
 												}
 											});
 										},
