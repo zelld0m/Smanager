@@ -34,7 +34,7 @@
 			var template = "";
 
 			template += '<div>';
-			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/preloader30x30Trans.gif">';
+			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	<select id="importAsSelect" title="Select rule" style="display:none">';
 			template += '		<option value="asNewRule">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
@@ -102,7 +102,7 @@
 			case "FACET_SORT": 
 				$allSpan.eq(0).find("input").attr({
 					disabled: "disabled"
-				});
+				}).val(rule["ruleName"]);
 				$allSpan.eq(1).hide();
 				break;
 			case "RANKING_RULE":	
