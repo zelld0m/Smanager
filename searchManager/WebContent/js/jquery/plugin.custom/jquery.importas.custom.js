@@ -67,6 +67,7 @@
 
 		base.showSelector = function(){
 			var $importAsSelect = base.$el.find("select#importAsSelect");
+			var $replacement = base.$el.find("#replacement");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 			base.$el.find("#preloader").hide();
@@ -79,6 +80,7 @@
 			case "FACET_SORT": 
 				$option.attr({value: rule["ruleName"], selected: true});
 				$option.text(rule["ruleName"]);
+				$replacement.find("input#newName").val(rule["ruleName"]);
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
@@ -102,7 +104,7 @@
 			case "FACET_SORT": 
 				$allSpan.eq(0).find("input").attr({
 					disabled: "disabled"
-				}).val(rule["ruleName"]);
+				});
 				$allSpan.eq(1).hide();
 				break;
 			case "RANKING_RULE":	
