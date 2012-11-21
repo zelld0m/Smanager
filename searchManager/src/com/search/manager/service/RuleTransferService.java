@@ -194,7 +194,7 @@ public class RuleTransferService {
 		ruleXml.setRuleName(ruleName);
 
 		if(RuleXmlUtil.importRule(ruleXml)){
-			addRuleTransferMap(ruleXml.getStore(), ruleXml.getRuleId(), ruleXml.getRuleName(), store, importAsRefId, ruleName, ruleEntity);
+			//TODO: addRuleTransferMap(ruleXml.getStore(), ruleXml.getRuleId(), ruleXml.getRuleName(), store, importAsRefId, ruleName, ruleEntity);
 			return deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
