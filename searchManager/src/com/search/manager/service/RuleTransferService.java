@@ -156,6 +156,7 @@ public class RuleTransferService {
 				case RANKING_RULE:
 					successList.add(ruleName);
 				}
+				
 			}
 		}
 		return successList;
@@ -169,6 +170,7 @@ public class RuleTransferService {
 		ruleXml.setRuleName(ruleName);
 
 		if(RuleXmlUtil.importRule(ruleXml)){
+			addRuleTransferMap(ruleXml.getStore(), ruleXml.getRuleId(), ruleXml.getRuleName(), store, importAsRefId, ruleName, ruleEntity);
 			return deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
@@ -232,30 +234,27 @@ public class RuleTransferService {
 	}
 
 	@RemoteMethod
-	public String getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String storeIdTarget, String ruleEntity){
+	public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity){
+		String storeIdTarget = UtilityService.getStoreName();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, "",  storeIdTarget, "", "", RuleEntity.getId(ruleEntity));
-		String ruleId = "";
-
+		
 		try {
 			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
 
 			if(CollectionUtils.isNotEmpty(rtList)){
-				ExportRuleMap exportRule = rtList.get(0);
-				if(exportRule!=null){
-					return exportRule.getRuleIdTarget();
-				}
+				return rtList.get(0);
 			}
 
-			return ruleId;
 		} catch (DaoException e) {
 			logger.error("Failed to retrive mapping of ruleId", e);
-			return ruleId;
+			return null;
 		}
+
+		return null;
 	}
 	
-	@RemoteMethod
-	public int addRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String storeIdTarget, String ruleIdTarget, String ruleEntity){
-		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, "",  storeIdTarget, ruleIdTarget, "", RuleEntity.getId(ruleEntity));
+	public int addRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleEntity ruleEntity){
+		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, ruleEntity);
 		int result = 0;
 		
 		try {

@@ -14,20 +14,25 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.importas.defaultOptions, options);
-			base.$el.html(base.getTemplate());	
+			base.$el.html(base.getTemplate());
 			base.getRules();
 		};
 
 		base.getRules = function(){
-			var ruleEntity = base.options.rule["ruleEntity"];
+			var rule = base.options.rule;
+			var ruleEntity = rule["ruleEntity"];
 
-			DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
-				callback: function(rs){
-					var list = rs.list;
-					base.populateOptions(list);
+			RuleTransferServiceJS.getRuleTransferMap(rule["store"], rule["ruleId"], ruleEntity, {
+				callback: function(ruleTransferMap){
+					base.autoMap = ruleTransferMap;
+					DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
+						callback: function(rs){
+							var list = rs.list;
+							base.populateOptions(list);
+						}
+					});
 				}
 			});
-
 		};
 
 		base.getTemplate = function(){
@@ -84,6 +89,11 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
+				if(base.autoMap!=null){ //TODO:
+					$option.attr({value: base.autoMap["ruleIdTarget"], selected: true});
+					$option.text(base.autoMap["ruleNameTarget"]);
+					$replacement.find("input#newName").val(base.autoMap["ruleNameTarget"]);
+				}
 				break;
 			}
 
@@ -109,6 +119,12 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
+				if(base.autoMap!=null){
+					$allSpan.eq(0).find("input").attr({
+						disabled: "disabled"
+					});
+					$allSpan.eq(1).hide();
+				}
 				break;
 			}
 
@@ -194,7 +210,8 @@
 				case "FACET_SORT": break;
 				case "RANKING_RULE":	
 				case "QUERY_CLEANING":
-					$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
+					if(base.autoMap==null)
+						$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
 					break;
 				}
 			}
