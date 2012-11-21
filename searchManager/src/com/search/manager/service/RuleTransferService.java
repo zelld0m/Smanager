@@ -126,7 +126,7 @@ public class RuleTransferService {
 				}
 			case QUERY_CLEANING:
 			case RANKING_RULE:
-				if(StringUtils.isBlank(importAsId)){
+				if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
 					importAsId = DAOUtils.generateUniqueId();
 				}
 				break;
@@ -181,18 +181,29 @@ public class RuleTransferService {
 	 * @return list of rule name of successfully rejected rule
 	 */
 	@RemoteMethod
-	public List<String> unimportRules(String ruleType, String[] ruleRefIdList, String comment){
+	public List<String> unimportRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList){
 		List<String> successList = new ArrayList<String>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
+			String ruleName = ruleNameList[i];
 						
 			if(deleteRuleFile(ruleEntity, store, ruleId, comment)){
 				//TODO addComment
 				//TODO addAuditTrail
-				successList.add(ruleId);
+				switch(ruleEntity){
+				case ELEVATE:
+				case EXCLUDE:
+				case DEMOTE:
+					successList.add(ruleId);
+					break;
+				case FACET_SORT:
+				case QUERY_CLEANING:
+				case RANKING_RULE:
+					successList.add(ruleName);
+				}
 			}
 		}
 		return successList;

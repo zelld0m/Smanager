@@ -1119,7 +1119,7 @@
 										case "export": 
 											break;
 										case "import": 
-											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
+											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(ruleName),{
 												callback: function(data){
 													base.api.hide();
 													base.postMsg(data, "rejected");

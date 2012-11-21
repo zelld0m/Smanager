@@ -215,7 +215,7 @@
 								});
 								break;
 							case "rejectBtn": 
-								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, {
+								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedRuleName(), {
 									callback: function(data){
 										self.postMsg(data,false);	
 										self.getImportList();
