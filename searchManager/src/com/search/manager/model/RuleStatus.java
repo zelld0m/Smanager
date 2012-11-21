@@ -272,4 +272,11 @@ public class RuleStatus extends ModelBean {
 		this.exportType = exportType;
 	}
 	
+	public String getRuleId(){
+		return this.ruleRefId;
+	}
+	
+	public String getRuleName(){
+		return this.description;
+	}
 }

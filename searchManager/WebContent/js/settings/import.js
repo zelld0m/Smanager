@@ -6,8 +6,7 @@
 			entityName : "",
 			ruleEntityList : null,
 			importTypeList : null,
-			importAsList : null,
-
+			
 			postMsg : function(data,pub){
 				var self = this;
 				var msg_ = pub ? 'imported:' : 'rejected:';
@@ -381,30 +380,10 @@
 								}
 
 								//import as
-								var $importAsSelect = $tr.find("td#importAs > select#importAsList");
-								switch(list[i]["ruleEntity"]){
-								case "ELEVATE": 
-								case "EXCLUDE": 
-								case "DEMOTE": 
-								case "FACET_SORT": 
-									$importAsSelect.find("option")
-										.remove().end()
-										.append($("<option>", {value: ""})
-											.text(list[i]["ruleName"]))
-											.attr({
-												disabled: "disabled"
-											}).val("");
-									break;
-								case "RANKING_RULE":	
-								case "QUERY_CLEANING":
-									if(self.importAsList){
-										for (var index in self.importAsList){
-											$importAsSelect.append($("<option>", {value: self.importAsList[index]["ruleRefId"]}).text(self.importAsList[index]["description"]));
-										}
-									}
-									break;
-								}
-
+								$tr.find("td#importAs").importas({
+									rule: list[i],
+								});
+								
 								$tr.appendTo($table);
 							}
 
@@ -435,24 +414,11 @@
 				});
 			},
 
-			getImportAsList : function(){
-				var self = this;
-
-				DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
-					callback : function(data){
-						self.importAsList = data.list;
-					},
-					postHook: function(){
-						self.getRuleEntityList();
-						self.populateTabContent();
-					}
-				});
-			},
-
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
-				self.getImportAsList();
+				self.getRuleEntityList();
+				self.populateTabContent();
 			}
 	};
 

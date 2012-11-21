@@ -63,7 +63,9 @@ public enum RuleEntity {
 	
 	private static boolean containsIgnoreCase(String str, List<String> list){
 	    for(String i : list){
-	        if(StringUtils.equalsIgnoreCase(str, i) || StringUtils.equalsIgnoreCase(str, StringUtils.deleteWhitespace(i)))
+	        if(StringUtils.equalsIgnoreCase(str, i) || 
+	        		StringUtils.equalsIgnoreCase(StringUtils.deleteWhitespace(str), StringUtils.deleteWhitespace(i)) || 
+	        		StringUtils.equalsIgnoreCase(StringUtils.deleteWhitespace(i), StringUtils.deleteWhitespace(StringUtils.replaceChars(str, '_', ' '))))
 	            return true;
 	    }
 	    return false;
