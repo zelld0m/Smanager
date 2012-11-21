@@ -40,13 +40,12 @@
 			template += '		<option value="0">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
 			template += '	<div id="replacement" style="display:none">';
-			template += '		<label>Enter new name: </label>';
+			template += '		<p>Use custom name for new <strong><a id="selectedRule" href="javascript:void(0);"></a></strong> rule: </p>';
 			template += '		<input id="newName" type="text"/>';
-			template += '		<p>for replacement of <strong><a id="selectedRule" href="javascript:void(0);"></a></strong> rule</p>';
 			template += '	</div>';
 			template += '	<div id="importAlert" style="display:none">';
-			template += '		<img src="' + GLOBAL_contextPath + '/images/icon_alert.png">';
-			template += '		<p id="status"></p>';
+			template += '		<p><img src="' + GLOBAL_contextPath + '/images/icon_alert.png">';
+			template += '		<span id="status"></span></p>';
 			template +=	'	</div>';
 			template += '</div>';
 
@@ -96,7 +95,7 @@
 					base.toggleFields($(this), u, false);
 				}
 			});	
-			
+
 			var $allSpan = $importAsSelect.nextAll("span");
 			switch(ruleEntity){
 			case "ELEVATE": 
@@ -121,6 +120,7 @@
 			var $replacement = base.$el.find("#replacement");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
+			base.options.selectedOptionChanged(u.item.value);
 			$select.val(u.item.value);
 
 			$allSpan.eq(0).hide();
@@ -128,7 +128,7 @@
 
 			if(selectRule){
 				$allSpan.eq(0).show();
-				
+
 				switch(ruleEntity){
 				case "ELEVATE": 
 				case "EXCLUDE": 
@@ -145,8 +145,8 @@
 					$(this).hide();
 				});
 			}else{
-				$replacement.find("#selectedRule").text(u.item.text);
-				
+				$replacement.find("#selectedRule").text(u.item.value==0? "Pending for Import":  u.item.text);
+
 				var $input = $replacement.find("input#newName");
 				$input.val(u.item.text);
 
@@ -156,6 +156,19 @@
 							base.toggleFields($select, u, true);
 						}
 					});
+				});
+
+				$input.off().on({
+					focusin: function(e){
+						if($(this).val().toLowerCase()===base.options.newRuleText.toLowerCase()){
+							$(this).val("");
+						}
+					},
+					focusout: function(e){
+						if($.isBlank($(this).val())){
+							$(this).val(u.item.text);
+						}
+					}
 				});
 			}
 
@@ -195,7 +208,8 @@
 
 	$.importas.defaultOptions = {
 			rule: null,
-			newRuleText: "Import As New Rule"
+			newRuleText: "Import As New Rule",
+			selectedOptionChanged: function(ruleId){}
 	};
 
 	$.fn.importas = function(options){

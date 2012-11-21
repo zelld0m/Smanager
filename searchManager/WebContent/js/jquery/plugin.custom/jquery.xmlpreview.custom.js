@@ -84,15 +84,13 @@
 
 			return type;
 		};
-		
-		base.updateTable = function(target, contentHolder, ruleType, sourceData){
-			var ruleId = (target) ? target.value : "";
-			base.getDatabaseData(contentHolder, ruleType, ruleId, sourceData);
-		};
 
 		base.populateImportAsList = function(data, contentHolder, sourceData){
 			contentHolder.find("#importAs").importas({
 				rule: base.options.ruleXml,
+				selectedOptionChanged: function(ruleId){
+					base.getDatabaseData(contentHolder, base.options.ruleType, ruleId, sourceData);
+				}
 			});
 		};
 
