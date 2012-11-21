@@ -892,14 +892,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRelevancy(Relevancy relevancy) throws DaoException {
-		int result = relevancyDAO.deleteRelevancy(relevancy);
-		RuleStatus ruleStatus = new RuleStatus();
-		ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
-		ruleStatus.setRuleRefId(relevancy.getRuleId());
-		ruleStatus.setStoreId(relevancy.getStore().getStoreId());
-		//TODO add transaction
-		processRuleStatus(ruleStatus, true);
-		return result;
+		return relevancyDAO.deleteRelevancy(relevancy);
 	}
 	
 	@Override
@@ -1049,14 +1042,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
-		int result = redirectRuleDAO.deleteRedirectRule(rule);
-		RuleStatus ruleStatus = new RuleStatus();
-		ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
-		ruleStatus.setRuleRefId(rule.getRuleId());
-		ruleStatus.setStoreId(rule.getStoreId());
-		//TODO add transaction
-		processRuleStatus(ruleStatus, true);
-		return result;
+		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
 	@Override
@@ -1226,10 +1212,11 @@ public class DaoServiceImpl implements DaoService {
 		int result = -1;
 		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
 		if (rSet.getList().size() > 0) {
+			// existing rule
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			if (isDelete) {
 				if (((RuleStatus)rSet.getList().get(0)).getPublishedStatus().equals(RuleStatusEntity.UNPUBLISHED.toString())) {
-					ruleStatus.setApprovalStatus(null);
+					ruleStatus.setApprovalStatus("");
 				}
 				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
 			} else {
@@ -1237,6 +1224,7 @@ public class DaoServiceImpl implements DaoService {
 			}
 			result = updateRuleStatus(ruleStatus);
 		} else if (!isDelete){
+			// new rule
 			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
 			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
 			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());

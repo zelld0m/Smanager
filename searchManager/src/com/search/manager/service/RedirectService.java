@@ -19,11 +19,13 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRule.RedirectType;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
@@ -45,32 +47,27 @@ public class RedirectService extends RuleService{
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.QUERY_CLEANING;
 	}
-	
-	public int addRule(String ruleName) {
-		int result = -1;
+
+	private String addRuleAndGetId(String ruleName) {
 		try {
+			String store = UtilityService.getStoreName();
+			String userName = UtilityService.getUsername();
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleName(ruleName);
 			rule.setRedirectType(RedirectType.FILTER);
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setCreatedBy(UtilityService.getUsername());
-			result = daoService.addRedirectRule(rule);
+			rule.setStoreId(store);
+			rule.setCreatedBy(userName);
+			if (daoService.addRedirectRule(rule) > 0) {
+				return rule.getRuleId();
+			}
+			try {
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.QUERY_CLEANING, store, rule.getRuleId(), ruleName, 
+						userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+			} catch (DaoException de) {
+				logger.error("Failed to create rule status for query cleaning: " + ruleName);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRule()",e);
-		}
-		return result;
-	}
-
-	public String addRuleAndGetId(String ruleName) {
-		try {
-			RedirectRule rule = new RedirectRule();
-			rule.setRuleName(ruleName);
-			rule.setRedirectType(RedirectType.FILTER);
-			rule.setStoreId(UtilityService.getStoreName());
-			rule.setCreatedBy(UtilityService.getUsername());
-			return daoService.addRedirectRuleAndGetId(rule);
-		} catch (DaoException e) {
-			logger.error("Failed during addRuleAndGetId()",e);
 		}
 		return null;
 	}
@@ -151,6 +148,13 @@ public class RedirectService extends RuleService{
 		int result = -1;
 		try {
 			result = daoService.deleteRedirectRule(rule);
+			if (result > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
+				ruleStatus.setRuleRefId(rule.getRuleId());
+				ruleStatus.setStoreId(rule.getStoreId());
+				daoService.processRuleStatus(ruleStatus, true);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteRule()",e);
 		}
