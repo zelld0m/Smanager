@@ -34,7 +34,7 @@
 			var template = "";
 
 			template += '<div>';
-			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/preloader30x30Trans.gif">';
+			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	<select id="importAsSelect" title="Select rule" style="display:none">';
 			template += '		<option value="asNewRule">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
@@ -67,6 +67,7 @@
 
 		base.showSelector = function(){
 			var $importAsSelect = base.$el.find("select#importAsSelect");
+			var $replacement = base.$el.find("#replacement");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 			base.$el.find("#preloader").hide();
@@ -79,6 +80,7 @@
 			case "FACET_SORT": 
 				$option.attr({value: rule["ruleName"], selected: true});
 				$option.text(rule["ruleName"]);
+				$replacement.find("input#newName").val(rule["ruleName"]);
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
