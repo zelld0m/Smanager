@@ -192,6 +192,7 @@
 				com.search.manager.model.DemoteProduct,
 				com.search.manager.model.DeploymentModel,
 				com.search.manager.model.ElevateProduct,
+				com.search.manager.model.ExportRuleMap,
 				com.search.manager.model.FacetGroup,
 				com.search.manager.model.FacetGroupItem,
 				com.search.manager.model.FacetSort,

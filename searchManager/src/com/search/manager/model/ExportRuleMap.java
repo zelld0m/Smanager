@@ -3,7 +3,7 @@ package com.search.manager.model;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
-import com.search.manager.enums.RuleType;
+import com.search.manager.enums.RuleEntity;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class ExportRuleMap {
@@ -16,7 +16,7 @@ public class ExportRuleMap {
 	private String 		storeIdTarget;
 	private String 		ruleIdTarget;
 	private String 		ruleNameTarget;
-	private RuleType 	ruleType;
+	private RuleEntity 	ruleType;
 	
 	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget) {
 		super();
@@ -28,7 +28,7 @@ public class ExportRuleMap {
 		this.ruleNameTarget = ruleNameTarget;
 	}
 	
-	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleType ruleType) {
+	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleEntity ruleType) {
 		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget);
 		this.ruleType= ruleType;
 	}
@@ -36,7 +36,7 @@ public class ExportRuleMap {
 	public ExportRuleMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, Integer ruleType) {
 		this(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget);
 		if (ruleType != null) {
-			RuleType ruleTypeObject = RuleType.get(ruleType);
+			RuleEntity ruleTypeObject = RuleEntity.find(RuleEntity.getValue(ruleType));
 			if (ruleTypeObject != null) {
 				this.ruleType = ruleTypeObject;
 			}			
@@ -91,12 +91,11 @@ public class ExportRuleMap {
 		this.ruleNameTarget = ruleNameTarget;
 	}
 	
-	public RuleType getRuleType() {
+	public RuleEntity getRuleType() {
 		return ruleType;
 	}
 	
-	public void setRuleType(RuleType ruleType) {
+	public void setRuleType(RuleEntity ruleType) {
 		this.ruleType = ruleType;
 	}
-	
 }

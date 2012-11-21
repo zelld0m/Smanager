@@ -17,13 +17,16 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -131,24 +134,30 @@ public class ElevateService extends RuleService{
 		return changes;
 	}
 
-	public int addItem(String keyword, String edp, int sequence, String expiryDate, String comment, boolean forceAdd) {
+	private int addItem(String keyword, String edp, RedirectRuleCondition condition, int sequence, String expiryDate, String comment, MemberTypeEntity entity, boolean forceAdd) {
 		int result = -1;
 		try {
-			logger.info(String.format("%s %s %d %s %s", keyword, edp, sequence, expiryDate, comment));
+			logger.info(String.format("%s %s %s %d %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
 			String store = UtilityService.getStoreName();
-
+			String userName = UtilityService.getUsername();
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword));
-
 			e.setLocation(sequence);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
+			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
-			e.setEdp(edp);
-			e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
+			e.setElevateEntity(entity);
 			e.setForceAdd(forceAdd);
-
+			switch (entity) {
+				case PART_NUMBER:
+					e.setEdp(edp);
+					break;
+				case FACET:
+					e.setCondition(condition);
+					break;
+			}
+			
 			result  = daoService.addElevateResult(e);
 			if (result > 0) {
 				if (!StringUtils.isBlank(comment)) {
@@ -157,23 +166,29 @@ public class ElevateService extends RuleService{
 				if (e.isForceAdd()) {
 					result = 2;
 				}
+				try {
+					// TODO: add checking if existing rule status?
+					daoService.addRuleStatus(new RuleStatus(RuleEntity.ELEVATE, DAOUtils.getStoreId(e.getStoreKeyword()), 
+							keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+				} catch (DaoException de) {
+					logger.error("Failed to create rule status for elevate: " + keyword);
+				}
 			}
 		} catch (DaoException e) {
-			logger.error("Failed during addProductItem()",e);
+			logger.error("Failed during addItem()",e);
 		}
 		return result;
-
 	}
 
 
 	@RemoteMethod
 	public int addProductItemForceAdd(String keyword, String edp, int sequence, String expiryDate, String comment) {
-		return addItem(keyword, edp, sequence, expiryDate, comment, true);
+		return addItem(keyword, edp, null, sequence, expiryDate, comment, MemberTypeEntity.PART_NUMBER, true);
 	}
 
 	@RemoteMethod
 	public int addProductItem(String keyword, String edp, int sequence, String expiryDate, String comment) {
-		return addItem(keyword, edp, sequence, expiryDate, comment, false);
+		return addItem(keyword, edp, null, sequence, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
 	}
 
 	@RemoteMethod
@@ -198,24 +213,10 @@ public class ElevateService extends RuleService{
 		sequence = (sequence==0)? 1: sequence;
 		for(String partNumber: partNumbers){
 			count = 0;
-			ElevateResult e = new ElevateResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
-					e.setStoreKeyword(new StoreKeyword(store, keyword));
-					e.setEdp(edp);
-					e.setForceAdd(false);
-					e.setLocation(sequence++);
-					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-					e.setCreatedBy(UtilityService.getUsername());
-					e.setComment(UtilityService.formatComment(comment));
-					e.setElevateEntity(MemberTypeEntity.PART_NUMBER);
-					if (StringUtils.isNotBlank(edp)){
-						count = daoService.addElevateResult(e);
-						if (!StringUtils.isBlank(comment)) {
-							addComment(comment, e);
-						}
-					}
+					addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
@@ -232,29 +233,7 @@ public class ElevateService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-
-		int result = -1;
-		try {
-			String store = UtilityService.getStoreName();
-			ElevateResult e = new ElevateResult();
-			RedirectRuleCondition condition = new RedirectRuleCondition();
-			condition.setFilter(filter);
-			e.setCondition(condition );
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setLocation(sequence++);
-			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			e.setElevateEntity(MemberTypeEntity.FACET);
-			e.setForceAdd(false);
-			result = daoService.addElevateResult(e);
-			if (result > 0 && !StringUtils.isBlank(comment)) {
-				addComment(comment, e);
-			}
-		} catch (DaoException de) {
-			logger.error("Failed during addItemToRuleUsingPartNumber()",de);
-		}
-		return result;
+		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET, true);
 	}
 
 	@RemoteMethod
@@ -545,15 +524,14 @@ public class ElevateService extends RuleService{
 		return -1;
 	}
 
-	private Comment addComment(String comment, ElevateResult e) throws DaoException {
+	private int addComment(String comment, ElevateResult e) throws DaoException {
 		Comment com = new Comment();
 		com.setComment(comment);
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
 		com.setStore(new Store(UtilityService.getStoreName()));
-		daoService.addComment(com);
-		return com;
+		return daoService.addComment(com);
 	}
 
 	@RemoteMethod
@@ -565,22 +543,12 @@ public class ElevateService extends RuleService{
 			ElevateResult elevate = new ElevateResult();
 			elevate.setStoreKeyword(new StoreKeyword(store, keyword));
 			elevate.setMemberId(memberId);
-			try {
-				elevate = daoService.getElevateItem(elevate);
-			} catch (DaoException e) {
-				elevate = null;
-			}
+			elevate = daoService.getElevateItem(elevate);
 			if (elevate != null) {
 				elevate.setComment(pComment);
 				elevate.setLastModifiedBy(UtilityService.getUsername());
 				daoService.updateElevateResultComment(elevate);
-				Comment com = new Comment();
-				com.setComment(pComment);
-				com.setUsername(UtilityService.getUsername());
-				com.setReferenceId(elevate.getMemberId());
-				com.setRuleTypeId(RuleEntity.ELEVATE.getCode());
-				com.setStore(new Store(store));
-				result = daoService.addComment(com);
+				result = addComment(pComment, elevate);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleItemComment()",e);

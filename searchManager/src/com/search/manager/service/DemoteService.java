@@ -17,13 +17,16 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -129,36 +132,54 @@ public class DemoteService extends RuleService{
 		return changes;
 	}
 	
-	@RemoteMethod
-	public int add(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
+	private int addItem(String keyword, String edp, RedirectRuleCondition condition, int sequence, String expiryDate, String comment, MemberTypeEntity entity) {
 		int result = -1;
 		try {
-			logger.info(String.format("%s %s %s %d %s %s", keyword, memberTypeId, value, sequence, expiryDate, comment));
+			logger.info(String.format("%s %s %s %d, %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
 			String store = UtilityService.getStoreName();
+			String userName = UtilityService.getUsername();
+			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 
-			DemoteResult e = new DemoteResult();
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			DemoteResult e = new DemoteResult(new StoreKeyword(store, keyword));
 			e.setLocation(sequence);
 			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
+			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
-			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
-				e.setEdp(value);
-				e.setDemoteEntity(MemberTypeEntity.PART_NUMBER);
-			} else {
-				e.setCondition(new RedirectRuleCondition(value));
-				e.setDemoteEntity(MemberTypeEntity.FACET);
+			e.setDemoteEntity(entity);
+			switch (entity) {
+				case PART_NUMBER:
+					e.setEdp(edp);
+					break;
+				case FACET:
+					e.setCondition(condition);
+					break;
 			}
-			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
+			
 			result  = daoService.addDemoteResult(e);
-			if (result > 0 && !StringUtils.isBlank(comment)) {
-				addComment(comment, e);
+			if (result > 0) {
+				if (!StringUtils.isBlank(comment)) {
+					addComment(comment, e);
+				}
+				try {
+					// TODO: add checking if existing rule status?
+					daoService.addRuleStatus(new RuleStatus(RuleEntity.DEMOTE, DAOUtils.getStoreId(e.getStoreKeyword()), 
+							keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+				} catch (DaoException de) {
+					logger.error("Failed to create rule status for demote: " + keyword);
+				}
 			}
 		} catch (DaoException e) {
-			logger.error("Failed during addDemote()",e);
+			logger.error("Failed during demoteItem()",e);
 		}
 		return result;
-
+	}
+	
+	@RemoteMethod
+	public int add(String keyword, String memberTypeId, String value, int sequence, String expiryDate, String comment) {
+		MemberTypeEntity memberTypeEntity = MemberTypeEntity.valueOf(memberTypeId);
+		return addItem(keyword, memberTypeEntity == MemberTypeEntity.PART_NUMBER ? value : null, 
+				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(value) : null, 
+				sequence, expiryDate, comment, memberTypeEntity);
 	}
 
 	@RemoteMethod
@@ -183,27 +204,11 @@ public class DemoteService extends RuleService{
 		sequence = (sequence==0)? 1: sequence;
 		for(String partNumber: partNumbers){
 			count = 0;
-			DemoteResult e = new DemoteResult();
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
-
 				if (StringUtils.isNotBlank(edp)) {
-					e.setStoreKeyword(new StoreKeyword(store, keyword));
-					e.setEdp(edp);
-					e.setLocation(sequence++);
-					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-					e.setCreatedBy(UtilityService.getUsername());
-					e.setComment(UtilityService.formatComment(comment));
-					e.setDemoteEntity(MemberTypeEntity.PART_NUMBER);
-					if (StringUtils.isNotBlank(edp)){
-						count = daoService.addDemoteResult(e);
-						if (!StringUtils.isBlank(comment)) {
-							addComment(comment, e);
-						}
-					}
-				} else {
-					
-				}
+					addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
+				} 
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
 			}
@@ -219,28 +224,7 @@ public class DemoteService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		
-		int count = 0;
-		try {
-			String store = UtilityService.getStoreName();
-			DemoteResult e = new DemoteResult();
-			RedirectRuleCondition condition = new RedirectRuleCondition();
-			condition.setFilter(filter);
-			e.setCondition(condition );
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setLocation(sequence++);
-			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			e.setDemoteEntity(MemberTypeEntity.FACET);
-			count = daoService.addDemoteResult(e);
-			if (!StringUtils.isBlank(comment)) {
-				addComment(comment, e);
-			}
-		} catch (DaoException de) {
-				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
-		}
-		return count;
+		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
 	@RemoteMethod
@@ -497,15 +481,14 @@ public class DemoteService extends RuleService{
 		this.daoService = daoService;
 	}
 
-	private Comment addComment(String comment, DemoteResult e) throws DaoException {
+	private int addComment(String comment, DemoteResult e) throws DaoException {
 		Comment com = new Comment();
 		com.setComment(comment);
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
 		com.setStore(new Store(UtilityService.getStoreName()));
-		daoService.addComment(com);
-		return com;
+		return daoService.addComment(com);
 	}
 
 	@RemoteMethod
@@ -516,22 +499,12 @@ public class DemoteService extends RuleService{
 			DemoteResult demote = new DemoteResult();
 			demote.setStoreKeyword(new StoreKeyword(store, keyword));
 			demote.setMemberId(memberId);
-			try {
-				demote = daoService.getDemoteItem(demote);
-			} catch (DaoException e) {
-				demote = null;
-			}
+			demote = daoService.getDemoteItem(demote);
 			if (demote != null) {
 				demote.setComment(pComment);
 				demote.setLastModifiedBy(UtilityService.getUsername());
 				daoService.updateDemoteResultComment(demote);
-				Comment com = new Comment();
-				com.setComment(pComment);
-				com.setUsername(UtilityService.getUsername());
-				com.setReferenceId(demote.getMemberId());
-				com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
-				com.setStore(new Store(store));
-				result = daoService.addComment(com);
+				result = addComment(pComment, demote);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during addRuleItemComment()",e);

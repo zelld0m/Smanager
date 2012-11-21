@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
@@ -157,32 +159,11 @@ public class RelevancyService extends RuleService{
 		return null;
 	}
 
-	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
-		try {
-			String store = UtilityService.getStoreName();
-			Relevancy rule = new Relevancy();
-			rule.setStore(new Store(store));
-			rule.setRelevancyName(name);
-			rule.setDescription(description);
-			rule.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
-			rule.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
-			rule.setCreatedBy(UtilityService.getUsername());
-			return StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(rule));
-		} catch (DaoException e) {
-			logger.error("Failed during addRuleAndGetId()",e);
-		}
-		return StringUtils.EMPTY;
-	}
-
-	@RemoteMethod
-	public Relevancy addRuleAndGetModel(String name, String description , String startDate, String endDate) {
-		return getRule(addRuleAndGetId(name, description , startDate, endDate));
-	}
-
 	@RemoteMethod
 	public Relevancy cloneRule(String ruleId, String name, String startDate, String endDate, String description) throws Exception{
 		String clonedId = StringUtils.EMPTY;
 		Relevancy clonedRelevancy = null;
+		String userName = UtilityService.getUsername();
 		if(ruleId.equalsIgnoreCase(""))
 			ruleId=UtilityService.getStoreName()+"_default";
 		try {
@@ -193,14 +174,10 @@ public class RelevancyService extends RuleService{
 			relevancy.setDescription(description);
 			relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
 			relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
-			relevancy.setCreatedBy(UtilityService.getUsername());
-
+			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
-
 			Relevancy hostRelevancy = getRule(ruleId);
-
 			Map<String, String> fields = hostRelevancy.getParameters();
-
 			for (String key: fields.keySet()){
 				try {
 					addRuleFieldValue(clonedId, key, fields.get(key));
@@ -209,13 +186,18 @@ public class RelevancyService extends RuleService{
 					logger.error("Failed during cloneRule()",e);
 				}
 			}
-
+			
+			try {
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.RANKING_RULE, store, clonedId, name, 
+						userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+			} catch (DaoException de) {
+				logger.error("Failed to create rule status for ranking rule: " + name);
+			}
+			
 			clonedRelevancy = getRule(clonedId);
-
 		} catch (DaoException e) {
 			logger.error("Failed during addRelevancy()",e);
 		}
-
 		return clonedRelevancy;
 	}
 
@@ -249,9 +231,18 @@ public class RelevancyService extends RuleService{
 			}
 			Relevancy rule = new Relevancy();
 			rule.setRuleId(ruleId);
-			rule.setStore(new Store(UtilityService.getStoreName()));
+			String storeName = UtilityService.getStoreName();
+			rule.setStore(new Store(storeName));
 			rule.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteRelevancy(rule);
+			int status = daoService.deleteRelevancy(rule);
+			if (status > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
+				ruleStatus.setRuleRefId(rule.getRuleId());
+				ruleStatus.setStoreId(storeName);
+				daoService.processRuleStatus(ruleStatus, true);
+			}
+			return status;
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
 		}
