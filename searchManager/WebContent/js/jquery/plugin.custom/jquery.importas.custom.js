@@ -36,7 +36,8 @@
 			template += '<div>';
 			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	<select id="importAsSelect" title="Select rule" style="display:none">';
-			template += '		<option value="asNewRule">' + base.options.newRuleText + '</option>';
+			template += '		<option value=""></option>';
+			template += '		<option value="0">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
 			template += '	<div id="replacement" style="display:none">';
 			template += '		<label>Enter new name: </label>';
@@ -145,7 +146,9 @@
 				});
 			}else{
 				$replacement.find("#selectedRule").text(u.item.text);
-				$replacement.find("input#newName").val(u.item.text);
+				
+				var $input = $replacement.find("input#newName");
+				$input.val(u.item.text);
 
 				$replacement.slideDown('slow', function() {
 					base.$el.find("#selectedRule").off().on({
