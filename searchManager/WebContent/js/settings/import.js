@@ -31,7 +31,7 @@
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
 							self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
-							self.getImportAsList();
+							self.getImportList();
 						}
 					}
 				});
