@@ -9,6 +9,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.springframework.util.StringUtils;
 
 import com.search.manager.enums.ExportType;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -73,6 +74,24 @@ public class RuleStatus extends ModelBean {
 		this.lastModifiedDate = dateModified;
 	}
 
+	public RuleStatus(RuleEntity ruleEntity, String storeId, String ruleId, String ruleName, String createdBy, String modifiedBy, 
+			RuleStatusEntity ruleStatus, RuleStatusEntity publishedStatus) {
+		this.createdBy = createdBy;
+		this.lastModifiedBy = modifiedBy;
+		if (publishedStatus!= null) {
+			this.publishedStatus = String.valueOf(publishedStatus);
+		}
+		this.storeId = storeId;
+		if (ruleEntity != null) {
+			this.ruleTypeId = ruleEntity.getCode();
+		}
+		this.ruleRefId = ruleId;
+		this.description = ruleName;
+		if (ruleStatus != null) {
+			this.ruleStatusId = String.valueOf(ruleStatus);
+		}
+	}
+	
 	public RuleStatus(String ruleStatusId, Integer ruleTypeId, String ruleRefId, String storeId, String description,
 			String updateStatus, String requestBy, Date lastRequestDate,
 			String approvalStatus, String approvalBy, Date lastApprovalDate,

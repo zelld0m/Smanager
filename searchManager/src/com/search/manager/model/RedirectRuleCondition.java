@@ -38,6 +38,10 @@ public class RedirectRuleCondition extends ModelBean {
 	public RedirectRuleCondition() {
 	}
 
+	public RedirectRuleCondition(Map<String, List<String>> filter) {
+		conditionMap.putAll(filter);
+	}
+	
 	public RedirectRuleCondition(String ruleId, String condition) {
 		this.ruleId = ruleId;
 		setCondition(condition);

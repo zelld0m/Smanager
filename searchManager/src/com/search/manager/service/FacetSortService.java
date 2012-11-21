@@ -20,12 +20,14 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
@@ -66,6 +68,13 @@ public class FacetSortService extends RuleService{
 				result = addAllFacetGroup(ruleId);
 			}
 
+			try {
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.FACET_SORT, store, ruleId, ruleName, 
+						username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+			} catch (DaoException de) {
+				logger.error("Failed to create rule status for ranking rule: " + ruleName);
+			}
+			
 			if (result>0){
 				return getRuleById(ruleId);
 			}
@@ -101,7 +110,14 @@ public class FacetSortService extends RuleService{
 			String username = UtilityService.getUsername();
 			FacetSort rule = new FacetSort(ruleId, store);
 			rule.setLastModifiedBy(username);
-			return daoService.deleteFacetSort(rule);
+			result = daoService.deleteFacetSort(rule);
+			if (result > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.FACET_SORT.getCode());
+				ruleStatus.setRuleRefId(ruleId);
+				ruleStatus.setStoreId(store);
+				daoService.processRuleStatus(ruleStatus, true);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteRule()",e);
 		}

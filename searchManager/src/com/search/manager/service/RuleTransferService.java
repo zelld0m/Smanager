@@ -22,6 +22,7 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
@@ -102,59 +103,82 @@ public class RuleTransferService {
 		List<String> successList = new ArrayList<String>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
-
+		String userName = UtilityService.getUsername();
+		
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
 			ImportType importType = ImportType.get(importTypeList[i]);
 			String ruleName = ruleNameList[i];
 			String importAsId = importAsRefIdList[i];
-
+			
 			//if importAsId is null, generate a new id
 			switch(ruleEntity){
-			case ELEVATE:
-			case EXCLUDE:
-			case DEMOTE:
-				ruleId = importAsId = ruleName;
-				break;
-			case FACET_SORT:
-				FacetSort facetSort = facetSortService.getRuleByName(ruleName);
-				if(facetSort != null){
-					importAsId = facetSort.getRuleId();
-					ruleName = facetSort.getRuleName();
-				}
-			case QUERY_CLEANING:
-			case RANKING_RULE:
-				if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
-					importAsId = DAOUtils.generateUniqueId();
-				}
-				break;
-			default:
-				break;
-			}
-
-			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
-				if(ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType){
-					//submit rule for approval
-					RuleStatus ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
-
-					if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
-						//approve rule
-						deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
-						//publish rule
-						deploymentService.publishRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
-					}
-				}
-
-				switch(ruleEntity){
 				case ELEVATE:
 				case EXCLUDE:
 				case DEMOTE:
-					successList.add(ruleId);
+					ruleId = importAsId = ruleName;
 					break;
 				case FACET_SORT:
+					FacetSort facetSort = facetSortService.getRuleByName(ruleName);
+					if(facetSort != null){
+						importAsId = facetSort.getRuleId();
+						ruleName = facetSort.getRuleName();
+					}
+					else {
+						importAsId = DAOUtils.generateUniqueId();
+					}
 				case QUERY_CLEANING:
 				case RANKING_RULE:
-					successList.add(ruleName);
+					if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
+						importAsId = DAOUtils.generateUniqueId();
+					}
+					break;
+				default:
+					break;
+			}
+						
+			// TODO: update return to reflect at which state error occurred.
+			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
+				int status = 0;
+				try {
+					daoService.addRuleStatus(new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName, 
+							RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+					status++;
+					if(ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType){
+						//submit rule for approval
+						RuleStatus ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
+						status++;
+						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
+							//approve rule
+							deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
+							status++;
+							//publish rule
+							deploymentService.publishRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
+							status++;
+						}
+					}
+					
+					switch(ruleEntity){
+						case ELEVATE:
+						case EXCLUDE:
+						case DEMOTE:
+							successList.add(ruleId);
+							break;
+						case FACET_SORT:
+						case QUERY_CLEANING:
+						case RANKING_RULE:
+							successList.add(ruleName);
+							break;
+					}
+				} catch (DaoException de) {
+					String msg = "";
+					switch (status) {
+						case 0: msg = "Failed to create rule status for: "; break;
+						case 1: msg = "Failed to submit rule for approval: "; break;
+						case 2: msg = "Failed to approve rule: "; break;
+						case 3: msg = "Failed to publish rule: "; break;
+					}
+					logger.error(msg + importAsId);
 				}
 				
 			}
