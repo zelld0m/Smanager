@@ -10,11 +10,17 @@
 			postMsg : function(data,pub){
 				var self = this;
 				var msg_ = pub ? 'imported:' : 'rejected:';
+				var okmsg = '';	
 
-				var okmsg = 'Following rules were successfully ' + msg_;	
-
-				for(var i=0; i<data.length; i++){	
-					okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+				if(data.length > 0){
+					okmsg = 'Following rules were successfully ' + msg_;	
+	
+					for(var i=0; i<data.length; i++){	
+						okmsg += '\n-'+ data[i];	
+					}
+				}
+				else{
+					okmsg = 'No rules were successfully ' + msg_ +'.';
 				}
 
 				jAlert(okmsg, self.entityName);

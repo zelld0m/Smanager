@@ -9,13 +9,12 @@
 		
 		postMsg : function(data,msg_){
 			var self = this;
-
 			var okmsg = '';	
 
 			if(data.length > 0){
 				okmsg = 'Following rules were successfully ' + msg_ +':';
 				for(var i=0; i<data.length; i++){	
-					okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+					okmsg += '\n-'+ data[i];	
 				}
 			}
 			else{
