@@ -83,7 +83,7 @@
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
-					selectedImportAsRefId.push($selectedTr.find("td#importAs > select#importAsList > option:selected")[0].value); 
+					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val()); 
 				}
 				return selectedImportAsRefId;
 			}, 
@@ -94,10 +94,26 @@
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
-					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected")[0].text); 
+					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected").text()); 
 				}
 				return selectedItems;
 			}, 
+			
+			checkSelectedImportAsName : function(){
+				var self = this;
+				var selectedNames = self.getSelectedRuleName();
+				
+				if(selectedNames == null || selectedNames.length==0)
+					return false;
+					
+				for(var i=0; i < selectedNames.length; i++){
+					if($.isBlank(selectedNames[i])){
+						return false;
+					}
+				}
+				
+				return true;
+			},
 
 			getSelectedRuleName : function(){
 				var self = this;
@@ -106,15 +122,9 @@
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
-					var $importAsSelect = $selectedTr.find("td#importAs > select#importAsList > option:selected");
-					
-					if($.isBlank($importAsSelect.val())){
-						//TODO get from input name
-						selectedRuleNames.push("");
-					}else{
-						selectedRuleNames.push($importAsSelect.text());
-					}
-					 
+					var $importAsSelect = $selectedTr.find("td#importAs").find("select#importAsSelect > option:selected");
+					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
+					selectedRuleNames.push(ruleName);
 				}
 				return selectedRuleNames;
 			},
@@ -184,11 +194,13 @@
 						var comment = $.trim($selectedTab.find("#comment").val());
 
 						if(self.getSelectedRefId().length==0){
-							jAlert("Please select rule", self.moduleName);
+							jAlert("Please select rule.", self.moduleName);
 						}else if ($.isBlank(comment)){
-							jAlert("Please add comment", self.moduleName);
+							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
 							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+						}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
+							jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 						}else{
 							switch($(evt.currentTarget).attr("id")){
 							case "okBtn":

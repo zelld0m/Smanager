@@ -280,6 +280,9 @@
 							$content.find("#ruleInfo").html("");
 							$content.find("#description").html("");
 							
+							$content.find("div.ruleFilter div#includeKeywordInSearchText").hide();
+							$content.find("div#ruleChange > #noChangeKeyword").show();
+							
 							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 							$tr.find("td#fieldValue").remove();

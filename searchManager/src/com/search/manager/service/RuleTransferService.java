@@ -116,10 +116,7 @@ public class RuleTransferService {
 			case ELEVATE:
 			case EXCLUDE:
 			case DEMOTE:
-				if(StringUtils.isBlank(importAsId)){
-					importAsId = ruleId;
-				}
-				ruleName = importAsId;
+				ruleName = ruleId = importAsId;
 				break;
 			case FACET_SORT:
 				FacetSort facetSort = facetSortService.getRuleByName(ruleName);
