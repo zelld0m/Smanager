@@ -1082,14 +1082,16 @@
 								var ruleName = "";
 
 								if("import" === base.options.transferType.toLowerCase()){
-									var $importAsSelect = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs > select#importAs").children("option:selected");
-									importAs = $importAsSelect.val();
-									ruleName = $.isBlank(importAs) ? "" : $importAsSelect.text(); //TODO if importAs is blank, get value from input name
+									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
+									importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
+									ruleName = importAsLabel.find("input#newName").val();
 									
 									importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").val();
 								}
 
-								if ($.isNotBlank(comment)){
+								if ($.isBlank(comment)){
+									jAlert("Please add comment.", base.options.transferType);
+								}else{
 									switch($(evt.currentTarget).attr("id")){
 									case "okBtn": 
 										switch(base.options.transferType.toLowerCase()){
@@ -1101,13 +1103,18 @@
 												}
 											});
 											break;
-										case "import": 
-											RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
-												callback: function(data){									
-													base.api.hide();
-													base.postMsg(data, "imported");
-												}	
-											});
+										case "import":
+											if($.isBlank(ruleName)){
+												jAlert("Please add Import As rule name.", base.options.transferType);	
+											}
+											else{
+												RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
+													callback: function(data){									
+														base.api.hide();
+														base.postMsg(data, "imported");
+													}	
+												});
+											}
 											break;
 										}
 										break;
@@ -1129,8 +1136,6 @@
 									}	
 
 									base.options.postButtonClick(base);
-								}else{
-									jAlert("Please add comment.", base.options.transferType);
 								}
 							}
 						});
