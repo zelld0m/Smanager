@@ -77,7 +77,7 @@
 			case "EXCLUDE": 
 			case "DEMOTE": 
 			case "FACET_SORT": 
-				$option.attr({value: rule["ruleName"]});
+				$option.attr({value: rule["ruleName"], selected: true});
 				$option.text(rule["ruleName"]);
 				break;
 			case "RANKING_RULE":	

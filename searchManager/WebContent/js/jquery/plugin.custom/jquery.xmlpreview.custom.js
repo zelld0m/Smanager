@@ -91,35 +91,9 @@
 		};
 
 		base.populateImportAsList = function(data, contentHolder, sourceData){
-			var $importAsSelect = contentHolder.find("select#importAs");
-
-			switch(base.options.ruleXml["ruleEntity"]){
-			case "ELEVATE": 
-			case "EXCLUDE": 
-			case "DEMOTE": 
-			case "FACET_SORT": 
-				$importAsSelect.find("option")
-						.remove().end()
-						.append($("<option>", {value: ""}).text(base.options.ruleXml["ruleName"]))
-						.attr({
-							disabled: "disabled"
-						}).val("");
-			case "RANKING_RULE":	
-			case "QUERY_CLEANING":
-				for (var index in data.list){
-					$importAsSelect.append($("<option>", {value: data.list[index]["ruleRefId"]}).text(data.list[index]["description"]));
-				}
-
-				$importAsSelect.off().on({
-					change: function(e){
-						base.updateTable(this, contentHolder, base.options.ruleType, sourceData);
-					},
-					selected: function(e){
-						base.updateTable(this, contentHolder, base.options.ruleType, sourceData);
-					}
-				});
-				break;
-			}
+			contentHolder.find("#importAs").importas({
+				rule: base.options.ruleXml,
+			});
 		};
 
 		base.populateImportTypeList = function(data, contentHolder){

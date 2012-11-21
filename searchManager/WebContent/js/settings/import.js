@@ -276,9 +276,6 @@
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
 				template += '		<label id="importAs" class="wAuto floatL">';
-				template += '			<select id="importAs">';
-				template += '				<option value="">Import As New Rule</option>';
-				template += '    		</select>';
 				template += '		</label>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
