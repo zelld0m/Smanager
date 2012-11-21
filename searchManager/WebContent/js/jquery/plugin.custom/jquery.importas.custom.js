@@ -36,7 +36,7 @@
 			template += '<div>';
 			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/preloader30x30Trans.gif">';
 			template += '	<select id="importAsSelect" title="Select rule" style="display:none">';
-			template += '		<option value="newRule">' + base.options.newRuleText + '</option>';
+			template += '		<option value="asNewRule">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
 			template += '	<div id="replacement" style="display:none">';
 			template += '		<label>Enter new name: </label>';
@@ -59,8 +59,10 @@
 			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
 				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
 				$importAlert.show();
+			}else{
+				$importAlert.find("#status").empty();
+				$importAlert.hide();
 			};
-
 		};
 
 		base.showSelector = function(){
