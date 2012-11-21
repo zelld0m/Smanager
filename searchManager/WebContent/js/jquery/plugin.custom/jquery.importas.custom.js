@@ -120,6 +120,7 @@
 			var $replacement = base.$el.find("#replacement");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
+			base.options.selectedOptionChanged(u.item.value);
 			$select.val(u.item.value);
 
 			$allSpan.eq(0).hide();
@@ -207,7 +208,8 @@
 
 	$.importas.defaultOptions = {
 			rule: null,
-			newRuleText: "Import As New Rule"
+			newRuleText: "Import As New Rule",
+			selectedOptionChanged: function(ruleId){}
 	};
 
 	$.fn.importas = function(options){
