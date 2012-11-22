@@ -189,12 +189,19 @@ public class RuleTransferService {
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
+		
+		String storeIdOrigin = ruleXml.getStore();
+		String ruleIdOrigin = ruleXml.getRuleId();
+		String ruleNameOrigin = ruleXml.getRuleName();
+		
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
 
 		if(RuleXmlUtil.importRule(ruleXml)){
-			//TODO: addRuleTransferMap(ruleXml.getStore(), ruleXml.getRuleId(), ruleXml.getRuleName(), store, importAsRefId, ruleName, ruleEntity);
+			if(ruleEntity == RuleEntity.RANKING_RULE || ruleEntity == RuleEntity.QUERY_CLEANING){
+				addRuleTransferMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
+			}
 			return deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
@@ -260,7 +267,7 @@ public class RuleTransferService {
 	@RemoteMethod
 	public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity){
 		String storeIdTarget = UtilityService.getStoreName();
-		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, "",  storeIdTarget, "", "", RuleEntity.getId(ruleEntity));
+		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, null,  storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		
 		try {
 			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();

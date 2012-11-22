@@ -375,10 +375,10 @@ public class DAOConstants {
 	public static final String COLUMN_LAST_EXPORT_DATE				= "last_export_date";
 
 	// export_rule_map_parameters
-	public static final String COLUMN_PROD_STORE_ID_ORIGIN			= "store_id_origin";
+	public static final String COLUMN_PROD_STORE_ID_ORIGIN			= "product_store_id_origin";
 	public static final String COLUMN_RULE_ID_ORIGIN   				= "rule_id_origin";
 	public static final String COLUMN_RULE_NAME_ORIGIN     			= "rule_name_origin";
-	public static final String COLUMN_PROD_STORE_ID_TARGET			= "store_id_target";
+	public static final String COLUMN_PROD_STORE_ID_TARGET			= "product_store_id_target";
 	public static final String COLUMN_RULE_ID_TARGET   				= "rule_id_target";
 	public static final String COLUMN_RULE_NAME_TARGET     			= "rule_name_target";
 	// GET* SPs total size

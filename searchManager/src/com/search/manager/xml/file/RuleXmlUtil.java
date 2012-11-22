@@ -98,7 +98,7 @@ public class RuleXmlUtil{
 		}
 		return latestVersion;
 	}
-	
+
 	public static RuleXml ruleToXml(String store, String ruleType, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
@@ -434,7 +434,7 @@ public class RuleXmlUtil{
 			}
 
 			if (processedItem != CollectionUtils.size(eItemXmlList)){
-				
+
 				daoService.clearExcludeResult(storeKeyword);
 				RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
 
@@ -494,7 +494,7 @@ public class RuleXmlUtil{
 			}
 
 			if (processedItem != CollectionUtils.size(dItemXmlList)){
-			
+
 				daoService.clearDemoteResult(storeKeyword);
 				RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
 
@@ -653,10 +653,14 @@ public class RuleXmlUtil{
 				rule.setRuleId(addRel.getRuleId());
 				rule.setStoreId(store);
 				rule.setLastModifiedBy(qRXml.getLastModifiedBy());
-				for (String keyword: keywordsXml.getKeyword()) {
-					daoService.addKeyword(new StoreKeyword(store, keyword));
-					rule.setSearchTerm(keyword);
-					processedItem += daoService.addRedirectKeyword(rule);							
+				List<String> keywords = keywordsXml.getKeyword();
+
+				if(!CollectionUtils.isEmpty(keywords)){
+					for (String keyword: keywordsXml.getKeyword()) {
+						daoService.addKeyword(new StoreKeyword(store, keyword));
+						rule.setSearchTerm(keyword);
+						processedItem += daoService.addRedirectKeyword(rule);							
+					}
 				}
 
 				if (processedItem == CollectionUtils.size(keywordsXml.getKeyword())) {
