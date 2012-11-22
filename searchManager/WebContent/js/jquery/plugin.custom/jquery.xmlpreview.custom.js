@@ -89,7 +89,7 @@
 			contentHolder.find("#importAs").importas({
 				rule: base.options.ruleXml,
 				selectedOptionChanged: function(ruleId){
-					base.getDatabaseData(contentHolder, base.options.ruleType, ruleId, sourceData);
+					base.getDatabaseData(contentHolder, ruleId, sourceData);
 				}
 			});
 		};
@@ -188,9 +188,8 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
-		base.getDatabaseData = function($content, sourceData){
+		base.getDatabaseData = function($content, ruleId, sourceData){
 			var ruleType = base.options.ruleType;
-			var ruleId = base.options.ruleId;
 			var ruleName = base.options.ruleName;
 			
 			switch(ruleType.toLowerCase()){
@@ -1056,7 +1055,7 @@
 						}
 						else if("database" === base.options.leftPanelSourceData){
 							if($.isNotBlank(base.options.ruleId)){
-								base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.leftPanelSourceData);
+								base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleId, base.options.leftPanelSourceData);
 							}
 						}
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
@@ -1074,7 +1073,7 @@
 							}
 							else if("database" === base.options.rightPanelSourceData){
 								if($.isNotBlank(base.options.ruleId)){
-									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
+									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleId, base.options.rightPanelSourceData);
 								}
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
@@ -1095,6 +1094,9 @@
 												callback: function(data){									
 													base.api.hide();
 													base.postMsg(data, "exported");
+												},
+												postHook: function(){
+													base.options.postButtonClick(base);
 												}
 											});
 											break;
@@ -1113,6 +1115,9 @@
 													callback: function(data){									
 														base.api.hide();
 														base.postMsg(data, "imported");
+													},
+													postHook: function(){
+														base.options.postButtonClick(base);
 													}	
 												});
 											}
@@ -1131,14 +1136,15 @@
 												callback: function(data){
 													base.api.hide();
 													base.postMsg(data, "rejected");
-												}	
+												},
+												postHook: function(){
+													base.options.postButtonClick(base);
+												}
 											});
 											break;
 										}
 										break;
 									}	
-
-									base.options.postButtonClick(base);
 								}
 							}
 						});
