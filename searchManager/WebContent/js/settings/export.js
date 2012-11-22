@@ -214,12 +214,16 @@
 									transferType: "export",
 									ruleType: self.entityName,
 									ruleId: rule["ruleRefId"],
+									ruleName: rule["ruleName"],
 									ruleInfo: rule["description"],
 									requestType: rule["updateStatus"],
 									enablePreTemplate: true,
 									enablePostTemplate: true,
 									leftPanelSourceData: "xml",
 									postTemplate: self.getPostTemplate(),
+									postButtonClick: function(){
+										self.getExportList();
+									},
 									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
 										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
 											callback: function(xml){

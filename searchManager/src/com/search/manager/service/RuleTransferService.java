@@ -1,5 +1,6 @@
 package com.search.manager.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -80,12 +81,16 @@ public class RuleTransferService {
 			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
 				RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
 				SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+				
 				try {
 					RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
 					if (approvedRset.getTotalSize() > 0) {
 						ruleStatus = approvedRset.getList().get(0);
-						daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
-						successList.add(ruleId);
+						
+						if(ruleStatus != null){
+							daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
+							successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
+						}
 					}
 					else {
 						logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
@@ -158,18 +163,8 @@ public class RuleTransferService {
 						}
 					}
 					
-					switch(ruleEntity){
-						case ELEVATE:
-						case EXCLUDE:
-						case DEMOTE:
-							successList.add(ruleId);
-							break;
-						case FACET_SORT:
-						case QUERY_CLEANING:
-						case RANKING_RULE:
-							successList.add(ruleName);
-							break;
-					}
+					successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
+					
 				} catch (DaoException de) {
 					String msg = "";
 					switch (status) {
@@ -186,6 +181,21 @@ public class RuleTransferService {
 		return successList;
 	}
 
+	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
+		switch(ruleEntity){
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE:
+				return ruleId;
+			case FACET_SORT:
+			case QUERY_CLEANING:
+			case RANKING_RULE:
+				return ruleName;
+			default:
+				return ruleName;
+		}
+	}
+	
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
@@ -213,21 +223,28 @@ public class RuleTransferService {
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
 			String ruleName = ruleNameList[i];
+			String refId = ruleId;
 
-			if(deleteRuleFile(ruleEntity, store, ruleId, comment)){
+			switch(ruleEntity){
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE:
+				refId = ruleNameList[i]; //delete file by rule name
+				break;
+			case FACET_SORT:
+			case QUERY_CLEANING:
+			case RANKING_RULE:
+				refId = ruleRefIdList[i]; //delete file by rule id
+				break;
+			default:
+				break;
+			}
+			
+			if(deleteRuleFile(ruleEntity, store, refId, comment)){
 				//TODO addComment
 				//TODO addAuditTrail
-				switch(ruleEntity){
-				case ELEVATE:
-				case EXCLUDE:
-				case DEMOTE:
-					successList.add(ruleId);
-					break;
-				case FACET_SORT:
-				case QUERY_CLEANING:
-				case RANKING_RULE:
-					successList.add(ruleName);
-				}
+				
+				successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
 			}
 		}
 		return successList;
@@ -237,11 +254,21 @@ public class RuleTransferService {
 		boolean success = false;
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		try{
-			RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, id));
-			success = true;
+			String filepath = RuleTransferUtil.getFilename(store, ruleEntity, id);
+			File file = new File(filepath);
+			
+			if(!file.exists()){
+				logger.info("File to delete not found. Filename = " + filepath);
+				success = false;
+			}
+			else{
+				RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, id));
+				success = true;
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
 
 		return success;

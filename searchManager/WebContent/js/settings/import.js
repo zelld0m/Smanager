@@ -120,7 +120,7 @@
 				
 				return true;
 			},
-
+			
 			getSelectedRuleName : function(){
 				var self = this;
 				var selectedRuleNames = [];
@@ -205,23 +205,25 @@
 							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
 							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
-						}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
-							jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 						}else{
 							switch($(evt.currentTarget).attr("id")){
 							case "okBtn":
-								RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
-									callback: function(data){									
-										self.postMsg(data,true);	
-										self.getImportList();	
-									},
-									preHook:function(){ 
-										self.prepareTabContent(); 
-									}	
-								});
+								if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
+									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+								}else{
+									RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
+										callback: function(data){									
+											self.postMsg(data,true);	
+											self.getImportList();	
+										},
+										preHook:function(){ 
+											self.prepareTabContent(); 
+										}	
+									});
+								}
 								break;
 							case "rejectBtn": 
-								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedRuleName(), {
+								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {
 									callback: function(data){
 										self.postMsg(data,false);	
 										self.getImportList();
@@ -317,6 +319,7 @@
 							for(var i=0; i < totalSize; i++){
 								var rule = list[i];
 								var ruleId = rule["ruleId"];
+								var ruleName = rule["ruleName"];
 								
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
@@ -326,11 +329,11 @@
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
 								
-								switch(self.entityName.toLowerCase()){
+								/*switch(self.entityName.toLowerCase()){
 								case "facetsort":
 									ruleId = rule["ruleName"]; //we will be getting facet sort rule by name in xmlpreview
 									break;
-								}
+								}*/
 								
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
@@ -338,6 +341,7 @@
 										transferType: "import",
 										ruleType: self.entityName,
 										ruleId: ruleId,
+										ruleName: ruleName,
 										ruleXml: rule,
 										enablePreTemplate: true,
 										enablePostTemplate: true,
