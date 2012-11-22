@@ -88,7 +88,7 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType), RuleStatusEntity.APPROVED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
+			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.APPROVED, ruleStatusList, UtilityService.getUsername(), new Date()));
 		} catch (DaoException e) {
 			logger.error("Failed during approveRule()",e);
 		}
@@ -115,7 +115,7 @@ public class DeploymentService {
 		List<String> result = new ArrayList<String>();
 		try {
 			List<RuleStatus> ruleStatusList = generateApprovalList(ruleRefIdList, RuleEntity.getId(ruleType),RuleStatusEntity.REJECTED.toString());
-			getSuccessList(result, daoService.updateRuleStatus(ruleStatusList));
+			getSuccessList(result, daoService.updateRuleStatus(RuleStatusEntity.REJECTED, ruleStatusList, UtilityService.getUsername(), new Date()));
 		} catch (DaoException e) {
 			logger.error("Failed during unapproveRule()",e);
 		}
@@ -205,6 +205,7 @@ public class DeploymentService {
 										if (approvedRset.getTotalSize() > 0) {
 											ruleStatus = approvedRset.getList().get(0);
 											daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
+											//TODO: inser audit trail
 										}
 										else {
 											logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
@@ -230,7 +231,7 @@ public class DeploymentService {
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
-			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
 			
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
@@ -276,7 +277,7 @@ public class DeploymentService {
 	private Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
-			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(ruleStatusList);
+			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
 			
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
@@ -318,17 +319,19 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
+	// Used by Submit For Approval and Delete Rule
 	public RuleStatus processRuleStatus(String ruleType, String ruleRefId, String description, Boolean isDelete) {
-
 		int result = -1;
 		try {
+			String username = UtilityService.getUsername();
 			RuleStatus ruleStatus = createRuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
 			ruleStatus.setRuleRefId(ruleRefId);
 			ruleStatus.setDescription(description);
-			ruleStatus.setLastModifiedBy(UtilityService.getUsername());
+			ruleStatus.setLastModifiedBy(username);
 			ruleStatus.setStoreId(UtilityService.getStoreName());
-			result = daoService.processRuleStatus(ruleStatus, isDelete);
+			result = isDelete ? daoService.updateRuleStatusDeletedInfo(ruleStatus, username)
+					: daoService.updateRuleStatusApprovalInfo(ruleStatus, RuleStatusEntity.PENDING, username, new Date());
 			if (result > 0) return getRuleStatus(ruleType, ruleRefId);
 		} catch (DaoException e) {
 			logger.error("Failed during processRuleStatus()",e);
