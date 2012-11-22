@@ -548,7 +548,7 @@
 
 				$table.find("tr:even").addClass("alt");
 
-				base.populateKeywordInRule($content, base.toStringArray(xml["relKeyword"]));
+				base.populateKeywordInRule($content, xml["ruleKeyword"]["keyword"]);
 
 				break;
 			}
