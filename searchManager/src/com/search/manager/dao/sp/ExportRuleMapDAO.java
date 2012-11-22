@@ -134,29 +134,29 @@ public class ExportRuleMapDAO {
 		try {
 			ExportRuleMap exportRuleMap = searchCriteria.getModel();
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, exportRuleMap.getRuleType().ordinal());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, exportRuleMap.getRuleType().getCode());
 			inputs.put(DAOConstants.PARAM_PROD_STORE_ID_ORIGIN, exportRuleMap.getStoreIdOrigin());
 			inputs.put(DAOConstants.PARAM_RULE_ID_ORIGIN, exportRuleMap.getRuleIdOrigin());
 			inputs.put(DAOConstants.PARAM_PROD_STORE_ID_TARGET, exportRuleMap.getStoreIdTarget());
-			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getStoreIdTarget());
+			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getRuleIdTarget());
 			return DAOUtils.getRecordSet(getExportRuleMapStoredProcedure.execute(inputs));
 		} catch (Exception e) {
 			throw new DaoException("Failed during getExportRuleMap()", e);
 		}
     }	
 
-    @Audit(entity = Entity.ruleStatus, operation = Operation.add)
+    //@Audit(entity = Entity.ruleStatus, operation = Operation.add)
     public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
-			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, exportRuleMap.getRuleType().ordinal());
+			inputs.put(DAOConstants.PARAM_RULE_TYPE_ID, exportRuleMap.getRuleType().getCode());
 			inputs.put(DAOConstants.PARAM_PROD_STORE_ID_ORIGIN, exportRuleMap.getStoreIdOrigin());
 			inputs.put(DAOConstants.PARAM_RULE_ID_ORIGIN, exportRuleMap.getRuleIdOrigin());
-			inputs.put(DAOConstants.PARAM_RULE_NAME_ORIGIN, exportRuleMap.getStoreIdTarget());
+			inputs.put(DAOConstants.PARAM_RULE_NAME_ORIGIN, exportRuleMap.getRuleNameOrigin());
 			inputs.put(DAOConstants.PARAM_PROD_STORE_ID_TARGET, exportRuleMap.getStoreIdTarget());
-			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getStoreIdTarget());
-			inputs.put(DAOConstants.PARAM_RULE_NAME_TARGET, exportRuleMap.getStoreIdTarget());
+			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getRuleIdTarget());
+			inputs.put(DAOConstants.PARAM_RULE_NAME_TARGET, exportRuleMap.getRuleNameTarget());
 			result = DAOUtils.getUpdateCount(addExportRuleMapStoredProcedure.execute(inputs));
     	}
     	catch (Exception e) {
@@ -165,7 +165,7 @@ public class ExportRuleMapDAO {
     	return result;
     }
 
-    @Audit(entity = Entity.ruleStatus, operation = Operation.update)
+    //@Audit(entity = Entity.ruleStatus, operation = Operation.update)
     public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
     	int result = -1;
 		try {
