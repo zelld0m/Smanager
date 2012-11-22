@@ -88,7 +88,7 @@ public class RuleStatus extends ModelBean {
 		this.ruleRefId = ruleId;
 		this.description = ruleName;
 		if (ruleStatus != null) {
-			this.ruleStatusId = String.valueOf(ruleStatus);
+			this.updateStatus = String.valueOf(ruleStatus);
 		}
 	}
 	
@@ -110,24 +110,6 @@ public class RuleStatus extends ModelBean {
 		this.lastExportDate = lastExportDate;
 	}
 
-	public void setRequestApprovalStatus(String requestBy, Date lastRequestDate) {
-		this.approvalStatus = RuleStatusEntity.PENDING.toString();
-		this.requestBy = requestBy;
-		this.lastRequestDate = lastRequestDate;
-	}
-	
-	public void setApprovalStatus(String approvalStatus, String approvalBy, Date lastApprovalDate) {
-		this.approvalStatus = approvalStatus;
-		this.approvalBy = approvalBy;
-		this.lastApprovalDate = lastApprovalDate;
-	}
-
-	public void setPubishStatus(String publishStatus, String publishedBy, Date lastPublishedDate) {
-		this.publishedStatus = publishStatus;
-		this.publishedBy = publishedBy;
-		this.lastPublishedDate = lastPublishedDate;
-	}
-	
 	public String getRuleStatusId() {
 		return ruleStatusId;
 	}

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1177,8 +1178,7 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.addRuleStatus(ruleStatus);
 	}
 
-	@Override
-	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
+	private int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
 		return ruleStatusDAO.updateRuleStatus(ruleStatus);
 	}
 
@@ -1188,13 +1188,36 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.deleteRuleStatus(ruleStatus);
 	}
 
-	@Override
-	public Map<String,Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {	
+	private Map<String,Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
-			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatus(ruleStatus) > 0?true:false);
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
 		}
 		return statusMap;
+	}
+
+	private Map<String,Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
+		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
+		for (RuleStatus ruleStatus : ruleStatusList) {
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
+		}
+		return statusMap;
+	}
+
+	@Override
+	public Map<String,Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
+		switch (status) {
+			case PUBLISHED:
+			case UNPUBLISHED:
+				return publishRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+			case APPROVED:
+			case REJECTED:
+				return approveRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+		}
+		return new HashMap<String,Boolean>();
 	}
 
 	@Override
@@ -1206,33 +1229,7 @@ public class DaoServiceImpl implements DaoService {
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException {
 		return ruleStatusDAO.getCleanList(ruleRefIds, ruleTypeId, pStatus, aStatus);
 	}
-	
-	@Override
-	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
-		int result = -1;
-		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
-		if (rSet.getList().size() > 0) {
-			// existing rule
-			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
-			if (isDelete) {
-				if (((RuleStatus)rSet.getList().get(0)).getPublishedStatus().equals(RuleStatusEntity.UNPUBLISHED.toString())) {
-					ruleStatus.setApprovalStatus("");
-				}
-				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
-			} else {
-				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());
-			}
-			result = updateRuleStatus(ruleStatus);
-		} else if (!isDelete){
-			// new rule
-			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
-			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
-			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
-			result = addRuleStatus(ruleStatus);
-		}
-		return result;
-	}
-	
+
 	@Override
 	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		return commentDAO.getComment(searchCriteria);
@@ -1515,10 +1512,13 @@ public class DaoServiceImpl implements DaoService {
 
 	private RuleStatus getRuleStatusPK(RuleStatus ruleStatus) {
 		RuleStatus updateRuleStatus = new RuleStatus();
-		updateRuleStatus.setStoreId(ruleStatus.getStoreId());
-		updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
-		updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
-		updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
+		if (ruleStatus != null) {
+			updateRuleStatus.setStoreId(ruleStatus.getStoreId());
+			updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
+			updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
+			updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
+			updateRuleStatus.setDescription(ruleStatus.getDescription());
+		}
 		return updateRuleStatus;
 	}
 	
@@ -1528,12 +1528,85 @@ public class DaoServiceImpl implements DaoService {
 			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
 			updateRuleStatus.setExportBy(exportBy);
 			updateRuleStatus.setExportType(exportType);
+			updateRuleStatus.setLastModifiedBy(exportBy);
 			updateRuleStatus.setLastExportDate(exportDate);
-			//TODO add Comment
-			//TODO add audit trail									
+			updateRuleStatus.setLastModifiedDate(exportDate);
 			return updateRuleStatus(updateRuleStatus);
 		}
 		return -1;
 	}
 
+	@Override
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, 
+			String requestBy, Date requestDate) throws DaoException {
+		RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+		updateRuleStatus.setApprovalStatus("");
+		updateRuleStatus.setPublishedStatus(String.valueOf(requestedPublishStatus));
+		updateRuleStatus.setPublishedBy(requestBy);
+		updateRuleStatus.setLastModifiedBy(requestBy);
+		updateRuleStatus.setLastPublishedDate(requestDate);
+		updateRuleStatus.setLastModifiedDate(requestDate);
+		return updateRuleStatus(updateRuleStatus);
+	}
+
+	@Override
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus, 
+			String requestBy, Date requestDate) throws DaoException {
+		int result = -1;
+		if (requestedApprovalStatus != null) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setApprovalStatus(String.valueOf(requestedApprovalStatus));
+			updateRuleStatus.setLastModifiedDate(requestDate);
+			switch(requestedApprovalStatus) {
+				case APPROVED:
+				case REJECTED:
+					updateRuleStatus.setApprovalBy(requestBy);
+					updateRuleStatus.setLastApprovalDate(requestDate);
+					break;
+				case PENDING:
+					updateRuleStatus.setRequestBy(requestBy);
+					updateRuleStatus.setLastRequestDate(requestDate);
+					break;
+				default:
+					return result;
+			}
+			
+			RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(
+					new RuleStatus(ruleStatus.getRuleTypeId(), ruleStatus.getStoreId(), ruleStatus.getRuleRefId()), null, null, 1, 1));
+			if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
+				// existing rule
+				RuleStatus existingRuleStatus = rSet.getList().get(0);
+				if (StringUtils.isBlank(existingRuleStatus.getUpdateStatus()) || StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED))) {
+					updateRuleStatus.setUpdateStatus(String.valueOf(RuleStatusEntity.UPDATE));
+				}
+				updateRuleStatus.setLastModifiedBy(requestBy);
+				result = updateRuleStatus(updateRuleStatus);
+			} 
+			else {
+				// new rule
+				updateRuleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
+				updateRuleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+				updateRuleStatus.setCreatedBy(requestBy);
+				updateRuleStatus.setCreatedDate(requestDate);
+				result = addRuleStatus(updateRuleStatus);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException {
+		int result = -1;
+		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(
+				new RuleStatus(ruleStatus.getRuleTypeId(), ruleStatus.getStoreId(), ruleStatus.getRuleRefId()), null, null, 1, 1));
+		if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setApprovalStatus(StringUtils.equalsIgnoreCase(rSet.getList().get(0).getPublishedStatus(), 
+					String.valueOf(RuleStatusEntity.UNPUBLISHED)) ? "" : String.valueOf(RuleStatusEntity.PENDING));
+			updateRuleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
+			result = updateRuleStatus(updateRuleStatus);
+		} 
+		return result;
+	}
+	
 }

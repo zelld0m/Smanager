@@ -229,18 +229,19 @@ public class RelevancyService extends RuleService{
 			} catch (Exception e) {
 				logger.error("Error creating backup. " + e.getMessage());
 			}
+			String username = UtilityService.getUsername();
 			Relevancy rule = new Relevancy();
 			rule.setRuleId(ruleId);
 			String storeName = UtilityService.getStoreName();
 			rule.setStore(new Store(storeName));
-			rule.setLastModifiedBy(UtilityService.getUsername());
+			rule.setLastModifiedBy(username);
 			int status = daoService.deleteRelevancy(rule);
 			if (status > 0) {
 				RuleStatus ruleStatus = new RuleStatus();
 				ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
 				ruleStatus.setRuleRefId(rule.getRuleId());
 				ruleStatus.setStoreId(storeName);
-				daoService.processRuleStatus(ruleStatus, true);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
 			}
 			return status;
 		} catch (DaoException e) {
