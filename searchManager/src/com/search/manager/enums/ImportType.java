@@ -36,7 +36,7 @@ public enum ImportType {
 		return description;
 	}
 
-	public static ImportType get(String displayText) { 
+	public static ImportType getByDisplayText(String displayText) { 
 		return lookup.get(displayText); 
 	}
 	

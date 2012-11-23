@@ -139,7 +139,7 @@ public class RuleTransferService {
 
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			String ruleId = ruleRefIdList[i];
-			ImportType importType = ImportType.get(importTypeList[i]);
+			ImportType importType = ImportType.getByDisplayText(importTypeList[i]);
 			String ruleName = ruleNameList[i];
 			String importAsId = importAsRefIdList[i];
 			
