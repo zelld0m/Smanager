@@ -259,9 +259,9 @@ public class RuleTransferService {
 		ruleXml.setRuleName(ruleName);
 
 		if(RuleXmlUtil.importRule(ruleXml)){
-			if(ruleEntity == RuleEntity.RANKING_RULE || ruleEntity == RuleEntity.QUERY_CLEANING){
-				addRuleTransferMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
-			}
+//			if(ruleEntity == RuleEntity.RANKING_RULE || ruleEntity == RuleEntity.QUERY_CLEANING){
+//				addRuleTransferMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
+//			}
 			return deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
