@@ -116,7 +116,7 @@ public class FacetSortService extends RuleService{
 				ruleStatus.setRuleTypeId(RuleEntity.FACET_SORT.getCode());
 				ruleStatus.setRuleRefId(ruleId);
 				ruleStatus.setStoreId(store);
-				daoService.processRuleStatus(ruleStatus, true);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteRule()",e);

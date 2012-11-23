@@ -56,7 +56,10 @@ public class AuditTrailConstants {
 		resetPassword,
 		//for facet sort only
 		updateGroup,
-		updateGroupItem
+		updateGroupItem,
+		// for import and export
+		importRule,
+		exportRule
 	}
 
 	public static Operation[] elevateOperations = {
@@ -165,7 +168,9 @@ public class AuditTrailConstants {
 	public static Operation[] ruleStatusOperations = {
 		Operation.add,
 		Operation.update,
-		Operation.delete };
+		Operation.delete,
+		Operation.exportRule,
+		Operation.importRule };
 
 	public static Operation[] securityOperations = {
 		Operation.add,

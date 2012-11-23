@@ -89,7 +89,7 @@
 			contentHolder.find("#importAs").importas({
 				rule: base.options.ruleXml,
 				selectedOptionChanged: function(ruleId){
-					base.getDatabaseData(contentHolder, base.options.ruleType, ruleId, sourceData);
+					base.getDatabaseData(contentHolder, ruleId, sourceData);
 				}
 			});
 		};
@@ -134,7 +134,7 @@
 					base.memberIdToItem[list[i]["memberId"]] = list[i];
 
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
-					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase()!=="exclude"?  list[i]["location"] : parseInt(i) + 1);
 
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
@@ -188,7 +188,10 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
-		base.getDatabaseData = function($content, ruleType, ruleId, sourceData){
+		base.getDatabaseData = function($content, ruleId, sourceData){
+			var ruleType = base.options.ruleType;
+			var ruleName = base.options.ruleName;
+			
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
 				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
@@ -218,7 +221,7 @@
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
 
-				FacetSortServiceJS.getRuleByName(ruleId, {
+				FacetSortServiceJS.getRuleByName(ruleName, {
 					callback: function(data){
 						if(data == null){
 							$ruleInfo.find("#ruleName").text("");
@@ -395,8 +398,10 @@
 			}
 		};
 
-		base.getRuleData = function($content, ruleType, ruleId, sourceData){
+		base.getRuleData = function($content, sourceData){
 			var products = (base.options.ruleXml) ? base.options.ruleXml["products"] : new Array();
+			var ruleType = base.options.ruleType;
+			var ruleId = base.options.ruleId;
 			
 			switch(ruleType.toLowerCase()){
 			case "elevate":
@@ -416,7 +421,7 @@
 				$ruleInfo.find("#ruleType").text(xml.ruleType.toLowerCase());
 				
 				if(xml == null){
-					
+					//TODO
 				}
 				else{
 					for(var index in xml.item){
@@ -543,7 +548,7 @@
 
 				$table.find("tr:even").addClass("alt");
 
-				base.populateKeywordInRule($content, base.toStringArray(xml["relKeyword"]));
+				base.populateKeywordInRule($content, xml["ruleKeyword"]["keyword"]);
 
 				break;
 			}
@@ -1045,12 +1050,12 @@
 								base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId, base.options.leftPanelSourceData);
 							}
 							else{
-								base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId, base.options.leftPanelSourceData);
+								base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.leftPanelSourceData);
 							}
 						}
 						else if("database" === base.options.leftPanelSourceData){
 							if($.isNotBlank(base.options.ruleId)){
-								base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId, base.options.leftPanelSourceData);
+								base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.ruleId, base.options.leftPanelSourceData);
 							}
 						}
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
@@ -1063,12 +1068,12 @@
 									base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId, base.options.rightPanelSourceData);
 								}
 								else{
-									base.getRuleData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId, base.options.rightPanelSourceData);
+									base.getRuleData(base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
 								}
 							}
 							else if("database" === base.options.rightPanelSourceData){
 								if($.isNotBlank(base.options.ruleId)){
-									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId, base.options.rightPanelSourceData);
+									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleId, base.options.rightPanelSourceData);
 								}
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
@@ -1077,17 +1082,6 @@
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
 								var comment = base.contentHolder.find("#comment").val();
-								var importType = "";
-								var importAs = "";
-								var ruleName = "";
-
-								if("import" === base.options.transferType.toLowerCase()){
-									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
-									importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
-									ruleName = importAsLabel.find("input#newName").val();
-									
-									importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").val();
-								}
 
 								if ($.isBlank(comment)){
 									jAlert("Please add comment.", base.options.transferType);
@@ -1100,10 +1094,19 @@
 												callback: function(data){									
 													base.api.hide();
 													base.postMsg(data, "exported");
+												},
+												postHook: function(){
+													base.options.postButtonClick(base);
 												}
 											});
 											break;
 										case "import":
+											var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
+											var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
+											var ruleName = importAsLabel.find("input#newName").val();
+											
+											var importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").val();
+											
 											if($.isBlank(ruleName)){
 												jAlert("Please add Import As rule name.", base.options.transferType);	
 											}
@@ -1112,6 +1115,9 @@
 													callback: function(data){									
 														base.api.hide();
 														base.postMsg(data, "imported");
+													},
+													postHook: function(){
+														base.options.postButtonClick(base);
 													}	
 												});
 											}
@@ -1124,18 +1130,21 @@
 										case "export": 
 											break;
 										case "import": 
+											var ruleName = base.options.ruleName;
+											
 											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(ruleName),{
 												callback: function(data){
 													base.api.hide();
 													base.postMsg(data, "rejected");
-												}	
+												},
+												postHook: function(){
+													base.options.postButtonClick(base);
+												}
 											});
 											break;
 										}
 										break;
 									}	
-
-									base.options.postButtonClick(base);
 								}
 							}
 						});
@@ -1156,6 +1165,7 @@
 			transferType: "",
 			ruleType: "",
 			ruleId: "",
+			ruleName: "",
 			ruleInfo: "",
 			ruleXml: null,
 			requestType: "",

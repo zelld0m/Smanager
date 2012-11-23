@@ -1,8 +1,6 @@
 package com.search.manager.xml.file;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
@@ -103,53 +100,6 @@ public class RuleTransferUtil {
 		return ruleXmls;
 	}
 
-	public static RuleXml getImportRule(String store, RuleEntity ruleEntity, String ruleId){
-		RuleXml ruleXml = new RuleXml();
-		String dir = RuleXmlUtil.getRuleFileDirectory(IMPORT_FILE_PATH, store, ruleEntity);
-		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-		String filename = RuleXmlUtil.getFilenameByDir(dir, id);
-
-		File dirFile = new File(dir);
-		FileWriter writer = null;
-		FileReader reader = null;
-		if (!dirFile.exists()) {
-			try {
-				FileUtils.forceMkdir(dirFile);
-			} catch (IOException e) {
-				logger.error("Unable to create directory", e);
-				return null;
-			}
-		}
-
-		try {
-			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.setEventHandler(new RuleVersionValidationEventHandler());
-			if (!new File(filename).exists()){
-				writer = new FileWriter(filename); 
-				m.marshal(new RuleXml(), writer);
-			}
-
-			Unmarshaller um = context.createUnmarshaller(); 
-			um.setEventHandler(new RuleVersionValidationEventHandler());
-			reader = new FileReader(filename);
-			ruleXml = (RuleXml) um.unmarshal(reader);
-
-		} catch (JAXBException e) {
-			logger.error("Unable to create marshaller/unmarshaller", e);
-			return null;
-		} catch (IOException e) {
-			logger.error("Unable to create marshaller/unmarshaller", e);
-			return null;
-		} finally {
-			try { if (writer != null) writer.close(); } catch (Exception e) {}
-			try { if (reader != null) reader.close(); } catch (Exception e) {}
-		}
-
-		return ruleXml;
-	}
-
 	public static boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
 		String[] stores = StringUtils.tokenizeToStringArray(UtilityService.getStoreSetting(DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
 		boolean exported = false;
@@ -158,6 +108,7 @@ public class RuleTransferUtil {
 			return false;
 		
 		for(int i=0; i < stores.length; i++){
+			// TODO: what if the first store failed?
 			exported = RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 		}
 		

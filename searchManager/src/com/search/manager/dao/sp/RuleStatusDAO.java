@@ -250,6 +250,7 @@ public class RuleStatusDAO {
 
     @Audit(entity = Entity.ruleStatus, operation = Operation.update)
     public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
+    	DAOValidation.checkRuleStatusPK(ruleStatus);
     	int result = -1;
 		try {
 			Map<String, Object> inputs = new HashMap<String, Object>();
@@ -259,7 +260,7 @@ public class RuleStatusDAO {
 			inputs.put(DAOConstants.PARAM_PUBLISHED_STATUS, ruleStatus.getPublishedStatus());
 			inputs.put(DAOConstants.PARAM_APPROVED_STATUS, ruleStatus.getApprovalStatus());
 			inputs.put(DAOConstants.PARAM_EVENT_STATUS, ruleStatus.getUpdateStatus());
-			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getCreatedBy());
+			inputs.put(DAOConstants.PARAM_MODIFIED_BY, ruleStatus.getLastModifiedBy());
 			inputs.put(DAOConstants.PARAM_STORE_ID, ruleStatus.getStoreId());
 			inputs.put(DAOConstants.PARAM_REQUEST_BY, ruleStatus.getRequestBy());
 			inputs.put(DAOConstants.PARAM_APPROVAL_BY, ruleStatus.getApprovalBy());

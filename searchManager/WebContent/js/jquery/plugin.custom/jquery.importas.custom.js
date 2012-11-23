@@ -81,9 +81,13 @@
 			switch(ruleEntity){
 			case "ELEVATE": 
 			case "EXCLUDE": 
-			case "DEMOTE": 
-			case "FACET_SORT": 
+			case "DEMOTE":
 				$option.attr({value: rule["ruleName"], selected: true});
+				$option.text(rule["ruleName"]);
+				$replacement.find("input#newName").val(rule["ruleName"]);
+				break;
+			case "FACET_SORT": 
+				$option.attr({value: rule["ruleId"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
 				break;

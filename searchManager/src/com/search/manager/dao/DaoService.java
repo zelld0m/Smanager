@@ -7,6 +7,7 @@ import java.util.Map;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -226,17 +227,19 @@ public interface DaoService {
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public Map<String, Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
+	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, Date requestDate) throws DaoException;
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
 	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
-	
+	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId);
+
     /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
-	public int addComment(Comment comment) throws DaoException;
+	public int addComment(Comment comment) throws DaoException;	
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;
 	

@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 public enum RuleStatusEntity {
 	// approval status
 	PENDING("Pending Approval", "Pending Approval"),
@@ -62,4 +64,5 @@ public enum RuleStatusEntity {
 		}
 		return builder.toString();
 	}
+	
 }

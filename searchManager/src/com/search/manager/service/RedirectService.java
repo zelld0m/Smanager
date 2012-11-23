@@ -147,13 +147,14 @@ public class RedirectService extends RuleService{
 	public int deleteRule(RedirectRule rule) {
 		int result = -1;
 		try {
+			String username = UtilityService.getUsername();
 			result = daoService.deleteRedirectRule(rule);
 			if (result > 0) {
 				RuleStatus ruleStatus = new RuleStatus();
 				ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
 				ruleStatus.setRuleRefId(rule.getRuleId());
 				ruleStatus.setStoreId(rule.getStoreId());
-				daoService.processRuleStatus(ruleStatus, true);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
 			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteRule()",e);

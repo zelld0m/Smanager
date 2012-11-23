@@ -12,6 +12,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.Product;
 
 @XmlRootElement(name = "elevate")
@@ -23,7 +24,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	private static final RuleEntity RULE_ENTITY = RuleEntity.ELEVATE;
 	private String keyword;
 	private List<ElevateItemXml> elevateItem;
-	private List<Product> products;
+	private List<ElevateProduct> products;
 	
 	public ElevateRuleXml() {
 		super(serialVersionUID);
@@ -73,11 +74,12 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 	}
 
 	@XmlTransient
-	public List<Product> getProducts() {
+	public List<ElevateProduct> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<Product> products) {
-		this.products = products;
+	public void setProducts(List<? extends Product> products) {
+		this.products = (List<ElevateProduct>) products;
+		
 	}
 }
