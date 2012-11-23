@@ -235,7 +235,8 @@ public interface DaoService {
 	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
 	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
 	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
-	 
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId);
+
     /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
 	public int addComment(Comment comment) throws DaoException;	

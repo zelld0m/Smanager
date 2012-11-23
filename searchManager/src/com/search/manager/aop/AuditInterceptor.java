@@ -774,8 +774,14 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Deleted reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
 							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
 				} else {
-					auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
-							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+					// TODO: only log approval/publishing events; logging of import/export events are handled elsewhere 
+					if (StringUtils.isNotBlank(ruleStatus.getApprovalStatus()) || StringUtils.isNotBlank(ruleStatus.getPublishedStatus())) {
+						auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
+								auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+					}
+					else {
+						return;
+					}
 				}
 				break;
 			default:

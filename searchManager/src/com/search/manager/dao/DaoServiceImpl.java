@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,6 +79,7 @@ import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -107,7 +109,7 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
 
 	private DaoServiceImpl instance;
-	
+	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
 	public DaoServiceImpl() {
 		instance = this;
 	}
@@ -1607,6 +1609,51 @@ public class DaoServiceImpl implements DaoService {
 			result = updateRuleStatus(updateRuleStatus);
 		} 
 		return result;
+	}
+
+	@Override
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId) {
+		Map<String, Integer> resultMap = new HashMap<String, Integer>();
+		String store = UtilityService.getStoreName();
+		String formatString = "%s";
+		if (ruleStatus != null) {
+			switch (ruleStatus) {
+				case APPROVED:
+					formatString = "[APPROVED] %s";
+					break;
+				case REJECTED:
+					formatString = "[REJECTED] %s";
+					break;
+				case PUBLISHED:
+					formatString = "[PUBLISHED] %s";
+					break;
+				case UNPUBLISHED:
+					formatString = "[UNPUBLISHED] %s";
+					break;
+				case PENDING:
+					formatString = "[REQUEST] %s";
+					break;
+				default:
+					break;
+			}
+		}
+		
+		Comment comment = new Comment();
+		comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
+		comment.setUsername(UtilityService.getUsername());
+		comment.setComment(String.format(formatString, pComment));
+		comment.setStore(new Store(store));
+		for(String rsId: ruleStatusId){
+			comment.setReferenceId(rsId);
+			int result = -1;
+			try {
+				result = addComment(comment);
+			} catch (DaoException e) {
+				logger.error("Failed during addComment()", e);
+			}
+			resultMap.put(rsId, result);
+		}
+		return resultMap;
 	}
 	
 }
