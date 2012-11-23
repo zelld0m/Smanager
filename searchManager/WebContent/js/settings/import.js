@@ -120,6 +120,47 @@
 				
 				return true;
 			},
+			
+			hasDuplicateImportAsId: function(){
+				var self = this;
+				var selectedRuleId = new Array();
+				var $selectedTab = $("#" + self.tabSelected);
+				var selectedItems = self.getSelectedItems();
+				
+				for (var id in selectedItems){
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
+					var $importAsSelect = $selectedTr.find("td#importAs").find("select#importAsSelect > option:selected");
+					var ruleId = $importAsSelect.val();
+					if ($.inArray(ruleId, selectedRuleId)==-1){
+						if(ruleId!=="0"){
+							selectedRuleId.push(ruleId);
+						};
+					}else{
+						return true;
+					}
+				}
+				
+				return false;
+			},
+			
+			hasDuplicateImportAsName: function(){
+				var self = this;
+				var selectedRuleName = new Array();
+				var $selectedTab = $("#" + self.tabSelected);
+				var selectedItems = self.getSelectedItems();
+				
+				for (var id in selectedItems){
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
+					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
+					if ($.inArray(ruleName.toLowerCase(), selectedRuleName)==-1){
+						selectedRuleName.push(ruleName.toLowerCase());
+					}else{
+						return true;
+					}
+				}
+				
+				return false;
+			},
 
 			getSelectedRuleName : function(){
 				var self = this;
@@ -128,7 +169,6 @@
 				var selectedItems = self.getSelectedItems();
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
-					var $importAsSelect = $selectedTr.find("td#importAs").find("select#importAsSelect > option:selected");
 					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
 					selectedRuleNames.push(ruleName);
 				}
@@ -205,6 +245,10 @@
 							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
 							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+						}else if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
+							jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+						}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
+							jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
 						}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
 							jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 						}else{
@@ -401,7 +445,7 @@
 
 								//import as
 								$tr.find("td#importAs").importas({
-									rule: list[i],
+									rule: list[i]
 								});
 								
 								$tr.appendTo($table);
