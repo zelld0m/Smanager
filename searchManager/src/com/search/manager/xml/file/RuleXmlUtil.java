@@ -673,8 +673,8 @@ public class RuleXmlUtil{
 						processedItem += daoService.addRedirectKeyword(rule);							
 					}
 				}
-
-				if (processedItem == CollectionUtils.size(keywordsXml.getKeyword())) {
+				
+				if (processedItem == (keywords==null? 0 : keywords.size())) {
 					processedItem = 0;
 					if (qRXml.getRuleCondition() == null) {
 						return true;
