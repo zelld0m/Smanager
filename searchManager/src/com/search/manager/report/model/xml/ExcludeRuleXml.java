@@ -70,13 +70,14 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 	public List<Product> getProducts() {
 		return products;
 	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
 	
 	@Override
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.EXCLUDE;
+	}
+
+	@Override
+	public void setProducts(List<? extends Product> products) {
+		this.products = (List<Product>) products;
 	}
 }

@@ -12,6 +12,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.Product;
 
 @XmlRootElement(name = "demote")
@@ -22,7 +23,7 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private List<DemoteItemXml> demoteItem;
-	private List<Product> products;
+	private List<DemoteProduct> products;
 	
 	public DemoteRuleXml(String store, long version, String name, String notes, String createdBy, String keyword, List<DemoteItemXml> demoteItem) {
 		super(store, name == null ? keyword : name, notes, createdBy);
@@ -67,16 +68,17 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 	}
 
 	@XmlTransient
-	public List<Product> getProducts() {
+	public List<DemoteProduct> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}	
-	
 	@Override
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.DEMOTE;
+	}
+
+	public void setProducts(List<? extends Product> products) {
+		this.products = (List<DemoteProduct>) products;
+		
 	}
 }

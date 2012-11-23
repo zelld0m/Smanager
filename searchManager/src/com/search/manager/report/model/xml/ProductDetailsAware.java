@@ -6,6 +6,6 @@ import com.search.manager.model.Product;
 
 public interface ProductDetailsAware {
 	public List<? extends RuleItemXml> getItem();
-	public List<Product> getProducts();
-	public void setProducts(List<Product> products);
+	public List<? extends Product> getProducts();
+	public void setProducts(List<? extends Product> products);
 }

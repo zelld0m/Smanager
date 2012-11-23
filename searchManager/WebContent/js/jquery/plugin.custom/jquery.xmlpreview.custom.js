@@ -134,7 +134,7 @@
 					base.memberIdToItem[list[i]["memberId"]] = list[i];
 
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
-					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
+					$tr.find("td#itemPosition").html(ruleType.toLowerCase()!=="exclude"?  list[i]["location"] : parseInt(i) + 1);
 
 					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
