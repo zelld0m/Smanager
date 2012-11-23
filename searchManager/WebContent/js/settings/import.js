@@ -245,16 +245,14 @@
 							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
 							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
-						}else if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
-							jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
-						}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
-							jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
-						}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
-							jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 						}else{
 							switch($(evt.currentTarget).attr("id")){
 							case "okBtn":
-								if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
+								if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
+									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+								}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
+									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
+								}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
 									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 								}else{
 									RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {

@@ -132,7 +132,12 @@
 				break;
 			}
 
-			base.showAlert($importAsSelect.find("option:selected").val());
+			if(ruleEntity==="FACET_SORT"){
+				var rs = base.rsLookupByName[rule["ruleName"]];
+				base.showAlert(rs["ruleId"]);
+			}else{
+				base.showAlert($importAsSelect.find("option:selected").val());
+			};
 		};
 
 		base.toggleFields = function($select, u, selectRule){
@@ -202,16 +207,19 @@
 
 			var ruleStatus = null;
 			base.rsLookup = new Array();
+			base.rsLookupByName = new Array();
 
 			for(var idx=0; idx < list.length; idx++){
 				ruleStatus = list[idx];
 				base.rsLookup[ruleStatus["ruleId"]] = ruleStatus;
+				base.rsLookupByName[ruleStatus["ruleName"]] = ruleStatus;
 
 				switch(ruleEntity){
 				case "ELEVATE": 
 				case "EXCLUDE": 
 				case "DEMOTE": 
-				case "FACET_SORT": break;
+				case "FACET_SORT": 
+					break;
 				case "RANKING_RULE":	
 				case "QUERY_CLEANING":
 					if(base.autoMap==null)
