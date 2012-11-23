@@ -25,7 +25,9 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.DemoteResult;
+import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetGroup;
@@ -202,13 +204,22 @@ public class RuleXmlUtil{
 		String mapKey = "";
 		String store = ruleXml.getStore();
 		String keyword = ruleXml.getRuleId();
+		
 
 		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 
 		if(CollectionUtils.isNotEmpty(ruleItemList)){
 			for (RuleItemXml ruleItem : ruleItemList) {
 				mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
-				map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
+				
+				if(ruleXml instanceof ElevateRuleXml){
+					map.put(mapKey, new ElevateProduct(new ElevateResult(storeKeyword, (ElevateItemXml) ruleItem)));
+				}else if(ruleXml instanceof DemoteRuleXml){
+					map.put(mapKey, new DemoteProduct(new DemoteResult(storeKeyword, (DemoteItemXml) ruleItem)));
+				}else{
+					map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
+				}
+				
 			}
 		}
 

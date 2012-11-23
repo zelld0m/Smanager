@@ -1105,7 +1105,7 @@
 											var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
 											var ruleName = importAsLabel.find("input#newName").val();
 											
-											var importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").val();
+											var importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").text();
 											
 											if($.isBlank(ruleName)){
 												jAlert("Please add Import As rule name.", base.options.transferType);	
