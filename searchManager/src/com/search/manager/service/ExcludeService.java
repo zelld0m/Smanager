@@ -116,7 +116,7 @@ public class ExcludeService extends RuleService{
 			
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
-					addItem(keyword, edp, null, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
+					count = addItem(keyword, edp, null, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addExcludeByPartNumber()",de);

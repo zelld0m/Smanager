@@ -49,7 +49,7 @@ public class ElevateService extends RuleService{
 	public RuleEntity getRuleEntity() {
 		return RuleEntity.ELEVATE;
 	}
-	
+
 	@RemoteMethod
 	public int updateElevateItem(String keyword, String memberId, int position, String comment, String expiryDate, String condition){
 		int changes = 0;
@@ -57,17 +57,17 @@ public class ElevateService extends RuleService{
 		ElevateResult elevate = new ElevateResult();
 		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
 		elevate.setMemberId(memberId);
-		
+
 		try {
 			elevate = daoService.getElevateItem(elevate);
 		} catch (DaoException e) {
 			elevate = null;
 		}
-		
+
 		if(elevate==null){
 			return changes;
 		}
-		
+
 		ElevateProduct elevateProduct = new ElevateProduct(elevate);
 
 		if (position!=elevate.getLocation()){
@@ -109,7 +109,7 @@ public class ElevateService extends RuleService{
 		}
 
 		ElevateProduct elevateProduct = new ElevateProduct(elevate);
-		
+
 		if (position!=elevate.getLocation()){
 			changes += ((updateElevate(keyword, memberId, position, null) > 0)? 1 : 0);
 		}
@@ -150,14 +150,14 @@ public class ElevateService extends RuleService{
 			e.setElevateEntity(entity);
 			e.setForceAdd(forceAdd);
 			switch (entity) {
-				case PART_NUMBER:
-					e.setEdp(edp);
-					break;
-				case FACET:
-					e.setCondition(condition);
-					break;
+			case PART_NUMBER:
+				e.setEdp(edp);
+				break;
+			case FACET:
+				e.setCondition(condition);
+				break;
 			}
-			
+
 			result  = daoService.addElevateResult(e);
 			if (result > 0) {
 				if (!StringUtils.isBlank(comment)) {
@@ -216,7 +216,7 @@ public class ElevateService extends RuleService{
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, "", StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
-					addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
+					count = addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER, false);
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
@@ -226,7 +226,8 @@ public class ElevateService extends RuleService{
 			}
 			else {
 				failedList.add(StringUtils.trim(partNumber));
-			}
+			}				
+
 		}
 		return resultMap;
 	}
@@ -538,7 +539,7 @@ public class ElevateService extends RuleService{
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
 		String store = UtilityService.getStoreName();
-		
+
 		try {
 			ElevateResult elevate = new ElevateResult();
 			elevate.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -555,7 +556,7 @@ public class ElevateService extends RuleService{
 		}
 		return result;
 	}
-	
+
 	@RemoteMethod
 	public Map<String, Boolean> isRequireForceAdd(String keyword, String[] memberIds) {
 		String storeName = UtilityService.getStoreName();
@@ -566,7 +567,7 @@ public class ElevateService extends RuleService{
 				elevate = daoService.getElevateItem(elevate);
 				if (elevate != null) {
 					String condition = elevate.getEntity() == MemberTypeEntity.FACET ? elevate.getCondition().getConditionForSolr() 
-								: String.format("EDP:%s", elevate.getEdp());
+							: String.format("EDP:%s", elevate.getEdp());
 					map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
 				}
 			}

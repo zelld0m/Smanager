@@ -207,7 +207,7 @@ public class DemoteService extends RuleService{
 			try {
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
-					addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
+					count = addItem(keyword, edp, null, sequence++, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
 				} 
 			} catch (DaoException de) {
 				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
