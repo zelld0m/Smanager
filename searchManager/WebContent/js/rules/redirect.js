@@ -1681,7 +1681,7 @@
 							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 							if($.isNotBlank(inDynamicAttribute)){
-								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
+								if($divItemList.find("div#"+$.formatAsId(attrName)).length > 0){
 									jAlert("Attribute already added. Please select a different attribute name.","Query Cleaning");
 								}
 								else{
