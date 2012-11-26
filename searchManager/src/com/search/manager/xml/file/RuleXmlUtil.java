@@ -666,8 +666,8 @@ public class RuleXmlUtil{
 				rule.setLastModifiedBy(qRXml.getLastModifiedBy());
 				List<String> keywords = keywordsXml.getKeyword();
 
-				if(!CollectionUtils.isEmpty(keywords)){
-					for (String keyword: keywordsXml.getKeyword()) {
+				if(CollectionUtils.isNotEmpty(keywords)){
+					for (String keyword: keywords) {
 						daoService.addKeyword(new StoreKeyword(store, keyword));
 						rule.setSearchTerm(keyword);
 						processedItem += daoService.addRedirectKeyword(rule);							
@@ -684,16 +684,21 @@ public class RuleXmlUtil{
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
-						for (String cond: qRXml.getRuleCondition().getCondition()) {
-							condition.setCondition(cond);
-							// TODO: temporary workaround until SP is fixed. value being returned is > 1.
-							if (daoService.addRedirectCondition(condition) > 0) {
-								processedItem++;
+						
+						if(qRXml.getRuleCondition()!=null && CollectionUtils.isNotEmpty(qRXml.getRuleCondition().getCondition())){
+							for (String cond: qRXml.getRuleCondition().getCondition()) {
+								condition.setCondition(cond);
+								// TODO: temporary workaround until SP is fixed. value being returned is > 1.
+								if (daoService.addRedirectCondition(condition) > 0) {
+									processedItem++;
+								}
+							}
+							
+							if (processedItem !=  CollectionUtils.size(qRXml.getRuleCondition().getCondition())) {
+								return false;
 							}
 						}
-						if (processedItem !=  CollectionUtils.size(qRXml.getRuleCondition().getCondition())) {
-							return false;
-						}
+						
 					} 
 				}
 
@@ -760,12 +765,14 @@ public class RuleXmlUtil{
 
 				if (processedItem == parameters.size()) {
 					processedItem = 0;
-					if (CollectionUtils.isNotEmpty(restoreVersion.getRelKeyword())) {
-						for (RelevancyKeyword keyword : restoreVersion.getRelKeyword()) {
+					List<RelevancyKeyword> keywords = restoreVersion.getRelKeyword();
+					
+					if (CollectionUtils.isNotEmpty(keywords)) {
+						for (RelevancyKeyword keyword : keywords) {
 							keyword.setRelevancy(restoreVersion);
 							processedItem += daoService.addRelevancyKeyword(keyword);
 						}
-						if (processedItem != restoreVersion.getRelKeyword().size()) {
+						if (processedItem != keywords.size()) {
 							return false;							
 						}
 					}

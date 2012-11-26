@@ -469,7 +469,7 @@
 				var $table = $content.find("div.ruleFilter table#item");
 				$table.find("tr:not(#itemPattern)").remove();
 
-				if(xml["ruleCondition"]["condition"].length==0){
+				if($.isBlank(xml["ruleCondition"]["condition"])){
 					$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 					$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 					$tr.find("td#fieldValue").remove();
