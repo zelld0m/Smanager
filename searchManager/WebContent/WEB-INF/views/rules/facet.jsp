@@ -130,7 +130,7 @@
 			<div class="clearB"></div>
 			
 			<div class="txtAR pad3 marT10">
-				<a id="addButton" href="javascript:void;" class="buttons btnGray clearfix"> <div class="buttons fontBold">Save</div> </a> 
+				<a id="addButton" href="javascript:void(0);" class="buttons btnGray clearfix"> <div class="buttons fontBold">Save</div> </a> 
 				<a id="clearButton" href="javascript:void(0);" class="buttons btnGray clearfix"> <div class="buttons fontBold">Clear</div> </a>
 			</div> 
 		</div>
