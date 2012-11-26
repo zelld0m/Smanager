@@ -77,7 +77,7 @@
 
 			var params = {
 					'facet': true,
-					'q': base.options.keyword,
+					'q': $.trim(base.options.keyword),
 					'facet.field': base.options.facetField,
 					'rows': 0,
 					'fq' : base.options.fq,

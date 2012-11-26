@@ -114,10 +114,10 @@
 				
 				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
-						self.keyword = self.selectedRule["ruleName"];
+						self.keyword = encodeURIComponent(self.selectedRule["ruleName"]);
 					}
 					else if("TEMPLATE" === self.selectedRule["ruleType"]){
-						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + self.selectedRule["ruleName"] + "\"";
+						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + encodeURIComponent(self.selectedRule["ruleName"]) + "\"";
 					}
 				}
 				
