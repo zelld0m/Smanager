@@ -40,6 +40,7 @@ public class ElevateResult extends SearchResult {
 		this.expiryDate = xml.getExpiryDate();
 		this.entity = xml.getMemberType();
 		this.location = xml.getLocation();
+		this.forceAdd = xml.isForceAdd();
 		this.createdBy = xml.getCreatedBy();
 		this.createdDate = xml.getCreatedDate();
 		this.lastModifiedBy = xml.getLastModifiedBy();
