@@ -233,7 +233,7 @@ public class ElevateService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET, true);
+		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
 	}
 
 	@RemoteMethod
