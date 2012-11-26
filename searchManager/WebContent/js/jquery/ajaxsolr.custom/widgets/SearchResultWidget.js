@@ -272,7 +272,7 @@
 					itemUpdateForceAddStatusCallback: function(base, memberId, status){
 						ElevateServiceJS.updateElevateForceAdd(keyword, memberId, status, {
 							callback:function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList(); 
 							},
 							preHook:function(){
@@ -295,7 +295,7 @@
 					itemAddItemCallback:function(base, productId, position, validityDate, comment){
 						ElevateServiceJS.addProductItem(keyword, productId, position, validityDate, comment, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -307,7 +307,7 @@
 					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
 						ElevateServiceJS.updateElevateItem(keyword, memberId, position, comment, validityDate, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -319,7 +319,7 @@
 					itemDeleteItemCallback:function(base, memberId){
 						ElevateServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -331,7 +331,7 @@
 					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
 						ElevateServiceJS.updateElevate(keyword, memberId, destinationIndex,{
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -374,7 +374,7 @@
 					itemAddItemCallback:function(base, productId, position, validityDate, comment){
 						ExcludeServiceJS.addExclude(keyword, 'PART_NUMBER', productId, validityDate, comment, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -387,7 +387,7 @@
 						//TODO: optimize and update exclude method name
 						ExcludeServiceJS.updateExpiryDate(keyword, memberId, validityDate, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -395,7 +395,7 @@
 								if($.isNotBlank(comment)){
 									ExcludeServiceJS.addComment(keyword, memberId, comment, {
 										callback : function(data){
-											if (data==1) base.hasChanges++;
+											if (data>0) base.hasChanges++;
 										}
 									});
 								}
@@ -406,7 +406,7 @@
 					itemDeleteItemCallback:function(base, memberId){
 						ExcludeServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -450,7 +450,7 @@
 					itemAddItemCallback:function(base, productId, position, validityDate, comment){
 						DemoteServiceJS.add(keyword, 'PART_NUMBER', productId, position, validityDate, comment, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -462,7 +462,7 @@
 					itemUpdateItemCallback:function(base, memberId, position, validityDate, comment){
 						DemoteServiceJS.updateItem(keyword, memberId, position, comment, validityDate, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -474,7 +474,7 @@
 					itemDeleteItemCallback:function(base, memberId){
 						DemoteServiceJS.deleteItemInRule(keyword, memberId, {
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
@@ -486,7 +486,7 @@
 					itemMoveItemPositionCallback: function(base, memberId, destinationIndex){
 						DemoteServiceJS.update(keyword, memberId, destinationIndex,{
 							callback : function(data){
-								if (data==1) base.hasChanges++;
+								if (data>0) base.hasChanges++;
 								base.getList();
 							},
 							preHook: function() { 
