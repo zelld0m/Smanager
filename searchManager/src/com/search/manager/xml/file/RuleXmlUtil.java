@@ -768,9 +768,10 @@ public class RuleXmlUtil{
 					List<RelevancyKeyword> keywords = restoreVersion.getRelKeyword();
 					
 					if (CollectionUtils.isNotEmpty(keywords)) {
-						for (RelevancyKeyword keyword : keywords) {
-							keyword.setRelevancy(restoreVersion);
-							processedItem += daoService.addRelevancyKeyword(keyword);
+						for (RelevancyKeyword relKeyword : keywords) {
+							daoService.addKeyword(new StoreKeyword(store, relKeyword.getKeyword().getKeywordId()));
+							relKeyword.setRelevancy(restoreVersion);
+							processedItem += daoService.addRelevancyKeyword(relKeyword);
 						}
 						if (processedItem != keywords.size()) {
 							return false;							
