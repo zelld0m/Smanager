@@ -577,8 +577,7 @@ public class RuleXmlUtil{
 					String groupId = DAOUtils.generateUniqueId();
 					facetGroup.setFacetGroupType(facetSort.getGroupType());
 					facetGroup.setName(facetSort.getGroupName());
-					facetGroup.setSortType(facetGroup.getSortType());
-					facetGroup.setSequence(facetGroup.getSequence());
+					facetGroup.setSortType(facetSort.getSortType());
 					facetGroup.setId(groupId);
 					totalItems++;
 					processedItems += daoService.addFacetGroup(facetGroup);
