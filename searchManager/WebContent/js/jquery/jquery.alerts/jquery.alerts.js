@@ -95,8 +95,8 @@
 			
 			$("#popup_title").text(title);
 			$("#popup_content").addClass(type);
-			$("#popup_message").text(msg);
-			$("#popup_message").text( $("#popup_message").text().replace(/\n/g, '<br />') );
+			$("#popup_message").text(msg.replace(/&/g,"&amp;"));
+			$("#popup_message").html( $("#popup_message").text().replace(/\n/g, '<br />') );
 			
 			$("#popup_container").css({
 				minWidth: $("#popup_container").outerWidth(),
