@@ -707,18 +707,16 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 					map.put(key, true);
 						
 					try{
-						for(Object e : backUp.get(key)){		
-							Map<String,Object> bck = (Map<String,Object>)e;
-							
+						for(Object e : backUp.get(key)){
+							@SuppressWarnings("unchecked")
+							Map<String,List<RelevancyKeyword>> bck = (Map<String,List<RelevancyKeyword>>)e;
 							if(bck != null && bck.size() > 0){
-								
 								relevancy = (Relevancy)bck.get("relevancy");
-								
 								if(relevancy != null && StringUtils.isNotEmpty(relevancy.getRelevancyId())){
 									// add relevancy
 									daoService.addRelevancy(relevancy);
 									// add relevancy keywords
-									kwList = (List<RelevancyKeyword>)bck.get("keywords");				
+									kwList = bck.get("keywords");				
 									if(CollectionUtils.isNotEmpty(kwList)){
 										for (RelevancyKeyword rk: kwList) {
 											daoService.addRelevancyKeyword(rk);
@@ -1309,7 +1307,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			
 			Store s = new Store(store);
 			daoCacheService.reloadAllKeywords(s);
-			daoCacheService.setForceReloadRedirect(s); // invalidates all cached data to force a reload and prevent stale data
+			daoCacheService.setForceReloadFacetSort(s); // invalidates all cached data to force a reload and prevent stale data
 		} catch (Exception e) {
 			logger.error(e,e);
 		}

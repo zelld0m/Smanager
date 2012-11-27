@@ -316,6 +316,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		result &= setForceReloadExclude(store);
 		result &= setForceReloadRedirect(store);
 		result &= setForceReloadRelevancy(store);
+		result &= setForceReloadFacetSort(store);
 		return result;
 	}
 	
