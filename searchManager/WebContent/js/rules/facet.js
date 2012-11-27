@@ -559,6 +559,15 @@
 					}
 				});
 			},
+			
+			checkNumberOfHighlightedItems : function(content, facetGroupId){
+				var self = this;
+				if(content.hasClass("isShown")){
+					var items = content.find("input#_items_"+facetGroupId);
+					return items ? items.length : -1; //return -1 if input element not found
+				}
+				return -1; //div is not shown
+			},
 
 			addNewFacetValueListener : function(content, facetGroupId){
 				var self = this;
@@ -567,8 +576,10 @@
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
 						if (!e.data.locked){
-							var items = self.buildFacetGroupItemsMap();
-							var conditionCount = (items && items[facetGroupId]) ? items[facetGroupId].length : 0;
+							var conditionCount = self.checkNumberOfHighlightedItems(content, facetGroupId);
+							if(conditionCount < 0){
+								return;
+							}
 							if (conditionCount >= self.maxHighlightedFacet) {
 								jAlert("Maximum allowed number of highlighted facet values is "+self.maxHighlightedFacet+"!",self.moduleName);
 								return;
@@ -628,8 +639,9 @@
 						var items = $("input#_items_"+self.facetGroupIdList[index]);
 	
 						for(var i = 0; i < items.length; i++){
-							if($.isNotBlank($(items[i]).val()) && isXSSSafe($(items[i]).val())){
-								facetItems[i] = $(items[i]).val();
+							var itemVal = $(items[i]).val();
+							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafe(itemVal)){
+								facetItems.push(itemVal);
 							}
 						}
 						itemMap[self.facetGroupIdList[index]] = facetItems;
