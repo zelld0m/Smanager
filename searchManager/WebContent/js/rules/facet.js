@@ -639,8 +639,9 @@
 						var items = $("input#_items_"+self.facetGroupIdList[index]);
 	
 						for(var i = 0; i < items.length; i++){
-							if($.isNotBlank($(items[i]).val()) && isXSSSafe($(items[i]).val())){
-								facetItems[i] = $(items[i]).val();
+							var itemVal = $(items[i]).val();
+							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafe(itemVal)){
+								facetItems.push(itemVal);
 							}
 						}
 						itemMap[self.facetGroupIdList[index]] = facetItems;
