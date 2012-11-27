@@ -51,7 +51,7 @@
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="24px" id="selectAll"><input type="checkbox"></th>
+							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
 							<th width="30px">Content</th>
 							<th width="150px">Rule Info</th>
 							<th width="50px">Published Date</th>
@@ -65,7 +65,7 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
-							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
+							<td width="24px" class="txtAC" id="select"><input type="checkbox" class="selectItem"></td>
 							<td class="txtAC" width="30px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
