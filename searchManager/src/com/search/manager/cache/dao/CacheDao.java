@@ -115,9 +115,39 @@ public abstract class CacheDao<T> {
 	}
 	
 	public CacheModel<T> getCachedObject(Store store, String name) throws DataException {
-		String key = getCacheKey(store, name);
 		
-		return cacheService.get(key);
+		CacheModel<T> cache = null;
+		boolean cacheError = false;
+		try {
+			String key = getCacheKey(store, name);
+			cache = cacheService.get(key);
+			if (cache != null && isNeedReloadCache(store, cache)) { // obsolete data, force a reload
+				cache = null;
+				reset(store, name);
+			}
+		} catch (Exception e) {
+			logger.error("Problem accessing cache.", e);
+			cacheError = true;
+		}
+		
+		if (cache == null) {
+			try {
+				cache = getDatabaseObject(store, name);
+				if (cache != null) {
+					logger.info("Retrieved rule from database.");					
+					if (!cacheError) {
+						try {
+							pushToCache(store, name, cache);
+						} catch (Exception e) {
+							logger.error("Cannot cache object", e);						
+						}					
+					}
+				}
+			} catch (Exception e) {
+				logger.error("Cannot retrieve rule from database.", e);
+			}
+		}
+		return cache;
 	}
 	
 	public CacheModel<T> getCachedObject(String key) throws DataException {
