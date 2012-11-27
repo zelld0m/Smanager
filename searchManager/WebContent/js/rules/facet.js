@@ -628,7 +628,7 @@
 						var items = $("input#_items_"+self.facetGroupIdList[index]);
 	
 						for(var i = 0; i < items.length; i++){
-							if($.isNotBlank($(items[i]).val()) && isXSSSafe($(items[i]).val())){
+							if($.isNotBlank($(items[i]).val()) && isXSSSafeAllowNonAscii($(items[i]).val())){
 								facetItems[i] = $(items[i]).val();
 							}
 						}
