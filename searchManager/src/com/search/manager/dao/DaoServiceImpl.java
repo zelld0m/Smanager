@@ -1578,7 +1578,10 @@ public class DaoServiceImpl implements DaoService {
 			if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
 				// existing rule
 				RuleStatus existingRuleStatus = rSet.getList().get(0);
-				if (StringUtils.isBlank(existingRuleStatus.getUpdateStatus()) || StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED))) {
+				// if rule is not for deletion do not change update status.
+				if (!StringUtils.equalsIgnoreCase(existingRuleStatus.getUpdateStatus(), String.valueOf(RuleStatusEntity.DELETE)) && 
+						(StringUtils.isBlank(existingRuleStatus.getUpdateStatus()) || 
+						 StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED)))) {
 					updateRuleStatus.setUpdateStatus(String.valueOf(RuleStatusEntity.UPDATE));
 				}
 				updateRuleStatus.setLastModifiedBy(requestBy);
