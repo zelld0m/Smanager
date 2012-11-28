@@ -112,25 +112,30 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.ELEVATE);		
 				
 				for(String key : list){
-					ElevateResult delEl = new ElevateResult();
-					StoreKeyword sk = new StoreKeyword(store, key);
-					delEl.setStoreKeyword(sk);
-					daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
-					
-					// retrieve staging data then push to prod
-					daoService.addKeyword(sk);
-					elevateFilter.setStoreKeyword(sk);
-					SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
-					elevatedList = daoServiceStg.getElevateResultList(criteria).getList();
-					
-					if(elevatedList != null && elevatedList.size() > 0){
-						for(ElevateResult e : elevatedList){
-							daoService.addElevateResult((ElevateResult) e);
+					try {
+						ElevateResult delEl = new ElevateResult();
+						StoreKeyword sk = new StoreKeyword(store, key);
+						delEl.setStoreKeyword(sk);
+						daoService.clearElevateResult(new StoreKeyword(store, key)); // prod
+						
+						// retrieve staging data then push to prod
+						daoService.addKeyword(sk);
+						elevateFilter.setStoreKeyword(sk);
+						SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(elevateFilter,null,null,0,0);
+						elevatedList = daoServiceStg.getElevateResultList(criteria).getList();
+						
+						if(elevatedList != null && elevatedList.size() > 0){
+							for(ElevateResult e : elevatedList){
+								daoService.addElevateResult((ElevateResult) e);
+							}
 						}
+						// clear cache data to force a reload
+						daoCacheService.resetElevateRule(sk); // prod
+						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to publish rule: " + key, e);
+						map.put(key, false);
 					}
-					// clear cache data to force a reload
-					daoCacheService.resetElevateRule(sk); // prod
-					map.put(key, true);
 				}
 				
 				Store s = new Store(store);
@@ -200,26 +205,31 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.EXCLUDE);	
 				
 				for(String key : list){
-					ExcludeResult delEl = new ExcludeResult();
-					StoreKeyword sk = new StoreKeyword(store, key);
-					delEl.setStoreKeyword(sk);
-					daoService.clearExcludeResult(sk); // prod
-					
-					// retrieve staging data then push to prod
-					daoService.addKeyword(sk);
-					excludeFilter.setStoreKeyword(sk);
-					SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
-					
-					excludeList = daoServiceStg.getExcludeResultList(criteria).getList();
-					
-					if(excludeList != null && excludeList.size() > 0){
-						for(ExcludeResult e : excludeList){
-							daoService.addExcludeResult(e);
+					try {
+						ExcludeResult delEl = new ExcludeResult();
+						StoreKeyword sk = new StoreKeyword(store, key);
+						delEl.setStoreKeyword(sk);
+						daoService.clearExcludeResult(sk); // prod
+						
+						// retrieve staging data then push to prod
+						daoService.addKeyword(sk);
+						excludeFilter.setStoreKeyword(sk);
+						SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(excludeFilter,null,null,0,0);
+						
+						excludeList = daoServiceStg.getExcludeResultList(criteria).getList();
+						
+						if(excludeList != null && excludeList.size() > 0){
+							for(ExcludeResult e : excludeList){
+								daoService.addExcludeResult(e);
+							}
 						}
+						// clear cache data to force a reload
+						daoCacheService.resetExcludeRule(sk); // prod
+						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to publish rule: " + key, e);
+						map.put(key, false);
 					}
-					// clear cache data to force a reload
-					daoCacheService.resetExcludeRule(sk); // prod
-					map.put(key, true);
 				}
 				
 				Store s = new Store(store);
@@ -305,49 +315,57 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.QUERY_CLEANING);		
 				
 				for(String key : list){
-
-					RedirectRule delRel = new RedirectRule();
-					delRel.setRuleId(key);
-					delRel.setStoreId(store);
-					daoService.deleteRedirectRule(delRel); // prod
-
-					// retrieve staging data then push to prod
-					RedirectRule addRel = new RedirectRule();
-					delRel.setRuleId(key);
-					delRel.setStoreId(store);
-					addRel = daoServiceStg.getRedirectRule(delRel);
-					for (String keyword: addRel.getSearchTerms()) {
-						daoService.addKeyword(new StoreKeyword(store, keyword));
-					}
-					
-					if(addRel != null) {
-						daoService.addRedirectRule(addRel); // prod 
+					try {
+						RedirectRule delRel = new RedirectRule();
+						delRel.setRuleId(key);
+						delRel.setStoreId(store);
+						daoService.deleteRedirectRule(delRel); // prod
+	
+						// retrieve staging data then push to prod
+						RedirectRule addRel = new RedirectRule();
+						delRel.setRuleId(key);
+						delRel.setStoreId(store);
+						addRel = daoServiceStg.getRedirectRule(delRel);
+						List<String> searchTerms = addRel.getSearchTerms();
+						if (CollectionUtils.isNotEmpty(searchTerms)) {
+							for (String keyword: searchTerms) {
+								daoService.addKeyword(new StoreKeyword(store, keyword));
+							}
+						}
 						
-						// add redirect keyword
-						for (String keyword: addRel.getSearchTerms()) {
+						if(addRel != null) {
+							daoService.addRedirectRule(addRel); // prod 
+							
+							// add redirect keyword
+							if (CollectionUtils.isNotEmpty(searchTerms)) {
+								for (String keyword: searchTerms) {
+									RedirectRule rule = new RedirectRule();
+									rule.setRuleId(addRel.getRuleId());
+									rule.setStoreId(addRel.getStoreId());
+									rule.setSearchTerm(keyword);
+									rule.setLastModifiedBy("SYSTEM");
+									daoService.addRedirectKeyword(rule);							
+								}
+							}
+							
+							// add rule condition
 							RedirectRule rule = new RedirectRule();
 							rule.setRuleId(addRel.getRuleId());
 							rule.setStoreId(addRel.getStoreId());
-							rule.setSearchTerm(keyword);
-							rule.setLastModifiedBy("SYSTEM");
-							daoService.addRedirectKeyword(rule);							
-						}
-						
-						// add rule condition
-						RedirectRule rule = new RedirectRule();
-						rule.setRuleId(addRel.getRuleId());
-						rule.setStoreId(addRel.getStoreId());
-						RecordSet<RedirectRuleCondition> conditionSet = daoServiceStg.getRedirectConditions(
-								new SearchCriteria<RedirectRule>(rule, null, null, 0, 0));
-						if (conditionSet!= null && conditionSet.getTotalSize() > 0) {
-							for (RedirectRuleCondition condition: conditionSet.getList()) {
-								condition.setLastModifiedBy("SYSTEM");
-								daoService.addRedirectCondition(condition);
+							RecordSet<RedirectRuleCondition> conditionSet = daoServiceStg.getRedirectConditions(
+									new SearchCriteria<RedirectRule>(rule, null, null, 0, 0));
+							if (conditionSet!= null && conditionSet.getTotalSize() > 0) {
+								for (RedirectRuleCondition condition: conditionSet.getList()) {
+									condition.setLastModifiedBy("SYSTEM");
+									daoService.addRedirectCondition(condition);
+								}
 							}
 						}
+						map.put(key, true);
+					} catch (Exception e) {
+						map.put(key, false);
+						logger.error("Failed to publish rule: " + key, e);
 					}
-					
-					map.put(key, true);
 				}
 				
 				Store s = new Store(store);
@@ -431,50 +449,54 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.RANKING_RULE);		
 				
 					for(String key : list){
-
-						Relevancy delRel = new Relevancy();
-						delRel.setRelevancyId(key);
-						delRel.setStore(new Store(store));
-						daoService.deleteRelevancy(delRel); // prod
-
-						// retrieve staging data then push to prod
-						Relevancy addRel = new Relevancy();
-						addRel.setRelevancyId(key);
-						addRel.setStore(new Store(store));
-						addRel = daoServiceStg.getRelevancyDetails(addRel);
-						
-						if(addRel != null) {
-							// add relevancy
-							daoService.addRelevancy(addRel);
-							// add relevancy keywords
-							RecordSet<RelevancyKeyword> relevancyKeywords = daoServiceStg.getRelevancyKeywords(addRel);
-							if (relevancyKeywords.getTotalSize() > 0) {
-								for (RelevancyKeyword rk: relevancyKeywords.getList()) {
-									daoService.addKeyword(new StoreKeyword(store, rk.getKeyword().getKeywordId()));
-									daoService.addRelevancyKeyword(rk);
-								}								
-							}
-							// save relevancy fields
-							RelevancyField rf = new RelevancyField();
-							rf.setRelevancy(addRel);
+						try {
+							Relevancy delRel = new Relevancy();
+							delRel.setRelevancyId(key);
+							delRel.setStore(new Store(store));
+							daoService.deleteRelevancy(delRel); // prod
+	
+							// retrieve staging data then push to prod
+							Relevancy addRel = new Relevancy();
+							addRel.setRelevancyId(key);
+							addRel.setStore(new Store(store));
+							addRel = daoServiceStg.getRelevancyDetails(addRel);
 							
-							Map<String, String> relevancyFields = addRel.getParameters();
-							if (relevancyFields != null) {
-								for (String field: relevancyFields.keySet()) {
-									String value = relevancyFields.get(field);
-									if (StringUtils.isNotBlank(value)) {
-										rf.setFieldName(field);
-										rf.setFieldValue(value);
-										daoService.addRelevancyField(rf);										
+							if(addRel != null) {
+								// add relevancy
+								daoService.addRelevancy(addRel);
+								// add relevancy keywords
+								RecordSet<RelevancyKeyword> relevancyKeywords = daoServiceStg.getRelevancyKeywords(addRel);
+								if (relevancyKeywords.getTotalSize() > 0) {
+									for (RelevancyKeyword rk: relevancyKeywords.getList()) {
+										daoService.addKeyword(new StoreKeyword(store, rk.getKeyword().getKeywordId()));
+										daoService.addRelevancyKeyword(rk);
+									}								
+								}
+								// save relevancy fields
+								RelevancyField rf = new RelevancyField();
+								rf.setRelevancy(addRel);
+								
+								Map<String, String> relevancyFields = addRel.getParameters();
+								if (relevancyFields != null) {
+									for (String field: relevancyFields.keySet()) {
+										String value = relevancyFields.get(field);
+										if (StringUtils.isNotBlank(value)) {
+											rf.setFieldName(field);
+											rf.setFieldValue(value);
+											daoService.addRelevancyField(rf);										
+										}
 									}
 								}
 							}
+							
+							Store s = new Store(store);
+							daoCacheService.reloadAllKeywords(s);
+							daoCacheService.setForceReloadRelevancy(s); // invalidates all cached data to force a reload and prevent stale data
+							map.put(key, true);
+						} catch (Exception e) {
+							logger.error("Failed to publish rule: " + key, e);
+							map.put(key, false);
 						}
-						
-						Store s = new Store(store);
-						daoCacheService.reloadAllKeywords(s);
-						daoCacheService.setForceReloadRelevancy(s); // invalidates all cached data to force a reload and prevent stale data
-						map.put(key, true);
 					}
 			} catch (Exception e) {
 				logger.error(e,e);
@@ -846,6 +868,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		try {	
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
+					try {
 						StoreKeyword sk = new StoreKeyword(store, key);
 						ElevateResult addEl = new ElevateResult();
 						addEl.setStoreKeyword(sk);
@@ -853,6 +876,10 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						daoCacheService.resetElevateRule(sk); // clear sk entry in cache
 						daoCacheService.setForceReloadExclude(new Store(store));
 						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -891,6 +918,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		try {	
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
+					try {
 						StoreKeyword sk = new StoreKeyword(store, key);
 						ExcludeResult addEx = new ExcludeResult();
 						addEx.setStoreKeyword(sk);
@@ -898,6 +926,10 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						daoCacheService.resetExcludeRule(sk); // clear sk entry in cache
 						daoCacheService.setForceReloadExclude(new Store(store));
 						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -949,24 +981,29 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			if(CollectionUtils.isNotEmpty(list)){
 				Store s = new Store(store);
 				for(String key : list){
-					RedirectRule delRel = new RedirectRule();
-					delRel.setRuleId(key);
-					delRel.setStoreId(store);
-					// get list of keywords for ranking rule
-					List<StoreKeyword> sks = new ArrayList<StoreKeyword>();
-					RedirectRule rule = new RedirectRule();
-					rule.setRuleId(key);
-					rule.setStoreId(store);
-					SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  0, 0);
-					for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR).getList()) {
-						sks.add(keyword);
+					try {
+						RedirectRule delRel = new RedirectRule();
+						delRel.setRuleId(key);
+						delRel.setStoreId(store);
+						// get list of keywords for ranking rule
+						List<StoreKeyword> sks = new ArrayList<StoreKeyword>();
+						RedirectRule rule = new RedirectRule();
+						rule.setRuleId(key);
+						rule.setStoreId(store);
+						SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(rule, null, null,  0, 0);
+						for (StoreKeyword keyword: daoService.getRedirectKeywords(criteria, MatchType.MATCH_ID, ExactMatch.SIMILAR).getList()) {
+							sks.add(keyword);
+						}
+						daoService.deleteRedirectRule(delRel); // prod
+						for (StoreKeyword sk: sks) {
+							daoCacheService.resetRedirectRule(sk); // clear sk entry in cache
+						}
+						daoCacheService.setForceReloadRedirect(s); // invalidates all cached data to force a reload and prevent stale data
+						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
 					}
-					daoService.deleteRedirectRule(delRel); // prod
-					for (StoreKeyword sk: sks) {
-						daoCacheService.resetRedirectRule(sk); // clear sk entry in cache
-					}
-					daoCacheService.setForceReloadRedirect(s); // invalidates all cached data to force a reload and prevent stale data
-					map.put(key, true);
 				}
 			}
 		} catch (Exception e) {
@@ -1012,20 +1049,25 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 			Store s = new Store(store);
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
-					Relevancy delRel = new Relevancy();
-					delRel.setRelevancyId(key);
-					delRel.setStore(s);
-					// get list of keywords for ranking rule
-					List<StoreKeyword> sks = new ArrayList<StoreKeyword>();
-					for (RelevancyKeyword keyword: daoService.getRelevancyKeywords(delRel).getList()) {
-						sks.add(new StoreKeyword(store, keyword.getKeyword().getKeywordId()));
+					try {
+						Relevancy delRel = new Relevancy();
+						delRel.setRelevancyId(key);
+						delRel.setStore(s);
+						// get list of keywords for ranking rule
+						List<StoreKeyword> sks = new ArrayList<StoreKeyword>();
+						for (RelevancyKeyword keyword: daoService.getRelevancyKeywords(delRel).getList()) {
+							sks.add(new StoreKeyword(store, keyword.getKeyword().getKeywordId()));
+						}
+						daoService.deleteRelevancy(delRel); // prod
+						for (StoreKeyword sk: sks) {
+							daoCacheService.resetRelevancyRule(sk); // clear sk entry in cache
+						}
+						daoCacheService.setForceReloadRelevancy(s); // invalidates all cached data to force a reload and prevent stale data
+						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
 					}
-					daoService.deleteRelevancy(delRel); // prod
-					for (StoreKeyword sk: sks) {
-						daoCacheService.resetRelevancyRule(sk); // clear sk entry in cache
-					}
-					daoCacheService.setForceReloadRelevancy(s); // invalidates all cached data to force a reload and prevent stale data
-					map.put(key, true);
 				}
 			}
 		} catch (Exception e) {
@@ -1097,25 +1139,30 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 				fileService.createBackup(store,list,RuleEntity.DEMOTE);		
 				
 				for(String key : list){
-					DemoteResult delEl = new DemoteResult();
-					StoreKeyword sk = new StoreKeyword(store, key);
-					delEl.setStoreKeyword(sk);
-					daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
-					
-					// retrieve staging data then push to prod
-					daoService.addKeyword(sk);
-					demoteFilter.setStoreKeyword(sk);
-					SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
-					demotedList = daoServiceStg.getDemoteResultList(criteria).getList();
-					
-					if(demotedList != null && demotedList.size() > 0){
-						for(DemoteResult e : demotedList){
-							daoService.addDemoteResult((DemoteResult) e);
+					try {
+						DemoteResult delEl = new DemoteResult();
+						StoreKeyword sk = new StoreKeyword(store, key);
+						delEl.setStoreKeyword(sk);
+						daoService.clearDemoteResult(new StoreKeyword(store, key)); // prod
+						
+						// retrieve staging data then push to prod
+						daoService.addKeyword(sk);
+						demoteFilter.setStoreKeyword(sk);
+						SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(demoteFilter,null,null,0,0);
+						demotedList = daoServiceStg.getDemoteResultList(criteria).getList();
+						
+						if(demotedList != null && demotedList.size() > 0){
+							for(DemoteResult e : demotedList){
+								daoService.addDemoteResult((DemoteResult) e);
+							}
 						}
+						// clear cache data to force a reload
+						daoCacheService.resetDemoteRule(sk); // prod
+						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to publish rule: " + key, e);
+						map.put(key, false);
 					}
-					// clear cache data to force a reload
-					daoCacheService.resetDemoteRule(sk); // prod
-					map.put(key, true);
 				}
 				
 				Store s = new Store(store);
@@ -1234,6 +1281,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		try {	
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
+					try {
 						StoreKeyword sk = new StoreKeyword(store, key);
 						DemoteResult addEl = new DemoteResult();
 						addEl.setStoreKeyword(sk);
@@ -1241,6 +1289,10 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						daoCacheService.resetDemoteRule(sk); // clear sk entry in cache
 						daoCacheService.setForceReloadDemote(new Store(store));
 						map.put(key, true);
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -1354,6 +1406,7 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 		try {	
 			if(CollectionUtils.isNotEmpty(list)){
 				for(String key : list){
+					try {
 						int result = -1;
 					
 						FacetSort delFs = new FacetSort();
@@ -1362,6 +1415,10 @@ public class DeploymentRuleServiceImpl implements DeploymentRuleService{
 						result = daoService.deleteFacetSort(delFs); // prod
 						daoCacheService.setForceReloadFacetSort(new Store(store));
 						map.put(key, (result > 0));
+					} catch (Exception e) {
+						logger.error("Failed to unpublish rule: " + key, e);
+						map.put(key, false);
+					}
 				}
 			}
 		} catch (Exception e) {

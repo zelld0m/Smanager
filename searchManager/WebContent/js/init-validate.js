@@ -9,6 +9,10 @@ isXSSSafe = function(text){
 	return isAscii(text) && !((text.indexOf("<") >= 0) && (text.indexOf(">") >= 0));
 };
 
+isXSSSafeAllowNonAscii = function(text){
+	return !((text.indexOf("<") >= 0) && (text.indexOf(">") >= 0));
+};
+
 isAllowedName = function(text){
 	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\*\s\-\"\'\(\)\?\/]*$/;
 	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);

@@ -640,7 +640,7 @@
 	
 						for(var i = 0; i < items.length; i++){
 							var itemVal = $(items[i]).val();
-							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafe(itemVal)){
+							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafeAllowNonAscii(itemVal)){
 								facetItems.push(itemVal);
 							}
 						}
