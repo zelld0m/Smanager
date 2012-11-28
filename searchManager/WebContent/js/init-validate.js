@@ -24,6 +24,11 @@ isDigit = function(text){
 	return digitRegex.test(text) && $.isNotBlank(text);
 };
 
+isAlphanumeric = function(text){
+	var digitRegex= /^[a-zA-Z0-9]*$/;
+	return digitRegex.test(text) && $.isNotBlank(text);
+};
+
 validateEmail = function(fieldName, fieldValue, length) {
 	if (!validateGeneric(fieldName, fieldValue, length)) {
 		return false;
@@ -124,3 +129,10 @@ validateGeneric = function(fieldName, fieldValue, length) {
 	return true;
 };
 
+validateAlphanumeric = function(fieldName, fieldValue) {
+	if(!isAlphanumeric(fieldValue)){
+		jAlert(fieldName+" should be alphanumeric.");
+		return false;
+	}
+	return true;
+}

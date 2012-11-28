@@ -199,7 +199,7 @@
 											<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>
 										</div>
 										<div class="clearB"></div>
-										<input id="catcode" type="text">
+										<input id="catcode" type="text" maxlength="4">
 									</td>
 								</tr>
 								<tr>
