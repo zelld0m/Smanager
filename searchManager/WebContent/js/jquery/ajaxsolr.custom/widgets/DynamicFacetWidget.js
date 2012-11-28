@@ -112,14 +112,31 @@
 					var storeparams = self.manager.store.params;
 					//merge params
 					for(var name in storeparams){
-						if(params[storeparams[name].name] === undefined)
-							params[storeparams[name].name] = storeparams[name].value;
+						if(!params[name]){
+							if ($.isArray(storeparams[name])){
+								params[name] = storeparams[name];
+							}
+							else{
+								params[name] = storeparams[name].value;
+							}
+						}
 					}
 
 					for (var name in params) {
 						if ($.isArray(params[name])){
 							for (var param in params[name]){
-								paramString += "&" + name + "=" + params[name][param];
+								var paramVal = "";
+								
+								if(params[name][param].value){ //if Object
+									paramVal = params[name][param].value;
+								}
+								else if(params[name][param]){
+									paramVal = params[name][param];
+								}
+								else{
+									continue;
+								}
+								paramString += "&" + name + "=" + paramVal;
 							}
 						}else{
 							if(name.toLowerCase() !== "sort".toLowerCase())
