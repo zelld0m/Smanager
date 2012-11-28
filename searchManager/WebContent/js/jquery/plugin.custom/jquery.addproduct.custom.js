@@ -1538,6 +1538,7 @@
 
 					if (valid){
 						if (base.options.newRecord){
+							base.api.destroy();
 							base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
 						}else{
 							base.api.destroy();
