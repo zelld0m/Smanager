@@ -397,6 +397,7 @@
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
+											setTimeout(function(){
 											var popName = "";
 											var ruleNameLabel = "Name";
 
@@ -446,6 +447,7 @@
 													}
 												});
 											}
+											}, 500);
 										}
 									});
 
@@ -676,12 +678,12 @@
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
-
+						
+						setTimeout(function() {
 						var sortType = $("select#facetSortOrder option:selected").val();
 						var facetGroupItems = self.buildFacetGroupItemsMap();
 						var sortOrders = self.buildFacetGroupSortTypeMap();
 
-						//if (self.checkIfUpdateAllowed()){
 						var response = 0;
 						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
 							callback: function(data){
@@ -708,7 +710,7 @@
 
 							}
 						});
-						//}
+						}, 500 );
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
