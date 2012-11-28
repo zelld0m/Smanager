@@ -314,7 +314,7 @@
 			template  += '		</div>';
 			template  += '	</div>';
 			template  += '</div>';
-			
+
 			template  += '<div class="fcetItem marT20 w500">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
@@ -331,7 +331,7 @@
 				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
-			
+
 			template  += '					</td>';
 			template  += '			    </tr>';		
 			template  += '				<tr>';
@@ -1431,12 +1431,12 @@
 				base.contentHolder.find("#conditionText").hide();
 			}else{
 				base.contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
-				
+
 				var formattedExpiryDate = base.options.item["formattedExpiryDate"];
 				if($.isNotBlank(formattedExpiryDate)){
 					base.contentHolder.find("#addItemDate").val(formattedExpiryDate);
 				};
-				
+
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
@@ -1498,53 +1498,56 @@
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
- 
+
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
-					var position = 1;
-					var valid = true;
-					
-					if (base.options.showPosition){
-						position = base.contentHolder.find("#addItemPosition").val();
-					}
-					
-					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+					setTimeout(function() {
 
-					if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
-						valid = false;
-					}
+						var position = 1;
+						var valid = true;
 
-					if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
-						valid = false;
-					}
-					
-					var condMap = base.getSelectedFacetFieldValues();
-					
-					if ($.isEmptyObject(condMap)){
-						valid = false;
-						jAlert('Please specify at least one filter condition');
-					}
-					
-					if (valid){
-						$.each(condMap, function(idx, el){
-							$.each(el, function(i,elem){
-								if(!validateGeneric("Input", elem)) {
-									valid = false;
-								}
-							});
-						});
-					}
-
-					if (valid){
-						if (base.options.newRecord){
-							base.api.destroy();
-							base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
-						}else{
-							base.api.destroy();
-							base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+						if (base.options.showPosition){
+							position = base.contentHolder.find("#addItemPosition").val();
 						}
-					}
+
+						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+						var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+
+						if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
+							valid = false;
+						}
+
+						if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
+							valid = false;
+						}
+
+						var condMap = base.getSelectedFacetFieldValues();
+
+						if ($.isEmptyObject(condMap)){
+							valid = false;
+							jAlert('Please specify at least one filter condition');
+						}
+
+						if (valid){
+							$.each(condMap, function(idx, el){
+								$.each(el, function(i,elem){
+									if(!validateGeneric("Input", elem)) {
+										valid = false;
+									}
+								});
+							});
+						}
+
+						if (valid){
+							if (base.options.newRecord){
+								base.api.destroy();
+								base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
+							}else{
+								base.api.destroy();
+								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+							}
+						}
+					}, 500 );
 				}
 			});
 
@@ -1563,7 +1566,7 @@
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
-			
+
 
 			base.contentHolder.find("#addItemPosition").on({
 				keypress:function(e){
@@ -1582,7 +1585,7 @@
 					return false;
 				}
 			});
-			
+
 			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
@@ -1598,7 +1601,7 @@
 					today.setHours(0,0,0,0); //ignore time of current date 
 
 					base.contentHolder.find("#addItemDate_1").datepicker('disable');
-					
+
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", "Invalid Input");
 					}
@@ -1618,7 +1621,7 @@
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
-					
+
 					if(!valid)
 						base.contentHolder.find("#addItemDate_1").datepicker('enable');
 
@@ -1640,12 +1643,12 @@
 				return '';
 			}
 		};
-		
+
 		base.promptRuleItemDetails = function(target, type){
-			
+
 			var typeLabel = base.getTypeLabel(type);
-			
-			
+
+
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
@@ -1674,7 +1677,7 @@
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
 						};				
-						
+
 						base.contentHolder.find("#clearBtn").on({
 							click: function(evt){
 								base.contentHolder.find("input,textarea").val("");

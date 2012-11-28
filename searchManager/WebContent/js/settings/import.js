@@ -248,23 +248,25 @@
 						}else{
 							switch($(evt.currentTarget).attr("id")){
 							case "okBtn":
-								if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
-									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
-								}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
-									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
-								}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
-									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
-								}else{
-									RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
-										callback: function(data){									
-											self.postMsg(data,true);	
-											self.getImportList();	
-										},
-										preHook:function(){ 
-											self.prepareTabContent(); 
-										}	
-									});
-								}
+								setTimeout(function() {
+									if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
+										jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+									}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
+										jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
+									}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
+										jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+									}else{
+										RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
+											callback: function(data){									
+												self.postMsg(data,true);	
+												self.getImportList();	
+											},
+											preHook:function(){ 
+												self.prepareTabContent(); 
+											}	
+										});
+									}
+								}, 500 );
 								break;
 							case "rejectBtn": 
 								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {

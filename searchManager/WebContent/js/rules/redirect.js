@@ -76,60 +76,61 @@
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
+						setTimeout(function() {
+							var ruleName = $.trim($('div#redirect input[id="name"]').val());  
+							var description = $.trim($('div#redirect textarea[id="description"]').val());  
 
-						var ruleName = $.trim($('div#redirect input[id="name"]').val());  
-						var description = $.trim($('div#redirect textarea[id="description"]').val());  
+							if (self.checkIfUpdateAllowed()){
+								if ($.isBlank(ruleName)){
+									jAlert("Rule name is required.","Query Cleaning");
+								}
+								else if (!isAllowedName(ruleName)){
+									jAlert("Rule name contains invalid value.","Query Cleaning");
+								}
+								else if (!isAscii(description)) {
+									jAlert("Description contains non-ASCII characters.","Query Cleaning");										
+								}
+								else if (!isXSSSafe(description)){
+									jAlert("Description contains XSS.","Query Cleaning");
+								}
+								else {
+									RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
+										callback: function(data){
+											if (data==true){
+												jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
+											}else{
+												var response = 0;
+												RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
+													callback: function(data){
+														response = data;
+														showActionResponse(response, "update", ruleName);
+													},
+													preHook: function(){
+														self.prepareRedirect();
+													},
+													postHook: function(){
+														if(response==1){
+															RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
+																callback: function(data){
+																	self.setRedirect(data);
+																},
+																preHook: function(){
+																	self.prepareRedirect();
+																}
+															});
+														}
+														else{
+															self.setRedirect(self.selectedRule);
+														}
 
-						if (self.checkIfUpdateAllowed()){
-							if ($.isBlank(ruleName)){
-								jAlert("Rule name is required.","Query Cleaning");
-							}
-							else if (!isAllowedName(ruleName)){
-								jAlert("Rule name contains invalid value.","Query Cleaning");
-							}
-							else if (!isAscii(description)) {
-								jAlert("Description contains non-ASCII characters.","Query Cleaning");										
-							}
-							else if (!isXSSSafe(description)){
-								jAlert("Description contains XSS.","Query Cleaning");
-							}
-							else {
-								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
-									callback: function(data){
-										if (data==true){
-											jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
-										}else{
-											var response = 0;
-											RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
-												callback: function(data){
-													response = data;
-													showActionResponse(response, "update", ruleName);
-												},
-												preHook: function(){
-													self.prepareRedirect();
-												},
-												postHook: function(){
-													if(response==1){
-														RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
-															callback: function(data){
-																self.setRedirect(data);
-															},
-															preHook: function(){
-																self.prepareRedirect();
-															}
-														});
 													}
-													else{
-														self.setRedirect(self.selectedRule);
-													}
-
-												}
-											});
+												});
+											}
 										}
-									}
-								});
+									});
+								}
 							}
-						}
+						}, 500 );
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
