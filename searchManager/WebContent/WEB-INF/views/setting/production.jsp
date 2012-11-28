@@ -25,7 +25,7 @@
 
 	<div style="width: 95%" class="dashboard marT20 mar0">
 		<c:if test="${store eq 'pcmall'}">
-			<div id="autoExportStatus" class="info" style="display:none">Auto-export setting is currently set to <span id="autoExportValue"></span></div> 
+			<div id="autoExportStatus" class="info notification border fsize14 marB20" style="display:none">Auto-export setting is currently set to <span id="autoExportValue" class="fbold"></span></div> 
 		</c:if>
 		<!-- tabs -->
 		<div id="production" class="tabs">
