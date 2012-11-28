@@ -133,7 +133,7 @@
 			template  += '							<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>';
 			template  += '						</div>';
 			template  += '						<div class="clearB"></div>';
-			template  += '						<input id="catcode" type="text">';
+			template  += '						<input id="catcode" type="text" maxlength="4">';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr>';
@@ -375,7 +375,7 @@
 			var $imsTab = base.contentHolder.find("div#ims"); 
 
 			if ($imsTab.length){
-				catCode[0] = $.trim($imsTab.find("input#catcode").val());
+				catCode[0] = $.trim($imsTab.find("input#catcode").val().toUpperCase());
 				category[0] = $.trim($imsTab.find("input#categoryList").val());
 				subCategory[0] = $.trim($imsTab.find("input#subCategoryList").val());
 				clazz[0] = $.trim($imsTab.find("input#classList").val());
@@ -1524,6 +1524,10 @@
 					if ($.isEmptyObject(condMap)){
 						valid = false;
 						jAlert('Please specify at least one filter condition');
+					}
+					
+					if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+						valid = false;
 					}
 					
 					if (valid){

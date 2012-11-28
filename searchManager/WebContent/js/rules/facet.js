@@ -688,7 +688,7 @@
 						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
 							callback: function(data){
 								response = data;
-								showActionResponse(response, "update", self.selectedRule["ruleName"]);
+								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
 							},
 							preHook: function(){
 								self.prepareFacetSort();

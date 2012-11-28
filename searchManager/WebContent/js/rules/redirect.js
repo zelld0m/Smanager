@@ -886,7 +886,7 @@
 
 				var catCodeVal = $.trim(ui.find("input#catcode").val());
 
-				if ($.isNotBlank(catCodeVal) && catCodeVal.length < 4 && ui.find("a.switchToCatName").is(":visible")){
+				if ($.isNotBlank(catCodeVal) && ui.find("a.switchToCatName").is(":visible")){
 					inCatCode = catCodeVal;
 				}else if(ui.find("a.switchToCatCode").is(":visible")){
 					inCategory = $.trim(ui.find("input#categoryList").val());
@@ -1558,7 +1558,7 @@
 
 
 				if (ui.find("div.ims").is(":visible")){
-					catCode[0] = $.trim(ui.find("input#catcode").val());
+					catCode[0] = $.trim(ui.find("input#catcode").val().toUpperCase());
 					category[0] = $.trim(ui.find("input#categoryList").val());
 					subCategory[0] = $.trim(ui.find("input#subCategoryList").val());
 					clazz[0] = $.trim(ui.find("input#classList").val());
@@ -1744,6 +1744,10 @@
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
 
+						if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+							return;
+						}
+						
 						if ($.isEmptyObject(condMap)){
 							jAlert('Please specify at least one filter condition',"Query Cleaning");
 							return;
