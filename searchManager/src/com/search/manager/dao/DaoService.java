@@ -223,10 +223,12 @@ public interface DaoService {
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
     public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException;
     public List<String> getRefIDs(String ent, String opt, String storeId) throws DaoException;
+    
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;

@@ -68,6 +68,8 @@
 				$importAlert.find("#status").empty();
 				$importAlert.hide();
 			};
+			
+			base.options.targetRuleStatusCallback(base.options.rule, ruleStatus);
 		};
 
 		base.showSelector = function(){
@@ -238,6 +240,7 @@
 	$.importas.defaultOptions = {
 			rule: null,
 			newRuleText: "Import As New Rule",
+			targetRuleStatusCallback: function(rule, ruleStatus){},
 			selectedOptionChanged: function(ruleId){}
 	};
 

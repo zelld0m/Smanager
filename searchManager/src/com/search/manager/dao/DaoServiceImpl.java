@@ -1180,7 +1180,8 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.addRuleStatus(ruleStatus);
 	}
 
-	private int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
+	@Override
+	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException {
 		return ruleStatusDAO.updateRuleStatus(ruleStatus);
 	}
 

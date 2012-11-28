@@ -89,12 +89,12 @@ public class RuleTransferService {
 			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
 				RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
 				SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-				
+
 				try {
 					RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
 					if (approvedRset.getTotalSize() > 0) {
 						ruleStatus = approvedRset.getList().get(0);
-						
+
 						if(ruleStatus != null){
 							auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
 							auditTrail.setDate(new Date());
@@ -130,7 +130,7 @@ public class RuleTransferService {
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		String userName = UtilityService.getUsername();
-		
+
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.importRule));
 		auditTrail.setUsername(UtilityService.getUsername());
@@ -142,33 +142,33 @@ public class RuleTransferService {
 			ImportType importType = ImportType.getByDisplayText(importTypeList[i]);
 			String ruleName = ruleNameList[i];
 			String importAsId = importAsRefIdList[i];
-			
+
 			//if importAsId is null, generate a new id
 			switch(ruleEntity){
-				case ELEVATE:
-				case EXCLUDE:
-				case DEMOTE:
-					ruleId = importAsId = ruleName;
-					break;
-				case FACET_SORT:
-					FacetSort facetSort = facetSortService.getRuleByName(ruleName);
-					if(facetSort != null){
-						importAsId = facetSort.getRuleId();
-						ruleName = facetSort.getRuleName();
-					}
-					else {
-						importAsId = DAOUtils.generateUniqueId();
-					}
-				case QUERY_CLEANING:
-				case RANKING_RULE:
-					if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
-						importAsId = DAOUtils.generateUniqueId();
-					}
-					break;
-				default:
-					break;
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE:
+				ruleId = importAsId = ruleName;
+				break;
+			case FACET_SORT:
+				FacetSort facetSort = facetSortService.getRuleByName(ruleName);
+				if(facetSort != null){
+					importAsId = facetSort.getRuleId();
+					ruleName = facetSort.getRuleName();
+				}
+				else {
+					importAsId = DAOUtils.generateUniqueId();
+				}
+			case QUERY_CLEANING:
+			case RANKING_RULE:
+				if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
+					importAsId = DAOUtils.generateUniqueId();
+				}
+				break;
+			default:
+				break;
 			}
-						
+
 			// TODO: update return to reflect at which state error occurred.
 			if(importRule(ruleEntity, store, ruleId, comment, importType, importAsId, ruleName)){
 				int status = 0;
@@ -176,12 +176,16 @@ public class RuleTransferService {
 					daoService.addRuleStatus(new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName, 
 							RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
 					status++;
-					RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
-					SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+					RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, importAsId);
+					SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
+					RuleStatus currRuleStatus = null;
+
 					try {
 						RecordSet<RuleStatus> rSet = daoService.getRuleStatus(searchCriteria);
+
 						if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
-							importedRuleStatusIds.add(rSet.getList().get(0).getRuleStatusId());
+							currRuleStatus = rSet.getList().get(0);
+							importedRuleStatusIds.add(currRuleStatus.getRuleStatusId());
 							auditTrail.setDate(new Date());
 							auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 							if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
@@ -189,15 +193,29 @@ public class RuleTransferService {
 							}
 							auditTrail.setDetails(String.format("Imported reference id = [%1$s], rule type = [%2$s].", 
 									auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId())));
-							daoService.addAuditTrail(auditTrail);
+							daoService.addAuditTrail(auditTrail);							
+
+							if("DELETE".equalsIgnoreCase(currRuleStatus.getUpdateStatus())){
+								RuleStatus rStatus = currRuleStatus;
+								rStatus.setApprovalStatus("");
+								rStatus.setUpdateStatus("");
+
+								if(daoService.updateRuleStatus(rStatus) > 0){
+									logger.info("Remove delete rule status for " + currRuleStatus.getRuleStatusId());
+								}else{
+									logger.error("Failed to remove delete rule status for " + currRuleStatus.getRuleStatusId());
+								};
+							}
+
 						}
 						else {
-							logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+							logger.error("No rule status found for " + ruleEntity + " : "  + importAsId);
 						}
+
 					} catch (DaoException e) {
-						logger.error("Failed to get rule status for " + ruleEntity + " : "  + ruleId, e);
+						logger.error("Failed to get rule status for " + ruleEntity + " : "  + importAsId, e);
 					}
-					
+
 					if(ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType){
 						//submit rule for approval
 						ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
@@ -211,20 +229,21 @@ public class RuleTransferService {
 							status++;
 						}
 					}
-					
+
+
 					successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
-					
+
 				} catch (DaoException de) {
 					String msg = "";
 					switch (status) {
-						case 0: msg = "Failed to create rule status for: "; break;
-						case 1: msg = "Failed to submit rule for approval: "; break;
-						case 2: msg = "Failed to approve rule: "; break;
-						case 3: msg = "Failed to publish rule: "; break;
+					case 0: msg = "Failed to create rule status for: "; break;
+					case 1: msg = "Failed to submit rule for approval: "; break;
+					case 2: msg = "Failed to approve rule: "; break;
+					case 3: msg = "Failed to publish rule: "; break;
 					}
 					logger.error(msg + importAsId);
 				}
-				
+
 			}
 		}
 		daoService.addRuleStatusComment(null, "[IMPORTED] " + comment, importedRuleStatusIds.toArray(new String[0]));
@@ -233,27 +252,27 @@ public class RuleTransferService {
 
 	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
 		switch(ruleEntity){
-			case ELEVATE:
-			case EXCLUDE:
-			case DEMOTE:
-				return ruleId;
-			case FACET_SORT:
-			case QUERY_CLEANING:
-			case RANKING_RULE:
-				return ruleName;
-			default:
-				return ruleName;
+		case ELEVATE:
+		case EXCLUDE:
+		case DEMOTE:
+			return ruleId;
+		case FACET_SORT:
+		case QUERY_CLEANING:
+		case RANKING_RULE:
+			return ruleName;
+		default:
+			return ruleName;
 		}
 	}
-	
+
 	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
-		
+
 		String storeIdOrigin = ruleXml.getStore();
 		String ruleIdOrigin = ruleXml.getRuleId();
 		String ruleNameOrigin = ruleXml.getRuleName();
-		
+
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
@@ -296,11 +315,11 @@ public class RuleTransferService {
 			default:
 				break;
 			}
-			
+
 			if(deleteRuleFile(ruleEntity, store, refId, comment)){
 				//TODO addComment
 				//TODO addAuditTrail
-				
+
 				successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
 			}
 		}
@@ -313,7 +332,7 @@ public class RuleTransferService {
 		try{
 			String filepath = RuleTransferUtil.getFilename(store, ruleEntity, id);
 			File file = new File(filepath);
-			
+
 			if(!file.exists()){
 				logger.info("File to delete not found. Filename = " + filepath);
 				success = false;
@@ -345,7 +364,7 @@ public class RuleTransferService {
 	public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity){
 		String storeIdTarget = UtilityService.getStoreName();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, null,  storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
-		
+
 		try {
 			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
 
@@ -360,11 +379,11 @@ public class RuleTransferService {
 
 		return null;
 	}
-	
+
 	public int addRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleEntity ruleEntity){
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, ruleEntity);
 		int result = 0;
-		
+
 		try {
 			result = daoService.addExportRuleMap(exportRuleMap);
 		} catch (DaoException e) {
