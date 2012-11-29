@@ -7,5 +7,7 @@ public class RelevancyFieldReportModel extends ReportModel<RelevancyFieldReportB
 	public RelevancyFieldReportModel(ReportHeader reportHeader, List<RelevancyFieldReportBean> records) {
 		super(reportHeader, RelevancyFieldReportBean.class, records);
 	}
-	
+	public RelevancyFieldReportModel(ReportHeader reportHeader, SubReportHeader subReportHeader, List<RelevancyFieldReportBean> records) {
+		super(reportHeader, subReportHeader, RelevancyFieldReportBean.class, records);
+	}
 }

@@ -84,7 +84,7 @@ public class ElevateReportBean extends ReportBean<ElevateProduct> {
 	private String getPartNumberDetails() {
 		
 		if (StringUtils.isNotBlank(model.getDpNo())){
-			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" Name:").append(model.getName())
+			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" Name:").append(model.getDescription())
 			.append("  SKU #:").append(model.getDpNo()).append("  Mfr. Part #:").append(model.getMfrPN()).toString();
 		}
 		

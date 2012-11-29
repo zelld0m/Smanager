@@ -8,4 +8,8 @@ public class DemoteReportModel extends ReportModel<DemoteReportBean> {
 		super(reportHeader, DemoteReportBean.class, records);
 	}
 	
+	public DemoteReportModel(ReportHeader reportHeader, SubReportHeader subReportHeader, List<DemoteReportBean> records) {
+		super(reportHeader, subReportHeader, DemoteReportBean.class, records);
+	}
+	
 }

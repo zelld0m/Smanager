@@ -7,5 +7,7 @@ public class RedirectRuleConditionReportModel extends ReportModel<RedirectRuleCo
 	public RedirectRuleConditionReportModel(ReportHeader reportHeader, List<RedirectRuleConditionReportBean> records) {
 		super(reportHeader, RedirectRuleConditionReportBean.class, records);
 	}
-	
+	public RedirectRuleConditionReportModel(ReportHeader reportHeader, SubReportHeader subReportHeader, List<RedirectRuleConditionReportBean> records) {
+		super(reportHeader, subReportHeader, RedirectRuleConditionReportBean.class, records);
+	}
 }

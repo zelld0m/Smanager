@@ -34,7 +34,9 @@ import com.search.manager.report.model.RelevancyFieldReportModel;
 import com.search.manager.report.model.RelevancyReportBean;
 import com.search.manager.report.model.RelevancyReportModel;
 import com.search.manager.report.model.ReportBean;
+import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
+import com.search.manager.report.model.SubReportHeader;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -175,24 +177,24 @@ public class RuleXmlReportUtil{
 		return (redirectRule != null) ? new RedirectRuleReportBean(redirectRule) : null;
 	}
 	
-	public static List<ReportModel<? extends ReportBean<?>>> getRedirectSubReports(RedirectRuleXml xml){
+	public static List<ReportModel<? extends ReportBean<?>>> getRedirectSubReports(RedirectRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader){
 		List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 		
 		RedirectRuleReportBean redirectRule = getRedirectRuleReportBean(xml);
 		if(redirectRule != null){
 			List<RedirectRuleReportBean> list = new ArrayList<RedirectRuleReportBean>();
 			list.add(redirectRule);
-			subReports.add( new RedirectRuleReportModel(null,list));
+			subReports.add( new RedirectRuleReportModel(reportHeader, subReportHeader, list));
 		}
 		
 		RuleKeywordXml ruleKeyword = xml.getRuleKeyword();
 		if(ruleKeyword != null){
-			subReports.add(new KeywordReportModel(null, getKeywordReportBeanList(ruleKeyword)));
+			subReports.add(new KeywordReportModel(reportHeader, subReportHeader, getKeywordReportBeanList(ruleKeyword)));
 		}
 			
 		RuleConditionXml ruleCondition = xml.getRuleCondition();
 		if(ruleCondition != null){
-			subReports.add(new RedirectRuleConditionReportModel(null, getRedirectRuleConditionReportBeanList(ruleCondition)));
+			subReports.add(new RedirectRuleConditionReportModel(reportHeader, subReportHeader, getRedirectRuleConditionReportBeanList(ruleCondition)));
 		}
 			
 		return subReports;
@@ -227,24 +229,24 @@ public class RuleXmlReportUtil{
 		return relevancyFields;
 	}
 	
-	public static List<ReportModel<? extends ReportBean<?>>> getRelevancySubReports(RankingRuleXml xml){
+	public static List<ReportModel<? extends ReportBean<?>>> getRelevancySubReports(RankingRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader){
 		List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 		
 		RelevancyReportBean relevancy = getRelevancyReportBean(xml);
 		if(relevancy != null){
 			List<RelevancyReportBean> list = new ArrayList<RelevancyReportBean>();
 			list.add(relevancy);
-			subReports.add( new RelevancyReportModel(null,list));
+			subReports.add( new RelevancyReportModel(reportHeader, subReportHeader,list));
 		}
 		
 		RuleKeywordXml ruleKeyword = xml.getRuleKeyword();
 		if(ruleKeyword != null){
-			subReports.add(new KeywordReportModel(null, getKeywordReportBeanList(ruleKeyword)));
+			subReports.add(new KeywordReportModel(reportHeader, subReportHeader, getKeywordReportBeanList(ruleKeyword)));
 		}
 			
 		Map<String, String> parameters = xml.getParameters();
 		if(parameters != null){
-			subReports.add(new RelevancyFieldReportModel(null, getRelevancyFieldReportBeanList(parameters)));
+			subReports.add(new RelevancyFieldReportModel(reportHeader, subReportHeader, getRelevancyFieldReportBeanList(parameters)));
 		}
 			
 		return subReports;

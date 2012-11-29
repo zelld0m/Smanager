@@ -27,7 +27,7 @@ public class ReportModel<T extends ReportBean<?>> {
     private Class<T> beanClass;
     
     private ReportHeader reportHeader;
-    private SubReportHeader subHeader;
+    private SubReportHeader subReportHeader;
     
     private List<ReportField> reportFields = new ArrayList<ReportField>();
     private Object[][] data;
@@ -41,6 +41,14 @@ public class ReportModel<T extends ReportBean<?>> {
 		
 	public ReportModel(ReportHeader reportHeader, Class<T> type, List<T> records) {
 		this.reportHeader = reportHeader;
+		this.records = records;
+		this.beanClass = type;
+		process();
+	}
+	
+	public ReportModel(ReportHeader reportHeader, SubReportHeader subReportHeader, Class<T> type, List<T> records) {
+		this.reportHeader = reportHeader;
+		this.subReportHeader = subReportHeader;
 		this.records = records;
 		this.beanClass = type;
 		process();
@@ -140,6 +148,10 @@ public class ReportModel<T extends ReportBean<?>> {
 
 	public ReportHeader getReportHeader() {
 		return reportHeader;
+	}
+	
+	public SubReportHeader getSubReportHeader(){
+		return subReportHeader;
 	}
 
 }

@@ -8,4 +8,7 @@ public class ElevateReportModel extends ReportModel<ElevateReportBean> {
 		super(reportHeader, ElevateReportBean.class, records);
 	}
 	
+	public ElevateReportModel(ReportHeader reportHeader, SubReportHeader subReportHeader, List<ElevateReportBean> records) {
+		super(reportHeader, subReportHeader, ElevateReportBean.class, records);
+	}
 }

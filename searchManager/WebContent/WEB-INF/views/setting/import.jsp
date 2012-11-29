@@ -19,6 +19,11 @@
 <!-- Start Right Side -->
 <div class="floatL w730 marL10 marT27 txtAL">
 
+	<div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5"></div>
+	  	<div class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></div>
+	  	<div class="clearB"></div>
+    </div>
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 id="titleText" class="padT7 padL15 fsize20 fnormal"></h1>
 	</div>

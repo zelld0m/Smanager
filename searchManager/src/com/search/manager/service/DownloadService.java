@@ -2,6 +2,8 @@ package com.search.manager.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportModel;
+import com.search.manager.report.model.SubReportHeader;
 import com.search.manager.utility.DateAndTimeUtils;
 
 /**
@@ -201,12 +204,6 @@ public class DownloadService {
 			createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), model.getReportHeader().getDate()));
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
 		}
-		else{
-			//TODO display subHeader
-			/*// empty line
-			createRow(worksheet, ++rowIndex, 10f);
-			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));*/
-		}
 
 		// empty line
 		createRow(worksheet, ++rowIndex, 10f);
@@ -215,6 +212,24 @@ public class DownloadService {
 		int recordCount = model.getNumberOfRecords();
 		
 		if(recordCount > 0){
+			/* Record Headers */
+			SubReportHeader subReportHeader = model.getSubReportHeader();
+			if(subReportHeader != null && subReportHeader.getRows() != null){
+				//TODO display subHeader
+				Map<String, String> items = subReportHeader.getRows();
+				for(Map.Entry<String, String> entry : items.entrySet()){
+					HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
+							CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+					HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
+							CellStyle.VERTICAL_CENTER, false);
+					
+					HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+					createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
+					createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
+					worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
+				}
+			}
+				
 			/* Column Headers */
 			HSSFCellStyle headerCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
 					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_25_PERCENT.index, CellStyle.FINE_DOTS);

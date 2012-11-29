@@ -1,5 +1,6 @@
 package com.search.manager.report.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Map;
  * 		 %%Date%% 			-> replace with Date
  * These strings will be replaced at runtime by another class
  */
-public class SubReportHeader {
+public class SubReportHeader extends ReportHeader {
 	
 	public SubReportHeader() {
 	}
@@ -27,5 +28,12 @@ public class SubReportHeader {
 
 	public void setRows(Map<String, String> rows) {
 		this.rows = rows;
+	}
+	
+	public void addRow(String key, String value){
+		if(rows==null){
+			rows = new HashMap<String, String>();
+		}
+		rows.put(key, value);
 	}
 }
