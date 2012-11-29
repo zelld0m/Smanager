@@ -20,7 +20,7 @@ import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetSort;
 
 @XmlRootElement(name = "facetsort")
-@XmlType(propOrder={"ruleType", "sortType", "item"})
+@XmlType(propOrder={"ruleType", "sortType", "groups"})
 @DataTransferObject(converter = BeanConverter.class)
 public class FacetSortRuleXml extends RuleXml {
 	
@@ -28,7 +28,7 @@ public class FacetSortRuleXml extends RuleXml {
 	
 	private RuleType ruleType;
 	private SortType sortType;
-	private List<FacetSortItemXml> item;
+	private List<FacetSortGroupXml> groups;
 	
 	public FacetSortRuleXml() {
 		super(serialVersionUID);
@@ -36,21 +36,21 @@ public class FacetSortRuleXml extends RuleXml {
 	}
 	
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, RuleType ruleType, SortType sortType,
-			String ruleId, String ruleName, List<FacetSortItemXml> item) {
+			String ruleId, String ruleName, List<FacetSortGroupXml> groups) {
 		super(store, name == null ? ruleName : name, notes, username);
 		this.setRuleId(ruleId);
 		this.setRuleName(ruleName);
 		this.ruleType = ruleType;
 		this.sortType = sortType;
-		this.item = item;
+		this.groups = groups;
 		setVersion(version);
 		setSerial(serialVersionUID);
 		this.setCreatedDate(new Date());
 	}
 
 	public FacetSortRuleXml(String store, long version, String name, String notes, String username, String ruleType, String sortType,
-			String ruleId, String ruleName, List<FacetSortItemXml> item) {
-		this(store, version, name, notes, username, RuleType.get(ruleType), SortType.get(sortType), ruleId, ruleName, item);
+			String ruleId, String ruleName, List<FacetSortGroupXml> groups) {
+		this(store, version, name, notes, username, RuleType.get(ruleType), SortType.get(sortType), ruleId, ruleName, groups);
 	}
 	
 	public FacetSortRuleXml(FacetSort facetSort){
@@ -59,15 +59,15 @@ public class FacetSortRuleXml extends RuleXml {
 		
 		Map<String, List<String>> groups = facetSort.getItems();
 		Map<String, SortType> groupSorts = facetSort.getGroupSortType();
-		List<FacetSortItemXml> facetSortItemXmlList = new ArrayList<FacetSortItemXml>();
+		List<FacetSortGroupXml> facetSortGroupXmlList = new ArrayList<FacetSortGroupXml>();
 		
 		if(MapUtils.isNotEmpty(groups) && MapUtils.isNotEmpty(groupSorts) && groups.size() == groupSorts.size() && groups.size()>0){
 			for(Map.Entry<String, List<String>> entry: groups.entrySet()){
-				facetSortItemXmlList.add(new FacetSortItemXml(entry.getKey(), entry.getValue(), groupSorts.get(entry.getKey()), this.sortType));
+				facetSortGroupXmlList.add(new FacetSortGroupXml(entry.getKey(), entry.getValue(), groupSorts.get(entry.getKey()), this.sortType));
 			}
 		}
 		
-		this.item = facetSortItemXmlList;
+		this.groups = facetSortGroupXmlList;
 	}
 
 	@XmlAttribute(name="default-type")
@@ -89,11 +89,11 @@ public class FacetSortRuleXml extends RuleXml {
 	}
 
 	@XmlElementRef
-	public List<FacetSortItemXml> getItem() {
-		return item;
+	public List<FacetSortGroupXml> getGroups() {
+		return groups;
 	}
 	
-	public void setItem(List<FacetSortItemXml> item) {
-		this.item = item;
+	public void setGroups(List<FacetSortGroupXml> groups) {
+		this.groups = groups;
 	}
 }

@@ -27,6 +27,8 @@ public class ReportModel<T extends ReportBean<?>> {
     private Class<T> beanClass;
     
     private ReportHeader reportHeader;
+    private SubReportHeader subHeader;
+    
     private List<ReportField> reportFields = new ArrayList<ReportField>();
     private Object[][] data;
     

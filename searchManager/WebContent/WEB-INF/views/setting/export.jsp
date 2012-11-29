@@ -20,9 +20,14 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 
 	<div class="floatL w730 titlePlacer breakWord">
-	  <div class="floatR padT7">
-	  	<div class="floatL fbold fsize14 marT4 marR5">Auto-export: </div>
+	<div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-export: </div>
 	  	<div class="floatR"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
+	  	<div class="clearB"></div>
+      </div>
+	  <div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5"></div>
+	  	<div class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></div>
 	  	<div class="clearB"></div>
       </div>
 	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">

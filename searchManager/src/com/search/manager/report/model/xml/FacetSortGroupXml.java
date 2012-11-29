@@ -14,9 +14,9 @@ import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
 
 @XmlRootElement(name="group")
-@XmlType(propOrder={"groupName", "groupType", "sortType", "groupItem"})
+@XmlType(propOrder={"groupId", "groupName", "groupType", "sortType", "groupItem"})
 @DataTransferObject(converter = BeanConverter.class)
-public class FacetSortItemXml extends BaseEntityXml{
+public class FacetSortGroupXml extends BaseEntityXml{
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,17 +24,28 @@ public class FacetSortItemXml extends BaseEntityXml{
 	private FacetGroupType groupType;
 	private SortType sortType;
 	private List<String> groupItem;
+	private String groupId;
 
-	public FacetSortItemXml(){
+	public FacetSortGroupXml(){
 		super();
 	}
 
-	public FacetSortItemXml(String groupName, List<String> items, SortType sortType, SortType defaultSortType) {
+	public FacetSortGroupXml(String groupName, List<String> items, SortType sortType, SortType defaultSortType) {
 		super();
 		this.groupName = groupName;
 		this.groupType = FacetGroupType.get(groupName);
 		this.groupItem = items;
 		this.sortType = sortType==null? defaultSortType: sortType;
+	}
+
+	public FacetSortGroupXml(String groupName, FacetGroupType groupType,
+			SortType sortType, List<String> groupItem, String groupId) {
+		super();
+		this.groupName = groupName;
+		this.groupType = groupType;
+		this.sortType = sortType;
+		this.groupItem = groupItem;
+		this.groupId = groupId;
 	}
 
 	@XmlAttribute(name="name")
@@ -62,6 +73,15 @@ public class FacetSortItemXml extends BaseEntityXml{
 
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+	
+	@XmlAttribute(name="group-id")
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
 
 	@XmlElement(name="item")

@@ -43,6 +43,21 @@
 				template += '<div class="clearB"></div>';
 			}
 			
+			if(base.options.hasRuleEntityOption){
+				template += '<div><span class="floatL marT10 marR5">Rule Type: </span>';
+				template += '	<span>';
+				template += '		<select id="ruletype" name="ruletype" class="mar0 w168 floatR marT6">';
+				template += '		<option value="elevate" selected="selected">Elevate</option>';
+				template += '		<option value="exclude">Exclude</option>';
+				template += '		<option value="demote">Demote</option>';
+				template += '		<option value="facetSort">Facet Sort</option>';
+				template += '		<option value="queryCleaning">Query Cleaning</option>';
+				template += '		<option value="rankingRule">Ranking Rule</option>';
+				template += '		</select>';
+				template += '	</span></div>';
+				template += '<div class="clearB"></div>';
+			}
+			
 			template += '<div><span class="floatL marT10 marR5">Type: </span>';
 			template += '<span>';
 			template += '<select id="type" name="type" class="mar0 w168 floatR marT6">';
@@ -114,7 +129,8 @@
 										  filename: $.trim($content.find("input#filename").val()),
 										  recipient: $.trim($content.find("textarea#recipient").val()),
 										  page: $content.find('select#page option:selected').val(),
-										  type: $content.find('select#type option:selected').val()
+										  type: $content.find('select#type option:selected').val(),
+										  ruletype: $content.find('select#ruletype option:selected').val()
 										};
 								
 								if($.isBlank(e.data.filename) || !isAllowedName(e.data.filename)){
@@ -155,6 +171,7 @@
 			fileFormat: ['Excel'],
 			sendMail: false,
 			hasPageOption: false,
+			hasRuleEntityOption: false,
 			requestCallback: function(e){} 
 	};
 

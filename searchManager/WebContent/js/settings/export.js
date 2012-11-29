@@ -110,6 +110,32 @@
 			});
 		},
 		
+		downloadHandler: function(){
+			var self = this;
+			$("a#downloadIcon").download({
+				headerText:"Download " + self.moduleName,
+				hasRuleEntityOption: true,
+				requestCallback:function(e){
+					var params = new Array();
+					var url = document.location.pathname + "/xls";
+					var urlParams = "";
+					var count = 0;
+					params["filename"] = e.data.filename;
+					params["type"] = e.data.type;
+					params["clientTimezone"] = +new Date();
+					params["ruleType"] = e.data.ruletype;
+
+					for(var key in params){
+						if (count>0) urlParams +='&';
+						urlParams += (key + '=' + params[key]);
+						count++;
+					};
+
+					document.location.href = url + '?' + urlParams;
+				}
+			});
+		},
+		
 		exportHandler : function(){
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
@@ -298,6 +324,8 @@
 			
 			self.getRuleEntityList();
 			self.populateTabContent();
+			
+			self.downloadHandler();
 
 			RuleTransferServiceJS.getAutoExport({
 				callback: function(isAutoExport){

@@ -191,7 +191,7 @@
 		base.getDatabaseData = function($content, ruleId, sourceData){
 			var ruleType = base.options.ruleType;
 			var ruleName = base.options.ruleName;
-
+			
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
 				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(ruleId, 0, 0,{
@@ -230,7 +230,7 @@
 						else{
 							$ruleInfo.find("#ruleName").text(data.name);
 							$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
-
+	
 							for(var facetGroup in data.items){
 								var facetName = facetGroup;
 								var facetValue = data.items[facetGroup];
@@ -238,28 +238,28 @@
 								var $tr = $table.find("tr#itemPattern").clone();
 								$tr.prop({id: $.formatAsId(facetName)});
 								$tr.find("#itemName").text(facetName);
-
+	
 								if($.isArray(facetValue)){
 									for(var i=0; i < facetValue.length; i++){
 										highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
 									}
 								}
 								$tr.find("#itemHighlightedItem").html(highlightedItems);
-
+	
 								var sortTypeDisplay = "";
 								var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
-
+	
 								switch(sortType){
 								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
 								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
 								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
 								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
 								}
-
+	
 								$tr.find("#itemSortType").text(sortTypeDisplay);
 								$tr.show();
 								$table.append($tr);
-							};
+						};
 						}						
 					}
 				});
@@ -280,10 +280,10 @@
 						if(data == null){
 							$content.find("#ruleInfo").html("");
 							$content.find("#description").html("");
-
+							
 							$content.find("div.ruleFilter div#includeKeywordInSearchText").hide();
 							$content.find("div#ruleChange > #noChangeKeyword").show();
-
+							
 							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 							$tr.find("td#fieldValue").remove();
@@ -295,7 +295,7 @@
 								$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 								$tr.find("td#fieldValue").remove();
 								$tr.appendTo($table);
-
+	
 							}else{
 								for(var field in data.readableConditions){
 									$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
@@ -304,7 +304,7 @@
 									$tr.appendTo($table);
 								}	
 							}
-
+	
 							$table.find("tr:even").addClass("alt");
 							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
 							$content.find("#description").html(data["description"]);
@@ -322,14 +322,14 @@
 								$content.find("#redirectType").html("");
 							break;									
 							}
-
+	
 							if ($.isNotBlank(data["changeKeyword"])){
 								$content.find("div#ruleChange > div#hasChangeKeyword").show();
 								$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
 							}else{
 								$content.find("div#ruleChange > #noChangeKeyword").show();
 							}
-
+	
 							var includeKeywordText = "Include keyword in search: <b>NO</b>";
 							if($.isNotBlank(data["includeKeyword"])){
 								includeKeywordText = "Include keyword in search: ";
@@ -342,7 +342,7 @@
 							}
 							$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
 							$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
-
+							
 							searchTerms = data["searchTerms"];
 						}
 						base.populateKeywordInRule($content, searchTerms);
@@ -356,7 +356,7 @@
 				RelevancyServiceJS.getRule(ruleId, {
 					callback: function(data){
 						var relKeyword = null;
-
+						
 						var $table = $content.find("div.ruleField table#item");
 						$table.find("tr:not(#itemPattern)").remove();
 
@@ -371,10 +371,10 @@
 							$content.find("#startDate").html(data["formattedStartDate"]);
 							$content.find("#endDate").html(data["formattedEndDate"]);
 							$content.find("#description").html(data["description"]);
-
+							
 							relKeyword = base.toStringArray(data["relKeyword"]);
 						}
-
+						
 						if(data == null || data.parameters.length==0){
 							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html("No parameters specified for this rule").attr("colspan","2");
@@ -389,7 +389,7 @@
 								$tr.appendTo($table);
 							}
 						}
-
+						
 						$table.find("tr:even").addClass("alt");
 						base.populateKeywordInRule($content, relKeyword);
 					}
@@ -402,7 +402,7 @@
 			var products = (base.options.ruleXml) ? base.options.ruleXml["products"] : new Array();
 			var ruleType = base.options.ruleType;
 			var ruleId = base.options.ruleId;
-
+			
 			switch(ruleType.toLowerCase()){
 			case "elevate":
 				base.populateItemTable($content, "Elevate", products, ruleId, sourceData);
@@ -419,38 +419,38 @@
 				var xml = base.options.ruleXml;
 				$ruleInfo.find("#ruleName").text(xml.ruleName);
 				$ruleInfo.find("#ruleType").text(xml.ruleType.toLowerCase());
-
+				
 				if(xml == null){
 					//TODO
 				}
 				else{
-					for(var index in xml.item){
-						var facetGroup = xml.item[index];
+					for(var index in xml.groups){
+						var facetGroup = xml.groups[index];
 						var facetName = facetGroup["groupName"];
 						var highlightedItems = "";
 						var $tr = $table.find("tr#itemPattern").clone();
 						$tr.prop({id: $.formatAsId(facetName)});
 						$tr.find("#itemName").text(facetName);
-
+	
 						var facetGroupItems = facetGroup["groupItem"];
-
+						
 						if($.isArray(facetGroupItems)){
 							for(var i=0; i < facetGroupItems.length; i++){
 								highlightedItems += (i+1) + ' - ' + facetGroupItems[i] + '<br/>';
 							}
 						}
 						$tr.find("#itemHighlightedItem").html(highlightedItems);
-
+	
 						var sortTypeDisplay = "";
 						var sortType = facetGroup["sortType"] == null ? xml.sortType : facetGroup["sortType"];
-
+	
 						switch(sortType){
 						case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
 						case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
 						case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
 						case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
 						}
-
+	
 						$tr.find("#itemSortType").text(sortTypeDisplay);
 						$tr.show();
 						$table.append($tr);
@@ -1101,27 +1101,27 @@
 											});
 											break;
 										case "import":
-											setTimeout(function() {
-												var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
-												var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
-												var ruleName = importAsLabel.find("input#newName").val();
-
-												var importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").text();
-
-												if($.isBlank(ruleName)){
-													jAlert("Please add Import As rule name.", base.options.transferType);	
-												}
-												else{
-													RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
-														callback: function(data){									
-															base.api.hide();
-															base.postMsg(data, "imported");
-														},
-														postHook: function(){
-															base.options.postButtonClick(base);
-														}	
-													});
-												}
+										setTimeout(function() {
+											var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
+											var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
+											var ruleName = importAsLabel.find("input#newName").val();
+											
+											var importType = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").text();
+											
+											if($.isBlank(ruleName)){
+												jAlert("Please add Import As rule name.", base.options.transferType);	
+											}
+											else{
+												RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
+													callback: function(data){									
+														base.api.hide();
+														base.postMsg(data, "imported");
+													},
+													postHook: function(){
+														base.options.postButtonClick(base);
+													}	
+												});
+											}
 											}, 500);
 											break;
 										}
@@ -1133,7 +1133,7 @@
 											break;
 										case "import": 
 											var ruleName = base.options.ruleName;
-
+											
 											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(ruleName),{
 												callback: function(data){
 													base.api.hide();

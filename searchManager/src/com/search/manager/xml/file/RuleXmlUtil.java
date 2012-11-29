@@ -50,7 +50,7 @@ import com.search.manager.report.model.xml.ElevateItemXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeItemXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
-import com.search.manager.report.model.xml.FacetSortItemXml;
+import com.search.manager.report.model.xml.FacetSortGroupXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RankingRuleXml;
@@ -564,7 +564,7 @@ public class RuleXmlUtil{
 				return false;
 			}
 
-			if (CollectionUtils.isNotEmpty(fXml.getItem())) {
+			if (CollectionUtils.isNotEmpty(fXml.getGroups())) {
 				FacetGroup facetGroup = new FacetGroup();
 				facetGroup.setRuleId(ruleId);
 				facetGroup.setLastModifiedBy(xml.getLastModifiedBy());
@@ -573,7 +573,7 @@ public class RuleXmlUtil{
 				int processedItems = 0;
 				int totalItems = 0;
 
-				for (FacetSortItemXml facetSort: fXml.getItem()) {
+				for (FacetSortGroupXml facetSort: fXml.getGroups()) {
 					String groupId = DAOUtils.generateUniqueId();
 					facetGroup.setFacetGroupType(facetSort.getGroupType());
 					facetGroup.setName(facetSort.getGroupName());

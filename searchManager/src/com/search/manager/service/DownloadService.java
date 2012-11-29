@@ -201,35 +201,45 @@ public class DownloadService {
 			createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), model.getReportHeader().getDate()));
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
 		}
+		else{
+			//TODO display subHeader
+			/*// empty line
+			createRow(worksheet, ++rowIndex, 10f);
+			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));*/
+		}
 
 		// empty line
 		createRow(worksheet, ++rowIndex, 10f);
 		worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
 		
-		/* Column Headers */
-		HSSFCellStyle headerCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
-				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_25_PERCENT.index, CellStyle.FINE_DOTS);
-		HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
-		for (int i = 0; i < model.getColumnCount(); i++) {
-			createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
-		}
+		int recordCount = model.getNumberOfRecords();
 		
-		/* Data */
-		Font bodyFont = createFont(workbook, (short)10, false);
-		HSSFCellStyle bodyCellStyle = createCellStyle(workbook, bodyFont, null, null,
-				CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, null, null);
-		for (int i = 0; i < model.getNumberOfRecords(); i++) {
-			short lines = 1;
-			HSSFRow row = createRow(worksheet, ++rowIndex, 15f);
-			for (int j = 0; j < model.getColumnCount(); j++) {
-				HSSFCell cell = createCell(row, j, bodyCellStyle, model.getCell(i,j));
-				short numLines = getNumberOfLines(cell.getStringCellValue(), worksheet.getColumnWidth(j), bodyFont);
-				if (lines < numLines) {
-					lines = numLines;
-				}
+		if(recordCount > 0){
+			/* Column Headers */
+			HSSFCellStyle headerCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
+					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_25_PERCENT.index, CellStyle.FINE_DOTS);
+			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
+			for (int i = 0; i < model.getColumnCount(); i++) {
+				createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
 			}
-			if (lines > 1) {
-				row.setHeightInPoints(row.getHeightInPoints() * lines);			
+			
+			/* Data */
+			Font bodyFont = createFont(workbook, (short)10, false);
+			HSSFCellStyle bodyCellStyle = createCellStyle(workbook, bodyFont, null, null,
+					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, null, null);
+			for (int i = 0; i < model.getNumberOfRecords(); i++) {
+				short lines = 1;
+				HSSFRow row = createRow(worksheet, ++rowIndex, 15f);
+				for (int j = 0; j < model.getColumnCount(); j++) {
+					HSSFCell cell = createCell(row, j, bodyCellStyle, model.getCell(i,j));
+					short numLines = getNumberOfLines(cell.getStringCellValue(), worksheet.getColumnWidth(j), bodyFont);
+					if (lines < numLines) {
+						lines = numLines;
+					}
+				}
+				if (lines > 1) {
+					row.setHeightInPoints(row.getHeightInPoints() * lines);			
+				}
 			}
 		}
 		
@@ -268,6 +278,25 @@ public class DownloadService {
 			}
 		}
 		
+		download(response, workbook, fileName);
+	}
+	
+	public HSSFWorkbook addWorkSheet(HttpServletResponse response, HSSFWorkbook workbook, ReportModel<? extends ReportBean<?>> reportModel, 
+			String sheetName, boolean mainModel) throws ClassNotFoundException {
+		logger.debug("adding new worksheet in Excel report: " + sheetName);
+		// 1. Create new worksheet
+		HSSFSheet worksheet = workbook.createSheet(sheetName);
+		int rowIndex = 0;
+		
+		// 2. prepare worksheet
+		rowIndex = prepareXls(workbook, worksheet, rowIndex, reportModel, mainModel);
+		
+		//3. return updated workbook
+		return workbook;
+	}
+	
+	public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
+		logger.debug("Downloading Excel report");
 		response.setHeader("Content-Disposition", "inline; filename=" + fileName);
 		// Make sure to set the correct content type
 		response.setContentType("application/vnd.ms-excel");
@@ -279,7 +308,7 @@ public class DownloadService {
 			// Retrieve the output stream
 			outputStream = response.getOutputStream();
 			// Write to the output stream
-			worksheet.getWorkbook().write(outputStream);
+			workbook.write(outputStream);
 			// Flush the stream
 			outputStream.flush();
 
@@ -288,6 +317,5 @@ public class DownloadService {
 		} finally {
 			try { if (outputStream != null) outputStream.close(); } catch (IOException e) { } 
 		}
-		
 	}
 }

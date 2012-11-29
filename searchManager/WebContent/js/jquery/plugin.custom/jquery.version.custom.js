@@ -144,7 +144,7 @@
 		
 		base.setFacetItemCompare = function(li, rowlabel, item){
 			var $li = li;
-			var groups = item["item"];
+			var groups = item["groups"];
 			var $rowLabelUl = rowlabel;
 			var $group, $groupItems = null;
 			

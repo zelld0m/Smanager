@@ -5,6 +5,7 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.SortType;
+import com.search.manager.report.model.xml.FacetSortGroupXml;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -57,6 +58,17 @@ public class FacetGroup extends ModelBean {
 		this.sortType = sortType;
 		this.sequence = sequence;
 		this.storeId = storeId;
+	}
+	
+	public FacetGroup(FacetSortGroupXml xml, String ruleId, Integer sequence, String storeId){
+		super();
+		this.ruleId = ruleId;
+		this.name = xml.getGroupName();
+		this.facetGroupType = xml.getGroupType();
+		this.sortType = xml.getSortType();
+		this.sequence = sequence;
+		this.storeId = storeId;
+		//TODO add groupId
 	}
 
 	public FacetGroup(String id) {

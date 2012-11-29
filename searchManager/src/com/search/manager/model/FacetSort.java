@@ -13,7 +13,7 @@ import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
-import com.search.manager.report.model.xml.FacetSortItemXml;
+import com.search.manager.report.model.xml.FacetSortGroupXml;
 import com.search.manager.report.model.xml.FacetSortRuleXml;
 import com.search.manager.utility.DateAndTimeUtils;
 
@@ -44,8 +44,8 @@ public class FacetSort extends ModelBean{
 		items = new HashMap<String, List<String>>();
 		groupSortType = new HashMap<String, SortType>(); 
 		
-		if (CollectionUtils.isNotEmpty(xml.getItem())) {
-			for (FacetSortItemXml facetSort: xml.getItem()) {
+		if (CollectionUtils.isNotEmpty(xml.getGroups())) {
+			for (FacetSortGroupXml facetSort: xml.getGroups()) {
 				items.put(facetSort.getGroupName(), 
 						CollectionUtils.isEmpty(facetSort.getGroupItem())
 							? new ArrayList<String>() 

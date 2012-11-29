@@ -221,7 +221,7 @@
 				com.search.manager.report.model.xml.ExcludeItemXml,
 				com.search.manager.report.model.xml.DemoteItemXml,
 				com.search.manager.report.model.xml.FacetSortRuleXml,
-				com.search.manager.report.model.xml.FacetSortItemXml,
+				com.search.manager.report.model.xml.FacetSortGroupXml,
 				com.search.manager.report.model.xml.RankingRuleXml,
 				com.search.manager.report.model.xml.RedirectRuleXml,
 				com.search.manager.report.model.xml.RuleKeywordXml,
