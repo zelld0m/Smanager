@@ -187,6 +187,7 @@
 			},
 
 			addSortableOption : function(contentHolder){
+				var self = this;
 				contentHolder.find('ul#selectedFacetValueList').sortable("destroy").sortable({
 					//handle : '.handle',
 					cursor : 'move',
@@ -194,7 +195,8 @@
 					tolerance: 'intersect',
 					placeholder: 'placeHolder_small',
 					forceHelperSize: true,
-					forcePlaceholderSize: true
+					forcePlaceholderSize: true,
+					disabled: self.selectedRuleStatus["locked"] || !allowModify
 				});
 			},
 			
