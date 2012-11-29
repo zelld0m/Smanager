@@ -12,3 +12,4 @@ input#importAsSelect					{width: 173px !important;}
 ul.ui-widget-content					{width: 145px !important; margin-left:0 !important;}
 
 div#importAlert img						{position: relative; top: 2px;}
+.ui-widget li.ui-menu-item				{margin: 0 0 0 -25px;}
