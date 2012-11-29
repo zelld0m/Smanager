@@ -40,6 +40,7 @@ import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
@@ -204,14 +205,14 @@ public class RuleXmlUtil{
 		String mapKey = "";
 		String store = ruleXml.getStore();
 		String keyword = ruleXml.getRuleId();
-		
+
 
 		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 
 		if(CollectionUtils.isNotEmpty(ruleItemList)){
 			for (RuleItemXml ruleItem : ruleItemList) {
 				mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
-				
+
 				if(ruleXml instanceof ElevateRuleXml){
 					map.put(mapKey, new ElevateProduct(new ElevateResult(storeKeyword, (ElevateItemXml) ruleItem)));
 				}else if(ruleXml instanceof DemoteRuleXml){
@@ -219,7 +220,7 @@ public class RuleXmlUtil{
 				}else{
 					map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
 				}
-				
+
 			}
 		}
 
@@ -672,7 +673,7 @@ public class RuleXmlUtil{
 						processedItem += daoService.addRedirectKeyword(rule);							
 					}
 				}
-				
+
 				if (processedItem == (keywords==null? 0 : keywords.size())) {
 					processedItem = 0;
 					if (qRXml.getRuleCondition() == null) {
@@ -683,7 +684,7 @@ public class RuleXmlUtil{
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
-						
+
 						if(qRXml.getRuleCondition()!=null && CollectionUtils.isNotEmpty(qRXml.getRuleCondition().getCondition())){
 							for (String cond: qRXml.getRuleCondition().getCondition()) {
 								condition.setCondition(cond);
@@ -692,12 +693,12 @@ public class RuleXmlUtil{
 									processedItem++;
 								}
 							}
-							
+
 							if (processedItem !=  CollectionUtils.size(qRXml.getRuleCondition().getCondition())) {
 								return false;
 							}
 						}
-						
+
 					} 
 				}
 
@@ -765,7 +766,7 @@ public class RuleXmlUtil{
 				if (processedItem == parameters.size()) {
 					processedItem = 0;
 					List<RelevancyKeyword> keywords = restoreVersion.getRelKeyword();
-					
+
 					if (CollectionUtils.isNotEmpty(keywords)) {
 						for (RelevancyKeyword relKeyword : keywords) {
 							daoService.addKeyword(new StoreKeyword(store, relKeyword.getKeyword().getKeywordId()));
@@ -887,5 +888,26 @@ public class RuleXmlUtil{
 
 	public void setDaoService(DaoService daoService) {
 		RuleXmlUtil.daoService = daoService;
+	}
+
+	public static RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId){
+		RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleEntity), store, ruleId);
+		SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus);
+
+		try {
+
+			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+
+			if (approvedRset.getTotalSize() > 0) {
+				ruleStatus = approvedRset.getList().get(0);
+			}else {
+				logger.error("No rule status found for " + ruleEntity + " : " + ruleId);
+			}
+
+		}catch (DaoException e) {
+			logger.error("Failed to update rule status for " + ruleEntity + " : " + ruleId, e);
+		}
+
+		return ruleStatus;
 	}
 }
