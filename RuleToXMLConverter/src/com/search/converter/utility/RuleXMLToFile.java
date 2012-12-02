@@ -59,6 +59,9 @@ public class RuleXMLToFile implements Runnable {
 				writer = new FileWriter(filename);
 				
 				RuleVersionListXml ruleVersionListXml = new RuleVersionListXml(2);
+				ruleVersionListXml.setRuleId(ruleId);
+				ruleVersionListXml.setRuleName(ruleXml.getRuleName());
+				
 				ruleXml.setVersion(1);
 				ruleVersionListXml.getVersions().add(ruleXml);
 				

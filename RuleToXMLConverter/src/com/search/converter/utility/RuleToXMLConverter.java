@@ -124,8 +124,10 @@ public class RuleToXMLConverter {
 				return null;
 			}
 
-			ruleXml = new FacetSortRuleXml(facetSort);
-			ruleXml.setRuleId(ruleId); //TODO: Why is not set??
+			ruleXml = new FacetSortRuleXml(facetSort); // check constructor
+			ruleXml.setRuleId(ruleId); //TODO: Why is not set?? 
+			ruleXml.setRuleName(facetSort.getRuleName());
+			ruleXml.setStore(store);
 			break;
 			
 		case QUERY_CLEANING:
@@ -391,8 +393,8 @@ public class RuleToXMLConverter {
 	}
 	
 	public static RuleStatus getRuleStatus(RuleEntity ruleEntity, String store, String ruleId){
-		RuleStatus ruleStatus = new RuleStatus();
-		SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus);
+		RuleStatus ruleStatus = new RuleStatus(ruleEntity.getCode(), store, ruleId);
+		SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
 
 		try {
 
