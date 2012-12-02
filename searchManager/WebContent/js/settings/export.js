@@ -201,7 +201,7 @@
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
 							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportDate"].toUTCString(): "";
-							var showId = rule["ruleRefId"] !== rule["description"];
+							var showId = rule["ruleRefId"].toLowerCase() !== rule["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleStatusId"]);

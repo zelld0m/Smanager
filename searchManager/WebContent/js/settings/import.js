@@ -432,7 +432,7 @@
 									$tr.find("td#ruleOption > img.previewIcon").hide();
 								}
 
-								if(ruleId !== rule["ruleName"])	
+								if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
