@@ -168,28 +168,26 @@
 		el : $("#tabs-2"),
 		activator : $("#weekly-link"),
 		isValid : function() {
-			var fromDate = $("#fromWeek").datepicker("getDate");
-			var toDate = $("#toWeek").datepicker("getDate");
+			var fromDate = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
+			var toDate = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
 
 			if (fromDate >= toDate) {
 				jAlert("Invalid date range.");
 				return false;
 			} else {
 				this.fromDate = fromDate;
-				this.toDate = toDate;
-				this.toDate.setDate(this.toDate.getDate() + 6);
+				this.toDate = $.getLastDayOfWeek(toDate);
 				return true;
 			}
 		},
 		collation : 'weekly',
 		init: function() {
 			var self = this;
-			var now = new Date();
+			var now = $.getFirstDayOfWeek(new Date());
 			var before = new Date(now);
 			
 			before.setDate(before.getDate() - 70);
-			before.setDate(before.getDate() - before.getDay());
-			now.setDate(now.getDate() - now.getDay());
+			before = $.getFirstDayOfWeek(before);
 			
 			// initialize date pickers
 			$("#fromWeek").datepicker({
@@ -197,11 +195,10 @@
 				defaultDate : before,
 				dateFormat : 'M d, yy',
 				showWeek: true,
+				firstDay: 1,
 				onSelect: function(dateStr, obj) {
-					var date = $("#fromWeek").datepicker("getDate");
-					
-					// make sure date is a Sunday
-					date.setDate(date.getDate() - date.getDay());
+					var date = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
+
 					$("#fromWeek").datepicker("option", "defaultDate", date);
 					$("#fromWeek").datepicker("setDate", date);
 				}
@@ -212,19 +209,18 @@
 				defaultDate : now,
 				dateFormat : 'M d, yy',
 				showWeek: true,
+				firstDay: 1,
 				onSelect: function(dateStr, obj) {
-					var date = $("#toWeek").datepicker("getDate");
-					
-					// make sure date is a Sunday
-					date.setDate(date.getDate() - date.getDay());
+					var date = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
+
 					$("#toWeek").datepicker("option", "defaultDate", date);
 					$("#toWeek").datepicker("setDate", date);
 				}
 			}).datepicker("setDate", now);
 
-			self.fromDate = $("#fromWeek").datepicker("getDate");
-			self.toDate = $("#toWeek").datepicker("getDate");
-			self.toDate.setDate(self.toDate.getDate() + 6);
+			self.fromDate = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
+			self.toDate = $.getLastDayOfWeek($("#toWeek").datepicker("getDate"));
+
 			$("#updateWeeklyBtn").click(new Handler.UpdateHandler(this));
 		}
 	}, TAB_TEMPLATE);
@@ -407,6 +403,12 @@
 					}
 				});
 	};
+
+	var DateTickFormatter = $.jqplot.DateTickFormatter;
+	var WeekFormatter = function(format, value) {
+		var weekno = $.getWeekNumber(new Date(value));
+		return weekno[0] + " w" + (weekno[1] < 10 ? "0" + weekno[1] : weekno[1]) + "   ";
+    };
 	
 	Utils.drawChart = function(tab) {
 		if (!tab.visible) {
@@ -417,6 +419,7 @@
 		var min = tab.fromDate;
 		var max = tab.toDate;
 		var xaxisFormatString = "%Y-%m-%d   ";
+		var formatter = DateTickFormatter;
 
 		if (tab.collation == 'monthly') {
 			tickInterval = '1 month';
@@ -425,8 +428,11 @@
 			xaxisFormatString = "%b %Y   ";
 		} else if (tab.collation == 'weekly') {
 			tickInterval = '7 days';
+			xaxisFormatString = "%Y wk%V   ";
+			formatter = WeekFormatter;
 		}
 
+		$.jqplot.DateTickFormatter = formatter;
 		var options = {
 			gridPadding : {
 				right : 35

@@ -380,7 +380,13 @@ public final class DateAndTimeUtils {
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(date);
-        int dow = Calendar.SUNDAY - cal.get(Calendar.DAY_OF_WEEK);
+        int dow = cal.get(Calendar.DAY_OF_WEEK);
+
+        if (dow == Calendar.SUNDAY) {
+            dow = Calendar.SATURDAY + 1;
+        }
+
+        dow = Calendar.MONDAY - dow;
 
         return DateUtils.addDays(date, dow);
 
