@@ -49,6 +49,7 @@ public class RuleToXMLConverter {
 
 	private static final Logger LOGGER = Logger.getLogger(RuleToXMLConverter.class);
 	private static DaoService daoService; 
+	private static DaoService daoServiceRuleStatus; 
 	private static Properties properties = new Properties(System.getProperties());
 	private static ExecutorService produceExec = Executors.newCachedThreadPool();
 	private static ExecutorService consumeExec = Executors.newCachedThreadPool();
@@ -60,7 +61,7 @@ public class RuleToXMLConverter {
 		StoreKeyword sk = new StoreKeyword(store, ruleId);
 
 		switch(ruleEntity){
-		
+
 		case ELEVATE:
 			SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(new ElevateResult(sk));
 			List<ElevateItemXml> elevateItemXmlList = new ArrayList<ElevateItemXml>();
@@ -70,6 +71,8 @@ public class RuleToXMLConverter {
 					for (ElevateResult elevateResult : elevateItemList) {
 						elevateItemXmlList.add(new ElevateItemXml(elevateResult));
 					}
+				}else{
+					return null;
 				}
 			} catch (DaoException e) {
 				LOGGER.error("Failed convert elevate rule to rule xml", e);
@@ -78,7 +81,7 @@ public class RuleToXMLConverter {
 
 			ruleXml = new ElevateRuleXml(store, ruleId, elevateItemXmlList);
 			break;
-			
+
 		case EXCLUDE:
 			SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(new ExcludeResult(sk));
 			List<ExcludeItemXml> excludeItemXmlList = new ArrayList<ExcludeItemXml>();
@@ -88,6 +91,8 @@ public class RuleToXMLConverter {
 					for (ExcludeResult result : excludeItemList) {
 						excludeItemXmlList.add(new ExcludeItemXml(result));
 					}
+				}else{
+					return null;
 				}
 			} catch (DaoException e) {
 				LOGGER.error("Failed convert exclude rule to rule xml", e);
@@ -96,16 +101,18 @@ public class RuleToXMLConverter {
 
 			ruleXml = new ExcludeRuleXml(store, ruleId, excludeItemXmlList);
 			break;
-			
+
 		case DEMOTE: 
 			SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(new DemoteResult(sk));
 			List<DemoteItemXml> demoteItemXmlList = new ArrayList<DemoteItemXml>();
 			try {
 				List<DemoteResult> demoteItemList = daoService.getDemoteResultList(demoteCriteria).getList();
 				if(CollectionUtils.isNotEmpty(demoteItemList)){
-				for (DemoteResult result : demoteItemList) {
-					demoteItemXmlList.add(new DemoteItemXml(result));
-				}
+					for (DemoteResult result : demoteItemList) {
+						demoteItemXmlList.add(new DemoteItemXml(result));
+					}
+				}else{
+					return null;
 				}
 			} catch (DaoException e) {
 				LOGGER.error("Failed convert demote rule to rule xml", e);
@@ -113,7 +120,7 @@ public class RuleToXMLConverter {
 			}	
 			ruleXml = new DemoteRuleXml(store, ruleId, demoteItemXmlList);
 			break;
-			
+
 		case FACET_SORT:
 			FacetSort facetSort = new FacetSort();
 
@@ -129,7 +136,7 @@ public class RuleToXMLConverter {
 			ruleXml.setRuleName(facetSort.getRuleName());
 			ruleXml.setStore(store);
 			break;
-			
+
 		case QUERY_CLEANING:
 			RedirectRule redirectRule = new RedirectRule();
 
@@ -143,7 +150,7 @@ public class RuleToXMLConverter {
 
 			ruleXml = new RedirectRuleXml(store, redirectRule);
 			break;
-			
+
 		case RANKING_RULE:
 			Relevancy relevancy = new Relevancy();
 
@@ -160,7 +167,7 @@ public class RuleToXMLConverter {
 			ruleXml = new RankingRuleXml(store, relevancy);
 			break;
 		}
-		
+
 		return ruleXml;
 	}
 
@@ -170,8 +177,13 @@ public class RuleToXMLConverter {
 		try {
 			PropertyConfigurator.configure("config/log4j.properties");
 			properties.load(new FileInputStream("config/converter.properties"));
-			context = new FileSystemXmlApplicationContext("/WebContent/WEB-INF/spring/db-context.xml");
+			context = new FileSystemXmlApplicationContext(
+					"/WebContent/WEB-INF/spring/db-rule-context.xml",
+					"/WebContent/WEB-INF/spring/db-rulestatus-context.xml");
+			
 			daoService = (DaoService) context.getBean("daoService");
+			daoServiceRuleStatus = (DaoService) context.getBean("daoServiceRuleStatus");
+			
 			store = properties.getProperty("store");
 		} catch (FileNotFoundException e) {
 			LOGGER.error("File not found", e);
@@ -210,7 +222,7 @@ public class RuleToXMLConverter {
 			relevancy.setRelevancyName("");
 			SearchCriteria<Relevancy> criteria = new SearchCriteria<Relevancy>(relevancy);
 			final List<Relevancy> rankingRuleList = daoService.searchRelevancy(criteria, MatchType.LIKE_NAME).getList();
-			
+
 			int tasks = 0;
 
 			//Transform to RuleXml
@@ -226,7 +238,7 @@ public class RuleToXMLConverter {
 								LOGGER.info(String.format("Ranking Rule to RuleXML %d of %d : %s (%s)", i+1, total, rankingRuleList.get(i).getRuleName(), rankingRuleList.get(i).getRuleId()));
 								ruleXmlList.add(rxml);
 							}else{
-								LOGGER.info(String.format("FAILED Ranking Rule to RuleXML %d of %d : %s (%s)", i+1, total, rankingRuleList.get(i).getRuleName(), rankingRuleList.get(i).getRuleId()));
+								LOGGER.info(String.format("No Ranking Rule to RuleXML %d of %d : %s (%s)", i+1, total, rankingRuleList.get(i).getRuleName(), rankingRuleList.get(i).getRuleId()));
 							}
 						}
 						return ruleXmlList;
@@ -236,7 +248,7 @@ public class RuleToXMLConverter {
 			}else{
 				LOGGER.info(String.format("No Ranking Rule retrieved"));
 			}	
-			
+
 			if(CollectionUtils.isNotEmpty(facetSortList)){
 				futureFacetSortRule = completionService.submit(new Callable<List<RuleXml>>() {
 					@Override
@@ -249,7 +261,7 @@ public class RuleToXMLConverter {
 								LOGGER.info(String.format("Facet Sort to RuleXML %d of %d : %s (%s)", i+1, total, facetSortList.get(i).getRuleName(), facetSortList.get(i).getRuleId()));
 								ruleXmlList.add(rxml);
 							}else{
-								LOGGER.info(String.format("FAILED Facet Sort to RuleXML %d of %d : %s (%s)", i+1, total, facetSortList.get(i).getRuleName(), facetSortList.get(i).getRuleId()));
+								LOGGER.info(String.format("No Facet Sort to RuleXML %d of %d : %s (%s)", i+1, total, facetSortList.get(i).getRuleName(), facetSortList.get(i).getRuleId()));
 							}
 						}
 						return ruleXmlList;
@@ -272,7 +284,7 @@ public class RuleToXMLConverter {
 								LOGGER.info(String.format("Query Cleaning to RuleXML %d of %d : %s (%s)", i+1, total, queryCleaningList.get(i).getRuleName(), queryCleaningList.get(i).getRuleId()));
 								ruleXmlList.add(rxml);
 							}else{
-								LOGGER.info(String.format("FAILED Query Cleaning to RuleXML %d of %d : %s (%s)", i+1, total, queryCleaningList.get(i).getRuleName(), queryCleaningList.get(i).getRuleId()));
+								LOGGER.info(String.format("No Query Cleaning to RuleXML %d of %d : %s (%s)", i+1, total, queryCleaningList.get(i).getRuleName(), queryCleaningList.get(i).getRuleId()));
 							}
 						}
 						return ruleXmlList;
@@ -291,13 +303,15 @@ public class RuleToXMLConverter {
 						try {
 							int total = keywordList.size();
 
-							for(int i=0; i< total; i++){
+							for(int i=0; i< total; i++)
+							{
+
 								RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.ELEVATE, keywordList.get(i).getKeywordTerm());
 								if(rxml!=null){
 									LOGGER.info(String.format("Elevate to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
 									ruleXmlList.add(rxml);
 								}else{
-									LOGGER.info(String.format("FAILED Elevate to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+									LOGGER.info(String.format("No Elevate to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
 								}
 							}
 						} catch (Exception e) {
@@ -322,7 +336,7 @@ public class RuleToXMLConverter {
 								LOGGER. info(String.format("Exclude to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
 								ruleXmlList.add(rxml);	
 							}else{
-								LOGGER. info(String.format("FAILED Exclude to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));								
+								LOGGER. info(String.format("No Exclude to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));								
 							}
 						}
 						return ruleXmlList;
@@ -341,7 +355,7 @@ public class RuleToXMLConverter {
 								LOGGER.info(String.format("Demote to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
 								ruleXmlList.add(rxml);
 							}else{
-								LOGGER.info(String.format("FAILED Demote to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+								LOGGER.info(String.format("No Demote to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
 							}
 						}
 						return ruleXmlList;
@@ -377,7 +391,8 @@ public class RuleToXMLConverter {
 		} catch (Throwable t) {
 			LOGGER.error("Throwable", t);
 		}
-		
+
+		LOGGER.info(String.format("End of processing"));
 		System.exit(0);
 	}
 
@@ -391,14 +406,14 @@ public class RuleToXMLConverter {
 			LOGGER.info(String.format("No record of %s to convert", ruleEntity.name()));
 		}
 	}
-	
+
 	public static RuleStatus getRuleStatus(RuleEntity ruleEntity, String store, String ruleId){
 		RuleStatus ruleStatus = new RuleStatus(ruleEntity.getCode(), store, ruleId);
 		SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
 
 		try {
 
-			RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+			RecordSet<RuleStatus> approvedRset = daoServiceRuleStatus.getRuleStatus(searchCriteria);
 
 			if (approvedRset.getTotalSize() > 0) {
 				ruleStatus = approvedRset.getList().get(0);
