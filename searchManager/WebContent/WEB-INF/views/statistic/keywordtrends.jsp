@@ -1,3 +1,4 @@
+<%@ page import="java.util.Calendar" %>
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 <c:set var="topmenu" value="statistic"/>
@@ -86,14 +87,31 @@
 			<div id="daily-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-2" class="filter padT5 fsize12 marT1">
-		    <p>Weekly tab</p>
-		    <div class="clearB"></div>
+			<div class="floatL w180 padTB5 padR5 marL20">
+			    <span class="fbold">From:</span>
+			    <input type="text" id="fromWeek" class="dateLabel" readonly="readonly"/>
+			</div>
+			<div class="floatL w180 padTB5 padR5">
+			    <span class="fbold">To:</span>
+			    <input type="text" id="toWeek" class="dateLabel" readonly="readonly"/>
+			</div>		
+			<div class="floatL marT4">
+			    <a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateWeeklyBtn">
+			        <div class="buttons fontBold">Update Chart</div>
+			    </a>
+			</div>
+			<div class="clearB"></div>
+			<hr />
+			<div id="weekly-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-3" class="filter padT5 fsize12 marT1">
+		<% int year = Calendar.getInstance().get(Calendar.YEAR); %>
 			<div class="floatL padTB5 padR5 marL20">
 			    <span class="fbold">From:</span>
 			    <select id="fromYear">
-			        <option>2012</option>
+			        <% for(int i=year; i >= 2012; i--) {%>
+			        <option value='<%=i %>'><%=i %></option>
+			        <% } %>
 			    </select>
 			    <select id="fromMonth">
 			        <option value="01">January</option>
@@ -113,7 +131,9 @@
 			<div class="floatL padTB5 padR5 marL20">
 			    <span class="fbold">To:</span>
 			    <select id="toYear">
-			        <option>2012</option>
+			        <% for(int i=year; i >= 2012; i--) {%>
+			        <option value='<%=i %>'><%=i %></option>
+			        <% } %>
 			    </select>
 			    <select id="toMonth">
 			        <option value="01">January</option>

@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import com.search.ws.ConfigManager;
@@ -374,4 +375,14 @@ public final class DateAndTimeUtils {
 	public static Date getFirstDayOfMonth(Date date) {
 		return parseDateYYYYMMDD(formatYYYYMMDD(date).substring(0, 6) + "01");
 	}
+
+    public static Date getFirstDayOfWeek(Date date) {
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(date);
+        int dow = Calendar.SUNDAY - cal.get(Calendar.DAY_OF_WEEK);
+
+        return DateUtils.addDays(date, dow);
+
+    }
 }

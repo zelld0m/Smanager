@@ -135,22 +135,28 @@
 		collation : 'daily',
 		init: function() {
 			var self = this;
-			// initialize date pickers
-			$("#fromDate").datepicker({
-				constrainInput : true,
-				defaultDate : -9,
-				dateFormat : 'M d, yy'
-			}).datepicker("setDate", "-9");
+			KeywordTrendsServiceJS.getMostRecentStatsDate({callback: function(date) {
+				var from = new Date(date);
+				var to = new Date(date);
 
-			$("#toDate").datepicker({
-				constrainInput : true,
-				defaultDate : 0,
-				dateFormat : 'M d, yy'
-			}).datepicker("setDate", "0");
+				from.setDate(from.getDate() - 9);
 
-			this.fromDate = $("#fromDate").datepicker("getDate");
-			this.toDate = $("#toDate").datepicker("getDate");
+				// initialize date pickers
+				$("#fromDate").datepicker({
+					constrainInput : true,
+					defaultDate : from,
+					dateFormat : 'M d, yy'
+				}).datepicker("setDate", from);
 
+				$("#toDate").datepicker({
+					constrainInput : true,
+					defaultDate : to,
+					dateFormat : 'M d, yy'
+				}).datepicker("setDate", to);
+
+				self.fromDate = $("#fromDate").datepicker("getDate");
+				self.toDate = $("#toDate").datepicker("getDate");
+			}});
 			$("#updateDateBtn").click(new Handler.UpdateHandler(this));
 		}
 	}, TAB_TEMPLATE);
@@ -158,14 +164,70 @@
 	/*
 	 * Weekly tab.
 	 */
-//	Tabs.weekly = $.extend(true, {
-//		el : $("#tabs-2"),
-//		activator : $("#weekly-link"),
-//		isValid : function() {
-//			return true;
-//		},
-//		collation : 'weekly'
-//	}, TAB_TEMPLATE);
+	Tabs.weekly = $.extend(true, {
+		el : $("#tabs-2"),
+		activator : $("#weekly-link"),
+		isValid : function() {
+			var fromDate = $("#fromWeek").datepicker("getDate");
+			var toDate = $("#toWeek").datepicker("getDate");
+
+			if (fromDate >= toDate) {
+				jAlert("Invalid date range.");
+				return false;
+			} else {
+				this.fromDate = fromDate;
+				this.toDate = toDate;
+				this.toDate.setDate(this.toDate.getDate() + 6);
+				return true;
+			}
+		},
+		collation : 'weekly',
+		init: function() {
+			var self = this;
+			var now = new Date();
+			var before = new Date(now);
+			
+			before.setDate(before.getDate() - 70);
+			before.setDate(before.getDate() - before.getDay());
+			now.setDate(now.getDate() - now.getDay());
+			
+			// initialize date pickers
+			$("#fromWeek").datepicker({
+				constrainInput : true,
+				defaultDate : before,
+				dateFormat : 'M d, yy',
+				showWeek: true,
+				onSelect: function(dateStr, obj) {
+					var date = $("#fromWeek").datepicker("getDate");
+					
+					// make sure date is a Sunday
+					date.setDate(date.getDate() - date.getDay());
+					$("#fromWeek").datepicker("option", "defaultDate", date);
+					$("#fromWeek").datepicker("setDate", date);
+				}
+			}).datepicker("setDate", before);
+
+			$("#toWeek").datepicker({
+				constrainInput : true,
+				defaultDate : now,
+				dateFormat : 'M d, yy',
+				showWeek: true,
+				onSelect: function(dateStr, obj) {
+					var date = $("#toWeek").datepicker("getDate");
+					
+					// make sure date is a Sunday
+					date.setDate(date.getDate() - date.getDay());
+					$("#toWeek").datepicker("option", "defaultDate", date);
+					$("#toWeek").datepicker("setDate", date);
+				}
+			}).datepicker("setDate", now);
+
+			self.fromDate = $("#fromWeek").datepicker("getDate");
+			self.toDate = $("#toWeek").datepicker("getDate");
+			self.toDate.setDate(self.toDate.getDate() + 6);
+			$("#updateWeeklyBtn").click(new Handler.UpdateHandler(this));
+		}
+	}, TAB_TEMPLATE);
 
 	/*
 	 * Monthly tab.
@@ -361,6 +423,8 @@
 			max = new Date(tab.toDate);
 			max.setDate(1);
 			xaxisFormatString = "%b %Y   ";
+		} else if (tab.collation == 'weekly') {
+			tickInterval = '7 days';
 		}
 
 		var options = {
