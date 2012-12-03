@@ -1597,7 +1597,7 @@
 					if($.isNotBlank(inTemplateName.trim())){
 						condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
 
-						$divDynamicAttrItems.find("ul").each(function(){ 
+						$divDynamicAttrItems.find("div").each(function(){ 
 							var attributeItem = this.title;
 							var attributeValues = new Array();
 
