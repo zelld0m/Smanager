@@ -205,14 +205,14 @@ public class RuleXmlUtil{
 		String mapKey = "";
 		String store = ruleXml.getStore();
 		String keyword = ruleXml.getRuleId();
-
+		
 
 		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 
 		if(CollectionUtils.isNotEmpty(ruleItemList)){
 			for (RuleItemXml ruleItem : ruleItemList) {
 				mapKey = ruleItem.getMemberType() == MemberTypeEntity.PART_NUMBER ? ruleItem.getEdp() : ruleItem.getMemberId();
-
+				
 				if(ruleXml instanceof ElevateRuleXml){
 					map.put(mapKey, new ElevateProduct(new ElevateResult(storeKeyword, (ElevateItemXml) ruleItem)));
 				}else if(ruleXml instanceof DemoteRuleXml){
@@ -220,7 +220,7 @@ public class RuleXmlUtil{
 				}else{
 					map.put(mapKey, new Product(new SearchResult(storeKeyword, ruleItem)));
 				}
-
+				
 			}
 		}
 
@@ -379,28 +379,28 @@ public class RuleXmlUtil{
 			int processedItem = 0;
 			List<ElevateItemXml> eItemXmlList = eXml.getItem();
 			ElevateResult elevateResult = null;
-
-			for (ElevateItemXml eItemXml : eItemXmlList){
-				elevateResult = new ElevateResult(storeKeyword, eItemXml);
-				processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
-			}
-
-			if (processedItem != CollectionUtils.size(eItemXmlList)){
-				daoService.clearElevateResult(storeKeyword);
-				RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
-
-				if(backupXml!=null && restoreElevate(path, backupXml, false)){
-					logger.info("Rollback elevate succeded");
-					return true;
-				}else{
-					logger.error("Failed to rollback elevate");
-					return false;
+			
+			if(CollectionUtils.isNotEmpty(eItemXmlList)){
+				for (ElevateItemXml eItemXml : eItemXmlList){
+					elevateResult = new ElevateResult(storeKeyword, eItemXml);
+					processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
 				}
-			}else{
-				return true;
+	
+				if (processedItem != CollectionUtils.size(eItemXmlList)){
+					daoService.clearElevateResult(storeKeyword);
+					RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
+	
+					if(backupXml!=null && restoreElevate(path, backupXml, false)){
+						logger.info("Rollback elevate succeded");
+						return true;
+					}else{
+						logger.error("Failed to rollback elevate");
+						return false;
+					}
+				}
 			}
-
-		}catch (Exception e) {
+			return true;
+		} catch (Exception e) {
 			logger.error("Failed to restore elevate", e);
 			return false;
 		} 
@@ -440,27 +440,27 @@ public class RuleXmlUtil{
 			List<ExcludeItemXml> eItemXmlList = eXml.getItem();
 			ExcludeResult excludeResult = null;
 
-			for (ExcludeItemXml eItemXml : eItemXmlList){
-				excludeResult = new ExcludeResult(storeKeyword,eItemXml);
-				processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
-			}
-
-			if (processedItem != CollectionUtils.size(eItemXmlList)){
-
-				daoService.clearExcludeResult(storeKeyword);
-				RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
-
-				if(backupXml!=null && restoreExclude(path, backupXml, false)){
-					logger.info("Rollback of exclude rule succeded");
-					return true;
-				}else{
-					logger.error("Failed to rollback exclude rule");
-					return false;
+			if(CollectionUtils.isNotEmpty(eItemXmlList)){
+				for (ExcludeItemXml eItemXml : eItemXmlList){
+					excludeResult = new ExcludeResult(storeKeyword,eItemXml);
+					processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
 				}
-			}else{
-				return true;
+	
+				if (processedItem != CollectionUtils.size(eItemXmlList)){
+	
+					daoService.clearExcludeResult(storeKeyword);
+					RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
+	
+					if(backupXml!=null && restoreExclude(path, backupXml, false)){
+						logger.info("Rollback of exclude rule succeded");
+						return true;
+					}else{
+						logger.error("Failed to rollback exclude rule");
+						return false;
+					}
+				}
 			}
-
+			return true;
 		}catch (Exception e) {
 			logger.error("Failed to restore exclude", e);
 			return false;
@@ -500,27 +500,27 @@ public class RuleXmlUtil{
 			List<DemoteItemXml> dItemXmlList = dXml.getItem();
 			DemoteResult demoteResult = null;
 
-			for (DemoteItemXml dItemXml : dItemXmlList){
-				demoteResult = new DemoteResult(storeKeyword, dItemXml);
-				processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
-			}
-
-			if (processedItem != CollectionUtils.size(dItemXmlList)){
-
-				daoService.clearDemoteResult(storeKeyword);
-				RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
-
-				if(backupXml!=null && restoreDemote(path, backupXml, false)){
-					logger.info("Rollback demote succeded");
-					return true;
-				}else{
-					logger.error("Failed to rollback demote");
-					return false;
+			if(CollectionUtils.isNotEmpty(preImportlist)){
+				for (DemoteItemXml dItemXml : dItemXmlList){
+					demoteResult = new DemoteResult(storeKeyword, dItemXml);
+					processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
 				}
-			}else{
-				return true;
-			}
 
+				if (processedItem != CollectionUtils.size(dItemXmlList)){
+
+					daoService.clearDemoteResult(storeKeyword);
+					RuleXml backupXml = xmlFileToRuleXml(store, path, ruleEntity, ruleId);
+
+					if(backupXml!=null && restoreDemote(path, backupXml, false)){
+						logger.info("Rollback demote succeded");
+						return true;
+					}else{
+						logger.error("Failed to rollback demote");
+						return false;
+					}
+				}
+			}
+			return true;
 		}catch (Exception e) {
 			logger.error("Falied to restore exclude", e);
 			return false;
@@ -673,7 +673,7 @@ public class RuleXmlUtil{
 						processedItem += daoService.addRedirectKeyword(rule);							
 					}
 				}
-
+				
 				if (processedItem == (keywords==null? 0 : keywords.size())) {
 					processedItem = 0;
 					if (qRXml.getRuleCondition() == null) {
@@ -684,7 +684,7 @@ public class RuleXmlUtil{
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
-
+						
 						if(qRXml.getRuleCondition()!=null && CollectionUtils.isNotEmpty(qRXml.getRuleCondition().getCondition())){
 							for (String cond: qRXml.getRuleCondition().getCondition()) {
 								condition.setCondition(cond);
@@ -693,12 +693,12 @@ public class RuleXmlUtil{
 									processedItem++;
 								}
 							}
-
+							
 							if (processedItem !=  CollectionUtils.size(qRXml.getRuleCondition().getCondition())) {
 								return false;
 							}
 						}
-
+						
 					} 
 				}
 
@@ -766,7 +766,7 @@ public class RuleXmlUtil{
 				if (processedItem == parameters.size()) {
 					processedItem = 0;
 					List<RelevancyKeyword> keywords = restoreVersion.getRelKeyword();
-
+					
 					if (CollectionUtils.isNotEmpty(keywords)) {
 						for (RelevancyKeyword relKeyword : keywords) {
 							daoService.addKeyword(new StoreKeyword(store, relKeyword.getKeyword().getKeywordId()));
@@ -889,7 +889,7 @@ public class RuleXmlUtil{
 	public void setDaoService(DaoService daoService) {
 		RuleXmlUtil.daoService = daoService;
 	}
-
+	
 	public static RuleStatus getRuleStatus(String ruleEntity, String store, String ruleId){
 		RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleEntity), store, ruleId);
 		SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus);

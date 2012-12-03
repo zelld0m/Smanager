@@ -49,6 +49,7 @@ public class RedirectService extends RuleService{
 	}
 
 	private String addRuleAndGetId(String ruleName) {
+		String ruleId = null;
 		try {
 			String store = UtilityService.getStoreName();
 			String userName = UtilityService.getUsername();
@@ -58,7 +59,7 @@ public class RedirectService extends RuleService{
 			rule.setStoreId(store);
 			rule.setCreatedBy(userName);
 			if (daoService.addRedirectRule(rule) > 0) {
-				return rule.getRuleId();
+				ruleId = rule.getRuleId();
 			}
 			try {
 				daoService.addRuleStatus(new RuleStatus(RuleEntity.QUERY_CLEANING, store, rule.getRuleId(), ruleName, 
@@ -69,7 +70,7 @@ public class RedirectService extends RuleService{
 		} catch (DaoException e) {
 			logger.error("Failed during addRule()",e);
 		}
-		return null;
+		return ruleId;
 	}
 
 	@RemoteMethod
