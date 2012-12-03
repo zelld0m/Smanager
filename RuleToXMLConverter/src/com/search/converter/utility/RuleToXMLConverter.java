@@ -25,6 +25,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.Relevancy;
@@ -206,7 +207,9 @@ public class RuleToXMLConverter {
 		Future<List<RuleXml>> futureRankingRule = null;
 
 		try {
-			final List<StoreKeyword> keywordList = daoService.getAllKeywords(store).getList();
+			final List<Keyword> elevateKeywordList = daoService.getAllKeywords(store, RuleEntity.ELEVATE);
+			final List<Keyword> excludeKeywordList = daoService.getAllKeywords(store, RuleEntity.EXCLUDE);
+			final List<Keyword> demoteKeywordList = daoService.getAllKeywords(store, RuleEntity.DEMOTE);
 
 			SearchCriteria<FacetSort> facetSortCriteria = new SearchCriteria<FacetSort>(new FacetSort("", "", store));
 			final List<FacetSort> facetSortList = daoService.searchFacetSort(facetSortCriteria, MatchType.LIKE_NAME).getList();
@@ -295,23 +298,23 @@ public class RuleToXMLConverter {
 				LOGGER.info(String.format("No Query Cleaning rule retrieved"));
 			}		
 
-			if(CollectionUtils.isNotEmpty(keywordList)){
+			if(CollectionUtils.isNotEmpty(elevateKeywordList)){
 				futureElevateRule = completionService.submit(new Callable<List<RuleXml>>() {
 					@Override
 					public List<RuleXml> call() throws Exception {
 						List<RuleXml> ruleXmlList = new ArrayList<RuleXml>();
 						try {
-							int total = keywordList.size();
+							int total = elevateKeywordList.size();
 
 							for(int i=0; i< total; i++)
 							{
 
-								RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.ELEVATE, keywordList.get(i).getKeywordTerm());
+								RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.ELEVATE, elevateKeywordList.get(i).getKeyword());
 								if(rxml!=null){
-									LOGGER.info(String.format("Elevate to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+									LOGGER.info(String.format("Elevate to RuleXML %d of %d : %s", i+1, total, elevateKeywordList.get(i).getKeyword()));
 									ruleXmlList.add(rxml);
 								}else{
-									LOGGER.info(String.format("No Elevate to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+									LOGGER.info(String.format("No Elevate to RuleXML %d of %d : %s", i+1, total, elevateKeywordList.get(i).getKeyword()));
 								}
 							}
 						} catch (Exception e) {
@@ -329,14 +332,14 @@ public class RuleToXMLConverter {
 					@Override
 					public List<RuleXml> call() throws Exception {
 						List<RuleXml> ruleXmlList = new ArrayList<RuleXml>();
-						int total = keywordList.size();
+						int total = excludeKeywordList.size();
 						for(int i=0; i< total; i++){
-							RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.EXCLUDE, keywordList.get(i).getKeywordTerm());
+							RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.EXCLUDE, excludeKeywordList.get(i).getKeyword());
 							if(rxml!=null){
-								LOGGER. info(String.format("Exclude to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+								LOGGER. info(String.format("Exclude to RuleXML %d of %d : %s", i+1, total, excludeKeywordList.get(i).getKeyword()));
 								ruleXmlList.add(rxml);	
 							}else{
-								LOGGER. info(String.format("No Exclude to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));								
+								LOGGER. info(String.format("No Exclude to RuleXML %d of %d : %s", i+1, total, excludeKeywordList.get(i).getKeyword()));								
 							}
 						}
 						return ruleXmlList;
@@ -348,14 +351,14 @@ public class RuleToXMLConverter {
 					@Override
 					public List<RuleXml> call() throws Exception {
 						List<RuleXml> ruleXmlList = new ArrayList<RuleXml>();
-						int total = keywordList.size();
+						int total = demoteKeywordList.size();
 						for(int i=0; i< total; i++){
-							RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.DEMOTE, keywordList.get(i).getKeywordTerm());
+							RuleXml rxml = RuleToXMLConverter.ruleToXml(store, RuleEntity.DEMOTE, demoteKeywordList.get(i).getKeyword());
 							if(rxml!=null){
-								LOGGER.info(String.format("Demote to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+								LOGGER.info(String.format("Demote to RuleXML %d of %d : %s", i+1, total, demoteKeywordList.get(i).getKeyword()));
 								ruleXmlList.add(rxml);
 							}else{
-								LOGGER.info(String.format("No Demote to RuleXML %d of %d : %s", i+1, total, keywordList.get(i).getKeywordTerm()));
+								LOGGER.info(String.format("No Demote to RuleXML %d of %d : %s", i+1, total, demoteKeywordList.get(i).getKeyword()));
 							}
 						}
 						return ruleXmlList;
