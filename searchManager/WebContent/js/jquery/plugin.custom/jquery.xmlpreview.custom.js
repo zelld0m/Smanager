@@ -88,6 +88,15 @@
 		base.populateImportAsList = function(data, contentHolder, sourceData){
 			contentHolder.find("#importAs").importas({
 				rule: base.options.ruleXml,
+				targetRuleStatusCallback: function(r, rs){
+					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+					
+					if (locked){
+						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
+					}else{
+						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+					}
+				},
 				selectedOptionChanged: function(ruleId){
 					base.getDatabaseData(contentHolder, ruleId, sourceData);
 				}
@@ -960,7 +969,7 @@
 				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
 				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
 				template += '	<div class="clearB"></div>';
-				template += '	<div align="right" class="padR15 marT10">';
+				template += '	<div id="btnHolder" align="right" class="padR15 marT10" style="display:none">';
 				template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 				template += '			<div class="buttons fontBold">Approve</div>';
 				template += '		</a>';
@@ -1076,7 +1085,7 @@
 									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.ruleId, base.options.rightPanelSourceData);
 								}
 							}
-							base.options.itemImportAsListCallback(base, base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
+							base.options.itemImportAsListCallback(base, base.contentHolder, base.options.rightPanelSourceData);
 						}
 
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
