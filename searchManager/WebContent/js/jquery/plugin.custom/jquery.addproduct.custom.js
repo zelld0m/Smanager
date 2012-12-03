@@ -133,7 +133,7 @@
 			template  += '							<a class="switchToCatName" href="javascript:void(0);">Use category names instead &raquo;</a>';
 			template  += '						</div>';
 			template  += '						<div class="clearB"></div>';
-			template  += '						<input id="catcode" type="text">';
+			template  += '						<input id="catcode" type="text" maxlength="4">';
 			template  += '					</td>';
 			template  += '				</tr>';
 			template  += '				<tr>';
@@ -219,14 +219,14 @@
 			template  += '								<img src="' +  GLOBAL_contextPath + '/images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR4 marL5" alt="Delete Attribute" title="Delete Attribute">';
 
 			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
-			template  += '									<ul id="dynamicAttributeValues">';
-			template  += '										<li id="dynamicAttributeValuesPattern" style="display: none;">';
+			template  += '									<div id="dynamicAttributeValues">';
+			template  += '										<div id="dynamicAttributeValuesPattern" style="display: none;">';
 			template  += '											<div class="w240">';
 			template  += '												<input type="checkbox" class="checkboxFilter">';
 			template  += '												<span id="attributeValueName"></span>';
 			template  += '											</div>';
-			template  += '										</li>';
-			template  += '									</ul>';
+			template  += '										</div>';
+			template  += '									</div>';
 			template  += '								</div>';
 			template  += '							</div>';
 			template  += '						</div>';
@@ -314,7 +314,7 @@
 			template  += '		</div>';
 			template  += '	</div>';
 			template  += '</div>';
-			
+
 			template  += '<div class="fcetItem marT20 w500">';
 			template  += '	<h3 id="" class="breakWord borderB padB5 txtAL fsize14">Rule Item Details</h3>';
 			template  += '			<table class="fsize12 marRL20">';
@@ -331,7 +331,7 @@
 				template  += '							<label><input id="addItemPosition" maxlength="2" type="text" class="w25"></label>';
 				template  += '						</div>';
 			}
-			
+
 			template  += '					</td>';
 			template  += '			    </tr>';		
 			template  += '				<tr>';
@@ -375,7 +375,7 @@
 			var $imsTab = base.contentHolder.find("div#ims"); 
 
 			if ($imsTab.length){
-				catCode[0] = $.trim($imsTab.find("input#catcode").val());
+				catCode[0] = $.trim($imsTab.find("input#catcode").val().toUpperCase());
 				category[0] = $.trim($imsTab.find("input#categoryList").val());
 				subCategory[0] = $.trim($imsTab.find("input#subCategoryList").val());
 				clazz[0] = $.trim($imsTab.find("input#classList").val());
@@ -1071,7 +1071,7 @@
 				$.each($item.condition["dynamicAttributes"], function(attrName, attrData) { 
 					if(attrName !== "TemplateName" || attrName !== GLOBAL_storeFacetTemplateName){
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
-						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 						$ulAttributeValues.prop({id: $.formatAsId(attrName), title:attrName});
 						var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
@@ -1088,7 +1088,7 @@
 
 							if(attributeValues){
 								for(var i=0; i<attributeValues.length; i++){
-									var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+									var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 									$liAttributeValue.show();
 									$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 									$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
@@ -1244,10 +1244,10 @@
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 						var $input = $tab.find("input#dynamicAttributeList");
 						var inDynamicAttribute = $.trim($input.val());
-						var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 						if($.isNotBlank(inDynamicAttribute)){
-							if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
+							if($divItemList.find("div#"+$.formatAsId(attrName)).length > 0){
 								jAlert("Attribute already added. Please select a different attribute name.");
 							}
 							else{
@@ -1268,7 +1268,7 @@
 									var attributeValues = attributeMap[attrName].attributeValues;
 									if(attributeValues){
 										for(var i=0; i<attributeValues.length; i++){
-											var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+											var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 											$liAttributeValue.show();
 											$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 											$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
@@ -1431,12 +1431,12 @@
 				base.contentHolder.find("#conditionText").hide();
 			}else{
 				base.contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
-				
+
 				var formattedExpiryDate = base.options.item["formattedExpiryDate"];
 				if($.isNotBlank(formattedExpiryDate)){
 					base.contentHolder.find("#addItemDate").val(formattedExpiryDate);
 				};
-				
+
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
@@ -1498,52 +1498,60 @@
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
- 
+
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
-					var position = 1;
-					var valid = true;
-					
-					if (base.options.showPosition){
-						position = base.contentHolder.find("#addItemPosition").val();
-					}
-					
-					var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+					setTimeout(function() {
 
-					if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
-						valid = false;
-					}
-
-					if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
-						valid = false;
-					}
-					
-					var condMap = base.getSelectedFacetFieldValues();
-					
-					if ($.isEmptyObject(condMap)){
-						valid = false;
-						jAlert('Please specify at least one filter condition');
-					}
-					
-					if (valid){
-						$.each(condMap, function(idx, el){
-							$.each(el, function(i,elem){
-								if(!validateGeneric("Input", elem)) {
-									valid = false;
-								}
-							});
-						});
-					}
-
-					if (valid){
-						if (base.options.newRecord){
-							base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
-						}else{
-							base.api.destroy();
-							base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+						var position = 1;
+						var valid = true;
+						
+						if (base.options.showPosition){
+							position = base.contentHolder.find("#addItemPosition").val();
 						}
-					}
+						
+						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
+						var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+
+						if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
+							valid = false;
+						}
+
+						if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
+							valid = false;
+						}
+						
+						var condMap = base.getSelectedFacetFieldValues();
+						
+						if ($.isEmptyObject(condMap)){
+							valid = false;
+							jAlert('Please specify at least one filter condition');
+						}
+						
+						if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+							valid = false;
+						}
+						
+						if (valid){
+							$.each(condMap, function(idx, el){
+								$.each(el, function(i,elem){
+									if(!validateGeneric("Input", elem)) {
+										valid = false;
+									}
+								});
+							});
+						}
+
+						if (valid){
+							if (base.options.newRecord){
+								base.api.destroy();
+								base.options.addFacetItemCallback(position, expiryDate, comment, condMap, base.getTypeLabel(type));
+							}else{
+								base.api.destroy();
+								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
+							}
+						}
+					}, 500 );
 				}
 			});
 
@@ -1562,7 +1570,7 @@
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
-			
+
 
 			base.contentHolder.find("#addItemPosition").on({
 				keypress:function(e){
@@ -1581,7 +1589,7 @@
 					return false;
 				}
 			});
-			
+
 			base.contentHolder.find("#addItemToRuleBtn").on({
 				click: function(evt){
 
@@ -1597,7 +1605,7 @@
 					today.setHours(0,0,0,0); //ignore time of current date 
 
 					base.contentHolder.find("#addItemDate_1").datepicker('disable');
-					
+
 					if ($.isBlank(skus)) {
 						jAlert("There are no SKUs specified in the list.", "Invalid Input");
 					}
@@ -1617,7 +1625,7 @@
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}
-					
+
 					if(!valid)
 						base.contentHolder.find("#addItemDate_1").datepicker('enable');
 
@@ -1639,12 +1647,12 @@
 				return '';
 			}
 		};
-		
+
 		base.promptRuleItemDetails = function(target, type){
-			
+
 			var typeLabel = base.getTypeLabel(type);
-			
-			
+
+
 			$(target).qtip("destroy").qtip({
 				content: {
 					text: $('<div/>'),
@@ -1673,7 +1681,7 @@
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
 						};				
-						
+
 						base.contentHolder.find("#clearBtn").on({
 							click: function(evt){
 								base.contentHolder.find("input,textarea").val("");

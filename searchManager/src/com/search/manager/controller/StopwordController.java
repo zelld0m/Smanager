@@ -23,6 +23,7 @@ public class StopwordController {
 	private static final Logger logger = Logger.getLogger(StopwordController.class);
 	
 	@Autowired DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired	private StopwordService stopwordService;
 	
 	@RequestMapping(value="/{store}")

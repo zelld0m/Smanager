@@ -20,7 +20,7 @@
 	
 	<property name="search.server.dev" value="10.241.2.206"/>
 	<property name="search.username.dev" value="solr"/>
-	<property name="search.password.dev" value="maestros@search_mall"/>
+	<property name="search.password.dev" value="hatch:Venus_demand"/>
 		
 	<target name="build" description="Build Search Manager projects">
   		<ant target="warSM" />

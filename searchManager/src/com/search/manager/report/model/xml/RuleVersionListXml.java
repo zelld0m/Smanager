@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 @XmlRootElement(name="versions")
-@XmlSeeAlso(RuleVersionXml.class)
+@XmlSeeAlso(RuleXml.class)
 public class RuleVersionListXml<T>{
 	
 	private List<T> versions;

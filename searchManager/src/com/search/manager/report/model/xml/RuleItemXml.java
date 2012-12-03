@@ -4,13 +4,16 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.model.RedirectRuleCondition;
 
 @XmlSeeAlso({
 	ElevateItemXml.class,
 	ExcludeItemXml.class,
-	DemoteItemXml.class
+	DemoteItemXml.class,
+	RedirectRuleCondition.class
 })
 public class RuleItemXml extends BaseEntityXml{
 	
@@ -19,6 +22,11 @@ public class RuleItemXml extends BaseEntityXml{
 	private MemberTypeEntity memberType;
 	private String edp;
 	private String condition;
+	private String dpNo;
+	private String imagePath;
+	private String mfrNo;
+	private String manufacturer;
+	private RedirectRuleCondition ruleCondition;
 	private Date expiryDate;
 	
 	@XmlAttribute(name="id", required=true)
@@ -48,11 +56,27 @@ public class RuleItemXml extends BaseEntityXml{
 	}
 
 	public String getCondition() {
+		if (ruleCondition!=null) 
+			return ruleCondition.getCondition();
+		
 		return condition;
 	}
 
 	public void setCondition(String condition) {
+		setRuleCondition(new RedirectRuleCondition(condition));
 		this.condition = condition;
+	}
+
+	@XmlTransient
+	public RedirectRuleCondition getRuleCondition() {
+		return ruleCondition;
+	}
+
+	public void setRuleCondition(RedirectRuleCondition ruleCondition) {
+		if(ruleCondition!=null)
+			this.condition = ruleCondition.getCondition();
+			
+		this.ruleCondition = ruleCondition;
 	}
 
 	public Date getExpiryDate() {
@@ -61,5 +85,41 @@ public class RuleItemXml extends BaseEntityXml{
 
 	public void setExpiryDate(Date expiryDate) {
 		this.expiryDate = expiryDate;
+	}
+
+	@XmlTransient
+	public String getDpNo() {
+		return dpNo;
+	}
+
+	public void setDpNo(String dpNo) {
+		this.dpNo = dpNo;
+	}
+
+	@XmlTransient
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	@XmlTransient
+	public String getMfrNo() {
+		return mfrNo;
+	}
+
+	public void setMfrNo(String mfrNo) {
+		this.mfrNo = mfrNo;
+	}
+
+	@XmlTransient
+	public String getManufacturer() {
+		return manufacturer;
+	}
+
+	public void setManufacturer(String manufacturer) {
+		this.manufacturer = manufacturer;
 	}
 }

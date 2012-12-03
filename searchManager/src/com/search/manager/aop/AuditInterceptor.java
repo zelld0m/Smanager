@@ -3,10 +3,8 @@ package com.search.manager.aop;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -479,9 +477,9 @@ public class AuditInterceptor {
 	}
 	
 	private void logFacetGroupItem(JoinPoint jp, Audit auditable, AuditTrail auditTrail) {
+		@SuppressWarnings("unchecked")
 		List<FacetGroupItem> e = (ArrayList<FacetGroupItem>)jp.getArgs()[0];
 		
-		String facetGroupId = "";
 		String facetGroupName = "";
 		String facetSortOrder = "";
 		String highlightedFacets = "";
@@ -776,8 +774,14 @@ public class AuditInterceptor {
 					auditTrail.setDetails(String.format("Deleted reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
 							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
 				} else {
-					auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
-							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+					// TODO: only log approval/publishing events; logging of import/export events are handled elsewhere 
+					if (StringUtils.isNotBlank(ruleStatus.getApprovalStatus()) || StringUtils.isNotBlank(ruleStatus.getPublishedStatus())) {
+						auditTrail.setDetails(String.format("Updated reference id = [%1$s], rule type = [%2$s], approval status = [%3$s], published status = [%4$s].", 
+								auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ruleStatus.getApprovalStatus(), ruleStatus.getPublishedStatus()));
+					}
+					else {
+						return;
+					}
 				}
 				break;
 			default:

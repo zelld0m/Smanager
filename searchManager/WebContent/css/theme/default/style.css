@@ -1,6 +1,6 @@
 .companyLogoImg 				{ position:absolute; top:56px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
 .ie .companyLogoImg 				{ position:absolute; top:55px; z-index:500; height: 77px; display: block; background:url(images/bgGradientGray.gif) top left repeat-x; width: 240px; text-align: center}
-
+     
 /* default theme  */
 .cssReset a:link,
 .cssReset a:active,
@@ -181,6 +181,9 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
+
+.cssReset a.btnCompare, .qtip a.btnCompare				{ background-position: -3px -619px; height: 16px; width: 67px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
+.cssReset a.btnCompare:hover, .qtip a.btnCompare:hover 	{ background-position: -3px -637px;  }
 
 .cssReset a.btnAddGrayMid,
 .qtip a.btnAddGrayMid			{ background-position: -3px -578px; height: 18px; width: 18px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
@@ -606,6 +609,7 @@ body .tabvs .ui-widget-content.contentWrapper	{ border:1px solid #bdbdbd; margin
 .qtip .ui-tabs					{ padding:0 !important; margin:0 !important;  }
 .qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
+.notification					{ background: url(images/icon_notification.png) 8px 8px no-repeat #F1F4F9; padding:6px 5px 6px 26px !important; }
 .qtip .ui-widget-content label	{ vertical-align: middle; }
 
 
@@ -887,7 +891,7 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .rulePreview								{ padding:0; margin:0; display:block }
 .rulePreview label							{ line-height: 14px; margin:3px 0 }
 
-/* elevate */
+/* qtip */
 .qtip #facetItem .ui-widget-content .ui-autocomplete-input { position:relative; bottom:-6.5px }
 .qtip #facetItem .holder a { color:#3B79C2; }
 .dynamicAttributeItem { padding-left:0 !important }
@@ -900,11 +904,11 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip .ui-tooltip-content { background: #fff !important }
 
 /* elevate for ie issue */
-.ie .qtip #facet .ui-button-icon { height:20px; top:1px }
+.ie .qtip #facet .ui-button-icon { height:20px; top:1px; position:relative }
 .ie .qtip .imsFields input[type='text'] { padding-top:2px }
 .ie .qtip #dynamicAttribute .ui-button-icon { position:relative; top:2px !important }
 .ie .qtip #ims .ui-autocomplete-input { padding-top:4px !important }
-.ie .qtip #ims .ui-button-icon { position:relative; top:0 !important }
+/*.ie .qtip #ims .ui-button-icon { position:relative; top:0 !important }*/
 .ie .qtip #cnet .ui-button-icon { height:20px !important;  }
 .ie .qtip #cnet .ui-autocomplete-input  { padding-top:4px !important }
 .ie .qtip #cnet #cnetmanufacturerList { padding-top:5px !important; bottom:-8px }
@@ -924,5 +928,16 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .cssReset .placeHolder_small, .qtip .placeHolder_small, .placeHolder_small { border:2px dashed #dedede; background:url(../../../images/bg_dropItemHere_small.png) center center no-repeat !important; }
 
 
+/* version rule list */
+.qtip .horizontalCont ul { list-style: none; margin:0; padding:0 } 
+.qtip .horizontalCont ul li { float:left; display:inline; margin-right:1px; padding:5px; width:129px; border-bottom:1px solid #eee }
+.qtip .horizontalCont li .title, .titleVersion { height: 16px; padding:4px; border-bottom:3px solid #666; color:#282828; font-weight:bold; margin:0 }
 
+/* version rule table */
+.qtip .version ul{ list-style:none; margin:0; padding:0 }
+.qtip .version li { padding:5px 4px; border-bottom:1px solid #eee }
+.qtip .version li.last { border-bottom:none !important }
+.qtip .version li.2line { height: 26px !important }
+
+.qtip ul#groupList > li.group:even{  background:#ebebeb }
 

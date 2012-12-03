@@ -13,6 +13,7 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -53,7 +54,12 @@ public class DAOValidation {
     // SEARCH CRITERIA
     public final static String ERROR_MESSAGE_NO_SEARCH_CRITERIA			= "No search criteria provided";
     public final static String ERROR_MESSAGE_NO_SEARCH_CRITERIA_MODEL	= "No search criteria model provided";
-    
+
+    // RULE STATUS
+    public final static String ERROR_MESSAGE_NO_RULE_STATUS					= "No rule status provided";
+    public final static String ERROR_MESSAGE_NO_RULE_STATUS_REFERENCE_ID	= "No rule status reference id provided";
+    public final static String ERROR_MESSAGE_NO_RULE_STATUS_TYPE_ID			= "No rule status type id provided";
+
 	/* Validation methods */
     public static boolean checkStringNotEmpty(String string, String errorMessage) throws DaoException {
     	if (StringUtils.isBlank(string)) {
@@ -160,6 +166,13 @@ public class DAOValidation {
 		checkStringNotEmpty(facetGroupItem.getId(), ERROR_MESSAGE_NO_FACET_GROUP_ITEM_ID);
     }
     
+    public static void checkRuleStatusPK(RuleStatus ruleStatus) throws DaoException {
+		checkObjectNotNull(ruleStatus, ERROR_MESSAGE_NO_RULE_STATUS);
+		checkStringNotEmpty(ruleStatus.getStoreId(), ERROR_MESSAGE_NO_STORE_ID);
+		checkStringNotEmpty(ruleStatus.getRuleRefId(), ERROR_MESSAGE_NO_RULE_STATUS_REFERENCE_ID);
+		checkObjectNotNull(ruleStatus.getRuleTypeId(), ERROR_MESSAGE_NO_RULE_STATUS_TYPE_ID);
+    }
+
     @SuppressWarnings({"rawtypes"})
     public static void checkSearchCriteria(SearchCriteria criteria) throws DaoException {
 		DAOValidation.checkObjectNotNull(criteria, DAOValidation.ERROR_MESSAGE_NO_SEARCH_CRITERIA);

@@ -6,19 +6,22 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRule.RedirectType;
 
 @XmlRootElement(name = "querycleaning")
 @DataTransferObject(converter = BeanConverter.class)
-public class RedirectRuleXml extends RuleVersionXml{
+public class RedirectRuleXml extends RuleXml{
 
-	private static final long serialVersionUID = 5605017143398572331L;
+	private static final long serialVersionUID = 1L;
 	private String description;
-	private String redirectType;
+	private RedirectType redirectType;
 	private String replacementKeyword;
 	private String directHit;
 	private RuleKeywordXml ruleKeyword;
@@ -26,18 +29,18 @@ public class RedirectRuleXml extends RuleVersionXml{
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.QUERY_CLEANING);
 	}
 
-	public RedirectRuleXml(String store, long version, String name, String notes, String username,
-			RedirectRule rr) {
-		super(store, name, notes, username);
+	public RedirectRuleXml(String store, long version, String name, String notes, String username, RedirectRule rr) {
+		super(store, name == null ? rr.getRuleName() : name, notes, username);
 
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());
 			this.setRuleName(rr.getRuleName());
 			this.setDescription(rr.getDescription());
 			this.setReplacementKeyword(rr.getChangeKeyword());
-			this.setRedirectType(rr.getRedirectType().name());	
+			this.setRedirectType(rr.getRedirectType());	
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
 			this.setRuleCondition(new RuleConditionXml(rr.getConditions()));
 		}
@@ -47,12 +50,16 @@ public class RedirectRuleXml extends RuleVersionXml{
 		this.setCreatedDate(new Date());
 	}
 	
+	public RedirectRuleXml(String store, RedirectRule queryCleaning) {
+		this(store, 0, "", "", "", queryCleaning);
+	}
+	
 	@XmlAttribute(name="type")
-	public String getRedirectType() {
+	public RedirectType getRedirectType() {
 		return redirectType;
 	}
 
-	public void setRedirectType(String redirectType) {
+	public void setRedirectType(RedirectType redirectType) {
 		this.redirectType = redirectType;
 	}
 
@@ -98,4 +105,12 @@ public class RedirectRuleXml extends RuleVersionXml{
 	public void setRuleCondition(RuleConditionXml ruleCondition) {
 		this.ruleCondition = ruleCondition;
 	}
+	
+	@XmlTransient
+	public boolean isIncludeKeyword(){
+		if(ruleCondition != null)
+			return ruleCondition.isIncludeKeyword();
+		return false;
+	}
+	
 }

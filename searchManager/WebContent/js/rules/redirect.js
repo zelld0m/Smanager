@@ -76,60 +76,61 @@
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
+						setTimeout(function() {
+							var ruleName = $.trim($('div#redirect input[id="name"]').val());  
+							var description = $.trim($('div#redirect textarea[id="description"]').val());  
 
-						var ruleName = $.trim($('div#redirect input[id="name"]').val());  
-						var description = $.trim($('div#redirect textarea[id="description"]').val());  
+							if (self.checkIfUpdateAllowed()){
+								if ($.isBlank(ruleName)){
+									jAlert("Rule name is required.","Query Cleaning");
+								}
+								else if (!isAllowedName(ruleName)){
+									jAlert("Rule name contains invalid value.","Query Cleaning");
+								}
+								else if (!isAscii(description)) {
+									jAlert("Description contains non-ASCII characters.","Query Cleaning");										
+								}
+								else if (!isXSSSafe(description)){
+									jAlert("Description contains XSS.","Query Cleaning");
+								}
+								else {
+									RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
+										callback: function(data){
+											if (data==true){
+												jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
+											}else{
+												var response = 0;
+												RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
+													callback: function(data){
+														response = data;
+														showActionResponse(response, "update", ruleName);
+													},
+													preHook: function(){
+														self.prepareRedirect();
+													},
+													postHook: function(){
+														if(response==1){
+															RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
+																callback: function(data){
+																	self.setRedirect(data);
+																},
+																preHook: function(){
+																	self.prepareRedirect();
+																}
+															});
+														}
+														else{
+															self.setRedirect(self.selectedRule);
+														}
 
-						if (self.checkIfUpdateAllowed()){
-							if ($.isBlank(ruleName)){
-								jAlert("Rule name is required.","Query Cleaning");
-							}
-							else if (!isAllowedName(ruleName)){
-								jAlert("Rule name contains invalid value.","Query Cleaning");
-							}
-							else if (!isAscii(description)) {
-								jAlert("Description contains non-ASCII characters.","Query Cleaning");										
-							}
-							else if (!isXSSSafe(description)){
-								jAlert("Description contains XSS.","Query Cleaning");
-							}
-							else {
-								RedirectServiceJS.checkForRuleNameDuplicate(self.selectedRule["ruleId"], ruleName, {
-									callback: function(data){
-										if (data==true){
-											jAlert("Another query cleaning rule is already using the name provided.","Query Cleaning");
-										}else{
-											var response = 0;
-											RedirectServiceJS.updateRule(self.selectedRule["ruleId"], ruleName, description, {
-												callback: function(data){
-													response = data;
-													showActionResponse(response, "update", ruleName);
-												},
-												preHook: function(){
-													self.prepareRedirect();
-												},
-												postHook: function(){
-													if(response==1){
-														RedirectServiceJS.getRule(self.selectedRule["ruleId"],{
-															callback: function(data){
-																self.setRedirect(data);
-															},
-															preHook: function(){
-																self.prepareRedirect();
-															}
-														});
 													}
-													else{
-														self.setRedirect(self.selectedRule);
-													}
-
-												}
-											});
+												});
+											}
 										}
-									}
-								});
+									});
+								}
 							}
-						}
+						}, 500 );
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
@@ -160,7 +161,7 @@
 					moduleName: self.moduleName,
 					ruleType: "Query Cleaning",
 					rule: self.selectedRule,
-					enableVersion:true,
+					enableVersion:false, // TODO: set to true for version feature
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){
@@ -886,7 +887,7 @@
 
 				var catCodeVal = $.trim(ui.find("input#catcode").val());
 
-				if ($.isNotBlank(catCodeVal) && catCodeVal.length < 4 && ui.find("a.switchToCatName").is(":visible")){
+				if ($.isNotBlank(catCodeVal) && ui.find("a.switchToCatName").is(":visible")){
 					inCatCode = catCodeVal;
 				}else if(ui.find("a.switchToCatCode").is(":visible")){
 					inCategory = $.trim(ui.find("input#categoryList").val());
@@ -1005,7 +1006,7 @@
 					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
 						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
-							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 							$ulAttributeValues.prop({id:$.formatAsId(attrName), title:attrName});
 							var currCondCount = parseInt($divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern):last").attr("id"));
@@ -1022,7 +1023,7 @@
 
 								if(attributeValues){
 									for(var i=0; i<attributeValues.length; i++){
-										var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+										var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 										$liAttributeValue.show();
 										$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 										$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i], checked: ($.inArray(attributeValues[i], attrData) > -1)});
@@ -1558,7 +1559,7 @@
 
 
 				if (ui.find("div.ims").is(":visible")){
-					catCode[0] = $.trim(ui.find("input#catcode").val());
+					catCode[0] = $.trim(ui.find("input#catcode").val().toUpperCase());
 					category[0] = $.trim(ui.find("input#categoryList").val());
 					subCategory[0] = $.trim(ui.find("input#subCategoryList").val());
 					clazz[0] = $.trim(ui.find("input#classList").val());
@@ -1678,10 +1679,10 @@
 							var $input = ui.find("input#dynamicAttributeList");
 							var inDynamicAttribute = $.trim($input.val());
 							var inTemplateName = ui.find("input#templateNameList").val();
-							var $ulAttributeValues = $divDynamicAttributeItem.find("ul#dynamicAttributeValues");
+							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 							if($.isNotBlank(inDynamicAttribute)){
-								if($divItemList.find("ul#"+$.formatAsId(attrName)).length > 0){
+								if($divItemList.find("div#"+$.formatAsId(attrName)).length > 0){
 									jAlert("Attribute already added. Please select a different attribute name.","Query Cleaning");
 								}
 								else{
@@ -1702,7 +1703,7 @@
 										var attributeValues = attributeMap[attrName].attributeValues;
 										if(attributeValues){
 											for(var i=0; i<attributeValues.length; i++){
-												var $liAttributeValue = $ulAttributeValues.find("li#dynamicAttributeValuesPattern").clone();
+												var $liAttributeValue = $ulAttributeValues.find("div#dynamicAttributeValuesPattern").clone();
 												$liAttributeValue.show();
 												$liAttributeValue.prop("id", "dynamicAttributeValues" + countId);
 												$liAttributeValue.find("input.checkboxFilter").prop({name:attrName, value:attributeValues[i]});
@@ -1744,6 +1745,10 @@
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
 
+						if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+							return;
+						}
+						
 						if ($.isEmptyObject(condMap)){
 							jAlert('Please specify at least one filter condition',"Query Cleaning");
 							return;

@@ -17,13 +17,16 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Comment;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -35,12 +38,58 @@ import com.search.manager.utility.DateAndTimeUtils;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "excludeService")
 )
-public class ExcludeService {
+public class ExcludeService extends RuleService{
 	private static final Logger logger = Logger.getLogger(ExcludeService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.EXCLUDE;
+	}
 
+	private int addItem(String keyword, String edp, RedirectRuleCondition condition, String expiryDate, String comment, MemberTypeEntity entity) {
+		int result = -1;
+		try {
+			logger.info(String.format("%s %s %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", expiryDate, comment));
+			String store = UtilityService.getStoreName();
+			String userName = UtilityService.getUsername();
+			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
+
+			ExcludeResult e = new ExcludeResult(new StoreKeyword(store, keyword));
+			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setCreatedBy(userName);
+			e.setComment(UtilityService.formatComment(comment));
+			e.setExcludeEntity(entity);
+			switch (entity) {
+				case PART_NUMBER:
+					e.setEdp(edp);
+					break;
+				case FACET:
+					e.setCondition(condition);
+					break;
+			}
+			
+			result  = daoService.addExcludeResult(e);
+			if (result > 0) {
+				if (!StringUtils.isBlank(comment)) {
+					addComment(comment, e);
+				}
+				try {
+					// TODO: add checking if existing rule status?
+					daoService.addRuleStatus(new RuleStatus(RuleEntity.EXCLUDE, DAOUtils.getStoreId(e.getStoreKeyword()), 
+							keyword, keyword, userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+				} catch (DaoException de) {
+					logger.error("Failed to create rule status for exclude: " + keyword);
+				}
+			}
+		} catch (DaoException e) {
+			logger.error("Failed during excludeItem()",e);
+		}
+		return result;
+	}
+	
+	
 	@RemoteMethod
 	public Map<String, List<String>> addItemToRuleUsingPartNumber(String keyword, String expiryDate, String comment, String[] partNumbers) {
 
@@ -67,19 +116,7 @@ public class ExcludeService {
 			
 				String edp = daoService.getEdpByPartNumber(server, store, keyword, StringUtils.trim(partNumber));
 				if (StringUtils.isNotBlank(edp)) {
-					ExcludeResult e = new ExcludeResult();
-					e.setStoreKeyword(new StoreKeyword(store, keyword));
-					e.setEdp(edp);
-					e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-					e.setCreatedBy(UtilityService.getUsername());
-					e.setComment(UtilityService.formatComment(comment));
-					e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
-					if (StringUtils.isNotBlank(edp)){
-						count = daoService.addExcludeResult(e);
-						if (!StringUtils.isBlank(comment)) {
-							addComment(comment, e);
-						}
-					}
+					count = addItem(keyword, edp, null, expiryDate, comment, MemberTypeEntity.PART_NUMBER);
 				}
 			} catch (DaoException de) {
 				logger.error("Failed during addExcludeByPartNumber()",de);
@@ -97,61 +134,16 @@ public class ExcludeService {
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		
-		int count = 0;
-		try {
-			String store = UtilityService.getStoreName();
-			ExcludeResult e = new ExcludeResult();
-			RedirectRuleCondition condition = new RedirectRuleCondition();
-			condition.setFilter(filter);
-			e.setCondition(condition );
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setExpiryDate(StringUtils.isBlank(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			e.setExcludeEntity(MemberTypeEntity.FACET);
-			count = daoService.addExcludeResult(e);
-			if (!StringUtils.isBlank(comment)) {
-				addComment(comment, e);
-			}
-		} catch (DaoException de) {
-				logger.error("Failed during addItemToRuleUsingPartNumber()",de);
-		}
-		return count;
+		return addItem(keyword, null, new RedirectRuleCondition(filter), expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
 
 	@RemoteMethod
 	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate, String comment) {
-		int count = -1;
-		try {
-			logger.info(String.format("%s %s", keyword, value));
-
-			String store = UtilityService.getStoreName();
-			
-			daoService.addKeyword(new StoreKeyword(store, keyword));
-			ExcludeResult e = new ExcludeResult();
-			
-			if (MemberTypeEntity.PART_NUMBER.toString().equalsIgnoreCase(memberTypeId)) {
-				e.setEdp(value);
-				e.setExcludeEntity(MemberTypeEntity.PART_NUMBER);
-			} else {
-				e.setCondition(new RedirectRuleCondition(value));
-				e.setExcludeEntity(MemberTypeEntity.FACET);
-			}			
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
-			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
-			e.setLastModifiedBy(UtilityService.getUsername());
-			e.setCreatedBy(UtilityService.getUsername());
-			e.setComment(UtilityService.formatComment(comment));
-			count  = daoService.addExcludeResult(e);
-			if (count > 0 && !StringUtils.isBlank(comment)) {
-				addComment(comment, e);
-			}
-		} catch (DaoException e) {
-			logger.error("Failed during addExclude()",e);
-		}
-		return count;
+		MemberTypeEntity memberTypeEntity = MemberTypeEntity.valueOf(memberTypeId);
+		return addItem(keyword, memberTypeEntity == MemberTypeEntity.PART_NUMBER ? value : null, 
+				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(value) : null, 
+				expiryDate, comment, memberTypeEntity);
 	}
 
 	@RemoteMethod
@@ -446,15 +438,14 @@ public class ExcludeService {
 		this.daoService = daoService;
 	}
 	
-	private Comment addComment(String comment, ExcludeResult e) throws DaoException {
+	private int addComment(String comment, ExcludeResult e) throws DaoException {
 		Comment com = new Comment();
 		com.setComment(comment);
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
 		com.setStore(new Store(UtilityService.getStoreName()));
-		daoService.addComment(com);
-		return com;
+		return daoService.addComment(com);
 	}
 
 	@RemoteMethod
@@ -474,18 +465,11 @@ public class ExcludeService {
 				exclude.setComment(pComment);
 				exclude.setLastModifiedBy(UtilityService.getUsername());
 				daoService.updateExcludeResultComment(exclude);
-				Comment com = new Comment();
-				com.setComment(pComment);
-				com.setUsername(UtilityService.getUsername());
-				com.setReferenceId(exclude.getMemberId());
-				com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
-				com.setStore(new Store(store));
-				result = daoService.addComment(com);
+				result = addComment(pComment, exclude);
 			}
 		} catch (DaoException e) {
-			logger.error("Failed during addRuleItemComment()",e);
+			logger.error("Failed during addRuleComment()",e);
 		}
 		return result;
 	}
-
 }

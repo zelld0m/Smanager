@@ -24,7 +24,7 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 				if(model.getCondition().isIMSFilter())
 					return "IMS Categories";
 				else if (model.getCondition().isCNetFilter())
-					return "Facet Template Categories";
+					return "Product Site Taxonomy";
 			}
 			return "Facets";
 		}
@@ -34,7 +34,13 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 	
 	@ReportField(label="Rule Details", size=60, sortOrder=3)
 	public String getRuleDetails(){
-		return isPartNumber()?getPartNumberDetails():model.getCondition().getCondition();
+		if(isPartNumber()){
+			return getPartNumberDetails();
+		}
+		else if(model.getCondition() != null){
+			return model.getCondition().getReadableString();
+		}
+		return "";
 	}
 	
 	@ReportField(label="Status", size=20, sortOrder=4)
@@ -78,8 +84,8 @@ public class DemoteReportBean extends ReportBean<DemoteProduct> {
 	private String getPartNumberDetails() {
 		
 		if (StringUtils.isNotBlank(model.getDpNo())){
-			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append("  EDP:").append(model.getEdp())
-			.append("  Part #:").append(model.getDpNo()).append("  Manufacturer Part #:").append(model.getMfrPN()).toString();
+			return new StringBuffer("Manufacturer:").append(model.getManufacturer()).append(" Name:").append(model.getName())
+			.append("  SKU #:").append(model.getDpNo()).append("  Mfr. Part #:").append(model.getMfrPN()).toString();
 		}
 		
 		return new StringBuffer("EDP: ").append(model.getEdp()).toString(); 

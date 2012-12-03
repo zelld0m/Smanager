@@ -23,6 +23,7 @@ public class BannerController {
 	private static final Logger logger = Logger.getLogger(BannerController.class);
 	
 	@Autowired private DaoCacheService daoCacheService;
+	@SuppressWarnings("unused")
 	@Autowired private BannerService bannerService;
 	
 	@RequestMapping(value="/{store}")

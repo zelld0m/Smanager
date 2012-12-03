@@ -1,6 +1,5 @@
 package utilities;
 
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +19,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 
@@ -63,7 +64,8 @@ public class TopKeywords implements Runnable {
 			String keyword = toProcess.peek();
 		    parameters.clear();
 		    try {
-				parameters.add(new BasicNameValuePair("q", URLDecoder.decode(keyword,"UTF-8")));
+//				parameters.add(new BasicNameValuePair("q", URLDecoder.decode(keyword,"UTF-8")));
+				parameters.add(new BasicNameValuePair("q", keyword));
 			    post.setEntity(new UrlEncodedFormEntity(parameters, "UTF-8"));
 			    solrResponse = client.execute(post);
 			    doc = builder.parse(solrResponse.getEntity().getContent());
@@ -71,22 +73,32 @@ public class TopKeywords implements Runnable {
 			    	count =  Integer.parseInt(doc.getElementsByTagName("result").item(0)
 							.getAttributes().getNamedItem("numFound").getNodeValue());
 			   
+		    	String edp = "";
 			    if(count != 0){
-			    String edp = "";
-				    edp =  doc.getElementsByTagName("int").item(5).getFirstChild().getNodeValue();
-			    	topKeywordsList.add(new Object[] {keyword,edp,count});
+					NodeList docNodes = doc.getElementsByTagName("doc").item(0).getChildNodes();
+					for (int k = 0, kSize = docNodes.getLength(); k < kSize; k++) {
+						Node kNode = docNodes.item(k);
+						if (kNode.getNodeName().equalsIgnoreCase("int") &&
+								kNode.getAttributes().getNamedItem("name").getNodeValue()
+								.equalsIgnoreCase("DPNo")) {
+							edp = kNode.getTextContent();
+						}
+					}
 			    }
+		    	topKeywordsList.add(new Object[] {keyword,edp,count});
 				toProcess.poll();
-//System.out.println(keyword + " -> " + count);
+System.out.println(keyword + " -> " + count);
 			} catch (Exception e) {
-//System.err.println(keyword + " -> " + e.getMessage());
+System.err.println(keyword + " -> " + e.getMessage());
+e.printStackTrace();
+//e.printStackTrace();
 				try {
-//System.out.println(Thread.currentThread().getId() + "*************retry " + retry++ + " fail" );	        			
+//System.out.println(Thread.currentThread().getId() + "*************retry " + retry + " fail" );	        			
         			Thread.sleep(5000);
         		} catch (Exception ex) {
         		}
 //        		System.out.println(keyword);
-        		if (retry > 10) {
+        		if (++retry > 10) {
         			retry = 0;
         			toProcess.poll();
         			forReprocess.add(keyword);
@@ -94,10 +106,7 @@ public class TopKeywords implements Runnable {
         		
 				EntityUtils.consumeQuietly(post.getEntity());
 				client.getConnectionManager().shutdown();
-				
         		client = new DefaultHttpClient();
-				retry++;
-        		
 				continue;
 			}
 		}
@@ -189,6 +198,7 @@ public class TopKeywords implements Runnable {
 	        List<String> forReprocess = new ArrayList<String>();
 			for (int n = 0; n < poolSize; n++) {
 				for (Object arr[]: topKeywordsPool[n].topKeywordsList) {
+System.out.println(arr[0].toString() + " " + arr[1].toString() + " " + arr[2].toString() + " " + Integer.toString(map.get(arr[0]).getValue()));
 					valuesTop.add(new String[] {arr[0].toString(),arr[1].toString(),arr[2].toString(),Integer.toString(map.get(arr[0]).getValue())});					
 				}
 				forReprocess.addAll(topKeywordsPool[n].forReprocess);

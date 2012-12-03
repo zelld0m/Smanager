@@ -6,8 +6,8 @@ import com.search.manager.utility.DateAndTimeUtils;
 
 public class FacetSortReportBean extends ReportBean<FacetGroup> {
 
-	private String ruleName;
-	private String ruleType;
+//	private String ruleName;
+//	private String ruleType;
 	private String highlightedFacets;
 	private String sortType;
 	

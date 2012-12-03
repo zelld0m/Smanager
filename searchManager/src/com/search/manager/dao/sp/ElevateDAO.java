@@ -42,8 +42,6 @@ public class ElevateDAO {
     	getNoExpirySP = new GetNoExpiryElevateStoredProcedure(jdbcTemplate);
     	updateSP = new UpdateElevateStoredProcedure(jdbcTemplate);
     	updateExpiryDateSP = new UpdateElevateExpiryDateStoredProcedure(jdbcTemplate);
-    	updateCommentSP = new UpdateElevateCommentStoredProcedure(jdbcTemplate);
-    	appendCommentSP = new AppendElevateCommentStoredProcedure(jdbcTemplate);
     	deleteSP = new DeleteElevateStoredProcedure(jdbcTemplate);
     }
 	
@@ -53,8 +51,6 @@ public class ElevateDAO {
 	private GetNoExpiryElevateStoredProcedure getNoExpirySP;
 	private UpdateElevateStoredProcedure updateSP;
 	private UpdateElevateExpiryDateStoredProcedure updateExpiryDateSP;
-	private UpdateElevateCommentStoredProcedure updateCommentSP;
-	private AppendElevateCommentStoredProcedure appendCommentSP;
 	private DeleteElevateStoredProcedure deleteSP;
 
 	private class AddElevateStoredProcedure extends CUDStoredProcedure {
@@ -211,32 +207,6 @@ public class ElevateDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_EXPIRY_DATE, Types.DATE));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));	
-		}
-	}
-	
-	private class UpdateElevateCommentStoredProcedure extends CUDStoredProcedure {
-	    public UpdateElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_UPDATE_ELEVATE_COMMENT);
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
-		}
-	}
-
-	private class AppendElevateCommentStoredProcedure extends CUDStoredProcedure {
-	    public AppendElevateCommentStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_APPEND_ELEVATE_COMMENT);
-	    }
-
-		@Override
-		protected void declareParameters() {
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MEMBER_ID, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_COMMENT, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 		}
 	}
 	

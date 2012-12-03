@@ -21,57 +21,32 @@ public class FacetSortVersionDAO extends RuleVersionDAO<FacetSortRuleXml>{
 	
 	@Autowired private DaoService daoService;
 	
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.FACET_SORT, ruleId);
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.FACET_SORT;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<FacetSortRuleXml> getRuleVersionList(
-			String store, String ruleId) {
-		return (RuleVersionListXml<FacetSortRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.FACET_SORT, ruleId);
-	}
-
-	@Override
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		RuleVersionListXml<FacetSortRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<FacetSortRuleXml> eRuleXmlList = ((RuleVersionListXml<FacetSortRuleXml>)ruleVersionListXml).getVersions();
+			List<FacetSortItemXml> eItemXmlList = new ArrayList<FacetSortItemXml>();
 			long version = ruleVersionListXml.getNextVersion();
-			List<FacetSortRuleXml> facetSortRuleXmlList = ruleVersionListXml.getVersions();
-			List<FacetSortItemXml> facetSortItemXml = new ArrayList<FacetSortItemXml>();
-
-			// Get all items
 			try {
 				FacetSort facetSort = daoService.getFacetSort(new FacetSort(ruleId, store));
-				
 				Map<String, List<String>> items = facetSort.getItems();
 				Map<String, SortType> sortType = facetSort.getGroupSortType();
-	
 				for(String mapKey: items.keySet()){
-					facetSortItemXml.add(new FacetSortItemXml(mapKey, items.get(mapKey), sortType.get(mapKey), facetSort.getSortType()));
+					eItemXmlList.add(new FacetSortItemXml(mapKey, items.get(mapKey), sortType.get(mapKey), facetSort.getSortType()));
 				}
-				
-				facetSortRuleXmlList.add(new FacetSortRuleXml(store, version, name, notes, username, facetSort.getRuleType(), facetSort.getSortType(), ruleId, facetSort.getRuleName(), facetSortItemXml));
-
+				eRuleXmlList.add(new FacetSortRuleXml(store, version, name, notes, username, facetSort.getRuleType(), facetSort.getSortType(), ruleId, facetSort.getRuleName(), eItemXmlList));
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(facetSort.getRuleName());
-				ruleVersionListXml.setVersions(facetSortRuleXmlList);
-			
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.FACET_SORT, ruleId, ruleVersionListXml);
 		}
+		return false;
+	}
 
-		return false;
-	}
-	
-	public boolean restoreRuleVersion(String store, String ruleId,
-			String username, long version) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

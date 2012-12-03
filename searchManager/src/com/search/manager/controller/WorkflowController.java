@@ -64,6 +64,7 @@ public class WorkflowController {
 	@RequestMapping(value="/import/{store}")
 	public String importRule(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
 		model.addAttribute("store", store);
+		
 		try {
 			daoCacheService.setUserCurrentPage(UtilityService.getUsername(), "Import Rule");
 		} catch (Exception e) {

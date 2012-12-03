@@ -3,6 +3,7 @@ package com.search.manager.model;
 import java.util.Date;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.report.model.xml.RuleItemXml;
 
 public class SearchResult extends ModelBean {
 
@@ -16,6 +17,19 @@ public class SearchResult extends ModelBean {
 	protected String memberId;
 	
 	public SearchResult() {}
+	
+	public SearchResult(StoreKeyword storeKeyword, RuleItemXml xml) {
+		this.storeKeyword = storeKeyword;
+		this.edp = xml.getEdp();
+		this.expiryDate = xml.getExpiryDate();
+		this.entity = xml.getMemberType();
+		this.condition = xml.getRuleCondition();
+		this.memberId = xml.getMemberId();
+		this.lastModifiedBy = xml.getLastModifiedBy();
+		this.lastModifiedDate = xml.getLastModifiedDate();
+		this.createdBy = xml.getCreatedBy();
+		this.createdDate = xml.getCreatedDate();
+	}
 	
 	public SearchResult(StoreKeyword storeKeyword, String edp, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
 		if (memberTypeId.equals(MemberTypeEntity.FACET.toString())) {

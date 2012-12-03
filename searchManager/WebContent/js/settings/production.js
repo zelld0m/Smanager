@@ -152,7 +152,7 @@
 								$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
 
 								var lastPublishedDate = $.isNotBlank(list[i]["lastPublishedDate"])? list[i]["lastPublishedDate"].toUTCString(): "";
-								var showId = list[i]["ruleRefId"] !== list[i]["description"];
+								var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 
 								$tr.find("td#select > input[type='checkbox']").attr("id", list[i]["ruleRefId"]);
 								$tr.find("td#select > input[type='checkbox']").attr("name", list[i]["ruleStatusId"]);
@@ -241,6 +241,13 @@
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
 			entityName = tabSelected.substring(1, tabSelected.length-3);
 			getForProductionList("approved");
+			
+			RuleTransferServiceJS.getAutoExport({
+				callback:function(isAutoExport){
+					$('#autoExportValue').text(isAutoExport? 'ON':'OFF').parent('#autoExportStatus').show();
+				}
+			});
+			
 		};
 		
 		init();

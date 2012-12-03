@@ -28,6 +28,7 @@ import com.search.ws.SearchHelper;
 	    creatorParams = @Param(name = "beanName", value = "categoryService")
 	)
 public class CategoryService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(CategoryService.class);
 	
 	@RemoteMethod

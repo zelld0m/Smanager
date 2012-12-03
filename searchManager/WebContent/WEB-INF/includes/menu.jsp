@@ -84,12 +84,19 @@
 		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>
 		      		</sec:authorize>
-		      		<sec:authorize access="hasRole('APPROVE_RULE')">    		
+		      		
+		      		<c:if test="${store eq 'pcmallcap'}">
+		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'import'? 'class="active"': ''}><a href="<spring:url value="/import/"/>${store}">Import Rule</a></li>
 		      		</sec:authorize>
+		      		</c:if>
+		      		
+		      		<c:if test="${store eq 'pcmall'}">
 		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'export'? 'class="active"': ''}><a href="<spring:url value="/export/"/>${store}">Export Rule</a></li>
 		      		</sec:authorize>	      		
+		      		</c:if>
+		      		
 		      		<li ${submenu eq 'monitor'? 'class="active"': ''}><a href="<spring:url value="/monitor/" />">Monitor</a></li>	      		
 		       </ul>
 	      </c:if>

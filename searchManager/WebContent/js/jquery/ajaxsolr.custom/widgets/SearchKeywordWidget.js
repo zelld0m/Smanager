@@ -58,6 +58,12 @@
 
 				if (!isKeepChecked){
 					self.manager.store.remove('fq');
+					self.manager.store.remove('disableElevate');
+					self.manager.store.remove('disableExclude');
+					self.manager.store.remove('disableDemote');
+					self.manager.store.remove('disableFacetSort');
+					self.manager.store.remove('disableRedirect');
+					self.manager.store.remove('disableRelevancy');
 					self.manager.widgets[WIDGET_ID_searchWithin]["searchWithin"] = "";
 				}
 

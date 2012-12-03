@@ -19,12 +19,15 @@ import org.springframework.stereotype.Service;
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.FacetGroupType;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
@@ -36,11 +39,16 @@ import com.search.manager.model.StoreKeyword;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "facetSortService")
 )
-public class FacetSortService {
+public class FacetSortService extends RuleService{
 	private static final Logger logger = Logger.getLogger(FacetSortService.class);
 
 	@Autowired private DaoService daoService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.FACET_SORT;
+	}
+	
 	@RemoteMethod
 	public FacetSort addRule(String ruleName, String ruleType, String sortType) {
 		int result = -1;
@@ -60,6 +68,13 @@ public class FacetSortService {
 				result = addAllFacetGroup(ruleId);
 			}
 
+			try {
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.FACET_SORT, store, ruleId, ruleName, 
+						username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+			} catch (DaoException de) {
+				logger.error("Failed to create rule status for ranking rule: " + ruleName);
+			}
+			
 			if (result>0){
 				return getRuleById(ruleId);
 			}
@@ -95,7 +110,14 @@ public class FacetSortService {
 			String username = UtilityService.getUsername();
 			FacetSort rule = new FacetSort(ruleId, store);
 			rule.setLastModifiedBy(username);
-			return daoService.deleteFacetSort(rule);
+			result = daoService.deleteFacetSort(rule);
+			if (result > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.FACET_SORT.getCode());
+				ruleStatus.setRuleRefId(ruleId);
+				ruleStatus.setStoreId(store);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
+			}
 		} catch (DaoException e) {
 			logger.error("Failed during deleteRule()",e);
 		}
@@ -202,6 +224,26 @@ public class FacetSortService {
 	public FacetSort getRuleByNameAndType(String ruleName, String ruleType) {
 		String store = UtilityService.getStoreName();
 		return getRule(new FacetSort(ruleName, RuleType.get(ruleType), null, new Store(store)));
+	}
+	
+	@RemoteMethod
+	public FacetSort getRuleByName(String ruleName){
+		FacetSort facetSort = null;
+		StoreKeyword sk = new StoreKeyword(UtilityService.getStoreName(), ruleName);
+		
+		try {
+			if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
+				facetSort = daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) ;
+			}
+			
+			if(facetSort == null){
+				facetSort = daoService.getFacetSort(new FacetSort(ruleName, RuleType.TEMPLATE, null, sk.getStore()));
+			}
+		} catch (DaoException e) {
+			logger.error("Failed to fetch rule id for Facet Sort rule : "  + ruleName, e);
+		}
+		
+		return facetSort;
 	}
 
 	@RemoteMethod

@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
+import com.search.manager.enums.ExportType;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -13,6 +17,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -31,6 +36,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
+import com.search.manager.report.model.xml.RuleXml;
 
 public interface DaoService {
 	
@@ -217,19 +223,25 @@ public interface DaoService {
     public int addAuditTrail(AuditTrail auditTrail) throws DaoException;
     public List<String> getDropdownValues(int type, String storeId, boolean adminFlag) throws DaoException;
     public List<String> getRefIDs(String ent, String opt, String storeId) throws DaoException;
+    
     /* Rule Status */
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException;
+    public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public Map<String, Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException;
+	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
-	
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, Date requestDate) throws DaoException;
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
+	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId);
+
     /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
-	public int addComment(Comment comment) throws DaoException;
+	public int addComment(Comment comment) throws DaoException;	
 	public int updateComment(Comment comment) throws DaoException;
 	public int removeComment(Integer commentId) throws DaoException;
 	
@@ -245,4 +257,19 @@ public interface DaoService {
 	public List<String> getGroups() throws DaoException;
 	public List<String> getAllPermissions() throws DaoException;
 	public RecordSet<Group> getGroupPermission(String groupId) throws DaoException;
+
+	/* Version */
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
+	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version);
+	public boolean restoreRuleVersion(RuleXml xml);	
+	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId);
+	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId);
+
+	/* Export Rule Map */
+    public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException;
+    public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+	
 }

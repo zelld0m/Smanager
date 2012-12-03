@@ -1,11 +1,14 @@
 package com.search.ws;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,16 +20,24 @@ import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.Product;
+import com.search.manager.model.SearchResult;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
-import com.search.manager.utility.SolrRequestDispatcher;
 
 public class SearchHelper {
 
@@ -36,6 +47,7 @@ public class SearchHelper {
 
 	private static JSON parseJsonResponse(JsonSlurper slurper,HttpResponse response) {
 		BufferedReader reader = null;
+		InputStream in = null;
 		try {
 
 			String encoding = (response.getEntity().getContentEncoding() != null) ? response.getEntity().getContentEncoding().getValue() : null;
@@ -43,7 +55,8 @@ public class SearchHelper {
 				encoding = "UTF-8";
 			}
 
-			reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
+			in = response.getEntity().getContent();
+			reader = new BufferedReader(new InputStreamReader(in, encoding));
 			String line = null;
 			StringBuilder jsonText = new StringBuilder();
 			while ((line = reader.readLine()) != null) {
@@ -59,6 +72,7 @@ public class SearchHelper {
 		}
 		finally {
 			try { if (reader != null) reader.close(); } catch (Exception e) {}
+			try { if (in != null) in.close();  } catch (IOException e) { }
 		}
 		return null;
 	}
@@ -67,8 +81,39 @@ public class SearchHelper {
 		// TODO: implement this
 		return false;
 	}
+	
+	public static LinkedHashMap<String, Product> getProducts(List<?  extends SearchResult> itemList, String store, String ruleId){
+		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
+		
+		for (SearchResult e: itemList) {
+			Product ep = new Product(e);
+			ep.setStore(store);
+			if (e.getMemberType() == MemberTypeEntity.PART_NUMBER) {
+				map.put(e.getEdp(), ep);
+			}else{
+				map.put(e.getMemberId(), ep);				
+			} 
+		}
+		
+		if(MapUtils.isNotEmpty(map)){
+			SearchHelper.getProducts(map, store, UtilityService.getServerName(), ruleId);
+		}
+		
+		return map;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static LinkedHashMap<String, Product> getProductsIgnoreKeyword(Map<String, ? extends Product> map, String store, String ruleId){
+		if(MapUtils.isNotEmpty(map)){
+			SearchHelper.getProductsIgnoreKeyword(map, store, UtilityService.getServerName(), ruleId);
+		}
+		
+		return (LinkedHashMap<String, Product>) map;
+	}
 
 	public static void getProducts(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
 			if (productList == null || productList.isEmpty()) {
 				return;
@@ -88,9 +133,11 @@ public class SearchHelper {
 			int size = productList.size();
 			boolean isWithEDP = false;
 			StringBuilder edps = new StringBuilder("EDP:(");
+			String edp = "";
 			for (Product product: productList.values()) {
-				edps.append(" ").append(product.getEdp());
-				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER) {
+				edp = product.getEdp();
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && StringUtils.isNotBlank(edp)) {
+					edps.append(" ").append(edp);
 					isWithEDP = true;
 				}
 			}
@@ -116,7 +163,15 @@ public class SearchHelper {
 				JSONArray resultArray = null;
 
 				// send solr request
-				HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+				client = new DefaultHttpClient();
+				post = new HttpPost(serverUrl);
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+				post.addHeader("Connection", "close");
+				if (logger.isDebugEnabled()) {
+					logger.debug("URL: " + post.getURI());
+					logger.debug("Parameter: " + nameValuePairs);
+				}
+				HttpResponse solrResponse = client.execute(post);
 				JsonConfig jsonConfig = new JsonConfig();
 				jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 				slurper = new JsonSlurper(jsonConfig);
@@ -175,10 +230,21 @@ public class SearchHelper {
 			}
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 	}
 
 	public static void getProductsIgnoreKeyword(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
 			if (productList == null || productList.isEmpty()) {
 				return;
@@ -195,8 +261,13 @@ public class SearchHelper {
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
 			int size = productList.size();
 			StringBuilder edps = new StringBuilder();
+			String edp = "";
+			
 			for (Product product: productList.values()) {
-				edps.append(" ").append(product.getEdp());
+				edp = product.getEdp();
+				if (product.getMemberTypeEntity() == MemberTypeEntity.PART_NUMBER && StringUtils.isNotBlank(edp)) {
+					edps.append(" ").append(edp);
+				}
 			}
 
 			if (edps.toString().trim().length() == 0) {
@@ -225,7 +296,15 @@ public class SearchHelper {
 			JSONArray resultArray = null;
 
 			// send solr request
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			client = new DefaultHttpClient();
+			post = new HttpPost(serverUrl);
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + nameValuePairs);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -269,6 +348,15 @@ public class SearchHelper {
 			}
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 	}
 
@@ -306,6 +394,8 @@ public class SearchHelper {
 			return map;
 		}
 
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
 			ConfigManager configManager = ConfigManager.getInstance();
 
@@ -362,7 +452,15 @@ public class SearchHelper {
 			JSONObject facets = null;
 
 			// send solr request
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			client = new DefaultHttpClient();
+			post = new HttpPost(serverUrl);
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + nameValuePairs);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -399,12 +497,23 @@ public class SearchHelper {
 
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return map;
 	}
 
 	public static String getEdpByPartNumber(String server, String storeId, String partNumber) {
 		String edp = "";
+		HttpClient client  = null;
+		HttpPost post = null;
 		if (StringUtils.isEmpty(partNumber)) {
 			return edp;
 		}
@@ -433,7 +542,16 @@ public class SearchHelper {
 			JSONArray resultArray = null;
 
 			// send solr request
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			client = new DefaultHttpClient();
+			client = new DefaultHttpClient();
+			post = new HttpPost(serverUrl);
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + nameValuePairs);
+			}
+			HttpResponse solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -446,12 +564,23 @@ public class SearchHelper {
 			}
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return edp;
 	}
 	
 	public static boolean isForceAddCondition(String server, String storeId, String keyword, String fqCondition) {
 		boolean forceAdd = false;
+		HttpClient client  = null;
+		HttpPost post = null;
 		try {
 			// build the query
 			String serverUrl = ConfigManager.getInstance().getServerParameter(server, "url")
@@ -474,13 +603,30 @@ public class SearchHelper {
 			}
 			
             // send solr request
-			HttpResponse solrResponse = SolrRequestDispatcher.dispatchRequest(serverUrl, nameValuePairs);
+			client = new DefaultHttpClient();
+			post = new HttpPost(serverUrl);
+			post.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + nameValuePairs);
+			}
+			HttpResponse solrResponse = client.execute(post);
             JsonConfig jsonConfig = new JsonConfig();
             jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
             forceAdd = (((JSONObject)parseJsonResponse(new JsonSlurper(jsonConfig), solrResponse))
 						.getJSONObject(SolrConstants.TAG_RESPONSE)).getInt(SolrConstants.ATTR_NUM_FOUND) > 0;
 		} catch (Throwable t) {
 			logger.error("Error while retrieving from Solr" , t);
+		} finally {
+			if (post != null) {
+				EntityUtils.consumeQuietly(post.getEntity());
+				post.releaseConnection();
+			}
+			if (client != null) {
+				ClientConnectionManager mgr = client.getConnectionManager();
+				mgr.shutdown();
+			}
 		}
 		return forceAdd;
 	}

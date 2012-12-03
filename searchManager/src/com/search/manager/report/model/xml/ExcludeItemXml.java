@@ -23,7 +23,7 @@ public class ExcludeItemXml extends RuleItemXml{
 		this.setMemberId(er.getMemberId());
 		this.setMemberType(er.getMemberType());
 		if(er.getMemberType() == MemberTypeEntity.FACET && er.getCondition()!=null){
-			this.setCondition(er.getCondition().getCondition());
+			this.setRuleCondition(er.getCondition());
 		}else{
 			this.setEdp(er.getEdp()) ;
 		}

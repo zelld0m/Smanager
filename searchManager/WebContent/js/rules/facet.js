@@ -49,7 +49,7 @@
 					moduleName: self.moduleName,
 					rule: self.selectedRule,
 					ruleType: "Facet Sort",
-					enableVersion:true,
+					enableVersion:false, // TODO: set to true for version feature
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){
@@ -114,10 +114,10 @@
 				
 				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
-						self.keyword = self.selectedRule["ruleName"];
+						self.keyword = encodeURIComponent(self.selectedRule["ruleName"]);
 					}
 					else if("TEMPLATE" === self.selectedRule["ruleType"]){
-						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + self.selectedRule["ruleName"] + "\"";
+						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + encodeURIComponent(self.selectedRule["ruleName"]) + "\"";
 					}
 				}
 				
@@ -169,7 +169,11 @@
 						self.facetValueList = json.facet_counts.facet_fields;
 						
 						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn"){
-							self.facetValueList["Category"] = json.FacetTemplate.Level1;
+							self.facetValueList["Category"] = [];
+							
+							if(json.FacetTemplate){
+								self.facetValueList["Category"] = json.FacetTemplate.Level1;
+							}
 						}
 						
 						self.populateFacetListDropdown();
@@ -393,6 +397,7 @@
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
+											setTimeout(function(){
 											var popName = "";
 											var ruleNameLabel = "Name";
 
@@ -442,6 +447,7 @@
 													}
 												});
 											}
+											}, 500);
 										}
 									});
 
@@ -555,6 +561,15 @@
 					}
 				});
 			},
+			
+			checkNumberOfHighlightedItems : function(content, facetGroupId){
+				var self = this;
+				if(content.hasClass("isShown")){
+					var items = content.find("input#_items_"+facetGroupId);
+					return items ? items.length : -1; //return -1 if input element not found
+				}
+				return -1; //div is not shown
+			},
 
 			addNewFacetValueListener : function(content, facetGroupId){
 				var self = this;
@@ -563,8 +578,10 @@
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
 						if (!e.data.locked){
-							var items = self.buildFacetGroupItemsMap();
-							var conditionCount = (items && items[facetGroupId]) ? items[facetGroupId].length : 0;
+							var conditionCount = self.checkNumberOfHighlightedItems(content, facetGroupId);
+							if(conditionCount < 0){
+								return;
+							}
 							if (conditionCount >= self.maxHighlightedFacet) {
 								jAlert("Maximum allowed number of highlighted facet values is "+self.maxHighlightedFacet+"!",self.moduleName);
 								return;
@@ -624,8 +641,9 @@
 						var items = $("input#_items_"+self.facetGroupIdList[index]);
 	
 						for(var i = 0; i < items.length; i++){
-							if($.isNotBlank($(items[i]).val()) && isXSSSafe($(items[i]).val())){
-								facetItems[i] = $(items[i]).val();
+							var itemVal = $(items[i]).val();
+							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafeAllowNonAscii(itemVal)){
+								facetItems.push(itemVal);
 							}
 						}
 						itemMap[self.facetGroupIdList[index]] = facetItems;
@@ -660,17 +678,17 @@
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
-
+						
+						setTimeout(function() {
 						var sortType = $("select#facetSortOrder option:selected").val();
 						var facetGroupItems = self.buildFacetGroupItemsMap();
 						var sortOrders = self.buildFacetGroupSortTypeMap();
 
-						//if (self.checkIfUpdateAllowed()){
 						var response = 0;
 						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
 							callback: function(data){
 								response = data;
-								showActionResponse(response, "update", self.selectedRule["ruleName"]);
+								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
 							},
 							preHook: function(){
 								self.prepareFacetSort();
@@ -692,7 +710,7 @@
 
 							}
 						});
-						//}
+						}, 500 );
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});

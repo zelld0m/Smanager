@@ -8,4 +8,8 @@ ul.relevancyInfo li,
 ul.keywordInRule li						{ list-style: none; padding:5px 0; display: block; width:100%}
 .ruleField								{ margin:15px 0; }
 
+input#importAsSelect					{width: 173px !important;}
+ul.ui-widget-content					{width: 145px !important; margin-left:0 !important;}
 
+div#importAlert img						{position: relative; top: 2px;}
+.ui-widget li.ui-menu-item				{margin: 0 0 0 -25px;} 

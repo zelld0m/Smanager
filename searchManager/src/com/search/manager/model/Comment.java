@@ -34,6 +34,22 @@ private static final long serialVersionUID = 1L;
 		this.createdDate = createdDate;
 		this.ruleTypeId = ruleTypeId;
 	}
+	
+	public Comment(Store store, String referenceId, Integer ruleTypeId, String comment, String username){
+		super();
+		this.store = store;
+		this.referenceId = referenceId;
+		this.ruleTypeId = ruleTypeId;
+		this.comment = comment;
+		this.username = username;
+	}
+	
+	public Comment(Store store, String referenceId, Integer ruleTypeId){
+		super();
+		this.store = store;
+		this.referenceId = referenceId;
+		this.ruleTypeId = ruleTypeId;
+	}
 
 	public void setUsername(String username) {
 		this.username = username;

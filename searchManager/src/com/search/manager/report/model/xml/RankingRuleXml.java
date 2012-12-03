@@ -1,21 +1,30 @@
 package com.search.manager.report.model.xml;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.utility.DateAndTimeUtils;
 
 @XmlRootElement(name = "rankingrule")
 @DataTransferObject(converter = BeanConverter.class)
-public class RankingRuleXml extends RuleVersionXml {
+public class RankingRuleXml extends RuleXml {
 
-	private static final long serialVersionUID = 1073476024072073843L;
+	private static final long serialVersionUID = 1L;
 	private String description;
 	private Date startDate;
 	private Date endDate;
@@ -24,11 +33,11 @@ public class RankingRuleXml extends RuleVersionXml {
 
 	public RankingRuleXml() {
 		super(serialVersionUID);
+		this.setRuleEntity(RuleEntity.RANKING_RULE);
 	}
 
-	public RankingRuleXml(String store, long version, String name, String notes, String username,
-			Relevancy rr) {
-		super(store, name, notes, username);
+	public RankingRuleXml(String store, long version, String name, String notes, String username, Relevancy rr) {
+		super(store, name == null ? rr.getRuleName() : name, notes, username);
 
 		if(rr!=null){
 			this.setRuleId(rr.getRuleId());
@@ -36,13 +45,23 @@ public class RankingRuleXml extends RuleVersionXml {
 			this.setStartDate(rr.getStartDate());
 			this.setEndDate(rr.getEndDate());
 			this.setDescription(rr.getDescription());
-			this.setRuleKeyword(new RuleKeywordXml(rr.getKeywords()));
+			List<String> keywords = new ArrayList<String>();
+			if (CollectionUtils.isNotEmpty(rr.getRelKeyword())) {
+				for (RelevancyKeyword keyword: rr.getRelKeyword()) {
+					keywords.add(DAOUtils.getKeywordId(keyword.getKeyword()));
+				}
+			}
+			this.setRuleKeyword(new RuleKeywordXml(keywords));
 			this.setParameters(rr.getParameters());
 		}
 
 		setVersion(version);
 		setSerial(serialVersionUID);
 		this.setCreatedDate(new Date());
+	}
+	
+	public RankingRuleXml(String store, Relevancy relevancy) {
+		this(store, 0, "", "", "", relevancy);
 	}
 
 	public String getDescription() {
@@ -84,5 +103,17 @@ public class RankingRuleXml extends RuleVersionXml {
 
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
+	}
+	
+	@XmlTransient
+	public String getFormattedStartDate() {
+		if(getStore()==null) return StringUtils.EMPTY;
+		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getStartDate());
+	}
+	
+	@XmlTransient
+	public String getFormattedEndDate() {
+		if(getStore()==null) return StringUtils.EMPTY;
+		return DateAndTimeUtils.formatDateUsingConfig(getStore(), getEndDate());
 	}
 }

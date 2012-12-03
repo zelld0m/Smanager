@@ -35,5 +35,5 @@
 }
 
 /* customized */
-.active-locked, .normal-forceadd { height: 24px !important; width: 72px !important; }
+.on-off, .active-locked, .normal-forceadd { height: 24px !important; width: 72px !important; }
 .small-normal-forceadd { height: 20px !important; width: 85px !important; margin-left:20px }

@@ -24,7 +24,8 @@ public class DemoteItemXml extends RuleItemXml{
 		this.setMemberId(dr.getMemberId());
 		this.setMemberType(dr.getMemberType());
 		if(dr.getMemberType() == MemberTypeEntity.FACET && dr.getCondition()!=null){
-			this.setCondition(dr.getCondition().getCondition());
+			this.setRuleCondition(dr.getCondition());
+			
 		}else{
 			this.setEdp(dr.getEdp()) ;
 		}

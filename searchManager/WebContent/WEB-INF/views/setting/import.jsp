@@ -51,12 +51,12 @@
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="24px" id="selectAll"><input type="checkbox"></th>
-							<th width="30px"></th>
+							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
+							<th width="30px">Content</th>
 							<th width="150px">Rule Info</th>
 							<th width="50px">Published Date</th>
 							<th width="85px">Import Type</th>
-							<th width="85px">Import As</th>
+							<th>Import As</th>
 						</tr>
 					<tbody>
 				</table>
@@ -65,7 +65,7 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
-							<td width="24px" class="txtAC" id="select"><input type="checkbox"></td>
+							<td width="24px" class="txtAC" id="select"><input type="checkbox" class="selectItem"></td>
 							<td class="txtAC" width="30px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
@@ -78,12 +78,11 @@
 							</td>
 							<td width="85px" class="txtAC" id="type">
 								<select id="importTypeList">
-									<option value="">-- Import Type --</option>
 								</select>
 							</td>
-							<td width="85px" class="txtAL" id="importAs">
+							<td class="txtAL" id="importAs">
 								<select id="importAsList">
-									<option value="">-- Import as New Rule --</option>
+									<option value="">Import as New Rule</option>
 								</select>
 							</td>
 						</tr>
@@ -99,10 +98,10 @@
 					<p>
 				</div>
 				<label class="floatL padL13 w100"><span class="fred">*</span> Comment: </label>
-				<label class="floatL w480"><textarea id="importComment" class="w510" style="height:32px"></textarea></label>
+				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea></label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<a id="importBtn" href="javascript:void(0);"
+					<a id="okBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Import</div>
 					</a>
 					<a id="rejectBtn" href="javascript:void(0);"

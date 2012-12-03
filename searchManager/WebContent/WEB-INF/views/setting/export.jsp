@@ -20,7 +20,15 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 
 	<div class="floatL w730 titlePlacer breakWord">
-		<h1 id="titleText" class="padT7 padL15 fsize20 fnormal"></h1>
+	  <div class="floatR padT7">
+	  	<div class="floatL fbold fsize14 marT4 marR5">Auto-export: </div>
+	  	<div class="floatR"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
+	  	<div class="clearB"></div>
+      </div>
+	  <div class="w480 padT10 padL10 floatL fsize20 fnormal breakWord">
+		<span id="titleText"></span>
+		<span id="titleHeader" class="fLblue fnormal"></span>
+	  </div>
 	</div>
 	
 	<div class="clearB"></div>
@@ -95,10 +103,10 @@
 					<p>
 				</div>
 				<label class="floatL padL13 w100"><span class="fred">*</span> Comment: </label>
-				<label class="floatL w480"><textarea id="exportComment" class="w510" style="height:32px"></textarea>	</label>
+				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea>	</label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<a id="exportBtn" href="javascript:void(0);"
+					<a id="okBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Export</div>
 					</a>
 				</div>

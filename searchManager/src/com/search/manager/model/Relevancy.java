@@ -1,5 +1,6 @@
 package com.search.manager.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -7,11 +8,13 @@ import java.util.Map;
 
 import jxl.common.Logger;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 
+import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -29,7 +32,6 @@ public class Relevancy extends ModelBean {
 	private Date endDate;
 	private Map<String, String> fields = new HashMap<String, String>();
 	private List<RelevancyKeyword> relKeyword;
-	private List<String> keywords;
 	
 	@DataTransferObject(converter = EnumConverter.class)
 	public enum Parameter {
@@ -92,7 +94,34 @@ public class Relevancy extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
-	
+	public Relevancy(RankingRuleXml xml) {
+		relevancyId = xml.getRuleId();
+		relevancyName = xml.getRuleName();
+		description = xml.getDescription();
+		store = new Store(xml.getStore());
+		startDate = xml.getStartDate();
+		endDate = xml.getEndDate();
+//		comment = xml.getNotes();
+		createdBy = xml.getCreatedBy();
+		lastModifiedBy = xml.getLastModifiedBy();
+		createdDate = xml.getCreatedDate();
+		lastModifiedDate = xml.getLastModifiedDate();
+		
+		Map<String, String> parameter = xml.getParameters();
+		if (parameter != null) {
+			for(String key: parameter.keySet()) {
+				setParameter(key, parameter.get(key));
+			}
+		}
+		
+		relKeyword = new ArrayList<RelevancyKeyword>();
+		if (xml.getRuleKeyword() != null && CollectionUtils.isNotEmpty(xml.getRuleKeyword().getKeyword())) {
+			for (String keyword: xml.getRuleKeyword().getKeyword()) {
+				relKeyword.add(new RelevancyKeyword(new Keyword(keyword), this));
+			}
+		}
+	}
+
 	public String getRuleId() {
 		return relevancyId;
 	}
@@ -284,11 +313,4 @@ public class Relevancy extends ModelBean {
 		this.fields = fields;
 	}
 
-	public List<String> getKeywords() {
-		return keywords;
-	}
-
-	public void setKeywords(List<String> keywords) {
-		this.keywords = keywords;
-	}
 }

@@ -53,6 +53,188 @@
 			});
 		};
 
+		base.addCompareButtonListener = function(){
+			var $content = base.contentHolder;
+	
+			$content.find("a#compareBtn").on({
+				click: function(e){
+					base.selectedVersion = [];
+					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
+						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
+					});
+					
+					base.setCompare();
+				}
+			});
+			
+		};
+		
+		base.getItemType = function(item){
+			var $condition = item.condition;
+			var type = "unknown";
+
+			if($.isBlank($condition)){
+				return type;
+			}
+
+			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
+				type="facet";
+			}else if($condition["CNetFilter"]){
+				type="cnet";
+			}else if($condition["IMSFilter"]){
+				type="ims";
+			}
+
+			return type;
+		};
+		
+		base.setCompare = function(){
+			var $content = base.contentHolder;
+			var index = 0;
+			var item, $li, $vItem = null;
+			var $vDiv = $content.find("div#vHeaderList");
+			var $vPattern = $vDiv.find("div#vPattern");
+			var $ul = $content.find("ul#versionList");
+			var $liPattern = $ul.find("li#itemPattern");
+
+			var $rowLabelUl = $content.find("ul#rowLabel");
+			
+			$ul.find("li.item:not(#itemPattern)").remove();
+			$vDiv.find("div.vHeader:not(#vPattern)").remove();
+			$rowLabelUl.find("li.dynamic").remove();
+			
+			for(var ver in base.selectedVersion){
+				index = base.selectedVersion[ver];
+				$li = $liPattern.clone();
+				$vItem = $vPattern.clone();
+				item = base.ruleMap[index];
+				rule = item["rule"];
+				
+				$vItem.attr("id","vHeader_" + index);
+				$vItem.find("#ver").text("Version " + item["version"]);
+				$vItem.show();
+				$vDiv.append($vItem);
+				
+				$li.attr("id","ver_" + index);
+				$li.find("#verCreatedBy").text(item["createdBy"]);
+				$li.find("#verDate").text(item["createdDate"].toUTCString());
+				$li.find("#verName").text(item["name"]);
+				$li.find("#verNote").text(item["notes"]);
+				$li.find("#ruleId").text(item["ruleId"]);
+				$li.find("#ruleName").text(item["ruleName"]);
+				
+				switch(base.options.ruleType){
+				case "Elevate": 
+				case "Exclude": 
+				case "Demote":
+					base.setProductCompare($li, $rowLabelUl, item); break; 
+				case "Facet Sort": 
+					base.setFacetItemCompare($li, $rowLabelUl, item); break; 
+				case "Query Cleaning": 
+					base.setQueryCleaningCompare($li, $rowLabelUl, item); break; 
+				case "Ranking Rule": 
+					base.setRankingRuleCompare($li, $rowLabelUl, item); break; 
+				}
+
+				$li.show();
+				$ul.append($li);
+
+			};
+		};
+		
+		base.setFacetItemCompare = function(li, rowlabel, item){
+			var $li = li;
+			var groups = item["item"];
+			var $rowLabelUl = rowlabel;
+			var $group, $groupItems = null;
+			
+			var $groupUl = $li.find("ul#groupList");
+			var $groupLiPattern = $groupUl.find("li#groupPattern");
+			var groupItemName = "";
+			
+			if(groups.length){
+				$groupUl.parent().show();
+				$rowLabelUl.find("li#groups").text("Highlighted").show();
+				for (var idx in groups){
+					$group = groups[idx];
+					$groupItems = $group["groupItem"];
+					
+					$groupLi = $groupLiPattern.clone();
+					$groupLi.attr("id", $.formatAsId($group["groupName"]));
+					$groupLi.find("#groupName").text($group["groupName"]);
+					$groupLi.find("#groupSort").text($group["sortType"]);
+					$groupLi.show();
+					
+					$groupItemUl = $groupLi.find("ul#groupItemList");
+					$groupItemLiPattern = $groupItemUl.find("li#groupItemPattern"); 
+					
+					//Populate items
+					for (var itemIdx in $groupItems){
+						$groupItemLi = $groupItemLiPattern.clone();
+						groupItemName = $groupItems[itemIdx];
+						$groupItemLi.attr("id", $.formatAsId(groupItemName));
+						$groupItemLi.text(groupItemName);
+						$groupItemLi.show();
+						$groupItemUl.append($groupItemLi);
+					}
+					
+					$groupUl.append($groupLi);
+				}
+			}
+		
+		};
+		
+		base.setProductCompare = function(li, rowlabel, item){
+			var $li = li;
+			var products = item["products"];
+			var $rowLabelUl = rowlabel;
+
+			console.log(item["products"]);
+			
+			if(products.length){
+				var $ul = $li.find("ul#prodList");
+				var $pattern = $ul.find("li#prodPattern");
+				var $pLi = null;
+				
+				$ul.parent().show();
+				$rowLabelUl.find("li#products").text("Products").show();
+				
+				for (var pXml in products){
+					var product = products[pXml];
+					$pLi = $pattern.clone();
+					$pLi.attr("id", product["memberId"]);
+					
+					if(product["memberType"]==="FACET"){
+						var imagePath ="";
+						switch(base.getItemType(product)){
+							case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+							case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+							case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+						};
+						
+						if($.isNotBlank(imagePath))
+							$pLi.find("#prodImage").attr("src", imagePath);
+						
+						$pLi.find("#prodInfo").text(product["condition"]["condition"]);
+					}else if(product["memberType"]==="PART_NUMBER"){
+						if($.isNotBlank(product["dpNo"])){
+							$pLi.find("#prodImage").attr("src", product["imagePath"]);
+							$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+							$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
+							$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
+						}else{
+							$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg');
+							$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
+						}
+					}
+					
+					$pLi.show();
+					$ul.append($pLi);
+				}
+			}
+			
+		};
+		
 		base.addSaveButtonListener = function(){
 			var $content = base.contentHolder;
 
@@ -106,13 +288,16 @@
 		base.addDeleteVersionListener = function(tr, item){
 			var $tr = tr;
 			var $item = item;
-			
+			var $content = base.contentHolder;
+
 			$tr.find(".deleteIcon").off().on({
 				click:function(e){
 					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
 							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
 								callback:function(data){
+									$content.find("li#ver_" + e.data.item["version"]).remove();
+									$content.find("div#vHeader_" + e.data.item["version"]).remove();
 									base.getAvailableVersion();
 								}
 							});
@@ -138,11 +323,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-									RuleVersionServiceJS.getRankingRuleVersion(base.options.ruleId, e.data.item["version"], {
-										callback: function(data){
-											base.options.postRestoreCallback(base, data);
-										}
-									});
+									
 								}
 							});
 						}
@@ -165,11 +346,14 @@
 						$table.find("tr#empty_row").show();
 					}
 					
+					base.ruleMap = {};
 					for (var i in data){
 						var item = data[i];
+						var version = item["version"];
 						var $tr = $table.find("tr#itemPattern").clone();
-						$tr.prop("id", "item" + $.formatAsId(item["version"]));
-
+						
+						base.ruleMap[version] = item;
+						$tr.prop("id", "item" + $.formatAsId(version));
 						$tr.find("td#itemId").html(item["version"]);
 						$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
 						$tr.find("td#itemInfo > p#name").html(item["name"]);
@@ -183,6 +367,7 @@
 				},
 				postHook:function(){
 					$table.find("tr#preloader").remove();
+					base.addCompareButtonListener();
 				}
 			});
 		};
@@ -190,7 +375,7 @@
 		base.getTemplate = function(){
 			var template  = '';
 
-			template += '<div style="width:700px">';
+			template += '<div style="width:845px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
 			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';			
 			
@@ -200,8 +385,8 @@
 			template += '				<tbody>';
 			template += '					<tr>';
 			template += '						<th class="displayBlock w60">';
-			template += '							<a id="compareBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-			template += '								<div class="buttons fontBold">Compare</div>';
+			template += '							<a id="compareBtn" href="javascript:void(0);" class="btnGraph btnCompare clearfix">';
+			template += '								<div class="btnGraph btnCompare"></div>';
 			template += '							</a>';
 			template += '						</th>';
 			template += '						<th class="w160">Name</th>';
@@ -276,16 +461,76 @@
 			template += '	</div>';	// end w400		
 			template += '</div>'; // end w700
 
-
 			return template;
 		};
-
 		
 		base.getItemListTemplate =function(){
 			var template  = '';
+	
+			template += '	<div class="version w425 floatR border">';
 			
-			template += '	<div class="w280 floatR border" style="height:500px">';
-			template += '		<div> lorem ipsum dolor sit amet </div>';
+			template += '	<div id="vHeaderList">';
+			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
+			template += '		<div id="vPattern" class="vHeader" style="display:none">';
+			template += '			<div id="ver" class="floatL titleVersion" style="padding:5px; width:129px;"></div>';
+			template += '		</div>';
+			template += '	</div>';
+			
+			template += '	<div class="clearB"></div>';
+			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
+			template += '		<div style="float:left; width:120px">';// label
+			template += '			<ul id="rowLabel" class="w100p" style="margin-top:23px">';
+			template += '				<li></li>';
+			template += '				<li>Created By</li>';
+			template += '				<li style="height:24px">Date</li>';
+			template += '				<li>Name</li>';
+			template += '				<li>Notes</li>';
+			template += '				<li>Rule ID</li>';
+			template += '				<li>Rule Name</li>';
+			template += '				<li id="products" style="display:none"></li>';
+			template += '				<li id="groups" style="display:none"></li>';
+			template += '			</ul>';
+			template += '		</div>';// end label
+			
+			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
+			template += '			<ul id="versionList">';
+			template += '				<li id="itemPattern" class="item" style="display:none">';
+			template += '					<ul id="ruleDetails">';
+			template += '						<li><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
+			template += '						<li id="verCreatedBy"></li>'; 
+			template += '						<li id="verDate"></li>';
+			template += '						<li id="verName"></li>'; 
+			template += '						<li id="verNote"></li>'; 
+			template += '						<li id="ruleId"></li>'; 
+			template += '						<li id="ruleName"></li>';
+			template += '						<li id="products" style="display:none">';
+			template += '							<ul id="prodList">';
+			template += '								<li id="prodPattern" class="prod" style="display:none">';
+			template += '									<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
+			template += '									<div id="prodInfo">';
+			template += '										<p id="prodSKU"></p>';
+			template += '										<p id="prodBrand"></p>';
+			template += '										<p id="prodMfrNo"></p>';
+			template += '									<div>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '						<li class="groups" style="display:none">';
+			template += '							<ul id="groupList">';
+			template += '								<li id="groupPattern" class="group" style="display:none">';
+			template += '									<p id="groupName"></p>';
+			template += '									<p id="groupSort"></p>';
+			template += '									<ul id="groupItemList">';
+			template += '										<li id="groupItemPattern" class="groupItem" style="display:none"></li>';
+			template += '									</ul>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '					</ul>';
+			template += '				</li>';
+			template += '			</ul>';
+			template += '		</div>';// end content
+			template += '	</div>';
 			template += '	</div>';
 			
 			return template;

@@ -22,50 +22,31 @@ public class DemoteVersionDAO extends RuleVersionDAO<DemoteRuleXml>{
 	@Autowired private DaoService daoService;
 	
 	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.DEMOTE, ruleId);
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.DEMOTE;
 	}
-	
+
 	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<DemoteRuleXml> getRuleVersionList(String store, String ruleId) {
-		return (RuleVersionListXml<DemoteRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.DEMOTE, ruleId);
-	}
-	
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes){
-		RuleVersionListXml<DemoteRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<DemoteRuleXml> eRuleXmlList = ((RuleVersionListXml<DemoteRuleXml>)ruleVersionListXml).getVersions();
+			List<DemoteItemXml> eItemXmlList = new ArrayList<DemoteItemXml>();
 			long version = ruleVersionListXml.getNextVersion();
-			List<DemoteRuleXml> demoteRuleXmlList = ruleVersionListXml.getVersions();
-			List<DemoteItemXml> demoteItemXmlList = new ArrayList<DemoteItemXml>();
-
-			// Get all items
-			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(new DemoteResult(new StoreKeyword(store, ruleId)));
-
 			try {
+				// Get all items
+				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(new DemoteResult(new StoreKeyword(store, ruleId)));
 				List<DemoteResult> demoteItemList = daoService.getDemoteResultList(criteria).getList();
-				for (DemoteResult demoteResult : demoteItemList) {
-					demoteItemXmlList.add(new DemoteItemXml(demoteResult));
+				for (DemoteResult er : demoteItemList) {
+					eItemXmlList.add(new DemoteItemXml(er));
 				}
+				eRuleXmlList.add(new DemoteRuleXml(store, version, name, notes, username, ruleId, eItemXmlList));
+				ruleVersionListXml.setRuleId(ruleId);
+				ruleVersionListXml.setRuleName(ruleId);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			demoteRuleXmlList.add(new DemoteRuleXml(store, version, name, notes, username, ruleId, demoteItemXmlList));
-
-			ruleVersionListXml.setRuleId(ruleId);
-			ruleVersionListXml.setRuleName(ruleId);
-			ruleVersionListXml.setVersions(demoteRuleXmlList);
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.DEMOTE, ruleId, ruleVersionListXml);
 		}
-
-		return false;
-	}
-
-	public boolean restoreRuleVersion(String store, String ruleId, String username, long version) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 }

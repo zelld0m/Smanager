@@ -15,6 +15,7 @@
 			var imageLabel = "check-default.png";
 
 			if (base.$el.hasClass("active-locked")) imageLabel = "check-active-locked.png";
+			if (base.$el.hasClass("on-off")) imageLabel = "check-on-off.png";
 			if (base.$el.hasClass("normal-forceadd")) imageLabel = "check-normal-forceadd.png";
 			if (base.$el.hasClass("small-normal-forceadd")) imageLabel = "check-small-normal-forceadd.png";
 

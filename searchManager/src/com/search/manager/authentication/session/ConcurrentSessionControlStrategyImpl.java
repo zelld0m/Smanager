@@ -65,7 +65,7 @@ public class ConcurrentSessionControlStrategyImpl extends ConcurrentSessionContr
 	}
 
 	protected void allowableSessionsExceeded(String sessionId, List<SessionInformation> sessions, int allowableSessions, SessionRegistry registry, Object authenticationDetail){
-		boolean exceptionIfMaximumExceeded = true;
+//		boolean exceptionIfMaximumExceeded = true;
 		
 //		if (authenticationDetail instanceof CustomAuthenticationDetailsSource)
 //		{
@@ -80,7 +80,7 @@ public class ConcurrentSessionControlStrategyImpl extends ConcurrentSessionContr
 //		}
 
 		// Determine least recently used session, and mark it for invalidation
-		SessionInformation leastRecentlyUsed = null;
+//		SessionInformation leastRecentlyUsed = null;
 
 		/* expire the last recently used session
 		for (int i = 0; i < sessions.length; i++){

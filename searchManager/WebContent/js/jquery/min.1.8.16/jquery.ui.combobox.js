@@ -82,7 +82,13 @@
 
 			 var span = $("<span style=\" white-space: nowrap;\"></span>")
               .append(input).insertAfter( select );
-			  
+			 
+			input.bind({
+				paste: function(e){
+					$(this).focusout();
+				}
+			});
+			
 			input.data( "autocomplete" )._renderItem = function( ul, item ) {
 				return $( "<li></li>" )
 				.data( "item.autocomplete", item )

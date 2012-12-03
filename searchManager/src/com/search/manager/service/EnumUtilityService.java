@@ -22,6 +22,7 @@ import com.search.manager.enums.SortType;
 )
 public class EnumUtilityService {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(EnumUtilityService.class);
 
 	@RemoteMethod

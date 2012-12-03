@@ -34,6 +34,7 @@ public class DemoteProduct extends Product {
 		this.setLastModifiedBy(e.getLastModifiedBy());
 		this.setCreatedBy(e.getCreatedBy());
 		this.setCondition(e.getCondition());
+		this.setMemberTypeEntity(e.getMemberType());
 		this.setMemberId(e.getMemberId());
 		this.setStore(e.getStoreKeyword().getStoreId());
 		this.setLocation(e.getLocation());

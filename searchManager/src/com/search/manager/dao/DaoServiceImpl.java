@@ -8,10 +8,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.search.manager.dao.file.DemoteVersionDAO;
+import com.search.manager.dao.file.ElevateVersionDAO;
+import com.search.manager.dao.file.ExcludeVersionDAO;
+import com.search.manager.dao.file.FacetSortVersionDAO;
+import com.search.manager.dao.file.RankingRuleVersionDAO;
+import com.search.manager.dao.file.RedirectRuleVersionDAO;
+import com.search.manager.dao.file.RuleVersionDAO;
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.BannerDAO;
 import com.search.manager.dao.sp.CampaignDAO;
@@ -20,14 +29,17 @@ import com.search.manager.dao.sp.DAOUtils;
 import com.search.manager.dao.sp.DemoteDAO;
 import com.search.manager.dao.sp.ElevateDAO;
 import com.search.manager.dao.sp.ExcludeDAO;
+import com.search.manager.dao.sp.ExportRuleMapDAO;
 import com.search.manager.dao.sp.FacetSortDAO;
 import com.search.manager.dao.sp.GroupsDAO;
 import com.search.manager.dao.sp.KeywordDAO;
 import com.search.manager.dao.sp.RedirectRuleDAO;
 import com.search.manager.dao.sp.RelevancyDAO;
 import com.search.manager.dao.sp.RuleStatusDAO;
+import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.ExportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
@@ -40,6 +52,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.ExportRuleMap;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -59,6 +72,14 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.RankingRuleXml;
+import com.search.manager.report.model.xml.RedirectRuleXml;
+import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -79,9 +100,16 @@ public class DaoServiceImpl implements DaoService {
 	@Autowired private UsersDAO			usersDAO;
 	@Autowired private GroupsDAO		groupsDAO;
 	@Autowired private FacetSortDAO		facetSortDAO;
+	@Autowired private ElevateVersionDAO elevateVersionDAO;
+	@Autowired private ExcludeVersionDAO excludeVersionDAO;
+	@Autowired private DemoteVersionDAO demoteVersionDAO;
+	@Autowired private FacetSortVersionDAO facetSortVersionDAO;
+	@Autowired private RedirectRuleVersionDAO queryCleaningVersionDAO;
+	@Autowired private RankingRuleVersionDAO rankingRuleVersionDAO;
+	@Autowired private ExportRuleMapDAO	exportRuleMapDAO;
 
 	private DaoServiceImpl instance;
-	
+	private final static Logger logger = Logger.getLogger(DaoServiceImpl.class);
 	public DaoServiceImpl() {
 		instance = this;
 	}
@@ -867,14 +895,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRelevancy(Relevancy relevancy) throws DaoException {
-		int result = relevancyDAO.deleteRelevancy(relevancy);
-		RuleStatus ruleStatus = new RuleStatus();
-		ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
-		ruleStatus.setRuleRefId(relevancy.getRuleId());
-		ruleStatus.setStoreId(relevancy.getStore().getStoreId());
-		//TODO add transaction
-		processRuleStatus(ruleStatus, true);
-		return result;
+		return relevancyDAO.deleteRelevancy(relevancy);
 	}
 	
 	@Override
@@ -1024,14 +1045,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int deleteRedirectRule(RedirectRule rule) throws DaoException {
-		int result = redirectRuleDAO.deleteRedirectRule(rule);
-		RuleStatus ruleStatus = new RuleStatus();
-		ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
-		ruleStatus.setRuleRefId(rule.getRuleId());
-		ruleStatus.setStoreId(rule.getStoreId());
-		//TODO add transaction
-		processRuleStatus(ruleStatus, true);
-		return result;
+		return redirectRuleDAO.deleteRedirectRule(rule);
 	}
 
 	@Override
@@ -1153,7 +1167,12 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria) throws DaoException {
-		return ruleStatusDAO.getRuleStatus(searchCriteria);
+		return ruleStatusDAO.getRuleStatus(searchCriteria, null);
+	}
+	
+	@Override
+	public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException {
+		return ruleStatusDAO.getRuleStatus(searchCriteria, sortOrder);
 	}
 
 	@Override
@@ -1172,13 +1191,36 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.deleteRuleStatus(ruleStatus);
 	}
 
-	@Override
-	public Map<String,Boolean> updateRuleStatus(List<RuleStatus> ruleStatusList) throws DaoException {	
+	private Map<String,Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
-			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatus(ruleStatus) > 0?true:false);
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
 		}
 		return statusMap;
+	}
+
+	private Map<String,Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
+		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
+		for (RuleStatus ruleStatus : ruleStatusList) {
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
+		}
+		return statusMap;
+	}
+
+	@Override
+	public Map<String,Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+			throws DaoException {	
+		switch (status) {
+			case PUBLISHED:
+			case UNPUBLISHED:
+				return publishRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+			case APPROVED:
+			case REJECTED:
+				return approveRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+		}
+		return new HashMap<String,Boolean>();
 	}
 
 	@Override
@@ -1190,31 +1232,7 @@ public class DaoServiceImpl implements DaoService {
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException {
 		return ruleStatusDAO.getCleanList(ruleRefIds, ruleTypeId, pStatus, aStatus);
 	}
-	
-	@Override
-	public int processRuleStatus(RuleStatus ruleStatus, Boolean isDelete) throws DaoException {
-		int result = -1;
-		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(ruleStatus, null, null, 1, 1));
-		if (rSet.getList().size() > 0) {
-			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
-			if (isDelete) {
-				if (((RuleStatus)rSet.getList().get(0)).getPublishedStatus().equals(RuleStatusEntity.UNPUBLISHED.toString())) {
-					ruleStatus.setApprovalStatus(null);
-				}
-				ruleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
-			} else {
-				ruleStatus.setUpdateStatus(RuleStatusEntity.UPDATE.toString());
-			}
-			result = updateRuleStatus(ruleStatus);
-		} else if (!isDelete){
-			ruleStatus.setApprovalStatus(RuleStatusEntity.PENDING.toString());
-			ruleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
-			ruleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
-			result = addRuleStatus(ruleStatus);
-		}
-		return result;
-	}
-	
+
 	@Override
 	public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException {
 		return commentDAO.getComment(searchCriteria);
@@ -1376,8 +1394,270 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems)
-			throws DaoException {
+	public int addFacetGroupItems(List<FacetGroupItem> facetGroupItems) throws DaoException {
 		return facetSortDAO.addFacetGroupItems(facetGroupItems);
 	}
+
+	private RuleVersionDAO<?> getRuleVersionDAO(RuleEntity ruleEntity) {
+		switch (ruleEntity) {
+		case ELEVATE:
+			return elevateVersionDAO;
+		case EXCLUDE:
+			return excludeVersionDAO;
+		case DEMOTE:
+			return demoteVersionDAO;
+		case FACET_SORT:
+			return facetSortVersionDAO;
+		case QUERY_CLEANING:
+			return queryCleaningVersionDAO;
+		case RANKING_RULE:
+			return rankingRuleVersionDAO;
+		}
+		return null;
+	}
+	
+	private RuleVersionDAO<?> getRuleVersionDAO(RuleXml xml) {
+		// TODO: convert to map
+		if (xml instanceof ElevateRuleXml) {
+			return elevateVersionDAO;
+		}
+		else if (xml instanceof ExcludeRuleXml) {
+			return excludeVersionDAO;
+		}
+		else if (xml instanceof DemoteRuleXml) {
+			return demoteVersionDAO;
+		}
+		else if (xml instanceof FacetSortRuleXml) {
+			return facetSortVersionDAO;
+		}
+		else if (xml instanceof RedirectRuleXml) {
+			return queryCleaningVersionDAO;
+		}
+		else if (xml instanceof RankingRuleXml) {
+			return rankingRuleVersionDAO;
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.createPublishedRuleVersion(store, ruleId, username, name, notes);
+		}
+		return false;
+	}
+
+	@Override
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getPublishedRuleVersions(store, ruleId);
+		}
+		return new ArrayList<RuleXml>();
+	}
+	
+	@Override
+	public boolean createRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String reason){
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.createRuleVersion(store, ruleId, username, name, reason);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean deleteRuleVersion(String store, RuleEntity ruleEntity, String ruleId, String username, int version){
+		RuleVersionDAO<?> dao = getRuleVersionDAO(ruleEntity);
+		if (dao != null) {
+			return dao.deleteRuleVersion(store, ruleId, username, version);
+		}
+		return false;
+	}
+
+	@Override
+	public List<RuleXml> getRuleVersions(String store, String ruleType, String ruleId) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getRuleVersions(store, ruleId);
+		}
+		return new ArrayList<RuleXml>();
+	}
+
+	@Override
+	public boolean restoreRuleVersion(RuleXml xml) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
+		if (dao != null) {
+			return dao.restoreRuleVersion(xml);
+		}
+		return false;
+	}
+
+	@Override
+	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.getExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.addExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);
+	}
+
+	@Override
+	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
+	}
+
+	private RuleStatus getRuleStatusPK(RuleStatus ruleStatus) {
+		RuleStatus updateRuleStatus = new RuleStatus();
+		if (ruleStatus != null) {
+			updateRuleStatus.setStoreId(ruleStatus.getStoreId());
+			updateRuleStatus.setRuleTypeId(ruleStatus.getRuleTypeId());
+			updateRuleStatus.setRuleRefId(ruleStatus.getRuleRefId());
+			updateRuleStatus.setRuleStatusId(ruleStatus.getRuleStatusId());
+			updateRuleStatus.setDescription(ruleStatus.getDescription());
+		}
+		return updateRuleStatus;
+	}
+	
+	@Override
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException {
+		if (ruleStatus != null) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setExportBy(exportBy);
+			updateRuleStatus.setExportType(exportType);
+			updateRuleStatus.setLastModifiedBy(exportBy);
+			updateRuleStatus.setLastExportDate(exportDate);
+			updateRuleStatus.setLastModifiedDate(exportDate);
+			return updateRuleStatus(updateRuleStatus);
+		}
+		return -1;
+	}
+
+	@Override
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, 
+			String requestBy, Date requestDate) throws DaoException {
+		RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+		updateRuleStatus.setApprovalStatus("");
+		updateRuleStatus.setPublishedStatus(String.valueOf(requestedPublishStatus));
+		updateRuleStatus.setPublishedBy(requestBy);
+		updateRuleStatus.setLastModifiedBy(requestBy);
+		updateRuleStatus.setLastPublishedDate(requestDate);
+		updateRuleStatus.setLastModifiedDate(requestDate);
+		return updateRuleStatus(updateRuleStatus);
+	}
+
+	@Override
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus, 
+			String requestBy, Date requestDate) throws DaoException {
+		int result = -1;
+		if (requestedApprovalStatus != null) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setApprovalStatus(String.valueOf(requestedApprovalStatus));
+			updateRuleStatus.setLastModifiedDate(requestDate);
+			switch(requestedApprovalStatus) {
+				case APPROVED:
+				case REJECTED:
+					updateRuleStatus.setApprovalBy(requestBy);
+					updateRuleStatus.setLastApprovalDate(requestDate);
+					break;
+				case PENDING:
+					updateRuleStatus.setRequestBy(requestBy);
+					updateRuleStatus.setLastRequestDate(requestDate);
+					break;
+				default:
+					return result;
+			}
+			
+			RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(
+					new RuleStatus(ruleStatus.getRuleTypeId(), ruleStatus.getStoreId(), ruleStatus.getRuleRefId()), null, null, 1, 1));
+			if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
+				// existing rule
+				RuleStatus existingRuleStatus = rSet.getList().get(0);
+				// if rule is not for deletion do not change update status.
+				if (!StringUtils.equalsIgnoreCase(existingRuleStatus.getUpdateStatus(), String.valueOf(RuleStatusEntity.DELETE)) && 
+						(StringUtils.isBlank(existingRuleStatus.getUpdateStatus()) || 
+						 StringUtils.equalsIgnoreCase(existingRuleStatus.getPublishedStatus(), String.valueOf(RuleStatusEntity.PUBLISHED)))) {
+					updateRuleStatus.setUpdateStatus(String.valueOf(RuleStatusEntity.UPDATE));
+				}
+				updateRuleStatus.setLastModifiedBy(requestBy);
+				result = updateRuleStatus(updateRuleStatus);
+			} 
+			else {
+				// new rule
+				updateRuleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
+				updateRuleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
+				updateRuleStatus.setCreatedBy(requestBy);
+				updateRuleStatus.setCreatedDate(requestDate);
+				result = addRuleStatus(updateRuleStatus);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException {
+		int result = -1;
+		RecordSet<RuleStatus> rSet = getRuleStatus(new SearchCriteria<RuleStatus>(
+				new RuleStatus(ruleStatus.getRuleTypeId(), ruleStatus.getStoreId(), ruleStatus.getRuleRefId()), null, null, 1, 1));
+		if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
+			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
+			updateRuleStatus.setApprovalStatus(StringUtils.equalsIgnoreCase(rSet.getList().get(0).getPublishedStatus(), 
+					String.valueOf(RuleStatusEntity.UNPUBLISHED)) ? "" : String.valueOf(RuleStatusEntity.PENDING));
+			updateRuleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
+			result = updateRuleStatus(updateRuleStatus);
+		} 
+		return result;
+	}
+
+	@Override
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId) {
+		Map<String, Integer> resultMap = new HashMap<String, Integer>();
+		String store = UtilityService.getStoreName();
+		String formatString = "%s";
+		if (ruleStatus != null) {
+			switch (ruleStatus) {
+				case APPROVED:
+					formatString = "[APPROVED] %s";
+					break;
+				case REJECTED:
+					formatString = "[REJECTED] %s";
+					break;
+				case PUBLISHED:
+					formatString = "[PUBLISHED] %s";
+					break;
+				case UNPUBLISHED:
+					formatString = "[UNPUBLISHED] %s";
+					break;
+				case PENDING:
+					formatString = "[REQUEST] %s";
+					break;
+				default:
+					break;
+			}
+		}
+		
+		Comment comment = new Comment();
+		comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
+		comment.setUsername(UtilityService.getUsername());
+		comment.setComment(String.format(formatString, pComment));
+		comment.setStore(new Store(store));
+		for(String rsId: ruleStatusId){
+			comment.setReferenceId(rsId);
+			int result = -1;
+			try {
+				result = addComment(comment);
+			} catch (DaoException e) {
+				logger.error("Failed during addComment()", e);
+			}
+			resultMap.put(rsId, result);
+		}
+		return resultMap;
+	}
+	
 }

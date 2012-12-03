@@ -23,22 +23,75 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.search.manager.model.RuleVersionInfo;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RuleStatus;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
+import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.report.model.xml.RuleVersionXml;
+import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.StringUtil;
+import com.search.manager.xml.file.RuleXmlUtil;
 
-public abstract class RuleVersionDAO<T extends RuleVersionXml>{
+public abstract class RuleVersionDAO<T extends RuleXml>{
 	
 	private Logger logger = Logger.getLogger(RuleVersionDAO.class);
-	
-	public abstract String getRuleVersionFilename(String store, String ruleId);
-	public abstract RuleVersionListXml<T> getRuleVersionList(String store, String ruleId);
-	public abstract boolean createRuleVersion(String store, String ruleId, String username, String name, String notes);
-	public abstract boolean restoreRuleVersion(String store, String ruleId, String username, long version);
 
+	protected abstract RuleEntity getRuleEntity();
+	
+	protected abstract boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes);
+
+	protected RuleVersionListXml<?> getRuleVersionList(String store, String ruleId) {
+		return RuleVersionUtil.getRuleVersionList(store, getRuleEntity(), ruleId);
+	}
+	
+	protected RuleVersionListXml<?> getPublishedList(String store, String ruleId) {
+		return RuleVersionUtil.getPublishedList(store, getRuleEntity(), ruleId);
+	}
+	
+	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
+		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
+		if (ruleVersionListXml!=null) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+				return false;
+			}
+		}
+		return RuleVersionUtil.addRuleVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
+	}
+	
+	public boolean createPublishedRuleVersion(String store, String ruleId, String username, String name, String notes) {
+		RuleVersionListXml<?> ruleVersionListXml = getPublishedList(store, ruleId);
+		if (ruleVersionListXml!=null) {
+			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
+				return false;
+			}
+			
+			List<?> versions = ruleVersionListXml.getVersions();
+			int index = -1;
+			
+			if(versions!=null){
+				index = versions.size()-1;
+				RuleXml ruleXml = (RuleXml)versions.get(index);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(getRuleEntity().name(), store, ruleId);
+				ruleXml.setRuleStatus(ruleStatus);
+			}
+		}
+		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);
+	}
+	
+	public boolean restoreRuleVersion(RuleXml xml){
+		return RuleXmlUtil.restoreRule(xml);
+	};
+
+	public String getRuleVersionFilename(String store, String ruleId) {
+		return RuleVersionUtil.getRuleVersionFilename(store, getRuleEntity(), StringUtil.escapeKeyword(ruleId));
+	}
+	
 	@SuppressWarnings("unchecked")
 	public boolean deleteRuleVersion(String store, String ruleId, final String username, final long version){
 
+		FileWriter writer = null;
 		try {
 			String filename = getRuleVersionFilename(store, ruleId);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -47,9 +100,9 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 			prefsDom.setXmlStandalone(true);
 			JAXBContext context = JAXBContext.newInstance(RuleVersionListXml.class);
 			Binder<Node> binder = context.createBinder();
-			RuleVersionListXml<T> prefsJaxb = (RuleVersionListXml<T>) binder.unmarshal(prefsDom);
+			RuleVersionListXml<RuleXml> prefsJaxb = (RuleVersionListXml<RuleXml>) binder.unmarshal(prefsDom);
 
-			List<T> versions = (List<T>) prefsJaxb.getVersions();
+			List<RuleXml> versions = (List<RuleXml>) prefsJaxb.getVersions();
 
 			CollectionUtils.forAllDo(versions, new Closure(){
 				public void execute(Object o) {
@@ -64,7 +117,8 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 			prefsJaxb.setVersions(versions);
 			Marshaller m = context.createMarshaller();
 			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(prefsJaxb, new FileWriter(filename));
+			writer = new FileWriter(filename);
+			m.marshal(prefsJaxb, writer);
 
 		} catch (JAXBException e) {
 			logger.error("JAXBException");
@@ -74,32 +128,48 @@ public abstract class RuleVersionDAO<T extends RuleVersionXml>{
 			logger.error("SAXException");
 		} catch (IOException e) {
 			logger.error("IOException");
-		} 
+		} finally {
+			try { if (writer != null) writer.close(); } catch (Exception e) {}
+		}
 		return false;
 	}
 
-	public List<RuleVersionInfo> getRuleVersions(String store, String ruleId) {
-		List<RuleVersionInfo> ruleVersionInfoList = new ArrayList<RuleVersionInfo>();
-		RuleVersionListXml<T> ruleVersionListXml = (RuleVersionListXml<T>) getRuleVersionList(store, ruleId);
-
+	@SuppressWarnings("unchecked")
+	public List<RuleXml> getRuleVersions(RuleVersionListXml<?> ruleVersionListXml) {
+		List<RuleXml> ruleVersionInfoList = new ArrayList<RuleXml>();
 		if (ruleVersionListXml!=null){
-			List<T> ruleXmlList =  (List<T>) ruleVersionListXml.getVersions();
-			
+			List<?> ruleXmlList =  ruleVersionListXml.getVersions();
+
 			if(CollectionUtils.isNotEmpty(ruleXmlList)){
-				for(T ruleVersion: ruleXmlList){
-					if(!ruleVersion.isDeleted())
-						ruleVersionInfoList.add( new RuleVersionInfo(ruleVersion));
+				for(RuleXml ruleVersion: (List<RuleXml>)ruleXmlList){
+					if(!ruleVersion.isDeleted()){
+						if(ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml){
+							ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
+							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion));
+							ruleVersionInfoList.add((RuleXml) productDetailsAware);
+						}else{
+							ruleVersionInfoList.add(ruleVersion);
+						}
+					}
 				}
 				
-				Collections.sort(ruleVersionInfoList, new Comparator<RuleVersionInfo>() {
+				Collections.sort(ruleVersionInfoList, new Comparator<RuleXml>() {
 					@Override
-					public int compare(RuleVersionInfo r1, RuleVersionInfo r2) {
+					public int compare(RuleXml r1, RuleXml r2) {
 						return r2.getVersion() < r1.getVersion() ? 0 : 1;
 					}
 				});
 			}
 		}
-
 		return ruleVersionInfoList;
-	}
+	}	
+	
+	
+	public List<RuleXml> getPublishedRuleVersions(String store, String ruleId) {
+		return getRuleVersions(getPublishedList(store, ruleId));
+	}	
+
+	public List<RuleXml> getRuleVersions(String store, String ruleId) {
+		return getRuleVersions(getRuleVersionList(store, ruleId));
+	}	
 }

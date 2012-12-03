@@ -3,7 +3,6 @@ package com.search.manager.utility;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,7 +34,7 @@ public class FileUtil {
 			if(StringUtils.isBlank(directoryName)) throw new Exception("directoryName is null.");
 			File newPath = new File(directoryName);
 			if(!newPath.exists()) {
-				boolean status = newPath.mkdirs();
+				newPath.mkdirs();
 			}
 		}catch(Exception e){
 			throw new Exception(e);

@@ -10,14 +10,14 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 
+import com.search.manager.report.model.xml.RedirectRuleXml;
+
 @DataTransferObject(converter = BeanConverter.class)
 public class RedirectRule extends ModelBean {
 
 	private static final long serialVersionUID = 4608433178597830828L;
 
-	private static final String DBL_PIPE_DELIM = "||";
 	private static final String ESCAPED_DBL_PIPE_DELIM = "\\|\\|";
-	private static final String OR = ") OR (";
 	private static final String COMMA = ",";
 
 	@DataTransferObject(converter = EnumConverter.class)
@@ -109,12 +109,12 @@ public class RedirectRule extends ModelBean {
 		this.searchTerm = searchTerm;
 	}
 	
-	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
+	public RedirectRule(String ruleId, RedirectType redirectType, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
 			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
 		super();
 		this.ruleId = ruleId;
-		setRedirectTypeId(redirectTypeId);
+		this.redirectType = redirectType;
 		this.ruleName = ruleName;
 		this.storeId = storeId;
 		this.description = description;
@@ -128,6 +128,38 @@ public class RedirectRule extends ModelBean {
 		this.changeKeyword = changeKeyword;
 		this.redirectUrl = redirectUrl;
 		this.includeKeyword = includeKeyword;
+	}
+	
+	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
+			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
+			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
+		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, dateCreated, dateModified, changeKeyword, redirectUrl, includeKeyword);
+	}
+	
+	
+	public RedirectRule(RedirectRuleXml xml) {
+		this.ruleId = xml.getRuleId();
+		this.ruleName = xml.getRuleName();
+		this.description = xml.getDescription();
+		this.redirectType = xml.getRedirectType();
+		this.storeId = xml.getStore();
+
+		if(xml.getRuleKeyword()!=null){
+			this.searchTerm = StringUtils.join(xml.getRuleKeyword().getKeyword().toArray(), ","); ;
+		}
+		
+		if(xml.getRuleCondition()!=null){
+			this.condition = StringUtils.join(xml.getRuleCondition().getCondition().toArray(), ",");
+		}
+		
+		this.changeKeyword = xml.getReplacementKeyword();
+		if(xml.getRuleCondition()!=null)
+			this.includeKeyword = xml.getRuleCondition().isIncludeKeyword();
+		this.redirectUrl = xml.getDirectHit();
+		this.createdBy = xml.getCreatedBy();
+		this.createdDate = xml.getCreatedDate();
+		this.lastModifiedBy = xml.getLastModifiedBy();
+		this.lastModifiedDate = xml.getLastModifiedDate();
 	}
 	
 	public String getRuleId() {

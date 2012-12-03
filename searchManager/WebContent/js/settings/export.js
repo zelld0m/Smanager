@@ -6,6 +6,23 @@
 		entityName : "",
 		autoExport : false,
 		ruleEntityList : null,
+		
+		postMsg : function(data,msg_){
+			var self = this;
+			var okmsg = '';	
+
+			if(data.length > 0){
+				okmsg = 'Following rules were successfully ' + msg_ +':';
+				for(var i=0; i<data.length; i++){	
+					okmsg += '\n-'+ data[i];	
+				}
+			}
+			else{
+				okmsg = 'No rules were successfully ' + msg_ +'.';
+			}
+
+			jAlert(okmsg, self.entityName);
+		},
 
 		populateTabContent: function(){
 			var self = this;
@@ -97,9 +114,9 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected);
 			
-			$selectedTab.find("a#exportBtn").on({
+			$selectedTab.find("a#okBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#exportComment").val());
+					var comment = $.trim($selectedTab.find("#comment").val());
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
@@ -108,13 +125,9 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
-						
-						//TODO
-						alert(self.getSelectedRefId());
-						/*DeploymentServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(),{
+						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
 							callback: function(data){									
-								postMsg(data,true);	
+								self.postMsg(data, "exported");	
 								self.getExportList();	
 							},
 							preHook:function(){ 
@@ -123,7 +136,7 @@
 							postHook:function(){ 
 								self.cleanUpTabContent(); 
 							}	
-						});*/
+						});
 					}
 				}
 			});
@@ -157,10 +170,10 @@
 			template += '		<p>';
 			template += '	</div>';
 			template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-			template += '	<label class="floatL w480"><textarea id="exportComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+			template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div align="right" class="padR15 marT10">';
-			template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '			<div class="buttons fontBold">Export</div>';
 			template += '		</a>';
 			template += '	</div>';
@@ -173,7 +186,7 @@
 			var self = this;
 			var $selectedTab = $("#"+self.tabSelected); 
 			
-			DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+			RuleTransferServiceJS.getPublishedRules(self.entityName, {
 				callback:function(data){
 					var list = data.list;
 
@@ -188,7 +201,7 @@
 							var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(rule["ruleRefId"])).show();
 							var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
 							var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportDate"].toUTCString(): "";
-							var showId = rule["ruleRefId"] !== rule["description"];
+							var showId = rule["ruleRefId"].toLowerCase() !== rule["description"].toLowerCase();
 
 							$tr.find("td#select > input[type='checkbox']").attr("id", rule["ruleRefId"]);
 							$tr.find("td#select > input[type='checkbox']").attr("name", rule["ruleStatusId"]);
@@ -196,17 +209,35 @@
 							//TODO: Get delete details from file
 							if (rule["updateStatus"]!=="DELETE"){
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", rule["ruleRefId"]);
-								$tr.find("td#ruleOption > img.previewIcon").preview({
-									ruleType: self.getRuleType(rule["ruleTypeId"]),
+								
+								$tr.find("td#ruleOption > img.previewIcon").xmlpreview({
+									transferType: "export",
+									ruleType: self.entityName,
 									ruleId: rule["ruleRefId"],
+									ruleName: rule["ruleName"],
 									ruleInfo: rule["description"],
 									requestType: rule["updateStatus"],
 									enablePreTemplate: true,
 									enablePostTemplate: true,
+									leftPanelSourceData: "xml",
 									postTemplate: self.getPostTemplate(),
+									postButtonClick: function(){
+										self.getExportList();
+									},
+									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
+										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
+											callback: function(xml){
+												base.options.ruleXml = xml;
+												base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+											}
+										});
+									},
+									postButtonClick: function(){
+										self.getExportList();
+									},
 									itemForceAddStatusCallback: function(base, memberIds){
-										if (rule["ruleTypeId"].toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(keyword, memberIds, {
+										if (self.entityName.toLowerCase() === "elevate")
+										ElevateServiceJS.isRequireForceAdd(rule["ruleRefId"], memberIds, {
 											callback:function(data){
 												base.updateForceAddStatus(data);
 											},
@@ -224,13 +255,13 @@
 								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
-							$tr.find("td#type").html(list[i]["exportStatus"]);
+							$tr.find("td#type").html(list[i]["exportType"]);
 							
 							//TODO
 							$tr.find("td#publishDate > p#requestedBy").html(list[i]["publishedStatus"]);
 							$tr.find("td#publishDate > p#requestedDate").html(lastPublishedDate);
 							
-							$tr.find("td#exportDate > p#requestedBy").html(list[i]["exportStatus"]);
+							$tr.find("td#exportDate > p#requestedBy").html(list[i]["exportBy"]);
 							$tr.find("td#exportDate > p#requestedDate").html(lastExportedDate);
 							$tr.appendTo($table);
 						}
@@ -264,8 +295,26 @@
 		init : function() {
 			var self = this;
 			$("#titleText").html(self.moduleName);
+			
 			self.getRuleEntityList();
 			self.populateTabContent();
+
+			RuleTransferServiceJS.getAutoExport({
+				callback: function(isAutoExport){
+					$('.firerift-style-checkbox').slidecheckbox({
+						initOn: isAutoExport,
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							RuleTransferServiceJS.setAutoExport(dt.status, {
+								callback: function(set){
+									
+								}
+							});
+						}
+					});
+				}
+			});
+			
 		}
 	};
 

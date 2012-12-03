@@ -1,10 +1,8 @@
 package com.search.manager.schema.model.bq;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -451,8 +449,8 @@ public class BoostQueryModel implements VerifiableModel {
 //			return;
 //		}
 		
-    	ConfigManager.getInstance("solr.xml");
-    	RelevancyConfig conf = RelevancyConfig.getInstance("relevancy.xml");
+    	ConfigManager.getInstance("/home/solr/conf/solr.xml");
+    	RelevancyConfig conf = RelevancyConfig.getInstance("/home/solr/conf/relevancy.xml");
 		
 		for (Operator e: conf.getAllLogicalOperators()) {
 			logger.debug(e.getName() + ": " + e.getText() + " : " + e.getRegExp());
@@ -478,7 +476,7 @@ public class BoostQueryModel implements VerifiableModel {
 		}
 		
 		
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema("search", "pcmall");
 		String[] bqs =  {
 			"Manufacturer:(\"2Point Communications\")^1 Manufacturer:(\"1 Step Technology\")^2",
 //			"Manufacturer:Apple^10",

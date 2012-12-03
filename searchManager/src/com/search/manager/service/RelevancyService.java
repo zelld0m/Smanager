@@ -19,13 +19,14 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.dao.RuleVersionDaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
 import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
@@ -49,12 +50,16 @@ import com.search.ws.SearchHelper;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "relevancyService")
 )
-public class RelevancyService {
+public class RelevancyService extends RuleService{
 	private static final Logger logger = Logger.getLogger(RelevancyService.class);
 
 	@Autowired private DaoService daoService;
-	@Autowired private RuleVersionDaoService fileService;
 
+	@Override
+	public RuleEntity getRuleEntity() {
+		return RuleEntity.RANKING_RULE;
+	}
+	
 	@RemoteMethod
 	public Relevancy getRule(String ruleId){
 		try {
@@ -104,7 +109,7 @@ public class RelevancyService {
 			//bq post-processing
 			if (StringUtils.equalsIgnoreCase("bq", fieldName)){
 				try {
-					Schema schema = SolrSchemaUtility.getSchema();
+					Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 					BoostQueryModel boostQueryModel = BoostQueryModel.toModel(schema, fieldValue, true);
 					fieldValue = boostQueryModel.toString();
 				} catch (SchemaException e) {
@@ -116,7 +121,7 @@ public class RelevancyService {
 			//bf post-processing
 			if (StringUtils.equalsIgnoreCase("bf", fieldName)){
 				try {
-					Schema schema = SolrSchemaUtility.getSchema();
+					Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 					BoostFunctionModel.toModel(schema, fieldValue, true);
 				}catch (SchemaException e) {
 					logger.error("Failed during addOrUpdateRelevancyField()",e);
@@ -154,32 +159,11 @@ public class RelevancyService {
 		return null;
 	}
 
-	public String addRuleAndGetId(String name, String description , String startDate, String endDate){
-		try {
-			String store = UtilityService.getStoreName();
-			Relevancy rule = new Relevancy();
-			rule.setStore(new Store(store));
-			rule.setRelevancyName(name);
-			rule.setDescription(description);
-			rule.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
-			rule.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
-			rule.setCreatedBy(UtilityService.getUsername());
-			return StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(rule));
-		} catch (DaoException e) {
-			logger.error("Failed during addRuleAndGetId()",e);
-		}
-		return StringUtils.EMPTY;
-	}
-
-	@RemoteMethod
-	public Relevancy addRuleAndGetModel(String name, String description , String startDate, String endDate) {
-		return getRule(addRuleAndGetId(name, description , startDate, endDate));
-	}
-
 	@RemoteMethod
 	public Relevancy cloneRule(String ruleId, String name, String startDate, String endDate, String description) throws Exception{
 		String clonedId = StringUtils.EMPTY;
 		Relevancy clonedRelevancy = null;
+		String userName = UtilityService.getUsername();
 		if(ruleId.equalsIgnoreCase(""))
 			ruleId=UtilityService.getStoreName()+"_default";
 		try {
@@ -190,14 +174,10 @@ public class RelevancyService {
 			relevancy.setDescription(description);
 			relevancy.setStartDate(StringUtils.isBlank(startDate) ? null : DateAndTimeUtils.toSQLDate(store, startDate));
 			relevancy.setEndDate(StringUtils.isBlank(endDate) ? null : DateAndTimeUtils.toSQLDate(store, endDate));
-			relevancy.setCreatedBy(UtilityService.getUsername());
-
+			relevancy.setCreatedBy(userName);
 			clonedId = StringUtils.trimToEmpty(daoService.addRelevancyAndGetId(relevancy));
-
 			Relevancy hostRelevancy = getRule(ruleId);
-
 			Map<String, String> fields = hostRelevancy.getParameters();
-
 			for (String key: fields.keySet()){
 				try {
 					addRuleFieldValue(clonedId, key, fields.get(key));
@@ -206,13 +186,18 @@ public class RelevancyService {
 					logger.error("Failed during cloneRule()",e);
 				}
 			}
-
+			
+			try {
+				daoService.addRuleStatus(new RuleStatus(RuleEntity.RANKING_RULE, store, clonedId, name, 
+						userName, userName, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
+			} catch (DaoException de) {
+				logger.error("Failed to create rule status for ranking rule: " + name);
+			}
+			
 			clonedRelevancy = getRule(clonedId);
-
 		} catch (DaoException e) {
 			logger.error("Failed during addRelevancy()",e);
 		}
-
 		return clonedRelevancy;
 	}
 
@@ -240,15 +225,25 @@ public class RelevancyService {
 	public int deleteRule(String ruleId){
 		try {
 			try {
-				fileService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.RANKING_RULE, ruleId, UtilityService.getUsername(), "Deleted Rule", "Deleted Rule");
+				daoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.RANKING_RULE, ruleId, UtilityService.getUsername(), "Deleted Rule", "Deleted Rule");
 			} catch (Exception e) {
 				logger.error("Error creating backup. " + e.getMessage());
 			}
+			String username = UtilityService.getUsername();
 			Relevancy rule = new Relevancy();
 			rule.setRuleId(ruleId);
-			rule.setStore(new Store(UtilityService.getStoreName()));
-			rule.setLastModifiedBy(UtilityService.getUsername());
-			return daoService.deleteRelevancy(rule);
+			String storeName = UtilityService.getStoreName();
+			rule.setStore(new Store(storeName));
+			rule.setLastModifiedBy(username);
+			int status = daoService.deleteRelevancy(rule);
+			if (status > 0) {
+				RuleStatus ruleStatus = new RuleStatus();
+				ruleStatus.setRuleTypeId(RuleEntity.RANKING_RULE.getCode());
+				ruleStatus.setRuleRefId(rule.getRuleId());
+				ruleStatus.setStoreId(storeName);
+				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
+			}
+			return status;
 		} catch (DaoException e) {
 			logger.error("Failed during getAllByName()",e);
 		}
@@ -258,7 +253,7 @@ public class RelevancyService {
 	@RemoteMethod
 	public BoostQueryModel getValuesByString(String bq) {
 		logger.info(String.format("%s", bq));
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 		BoostQueryModel boostQueryModel = new BoostQueryModel();
 
 		try {
@@ -416,7 +411,7 @@ public class RelevancyService {
 		List<QueryField> qFieldList = new ArrayList<QueryField>();
 		logger.info(String.format("%s", fieldValue));
 		try {
-			Schema schema = SolrSchemaUtility.getSchema();
+			Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 			QueryFieldsModel qFieldModel = QueryFieldsModel.toModel(schema, fieldValue, true);
 			if (qFieldModel!=null) qFieldList = qFieldModel.getQueryFields();
 		} catch (SchemaException e) {
@@ -428,7 +423,7 @@ public class RelevancyService {
 
 	@RemoteMethod
 	public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String keyword, String[] excludedFields) {
-		Schema schema = SolrSchemaUtility.getSchema();
+		Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreName());
 
 		List<Field> excludeFieldList = new ArrayList<Field>();
 

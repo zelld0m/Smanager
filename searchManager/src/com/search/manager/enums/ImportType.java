@@ -9,15 +9,14 @@ import org.directwebremoting.convert.EnumConverter;
 
 @DataTransferObject(converter=EnumConverter.class)
 public enum ImportType {
-	FOR_APPROVAL("For Approval", "For Approroval"),
 	FOR_REVIEW("For Review", "For Review"),
+	FOR_APPROVAL("For Approval", "For Approval"),
 	AUTO_PUBLISH("Auto-Publish", "Auto-Publish");
 
 	private final String displayText;
 	private final String description;
 	
-	private static final Map<String,ImportType> lookup 
-	= new HashMap<String,ImportType>();
+	private static final Map<String,ImportType> lookup = new HashMap<String,ImportType>();
 
 	ImportType(String displayText, String description){
 		this.displayText = displayText;
@@ -37,7 +36,7 @@ public enum ImportType {
 		return description;
 	}
 
-	public static ImportType get(String displayText) { 
+	public static ImportType getByDisplayText(String displayText) { 
 		return lookup.get(displayText); 
 	}
 	

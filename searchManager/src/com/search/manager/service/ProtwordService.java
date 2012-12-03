@@ -16,6 +16,7 @@ import com.search.manager.dao.DaoService;
 	    creatorParams = @Param(name = "beanName", value = "protwordService")
 	)
 public class ProtwordService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(ProtwordService.class);
 	
 	@Autowired private DaoService daoService;

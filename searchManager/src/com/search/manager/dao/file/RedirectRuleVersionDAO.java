@@ -11,55 +11,32 @@ import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleVersionListXml;
-import com.search.manager.utility.StringUtil;
 
 @Repository(value="queryCleaningVersionDAO")
 public class RedirectRuleVersionDAO extends RuleVersionDAO<RedirectRuleXml>{
 
 	@Autowired private DaoService daoService;
 
-	@Override
-	public String getRuleVersionFilename(String store, String ruleId) {
-		return RuleVersionUtil.getFileName(store, RuleEntity.QUERY_CLEANING, StringUtil.escapeKeyword(ruleId));
+	protected RuleEntity getRuleEntity() {
+		return RuleEntity.QUERY_CLEANING;
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public RuleVersionListXml<RedirectRuleXml> getRuleVersionList(
-			String store, String ruleId) {
-		return (RuleVersionListXml<RedirectRuleXml>) RuleVersionUtil.getRuleVersionList(store, RuleEntity.QUERY_CLEANING, ruleId);
-	}
-
-	@Override
-	public boolean createRuleVersion(String store, String ruleId, String username, String name, String notes) {
-		RuleVersionListXml<RedirectRuleXml> ruleVersionListXml = getRuleVersionList(store, ruleId);
-
-		if (ruleVersionListXml!=null){
+	protected boolean addLatestVersion(RuleVersionListXml<?> ruleVersionListXml, String store, String ruleId, String username, String name, String notes) {
+		if (ruleVersionListXml != null) {
+			@SuppressWarnings("unchecked")
+			List<RedirectRuleXml> eRuleXmlList = ((RuleVersionListXml<RedirectRuleXml>)ruleVersionListXml).getVersions();
 			long version = ruleVersionListXml.getNextVersion();
-			List<RedirectRuleXml> queryCleaningRuleXmlList = ruleVersionListXml.getVersions();
-
 			try {
 				RedirectRule redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
-				
-				queryCleaningRuleXmlList.add(new RedirectRuleXml(store, version, name, notes, username, redirectRule));
-
+				eRuleXmlList.add(new RedirectRuleXml(store, version, name, notes, username, redirectRule));
 				ruleVersionListXml.setRuleId(ruleId);
 				ruleVersionListXml.setRuleName(redirectRule.getRuleName());
-				ruleVersionListXml.setVersions(queryCleaningRuleXmlList);
+				return true;
 			} catch (DaoException e) {
-				return false;
 			}	
-
-			return RuleVersionUtil.addRuleVersion(store, RuleEntity.QUERY_CLEANING, ruleId, ruleVersionListXml);
 		}
-
 		return false;
 	}
 
-	@Override
-	public boolean restoreRuleVersion(String store, String ruleId,
-			String username, long version) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

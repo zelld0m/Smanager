@@ -10,10 +10,11 @@ import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.search.manager.dao.RuleVersionDaoService;
+import com.search.manager.dao.DaoService;
+import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
-import com.search.manager.model.RuleVersionInfo;
+import com.search.manager.report.model.xml.RuleXml;
 
 @Service("ruleVersionService")
 @RemoteProxy(
@@ -21,23 +22,23 @@ import com.search.manager.model.RuleVersionInfo;
 		creator = SpringCreator.class,
 		creatorParams = @Param(name = "beanName", value = "ruleVersionService")
 )
-public class RuleVersionService {
+public class RuleVersionService{
 
 	private static final Logger logger = Logger.getLogger(RuleVersionService.class);
 
-	@Autowired private RuleVersionDaoService ruleVersionDaoService;
+	@Autowired private DaoService daoService;
 	@Autowired private DeploymentService deploymentService;
 
 	@RemoteMethod
 	public boolean createRuleVersion(String ruleType, String ruleId, String name, String reason) {
-		return ruleVersionDaoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
+		return daoService.createRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), name, reason);
 	}
 
 	@RemoteMethod
 	public boolean deleteRuleVersion(String ruleType, String ruleId, int version) {
 		boolean success = false;
 		try {
-			success = ruleVersionDaoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
+			success = daoService.deleteRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
 		} catch (Exception e) {
 			logger.error("Failed during deleteRuleVersion()",e);
 		}
@@ -45,10 +46,10 @@ public class RuleVersionService {
 	}
 
 	@RemoteMethod
-	public List<RuleVersionInfo> getRuleVersions(String ruleType, String ruleId) {
-		List<RuleVersionInfo> versionList = null;
+	public List<RuleXml> getRuleVersions(String ruleType, String ruleId) {
+		List<RuleXml> versionList = null;
 		try {
-			versionList = ruleVersionDaoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
+			versionList = daoService.getRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
 		} catch (Exception e) {
 			logger.error("Failed during getRuleVersions()",e);
 		}
@@ -57,27 +58,27 @@ public class RuleVersionService {
 
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
-		boolean success = ruleVersionDaoService.restoreRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, UtilityService.getUsername(), version);
-		switch (RuleEntity.find(ruleType)) {
-		case ELEVATE:
-			break;
-		case EXCLUDE:
-			break;
-		case DEMOTE:
-			break;
-		case FACET_SORT:
-			break;
-		case QUERY_CLEANING:
-			break;
-		case RANKING_RULE:
-			RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
-			if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-				deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+		boolean success = false;
+		RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, version);
+		if (rule != null) {
+			success = daoService.restoreRuleVersion(rule);
+			switch (RuleEntity.find(ruleType)) {
+				case ELEVATE:
+				case EXCLUDE:
+				case DEMOTE:
+				case FACET_SORT:
+				case QUERY_CLEANING:
+				default: 
+					break;
+				case RANKING_RULE:
+					// what is this for?
+					RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
+					if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
+						deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+					}
+					break;
 			}
-			break;
-		default: break;
 		}
-
 		return success;
 	}	
 }
