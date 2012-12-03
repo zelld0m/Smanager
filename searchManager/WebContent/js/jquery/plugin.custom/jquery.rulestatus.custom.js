@@ -46,25 +46,30 @@
 							base.$el.find("a#submitForApprovalBtn").hide();
 						}
 
-						base.$el.find("div#commentHolder span#commentIcon").off().on({
-							click:function(e){
-								$(this).comment({
-									title: "Rule Comment",
-									itemDataCallback: function(plugin, page){
-										CommentServiceJS.getComment("Rule Status", base.options.ruleStatus["ruleStatusId"], plugin.options.page, plugin.options.pageSize, {
-											callback: function(data){
-												var total = data.totalSize;
-												plugin.populateList(data);
-												plugin.addPaging(plugin.options.page, total);
-											},
-											preHook: function(){
-												plugin.prepareList();
-											}
-										});
-									}
-								});
-							}
-						});
+						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
+							base.$el.find("div#commentHolder").show();
+							base.$el.find("div#commentHolder span#commentIcon").off().on({
+								click:function(e){
+									$(this).comment({
+										title: "Rule Comment",
+										itemDataCallback: function(plugin, page){
+											CommentServiceJS.getComment("Rule Status", base.options.ruleStatus["ruleStatusId"], plugin.options.page, plugin.options.pageSize, {
+												callback: function(data){
+													var total = data.totalSize;
+													plugin.populateList(data);
+													plugin.addPaging(plugin.options.page, total);
+												},
+												preHook: function(){
+													plugin.prepareList();
+												}
+											});
+										}
+									});
+								}
+							});
+						}else{
+							base.$el.find("div#commentHolder").hide();
+						}
 					}
 
 					base.addSubmitForApprovalListener();
@@ -147,7 +152,7 @@
 				template += '			</div>';
 			}
 
-			template += '			<div id="commentHolder">';
+			template += '			<div id="commentHolder" style="display:none">';
 			template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
 			template += '					<span id="commentIcon"><img src="' + GLOBAL_contextPath + '/images/icon_comment.png" class="pointer"></span>';  
 			template += '				</label>';
