@@ -210,7 +210,7 @@
 						$("select#_items_"+facetGroupId).not(target).each(function() {
 						       if ($(this).val() == value) {
 						           jAlert(value + " is already selected.", self.moduleName);
-						           break;
+						           return;
 						       }
 						});
 					}
@@ -565,7 +565,14 @@
 			addNewFacetValueListener : function(content, facetGroupId){
 				var self = this;
 				var ul = content.find('ul#selectedFacetValueList');
+				var facetValues = self.facetValueList[self.tabSelectedName];
+				
+				if($.isEmptyObject(facetValues)){
+					content.find("span#addNewLink").hide();
+					return;
+				}
 
+				content.find("span#addNewLink").text("[add new " + self.tabSelectedName.toLowerCase() + " value]");
 				content.find("a#addNewFacetValue").off().on({
 					click: function(e){
 						if (!e.data.locked){
@@ -601,8 +608,6 @@
 					},
 					mouseenter: showHoverInfo
 				},{locked:self.selectedRuleStatus["locked"] || !allowModify});
-
-				content.find("span#addNewLink").text("[add new " + self.tabSelectedName.toLowerCase() + " value]");
 			},
 
 			addDeleteFacetValueListener : function(contentHolder){
