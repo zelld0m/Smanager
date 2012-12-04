@@ -202,28 +202,17 @@
 			
 			checkDuplicateFacet : function (target, e, u, facetGroupId){
 				var self = this;
-				var selectedFacetName = "";
-				var itemId = $(target).attr("id");
+				var $input = $(target).siblings().find("input#_"+facetGroupId);
 				
 				if(u.item){
-					selectedFacetName = u.item.text;
-					var selectedFacetMap = self.buildFacetGroupItemsMap();
-					var selectedFacets = selectedFacetMap[facetGroupId];
-					
-					//check duplicate
-					if($.isNotBlank(selectedFacetName)){
-						//count
-						var count = 0;
-						for(var i in selectedFacets){
-							if(selectedFacets[i] === selectedFacetName){
-								count++;
-							}
-						}
-						
-						if(count > 1){
-							jAlert(selectedFacetName + " is already selected.", self.moduleName);
-							// TODO set input text to empty string
-						}
+					if($("div#_" + facetGroupId).hasClass("isShown")){
+						var value = u.item.text;
+						$("select#_items_"+facetGroupId).not(target).each(function() {
+						       if ($(this).val() == value) {
+						           jAlert(value + " is already selected.", self.moduleName);
+						           break;
+						       }
+						});
 					}
 				}
 			},
