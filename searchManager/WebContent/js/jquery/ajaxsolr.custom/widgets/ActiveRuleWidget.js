@@ -39,6 +39,7 @@
 						case "elevate": checkboxId="disableElevate"; break;
 						case "demote": checkboxId="disableDemote"; break;
 						case "exclude": checkboxId="disableExclude"; break;
+						case "facet sort": checkboxId="disableFacetSort"; break;
 					}
 					
 					$li.find('label.select > input[type="checkbox"]')

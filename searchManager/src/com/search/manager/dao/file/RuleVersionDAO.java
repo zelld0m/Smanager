@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -64,6 +65,16 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		if (ruleVersionListXml!=null) {
 			if (!addLatestVersion(ruleVersionListXml, store, ruleId, username, name, notes)) {
 				return false;
+			}
+			
+			List<?> versions = ruleVersionListXml.getVersions();
+			int index = -1;
+			
+			if(versions!=null){
+				index = versions.size()-1;
+				RuleXml ruleXml = (RuleXml)versions.get(index);
+				RuleStatus ruleStatus = RuleXmlUtil.getRuleStatus(getRuleEntity().name(), store, ruleId);
+				ruleXml.setRuleStatus(ruleStatus);
 			}
 		}
 		return RuleVersionUtil.addPublishedVersion(store, getRuleEntity(), ruleId, ruleVersionListXml);

@@ -471,10 +471,12 @@
 				var $preloader = $("div#keyword").find('#preloader');
 
 				$input.val(self.selectedRule["changeKeyword"]).prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
+				
+				var inputVal = encodeURIComponent($.trim($input.val()));
 
 				if ($.isNotBlank($input.val()))
 					$('div#keyword').find('#activerules > .alert > #rules').activerule({
-						keyword: $input.val(), 
+						keyword: inputVal, 
 						beforeRequest: function(){
 							$preloader.show();
 							$input.prop({disabled:true});
@@ -1597,7 +1599,7 @@
 					if($.isNotBlank(inTemplateName.trim())){
 						condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName.trim());
 
-						$divDynamicAttrItems.find("ul").each(function(){ 
+						$divDynamicAttrItems.find("div").each(function(){ 
 							var attributeItem = this.title;
 							var attributeValues = new Array();
 

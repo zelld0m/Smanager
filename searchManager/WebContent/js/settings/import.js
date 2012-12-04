@@ -342,7 +342,7 @@
 				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
 				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
 				template += '	<div class="clearB"></div>';
-				template += '	<div align="right" class="padR15 marT10">';
+				template += '	<div id="btnHolder" align="right" class="padR15 marT10" style="display:none">';
 				template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 				template += '			<div class="buttons fontBold">Import</div>';
 				template += '		</a>';
@@ -458,7 +458,7 @@
 									$tr.find("td#ruleOption > img.previewIcon").hide();
 								}
 
-								if(ruleId !== rule["ruleName"])	
+								if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);

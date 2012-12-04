@@ -13,10 +13,10 @@
     </beans:bean>
 
     <beans:bean id="dataSource_solr" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" scope="singleton">
-       <beans:property name="driverClassName" value="${driverClassName.prod}" />
-       <beans:property name="url" value="${url.prod}" />
-       <beans:property name="username" value="${username.prod}" />
-       <beans:property name="password" value="${password.prod}" />
+       <beans:property name="driverClassName" value="${driverClassName.rule}" />
+       <beans:property name="url" value="${url.rule}" />
+       <beans:property name="username" value="${username.rule}" />
+       <beans:property name="password" value="${password.rule}" />
        <beans:property name="validationQuery" value="select 1" />
   	   <beans:property name="testOnBorrow" value="true" />
   	   <beans:property name="testOnReturn" value="false" />
