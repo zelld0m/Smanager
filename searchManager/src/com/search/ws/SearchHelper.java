@@ -186,6 +186,8 @@ public class SearchHelper {
 				for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 					JSONObject json = resultArray.getJSONObject(i);
 					Product product = productList.get(json.getString("EDP"));
+					name = "";
+					description = "";
 					if (product != null) {
 						@SuppressWarnings("unchecked")
 						Set<String> keys = (Set<String>)json.keySet();
@@ -224,7 +226,7 @@ public class SearchHelper {
 						product.setName(name);
 					}
 					if (StringUtils.isBlank(product.getDescription())) {
-						product.setName(description);
+						product.setDescription(description);
 					}
 				}
 			}
@@ -314,9 +316,13 @@ public class SearchHelper {
 			resultArray = ((JSONObject)initialJson)
 			.getJSONObject(SolrConstants.TAG_RESPONSE)
 			.getJSONArray(SolrConstants.TAG_DOCS);
+			String name = null;
+			String description = null;
 			for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
 				JSONObject json = resultArray.getJSONObject(i);
 				Product product = productList.get(json.getString("EDP"));
+				name = "";
+				description = "";
 				if (product != null) {
 					@SuppressWarnings("unchecked")
 					Set<String> keys = (Set<String>)json.keySet();
@@ -337,12 +343,24 @@ public class SearchHelper {
 						else if ("ImagePath".equals(key)) {
 							product.setImagePath(value);
 						}
+						else if ("Name".equals(key)) {
+							name = value;
+						}
+						else if ("Description".equals(key)) {
+							description = value;
+						}
 						else if (key.matches("(.*)_Name$")) {
 							product.setName(value);
 						}
 						else if (key.matches("(.*)_Description$")) {
 							product.setDescription(value);
 						}
+					}
+					if (StringUtils.isBlank(product.getName())) {
+						product.setName(name);
+					}
+					if (StringUtils.isBlank(product.getDescription())) {
+						product.setDescription(description);
 					}
 				}
 			}
