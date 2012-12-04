@@ -29,7 +29,7 @@
 				callback:function(data){
 					self.loadItems($("table#itemPattern"), data);
 					$("a#downloadBtn").download({
-						headerText:"Download Stop Words",
+						headerText:"Download Synonym",
 						fileFormat:['Text'],
 						requestCallback:function(e){
 							self.downloadFile(e.data.filename);
