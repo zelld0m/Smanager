@@ -230,7 +230,7 @@
 					}
 				});
 			},
-			
+
 			downloadHandler: function(){
 				var self = this;
 				$("a#downloadIcon").download({
@@ -393,6 +393,17 @@
 								var rule = list[i];
 								var ruleId = rule["ruleId"];
 								var ruleName = rule["ruleName"];
+								var dbRuleId = "";
+								
+								switch(self.entityName.toLowerCase()){
+								case "elevate":
+								case "exclude":
+								case "demote":
+								case "facetsort":
+									dbRuleId = ruleId;
+									break;
+								default: break;
+								}
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
@@ -401,12 +412,6 @@
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
-
-								/*switch(self.entityName.toLowerCase()){
-								case "facetsort":
-									ruleId = rule["ruleName"]; //we will be getting facet sort rule by name in xmlpreview
-									break;
-								}*/
 
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
@@ -421,6 +426,7 @@
 										leftPanelSourceData: "xml",
 										enableRightPanel: true,
 										rightPanelSourceData: "database",
+										dbRuleId: dbRuleId,
 										postTemplate: self.getPostTemplate(),
 										preTemplate: self.getPreTemplate(rule["importType"]),
 										rightPanelTemplate: self.getRightPanelTemplate(),
