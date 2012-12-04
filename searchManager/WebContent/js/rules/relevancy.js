@@ -1650,9 +1650,10 @@
 			},
 			
 			itemOptionCallback: function(base, item){
-				var icon = '<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></a>';
+				var icon = '<a id="deleteKw" href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/icon_delete2.png"></a>';
 
-				item.ui.find(".itemLink").html($(icon)).off().on({
+				item.ui.find(".itemLink").html($(icon));
+				item.ui.find(".itemLink > a#deleteKw").off().on({
 					click: function(e){
 						if (e.data.locked) return;
 
