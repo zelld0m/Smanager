@@ -29,7 +29,7 @@
 						var counter = 0;
 						facetValues = facetFields[facetField];
 						
-						if($.isBlank(facetValues) || facetField === GLOBAL_storeFacetTemplateName)
+						if($.isEmptyObject(facetValues) || facetField === GLOBAL_storeFacetTemplateName)
 							continue;
 							
 						$(this.target).append(AjaxSolr.theme('createFacetHolder',facetField, facetField));
