@@ -137,7 +137,7 @@
 						});
 
 						$("a#downloadBtn").download({
-							headerText:"Download Top Keyword",
+							headerText:"Download Zero Result",
 							defaultFilename: "",
 							sendMail: true,
 							requestCallback:function(e){
