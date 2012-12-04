@@ -63,6 +63,7 @@
 
 		base.prepareList = function(){
 			base.contentHolder.find('div#commentHolder,#commentPagingTop, #commentPagingBottom').empty();
+			base.contentHolder.find('div#addCommentHolder > textarea#comment').val("");
 			base.contentHolder.find('div#empty, div#addCommentHolder').hide();
 			base.contentHolder.find('div#preloader').show();
 		};
