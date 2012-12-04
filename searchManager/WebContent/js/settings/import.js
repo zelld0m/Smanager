@@ -30,9 +30,9 @@
 				var self = this;
 
 				$("#import").tabs("destroy").tabs({
-					cookie: {
+					/*cookie: {
 						expires: 0
-					},
+					},*/
 					show: function(event, ui){
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
@@ -407,8 +407,8 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
-								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
-								var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
+								var lastExportedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastExportDate"]))? rule["ruleStatus"]["lastExportedDate"].toUTCString(): "";
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
