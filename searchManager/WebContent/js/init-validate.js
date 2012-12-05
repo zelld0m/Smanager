@@ -135,4 +135,16 @@ validateAlphanumeric = function(fieldName, fieldValue) {
 		return false;
 	}
 	return true;
-}
+};
+
+validateCatCode = function(fieldName, fieldValue) {
+	var digitRegex= /^[a-zA-Z0-9\*]*$/;
+	
+	var isValid = digitRegex.test(fieldValue) && $.isNotBlank(fieldValue);
+	
+	if(!isValid){
+		jAlert(fieldName+" is not valid.");
+		return false;
+	}
+	return true;
+};

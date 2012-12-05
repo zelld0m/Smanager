@@ -1528,7 +1528,7 @@
 							jAlert('Please specify at least one filter condition');
 						}
 						
-						if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
 							valid = false;
 						}
 						
