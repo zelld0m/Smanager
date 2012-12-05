@@ -1749,7 +1749,7 @@
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
 
-						if (!$.isBlank(condMap["CatCode"]) && !validateAlphanumeric("Catergory Code", condMap["CatCode"])){
+						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Category Code", condMap["CatCode"])){
 							return;
 						}
 						
