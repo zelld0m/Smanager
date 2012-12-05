@@ -53,10 +53,15 @@ public class EnumUtilityService {
 	}
 	
 	@RemoteMethod
-	public static Map<String, String> getImportTypeList(){
+	public static Map<String, String> getImportTypeList(boolean hasPublishRule){
+		ImportType[] importTypes = ImportType.NON_PUBLISHER_LIST;
 		Map<String, String> importTypeList = new LinkedHashMap<String, String>();
 
-		for (ImportType it: ImportType.values()) {
+		if(hasPublishRule){
+			importTypes = ImportType.PUBLISHER_LIST;
+		}
+		
+		for (ImportType it: importTypes) {
 			importTypeList.put(it.toString(), it.getDisplayText());
 		}
 

@@ -56,7 +56,7 @@
 					}
 				});
 
-				EnumUtilityServiceJS.getImportTypeList({
+				EnumUtilityServiceJS.getImportTypeList(hasPublishRule, {
 					callback : function(data){
 						self.importTypeList = data;
 						ctr++;
@@ -423,7 +423,6 @@
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
-								//var lastExportedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastExportDate"]))? rule["ruleStatus"]["lastExportedDate"].toUTCString(): "";
 
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
