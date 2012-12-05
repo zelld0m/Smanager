@@ -385,8 +385,9 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
-								var lastPublishedDate = $.isNotBlank(rule["lastPublishedDate"])? rule["lastPublishedDate"].toUTCString(): "";
-								var lastExportedDate = $.isNotBlank(rule["lastExportDate"])? rule["lastExportedDate"].toUTCString(): "";
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
+								//var lastExportedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastExportDate"]))? rule["ruleStatus"]["lastExportDate"].toUTCString(): "";
+
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
@@ -448,10 +449,8 @@
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 
-								//TODO
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
-								$tr.find("td#type").html(list[i]["importStatus"]);
-
+								
 								//import type
 								var $importTypeSelect = $tr.find("td#type > select#importTypeList");
 
