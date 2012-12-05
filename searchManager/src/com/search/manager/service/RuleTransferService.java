@@ -86,36 +86,39 @@ public class RuleTransferService {
 			String ruleId = ruleRefIdList[i];
 			RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
 
-			if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
-				RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
-				SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-
-				try {
-					RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-					if (approvedRset.getTotalSize() > 0) {
-						ruleStatus = approvedRset.getList().get(0);
-
-						if(ruleStatus != null){
-							auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
-							auditTrail.setDate(new Date());
-							auditTrail.setReferenceId(ruleStatus.getRuleRefId());
-							if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
-								auditTrail.setKeyword(ruleStatus.getRuleRefId());
+			if(ruleXml != null && StringUtils.isNotBlank(ruleXml.getRuleId())){
+				if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
+					logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully exported.", store, ruleEntity.name(), ruleId));
+					RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
+					SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
+	
+					try {
+						RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
+						if (approvedRset.getTotalSize() > 0) {
+							ruleStatus = approvedRset.getList().get(0);
+	
+							if(ruleStatus != null){
+								auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
+								auditTrail.setDate(new Date());
+								auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+								if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
+									auditTrail.setKeyword(ruleStatus.getRuleRefId());
+								}
+								auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
+										auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.MANUAL));
+								daoService.addAuditTrail(auditTrail);
+	
+								daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
+								successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
+								successRuleStatusIdList.add(ruleStatus.getRuleStatusId());
 							}
-							auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
-									auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.MANUAL));
-							daoService.addAuditTrail(auditTrail);
-
-							daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
-							successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
-							successRuleStatusIdList.add(ruleStatus.getRuleStatusId());
 						}
+						else {
+							logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+						}
+					} catch (DaoException e) {
+						logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
 					}
-					else {
-						logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
-					}
-				} catch (DaoException e) {
-					logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
 				}
 			}
 		}
@@ -277,11 +280,12 @@ public class RuleTransferService {
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
 
-		if(RuleXmlUtil.importRule(ruleXml)){
+		if(RuleTransferUtil.importRule(store, importAsRefId, ruleXml)){
+			logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully imported.", store, ruleEntity.name(), ruleId));
 			if(ruleEntity == RuleEntity.RANKING_RULE || ruleEntity == RuleEntity.QUERY_CLEANING){
 				addRuleTransferMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
 			}
-			return deleteRuleFile(ruleEntity, store, ruleId, comment);
+			return RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
 		return false;
 	}
@@ -316,7 +320,7 @@ public class RuleTransferService {
 				break;
 			}
 
-			if(deleteRuleFile(ruleEntity, store, refId, comment)){
+			if(RuleTransferUtil.deleteRuleFile(ruleEntity, store, refId, comment)){
 				//TODO addComment
 				//TODO addAuditTrail
 
@@ -324,30 +328,6 @@ public class RuleTransferService {
 			}
 		}
 		return successList;
-	}
-
-	public boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment){
-		boolean success = false;
-		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
-		try{
-			String filepath = RuleTransferUtil.getFilename(store, ruleEntity, id);
-			File file = new File(filepath);
-
-			if(!file.exists()){
-				logger.info("File to delete not found. Filename = " + filepath);
-				success = false;
-			}
-			else{
-				RuleXmlUtil.deleteFile(RuleTransferUtil.getFilename(store, ruleEntity, id));
-				success = true;
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		return success;
 	}
 
 	@RemoteMethod

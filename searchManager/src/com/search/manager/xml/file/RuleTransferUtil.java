@@ -58,7 +58,7 @@ public class RuleTransferUtil {
 			return (RuleXml) um.unmarshal(file);
 
 		} catch (JAXBException e) {
-			logger.error("Unable to create marshaller/unmarshaller", e);
+			logger.error("Unable to create unmarshaller", e);
 			return null;
 		}
 	}
@@ -109,13 +109,45 @@ public class RuleTransferUtil {
 		
 		for(int i=0; i < stores.length; i++){
 			// TODO: what if the first store failed?
+			logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", stores[i], ruleId, IMPORT_FILE_PATH));
 			exported = RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 		}
 		
 		return exported;
 	}
+	
+	public static boolean importRule(String store, String ruleId, RuleXml ruleXml){
+		logger.info(String.format("Importing rule xml... [store = %s, ruleId = %s]", store, ruleId));
+		return RuleXmlUtil.importRule(ruleXml);
+	}
 
 	public static String getFilename(String store, RuleEntity ruleEntity ,String ruleId){
 		return RuleXmlUtil.getFilename(IMPORT_FILE_PATH, store, ruleEntity, ruleId);
+	}
+	
+	public static boolean deleteRuleFile(RuleEntity ruleEntity, String store, String ruleId, String comment){
+		boolean success = false;
+		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
+		try{
+			String filepath = RuleTransferUtil.getFilename(store, ruleEntity, id);
+			File file = new File(filepath);
+
+			logger.info(String.format("Trying to delete file [%s]", filepath));
+			if(!file.exists()){
+				logger.info("File to delete not found. Filename = " + filepath);
+				success = false;
+			}
+			else{
+				RuleXmlUtil.deleteFile(filepath);
+				success = true;
+				logger.info(String.format("File [%s] has been deleted.", filepath));
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return success;
 	}
 }

@@ -125,7 +125,7 @@ public class DownloadService {
 			cellStyle.setWrapText(wrapText);
 		}
 		if (backgroundColor != null) {
-			cellStyle.setFillBackgroundColor(backgroundColor);
+			cellStyle.setFillForegroundColor(backgroundColor);
 		}
 		if (fillStyle != null) {
 			cellStyle.setFillPattern(fillStyle);
@@ -232,7 +232,7 @@ public class DownloadService {
 				
 			/* Column Headers */
 			HSSFCellStyle headerCellStyle = createCellStyle(workbook, createFont(workbook, (short)10, true), BORDER_BOTTOM, CellStyle.BORDER_THIN,
-					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_25_PERCENT.index, CellStyle.FINE_DOTS);
+					CellStyle.ALIGN_CENTER, CellStyle.VERTICAL_CENTER, true, HSSFColor.GREY_40_PERCENT.index, HSSFCellStyle.SOLID_FOREGROUND);
 			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
 			for (int i = 0; i < model.getColumnCount(); i++) {
 				createCell(rowHeader, i, headerCellStyle, model.getColumn(i).label());
