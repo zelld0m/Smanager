@@ -25,12 +25,18 @@
 			RuleTransferServiceJS.getRuleTransferMap(rule["store"], rule["ruleId"], ruleEntity, {
 				callback: function(ruleTransferMap){
 					base.autoMap = ruleTransferMap;
-					DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
-						callback: function(rs){
-							var list = rs.list;
-							base.populateOptions(list);
-						}
-					});
+
+					if(base.options.ruleStatusList!=null){
+						base.populateOptions(base.options.ruleStatusList);
+					}else{
+						DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
+							callback: function(rs){
+								var list = rs.list;
+								base.populateOptions(list);
+								base.options.setRuleStatusListCallback(base, list);
+							}
+						});
+					}
 				}
 			});
 		};
@@ -68,7 +74,7 @@
 				$importAlert.find("#status").empty();
 				$importAlert.hide();
 			};
-			
+
 			base.options.targetRuleStatusCallback(base.options.rule, ruleStatus);
 		};
 
@@ -239,9 +245,11 @@
 
 	$.importas.defaultOptions = {
 			rule: null,
+			ruleStatusList: null,
 			newRuleText: "Import As New Rule",
 			targetRuleStatusCallback: function(rule, ruleStatus){},
-			selectedOptionChanged: function(ruleId){}
+			selectedOptionChanged: function(ruleId){},
+			setRuleStatusListCallback: function(base, list){}
 	};
 
 	$.fn.importas = function(options){

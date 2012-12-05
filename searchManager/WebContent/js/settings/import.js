@@ -6,6 +6,7 @@
 			entityName : "",
 			ruleEntityList : null,
 			importTypeList : null,
+			ruleStatusMap : new Array(),
 
 			postMsg : function(data,pub){
 				var self = this;
@@ -37,11 +38,34 @@
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
 							self.entityName = self.tabSelected.substring(0, self.tabSelected.length-3);
-							self.getImportList();
+							self.initVariables();
 						}
 					}
 				});
 			},
+
+			initVariables: function(){
+				var ctr = 0, max = 2, self = this;
+				DeploymentServiceJS.getAllRuleStatus(self.entityName, {
+					callback: function(rs){
+						self.ruleStatusMap[self.entityName] = rs.list;
+						ctr++;
+					}, 
+					postHook: function(){
+						if (ctr==max) self.getImportList();
+					}
+				});
+
+				EnumUtilityServiceJS.getImportTypeList({
+					callback : function(data){
+						self.importTypeList = data;
+						ctr++;
+					},
+					postHook: function(){
+						if (ctr==max) self.getImportList();
+					}
+				});
+			}, 
 
 			prepareTabContent:function(){
 				var self = this;
@@ -54,15 +78,6 @@
 
 			cleanUpTabContent:function(){
 				$('div.circlePreloader').remove();
-			},
-
-			getImportTypeList : function(){
-				var self = this;
-				EnumUtilityServiceJS.getImportTypeList({
-					callback : function(data){
-						self.importTypeList = data;
-					}
-				});
 			},
 
 			getRuleEntityList : function(){
@@ -441,11 +456,7 @@
 											});
 										},
 										itemImportTypeListCallback: function(base, contentHolder){
-											EnumUtilityServiceJS.getImportTypeList({
-												callback : function(data){
-													base.populateImportTypeList(data, contentHolder);
-												}
-											});
+											base.populateImportTypeList(self.importTypeList, contentHolder);
 										},
 										itemForceAddStatusCallback: function(base, memberIds){
 											if (self.entityName === "elevate"){
@@ -485,6 +496,10 @@
 								//import as
 								$tr.find("td#importAs").importas({
 									rule: list[i],
+									ruleStatusList: self.ruleStatusMap[self.entityName],
+									setRuleStatusListCallback: function(base, list){
+										self.ruleStatusMap[self.entityName]= list;
+									},
 									targetRuleStatusCallback: function(r, rs){
 										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
 
@@ -529,7 +544,6 @@
 					},
 					preHook:function(){ 
 						self.prepareTabContent();
-						self.getImportTypeList();
 					},
 					postHook:function(){ 
 						self.cleanUpTabContent(); 
