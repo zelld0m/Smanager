@@ -31,9 +31,9 @@
 				var self = this;
 
 				$("#import").tabs("destroy").tabs({
-					/*cookie: {
+					cookie: {
 						expires: 0
-					},*/
+					},
 					show: function(event, ui){
 						if(ui.panel){
 							self.tabSelected = ui.panel.id;
@@ -423,7 +423,8 @@
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
-								var lastExportedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastExportDate"]))? rule["ruleStatus"]["lastExportedDate"].toUTCString(): "";
+								//var lastExportedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastExportDate"]))? rule["ruleStatus"]["lastExportedDate"].toUTCString(): "";
+
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
@@ -480,10 +481,8 @@
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 
-								//TODO
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
-								$tr.find("td#type").html(list[i]["importStatus"]);
-
+								
 								//import type
 								var $importTypeSelect = $tr.find("td#type > select#importTypeList");
 
