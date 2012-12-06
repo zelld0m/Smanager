@@ -43,6 +43,17 @@ public enum ImportType {
 	public static ImportType get(Integer intValue) { 
         return ImportType.values()[intValue-1];
     }
+	
+	public static ImportType[] PUBLISHER_LIST = new ImportType[]{
+		ImportType.FOR_REVIEW,
+		ImportType.FOR_APPROVAL,
+		ImportType.AUTO_PUBLISH
+	};
+	
+	public static ImportType[] NON_PUBLISHER_LIST = new ImportType[]{
+		ImportType.FOR_REVIEW,
+		ImportType.FOR_APPROVAL
+	}; 
 
 	@Override
 	public String toString() {

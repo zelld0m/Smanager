@@ -56,7 +56,7 @@
 					}
 				});
 
-				EnumUtilityServiceJS.getImportTypeList({
+				EnumUtilityServiceJS.getImportTypeList(hasPublishRule, {
 					callback : function(data){
 						self.importTypeList = data;
 						ctr++;
@@ -391,12 +391,6 @@
 								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
 
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
-
-								/*switch(self.entityName.toLowerCase()){
-								case "facetsort":
-									ruleId = rule["ruleName"]; //we will be getting facet sort rule by name in xmlpreview
-									break;
-								}*/
 
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")

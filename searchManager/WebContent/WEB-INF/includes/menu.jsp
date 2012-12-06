@@ -86,7 +86,7 @@
 		      		</sec:authorize>
 		      		
 		      		<c:if test="${store eq 'pcmallcap'}">
-		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
+		      		<sec:authorize access="hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'import'? 'class="active"': ''}><a href="<spring:url value="/import/"/>${store}">Import Rule</a></li>
 		      		</sec:authorize>
 		      		</c:if>

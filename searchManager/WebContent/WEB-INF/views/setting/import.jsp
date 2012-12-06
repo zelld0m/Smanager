@@ -6,6 +6,10 @@
 
 <script type="text/javascript" src="<spring:url value="/js/settings/import.js" />"></script>
 
+<script>
+	var hasPublishRule = <%= request.isUserInRole("PUBLISH_RULE") %>;
+</script>
+
 <link type="text/css" rel="stylesheet" href="<spring:url value="/css/settings/settings.css" />">
 
 <!-- Start Left Side -->

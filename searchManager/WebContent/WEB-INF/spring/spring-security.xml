@@ -35,7 +35,7 @@
     	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
     	<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
-    	<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
+    	<security:intercept-url pattern="/import/**" access="isAuthenticated() and hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')" />
     	<security:intercept-url pattern="/export/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
     	<security:intercept-url pattern="/audit/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/security/**" access="isAuthenticated() and hasRole('MANAGE_USER')" />
