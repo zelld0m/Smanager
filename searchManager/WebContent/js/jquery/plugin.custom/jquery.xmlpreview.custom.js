@@ -228,47 +228,57 @@
 				break;
 			case "facetsort": 
 				var $table = $content.find("table#item");
-				var $ruleInfo = $content.find("div#ruleInfo");
+				var $ruleInfo = $content.find("#ruleInfo");
 
 				FacetSortServiceJS.getRuleByName(ruleName, {
 					callback: function(data){
 						if(data == null){
-							$ruleInfo.find("#ruleName").text("");
-							$ruleInfo.find("#ruleType").text("");
+							$ruleInfo.text("");
+							
+							var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
+							$tr.find("td#itemHighlightedItem, td#itemSortType").remove();
+							$table.append($tr);
 						}
 						else{
-							$ruleInfo.find("#ruleName").text(data.name);
-							$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+							$ruleInfo.text(data.name + "[" + data.ruleId + "]");
 
-							for(var facetGroup in data.items){
-								var facetName = facetGroup;
-								var facetValue = data.items[facetGroup];
-								var highlightedItems = "";
+							if(data.items && data.items.length == 0){
 								var $tr = $table.find("tr#itemPattern").clone();
-								$tr.prop({id: $.formatAsId(facetName)});
-								$tr.find("#itemName").text(facetName);
-
-								if($.isArray(facetValue)){
-									for(var i=0; i < facetValue.length; i++){
-										highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
-									}
-								}
-								$tr.find("#itemHighlightedItem").html(highlightedItems);
-
-								var sortTypeDisplay = "";
-								var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
-
-								switch(sortType){
-								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
-								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
-								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
-								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
-								}
-
-								$tr.find("#itemSortType").text(sortTypeDisplay);
-								$tr.show();
+								$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
 								$table.append($tr);
-							};
+							}
+							else{
+								for(var facetGroup in data.items){
+									var facetName = facetGroup;
+									var facetValue = data.items[facetGroup];
+									var highlightedItems = "";
+									var $tr = $table.find("tr#itemPattern").clone();
+									$tr.prop({id: $.formatAsId(facetName)});
+									$tr.find("#itemName").text(facetName);
+	
+									if($.isArray(facetValue)){
+										for(var i=0; i < facetValue.length; i++){
+											highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
+										}
+									}
+									$tr.find("#itemHighlightedItem").html(highlightedItems);
+	
+									var sortTypeDisplay = "";
+									var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
+	
+									switch(sortType){
+									case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+									case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+									case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+									case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+									}
+	
+									$tr.find("#itemSortType").text(sortTypeDisplay);
+									$tr.show();
+									$table.append($tr);
+								}
+							}
 						}						
 					}
 				});
@@ -384,7 +394,13 @@
 							relKeyword = base.toStringArray(data["relKeyword"]);
 						}
 
-						if(data == null || data.parameters.length==0){
+						if(data == null){
+							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
+							$tr.find("td#fieldName").html("No parameters found for this rule").attr("colspan","2");
+							$tr.find("td#fieldValue").remove();
+							$tr.appendTo($table);
+						}
+						else if(data.parameters.length==0){
 							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("td#fieldName").html("No parameters specified for this rule").attr("colspan","2");
 							$tr.find("td#fieldValue").remove();
@@ -424,45 +440,58 @@
 				break;
 			case "facetsort": 
 				var $table = $content.find("table#item");
-				var $ruleInfo = $content.find("div#ruleInfo");
+				var $ruleInfo = $content.find("#ruleInfo");
 				var xml = base.options.ruleXml;
-				$ruleInfo.find("#ruleName").text(xml.ruleName);
-				$ruleInfo.find("#ruleType").text(xml.ruleType.toLowerCase());
 
 				if(xml == null){
-					//TODO
+					$ruleInfo.text("");
+					
+					var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
+					$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
+					$tr.find("td#itemHighlightedItem, td#itemSortType").remove();
+					$table.append($tr);
 				}
 				else{
-					for(var index in xml.groups){
-						var facetGroup = xml.groups[index];
-						var facetName = facetGroup["groupName"];
-						var highlightedItems = "";
-						var $tr = $table.find("tr#itemPattern").clone();
-						$tr.prop({id: $.formatAsId(facetName)});
-						$tr.find("#itemName").text(facetName);
-
-						var facetGroupItems = facetGroup["groupItem"];
-
-						if($.isArray(facetGroupItems)){
-							for(var i=0; i < facetGroupItems.length; i++){
-								highlightedItems += (i+1) + ' - ' + facetGroupItems[i] + '<br/>';
-							}
-						}
-						$tr.find("#itemHighlightedItem").html(highlightedItems);
-
-						var sortTypeDisplay = "";
-						var sortType = facetGroup["sortType"] == null ? xml.sortType : facetGroup["sortType"];
-
-						switch(sortType){
-						case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
-						case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
-						case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
-						case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
-						}
-
-						$tr.find("#itemSortType").text(sortTypeDisplay);
-						$tr.show();
+					$ruleInfo.text(xml.ruleName + " [" + xml.ruleId + "]");
+					
+					if(xml.groups && xml.groups.length == 0){
+						var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
+						$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
+						$tr.find("td#itemHighlightedItem, td#itemSortType").remove();
 						$table.append($tr);
+					}
+					else{
+						for(var index in xml.groups){
+							var facetGroup = xml.groups[index];
+							var facetName = facetGroup["groupName"];
+							var highlightedItems = "";
+							var $tr = $table.find("tr#itemPattern").clone();
+							$tr.prop({id: $.formatAsId(facetName)});
+							$tr.find("#itemName").text(facetName);
+	
+							var facetGroupItems = facetGroup["groupItem"];
+	
+							if($.isArray(facetGroupItems)){
+								for(var i=0; i < facetGroupItems.length; i++){
+									highlightedItems += (i+1) + ' - ' + facetGroupItems[i] + '<br/>';
+								}
+							}
+							$tr.find("#itemHighlightedItem").html(highlightedItems);
+	
+							var sortTypeDisplay = "";
+							var sortType = facetGroup["sortType"] == null ? xml.sortType : facetGroup["sortType"];
+	
+							switch(sortType){
+							case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
+							case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
+							case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
+							case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
+							}
+	
+							$tr.find("#itemSortType").text(sortTypeDisplay);
+							$tr.show();
+							$table.append($tr);
+						}
 					}
 				}			
 				break;
