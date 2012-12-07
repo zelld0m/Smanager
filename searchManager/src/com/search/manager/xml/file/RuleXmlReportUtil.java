@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoService;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetGroup;
@@ -47,6 +48,8 @@ import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
+import com.search.manager.utility.DateAndTimeUtils;
 
 public class RuleXmlReportUtil{
 	private static Logger logger = Logger.getLogger(RuleXmlReportUtil.class);
@@ -57,7 +60,7 @@ public class RuleXmlReportUtil{
 	protected RuleXmlReportUtil() {
 		//Exists only to defeat instantiation.
 	}
-
+	
 	public static RuleXmlReportUtil getInstance() {
 		logger.info("RuleXmlReportUtil.getInstance()");
 		if(instance == null) {
@@ -68,6 +71,15 @@ public class RuleXmlReportUtil{
 			}
 		}
 		return instance;
+	}
+	
+	public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity){
+		SubReportHeader subReportHeader = new SubReportHeader();
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreName(), xml.getCreatedDate()) : "");
+		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
+		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
+		
+		return subReportHeader;
 	}
 
 	public static List<ElevateReportBean> getElevateProducts(RuleXml ruleXml){

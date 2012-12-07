@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.cache.dao.DaoCacheService;
+import com.search.manager.dao.file.RuleVersionUtil;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.RecordSet;
@@ -28,9 +30,15 @@ import com.search.manager.report.model.FacetSortReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
+import com.search.manager.report.model.SubReportHeader;
+import com.search.manager.report.model.xml.FacetSortRuleXml;
+import com.search.manager.report.model.xml.RuleVersionListXml;
+import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.FacetSortService;
+import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.UtilityService;
+import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
 @RequestMapping("/facet")
@@ -38,10 +46,11 @@ import com.search.manager.service.UtilityService;
 public class FacetSortController {
 	
 	private static final Logger logger = Logger.getLogger(FacetSortController.class);
-	
+	private static final String RULE_TYPE = RuleEntity.FACET_SORT.toString();
 	@Autowired private DaoCacheService daoCacheService;
 	@Autowired private FacetSortService facetSortService;
 	@Autowired private DownloadService downloadService;
+	@Autowired private RuleVersionService ruleVersionService;
 
 	@RequestMapping(value="/{store}")
 	public String execute(HttpServletRequest request,HttpServletResponse response, Model model, @PathVariable String store){
@@ -117,6 +126,51 @@ public class FacetSortController {
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
 		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
 			downloadService.downloadXLS(response, reportModel, subReports);
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/{store}/version/xls", method = RequestMethod.GET)
+	// TODO: change to POST, retrieve filter type
+	public void getVersionXLS(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable String store) throws ClassNotFoundException {
+		String ruleId = request.getParameter("id");
+		String type = request.getParameter("type");
+		String filename = request.getParameter("filename");
+		long clientTimezone = Long.parseLong(request.getParameter("clientTimezone"));
+		Date headerDate = new Date(clientTimezone);
+
+		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
+		
+		RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreName(), RuleEntity.FACET_SORT, ruleId);
+		String subTitle = String.format("Facet Sort Rule [%s] \nType: %s", facetSortXml!=null? facetSortXml.getRuleName():"");
+				
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
+		
+		ReportModel<FacetSortReportBean> reportModel = new FacetSortReportModel(reportHeader, new ArrayList<FacetSortReportBean>());
+		ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
+
+		List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, ruleId);
+			if(rules != null){
+				for(RuleXml rule : rules){
+					FacetSortRuleXml xml = (FacetSortRuleXml) rule;
+					if(rule != null){
+						SubReportHeader subReportHeader = RuleXmlReportUtil.getVersionSubReportHeader(xml, RuleEntity.FACET_SORT);
+						subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+					}
+				}
+			}
+		download(response, reportModel, subModels, type);
+	}
+	
+	private void download(HttpServletResponse response, ReportModel<? extends ReportBean<?>> mainModel, ArrayList<ReportModel<? extends ReportBean<?>>> subModels, String fileType){
+		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
+		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(fileType)) {
+			try {
+				downloadService.downloadXLS(response, mainModel, subModels);
+			} catch (ClassNotFoundException e) {
+				logger.error("Error encountered while trying to download.", e);
+				e.printStackTrace();
+			}
 		}
 	}
 }
