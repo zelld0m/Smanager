@@ -66,7 +66,7 @@
 			var okmsg = 'Following rules were successfully ' + msg_;	
 
 			for(var i=0; i<data.length; i++){	
-				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").html();	
+				okmsg += '\n-'+ $("tr#ruleItem" + $.formatAsId(data[i]) + " > td#ruleRefId > p#ruleName").text();	
 			}
 
 			jAlert(okmsg,"Approval");
@@ -108,8 +108,8 @@
 								postHook:function(){ 
 									cleanUpTabContent(); 
 								}	
-							});break;
-
+							});
+							break;
 						case "rejectBtn": 
 							if (checkIfDeleted()) {
 								jAlert("Deleted rules cannot be rejected!","Approval");
