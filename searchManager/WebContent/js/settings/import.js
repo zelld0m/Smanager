@@ -458,14 +458,26 @@
 										itemImportTypeListCallback: function(base, contentHolder){
 											base.populateImportTypeList(self.importTypeList, contentHolder);
 										},
-										itemForceAddStatusCallback: function(base, memberIds){
+										itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
 											if (self.entityName === "elevate"){
-												ElevateServiceJS.isRequireForceAdd(ruleId, memberIds, {
+												ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
 													callback:function(data){
-														base.updateForceAddStatus(data);
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
 													},
 													preHook: function(){
-														base.prepareForceAddStatus();
+														base.prepareForceAddStatus(contentHolder);
+													}
+												});
+											}
+										},
+										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+											if (self.entityName === "elevate"){
+												ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+													callback:function(data){
+														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+													},
+													preHook: function(){
+														base.prepareForceAddStatus(contentHolder);
 													}
 												});
 											}

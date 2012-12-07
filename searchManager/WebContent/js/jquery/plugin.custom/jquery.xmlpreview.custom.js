@@ -4,6 +4,10 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
+		
+		base.XML_SOURCE = "xml";
+		base.DATABASE_SOURCE = "database";
+		
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -22,28 +26,31 @@
 
 		};
 
-		base.prepareForceAddStatus = function(){
-			base.contentHolder.find('div#forceAdd').show();
+		base.prepareForceAddStatus = function(contentHolder){
+			contentHolder.find('div#forceAdd').show();
 		};
 
-		base.updateForceAddStatus = function(data){
+		base.updateForceAddStatus = function(contentHolder, data, memberIdToItemMap){
 			for(var mapKey in data){
-				var $tr = base.contentHolder.find('tr#item' + $.formatAsId(mapKey));
-				var $item = base.memberIdToItem[mapKey];
+				var $tr = contentHolder.find('tr#item' + $.formatAsId(mapKey));
+				var $item = memberIdToItemMap[mapKey];
 
 				// Force Add Color Coding
-				if(data[mapKey] && !$item["forceAdd"]){
+				if(!$item){
+					
+				}
+				else if(data[mapKey] && !$item[0]["forceAdd"]){
 
-				}else if(data[mapKey] && $item["forceAdd"]){
+				}else if(data[mapKey] && $item[0]["forceAdd"]){
 					$tr.addClass("forceAddBorderErrorClass");
-				}else if(!data[mapKey] && $item["forceAdd"]){
+				}else if(!data[mapKey] && $item[0]["forceAdd"]){
 					$tr.addClass("forceAddClass");
-				}else if(!data[mapKey] && !$item["forceAdd"]){
+				}else if(!data[mapKey] && !$item[0]["forceAdd"]){
 					$tr.addClass("forceAddErrorClass");
 				}
 			}
 
-			base.contentHolder.find('div#forceAdd').hide();
+			contentHolder.find('div#forceAdd').hide();
 		};
 
 		base.setImage = function(tr, item){
@@ -118,15 +125,16 @@
 		base.populateItemTable = function($content, ruleType, data, ruleName, sourceData){
 			var list = data;
 			var memberIds = new Array();
+			var memberConditions = new Array();
 			var $table = $content.find("table#item");
-			base.memberIdToItem = new Array();
+			base.memberIdToItem = new Object();
 
 			$table.find("tr:not(#itemPattern)").remove();
 
 			$content.find("#ruleInfo").text($.trim(ruleName));
 			$content.find("#requestType").text(base.options.requestType);
 
-			if(list.length==0 && base.options.ruleXml == null && "xml" === sourceData){
+			if(list.length==0 && base.options.ruleXml == null && base.XML_SOURCE === sourceData){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
 				$tr.find("td#itemPosition").attr("colspan", "6").html("Unable to find data for this rule. Please contact Search Manager Team.");
@@ -140,7 +148,7 @@
 
 				for (var i = 0; i < list.length; i++) {
 					memberIds.push(list[i]["memberId"]);
-					base.memberIdToItem[list[i]["memberId"]] = list[i];
+					base.memberIdToItem[list[i]["memberId"]] = $.makeArray(list[i]);
 
 					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
 					$tr.find("td#itemPosition").html(ruleType.toLowerCase()!=="exclude"?  list[i]["location"] : parseInt(i) + 1);
@@ -149,6 +157,7 @@
 					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
 
 					if(FACET){
+						memberConditions.push(list[i].condition["conditionForSolr"]);
 						base.setImage($tr,list[i]);
 						$tr.find("td#itemMan").html(list[i].condition["readableString"])
 						.prop("colspan",3)
@@ -164,6 +173,7 @@
 						$tr.find("td#itemDPNo,td#itemName").remove();
 					}
 					else if(PART_NUMBER){
+						memberConditions.push("EDP:"+list[i]["edp"]);
 						if($.isNotBlank(list[i]["dpNo"])){
 							base.setImage($tr,list[i]);
 							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
@@ -188,8 +198,14 @@
 					$tr.appendTo($table);
 				};
 
-				if (ruleType.toLowerCase() === "elevate" && memberIds.length>0) 
-					base.options.itemForceAddStatusCallback(base, memberIds);
+				if (ruleType.toLowerCase() === "elevate" && memberIds.length>0){ 
+					if(base.XML_SOURCE === sourceData){
+						base.options.itemXmlForceAddStatusCallback(base, $content, ruleName, memberIds, memberConditions, base.memberIdToItem);
+					}
+					else if(base.DATABASE_SOURCE === sourceData){
+						base.options.itemForceAddStatusCallback(base, $content, ruleName, memberIds, base.memberIdToItem);
+					}
+				}
 			}
 
 			// Alternate row style
@@ -1082,7 +1098,7 @@
 						//left pane is shown by default
 						base.contentHolder.append(base.showLeftPane());
 
-						if("xml" === base.options.leftPanelSourceData){
+						if(base.XML_SOURCE === base.options.leftPanelSourceData){
 							if(base.options.ruleXml == null){
 								//retrieve xml data first
 								base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId, base.options.leftPanelSourceData);
@@ -1091,7 +1107,7 @@
 								base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.leftPanelSourceData);
 							}
 						}
-						else if("database" === base.options.leftPanelSourceData){
+						else if(base.DATABASE_SOURCE === base.options.leftPanelSourceData){
 							base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.dbRuleId, base.options.leftPanelSourceData);
 						}
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
@@ -1099,7 +1115,7 @@
 
 						if(base.options.enableRightPanel){
 							base.contentHolder.append(base.showRightPane());
-							if("xml" === base.options.rightPanelSourceData){
+							if(base.XML_SOURCE === base.options.rightPanelSourceData){
 								if(base.options.ruleXml == null){
 									base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId, base.options.rightPanelSourceData);
 								}
@@ -1107,7 +1123,7 @@
 									base.getRuleData(base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
 								}
 							}
-							else if("database" === base.options.rightPanelSourceData){
+							else if(base.DATABASE_SOURCE === base.options.rightPanelSourceData){
 								base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId, base.options.rightPanelSourceData);
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder, base.options.rightPanelSourceData);
@@ -1216,7 +1232,8 @@
 			postTemplate: "",
 			rightPanelTemplate: "",
 			itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){},
-			itemForceAddStatusCallback: function(base, memberIds){},
+			itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItem){},
+			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItem){},
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
 			setSelectedOverwriteRulePreview: function(base, rulename){},

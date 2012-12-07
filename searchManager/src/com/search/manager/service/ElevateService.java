@@ -576,4 +576,21 @@ public class ElevateService extends RuleService{
 		}
 		return map;
 	}
+	
+	@RemoteMethod
+	public Map<String, Boolean> isItemRequireForceAdd(String keyword, String[] memberIds, String[] conditions) {
+		String storeName = UtilityService.getStoreName();
+		Map<String, Boolean> map = new HashMap<String, Boolean>();
+
+		int i = 0;
+		for (String memberId: memberIds) {
+			String condition = conditions[i]; 
+			if (StringUtils.isNotBlank(condition)) {
+				map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+			}
+			i++;
+		}
+
+		return map;
+	}
 }
