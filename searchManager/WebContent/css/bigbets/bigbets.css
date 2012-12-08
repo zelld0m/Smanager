@@ -149,8 +149,8 @@ div.tileView ul.boxContainer li.forceAddErrorClass div.bgShade {
 div.tileView ul.boxContainer li div.bgShade label { margin:0 !important; padding:0 }
 div.tileView ul.boxContainer li div.picArea { text-align: center; height: 100px; overflow: hidden; margin-top:17px; margin-bottom:10px;  }
 div.tileView ul.boxContainer li div.picArea img { border:1px solid #f2f2f2 }
-div.tileView ul.boxContainer li div.titleArea { height: 50px; margin-bottom:3px; display:block; text-align: left; font-weight: bold; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; line-height: 15.5px;  }
-.ie div.tileView ul.boxContainer li div.titleArea { height: 47px; margin-bottom:3px; display:block; text-align: left; font-weight: bold; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; line-height: 15px;   }
+div.tileView ul.boxContainer li div.titleArea { height: 67px; margin-bottom:3px; display:block; text-align: left; font-weight: bold; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; line-height: 15.5px;  }
+.ie div.tileView ul.boxContainer li div.titleArea { height: 67px; margin-bottom:3px; display:block; text-align: left; font-weight: bold; vertical-align: middle !important; word-wrap:break-word; overflow:hidden; line-height: 15px;   }
 div.tileView ul.boxContainer li div.proInfo { margin:10px 8px; }
 div.tileView ul.boxContainer li .proName, .proName a { vertical-align: middle !important; color:#3B79C2; word-wrap:break-word;  }
 div.tileView ul.boxContainer li div.textInfo { padding:1px 0; height: 18px; display:block; }
