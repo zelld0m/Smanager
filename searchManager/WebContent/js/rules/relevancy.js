@@ -1197,7 +1197,7 @@
 			moduleName: moduleName,
 			ruleType: "Ranking Rule",
 			rule: selectedRule,
-			enableVersion:false, // TODO: set to true for version feature
+			enableVersion: true,
 			authorizeRuleBackup: true,
 			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 			afterSubmitForApprovalRequest:function(ruleStatus){
