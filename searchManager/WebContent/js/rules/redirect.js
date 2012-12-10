@@ -234,6 +234,8 @@
 					pageStyle: "style2",
 					pageSize: self.keywordInRulePageSize,
 					headerText : "Using This Rule",
+					headerTextAlt : "Keyword",
+					itemTextClass: "cursorText",
 					showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
 					showStatus: false,
 

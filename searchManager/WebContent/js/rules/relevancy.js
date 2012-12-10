@@ -1636,6 +1636,8 @@
 			pageStyle: "style2",
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
+			headerTextAlt : "Keyword",
+			itemTextClass : "cursorText",
 			searchText : "Enter Keyword",
 			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId , "_default") && allowModify,
 			showStatus: false,

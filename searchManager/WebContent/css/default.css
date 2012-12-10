@@ -462,3 +462,4 @@ body 							{ margin: 0px; min-width:1200px }
 #keyword-list .keywordIcons img { cursor: pointer; }
 
 .ui-widget li.ui-menu-item		{ list-style: none !important; padding: 8px 0 0 0 !important;}
+.cursorText { cursor: text !important }

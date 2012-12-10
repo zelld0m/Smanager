@@ -15,14 +15,15 @@
 			base.$el.find("#addButton").off().on({
 				click: function(e){
 					var ruleName = $.trim(base.$el.find('input[type="text"]').val());
+					var alertMsg = $.isBlank(base.options.headerTextAlt) ? base.options.headerText : base.options.headerTextAlt;
 
 					if(base.options.customAddRule){
 						//Skip validation
 					}else if ($.isBlank(ruleName) ||  ruleName.toLowerCase() === base.options.searchText.toLowerCase()){
-						jAlert(base.options.headerText + " is required.", base.options.headerText);
+						jAlert(alertMsg + " is required.", base.options.headerText);
 						return
 					}else if (!isAllowedName(ruleName)){
-						jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
+						jAlert(alertMsg + " contains invalid value.", base.options.headerText);
 						return
 					}
 
@@ -133,7 +134,9 @@
 			content+= '					<div style="width:155px; float:left;">';
 			content+= '						<div class="itemIcon lnk floatL w20"><a href="javascript:void(0);"></a></div>';
 			content+= '						<div class="floatL w135">';
-			content+= '							<div class="itemText lnk"><a href="javascript:void(0);"></a></div>';
+			content+= '							<div class="itemText lnk">';
+			content+= '								<a class="'+base.options.itemTextClass+'" href="javascript:void(0);"></a>';
+			content+= ' 						</div>';
 			content+= '							<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
 			content+= '						</div>';
 			content+= '					</div>';
@@ -260,6 +263,8 @@
 			region: "left",
 			pageStyle: "style1",
 			headerText: "Keyword",
+			headerTextAlt: "", //currently being used in "Using This Rule" jAlert message
+			itemTextClass: "",
 			searchText: "Search Keyword",
 			searchLabel: "",
 			filterText:"",
