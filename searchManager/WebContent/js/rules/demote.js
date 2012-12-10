@@ -424,7 +424,8 @@
 
 					authorizeSubmitForApproval: allowModify,
 					afterSubmitForApprovalRequest: function(ruleStatus){
-						self.populateRuleItem(page);
+						self.selectedRuleStatus = ruleStatus;
+						self.showRuleContent();
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
