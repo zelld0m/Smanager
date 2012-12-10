@@ -85,7 +85,7 @@
 								$("#versionIcon").version({
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
-									ruleId: base.options.rule["ruleId"],
+									rule: base.options.rule,
 //									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);

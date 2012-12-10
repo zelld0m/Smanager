@@ -363,7 +363,7 @@
 		};
 
 		base.createVersion = function(name, notes){
-			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, name, notes, {
+			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {
 				callback: function(data){
 					if (data) {
 						jAlert("Successfully created back up!");
@@ -384,7 +384,7 @@
 				click:function(e){
 					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
-							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
+							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
 									$content.find("li#ver_" + e.data.item["version"]).remove();
 									$content.find("div#vHeader_" + e.data.item["version"]).remove();
@@ -405,7 +405,7 @@
 				click:function(e){
 					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
 						if(result){
-							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
+							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
 
 								},
@@ -413,7 +413,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-
+									base.options.postRestoreCallback(base, base.options.rule);
 								}
 							});
 						}
@@ -426,7 +426,7 @@
 			var $content = base.contentHolder;
 			var $table = $content.find("table#versionList");
 
-			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
+			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
 				callback: function(data){
 					$table.find("tr.itemRow:not(#itemPattern)").remove();
 
@@ -664,7 +664,7 @@
 			moduleName: "",
 			headerText: "",
 			ruleType: "",
-			ruleId: "",
+			rule: null,
 			limit: 3,
 			locked: true,
 			beforeRequest: function(){},
