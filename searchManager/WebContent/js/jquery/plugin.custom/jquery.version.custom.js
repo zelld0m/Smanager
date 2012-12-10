@@ -142,9 +142,46 @@
 		};
 
 		base.setQueryCleaningCompare = function(li, rowLabelUl, item){
-			base.setRuleKeyword(li, rowLabelUl, item);
-
+			var $li = li;
+			var $rowLabelUl = rowLabelUl;
+			var $ruleCondition = item["ruleCondition"];
+			var conditions = null;
+			if ($ruleCondition!=null) conditions = $ruleCondition["condition"];
 			
+			$rowLabelUl.find("li#redirectType").text("Active Type").show();
+			$li.find("#redirectType").show();
+			
+			if ($.isNotBlank(item["redirectType"])){
+				$li.find("#redirectType").text(item["redirectType"]);
+			}
+			
+			$rowLabelUl.find("li#redirectKeyword").text("Replace Keyword").show();
+			$li.find("#redirectKeyword").show();
+			
+			if ($.isNotBlank(item["replacementKeyword"])){
+				$li.find("#redirectKeyword").text(item["replacementKeyword"]);
+			}
+			
+			$rowLabelUl.find("li#conditions").text("Conditions").show();
+
+			if($ruleCondition!=null && $ruleCondition["includeKeyword"]){
+				$li.find("#includeKeyword").text("YES");
+			}
+			
+			if(conditions!=null && conditions.length > 0){
+				var $conditionUl = $li.find("ul#conditionList");
+				var $conditionLiPattern = $conditionUl.find("li#conditionPattern");
+				var $conditionLi = null;
+				$conditionUl.parent().show();
+
+				for(var i=0; i<conditions.length; i++){
+					$conditionLi = $conditionLiPattern.clone();
+					$conditionLi.attr("id", i+1);
+					$conditionLi.find("#condition").text(conditions[i]);
+					$conditionLi.show();
+					$conditionUl.append($conditionLi);
+				}
+			}		
 		};
 
 		base.setRankingRuleCompare = function(li, rowLabelUl, item){
@@ -544,6 +581,9 @@
 			template += '				<li id="groups" style="display:none"></li>';
 			template += '				<li id="keywords" style="display:none"></li>';
 			template += '				<li id="parameters" style="display:none"></li>';
+			template += '				<li id="redirectType" style="display:none"></li>';
+			template += '				<li id="redirectKeyword" style="display:none"></li>';
+			template += '				<li id="conditions" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
 
@@ -593,6 +633,16 @@
 			template += '								<li id="parameterPattern" class="parameter" style="display:none">';
 			template += '									<p id="factor"></p>';
 			template += '									<p id="parameter"></p>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '						<li id="redirectType" style="display:none">UNKNOWN</li>';
+			template += '						<li id="redirectKeyword" style="display:none">NONE</li>';
+			template += '						<li id="conditions" style="display:none">';
+			template += '							<p>Include Keyword: <span id="includeKeyword" class="fbold">NO</span></p>';
+			template += '							<ul id="conditionList">';
+			template += '								<li id="conditionPattern" class="condition" style="display:none">';
+			template += '									<p id="condition"></p>';
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
