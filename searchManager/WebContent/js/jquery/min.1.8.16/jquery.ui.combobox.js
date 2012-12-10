@@ -90,7 +90,7 @@
 			});
 			
 			input.data( "autocomplete" )._renderItem = function( ul, item ) {
-				return $( "<li></li>" )
+				return $( "<li class='"+theId+"'></li>" )
 				.data( "item.autocomplete", item )
 				.append( "<a>" + item.label + "</a>" )
 				.appendTo( ul );
@@ -119,7 +119,13 @@
 				$( this ).blur();
 
 				// pass empty string as value to search for, displaying all results
-				input.autocomplete( "search", "" );
+				input.autocomplete("search", "");
+				$('li.'+theId).parent().css('position', 'absolute');
+				$('li.'+theId).parent().position({
+				    my: "left top",
+				    at: "left bottom",
+				    of: "input#"+theId
+				});
 				input.focus();
 			});
 		},
