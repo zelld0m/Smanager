@@ -55,20 +55,20 @@
 
 		base.addCompareButtonListener = function(){
 			var $content = base.contentHolder;
-	
+
 			$content.find("a#compareBtn").on({
 				click: function(e){
 					base.selectedVersion = [];
 					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-					
+
 					base.setCompare();
 				}
 			});
-			
+
 		};
-		
+
 		base.getItemType = function(item){
 			var $condition = item.condition;
 			var type = "unknown";
@@ -87,7 +87,7 @@
 
 			return type;
 		};
-		
+
 		base.setCompare = function(){
 			var $content = base.contentHolder;
 			var index = 0;
@@ -98,23 +98,23 @@
 			var $liPattern = $ul.find("li#itemPattern");
 
 			var $rowLabelUl = $content.find("ul#rowLabel");
-			
+
 			$ul.find("li.item:not(#itemPattern)").remove();
 			$vDiv.find("div.vHeader:not(#vPattern)").remove();
 			$rowLabelUl.find("li.dynamic").remove();
-			
+
 			for(var ver in base.selectedVersion){
 				index = base.selectedVersion[ver];
 				$li = $liPattern.clone();
 				$vItem = $vPattern.clone();
 				item = base.ruleMap[index];
 				rule = item["rule"];
-				
+
 				$vItem.attr("id","vHeader_" + index);
 				$vItem.find("#ver").text("Version " + item["version"]);
 				$vItem.show();
 				$vDiv.append($vItem);
-				
+
 				$li.attr("id","ver_" + index);
 				$li.find("#verCreatedBy").text(item["createdBy"]);
 				$li.find("#verDate").text(item["createdDate"].toUTCString());
@@ -122,7 +122,7 @@
 				$li.find("#verNote").text(item["notes"]);
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
-				
+
 				switch(base.options.ruleType){
 				case "Elevate": 
 				case "Exclude": 
@@ -138,36 +138,89 @@
 
 				$li.show();
 				$ul.append($li);
-
 			};
 		};
-		
+
+		base.setQueryCleaningCompare = function(li, rowLabelUl, item){
+			base.setRuleKeyword(li, rowLabelUl, item);
+
+			
+		};
+
+		base.setRankingRuleCompare = function(li, rowLabelUl, item){
+			var $li = li;
+			var $rowLabelUl = rowLabelUl;
+			var $parameters = item["parameters"];
+			base.setRuleKeyword(li, rowLabelUl, item);
+
+			if($parameters!=null){
+				var $parameterUl = $li.find("ul#parameterList");
+				var $parameterLiPattern = $parameterUl.find("li#parameterPattern");
+				var $parameterLi = null;
+				$parameterUl.parent().show();
+				$rowLabelUl.find("li#parameters").text("Parameters").show();
+
+				for(var factor in $parameters){
+					$parameterLi = $parameterLiPattern.clone();
+					$parameterLi.attr("id", $.formatAsId(factor));
+					$parameterLi.find("#factor").text(factor);
+					$parameterLi.find("#parameter").text($parameters[factor]);
+					$parameterLi.show();
+					$parameterUl.append($parameterLi);
+				}
+			}
+		};
+
+		base.setRuleKeyword = function(li, rowLabelUl, item){
+			var $li = li;
+			var $rowLabelUl = rowLabelUl;
+			var $ruleKeyword = item["ruleKeyword"];
+			var keywords = null;
+			if ($ruleKeyword!=null) keywords = item["ruleKeyword"]["keyword"];
+
+			if(keywords!=null && keywords.length > 0){
+				var $keywordUl = $li.find("ul#keywordList");
+				var $keywordLiPattern = $keywordUl.find("li#keywordPattern");
+				var $keywordLi = null;
+				$keywordUl.parent().show();
+				$rowLabelUl.find("li#keywords").text("Keywords").show();
+
+				for(var i=0; i<keywords.length; i++){
+					$keywordLi = $keywordLiPattern.clone();
+					$keywordLi.attr("id", i+1);
+					$keywordLi.find("#keyword").text(keywords[i]);
+					$keywordLi.show();
+					$keywordUl.append($keywordLi);
+				}
+			}		
+		};
+
 		base.setFacetItemCompare = function(li, rowlabel, item){
 			var $li = li;
 			var groups = item["groups"];
 			var $rowLabelUl = rowlabel;
 			var $group, $groupItems = null;
-			
+
 			var $groupUl = $li.find("ul#groupList");
 			var $groupLiPattern = $groupUl.find("li#groupPattern");
 			var groupItemName = "";
-			
+
 			if(groups.length){
 				$groupUl.parent().show();
 				$rowLabelUl.find("li#groups").text("Highlighted").show();
 				for (var idx in groups){
 					$group = groups[idx];
 					$groupItems = $group["groupItem"];
-					
+
 					$groupLi = $groupLiPattern.clone();
 					$groupLi.attr("id", $.formatAsId($group["groupName"]));
 					$groupLi.find("#groupName").text($group["groupName"]);
 					$groupLi.find("#groupSort").text($group["sortType"]);
 					$groupLi.show();
-					
+
 					$groupItemUl = $groupLi.find("ul#groupItemList");
 					$groupItemLiPattern = $groupItemUl.find("li#groupItemPattern"); 
-					
+
 					//Populate items
 					for (var itemIdx in $groupItems){
 						$groupItemLi = $groupItemLiPattern.clone();
@@ -177,44 +230,44 @@
 						$groupItemLi.show();
 						$groupItemUl.append($groupItemLi);
 					}
-					
+
 					$groupUl.append($groupLi);
 				}
 			}
-		
+
 		};
-		
+
 		base.setProductCompare = function(li, rowlabel, item){
 			var $li = li;
 			var products = item["products"];
 			var $rowLabelUl = rowlabel;
 
 			console.log(item["products"]);
-			
+
 			if(products.length){
 				var $ul = $li.find("ul#prodList");
 				var $pattern = $ul.find("li#prodPattern");
 				var $pLi = null;
-				
+
 				$ul.parent().show();
 				$rowLabelUl.find("li#products").text("Products").show();
-				
+
 				for (var pXml in products){
 					var product = products[pXml];
 					$pLi = $pattern.clone();
 					$pLi.attr("id", product["memberId"]);
-					
+
 					if(product["memberType"]==="FACET"){
 						var imagePath ="";
 						switch(base.getItemType(product)){
-							case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
-							case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
-							case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+						case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+						case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+						case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
 						};
-						
+
 						if($.isNotBlank(imagePath))
 							$pLi.find("#prodImage").attr("src", imagePath);
-						
+
 						$pLi.find("#prodInfo").text(product["condition"]["condition"]);
 					}else if(product["memberType"]==="PART_NUMBER"){
 						if($.isNotBlank(product["dpNo"])){
@@ -227,14 +280,14 @@
 							$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
 						}
 					}
-					
+
 					$pLi.show();
 					$ul.append($pLi);
 				}
 			}
-			
+
 		};
-		
+
 		base.addSaveButtonListener = function(){
 			var $content = base.contentHolder;
 
@@ -310,7 +363,7 @@
 		base.addRestoreVersionListener = function(tr, item){
 			var $tr = tr;
 			var $item = item;
-			
+
 			$tr.find(".restoreIcon").off().on({
 				click:function(e){
 					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
@@ -323,7 +376,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-									
+
 								}
 							});
 						}
@@ -339,19 +392,19 @@
 			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
 				callback: function(data){
 					$table.find("tr.itemRow:not(#itemPattern)").remove();
-					
+
 					if(data.length>0){
 						$table.find("tr#empty_row").hide();
 					}else{
 						$table.find("tr#empty_row").show();
 					}
-					
+
 					base.ruleMap = {};
 					for (var i in data){
 						var item = data[i];
 						var version = item["version"];
 						var $tr = $table.find("tr#itemPattern").clone();
-						
+
 						base.ruleMap[version] = item;
 						$tr.prop("id", "item" + $.formatAsId(version));
 						$tr.find("td#itemId").html(item["version"]);
@@ -378,7 +431,7 @@
 			template += '<div style="width:845px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
 			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';			
-			
+
 			template += '	<div id="version" class="floatL w400">';
 			template += '		<div class="w400 mar0 pad0">';
 			template += '			<table class="tblItems w100p marT5">';
@@ -463,19 +516,19 @@
 
 			return template;
 		};
-		
+
 		base.getItemListTemplate =function(){
 			var template  = '';
-	
+
 			template += '	<div class="version w425 floatR border">';
-			
+
 			template += '	<div id="vHeaderList">';
 			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
 			template += '		<div id="vPattern" class="vHeader" style="display:none">';
 			template += '			<div id="ver" class="floatL titleVersion" style="padding:5px; width:129px;"></div>';
 			template += '		</div>';
 			template += '	</div>';
-			
+
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
 			template += '		<div style="float:left; width:120px">';// label
@@ -489,9 +542,11 @@
 			template += '				<li>Rule Name</li>';
 			template += '				<li id="products" style="display:none"></li>';
 			template += '				<li id="groups" style="display:none"></li>';
+			template += '				<li id="keywords" style="display:none"></li>';
+			template += '				<li id="parameters" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
-			
+
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
 			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none">';
@@ -526,16 +581,31 @@
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
+			template += '						<li id="keywords" style="display:none">';
+			template += '							<ul id="keywordList">';
+			template += '								<li id="keywordPattern" class="keyword" style="display:none">';
+			template += '									<p id="keyword"></p>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
+			template += '						<li id="parameters" style="display:none">';
+			template += '							<ul id="parameterList">';
+			template += '								<li id="parameterPattern" class="parameter" style="display:none">';
+			template += '									<p id="factor"></p>';
+			template += '									<p id="parameter"></p>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
 			template += '					</ul>';
 			template += '				</li>';
 			template += '			</ul>';
 			template += '		</div>';// end content
 			template += '	</div>';
 			template += '	</div>';
-			
+
 			return template;
 		};
-		
+
 		// Run initializer
 		base.init();
 	};

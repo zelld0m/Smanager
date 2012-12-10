@@ -469,7 +469,7 @@
 					moduleName: self.moduleName,
 					ruleType: "Elevate",
 					rule: self.selectedRule,
-					enableVersion:false, // TODO: set to true for version feature
+					enableVersion: true, 
 					authorizeRuleBackup: true,
 					viewAuditCallback: function(target){
 						$(target).viewaudit({
