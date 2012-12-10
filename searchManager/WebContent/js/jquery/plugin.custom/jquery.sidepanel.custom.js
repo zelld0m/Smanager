@@ -15,14 +15,15 @@
 			base.$el.find("#addButton").off().on({
 				click: function(e){
 					var ruleName = $.trim(base.$el.find('input[type="text"]').val());
+					var alertMsg = $.isBlank(base.options.headerTextAlt) ? base.options.headerText : base.options.headerTextAlt;
 
 					if(base.options.customAddRule){
 						//Skip validation
 					}else if ($.isBlank(ruleName) ||  ruleName.toLowerCase() === base.options.searchText.toLowerCase()){
-						jAlert(base.options.headerText + " is required.", base.options.headerText);
+						jAlert(alertMsg + " is required.", base.options.headerText);
 						return
 					}else if (!isAllowedName(ruleName)){
-						jAlert(base.options.headerText + " contains invalid value.", base.options.headerText);
+						jAlert(alertMsg + " contains invalid value.", base.options.headerText);
 						return
 					}
 
@@ -91,6 +92,24 @@
 
 			base.addAddButtonListener();
 		};
+		
+		base.noResultsPattern = function(){
+		var content = '		<tr id="item0" class="itemRow">';
+			content+= '			<td class="padR10 padL10">';
+			content+= '				<div class="itemHolder clearfix">';	
+			content+= '					<div style="width:155px; float:left;">';
+			content+= '						<div class="itemIcon lnk floatL w20"><a href="javascript:void(0);"></a></div>';
+			content+= '						<div class="floatL w135">';
+			content+= '							<div class="itemText fLgray lnk"></div>';
+			content+= '							<div style="float:left; font-size:11px;" class="itemSubText fgray">No Records Found</div>';
+			content+= '						</div>';
+			content+= '					</div>';
+			content+= '				</div>';		
+			content+= '			</td>';
+			content+= '		</tr>';
+			
+			return content;
+		};
 
 		base.populateTemplate = function(){
 
@@ -133,7 +152,9 @@
 			content+= '					<div style="width:155px; float:left;">';
 			content+= '						<div class="itemIcon lnk floatL w20"><a href="javascript:void(0);"></a></div>';
 			content+= '						<div class="floatL w135">';
-			content+= '							<div class="itemText lnk"><a href="javascript:void(0);"></a></div>';
+			content+= '							<div class="itemText lnk">';
+			content+= '								<a class="'+base.options.itemTextClass+'" href="javascript:void(0);"></a>';
+			content+= ' 						</div>';
 			content+= '							<div class="itemSubText fgray" style="float:left; font-size:11px;"></div>';
 			content+= '						</div>';
 			content+= '					</div>';
@@ -186,23 +207,29 @@
 			$table.find("tr.itemRow:not(#itemPattern)").remove();
 
 			// populate list
-			for (var i = 0; i < data.list.length; i++) {
-				name = list[i][base.options.fieldName];
-				id = "item" + $.formatAsId(i+1);
-
-				$tr = $table.find("tr#itemPattern").clone();
-				$tr.attr("id", id).show();
+			if(list && list.length > 0){
+				for (var i = 0; i < list.length; i++) {
+					name = list[i][base.options.fieldName];
+					id = "item" + $.formatAsId(i+1);
+	
+					$tr = $table.find("tr#itemPattern").clone();
+					$tr.attr("id", id).show();
+					$table.append($tr);
+	
+					$tr.find(".itemText > a").text(name).on({
+						click: function(e){
+							base.options.itemNameCallback(e.data.base, e.data);	
+						}
+					},{base: base, ui: $tr, name:name, id:id, model:list[i]});
+	
+					base.options.itemOptionCallback(base, {ui:$tr, name:name, id:id, model:list[i]});
+	
+					if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
+				}
+			}
+			else{ // display no result found text. TODO: add option to display/not to display text
+				$tr = $(base.noResultsPattern());
 				$table.append($tr);
-
-				$tr.find(".itemText > a").text(name).on({
-					click: function(e){
-						base.options.itemNameCallback(e.data.base, e.data);	
-					}
-				},{base: base, ui: $tr, name:name, id:id, model:list[i]});
-
-				base.options.itemOptionCallback(base, {ui:$tr, name:name, id:id, model:list[i]});
-
-				if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
 			}
 		};
 
@@ -260,6 +287,8 @@
 			region: "left",
 			pageStyle: "style1",
 			headerText: "Keyword",
+			headerTextAlt: "", //currently being used in "Using This Rule" jAlert message
+			itemTextClass: "",
 			searchText: "Search Keyword",
 			searchLabel: "",
 			filterText:"",

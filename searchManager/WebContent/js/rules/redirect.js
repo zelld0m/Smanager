@@ -161,7 +161,7 @@
 					moduleName: self.moduleName,
 					ruleType: "Query Cleaning",
 					rule: self.selectedRule,
-					enableVersion:false, // TODO: set to true for version feature
+					enableVersion: true,
 					authorizeRuleBackup: true,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					afterSubmitForApprovalRequest:function(ruleStatus){
@@ -234,6 +234,8 @@
 					pageStyle: "style2",
 					pageSize: self.keywordInRulePageSize,
 					headerText : "Using This Rule",
+					headerTextAlt : "Keyword",
+					itemTextClass: "cursorText",
 					showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
 					showStatus: false,
 

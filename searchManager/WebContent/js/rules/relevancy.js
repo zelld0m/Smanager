@@ -1197,7 +1197,7 @@
 			moduleName: moduleName,
 			ruleType: "Ranking Rule",
 			rule: selectedRule,
-			enableVersion:false, // TODO: set to true for version feature
+			enableVersion: true,
 			authorizeRuleBackup: true,
 			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 			afterSubmitForApprovalRequest:function(ruleStatus){
@@ -1636,6 +1636,8 @@
 			pageStyle: "style2",
 			pageSize: keywordInRulePageSize,
 			headerText : "Using This Rule",
+			headerTextAlt : "Keyword",
+			itemTextClass : "cursorText",
 			searchText : "Enter Keyword",
 			showAddButton: !selectedRuleStatus.locked && !$.endsWith(selectedRule.ruleId , "_default") && allowModify,
 			showStatus: false,

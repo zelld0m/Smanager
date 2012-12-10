@@ -372,7 +372,7 @@
 					moduleName: self.moduleName,
 					ruleType: "Exclude",
 					rule: self.selectedRule,
-					enableVersion:false, // TODO: set to true for version feature
+					enableVersion: true,
 					authorizeRuleBackup: true,
 					viewAuditCallback: function(target){
 						$(target).viewaudit({
@@ -386,7 +386,8 @@
 					
 					authorizeSubmitForApproval: allowModify,
 					afterSubmitForApprovalRequest: function(ruleStatus){
-						self.populateRuleItem(page);
+						self.selectedRuleStatus = ruleStatus;
+						self.showRuleContent();
 					},
 					afterRuleStatusRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
