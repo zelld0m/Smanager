@@ -218,7 +218,7 @@
 			template  += '								<div class="w146 floatL padL25 marT8"><span id="dynamicAttributeLabel"></span></div>';
 			template  += '								<img src="' +  GLOBAL_contextPath + '/images/iconDelete.png" class="deleteAttrIcon posRel floatR marT8 marR4 marL5" alt="Delete Attribute" title="Delete Attribute">';
 
-			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; max-height: 107px">';												
+			template  += '								<div class="w240 floatL marT8 border" style="overflow-y:auto; height: 107px">';												
 			template  += '									<div id="dynamicAttributeValues">';
 			template  += '										<div id="dynamicAttributeValuesPattern" style="display: none;">';
 			template  += '											<div class="w240">';
