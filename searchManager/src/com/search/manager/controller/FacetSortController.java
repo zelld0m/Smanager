@@ -142,7 +142,7 @@ public class FacetSortController {
 		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 		
 		RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreName(), RuleEntity.FACET_SORT, ruleId);
-		String subTitle = String.format("Facet Sort Rule [%s] \nType: %s", facetSortXml!=null? facetSortXml.getRuleName():"");
+		String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml!=null? facetSortXml.getRuleName():"");
 				
 		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		

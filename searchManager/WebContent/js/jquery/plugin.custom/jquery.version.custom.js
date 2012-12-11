@@ -142,9 +142,46 @@
 		};
 
 		base.setQueryCleaningCompare = function(li, rowLabelUl, item){
-			base.setRuleKeyword(li, rowLabelUl, item);
-
+			var $li = li;
+			var $rowLabelUl = rowLabelUl;
+			var $ruleCondition = item["ruleCondition"];
+			var conditions = null;
+			if ($ruleCondition!=null) conditions = $ruleCondition["condition"];
 			
+			$rowLabelUl.find("li#redirectType").text("Active Type").show();
+			$li.find("#redirectType").show();
+			
+			if ($.isNotBlank(item["redirectType"])){
+				$li.find("#redirectType").text(item["redirectType"]);
+			}
+			
+			$rowLabelUl.find("li#redirectKeyword").text("Replace Keyword").show();
+			$li.find("#redirectKeyword").show();
+			
+			if ($.isNotBlank(item["replacementKeyword"])){
+				$li.find("#redirectKeyword").text(item["replacementKeyword"]);
+			}
+			
+			$rowLabelUl.find("li#conditions").text("Conditions").show();
+
+			if($ruleCondition!=null && $ruleCondition["includeKeyword"]){
+				$li.find("#includeKeyword").text("YES");
+			}
+			
+			if(conditions!=null && conditions.length > 0){
+				var $conditionUl = $li.find("ul#conditionList");
+				var $conditionLiPattern = $conditionUl.find("li#conditionPattern");
+				var $conditionLi = null;
+				$conditionUl.parent().show();
+
+				for(var i=0; i<conditions.length; i++){
+					$conditionLi = $conditionLiPattern.clone();
+					$conditionLi.attr("id", i+1);
+					$conditionLi.find("#condition").text(conditions[i]);
+					$conditionLi.show();
+					$conditionUl.append($conditionLi);
+				}
+			}		
 		};
 
 		base.setRankingRuleCompare = function(li, rowLabelUl, item){
@@ -326,7 +363,7 @@
 		};
 
 		base.createVersion = function(name, notes){
-			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.ruleId, name, notes, {
+			RuleVersionServiceJS.createRuleVersion(base.options.ruleType, base.options.rule["ruleId"], name, notes, {
 				callback: function(data){
 					if (data) {
 						jAlert("Successfully created back up!");
@@ -347,7 +384,7 @@
 				click:function(e){
 					jConfirm("Delete restore point version " + e.data.item["name"] + "?" , "Delete Version", function(result){
 						if(result){
-							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
+							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
 									$content.find("li#ver_" + e.data.item["version"]).remove();
 									$content.find("div#vHeader_" + e.data.item["version"]).remove();
@@ -368,7 +405,7 @@
 				click:function(e){
 					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
 						if(result){
-							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.ruleId, e.data.item["version"], {
+							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
 
 								},
@@ -376,7 +413,7 @@
 									base.options.preRestoreCallback(base);
 								},
 								postHook:function(){
-
+									base.options.postRestoreCallback(base, base.options.rule);
 								}
 							});
 						}
@@ -389,7 +426,7 @@
 			var $content = base.contentHolder;
 			var $table = $content.find("table#versionList");
 
-			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.ruleId, {
+			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
 				callback: function(data){
 					$table.find("tr.itemRow:not(#itemPattern)").remove();
 
@@ -544,6 +581,9 @@
 			template += '				<li id="groups" style="display:none"></li>';
 			template += '				<li id="keywords" style="display:none"></li>';
 			template += '				<li id="parameters" style="display:none"></li>';
+			template += '				<li id="redirectType" style="display:none"></li>';
+			template += '				<li id="redirectKeyword" style="display:none"></li>';
+			template += '				<li id="conditions" style="display:none"></li>';
 			template += '			</ul>';
 			template += '		</div>';// end label
 
@@ -596,6 +636,16 @@
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
+			template += '						<li id="redirectType" style="display:none">UNKNOWN</li>';
+			template += '						<li id="redirectKeyword" style="display:none">NONE</li>';
+			template += '						<li id="conditions" style="display:none">';
+			template += '							<p>Include Keyword: <span id="includeKeyword" class="fbold">NO</span></p>';
+			template += '							<ul id="conditionList">';
+			template += '								<li id="conditionPattern" class="condition" style="display:none">';
+			template += '									<p id="condition"></p>';
+			template += '								</li>';
+			template += '							</ul>';
+			template += '						</li>';
 			template += '					</ul>';
 			template += '				</li>';
 			template += '			</ul>';
@@ -614,7 +664,7 @@
 			moduleName: "",
 			headerText: "",
 			ruleType: "",
-			ruleId: "",
+			rule: null,
 			limit: 3,
 			locked: true,
 			beforeRequest: function(){},

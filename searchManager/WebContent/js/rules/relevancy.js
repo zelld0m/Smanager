@@ -1200,6 +1200,10 @@
 			enableVersion: true,
 			authorizeRuleBackup: true,
 			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+			postRestoreCallback: function(base, rule){
+				base.api.destroy();
+				showRelevancy();
+			},
 			afterSubmitForApprovalRequest:function(ruleStatus){
 				selectedRuleStatus = ruleStatus;
 				showRelevancy();

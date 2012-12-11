@@ -385,6 +385,10 @@
 					},
 					
 					authorizeSubmitForApproval: allowModify,
+					postRestoreCallback: function(base, rule){
+						base.api.destroy();
+						self.showRuleContent();
+					},
 					afterSubmitForApprovalRequest: function(ruleStatus){
 						self.selectedRuleStatus = ruleStatus;
 						self.showRuleContent();

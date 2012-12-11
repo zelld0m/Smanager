@@ -85,13 +85,46 @@
 								$("#versionIcon").version({
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
-									ruleId: base.options.rule["ruleId"],
+									rule: base.options.rule,
 //									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
 									},
 									postRestoreCallback: function(el, rule){
 										base.options.postRestoreCallback(el, rule);
+									}
+								});
+							}
+						});
+						
+						base.$el.find("#downloadVersionIcon").on({
+							click: function(e){
+								$("#downloadVersionIcon").download({
+									headerText:"Download " + base.options.moduleName,
+									moduleName: base.options.moduleName,
+									ruleType: base.options.ruleType,  
+									rule: base.options.rule,
+//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+									requestCallback:function(e){
+										var params = new Array();
+										var url = document.location.pathname + "/version/xls";
+										var urlParams = "";
+										var count = 0;
+
+										params["filename"] = e.data.filename;
+										params["type"] = e.data.type;
+										params["keyword"] = base.options.rule["ruleName"];
+										params["id"] = base.options.rule["ruleId"];
+										//params["filter"] = base.getRuleItemFilter();
+										params["clientTimezone"] = +new Date();
+
+										for(var key in params){
+											if (count>0) urlParams +='&';
+											urlParams += (key + '=' + params[key]);
+											count++;
+										};
+
+										document.location.href = url + '?' + urlParams;
 									}
 								});
 							}
@@ -138,6 +171,10 @@
 				template += '			<div id="versionHolder">';
 				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
 				template += '					<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>';			        		 
+				template += '				</label>';
+				
+				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
+				template += '					<span><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download Rule Versions" title="Download Rule Versions"></span>';			        		 
 				template += '				</label>';
 
 				if(base.options.authorizeRuleBackup){
