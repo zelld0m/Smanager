@@ -922,7 +922,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
  	-moz-box-shadow:0 0 6px #007eff;
  	-ms-box-shadow:0 0 6px #007eff;
  	box-shadow:0 0 6px #007eff;
- 	
 }
 
 .cssReset .placeHolder, .qtip .placeHolder, .placeHolder { border:3px dashed #dedede; background:url(../../../images/bg_dropItemHere.png) center center no-repeat !important; }
