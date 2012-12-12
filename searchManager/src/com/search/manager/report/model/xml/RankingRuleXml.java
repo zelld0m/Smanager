@@ -53,6 +53,10 @@ public class RankingRuleXml extends RuleXml {
 			}
 			this.setRuleKeyword(new RuleKeywordXml(keywords));
 			this.setParameters(rr.getParameters());
+			this.setCreatedBy(rr.getCreatedBy());
+			this.setCreatedDate(rr.getCreatedDate());
+			this.setLastModifiedBy(rr.getLastModifiedBy());
+			this.setLastModifiedDate(rr.getLastModifiedDate());
 		}
 
 		setVersion(version);

@@ -55,17 +55,21 @@
 
 		base.addCompareButtonListener = function(){
 			var $content = base.contentHolder;
+			base.selectedVersion = [];
+			base.selectedVersion.push("current");
 
 			$content.find("a#compareBtn").on({
 				click: function(e){
 					base.selectedVersion = [];
+					base.selectedVersion.push("current");
 					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-
 					base.setCompare();
 				}
 			});
+
+			base.setCompare();
 
 		};
 
@@ -111,15 +115,21 @@
 				rule = item["rule"];
 
 				$vItem.attr("id","vHeader_" + index);
-				$vItem.find("#ver").text("Version " + item["version"]);
+				$vItem.find("#ver").text(index==="current" ? "Current Rule": "Version " + item["version"]);
 				$vItem.show();
 				$vDiv.append($vItem);
 
 				$li.attr("id","ver_" + index);
-				$li.find("#verCreatedBy").text(item["createdBy"]);
-				$li.find("#verDate").text(item["createdDate"].toUTCString());
-				$li.find("#verName").text(item["name"]);
-				$li.find("#verNote").text(item["notes"]);
+				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
+				$li.find("#restoreLink").hide();
+				
+				if(index !== "current"){
+					$li.find("#restoreLink").show();
+					$li.find("#verDate").text(item["createdDate"].toUTCString());
+					$li.find("#verName").text(item["name"]);
+					$li.find("#verNote").text(item["notes"]);
+				}
+
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
 
@@ -146,28 +156,29 @@
 			var $rowLabelUl = rowLabelUl;
 			var $ruleCondition = item["ruleCondition"];
 			var conditions = null;
+			base.setRuleKeyword(li, rowLabelUl, item);
 			if ($ruleCondition!=null) conditions = $ruleCondition["condition"];
-			
+
 			$rowLabelUl.find("li#redirectType").text("Active Type").show();
 			$li.find("#redirectType").show();
-			
+
 			if ($.isNotBlank(item["redirectType"])){
 				$li.find("#redirectType").text(item["redirectType"]);
 			}
-			
+
 			$rowLabelUl.find("li#redirectKeyword").text("Replace Keyword").show();
 			$li.find("#redirectKeyword").show();
-			
+
 			if ($.isNotBlank(item["replacementKeyword"])){
 				$li.find("#redirectKeyword").text(item["replacementKeyword"]);
 			}
-			
+
 			$rowLabelUl.find("li#conditions").text("Conditions").show();
 
 			if($ruleCondition!=null && $ruleCondition["includeKeyword"]){
 				$li.find("#includeKeyword").text("YES");
 			}
-			
+
 			if(conditions!=null && conditions.length > 0){
 				var $conditionUl = $li.find("ul#conditionList");
 				var $conditionLiPattern = $conditionUl.find("li#conditionPattern");
@@ -279,9 +290,7 @@
 			var products = item["products"];
 			var $rowLabelUl = rowlabel;
 
-			console.log(item["products"]);
-
-			if(products.length){
+			if(products!=null && products.length){
 				var $ul = $li.find("ul#prodList");
 				var $pattern = $ul.find("li#prodPattern");
 				var $pLi = null;
@@ -425,41 +434,52 @@
 		base.getAvailableVersion = function(){
 			var $content = base.contentHolder;
 			var $table = $content.find("table#versionList");
+			base.ruleMap = {};
 
-			RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
+			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){
-					$table.find("tr.itemRow:not(#itemPattern)").remove();
-
-					if(data.length>0){
-						$table.find("tr#empty_row").hide();
-					}else{
-						$table.find("tr#empty_row").show();
+					if(data!=null){
+						base.ruleMap["current"] = data;
 					}
-
-					base.ruleMap = {};
-					for (var i in data){
-						var item = data[i];
-						var version = item["version"];
-						var $tr = $table.find("tr#itemPattern").clone();
-
-						base.ruleMap[version] = item;
-						$tr.prop("id", "item" + $.formatAsId(version));
-						$tr.find("td#itemId").html(item["version"]);
-						$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
-						$tr.find("td#itemInfo > p#name").html(item["name"]);
-						$tr.find("td#itemInfo > p#notes").html(item["notes"]);
-						base.addDeleteVersionListener($tr, item);
-						base.addRestoreVersionListener($tr, item);
-						$tr.show();
-						$table.append($tr);
-					}
-					$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
 				},
-				postHook:function(){
-					$table.find("tr#preloader").remove();
-					base.addCompareButtonListener();
+				postHook: function(){
+					RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
+						callback: function(data){
+							$table.find("tr.itemRow:not(#itemPattern)").remove();
+
+							if(data.length>0){
+								$table.find("tr#empty_row").hide();
+							}else{
+								$table.find("tr#empty_row").show();
+							}
+
+							for (var i in data){
+								var item = data[i];
+								var version = item["version"];
+								var $tr = $table.find("tr#itemPattern").clone();
+
+								base.ruleMap[version] = item;
+								$tr.prop("id", "item" + $.formatAsId(version));
+								$tr.find("td#itemId").html(item["version"]);
+								$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
+								$tr.find("td#itemInfo > p#name").html(item["name"]);
+								$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+								base.addDeleteVersionListener($tr, item);
+								base.addRestoreVersionListener($tr, item);
+								$tr.show();
+								$table.append($tr);
+							}
+							$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
+						},
+						postHook:function(){
+							$table.find("tr#preloader").remove();
+							base.addCompareButtonListener();
+						}
+					});
 				}
 			});
+
+
 		};
 
 		base.getTemplate = function(){
@@ -591,11 +611,11 @@
 			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none">';
 			template += '					<ul id="ruleDetails">';
-			template += '						<li><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
-			template += '						<li id="verCreatedBy"></li>'; 
-			template += '						<li id="verDate"></li>';
-			template += '						<li id="verName"></li>'; 
-			template += '						<li id="verNote"></li>'; 
+			template += '						<li id="restoreLink" style="display:none"><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
+			template += '						<li id="verCreatedBy">Not Available</li>'; 
+			template += '						<li id="verDate">Not Available</li>';
+			template += '						<li id="verName">Not Available</li>'; 
+			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 
 			template += '						<li id="ruleName"></li>';
 			template += '						<li id="products" style="display:none">';

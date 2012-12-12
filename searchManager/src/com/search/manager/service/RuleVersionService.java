@@ -14,7 +14,11 @@ import com.search.manager.dao.DaoService;
 import com.search.manager.dao.file.RuleVersionUtil;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RuleStatus;
+import com.search.manager.report.model.xml.DemoteRuleXml;
+import com.search.manager.report.model.xml.ElevateRuleXml;
+import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.xml.file.RuleXmlUtil;
 
 @Service("ruleVersionService")
 @RemoteProxy(
@@ -63,22 +67,37 @@ public class RuleVersionService{
 		if (rule != null) {
 			success = daoService.restoreRuleVersion(rule);
 			switch (RuleEntity.find(ruleType)) {
-				case ELEVATE:
-				case EXCLUDE:
-				case DEMOTE:
-				case FACET_SORT:
-				case QUERY_CLEANING:
-				default: 
-					break;
-				case RANKING_RULE:
-					// what is this for?
-					RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
-					if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
-						deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
-					}
-					break;
+			case ELEVATE:
+			case EXCLUDE:
+			case DEMOTE:
+			case FACET_SORT:
+			case QUERY_CLEANING:
+			default: 
+				break;
+			case RANKING_RULE:
+				// what is this for?
+				RuleStatus ruleStatus = deploymentService.getRuleStatus("Ranking Rule", ruleId);
+				if ("DELETE".equals(ruleStatus.getUpdateStatus())) {
+					deploymentService.processRuleStatus("Ranking Rule", ruleId, null, false);
+				}
+				break;
 			}
 		}
 		return success;
 	}	
+
+	@RemoteMethod
+	public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
+		RuleXml rXml = RuleXmlUtil.ruleToXml(UtilityService.getStoreName(), ruleType, ruleId);
+
+		if (rXml instanceof ElevateRuleXml){
+			((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+		}else if (rXml instanceof ExcludeRuleXml){
+			((ExcludeRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+		}else if (rXml instanceof DemoteRuleXml){
+			((DemoteRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+		}
+
+		return rXml;
+	}
 }

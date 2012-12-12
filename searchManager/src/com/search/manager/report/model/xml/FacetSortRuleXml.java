@@ -54,6 +54,9 @@ public class FacetSortRuleXml extends RuleXml {
 	}
 	
 	public FacetSortRuleXml(FacetSort facetSort){
+		this.setStore(facetSort.getStoreId());
+		this.setRuleName(facetSort.getRuleName());
+		this.setRuleId(facetSort.getRuleId());
 		this.ruleType = facetSort.getRuleType();
 		this.sortType = facetSort.getSortType();
 		
@@ -68,6 +71,10 @@ public class FacetSortRuleXml extends RuleXml {
 		}
 		
 		this.groups = facetSortGroupXmlList;
+		this.setCreatedBy(facetSort.getCreatedBy());
+		this.setCreatedDate(facetSort.getCreatedDate());
+		this.setLastModifiedBy(facetSort.getLastModifiedBy());
+		this.setLastModifiedDate(facetSort.getLastModifiedDate());
 	}
 
 	@XmlAttribute(name="default-type")
