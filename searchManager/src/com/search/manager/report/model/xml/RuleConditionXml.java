@@ -55,6 +55,14 @@ public class RuleConditionXml extends BaseEntityXml{
 
 	public void setCondition(List<String> condition) {
 		this.condition = condition;
+	}      
+
+	@XmlTransient
+	public List<RedirectRuleCondition> getRuleCondition() {
+		
+		if(CollectionUtils.isNotEmpty(ruleConditionList)){
+			return ruleConditionList;
+		}
 		
 		List<RedirectRuleCondition> ruleCondition = new ArrayList<RedirectRuleCondition>();
 		
@@ -65,7 +73,4 @@ public class RuleConditionXml extends BaseEntityXml{
 		}
 		
 		this.setRuleCondition(ruleCondition);
-	}      
-
-	@XmlTransient
-	public List<RedirectRuleCondition> getRuleCondition() {		return ruleConditionList;	}	public void setRuleCondition(List<RedirectRuleCondition> ruleConditionList) {		this.ruleConditionList = ruleConditionList;	}}
+				return ruleConditionList;	}	public void setRuleCondition(List<RedirectRuleCondition> ruleConditionList) {		this.ruleConditionList = ruleConditionList;	}}
