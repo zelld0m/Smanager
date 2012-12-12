@@ -145,11 +145,14 @@ public class RedirectRule extends ModelBean {
 		this.storeId = xml.getStore();
 
 		if(xml.getRuleKeyword()!=null){
+			if(xml.getRuleKeyword().getKeyword() != null)
 			this.searchTerm = StringUtils.join(xml.getRuleKeyword().getKeyword().toArray(), ","); ;
 		}
 		
 		if(xml.getRuleCondition()!=null){
-			this.condition = StringUtils.join(xml.getRuleCondition().getCondition().toArray(), ",");
+			if(xml.getRuleCondition().getCondition() != null){
+				this.condition = StringUtils.join(xml.getRuleCondition().getCondition().toArray(), ",");
+			}
 		}
 		
 		this.changeKeyword = xml.getReplacementKeyword();
