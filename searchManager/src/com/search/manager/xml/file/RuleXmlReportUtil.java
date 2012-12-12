@@ -19,6 +19,7 @@ import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRule;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
 import com.search.manager.report.model.DemoteReportBean;
 import com.search.manager.report.model.ElevateReportBean;
@@ -174,11 +175,11 @@ public class RuleXmlReportUtil{
 		List<RedirectRuleConditionReportBean> conditions = new ArrayList<RedirectRuleConditionReportBean>();
 		
 		if(ruleConditionXml != null){
-			List<String> ruleConditions = ruleConditionXml.getCondition();
+			List<RedirectRuleCondition> ruleConditions = ruleConditionXml.getRuleCondition();
 			
 			if(CollectionUtils.isNotEmpty(ruleConditions)){
-				for(String cond : ruleConditions){
-					conditions.add(new RedirectRuleConditionReportBean(cond));
+				for(RedirectRuleCondition cond : ruleConditions){
+					conditions.add(new RedirectRuleConditionReportBean(cond.getReadableString()));
 				}
 			}
 		}
