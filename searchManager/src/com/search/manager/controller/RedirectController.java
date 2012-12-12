@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,7 +140,7 @@ public class RedirectController {
 		ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 
 		List<RuleXml> rules = ruleVersionService.getRuleVersions(RULE_TYPE, ruleId);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml rule : rules){
 					RedirectRuleXml xml = (RedirectRuleXml) rule;
 					if(xml != null){

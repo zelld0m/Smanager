@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,18 +172,21 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.add(new ElevateReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getElevateProducts((ElevateRuleXml) xml)));
+						}
 					}
 				}
 			}
 		}
 		else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml xml : rules){
 					if(xml != null){
 						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
@@ -201,17 +205,20 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.add(new DemoteReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getDemoteProducts((DemoteRuleXml) xml)));
+						}
 					}
 				}
 			}
 		}else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml xml : rules){
 					if(xml != null){
 						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
@@ -230,17 +237,20 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						RuleXml xml = ruleTransferService.getRuleToExport(ruleType, ruleStatus.getRuleId());
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.add(new ExcludeReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getExcludeProducts((ExcludeRuleXml) xml)));
+						}
 					}
 				}
 			}
 		}else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml xml : rules){
 					if(xml != null){
 						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
@@ -259,18 +269,21 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					String ruleId = ruleStatus.getRuleId();
-					FacetSortRuleXml xml = (FacetSortRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						String ruleId = ruleStatus.getRuleId();
+						FacetSortRuleXml xml = (FacetSortRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.add(new FacetSortReportModel(reportHeader, subReportHeader, RuleXmlReportUtil.getFacetSortReportBeanList(xml)));
+						}
 					}
 				}
 			}
 		}else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml rule : rules){
 					FacetSortRuleXml xml = (FacetSortRuleXml) rule;
 					if(rule != null){
@@ -290,18 +303,21 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					String ruleId = ruleStatus.getRuleId();
-					RedirectRuleXml xml = (RedirectRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.addAll(RuleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						String ruleId = ruleStatus.getRuleId();
+						RedirectRuleXml xml = (RedirectRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.addAll(RuleXmlReportUtil.getRedirectSubReports(xml, reportHeader, subReportHeader));
+						}
 					}
 				}
 			}
 		}else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml rule : rules){
 					RedirectRuleXml xml = (RedirectRuleXml) rule;
 					if(xml != null){
@@ -321,18 +337,21 @@ public class RuleTransferController {
 		if(EXPORT.equalsIgnoreCase(transferType)){
 			RecordSet<RuleStatus> rules = ruleTransferService.getPublishedRules(ruleType);
 			if(rules != null){
-				for(RuleStatus ruleStatus : rules.getList()){
-					String ruleId = ruleStatus.getRuleId();
-					RankingRuleXml xml = (RankingRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
-					if(xml != null){
-						SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
-						subModels.addAll(RuleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
+				List<RuleStatus> list = rules.getList();
+				if(CollectionUtils.isNotEmpty(list)){
+					for(RuleStatus ruleStatus : list){
+						String ruleId = ruleStatus.getRuleId();
+						RankingRuleXml xml = (RankingRuleXml) ruleTransferService.getRuleToExport(ruleType, ruleId);
+						if(xml != null){
+							SubReportHeader subReportHeader = getSubReportHeader(xml, RuleEntity.find(ruleType), transferType);
+							subModels.addAll(RuleXmlReportUtil.getRelevancySubReports(xml, reportHeader, subReportHeader));
+						}
 					}
 				}
 			}
 		}else if(IMPORT.equalsIgnoreCase(transferType)){
 			List<RuleXml> rules = ruleTransferService.getAllRulesToImport(ruleType);
-			if(rules != null){
+			if(CollectionUtils.isNotEmpty(rules)){
 				for(RuleXml rule : rules){
 					RankingRuleXml xml = (RankingRuleXml) rule;
 					if(xml != null){

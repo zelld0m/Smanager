@@ -88,7 +88,7 @@ public class RuleXmlReportUtil{
 			List<ElevateProduct> products = xml.getProducts();
 			List<ElevateReportBean> elList = new ArrayList<ElevateReportBean>();
 			
-			if(products != null){
+			if(CollectionUtils.isNotEmpty(products)){
 				for (ElevateProduct p: products) {
 					elList.add(new ElevateReportBean(p));
 				}
@@ -106,7 +106,7 @@ public class RuleXmlReportUtil{
 			List<DemoteProduct> products = dXml.getProducts();
 			List<DemoteReportBean> dList = new ArrayList<DemoteReportBean>();
 			
-			if(products != null){
+			if(CollectionUtils.isNotEmpty(products)){
 				for (DemoteProduct p: products) {
 					dList.add(new DemoteReportBean(p));
 				}
@@ -124,7 +124,7 @@ public class RuleXmlReportUtil{
 			List<Product> products = dXml.getProducts();
 			List<ExcludeReportBean> dList = new ArrayList<ExcludeReportBean>();
 			
-			if(products != null){
+			if(CollectionUtils.isNotEmpty(products)){
 				for (Product p: products) {
 					dList.add(new ExcludeReportBean(p));
 				}
@@ -142,30 +142,31 @@ public class RuleXmlReportUtil{
 		FacetSort fs = new FacetSort(xml);
 		int count = 0;
 		
-		for(FacetSortGroupXml group : groups){
-			StringBuilder sb = new StringBuilder();
-			List<String> facets = group.getGroupItem();
-			FacetGroup fsg = new FacetGroup(group, fs.getId(), count, fs.getStoreId());
-			
-			if(CollectionUtils.isNotEmpty(facets)){
-				for(int i=0 ; i < facets.size(); i++){
-					sb.append((i+1) + " - " + facets.get(i) + (char)10);    
+		if(CollectionUtils.isNotEmpty(groups)){
+			for(FacetSortGroupXml group : groups){
+				StringBuilder sb = new StringBuilder();
+				List<String> facets = group.getGroupItem();
+				FacetGroup fsg = new FacetGroup(group, fs.getId(), count, fs.getStoreId());
+				
+				if(CollectionUtils.isNotEmpty(facets)){
+					for(int i=0 ; i < facets.size(); i++){
+						sb.append((i+1) + " - " + facets.get(i) + (char)10);    
+					}
 				}
+	
+				String highlightedFacets = sb.toString();
+				if(StringUtils.isNotBlank(highlightedFacets)){
+					highlightedFacets = highlightedFacets.substring(0, highlightedFacets.length()-1);
+				}
+				else{
+					highlightedFacets = "No Highlighted Facets";
+				}
+				
+				FacetSortReportBean reportBean = new FacetSortReportBean(fsg, highlightedFacets);
+				list.add(reportBean);
+				count++;
 			}
-
-			String highlightedFacets = sb.toString();
-			if(StringUtils.isNotBlank(highlightedFacets)){
-				highlightedFacets = highlightedFacets.substring(0, highlightedFacets.length()-1);
-			}
-			else{
-				highlightedFacets = "No Highlighted Facets";
-			}
-			
-			FacetSortReportBean reportBean = new FacetSortReportBean(fsg, highlightedFacets);
-			list.add(reportBean);
-			count++;
 		}
-		
 		return list;
 	}
 	
@@ -175,7 +176,7 @@ public class RuleXmlReportUtil{
 		if(ruleConditionXml != null){
 			List<String> ruleConditions = ruleConditionXml.getCondition();
 			
-			if(ruleConditions != null){
+			if(CollectionUtils.isNotEmpty(ruleConditions)){
 				for(String cond : ruleConditions){
 					conditions.add(new RedirectRuleConditionReportBean(cond));
 				}
@@ -196,17 +197,17 @@ public class RuleXmlReportUtil{
 		if(redirectRule != null){
 			List<RedirectRuleReportBean> list = new ArrayList<RedirectRuleReportBean>();
 			list.add(redirectRule);
-			subReports.add( new RedirectRuleReportModel(reportHeader, subReportHeader, list));
+			subReports.add( new RedirectRuleReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, list));
 		}
 		
 		RuleKeywordXml ruleKeyword = xml.getRuleKeyword();
 		if(ruleKeyword != null){
-			subReports.add(new KeywordReportModel(reportHeader, subReportHeader, getKeywordReportBeanList(ruleKeyword)));
+			subReports.add(new KeywordReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, getKeywordReportBeanList(ruleKeyword)));
 		}
 			
 		RuleConditionXml ruleCondition = xml.getRuleCondition();
 		if(ruleCondition != null){
-			subReports.add(new RedirectRuleConditionReportModel(reportHeader, subReportHeader, getRedirectRuleConditionReportBeanList(ruleCondition)));
+			subReports.add(new RedirectRuleConditionReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, getRedirectRuleConditionReportBeanList(ruleCondition)));
 		}
 			
 		return subReports;
@@ -223,8 +224,10 @@ public class RuleXmlReportUtil{
 		if(ruleKeyword != null){
 			List<String> keywordList = ruleKeyword.getKeyword();
 			
-			for (String kw : keywordList) {
-				keywords.add(new KeywordReportBean(new Keyword(kw)));
+			if(CollectionUtils.isNotEmpty(keywordList)){
+				for (String kw : keywordList) {
+					keywords.add(new KeywordReportBean(new Keyword(kw)));
+				}
 			}
 		}
 		return keywords;
@@ -232,10 +235,12 @@ public class RuleXmlReportUtil{
 	
 	public static List<RelevancyFieldReportBean> getRelevancyFieldReportBeanList(Map<String, String> parameters){
 		List<RelevancyFieldReportBean> relevancyFields = new ArrayList<RelevancyFieldReportBean>();
-		for (String key: parameters.keySet()) {
-			String value = parameters.get(key);
-			if (value != null) {
-				relevancyFields.add(new RelevancyFieldReportBean(new BasicNameValuePair(key, value)));
+		if(parameters != null){
+			for (String key: parameters.keySet()) {
+				String value = parameters.get(key);
+				if (value != null) {
+					relevancyFields.add(new RelevancyFieldReportBean(new BasicNameValuePair(key, value)));
+				}
 			}
 		}
 		return relevancyFields;
@@ -248,17 +253,17 @@ public class RuleXmlReportUtil{
 		if(relevancy != null){
 			List<RelevancyReportBean> list = new ArrayList<RelevancyReportBean>();
 			list.add(relevancy);
-			subReports.add( new RelevancyReportModel(reportHeader, subReportHeader,list));
+			subReports.add( new RelevancyReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null,list));
 		}
 		
 		RuleKeywordXml ruleKeyword = xml.getRuleKeyword();
 		if(ruleKeyword != null){
-			subReports.add(new KeywordReportModel(reportHeader, subReportHeader, getKeywordReportBeanList(ruleKeyword)));
+			subReports.add(new KeywordReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, getKeywordReportBeanList(ruleKeyword)));
 		}
 			
 		Map<String, String> parameters = xml.getParameters();
 		if(parameters != null){
-			subReports.add(new RelevancyFieldReportModel(reportHeader, subReportHeader, getRelevancyFieldReportBeanList(parameters)));
+			subReports.add(new RelevancyFieldReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, getRelevancyFieldReportBeanList(parameters)));
 		}
 			
 		return subReports;
