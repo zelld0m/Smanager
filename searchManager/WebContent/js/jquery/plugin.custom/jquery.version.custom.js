@@ -157,7 +157,7 @@
 			var $ruleCondition = item["ruleCondition"];
 			var conditions = null;
 			base.setRuleKeyword(li, rowLabelUl, item);
-			if ($ruleCondition!=null) conditions = $ruleCondition["condition"];
+			if ($ruleCondition!=null) conditions = $ruleCondition["ruleCondition"];
 
 			$rowLabelUl.find("li#redirectType").text("Active Type").show();
 			$li.find("#redirectType").show();
@@ -188,7 +188,7 @@
 				for(var i=0; i<conditions.length; i++){
 					$conditionLi = $conditionLiPattern.clone();
 					$conditionLi.attr("id", i+1);
-					$conditionLi.find("#condition").text(conditions[i]);
+					$conditionLi.find("#condition").text(conditions[i]["readableString"]);
 					$conditionLi.show();
 					$conditionUl.append($conditionLi);
 				}
@@ -314,7 +314,7 @@
 						if($.isNotBlank(imagePath))
 							$pLi.find("#prodImage").attr("src", imagePath);
 
-						$pLi.find("#prodInfo").text(product["condition"]["condition"]);
+						$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
 					}else if(product["memberType"]==="PART_NUMBER"){
 						if($.isNotBlank(product["dpNo"])){
 							$pLi.find("#prodImage").attr("src", product["imagePath"]);
