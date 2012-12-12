@@ -487,7 +487,7 @@
 
 			template += '<div style="width:845px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
-			template += '	<h2 class="confirmTitle">This is the rule status section</h2>';			
+			template += '	<h2 class="notification">This is the rule status section</h2>';			
 
 			template += '	<div id="version" class="floatL w400">';
 			template += '		<div class="w400 mar0 pad0">';
