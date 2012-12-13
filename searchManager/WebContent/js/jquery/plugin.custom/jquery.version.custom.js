@@ -122,7 +122,7 @@
 				$li.attr("id","ver_" + index);
 				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
 				$li.find("#restoreLink").hide();
-				
+
 				if(index !== "current"){
 					$li.find("#restoreLink").show();
 					$li.find("#verDate").text(item["createdDate"].toUTCString());
@@ -474,12 +474,21 @@
 						postHook:function(){
 							$table.find("tr#preloader").remove();
 							base.addCompareButtonListener();
+							$table.find("input.selectOne").off().on({
+								click:function(e){
+									if($(this).is(':checked')==true) {
+										$table.find("input.selectOne").each(function() {
+											$(this).prop('checked',false);
+										});
+
+										$(this).prop('checked',true);
+									};
+								}
+							});
 						}
 					});
 				}
 			});
-
-
 		};
 
 		base.getTemplate = function(){
@@ -509,7 +518,7 @@
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
 			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="checkbox"/>';
+			template += '	                   	<input id="select" type="checkbox" class="selectOne"/>';
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
