@@ -487,8 +487,6 @@
 
 			template += '<div style="width:845px">';
 			template += '<div id="versionWrapper" style="floatL w400">';
-			template += '	<h2 class="notification">This is the rule status section</h2>';			
-
 			template += '	<div id="version" class="floatL w400">';
 			template += '		<div class="w400 mar0 pad0">';
 			template += '			<table class="tblItems w100p marT5">';
@@ -541,11 +539,10 @@
 
 			template += '	<div id="addVersion">';
 			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border pad10 w380 marB20" style="background: #f3f3f3;">';
-			template += '			<h3 style="border:none;">Rule Version</h3>';
+			template += '			<h3 style="border:none;">Create New Rule Version</h3>';
 			template += '			<div class="fgray padL10 padR10 padB15 fsize11">';
 			template += '			<p align="justify">';
-			template += '				Before approving any rule, it is advisable to review each one. Click on <strong>Preview Content</strong> to view the rule details.<br/><br/>';
-			template += '				If the rule is ready to be pushed to production, click on <strong>Approve</strong>. If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.';
+			template += '				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
 			template += '			</p>';
 			template += '		</div>';
 
@@ -577,7 +574,7 @@
 		base.getItemListTemplate =function(){
 			var template  = '';
 
-			template += '	<div class="version w425 floatR border">';
+			template += '	<div class="version w425 marT5 floatR border">';
 
 			template += '	<div id="vHeaderList">';
 			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
