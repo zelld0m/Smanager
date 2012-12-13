@@ -194,7 +194,7 @@
 			base.$el.find("#sideBottomPaging").hide();
 		};
 
-		base.populateList = function(data){
+		base.populateList = function(data, keyword){
 			var name = "";
 			var id = "";
 			var $tr = null;
@@ -227,7 +227,7 @@
 					if(base.options.showStatus) base.getRuleStatus($tr, list[i]);
 				}
 			}
-			else{ // display no result found text. TODO: add option to display/not to display text
+			else if($.isNotBlank(keyword) && keyword !== base.options.searchText){ // display no result found text. TODO: add option to display/not to display text
 				$tr = $(base.noResultsPattern());
 				$table.append($tr);
 			}

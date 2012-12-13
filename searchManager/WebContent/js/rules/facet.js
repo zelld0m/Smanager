@@ -314,7 +314,7 @@
 						self.ruleFilterText = ruleName;
 						FacetSortServiceJS.getAllRule(ruleName, page, base.options.pageSize, {
 							callback: function(data){
-								base.populateList(data);
+								base.populateList(data, ruleName);
 								base.addPaging(ruleName, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }
