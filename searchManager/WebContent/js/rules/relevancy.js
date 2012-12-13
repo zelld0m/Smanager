@@ -1448,7 +1448,7 @@
 				rulePage = page;
 				RelevancyServiceJS.getAllRule(keyword, page, rulePageSize,{
 					callback: function(data){
-						base.populateList(data);
+						base.populateList(data, keyword);
 						base.addPaging(keyword, page, data.totalSize);
 					},
 					preHook: function(){ base.prepareList(); }
@@ -1511,7 +1511,7 @@
 				keywordPage = page;
 				StoreKeywordServiceJS.getAllKeyword(keyword, page, ruleKeywordPageSize,{
 					callback: function(data){
-						base.populateList(data);
+						base.populateList(data, keyword);
 						base.addPaging(keyword, page, data.totalSize);
 					},
 					preHook: function(){ base.prepareList(); }
@@ -1648,7 +1648,7 @@
 			itemDataCallback: function(base, keyword, page){
 				RelevancyServiceJS.getAllKeywordInRule(selectedRule.ruleId, keyword, page, keywordInRulePageSize, {
 					callback: function(data){
-						base.populateList(data);
+						base.populateList(data, keyword);
 						base.addPaging(keyword, page, data.totalSize);
 					},
 					preHook: function(){ base.prepareList(); }

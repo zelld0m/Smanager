@@ -246,7 +246,7 @@
 					itemDataCallback: function(base, keyword, page){
 						RedirectServiceJS.getAllKeywordInRule(self.selectedRule["ruleId"], keyword, page, base.options.pageSize, {
 							callback: function(data){
-								base.populateList(data);
+								base.populateList(data, keyword);
 								base.addPaging(keyword, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }
@@ -313,7 +313,7 @@
 						self.ruleKeywordFilterText = keyword;
 						StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
 							callback: function(data){
-								base.populateList(data);
+								base.populateList(data, keyword);
 								base.addPaging(keyword, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }
@@ -403,7 +403,7 @@
 						self.ruleFilterText = keyword;
 						RedirectServiceJS.getAllRule(keyword, page, base.options.pageSize, {
 							callback: function(data){
-								base.populateList(data);
+								base.populateList(data, keyword);
 								base.addPaging(keyword, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }

@@ -36,7 +36,7 @@
 						self.rulePage = page;
 						StoreKeywordServiceJS.getAllKeyword(keyword, page, base.options.pageSize,{
 							callback: function(data){
-								base.populateList(data);
+								base.populateList(data, keyword);
 								base.addPaging(keyword, page, data.totalSize);
 							},
 							preHook: function(){ base.prepareList(); }
