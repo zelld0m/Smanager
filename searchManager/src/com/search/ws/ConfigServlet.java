@@ -22,6 +22,11 @@ public class ConfigServlet extends HttpServlet {
 		logger.info("config file: " + conf);
 		ConfigManager.getInstance(conf);
 		
+		// enterprise search config
+		conf = config.getInitParameter("config-folder") + fileSeparator + config.getInitParameter("enterpriseSearch-config-file");
+		logger.info("enterprise search config file: " + conf);
+		EnterpriseSearchConfigManager.getInstance(conf);
+
 		// relevancy config
 		conf = config.getInitParameter("config-folder") + fileSeparator + config.getInitParameter("relevancy-config-file");
 		logger.info("relevancy config file: " + conf);

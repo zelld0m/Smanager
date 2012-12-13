@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<enterprise-search-config>
+
+	<!-- eCOST -->
+	<store name="ecost">
+		<catalog>eCOST Web</catalog>
+		
+		<store-flag>eCOST_StoreFlag</store-flag>
+		
+		<dismax>dismaxecostrelevancy</dismax>
+		<default-relevancy>
+                	<mm>3&lt;-1 5&lt;90%</mm>
+                	<pf></pf>
+                	<bq></bq>
+                	<tie>1</tie>
+                	<qf>EDP2^0 DPNo2^0 UPC2^0 GenericUser_Keywords^0 RelevantIDKey^6 eCOST_Description^0 NameIndex^2 MfrPN2^0 MfrPN^1 ManufacturerIndex^1 CategoryIndex^10 UPC^2</qf>
+                	<bf>sum(linear(eCOST_PopularityScale,1,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8))^10</bf>
+                	<q.alt>*:*</q.alt>
+                	<qs></qs>
+                	<ps>1000</ps>
+		</default-relevancy>
+		<store-specific-fields>
+			<facet-template>eCOST_FacetTemplate</facet-template>
+			<product-name>eCOST_Name</product-name>
+			<product-description>eCOST_Description</product-description>
+			<popularity>eCOST_Popularity</popularity>
+		</store-specific-fields>
+		
+		<search-rule>
+			<redirect override='pcmall'/>
+		</search-rule>
+	</store>
+	<store name="ecoe">
+		<catalog>eCOST Order Entry</catalog>
+		<store-flag>eCOST_OrderEntryFlag</store-flag>
+		<store-specific-fields override="ecost" />
+		<search-rule override="ecost"/>
+	</store>
+
+	<!-- MacMall -->
+	<store name="macmall">
+		<catalog>MacMall Web</catalog>
+		<store-flag>MacMall_StoreFlag</store-flag>
+		<dismax>dismaxmacmallrelevancy</dismax>
+		<store-specific-fields>
+			<facet-template>MacMall_FacetTemplate</facet-template>
+			<product-name>MacMall_Name</product-name>
+			<product-description>MacMall_Description</product-description>
+			<popularity>MacMall_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule>
+			<elevate/>
+			<exclude/>
+			<demote/>
+			<facet-sort/>
+			<redirect/>
+			<relevancy/>
+		</search-rule>
+		<default-relevancy>
+                	<mm>3&lt;-1 5&lt;90%</mm>
+                	<pf></pf>
+                	<bq></bq>
+                	<tie>1</tie>
+                	<qf>RelevantIDKey^6 SubCategoryIndex^3 CategoryIndex^5 ClassIndex^2 SubClassIndex^2 NameIndex^2 ManufacturerIndex^9 MfrPN^1 GenericUser_Keywords^2 UPC^2 EDP2^0 DPNo2^0 MfrPN2^0 UPC2^0</qf>
+                	<bf>linear(MacMall_PopularityScale,1,0)^50</bf>
+                	<q.alt>*:*</q.alt>
+                	<qs></qs>
+                	<ps>1000</ps>
+		</default-relevancy>
+	</store>
+	<store name="mmoe">
+		<catalog>MacMall Order Entry</catalog>
+		<store-flag>MacMall_OrderEntryFlag</store-flag>
+		<store-specific-fields override="macmall" />
+		<search-rule override="macmall"/>
+	</store>
+<!-- not yet in schema  
+	<store name="mmrt">
+		<catalog>MacMall Retail</catalog>
+		<store-flag></store-flag>
+		<store-specific-fields override="macmall"/>
+		<search-rule override="macmall"/>
+	</store>
+-->
+
+	<!-- OnSale -->
+	<store name="onsale">
+		<catalog>OnSale Web</catalog>
+		<store-flag>OnSale_StoreFlag</store-flag>
+		<dismax>dismaxonsalerelevancy</dismax>
+		<store-specific-fields>
+			<facet-template>OnSale_FacetTemplate</facet-template>
+			<product-name>OnSale_Name</product-name>
+			<product-description>OnSale_Description</product-description>
+			<popularity>OnSale_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule>
+			<redirect override='pcmall'/>
+		</search-rule>
+		<default-relevancy>
+                	<mm>3&lt;-1 5&lt;90%</mm>
+                	<pf></pf>
+                	<bq></bq>
+                	<tie>1</tie>
+                	<qf>RelevantIDKey^6 SubCategoryIndex^3 CategoryIndex^5 ClassIndex^2 SubClassIndex^2 NameIndex^2 ManufacturerIndex^9 MfrPN^1 GenericUser_Keywords^2 UPC^2 EDP2^0 DPNo2^0 MfrPN2^0 UPC2^0</qf>
+                	<bf>linear(OnSale_PopularityScale,1,0)^50</bf>
+                	<q.alt>*:*</q.alt>
+                	<qs></qs>
+                	<ps>1000</ps>
+		</default-relevancy>
+	</store>
+	<store name="osoe">
+		<catalog>OnSale Order Entry</catalog>
+		<store-flag>OnSale_OrderEntryFlag</store-flag>
+		<store-specific-fields override="onsale"/>
+		<search-rule override="onsale"/>
+	</store>
+
+	<!-- PC Mall -->
+	<store name="pcmall">
+		<catalog>PC Mall Web</catalog>
+		<dismax>dismaxpcmallrelevancy</dismax>
+		<store-flag>PcMall_StoreFlag</store-flag>
+		<default-relevancy>
+                	<mm>3&lt;-1 5&lt;90%</mm>
+                	<pf></pf>
+                	<bq></bq>
+                	<tie>1</tie>
+                	<qf>EDP2^0 DPNo2^0 Description^0 UPC2^0 RelevantIDKey^4 NameIndex^2 MfrPN2^0 MfrPN^1 SubCategoryIndex^3 PCMall_FacetTemplateNameIndex^8 ManufacturerIndex^2 CategoryIndex^6 UPC^2</qf>
+                	<bf>linear(PcMall_PopularityScale,1,0)^2</bf>
+                	<q.alt>*:*</q.alt>
+                	<qs></qs>
+                	<ps>1000</ps>
+		</default-relevancy>
+		<store-specific-fields>
+			<facet-template>PCMall_FacetTemplate</facet-template>
+			<product-name>PcMall_Name</product-name>
+			<product-description>PcMall_Description</product-description>
+			<popularity>PcMall_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule>
+			<elevate/>
+			<exclude/>
+			<demote/>
+			<facet-sort/>
+			<redirect/>
+			<relevancy/>
+		</search-rule>
+	</store>
+	<store name="pcoe">
+		<catalog>PC Mall Order Entry</catalog>
+		<store-flag>PCMall_OrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmall"/>
+		<search-rule override="pcmall"/>
+	</store>
+
+	<!-- PC Mall Gov Open -->
+	<store name="pcmallgov">
+		<catalog>PC Mall Gov Open Web</catalog>
+		<store-flag>PCMallGov_OpenStoreFlag</store-flag>
+		<store-specific-fields>
+			<facet-template>PCMallGov_FacetTemplate</facet-template>
+			<product-name>PCMallGov_Name</product-name>
+			<product-description>PCMallGov_Description</product-description>
+		</store-specific-fields>
+		<search-rule override="pcmall"/>
+	</store>
+	<store name="pgoe">
+		<catalog>PC Mall Gov Open Web Order Entry</catalog>
+		<store-flag>PCMallGov_OpenOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmallgov"/>
+		<search-rule override="pcmallgov"/>
+	</store>
+
+	<!-- PC Mall Gov Government -->
+	<store name="pggv">
+		<catalog>PC Mall Gov Government Web</catalog>
+		<store-flag>PCMallGov_GovStoreFlag</store-flag>
+		<store-specific-fields override="pcmallgov"/>
+		<search-rule override="pcmallgov"/>
+	</store>
+	<store name="pggvoe">
+		<catalog>PC Mall Gov Government Order Entry</catalog>
+		<store-flag>PCMallGov_GovOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmallgov"/>
+		<search-rule override="pcmallgov"/>
+	</store>
+
+	<!-- PC Mall Gov Academic -->
+	<store name="pged">
+		<catalog>PC Mall Gov Academic Web</catalog>
+		<store-flag>PCMallGov_ACAStoreFlag</store-flag>
+		<store-specific-fields override="pcmallgov"/>
+		<search-rule override="pcmallgov"/>
+	</store>
+	<store name="pgedoe">
+		<catalog>PC Mall Gov Academic Order Entry</catalog>
+		<store-flag>PCMallGov_ACAOrderEntryFlag</store-flag>
+		<store-specific-fields override="pcmallgov"/>
+		<search-rule override="pcmallgov"/>
+	</store>
+
+	<!-- SBN -->
+	<store name="sbn">
+		<catalog>SBN Web</catalog>
+		<store-flag>SBN_StoreFlag</store-flag>
+		<default-relevancy>
+                	<mm>3&lt;-1 5&lt;90%</mm>
+                	<pf></pf>
+                	<bq></bq>
+                	<tie>1</tie>
+                	<qf>EDP2^0 DPNo2^0 Description^0 UPC2^0 GenericUser_Keywords^2 RelevantIDKey^6 NameIndex^2 MfrPN2^0 SBN_Description^0 MfrPN^1 SubCategoryIndex^3 ManufacturerIndex^5 CategoryIndex^5 UPC^2</qf>
+                	<bf>linear(SBN_PopularityScale,1,0)^0.2</bf>
+                	<q.alt>*:*</q.alt>
+                	<qs></qs>
+                	<ps>1000</ps>
+		</default-relevancy>
+		<store-specific-fields>
+			<facet-template>SBN_FacetTemplate</facet-template>
+			<product-name>SBN_Name</product-name>
+			<product-description>SBN_Description</product-description>
+			<popularity>SBN_Popularity</popularity>
+		</store-specific-fields>
+		<search-rule>
+			<elevate/>
+			<exclude/>
+			<demote/>
+			<facet-sort/>
+			<redirect/>
+			<relevancy/>
+		</search-rule>
+	</store>
+	<store name="sbnoe">
+		<catalog>SBN Order Entry</catalog>
+		<store-flag>SBN_OrderEntryFlag</store-flag>
+		<store-specific-fields override="sbn"/>
+		<search-rule override="sbn"/>
+	</store>
+</enterprise-search-config>

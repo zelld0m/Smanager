@@ -1,25 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
 
-  <store name="eCost">
-    <core>ecost</core>
-    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
-    <qt>dismaxecostrelevancy</qt>
-    <facet-name>eCost</facet-name>
-    <solr-param-name>
-    	<param-name>fq</param-name>
-    </solr-param-name>    
-    <solr-param-value name="fq">
-    	<param-value>eCOST_StoreFlag:true</param-value>
-    </solr-param-value>   
-    <dateformat>MM/dd/yyyy</dateformat>
-    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
-    <default-server>search</default-server>
-    <facet-template></facet-template>
-    <facet-template-name></facet-template-name>
-  </store>
-
-  <store name="SBN">
+   <store name="SBN">
     <core>sbn</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxsbnrelevancy</qt>
@@ -68,7 +50,7 @@
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat>    
     <default-server>search</default-server>
-    <facet-template></facet-template>
+    <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
   </store>
 

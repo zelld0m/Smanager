@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -40,6 +41,35 @@ public abstract class SolrResponseParser {
 	protected List<String> expiredDemotedEDPs = null;
 
 	protected FacetSort facetSortRule;
+	
+	/* Enterprise Search start */
+	protected boolean forEnterpriseSearch;
+	protected Map<String, String> enterpriseSearchElevateFieldOverrides;
+	protected Map<String, String> enterpriseSearchDemoteFieldOverrides;
+
+	public boolean isForEnterpriseSearch() {
+		return forEnterpriseSearch;
+	}
+	public void setForEnterpriseSearch(boolean forEnterpriseSearch) {
+		this.forEnterpriseSearch = forEnterpriseSearch;
+	}
+	
+	public Map<String, String> getEnterpriseSearchElevateFieldOverrides() {
+		return enterpriseSearchElevateFieldOverrides;
+	}
+	
+	public void setEnterpriseSearchElevateFieldOverrides(Map<String, String> enterpriseSearchElevateFieldOverrides) {
+		this.enterpriseSearchElevateFieldOverrides = enterpriseSearchElevateFieldOverrides;
+	}
+	
+	public Map<String, String> getEnterpriseSearchDemoteFieldOverrides() {
+		return enterpriseSearchDemoteFieldOverrides;
+	}
+	
+	public void setEnterpriseSearchDemoteFieldOverrides(Map<String, String> enterpriseSearchDemoteFieldOverrides) {
+		this.enterpriseSearchDemoteFieldOverrides = enterpriseSearchDemoteFieldOverrides;
+	}
+	/* Enterprise Search end */
 	
 	/* public setters and getters */
 	public final void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
@@ -99,7 +129,7 @@ public abstract class SolrResponseParser {
 		}
 	}
 	
-	protected void generateExcludeFilterList(StringBuilder filter, Collection<? extends SearchResult> list, int currItem, boolean reverse) {
+	protected void generateExcludeFilterList(StringBuilder filter, List<? extends SearchResult> list, int currItem, boolean reverse) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
 		int i = 1;
@@ -108,6 +138,15 @@ public abstract class SolrResponseParser {
 			StringBuilder edpValues = new StringBuilder();
 			StringBuilder facetValues = new StringBuilder();
 
+			Map<String,String> overrideMap = null;
+			if (forEnterpriseSearch) {
+				if (list.get(0) instanceof ElevateResult) {
+					overrideMap = enterpriseSearchElevateFieldOverrides;
+				}
+				else if (list.get(0) instanceof DemoteResult) {
+					overrideMap = enterpriseSearchDemoteFieldOverrides;
+				}
+			}
 			for (SearchResult result: list) {
 				
 				if (reverse) {
@@ -130,7 +169,12 @@ public abstract class SolrResponseParser {
 					} else {
 						facetValues.append(" OR ");
 					}
-					facetValues.append("(").append(result.getCondition().getConditionForSolr()).append(")");
+					String strCondition = result.getCondition().getConditionForSolr();
+					if (overrideMap != null) {
+						strCondition = StringUtils.replaceEach(strCondition, overrideMap.keySet().toArray(new String[0]),
+								overrideMap.values().toArray(new String[0]));
+					}
+					facetValues.append("(").append(strCondition).append(")");
 				}
 			}
 			
@@ -197,7 +241,12 @@ public abstract class SolrResponseParser {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString()));
 				}
 				else {
-					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, elevateResult.getCondition().getConditionForSolr()));
+					String strCondition = elevateResult.getCondition().getConditionForSolr();
+					if (forEnterpriseSearch) {
+						strCondition = StringUtils.replaceEach(strCondition, enterpriseSearchElevateFieldOverrides.keySet().toArray(new String[0]),
+								enterpriseSearchElevateFieldOverrides.values().toArray(new String[0]));
+					}
+					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, strCondition));
 				}
 				
 				generateExcludeFilterList(elevateFilter, elevatedList, currItem++, false);
@@ -283,7 +332,12 @@ public abstract class SolrResponseParser {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString()));
 				}
 				else {
-					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteResult.getCondition().getConditionForSolr()));
+					String strCondition = demoteResult.getCondition().getConditionForSolr();
+					if (forEnterpriseSearch) {
+						strCondition = StringUtils.replaceEach(strCondition, enterpriseSearchDemoteFieldOverrides.keySet().toArray(new String[0]),
+								enterpriseSearchDemoteFieldOverrides.values().toArray(new String[0]));
+					}
+					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, strCondition));
 				}
 				
 				if (isEdpList) {
