@@ -124,7 +124,16 @@
 				$li.find("#restoreLink").hide();
 
 				if(index !== "current"){
-					$li.find("#restoreLink").show();
+					$li.find("#restoreLink").off().on({
+						click:function(e){
+							jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+								if(result){
+									base.restoreVersion(e.data.item);
+								}
+							});
+						}
+					},{item: item}).show();
+					
 					$li.find("#verDate").text(item["createdDate"].toUTCString());
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
@@ -414,21 +423,25 @@
 				click:function(e){
 					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
 						if(result){
-							RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
-								callback:function(data){
-
-								},
-								preHook:function(){
-									base.options.preRestoreCallback(base);
-								},
-								postHook:function(){
-									base.options.postRestoreCallback(base, base.options.rule);
-								}
-							});
+							base.restoreVersion(e.data.item);
 						}
 					});
 				}
 			},{item: $item});
+		};
+		
+		base.restoreVersion = function(item){
+			RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.rule["ruleId"], item["version"], {
+				callback:function(data){
+
+				},
+				preHook:function(){
+					base.options.preRestoreCallback(base);
+				},
+				postHook:function(){
+					base.options.postRestoreCallback(base, base.options.rule);
+				}
+			});
 		};
 
 		base.getAvailableVersion = function(){
