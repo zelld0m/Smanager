@@ -161,6 +161,15 @@
 		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
 		output  += '	</select>';
 		output  += '</div>';
+		
+		output  += '<div class="box marT8">';
+		output  += '	<h2>Product Image</h2>';
+		output  += '	<select class="dropdownFilter mar10 w215" id="imageExistsFilter">';
+		output  += '		<option value="all">Both With & Without Product Image</option>';
+		output  += '		<option value="ImageExists:1">With Product Image Only</option>';
+		output  += '		<option value="ImageExists:0">Without Product Image Only</option>';
+		output  += '	</select>';
+		output  += '</div>';
 
 		return $(output);
 	};
@@ -183,6 +192,15 @@
 		output  += '		<option value="all">Both License & Non-License</option>';
 		output  += '		<option value="Licence_Flag:1">License Product Only</option>';
 		output  += '		<option value="Licence_Flag:0">Non-License Product Only</option>';
+		output  += '	</select>';
+		output  += '</div>';
+		
+		output  += '<div class="box marT8">';
+		output  += '	<h2>Product Image</h2>';
+		output  += '	<select class="dropdownFilter mar10 w215" id="imageExistsFilter">';
+		output  += '		<option value="all">Both With & Without Product Image</option>';
+		output  += '		<option value="ImageExists:1">With Product Image Only</option>';
+		output  += '		<option value="ImageExists:0">Without Product Image Only</option>';
 		output  += '	</select>';
 		output  += '</div>';
 

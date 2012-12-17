@@ -222,6 +222,17 @@ public class RedirectRuleCondition extends ModelBean {
 				builder.append("Licence_Flag").append(":1").append(" AND ");
 			}			
 		}
+		
+		if (map.containsKey("ImageExists")) {
+			String value = map.get("ImageExists").get(0);
+			if (value.equals("Show Products Without Image Only")) {
+				builder.append("ImageExists").append(":0").append(" AND ");
+			}
+			else if (value.equals("Show Products With Image Only")) {
+				builder.append("ImageExists").append(":1").append(" AND ");
+			}			
+		}
+		
 		if (map.containsKey("Availability")) {
 			String value = map.get("Availability").get(0);
 			if (value.equals("Call")) {
@@ -421,7 +432,13 @@ public class RedirectRuleCondition extends ModelBean {
 		
 		map = getFacets();
 		for (String key: map.keySet()) {
-			builder.append(key).append(ArrayUtils.contains(arrFieldContains, key) ? " contains " : " is ");
+			if ("ImageExists".equalsIgnoreCase(key)) {
+				builder.append("Product Image");
+			}else{
+				builder.append(key);
+			}
+			
+			builder.append(ArrayUtils.contains(arrFieldContains, key) ? " contains " : " is ");
 			List<String> values = map.get(key);
 			if (values.size() == 1) {
 				builder.append(encloseInQuotes(values.get(0)));
@@ -501,6 +518,15 @@ public class RedirectRuleCondition extends ModelBean {
 			}
 			else if (fieldName.equals("Licence_Flag") && fieldValue.equals("1")) {
 				putToConditionMap("License", "Show License Products Only");
+			}
+			
+			// if  ImageExists:0 set ImageExists to "Show Products Without Image Only"
+			//                 :1 set ImageExists to "Show Products With Image Only"
+			else if (fieldName.equals("ImageExists") && fieldValue.equals("0")) {
+				putToConditionMap("ImageExists", "Show Products Without Image Only");
+			}
+			else if (fieldName.equals("ImageExists") && fieldValue.equals("1")) {
+				putToConditionMap("ImageExists", "Show Products With Image Only");
 			}
 
 			// CNET
@@ -615,9 +641,9 @@ public class RedirectRuleCondition extends ModelBean {
 
 	public Map<String, List<String>> getFacets() {
 		// if any of the following fields are present return them;
-		// Platform, Condition, Availability, License
+		// Platform, Condition, Availability, License, ImageExists
 		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
-		String[] keys = { "Platform", "Condition", "Availability", "License", "Name", "Description" };
+		String[] keys = { "Platform", "Condition", "Availability", "License", "ImageExists", "Name", "Description" };
 		for (String key: keys) {
 			List<String> value = conditionMap.get(key);
 			if (value != null && !value.isEmpty()) {
@@ -668,6 +694,8 @@ public class RedirectRuleCondition extends ModelBean {
 		//            else, set Licence_Flag:0
 		// if Availability == "In Stock" set InStock:1
 		//                 == "Call"     set InStock:0
+		// if ImageExists == "Show Products Without Image Only", set ImageExists:0
+		//                == "Show Products With Image Only", set ImageExists:2
 		String[] conditions = {
 //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
 //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",
@@ -677,7 +705,7 @@ public class RedirectRuleCondition extends ModelBean {
 //				"Name:bag ivory AND Description:bag ivory",
 //				"TemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5 OR a2|Core i7",
 //				"PCMall_FacetTemplateName:Notebook Computers AND af_Processor1_Value_Attrib:a2|Core i5",
-//				"Clearance_Flag:1 AND Licence_Flag:0",
+//				"Clearance_Flag:1 AND Licence_Flag:0 AND ImageExists:1",
 				"Manufacturer:Apple AND PCMall_FacetTemplate:Data Storage | Network Attached Storage (NAS) AND Description:netbook",
 //				""
 		};

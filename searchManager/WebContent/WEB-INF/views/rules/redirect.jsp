@@ -370,6 +370,16 @@
 										</select>
 									</td>
 								</tr>
+								<tr>
+									<td class="w175">Product Image :</td>
+									<td class="iepadBT0">
+										<select name="select" id="imageExistsList" class="selectCombo w235" title="Select Product Image" >
+											<option value="all"></option>
+											<option value="withImage">Show Products With Image Only</option>
+											<option value="noImage">Show Products Without Image Only</option>
+										</select>
+									</td>
+								</tr>
 							</table>						
 						</div><!--  end item 4 -->
 						</div>
