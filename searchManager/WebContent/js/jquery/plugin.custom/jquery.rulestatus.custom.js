@@ -80,9 +80,10 @@
 					}
 
 					if (base.options.enableVersion){
-						base.$el.find("#versionIcon, #backupBtn").on({
+						//base.$el.find("#versionIcon, #backupBtn")
+						base.$el.find("#backupBtn").on({
 							click: function(e){
-								$("#versionIcon").version({
+								$(e.currentTarget).version({
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
 									rule: base.options.rule,
@@ -169,9 +170,9 @@
 
 			if(base.options.enableVersion){
 				template += '			<div id="versionHolder">';
-				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-				template += '					<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>';			        		 
-				template += '				</label>';
+//				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
+//				template += '					<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>';			        		 
+//				template += '				</label>';
 				
 				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
 				template += '					<span><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download Rule Versions" title="Download Rule Versions"></span>';			        		 
