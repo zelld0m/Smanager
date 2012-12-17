@@ -1,15 +1,7 @@
 package com.search.manager.utility;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import org.apache.log4j.Logger;
 
@@ -36,8 +28,6 @@ public class StatisticsUtil {
                 String[] data = reader.readNext();
 
                 while (lines.size() < keywords.size() && data != null) {
-                    data[keyCol] = URLDecoder.decode(data[keyCol], "UTF-8").toLowerCase().trim()
-                            .replaceAll("[\\s]{2,}", " ");
                     if (keywords.indexOf(data[keyCol]) >= 0) {
                         lines.add(data);
                     }
@@ -102,8 +92,7 @@ public class StatisticsUtil {
                 String[] data = reader.readNext();
 
                 for (int i = 0; i < count && data != null; i++, data = reader.readNext()) {
-                    KeywordStats stats = new KeywordStats(URLDecoder.decode(data[keywordCol], "UTF-8").toLowerCase()
-                            .trim().replaceAll("[\\s]{2,}", " "));
+                    KeywordStats stats = new KeywordStats(data[keywordCol]);
 
                     stats.addStats(date, Integer.parseInt(data[countCol]));
                     top.add(stats);
