@@ -449,6 +449,8 @@
 			var $table = $content.find("table#versionList");
 			base.ruleMap = {};
 
+			$content.find("#preloader").show();
+			$content.find("#compareSection").hide();
 			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){
 					if(data!=null){
@@ -456,6 +458,8 @@
 					}
 				},
 				postHook: function(){
+					$content.find("#preloader").hide();
+					$content.find("#compareSection").show();
 					RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
 						callback: function(data){
 							$table.find("tr.itemRow:not(#itemPattern)").remove();
@@ -532,7 +536,7 @@
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
 			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="checkbox"/>';
+			template += '	                   	<input id="select" type="checkbox" class="selectOne"/>';
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
@@ -558,10 +562,7 @@
 			template += '				</tbody>';
 			template += '			</table>';
 			template += '		</div>';
-			template += '	</div>'; //end version
-
-
-
+			
 			template += '	<div id="addVersion">';
 			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border marB20" style="background: #f3f3f3; width:400px;" >';
 			template += '			<table class="tblItems" style="width:100%;">';
@@ -602,11 +603,10 @@
 			template += '			</a>';
 			template += '		</div>';
 
-
 			template += '	</div>'; // end addVersion
 			template += '	</div>';	// end w400		
 			template += '</div>'; // end w700
-
+			template += '	</div>'; //end version
 			return template;
 		};
 
@@ -614,6 +614,8 @@
 			var template  = '';
 
 			template += '	<div class="version w425 floatR border">';
+			template += '	<div id="preloader"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif"></div>';
+			template += '	<div id="compareSection" style="display:none">';
 			template += '	<div style="width:100%;height:28px;padding-top:5px;background:#3f63a1;border-bottom:2px solid">';
 			template += '	<div id="vHeaderList">';
 			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
@@ -648,11 +650,11 @@
 			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none;border:0">';
 			template += '					<ul id="ruleDetails" style="border:0">';
-			template += '						<li style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
-			template += '						<li id="verCreatedBy"></li>'; 
-			template += '						<li id="verDate"></li>';
-			template += '						<li id="verName"></li>'; 
-			template += '						<li id="verNote"></li>'; 
+			template += '						<li id="restoreLink" style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
+			template += '						<li id="verCreatedBy">Not Available</li>'; 
+			template += '						<li id="verDate">Not Available</li>';
+			template += '						<li id="verName">Not Available</li>'; 
+			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 
 			template += '						<li id="ruleName"></li>';
 			template += '						<li id="products" style="display:none;border:0;background:#f1f4fb;">';
@@ -708,6 +710,7 @@
 			template += '				</li>';
 			template += '			</ul>';
 			template += '		</div>';// end content
+			template += '	</div>';
 			template += '	</div>';
 			template += '	</div>';
 
