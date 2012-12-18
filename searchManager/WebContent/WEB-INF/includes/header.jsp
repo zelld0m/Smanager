@@ -101,6 +101,9 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.addproduct.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
+  
+  <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
+ 
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
