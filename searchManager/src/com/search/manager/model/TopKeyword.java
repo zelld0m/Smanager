@@ -71,7 +71,7 @@ public class TopKeyword implements Serializable, Comparable<TopKeyword> {
         } else if (count < kc.count) {
             return 1;
         } else {
-            return kc.keyword.compareTo(keyword);
+            return keyword.compareTo(kc.keyword);
         }
     }
 }
