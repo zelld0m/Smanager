@@ -147,6 +147,10 @@ public class DownloadService {
 	}
 	
 	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel) {
+		HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
+				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+		HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
+				CellStyle.VERTICAL_CENTER, false);
 		
 		// Set column widths
 		for (int i = 0; i < model.getColumnCount(); i++) {
@@ -184,17 +188,11 @@ public class DownloadService {
 				rowSubTitle.setHeightInPoints(rowSubTitle.getHeightInPoints() * numLines);	
 			}
 
-
 			// empty line
 			createRow(worksheet, ++rowIndex, 10f);
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,0,model.getColumnCount() - 1));
 			
 			// Request details:
-			HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
-					CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-			HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
-					CellStyle.VERTICAL_CENTER, false);
-			
 			HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
 			createCell(rowHeader, 0, cellStyleHeaderParam, "Requested by:");
 			createCell(rowHeader, 1, cellStyleHeaderValue, UtilityService.getUsername());
@@ -215,14 +213,9 @@ public class DownloadService {
 			/* Record Headers */
 			SubReportHeader subReportHeader = model.getSubReportHeader();
 			if(subReportHeader != null && subReportHeader.getRows() != null){
-				//TODO display subHeader
 				Map<String, String> items = subReportHeader.getRows();
+				
 				for(Map.Entry<String, String> entry : items.entrySet()){
-					HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
-							CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-					HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
-							CellStyle.VERTICAL_CENTER, false);
-					
 					HSSFRow rowHeader = createRow(worksheet, ++rowIndex, 25f);
 					createCell(rowHeader, 0, cellStyleHeaderParam, entry.getKey());
 					createCell(rowHeader, 1, cellStyleHeaderValue, entry.getValue());
