@@ -41,7 +41,9 @@
 						$tablePattern.append($trItem);
 						$trItem = $tablePattern.find("tr#itemRow").clone().prop("id", "row" + $.formatAsId(parseInt(row)));
 					}
-				}else if(ctr==mapSize){
+				}
+				
+				if(ctr==mapSize){
 					$tablePattern.append($trItem);
 				}
 				ctr++;
