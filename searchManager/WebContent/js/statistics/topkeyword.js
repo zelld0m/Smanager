@@ -4,6 +4,79 @@
 			initialNoOfItems: 100,
 			itemsPerScroll: 100,
 			startIndex: 0,
+			reportType: {basic: 1, withStats: 2, custom: 3},
+
+			initTabs: function() {
+				var self = this;
+				$("#tabs").tabs();
+
+				// initialize date pickers
+				$("#fromDate").datepicker({
+					constrainInput : true,
+					defaultDate : "-7",
+					dateFormat : 'M d, yy'
+				}).datepicker("setDate", "-7");
+
+				$("#toDate").datepicker({
+					constrainInput : true,
+					defaultDate : "0",
+					dateFormat : 'M d, yy'
+				}).datepicker("setDate", "0");
+				
+				$("#updateDateBtn").click(function(){
+					self.customStartIndex = 0;
+					self.getCustomRangeList();
+				});
+
+
+				$("a#customDownloadBtn").download({
+					headerText:"Download Top Keyword",
+					defaultFilename: "",
+					sendMail: true,
+					requestCallback:function(e){
+						if (e.data.type==="excel") self.downloadCustomRangeAsCSV(e.data.filename);
+						if (e.data.type==="mail"){
+							var recipientArrCleaned = [];
+							var recipientToArr = e.data.recipient.split(',');
+
+							for(var recipient in recipientToArr){
+								recipientArrCleaned.push($.trim(recipientToArr[recipient]));
+							}
+
+							self.sendCustomRangeAsEmail(e.data.filename, recipientArrCleaned);
+						}
+					}
+				});
+			},
+
+			downloadCustomRangeAsCSV: function(customFilename) {
+				var self = this;
+				TopKeywordServiceJS.downloadCustomRangeAsCSV(self.fromDate, self.toDate, customFilename, {
+					callback: function(data){
+						dwr.engine.openInDownload(data);
+					}
+				});
+			},
+
+			sendCustomRangeAsEmail: function(customFilename, recipients) {
+				var self = this;
+				for (var i = 0; i < recipients.length; i++) {
+					if (!validateEmail(recipients[i],recipients[i],1)) {
+						return;
+					}
+				}
+
+				TopKeywordServiceJS.sendCustomRangeAsEmail(self.fromDate, self.toDate, customFilename, recipients, {
+					callback: function(data){
+						if (data == true) {
+							jAlert("Email sent.","Top Keyword");
+						}
+						else {
+							jAlert("Unable to send email.","Top Keyword");
+						}
+					}
+				});
+			},
 
 			sendFileAsEmail: function(customFilename, recipients){
 
@@ -33,10 +106,17 @@
 				});
 			},
 
-			loadItems: function($divList, list, start, noOfItems){
+			loadItems: function($divList, list, start, noOfItems, type){
 				var listLen = list.length;
-				var isType2 = $("select#fileFilter").val().indexOf("-splunk") > 0;
-				var patternId = isType2 ? "div#itemPattern2" : "div#itemPattern1";
+				var patternId;
+				var isType2 = false;
+
+				if (type == this.reportType.custom) {
+					patternId = "div#itemPattern";
+				} else {
+					isType2 = $("select#fileFilter").val().indexOf("-splunk") > 0;
+					patternId = isType2 ? "div#itemPattern2" : "div#itemPattern1";
+				}
 
 				for (var i=start; i < start + noOfItems ; i++){
 					if(i == listLen)
@@ -140,6 +220,57 @@
 					}
 				});
 			},
+			
+			getCustomRangeList: function() {
+				var self = this;
+				var from = $("#fromDate").datepicker("getDate");
+				var to = $("#toDate").datepicker("getDate");
+				
+				if (from > to) {
+					jAlert("Invalid date range.");
+				} else {
+					self.fromDate = from;
+					self.toDate = to;
+
+					TopKeywordServiceJS.getTopKeywords(from, to, {
+						callback: function(data){
+							var $divList = $("div#customRangeItemList");
+							$divList.find("div.items:not(#itemPattern)").remove();
+	
+							if (data.length > 0){
+								$("#itemHeader").show();
+								self.loadItems($divList, data, self.customStartIndex, self.initialNoOfItems, self.reportType.custom);
+								self.customStartIndex = self.initialNoOfItems;
+	
+								$("#customKeywordCount").html(data.length == 1 ? "1 Keyword" : data.length + " Keywords");
+								$("div#customCountSec").show();
+	
+								$divList.off().on({
+									scroll: function(e){
+										if(data.length > self.customStartIndex){
+											if ($divList[0].scrollTop == $divList[0].scrollHeight - $divList[0].clientHeight) {
+												self.loadItems($divList, data, self.customStartIndex, self.itemsPerScroll, self.reportType.custom);
+												self.customStartIndex = self.customStartIndex + self.itemsPerScroll;
+											}
+										}
+									}
+								},{list: data});
+							}else{
+								$empty = '<div id="empty" class="items txtAC borderB">Unable to retrieve top keywords for specified date range.</div>';
+								$divList.append($empty);
+								$("#itemHeader").hide();
+								$("div#customCountSec").hide();
+							}
+						},
+						preHook:function(){
+							$("img#customPreloader").show();
+						},
+						postHook:function(){
+							$("img#customPreloader").hide();
+						}
+					});
+				}
+			},
 
 			getFileList: function(){
 				var self = this;
@@ -189,6 +320,7 @@
 			
 			init: function(){
 				var self = this;
+				self.initTabs();
 				self.getFileList();
 			}		
 	};

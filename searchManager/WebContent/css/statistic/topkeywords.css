@@ -1,0 +1,7 @@
+
+#tabs {margin-top: 20px;}
+#tabs ul.ui-tabs-nav li a {font-size: 13px;}
+#tabs ul.ui-tabs-nav li {padding-left: 8px; padding-right: 8px; }
+#tabs ul.ui-tabs-nav {background: none; margin-bottom: -1px}
+#tabs > div {border: 1px solid #AAA; padding: 0; }
+.dateLabel { text-decoration:underline; border: none !important; cursor: pointer; background: transparent; width: 80px; margin-left:5px; margin-bottom:4px }

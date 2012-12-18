@@ -1,13 +1,17 @@
 package com.search.manager.utility;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.search.manager.model.KeywordStats;
+import com.search.manager.model.TopKeyword;
+import com.search.manager.service.UtilityService;
 
 public class StatisticsUtil {
 
@@ -38,15 +42,7 @@ public class StatisticsUtil {
         } catch (IOException ex) {
             logger.error(ex.getMessage());
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                    logger.error(ex.getMessage());
-                } finally {
-                    reader = null;
-                }
-            }
+            IOUtils.closeQuietly(reader);
         }
 
         return lines;
@@ -82,8 +78,9 @@ public class StatisticsUtil {
         return counts;
     }
 
-    public static List<KeywordStats> top(File file, Date date, int count, int keywordCol, int countCol) {
+    public static List<KeywordStats> top(Date date, int count, int keywordCol, int countCol) {
         List<KeywordStats> top = new ArrayList<KeywordStats>(count);
+        File file = getSplunkFile(date);
         CSVReader reader = null;
 
         try {
@@ -101,22 +98,14 @@ public class StatisticsUtil {
         } catch (IOException ex) {
             logger.error(ex.getMessage());
         } finally {
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException ex) {
-                    logger.error(ex.getMessage());
-                } finally {
-                    reader = null;
-                }
-            }
+            IOUtils.closeQuietly(reader);
         }
 
         return top;
     }
 
-    public static void retrieveStats(List<KeywordStats> list, File file, Date date, int keyCol, int countCol,
-            String collation) {
+    public static void retrieveStats(List<KeywordStats> list, Date date, int keyCol, int countCol, String collation) {
+        File file = getSplunkFile(date);
         Map<String, Integer> counts = getCount(file, extractKeywords(list), keyCol, countCol);
         Date key = date;
 
@@ -149,5 +138,56 @@ public class StatisticsUtil {
         }
 
         return keywords;
+    }
+
+    public static void getAllStats(Date date, Map<String, TopKeyword> stats) {
+        CSVReader reader = null;
+        File file = getSplunkFile(date);
+
+        try {
+            if (file != null && file.exists()) {
+                reader = new CSVReader(new FileReader(file), ',', '\"', '\0', 1, false);
+                String[] data = reader.readNext();
+
+                while (data != null) {
+                    String keyword = data[0];
+                    Integer count = Integer.parseInt(data[1]);
+                    TopKeyword kc = stats.get(keyword);
+
+                    if (kc == null) {
+                        kc = new TopKeyword();
+                        kc.setKeyword(keyword);
+                        kc.setCount(count);
+                        stats.put(keyword, kc);
+                    } else {
+                        kc.setCount(kc.getCount() + count);
+                    }
+
+                    data = reader.readNext();
+                }
+            }
+        } catch (IOException ex) {
+            logger.error(ex.getMessage());
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get CSV file for the given date or null if non-existent.
+     * 
+     * @param date
+     *            Date
+     * @return CSV file for the given date
+     */
+    public static File getSplunkFile(Date date) {
+        String str = DateAndTimeUtils.formatYYYYMMDD(date);
+        return new File(MessageFormat.format(getSplunkFilePattern(), str.substring(0, 6), str));
+    }
+
+    public static String getSplunkFilePattern() {
+        return new StringBuilder().append(PropsUtils.getValue("splunkdir")).append(File.separator)
+                .append(UtilityService.getStoreName()).append(File.separator).append("{0}").append(File.separator)
+                .append("{1}.csv").toString();
     }
 }

@@ -1,36 +1,25 @@
 package com.search.manager.service;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.directwebremoting.annotations.Param;
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
+import org.apache.poi.util.IOUtils;
+import org.directwebremoting.annotations.*;
 import org.directwebremoting.io.FileTransfer;
 import org.directwebremoting.spring.SpringCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.search.manager.mail.ReportNotificationMailService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.TopKeyword;
-import com.search.manager.utility.CombinedInputStream;
-import com.search.manager.utility.PropsUtils;
+import com.search.manager.utility.*;
 
 @Service(value = "topKeywordService")
 @RemoteProxy(
@@ -126,29 +115,79 @@ public class TopKeywordService {
 	private File getFile(String filename){
 		return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
 	}
-	
+
 	@RemoteMethod
-	public FileTransfer downloadFileAsCSV(String filename, String customFilename)  {
-		FileTransfer fileTransfer = null;
-		File file = getFile(filename);
-		BufferedInputStream bis = null;
-		try {
-			try {
-				bis = new BufferedInputStream(new FileInputStream(file));
-				CombinedInputStream cis = new CombinedInputStream(new InputStream[]{new ByteArrayInputStream(getFileHeader(filename).getBytes()), bis});
-				// FileTransfer auto-closes the stream
-				fileTransfer = new FileTransfer(StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", "application/csv", cis);
-			} catch (FileNotFoundException e) {
-				logger.error(e.getMessage());
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return fileTransfer;
-	}
-	
+    public FileTransfer downloadFileAsCSV(String filename, String customFilename) {
+        try {
+            return downloadCsv(new FileInputStream(getFile(filename)), filename, customFilename);
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage());
+        }
+
+        return null;
+    }
+
+    private FileTransfer downloadCsv(InputStream content, String filename, String customFilename) {
+        BufferedInputStream bis = null;
+
+        try {
+            bis = new BufferedInputStream(content);
+            CombinedInputStream cis = new CombinedInputStream(new InputStream[] {
+                    new ByteArrayInputStream(getFileHeader(filename).getBytes()), bis });
+            // FileTransfer auto-closes the stream
+            return new FileTransfer(StringUtils.isBlank(customFilename) ? filename : customFilename + ".csv",
+                    "application/csv", cis);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+
+        return null;
+    }
+
+    @RemoteMethod
+    public FileTransfer downloadCustomRangeAsCSV(Date from, Date to, String customFilename) {
+        return downloadCsv(getCustomRangeReportStream(from, to), "customRangeTopKeywords", customFilename);
+    }
+
 	@RemoteMethod
 	public boolean sendFileAsEmail(String filename, String customFilename, String[] recipients)  {
 		return reportNotificationMailService.sendTopKeyword(getFile(filename), StringUtils.isBlank(customFilename)? filename : customFilename + ".csv", recipients,new ByteArrayInputStream(getFileHeader(filename).getBytes()),"text/csv");
 	}
+
+    @RemoteMethod
+    public boolean sendCustomRangeAsEmail(Date from, Date to, String customFilename, String[] recipients)  {
+        return reportNotificationMailService.sendTopKeyword(getCustomRangeReportStream(from, to), StringUtils.isBlank(customFilename)? "customRangeTopKeywords" : customFilename + ".csv", recipients,new ByteArrayInputStream(getFileHeader("customRangeTopKeywords").getBytes()),"text/csv");
+    }
+
+    private InputStream getCustomRangeReportStream(Date from, Date to) {
+        List<TopKeyword> topKeywords = getTopKeywords(from, to);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(os));
+
+        for (TopKeyword kw : topKeywords) {
+            writer.writeNext(new String[] { String.valueOf(kw.getCount()), kw.getKeyword() });
+        }
+
+        // close writer before passing to downloader
+        IOUtils.closeQuietly(writer);
+
+        return new ByteArrayInputStream(os.toByteArray());
+    }
+
+	@RemoteMethod
+    public List<TopKeyword> getTopKeywords(Date from, Date to) {
+        Map<String, TopKeyword> stats = new HashMap<String, TopKeyword>();
+        Date limit = DateUtils.truncate(to, Calendar.DATE);
+        Date date = DateUtils.truncate(from, Calendar.DATE);
+
+        while (!date.after(limit)) {
+            StatisticsUtil.getAllStats(date, stats);
+            date = DateUtils.addDays(date, 1);
+        }
+
+        List<TopKeyword> kcList = new ArrayList<TopKeyword>(stats.values());
+
+        Collections.sort(kcList);
+        return kcList;
+    }
 }
