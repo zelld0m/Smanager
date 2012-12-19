@@ -219,7 +219,10 @@
 					$selectedTab.html($("div#tabContentTemplate").html());
 
 					if (data.totalSize>0){
-						var totalSize = data.totalSize;
+						var totalSize = (data) ? data.totalSize : 0;
+						
+						$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+						
 						// Populate table row
 						for(var i=0; i < totalSize; i++){
 							var rule = list[i];
