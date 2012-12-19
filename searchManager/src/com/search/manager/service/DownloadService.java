@@ -3,7 +3,6 @@ package com.search.manager.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -146,12 +145,7 @@ public class DownloadService {
 		return lines;
 	}
 	
-	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel) {
-		HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
-				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
-		HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
-				CellStyle.VERTICAL_CENTER, false);
-		
+	private static int prepareXls(HSSFWorkbook workbook, HSSFSheet worksheet, HSSFCellStyle cellStyleHeaderParam, HSSFCellStyle cellStyleHeaderValue, int rowIndex, ReportModel<? extends ReportBean<?>> model, boolean mainModel) {
 		// Set column widths
 		for (int i = 0; i < model.getColumnCount(); i++) {
 			int colSize = model.getColumn(i).size() * 256;
@@ -274,22 +268,28 @@ public class DownloadService {
 		// 2. Create new worksheet
 		HSSFSheet worksheet = workbook.createSheet("Data");
 		int rowIndex = 0;
+		
+		HSSFCellStyle cellStyleHeaderParam = createCellStyle(workbook, createFont(workbook, (short)11, true), null, null,
+				CellStyle.ALIGN_LEFT, CellStyle.VERTICAL_CENTER, false, null, null);
+		HSSFCellStyle cellStyleHeaderValue = createCellStyle(workbook, createFont(workbook, (short)11, false), CellStyle.ALIGN_LEFT,
+				CellStyle.VERTICAL_CENTER, false);
+		
 		// 3. prepare worksheet
 		
-		rowIndex = prepareXls(workbook, worksheet, rowIndex, mainModel, true);
+		rowIndex = prepareXls(workbook, worksheet, cellStyleHeaderParam, cellStyleHeaderValue, rowIndex, mainModel, true);
 		String fileName = mainModel.getReportHeader().getFileName() + ".xls";
 		
 		if (subModels != null) {
 			for (ReportModel<? extends ReportBean<?>> model: subModels) {
 				rowIndex++;
-				rowIndex = prepareXls(workbook, worksheet, rowIndex, model, false);
+				rowIndex = prepareXls(workbook, worksheet, cellStyleHeaderParam, cellStyleHeaderValue, rowIndex, model, false);
 			}
 		}
 		
 		download(response, workbook, fileName);
 	}
 	
-	public HSSFWorkbook addWorkSheet(HttpServletResponse response, HSSFWorkbook workbook, ReportModel<? extends ReportBean<?>> reportModel, 
+	public HSSFWorkbook addWorkSheet(HttpServletResponse response, HSSFWorkbook workbook, HSSFCellStyle cellStyleHeaderParam, HSSFCellStyle cellStyleHeaderValue, ReportModel<? extends ReportBean<?>> reportModel, 
 			String sheetName, boolean mainModel) throws ClassNotFoundException {
 		logger.debug("adding new worksheet in Excel report: " + sheetName);
 		// 1. Create new worksheet
@@ -297,7 +297,7 @@ public class DownloadService {
 		int rowIndex = 0;
 		
 		// 2. prepare worksheet
-		rowIndex = prepareXls(workbook, worksheet, rowIndex, reportModel, mainModel);
+		rowIndex = prepareXls(workbook, worksheet, cellStyleHeaderParam, cellStyleHeaderValue, rowIndex, reportModel, mainModel);
 		
 		//3. return updated workbook
 		return workbook;
