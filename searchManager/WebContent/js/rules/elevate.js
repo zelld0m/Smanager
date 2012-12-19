@@ -184,7 +184,7 @@
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	
 						if ($item["formattedExpiryDate"] !== dateText){
-							self.updateValidityDate($item, dateText);
+							self.updateValidityDate($item, "update", dateText);
 						}
 					}
 				});
@@ -194,7 +194,7 @@
 						if (e.data.locked) return;
 
 						jConfirm(self.removeExpiryDateConfirmText, "Remove Field Value", function(result){
-							if(result) self.updateValidityDate(e.data.item, "");
+							if(result) self.updateValidityDate(e.data.item, "delete", "");
 						});
 					}
 				}, {locked: self.selectedRuleStatus["locked"] || !allowModify, item: $item});
@@ -364,12 +364,12 @@
 				}, 10);
 			},
 
-			updateValidityDate: function(item, dateText){
+			updateValidityDate: function(item, action, dateText){
 				var self = this;
 				var $item = item;
 				ElevateServiceJS.updateExpiryDate(self.selectedRule["ruleName"], $item["memberId"], dateText, {
 					callback: function(code){
-						showActionResponse(code, "update", "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
+						showActionResponse(code, action, "expiry date of " + ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]));
 						if(code==1) self.populateRuleItem(self.selectedRuleItemPage);
 					}
 				});
