@@ -32,7 +32,7 @@
 					}
 				});
 			},
-
+			
 			loadItems: function($divList, list, start, noOfItems){
 				var listLen = list.length;
 				var isType2 = $("select#fileFilter").val().indexOf("-splunk") > 0;
@@ -162,10 +162,11 @@
 						$("a#downloadBtn").download({
 							headerText:"Download Top Keyword",
 							defaultFilename: "",
+							fileFormat: ['CSV'],
 							sendMail: true,
 							requestCallback:function(e){
-								if (e.data.type==="excel") self.downloadFileAsCSV(e.data.filename);
-								if (e.data.type==="mail"){
+								if (e.data.type==="csv") { self.downloadFileAsCSV(e.data.filename); }
+								else if (e.data.type==="mail"){
 									var recipientArrCleaned = [];
 									var recipientToArr = e.data.recipient.split(',');
 
