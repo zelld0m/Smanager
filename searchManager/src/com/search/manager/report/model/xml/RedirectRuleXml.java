@@ -42,7 +42,7 @@ public class RedirectRuleXml extends RuleXml{
 			this.setReplacementKeyword(rr.getChangeKeyword());
 			this.setRedirectType(rr.getRedirectType());	
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
-			this.setRuleCondition(new RuleConditionXml(rr.getConditions()));
+			this.setRuleCondition(new RuleConditionXml(rr.getConditions(), rr.getIncludeKeyword()));
 			this.setCreatedBy(rr.getCreatedBy());
 			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
