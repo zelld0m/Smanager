@@ -148,7 +148,7 @@ public class DemoteController {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
 		}
 		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", "", filename, headerDate);
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		
 		ReportModel<DemoteReportBean> reportModel = new DemoteReportModel(reportHeader, new ArrayList<DemoteReportBean>());
 		ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();

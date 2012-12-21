@@ -144,7 +144,7 @@ public class ExcludeController {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "");
 		}
 		
-		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", "", filename, headerDate);
+		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		
 		ReportModel<ExcludeReportBean> reportModel = new ExcludeReportModel(reportHeader, new ArrayList<ExcludeReportBean>());
 		ArrayList<ReportModel<? extends ReportBean<?>>> subModels = new ArrayList<ReportModel<? extends ReportBean<?>>>();
