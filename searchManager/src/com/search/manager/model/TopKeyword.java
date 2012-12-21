@@ -14,7 +14,10 @@ public class TopKeyword implements Serializable, Comparable<TopKeyword> {
 	private int count;
 	private int resultCount;
 	private String sku;
-	
+
+	// tries
+	private int tries;
+
 	public TopKeyword(){
 	}
 
@@ -64,6 +67,17 @@ public class TopKeyword implements Serializable, Comparable<TopKeyword> {
 		this.sku = sku;
 	}
 
+	public void incrementTries() {
+	    tries++;
+	}
+	
+	public void stopProcessing() {
+	    tries = -1;
+	}
+	
+	public boolean continueProcessing(int max) {
+	    return tries < max;
+	}
     @Override
     public int compareTo(TopKeyword kc) {
         if (count > kc.count) {
@@ -73,5 +87,9 @@ public class TopKeyword implements Serializable, Comparable<TopKeyword> {
         } else {
             return keyword.compareTo(kc.keyword);
         }
+    }
+    
+    public String[] toStringArray() {
+        return new String[] {String.valueOf(count), keyword, String.valueOf(resultCount), sku};
     }
 }

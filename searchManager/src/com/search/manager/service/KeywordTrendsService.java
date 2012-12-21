@@ -39,7 +39,7 @@ public class KeywordTrendsService {
     @RemoteMethod
     public List<String> getTopTenKeywords() {
         Date recent = getMostRecentStatsDate();
-        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1);
+        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1, UtilityService.getStoreName());
         List<String> top = new ArrayList<String>();
 
         for (KeywordStats stats : list) {
@@ -80,7 +80,7 @@ public class KeywordTrendsService {
 
             try {
                 String path = csvs[0].getCanonicalPath();
-                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern()).parse(path)[1].toString();
+                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern(UtilityService.getStoreName())).parse(path)[1].toString();
 
                 return DateAndTimeUtils.parseDateYYYYMMDD(dateStr);
             } catch (IOException ex) {
@@ -108,7 +108,7 @@ public class KeywordTrendsService {
         Date date = fromDate;
 
         while (DateAndTimeUtils.compare(date, toDate) <= 0) {
-            StatisticsUtil.retrieveStats(list, date, 0, 1, collation);
+            StatisticsUtil.retrieveStats(list, date, 0, 1, collation, UtilityService.getStoreName());
             date = DateUtils.addDays(date, 1);
         }
     }

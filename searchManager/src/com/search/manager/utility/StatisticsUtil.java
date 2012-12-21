@@ -5,13 +5,14 @@ import java.text.MessageFormat;
 import java.util.*;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 import com.search.manager.model.KeywordStats;
 import com.search.manager.model.TopKeyword;
-import com.search.manager.service.UtilityService;
 
 public class StatisticsUtil {
 
@@ -78,9 +79,9 @@ public class StatisticsUtil {
         return counts;
     }
 
-    public static List<KeywordStats> top(Date date, int count, int keywordCol, int countCol) {
+    public static List<KeywordStats> top(Date date, int count, int keywordCol, int countCol, String store) {
         List<KeywordStats> top = new ArrayList<KeywordStats>(count);
-        File file = getSplunkFile(date);
+        File file = getSplunkFile(date, store);
         CSVReader reader = null;
 
         try {
@@ -104,8 +105,8 @@ public class StatisticsUtil {
         return top;
     }
 
-    public static void retrieveStats(List<KeywordStats> list, Date date, int keyCol, int countCol, String collation) {
-        File file = getSplunkFile(date);
+    public static void retrieveStats(List<KeywordStats> list, Date date, int keyCol, int countCol, String collation, String storeName) {
+        File file = getSplunkFile(date, storeName);
         Map<String, Integer> counts = getCount(file, extractKeywords(list), keyCol, countCol);
         Date key = date;
 
@@ -140,9 +141,9 @@ public class StatisticsUtil {
         return keywords;
     }
 
-    public static void getAllStats(Date date, Map<String, TopKeyword> stats) {
+    public static void getAllStats(Date date, Map<String, TopKeyword> stats, String storeName) {
         CSVReader reader = null;
-        File file = getSplunkFile(date);
+        File file = getSplunkFile(date, storeName);
 
         try {
             if (file != null && file.exists()) {
@@ -173,6 +174,37 @@ public class StatisticsUtil {
         }
     }
 
+    public static InputStream getCustomRangeReportStream(List<TopKeyword> topKeywords,
+            CsvTransformer<TopKeyword> transformer) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        CSVWriter writer = new CSVWriter(new OutputStreamWriter(os));
+
+        for (TopKeyword kw : topKeywords) {
+            writer.writeNext(transformer.toStringArray(kw));
+        }
+
+        // close writer before passing to downloader
+        IOUtils.closeQuietly(writer);
+
+        return new ByteArrayInputStream(os.toByteArray());
+    }
+    
+    public static List<TopKeyword> getTopKeywordsInRange(Date from, Date to, String storeName) {
+        Map<String, TopKeyword> stats = new HashMap<String, TopKeyword>();
+        Date limit = DateUtils.truncate(to, Calendar.DATE);
+        Date date = DateUtils.truncate(from, Calendar.DATE);
+
+        while (!date.after(limit)) {
+            StatisticsUtil.getAllStats(date, stats, storeName);
+            date = DateUtils.addDays(date, 1);
+        }
+
+        List<TopKeyword> kcList = new ArrayList<TopKeyword>(stats.values());
+
+        Collections.sort(kcList);
+        return kcList;
+    }
+
     /**
      * Get CSV file for the given date or null if non-existent.
      * 
@@ -180,14 +212,14 @@ public class StatisticsUtil {
      *            Date
      * @return CSV file for the given date
      */
-    public static File getSplunkFile(Date date) {
+    public static File getSplunkFile(Date date, String storeName) {
         String str = DateAndTimeUtils.formatYYYYMMDD(date);
-        return new File(MessageFormat.format(getSplunkFilePattern(), str.substring(0, 6), str));
+        return new File(MessageFormat.format(getSplunkFilePattern(storeName), str.substring(0, 6), str));
     }
 
-    public static String getSplunkFilePattern() {
+    public static String getSplunkFilePattern(String storeName) {
         return new StringBuilder().append(PropsUtils.getValue("splunkdir")).append(File.separator)
-                .append(UtilityService.getStoreName()).append(File.separator).append("{0}").append(File.separator)
+                .append(storeName).append(File.separator).append("{0}").append(File.separator)
                 .append("{1}.csv").toString();
     }
 }
