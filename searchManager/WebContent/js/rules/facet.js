@@ -338,7 +338,7 @@
 							events: { 
 								show: function(e, api){
 									var $contentHolder = $("div", api.elements.content).html($("#addFacetSortTemplate").html());
-									var $select = $("select#popSortOrder");
+									var $select = $contentHolder.find("select#popSortOrder");
 									//populate sort order dropdown list
 									self.populateSortOrderList($select);
 
@@ -368,6 +368,10 @@
 										}
 									});
 
+									//make input box of type and sort order uneditable
+									$contentHolder.find("input#popType").attr('readonly', true);
+									$contentHolder.find("input#popSortOrder").attr('readonly', true);
+									
 									$contentHolder.find('select[id="popType"]').off().on({
 										change: function(e){
 											var selectedType = e.target.value;
