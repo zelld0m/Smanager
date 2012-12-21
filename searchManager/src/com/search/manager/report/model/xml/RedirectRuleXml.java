@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -42,7 +43,7 @@ public class RedirectRuleXml extends RuleXml{
 			this.setReplacementKeyword(rr.getChangeKeyword());
 			this.setRedirectType(rr.getRedirectType());	
 			this.setRuleKeyword(new RuleKeywordXml(rr.getSearchTerms()));
-			this.setRuleCondition(new RuleConditionXml(rr.getConditions(), rr.getIncludeKeyword()));
+			this.setRuleCondition(new RuleConditionXml(rr.getConditions(), BooleanUtils.isTrue(rr.getIncludeKeyword())));
 			this.setCreatedBy(rr.getCreatedBy());
 			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
