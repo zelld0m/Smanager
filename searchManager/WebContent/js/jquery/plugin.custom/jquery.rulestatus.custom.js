@@ -98,36 +98,32 @@
 							}
 						});
 						
-						base.$el.find("#downloadVersionIcon").on({
-							click: function(e){
-								$("#downloadVersionIcon").download({
-									headerText:"Download " + base.options.moduleName,
-									moduleName: base.options.moduleName,
-									ruleType: base.options.ruleType,  
-									rule: base.options.rule,
-//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-									requestCallback:function(e){
-										var params = new Array();
-										var url = document.location.pathname + "/version/xls";
-										var urlParams = "";
-										var count = 0;
+						$("#downloadVersionIcon").download({
+							headerText:"Download " + base.options.moduleName,
+							moduleName: base.options.moduleName,
+							ruleType: base.options.ruleType,  
+							rule: base.options.rule,
+//							locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+							requestCallback:function(e){
+								var params = new Array();
+								var url = document.location.pathname + "/version/xls";
+								var urlParams = "";
+								var count = 0;
 
-										params["filename"] = e.data.filename;
-										params["type"] = e.data.type;
-										params["keyword"] = base.options.rule["ruleName"];
-										params["id"] = base.options.rule["ruleId"];
-										//params["filter"] = base.getRuleItemFilter();
-										params["clientTimezone"] = +new Date();
+								params["filename"] = e.data.filename;
+								params["type"] = e.data.type;
+								params["keyword"] = base.options.rule["ruleName"];
+								params["id"] = base.options.rule["ruleId"];
+								//params["filter"] = base.getRuleItemFilter();
+								params["clientTimezone"] = +new Date();
 
-										for(var key in params){
-											if (count>0) urlParams +='&';
-											urlParams += (key + '=' + params[key]);
-											count++;
-										};
+								for(var key in params){
+									if (count>0) urlParams +='&';
+									urlParams += (key + '=' + params[key]);
+									count++;
+								};
 
-										document.location.href = url + '?' + urlParams;
-									}
-								});
+								document.location.href = url + '?' + urlParams;
 							}
 						});
 					}
