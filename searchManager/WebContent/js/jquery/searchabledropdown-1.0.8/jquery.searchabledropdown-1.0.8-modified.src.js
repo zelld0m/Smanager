@@ -39,8 +39,8 @@
         exactMatch: false,
         wildcards: true,
         ignoreCase: true,
-        warnMultiMatch: "top {0} matches ...",
-        warnNoMatch: "no matches ...",
+        warnMultiMatch: "Top {0} Matches ...",
+        warnNoMatch: "No Matches Found...",
         latency: 200,
         zIndex: "auto",
         change: function(item){}
@@ -56,10 +56,15 @@
 		var timer = null;
         var searchCache = null;
         var search = null;
-
+        
 		// do not attach on IE6 or lower
 		if ($.browser.msie && parseInt(jQuery.browser.version) < 7)
 			return this;
+
+		//custom refresh
+		if ($(this).parent(".ss-wrapper").length > 0){
+			$(this).parent(".ss-wrapper").replaceWith($(this));
+		};
 
     	// only active select elements with drop down capability
         if (this.nodeName != "SELECT" || this.size > 1)
@@ -83,16 +88,16 @@
         }
 
         // objects
-        var wrapper = $("<div/>");
-        var overlay = $("<div/>");
-        var input = $("<input/>");
-        var selector = $("<select/>");
-
+        var wrapper = $('<div/>').addClass("ss-wrapper");
+        var overlay = $('<div/>').addClass("ss-overlay");
+        var input = $('<input/>').addClass("ss-textbox");
+        var selector = $('<select/>').addClass("ss-selector");
+  		
         // matching option items
         var topMatchItem = $("<option>"+settings.warnMultiMatch.replace(/\{0\}/g, settings.maxMultiMatch)+"</option>").attr("disabled", "true");
         var noMatchItem = $("<option>"+settings.warnNoMatch+"</option>").attr("disabled", "true");
-
-
+        selector.append($("<option>", {value: ""}).text(""));
+       
         var selectorHelper = {
     		/**
              * Return DOM options of selector element
@@ -123,7 +128,7 @@
 	        	selector.attr("size", Math.max(2, Math.min(size, 20)));
 	        },
 	        /**
-	         * Reset the entries, which can be choose to it's inital state depends on selectedIndex and maxMultiMatch
+	         * Reset the entries, which can be choose to it's initial state depends on selectedIndex and maxMultiMatch
 	         */
 	        reset: function() {
 	        	// return if selector has data and stored index equal selectedIndex of source select element
@@ -224,8 +229,8 @@
         });
         
         // custom callback handler
-        self.change(function(e){
-        	settings.change(selectorHelper.selected(), e);
+        self.off("change").on("change", function(e){
+        	settings.change(selectorHelper.selected().get(0), e);
         });
 
         // toggle click event on overlay div
@@ -310,7 +315,7 @@
             // doing anything with it!
             return false;
         });
-
+        
         /**
          * Draw the needed elements
          */
@@ -478,7 +483,7 @@
     			return false;
 
     		// prepend empty option
-      		self.prepend("<option />");
+      		self.prepend($("<option/>", {value:""}).text(""));
 
     		// set state to enabled
     		if(typeof v == "undefined")
@@ -712,7 +717,6 @@
     	$.fn[nsp] = function(settings) {
     		// extend default settings
     		settings = $.extend(plugin.defaults, settings);
-
     		var elmSize = this.size();
             return this.each(function(index) {
             	plugin.execute.call(this, settings, elmSize-index);
