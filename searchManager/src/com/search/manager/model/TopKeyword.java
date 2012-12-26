@@ -6,7 +6,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter = BeanConverter.class)
-public class TopKeyword implements Serializable {
+public class TopKeyword implements Serializable, Comparable<TopKeyword> {
 
 	private static final long serialVersionUID = 5855294022170978094L;
 
@@ -14,7 +14,10 @@ public class TopKeyword implements Serializable {
 	private int count;
 	private int resultCount;
 	private String sku;
-	
+
+	// tries
+	private int tries;
+
 	public TopKeyword(){
 	}
 
@@ -63,4 +66,30 @@ public class TopKeyword implements Serializable {
 	public void setSku(String sku) {
 		this.sku = sku;
 	}
+
+	public void incrementTries() {
+	    tries++;
+	}
+	
+	public void stopProcessing() {
+	    tries = -1;
+	}
+	
+	public boolean continueProcessing(int max) {
+	    return tries < max;
+	}
+    @Override
+    public int compareTo(TopKeyword kc) {
+        if (count > kc.count) {
+            return -1;
+        } else if (count < kc.count) {
+            return 1;
+        } else {
+            return keyword.compareTo(kc.keyword);
+        }
+    }
+    
+    public String[] toStringArray() {
+        return new String[] {String.valueOf(count), keyword, String.valueOf(resultCount), sku};
+    }
 }

@@ -81,5 +81,11 @@
 	 	<property name="daoService" ref="daoService" />
 	</bean>
 	
+	<bean id="commandExecutor" class="com.search.manager.utility.CommandExecutor" init-method="init" destroy-method="destroy" scope="singleton">
+	    <!-- maximum length of command queue -->
+	    <property name="maxCount" value="1000" />
+	    <property name="interval" value="1000" />
+	</bean>
+	
 	<import resource="file:/home/solr/conf/cron-app.xml"/>
 </beans>

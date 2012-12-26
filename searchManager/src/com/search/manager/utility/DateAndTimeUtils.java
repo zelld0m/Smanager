@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
 import com.search.ws.ConfigManager;
@@ -104,8 +105,7 @@ public final class DateAndTimeUtils {
 
 	public static String getDateStringMMDDYYYY(Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT_STRING_MM_DD_YYYY);
-		String mmDdYyyy = formatter.format(date);
-		return mmDdYyyy;
+		return formatter.format(date);
 	}
 
 	public static String getHyphenedDateStringMMDDYYYY(Date date) {
@@ -371,4 +371,24 @@ public final class DateAndTimeUtils {
 			e.printStackTrace();
 		}
 	}
+
+	public static Date getFirstDayOfMonth(Date date) {
+		return parseDateYYYYMMDD(formatYYYYMMDD(date).substring(0, 6) + "01");
+	}
+
+    public static Date getFirstDayOfWeek(Date date) {
+        Calendar cal = Calendar.getInstance();
+
+        cal.setTime(date);
+        int dow = cal.get(Calendar.DAY_OF_WEEK);
+
+        if (dow == Calendar.SUNDAY) {
+            dow = Calendar.SATURDAY + 1;
+        }
+
+        dow = Calendar.MONDAY - dow;
+
+        return DateUtils.addDays(date, dow);
+
+    }
 }

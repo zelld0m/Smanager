@@ -44,6 +44,18 @@ public class KeywordStats implements Serializable {
 			stats = new HashMap<String, Integer>();
 		}
 
-		stats.put(DateAndTimeUtils.getHyphenedDateStringMMDDYYYY(date), count);
+		String key = DateAndTimeUtils.getHyphenedDateStringMMDDYYYY(date);
+		Integer curVal = stats.get(key);
+		Integer value = null;
+
+		if (curVal != null && count != null) {
+			value = curVal + count;
+		} else if (count != null) {
+			value = count;
+		} else if (curVal != null) {
+			value = curVal;
+		}
+
+		stats.put(key, value);
 	}
 }
