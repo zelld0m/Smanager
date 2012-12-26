@@ -293,6 +293,54 @@
 			}
 
 		};
+		
+		base.setProduct = function(li, item){
+			var $pLi = li;
+			var product = item;
+			
+			if(product["memberType"]==="FACET"){
+				var imagePath ="";
+				switch(base.getItemType(product)){
+				case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+				case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+				case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+				};
+
+				if($.isNotBlank(imagePath)){
+					setTimeout(function(){
+					$pLi.find("#prodImage").attr("src", imagePath).off().on({
+						error:function(){ 
+							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+						}
+					});
+					},10);
+				}
+
+				$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
+			}else if(product["memberType"]==="PART_NUMBER"){
+				if($.isNotBlank(product["dpNo"])){
+					if($.isNotBlank(product["imagePath"])){
+						setTimeout(function(){
+						$pLi.find("#prodImage").attr("src", product["imagePath"]).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+							}
+						});
+						},10);
+					}
+					$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+					$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
+					$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
+				}else{
+					$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg').off().on({
+						error:function(){ 
+							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+						}
+					});
+					$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
+				}
+			}
+		};
 
 		base.setProductCompare = function(li, rowlabel, item){
 			var $li = li;
@@ -311,31 +359,7 @@
 					var product = products[pXml];
 					$pLi = $pattern.clone();
 					$pLi.attr("id", product["memberId"]);
-
-					if(product["memberType"]==="FACET"){
-						var imagePath ="";
-						switch(base.getItemType(product)){
-						case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
-						case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
-						case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
-						};
-
-						if($.isNotBlank(imagePath))
-							$pLi.find("#prodImage").attr("src", imagePath);
-
-						$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
-					}else if(product["memberType"]==="PART_NUMBER"){
-						if($.isNotBlank(product["dpNo"])){
-							$pLi.find("#prodImage").attr("src", product["imagePath"]);
-							$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
-							$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
-							$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
-						}else{
-							$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg');
-							$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
-						}
-					}
-
+					base.setProduct($pLi, product);
 					$pLi.show();
 					$ul.append($pLi);
 				}
