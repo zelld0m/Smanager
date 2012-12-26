@@ -1,8 +1,6 @@
 package com.search.manager.mail;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -17,11 +15,10 @@ import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.mail.javamail.*;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
@@ -42,12 +39,12 @@ public class EmailSender{
 		this.mailSender = mailSender;
 	}
 
-	private MimeMessagePreparator getMimeMessagePreparator(final SimpleMailMessage messageDetails, final Map<String, File> fileMap){
+	private MimeMessagePreparator getMimeMessagePreparator(final SimpleMailMessage messageDetails, final Map<String, InputStreamSource> attachmentMap){
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
 			public void prepare(MimeMessage mimeMessage) throws Exception {
 
-				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, MapUtils.isNotEmpty(fileMap));
+				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, MapUtils.isNotEmpty(attachmentMap));
 				message.setTo(messageDetails.getTo());
 				message.setFrom(messageDetails.getFrom());
 				message.setCc(messageDetails.getCc());
@@ -55,9 +52,9 @@ public class EmailSender{
 				message.setSubject(messageDetails.getSubject());
 				message.setText(messageDetails.getText(), true);
 
-				if (MapUtils.isNotEmpty(fileMap)){
-					for (String filename: fileMap.keySet()){
-						message.addAttachment(filename, fileMap.get(filename));
+				if (MapUtils.isNotEmpty(attachmentMap)){
+					for (String filename: attachmentMap.keySet()){
+						message.addAttachment(filename, attachmentMap.get(filename));
 					}
 				}
 			}
@@ -66,12 +63,12 @@ public class EmailSender{
 		return preparator;
 	}
 	
-	private MimeMessagePreparator getMimeMessagePreparatorInputStream(final SimpleMailMessage messageDetails, final Map<String, File> fileMap,final ByteArrayInputStream bais,final String contentType){
+	private MimeMessagePreparator getMimeMessagePreparatorInputStream(final SimpleMailMessage messageDetails, final Map<String, InputStreamSource> attachmentMap,final ByteArrayInputStream bais,final String contentType){
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 
 			public void prepare(MimeMessage mimeMessage) throws Exception {
 
-				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, MapUtils.isNotEmpty(fileMap));
+				MimeMessageHelper message = new MimeMessageHelper(mimeMessage, MapUtils.isNotEmpty(attachmentMap));
 				message.setTo(messageDetails.getTo());
 				message.setFrom(messageDetails.getFrom());
 				message.setCc(messageDetails.getCc());
@@ -79,9 +76,9 @@ public class EmailSender{
 				message.setSubject(messageDetails.getSubject());
 				message.setText(messageDetails.getText(), true);
 
-				if (MapUtils.isNotEmpty(fileMap)){
-					for (String filename: fileMap.keySet()){
-						message.addAttachment(filename, fileMap.get(filename));
+				if (MapUtils.isNotEmpty(attachmentMap)){
+					for (String filename: attachmentMap.keySet()){
+						message.addAttachment(filename, attachmentMap.get(filename));
 					}
 				}
 				MimeMessage mes = message.getMimeMessage();
@@ -115,7 +112,7 @@ public class EmailSender{
 	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
 			final Map<Object, Object> hTemplateVariables, 
-			Map<String, File> fileMap,final ByteArrayInputStream bais,final String contentType) {
+			Map<String, InputStreamSource> attachmentMap,final ByteArrayInputStream bais,final String contentType) {
 
 		boolean sent = false;
 		
@@ -123,9 +120,9 @@ public class EmailSender{
 
 		MimeMessagePreparator preparator = null;
 		if(StringUtils.isBlank(contentType))
-			preparator = getMimeMessagePreparator(messageDetails, fileMap);
+			preparator = getMimeMessagePreparator(messageDetails, attachmentMap);
 		else
-			preparator = getMimeMessagePreparatorInputStream(messageDetails, fileMap,bais,contentType);
+			preparator = getMimeMessagePreparatorInputStream(messageDetails, attachmentMap,bais,contentType);
 		
 		try {
 			mailSender.send(preparator);
@@ -142,8 +139,8 @@ public class EmailSender{
 	public boolean send(final SimpleMailMessage messageDetails,
 			final String templateLocation,
 			final Map<Object, Object> hTemplateVariables, 
-			Map<String, File> fileMap){
-		return send(messageDetails, templateLocation, hTemplateVariables, fileMap,null,null);
+			Map<String, InputStreamSource> attachmentMap){
+		return send(messageDetails, templateLocation, hTemplateVariables, attachmentMap,null,null);
 	}
 	
 	public boolean send(final SimpleMailMessage messageDetails,

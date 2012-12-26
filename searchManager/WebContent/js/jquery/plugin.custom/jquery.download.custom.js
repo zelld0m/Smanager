@@ -13,7 +13,7 @@
 		base.$el.data("download", base);
 
 		base.init = function(){
-			base.options = $.extend({},$.download.defaultOptions, options);
+			base.options = $.extend(true, {},$.download.defaultOptions, options);
 
 			var fileFormat = base.options.fileFormat;
 			
