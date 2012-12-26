@@ -7,7 +7,7 @@
 
 			sendFileAsEmail: function(customFilename, recipients){
 				for (var i = 0; i < recipients.length; i++) {
-					if (!validateEmail(recipients[i],recipients[i],1)) {
+					if (!validateEmail('Recipient',recipients[i],1)) {
 						return;
 					}
 				}

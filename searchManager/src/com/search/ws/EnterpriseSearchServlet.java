@@ -538,8 +538,8 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			
 			// do not elevate/demote if sort is by price or manufacturer
 			String sort = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT);
-			boolean bestMatchFlag = StringUtils.isEmpty(sort) || StringUtils.containsIgnoreCase(sort, "price") ||
-							StringUtils.containsIgnoreCase(sort, "manufacturer") ;
+			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !StringUtils.containsIgnoreCase(sort, "price") ||
+							!StringUtils.containsIgnoreCase(sort, "manufacturer");
 
 			Map<String, String> elevateOverrideMap = new HashMap<String,String>();
 			Map<String, String> excludeOverrideMap = new HashMap<String,String>();

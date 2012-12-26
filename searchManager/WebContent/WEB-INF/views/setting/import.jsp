@@ -51,6 +51,10 @@
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
+			<div class="filter padT5 fsize12 marT8">
+				<div class="floatR padT3" id="ruleCount"></div>
+			</div>
+			<div class="clearB"></div>
 			<div class="">
 				<table class="tblItems w100p marT5">
 					<tbody>
