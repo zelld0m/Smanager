@@ -7,8 +7,11 @@
 			reportType: {basic: 1, withStats: 2, custom: 3},
 
 			initTabs: function() {
-				var self = this;
 				$("#tabs").tabs();
+			},
+
+			initCustomTab: function() {
+				var self = this;
 
 				// initialize date pickers
 				$("#fromDate").datepicker({
@@ -22,12 +25,11 @@
 					defaultDate : "0",
 					dateFormat : 'M d, yy'
 				}).datepicker("setDate", "0");
-				
+
 				$("#updateDateBtn").click(function(){
 					self.customStartIndex = 0;
 					self.getCustomRangeList();
 				});
-
 
 				$("a#customDownloadBtn").download({
 					headerText:"Download Top Keyword",
@@ -51,6 +53,7 @@
 
 			downloadCustomRangeAsCSV: function(customFilename) {
 				var self = this;
+
 				TopKeywordServiceJS.downloadCustomRangeAsCSV(self.fromDate, self.toDate, customFilename, {
 					callback: function(data){
 						dwr.engine.openInDownload(data);
@@ -60,6 +63,7 @@
 
 			sendCustomRangeAsEmail: function(customFilename, recipients) {
 				var self = this;
+
 				for (var i = 0; i < recipients.length; i++) {
 					if (!validateEmail(recipients[i],recipients[i],1)) {
 						return;
@@ -69,7 +73,7 @@
 				TopKeywordServiceJS.sendCustomRangeAsEmail(self.fromDate, self.toDate, customFilename, recipients, {
 					callback: function(data){
 						if (data == true) {
-							jAlert("Email sent.","Top Keyword");
+							jAlert("Email request to be processed. This requires 2-4 minutes to finish.","Top Keyword");
 						}
 						else {
 							jAlert("Unable to send email.","Top Keyword");
@@ -165,7 +169,7 @@
 				$divList.find("div.items").removeClass("alt");
 				$divList.find("div.items:even").addClass("alt");
 			},
-			
+
 			resetHeader: function() {
 				var $divHeader1 = $("div#itemHeader1");
 				var $divHeader2 = $("div#itemHeader2");
@@ -220,7 +224,7 @@
 					}
 				});
 			},
-			
+
 			getCustomRangeList: function() {
 				var self = this;
 				var from = $("#fromDate").datepicker("getDate");
@@ -317,11 +321,12 @@
 					}
 				});
 			},
-			
+
 			init: function(){
 				var self = this;
 				self.initTabs();
 				self.getFileList();
+				self.initCustomTab();
 			}		
 	};
 
