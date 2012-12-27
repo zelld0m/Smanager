@@ -365,8 +365,8 @@
 									<td class="iepadBT0">
 										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
 											<option value="all"></option>
-											<option value="license">Show License Products Only</option>
-											<option value="nonlicense">Show Non-License Products Only</option>
+											<option value="license">License Products Only</option>
+											<option value="nonlicense">Non-License Products Only</option>
 										</select>
 									</td>
 								</tr>
@@ -375,8 +375,8 @@
 									<td class="iepadBT0">
 										<select name="select" id="imageExistsList" class="selectCombo w235" title="Select Product Image" >
 											<option value="all"></option>
-											<option value="withImage">Show Products With Image Only</option>
-											<option value="noImage">Show Products Without Image Only</option>
+											<option value="withImage">Products With Image Only</option>
+											<option value="noImage">Products Without Image Only</option>
 										</select>
 									</td>
 								</tr>
