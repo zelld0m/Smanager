@@ -97,13 +97,13 @@
 								});
 							}
 						});
-						
+
 						$("#downloadVersionIcon").download({
 							headerText:"Download " + base.options.moduleName,
 							moduleName: base.options.moduleName,
 							ruleType: base.options.ruleType,  
 							rule: base.options.rule,
-//							locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 							requestCallback:function(e){
 								var params = new Array();
 								var url = document.location.pathname + "/version/xls";
@@ -171,7 +171,7 @@
 //				template += '				</label>';
 				
 				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-				template += '					<span><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download Rule Versions" title="Download Rule Versions"></span>';			        		 
+				template += '					<span title="Download Rule Versions"><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download"></span>';			        		 
 				template += '				</label>';
 
 				if(base.options.authorizeRuleBackup){
