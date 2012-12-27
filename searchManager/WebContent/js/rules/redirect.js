@@ -949,6 +949,9 @@
 
 					$facet.find("input#licenseList").val(condition.facets["License"]);
 					$facet.find("select#licenseList").prop("selectedText", condition.facets["License"]);
+					
+					$facet.find("input#imageExistsList").val(condition.facets["ImageExists"]);
+					$facet.find("select#imageExistsList").prop("selectedText", condition.facets["ImageExists"]);
 
 					$facet.find("input#nameContains").val(condition.facets["Name"]);
 					$facet.find("input#descriptionContains").val(condition.facets["Description"]);
@@ -1628,6 +1631,7 @@
 					var license = $.trim(ui.find("input#licenseList").val());
 					var nameContains = $.trim(ui.find("input#nameContains").val());
 					var descriptionContains = $.trim(ui.find("input#descriptionContains").val());
+					var imageExists = $.trim(ui.find("input#imageExistsList").val());
 
 					switch(platform.toLowerCase()){
 					case "universal": condMap["Platform"] = ["Universal"]; break;
@@ -1650,6 +1654,11 @@
 					switch(license.toLowerCase()){
 					case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
 					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+					}
+					
+					switch($.trim(imageExists.toLowerCase())){
+					case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
+					case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
 					}
 
 					if($.isNotBlank(nameContains))

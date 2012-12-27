@@ -398,7 +398,7 @@
 				RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 					callback:function(data){
 						var list = data;
-						totalSize = data.length;
+						var totalSize = (data) ? data.length : 0;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
 
@@ -534,6 +534,8 @@
 								$tr.appendTo($table);
 							}
 
+							$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+							
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 

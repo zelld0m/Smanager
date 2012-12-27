@@ -215,11 +215,11 @@
 			RuleTransferServiceJS.getPublishedRules(self.entityName, {
 				callback:function(data){
 					var list = data.list;
-
+					var totalSize = (data) ? data.totalSize : 0;
+					
 					$selectedTab.html($("div#tabContentTemplate").html());
 
-					if (data.totalSize>0){
-						var totalSize = data.totalSize;
+					if (totalSize>0){
 						// Populate table row
 						for(var i=0; i < totalSize; i++){
 							var rule = list[i];
@@ -292,6 +292,8 @@
 							$tr.appendTo($table);
 						}
 
+						$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+						
 						// Alternate row style
 						$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 

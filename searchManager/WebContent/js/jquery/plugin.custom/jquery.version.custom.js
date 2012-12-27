@@ -133,7 +133,7 @@
 							});
 						}
 					},{item: item}).show();
-					
+
 					$li.find("#verDate").text(item["createdDate"].toUTCString());
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
@@ -293,6 +293,54 @@
 			}
 
 		};
+		
+		base.setProduct = function(li, item){
+			var $pLi = li;
+			var product = item;
+			
+			if(product["memberType"]==="FACET"){
+				var imagePath ="";
+				switch(base.getItemType(product)){
+				case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+				case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+				case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+				};
+
+				if($.isNotBlank(imagePath)){
+					setTimeout(function(){
+					$pLi.find("#prodImage").attr("src", imagePath).off().on({
+						error:function(){ 
+							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+						}
+					});
+					},10);
+				}
+
+				$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
+			}else if(product["memberType"]==="PART_NUMBER"){
+				if($.isNotBlank(product["dpNo"])){
+					if($.isNotBlank(product["imagePath"])){
+						setTimeout(function(){
+						$pLi.find("#prodImage").attr("src", product["imagePath"]).off().on({
+							error:function(){ 
+								$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+							}
+						});
+						},10);
+					}
+					$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
+					$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
+					$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
+				}else{
+					$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg').off().on({
+						error:function(){ 
+							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image.jpg"); 
+						}
+					});
+					$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
+				}
+			}
+		};
 
 		base.setProductCompare = function(li, rowlabel, item){
 			var $li = li;
@@ -311,31 +359,7 @@
 					var product = products[pXml];
 					$pLi = $pattern.clone();
 					$pLi.attr("id", product["memberId"]);
-
-					if(product["memberType"]==="FACET"){
-						var imagePath ="";
-						switch(base.getItemType(product)){
-						case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
-						case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
-						case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
-						};
-
-						if($.isNotBlank(imagePath))
-							$pLi.find("#prodImage").attr("src", imagePath);
-
-						$pLi.find("#prodInfo").text(product["condition"]["readableString"]);
-					}else if(product["memberType"]==="PART_NUMBER"){
-						if($.isNotBlank(product["dpNo"])){
-							$pLi.find("#prodImage").attr("src", product["imagePath"]);
-							$pLi.find("#prodInfo > #prodSKU").text(product["dpNo"]);
-							$pLi.find("#prodInfo > #prodBrand").text(product["manufacturer"]);
-							$pLi.find("#prodInfo > #prodMfrNo").text(product["mfrPN"]);							
-						}else{
-							$pLi.find("#prodImage").attr("src", GLOBAL_contextPath + '/images/padlock_img.jpg');
-							$pLi.find("#prodInfo").text("Product details not available. Product id is " + product["edp"]);
-						}
-					}
-
+					base.setProduct($pLi, product);
 					$pLi.show();
 					$ul.append($pLi);
 				}
@@ -429,7 +453,7 @@
 				}
 			},{item: $item});
 		};
-		
+
 		base.restoreVersion = function(item){
 			RuleVersionServiceJS.restoreRuleVersion(base.options.ruleType, base.options.rule["ruleId"], item["version"], {
 				callback:function(data){
@@ -449,6 +473,8 @@
 			var $table = $content.find("table#versionList");
 			base.ruleMap = {};
 
+			$content.find("#preloader").show();
+			$content.find("#compareSection").hide();
 			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){
 					if(data!=null){
@@ -456,6 +482,8 @@
 					}
 				},
 				postHook: function(){
+					$content.find("#preloader").hide();
+					$content.find("#compareSection").show();
 					RuleVersionServiceJS.getRuleVersions(base.options.ruleType,base.options.rule["ruleId"], {
 						callback: function(data){
 							$table.find("tr.itemRow:not(#itemPattern)").remove();
@@ -508,7 +536,8 @@
 			var template  = '';
 
 			template += '<div style="width:845px">';
-			template += '<div id="versionWrapper" style="floatL w400">';
+			template += '<div id="versionWrapper" style="floatL w400">';		
+
 			template += '	<div id="version" class="floatL w400">';
 			template += '		<div class="w400 mar0 pad0">';
 			template += '			<table class="tblItems w100p marT5">';
@@ -557,27 +586,39 @@
 			template += '				</tbody>';
 			template += '			</table>';
 			template += '		</div>';
-			template += '	</div>'; //end version
-
+			
 			template += '	<div id="addVersion">';
-			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border pad10 w380 marB20" style="background: #f3f3f3;">';
-			template += '			<h3 style="border:none;">Create New Rule Version</h3>';
-			template += '			<div class="fgray padL10 padR10 padB15 fsize11">';
-			template += '			<p align="justify">';
-			template += '				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum';
-			template += '			</p>';
-			template += '		</div>';
+			template += '		<div id="actionBtn" class="floatL marT10 fsize12 border marB20" style="background: #f3f3f3; width:400px;" >';
+			template += '			<table class="tblItems" style="width:100%;">';
+			template += '				<tbody>';
+			template += '					<tr>';
+			template += '						<th colspan="4" style="font-weight:bold;font-size:13px;">Create New Rule Version</th>';
+			template += '					</tr>';			
+			template += '				</tbody>';
+			template += '			</table>';
 
-			template += '		<div>';
-			template += '			<label class="floatL padL13 w100 marT5"><span class="fred">*</span>Name:</label>';
-			template += '			<label class="floatL w260 marT5"><input type="text" id="name" class="w260"></label>';
-			template += '			<div class="clearB"></div>';
-			template += '			<label class="floatL padL13 marT5 w100"><span class="fred">*</span>Notes:</label>';
-			template += '			<label class="floatL w260 marT5"><textarea id="notes" class="w260" style="height:32px"></textarea></label>';
-			template += '		</div>';
-
-			template += '		<div class="clearB"></div>';
-			template += '		<div align="right" class="marT10">';
+			template += '			<table style="width:100%;border-top:1px solid #ccc;">';
+			template += '				<tbody>';
+			template += '					<tr>';
+			template += '					</tr>';			
+			template += '					<tr>';
+			template += '						<td colspan="4">&nbsp;</td>';		
+			template += '					</tr>';			
+			template += '					<tr>';
+			template += '						<td>&nbsp;</td>';		
+			template += '						<td><span class="fred">*</span> Name:</td>';			
+			template += '						<td>&nbsp;</td>';	
+			template += '						<td><input type="text" id="name" class="w260" style="height:20px;"></td>';
+			template += '					</tr>';		
+			template += '					<tr>';
+			template += '						<td>&nbsp;</td>';			
+			template += '						<td><span class="fred">*</span> Notes:</td>';
+			template += '						<td>&nbsp;</td>';	
+			template += '						<td><textarea id="notes" class="w260" style="height:50px"></textarea></td>';
+			template += '					</tr>';
+			template += '				<tbody>';
+			template += '			</table>';
+			template += '		<div align="right" style="margin:5px;">';
 			template += '			<a id="saveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 			template += '				<div class="buttons fontBold">Create Version</div>';
 			template += '			</a>';
@@ -589,27 +630,30 @@
 			template += '	</div>'; // end addVersion
 			template += '	</div>';	// end w400		
 			template += '</div>'; // end w700
-
+			template += '	</div>'; //end version
 			return template;
 		};
 
 		base.getItemListTemplate =function(){
 			var template  = '';
 
-			template += '	<div class="version w425 marT5 floatR border">';
-
+			template += '	<div class="version w425 floatR border">';
+			template += '	<div id="preloader"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif"></div>';
+			template += '	<div id="compareSection" style="display:none">';
+			template += '	<div style="width:100%;height:28px;padding-top:5px;background:#3f63a1;border-bottom:2px solid">';
 			template += '	<div id="vHeaderList">';
 			template += '		<div class="floatL" style="padding:5px; width:110px;"> &nbsp; </div>';
 			template += '		<div id="vPattern" class="vHeader" style="display:none">';
-			template += '			<div id="ver" class="floatL titleVersion" style="padding:5px; width:129px;"></div>';
+			template += '			<div id="ver" class="floatL" style="background:#3f63a1;font:Arial, Helvetica, sans-serif;color:#fff; font-size:13px;padding:5px; width:129px; margin-left:10px"></div>';
 			template += '		</div>';
+			template += '	</div>';
 			template += '	</div>';
 
 			template += '	<div class="clearB"></div>';
-			template += '	<div style="overflow-x:hidden; overflow-y:auto; height:343px">';
+			template += '	<div style="overflow-x:hidden;overflow-y:auto; height:343px">';			
 			template += '		<div style="float:left; width:120px">';// label
-			template += '			<ul id="rowLabel" class="w100p" style="margin-top:23px">';
-			template += '				<li></li>';
+			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:23px;background:#cbd4e6;">';
+			template += '				<li style="background:#fff;"></li>';
 			template += '				<li>Created By</li>';
 			template += '				<li style="height:24px">Date</li>';
 			template += '				<li>Name</li>';
@@ -628,16 +672,16 @@
 
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
 			template += '			<ul id="versionList">';
-			template += '				<li id="itemPattern" class="item" style="display:none">';
-			template += '					<ul id="ruleDetails">';
-			template += '						<li id="restoreLink" style="display:none"><label class="restoreIcon topn2"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
+			template += '				<li id="itemPattern" class="item" style="display:none;border:0">';
+			template += '					<ul id="ruleDetails" style="border:0">';
+			template += '						<li id="restoreLink" style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy">Not Available</li>'; 
 			template += '						<li id="verDate">Not Available</li>';
 			template += '						<li id="verName">Not Available</li>'; 
 			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 
 			template += '						<li id="ruleName"></li>';
-			template += '						<li id="products" style="display:none">';
+			template += '						<li id="products" style="display:none;border:0;background:#f1f4fb;">';
 			template += '							<ul id="prodList">';
 			template += '								<li id="prodPattern" class="prod" style="display:none">';
 			template += '									<img id="prodImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg"/>';
@@ -649,29 +693,30 @@
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
-			template += '						<li class="groups" style="display:none">';
+			template += '						<li class="groups" style="display:none;background:#ecf0f8;border:0">';
 			template += '							<ul id="groupList">';
-			template += '								<li id="groupPattern" class="group" style="display:none">';
-			template += '									<p id="groupName"></p>';
-			template += '									<p id="groupSort"></p>';
+			template += '								<li id="groupPattern" class="group" style="display:none;border:0">';
+			template += '									<p id="groupName" style="background:#f1f4fb;font-weight:bold; border-bottom:1px solid #ccc;" ></p>';
 			template += '									<ul id="groupItemList">';
-			template += '										<li id="groupItemPattern" class="groupItem" style="display:none"></li>';
-			template += '									</ul>';
+			template += '										<li id="groupItemPattern" class="groupItem" style="display:none;border:0;"></li><li style="border:0;"></li>';
+			template += '									</ul>';			
+			template += '									<p id="groupSort" style="border-bottom:1px solid #ccc;font-style:italic;"></p>';
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
 			template += '						<li id="keywords" style="display:none">';
 			template += '							<ul id="keywordList">';
 			template += '								<li id="keywordPattern" class="keyword" style="display:none">';
-			template += '									<p id="keyword"></p>';
+			template += '									<p id="keyword" style="font-weight:bold;"></p>';
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
-			template += '						<li id="parameters" style="display:none">';
+			template += '						<li id="parameters" style="display:none;border:0;background:#f1f4fb;">';
 			template += '							<ul id="parameterList">';
-			template += '								<li id="parameterPattern" class="parameter" style="display:none">';
-			template += '									<p id="factor"></p>';
-			template += '									<p id="parameter"></p>';
+			template += '								<li id="parameterPattern" class="parameter" style="display:none;border:0">';
+			template += '									<p id="factor" style="border-bottom:1px solid #ccc;font-weight:bold;"></p>';
+			template += '									<p id="parameter" style="border:0;"></p>';
+			template += '									<p style="border-top:1px solid #ccc;"></p>';			
 			template += '								</li>';
 			template += '							</ul>';
 			template += '						</li>';
@@ -689,6 +734,7 @@
 			template += '				</li>';
 			template += '			</ul>';
 			template += '		</div>';// end content
+			template += '	</div>';
 			template += '	</div>';
 			template += '	</div>';
 

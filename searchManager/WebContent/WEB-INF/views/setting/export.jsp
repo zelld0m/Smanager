@@ -20,7 +20,7 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 
 	<div class="floatL w730 titlePlacer breakWord">
-	<div class="floatR padT7">
+	  <div class="floatR padT7">
 	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-export: </div>
 	  	<div class="floatR"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
 	  	<div class="clearB"></div>
@@ -60,6 +60,10 @@
 		</div><!--  end tabs -->
 		
 		<div id="tabContentTemplate" style="display: none">
+			<div class="filter padT5 fsize12 marT8">
+				<div class="floatR padT3" id="ruleCount"></div>
+			</div>
+			<div class="clearB"></div>
 			<div class="">
 				<table class="tblItems w100p marT5">
 					<tbody>

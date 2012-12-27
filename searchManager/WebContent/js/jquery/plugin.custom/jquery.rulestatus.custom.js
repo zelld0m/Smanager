@@ -98,36 +98,32 @@
 							}
 						});
 						
-						base.$el.find("#downloadVersionIcon").on({
-							click: function(e){
-								$("#downloadVersionIcon").download({
-									headerText:"Download " + base.options.moduleName,
-									moduleName: base.options.moduleName,
-									ruleType: base.options.ruleType,  
-									rule: base.options.rule,
-//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
-									requestCallback:function(e){
-										var params = new Array();
-										var url = document.location.pathname + "/version/xls";
-										var urlParams = "";
-										var count = 0;
+						$("#downloadVersionIcon").download({
+							headerText:"Download " + base.options.moduleName,
+							moduleName: base.options.moduleName,
+							ruleType: base.options.ruleType,  
+							rule: base.options.rule,
+//							locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+							requestCallback:function(e){
+								var params = new Array();
+								var url = document.location.pathname + "/version/xls";
+								var urlParams = "";
+								var count = 0;
 
-										params["filename"] = e.data.filename;
-										params["type"] = e.data.type;
-										params["keyword"] = base.options.rule["ruleName"];
-										params["id"] = base.options.rule["ruleId"];
-										//params["filter"] = base.getRuleItemFilter();
-										params["clientTimezone"] = +new Date();
+								params["filename"] = e.data.filename;
+								params["type"] = e.data.type;
+								params["keyword"] = base.options.rule["ruleName"];
+								params["id"] = base.options.rule["ruleId"];
+								//params["filter"] = base.getRuleItemFilter();
+								params["clientTimezone"] = +new Date();
 
-										for(var key in params){
-											if (count>0) urlParams +='&';
-											urlParams += (key + '=' + params[key]);
-											count++;
-										};
+								for(var key in params){
+									if (count>0) urlParams +='&';
+									urlParams += (key + '=' + params[key]);
+									count++;
+								};
 
-										document.location.href = url + '?' + urlParams;
-									}
-								});
+								document.location.href = url + '?' + urlParams;
 							}
 						});
 					}
@@ -180,7 +176,7 @@
 
 				if(base.options.authorizeRuleBackup){
 					template += '				<label class="floatL marTn7">';
-					template += '					<a id="backupBtn" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">';
+					template += '					<a id="backupBtn" title="Backup Now" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">';
 					template += '						<div class="btnGraph btnBackUp"></div>';
 					template += '					</a>'; 
 					template += '				</label>';
@@ -192,7 +188,7 @@
 
 			template += '			<div id="commentHolder" style="display:none">';
 			template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-			template += '					<span id="commentIcon"><img src="' + GLOBAL_contextPath + '/images/icon_comment.png" class="pointer"></span>';  
+			template += '					<span id="commentIcon" title="Rule Comment"><img src="' + GLOBAL_contextPath + '/images/icon_comment.png" class="pointer"></span>';  
 			template += '				</label>';
 			template += '			</div>';
 

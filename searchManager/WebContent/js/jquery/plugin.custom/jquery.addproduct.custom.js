@@ -309,6 +309,16 @@
 			template  += '						</select>';
 			template  += '					</td>';
 			template  += '				</tr>';
+			template  += '				<tr>';
+			template  += '					<td class="w175">Product Image :</td>';
+			template  += '					<td class="iepadBT0 padT1">';
+			template  += '						<select name="select" id="imageExistsList" class="selectCombo w229" title="Select Product Image" >';
+			template  += '							<option value="all"></option>';
+			template  += '							<option value="withImage">Show Products With Image Only</option>';
+			template  += '							<option value="noImage">Show Products Without Image Only</option>';
+			template  += '						</select>';
+			template  += '					</td>';
+			template  += '				</tr>';
 			template  += '			</table>';
 			template  += '			<div class="clearB"></div>';	
 			template  += '		</div>';
@@ -438,6 +448,7 @@
 				var license = $facetTab.find("select#licenseList").text();
 				var nameContains = $.trim($facetTab.find("input#nameContains").val());
 				var descriptionContains = $.trim($facetTab.find("input#descriptionContains").val());
+				var imageExists = $facetTab.find("input#imageExistsList").val();
 
 				switch($.trim(platform.toLowerCase())){
 				case "universal": condMap["Platform"] = ["Universal"]; break;
@@ -460,6 +471,11 @@
 				switch($.trim(license.toLowerCase())){
 				case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
 				case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+				}
+				
+				switch($.trim(imageExists.toLowerCase())){
+				case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
+				case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
 				}
 
 				if($.isNotBlank(nameContains))
@@ -1333,6 +1349,9 @@
 
 			$facet.find("input#licenseList").val($condition.facets["License"]);
 			$facet.find("select#licenseList").prop("selectedText", $condition.facets["License"]);
+			
+			$facet.find("input#imageExistsList").val($condition.facets["ImageExists"]);
+			$facet.find("select#imageExistsList").prop("selectedText", $condition.facets["ImageExists"]);
 
 			$facet.find("input#nameContains").val($condition.facets["Name"]);
 			$facet.find("input#descriptionContains").val($condition.facets["Description"]);

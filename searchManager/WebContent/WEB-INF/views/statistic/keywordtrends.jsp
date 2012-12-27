@@ -1,3 +1,4 @@
+<%@ page import="java.util.Calendar" %>
 <%@ include file="/WEB-INF/includes/includes.jsp" %> 
 <%@ include file="/WEB-INF/includes/header.jsp" %>
 <c:set var="topmenu" value="statistic"/>
@@ -62,29 +63,102 @@
 	
 	<div class="clearB"></div>
 	<div id="tabs">
-	<ul>
-	    <li><a href="#tabs-1">Daily</a></li>
-	    <li><a href="#tabs-2">Weekly</a></li>
-	    <li><a href="#tabs-3">Monthly</a></li>
-	</ul>
-	<div id="tabs-1" class="filter padT5 fsize12 marT1">
-		<div class="floatL w180 padTB5 padR5 marL20"><span class="fbold">From:</span> <input type="text" id="fromDate" class="dateLabel" readonly="readonly"/></div>
-		<div class="floatL w180 padTB5 padR5"><span class="fbold">To:</span> <input type="text" id="toDate" class="dateLabel" readonly="readonly"/></div>		
-		<div class="floatL marT4"><a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateDateBtn"><div class="buttons fontBold">Update Date Range</div></a></div>
-		<div class="clearB"></div>
-		<!-- <button id="updateDateBtn">Update Date Range</button>  -->
-
-		<div class="clearB"></div>
-		<div id="chart2" style="font-size: 12px;"></div>
-	</div>
-	<div id="tabs-2" class="filter padT5 fsize12 marT1">
-	    <p>Weekly tab</p>
-	    <div class="clearB"></div>
-	</div>
-	<div id="tabs-3" class="filter padT5 fsize12 marT1">
-	    <p>Monthly tab</p>
-	    <div class="clearB"></div>
-	</div>
+		<ul>
+		    <li><a id="daily-link" href="#tabs-1">Daily</a></li>
+		    <li><a id="weekly-link" href="#tabs-2">Weekly</a></li>
+		    <li><a id="monthly-link" href="#tabs-3">Monthly</a></li>
+		</ul>
+		<div id="tabs-1" class="filter padT5 fsize12 marT1">
+			<div class="floatL w180 padTB5 padR5 marL20">
+			    <span class="fbold">From:</span>
+			    <input type="text" id="fromDate" class="dateLabel" readonly="readonly"/>
+			</div>
+			<div class="floatL w180 padTB5 padR5">
+			    <span class="fbold">To:</span>
+			    <input type="text" id="toDate" class="dateLabel" readonly="readonly"/>
+			</div>		
+			<div class="floatL marT4">
+			    <a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateDateBtn">
+			        <div class="buttons fontBold">Update Chart</div>
+			    </a>
+			</div>
+			<div class="clearB"></div>
+			<hr />
+			<div id="daily-chart" class="chart" style="font-size: 12px;"></div>
+		</div>
+		<div id="tabs-2" class="filter padT5 fsize12 marT1">
+			<div class="floatL w180 padTB5 padR5 marL20">
+			    <span class="fbold">From:</span>
+			    <input type="text" id="fromWeek" class="dateLabel" readonly="readonly"/>
+			</div>
+			<div class="floatL w180 padTB5 padR5">
+			    <span class="fbold">To:</span>
+			    <input type="text" id="toWeek" class="dateLabel" readonly="readonly"/>
+			</div>		
+			<div class="floatL marT4">
+			    <a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateWeeklyBtn">
+			        <div class="buttons fontBold">Update Chart</div>
+			    </a>
+			</div>
+			<div class="clearB"></div>
+			<hr />
+			<div id="weekly-chart" class="chart" style="font-size: 12px;"></div>
+		</div>
+		<div id="tabs-3" class="filter padT5 fsize12 marT1">
+		<% int year = Calendar.getInstance().get(Calendar.YEAR); %>
+			<div class="floatL padTB5 padR5 marL20">
+			    <span class="fbold">From:</span>
+			    <select id="fromYear">
+			        <% for(int i=year; i >= 2012; i--) {%>
+			        <option value='<%=i %>'><%=i %></option>
+			        <% } %>
+			    </select>
+			    <select id="fromMonth">
+			        <option value="01">January</option>
+			        <option value="02">February</option>
+			        <option value="03">March</option>
+			        <option value="04">April</option>
+			        <option value="05">May</option>
+			        <option value="06">June</option>
+			        <option value="07">July</option>
+			        <option value="08">August</option>
+			        <option value="09">September</option>
+			        <option value="10">October</option>
+			        <option value="11">November</option>
+			        <option value="12">December</option>
+			    </select>
+			</div>
+			<div class="floatL padTB5 padR5 marL20">
+			    <span class="fbold">To:</span>
+			    <select id="toYear">
+			        <% for(int i=year; i >= 2012; i--) {%>
+			        <option value='<%=i %>'><%=i %></option>
+			        <% } %>
+			    </select>
+			    <select id="toMonth">
+			        <option value="01">January</option>
+			        <option value="02">February</option>
+			        <option value="03">March</option>
+			        <option value="04">April</option>
+			        <option value="05">May</option>
+			        <option value="06">June</option>
+			        <option value="07">July</option>
+			        <option value="08">August</option>
+			        <option value="09">September</option>
+			        <option value="10">October</option>
+			        <option value="11">November</option>
+			        <option value="12">December</option>
+			    </select>
+			</div>		
+			<div class="floatL marT6 marL20">
+			    <a class="buttons btnGray clearfix" href="javascript:void(0);" id="updateMonthlyBtn">
+			        <div class="buttons fontBold">Update Chart</div>
+			    </a>
+			</div>
+			<div class="clearB"></div>
+			<hr />
+			<div id="monthly-chart" class="chart" style="font-size: 12px;"></div>
+		</div>
 	</div>
 </div> 
 
