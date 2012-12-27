@@ -84,6 +84,7 @@
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 			base.$el.find("#preloader").hide();
+			
 			var $option = $importAsSelect.find('option:eq(0)');
 
 			switch(ruleEntity){
@@ -108,7 +109,7 @@
 				}
 				break;
 			}
-
+			
 			$importAsSelect.combobox({
 				change: function(e, u){
 					base.toggleFields($(this), u, false);
@@ -146,6 +147,8 @@
 			}else{
 				base.showAlert($importAsSelect.find("option:selected").val());
 			};
+			
+			base.options.afterUIRendered();
 		};
 
 		base.toggleFields = function($select, u, selectRule){
@@ -249,7 +252,8 @@
 			newRuleText: "Import As New Rule",
 			targetRuleStatusCallback: function(rule, ruleStatus){},
 			selectedOptionChanged: function(ruleId){},
-			setRuleStatusListCallback: function(base, list){}
+			setRuleStatusListCallback: function(base, list){},
+			afterUIRendered: function(){}
 	};
 
 	$.fn.importas = function(options){

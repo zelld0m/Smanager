@@ -25,11 +25,27 @@
 					if ($.isNotBlank(relevancyId)) {
 						$rankingRuleSelect.find('option[value="' + relevancyId + '"]').prop('selected', true);
 					}
-
-					$rankingRuleSelect.combobox({
-						selected: function(event, ui){
+					
+//					$rankingRuleSelect.msDropdown({
+//						on: {
+//							change: function(data, ui){
+//								console.log(data);
+//								var key = self.manager.store.values('q');
+//								var selectedVal = data.value;
+//								self.manager.store.addByValue('relevancyId', selectedVal==="keyword_default"? "":selectedVal);
+//								if($.isNotBlank(key)) 
+//									self.manager.doRequest();
+//							}
+//						}
+//					});
+					
+					$rankingRuleSelect.searchable({
+						maxListSize: 10, 
+						maxMultiMatch: 10,
+						exactMatch: true,
+						change: function(u, e){
 							var key = self.manager.store.values('q');
-							var selectedVal = $(this).val();
+							var selectedVal = u.value;
 							self.manager.store.addByValue('relevancyId', selectedVal==="keyword_default"? "":selectedVal);
 							if($.isNotBlank(key)) 
 								self.manager.doRequest();
@@ -41,7 +57,7 @@
 
 		beforeRequest: function(){
 			var self = this;
-			$(self.target).find('input[type="text"], input[type="checkbox"]').prop("disabled", true);
+			//$(self.target).find('input[type="text"], input[type="checkbox"]').prop("disabled", true);
 		}
 	});
 
