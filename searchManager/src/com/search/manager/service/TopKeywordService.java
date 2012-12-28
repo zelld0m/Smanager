@@ -1,5 +1,7 @@
 package com.search.manager.service;
 
+import static com.search.manager.utility.DateAndTimeUtils.asUTC;
+
 import java.io.*;
 import java.util.*;
 
@@ -145,7 +147,7 @@ public class TopKeywordService {
 
     @RemoteMethod
     public FileTransfer downloadCustomRangeAsCSV(Date from, Date to, String customFilename) {
-        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(from, to, UtilityService.getStoreName());
+        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreName());
         return downloadCsv(StatisticsUtil.getCustomRangeReportStream(topKeywords, new CsvTransformer<TopKeyword>() {
 
             @Override
@@ -166,13 +168,13 @@ public class TopKeywordService {
     @RemoteMethod
     public boolean sendCustomRangeAsEmail(Date from, Date to, String customFilename, String[] recipients) {
         return commandExecutor.addCommand(new TopKeywordMailCommand(reportNotificationMailService, UtilityService
-                .getStoreName(), from, to, recipients, StringUtils.isBlank(customFilename) ? "customRangeTopKeywords"
+                .getStoreName(), asUTC(from), asUTC(to), recipients, StringUtils.isBlank(customFilename) ? "customRangeTopKeywords"
                 : customFilename + ".csv", new ByteArrayInputStream(getFileHeader("customRangeTopKeywords-splunk")
                 .getBytes()), "text/csv"));
     }
 
     @RemoteMethod
     public List<TopKeyword> getTopKeywords(Date from, Date to) {
-        return StatisticsUtil.getTopKeywordsInRange(from, to, UtilityService.getStoreName());
+        return StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreName());
     }
 }

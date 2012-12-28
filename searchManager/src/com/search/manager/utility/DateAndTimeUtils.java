@@ -3,8 +3,7 @@ package com.search.manager.utility;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -373,7 +372,7 @@ public final class DateAndTimeUtils {
 	}
 
 	public static Date getFirstDayOfMonth(Date date) {
-		return parseDateYYYYMMDD(formatYYYYMMDD(date).substring(0, 6) + "01");
+	    return DateUtils.truncate(date, Calendar.MONTH);
 	}
 
     public static Date getFirstDayOfWeek(Date date) {
@@ -389,6 +388,22 @@ public final class DateAndTimeUtils {
         dow = Calendar.MONDAY - dow;
 
         return DateUtils.addDays(date, dow);
+    }
 
+    public static Date asUTC(Date date) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        Calendar calOrig = Calendar.getInstance();
+
+        cal.setTime(date);
+
+        calOrig.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+        calOrig.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+        calOrig.set(Calendar.DATE, cal.get(Calendar.DATE));
+        calOrig.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY));
+        calOrig.set(Calendar.MINUTE, cal.get(Calendar.MINUTE));
+        calOrig.set(Calendar.SECOND, cal.get(Calendar.SECOND));
+
+        return calOrig.getTime();
+        
     }
 }

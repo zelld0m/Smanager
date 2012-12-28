@@ -191,8 +191,8 @@ public class StatisticsUtil {
     
     public static List<TopKeyword> getTopKeywordsInRange(Date from, Date to, String storeName) {
         Map<String, TopKeyword> stats = new HashMap<String, TopKeyword>();
-        Date limit = DateUtils.truncate(to, Calendar.DATE);
-        Date date = DateUtils.truncate(from, Calendar.DATE);
+        Date limit = to;
+        Date date = from;
 
         while (!date.after(limit)) {
             StatisticsUtil.getAllStats(date, stats, storeName);

@@ -105,9 +105,10 @@ public class KeywordTrendsService {
      *            end of date range
      */
     private void retrieveStats(List<KeywordStats> list, Date fromDate, Date toDate, String collation) {
-        Date date = fromDate;
+        Date date = DateAndTimeUtils.asUTC(fromDate);
+        Date limit = DateAndTimeUtils.asUTC(toDate);
 
-        while (DateAndTimeUtils.compare(date, toDate) <= 0) {
+        while (DateAndTimeUtils.compare(date, limit) <= 0) {
             StatisticsUtil.retrieveStats(list, date, 0, 1, collation, UtilityService.getStoreName());
             date = DateUtils.addDays(date, 1);
         }
