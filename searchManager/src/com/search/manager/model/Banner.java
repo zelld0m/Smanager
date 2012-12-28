@@ -12,6 +12,8 @@ public class Banner extends ModelBean {
 	private String bannerName;
 	private String linkPath;
 	private String imagePath;
+	private String thumbnailPath;
+	private String imageAlt;
 	
 	public Banner() {
 	}
@@ -38,6 +40,30 @@ public class Banner extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
+	public Banner(Store store, String bannerId, String bannerName,
+			String linkPath, String imagePath, String imageAlt) {
+		super();
+		this.store = store;
+		this.bannerId = bannerId;
+		this.bannerName = bannerName;
+		this.linkPath = linkPath;
+		this.imagePath = imagePath;
+		this.imageAlt = imageAlt;
+	}
+	
+	public Banner(Store store, String bannerId, String bannerName,
+			String linkPath, String imagePath, String thumbnailPath,
+			String imageAlt) {
+		super();
+		this.store = store;
+		this.bannerId = bannerId;
+		this.bannerName = bannerName;
+		this.linkPath = linkPath;
+		this.imagePath = imagePath;
+		this.thumbnailPath = thumbnailPath;
+		this.imageAlt = imageAlt;
+	}
+
 	public String getBannerId() {
 		return bannerId;
 	}
@@ -76,6 +102,22 @@ public class Banner extends ModelBean {
 
 	public Store getStore() {
 		return store;
+	}
+
+	public String getImageAlt() {
+		return imageAlt;
+	}
+
+	public void setImageAlt(String imageAlt) {
+		this.imageAlt = imageAlt;
+	}
+
+	public String getThumbnailPath() {
+		return thumbnailPath;
+	}
+
+	public void setThumbnailPath(String thumbnailPath) {
+		this.thumbnailPath = thumbnailPath;
 	}
 	
 }

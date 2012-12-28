@@ -1,12 +1,15 @@
 package com.search.manager.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Campaign extends ModelBean {
 	
 	private static final long serialVersionUID = 1L;
 	private String campaignId;
 	private String campaignName;
+	private List<Banner> bannerList;
+	private List<Keyword> keywordList;
 	private Store store;
 	private Date startDate;
 	private Date endDate;
@@ -42,6 +45,35 @@ public class Campaign extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
+	public Campaign(String campaignId, String campaignName,
+			List<Banner> bannerList, List<Keyword> keywordList, Store store,
+			Date startDate, Date endDate) {
+		super();
+		this.campaignId = campaignId;
+		this.campaignName = campaignName;
+		this.bannerList = bannerList;
+		this.keywordList = keywordList;
+		this.store = store;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	public List<Banner> getBannerList() {
+		return bannerList;
+	}
+
+	public void setBannerList(List<Banner> bannerList) {
+		this.bannerList = bannerList;
+	}
+
+	public List<Keyword> getKeywordList() {
+		return keywordList;
+	}
+
+	public void setKeywordList(List<Keyword> keywordList) {
+		this.keywordList = keywordList;
+	}
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -81,5 +113,4 @@ public class Campaign extends ModelBean {
 	public String getCampaignId() {
 		return campaignId;
 	}
-
 }
