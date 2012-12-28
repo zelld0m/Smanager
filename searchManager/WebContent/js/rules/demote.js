@@ -298,7 +298,7 @@
 					keypress:function(e){
 						if (e.data.locked) return;
 
-						var currentIndex = $.trim(($(this).parent("li").index()+1) + ((self.selectedRuleItemPage-1)*self.ruleItemPageSize));
+						var currentIndex = $.trim(($(this).parents("li.ruleItem").index()) + ((self.selectedRuleItemPage-1)*self.ruleItemPageSize));
 
 						var code = (e.keyCode ? e.keyCode : e.which);
 

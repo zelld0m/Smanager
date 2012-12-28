@@ -1652,13 +1652,13 @@
 					}
 
 					switch(license.toLowerCase()){
-					case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
-					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+					case "license products only": condMap["License"] = ["License Products Only"]; break;
+					case "non-license products only": condMap["License"] = ["Non-License Products Only"]; break;
 					}
 					
 					switch($.trim(imageExists.toLowerCase())){
-					case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
-					case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
+					case "products with image only": condMap["ImageExists"] = ["Products With Image Only"]; break;
+					case "products without image only": condMap["ImageExists"] = ["Products Without Image Only"]; break;
 					}
 
 					if($.isNotBlank(nameContains))
