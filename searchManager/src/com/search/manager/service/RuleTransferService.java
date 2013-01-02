@@ -2,9 +2,12 @@ package com.search.manager.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -352,13 +355,39 @@ public class RuleTransferService {
 			}
 
 		} catch (DaoException e) {
-			logger.error("Failed to retrive mapping of ruleId", e);
+			logger.error("Failed to retrieve mapping of ruleId", e);
 			return null;
 		}
 
 		return null;
 	}
 
+	@RemoteMethod
+	public Map<String, ExportRuleMap> getMapRuleTransferMap(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
+		String storeIdTarget = UtilityService.getStoreName();
+		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
+		Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
+		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
+		try {
+			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
+			if(CollectionUtils.isNotEmpty(rtList)) {
+				for (ExportRuleMap item: rtList) {
+					if (returnAllIdsOrigin || ArrayUtils.contains(ruleIdsOrigin, item.getRuleIdOrigin())) {
+						if (map.containsKey(item.getRuleIdOrigin())) {
+							logger.error("Duplicate rule map detected! Please check store origin: %s; rule id origin: %s; store targer: %s;" + item.getStoreIdOrigin());
+							continue;
+						}
+						map.put(item.getRuleIdOrigin(), item);
+					}
+				}
+			}
+			return map;
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve mapping of ruleId", e);
+		}
+		return null;
+	}
+	
 	public int addRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleEntity ruleEntity){
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, ruleEntity);
 		int result = 0;
