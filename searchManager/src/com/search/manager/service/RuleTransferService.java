@@ -355,7 +355,7 @@ public class RuleTransferService {
 			}
 
 		} catch (DaoException e) {
-			logger.error("Failed to retrive mapping of ruleId", e);
+			logger.error("Failed to retrieve mapping of ruleId", e);
 			return null;
 		}
 
@@ -367,24 +367,23 @@ public class RuleTransferService {
 		String storeIdTarget = UtilityService.getStoreName();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
-		if (ArrayUtils.isNotEmpty(ruleIdsOrigin)) {
-			try {
-				List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
-				if(CollectionUtils.isNotEmpty(rtList)){
-					for (ExportRuleMap item: rtList) {
-						if (ArrayUtils.contains(ruleIdsOrigin, item.getRuleIdOrigin())) {
-							if (map.containsKey(item.getRuleIdOrigin())) {
-								logger.warn("Duplicate rule map detected! Please check store origin: %s; rule id origin: %s; store targer: %s;" + item.getStoreIdOrigin());
-								continue;
-							}
-							map.put(item.getRuleIdOrigin(), item);
+		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
+		try {
+			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
+			if(CollectionUtils.isNotEmpty(rtList)) {
+				for (ExportRuleMap item: rtList) {
+					if (returnAllIdsOrigin || ArrayUtils.contains(ruleIdsOrigin, item.getRuleIdOrigin())) {
+						if (map.containsKey(item.getRuleIdOrigin())) {
+							logger.error("Duplicate rule map detected! Please check store origin: %s; rule id origin: %s; store targer: %s;" + item.getStoreIdOrigin());
+							continue;
 						}
+						map.put(item.getRuleIdOrigin(), item);
 					}
 				}
-				return map;
-			} catch (DaoException e) {
-				logger.error("Failed to retrive mapping of ruleId", e);
 			}
+			return map;
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve mapping of ruleId", e);
 		}
 		return null;
 	}
