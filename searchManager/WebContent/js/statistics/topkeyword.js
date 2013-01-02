@@ -228,9 +228,9 @@
 
 			getCustomRangeList: function() {
 				var self = this;
-				var from = $("#fromDate").datepicker("getDate");
-				var to = $("#toDate").datepicker("getDate");
-				
+				var from = $.asUTC($("#fromDate").datepicker("getDate"));
+				var to = $.asUTC($("#toDate").datepicker("getDate"));
+
 				if (from > to) {
 					jAlert("Invalid date range.");
 				} else {
