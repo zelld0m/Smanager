@@ -14,9 +14,7 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.addproduct.defaultOptions, options);
-
 			base.promptRuleItemDetails(this, base.options.type);
-
 		};
 
 		base.getAddProductItemTemplate = function(){
@@ -46,6 +44,7 @@
 				template  += '		<div class="clearB"></div>';
 				template  += '		<div class="floatL marT5 marL5">';
 			}
+
 			template  += '		<div class="clearB"></div>';
 			template  += '			<label class="w60 floatL padT5">Comment: </label> ';
 			template  += '			<label><textarea id="addItemComment" style="margin-bottom: 7px" class="floatL w230"></textarea></label>';
@@ -195,8 +194,7 @@
 
 			template  += '	<div id="dynamicAttribute" class="w500">';
 			template  += '		<div class="holder fsize12 padT40 marRL20">';
-
-			template  += '				<table class="w460">';
+			template  += '				<table class="dynamicAttribFields w460">';
 			template  += '				<tr>';
 			template  += '					<td class="w175 padB8" valign="bottom">Template Name :</td>';
 			template  += '					<td class="iepadBT0 w278 padT1">';
@@ -270,7 +268,7 @@
 			template  += '					<td class="w175">Platform :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="platformList" class="selectCombo w229" title="Select Platform" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value=""></option>';
 			template  += '							<option value="universal">Universal</option>';
 			template  += '							<option value="pc">PC</option>';
 			template  += '							<option value="linux">Linux</option>';
@@ -282,7 +280,7 @@
 			template  += '					<td class="w175">Condition :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="conditionList" class="selectCombo w229" title="Select Condition" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value=""></option>';
 			template  += '							<option value="refurbished">Refurbished</option>';
 			template  += '							<option value="open">Open Box</option>';
 			template  += '							<option value="clearance">Clearance</option>';
@@ -293,7 +291,7 @@
 			template  += '					<td class="w175">Availability :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="availabilityList" class="selectCombo w229" title="Select Availability" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value=""></option>';
 			template  += '							<option value="instock">In Stock</option>';
 			template  += '							<option value="call">Call</option>';
 			template  += '						</select>';
@@ -303,7 +301,7 @@
 			template  += '					<td class="w175">License :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value=""></option>';
 			template  += '							<option value="license">Show License Products Only</option>';
 			template  += '							<option value="nonlicense">Show Non-License Products Only</option>';
 			template  += '						</select>';
@@ -313,7 +311,7 @@
 			template  += '					<td class="w175">Product Image :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="imageExistsList" class="selectCombo w229" title="Select Product Image" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value=""></option>';
 			template  += '							<option value="withImage">Show Products With Image Only</option>';
 			template  += '							<option value="noImage">Show Products Without Image Only</option>';
 			template  += '						</select>';
@@ -353,7 +351,6 @@
 			template  += '			</table>';
 			template  += '</div>';
 
-
 			if (!base.options.locked){
 				template  += '<div align="right">';
 				template  += '	<a id="addFacetItemToRuleBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
@@ -364,7 +361,6 @@
 				template  += '	</a>';
 				template  += '</div>';
 			}
-
 
 			return template;
 		};
@@ -385,12 +381,12 @@
 			var $imsTab = base.contentHolder.find("div#ims"); 
 
 			if ($imsTab.length){
-				catCode[0] = $.trim($imsTab.find("input#catcode").text().toUpperCase());
-				category[0] = $.trim($imsTab.find("select#categoryList").text());
-				subCategory[0] = $.trim($imsTab.find("select#subCategoryList").text());
-				clazz[0] = $.trim($imsTab.find("select#classList").text());
-				minor[0] = $.trim($imsTab.find("select#minorList").text());
-				manufacturer[0] = $.trim($imsTab.find("select#manufacturerList").text());
+				catCode[0] = $.trim($imsTab.find("input#catcode").val().toUpperCase());
+				category[0] = $.trim($imsTab.find("select#categoryList > option:gt(0):selected").text());
+				subCategory[0] = $.trim($imsTab.find("select#subCategoryList > option:gt(0):selected").text());
+				clazz[0] = $.trim($imsTab.find("select#classList > option:gt(0):selected").text());
+				minor[0] = $.trim($imsTab.find("select#minorList > option:gt(0):selected").text());
+				manufacturer[0] = $.trim($imsTab.find("select#manufacturerList > option:gt(0):selected").text());
 
 				if ($.isNotBlank(catCode[0])) condMap["CatCode"] = catCode;
 				if ($.isNotBlank(category[0])) condMap["Category"] = category; 	
@@ -403,10 +399,10 @@
 			var $cnetTab = base.contentHolder.find("div#cnet"); 
 
 			if ($cnetTab.length){
-				level1Cat[0] = $.trim($cnetTab.find("select#level1CategoryList").text());
-				level2Cat[0] = $.trim($cnetTab.find("select#level2CategoryList").text());
-				level3Cat[0] = $.trim($cnetTab.find("select#level3CategoryList").text());
-				cnetManufacturer[0] = $.trim($cnetTab.find("select#cnetmanufacturerList").val());
+				level1Cat[0] = $.trim($cnetTab.find("select#level1CategoryList > option:gt(0):selected").text());
+				level2Cat[0] = $.trim($cnetTab.find("select#level2CategoryList > option:gt(0):selected").text());
+				level3Cat[0] = $.trim($cnetTab.find("select#level3CategoryList > option:gt(0):selected").text());
+				cnetManufacturer[0] = $.trim($cnetTab.find("select#cnetmanufacturerList > option:gt(0):selected").val());
 
 				if ($.isNotBlank(level1Cat[0])) condMap["Level1Category"] = level1Cat; 	
 				if ($.isNotBlank(level2Cat[0])) condMap["Level2Category"] = level2Cat; 	
@@ -418,7 +414,7 @@
 			var $dynamicAttribute = base.contentHolder.find("div#dynamicAttribute"); 
 
 			if($dynamicAttribute.length){
-				var inTemplateName = $dynamicAttribute.find("select#templateNameList").text();
+				var inTemplateName = $dynamicAttribute.find("select#templateNameList > option:gt(0):selected:eq(0)").text();
 				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)");
 
 				if($.isNotBlank($.trim(inTemplateName))){
@@ -442,40 +438,50 @@
 			var $facetTab = base.contentHolder.find("div#facet"); 
 
 			if($facetTab.length){
-				var platform = $facetTab.find("select#platformList").text();
-				var condition = $facetTab.find("select#conditionList").text();
-				var availability = $facetTab.find("select#availabilityList").text();
-				var license = $facetTab.find("select#licenseList").text();
+				var platform = $facetTab.find("select#platformList  > option:gt(0):selected:eq(0)").text();
+				var condition = $facetTab.find("select#conditionList  > option:gt(0):selected:eq(0)").text();
+				var availability = $facetTab.find("select#availabilityList  > option:gt(0):selected:eq(0)").text();
+				var license = $facetTab.find("select#licenseList  > option:gt(0):selected:eq(0)").text();
 				var nameContains = $.trim($facetTab.find("input#nameContains").val());
 				var descriptionContains = $.trim($facetTab.find("input#descriptionContains").val());
-				var imageExists = $facetTab.find("input#imageExistsList").val();
+				var imageExists = $facetTab.find("select#imageExistsList  > option:gt(0):selected:eq(0)").text();
 
-				switch($.trim(platform.toLowerCase())){
-				case "universal": condMap["Platform"] = ["Universal"]; break;
-				case "pc": condMap["Platform"] = ["PC"]; break;
-				case "linux": condMap["Platform"] = ["Linux"]; break;
-				case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
+				if($.isNotBlank(platform)){
+					switch(platform.toLowerCase()){
+					case "universal": condMap["Platform"] = ["Universal"]; break;
+					case "pc": condMap["Platform"] = ["PC"]; break;
+					case "linux": condMap["Platform"] = ["Linux"]; break;
+					case "macintosh": condMap["Platform"] = ["Macintosh"]; break;
+					}
 				}
 
-				switch($.trim(condition.toLowerCase())){
-				case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
-				case "open box": condMap["Condition"] = ["Open Box"]; break;
-				case "clearance": condMap["Condition"] = ["Clearance"]; break;
+				if($.isNotBlank(condition)){
+					switch(condition.toLowerCase()){
+					case "refurbished": condMap["Condition"] = ["Refurbished"]; break;
+					case "open box": condMap["Condition"] = ["Open Box"]; break;
+					case "clearance": condMap["Condition"] = ["Clearance"]; break;
+					}
 				}
 
-				switch($.trim(availability.toLowerCase())){
-				case "in stock": condMap["Availability"] = ["In Stock"]; break;
-				case "call": condMap["Availability"] = ["Call"]; break;
+				if($.isNotBlank(availability)){
+					switch(availability.toLowerCase()){
+					case "in stock": condMap["Availability"] = ["In Stock"]; break;
+					case "call": condMap["Availability"] = ["Call"]; break;
+					}
 				}
 
-				switch($.trim(license.toLowerCase())){
-				case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
-				case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+				if($.isNotBlank(license)){
+					switch(license.toLowerCase()){
+					case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
+					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+					}
 				}
-				
-				switch($.trim(imageExists.toLowerCase())){
-				case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
-				case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
+
+				if($.isNotBlank(imageExists)){
+					switch(imageExists.toLowerCase()){
+					case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
+					case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
+					}
 				}
 
 				if($.isNotBlank(nameContains))
@@ -494,22 +500,76 @@
 				maxMultiMatch: 10,
 				exactMatch: true,
 				change: function(u, e){
-					var $tab = base.contentHolder.find("div#ims");
-					var selectedCategory = $.trim($tab.find("select#categoryList > option:selected:eq(0)").text());
-					var selectedSubcategory = $.trim($tab.find("select#subCategoryList > option:selected:eq(0)").text());
-					var selectedClass = $.trim($tab.find("select#classList > option:selected:eq(0)").text());
-					
+					var $imsTab = base.contentHolder.find("div#ims");
+					var selectedCategory = $.trim($imsTab.find("select#categoryList > option:gt(0):selected:eq(0)").text());
+					var selectedSubcategory = $.trim($imsTab.find("select#subCategoryList > option:gt(0):selected:eq(0)").text());
+					var selectedClass = $.trim($imsTab.find("select#classList > option:gt(0):selected:eq(0)").text());
+
+					var $cnetTab = base.contentHolder.find("div#cnet");
+					var selectedLevel1Category = $.trim($cnetTab.find("select#level1CategoryList > option:gt(0):selected:eq(0)").text());
+					var selectedLevel2Category = $.trim($cnetTab.find("select#level2CategoryList > option:gt(0):selected:eq(0)").text());
+
+					if($.isBlank(u.value)){
+						switch($(e.currentTarget).prop("id").toLowerCase()){
+						case "categorylist": 
+						case "subcategorylist":
+							$imsTab.find("tr#class").hide();
+						case "classlist": 
+							$imsTab.find("tr#minor").hide();
+						case "minorlist": 
+							break;
+						case "level1categorylist": 
+						case "level2categorylist": 
+							$cnetTab.find("tr#level3Cat").hide();
+						case "level3categorylist": 
+							break;
+						case "templatenamelist": 
+							if (base.contentHolder.find("div#ims").length)
+								base.populateIMSTemplateNames();
+							else if (base.contentHolder.find("div#cnet"))
+								base.populateCNETTemplateNames();
+							break;
+						}
+					}
+
 					switch($(e.currentTarget).prop("id").toLowerCase()){
 					case "categorylist": 
-						base.populateSubcategories(selectedCategory);
+						if($.isNotBlank(selectedCategory)){
+							base.populateSubcategories(selectedCategory);
+						}
 						break;
 					case "subcategorylist": 
-						base.populateClass(selectedCategory, selectedSubcategory);
+						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
+							base.populateClass(selectedCategory, selectedSubcategory);
+						}
 						break;
 					case "classlist": 
-						base.populateMinor(selectedCategory, selectedSubcategory, selectedClass);
+						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)  && $.isNotBlank(selectedClass)){
+							base.populateMinor(selectedCategory, selectedSubcategory, selectedClass);
+						}
 						break;
-					case "minorlist": 
+					case "minorlist":
+						base.populateIMSManufacturers();
+						break;
+					case "level1categorylist": 
+						if($.isNotBlank(selectedLevel1Category))
+							base.populateLevel2Categories(selectedLevel1Category);
+						break;
+					case "level2categorylist": 
+						if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category))
+							base.populateLevel3Categories(selectedLevel1Category, selectedLevel2Category);
+						break;
+					case "level3categorylist": 
+						base.populateCNETManufacturers();
+						break;
+					case "templatenamelist": 
+						if (base.contentHolder.find("div#ims").length)
+							base.populateIMSDynamicAttributes(u.value);
+						else if (base.contentHolder.find("div#cnet").length)
+							base.populateCNETDynamicAttributes(u.value);
+						break;
+					case "dynamicattributelist": 
+						base.addDynamicAttributeButtonListener(u.value);
 						break;
 					}
 				}
@@ -520,18 +580,19 @@
 			var $tab = base.contentHolder.find("div#ims");
 			var $select = $tab.find("select#categoryList");
 			var $table = $tab.find("table.imsFields");
-			
+			var $item = base.options.item;
+
 			CategoryServiceJS.getIMSCategories({
 				callback: function(data){
 					var list = data;
-
+					$select.append($("<option>", {value: ""}).text("-Select Category-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
 				preHook:function(){
 					$tab.find("img#preloaderCategoryList").show();
-					base.resetIMSComboBox("category");
+					base.resetIMSFields("category");
 					$table.find("tr#subcategory,tr#class,tr#minor").hide();
 					$table.find("select.selectCombo").prop("disabled", true);
 				},
@@ -539,30 +600,38 @@
 					$tab.find("img#preloaderCategoryList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					base.populateIMSManufacturers();
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Category"])){
+						$select.val($item.condition.IMSFilters["Category"]);
+						$select.change();
+					}else{
+						base.populateIMSManufacturers();
+					}
 				}
 			});
 		},
-		
+
 		base.populateSubcategories= function(selectedCategory){
 			var $tab = base.contentHolder.find("div#ims");
 			var $select = $tab.find("select#subCategoryList");
 			var $table = $tab.find("table.imsFields");
+			var $item = base.options.item;
 
 			CategoryServiceJS.getIMSSubcategories(selectedCategory, {
 				callback: function(data){
 					var list = data;
-
+					$select.append($("<option>", {value: ""}).text("-Select SubCategory-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 
-					if ($.isNotBlank(list) && list.length>0) $table.find("tr#subcategory").show();
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#subcategory").show();
+					}
 				},
 				preHook:function(){
 					$table.find("tr#subcategory").hide();
 					$tab.find("img#preloaderSubCategoryList").show();
-					base.resetIMSComboBox("subcategory");
+					base.resetIMSFields("subcategory");
 					$table.find("tr#class,tr#minor").hide();
 					$table.find("select.selectCombo").prop("disabled", true);
 				},
@@ -570,7 +639,12 @@
 					$tab.find("img#preloaderSubCategoryList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					base.populateIMSManufacturers();
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["SubCategory"])){
+						$select.val(base.options.item.condition.IMSFilters["SubCategory"]);
+						$select.change();
+					}else{
+						base.populateIMSManufacturers();
+					}
 				}
 			});
 		},
@@ -579,20 +653,24 @@
 			var $tab = base.contentHolder.find("div#ims");
 			var $select = $tab.find("select#classList");
 			var $table = $tab.find("table.imsFields");
-			
+			var $item = base.options.item;
+
 			CategoryServiceJS.getIMSClasses(selectedCategory, selectedSubCategory, {
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select Class-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 
-					if ($.isNotBlank(list) && list.length>0) $table.find("tr#class").show();
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#class").show();
+					}
 				},
 				preHook:function(){
 					$table.find("tr#class").hide();
 					$tab.find("img#preloaderClassList").show();
-					base.resetIMSComboBox("class");
+					base.resetIMSFields("class");
 					$table.find("tr#minor").hide();
 					$table.find("select.selectCombo").prop("disabled", true);
 				},
@@ -600,7 +678,12 @@
 					$tab.find("img#preloaderClassList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					base.populateIMSManufacturers();
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Class"])) {
+						$select.val(base.options.item.condition.IMSFilters["Class"]);
+						$select.change();
+					}else{
+						base.populateIMSManufacturers();
+					}
 				}
 			});
 		},
@@ -609,27 +692,36 @@
 			var $tab = base.contentHolder.find("div#ims");
 			var $select = $tab.find("select#minorList");
 			var $table = $tab.find("table.imsFields");
-			
+			var $item = base.options.item;
+
 			CategoryServiceJS.getIMSMinors(selectedCategory, selectedSubCategory, selectedClass, {
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select SubClass-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 
-					if ($.isNotBlank(list) && list.length>0) $table.find("tr#minor").show();
+					if ($.isNotBlank(list) && list.length>0){
+						$table.find("tr#minor").show();
+					}
 				},
 				preHook:function(){
 					$table.find("tr#minor").hide();
 					$tab.find("img#preloaderMinorList").show();
-					base.resetIMSComboBox("minor");
+					base.resetIMSFields("minor");
 					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderMinorList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					base.populateIMSManufacturers();
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["SubClass"])){
+						$select.val(base.options.item.condition.IMSFilters["SubClass"]);
+						$select.change();
+					}else{
+						base.populateIMSManufacturers();
+					}
 				}
 			});
 		},
@@ -639,7 +731,8 @@
 			var $select = $tab.find("select#manufacturerList");
 			var $table = $tab.find("table.imsFields");
 			var $catcode = $table.find("input#catcode");
-			
+			var $item = base.options.item;
+
 			var inCatCode = "";
 			var inCategory = "";
 			var inSubCategory = "";
@@ -647,35 +740,40 @@
 			var inMinor = "";
 
 			if ($.isNotBlank($catcode.val())){
-				inCatCode = $.trim($catcode.val());
+				inCatCode = $.trim($catcode.val().toUpperCase());
 			}else{
-				inCategory = $.trim($tab.find("select#categoryList >option:selected:eq(0)").text());
-				inSubCategory = $.trim($tab.find("select#subCategoryList >option:selected:eq(0)").text());
-				inClass = $.trim($tab.find("select#classList >option:selected:eq(0)").text());
-				inMinor = $.trim($tab.find("select#minorList >option:selected:eq(0)").text());
+				inCategory = $.trim($tab.find("select#categoryList >option:gt(0):selected:eq(0)").text());
+				inSubCategory = $.trim($tab.find("select#subCategoryList >option:gt(0):selected:eq(0)").text());
+				inClass = $.trim($tab.find("select#classList >option:gt(0):selected:eq(0)").text());
+				inMinor = $.trim($tab.find("select#minorList >option:gt(0):selected:eq(0)").text());
 			}
 
 			CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
 				preHook:function(){
 					$tab.find("img#preloaderManufacturerList").show();
-					base.resetIMSComboBox("manufacturer");
+					base.resetIMSFields("manufacturer");
 					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderManufacturerList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["Manufacturer"])){
+						$select.val(base.options.item.condition.IMSFilters["Manufacturer"]);
+						$select.change();
+					}
 				}
 			});
 		},  
 
-		base.resetIMSComboBox = function(trigger){
+		base.resetIMSFields = function(trigger){
 			var $tab = base.contentHolder.find("div#ims");
 
 			if ($.isBlank(trigger)){
@@ -703,7 +801,7 @@
 			var usingCategory = false;
 			var $item = base.options.item;
 			var $catcode = $table.find("input#catcode");
-			
+
 			$table.find("tr.catCode").hide();
 
 			if ($.isNotBlank($item)){
@@ -736,7 +834,7 @@
 						base.populateCategories();
 						break;
 					case "switchToCatCode" : 
-						base.resetIMSComboBox();
+						base.resetIMSFields();
 						if ($.isNotBlank($item) && $.isNotBlank($item.condition.IMSFilters["CatCode"])){
 							$catcode.val($item.condition.IMSFilters["CatCode"]);
 						}
@@ -759,52 +857,50 @@
 			base.addFacetListener();
 		},
 
-		base.populateLevel1Categories= function(e){
+		base.populateLevel1Categories= function(){
 			var $tab = base.contentHolder.find("div#cnet");
 			var $select = $tab.find("select#level1CategoryList");
-			var $input = $tab.find("input#level1CategoryList");
 			var $table = $tab.find("table.cnetFields");
 			var $item = base.options.item;
 
 			CategoryServiceJS.getCNETLevel1Categories({
 				callback: function(data){
 					var list = data;
-
+					$select.append($("<option>", {value: ""}).text("-Select Level 1-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
-
-					if($.isNotBlank($input.val())) base.populateLevel2Categories(e);
 				},
 				preHook:function(){
 					$tab.find("img#preloaderLevel1CategoryList").show();
-					base.clearCNETComboBox("level1Cat");
+					base.resetCNETFields("level1Cat");
 					$table.find("tr#level2Cat, tr#level3Cat").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level1Category"])){
-						$select.prop("selectedText",$item.condition.CNetFilters["Level1Category"]);
-						$input.val($item.condition.CNetFilters["Level1Category"]);
-					}
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderLevel1CategoryList").hide();
-					if($.isBlank($input.val()))
-						base.populateCNETManufacturers(e);
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level1Category"])){
+						$select.val($item.condition.CNetFilters["Level1Category"]);
+						$select.change();
+					}else{
+						base.populateCNETManufacturers();
+					}
 				}
 			});
 		},
 
-		base.populateLevel2Categories= function(e){
+		base.populateLevel2Categories= function(selectedLevel1Category){
 			var $tab = base.contentHolder.find("div#cnet");
-			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
 			var $select = $tab.find("select#level2CategoryList");
-			var $input = $tab.find("input#level2CategoryList");
 			var $table = $tab.find("table.cnetFields");
 			var $item = base.options.item;
 
-			CategoryServiceJS.getCNETLevel2Categories(inLevel1Category, {
+			CategoryServiceJS.getCNETLevel2Categories(selectedLevel1Category, {
 				callback: function(data){
 					var list = data;
-
+					$select.append($("<option>", {value: ""}).text("-Select Level 2-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
@@ -814,38 +910,38 @@
 					}else{
 						$table.find("tr#level2Cat").hide();
 					}  
-
-					if($.isNotBlank($input.val())) base.populateLevel3Categories(e);
 				},
 				preHook:function(){
 					$tab.find("img#preloaderLevel2CategoryList").show();
-					base.clearCNETComboBox("level2Cat");
+					base.resetCNETFields("level2Cat");
 					$table.find("tr#level3Cat").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level2Category"])){
-						$select.prop("selectedText",$item.condition.CNetFilters["Level2Category"]);
-						$input.val($item.condition.CNetFilters["Level2Category"]);
-					};
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderLevel2CategoryList").hide();
-					if($.isNotBlank(inLevel1Category) && $.isBlank($input.val()))
-						base.populateCNETManufacturers(e);
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level2Category"])){
+						$select.val($item.condition.CNetFilters["Level2Category"]);
+						$select.change();
+					}else{
+						base.populateCNETManufacturers();
+					}
 				}
 			});
 		},
 
-		base.populateLevel3Categories= function(e){
+		base.populateLevel3Categories= function(selectedLevel1Category,selectedLevel2Category){
 			var $tab = base.contentHolder.find("div#cnet");
-			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
-			var inLevel2Category = $.trim($tab.find("input#level2CategoryList").val());
 			var $select = $tab.find("select#level3CategoryList");
-			var $input = $tab.find("input#level3CategoryList");
 			var $table = $tab.find("table.cnetFields");
 			var $item = base.options.item;
 
-			CategoryServiceJS.getCNETLevel3Categories(inLevel1Category, inLevel2Category, {
+			CategoryServiceJS.getCNETLevel3Categories(selectedLevel1Category, selectedLevel2Category, {
 				callback: function(data){
 					var list = data;
+
+					$select.append($("<option>", {value: ""}).text("-Select Level 3-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
@@ -855,136 +951,81 @@
 					}else{
 						$table.find("tr#level3Cat").hide();
 					}  
-
 				},
 				preHook:function(){
 					$tab.find("img#preloaderLevel3CategoryList").show();
-					base.clearCNETComboBox("level3Cat");
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level3Category"])){
-						$select.prop("selectedText",$item.condition.CNetFilters["Level3Category"]);
-						$input.val($item.condition.CNetFilters["Level3Category"]);
-					}
+					base.resetCNETFields("level3Cat");
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderLevel3CategoryList").hide();
-					base.populateCNETManufacturers(e);
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Level3Category"])){
+						$select.val($item.condition.CNetFilters["Level3Category"]);
+						$select.change();
+					}else{
+						base.populateCNETManufacturers();
+					}
 				}
 			});
 		},
 
-		base.populateCNETManufacturers= function(e){
+		base.populateCNETManufacturers= function(){
 			var $tab = base.contentHolder.find("div#cnet");
 			var $select = $tab.find("select#cnetmanufacturerList");
-			var $input = $tab.find("input#cnetmanufacturerList");
+			var $table = $tab.find("table.cnetFields");
 			var $item = base.options.item;
 
-			var inLevel1Category = $.trim($tab.find("input#level1CategoryList").val());
-			var inLevel2Category = $.trim($tab.find("input#level2CategoryList").val());
-			var inLevel3Category = $.trim($tab.find("input#level3CategoryList").val());
+			var inLevel1Category = $.trim($tab.find("select#level1CategoryList").val());
+			var inLevel2Category = $.trim($tab.find("select#level2CategoryList").val());
+			var inLevel3Category = $.trim($tab.find("select#level3CategoryList").val());
 
 			CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
 				preHook:function(){
 					$tab.find("img#preloaderCNETManufacturerList").show();
-					base.clearCNETComboBox("cnetmanufacturer");
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Manufacturer"])){
-						$select.prop("selectedText",$item.condition.CNetFilters["Manufacturer"]);
-						$input.val($item.condition.CNetFilters["Manufacturer"]);
-					}
+					base.resetCNETFields("cnetmanufacturer");
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderCNETManufacturerList").hide();
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if($.isNotBlank($item) && $.isNotBlank($item.condition.CNetFilters["Manufacturer"])){
+						$select.val($item.condition.CNetFilters["Manufacturer"]);
+						$select.change();
+					}
 				}
 			});
 		}, 
 
-		base.updateCNETCombobox = function (target, e, u){
-			var $tab = base.contentHolder.find("div#cnet");
-
-			switch($(target).attr("id").toLowerCase()){
-			case "level1categorylist" :
-				if(u.item){
-					$tab.find("input#level1CategoryList").val(u.item.text);
-					$tab.find("input#level1CategoryList").prop("selectedText", u.item.text);
-					base.populateLevel2Categories(e);
-				}
-				else base.populateLevel1Categories(e);
-
-				$tab.find("input#level2CategoryList").val("");
-				$tab.find("input#level3CategoryList").val("");
-				$tab.find("input#cnetmanufacturerList").val("");
-				break;
-			case "level2categorylist" : 
-				if(u.item){
-					$tab.find("input#level2CategoryList").val(u.item.text);
-					$tab.find("input#level2CategoryList").prop("selectedText", u.item.text);
-					base.populateLevel3Categories(e);
-					$tab.find("input#level3CategoryList").val("");
-				}
-				else base.populateLevel2Categories(e);
-
-				$tab.find("input#cnetmanufacturerList").val("");
-				break;
-			case "level3categorylist" : 
-				if(u.item){
-					$tab.find("input#level3CategoryList").val(u.item.text);
-					$tab.find("input#level3CategoryList").prop("selectedText", u.item.text);
-					base.populateCNETManufacturers(e);
-				}
-				else base.populateLevel3Categories(e);
-
-				$tab.find("input#cnetmanufacturerList").val("");
-				break;
-			case "cnetmanufacturerlist" : 
-				if(u.item){
-					$tab.find("input#cnetmanufacturerList").val(u.item.text);
-					$tab.find("input#cnetmanufacturerList").prop("selectedText",u.item.text);
-				} 
-				break;
-			}
-		};
-
-		base.clearCNETComboBox= function(trigger){
+		base.resetCNETFields= function(trigger){
 			var $tab = base.contentHolder.find("div#cnet");
 
 			if ($.isBlank(trigger)){
-				$tab.find("input").val("");
 				$tab.find("select.selectCombo option").remove();
 			}else{
 				switch (trigger.toLowerCase()){
 				case "level1cat": 
-					$tab.find("input#level1CategoryList").val("");
 					$tab.find("select#level1CategoryList option").remove();
 				case "level2cat": 
-					$tab.find("input#level2CategoryList").val("");
 					$tab.find("select#level2CategoryList option").remove();
 				case "level3cat": 
-					$tab.find("input#level3CategoryList").val("");
 					$tab.find("select#level3CategoryList option").remove();
 				case "cnetmanufacturer": 
-					$tab.find("input#cnetmanufacturerList").val("");
 					$tab.find("select#cnetmanufacturerList option").remove();	
 				}
 			}
 		},
 
 		base.addCNETListener = function(){
-			var $tab = base.contentHolder.find("div#cnet");
-
-			$tab.find("select.selectCombo").combobox({
-				change: function(e, u){
-					base.updateCNETCombobox(this, e, u);
-				},
-				selected: function(e, u){
-					base.updateCNETCombobox(this, e, u);
-				}
-			});
-
 			base.populateLevel1Categories();
 			base.addDynamicAttributeListener();
 			base.addFacetListener();
@@ -1040,15 +1081,13 @@
 			}
 		},
 
-		base.populateCNETDynamicAttributes = function(e){
+		base.populateCNETDynamicAttributes = function(selectedTemplateName){
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#dynamicAttributeList");
-			var $templateName = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
-			var inTemplateName = $.trim($templateName.val());
-
-			CategoryServiceJS.getCNETTemplateAttributes(inTemplateName, {
+			CategoryServiceJS.getCNETTemplateAttributes(selectedTemplateName, {
 				callback: function(data){
 					base.templateAttributes = data;
 					var isEmpty = true;
@@ -1059,6 +1098,7 @@
 					});
 
 					if (!isEmpty){
+						$select.prepend($("<option>", {value: ""}).text("-Select Attribute-"));
 						$tab.find("table#addDynamicAttributeName").show();
 					}else{
 						$tab.find("table#addDynamicAttributeName").hide();
@@ -1066,102 +1106,66 @@
 				},
 				preHook:function(){
 					$tab.find("img#preloaderDynamicAttributeList").show();
-					base.clearDynamicAttributeComboBox("attributevaluelist");
+					base.resetDynamicAttributeFields("attributevaluelist");
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderDynamicAttributeList").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if ($.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
 						base.populateDynamicAttributeValues();
 					}
 				}
 			});
 		},
 
-		base.populateCNETTemplateNames= function(e){
+		base.populateCNETTemplateNames= function(){
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#templateNameList");
-			var $input = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
 			CategoryServiceJS.getCNETTemplateNames({
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select Template-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
 				preHook:function(){
 					$tab.find("img#preloaderTemplateNameList").show();
-					base.clearDynamicAttributeComboBox("templateNameList");
+					base.resetDynamicAttributeFields("templateNameList");
 					$tab.find("table#addDynamicAttributeName").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
-						$select.prop("selectedText",$item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
-						$input.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
-					}
-
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderTemplateNameList").hide();
-					if($.isNotBlank($.trim($input.val()))) 
-						base.populateCNETDynamicAttributes(e);
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if ($.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+					}
 				}
 			});
 		},
 
-		base.clearDynamicAttributeComboBox= function(trigger){
+		base.resetDynamicAttributeFields= function(trigger){
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 
 			if ($.isBlank(trigger)){
-				$tab.find("input").val("");
 				$tab.find("select.selectCombo option").remove();
 			}else{
 				switch (trigger.toLowerCase()){
 				case "templatenamelist": 
-					$tab.find("input#templateNameList").val("");
 					$tab.find("select#templateNameList option").remove();
 				case "attributevaluelist":
 					$tab.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
 				case "dynamicattributelist": 
-					$tab.find("input#dynamicAttributeList").val("");
 					$tab.find("select#dynamicAttributeList option").remove();
 				}
-			}
-		},
-
-		base.updateFacetTemplateCombobox = function (target, e, u){
-			var $tab = base.contentHolder.find("div#dynamicAttribute");
-
-			switch($(target).attr("id").toLowerCase()){
-			case "templatenamelist" :
-				if(u.item){
-					$tab.find("input#templateNameList").val(u.item.text);
-					$tab.find("input#templateNameList").prop("selectedText", u.item.text);
-
-					if (base.contentHolder.find("div#ims").length)
-						base.populateIMSDynamicAttributes(e);
-					else if (base.contentHolder.find("div#cnet").length)
-						base.populateCNETDynamicAttributes(e);
-				}
-				else{
-					if (base.contentHolder.find("div#ims").length)
-						base.populateIMSTemplateNames(e);
-					else if (base.contentHolder.find("div#cnet"))
-						base.populateCNETTemplateNames(e);
-				}
-				$tab.find("input#dynamicAttributeList").val("");
-				break;
-
-			case "dynamicattributelist" :
-				if(u.item){
-					$tab.find("input#dynamicAttributeList").val(u.item.text);
-					$tab.find("input#dynamicAttributeList").prop("selectedText", u.item.text);
-					base.addDynamicAttributeButtonListener(u.item.value);
-				}
-				else{
-					jAlert("Please specify a valid attribute name.");
-					base.addDynamicAttributeButtonListener("");
-				}
-				break;
 			}
 		},
 
@@ -1173,8 +1177,7 @@
 					if (!e.data.locked){
 						var $divItemList = $tab.find('div#dynamicAttributeItemList');
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
-						var $input = $tab.find("input#dynamicAttributeList");
-						var inDynamicAttribute = $.trim($input.val());
+						var inDynamicAttribute = $tab.find("select#dynamicAttributeList >option:gt(0):selected:eq(0)").text();
 						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
 						if($.isNotBlank(inDynamicAttribute)){
@@ -1240,15 +1243,13 @@
 			},{locked: base.options.locked, attrib: attribName});
 		},
 
-		base.populateIMSDynamicAttributes= function(e){
+		base.populateIMSDynamicAttributes= function(selectedTemplateName){
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#dynamicAttributeList");
-			var $templateName = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
-			var inTemplateName = $.trim($templateName.val());
-
-			CategoryServiceJS.getIMSTemplateAttributes(inTemplateName, {
+			CategoryServiceJS.getIMSTemplateAttributes(selectedTemplateName, {
 				callback: function(data){
 					base.templateAttributes = data;
 					var isEmpty = true;
@@ -1259,6 +1260,7 @@
 					});
 
 					if (!isEmpty){
+						$select.prepend($("<option>", {value: ""}).text("-Select Attribute-"));
 						$tab.find("table#addDynamicAttributeName").show();
 					}else{
 						$tab.find("table#addDynamicAttributeName").hide();
@@ -1266,11 +1268,14 @@
 				},
 				preHook:function(){
 					$tab.find("img#preloaderDynamicAttributeList").show();
-					base.clearDynamicAttributeComboBox("attributevaluelist");
+					base.resetDynamicAttributeFields("attributevaluelist");
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderDynamicAttributeList").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if ($.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
 						base.populateDynamicAttributeValues();
 					}
 				}
@@ -1280,45 +1285,36 @@
 		base.populateIMSTemplateNames= function(e){
 			var $tab = base.contentHolder.find("div#dynamicAttribute");
 			var $select = $tab.find("select#templateNameList");
-			var $input = $tab.find("input#templateNameList");
+			var $table = $tab.find("table.dynamicAttribFields");
 			var $item = base.options.item;
 
 			CategoryServiceJS.getIMSTemplateNames({
 				callback: function(data){
 					var list = data;
+					$select.append($("<option>", {value: ""}).text("-Select Template-"));
 					for(var i=0; i<list.length; i++){
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
 				preHook:function(){
 					$tab.find("img#preloaderTemplateNameList").show();
-					base.clearDynamicAttributeComboBox("templateNameList");
+					base.resetDynamicAttributeFields("templateNameList");
 					$tab.find("table#addDynamicAttributeName").hide();
-					if (!e && $.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
-						$select.prop("selectedText",$item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
-						$input.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName]);
-					}
+					$table.find("select.selectCombo").prop("disabled", true);
 				},
 				postHook:function(){
 					$tab.find("img#preloaderTemplateNameList").hide();
-					if($.isNotBlank($.trim($input.val())))
-						base.populateIMSDynamicAttributes(e);
+					$table.find("select.selectCombo").prop("disabled", false);
+					base.makeSelectSearchable($select);
+					if ($.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+					}
 				}
 			});
 		},
 
 		base.addDynamicAttributeListener = function(){
-			var $tab = base.contentHolder.find("div#dynamicAttribute");
-
-			$tab.find("select.selectCombo").combobox({
-				change: function(e, u){
-					base.updateFacetTemplateCombobox(this, e, u);
-				},
-				selected: function(e, u){
-					base.updateFacetTemplateCombobox(this, e, u);
-				}
-			});
-
 			if (base.contentHolder.find("div#ims").length){
 				base.populateIMSTemplateNames();
 			}else if(base.contentHolder.find("div#cnet").length){
@@ -1330,32 +1326,27 @@
 
 			var $facet = base.contentHolder.find("div#facet");
 
-			$facet.find("select.selectCombo").combobox({
-
-			});
-
 			if ($.isBlank(base.options.item)) return;
 
 			var $condition = base.options.item.condition;
 
-			$facet.find("input#platformList").val($condition.facets["Platform"]);
-			$facet.find("select#platformList").prop("selectedText", $condition.facets["Platform"]);
+			if($.isNotBlank($condition.facets["Platform"]))
+				$facet.find("select#platformList > option:contains('" + $condition.facets["Platform"][0] + "')").prop("selected", true);
 
-			$facet.find("input#conditionList").val($condition.facets["Condition"]);
-			$facet.find("select#conditionList").prop("selectedText", $condition.facets["Condition"]);
+			if($.isNotBlank($condition.facets["Condition"]))
+				$facet.find("select#conditionList > option:contains('" + $condition.facets["Condition"][0] + "')").prop("selected", true);
 
-			$facet.find("input#availabilityList").val($condition.facets["Availability"]);
-			$facet.find("select#availabilityList").prop("selectedText", $condition.facets["Availability"]);
+			if($.isNotBlank($condition.facets["Availability"]))
+				$facet.find("select#availabilityList > option:contains('" + $condition.facets["Availability"][0] + "')").prop("selected", true);
 
-			$facet.find("input#licenseList").val($condition.facets["License"]);
-			$facet.find("select#licenseList").prop("selectedText", $condition.facets["License"]);
-			
-			$facet.find("input#imageExistsList").val($condition.facets["ImageExists"]);
-			$facet.find("select#imageExistsList").prop("selectedText", $condition.facets["ImageExists"]);
+			if($.isNotBlank($condition.facets["License"]))
+				$facet.find("select#licenseList > option:contains('" + $condition.facets["License"][0] + "')").prop("selected", true);
+
+			if($.isNotBlank($condition.facets["ImageExists"]))
+				$facet.find("select#imageExistsList > option:contains('" + $condition.facets["ImageExists"][0] + "')").prop("selected", true);
 
 			$facet.find("input#nameContains").val($condition.facets["Name"]);
 			$facet.find("input#descriptionContains").val($condition.facets["Description"]);
-
 		};
 
 		base.promptAddFacetItem = function(type){
@@ -1374,6 +1365,7 @@
 				if (base.options.showPosition)
 					base.contentHolder.find("#addItemPosition").val(base.options.item["location"]);
 			}
+
 			base.contentHolder.find("#addItemPosition").on({
 				keypress:function(e){
 					var charCode = (e.which) ? e.which : e.keyCode;
@@ -1394,7 +1386,6 @@
 
 			switch(type){
 			case "facet": 
-				//contentHolder.find('a[href="#facet"]').parents('div#tabHeight').remove();
 				base.contentHolder.find('a[href="#ims"],a[href="#cnet"],a[href="#dynamicAttribute"]').parent('li').remove();
 				base.contentHolder.find("div#ims,div#cnet,div#dynamicAttribute").remove();
 				base.addFacetListener();
@@ -1483,7 +1474,7 @@
 								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
 							}
 						}
-					}, 500 );
+					}, 500);
 				}
 			});
 
@@ -1502,7 +1493,6 @@
 				buttonImage: GLOBAL_contextPath + "/images/icon_calendar.png",
 				buttonImageOnly: true
 			});
-
 
 			base.contentHolder.find("#addItemPosition").on({
 				keypress:function(e){
@@ -1583,7 +1573,6 @@
 		base.promptRuleItemDetails = function(target, type){
 
 			var typeLabel = base.getTypeLabel(type);
-
 
 			$(target).qtip("destroy").qtip({
 				content: {

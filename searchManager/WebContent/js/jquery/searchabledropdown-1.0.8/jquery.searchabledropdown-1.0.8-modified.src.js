@@ -230,7 +230,8 @@
         
         // custom callback handler
         self.off("change").on("change", function(e){
-        	settings.change(selectorHelper.selected().get(0), e);
+        	if(selectorHelper.selected().get(0).value !== $(e.currentTarget).get(0).value);
+        		settings.change($(e.currentTarget).get(0), e);
         });
 
         // toggle click event on overlay div
