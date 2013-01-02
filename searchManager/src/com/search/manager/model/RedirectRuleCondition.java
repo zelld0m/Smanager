@@ -190,15 +190,17 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		
 		
-		// Platform, Condition, Availability, License are grouped together
+		// Platform, Condition, Availability, License, ImageExists are grouped together
 		// special processing
 		// if Condition == "Refurbished" set Refurbished_Flag:1
 		//				== "Open Box"    set OpenBox_Flag:1
 		//              == "Clearance"   set Clearance_Flag:1
-		// if License == "Show Non-License Products Only" set Licence_Flag:0
-		//		      == "Show License Products Only", set Licence_Flag:1
+		// if License == "Non-License Products Only" set Licence_Flag:0
+		//		      == "License Products Only", set Licence_Flag:1
 		// if Availability == "In Stock" set InStock:1
 		//                 == "Call"     set InStock:0
+		// if ImageExists == "Products with Image Only" 	set ImageExists:1
+		//                == "Products without Image Only"  set ImageExists:0
 		
 		map = getFacets();
 		if (map.containsKey("Condition")) {
@@ -215,20 +217,20 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		if (map.containsKey("License")) {
 			String value = map.get("License").get(0);
-			if (value.equals("Show Non-License Products Only")) {
+			if (value.equals("Non-License Products Only")) {
 				builder.append("Licence_Flag").append(":0").append(" AND ");
 			}
-			else if (value.equals("Show License Products Only")) {
+			else if (value.equals("License Products Only")) {
 				builder.append("Licence_Flag").append(":1").append(" AND ");
 			}			
 		}
 		
 		if (map.containsKey("ImageExists")) {
 			String value = map.get("ImageExists").get(0);
-			if (value.equals("Show Products Without Image Only")) {
+			if (value.equals("Products Without Image Only")) {
 				builder.append("ImageExists").append(":0").append(" AND ");
 			}
-			else if (value.equals("Show Products With Image Only")) {
+			else if (value.equals("Products With Image Only")) {
 				builder.append("ImageExists").append(":1").append(" AND ");
 			}			
 		}
@@ -511,22 +513,22 @@ public class RedirectRuleCondition extends ModelBean {
 				putToConditionMap("Condition", "Clearance");
 			}
 			
-			// if  Licence_Flag:0 set License to "Show Non-License Products Only"
-			//                 :1 set License to "Show License Products Only"
+			// if  Licence_Flag:0 set License to "Non-License Products Only"
+			//                 :1 set License to "License Products Only"
 			else if (fieldName.equals("Licence_Flag") && fieldValue.equals("0")) {
-				putToConditionMap("License", "Show Non-License Products Only");
+				putToConditionMap("License", "Non-License Products Only");
 			}
 			else if (fieldName.equals("Licence_Flag") && fieldValue.equals("1")) {
-				putToConditionMap("License", "Show License Products Only");
+				putToConditionMap("License", "License Products Only");
 			}
 			
-			// if  ImageExists:0 set ImageExists to "Show Products Without Image Only"
-			//                 :1 set ImageExists to "Show Products With Image Only"
+			// if  ImageExists:0 set ImageExists to "Products Without Image Only"
+			//                 :1 set ImageExists to "Products With Image Only"
 			else if (fieldName.equals("ImageExists") && fieldValue.equals("0")) {
-				putToConditionMap("ImageExists", "Show Products Without Image Only");
+				putToConditionMap("ImageExists", "Products Without Image Only");
 			}
 			else if (fieldName.equals("ImageExists") && fieldValue.equals("1")) {
-				putToConditionMap("ImageExists", "Show Products With Image Only");
+				putToConditionMap("ImageExists", "Products With Image Only");
 			}
 
 			// CNET
@@ -689,13 +691,13 @@ public class RedirectRuleCondition extends ModelBean {
 		// if Condition == "Refurbished" set Refurbished_Flag:1
 		//				== "Open Box"    set OpenBox_Flag:1
 		//              == "Clearance"   set Clearance_Flag:1
-		// if License == "Show License Products Only" set Licence_Flag:1
-		//		      == "Show Non-License Products Only", set Licence_Flag:0
+		// if License == "License Products Only" set Licence_Flag:1
+		//		      == "Non-License Products Only", set Licence_Flag:0
 		//            else, set Licence_Flag:0
 		// if Availability == "In Stock" set InStock:1
 		//                 == "Call"     set InStock:0
-		// if ImageExists == "Show Products Without Image Only", set ImageExists:0
-		//                == "Show Products With Image Only", set ImageExists:2
+		// if ImageExists == "Products Without Image Only", set ImageExists:0
+		//                == "Products With Image Only", set ImageExists:2
 		String[] conditions = {
 //				"Category:\"System\" AND SubCategory:\"Notebook Computers\" AND Manufacturer:\"Apple\" AND Refurbished_Flag:1 AND InStock:1",
 //				"Manufacturer:Microsoft AND PCMall_FacetTemplate:Games | XBOX 360 Games | XBOX 360 Racing Games*",

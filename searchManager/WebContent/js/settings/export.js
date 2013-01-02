@@ -48,6 +48,7 @@
 				$('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($selectedTab);
 			} 
 			$selectedTab.find('table.tblItems, div#actionBtn').hide();
+			$selectedTab.find("div#ruleCount").html("");
 		},
 		
 		cleanUpTabContent:function(){

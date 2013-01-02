@@ -362,7 +362,7 @@
 	Utils.updateAllStats = function(tab) {
 		// Get stats for all listed keywords
 		KeywordTrendsServiceJS.getStats(Utils.getSelectedKeywords(),
-				tab.fromDate, tab.toDate, tab.collation, {
+				$.asUTC(tab.fromDate), $.asUTC(tab.toDate), tab.collation, {
 					callback : function(data) {
 						for ( var i = 0; i < data.length; i++) {
 							tab.setData(data[i].keyword, data[i].stats);
@@ -393,7 +393,7 @@
 	 * Retrieve stats for newly added keyword.
 	 */
 	Utils.getStatsForNewKeyword = function(keyword, tab) {
-		KeywordTrendsServiceJS.getStats(keyword, tab.fromDate, tab.toDate,
+		KeywordTrendsServiceJS.getStats(keyword, $.asUTC(tab.fromDate), $.asUTC(tab.toDate),
 				tab.collation, {
 					callback : function(data) {
 						var series = new Series(data);

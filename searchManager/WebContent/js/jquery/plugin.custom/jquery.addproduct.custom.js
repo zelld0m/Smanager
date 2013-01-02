@@ -301,9 +301,9 @@
 			template  += '					<td class="w175">License :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
-			template  += '							<option value=""></option>';
-			template  += '							<option value="license">Show License Products Only</option>';
-			template  += '							<option value="nonlicense">Show Non-License Products Only</option>';
+			template  += '							<option value="all"></option>';
+			template  += '							<option value="license">License Products Only</option>';
+			template  += '							<option value="nonlicense">Non-License Products Only</option>';
 			template  += '						</select>';
 			template  += '					</td>';
 			template  += '				</tr>';
@@ -311,9 +311,9 @@
 			template  += '					<td class="w175">Product Image :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="imageExistsList" class="selectCombo w229" title="Select Product Image" >';
-			template  += '							<option value=""></option>';
-			template  += '							<option value="withImage">Show Products With Image Only</option>';
-			template  += '							<option value="noImage">Show Products Without Image Only</option>';
+			template  += '							<option value="all"></option>';
+			template  += '							<option value="withImage">Products With Image Only</option>';
+			template  += '							<option value="noImage">Products Without Image Only</option>';
 			template  += '						</select>';
 			template  += '					</td>';
 			template  += '				</tr>';
@@ -472,15 +472,15 @@
 
 				if($.isNotBlank(license)){
 					switch(license.toLowerCase()){
-					case "show license products only": condMap["License"] = ["Show License Products Only"]; break;
-					case "show non-license products only": condMap["License"] = ["Show Non-License Products Only"]; break;
+					case "license products only": condMap["License"] = ["License Products Only"]; break;
+					case "non-license products only": condMap["License"] = ["Non-License Products Only"]; break;
 					}
 				}
 
 				if($.isNotBlank(imageExists)){
 					switch(imageExists.toLowerCase()){
-					case "show products with image only": condMap["ImageExists"] = ["Show Products With Image Only"]; break;
-					case "show products without image only": condMap["ImageExists"] = ["Show Products Without Image Only"]; break;
+					case "products with image only": condMap["ImageExists"] = ["Products With Image Only"]; break;
+					case "products without image only": condMap["ImageExists"] = ["Products Without Image Only"]; break;
 					}
 				}
 

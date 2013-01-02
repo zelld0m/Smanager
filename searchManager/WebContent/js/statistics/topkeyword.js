@@ -34,9 +34,10 @@
 				$("a#customDownloadBtn").download({
 					headerText:"Download Top Keyword",
 					defaultFilename: "",
+					fileFormat: ['CSV'],
 					sendMail: true,
 					requestCallback:function(e){
-						if (e.data.type==="excel") self.downloadCustomRangeAsCSV(e.data.filename);
+						if (e.data.type==="csv") self.downloadCustomRangeAsCSV(e.data.filename);
 						if (e.data.type==="mail"){
 							var recipientArrCleaned = [];
 							var recipientToArr = e.data.recipient.split(',');
@@ -65,7 +66,7 @@
 				var self = this;
 
 				for (var i = 0; i < recipients.length; i++) {
-					if (!validateEmail(recipients[i],recipients[i],1)) {
+					if (!validateEmail('Recipient',recipients[i],1)) {
 						return;
 					}
 				}
@@ -227,9 +228,9 @@
 
 			getCustomRangeList: function() {
 				var self = this;
-				var from = $("#fromDate").datepicker("getDate");
-				var to = $("#toDate").datepicker("getDate");
-				
+				var from = $.asUTC($("#fromDate").datepicker("getDate"));
+				var to = $.asUTC($("#toDate").datepicker("getDate"));
+
 				if (from > to) {
 					jAlert("Invalid date range.");
 				} else {

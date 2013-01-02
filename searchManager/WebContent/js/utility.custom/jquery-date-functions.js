@@ -26,6 +26,10 @@ jQuery.extend(
 					d.setDate(d.getDate() - (d.getDay() || 7) + 7);
 					
 					return d;
+				},
+
+				asUTC: function(date) {
+					return new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
 				}
 			};
 		}(jQuery))  
