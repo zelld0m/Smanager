@@ -13,7 +13,7 @@
 
 			rulePage: 1,
 			rulePageSize: 15,
-			
+
 			removeFacetGroupItemConfirmText: "Delete facet value?",
 
 			facetFields : ["Category", "Manufacturer"],	//TODO This might be retrieved from a lookup table
@@ -77,9 +77,9 @@
 						var $facetSortOrder = $('#facetSortOrder');
 						self.populateSortOrderList($facetSortOrder, self.selectedRule["sortType"]);
 						self.selectedRuleStatus = ruleStatus;
-						
+
 						$facetSortOrder.prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
-						
+
 						$("#facetsorting").show();
 						$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
 
@@ -115,7 +115,7 @@
 				self.selectedRule = rule;
 				self.keyword = "";
 				self.fq = "";
-				
+
 				if(self.selectedRule!=null && self.selectedRule["ruleType"]){
 					if("KEYWORD" === self.selectedRule["ruleType"]){
 						self.keyword = encodeURIComponent(self.selectedRule["ruleName"]);
@@ -124,7 +124,7 @@
 						self.fq = GLOBAL_storeFacetTemplateName + ":\"" + encodeURIComponent(self.selectedRule["ruleName"]) + "\"";
 					}
 				}
-				
+
 				self.showFacetSort();
 			},
 
@@ -140,6 +140,7 @@
 				if(self.facetValueList){
 					var facetValues = self.facetValueList[self.tabSelectedName];
 
+					$select.append($("<option>", {value: ""}).text("-Select " + self.tabSelectedName + "-"));
 					for (var facetValue in facetValues){
 						$select.append($("<option>", {value: facetValue}).text(facetValue));
 					}
@@ -154,7 +155,7 @@
 
 				//if there exists tempItems, tab is already populated, do not refresh
 				if(tabContainer.find("li.tempItem").length > 0) return;
-				
+
 				tabContainer.show();
 				if(!tabContainer.hasClass("isShown")){
 					tabContainer.addClass("isShown");
@@ -171,20 +172,20 @@
 					fq: self.fq,
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
-						
+
 						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn"){
 							self.facetValueList["Category"] = [];
-							
+
 							if(json.FacetTemplate){
 								self.facetValueList["Category"] = json.FacetTemplate.Level1;
 							}
 						}
-						
+
 						self.populateFacetListDropdown();
 						self.populateSelectedValues(tabContainer, facetTabId.split("_")[1]);
 						self.addNewFacetValueListener(tabContainer, facetTabId.split("_")[1]);
 						self.addSortableOption(tabContainer);
-						
+
 						tabContainer.find("span#addFacetSortTitleHeader").text("Highlighted " + self.tabSelectedName + " Values");
 					}
 				});
@@ -203,21 +204,17 @@
 					disabled: self.selectedRuleStatus["locked"] || !allowModify
 				});
 			},
-			
-			checkDuplicateFacet : function (target, e, u, facetGroupId){
-				var self = this;
-				var $input = $(target).siblings().find("input#_"+facetGroupId);
-				
-				if(u.item){
-					if($("div#_" + facetGroupId).hasClass("isShown")){
-						var value = u.item.text;
-						$("select#_items_"+facetGroupId).not(target).each(function() {
-						       if ($(this).val() == value) {
-						           jAlert(value + " is already selected.", self.moduleName);
-						           return;
-						       }
-						});
-					}
+
+			checkDuplicateFacet : function (e, u, facetGroupId){
+				if($("div#_" + facetGroupId).hasClass("isShown")){
+					var value = u.value;
+					$("select#_items_"+facetGroupId).not($(e.currentTarget)).each(function() {
+						if ($(this).val() === value && $.isNotBlank(value)) {
+							jAlert(value + " is already selected.", self.moduleName);
+							$(e.currentTarget).prop("selectedIndex", 0);
+							return;
+						}
+					});
 				}
 			},
 
@@ -240,23 +237,20 @@
 							var $select = $li.find("select.selectCombo");
 							$select.prop({id: "_items_"+facetGroupId});
 
-							$select.combobox({
-								change: function(e, u){
-									self.checkDuplicateFacet(this, e, u, facetGroupId);
-								},
-								selected: function(e, u){
-									self.checkDuplicateFacet(this, e, u, facetGroupId);
+							$select.searchable({
+								maxListSize: 10, 
+								maxMultiMatch: 10,
+								exactMatch: true,
+								change: function(u, e){
+									self.checkDuplicateFacet(e, u, facetGroupId);
 								}
 							});
-							$li.find("input#_items_"+facetGroupId).val(itemName);
-							$li.find("select#_items_"+facetGroupId).prop("selectedText", itemName);
+
+							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')").prop("selected", true);
 
 							$ul.append($li);
 							self.addDeleteFacetValueListener($li);
 						}
-					},
-					preHook:function(){
-						
 					}
 				});
 			},
@@ -276,22 +270,36 @@
 				$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
 					contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
 				});
-
 			},
 
 			populateTemplateNameList: function(contentHolder){
-				$select = contentHolder.find('select[id="popName"]');
+				var $select = contentHolder.find('select[id="popName"]');
+				var count = 0;
 
 				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_store, {
 					callback: function(data){
 						var list = data;
+						count = list.length;
 
-						for(var i=0; i<list.length; i++){
+						if(count>0)
+							$select.append($("<option>", {value: ""}).text("-Select Template-"));
+
+						for(var i=0; i<count; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 					},
 					preHook: function(){
 						$select.find("option").remove();
+						$select.prop("disabled", true);
+					},
+					postHook: function(){
+						if(count>0){
+							$select.prop("disabled", false).searchable({
+								maxListSize: 10, 
+								maxMultiMatch: 10,
+								exactMatch: true
+							});
+						}
 					}
 				});
 			},
@@ -344,34 +352,6 @@
 
 									if ($.isNotBlank(name)) $contentHolder.find('input[id="popKeywordName"]').val(name);
 
-									$contentHolder.find("select.selectCombo").combobox({
-										selected: function(e, u){
-											switch($(this).attr("id").toLowerCase()){
-											case "poptype":
-												var selectedType = u.item.text;
-												var $divTemplate = $contentHolder.find('div#templatelist');
-												$contentHolder.find('div#keywordinput, div#templatelist').show();
-
-												switch(selectedType.toLowerCase()){
-												case "keyword": 
-													$contentHolder.find('div#templatelist').hide();
-													$contentHolder.find('div#keywordinput').show();
-													break;
-												case "template":
-													$contentHolder.find('div#keywordinput').hide();
-													$contentHolder.find('div#templatelist').show();
-													self.populateTemplateNameList($divTemplate);
-													break;
-												}
-												break;
-											}
-										}
-									});
-
-									//make input box of type and sort order uneditable
-									$contentHolder.find("input#popType").attr('readonly', true);
-									$contentHolder.find("input#popSortOrder").attr('readonly', true);
-									
 									$contentHolder.find('select[id="popType"]').off().on({
 										change: function(e){
 											var selectedType = e.target.value;
@@ -380,12 +360,12 @@
 
 											switch(selectedType.toLowerCase()){
 											case "keyword": 
-												$divTemplate.remove();
+												$divTemplate.hide();
 												$divKeyword.show();
 												break;
 											case "template":
 												$divTemplate.show();
-												$divKeyword.remove();
+												$divKeyword.hide();
 												self.populateTemplateNameList($divTemplate);
 												break;
 											default:
@@ -396,19 +376,18 @@
 
 									$contentHolder.find('a#addButton').off().on({
 										click: function(e){
-											setTimeout(function(){
 											var popName = "";
 											var ruleNameLabel = "Name";
 
-											var ruleType = $.trim($contentHolder.find("input#popType").val());
-											var sortType = $.trim($contentHolder.find("input#popSortOrder").val());
+											var ruleType = $.trim($contentHolder.find("select#popType >option:selected:eq(0)").val());
+											var sortType = $.trim($contentHolder.find("select#popSortOrder >option:selected:eq(0)").val());
 
 											if($contentHolder.find('div#keywordinput').is(":visible")){
 												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
 												ruleNameLabel = "Keyword";
 											}
 											else if($contentHolder.find('div#templatelist').is(":visible")){
-												popName = $.trim($contentHolder.find("input#popName").val());
+												popName = $.trim($contentHolder.find("select#popName option:gt(0):selected:eq(0)").text());
 												ruleNameLabel = "Template Name";
 											}
 
@@ -446,16 +425,15 @@
 													}
 												});
 											}
-											}, 500);
 										}
 									});
 
 									$contentHolder.find('a#clearButton').off().on({
 										click: function(e){
 											$contentHolder.find('input#popKeywordName').val("");
-											$contentHolder.find("input#popName").val("");
-											$contentHolder.find("input#popSortOrder").val(self.sortOrderList["ASC_ALPHABETICALLY"]);
-											$contentHolder.find("input#popType").val("Keyword");
+											$contentHolder.find("select#popName").prop("selectedIndex", 0);
+											$contentHolder.find("select#popSortOrder").val(self.sortOrderList["ASC_ALPHABETICALLY"]);
+											$contentHolder.find("select#popType").val("Keyword");
 											$contentHolder.find('div#keywordinput').show();
 											$contentHolder.find('div#templatelist').hide();
 										}
@@ -468,18 +446,18 @@
 						});
 
 					},
-					
+
 					itemNameCallback: function(base, item){
 						self.setFacetSort(item.model);
 					},
-					
+
 					itemOptionCallback: function(base, item){
 						var iconPath = "";
-						
+
 						item.ui.find("#itemLinkValue").empty();
 						switch(item.model["ruleType"].toLowerCase()){
-							case "keyword": iconPath = self.keywordIconPath; break;
-							case "template": iconPath = self.templateIconPath; break;
+						case "keyword": iconPath = self.keywordIconPath; break;
+						case "template": iconPath = self.templateIconPath; break;
 						}
 						if ($.isNotBlank(iconPath)) item.ui.find(".itemIcon").html(iconPath);
 					}
@@ -522,21 +500,21 @@
 							$facetDiv.removeClass("facetTabPattern");
 							$facetDiv.prop({id : facetGroupId});
 							$facetDiv.addClass("facetTab");
-							
+
 							$facetDiv.find("input#facetGroupCheckbox").prop({checked: (facetGroup["sortType"] != null), disabled: self.selectedRuleStatus["locked"] || !allowModify }).off().on({
 								click:function(e){
 									if (e.data.locked) return;
-									
+
 									var $this = e.data.ui;
-						            if ($this.attr('disabled')) $this.removeAttr('disabled');
-						            else $this.attr('disabled', 'disabled');
+									if ($this.attr('disabled')) $this.removeAttr('disabled');
+									else $this.attr('disabled', 'disabled');
 								},
 								mouseenter: showHoverInfo
 							}, {locked: self.selectedRuleStatus["locked"] || !allowModify, ui : $facetSort});
 
 							self.populateSortOrderList($facetSort, facetGroup["sortType"]);
 							$facetSort.prop({disabled: (facetGroup["sortType"] == null || (self.selectedRuleStatus["locked"] || !allowModify))});
-							
+
 							$("div.facetTabPattern").before($facetDiv);
 						}
 					},
@@ -550,7 +528,7 @@
 				$("#facetsort").tabs("destroy").tabs({
 					cookie: {
 						expires: 0
-						},
+					},
 					show: function(event, ui){
 						if(ui.panel){
 							self.tabSelectedId = ui.panel.id;
@@ -560,7 +538,7 @@
 					}
 				});
 			},
-			
+
 			checkNumberOfHighlightedItems : function(content, facetGroupId){
 				var self = this;
 				if(content.hasClass("isShown")){
@@ -574,7 +552,7 @@
 				var self = this;
 				var ul = content.find('ul#selectedFacetValueList');
 				var facetValues = self.facetValueList[self.tabSelectedName];
-				
+
 				if($.isEmptyObject(facetValues)){
 					content.find("span#addNewLink").hide();
 					return;
@@ -592,25 +570,25 @@
 								jAlert("Maximum allowed number of highlighted facet values is "+self.maxHighlightedFacet+"!",self.moduleName);
 								return;
 							}
-							
+
 							var $li = content.find('li#addFacetValuePattern').clone();
-	
+
 							$li.show();
 							$li.removeClass("addFacetValuePattern");
 							$li.addClass("tempItem");
 							$li.prop({id: ""});
-							
+
 							ul.append($li);
-	
-							$li.find("select.selectCombo").combobox({
-								change: function(e, u){
-									self.checkDuplicateFacet(this, e, u, facetGroupId);
-								},
-								selected: function(e, u){
-									self.checkDuplicateFacet(this, e, u, facetGroupId);
+
+							$li.find("select.selectCombo").searchable({
+								maxListSize: 10, 
+								maxMultiMatch: 10,
+								exactMatch: true,
+								change: function(u, e){
+									self.checkDuplicateFacet(e, u, facetGroupId);
 								}
 							});
-	
+
 							self.addDeleteFacetValueListener($li);
 						}
 					},
@@ -640,12 +618,12 @@
 
 				for(var index in self.facetGroupIdList){
 					var facetItems = [];
-					
+
 					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
-						var items = $("input#_items_"+self.facetGroupIdList[index]);
-	
+						var items = $("select#_items_"+self.facetGroupIdList[index]);
+
 						for(var i = 0; i < items.length; i++){
-							var itemVal = $(items[i]).val();
+							var itemVal = $(items[i]).find("option:gt(0):selected:eq(0)").text();
 							if($.isNotBlank(itemVal) && $.inArray(itemVal, facetItems) ==-1 && isXSSSafeAllowNonAscii(itemVal)){
 								facetItems.push(itemVal);
 							}
@@ -666,7 +644,7 @@
 					if($("div#_" + self.facetGroupIdList[index]).hasClass("isShown")){
 						var sortType = null;
 						var isChecked = $("div#_"+self.facetGroupIdList[index] +" input#facetGroupCheckbox").is(":checked");
-	
+
 						if(isChecked){
 							sortType = $("div#_"+self.facetGroupIdList[index] +" select.facetGroupSortOrder option:selected").val();
 						}
@@ -682,38 +660,38 @@
 				$("#saveBtn").off().on({
 					click: function(e){
 						if (e.data.locked) return;
-						
+
 						setTimeout(function() {
-						var sortType = $("select#facetSortOrder option:selected").val();
-						var facetGroupItems = self.buildFacetGroupItemsMap();
-						var sortOrders = self.buildFacetGroupSortTypeMap();
+							var sortType = $("select#facetSortOrder option:selected").val();
+							var facetGroupItems = self.buildFacetGroupItemsMap();
+							var sortOrders = self.buildFacetGroupSortTypeMap();
 
-						var response = 0;
-						FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
-							callback: function(data){
-								response = data;
-								showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
-							},
-							preHook: function(){
-								self.prepareFacetSort();
-							},
-							postHook: function(){
-								if(response>0){
-									FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
-										callback: function(data){
-											self.setFacetSort(data);
-										},
-										preHook: function(){
-											self.prepareFacetSort();
-										}
-									});
-								}
-								else{
-									self.setFacetSort(self.selectedRule);
-								}
+							var response = 0;
+							FacetSortServiceJS.updateRule(self.selectedRule["ruleId"], self.selectedRule["ruleName"], sortType, facetGroupItems, sortOrders,  {
+								callback: function(data){
+									response = data;
+									showActionResponse(data > 0 ? 1 : data, "update", self.selectedRule["ruleName"]);
+								},
+								preHook: function(){
+									self.prepareFacetSort();
+								},
+								postHook: function(){
+									if(response>0){
+										FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
+											callback: function(data){
+												self.setFacetSort(data);
+											},
+											preHook: function(){
+												self.prepareFacetSort();
+											}
+										});
+									}
+									else{
+										self.setFacetSort(self.selectedRule);
+									}
 
-							}
-						});
+								}
+							});
 						}, 500 );
 					},
 					mouseenter: showHoverInfo

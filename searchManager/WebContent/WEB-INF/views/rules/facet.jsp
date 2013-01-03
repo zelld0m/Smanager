@@ -68,9 +68,7 @@
 							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
 								<label class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
 								<label class="marL5 w207 posRel" style="left:-13px">
-									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6">
-										<option value="all"></option>
-									</select>						
+									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6"></select>						
 								</label>
 								<label class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
 							</li>
