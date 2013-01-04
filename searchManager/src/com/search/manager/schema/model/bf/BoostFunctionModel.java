@@ -89,7 +89,7 @@ public class BoostFunctionModel implements FunctionModelComponent {
 			}
 			else {
 				if (CharUtils.isAsciiAlpha(str.charAt(0))) {
-					if ("NOW".equals(str)) {
+					if (DateConstant.isValidConstant(str)) {
 						stack.peek().addArgument(new DateConstant(str));
 //						logger.debug(str + " is a date constant");
 					}
@@ -103,7 +103,8 @@ public class BoostFunctionModel implements FunctionModelComponent {
 					}
 				}
 				else {
-					if (str.contains("-")) { // Literal date: YYYY-MM-DD Thh:mm:ssZ
+					Matcher dateMatcher = Pattern.compile("[0-9]{4}-(0[1-9]|1[0-9]|2[0-9]|3[01])-(0[1-9]|1[012])(\\s)?T([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z").matcher(str);
+					if (dateMatcher.matches()) { // Literal date: YYYY-MM-DD Thh:mm:ssZ
 						stack.peek().addArgument(new DateConstant(str));
 					}
 					else {
