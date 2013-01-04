@@ -22,7 +22,8 @@
 	<div class="floatL w730 titlePlacer breakWord">
 	  <div class="floatR padT7">
 	  	<div class="floatL fbold fsize14 marT4 marR5"><label class="floatL wAuto marRL5 fLgray2">|</label> Auto-export: </div>
-	  	<div class="floatR"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
+	  	<div class="floatR marT4 marR5"><a class="infoIcon" href="javascript:void(0);" title="What's this?"><img src="/searchManager/images/icon_info.png"></a></div>
+	  	<div class="floatR marR5"><input id="autoexport" type="checkbox" class="firerift-style-checkbox on-off"/></div>
 	  	<div class="clearB"></div>
       </div>
 	  <div class="floatR padT7">
@@ -34,6 +35,16 @@
 		<span id="titleText"></span>
 		<span id="titleHeader" class="fLblue fnormal"></span>
 	  </div>
+	</div>
+	
+	<div class="clearB"></div>
+	
+	<div style="width:95%" class="dashboard marT20 mar0 fsize12">
+	These are all the rule that are available for Export. You can manually export rules by selecting the checkboxes and clicking on the 'Export' button.
+	<ul class="marL15">
+		<li>If you have Auto-Export turned on, all rules that you publish to ${storeLabel} will be automatically exported. There is no need to manually export any rules.</li>
+		<li>Exporting a rule will not remove it from the list.</li>
+	</ul>
 	</div>
 	
 	<div class="clearB"></div>
@@ -72,8 +83,8 @@
 							<th width="50px">Content</th>
 							<th width="230px">Rule Info</th>
 							<th width="85px">Published Date</th>
-							<th>Export Type</th>
 							<th width="85px">Export Date</th>
+							<th>Export Type</th>
 						</tr>
 					<tbody>
 				</table>
@@ -94,11 +105,11 @@
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>
-							<td class="txtAC" id="type"></td>
 							<td width="85px" class="txtAL" id="exportDate">
 								<p id="requestedBy"></p>
 								<p id="requestedDate" class="fsize11"></p>
 							</td>
+							<td class="txtAC" id="type"></td>
 						</tr>
 					</tbody>
 				</table>

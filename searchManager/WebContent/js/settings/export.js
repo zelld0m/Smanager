@@ -325,6 +325,34 @@
 			var self = this;
 			$("#titleText").html(self.moduleName);
 			
+			$('a.infoIcon').qtip({
+				content: { 
+					text: $('<div>')
+				},
+				show:{ modal:true },
+				style:{
+					width:'150px'
+				},
+				events: {
+					render:function(rEvt, api){
+						var $content = $("div", api.elements.content);
+						$content.html("");
+					},
+
+					show:function(rEvt, api){
+						var $content = $("div", api.elements.content);	
+
+						var text = "ON: all rules that you publish will be automatically exported. <br/> OFF: all rules that you publish needs to be manually exported";
+
+						if(!$content.get(0))						
+							$content = api.elements.content;
+
+						$content.html(text);
+
+					}
+				}
+			});
+			
 			self.getRuleEntityList();
 			self.populateTabContent();
 			
