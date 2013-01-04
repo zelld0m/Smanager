@@ -268,7 +268,7 @@
 			template  += '					<td class="w175">Platform :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="platformList" class="selectCombo w229" title="Select Platform" >';
-			template  += '							<option value=""></option>';
+			template  += '							<option value="">-Select Platform-</option>';
 			template  += '							<option value="universal">Universal</option>';
 			template  += '							<option value="pc">PC</option>';
 			template  += '							<option value="linux">Linux</option>';
@@ -280,7 +280,7 @@
 			template  += '					<td class="w175">Condition :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="conditionList" class="selectCombo w229" title="Select Condition" >';
-			template  += '							<option value=""></option>';
+			template  += '							<option value="">-Select Condition-</option>';
 			template  += '							<option value="refurbished">Refurbished</option>';
 			template  += '							<option value="open">Open Box</option>';
 			template  += '							<option value="clearance">Clearance</option>';
@@ -291,7 +291,7 @@
 			template  += '					<td class="w175">Availability :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="availabilityList" class="selectCombo w229" title="Select Availability" >';
-			template  += '							<option value=""></option>';
+			template  += '							<option value="">-Select Availability-</option>';
 			template  += '							<option value="instock">In Stock</option>';
 			template  += '							<option value="call">Call</option>';
 			template  += '						</select>';
@@ -301,7 +301,7 @@
 			template  += '					<td class="w175">License :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value="all">-Select License-</option>';
 			template  += '							<option value="license">License Products Only</option>';
 			template  += '							<option value="nonlicense">Non-License Products Only</option>';
 			template  += '						</select>';
@@ -311,7 +311,7 @@
 			template  += '					<td class="w175">Product Image :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
 			template  += '						<select name="select" id="imageExistsList" class="selectCombo w229" title="Select Product Image" >';
-			template  += '							<option value="all"></option>';
+			template  += '							<option value="all">-Select Image Option-</option>';
 			template  += '							<option value="withImage">Products With Image Only</option>';
 			template  += '							<option value="noImage">Products Without Image Only</option>';
 			template  += '						</select>';
@@ -1113,7 +1113,7 @@
 					$tab.find("img#preloaderDynamicAttributeList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					if ($.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
+					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition["dynamicAttributes"])){
 						base.populateDynamicAttributeValues();
 					}
 				}
@@ -1144,7 +1144,7 @@
 					$tab.find("img#preloaderTemplateNameList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					if ($.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
 						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
 						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
 					}
@@ -1275,7 +1275,7 @@
 					$tab.find("img#preloaderDynamicAttributeList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					if ($.isNotBlank($item) && $.isNotBlank($item.condition["dynamicAttributes"])){
+					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition["dynamicAttributes"])){
 						base.populateDynamicAttributeValues();
 					}
 				}
@@ -1306,7 +1306,7 @@
 					$tab.find("img#preloaderTemplateNameList").hide();
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
-					if ($.isNotBlank($item) && $.isNotBlank($item.condition.dynamicAttributes)){
+					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
 						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
 						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
 					}

@@ -331,7 +331,7 @@
 									<td class="w175">Platform :</td>
 									<td class="iepadBT0">
 										<select name="select" id="platformList" class="selectCombo w235" title="Select Platform" >
-											<option value="all"></option>
+											<option value="all">-Select Platform-</option>
 											<option value="universal">Universal</option>
 											<option value="pc">PC</option>
 											<option value="linux">Linux</option>
@@ -343,7 +343,7 @@
 									<td class="w175">Condition :</td>
 									<td class="iepadBT0">
 										<select name="select" id="conditionList" class="selectCombo w235" title="Select Condition" >
-											<option value="all"></option>
+											<option value="all">-Select Condition-</option>
 											<option value="refurbished">Refurbished</option>
 											<option value="open">Open Box</option>
 											<option value="clearance">Clearance</option>
@@ -354,7 +354,7 @@
 									<td class="w175">Availability :</td>
 									<td class="iepadBT0">
 										<select name="select" id="availabilityList" class="selectCombo w235" title="Select Availability" >
-											<option value="all"></option>
+											<option value="all">-Select Availability-</option>
 											<option value="instock">In Stock</option>
 											<option value="call">Call</option>
 										</select>
@@ -364,7 +364,7 @@
 									<td class="w175">License :</td>
 									<td class="iepadBT0">
 										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
-											<option value="all"></option>
+											<option value="all">-Select License-</option>
 											<option value="license">License Products Only</option>
 											<option value="nonlicense">Non-License Products Only</option>
 										</select>
@@ -374,7 +374,7 @@
 									<td class="w175">Product Image :</td>
 									<td class="iepadBT0">
 										<select name="select" id="imageExistsList" class="selectCombo w235" title="Select Product Image" >
-											<option value="all"></option>
+											<option value="all">-Select Image Option-</option>
 											<option value="withImage">Products With Image Only</option>
 											<option value="noImage">Products Without Image Only</option>
 										</select>
