@@ -74,14 +74,12 @@
 		<store-specific-fields override="macmall" />
 		<search-rule override="macmall"/>
 	</store>
-<!-- not yet in schema  
 	<store name="mmrt">
 		<catalog>MacMall Retail</catalog>
-		<store-flag></store-flag>
+		<store-flag>MacMallRetail_StoreFlag</store-flag>
 		<store-specific-fields override="macmall"/>
 		<search-rule override="macmall"/>
 	</store>
--->
 
 	<!-- OnSale -->
 	<store name="onsale">
@@ -162,6 +160,7 @@
 			<facet-template>PCMallGov_FacetTemplate</facet-template>
 			<product-name>PCMallGov_Name</product-name>
 			<product-description>PCMallGov_Description</product-description>
+			<popularity>PCMallGov_Open_Popularity</popularity>
 		</store-specific-fields>
 		<search-rule override="pcmall"/>
 	</store>
@@ -176,13 +175,18 @@
 	<store name="pggv">
 		<catalog>PC Mall Gov Government Web</catalog>
 		<store-flag>PCMallGov_GovStoreFlag</store-flag>
-		<store-specific-fields override="pcmallgov"/>
+		<store-specific-fields>
+			<facet-template>PCMallGov_FacetTemplate</facet-template>
+			<product-name>PCMallGov_Name</product-name>
+			<product-description>PCMallGov_Description</product-description>
+			<popularity>PCMallGov_Gov_Popularity</popularity>
+		</store-specific-fields>
 		<search-rule override="pcmallgov"/>
 	</store>
 	<store name="pggvoe">
 		<catalog>PC Mall Gov Government Order Entry</catalog>
 		<store-flag>PCMallGov_GovOrderEntryFlag</store-flag>
-		<store-specific-fields override="pcmallgov"/>
+		<store-specific-fields override="pggv"/>
 		<search-rule override="pcmallgov"/>
 	</store>
 
@@ -190,13 +194,18 @@
 	<store name="pged">
 		<catalog>PC Mall Gov Academic Web</catalog>
 		<store-flag>PCMallGov_ACAStoreFlag</store-flag>
-		<store-specific-fields override="pcmallgov"/>
+		<store-specific-fields>
+			<facet-template>PCMallGov_FacetTemplate</facet-template>
+			<product-name>PCMallGov_Name</product-name>
+			<product-description>PCMallGov_Description</product-description>
+			<popularity>PCMallGov_ACA_Popularity</popularity>
+		</store-specific-fields>
 		<search-rule override="pcmallgov"/>
 	</store>
 	<store name="pgedoe">
 		<catalog>PC Mall Gov Academic Order Entry</catalog>
 		<store-flag>PCMallGov_ACAOrderEntryFlag</store-flag>
-		<store-specific-fields override="pcmallgov"/>
+		<store-specific-fields override="pged"/>
 		<search-rule override="pcmallgov"/>
 	</store>
 

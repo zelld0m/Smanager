@@ -195,7 +195,7 @@ public class SolrSchemaUtility {
 
 		String[] bfs =
 		{
-				"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				/*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
 				"sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
 				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
 				"linear(PcMall_PopularityScale,1,0)^2",
@@ -203,7 +203,11 @@ public class SolrSchemaUtility {
 				"ms(NOW,2000-01-01T00:00:00Z)^2.0",
 				"ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
 				"ms(NOW,2000-01-01T00:65:61Z)^2.0",
-				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0)^10.0",
+				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0)^10.0",*/
+				
+				"ms(NOW/HOUR)^2.0",
+				"ms(NOW/2HOURS)^2.0",
+				"ms(NOW/DAY+6MONTHS-3DAYS)^2.0"
 		};
 
 		for (String bf: bfs) {
