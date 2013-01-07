@@ -1,8 +1,7 @@
 package com.search.manager.schema.model.bf;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.solr.util.DateMathParser;
+import org.apache.lucene.queryParser.ParseException;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -15,8 +14,6 @@ public class DateConstant extends Constant {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private final static String[] validConstants = DateMathParser.CALENDAR_UNITS.keySet().toArray(new String[0]);//{ "NOW", "YEAR", "MONTH", "DAY", "MIN" , };
-	
 	private final static String DATE_NOW = "NOW";
 	
 	public DateConstant(String value) {
@@ -24,11 +21,23 @@ public class DateConstant extends Constant {
 		genericType = GenericType.DATE;
 	}
 	
-	public static boolean isValidConstant(String value) {
-		if(DATE_NOW.equals(value))
-			return true;
+	public static boolean isValidConstant(String value) throws SchemaException {
+		boolean isValid = false;
 		
-		return ArrayUtils.contains(validConstants, value);
+		if(StringUtils.isNotBlank(value)){
+			if(DATE_NOW.equals(value)){
+				isValid = true;
+			} else
+				try {
+					if(value.startsWith(DATE_NOW) && DateMathUtil.isValidDateMath(value.substring(DATE_NOW.length()))){
+						isValid = true;
+					}
+				} catch (ParseException e) {
+					throw new SchemaException("Invalid Date Math String: " + value + "!");
+				}
+		}
+		
+		return isValid;
 	}
 	
 	@Override
