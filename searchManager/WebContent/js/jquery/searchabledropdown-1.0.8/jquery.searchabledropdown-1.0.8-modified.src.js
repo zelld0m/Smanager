@@ -34,6 +34,7 @@
 
     // defaults
 	plugin.defaults = {
+		rule: null, 
         maxListSize: 100,
         maxMultiMatch: 50,
         exactMatch: false,
@@ -229,10 +230,12 @@
         });
         
         // custom callback handler
-        self.off("change").on("change", function(e){
-        	if(selectorHelper.selected().get(0).value !== $(e.currentTarget).get(0).value);
-        		settings.change($(e.currentTarget).get(0), e);
-        });
+        self.off("change").on({
+        		change: function(e){
+        				if(selectorHelper.selected().get(0).value !== $(e.currentTarget).get(0).value);
+        					settings.change($(e.currentTarget).get(0), e, e.data.rule);
+        				}
+        }, {rule: settings.rule});
 
         // toggle click event on overlay div
         overlay.click(function(e) {

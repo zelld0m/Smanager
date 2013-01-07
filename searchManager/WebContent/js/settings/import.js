@@ -7,6 +7,7 @@
 			ruleEntityList : null,
 			importTypeList : null,
 			ruleStatusMap : new Array(),
+			ruleTransferMap: null,
 
 			postMsg : function(data,pub){
 				var self = this;
@@ -391,11 +392,23 @@
 				return template;
 			},
 
-			getImportList : function(){
+			getRuleTransferMap: function(){
 				var self = this;
-				var $selectedTab = $("#"+self.tabSelected); 
-				var totalSize = 0;
+				//TODO: dynamic origin and target
+				RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
+					callback: function(ruleTransferMap){
+						self.ruleTransferMap = ruleTransferMap;
+					},
+					postHook: function(){
+						self.getAllRulesToImport();
+					}
+				});
+			},
 
+			getAllRulesToImport: function(){
+				var self = this;
+				var $selectedTab = $("#"+self.tabSelected);
+				
 				RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 					callback:function(data){
 						var list = data;
@@ -410,7 +423,7 @@
 								var ruleId = rule["ruleId"];
 								var ruleName = rule["ruleName"];
 								var dbRuleId = "";
-								
+
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
 								case "exclude":
@@ -494,7 +507,7 @@
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
-								
+
 								//import type
 								var $importTypeSelect = $tr.find("td#type > select#importTypeList");
 
@@ -508,6 +521,7 @@
 								$tr.find("td#importAs").importas({
 									rule: list[i],
 									ruleStatusList: self.ruleStatusMap[self.entityName],
+									ruleTransferMap: self.ruleTransferMap,
 									setRuleStatusListCallback: function(base, list){
 										self.ruleStatusMap[self.entityName]= list;
 									},
@@ -536,7 +550,7 @@
 							}
 
 							$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
-							
+
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
@@ -561,7 +575,17 @@
 					postHook:function(){ 
 						self.cleanUpTabContent(); 
 					}
-				});
+				});			
+			},
+			
+			getImportList : function(){
+				var self = this;
+								
+				if(GLOBAL_store==="pcmallcap"){
+					self.getRuleTransferMap();
+				}else{
+					self.getAllRulesToImport();
+				}
 			},
 
 			init : function() {

@@ -14,44 +14,40 @@
 
 		base.init = function(){
 			base.options = $.extend({},$.importas.defaultOptions, options);
-			base.$el.html(base.getTemplate());
+			base.setTemplate();
 			base.getRules();
 		};
 
 		base.getRules = function(){
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
-
-			RuleTransferServiceJS.getRuleTransferMap(rule["store"], rule["ruleId"], ruleEntity, {
-				callback: function(ruleTransferMap){
-					base.autoMap = ruleTransferMap;
-
-					if(base.options.ruleStatusList!=null){
-						base.populateOptions(base.options.ruleStatusList);
-					}else{
-						DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
-							callback: function(rs){
-								var list = rs.list;
-								base.populateOptions(list);
-								base.options.setRuleStatusListCallback(base, list);
-							}
-						});
+			base.automap = base.options.ruleTransferMap;
+			
+			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
+				base.populateOptions(base.options.ruleStatusList);
+			}else{
+				DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
+					callback: function(rs){
+						var list = rs.list;
+						if(list!=null && list.length>0){
+							base.populateOptions(list);
+							base.options.setRuleStatusListCallback(base, list);
+						}							
 					}
-				}
-			});
+				});
+			}			
 		};
 
-		base.getTemplate = function(){
+		base.setTemplate = function(){
 			var template = "";
 
 			template += '<div>';
 			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-			template += '	<select id="importAsSelect" title="Select rule" style="display:none">';
-			template += '		<option value=""></option>';
+			template += '	<select id="importAsSelect" title="Select rule" class="searchable">';
 			template += '		<option value="0">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
 			template += '	<div id="replacement" style="display:none">';
-			template += '		<p>Use custom name for new <strong><a id="selectedRule" href="javascript:void(0);"></a></strong> rule: </p>';
+			template += '		<p>Use custom name for <strong><a id="selectedRule" href="javascript:void(0);"></a></strong> rule: </p>';
 			template += '		<input id="newName" type="text"/>';
 			template += '	</div>';
 			template += '	<div id="importAlert" style="display:none">';
@@ -60,7 +56,7 @@
 			template +=	'	</div>';
 			template += '</div>';
 
-			return template;
+			base.$el.append(template);
 		};
 
 		base.showAlert = function(id){
@@ -78,11 +74,75 @@
 			base.options.targetRuleStatusCallback(base.options.rule, ruleStatus);
 		};
 
-		base.showSelector = function(){
+		base.toggleFields = function(u, evt, rule, selectRule){
+			var $replacement = $(u).parents("tr").find("#replacement");
+			base.options.selectedOptionChanged(u.value);
+
+			if(selectRule){
+				$replacement.slideUp('slow', function(){
+					$(this).hide();
+				});
+			}else{
+				$replacement.find("#selectedRule").text($(u).val()==="0"? "Pending for Import":  rule["ruleName"]);
+
+				var $input = $replacement.find("input#newName");
+				
+				$input.val($(u).val()==="0"? rule["ruleName"]:  $(u).find("option:gt(0):selected:eq(0)").text());
+
+				$replacement.slideDown('slow', function() {
+					$(u).parents("tr").find("#selectedRule").off().on({
+						click: function(e){
+							base.toggleFields(e.data.u, e.data.evt, e.data.rule, true);
+						}
+					},{u: u, evt: evt, rule: rule});
+				});
+
+				$input.off().on({
+					focusin: function(e){
+						if($(e.currentTarget).val().toLowerCase()===base.options.newRuleText.toLowerCase()){
+							$(e.currentTarget).val("");
+						}
+					},
+					focusout: function(e){
+						if($.isBlank($(e.currentTarget).val())){
+							$(e.currentTarget).val(u.value);
+						}
+					}
+				});
+			}
+
+			base.showAlert(u.value);
+		};
+
+		base.populateOptions = function(list){
 			var $importAsSelect = base.$el.find("select#importAsSelect");
-			var $replacement = base.$el.find("#replacement");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
+			
+			var ruleStatus = null;
+			base.rsLookup = new Array();
+			base.rsLookupByName = new Array();
+
+			for(var idx=0; idx < list.length; idx++){
+				ruleStatus = list[idx];
+				base.rsLookup[ruleStatus["ruleId"]] = ruleStatus;
+				base.rsLookupByName[ruleStatus["ruleName"]] = ruleStatus;
+
+				switch(ruleEntity){
+				case "ELEVATE": 
+				case "EXCLUDE": 
+				case "DEMOTE": 
+				case "FACET_SORT": 
+					break;
+				case "RANKING_RULE":	
+				case "QUERY_CLEANING":
+					if($.isEmptyObject(base.autoMap) || (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]])))
+						$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
+					break;
+				}
+			}
+
+			var $replacement = base.$el.find("#replacement");
 			base.$el.find("#preloader").hide();
 			
 			var $option = $importAsSelect.find('option:eq(0)');
@@ -102,144 +162,32 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
-				if(base.autoMap!=null){ //TODO:
-					$option.attr({value: base.autoMap["ruleIdTarget"], selected: true});
-					$option.text(base.autoMap["ruleNameTarget"]);
-					$replacement.find("input#newName").val(base.autoMap["ruleNameTarget"]);
+				if(!$.isEmptyObject(base.autoMap) && !$.isEmptyObject(base.autoMap[rule["ruleId"]])){ //TODO:
+					$option.attr({value: base.autoMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
+					$option.text(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
+					$replacement.find("input#newName").val(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
 				}
 				break;
 			}
 			
-			$importAsSelect.combobox({
-				change: function(e, u){
-					base.toggleFields($(this), u, false);
-				},
-				selected: function(e, u){
-					base.toggleFields($(this), u, false);
+			$importAsSelect.searchable({
+				rule: rule,
+				maxListSize: 10, 
+				maxMultiMatch: 10,
+				exactMatch: true,
+				change: function(u, e, rule){
+					base.toggleFields(u, e, rule, false);
 				}
-			});	
-
-			var $allSpan = $importAsSelect.nextAll("span");
-			switch(ruleEntity){
-			case "ELEVATE": 
-			case "EXCLUDE": 
-			case "DEMOTE": 
-			case "FACET_SORT": 
-				$allSpan.eq(0).find("input").attr({
-					disabled: "disabled"
-				});
-				$allSpan.eq(1).hide();
-				break;
-			case "RANKING_RULE":	
-			case "QUERY_CLEANING":
-				if(base.autoMap!=null){
-					$allSpan.eq(0).find("input").attr({
-						disabled: "disabled"
-					});
-					$allSpan.eq(1).hide();
-				}
-				break;
-			}
-
+			});
+			
 			if(ruleEntity==="FACET_SORT"){
 				var rs = base.rsLookupByName[rule["ruleName"]];
 				base.showAlert(rs["ruleId"]);
 			}else{
 				base.showAlert($importAsSelect.find("option:selected").val());
 			};
-			
+
 			base.options.afterUIRendered();
-		};
-
-		base.toggleFields = function($select, u, selectRule){
-			var $allSpan = $select.nextAll("span");
-			var $replacement = base.$el.find("#replacement");
-			var rule = base.options.rule;
-			var ruleEntity = rule["ruleEntity"];
-			base.options.selectedOptionChanged(u.item.value);
-			$select.val(u.item.value);
-
-			$allSpan.eq(0).hide();
-			$allSpan.eq(1).hide();
-
-			if(selectRule){
-				$allSpan.eq(0).show();
-
-				switch(ruleEntity){
-				case "ELEVATE": 
-				case "EXCLUDE": 
-				case "DEMOTE": 
-				case "FACET_SORT": 
-					break;
-				case "RANKING_RULE":	
-				case "QUERY_CLEANING":
-					$allSpan.eq(1).show();
-					break;
-				}
-
-				$replacement.slideUp('slow', function(){
-					$(this).hide();
-				});
-			}else{
-				$replacement.find("#selectedRule").text(u.item.value==0? "Pending for Import":  u.item.text);
-
-				var $input = $replacement.find("input#newName");
-				$input.val(u.item.text);
-
-				$replacement.slideDown('slow', function() {
-					base.$el.find("#selectedRule").off().on({
-						click: function(e){
-							base.toggleFields($select, u, true);
-						}
-					});
-				});
-
-				$input.off().on({
-					focusin: function(e){
-						if($(this).val().toLowerCase()===base.options.newRuleText.toLowerCase()){
-							$(this).val("");
-						}
-					},
-					focusout: function(e){
-						if($.isBlank($(this).val())){
-							$(this).val(u.item.text);
-						}
-					}
-				});
-			}
-
-			base.showAlert(u.item.value);
-		};
-
-		base.populateOptions = function(list){
-			var $importAsSelect = base.$el.find("select#importAsSelect");
-			var rule = base.options.rule;
-			var ruleEntity = rule["ruleEntity"];
-
-			var ruleStatus = null;
-			base.rsLookup = new Array();
-			base.rsLookupByName = new Array();
-
-			for(var idx=0; idx < list.length; idx++){
-				ruleStatus = list[idx];
-				base.rsLookup[ruleStatus["ruleId"]] = ruleStatus;
-				base.rsLookupByName[ruleStatus["ruleName"]] = ruleStatus;
-
-				switch(ruleEntity){
-				case "ELEVATE": 
-				case "EXCLUDE": 
-				case "DEMOTE": 
-				case "FACET_SORT": 
-					break;
-				case "RANKING_RULE":	
-				case "QUERY_CLEANING":
-					if(base.autoMap==null)
-						$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
-					break;
-				}
-			}
-
-			base.showSelector();
 		};
 
 		// Run initializer
@@ -259,6 +207,7 @@
 	$.fn.importas = function(options){
 		if (this.length) {
 			return this.each(function() {
+				$(this).empty();
 				(new $.importas(this, options));
 			});
 		};
