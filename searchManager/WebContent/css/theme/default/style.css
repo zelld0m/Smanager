@@ -540,7 +540,7 @@ ul.topmenu li.submenu:hover ul li:hover { }
 
 
 /* forms */
-select 							{ font: normal 12px arial; margin-left:10px; padding: 2px; border:1px solid #ccc; color:#666}			
+select 							{ font: normal 12px arial; padding: 2px; border:1px solid #ccc; color:#666}			
 input[type="text"], 
 input[type="password"] 			{ outline: none; }
 input[type=text], 
@@ -918,10 +918,11 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .searchBoxHolder:focus, div.searchBoxHolder:focus, select:focus, textarea:focus, .pagingArrow input:focus, .boxContainer input:focus, label input:focus, 
 .tblCatalog input:focus, .bannerContent input:focus, .highlight input:focus
  { 
- 	-webkit-box-shadow:0 0 6px #007eff;
- 	-moz-box-shadow:0 0 6px #007eff;
- 	-ms-box-shadow:0 0 6px #007eff;
- 	box-shadow:0 0 6px #007eff;
+/*Because of conflict in dropdown plugin*/
+/*  	-webkit-box-shadow:0 0 6px #007eff; */
+/*  	-moz-box-shadow:0 0 6px #007eff; */
+/*  	-ms-box-shadow:0 0 6px #007eff; */
+/*  	box-shadow:0 0 6px #007eff; */
 }
 
 .cssReset .placeHolder, .qtip .placeHolder, .placeHolder { border:3px dashed #dedede; background:url(../../../images/bg_dropItemHere.png) center center no-repeat !important; }
@@ -940,4 +941,6 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 .qtip .version li.2line { height: 26px !important }
 
 .qtip ul#groupList > li.group:even{  background:#ecf0f8 }
+
+input.ss-textbox { font-family: sans-serif, Arial !important; /*Mozilla font issue*/ }
 

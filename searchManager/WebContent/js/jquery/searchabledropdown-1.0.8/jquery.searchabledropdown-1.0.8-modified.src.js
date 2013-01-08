@@ -327,12 +327,12 @@
 
             // fix some styles
             self.css("text-decoration", "none");
-            self.width(self.outerWidth());
-            self.height(self.outerHeight());
+            self.css("width", "100%");
+            //self.height(self.outerHeight());
 
             // wrapper styles
             wrapper.css("position", "relative");
-            wrapper.css("width", self.outerWidth());
+            wrapper.css("width", "100%");
             // relative div needs an z-index (related to IE z-index bug)
             if($.browser.msie)
             	wrapper.css("z-index", zindex);
@@ -399,8 +399,9 @@
     		else if($.browser.chrome) {
     			input.height(self.innerHeight());
     			input.css("text-transform", "none");
-    			input.css("padding-left", parseFloatPx(input.css("padding-left"))+3);
-    			input.css("padding-top", 2);
+    			input.css("padding", "2px 5px 0px 5px");
+    			//input.css("padding-left", parseFloatPx(input.css("padding-left"))+3);
+    			//input.css("padding-top", 2);
     		}
     		// safari
     		else if($.browser.safari) {
@@ -423,8 +424,9 @@
     		}
     		// all other browsers
     		else {
-    			input.css("padding-left", parseFloatPx(self.css("padding-left"))+3);
-    			input.css("padding-top", parseFloatPx(self.css("padding-top"))+1);
+    			//input.css("padding-left", parseFloatPx(self.css("padding-left"))+3);
+    			//input.css("padding-top", parseFloatPx(self.css("padding-top"))+1);
+    			input.css("padding", '0px 5px');
     		}
 
     		// adjust width of search field
@@ -438,9 +440,9 @@
     		// do not work in all browser.
             var w = self.css("width");
             var ow = self.outerWidth();
-            self.css("width", "auto");
+            //self.css("width", "auto");
             ow = ow > self.outerWidth() ? ow : self.outerWidth();
-            self.css("width", w);
+            //self.css("width", w);
 
             // entries selector replacement
             selector.hide();

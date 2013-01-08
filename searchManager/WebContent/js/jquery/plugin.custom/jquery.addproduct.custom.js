@@ -267,7 +267,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Platform :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="platformList" class="selectCombo w229" title="Select Platform" >';
+			template  += '						<select name="select" id="platformList" class="selectCombo" style="width: 100%;" title="Select Platform" >';
 			template  += '							<option value="">-Select Platform-</option>';
 			template  += '							<option value="universal">Universal</option>';
 			template  += '							<option value="pc">PC</option>';
@@ -279,7 +279,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Condition :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="conditionList" class="selectCombo w229" title="Select Condition" >';
+			template  += '						<select name="select" id="conditionList" class="selectCombo" style="width: 100%;" title="Select Condition" >';
 			template  += '							<option value="">-Select Condition-</option>';
 			template  += '							<option value="refurbished">Refurbished</option>';
 			template  += '							<option value="open">Open Box</option>';
@@ -290,7 +290,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Availability :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="availabilityList" class="selectCombo w229" title="Select Availability" >';
+			template  += '						<select name="select" id="availabilityList" class="selectCombo" style="width: 100%;" title="Select Availability" >';
 			template  += '							<option value="">-Select Availability-</option>';
 			template  += '							<option value="instock">In Stock</option>';
 			template  += '							<option value="call">Call</option>';
@@ -300,7 +300,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">License :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="licenseList" class="selectCombo w229" title="Select License" >';
+			template  += '						<select name="select" id="licenseList" class="selectCombo" style="width: 100%;" title="Select License" >';
 			template  += '							<option value="all">-Select License-</option>';
 			template  += '							<option value="license">License Products Only</option>';
 			template  += '							<option value="nonlicense">Non-License Products Only</option>';
@@ -310,7 +310,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Product Image :</td>';
 			template  += '					<td class="iepadBT0 padT1">';
-			template  += '						<select name="select" id="imageExistsList" class="selectCombo w229" title="Select Product Image" >';
+			template  += '						<select name="select" id="imageExistsList" class="selectCombo" style="width: 100%;" title="Select Product Image" >';
 			template  += '							<option value="all">-Select Image Option-</option>';
 			template  += '							<option value="withImage">Products With Image Only</option>';
 			template  += '							<option value="noImage">Products Without Image Only</option>';
