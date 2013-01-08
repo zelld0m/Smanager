@@ -18,7 +18,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
-import com.search.manager.model.CampaignBanner;
+//import com.search.manager.model.CampaignBanner;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -44,8 +44,8 @@ public class CampaignDAO {
 	private AddBannerToCampaignStoredProcedure addBannerSP;
 	private UpdateCampaignBannerStoredProcedure updateBannerSP;
 	private DeleteCampaignBannerStoredProcedure deleteBannerSP;
-	private GetCampaignBannersStoredProcedure getBannerSP;
-	private SearchCampaignBannersStoredProcedure searchBannerSP;
+	//private GetCampaignBannersStoredProcedure getBannerSP;
+	//private SearchCampaignBannersStoredProcedure searchBannerSP;
 	private AddKeywordToCampaignBannerStoredProcedure addBannerKeywordSP;
 	private DeleteCampaignBannerKeywordStoredProcedure deleteBannerKeywordSP;
 	private GetCampaignBannerKeywordsStoredProcedure getBannerKeywordSP;
@@ -63,8 +63,8 @@ public class CampaignDAO {
     	addBannerSP = new AddBannerToCampaignStoredProcedure(jdbcTemplate);
     	updateBannerSP = new UpdateCampaignBannerStoredProcedure(jdbcTemplate);
     	deleteBannerSP = new DeleteCampaignBannerStoredProcedure(jdbcTemplate);
-    	getBannerSP = new GetCampaignBannersStoredProcedure(jdbcTemplate);
-    	searchBannerSP = new SearchCampaignBannersStoredProcedure(jdbcTemplate);
+    	//getBannerSP = new GetCampaignBannersStoredProcedure(jdbcTemplate);
+    	//searchBannerSP = new SearchCampaignBannersStoredProcedure(jdbcTemplate);
     	addBannerKeywordSP = new AddKeywordToCampaignBannerStoredProcedure(jdbcTemplate);
     	deleteBannerKeywordSP = new DeleteCampaignBannerKeywordStoredProcedure(jdbcTemplate);
     	getBannerKeywordSP = new GetCampaignBannerKeywordsStoredProcedure(jdbcTemplate);
@@ -228,7 +228,7 @@ public class CampaignDAO {
 		}
 	}
 
-	public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
+	/*public int addCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
     	try {
     		// TODO: add checking for duplicates
         	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -242,7 +242,7 @@ public class CampaignDAO {
     	catch (Exception e) {
     		throw new DaoException("Failed during addCampaignBanner()", e);
     	}
-    }
+    }*/
 	
 	private class UpdateCampaignBannerStoredProcedure extends StoredProcedure {
 		private UpdateCampaignBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -256,7 +256,7 @@ public class CampaignDAO {
 	    }
 	}
 
-	public int updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
+	/*public int updateCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
     	try {
         	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
@@ -269,7 +269,7 @@ public class CampaignDAO {
     	catch (Exception e) {
     		throw new DaoException("Failed during updateCampaignBanner()", e);
     	}
-    }
+    }*/
 	
 	private class DeleteCampaignBannerStoredProcedure extends StoredProcedure {
 		private DeleteCampaignBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -280,7 +280,7 @@ public class CampaignDAO {
 	    }
 	}
 
-	public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
+	/*public int deleteCampaignBanner(CampaignBanner campaignBanner) throws DaoException {
     	try {
         	Map<String, Object> inputs = new HashMap<String, Object>();
             inputs.put(DAOConstants.PARAM_CAMPAIGN_ID, campaignBanner.getCampaign().getCampaignId());
@@ -290,7 +290,7 @@ public class CampaignDAO {
     	catch (Exception e) {
     		throw new DaoException("Failed during deleteCampaignBanner()", e);
     	}
-    }
+    }*/
 	
 	private class AddKeywordToCampaignBannerStoredProcedure extends StoredProcedure {
 		private AddKeywordToCampaignBannerStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -303,7 +303,7 @@ public class CampaignDAO {
 	    }
 	}
 
-	public int addCampaignBannerKeyword(CampaignBanner campaignBanner) throws DaoException {
+	/*public int addCampaignBannerKeyword(CampaignBanner campaignBanner) throws DaoException {
     	try {
     		// TODO: add checking for duplicates
     		int i = 0;
@@ -320,7 +320,7 @@ public class CampaignDAO {
     	catch (Exception e) {
     		throw new DaoException("Failed during addCampaignBannerKeyword()", e);
     	}
-    }
+    }*/
 	
 	private class DeleteCampaignBannerKeywordStoredProcedure extends StoredProcedure {
 		private DeleteCampaignBannerKeywordStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -332,7 +332,7 @@ public class CampaignDAO {
 	    }
 	}
 
-	public int deleteCampaignBannerKeyword(CampaignBanner campaignBanner) throws DaoException {
+	/*public int deleteCampaignBannerKeyword(CampaignBanner campaignBanner) throws DaoException {
     	try {
     		// TODO: add checking for duplicates
     		int i = 0;
@@ -348,9 +348,9 @@ public class CampaignDAO {
     	catch (Exception e) {
     		throw new DaoException("Failed during deleteCampaignBannerKeyword()", e);
     	}
-    }
+    }*/
 
-	private class GetCampaignBannersStoredProcedure extends StoredProcedure {
+	/*private class GetCampaignBannersStoredProcedure extends StoredProcedure {
 		private GetCampaignBannersStoredProcedure(JdbcTemplate jdbcTemplate) {
 	        super(jdbcTemplate, DAOConstants.SP_GET_CAMPAIGN_BANNER);
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<CampaignBanner>() {
@@ -465,7 +465,7 @@ public class CampaignDAO {
 		} catch (Exception e) {
     		throw new DaoException("Failed during getCampaign()", e);
     	}
-	}
+	}*/
 	
 	private class GetCampaignBannerKeywordsStoredProcedure extends StoredProcedure {
 		private GetCampaignBannerKeywordsStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -496,7 +496,7 @@ public class CampaignDAO {
 	    }
 	}
 	
-	public RecordSet<CampaignBanner> getCampaignBannerKeywords(SearchCriteria<CampaignBanner> criteria) throws DaoException {
+	/*public RecordSet<CampaignBanner> getCampaignBannerKeywords(SearchCriteria<CampaignBanner> criteria) throws DaoException {
 		try {
 			CampaignBanner model = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -510,7 +510,7 @@ public class CampaignDAO {
 		} catch (Exception e) {
 			throw (e instanceof DaoException) ? (DaoException)e : new DaoException("Failed during getCampaign()", e);
     	}
-	}
+	}*/
 	
 	private class SearchCampaignBannerKeywordsStoredProcedure extends StoredProcedure {
 		private SearchCampaignBannerKeywordsStoredProcedure(JdbcTemplate jdbcTemplate) {
@@ -544,7 +544,7 @@ public class CampaignDAO {
 	    }
 	}
 	
-	public RecordSet<CampaignBanner> getCampaignBannerWithKeyword(SearchCriteria<CampaignBanner> criteria) throws DaoException {
+	/*public RecordSet<CampaignBanner> getCampaignBannerWithKeyword(SearchCriteria<CampaignBanner> criteria) throws DaoException {
 		try {
 			CampaignBanner model = criteria.getModel();
 	    	Map<String, Object> inputs = new HashMap<String, Object>();
@@ -558,7 +558,7 @@ public class CampaignDAO {
 		} catch (Exception e) {
 			throw (e instanceof DaoException) ? (DaoException)e : new DaoException("Failed during getCampaign()", e);
     	}
-	}
+	}*/
 	
 	public int addCampaign(Campaign campaign) throws DaoException {
     	try {
