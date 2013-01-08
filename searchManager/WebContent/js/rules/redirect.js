@@ -754,16 +754,20 @@
 						if($.isBlank(u.value)){
 							switch($(e.currentTarget).prop("id").toLowerCase()){
 							case "categorylist": 
+								ui.find("tr#subcategory").hide();
 							case "subcategorylist":
 								ui.find("tr#class").hide();
 							case "classlist": 
 								ui.find("tr#minor").hide();
 							case "minorlist": 
+								self.populateIMSManufacturers(ui, condition);
 								break;
 							case "level1categorylist": 
+								ui.find("tr#level2Cat").hide();
 							case "level2categorylist": 
 								ui.find("tr#level3Cat").hide();
 							case "level3categorylist": 
+								self.populateCNETManufacturers(ui, condition);
 								break;
 							case "templatenamelist": 
 								if (ui.find("div.ims").is(":visible"))
@@ -999,6 +1003,11 @@
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
+						if ($.isNotBlank(list) && list.length>0){
+							$table.find("tr#manufacturer").show();
+						}else{
+							$table.find("tr#manufacturer").hide();
+						}  
 					},
 					preHook:function(){
 						ui.find("img#preloaderManufacturerList").show();

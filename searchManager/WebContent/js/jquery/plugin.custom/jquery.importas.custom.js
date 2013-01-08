@@ -79,10 +79,12 @@
 			base.options.selectedOptionChanged(u.value);
 
 			if(selectRule){
+				$(u).show();
 				$replacement.slideUp('slow', function(){
 					$(this).hide();
 				});
 			}else{
+				$(u).hide();
 				$replacement.find("#selectedRule").text($(u).val()==="0"? "Pending for Import":  rule["ruleName"]);
 
 				var $input = $replacement.find("input#newName");
@@ -142,9 +144,9 @@
 				}
 			}
 
-			var $replacement = base.$el.find("#replacement");
 			base.$el.find("#preloader").hide();
-			
+
+			var $replacement = base.$el.find("#replacement");
 			var $option = $importAsSelect.find('option:eq(0)');
 
 			switch(ruleEntity){

@@ -152,7 +152,7 @@
 	        				<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
-								<tr class="catName">
+								<tr class="catName" id="category">
 									<td class="w175 padB8" valign="bottom">Category :</td>
 									<td class="iepadBT0">
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
@@ -192,7 +192,7 @@
 										</div>
 									</td>
 								</tr>
-								<tr class="catCode">
+								<tr class="catCode" id="catCode">
 									<td  class="w175 padB8" valign="bottom">Category Code :</td>
 									<td>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
@@ -202,7 +202,7 @@
 										<input id="catcode" type="text" maxlength="4">
 									</td>
 								</tr>
-								<tr>
+								<tr id="manufacturer">
 									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>

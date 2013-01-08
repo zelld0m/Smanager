@@ -512,16 +512,20 @@
 					if($.isBlank(u.value)){
 						switch($(e.currentTarget).prop("id").toLowerCase()){
 						case "categorylist": 
+							$imsTab.find("tr#subcategory").hide();
 						case "subcategorylist":
 							$imsTab.find("tr#class").hide();
 						case "classlist": 
 							$imsTab.find("tr#minor").hide();
-						case "minorlist": 
+						case "minorlist":
+							base.populateIMSManufacturers();
 							break;
 						case "level1categorylist": 
+							$cnetTab.find("tr#level2Cat").hide();
 						case "level2categorylist": 
 							$cnetTab.find("tr#level3Cat").hide();
 						case "level3categorylist": 
+							base.populateCNETManufacturers();
 							break;
 						case "templatenamelist": 
 							if (base.contentHolder.find("div#ims").length)
