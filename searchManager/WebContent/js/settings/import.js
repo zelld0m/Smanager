@@ -525,16 +525,16 @@
 									setRuleStatusListCallback: function(base, list){
 										self.ruleStatusMap[self.entityName]= list;
 									},
-									targetRuleStatusCallback: function(r, rs){
+									targetRuleStatusCallback: function(base, r, rs){
 										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-
-										$('input[type="checkbox"]#' + r["ruleId"]).prop({
+									
+										base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox", class="selectItem"]').prop({
 											disabled: locked,
 											readonly: locked
 										});
 
 										if(locked){
-											$('input[type="checkbox"]#' + r["ruleId"]).prop({checked:false});
+											base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox, class="selectItem"]').prop({checked:false});
 										}
 									},
 									selectedOptionChanged: function(ruleId){

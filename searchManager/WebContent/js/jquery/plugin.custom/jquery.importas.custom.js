@@ -22,17 +22,15 @@
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 			base.automap = base.options.ruleTransferMap;
-			
+
 			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
 				base.populateOptions(base.options.ruleStatusList);
 			}else{
 				DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
 					callback: function(rs){
 						var list = rs.list;
-						if(list!=null && list.length>0){
-							base.populateOptions(list);
-							base.options.setRuleStatusListCallback(base, list);
-						}							
+						base.populateOptions(list);
+						base.options.setRuleStatusListCallback(base, list);		
 					}
 				});
 			}			
@@ -71,7 +69,7 @@
 				$importAlert.hide();
 			};
 
-			base.options.targetRuleStatusCallback(base.options.rule, ruleStatus);
+			base.options.targetRuleStatusCallback(base, base.options.rule, ruleStatus);
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
@@ -88,7 +86,7 @@
 				$replacement.find("#selectedRule").text($(u).val()==="0"? "Pending for Import":  rule["ruleName"]);
 
 				var $input = $replacement.find("input#newName");
-				
+
 				$input.val($(u).val()==="0"? rule["ruleName"]:  $(u).find("option:gt(0):selected:eq(0)").text());
 
 				$replacement.slideDown('slow', function() {
@@ -120,7 +118,7 @@
 			var $importAsSelect = base.$el.find("select#importAsSelect");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
-			
+
 			var ruleStatus = null;
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
@@ -171,17 +169,19 @@
 				}
 				break;
 			}
-			
+
 			$importAsSelect.searchable({
 				rule: rule,
 				maxListSize: 10, 
 				maxMultiMatch: 10,
 				exactMatch: true,
 				change: function(u, e, rule){
-					base.toggleFields(u, e, rule, false);
+					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
+						base.toggleFields(u, e, rule, false);
+					}
 				}
 			});
-			
+
 			if(ruleEntity==="FACET_SORT"){
 				var rs = base.rsLookupByName[rule["ruleName"]];
 				base.showAlert(rs["ruleId"]);
@@ -200,7 +200,7 @@
 			rule: null,
 			ruleStatusList: null,
 			newRuleText: "Import As New Rule",
-			targetRuleStatusCallback: function(rule, ruleStatus){},
+			targetRuleStatusCallback: function(base, rule, ruleStatus){},
 			selectedOptionChanged: function(ruleId){},
 			setRuleStatusListCallback: function(base, list){},
 			afterUIRendered: function(){}
