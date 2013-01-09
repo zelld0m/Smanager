@@ -90,10 +90,10 @@
 	        	 	<label class="floatR w90 padT5">Select Catalog:</label>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
-	        		<label class="floatL w150 padT5">Select Ranking Rule:</label>
-		        	<label class="floatL w200">
+	        		<div class="floatL w150 padT5">Select Ranking Rule:</div>
+		        	<div class="floatL w200">
 			        	<select id="rankingRule" class="w178"></select>
-		        	</label>	        	
+		        	</div>	        	
 			  	</div>
 	      </div>
 		  

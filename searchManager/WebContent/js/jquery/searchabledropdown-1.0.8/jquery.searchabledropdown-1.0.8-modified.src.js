@@ -451,7 +451,7 @@
 				"position": "absolute",
 				"top": self.outerHeight(),
 				"left": 0,
-				"width": ow,
+				"width": '100%',
 				"border": "1px solid #333",
 				"font-weight": "normal",
 				"padding": 0,
