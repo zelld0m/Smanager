@@ -66,11 +66,11 @@
 					<div>
 						<ul id="selectedFacetValueList" class="marT8">
 							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
-								<label class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-								<label class="marL5 w207 posRel" style="left:-13px">
+								<div class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></div>
+								<div class="marL5 w207" style="display: block; float: left; width: 210px !important; position: relative; top: -5px;">
 									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6"></select>						
-								</label>
-								<label class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								</div>
+								<div class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></div>
 							</li>
 						</ul>
 					</div>
@@ -114,10 +114,10 @@
 			<div class="clearB"></div>
 			
 			<div id="templatelist" style="display: none;">
-		   		<label class="floatL w80 txtLabel">Template Name</label>
-		   		<label class="floatL">
+		   		<div class="floatL w80 txtLabel">Template Name</div>
+		   		<div class="floatL">
 		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
-		   		</label>
+		   		</div>
 		   	</div>
 		   	<div class="clearB"></div>
 		   	

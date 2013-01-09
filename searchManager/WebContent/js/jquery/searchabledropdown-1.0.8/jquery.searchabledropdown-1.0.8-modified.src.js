@@ -180,6 +180,12 @@
 				enable(e, true);
 			else
 				disable(e, true);
+			
+			//fix ui bugs
+        	input.height(self.outerHeight());
+        	input.css('width', '100%');
+        	input.select();
+        	selector.css('top', self.outerHeight());
 		});
 		input.blur(function(e) {
 			if(!suspendBlur && enabled)
@@ -336,8 +342,8 @@
 				"position": "absolute",
 				"top": 0,
 				"left": 0,
-				"width":  self.outerWidth(),
-				"height": self.outerHeight(),
+				"width":  '100%',
+				"height": '100%',
 				"background-color": "#FFFFFF",
 				"opacity": "0.01"
 			});
