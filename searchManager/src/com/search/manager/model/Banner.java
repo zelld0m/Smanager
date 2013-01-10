@@ -1,6 +1,7 @@
 package com.search.manager.model;
 
 import java.util.Date;
+import java.util.List;
 
 
 public class Banner extends ModelBean {
@@ -14,6 +15,7 @@ public class Banner extends ModelBean {
 	private String imagePath;
 	private String thumbnailPath;
 	private String imageAlt;
+	private List<Keyword> keywordList;
 	
 	public Banner() {
 	}
@@ -40,6 +42,20 @@ public class Banner extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 	
+	public Banner(Store store, String bannerId, String bannerName,
+			String linkPath, String imagePath, String thumbnailPath,
+			String imageAlt, List<Keyword> keywordList) {
+		super();
+		this.store = store;
+		this.bannerId = bannerId;
+		this.bannerName = bannerName;
+		this.linkPath = linkPath;
+		this.imagePath = imagePath;
+		this.thumbnailPath = thumbnailPath;
+		this.imageAlt = imageAlt;
+		this.keywordList = keywordList;
+	}
+
 	public Banner(Store store, String bannerId, String bannerName,
 			String linkPath, String imagePath, String imageAlt) {
 		super();
@@ -119,5 +135,12 @@ public class Banner extends ModelBean {
 	public void setThumbnailPath(String thumbnailPath) {
 		this.thumbnailPath = thumbnailPath;
 	}
-	
+
+	public List<Keyword> getKeywordList() {
+		return keywordList;
+	}
+
+	public void setKeywordList(List<Keyword> keywordList) {
+		this.keywordList = keywordList;
+	}
 }

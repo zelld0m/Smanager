@@ -9,7 +9,7 @@ public class Campaign extends ModelBean {
 	private String campaignId;
 	private String campaignName;
 	private List<Banner> bannerList;
-	private List<Keyword> keywordList;
+	
 	private Store store;
 	private Date startDate;
 	private Date endDate;
@@ -46,13 +46,12 @@ public class Campaign extends ModelBean {
 	}
 	
 	public Campaign(String campaignId, String campaignName,
-			List<Banner> bannerList, List<Keyword> keywordList, Store store,
+			List<Banner> bannerList, Store store,
 			Date startDate, Date endDate) {
 		super();
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.bannerList = bannerList;
-		this.keywordList = keywordList;
 		this.store = store;
 		this.startDate = startDate;
 		this.endDate = endDate;
@@ -64,14 +63,6 @@ public class Campaign extends ModelBean {
 
 	public void setBannerList(List<Banner> bannerList) {
 		this.bannerList = bannerList;
-	}
-
-	public List<Keyword> getKeywordList() {
-		return keywordList;
-	}
-
-	public void setKeywordList(List<Keyword> keywordList) {
-		this.keywordList = keywordList;
 	}
 
 	public Date getStartDate() {
