@@ -13,16 +13,16 @@
 	<div class="clearB floatL w240">&nbsp;</div>
 	<div class="sideHeader">Most Popular</div>
 	<div class="marT10 txtAC"><a href=""><img src="<spring:url value="/images/productItems/imgMostPopular.jpg" />">
-		<p style="color:#4e4d4d; font-size:11px">Lore ipsum dolor  <span style="color:#005da2">(26901)</span></p></a>
+		<p style="color:#4e4d4d; font-size:11px">Back-To-School Sale  <span style="color:#005da2">(26901)</span></p></a>
 	</div>
 	
 	<div class="sideHeader">Recently Added</div>
 		<div class="padL10 padT10">
 			<ul class="recentlyAdded">
-				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded1.jpg" />"><p>Lorem <span>(26901)</span></p></a></li>
-				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded2.jpg" />"><p>Lorem <span>(26901)</span></p></a></li>
-				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded1.jpg" />"><p>Lorem <span>(26901)</span></p></a></li>
-				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded2.jpg" />"><p>Lorem <span>(26901)</span></p></a></li>
+				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded1.jpg" />"><p>Early Holiday Treats <span>(26901)</span></p></a></li>
+				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded2.jpg" />"><p>Back-To-School Sale <span>(26901)</span></p></a></li>
+				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded1.jpg" />"><p>Black Friday Deals <span>(26901)</span></p></a></li>
+				<li><a href=""><img src="<spring:url value="/images/productItems/resentlyAdded2.jpg" />"><p>Year-End Sale <span>(26901)</span></p></a></li>
 			</ul>
 		</div>
 	
@@ -47,7 +47,47 @@
 	
 	<div class="campaignContent">
 		<ul>
-		    <c:forEach var="i" begin="1" end="6" step="1">
+			<li>
+				<div id="mG1" class="microGallery" title="Early Holiday Treats | Jan 1 - Jan 30">
+						<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
+						<img src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcT_rEtxR8JPtb3MDtn5do3GOHyvgHJ6mkvK_wvxZ6t_P7ASqjeQ"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcQLKMYGMHenPHLWQggtsIgn5l8HtQYQv4cWKsS6ZaY5xWQ5SKOsmA"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
+				</div>
+			</li>
+			<li>
+				<div id="mG2" class="microGallery" title="Back-To-School Sale | Jun 15 - Jul 15">
+						<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
+						<img src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcT_rEtxR8JPtb3MDtn5do3GOHyvgHJ6mkvK_wvxZ6t_P7ASqjeQ"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcQLKMYGMHenPHLWQggtsIgn5l8HtQYQv4cWKsS6ZaY5xWQ5SKOsmA"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
+				</div>
+			</li>
+			<li>
+				<div id="mG3" class="microGallery" title="Black Friday Deals | Nov 26 - Nov 30">
+						<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
+						<img src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcT_rEtxR8JPtb3MDtn5do3GOHyvgHJ6mkvK_wvxZ6t_P7ASqjeQ"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcQLKMYGMHenPHLWQggtsIgn5l8HtQYQv4cWKsS6ZaY5xWQ5SKOsmA"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
+				</div>
+			</li>
+			<li>
+				<div id="mG3" class="microGallery" title="Year-End Sale | Dec 15 - Dec 31">
+						<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcRTqfWIn_gA1034cj3zFLElp62rHyJj8Zrxc8KMvx-WVuu5gSHP"/>
+						<img src="http://t3.gstatic.com/images?q=tbn:ANd9GcSEuglQt5IId5Y_UfQOP55l8V2uPLb8KGtbL7t8s7iXB2zucT2lnw"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcT_rEtxR8JPtb3MDtn5do3GOHyvgHJ6mkvK_wvxZ6t_P7ASqjeQ"/>
+						<img src="http://t1.gstatic.com/images?q=tbn:ANd9GcQLKMYGMHenPHLWQggtsIgn5l8HtQYQv4cWKsS6ZaY5xWQ5SKOsmA"/>
+						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
+				</div>
+			</li>
+		    <%-- <c:forEach var="i" begin="1" end="3" step="1">
 		    <li>
 				<div id="mG${i}" class="microGallery" title="Campaign Name|Jan 15 - Dec 15">
 						<img src="http://t0.gstatic.com/images?q=tbn:ANd9GcRZynMzjEr8vMvQbt5zUmCkI52bxXkW4ElcIIfRU9csAjE9tAqRN2bk3AkW"/>
@@ -58,7 +98,7 @@
 						<img src="http://t2.gstatic.com/images?q=tbn:ANd9GcREnV_irVsWDX8Q8LSlji5BA1Cz0hNtFCnc6zZitSaroYEFKYSKQA"/>
 				</div>
 			</li>
-			</c:forEach>
+			</c:forEach> --%>
 		</ul>
 	</div>
 	
