@@ -135,7 +135,7 @@
 				var $select = $facetDiv.find("select#facetValuesPattern");
 
 				$select.find("option.not:('valuePattern')").remove();
-				$select.prop({id : "_items"+self.tabSelectedId});
+				//$select.prop({id : "_items"+self.tabSelectedId});
 
 				if(self.facetValueList){
 					var facetValues = self.facetValueList[self.tabSelectedName];
@@ -542,7 +542,7 @@
 			checkNumberOfHighlightedItems : function(content, facetGroupId){
 				var self = this;
 				if(content.hasClass("isShown")){
-					var items = content.find("input#_items_"+facetGroupId);
+					var items = content.find("select#_items_"+facetGroupId);
 					return items ? items.length : -1; //return -1 if input element not found
 				}
 				return -1; //div is not shown
@@ -580,6 +580,7 @@
 
 							ul.append($li);
 
+							$li.find("select.selectCombo").prop({id: "_items_"+facetGroupId});
 							$li.find("select.selectCombo").searchable({
 								maxListSize: 10, 
 								maxMultiMatch: 10,
