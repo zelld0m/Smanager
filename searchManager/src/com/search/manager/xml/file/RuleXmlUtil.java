@@ -103,7 +103,7 @@ public class RuleXmlUtil{
 		return latestVersion;
 	}
 
-	public static RuleXml ruleToXml(String store, String ruleType, String ruleId){
+	public static RuleXml currentRuleToXml(String store, String ruleType, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		StoreKeyword sk = new StoreKeyword(store, ruleId);
@@ -169,16 +169,14 @@ public class RuleXmlUtil{
 			break;
 		case QUERY_CLEANING:
 			RedirectRule redirectRule = new RedirectRule();
-
 			try {
 				redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
-
 			} catch (DaoException e) {
 				logger.error("Failed convert query cleaning rule to rule xml", e);
 				return null;
 			}
-
 			ruleXml = new RedirectRuleXml(store, redirectRule);
+			ruleXml.setCreatedDate(redirectRule.getCreatedDate());
 			break;
 		case RANKING_RULE:
 			Relevancy relevancy = new Relevancy();
