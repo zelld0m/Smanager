@@ -50,7 +50,7 @@
 					rule: self.selectedRule,
 					ruleType: "Facet Sort",
 					enableVersion: true,
-					authorizeRuleBackup: true,
+					authorizeRuleBackup: allowModify,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();

@@ -171,5 +171,21 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 	public List<RuleXml> getRuleVersions(String store, String ruleId) {
 		return getRuleVersions(getRuleVersionList(store, ruleId));
+	}
+
+	public int getRuleVersionsCount(String store, String ruleId) {
+		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
+		int count = 0;
+		
+		List<?> ruleXmlList =  ruleVersionListXml.getVersions();
+		if(ruleVersionListXml != null && CollectionUtils.isNotEmpty(ruleXmlList)){
+			for(RuleXml ruleVersion: (List<RuleXml>)ruleXmlList){
+				if(!ruleVersion.isDeleted()){
+					count++;
+				}
+			}
+		}
+		
+		return count;
 	}	
 }

@@ -45,6 +45,7 @@
 							base.$el.find("span#statusMode").append("[Read-Only]");
 							base.$el.find("a#submitForApprovalBtn").hide();
 						}
+						base.$el.find("div#versionHolder").show();
 
 						if(base.options.ruleStatus!=null && $.isNotBlank(base.options.ruleStatus["ruleStatusId"])){
 							base.$el.find("div#commentHolder").show();
@@ -98,32 +99,42 @@
 							}
 						});
 
-						$("#downloadVersionIcon").download({
-							headerText:"Download " + base.options.moduleName,
+						base.$el.find("#downloadVersionIcon").download({
+							headerText:"Download " + base.options.moduleName + " Rule Versions",
 							moduleName: base.options.moduleName,
 							ruleType: base.options.ruleType,  
 							rule: base.options.rule,
-//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+//							locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
 							requestCallback:function(e){
-								var params = new Array();
-								var url = document.location.pathname + "/version/xls";
-								var urlParams = "";
-								var count = 0;
+								RuleVersionServiceJS.getRuleVersionsCount(base.options.ruleType, base.options.rule["ruleId"], {
+									callback: function(data){
+										if(data > 0){
+											var params = new Array();
+											var url = document.location.pathname + "/version/xls";
+											var urlParams = "";
+											var count = 0;
 
-								params["filename"] = e.data.filename;
-								params["type"] = e.data.type;
-								params["keyword"] = base.options.rule["ruleName"];
-								params["id"] = base.options.rule["ruleId"];
-								//params["filter"] = base.getRuleItemFilter();
-								params["clientTimezone"] = +new Date();
+											params["filename"] = e.data.filename;
+											params["type"] = e.data.type;
+											params["keyword"] = base.options.rule["ruleName"];
+											params["id"] = base.options.rule["ruleId"];
+											//params["filter"] = base.getRuleItemFilter();
+											params["clientTimezone"] = +new Date();
 
-								for(var key in params){
-									if (count>0) urlParams +='&';
-									urlParams += (key + '=' + params[key]);
-									count++;
-								};
+											for(var key in params){
+												if (count>0) urlParams +='&';
+												urlParams += (key + '=' + params[key]);
+												count++;
+											};
 
-								document.location.href = url + '?' + urlParams;
+											document.location.href = url + '?' + urlParams;
+										}
+										else{
+											jAlert("No available version to download for this rule.", "Download " + base.options.moduleName + " Rule Versions");
+										}
+									}
+								});
+								
 							}
 						});
 					}
@@ -165,25 +176,24 @@
 			template += '		<div class="floatL padT10 padL10" style="width:70%">';
 
 			if(base.options.enableVersion){
-				template += '			<div id="versionHolder">';
-//				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-//				template += '					<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>';			        		 
-//				template += '				</label>';
-				
-				template += '				<label class="floatL wAuto padL5 fsize11 fLgray">';
-				template += '					<span title="Download Rule Versions"><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download"></span>';			        		 
-				template += '				</label>';
-
 				if(base.options.authorizeRuleBackup){
-					template += '				<label class="floatL marTn7">';
-					template += '					<a id="backupBtn" title="Backup Now" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">';
-					template += '						<div class="btnGraph btnBackUp"></div>';
-					template += '					</a>'; 
-					template += '				</label>';
+					template += '		<div id="versionHolder" style="display:none">';
+//					template += '			<label class="floatL wAuto padL5 fsize11 fLgray">';
+//					template += '				<span><img id="versionIcon" class="pointer" src="../images/icon_version.png"  alt="Rule Versions" title="Rule Versions"></span>';			        		 
+//					template += '			</label>';
+					
+					template += '			<label class="floatL wAuto padL5 fsize11 fLgray">';
+					template += '				<span title="Download Rule Versions"><img id="downloadVersionIcon" class="pointer" src="../images/icon_download.gif"  alt="Download"></span>';			        		 
+					template += '			</label>';
+					
+					template += '			<label class="floatL marTn7">';
+					template += '				<a id="backupBtn" title="Backup Now" href="javascript:void(0);" class="btnGraph btnBackUp clearfix">';
+					template += '					<div class="btnGraph btnBackUp"></div>';
+					template += '				</a>'; 
+					template += '			</label>';
+					template += '			<label class="floatL wAuto marRL5 fLgray2">|</label>';
+					template += '		</div>';
 				}
-
-				template += '				<label class="floatL wAuto marRL5 fLgray2">|</label>';
-				template += '			</div>';
 			}
 
 			template += '			<div id="commentHolder" style="display:none">';
