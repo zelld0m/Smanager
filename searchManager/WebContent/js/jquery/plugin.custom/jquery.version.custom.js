@@ -133,12 +133,15 @@
 							});
 						}
 					},{item: item}).show();
-
-					$li.find("#verDate").text(item["createdDate"].toUTCString());
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
+					$li.find("#verDate").text(item["createdDate"].toUTCString());
 				}
-
+				else {
+					$li.find("#verName").text("Current Rule");
+					$li.find("#verNote").text("Current Rule");
+					$li.find("#verDate").text(item["lastModifiedDate"].toUTCString());
+				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
 

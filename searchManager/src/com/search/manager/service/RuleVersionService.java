@@ -88,7 +88,7 @@ public class RuleVersionService{
 
 	@RemoteMethod
 	public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
-		RuleXml rXml = RuleXmlUtil.ruleToXml(UtilityService.getStoreName(), ruleType, ruleId);
+		RuleXml rXml = RuleXmlUtil.currentRuleToXml(UtilityService.getStoreName(), ruleType, ruleId);
 
 		if (rXml instanceof ElevateRuleXml){
 			((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
