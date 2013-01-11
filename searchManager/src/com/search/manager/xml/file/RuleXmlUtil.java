@@ -45,6 +45,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateItemXml;
@@ -154,15 +155,17 @@ public class RuleXmlUtil{
 			break;
 		case FACET_SORT:
 			FacetSort facetSort = new FacetSort();
-
+			List<FacetGroup> groups = null;
 			try {
 				facetSort = daoService.getFacetSort(new FacetSort(ruleId, store));
+				RecordSet<FacetGroup> facetGroups = daoService.searchFacetGroup(new SearchCriteria<FacetGroup>(new FacetGroup(ruleId, "")), MatchType.MATCH_ID);
+				groups = (facetGroups != null) ? facetGroups.getList() : null;
 			} catch (DaoException e) {
 				logger.error("Failed convert facet sort rule to rule xml", e);
 				return null;
 			}
 
-			ruleXml = new FacetSortRuleXml(facetSort);
+			ruleXml = new FacetSortRuleXml(facetSort, groups);
 			break;
 		case QUERY_CLEANING:
 			RedirectRule redirectRule = new RedirectRule();

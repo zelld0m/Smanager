@@ -110,6 +110,10 @@ public class FacetSortController {
 				highlightedFacets = "No Highlighted Facets";
 			}
 			
+			if (group.getSortType() == null) {
+				group.setSortType(facetSortRule.getSortType());
+			}
+			
 			FacetSortReportBean reportBean = new FacetSortReportBean(group, highlightedFacets);
 			list.add(reportBean);
 		}
