@@ -1412,7 +1412,13 @@
 			}
 
 			base.contentHolder.find("#facetItem").tabs("destroy").tabs({
-				show: function(){}
+				show: function(event, ui){
+					if(ui.panel){
+						if (ui.panel.id === "dynamicAttribute") {
+							base.contentHolder.find("#templateNameList").focus();;
+						}
+					}
+				}
 			});
 
 			base.contentHolder.find("#addItemDate").attr('id', 'addItemDate_1');
@@ -1615,6 +1621,7 @@
 
 					},
 					hide: function(event, api){
+						base.contentHolder.find("#addItemDate_1").datepicker('hide');
 						api.destroy();
 					}
 				}
