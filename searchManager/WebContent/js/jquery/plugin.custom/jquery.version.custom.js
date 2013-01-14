@@ -62,10 +62,16 @@
 				click: function(e){
 					base.selectedVersion = [];
 					base.selectedVersion.push("current");
-					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
+					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='radio']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-					base.setCompare();
+					
+					if(base.selectedVersion.length != 2){
+						jAlert("Please select a version to compare.");
+					}
+					else{
+						base.setCompare();
+					}
 				}
 			});
 
@@ -563,7 +569,7 @@
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
 			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="checkbox" class="selectOne"/>';
+			template += '	                   	<input id="select" type="radio" class="selectOne"/>';
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
