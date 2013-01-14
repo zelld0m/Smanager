@@ -267,9 +267,17 @@
 			populateSortOrderList : function(contentHolder, selectedOrder){
 				var self = this;
 				contentHolder.find("option").remove();
-				$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
-					contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
-				});
+				
+				if($.isNotBlank(selectedOrder)){
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+					});
+				}
+				else{
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+					});
+				}
 			},
 
 			populateTemplateNameList: function(contentHolder){
