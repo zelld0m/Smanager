@@ -4,7 +4,8 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
-
+		var requestOngoing = false;
+		
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -386,24 +387,16 @@
 					var notes = $content.find("textarea#notes").val();
 
 					switch($(e.currentTarget).attr("id")){
-					case "saveBtn": 
-
-						if(!validateField('Name', name, 1) || !validateField('Notes', notes, 1)){
-							return;
+					case "saveBtn":
+						if (!requestOngoing) {
+							requestOngoing = true;
+							
+							if(!validateField('Name', name, 1, 100) || !validateField('Notes', notes, 1, 255)){
+								requestOngoing = false;
+								return;
+							}
+							base.createVersion(name, notes);
 						}
-
-						if (name.length>100){
-							jAlert("Name should not exceed 100 characters.");
-							return
-						}
-
-						if (notes.length>255){
-							jAlert("Notes should not exceed 255 characters.");
-							return
-						}
-
-						base.createVersion(name, notes);
-
 						break;
 					case "cancelBtn": 
 						base.api.destroy();
@@ -422,6 +415,9 @@
 					} else {
 						jAlert("Failed creating back up!");
 					}
+				},
+				postHook:function(){
+					requestOngoing = false;
 				}
 			});
 		};
