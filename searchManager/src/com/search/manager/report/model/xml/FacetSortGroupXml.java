@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -79,6 +80,14 @@ public class FacetSortGroupXml extends BaseEntityXml{
 
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+	
+	@XmlTransient
+	public String getSortTypeLabel(){
+		if(sortType != null){
+			return sortType.getDisplayText();
+		}
+		return "";
 	}
 	
 	@XmlAttribute(name="group-id")

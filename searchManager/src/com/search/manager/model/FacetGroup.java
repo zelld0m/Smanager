@@ -125,6 +125,13 @@ public class FacetGroup extends ModelBean {
 		this.sortType = sortType;
 	}
 	
+	public String getSortTypeLabel(){
+		if(sortType != null){
+			return sortType.getDisplayText();
+		}
+		return "";
+	}
+	
 	public String getStoreId() {
 		return storeId;
 	}

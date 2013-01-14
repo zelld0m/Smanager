@@ -275,7 +275,7 @@
 					$groupLi = $groupLiPattern.clone();
 					$groupLi.attr("id", $.formatAsId($group["groupName"]));
 					$groupLi.find("#groupName").text($group["groupName"]);
-					$groupLi.find("#groupSort").text($group["sortType"]);
+					$groupLi.find("#groupSort").text($group["sortTypeLabel"]);
 					$groupLi.show();
 
 					$groupItemUl = $groupLi.find("ul#groupItemList");
