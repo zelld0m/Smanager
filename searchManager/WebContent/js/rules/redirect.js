@@ -740,9 +740,6 @@
 			makeSelectSearchable: function(ui, condition, select){
 				var self = this;
 				select.searchable({
-					maxListSize: 10, 
-					maxMultiMatch: 10,
-					exactMatch: true,
 					change: function(u, e){
 						var selectedCategory = $.trim(ui.find("select#categoryList > option:gt(0):selected:eq(0)").text());
 						var selectedSubcategory = $.trim(ui.find("select#subCategoryList > option:gt(0):selected:eq(0)").text());

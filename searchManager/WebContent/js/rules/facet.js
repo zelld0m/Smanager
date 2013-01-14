@@ -238,9 +238,6 @@
 							$select.prop({id: "_items_"+facetGroupId});
 
 							$select.searchable({
-								maxListSize: 10, 
-								maxMultiMatch: 10,
-								exactMatch: true,
 								change: function(u, e){
 									self.checkDuplicateFacet(e, u, facetGroupId);
 								}
@@ -294,11 +291,7 @@
 					},
 					postHook: function(){
 						if(count>0){
-							$select.prop("disabled", false).searchable({
-								maxListSize: 10, 
-								maxMultiMatch: 10,
-								exactMatch: true
-							});
+							$select.prop("disabled", false).searchable({});
 						}
 					}
 				});
@@ -581,9 +574,6 @@
 							ul.append($li);
 
 							$li.find("select.selectCombo").searchable({
-								maxListSize: 10, 
-								maxMultiMatch: 10,
-								exactMatch: true,
 								change: function(u, e){
 									self.checkDuplicateFacet(e, u, facetGroupId);
 								}

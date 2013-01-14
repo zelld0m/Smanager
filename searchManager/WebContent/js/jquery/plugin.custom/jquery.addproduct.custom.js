@@ -496,9 +496,6 @@
 
 		base.makeSelectSearchable = function(select){
 			select.searchable({
-				maxListSize: 10, 
-				maxMultiMatch: 10,
-				exactMatch: true,
 				change: function(u, e){
 					var $imsTab = base.contentHolder.find("div#ims");
 					var selectedCategory = $.trim($imsTab.find("select#categoryList > option:gt(0):selected:eq(0)").text());

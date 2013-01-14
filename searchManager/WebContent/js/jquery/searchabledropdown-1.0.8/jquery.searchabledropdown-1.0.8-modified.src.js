@@ -36,7 +36,7 @@
 	plugin.defaults = {
 			rule: null, 
 			maxListSize: 100,
-			maxMultiMatch: 50,
+			maxMultiMatch: 100,
 			exactMatch: false,
 			wildcards: true,
 			ignoreCase: true,
@@ -53,7 +53,6 @@
 	 * @param {Options} settings Settings
 	 */
 	plugin.execute = function(settings, zindex) {
-
 		var timer = null;
 		var searchCache = null;
 		var search = null;
@@ -90,11 +89,13 @@
 		var selector = $('<select>').addClass("ss-selector");
 
 		// matching option items
-		var topMatchItem = $("<option>"+settings.warnMultiMatch.replace(/\{0\}/g, settings.maxMultiMatch)+"</option>").attr("disabled", "true");
 		var noMatchItem = $("<option>"+settings.warnNoMatch+"</option>").attr("disabled", "true");
-		selector.append($("<option>", {value: ""}).text(""));
 
 		var selectorHelper = {
+				getTopMatchItem: function(ctr){
+					return $("<option>"+settings.warnMultiMatch.replace(/\{0\}/g, $.isNotBlank(ctr) && $.isNumeric(ctr) ? ctr : settings.maxMultiMatch)+"</option>").attr("disabled", "true");
+				},
+
 				/**
 				 * Return DOM options of selector element
 				 */
@@ -128,8 +129,8 @@
 				 */
 				reset: function() {
 					// return if selector has data and stored index equal selectedIndex of source select element
-					if((self.get(0).selectedIndex-1) == self.data("index"))
-						return;
+					//if((self.get(0).selectedIndex-1) == self.data("index"))
+					//	return;
 
 					// calc start and length of iteration
 					var idx = self.get(0).selectedIndex;
@@ -144,12 +145,13 @@
 					this.size(end-begin);
 
 					// append options
-					for (var i=begin; i < end; i++)
+					for (var i=begin; i < end; i++){
 						selector.append($(self.get(0).options[i]).clone().attr(idxAttr, i-1));
+					}
 
 					// append top match item if length exceeds
-					if(end > settings.maxMultiMatch)
-						selector.append(topMatchItem);
+					if(end < len)
+						selector.append(this.getTopMatchItem(selector.get(0).length));
 
 					// set selectedIndex of selector
 					selector.get(0).selectedIndex = si;
@@ -180,12 +182,12 @@
 				enable(e, true);
 			else
 				disable(e, true);
-			
+
 			//fix ui bugs
-        	input.height(self.outerHeight());
-        	input.css('width', '100%');
-        	input.select();
-        	selector.css('top', self.outerHeight());
+			input.height(self.outerHeight());
+			input.css('width', '100%');
+			input.select();
+			selector.css('top', self.outerHeight());
 		});
 		input.blur(function(e) {
 			if(!suspendBlur && enabled)
@@ -232,7 +234,7 @@
 
 		// custom callback handler
 		self.off("change").on({
-			change: function(e){
+			change:function(e){
 				settings.change($(e.currentTarget).get(0), e, e.data.rule);
 			}
 		}, {rule: settings.rule});
@@ -595,6 +597,7 @@
 		function store() {
 			storage.index = selectorHelper.selectedIndex();
 			storage.options = new Array();
+			console.log("Storing Options: " + selector.get(0).options.length);
 			for(var i=0;i<selector.get(0).options.length;i++)
 				storage.options.push(selector.get(0).options[i]);
 		};
@@ -604,6 +607,7 @@
 		 */
 		function restore() {
 			selector.empty();
+			console.log("Restoring Options: " + storage.options.length);
 			for(var i=0;i<storage.options.length;i++)
 				selector.append(storage.options[i]);
 			selectorHelper.selectedIndex(storage.index);
@@ -657,14 +661,22 @@
 			// for each item in list
 			for(var i=1; i<self.get(0).length && matches < settings.maxMultiMatch;i++){
 				// search
-				if(search.length == 0 || search.test(self.get(0).options[i].text)){
+				if (search.length == 0 || search.test(self.get(0).options[i].text)){
+					
 					var opt = $(self.get(0).options[i]).clone().attr(idxAttr, i-1);
-					if(self.data("index") == i)
+					if(self.data("index") == i){
+						console.log("self.data('index') == i: " + self.data("text"));
 						opt.text(self.data("text"));
-					selector.append(opt);
-					matches++;
+					}
+
+					if(i-1!=0){
+						console.log("Matched option added: " + self.get(0).options[i].text);
+						selector.append(opt);
+						matches++;
+					}
 				}
 			}
+
 
 			// result actions
 			if(matches >= 1){
@@ -676,7 +688,7 @@
 
 			// append top match item if matches exceeds maxMultiMatch
 			if(matches >= settings.maxMultiMatch){
-				selector.append(topMatchItem);
+				selector.append(selectorHelper.getTopMatchItem());
 			}
 
 			// resize selector
