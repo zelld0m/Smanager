@@ -4,7 +4,8 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
-
+		var requestOngoing = false;
+		
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -62,10 +63,16 @@
 				click: function(e){
 					base.selectedVersion = [];
 					base.selectedVersion.push("current");
-					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
+					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='radio']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-					base.setCompare();
+					
+					if(base.selectedVersion.length != 2){
+						jAlert("Please select a version to compare.");
+					}
+					else{
+						base.setCompare();
+					}
 				}
 			});
 
@@ -275,7 +282,7 @@
 					$groupLi = $groupLiPattern.clone();
 					$groupLi.attr("id", $.formatAsId($group["groupName"]));
 					$groupLi.find("#groupName").text($group["groupName"]);
-					$groupLi.find("#groupSort").text($group["sortType"]);
+					$groupLi.find("#groupSort").text($group["sortTypeLabel"]);
 					$groupLi.show();
 
 					$groupItemUl = $groupLi.find("ul#groupItemList");
@@ -380,24 +387,16 @@
 					var notes = $content.find("textarea#notes").val();
 
 					switch($(e.currentTarget).attr("id")){
-					case "saveBtn": 
-
-						if(!validateField('Name', name, 1) || !validateField('Notes', notes, 1)){
-							return;
+					case "saveBtn":
+						if (!requestOngoing) {
+							requestOngoing = true;
+							
+							if(!validateField('Name', name, 1, 100) || !validateField('Notes', notes, 1, 255)){
+								requestOngoing = false;
+								return;
+							}
+							base.createVersion(name, notes);
 						}
-
-						if (name.length>100){
-							jAlert("Name should not exceed 100 characters.");
-							return
-						}
-
-						if (notes.length>255){
-							jAlert("Notes should not exceed 255 characters.");
-							return
-						}
-
-						base.createVersion(name, notes);
-
 						break;
 					case "cancelBtn": 
 						base.api.destroy();
@@ -416,6 +415,9 @@
 					} else {
 						jAlert("Failed creating back up!");
 					}
+				},
+				postHook:function(){
+					requestOngoing = false;
 				}
 			});
 		};
@@ -563,7 +565,7 @@
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
 			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="checkbox" class="selectOne"/>';
+			template += '	                   	<input id="select" type="radio" class="selectOne"/>';
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';

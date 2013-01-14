@@ -90,6 +90,10 @@ jQuery.extend(
 						return "";
 					}
 					return obj;
+				},
+				
+				capitalize: function(obj) {
+					return obj.charAt(0).toUpperCase() + obj.slice(1);
 				}
 			};  
 		}(jQuery))  
