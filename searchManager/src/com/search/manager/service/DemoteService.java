@@ -73,7 +73,7 @@ public class DemoteService extends RuleService{
 		}
 		
 		if (StringUtils.isNotBlank(comment)){
-			changes += ((addComment(keyword, memberId, comment) > 0)? 1 : 0);
+			changes += ((addRuleComment(keyword, memberId, comment) >  0)? 1 : 0);
 		}
 		
 		if (StringUtils.isNotBlank(condition)){

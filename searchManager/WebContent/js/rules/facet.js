@@ -50,7 +50,7 @@
 					rule: self.selectedRule,
 					ruleType: "Facet Sort",
 					enableVersion: true,
-					authorizeRuleBackup: true,
+					authorizeRuleBackup: allowModify,
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
@@ -135,7 +135,7 @@
 				var $select = $facetDiv.find("select#facetValuesPattern");
 
 				$select.find("option.not:('valuePattern')").remove();
-				$select.prop({id : "_items"+self.tabSelectedId});
+				//$select.prop({id : "_items"+self.tabSelectedId});
 
 				if(self.facetValueList){
 					var facetValues = self.facetValueList[self.tabSelectedName];
@@ -264,9 +264,17 @@
 			populateSortOrderList : function(contentHolder, selectedOrder){
 				var self = this;
 				contentHolder.find("option").remove();
-				$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
-					contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
-				});
+				
+				if($.isNotBlank(selectedOrder)){
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+					});
+				}
+				else{
+					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
+						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+					});
+				}
 			},
 
 			populateTemplateNameList: function(contentHolder){
@@ -535,7 +543,7 @@
 			checkNumberOfHighlightedItems : function(content, facetGroupId){
 				var self = this;
 				if(content.hasClass("isShown")){
-					var items = content.find("input#_items_"+facetGroupId);
+					var items = content.find("select#_items_"+facetGroupId);
 					return items ? items.length : -1; //return -1 if input element not found
 				}
 				return -1; //div is not shown
@@ -573,6 +581,7 @@
 
 							ul.append($li);
 
+							$li.find("select.selectCombo").prop({id: "_items_"+facetGroupId});
 							$li.find("select.selectCombo").searchable({
 								change: function(u, e){
 									self.checkDuplicateFacet(e, u, facetGroupId);

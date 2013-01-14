@@ -10,13 +10,14 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetSort;
 
 @XmlRootElement(name = "facetsort")
@@ -53,7 +54,7 @@ public class FacetSortRuleXml extends RuleXml {
 		this(store, version, name, notes, username, RuleType.get(ruleType), SortType.get(sortType), ruleId, ruleName, groups);
 	}
 	
-	public FacetSortRuleXml(FacetSort facetSort){
+	public FacetSortRuleXml(FacetSort facetSort, List<FacetGroup> facetGroups){
 		this.setStore(facetSort.getStoreId());
 		this.setRuleName(facetSort.getRuleName());
 		this.setRuleId(facetSort.getRuleId());
@@ -64,9 +65,11 @@ public class FacetSortRuleXml extends RuleXml {
 		Map<String, SortType> groupSorts = facetSort.getGroupSortType();
 		List<FacetSortGroupXml> facetSortGroupXmlList = new ArrayList<FacetSortGroupXml>();
 		
-		if(MapUtils.isNotEmpty(groups) && MapUtils.isNotEmpty(groupSorts) && groups.size() == groupSorts.size() && groups.size()>0){
-			for(Map.Entry<String, List<String>> entry: groups.entrySet()){
-				facetSortGroupXmlList.add(new FacetSortGroupXml(entry.getKey(), entry.getValue(), groupSorts.get(entry.getKey()), this.sortType));
+		if (CollectionUtils.isNotEmpty(facetGroups)) {
+			for(FacetGroup facetGroup: facetGroups){
+				String mapKey = facetGroup.getName();
+				facetSortGroupXmlList.add(new FacetSortGroupXml(mapKey, groups.get(mapKey), groupSorts.get(mapKey), 
+						facetSort.getSortType(), facetGroup.getCreatedBy(), facetGroup.getCreatedDate()));
 			}
 		}
 		

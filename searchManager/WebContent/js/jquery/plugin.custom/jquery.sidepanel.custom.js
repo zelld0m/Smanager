@@ -73,6 +73,7 @@
 
 			if($.isNotBlank(base.options.filterText)){
 				base.$el.find('input[id="searchTextbox"]').val(base.options.filterText);
+				base.oldSearch = base.options.filterText;
 			}
 
 			base.$el.find('input[id="searchTextbox"]').on({

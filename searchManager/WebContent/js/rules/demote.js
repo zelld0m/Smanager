@@ -411,7 +411,7 @@
 					ruleType: "Demote",
 					rule: self.selectedRule,
 					enableVersion: true,
-					authorizeRuleBackup: true,
+					authorizeRuleBackup: allowModify,
 					viewAuditCallback: function(target){
 						$(target).viewaudit({
 							getDataCallback: function(base, page){

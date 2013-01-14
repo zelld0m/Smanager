@@ -69,10 +69,6 @@ validateUsername = function(fieldName, fieldValue, length) {
 			jAlert(fieldName+" contains invalid value.");
 			return false;
 		}
-		if(fieldValue.length < 4){
-			jAlert("Minimum size for " + fieldName + " is 4 characters.");
-			return false;
-		}		
 	}
 	return true;
 };
@@ -94,8 +90,9 @@ validatePassword = function(fieldName, fieldValue, length) {
 	return true;
 };
 
-validateField = function(fieldName, fieldValue, length) {
-	if (!validateGeneric(fieldName, fieldValue, length)) {
+validateField = function(fieldName, fieldValue, minLength, maxLength) {
+	fieldName = $.capitalize(fieldName);
+	if (!validateGeneric(fieldName, fieldValue, minLength, maxLength)) {
 		return false;
 	};
 	if (!$.isBlank(fieldValue)) {
@@ -107,16 +104,21 @@ validateField = function(fieldName, fieldValue, length) {
 	return true;
 };
 
-validateGeneric = function(fieldName, fieldValue, length) {	
-	if(length != undefined && length > 0) {
+validateGeneric = function(fieldName, fieldValue, minLength, maxLength) {
+	fieldName = $.capitalize(fieldName);
+	if(minLength != undefined && minLength > 0) {
 		if ($.isBlank(fieldValue)) {
-			jAlert(fieldName+' cannot be empty.');
-			return false;
-		}		
-		if (fieldValue.length < length){
-			jAlert("Minimum size for  " + fieldName + " is " + length + " characters.");
+			jAlert(fieldName+" cannot be empty.");
 			return false;
 		}
+		if (fieldValue.length < minLength){
+			jAlert(fieldName + " should be at least " + minLength + " characters.");
+			return false;
+		}
+	}
+	if (maxLength != undefined && $.isNotBlank(fieldValue) && fieldValue.length > maxLength){
+		jAlert(fieldName + " cannot exceed " + maxLength + " characters.");
+		return false;
 	}
 	if(!isAscii(fieldValue)) {
 		jAlert(fieldName+" contains non-ASCII characters.");		

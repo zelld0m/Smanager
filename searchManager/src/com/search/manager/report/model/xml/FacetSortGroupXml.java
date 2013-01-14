@@ -1,10 +1,12 @@
 package com.search.manager.report.model.xml;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
@@ -30,22 +32,27 @@ public class FacetSortGroupXml extends BaseEntityXml{
 		super();
 	}
 
-	public FacetSortGroupXml(String groupName, List<String> items, SortType sortType, SortType defaultSortType) {
+	public FacetSortGroupXml(String groupName, List<String> items, SortType sortType, 
+			SortType defaultSortType, String createdBy, Date createdDate) {
 		super();
 		this.groupName = groupName;
 		this.groupType = FacetGroupType.get(groupName);
 		this.groupItem = items;
-		this.sortType = sortType==null? defaultSortType: sortType;
+		this.sortType = sortType == null? defaultSortType: sortType;
+		setCreatedBy(createdBy);
+		setCreatedDate(createdDate);
 	}
 
-	public FacetSortGroupXml(String groupName, FacetGroupType groupType,
-			SortType sortType, List<String> groupItem, String groupId) {
+	public FacetSortGroupXml(String groupName, FacetGroupType groupType, SortType sortType, 
+			List<String> groupItem, String groupId, String createdBy, Date createdDate) {
 		super();
 		this.groupName = groupName;
 		this.groupType = groupType;
 		this.sortType = sortType;
 		this.groupItem = groupItem;
 		this.groupId = groupId;
+		setCreatedBy(createdBy);
+		setCreatedDate(createdDate);
 	}
 
 	@XmlAttribute(name="name")
@@ -73,6 +80,14 @@ public class FacetSortGroupXml extends BaseEntityXml{
 
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+	
+	@XmlTransient
+	public String getSortTypeLabel(){
+		if(sortType != null){
+			return sortType.getDisplayText();
+		}
+		return "";
 	}
 	
 	@XmlAttribute(name="group-id")

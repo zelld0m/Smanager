@@ -1483,6 +1483,15 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return new ArrayList<RuleXml>();
 	}
+	
+	@Override
+	public int getRuleVersionsCount(String store, String ruleType, String ruleId) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getRuleVersionsCount(store, ruleId);
+		}
+		return 0;
+	}
 
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
@@ -1659,5 +1668,6 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return resultMap;
 	}
+
 	
 }

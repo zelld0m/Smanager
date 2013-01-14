@@ -59,6 +59,17 @@ public class RuleVersionService{
 		}
 		return versionList;
 	}
+	
+	@RemoteMethod
+	public int getRuleVersionsCount(String ruleType, String ruleId) {
+		int count = 0;
+		try {
+			count = daoService.getRuleVersionsCount(UtilityService.getStoreName(), ruleType, ruleId);
+		} catch (Exception e) {
+			logger.error("Failed during getRuleVersionsCount()",e);
+		}
+		return count;
+	}
 
 	@RemoteMethod
 	public boolean restoreRuleVersion(String ruleType, String ruleId, int version) {
@@ -88,7 +99,7 @@ public class RuleVersionService{
 
 	@RemoteMethod
 	public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
-		RuleXml rXml = RuleXmlUtil.ruleToXml(UtilityService.getStoreName(), ruleType, ruleId);
+		RuleXml rXml = RuleXmlUtil.currentRuleToXml(UtilityService.getStoreName(), ruleType, ruleId);
 
 		if (rXml instanceof ElevateRuleXml){
 			((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
