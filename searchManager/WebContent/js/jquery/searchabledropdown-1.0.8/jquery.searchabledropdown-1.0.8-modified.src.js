@@ -467,8 +467,8 @@
 			if (settings.zIndex && /^\d+$/.test(settings.zIndex))
 				zIndex = settings.zIndex;
 			overlay.css("z-index", (zIndex).toString(10));
-			input.css("z-index", (zIndex+2).toString(10));
-			selector.css("z-index", (zIndex+4).toString(10));
+			input.css("z-index", (zIndex+1).toString(10));
+			selector.css("z-index", (zIndex+2).toString(10));
 
 			// append to container
 			self.wrap(wrapper);
