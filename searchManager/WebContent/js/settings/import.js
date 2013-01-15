@@ -415,6 +415,7 @@
 						var totalSize = (data) ? data.length : 0;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
+						var ruleDiv = $selectedTab.find("#rule").parent()[0];
 
 						if (totalSize>0){
 							// Populate table row
@@ -519,6 +520,7 @@
 
 								//import as
 								$tr.find("td#importAs").importas({
+									container: ruleDiv,
 									rule: list[i],
 									ruleStatusList: self.ruleStatusMap[self.entityName],
 									ruleTransferMap: self.ruleTransferMap,
@@ -550,6 +552,7 @@
 							}
 
 							$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+							$(ruleDiv).scroll();
 
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
@@ -573,11 +576,11 @@
 						self.prepareTabContent();
 					},
 					postHook:function(){ 
-						self.cleanUpTabContent(); 
+						self.cleanUpTabContent();
 					}
 				});			
 			},
-			
+
 			getImportList : function(){
 				var self = this;
 								
