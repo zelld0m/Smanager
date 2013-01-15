@@ -184,6 +184,7 @@
 				disable(e, true);
 
 			//fix ui bugs
+		
 			input.height(self.outerHeight());
 			input.css('width', '100%');
 			input.select();
@@ -454,6 +455,10 @@
 				"top": self.outerHeight(),
 				"left": 0,
 				"width": '100%',
+				"height": 'auto',
+				"min-height": 'auto',
+				"max-height": '85px',
+				"margin-top": '5px',
 				"border": "1px solid #333",
 				"font-weight": "normal",
 				"padding": 0,

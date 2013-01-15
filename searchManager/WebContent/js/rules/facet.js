@@ -203,6 +203,7 @@
 					forcePlaceholderSize: true,
 					disabled: self.selectedRuleStatus["locked"] || !allowModify
 				});
+		
 			},
 
 			checkDuplicateFacet : function (e, u, facetGroupId){
