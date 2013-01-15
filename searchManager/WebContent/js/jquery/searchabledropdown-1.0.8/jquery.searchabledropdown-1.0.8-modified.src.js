@@ -337,8 +337,8 @@
 			wrapper.css("position", "relative");
 			wrapper.css("width", "100%");
 			// relative div needs an z-index (related to IE z-index bug)
-			if($.browser.msie)
-				wrapper.css("z-index", zindex);
+			//if($.browser.msie)
+			//	wrapper.css("z-index", zindex);
 
 			// overlay div to block events of source select element
 			overlay.css({
@@ -602,7 +602,6 @@
 		function store() {
 			storage.index = selectorHelper.selectedIndex();
 			storage.options = new Array();
-			console.log("Storing Options: " + selector.get(0).options.length);
 			for(var i=0;i<selector.get(0).options.length;i++)
 				storage.options.push(selector.get(0).options[i]);
 		};
@@ -612,7 +611,6 @@
 		 */
 		function restore() {
 			selector.empty();
-			console.log("Restoring Options: " + storage.options.length);
 			for(var i=0;i<storage.options.length;i++)
 				selector.append(storage.options[i]);
 			selectorHelper.selectedIndex(storage.index);
@@ -670,12 +668,10 @@
 					
 					var opt = $(self.get(0).options[i]).clone().attr(idxAttr, i-1);
 					if(self.data("index") == i){
-						console.log("self.data('index') == i: " + self.data("text"));
 						opt.text(self.data("text"));
 					}
 
 					if(i-1!=0){
-						console.log("Matched option added: " + self.get(0).options[i].text);
 						selector.append(opt);
 						matches++;
 					}

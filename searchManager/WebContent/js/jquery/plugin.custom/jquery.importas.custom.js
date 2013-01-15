@@ -15,7 +15,24 @@
 		base.init = function(){
 			base.options = $.extend({},$.importas.defaultOptions, options);
 			base.setTemplate();
-			base.getRules();
+			base.handleScroll();
+		};
+
+		base.handleScroll = function() {
+			$(base.options.container).on({
+				scroll: function() {
+					if (!base.processed) {
+						var rect1 = base.options.container.getBoundingClientRect();
+						var rect2 = base.$el.find("select#importAsSelect")[0].getBoundingClientRect();
+
+						if (rect1.top < rect2.bottom && rect1.bottom > rect2.top) {
+							base.getRules();
+							base.processed = true;
+						}
+					}
+					
+				}
+			});
 		};
 
 		base.getRules = function(){
@@ -119,27 +136,26 @@
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 
-			var ruleStatus = null;
+			var optionString = "";
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
+			
+			$.each(list, function() {
+				base.rsLookup[this.ruleId] = this;
+				base.rsLookupByName[this.ruleName] = this;
 
-			for(var idx=0; idx < list.length; idx++){
-				ruleStatus = list[idx];
-				base.rsLookup[ruleStatus["ruleId"]] = ruleStatus;
-				base.rsLookupByName[ruleStatus["ruleName"]] = ruleStatus;
-
-				switch(ruleEntity){
-				case "ELEVATE": 
-				case "EXCLUDE": 
-				case "DEMOTE": 
-				case "FACET_SORT": 
-					break;
-				case "RANKING_RULE":	
-				case "QUERY_CLEANING":
-					if($.isEmptyObject(base.autoMap) || (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]])))
-						$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
-					break;
+				if (ruleEntity == "QUERY_CLEANING" && !$.importas.selectOptions["QUERY_CLEANING"] && $.isEmptyObject(base.autoMap)
+						|| (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]]))) {
+					optionString += "<option value='" + this.ruleId + "'>" + this.ruleName + "</option>";
 				}
+			});
+
+			if (ruleEntity == "QUERY_CLEANING") {
+				if (!$.importas.selectOptions["QUERY_CLEANING"]) {
+				    $.importas.selectOptions["QUERY_CLEANING"] = optionString;
+				}
+
+				$importAsSelect.append($.importas.selectOptions["QUERY_CLEANING"]);
 			}
 
 			base.$el.find("#preloader").hide();
@@ -205,6 +221,8 @@
 			setRuleStatusListCallback: function(base, list){},
 			afterUIRendered: function(){}
 	};
+
+	$.importas.selectOptions = new Array();
 
 	$.fn.importas = function(options){
 		if (this.length) {
