@@ -515,14 +515,12 @@
 						case "classlist": 
 							$imsTab.find("tr#minor").hide();
 						case "minorlist":
-							base.populateIMSManufacturers();
 							break;
 						case "level1categorylist": 
 							$cnetTab.find("tr#level2Cat").hide();
 						case "level2categorylist": 
 							$cnetTab.find("tr#level3Cat").hide();
 						case "level3categorylist": 
-							base.populateCNETManufacturers();
 							break;
 						case "templatenamelist": 
 							if (base.contentHolder.find("div#ims").length)
@@ -1608,13 +1606,9 @@
 						case "ims": base.promptAddFacetItem(type); break;
 						case "cnet": base.promptAddFacetItem(type); break;
 						case "facet": base.promptAddFacetItem(type); break;
-						};				
-
-						base.contentHolder.find("#clearBtn").on({
-							click: function(evt){
-								base.contentHolder.find("input,textarea").val("");
-							}
-						});
+						};	
+						
+						base.addClearButtonListener(type);
 
 					},
 					hide: function(event, api){
@@ -1623,6 +1617,26 @@
 					}
 				}
 			});
+		};
+		
+		base.addClearButtonListener = function(type){
+			base.contentHolder.find("#clearBtn").on({
+				click: function(e){
+					base.contentHolder.find("input,textarea").val("");
+					base.contentHolder.find("select").prop("selectedIndex", 0);
+					
+					switch(e.data.type){
+						case "ims":  
+							base.contentHolder.find("select#categoryList").change();
+							break;
+						case "cnet":  
+							base.contentHolder.find("select#level1CategoryList").change();
+							break;	
+					};	
+					
+					base.contentHolder.find("select#templateNameList").prop("selectedIndex", 0).change();
+				}
+			}, {type: type});
 		};
 
 		// Run initializer
