@@ -273,7 +273,7 @@
 				}
 				else{
 					$.each(self.sortOrderList, function(sortName, sortDisplayText) { 
-						contentHolder.append($("<option>", {value: sortDisplayText, selected: sortName===selectedOrder}).text(sortDisplayText));
+						contentHolder.append($("<option>", {value: sortDisplayText}).text(sortDisplayText));
 					});
 				}
 			},
