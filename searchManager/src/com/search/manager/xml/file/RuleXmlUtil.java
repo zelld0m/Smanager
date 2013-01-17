@@ -501,7 +501,7 @@ public class RuleXmlUtil{
 			List<DemoteItemXml> dItemXmlList = dXml.getItem();
 			DemoteResult demoteResult = null;
 
-			if(CollectionUtils.isNotEmpty(preImportlist)){
+			if(CollectionUtils.isNotEmpty(dItemXmlList)){
 				for (DemoteItemXml dItemXml : dItemXmlList){
 					demoteResult = new DemoteResult(storeKeyword, dItemXml);
 					processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
