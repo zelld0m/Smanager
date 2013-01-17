@@ -222,7 +222,7 @@
 				return selectedStatusId; 
 			},
 
-			checkSelectHandler : function(){
+			/*checkSelectHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
@@ -234,9 +234,9 @@
 						}
 					}
 				});
-			},
+			},*/
 
-			checkSelectAllHandler : function(){
+			/*checkSelectAllHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
@@ -246,7 +246,7 @@
 						$selectedTab.find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']:not([readonly])").attr("checked", selectAll);
 					}
 				});
-			},
+			},*/
 
 			downloadHandler: function(){
 				var self = this;
@@ -530,22 +530,22 @@
 									targetRuleStatusCallback: function(base, r, rs){
 										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
 									
-										base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox", class="selectItem"]').prop({
+										base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
 											disabled: locked,
 											readonly: locked
 										});
 
 										if(locked){
-											base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox, class="selectItem"]').prop({checked:false});
+											base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({checked:false});
 										}
-									},
+									}/*,
 									selectedOptionChanged: function(ruleId){
 										if ($('input[type="checkbox", class="selectItem"]:not([readonly])').length <= 1){
 											$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
 										}else{
 											$selectedTab.find('th#selectAll > input[type="checkbox"]').show();
 										}
-									}
+									}*/
 								});
 
 								$tr.appendTo($table);
@@ -557,8 +557,8 @@
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
-							self.checkSelectHandler();
-							self.checkSelectAllHandler();
+							//self.checkSelectHandler();
+							//self.checkSelectAllHandler();
 							self.importHandler();
 
 						}else{
@@ -566,11 +566,11 @@
 							$selectedTab.find('div#actionBtn').hide();
 						}
 
-						if(totalSize <= 1){
+						/*if(totalSize <= 1){
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
 						}else{
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').show();
-						}
+						}*/
 					},
 					preHook:function(){ 
 						self.prepareTabContent();
