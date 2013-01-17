@@ -94,6 +94,7 @@
 
 		base.populateImportAsList = function(data, contentHolder, sourceData){
 			contentHolder.find("#importAs").importas({
+				inPreview: true,
 				rule: base.options.ruleXml,
 				targetRuleStatusCallback: function(r, rs){
 					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");

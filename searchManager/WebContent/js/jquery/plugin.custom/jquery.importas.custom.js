@@ -15,24 +15,37 @@
 		base.init = function(){
 			base.options = $.extend({},$.importas.defaultOptions, options);
 			base.setTemplate();
-			base.handleScroll();
+			
+			if (base.options.inPreview) {
+				base.getRules();
+			} else {
+				base.handleScroll();
+			}
 		};
 
 		base.handleScroll = function() {
+			var timer;
+			
 			$(base.options.container).on({
 				scroll: function() {
-					if (!base.processed) {
-						var rect1 = base.options.container.getBoundingClientRect();
-						var rect2 = base.$el.find("select#importAsSelect")[0].getBoundingClientRect();
-
-						if (rect1.top < rect2.bottom && rect1.bottom > rect2.top) {
-							base.getRules();
-							base.processed = true;
-						}
+					if (timer) {
+						clearTimeout(timer);
 					}
-					
+					timer = setTimeout(base.populateSelect, 400);
 				}
 			});
+		};
+		
+		base.populateSelect = function() {
+			if (!base.processed) {
+				var rect1 = base.options.container.getBoundingClientRect();
+				var rect2 = base.$el.find("select#importAsSelect")[0].getBoundingClientRect();
+
+				if (rect1.top < rect2.bottom && rect1.bottom > rect2.top) {
+					base.getRules();
+					base.processed = true;
+				}
+			}
 		};
 
 		base.getRules = function(){
@@ -144,18 +157,26 @@
 				base.rsLookup[this.ruleId] = this;
 				base.rsLookupByName[this.ruleName] = this;
 
-				if (ruleEntity == "QUERY_CLEANING" && !$.importas.selectOptions["QUERY_CLEANING"] && $.isEmptyObject(base.autoMap)
-						|| (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]]))) {
-					optionString += "<option value='" + this.ruleId + "'>" + this.ruleName + "</option>";
+				if (!$.importas.selectOptions[ruleEntity]) {
+					switch (ruleEntity) {
+					case "QUERY_CLEANING":
+					case "RANKING_RULE":
+						optionString += "<option value='" + this.ruleId + "'>"
+								+ this.ruleName + "</option>";
+					}
 				}
 			});
 
-			if (ruleEntity == "QUERY_CLEANING") {
-				if (!$.importas.selectOptions["QUERY_CLEANING"]) {
-				    $.importas.selectOptions["QUERY_CLEANING"] = optionString;
-				}
+			switch(ruleEntity) {
+			    case "QUERY_CLEANING":
+			    case "RANKING_RULE":
+					if (!$.importas.selectOptions[ruleEntity]) {
+						$.importas.selectOptions[ruleEntity] = optionString;
+					}
 
-				$importAsSelect.append($.importas.selectOptions["QUERY_CLEANING"]);
+					if ($.isEmptyObject(base.autoMap) || (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]]))) {
+						$importAsSelect.append($.importas.selectOptions[ruleEntity]);
+					}
 			}
 
 			base.$el.find("#preloader").hide();
@@ -216,6 +237,7 @@
 			rule: null,
 			ruleStatusList: null,
 			newRuleText: "Import As New Rule",
+			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
 			selectedOptionChanged: function(ruleId){},
 			setRuleStatusListCallback: function(base, list){},
