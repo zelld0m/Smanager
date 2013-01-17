@@ -16,7 +16,7 @@
 			base.options = $.extend({},$.importas.defaultOptions, options);
 			base.setTemplate();
 			
-			if (base.options.inPreview) {
+			if (base.options.inPreview || !$.importas.isLazyLoaded(base.options.rule.ruleEntity)) {
 				base.getRules();
 			} else {
 				base.handleScroll();
@@ -221,7 +221,9 @@
 
 			if(ruleEntity==="FACET_SORT"){
 				var rs = base.rsLookupByName[rule["ruleName"]];
-				base.showAlert(rs["ruleId"]);
+				
+				if (rs)
+					base.showAlert(rs["ruleId"]);
 			}else{
 				base.showAlert($importAsSelect.find("option:selected").val());
 			};
@@ -245,6 +247,15 @@
 	};
 
 	$.importas.selectOptions = new Array();
+	$.importas.isLazyLoaded = function(ruleEntity) {
+		switch(ruleEntity) {
+		case "RANKING_RULE":
+		case "QUERY_CLEANING":
+			return true;
+	    default:
+			return false;
+		}
+	};
 
 	$.fn.importas = function(options){
 		if (this.length) {
