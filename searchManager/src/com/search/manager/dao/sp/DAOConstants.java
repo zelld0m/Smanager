@@ -109,6 +109,7 @@ public class DAOConstants {
 	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule";
 	public static final String SP_DELETE_REDIRECT					= "usp_Delete_Redirect_Rule";
 	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
+	public static final String SP_GET_REDIRECT_NEW					= "usp_Get_Redirect_Rule_New";
 	//REDIRECT_RULE_KEYWORD
 	public static final String SP_ADD_REDIRECT_KEYWORD				= "usp_Add_Redirect_Rule_Keyword_Relationship";
 	public static final String SP_DELETE_REDIRECT_KEYWORD			= "usp_Delete_Redirect_Rule_Keyword_Relationship";
@@ -322,7 +323,9 @@ public class DAOConstants {
 	public static final String COLUMN_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String COLUMN_REDIRECT_URL 	 				= "redirect_url";
 	public static final String COLUMN_INCLUDE_KEYWORD 	 			= "include_keyword";
-
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE  = "replace_keyword_message_type";
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";
+	
 	public static final String COLUMN_RULE_STATUS_ID		 		= "rule_status_id";
 	public static final String COLUMN_RULE_TYPE_ID		 			= "rule_type_id";
 	public static final String COLUMN_REFERENCE_ID		 			= "reference_id";
