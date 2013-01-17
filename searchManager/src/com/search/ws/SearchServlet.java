@@ -307,7 +307,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
-
+			
 			// redirect 
 			RedirectRule redirect = null;
 			NameValuePair redirectFqNvp = null; 
@@ -320,11 +320,10 @@ public class SearchServlet extends HttpServlet {
 					keywordHistory.add(StringUtils.lowerCase(keyword));
 					redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
 							: daoCacheService.getRedirectRule(sk);
+					
 					if (redirect == null) {
 						break;
-					}
-					else {
-						
+					} else {
 						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 						
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
@@ -338,19 +337,40 @@ public class SearchServlet extends HttpServlet {
 							break;
 						}
 						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
-						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
+						
+						// option 1: Search Result for "original keyword"
+						// option 2: Showing Result for "replacement keyword" / Search instead for: origanal keyword
+						// option 3: Display custom text
+						int replaceType = 1; // default option 1
+						
+						if(redirect.getReplaceKeywordMessageType() != null) {
+							replaceType = redirect.getReplaceKeywordMessageType();
+						}
+						
+						switch(replaceType) {
+							case 3:
+								keyword = StringUtils.trimToEmpty(redirect.getReplaceKeywordMessageCustomText());
+								break;
+							case 2:
+								keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
+								break;
+							default:
+								keyword = originalKeyword;
+								break;
+						}
+						
 						sk.setKeyword(new Keyword(keyword));
 						// remove the original keyword
 						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+						
 						if (StringUtils.isEmpty(keyword)) {
 							sk.setKeyword(null);
 							keywordPresent = false;
 							break;
-						}
-						else {
+						} else {
 							// set the new keyword
-							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, redirect.getChangeKeyword());
+							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 							if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 								nameValuePairs.add(nvp);
 							}
@@ -368,6 +388,7 @@ public class SearchServlet extends HttpServlet {
 								break;
 							}
 						}
+						
 					}
 				}
 				
