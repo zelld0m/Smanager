@@ -77,6 +77,8 @@ public class RedirectRule extends ModelBean {
 	private Boolean includeKeyword;
 	private String redirectUrl;
 	private String modifiedBy;
+	private Integer replaceKeywordMessageType;
+	private String replaceKeywordMessageCustomText;
 	
 	public String getModifiedBy() {
 		return modifiedBy;
@@ -303,4 +305,22 @@ public class RedirectRule extends ModelBean {
 	public String getRedirectUrl() {
 		return redirectUrl;
 	}
+
+	public Integer getReplaceKeywordMessageType() {
+		return replaceKeywordMessageType;
+	}
+
+	public void setReplaceKeywordMessageType(Integer replaceKeywordMessageType) {
+		this.replaceKeywordMessageType = replaceKeywordMessageType;
+	}
+
+	public String getReplaceKeywordMessageCustomText() {
+		return replaceKeywordMessageCustomText;
+	}
+
+	public void setReplaceKeywordMessageCustomText(
+			String replaceKeywordMessageCustomText) {
+		this.replaceKeywordMessageCustomText = replaceKeywordMessageCustomText;
+	}
+	
 }
