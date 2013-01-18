@@ -96,7 +96,7 @@
 			contentHolder.find("#importAs").importas({
 				inPreview: true,
 				rule: base.options.ruleXml,
-				targetRuleStatusCallback: function(r, rs){
+				targetRuleStatusCallback: function(item, r, rs){
 					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
 					
 					if (locked){
@@ -106,7 +106,7 @@
 					}
 				},
 				selectedOptionChanged: function(ruleId){
-					base.getDatabaseData(contentHolder, ruleId, sourceData);
+					base.getDatabaseData(contentHolder.find("div#rightPreview"), ruleId, sourceData);
 				}
 			});
 		};

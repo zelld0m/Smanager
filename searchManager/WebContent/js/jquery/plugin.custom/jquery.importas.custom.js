@@ -89,7 +89,7 @@
 
 		base.showAlert = function(item, id){
 			var ruleStatus = base.rsLookup[id];
-			var $importAlert = item.parents("tr").find("#importAlert");
+			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
 			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
 				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
@@ -103,7 +103,7 @@
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
-			var $replacement = $(u).parents("tr").find("#replacement");
+			var $replacement = $(u).parent("div.ss-wrapper").siblings("#replacement");
 			base.options.selectedOptionChanged(u.value);
 
 			if(selectRule){
@@ -113,14 +113,14 @@
 				});
 			}else{
 				$(u).hide();
-				$replacement.find("#selectedRule").text($(u).val()==="0"? "Pending for Import":  rule["ruleName"]);
+				$replacement.find("#selectedRule").text($(u).val()==="0"? rule["ruleName"] + " [As New Rule]":  rule["ruleName"]);
 
 				var $input = $replacement.find("input#newName");
 
 				$input.val($(u).val()==="0"? rule["ruleName"]:  $(u).find("option:gt(0):selected:eq(0)").text());
 
 				$replacement.slideDown('slow', function() {
-					$(u).parents("tr").find("#selectedRule").off().on({
+					$(u).parent("div.ss-wrapper").siblings("#replacement").find("#selectedRule").off().on({
 						click: function(e){
 							base.toggleFields(e.data.u, e.data.evt, e.data.rule, true);
 						}
