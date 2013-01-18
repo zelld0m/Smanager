@@ -752,6 +752,7 @@
 					var list = data;
 					$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 					for(var i=0; i<list.length; i++){
+						if($.isNotBlank(list[i]))
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
 					}
 				},
