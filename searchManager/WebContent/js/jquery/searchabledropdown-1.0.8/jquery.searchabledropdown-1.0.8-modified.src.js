@@ -455,7 +455,7 @@
 				"top": self.outerHeight(),
 				"left": 0,
 				"width": '100%',
-				"height": 'auto',
+				"height": '85px',
 				"min-height": 'auto',
 				"max-height": '85px',
 				"margin-top": '5px',
