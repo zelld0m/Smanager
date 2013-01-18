@@ -51,8 +51,7 @@
 		base.getRules = function(){
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
-			base.automap = base.options.ruleTransferMap;
-
+		
 			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
 				base.populateOptions(base.options.ruleStatusList);
 			}else{
@@ -174,7 +173,7 @@
 						$.importas.selectOptions[ruleEntity] = optionString;
 					}
 
-					if ($.isEmptyObject(base.autoMap) || (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]]))) {
+					if ($.isEmptyObject(base.options.ruleTransferMap) || (!$.isEmptyObject(base.options.ruleTransferMap) && $.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]]))) {
 						$importAsSelect.append($.importas.selectOptions[ruleEntity]);
 					}
 			}
@@ -201,10 +200,10 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
-				if(!$.isEmptyObject(base.autoMap) && !$.isEmptyObject(base.autoMap[rule["ruleId"]])){ //TODO:
-					$option.attr({value: base.autoMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
-					$option.text(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
-					$replacement.find("input#newName").val(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){ //TODO:
+					$option.attr({value: base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
+					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
+					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$importAsSelect.prop("disabled", true);
 				}
 				break;
