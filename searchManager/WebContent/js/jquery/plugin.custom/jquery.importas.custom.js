@@ -87,9 +87,9 @@
 			base.$el.append(template);
 		};
 
-		base.showAlert = function(id){
+		base.showAlert = function(item, id){
 			var ruleStatus = base.rsLookup[id];
-			var $importAlert = base.$el.find("#importAlert");
+			var $importAlert = item.parents("tr").find("#importAlert");
 
 			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
 				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
@@ -99,7 +99,7 @@
 				$importAlert.hide();
 			};
 
-			base.options.targetRuleStatusCallback(base, base.options.rule, ruleStatus);
+			base.options.targetRuleStatusCallback(item, base.options.rule, ruleStatus);
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
@@ -141,7 +141,7 @@
 				});
 			}
 
-			base.showAlert(u.value);
+			base.showAlert($(u), u.value);
 		};
 
 		base.populateOptions = function(list){
@@ -191,11 +191,13 @@
 				$option.attr({value: rule["ruleName"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
 				break;
 			case "FACET_SORT": 
 				$option.attr({value: rule["ruleId"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
@@ -203,6 +205,7 @@
 					$option.attr({value: base.autoMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
 					$option.text(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
 					$replacement.find("input#newName").val(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
+					$importAsSelect.prop("disabled", true);
 				}
 				break;
 			}
@@ -215,18 +218,17 @@
 				change: function(u, e, rule){
 					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
 						base.toggleFields(u, e, rule, false);
-					}
+					} 
+				},
+				rendered: function(item){
+					if(ruleEntity==="FACET_SORT"){
+						var rs = base.rsLookupByName[rule["ruleName"]];
+						if (rs) base.showAlert(item, rs["ruleId"]);
+					}else{
+						base.showAlert(item, item.val());
+					};
 				}
 			});
-
-			if(ruleEntity==="FACET_SORT"){
-				var rs = base.rsLookupByName[rule["ruleName"]];
-				
-				if (rs)
-					base.showAlert(rs["ruleId"]);
-			}else{
-				base.showAlert($importAsSelect.find("option:selected").val());
-			};
 
 			base.options.afterUIRendered();
 		};

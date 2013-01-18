@@ -44,7 +44,8 @@
 			warnNoMatch: "No Matches Found...",
 			latency: 200,
 			zIndex: "auto",
-			change: function(item){}
+			change: function(u, e, rule){},
+			rendered: function(item){}
 	};
 
 	/**
@@ -480,6 +481,7 @@
 			self.after(overlay);
 			self.after(input);
 			self.after(selector);
+			settings.rendered(self);
 		};
 
 		/**
