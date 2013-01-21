@@ -211,9 +211,6 @@
 
 			$importAsSelect.searchable({
 				rule: rule,
-				maxListSize: 10, 
-				maxMultiMatch: 10,
-				exactMatch: true,
 				change: function(u, e, rule){
 					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
 						base.toggleFields(u, e, rule, false);
