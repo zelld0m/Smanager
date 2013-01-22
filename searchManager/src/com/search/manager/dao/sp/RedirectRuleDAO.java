@@ -69,7 +69,7 @@ public class RedirectRuleDAO {
 	
 	private class GetRedirectRuleStoredProcedure extends GetStoredProcedure {
 	    public GetRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT);
+	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT_NEW);
 	    }
 
 		@Override
@@ -106,7 +106,9 @@ public class RedirectRuleDAO {
 	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
-	                		isIncludeKeyword	                				
+	                		isIncludeKeyword,
+	                		rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE),
+	                		rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
 	                		);
 	        	}
 	        }));
