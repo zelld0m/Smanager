@@ -94,8 +94,11 @@
 
 		base.populateImportAsList = function(data, contentHolder, sourceData){
 			contentHolder.find("#importAs").importas({
+				inPreview: true,
 				rule: base.options.ruleXml,
-				targetRuleStatusCallback: function(r, rs){
+				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
+				ruleTransferMap: base.options.ruleTransferMap,
+				targetRuleStatusCallback: function(item, r, rs){
 					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
 					
 					if (locked){
@@ -103,9 +106,8 @@
 					}else{
 						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					}
-				},
-				selectedOptionChanged: function(ruleId){
-					base.getDatabaseData(contentHolder, ruleId, sourceData);
+					
+					if(rs!=null) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
 				}
 			});
 		};
@@ -1152,7 +1154,7 @@
 											break;
 										case "import":
 											setTimeout(function() {
-												var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
+												var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
 												var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
 												var ruleName = importAsLabel.find("input#newName").val();
 
@@ -1237,7 +1239,9 @@
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
 			setSelectedOverwriteRulePreview: function(base, rulename){},
-			postButtonClick: function(base){}
+			postButtonClick: function(base){},
+			ruleStatusList: null,
+			ruleTransferMap: null
 	};
 
 	$.fn.xmlpreview = function(options){

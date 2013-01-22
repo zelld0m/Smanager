@@ -757,14 +757,12 @@
 							case "classlist": 
 								ui.find("tr#minor").hide();
 							case "minorlist": 
-								self.populateIMSManufacturers(ui, condition);
 								break;
 							case "level1categorylist": 
 								ui.find("tr#level2Cat").hide();
 							case "level2categorylist": 
 								ui.find("tr#level3Cat").hide();
 							case "level3categorylist": 
-								self.populateCNETManufacturers(ui, condition);
 								break;
 							case "templatenamelist": 
 								if (ui.find("div.ims").is(":visible"))
@@ -998,6 +996,7 @@
 						var list = data;
 						$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 						for(var i=0; i<list.length; i++){
+							if($.isNotBlank(list[i]))
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
 						}
 						if ($.isNotBlank(list) && list.length>0){

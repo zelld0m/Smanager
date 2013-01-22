@@ -69,7 +69,7 @@
 					<tbody>
 				</table>
 			</div>
-			<div style="max-height:360px; overflow-y:auto">
+			<div style="height:360px; overflow-y:auto">
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">

@@ -222,7 +222,7 @@
 				return selectedStatusId; 
 			},
 
-			checkSelectHandler : function(){
+			/*checkSelectHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
@@ -234,9 +234,9 @@
 						}
 					}
 				});
-			},
+			},*/
 
-			checkSelectAllHandler : function(){
+			/*checkSelectAllHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
@@ -246,7 +246,7 @@
 						$selectedTab.find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']:not([readonly])").attr("checked", selectAll);
 					}
 				});
-			},
+			},*/
 
 			downloadHandler: function(){
 				var self = this;
@@ -375,19 +375,18 @@
 			getRightPanelTemplate : function(){
 				var template = "";
 
-				template += '	<div class="rulePreview w590 marB20">';
-				template += '		<div class="alert marB10">';
-				template += '			Selected rule below will be overwritten when import button is clicked.';
-				template += '			It is advisable to review both rules as this action cannot be undone.';
-				template += '		</div>';
-				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
-				template += '		<div class="clearB"></div>';
-				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<label id="importAs" class="wAuto floatL">';
-				template += '		</label>';
-				template += '		<div class="clearB"></div>';
-				template += '	</div>';
+				template += '     <div class="rulePreview w590 marB20">';
+				template += '           <div class="alert marB10">';
+				template += '                 Selected rule below will be overwritten when import button is clicked.';
+				template += '                 It is advisable to review both rules as this action cannot be undone.';
+				template += '           </div>';
+				template += '           <label class="w110 floatL marL20 fbold">Rule Info:</label>';
+				template += '           <label class="wAuto floatL" id="ruleInfo" style="margin-left: 90px;"></label>';
+				template += '           <div class="clearB"></div>';
+				template += '           <label class="w110 floatL marL20 fbold">Import As:</label>';
+				template += '           <div id="importAs" class="wAuto floatL" style="margin-left: 90px;"></div>';
+				template += '           <div class="clearB"></div>';
+				template += '     </div>';
 
 				return template;
 			},
@@ -408,13 +407,14 @@
 			getAllRulesToImport: function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				
+
 				RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 					callback:function(data){
 						var list = data;
 						var totalSize = (data) ? data.length : 0;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
+						var ruleDiv = $selectedTab.find("#rule").parent()[0];
 
 						if (totalSize>0){
 							// Populate table row
@@ -450,52 +450,55 @@
 										ruleId: ruleId,
 										ruleName: ruleName,
 										ruleXml: rule,
-										enablePreTemplate: true,
-										enablePostTemplate: true,
-										leftPanelSourceData: "xml",
-										enableRightPanel: true,
-										rightPanelSourceData: "database",
-										dbRuleId: dbRuleId,
-										postTemplate: self.getPostTemplate(),
-										preTemplate: self.getPreTemplate(rule["importType"]),
-										rightPanelTemplate: self.getRightPanelTemplate(),
-										postButtonClick: function(){
-											self.getImportList();
-										},
-										itemImportAsListCallback: function(base, contentHolder, sourceData){
-											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
-												callback : function(data){
-													base.populateImportAsList(data, contentHolder, sourceData);
+										rule: rule,
+										ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
+												ruleTransferMap: self.ruleTransferMap,
+												enablePreTemplate: true,
+												enablePostTemplate: true,
+												leftPanelSourceData: "xml",
+												enableRightPanel: true,
+												rightPanelSourceData: "database",
+												dbRuleId: dbRuleId,
+												postTemplate: self.getPostTemplate(),
+												preTemplate: self.getPreTemplate(rule["importType"]),
+												rightPanelTemplate: self.getRightPanelTemplate(),
+												postButtonClick: function(){
+													self.getImportList();
+												},
+												itemImportAsListCallback: function(base, contentHolder, sourceData){
+													DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+														callback : function(data){
+															base.populateImportAsList(data, contentHolder, sourceData);
+														}
+													});
+												},
+												itemImportTypeListCallback: function(base, contentHolder){
+													base.populateImportTypeList(self.importTypeList, contentHolder);
+												},
+												itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
+												},
+												itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
 												}
-											});
-										},
-										itemImportTypeListCallback: function(base, contentHolder){
-											base.populateImportTypeList(self.importTypeList, contentHolder);
-										},
-										itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
-											if (self.entityName === "elevate"){
-												ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
-													callback:function(data){
-														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-													},
-													preHook: function(){
-														base.prepareForceAddStatus(contentHolder);
-													}
-												});
-											}
-										},
-										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
-											if (self.entityName === "elevate"){
-												ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
-													callback:function(data){
-														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-													},
-													preHook: function(){
-														base.prepareForceAddStatus(contentHolder);
-													}
-												});
-											}
-										}
 									});
 								}else{
 									$tr.find("td#ruleOption > img.previewIcon").hide();
@@ -519,43 +522,45 @@
 
 								//import as
 								$tr.find("td#importAs").importas({
+									container: ruleDiv,
 									rule: list[i],
 									ruleStatusList: self.ruleStatusMap[self.entityName],
 									ruleTransferMap: self.ruleTransferMap,
 									setRuleStatusListCallback: function(base, list){
 										self.ruleStatusMap[self.entityName]= list;
 									},
-									targetRuleStatusCallback: function(base, r, rs){
+									targetRuleStatusCallback: function(item, r, rs){
 										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-									
-										base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox", class="selectItem"]').prop({
+
+										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
 											disabled: locked,
 											readonly: locked
 										});
 
 										if(locked){
-											base.$el.parents("tr.ruleItem").find('td#select > input[type="checkbox, class="selectItem"]').prop({checked:false});
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({checked:false});
 										}
-									},
+									}/*,
 									selectedOptionChanged: function(ruleId){
 										if ($('input[type="checkbox", class="selectItem"]:not([readonly])').length <= 1){
 											$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
 										}else{
 											$selectedTab.find('th#selectAll > input[type="checkbox"]').show();
 										}
-									}
+									}*/
 								});
 
 								$tr.appendTo($table);
 							}
 
 							$selectedTab.find("div#ruleCount").html(totalSize + (totalSize == 1 ? " Rule" : " Rules"));
+							$(ruleDiv).scroll();
 
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
-							self.checkSelectHandler();
-							self.checkSelectAllHandler();
+							//self.checkSelectHandler();
+							//self.checkSelectAllHandler();
 							self.importHandler();
 
 						}else{
@@ -563,24 +568,24 @@
 							$selectedTab.find('div#actionBtn').hide();
 						}
 
-						if(totalSize <= 1){
+						/*if(totalSize <= 1){
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
 						}else{
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').show();
-						}
+						}*/
 					},
 					preHook:function(){ 
 						self.prepareTabContent();
 					},
 					postHook:function(){ 
-						self.cleanUpTabContent(); 
+						self.cleanUpTabContent();
 					}
 				});			
 			},
-			
+
 			getImportList : function(){
 				var self = this;
-								
+
 				if(GLOBAL_store==="pcmallcap"){
 					self.getRuleTransferMap();
 				}else{

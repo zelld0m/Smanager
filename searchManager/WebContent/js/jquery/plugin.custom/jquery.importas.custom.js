@@ -15,14 +15,43 @@
 		base.init = function(){
 			base.options = $.extend({},$.importas.defaultOptions, options);
 			base.setTemplate();
-			base.getRules();
+			
+			if (base.options.inPreview || !$.importas.isLazyLoaded(base.options.rule.ruleEntity)) {
+				base.getRules();
+			} else {
+				base.handleScroll();
+			}
+		};
+
+		base.handleScroll = function() {
+			var timer;
+			
+			$(base.options.container).on({
+				scroll: function() {
+					if (timer) {
+						clearTimeout(timer);
+					}
+					timer = setTimeout(base.populateSelect, 400);
+				}
+			});
+		};
+		
+		base.populateSelect = function() {
+			if (!base.processed) {
+				var rect1 = base.options.container.getBoundingClientRect();
+				var rect2 = base.$el.find("select#importAsSelect")[0].getBoundingClientRect();
+
+				if (rect1.top < rect2.bottom && rect1.bottom > rect2.top) {
+					base.getRules();
+					base.processed = true;
+				}
+			}
 		};
 
 		base.getRules = function(){
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
-			base.automap = base.options.ruleTransferMap;
-
+		
 			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
 				base.populateOptions(base.options.ruleStatusList);
 			}else{
@@ -57,9 +86,9 @@
 			base.$el.append(template);
 		};
 
-		base.showAlert = function(id){
+		base.showAlert = function(item, id){
 			var ruleStatus = base.rsLookup[id];
-			var $importAlert = base.$el.find("#importAlert");
+			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
 			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
 				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
@@ -69,11 +98,11 @@
 				$importAlert.hide();
 			};
 
-			base.options.targetRuleStatusCallback(base, base.options.rule, ruleStatus);
+			base.options.targetRuleStatusCallback(item, base.options.rule, ruleStatus);
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
-			var $replacement = $(u).parents("tr").find("#replacement");
+			var $replacement = $(u).parent("div.ss-wrapper").siblings("#replacement");
 			base.options.selectedOptionChanged(u.value);
 
 			if(selectRule){
@@ -83,14 +112,14 @@
 				});
 			}else{
 				$(u).hide();
-				$replacement.find("#selectedRule").text($(u).val()==="0"? "Pending for Import":  rule["ruleName"]);
+				$replacement.find("#selectedRule").text($(u).val()==="0"? rule["ruleName"] + " [As New Rule]":  rule["ruleName"]);
 
 				var $input = $replacement.find("input#newName");
 
 				$input.val($(u).val()==="0"? rule["ruleName"]:  $(u).find("option:gt(0):selected:eq(0)").text());
 
 				$replacement.slideDown('slow', function() {
-					$(u).parents("tr").find("#selectedRule").off().on({
+					$(u).parent("div.ss-wrapper").siblings("#replacement").find("#selectedRule").off().on({
 						click: function(e){
 							base.toggleFields(e.data.u, e.data.evt, e.data.rule, true);
 						}
@@ -111,7 +140,7 @@
 				});
 			}
 
-			base.showAlert(u.value);
+			base.showAlert($(u), u.value);
 		};
 
 		base.populateOptions = function(list){
@@ -119,27 +148,34 @@
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
 
-			var ruleStatus = null;
+			var optionString = "";
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
+			
+			$.each(list, function() {
+				base.rsLookup[this.ruleId] = this;
+				base.rsLookupByName[this.ruleName] = this;
 
-			for(var idx=0; idx < list.length; idx++){
-				ruleStatus = list[idx];
-				base.rsLookup[ruleStatus["ruleId"]] = ruleStatus;
-				base.rsLookupByName[ruleStatus["ruleName"]] = ruleStatus;
-
-				switch(ruleEntity){
-				case "ELEVATE": 
-				case "EXCLUDE": 
-				case "DEMOTE": 
-				case "FACET_SORT": 
-					break;
-				case "RANKING_RULE":	
-				case "QUERY_CLEANING":
-					if($.isEmptyObject(base.autoMap) || (!$.isEmptyObject(base.autoMap) && $.isEmptyObject(base.autoMap[rule["ruleId"]])))
-						$importAsSelect.append($("<option>", {value: ruleStatus["ruleId"]}).text(ruleStatus["ruleName"]));
-					break;
+				if (!$.importas.selectOptions[ruleEntity]) {
+					switch (ruleEntity) {
+					case "QUERY_CLEANING":
+					case "RANKING_RULE":
+						optionString += "<option value='" + this.ruleId + "'>"
+								+ this.ruleName + "</option>";
+					}
 				}
+			});
+
+			switch(ruleEntity) {
+			    case "QUERY_CLEANING":
+			    case "RANKING_RULE":
+					if (!$.importas.selectOptions[ruleEntity]) {
+						$.importas.selectOptions[ruleEntity] = optionString;
+					}
+
+					if ($.isEmptyObject(base.options.ruleTransferMap) || (!$.isEmptyObject(base.options.ruleTransferMap) && $.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]]))) {
+						$importAsSelect.append($.importas.selectOptions[ruleEntity]);
+					}
 			}
 
 			base.$el.find("#preloader").hide();
@@ -154,40 +190,41 @@
 				$option.attr({value: rule["ruleName"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
 				break;
 			case "FACET_SORT": 
 				$option.attr({value: rule["ruleId"], selected: true});
 				$option.text(rule["ruleName"]);
 				$replacement.find("input#newName").val(rule["ruleName"]);
+				$importAsSelect.prop("disabled", true);
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
-				if(!$.isEmptyObject(base.autoMap) && !$.isEmptyObject(base.autoMap[rule["ruleId"]])){ //TODO:
-					$option.attr({value: base.autoMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
-					$option.text(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
-					$replacement.find("input#newName").val(base.autoMap[rule["ruleId"]]["ruleNameTarget"]);
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){ //TODO:
+					$option.attr({value: base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
+					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
+					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
+					$importAsSelect.prop("disabled", true);
 				}
 				break;
 			}
 
 			$importAsSelect.searchable({
 				rule: rule,
-				maxListSize: 10, 
-				maxMultiMatch: 10,
-				exactMatch: true,
 				change: function(u, e, rule){
 					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
 						base.toggleFields(u, e, rule, false);
-					}
+					} 
+				},
+				rendered: function(item){
+					if(ruleEntity==="FACET_SORT"){
+						var rs = base.rsLookupByName[rule["ruleName"]];
+						if (rs) base.showAlert(item, rs["ruleId"]);
+					}else{
+						base.showAlert(item, item.val());
+					};
 				}
 			});
-
-			if(ruleEntity==="FACET_SORT"){
-				var rs = base.rsLookupByName[rule["ruleName"]];
-				base.showAlert(rs["ruleId"]);
-			}else{
-				base.showAlert($importAsSelect.find("option:selected").val());
-			};
 
 			base.options.afterUIRendered();
 		};
@@ -200,10 +237,22 @@
 			rule: null,
 			ruleStatusList: null,
 			newRuleText: "Import As New Rule",
+			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
 			selectedOptionChanged: function(ruleId){},
 			setRuleStatusListCallback: function(base, list){},
 			afterUIRendered: function(){}
+	};
+
+	$.importas.selectOptions = new Array();
+	$.importas.isLazyLoaded = function(ruleEntity) {
+		switch(ruleEntity) {
+		case "RANKING_RULE":
+		case "QUERY_CLEANING":
+			return true;
+	    default:
+			return false;
+		}
 	};
 
 	$.fn.importas = function(options){

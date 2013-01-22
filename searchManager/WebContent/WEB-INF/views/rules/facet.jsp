@@ -71,6 +71,7 @@
 									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6"></select>						
 								</div>
 								<div class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></div>
+								<div style="clear: both;"> </div>
 							</li>
 						</ul>
 					</div>
