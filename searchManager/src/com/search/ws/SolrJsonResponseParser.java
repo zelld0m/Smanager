@@ -477,7 +477,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
 			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || 
-					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId())) {
+					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
 				for (String lvl1Key: root.getFacets()) {
 					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
 					lvl1Map.put(lvl1Key, lvl1.getCount());
@@ -598,7 +598,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 
 		for (String key: facetSortRule.getItems().keySet()) {
-			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId()))) {
+			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId()))) {
 				
 				// grab a copy of the fields
 				List<FacetEntry> entries = new ArrayList<FacetEntry>();

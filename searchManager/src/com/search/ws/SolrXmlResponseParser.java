@@ -500,7 +500,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				sortType = facetSortRule.getSortType();
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
-			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId())) {
+			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
 				key = ConfigManager.getInstance().getParameterByCore(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				isFacetTemplate = true;
 			}
