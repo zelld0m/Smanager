@@ -24,9 +24,7 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 id="titleText" class="padT7 padL15 fsize20 fnormal floatL"></h1>
-		<div class="floatR marT10 marR10"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></div>
 	</div>
-	
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
@@ -52,9 +50,30 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div class="floatR padT3" id="ruleCount"></div>
+				<div class="floatL" style="display: none;">
+					<span>Show:</span> 
+					<select id="ruleFilter">
+						<option value="all">All Rules</option>
+						<option value="nonrejected">Non-rejected Rules</option>
+						<option value="rejected">Previously Rejected Rules</option>
+					</select>
+				</div>
+				<a id="searchBtn" href="javascript:void(0);">
+					<img class="marR5 marLn4 marT1 floatR posRel" align="absmiddle" src="/searchManager/js/jquery/ajaxsolr.custom/images/btn_GO.png">
+				</a>
+				<div class="searchBoxHolder w150 floatR marT1 marR8">
+					<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">
+				</div>
 			</div>
 			<div class="clearB"></div>
+			<!-- Pagination-->     
+		    <div class="floatR padT10">
+		    	<a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload"></div></a>
+			</div>
+			<div id="resultsTopPaging" class="marTn2"></div>
+		    <div class="clearB"></div>
+		    <!--end Pagination-->
+			
 			<div class="">
 				<table class="tblItems w100p marT5">
 					<tbody>
@@ -97,6 +116,9 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="mar0">
+        		<div id="resultsBottomPaging"></div>	
+      		</div>
 			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Import Rule Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">

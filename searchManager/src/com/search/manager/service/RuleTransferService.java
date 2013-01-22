@@ -50,6 +50,11 @@ public class RuleTransferService {
 	@Autowired private FacetSortService facetSortService;
 
 	private static final Logger logger = Logger.getLogger(RuleTransferService.class);
+	
+	private static final String IMPORT_SUCCESS = "Successfully imported ";
+	private static final String IMPORT_ERROR_DUPLICATE_NAME = "Duplicate name found.";
+	private static final String IMPORT_ERROR_XML_FILE_MISSING = "XML file is missing.";
+	private static final String IMPORT_ERROR_EXPORT_MAPPING = "Export mapping already exists.";
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType){
@@ -59,6 +64,21 @@ public class RuleTransferService {
 	@RemoteMethod
 	public List<RuleXml> getAllRulesToImport(String ruleType){
 		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreName(), ruleType);
+	}
+	
+	/*
+	 * ruleType - elevate | exclude | demote | facetSort | queryCleaning | rankingRule
+	 * keywordFilter - keyword filter
+	 * page - page number
+	 * itemsPerPage - rows per page
+	 * ruleFilter - all | rejected | nonrejected
+	 * orderByExportDate - ASC | DESC
+	 * orderByPublishDate - ASC | DESC
+	 * */
+	@RemoteMethod
+	public List<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderByExportDate, String orderByPublishDate){
+		//TODO
+		return getAllRulesToImport(ruleType);
 	}
 
 	@RemoteMethod
@@ -111,7 +131,7 @@ public class RuleTransferService {
 								daoService.addAuditTrail(auditTrail);
 	
 								daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
-								successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
+								successList.add(getRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
 								successRuleStatusIdList.add(ruleStatus.getRuleStatusId());
 							}
 						}
@@ -129,8 +149,8 @@ public class RuleTransferService {
 	}
 
 	@RemoteMethod
-	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
-		List<String> successList = new ArrayList<String>();
+	public Map<String, String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
+		Map<String, String> importList = new HashMap<String, String>();
 		List<String> importedRuleStatusIds = new ArrayList<String>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
@@ -234,10 +254,7 @@ public class RuleTransferService {
 							status++;
 						}
 					}
-
-
-					successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
-
+					importList.put(getRule(ruleEntity, ruleId, ruleName), IMPORT_SUCCESS);
 				} catch (DaoException de) {
 					String msg = "";
 					switch (status) {
@@ -247,15 +264,17 @@ public class RuleTransferService {
 					case 3: msg = "Failed to publish rule: "; break;
 					}
 					logger.error(msg + importAsId);
+					
+					importList.put(getRule(ruleEntity, ruleId, ruleName), msg+importAsId);
 				}
 
 			}
 		}
 		daoService.addRuleStatusComment(null, "[IMPORTED] " + comment, importedRuleStatusIds.toArray(new String[0]));
-		return successList;
+		return importList;
 	}
 
-	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
+	private String getRule(RuleEntity ruleEntity, String ruleId, String ruleName){
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
@@ -326,7 +345,7 @@ public class RuleTransferService {
 				//TODO addComment
 				//TODO addAuditTrail
 
-				successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
+				successList.add(getRule(ruleEntity, ruleId, ruleName));
 			}
 		}
 		return successList;

@@ -436,7 +436,7 @@
 			getAllRulesToImport: function(curPage){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				
+
 				RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
 					callback:function(data){
 						var list = data;
@@ -482,6 +482,7 @@
 										rule: rule,
 										ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
 												ruleTransferMap: self.ruleTransferMap,
+<<<<<<< HEAD
 										enablePreTemplate: true,
 										enablePostTemplate: true,
 										leftPanelSourceData: "xml",
@@ -498,36 +499,54 @@
 											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
 												callback : function(data){
 													base.populateImportAsList(data, contentHolder, sourceData);
+=======
+												enablePreTemplate: true,
+												enablePostTemplate: true,
+												leftPanelSourceData: "xml",
+												enableRightPanel: true,
+												rightPanelSourceData: "database",
+												dbRuleId: dbRuleId,
+												postTemplate: self.getPostTemplate(),
+												preTemplate: self.getPreTemplate(rule["importType"]),
+												rightPanelTemplate: self.getRightPanelTemplate(),
+												postButtonClick: function(){
+													self.getImportList();
+												},
+												itemImportAsListCallback: function(base, contentHolder, sourceData){
+													DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
+														callback : function(data){
+															base.populateImportAsList(data, contentHolder, sourceData);
+														}
+													});
+												},
+												itemImportTypeListCallback: function(base, contentHolder){
+													base.populateImportTypeList(self.importTypeList, contentHolder);
+												},
+												itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
+												},
+												itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
+>>>>>>> refs/remotes/origin/sprint_dropdown_jquery_upgrade
 												}
-											});
-										},
-										itemImportTypeListCallback: function(base, contentHolder){
-											base.populateImportTypeList(self.importTypeList, contentHolder);
-										},
-										itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
-											if (self.entityName === "elevate"){
-												ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
-													callback:function(data){
-														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-													},
-													preHook: function(){
-														base.prepareForceAddStatus(contentHolder);
-													}
-												});
-											}
-										},
-										itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
-											if (self.entityName === "elevate"){
-												ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
-													callback:function(data){
-														base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
-													},
-													preHook: function(){
-														base.prepareForceAddStatus(contentHolder);
-													}
-												});
-											}
-										}
 									});
 								}else{
 									$tr.find("td#ruleOption > img.previewIcon").hide();
@@ -561,7 +580,7 @@
 									},
 									targetRuleStatusCallback: function(item, r, rs){
 										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-									
+
 										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
 											disabled: locked,
 											readonly: locked
@@ -615,7 +634,7 @@
 
 			getImportList : function(curPage){
 				var self = this;
-								
+
 				if(GLOBAL_store==="pcmallcap"){
 					self.getRuleTransferMap(curPage);
 				}else{
