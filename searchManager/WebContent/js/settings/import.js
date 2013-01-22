@@ -10,6 +10,8 @@
 			ruleTransferMap: new Object(),
 			ruleTargetList: new Array(),
 			pageSize : 10,
+			defaultText : "Search Rule Info",
+			currentPage : 1,
 
 			postMsg : function(data,pub){
 				var self = this;
@@ -254,7 +256,7 @@
 				});
 			},*/
 			
-			addFieldValuesPaging : function(selectedTab, curPage, totalItem){
+			addFieldValuesPaging : function(selectedTab, curPage, totalItem, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
 				var self = this;
 				var $selectedTab = selectedTab;
 				if(totalItem==0){
@@ -271,11 +273,38 @@
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 						},
-						pageLinkCallback: function(e){ self.getImportList(e.data.page); },
-						nextLinkCallback: function(e){ self.getImportList(e.data.page+1);},
-						prevLinkCallback: function(e){ self.getImportList(e.data.page-1);},
+						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);},
 						firstLinkCallback: function(e){self.getImportList(1);},
-						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages);}
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);}
+					});
+					
+					$selectedTab.find('input#keyword').off().on({
+						focusin: function(e){
+							if ($.trim($(e.currentTarget).val()).toLowerCase() === $.trim(self.defaultText).toLowerCase())
+								$(e.currentTarget).val("");
+						},
+						focusout: function(e){
+							if ($.isBlank($(e.currentTarget).val())) 
+								$(e.currentTarget).val(self.defaultText);
+						},
+						keydown: function(e){
+							var code = (e.keyCode ? e.keyCode : e.which);
+							var keyword = $.trim($(e.target).val());
+
+							if (code == 13 && keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase()) 
+								self.getImportList(1, keyword);
+						}
+					}).val(self.defaultText);
+					
+					$selectedTab.find("a#searchBtn").off().on({
+						click: function(e){
+							var keyword = $.trim($selectedTab.find('input#keyword').val());
+							
+							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+								self.getImportList(1, keyword);
+						}
 					});
 					
 					$selectedTab.find("a#downloadIcon").download({
@@ -419,7 +448,7 @@
 				return template;
 			},
 
-			getRuleTransferMap: function(curPage){
+			getRuleTransferMap: function(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
 				var self = this;
 				//TODO: dynamic origin and target
 				//RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
@@ -433,16 +462,16 @@
 						}
 					},
 					postHook: function(){
-						self.getAllRulesToImport(curPage);
+						self.getAllRulesToImport(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);
 					}
 				});
 			},
 
-			getAllRulesToImport: function(curPage){
+			getAllRulesToImport: function(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
-				RuleTransferServiceJS.getAllRulesToImport(self.entityName, {
+				RuleTransferServiceJS.getRulesToImport(self.entityName, keywordFilter, curPage, self.pageSize, ruleFilter, exportDateOrder, publishDateOrder, {
 					callback:function(data){
 						var list = data;
 						var totalSize = (data) ? data.length : 0;
@@ -601,7 +630,9 @@
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
 						}
-						self.addFieldValuesPaging($selectedTab, curPage, totalSize);
+						
+						self.populateKeywordFilter($selectedTab, keywordFilter);
+						self.addFieldValuesPaging($selectedTab, curPage, totalSize, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);
 
 						/*if(totalSize <= 1){
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
@@ -617,14 +648,19 @@
 					}
 				});			
 			},
+			
+			populateKeywordFilter : function($selectedTab, keywordFilter){
+				$selectedTab.find('input#keyword').val(keywordFilter);
+			},
 
-			getImportList : function(curPage){
+			getImportList : function(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
 				var self = this;
+				self.currentPage = curPage;
 
 				if(GLOBAL_store==="pcmallcap"){
-					self.getRuleTransferMap(curPage);
+					self.getRuleTransferMap(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);
 				}else{
-					self.getAllRulesToImport(curPage);
+					self.getAllRulesToImport(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder);
 				}
 			},
 
