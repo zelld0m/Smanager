@@ -8,6 +8,8 @@
 			importTypeList : null,
 			ruleStatusMap : new Array(),
 			ruleTransferMap: null,
+			ruleTargetMap: null,
+			pageSize : 10,
 
 			postMsg : function(data,pub){
 				var self = this;
@@ -53,7 +55,7 @@
 						ctr++;
 					}, 
 					postHook: function(){
-						if (ctr==max) self.getImportList();
+						if (ctr==max) self.getImportList(1);
 					}
 				});
 
@@ -63,7 +65,7 @@
 						ctr++;
 					},
 					postHook: function(){
-						if (ctr==max) self.getImportList();
+						if (ctr==max) self.getImportList(1);
 					}
 				});
 			}, 
@@ -76,6 +78,11 @@
 				} 
 				$selectedTab.find('table.tblItems, div#actionBtn').hide();
 				$selectedTab.find("div#ruleCount").html("");
+				
+				
+				$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
+				$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
+				$selectedTab.find("a#downloadIcon").hide();
 			},
 
 			cleanUpTabContent:function(){
@@ -247,31 +254,53 @@
 					}
 				});
 			},*/
-
-			downloadHandler: function(){
+			
+			addFieldValuesPaging : function(selectedTab, curPage, totalItem){
 				var self = this;
-				$("a#downloadIcon").download({
-					headerText:"Download " + self.moduleName,
-					hasRuleEntityOption: true,
-					requestCallback:function(e){
-						var params = new Array();
-						var url = document.location.pathname + "/xls";
-						var urlParams = "";
-						var count = 0;
-						params["filename"] = e.data.filename;
-						params["type"] = e.data.type;
-						params["clientTimezone"] = +new Date();
-						params["ruleType"] = e.data.ruletype;
+				var $selectedTab = selectedTab;
+				if(totalItem==0){
+					$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
+					$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
+					$selectedTab.find("#downloadIcon").hide();
+				}else{
+					$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
+					$selectedTab.find("#downloadIcon").show();
+					$selectedTab.find("#resultsTopPaging, #resultsBottomPaging").paginate({
+						currentPage: curPage, 
+						pageSize: self.pageSize,
+						totalItem: totalItem,
+						callbackText: function(itemStart, itemEnd, itemTotal){
+							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
+						},
+						pageLinkCallback: function(e){ self.getImportList(e.data.page); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1);},
+						firstLinkCallback: function(e){self.getImportList(1);},
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages);}
+					});
+					
+					$selectedTab.find("a#downloadIcon").download({
+						headerText:"Download " + self.moduleName,
+						requestCallback:function(e){
+							var params = new Array();
+							var url = document.location.pathname + "/xls";
+							var urlParams = "";
+							var count = 0;
+							params["filename"] = e.data.filename;
+							params["type"] = e.data.type;
+							params["clientTimezone"] = +new Date();
+							params["ruleType"] = self.entityName;
 
-						for(var key in params){
-							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
-							count++;
-						};
+							for(var key in params){
+								if (count>0) urlParams +='&';
+								urlParams += (key + '=' + params[key]);
+								count++;
+							};
 
-						document.location.href = url + '?' + urlParams;
-					}
-				});
+							document.location.href = url + '?' + urlParams;
+						}
+					});
+				}
 			},
 
 			importHandler : function(){
@@ -302,7 +331,7 @@
 										RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 											callback: function(data){									
 												self.postMsg(data,true);	
-												self.getImportList();	
+												self.getImportList(1);
 											},
 											preHook:function(){ 
 												self.prepareTabContent(); 
@@ -315,7 +344,7 @@
 								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {
 									callback: function(data){
 										self.postMsg(data,false);	
-										self.getImportList();
+										self.getImportList(1);
 									},
 									preHook:function(){ 
 										self.prepareTabContent(); 
@@ -381,18 +410,17 @@
 				template += '			It is advisable to review both rules as this action cannot be undone.';
 				template += '		</div>';
 				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
+				template += '		<label class="wAuto floatL" id="ruleInfo" style="margin-left: 90px;"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<label id="importAs" class="wAuto floatL">';
-				template += '		</label>';
+				template += '		<div id="importAs" class="wAuto floatL" style="margin-left: 90px;"></div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
 
 				return template;
 			},
 
-			getRuleTransferMap: function(){
+			getRuleTransferMap: function(curPage){
 				var self = this;
 				//TODO: dynamic origin and target
 				RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
@@ -400,12 +428,12 @@
 						self.ruleTransferMap = ruleTransferMap;
 					},
 					postHook: function(){
-						self.getAllRulesToImport();
+						self.getAllRulesToImport(curPage);
 					}
 				});
 			},
 
-			getAllRulesToImport: function(){
+			getAllRulesToImport: function(curPage){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 				
@@ -451,6 +479,9 @@
 										ruleId: ruleId,
 										ruleName: ruleName,
 										ruleXml: rule,
+										rule: rule,
+										ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
+												ruleTransferMap: self.ruleTransferMap,
 										enablePreTemplate: true,
 										enablePostTemplate: true,
 										leftPanelSourceData: "xml",
@@ -461,7 +492,7 @@
 										preTemplate: self.getPreTemplate(rule["importType"]),
 										rightPanelTemplate: self.getRightPanelTemplate(),
 										postButtonClick: function(){
-											self.getImportList();
+											self.getImportList(1);
 										},
 										itemImportAsListCallback: function(base, contentHolder, sourceData){
 											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
@@ -524,6 +555,7 @@
 									rule: list[i],
 									ruleStatusList: self.ruleStatusMap[self.entityName],
 									ruleTransferMap: self.ruleTransferMap,
+									ruleTargetList: self.ruleTargetList,
 									setRuleStatusListCallback: function(base, list){
 										self.ruleStatusMap[self.entityName]= list;
 									},
@@ -560,11 +592,11 @@
 							//self.checkSelectHandler();
 							//self.checkSelectAllHandler();
 							self.importHandler();
-
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
 						}
+						self.addFieldValuesPaging($selectedTab, curPage, totalSize);
 
 						/*if(totalSize <= 1){
 							$selectedTab.find('th#selectAll > input[type="checkbox"]').hide();
@@ -581,20 +613,19 @@
 				});			
 			},
 
-			getImportList : function(){
+			getImportList : function(curPage){
 				var self = this;
 								
 				if(GLOBAL_store==="pcmallcap"){
-					self.getRuleTransferMap();
+					self.getRuleTransferMap(curPage);
 				}else{
-					self.getAllRulesToImport();
+					self.getAllRulesToImport(curPage);
 				}
 			},
 
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
-				self.downloadHandler();
 				self.getRuleEntityList();
 				self.populateTabContent();
 			}
