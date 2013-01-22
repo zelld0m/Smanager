@@ -7,8 +7,8 @@
 			ruleEntityList : null,
 			importTypeList : null,
 			ruleStatusMap : new Array(),
-			ruleTransferMap: null,
-			ruleTargetMap: null,
+			ruleTransferMap: new Object(),
+			ruleTargetList: new Array(),
 			pageSize : 10,
 
 			postMsg : function(data,pub){
@@ -78,7 +78,6 @@
 				} 
 				$selectedTab.find('table.tblItems, div#actionBtn').hide();
 				$selectedTab.find("div#ruleCount").html("");
-				
 				
 				$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
 				$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
@@ -423,9 +422,15 @@
 			getRuleTransferMap: function(curPage){
 				var self = this;
 				//TODO: dynamic origin and target
-				RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
-					callback: function(ruleTransferMap){
-						self.ruleTransferMap = ruleTransferMap;
+				//RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
+				RuleTransferServiceJS.getExportMapList("pcmall", $.makeArray(), self.entityName, {
+					callback: function(exportMapList){
+						if(exportMapList){
+							for(var index in exportMapList){
+								self.ruleTransferMap[exportMapList[index]["ruleIdOrigin"]] = exportMapList[index];
+								self.ruleTargetList[exportMapList[index]["ruleIdTarget"]] = exportMapList[index]["ruleIdTarget"];
+							}
+						}
 					},
 					postHook: function(){
 						self.getAllRulesToImport(curPage);
@@ -482,24 +487,6 @@
 										rule: rule,
 										ruleStatusList: self.ruleStatusMap==null? null: self.ruleStatusMap[self.entityName],
 												ruleTransferMap: self.ruleTransferMap,
-<<<<<<< HEAD
-										enablePreTemplate: true,
-										enablePostTemplate: true,
-										leftPanelSourceData: "xml",
-										enableRightPanel: true,
-										rightPanelSourceData: "database",
-										dbRuleId: dbRuleId,
-										postTemplate: self.getPostTemplate(),
-										preTemplate: self.getPreTemplate(rule["importType"]),
-										rightPanelTemplate: self.getRightPanelTemplate(),
-										postButtonClick: function(){
-											self.getImportList(1);
-										},
-										itemImportAsListCallback: function(base, contentHolder, sourceData){
-											DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
-												callback : function(data){
-													base.populateImportAsList(data, contentHolder, sourceData);
-=======
 												enablePreTemplate: true,
 												enablePostTemplate: true,
 												leftPanelSourceData: "xml",
@@ -510,7 +497,7 @@
 												preTemplate: self.getPreTemplate(rule["importType"]),
 												rightPanelTemplate: self.getRightPanelTemplate(),
 												postButtonClick: function(){
-													self.getImportList();
+													self.getImportList(1);
 												},
 												itemImportAsListCallback: function(base, contentHolder, sourceData){
 													DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
@@ -545,7 +532,6 @@
 															}
 														});
 													}
->>>>>>> refs/remotes/origin/sprint_dropdown_jquery_upgrade
 												}
 									});
 								}else{

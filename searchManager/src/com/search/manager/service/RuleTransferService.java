@@ -50,11 +50,6 @@ public class RuleTransferService {
 	@Autowired private FacetSortService facetSortService;
 
 	private static final Logger logger = Logger.getLogger(RuleTransferService.class);
-	
-	private static final String IMPORT_SUCCESS = "Successfully imported ";
-	private static final String IMPORT_ERROR_DUPLICATE_NAME = "Duplicate name found.";
-	private static final String IMPORT_ERROR_XML_FILE_MISSING = "XML file is missing.";
-	private static final String IMPORT_ERROR_EXPORT_MAPPING = "Export mapping already exists.";
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType){
@@ -131,7 +126,7 @@ public class RuleTransferService {
 								daoService.addAuditTrail(auditTrail);
 	
 								daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
-								successList.add(getRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
+								successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
 								successRuleStatusIdList.add(ruleStatus.getRuleStatusId());
 							}
 						}
@@ -149,8 +144,8 @@ public class RuleTransferService {
 	}
 
 	@RemoteMethod
-	public Map<String, String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
-		Map<String, String> importList = new HashMap<String, String>();
+	public List<String> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
+		List<String> successList = new ArrayList<String>();
 		List<String> importedRuleStatusIds = new ArrayList<String>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
@@ -254,7 +249,10 @@ public class RuleTransferService {
 							status++;
 						}
 					}
-					importList.put(getRule(ruleEntity, ruleId, ruleName), IMPORT_SUCCESS);
+
+
+					successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
+
 				} catch (DaoException de) {
 					String msg = "";
 					switch (status) {
@@ -264,17 +262,15 @@ public class RuleTransferService {
 					case 3: msg = "Failed to publish rule: "; break;
 					}
 					logger.error(msg + importAsId);
-					
-					importList.put(getRule(ruleEntity, ruleId, ruleName), msg+importAsId);
 				}
 
 			}
 		}
 		daoService.addRuleStatusComment(null, "[IMPORTED] " + comment, importedRuleStatusIds.toArray(new String[0]));
-		return importList;
+		return successList;
 	}
 
-	private String getRule(RuleEntity ruleEntity, String ruleId, String ruleName){
+	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
@@ -345,7 +341,7 @@ public class RuleTransferService {
 				//TODO addComment
 				//TODO addAuditTrail
 
-				successList.add(getRule(ruleEntity, ruleId, ruleName));
+				successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
 			}
 		}
 		return successList;
@@ -382,11 +378,29 @@ public class RuleTransferService {
 	}
 
 	@RemoteMethod
+	public List<ExportRuleMap> getExportMapList(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
+		String storeIdTarget = UtilityService.getStoreName();
+		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
+		
+		try {
+			RecordSet<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap));
+			
+			if(rtList != null)
+				return rtList.getList();
+			
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve mapping of ruleId", e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
 	public Map<String, ExportRuleMap> getMapRuleTransferMap(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
 		String storeIdTarget = UtilityService.getStoreName();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
 		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
+		
 		try {
 			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
 			if(CollectionUtils.isNotEmpty(rtList)) {

@@ -53,12 +53,12 @@
 			var ruleEntity = rule["ruleEntity"];
 		
 			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
-				base.populateOptions(base.options.ruleStatusList, base.options.ruleTransferMap);
+				base.populateOptions(base.options.ruleStatusList, base.options.ruleTargetList);
 			}else{
 				DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
 					callback: function(rs){
 						var list = rs.list;
-						base.populateOptions(list, base.options.ruleTransferMap);
+						base.populateOptions(list, base.options.ruleTargetList);
 						base.options.setRuleStatusListCallback(base, list);		
 					}
 				});
@@ -238,6 +238,7 @@
 	$.importas.defaultOptions = {
 			rule: null,
 			ruleStatusList: null,
+			ruleTargetList: new Array(),
 			newRuleText: "Import As New Rule",
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
