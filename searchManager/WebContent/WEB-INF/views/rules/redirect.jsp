@@ -85,12 +85,7 @@
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			
-    			<div class="landingCont bgboxGray w96p50p floatL marB10">
-    				<input type="radio" name="replaceType" value="1" checked="checked"> Do not display any additional text in search results(<span class="fbold">Search Result for <span class="fitalic">"original keyword"</span></span>)<div class="clearB"></div>
-    				<input type="radio" name="replaceType" value="2"> Display standard text(<span class="fbold">Showing Result for <span class="fitalic">"replacement keyword"</span> / Search instead for: original Keyword</span>)<div class="clearB"></div>
-    				<input type="radio" name="replaceType" value="3"> Display custom text 
-    				<input type="text" id="customText" class="w500" placeholder="Your search query did not yield any results. You might be interested in the following items instead:" /><div class="clearB"></div>
-    			</div>
+    			<div id="searchHeaderText" class="landingCont bgboxGray w96p50p floatL marB10"></div>
     			
     			<div class="landingCont bgboxGray w96p50p floatL">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">

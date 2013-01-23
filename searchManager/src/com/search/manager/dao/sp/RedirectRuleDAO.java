@@ -69,7 +69,7 @@ public class RedirectRuleDAO {
 	
 	private class GetRedirectRuleStoredProcedure extends GetStoredProcedure {
 	    public GetRedirectRuleStoredProcedure(JdbcTemplate jdbcTemplate) {
-	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT_NEW);
+	        super(jdbcTemplate, DAOConstants.SP_GET_REDIRECT);
 	    }
 
 		@Override
@@ -184,6 +184,8 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_TYPE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
