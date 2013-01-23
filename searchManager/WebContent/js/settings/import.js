@@ -1,7 +1,7 @@
 (function($){
 
 	var Import = {
-			moduleName : "Import Rule",	
+			moduleName : "Import Rule",
 			tabSelected : "",
 			entityName : "",
 			ruleEntityList : null,
@@ -12,26 +12,42 @@
 			postMsg : function(data, pub) {
 				var self = this;
 				var msg_ = pub;
-				var okmsg = '';	
+				var okmsg = '';
 
-				if(data.length > 0) {
-					if(pub == 'all') { // Rules imported and rejected message.
-						okmsg = 'Following rules were successfully ' + msg_ + ':';	
-	
-						for(var i=0; i<data.length; i++){	
-							okmsg += '\n-'+ data[i];	
+				if(pub == 'all') { // Rules imported and rejected message.
+					if(!$.isEmptyObject(data)) {
+						var imported = '';
+						var rejected = '';
+						
+						for(key in data) {
+							if(data[key] == 'import_success') {
+								imported += '\n-' + key;
+							} else {
+								rejected += '\n-' + key;
+							}
 						}
-					} else { // Rules imported or rejected message.
-						okmsg = 'Following rules were successfully ' + msg_ + ':';	
-
-						for(var i=0; i<data.length; i++){	
-							okmsg += '\n-'+ data[i];	
-						}						
+						
+						okmsg = 'Following rules were successfully imported:';	
+						// Imported rules
+						okmsg += imported;
+						okmsg += '\nFollowing rules were successfully rejected:';
+						// Rejected rules
+						okmsg += rejected;
+					} else {
+						okmsg = 'No rules were successfully imported and rejected.';
 					}
 				} else {
-					okmsg = 'No rules were successfully ' + msg_ +'.';
+					if(data.length > 0) {
+						okmsg = 'Following rules were successfully ' + msg_ + ':';
+						
+						for(var i=0; i<data.length; i++){	
+							okmsg += '\n-'+ data[i];	
+						}	
+					} else {
+						okmsg = 'No rules were successfully ' + msg_ +'.';
+					}
 				}
-
+				
 				jAlert(okmsg, self.entityName);
 			},
 
@@ -118,9 +134,10 @@
 				}
 				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
 					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val()); 
 				}
+				
 				return selectedImportAsRefId;
 			},
 			
@@ -136,7 +153,7 @@
 				}
 				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
 					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected").text()); 
 				}
 				return selectedItems;
@@ -165,7 +182,7 @@
 				var selectedItems = self.getSelectedItems(value);
 
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + id);
 					var $importAsSelect = $selectedTr.find("td#importAs").find("select#importAsSelect > option:selected");
 					var ruleId = $importAsSelect.val();
 					if ($.inArray(ruleId, selectedRuleId)==-1){
@@ -187,7 +204,7 @@
 				var selectedItems = self.getSelectedItems(value);
 
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + id);
 					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
 					if ($.inArray(ruleName.toLowerCase(), selectedRuleName)==-1){
 						selectedRuleName.push(ruleName.toLowerCase());
@@ -212,24 +229,25 @@
 				}
 				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+ id);
 					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
 					selectedRuleNames.push(ruleName);
 				}
+				
 				return selectedRuleNames;
 			},
 			
-			getSelectedItems : function(flag){
+			getSelectedItems : function(flag) {
 				var self = this;
 				var selectedItems = [];
 				var $selectedTab = $("#"+self.tabSelected);
 				
 				if(flag == 'all') {
-					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='radio']:not([readonly]):checked").each(function(index, value){
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
 						selectedItems[$(this).attr("id")] = $(this).attr("name");
 					});
 				} else {
-					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='radio']:input[value='"+flag+"']:not([readonly]):checked").each(function(index, value){
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:input[value='"+flag+"']:not([readonly]):checked").each(function(index, value){
 						selectedItems[$(this).attr("id")] = $(this).attr("name");
 					});
 				}
@@ -249,8 +267,9 @@
 				}
 				
 				for (var i in selectedItems){
-					selectedRefIds.push(i); 
+					selectedRefIds.push(i);
 				}
+				
 				return selectedRefIds; 
 			},
 
@@ -330,7 +349,7 @@
 				$selectedTab.find("a#okBtn, a#rejectBtn").on({
 					click: function(evt){
 						var comment = $.trim($selectedTab.find("#comment").val());
-
+						
 						if(self.getSelectedRefId().length==0){
 							jAlert("Please select rule.", self.moduleName);
 						}else if ($.isBlank(comment)){
@@ -376,7 +395,7 @@
 					}
 				});
 			},
-
+			
 			// TODO here...
 			submitHandler : function(){
 				var self = this;
@@ -397,11 +416,14 @@
 							var rejectedItems = [];
 							var validImport = true;
 							
-							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='radio']:not([readonly]):checked").each(function(index, value){
-								if($(value).attr('value')=='import') {
+							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
+								switch($(value).attr('value')) {
+								case 'import':
 									importedItems.push($(value).attr('name'));
-								} else if($(value).attr('value')=='reject') {
+									break;
+								case 'reject':
 									rejectedItems.push($(value).attr('name'));
+									break;
 								}
 							});
 							
@@ -444,7 +466,7 @@
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
 									callback: function(data){									
 										self.postMsg(data, 'all');	
-										self.getImportList();	
+										self.getImportList();
 									},
 									preHook:function() { 
 										self.prepareTabContent(); 
@@ -482,18 +504,18 @@
 				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
-				template += '			If the rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
+//				template += '			If the rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
 				template += '		<p>';
 				template += '	</div>';
-				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
-				template += '	<div class="clearB"></div>';
+//				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
+//				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
+//				template += '	<div class="clearB"></div>';
 				template += '	<div id="btnHolder" align="right" class="padR15 marT10" style="display:none">';
-				template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Import</div>';
+				template += '		<a id="setImportBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Set For Import</div>';
 				template += '		</a>';
-				template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Reject</div>';
+				template += '		<a id="setRejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Set For Reject</div>';
 				template += '		</a>';
 				template += '	</div>';
 				template += '</div>';
@@ -523,7 +545,7 @@
 
 			getRuleTransferMap: function(){
 				var self = this;
-				//TODO: dynamic origin and target
+				// TODO: dynamic origin and target
 				RuleTransferServiceJS.getMapRuleTransferMap("pcmall", $.makeArray(), self.entityName, {
 					callback: function(ruleTransferMap){
 						self.ruleTransferMap = ruleTransferMap;
@@ -568,9 +590,9 @@
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
-								$tr.find("td#select > input[type='radio']").attr({"id": ruleId, "name": rule["ruleName"]});
+								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "name": rule["ruleName"]});
 								
-								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
@@ -599,6 +621,25 @@
 												}
 											});
 										},
+										
+										// TODO here...
+										checkUncheckCheckboxCallback : function(base, ruleId, pub) {
+											switch(pub) {
+											case 'import':
+												$("#"+$.formatAsId(ruleId)+".import").attr('checked', true);
+												$("#"+$.formatAsId(ruleId)+".reject").attr('checked', false);
+												break;
+											case 'reject':
+												$("#"+$.formatAsId(ruleId)+".import").attr('checked', false);
+												$("#"+$.formatAsId(ruleId)+".reject").attr('checked', true);
+												break;
+											}
+										},
+										
+										changeImportTypeCallback : function(base, ruleId, opt) {
+											$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
+										},
+										
 										itemImportTypeListCallback: function(base, contentHolder){
 											base.populateImportTypeList(self.importTypeList, contentHolder);
 										},
@@ -690,6 +731,8 @@
 							//self.checkSelectAllHandler();
 							//self.importHandler();
 							self.submitHandler();
+							
+							self.toggleCheckbox();
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
@@ -720,6 +763,30 @@
 				}
 			},
 
+			toggleCheckbox : function() {
+				var self = this;
+				var $selectedTab = $("#"+self.tabSelected);
+				
+				$selectedTab.find(".import, .reject").on({
+					click: function(evt) {
+						var id = $(this).attr('id');
+						
+						switch($(this).attr('class')) {
+						case 'import':
+							if($(this).attr('checked') == 'checked') {
+								$selectedTab.find("#" + id + ".reject").attr('checked', false);
+							}
+							break;
+						case 'reject':
+							if($(this).attr('checked') == 'checked') {
+								$selectedTab.find("#" + id + ".import").attr('checked', false);
+							}
+							break;
+						}
+					}
+				});
+			},
+			
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
@@ -731,6 +798,6 @@
 
 	$(document).ready(function() {
 		Import.init();
-	});	
-
+	});
+	
 })(jQuery);
