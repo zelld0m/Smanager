@@ -12,9 +12,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.springframework.util.StringUtils;
 
-import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
@@ -22,7 +20,6 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionValidationEventHandler;
 import com.search.manager.report.model.xml.RuleXml;
-import com.search.manager.service.UtilityService;
 import com.search.manager.utility.PropsUtils;
 
 public class RuleTransferUtil {
@@ -44,8 +41,7 @@ public class RuleTransferUtil {
 
 		if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 			ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-			ruleXml.setStore(store);
-			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
+			productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
 		}
 		return ruleXml;
 	}
@@ -88,8 +84,7 @@ public class RuleTransferUtil {
 			if(ruleXml != null){
 				if(ruleXml instanceof ElevateRuleXml || ruleXml instanceof ExcludeRuleXml || ruleXml instanceof DemoteRuleXml){
 					ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleXml;
-					ruleXml.setStore(store);
-					productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml));
+					productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleXml, store));
 					ruleXmls.add((RuleXml) productDetailsAware);
 				}else{
 					ruleXmls.add(ruleXml);
@@ -100,20 +95,9 @@ public class RuleTransferUtil {
 		return ruleXmls;
 	}
 
-	public static boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule){
-		String[] stores = StringUtils.tokenizeToStringArray(UtilityService.getStoreSetting(DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
-		boolean exported = false;
-		
-		if(stores == null || stores.length <= 0)
-			return false;
-		
-		for(int i=0; i < stores.length; i++){
-			// TODO: what if the first store failed?
-			logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", stores[i], ruleId, IMPORT_FILE_PATH));
-			exported = RuleXmlUtil.ruleXmlToFile(stores[i], ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
-		}
-		
-		return exported;
+	public static boolean exportRule(String targetStore, RuleEntity ruleEntity, String ruleId, RuleXml rule){
+		logger.info(String.format("Exporting rule xml... [store = %s, ruleId = %s, path = %s]", targetStore, ruleId, IMPORT_FILE_PATH));
+		return RuleXmlUtil.ruleXmlToFile(targetStore, ruleEntity, ruleId, rule, IMPORT_FILE_PATH);
 	}
 	
 	public static boolean importRule(String store, String ruleId, RuleXml ruleXml){
@@ -135,7 +119,6 @@ public class RuleTransferUtil {
 			logger.info(String.format("Trying to delete file [%s]", filepath));
 			if(!file.exists()){
 				logger.info("File to delete not found. Filename = " + filepath);
-				success = false;
 			}
 			else{
 				RuleXmlUtil.deleteFile(filepath);
@@ -144,10 +127,8 @@ public class RuleTransferUtil {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			logger.error("Failed to delete rule file", e);
 		}
-
 		return success;
 	}
 }

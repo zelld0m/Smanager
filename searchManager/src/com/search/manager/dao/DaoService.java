@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
+import com.search.manager.enums.ExportRuleMapSortType;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
@@ -237,7 +238,7 @@ public interface DaoService {
 	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
 	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
 	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
-	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId);
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username, String pComment, String ...ruleStatusId);
 
     /* Comment */
     public RecordSet<Comment> getComment(SearchCriteria<Comment> searchCriteria) throws DaoException;
@@ -267,10 +268,13 @@ public interface DaoService {
 	public boolean createPublishedVersion(String store, RuleEntity ruleEntity, String ruleId, String username, String name, String notes);
 	public List<RuleXml> getPublishedRuleVersions(String store, String ruleType, String ruleId);
 
+	
+	/* Export */
+	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException;
+	
 	/* Export Rule Map */
-    public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException;
-    public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
-	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
+    public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
+	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	
 }
