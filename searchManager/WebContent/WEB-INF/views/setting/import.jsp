@@ -79,9 +79,12 @@
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
-							<th width="30px">Content</th>
+							<th width="24px"></th>
 							<th width="150px">Rule Info</th>
-							<th width="50px">Published Date</th>
+							<th width="50px">Published Date 
+								<img id="publishDateSort" class="publishDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="pubDate" checked type="checkbox" style="display: none;"/>
+							</th>
 							<th width="85px">Import Type</th>
 							<th>Import As</th>
 						</tr>
@@ -93,7 +96,7 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select"><input type="checkbox" class="selectItem"></td>
-							<td class="txtAC" width="30px" id="ruleOption">
+							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
 							<td width="150px" id="ruleRefId">
