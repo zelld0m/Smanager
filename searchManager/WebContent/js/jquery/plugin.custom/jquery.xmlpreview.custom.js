@@ -1133,7 +1133,6 @@
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
 								var comment = base.contentHolder.find("#comment").val();
-
 								if ($.isBlank(comment)){
 									jAlert("Please add comment.", base.options.transferType);
 								}else{
@@ -1199,9 +1198,38 @@
 										break;
 									}	
 								}
+								
+							}
+						});
+						
+						// set for import and set for reject button.
+						base.contentHolder.find('a#setImportBtn, a#setRejectBtn').off().on({
+							click: function(evt){
+								switch($(evt.currentTarget).attr("id")){
+								case 'setImportBtn':
+									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
+									base.api.hide();
+									break;
+								case 'setRejectBtn': 
+									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
+									base.api.hide();
+									break;
+								}
+							}
+						});
+						
+						// import type select
+						base.contentHolder.find('#importType').off().on({
+							change: function() {
+								var opt = '';
+								$("#importType option:selected").each(function(){
+									opt = $(this).val();
+								});
+								base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
 							}
 						});
 					},
+					
 					hide:function(event, api){
 						api.destroy();
 					}
@@ -1237,6 +1265,10 @@
 			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItem){},
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
+			
+			checkUncheckCheckboxCallback: function(base, ruleId, pub){},
+			changeImportTypeCallback: function(base, ruleId, importType){},
+			
 			setSelectedOverwriteRulePreview: function(base, rulename){},
 			postButtonClick: function(base){}
 	};
