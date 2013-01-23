@@ -181,31 +181,34 @@ public class DeploymentService {
 		String ruleStatusId = "";
 
 		if(ruleXml != null && RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
-			logger.info(String.format("Auto-Exported rule: $s %s %s", store, ruleEntity, ruleId));
+			logger.info(String.format("Auto-Exported rule: %s %s %s", store, ruleEntity, ruleId));
 			RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
 			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
+			RecordSet<RuleStatus> approvedRset = null;
 
 			try {
-				RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-
-				if(approvedRset == null || CollectionUtils.isEmpty(approvedRset.getList())){
-					logger.error(String.format("No rule status found for %s : %s", ruleEntity, ruleId));
-				}else{
-					// Update rule status export info
-					ruleStatus = approvedRset.getList().get(0);
-					ruleStatusId = ruleStatus.getRuleStatusId();
-					try {
-						int updateExportInfo = daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
-						
-						if (updateExportInfo!=1){
-							
-						}
-						
-					} catch (Exception e) {
-						logger.error(String.format("Failed to update rule status for %s : %s", ruleEntity, ruleId), e);
+				approvedRset = daoService.getRuleStatus(searchCriteria);
+			} catch (DaoException e) {
+				logger.error(String.format("Failed to retrieve rule status for %s : %s", ruleEntity, ruleId), e);
+			}
+			
+			if(approvedRset == null || CollectionUtils.isEmpty(approvedRset.getList())){
+				logger.error(String.format("No rule status found for %s : %s", ruleEntity, ruleId));
+			}else{
+				// Update rule status export info
+				ruleStatus = approvedRset.getList().get(0);
+				ruleStatusId = ruleStatus.getRuleStatusId();
+				
+				try {
+					int updateExportInfo = daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
+					if (updateExportInfo!=1){
+						logger.error(String.format("Failed to update export info of rule status : %s", ruleStatusId));
 					}
+				} catch (DaoException e) {
+					logger.error(String.format("Failed to update rule status for %s : %s", ruleEntity, ruleId), e);
+				}
 
-					
+				try {
 					// Define audit entry
 					AuditTrail auditTrail = new AuditTrail();
 					auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
@@ -219,15 +222,19 @@ public class DeploymentService {
 					}
 					auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
 							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
-					daoService.addAuditTrail(auditTrail);
+					int addExportTrail = daoService.addAuditTrail(auditTrail);
+					if (addExportTrail!=1){
+						logger.error(String.format("Failed to add export trail for reference id: %s", ruleStatus.getRuleRefId()));
+					}
+				} catch (DaoException e) {
+					logger.error(String.format("Failed to add export trail for reference id: %s", ruleStatus.getRuleRefId()), e);
 				}
-			} catch (DaoException e) {
-				logger.error(String.format("Failed to update rule status for %s : %s", ruleEntity, ruleId), e);
 			}
+
 		}else{
 			logger.error(String.format("Failed to export %s : %s", ruleEntity, ruleId));			
 		}
-		
+
 		return ruleStatusId;
 	}
 
@@ -238,7 +245,7 @@ public class DeploymentService {
 		List<String> approvedRuleList = null;
 		List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
 		List<String> exportedRuleStatusIdList = new ArrayList<String>();
-		
+
 		try {
 			if(ArrayUtils.isEmpty(ruleRefIdList)){
 				logger.error("No rule id specified");	
@@ -261,14 +268,14 @@ public class DeploymentService {
 		}
 
 		if (MapUtils.isEmpty(ruleMap)){
-			logger.error("No rules were published");
+			logger.error(String.format("No rules were published from the list of rule id: %s", StringUtils.join(ruleRefIdList, ',')));
 		}
 
 		DeploymentModel deploymentModel = null;
 		RuleEntity ruleEntity = null;
 		List<String> publishedRuleStatusIdList =  new ArrayList<String>();
 		String ruleId = "";
-		
+
 		//Populate deployment model for all rules queued for publishing
 		for(int i=0; i < Array.getLength(ruleRefIdList); i++){	
 			ruleId = ruleRefIdList[i];
@@ -278,9 +285,14 @@ public class DeploymentService {
 				ruleEntity = RuleEntity.find(ruleType);
 				deploymentModel.setPublished(1);
 				publishedRuleStatusIdList.add(ruleStatusIdList[i]);
-				daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment);
-				if (isAutoExport) {
-					exportedRuleStatusIdList.add(autoExport(ruleType, ruleId));
+				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment)){
+					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
+					if (isAutoExport) {
+						String rsId = autoExport(ruleType, ruleId);
+						if (StringUtils.isNotBlank(rsId)) exportedRuleStatusIdList.add(rsId);
+					}
+				}else{
+					logger.error(String.format("Failed to create published rule xml: %s %s", ruleEntity, ruleId));	
 				}
 			}
 
