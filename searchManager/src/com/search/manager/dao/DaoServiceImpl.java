@@ -1514,8 +1514,7 @@ public class DaoServiceImpl implements DaoService {
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		ExportRuleMap searchExportRuleMap = new ExportRuleMap(exportRuleMap.getStoreIdOrigin(), exportRuleMap.getRuleIdOrigin(), null,  
 				exportRuleMap.getStoreIdTarget(), null, null, exportRuleMap.getRuleType());
-		// TODO: temp until fixed by DBA
-		List<ExportRuleMap> rtList = getExportRuleMap(new SearchCriteria<ExportRuleMap>(searchExportRuleMap, 1, 100000), null).getList();
+		List<ExportRuleMap> rtList = getExportRuleMap(new SearchCriteria<ExportRuleMap>(searchExportRuleMap), null).getList();
 		if (CollectionUtils.isEmpty(rtList)) {
 			exportRuleMapDAO.addExportRuleMap(searchExportRuleMap);
 		}
@@ -1711,6 +1710,7 @@ public class DaoServiceImpl implements DaoService {
 			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, ruleId,  
 					targetStore, null, null, ruleEntity);
 			exportRuleMap.setExportDate(exportDate);
+			exportRuleMap.setDeleted(false);
 			if (ruleStatus != null) {
 				exportRuleMap.setPublishedDate(ruleStatus.getLastPublishedDate());
 			}

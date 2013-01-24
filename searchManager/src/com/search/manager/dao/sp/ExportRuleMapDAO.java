@@ -159,7 +159,7 @@ public class ExportRuleMapDAO {
 			inputs.put(DAOConstants.PARAM_RULE_ID_TARGET, exportRuleMap.getRuleIdTarget());
 	        inputs.put(DAOConstants.PARAM_START_ROW, searchCriteria.getStartRow());
 	        inputs.put(DAOConstants.PARAM_END_ROW, searchCriteria.getEndRow());
-	        inputs.put(DAOConstants.PARAM_SORT_BY, sortType);
+	        inputs.put(DAOConstants.PARAM_SORT_BY, sortType == null ? null : sortType.getCode());
 	        inputs.put(DAOConstants.PARAM_REJECTED, BooleanUtils.toString(exportRuleMap.getRejected(), "Y", "N", null));
 	        inputs.put(DAOConstants.PARAM_DELETED, BooleanUtils.toString(exportRuleMap.getDeleted(), "Y", "N", null));
 			return DAOUtils.getRecordSet(getExportRuleMapStoredProcedure.execute(inputs));

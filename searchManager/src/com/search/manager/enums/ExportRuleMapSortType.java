@@ -7,7 +7,7 @@ import org.directwebremoting.convert.EnumConverter;
 @DataTransferObject(converter=EnumConverter.class, javascript="ExportRuleMapSortType")
 public enum ExportRuleMapSortType {
 	
-	EXPORT_DATE_DESC(1, "EXPORT_DATE DESC"),
+	EXPORT_DATE_DESC(1, "EXPORT_DATE_DESC"),
 	EXPORT_DATE_ASC (2, "EXPORT_DATE_ASC"),
 	RULE_NAME_DESC(3, "RULE_NAME_DESC"),
 	RULE_NAME_ASC(4, "RULE_NAME_ASC"),
