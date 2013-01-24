@@ -254,8 +254,7 @@ public class RuleTransferService {
 		daoService.addRuleStatusComment(null, "[IMPORTED] " + comment, importedRuleStatusIds.toArray(new String[0]));
 		return successList;
 	}
-
-	// TODO here...
+	
 	@RemoteMethod
 	public Map<String, String> importRejectRules(String ruleType,
 			String[] importRuleRefIdList, String comment,
