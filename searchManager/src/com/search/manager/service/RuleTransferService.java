@@ -60,6 +60,21 @@ public class RuleTransferService {
 	public List<RuleXml> getAllRulesToImport(String ruleType){
 		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreName(), ruleType);
 	}
+	
+	/*
+	 * ruleType - elevate | exclude | demote | facetSort | queryCleaning | rankingRule
+	 * keywordFilter - keyword filter
+	 * page - page number
+	 * itemsPerPage - rows per page
+	 * ruleFilter - all | rejected | nonrejected
+	 * orderByExportDate - ASC | DESC
+	 * orderByPublishDate - ASC | DESC
+	 * */
+	@RemoteMethod
+	public List<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderByExportDate, String orderByPublishDate){
+		//TODO
+		return getAllRulesToImport(ruleType);
+	}
 
 	@RemoteMethod
 	public RuleXml getRuleToExport(String ruleType, String ruleId){   
@@ -388,11 +403,29 @@ public class RuleTransferService {
 	}
 
 	@RemoteMethod
+	public List<ExportRuleMap> getExportMapList(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
+		String storeIdTarget = UtilityService.getStoreName();
+		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
+		
+		try {
+			RecordSet<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap));
+			
+			if(rtList != null)
+				return rtList.getList();
+			
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve mapping of ruleId", e);
+		}
+		return null;
+	}
+	
+	@RemoteMethod
 	public Map<String, ExportRuleMap> getMapRuleTransferMap(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
 		String storeIdTarget = UtilityService.getStoreName();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
 		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
+		
 		try {
 			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
 			if(CollectionUtils.isNotEmpty(rtList)) {

@@ -117,7 +117,7 @@ public class CategoryService {
 	public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
 		if("macmall".equalsIgnoreCase(storeId)) {
 			return getIMSTemplateNames();
-		}else if("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "sbn".equalsIgnoreCase(storeId)) {
+		}else if("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "pcmgbd".equalsIgnoreCase(storeId)) {
 			return getCNETTemplateNames();			
 		}else if("onsale".equalsIgnoreCase(storeId)) {
 			return null;			

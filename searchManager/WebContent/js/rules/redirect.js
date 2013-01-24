@@ -1297,7 +1297,7 @@
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					ui.find("div.ims, div.dynamicAttribute").show();
 
-					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'sbn'){
+					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'pcmgbd'){
 						ui.find("div.dynamicAttribute").hide();
 					}
 

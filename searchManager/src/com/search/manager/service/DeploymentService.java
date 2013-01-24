@@ -1,13 +1,16 @@
 package com.search.manager.service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -41,22 +44,14 @@ import com.search.ws.client.SearchGuiClientServiceImpl;
 @Service(value = "deploymentService")
 @RemoteProxy(
 		name = "DeploymentServiceJS",
-	    creator = SpringCreator.class,
-	    creatorParams = @Param(name = "beanName", value = "deploymentService")
-	)
+		creator = SpringCreator.class,
+		creatorParams = @Param(name = "beanName", value = "deploymentService")
+)
 public class DeploymentService {
 
 	private static final Logger logger = Logger.getLogger(DeploymentService.class);
-	
+
 	@Autowired private DaoService daoService;
-
-	public DaoService getDaoService() {
-		return daoService;
-	}
-
-	public void setDaoService(DaoService daoService) {
-		this.daoService = daoService;
-	}
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getApprovalList(String ruleType, Boolean includeApprovedFlag) {
@@ -90,7 +85,7 @@ public class DeploymentService {
 		}
 		return list.toArray(new String[list.size()]);
 	}
-	
+
 	@RemoteMethod
 	public List<String> approveRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
 		// TODO: add transaction dependency handshake
@@ -98,7 +93,7 @@ public class DeploymentService {
 		daoService.addRuleStatusComment(RuleStatusEntity.APPROVED, comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 		return result;
 	}
-	
+
 	private List<String> approveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
@@ -125,7 +120,7 @@ public class DeploymentService {
 		daoService.addRuleStatusComment(RuleStatusEntity.REJECTED, comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, result));
 		return result;
 	}
-	
+
 	public List<String> unapproveRule(String ruleType, List<String> ruleRefIdList) {
 		List<String> result = new ArrayList<String>();
 		try {
@@ -179,103 +174,159 @@ public class DeploymentService {
 		return new RecordSet<RuleStatus>(list, approvedRset.getTotalSize() + publishedRset.getTotalSize());
 	}
 
+	private String autoExport(String ruleType, String ruleId){
+		String store = UtilityService.getStoreName();
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
+		String ruleStatusId = "";
+
+		if(ruleXml != null && RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
+			logger.info(String.format("Auto-Exported rule: %s %s %s", store, ruleEntity, ruleId));
+			RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
+			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
+			RecordSet<RuleStatus> approvedRset = null;
+
+			try {
+				approvedRset = daoService.getRuleStatus(searchCriteria);
+			} catch (DaoException e) {
+				logger.error(String.format("Failed to retrieve rule status for %s : %s", ruleEntity, ruleId), e);
+			}
+			
+			if(approvedRset == null || CollectionUtils.isEmpty(approvedRset.getList())){
+				logger.error(String.format("No rule status found for %s : %s", ruleEntity, ruleId));
+			}else{
+				// Update rule status export info
+				ruleStatus = approvedRset.getList().get(0);
+				ruleStatusId = ruleStatus.getRuleStatusId();
+				
+				try {
+					int updateExportInfo = daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
+					if (updateExportInfo!=1){
+						logger.error(String.format("Failed to update export info of rule status : %s", ruleStatusId));
+					}
+				} catch (DaoException e) {
+					logger.error(String.format("Failed to update rule status for %s : %s", ruleEntity, ruleId), e);
+				}
+
+				try {
+					// Define audit entry
+					AuditTrail auditTrail = new AuditTrail();
+					auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
+					auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
+					auditTrail.setUsername(UtilityService.getUsername());
+					auditTrail.setStoreId(store);
+					auditTrail.setDate(new Date());
+					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+					if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
+						auditTrail.setKeyword(ruleStatus.getRuleRefId());
+					}
+					auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
+							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
+					int addExportTrail = daoService.addAuditTrail(auditTrail);
+					if (addExportTrail!=1){
+						logger.error(String.format("Failed to add export trail for reference id: %s", ruleStatus.getRuleRefId()));
+					}
+				} catch (DaoException e) {
+					logger.error(String.format("Failed to add export trail for reference id: %s", ruleStatus.getRuleRefId()), e);
+				}
+			}
+
+		}else{
+			logger.error(String.format("Failed to export %s : %s", ruleEntity, ruleId));			
+		}
+
+		return ruleStatusId;
+	}
 
 	@RemoteMethod
 	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
-		//clean list, only approved rules should be published
-		List<String> cleanList = null;
-		List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
 		String store = UtilityService.getStoreName();
-		
-		String strExport = UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT);
-		boolean export = BooleanUtils.toBoolean(strExport);
+		boolean isAutoExport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+		List<String> approvedRuleList = null;
+		List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
+		List<String> exportedRuleStatusIdList = new ArrayList<String>();
+
 		try {
-			cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+			if(ArrayUtils.isEmpty(ruleRefIdList)){
+				logger.error("No rule id specified");	
+			}else if(ArrayUtils.getLength(ruleRefIdList)!=ArrayUtils.getLength(ruleStatusIdList)){
+				logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));	
+			}else{
+				approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+			}
 		} catch (DaoException e) {
-			logger.error("Failed during getCleanList()",e);
+			logger.error("Failed during retrieval of approved rules list", e);
 		}
-		// TODO: add transaction dependency handshake
-		daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, comment, ruleStatusIdList);
-		Map<String,Boolean> ruleMap = publishRule(ruleType, cleanList);
 
-		List<String> exportedRuleStatusIds = new ArrayList<String>();
-		
-		AuditTrail auditTrail = new AuditTrail();
-		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
-		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
-		auditTrail.setUsername(UtilityService.getUsername());
-		auditTrail.setStoreId(store);
+		Map<String,Boolean> ruleMap = new HashMap<String, Boolean>();
 
-		for(String ruleId : ruleRefIdList){	
-			DeploymentModel deploy = new DeploymentModel();
-			deploy.setRuleId(ruleId);
-			deploy.setPublished(0);
-			
-			if(ruleMap != null && ruleMap.size() > 0){
-				if(ruleMap.containsKey(ruleId)){
-					if(ruleMap.get(ruleId)) {
-						RuleEntity ruleEntity = RuleEntity.find(ruleType);
-						deploy.setPublished(1);
-						daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment);
-						if (export) {
-							RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId));
-							if (ruleXml != null) {
-								if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)) {
-									RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
-									SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-									try {
-										RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-										if (approvedRset != null && CollectionUtils.isNotEmpty(approvedRset.getList())) {
-											// RULE STATUS
-											ruleStatus = approvedRset.getList().get(0);
-											daoService.updateRuleStatusExportInfo(ruleStatus, "SYSTEM", ExportType.AUTOMATIC, new Date());
-											// AUDIT TRAIL
-											exportedRuleStatusIds.add(ruleStatus.getRuleStatusId());
-											auditTrail.setDate(new Date());
-											auditTrail.setReferenceId(ruleStatus.getRuleRefId());
-											if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
-												auditTrail.setKeyword(ruleStatus.getRuleRefId());
-											}
-											auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
-													auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
-											daoService.addAuditTrail(auditTrail);
-										}
-										else {
-											logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
-										}
-									} catch (DaoException e) {
-										logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
-									}
-								}
-								else {
-									logger.error("Failed to export " + ruleEntity + " : " + ruleId);
-								}
-							}
-						}
+		//publish qualified rule, only approved rule
+		if (CollectionUtils.isEmpty(approvedRuleList)){
+			logger.error("No approved rules retrieved for publishing");					
+		}else{
+			ruleMap = publishRule(ruleType, approvedRuleList);
+		}
+
+		if (MapUtils.isEmpty(ruleMap)){
+			logger.error(String.format("No rules were published from the list of rule id: %s", StringUtils.join(ruleRefIdList, ',')));
+		}
+
+		DeploymentModel deploymentModel = null;
+		RuleEntity ruleEntity = null;
+		List<String> publishedRuleStatusIdList =  new ArrayList<String>();
+		String ruleId = "";
+
+		//Populate deployment model for all rules queued for publishing
+		for(int i=0; i < Array.getLength(ruleRefIdList); i++){	
+			ruleId = ruleRefIdList[i];
+			deploymentModel = new DeploymentModel(ruleId, 0);
+
+			if(MapUtils.isNotEmpty(ruleMap) && ruleMap.containsKey(ruleId) && BooleanUtils.isTrue(ruleMap.get(ruleId))){
+				ruleEntity = RuleEntity.find(ruleType);
+				deploymentModel.setPublished(1);
+				publishedRuleStatusIdList.add(ruleStatusIdList[i]);
+				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, UtilityService.getUsername(), null, comment)){
+					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
+					if (isAutoExport) {
+						String rsId = autoExport(ruleType, ruleId);
+						if (StringUtils.isNotBlank(rsId)) exportedRuleStatusIdList.add(rsId);
 					}
+				}else{
+					logger.error(String.format("Failed to create published rule xml: %s %s", ruleEntity, ruleId));	
 				}
 			}
-			deployList.add(deploy);
+
+			publishingResultList.add(deploymentModel);
 		}
-		if (export) {
-			daoService.addRuleStatusComment(null, "[EXPORTED] Automatic Export on Publish", exportedRuleStatusIds.toArray(new String[0]));
+
+		// Add rule status comment for successfully published rule
+		if(CollectionUtils.isNotEmpty(publishedRuleStatusIdList)){
+			daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, comment, publishedRuleStatusIdList.toArray(new String[0]));
+			logger.info(String.format("Queued published rule for rule status comment. RuleStatusId: %s", StringUtils.join(publishedRuleStatusIdList, ',')));
 		}
-		return new RecordSet<DeploymentModel>(deployList,deployList.size());
+
+		// Add rule status comment for successfully exported rule
+		if (isAutoExport && CollectionUtils.isNotEmpty(exportedRuleStatusIdList)) {
+			daoService.addRuleStatusComment(null, "[EXPORTED] Automatic Export on Publish", exportedRuleStatusIdList.toArray(new String[0]));
+			logger.info(String.format("Queued exported rule for rule status comment. RuleStatusId: %s", StringUtils.join(exportedRuleStatusIdList, ',')));
+		}
+
+		return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Map<String,Boolean> publishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(publishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.PUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
-			
+
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
-	
+
 		} catch (Exception e) {
 			logger.error("Failed during publishRule()",e);
 		}
-	
+
 		return Collections.EMPTY_MAP;
 	}
 
@@ -296,7 +347,7 @@ public class DeploymentService {
 			DeploymentModel deploy = new DeploymentModel();
 			deploy.setRuleId(ruleId);
 			deploy.setPublished(0);
-			
+
 			if(ruleMap != null && ruleMap.size() > 0){
 				if(ruleMap.containsKey(ruleId)){
 					if(ruleMap.get(ruleId)) {
@@ -310,27 +361,27 @@ public class DeploymentService {
 		daoService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
 		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Map<String,Boolean> unpublishRule(String ruleType, List<String> ruleRefIdList) {
 		try {
 			List<RuleStatus> ruleStatusList = getPublishingListFromMap(unpublishWSMap(ruleRefIdList, RuleEntity.find(ruleType)), RuleEntity.getId(ruleType), RuleStatusEntity.UNPUBLISHED.toString());	
 			Map<String,Boolean> ruleMap = daoService.updateRuleStatus(RuleStatusEntity.UNPUBLISHED, ruleStatusList, UtilityService.getUsername(), new Date());
-			
+
 			if(ruleMap != null && ruleMap.size() > 0)
 				return ruleMap;
-	
+
 		} catch (Exception e) {
 			logger.error("Failed during unpublishRule()",e);
 		}
-	
+
 		return Collections.EMPTY_MAP;
 	}
 
 	@RemoteMethod
 	public RuleStatus getRuleStatus(String ruleType, String ruleRefId) {
 		RuleStatus result = null;
-		
+
 		try {
 			RuleStatus ruleStatus = new RuleStatus();
 			ruleStatus.setRuleTypeId(RuleEntity.getId(ruleType));
@@ -342,7 +393,7 @@ public class DeploymentService {
 		}
 		return result == null? new RuleStatus() : result;
 	}
-	
+
 	@RemoteMethod
 	public RecordSet<RuleStatus> getAllRuleStatus(String ruleType) {
 		try {
@@ -433,7 +484,7 @@ public class DeploymentService {
 		}
 		return rsList;
 	}
-	
+
 	private RuleStatus createRuleStatus() {
 		String userName = UtilityService.getUsername();
 		RuleStatus ruleStatus = new RuleStatus();
@@ -452,5 +503,4 @@ public class DeploymentService {
 		SearchGuiClientService service = new SearchGuiClientServiceImpl();
 		return service.unDeployRulesMap(UtilityService.getStoreName(), ruleList, ruleType);
 	}
-
 }

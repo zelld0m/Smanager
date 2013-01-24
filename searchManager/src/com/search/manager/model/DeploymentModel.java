@@ -13,6 +13,16 @@ public class DeploymentModel implements Serializable{
 	private String ruleId;
 	private int published;
 	
+	public DeploymentModel() {
+		super();
+	}
+	
+	public DeploymentModel(String ruleId, int published) {
+		super();
+		this.ruleId = ruleId;
+		this.published = published;
+	}
+
 	public String getRuleId() {
 		return ruleId;
 	}

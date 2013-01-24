@@ -173,7 +173,7 @@
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
 
-						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn"){
+						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "pcmgbd"){
 							self.facetValueList["Category"] = [];
 
 							if(json.FacetTemplate){

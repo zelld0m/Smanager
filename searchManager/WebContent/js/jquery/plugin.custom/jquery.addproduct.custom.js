@@ -1399,7 +1399,7 @@
 				base.contentHolder.find('a[href="#cnet"]').parent('li').remove();
 				base.contentHolder.find("div#cnet").remove();
 
-				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="sbn"){
+				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="pcmgbd"){
 					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
 					base.contentHolder.find("div#dynamicAttribute").remove();
 				}

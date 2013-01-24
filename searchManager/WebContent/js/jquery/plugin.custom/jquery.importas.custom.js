@@ -53,12 +53,12 @@
 			var ruleEntity = rule["ruleEntity"];
 		
 			if(base.options.ruleStatusList!=null && base.options.ruleStatusList.length > 0){
-				base.populateOptions(base.options.ruleStatusList);
+				base.populateOptions(base.options.ruleStatusList, base.options.ruleTargetList);
 			}else{
 				DeploymentServiceJS.getAllRuleStatus(ruleEntity, {
 					callback: function(rs){
 						var list = rs.list;
-						base.populateOptions(list);
+						base.populateOptions(list, base.options.ruleTargetList);
 						base.options.setRuleStatusListCallback(base, list);		
 					}
 				});
@@ -143,7 +143,7 @@
 			base.showAlert($(u), u.value);
 		};
 
-		base.populateOptions = function(list){
+		base.populateOptions = function(list, excList){
 			var $importAsSelect = base.$el.find("select#importAsSelect");
 			var rule = base.options.rule;
 			var ruleEntity = rule["ruleEntity"];
@@ -160,8 +160,10 @@
 					switch (ruleEntity) {
 					case "QUERY_CLEANING":
 					case "RANKING_RULE":
+						if($.isEmptyObject(excList[this.ruleId])){
 						optionString += "<option value='" + this.ruleId + "'>"
 								+ this.ruleName + "</option>";
+						}
 					}
 				}
 			});
@@ -211,9 +213,6 @@
 
 			$importAsSelect.searchable({
 				rule: rule,
-				maxListSize: 10, 
-				maxMultiMatch: 10,
-				exactMatch: true,
 				change: function(u, e, rule){
 					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
 						base.toggleFields(u, e, rule, false);
@@ -239,6 +238,7 @@
 	$.importas.defaultOptions = {
 			rule: null,
 			ruleStatusList: null,
+			ruleTargetList: new Array(),
 			newRuleText: "Import As New Rule",
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},

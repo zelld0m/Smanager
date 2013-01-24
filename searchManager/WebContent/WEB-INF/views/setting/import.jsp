@@ -24,9 +24,7 @@
 <div class="floatL w730 marL10 marT27 txtAL">
 	<div class="floatL w730 titlePlacer breakWord">
 		<h1 id="titleText" class="padT7 padL15 fsize20 fnormal floatL"></h1>
-		<div class="floatR marT10 marR10"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></div>
 	</div>
-	
 	<div class="clearB"></div>
 	
 	<!-- Start Main Content -->
@@ -52,17 +50,41 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div class="floatR padT3" id="ruleCount"></div>
+				<div class="floatL" style="display: none;">
+					<span>Show:</span> 
+					<select id="ruleFilter">
+						<option value="all">All Rules</option>
+						<option value="nonrejected">Non-rejected Rules</option>
+						<option value="rejected">Previously Rejected Rules</option>
+					</select>
+				</div>
+				<a id="searchBtn" href="javascript:void(0);">
+					<img class="marR5 marLn4 marT1 floatR posRel" align="absmiddle" src="/searchManager/js/jquery/ajaxsolr.custom/images/btn_GO.png">
+				</a>
+				<div class="searchBoxHolder w150 floatR marT1 marR8">
+					<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">
+				</div>
 			</div>
 			<div class="clearB"></div>
+			<!-- Pagination-->     
+		    <div class="floatR padT10">
+		    	<a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload"></div></a>
+			</div>
+			<div id="resultsTopPaging" class="marTn2"></div>
+		    <div class="clearB"></div>
+		    <!--end Pagination-->
+			
 			<div class="">
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
-							<th width="30px">Content</th>
+							<th width="24px"></th>
 							<th width="150px">Rule Info</th>
-							<th width="50px">Published Date</th>
+							<th width="50px">Published Date 
+								<img id="publishDateSort" class="publishDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="pubDate" checked type="checkbox" style="display: none;"/>
+							</th>
 							<th width="85px">Import Type</th>
 							<th>Import As</th>
 						</tr>
@@ -77,7 +99,7 @@
 								<input class="import" type="checkbox"><label for="import">import</label>
 								<input class="reject" type="checkbox"><label for="reject">reject</label>
 							</td>
-							<td class="txtAC" width="30px" id="ruleOption">
+							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
 							<td width="150px" id="ruleRefId">
@@ -100,6 +122,9 @@
 					</tbody>
 				</table>
 			</div>
+			<div class="mar0">
+        		<div id="resultsBottomPaging"></div>	
+      		</div>
 			<div id="actionBtn" class="floatR marT10 fsize12 border pad10 w650 marB20" style="background: #f3f3f3;">
 				<h3 style="border:none;">Import Rule Guidelines</h3>
 				<div class="fgray padL10 padR10 padB15 fsize11">
@@ -112,12 +137,6 @@
 				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea></label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<!--a id="okBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Import</div>
-					</a>
-					<a id="rejectBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
-					</a-->
 					<a id="sbmtBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Submit</div>
 					</a>
