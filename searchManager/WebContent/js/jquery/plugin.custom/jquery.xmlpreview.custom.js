@@ -104,9 +104,7 @@
 					}else{
 						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					}
-				},
-				selectedOptionChanged: function(ruleId){
-					base.getDatabaseData(contentHolder.find("div#rightPreview"), ruleId, sourceData);
+					if(rs!=null) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
 				}
 			});
 		};
@@ -1070,6 +1068,17 @@
 			return '';
 		};
 
+		// TODO
+		base.changeImportType = function() {
+			var opt = '';
+			
+			$("#importType option:selected").each(function(){
+				opt = $(this).val();
+			});
+			
+			return opt;
+		};
+		
 		base.showQtipPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -1207,10 +1216,18 @@
 							click: function(evt){
 								switch($(evt.currentTarget).attr("id")){
 								case 'setImportBtn':
+									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > label#importAs");
+									var importAs = importAsLabel.find("select#importAsSelect").children("option:selected").val();
+									var ruleName = importAsLabel.find("input#newName").val();
+									var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType").children("option:selected").val();
+									
+									base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
+									base.options.changeImportAsCallback(base, base.options.ruleId, importAs, ruleName); // TODO
 									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
 									base.api.hide();
 									break;
 								case 'setRejectBtn': 
+									base.options.changeImportTypeCallback(base, base.options.ruleId, base.changeImportType());
 									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
 									base.api.hide();
 									break;
@@ -1218,16 +1235,6 @@
 							}
 						});
 						
-						// import type select
-						base.contentHolder.find('#importType').off().on({
-							change: function() {
-								var opt = '';
-								$("#importType option:selected").each(function(){
-									opt = $(this).val();
-								});
-								base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
-							}
-						});
 					},
 					
 					hide:function(event, api){
@@ -1240,7 +1247,7 @@
 		// Run initializer
 		base.init();
 	};
-
+	
 	$.xmlpreview.defaultOptions = {
 			headerText:"Rule Preview",
 			transferType: "",
@@ -1268,6 +1275,7 @@
 			
 			checkUncheckCheckboxCallback: function(base, ruleId, pub){},
 			changeImportTypeCallback: function(base, ruleId, importType){},
+			changeImportAsCallback: function(base, ruleId, importAs, ruleName){},
 			
 			setSelectedOverwriteRulePreview: function(base, rulename){},
 			postButtonClick: function(base){}
