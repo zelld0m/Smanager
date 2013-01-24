@@ -73,7 +73,10 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
-							<td width="24px" class="txtAC" id="select"><input type="checkbox" class="selectItem"></td>
+							<td width="24px" class="txtAC" id="select">
+								<input class="import" type="checkbox"><label for="import">import</label>
+								<input class="reject" type="checkbox"><label for="reject">reject</label>
+							</td>
 							<td class="txtAC" width="30px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
@@ -109,11 +112,14 @@
 				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea></label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<a id="okBtn" href="javascript:void(0);"
+					<!--a id="okBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Import</div>
 					</a>
 					<a id="rejectBtn" href="javascript:void(0);"
 						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					</a-->
+					<a id="sbmtBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Submit</div>
 					</a>
 				</div>
 			</div>
