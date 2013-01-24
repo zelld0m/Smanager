@@ -847,11 +847,23 @@
 			});
 
 			$catcode.off().on({
+				mouseenter: function(e){
+					e.data.input = $.trim($(e.currentTarget).val());
+				},
 				mouseleave: function(e){
-					if ($catcode.is(":visible"))
+					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
 						base.populateIMSManufacturers(e);
-				}
-			});
+					}
+				},
+				focusin: function(e){
+					e.data.input = $.trim($(e.currentTarget).val());
+				},
+				focusout: function(e){
+					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+						base.populateIMSManufacturers(e);
+					}
+				},
+			},{input: ""});
 
 			base.addDynamicAttributeListener();
 			base.addFacetListener();
