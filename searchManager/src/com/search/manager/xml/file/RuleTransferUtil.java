@@ -47,17 +47,20 @@ public class RuleTransferUtil {
 	}
 
 	public static RuleXml getRule(String store, RuleEntity ruleEntity, File file, String path){
-		try {
-			JAXBContext context = JAXBContext.newInstance(RuleXml.class);
-			Unmarshaller um = context.createUnmarshaller(); 
-			um.setEventHandler(new RuleVersionValidationEventHandler());
-			return (RuleXml) um.unmarshal(file);
-
-		} catch (JAXBException e) {
-			logger.error("Unable to create unmarshaller", e);
-			return null;
-		}
+        try {
+              if (file != null  && file.exists()) {
+                    JAXBContext context = JAXBContext.newInstance(RuleXml.class);
+                    Unmarshaller um = context.createUnmarshaller(); 
+                    um.setEventHandler(new RuleVersionValidationEventHandler());
+                    return (RuleXml) um.unmarshal(file);
+              }
+              logger.warn(String.format("File %s does not exist", file));
+        } catch (JAXBException e) {
+              logger.error("Unable to create unmarshaller", e);
+        }
+        return null;
 	}
+
 
 	public static List<RuleXml> getRules(String store, RuleEntity ruleEntity, String path){
 		List<RuleXml> ruleXmls = new ArrayList<RuleXml>();

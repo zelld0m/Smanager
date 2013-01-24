@@ -1707,7 +1707,7 @@ public class DaoServiceImpl implements DaoService {
 		
 		for(String targetStore: UtilityService.getStoresToExport(store)) {
 			exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
-			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, ruleId,  
+			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),  
 					targetStore, null, null, ruleEntity);
 			exportRuleMap.setExportDate(exportDate);
 			exportRuleMap.setDeleted(false);
