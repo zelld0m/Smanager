@@ -125,13 +125,7 @@
 				var self = this;
 				var selectedImportAsRefId = [];
 				var $selectedTab = $("#"+self.tabSelected);
-				var selectedItems;
-				
-				if(value == 'all') {
-					selectedItems = self.getSelectedItems('all');
-				} else {
-					selectedItems = self.getSelectedItems(value);
-				}
+				var selectedItems = self.getSelectedItems(value);
 				
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
@@ -144,18 +138,13 @@
 			getSelectedImportType : function(value){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				var selectedItems = [];
-				
-				if(value == 'all') {
-					selectedItems = self.getSelectedItems('all');
-				} else {
-					selectedItems = self.getSelectedItems(value);
-				}
+				var selectedItems = self.getSelectedItems(value);
 				
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
 					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected").text()); 
 				}
+				
 				return selectedItems;
 			},
 
@@ -220,13 +209,7 @@
 				var self = this;
 				var selectedRuleNames = [];
 				var $selectedTab = $("#"+self.tabSelected);
-				var selectedItems = [];
-				
-				if(value == 'all') {
-					selectedItems = self.getSelectedItems('all');
-				} else {
-					selectedItems = self.getSelectedItems(value);
-				}
+				var selectedItems = self.getSelectedItems(value);
 				
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+ id);
@@ -247,7 +230,7 @@
 						selectedItems[$(this).attr("id")] = $(this).attr("name");
 					});
 				} else {
-					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:input[value='"+flag+"']:not([readonly]):checked").each(function(index, value){
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input."+flag+"[type='checkbox']:not([readonly]):checked").each(function(index, value){
 						selectedItems[$(this).attr("id")] = $(this).attr("name");
 					});
 				}
@@ -255,19 +238,19 @@
 				return selectedItems;
 			},
 			
-			getSelectedRefId : function(value){
+			getSelectedRefId : function(flag){
 				var self = this;
 				var selectedRefIds = [];
-				var selectedItems = [];
+				var $selectedTab = $("#"+self.tabSelected);
 				
-				if(value == 'all') {
-					selectedItems = self.getSelectedItems('all');
+				if(flag == 'all') {
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedRefIds.push($(this).attr("value"));
+					});
 				} else {
-					selectedItems = self.getSelectedItems(value);
-				}
-				
-				for (var i in selectedItems){
-					selectedRefIds.push(i);
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input."+flag+"[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedRefIds.push($(this).attr("value"));
+					});
 				}
 				
 				return selectedRefIds; 
@@ -276,17 +259,12 @@
 			getSelectedStatusId : function(value){
 				var self = this;
 				var selectedStatusId = [];
-				var selectedItems = [];
-				
-				if(value == 'all') {
-					selectedItems = self.getSelectedItems('all');
-				} else {
-					selectedItems = self.getSelectedItems(value);
-				}
+				var selectedItems = self.getSelectedItems(value);
 				
 				for (var i in selectedItems){
 					selectedStatusId.push(selectedItems[i]); 
 				}
+				
 				return selectedStatusId; 
 			},
 			
@@ -342,6 +320,7 @@
 				});
 			},
 
+			// not in used.
 			importHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
@@ -350,7 +329,7 @@
 					click: function(evt){
 						var comment = $.trim($selectedTab.find("#comment").val());
 						
-						if(self.getSelectedRefId().length==0){
+						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select rule.", self.moduleName);
 						}else if ($.isBlank(comment)){
 							jAlert("Please add comment.", self.moduleName);
@@ -405,6 +384,8 @@
 					click: function(evt){
 						var comment = $.trim($selectedTab.find("#comment").val());
 						
+						var test = self.getSelectedRefId('import');
+						
 						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select rule.", self.moduleName);
 						}else if($.isBlank(comment)){
@@ -439,7 +420,7 @@
 									validImport = false;
 								}
 							}
-							
+							// TODO double check
 							if(validImport && importedItems.length > 0 && rejectedItems.length <= 0) {
 								RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'), {
 									callback: function(data){									
@@ -461,7 +442,6 @@
 									}
 								});
 							} else {
-								// TODO need to test
 								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
 									callback: function(data){									
@@ -590,7 +570,7 @@
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
-								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "name": rule["ruleName"]});
+								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
 								
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
@@ -635,10 +615,16 @@
 												break;
 											}
 										},
-										
 										changeImportTypeCallback : function(base, ruleId, opt) {
 											$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
 										},
+										changeImportAsCallback : function(base, ruleId, importAs, ruleName) {
+											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs);
+											
+											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(ruleName);
+											alert(importAs + " = " + ruleName);
+										},
+										
 										
 										itemImportTypeListCallback: function(base, contentHolder){
 											base.populateImportTypeList(self.importTypeList, contentHolder);
