@@ -587,7 +587,7 @@
 
 
 	AjaxSolr.theme.prototype.createLink = function (value, handler, id) {
-		var $a = $('<a href="javascript:void(0)"/>').html(value).click(handler);
+		var $a = $('<a href="javascript:void(0)"/>').text(value).click(handler);
 		if ($.isNotBlank(id)){
 			$a.prop("id", id);
 		}
