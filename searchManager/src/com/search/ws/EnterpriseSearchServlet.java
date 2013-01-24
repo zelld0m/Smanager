@@ -77,6 +77,15 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			SolrConstants.SOLR_PARAM_START
 			};
 
+	// TODO: transfer to config file
+	private final static String[] supportedCores = {
+		"pcmall",
+		"macmall",
+		"ecost",
+		"pcmallgov",
+		"enterpriseSearch"
+	};
+	
 	public final ExecutorService execService = Executors.newCachedThreadPool();
 
 	public void setDaoCacheService(DaoCacheService daoCacheService) {
@@ -190,7 +199,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			NameValuePair defTypeNVP = new BasicNameValuePair("defType", "dismax");
 
 			// get the server name, solr path, core name and do mapping for the store name to use for the search
-			Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(enterpriseSearch)/select.*");
+			Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
 			String requestPath = "http:/" + request.getPathInfo();
 
 			if (StringUtils.isEmpty(requestPath)) {
@@ -209,15 +218,22 @@ public class EnterpriseSearchServlet extends HttpServlet {
 
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
+			String solrCore = matcher.group(3);
 			String storeName =  StringUtils.lowerCase(request.getParameter("store"));
+			
 			if (enterpriseSearchConfigManager.getSearchConfiguration(storeName) == null) {
-				response.sendError(400, "Invalid request");
+				response.sendError(400, "Invalid request: Invalid store " + storeName);
 				return;
 			}
+			else if (!ArrayUtils.contains(supportedCores, solrCore)) {
+				response.sendError(400, "Invalid request: Invalid core " + solrCore);
+				return;
+			}		
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Server name: " + serverName);
-				logger.debug("Solr path: " + solr);
+				logger.debug("Solr version: " + solr);
+				logger.debug("Solr core: " + solrCore);
 				logger.debug("store name: " + storeName);
 			}
 
