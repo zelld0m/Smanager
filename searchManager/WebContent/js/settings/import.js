@@ -618,11 +618,13 @@
 										changeImportTypeCallback : function(base, ruleId, opt) {
 											$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
 										},
-										changeImportAsCallback : function(base, ruleId, importAs, ruleName) {
-											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs);
+										changeImportAsCallback : function(base, ruleId, importAs, ruleName, newName) {
+											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
+											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
 											
-											$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(ruleName);
-											alert(importAs + " = " + ruleName);
+//											if(importAs != 0 || newName.length>0) {
+//												$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").change();
+//											}
 										},
 										
 										
