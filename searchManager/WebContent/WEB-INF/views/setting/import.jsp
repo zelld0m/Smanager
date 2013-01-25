@@ -50,7 +50,7 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div class="floatL" style="display: none;">
+				<div id="ruleFilterDiv" class="floatL">
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="all">All Rules</option>
@@ -80,11 +80,20 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
 							<th width="24px"></th>
-							<th width="150px">Rule Info</th>
+							<th width="150px">Rule Info
+								<img id="ruleNameSort" class="ruleNameSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="ruleNameInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
+							</th>
 							<th width="50px">Published Date 
 								<img id="publishDateSort" class="publishDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
-								<input id="pubDate" checked type="checkbox" style="display: none;"/>
+								<input id="pubDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
 							</th>
+							<!-- Do not delete. Will be used for future purposes.
+							<th width="50px">Export Date 
+								<img id="exportDateSort" class="exportDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="expDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
+							</th>
+							 -->
 							<th width="85px">Import Type</th>
 							<th>Import As</th>
 						</tr>

@@ -69,7 +69,7 @@
 			var template = "";
 
 			template += '<div>';
-			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif" style="display:none">';
 			template += '	<select id="importAsSelect" title="Select rule" class="searchable">';
 			template += '		<option value="0">' + base.options.newRuleText + '</option>';
 			template += '	</select>';

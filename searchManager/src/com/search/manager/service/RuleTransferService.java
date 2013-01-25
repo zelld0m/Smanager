@@ -79,7 +79,7 @@ public class RuleTransferService {
 
 		if (ruleEntity != null) {
 			Boolean rejectStatus = null;
-			if (StringUtils.isNotBlank(ruleFilter)) {
+			if (StringUtils.isNotBlank(ruleFilter) && !"all".equalsIgnoreCase(ruleFilter)) {
 				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
 			}
 			ExportRuleMap searchExportRuleMap = new ExportRuleMap(null, null, keywordFilter, store, null, null, null, null, null, false, rejectStatus, ruleEntity);
