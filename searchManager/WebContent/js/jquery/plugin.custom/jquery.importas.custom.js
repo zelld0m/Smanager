@@ -202,7 +202,7 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
-				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){ //TODO:
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]]) && $.isNotBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])){ //TODO:
 					$option.attr({value: base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
 					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
