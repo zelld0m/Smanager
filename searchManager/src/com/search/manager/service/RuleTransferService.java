@@ -95,6 +95,7 @@ public class RuleTransferService {
 							list.add(ruleXml);
 						}
 						else {
+							list.add(new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true));
 							logger.warn(String.format("Missing ruleXml for store:%s, ruleEntity:%s, ruleId: %s", store, ruleType, ruleId));
 						}
 					}
