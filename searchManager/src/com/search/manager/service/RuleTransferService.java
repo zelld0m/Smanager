@@ -266,7 +266,32 @@ public class RuleTransferService {
 		daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, importedRuleStatusIds.toArray(new String[0]));
 		return successList;
 	}
+	
+	@RemoteMethod
+	public Map<String, String> importRejectRules(String ruleType,
+			String[] importRuleRefIdList, String comment,
+			String[] importTypeList, String[] importAsRefIdList,
+			String[] ruleNameList, String[] rejectRuleRefIdList,
+			String[] rejectRuleNameList) {
+		Map<String, String> successList = new HashMap<String, String>();
+		List<String> importSuccessList = new ArrayList<String>();
+		List<String> rejectSuccessList = new ArrayList<String>();
 
+		importSuccessList = importRules(ruleType, importRuleRefIdList, comment,
+				importTypeList, importAsRefIdList, ruleNameList);
+		rejectSuccessList = unimportRules(ruleType, rejectRuleRefIdList,
+				comment, rejectRuleNameList);
+
+		for (String key : importSuccessList) {
+			successList.put(key, "import_success");
+		}
+		for (String key : rejectSuccessList) {
+			successList.put(key, "reject_success");
+		}
+
+		return successList;
+	}
+	
 	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
 		switch(ruleEntity){
 		case ELEVATE:
@@ -353,10 +378,10 @@ public class RuleTransferService {
 				}
 				//TODO addComment
 				//TODO addAuditTrail
-
 				successList.add(getSuccessRule(ruleEntity, ruleId, ruleName));
 			}
 		}
+		
 		return successList;
 	}
 

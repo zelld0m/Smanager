@@ -91,7 +91,7 @@
 
 			return type;
 		};
-
+		
 		base.populateImportAsList = function(data, contentHolder, sourceData){
 			contentHolder.find("#importAs").importas({
 				inPreview: true,
@@ -100,27 +100,50 @@
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
 					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-					
 					if (locked){
 						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
 					}else{
 						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					}
-					
+
 					if(rs!=null) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
+					
+					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
+					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
+					
+					if(opt != 0 || newName.length > 0) {
+						contentHolder.find("div#rightPreview div#importAs div#replacement input#newName").val(newName);
+						contentHolder.find("div#rightPreview div#importAs select#importAsSelect").val(opt);
+					}
 				}
 			});
 		};
-
+		
+		base.isLocked = function() {
+			var rule = base.options.rule;
+			var ruleEntity = rule["ruleEntity"];
+			
+			switch (ruleEntity) {
+			case "QUERY_CLEANING":
+			case "RANKING_RULE":
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){
+					return true;
+				}
+				break;
+			}
+			
+			return false;
+		};
+		
 		base.populateImportTypeList = function(data, contentHolder){
 			var $importType= contentHolder.find("div.rulePreview > label#importType");
 			var $select = $('<select></select>');
 			$select.attr("id", "importType");
-
+			var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #type select").val();
 			for (var index in data){
 				$select.append($("<option>", {value: index}).text(data[index]));
 			}
-
+			$select.val(opt);
 			$importType.html($select);
 		};
 
@@ -1070,7 +1093,7 @@
 
 			return '';
 		};
-
+		
 		base.showQtipPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -1134,7 +1157,6 @@
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
 								var comment = base.contentHolder.find("#comment").val();
-
 								if ($.isBlank(comment)){
 									jAlert("Please add comment.", base.options.transferType);
 								}else{
@@ -1200,9 +1222,39 @@
 										break;
 									}	
 								}
+								
 							}
 						});
+						
+						// set for import and set for reject button.
+						base.contentHolder.find('a#setImportBtn, a#setRejectBtn').off().on({
+							click: function(evt){
+								switch($(evt.currentTarget).attr("id")){
+								case 'setImportBtn':
+									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
+									var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
+									var newName = importAsLabel.find("div#replacement input#newName").val();
+									var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
+									var isLocked = base.isLocked();
+									
+									if(!isLocked) {
+										base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
+									}
+									
+									base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
+									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
+									base.api.hide();
+									break;
+								case 'setRejectBtn':
+									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
+									base.api.hide();
+									break;
+								}
+							}
+						});
+						
 					},
+					
 					hide:function(event, api){
 						api.destroy();
 					}
@@ -1213,7 +1265,7 @@
 		// Run initializer
 		base.init();
 	};
-
+	
 	$.xmlpreview.defaultOptions = {
 			headerText:"Rule Preview",
 			transferType: "",
@@ -1222,6 +1274,7 @@
 			ruleName: "",
 			ruleInfo: "",
 			ruleXml: null,
+			rule: null,
 			dbRuleId: "", //database rule Id
 			requestType: "",
 			version: "",
@@ -1238,6 +1291,11 @@
 			itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItem){},
 			itemImportTypeListCallback: function(base, contentHolder){},
 			itemImportAsListCallback: function(base, contentHolder){},
+			
+			checkUncheckCheckboxCallback: function(base, ruleId, pub){},
+			changeImportTypeCallback: function(base, ruleId, importType){},
+			changeImportAsCallback: function(base, ruleId, importAs, ruleName, newName){},
+			
 			setSelectedOverwriteRulePreview: function(base, rulename){},
 			postButtonClick: function(base){},
 			ruleStatusList: null,
