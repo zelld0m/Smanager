@@ -9,7 +9,7 @@
 			ruleStatusMap : new Array(),
 			ruleTransferMap: new Object(),
 			ruleTargetList: new Array(),
-			pageSize : 4,
+			pageSize : 10,
 			defaultText : "Search Rule Name",
 			currentPage : 1,
 			searchText : "",
@@ -317,7 +317,7 @@
 				
 				$selectedTab.find("select#ruleFilter").val(ruleFilter).on({
 					change: function(e){
-						self.getImportList(self.currentPage, self.searchText, sortOrder, $(this).val());
+						self.getImportList(1, self.searchText, sortOrder, $(this).val());
 					}
 				});
 				
@@ -667,7 +667,10 @@
 				$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
 				
 				//populate search keyword input
-				$selectedTab.find('input#keyword').val(self.searchText);
+				if($.isBlank(self.searchText))
+					$selectedTab.find('input#keyword').val(self.defaultText);
+				else
+					$selectedTab.find('input#keyword').val(self.searchText);
 				
 				//populate sort icon
 				//1. initialize as no active sort Order

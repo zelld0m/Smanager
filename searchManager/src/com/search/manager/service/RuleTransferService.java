@@ -35,6 +35,7 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
@@ -79,7 +80,7 @@ public class RuleTransferService {
 
 		if (ruleEntity != null) {
 			Boolean rejectStatus = null;
-			if (StringUtils.isNotBlank(ruleFilter) && !"all".equalsIgnoreCase(ruleFilter)) {
+			if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
 				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
 			}
 			ExportRuleMap searchExportRuleMap = new ExportRuleMap(null, null, keywordFilter, store, null, null, null, null, null, false, rejectStatus, ruleEntity);
@@ -89,7 +90,7 @@ public class RuleTransferService {
 				if (exportList != null && CollectionUtils.isNotEmpty(exportList.getList())) {
 					for (ExportRuleMap ruleMap: exportList.getList()) {
 						String ruleId = ruleMap.getRuleIdOrigin();
-						RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, ruleId);
+						RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
 						if (ruleXml != null) {
 							list.add(ruleXml);
 						}
