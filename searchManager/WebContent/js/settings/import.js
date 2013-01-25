@@ -140,7 +140,7 @@
 				
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
-					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val()); 
+					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val());
 				}
 				
 				return selectedImportAsRefId;
@@ -206,7 +206,8 @@
 
 				for (var id in selectedItems){
 					var $selectedTr = $selectedTab.find("tr#ruleItem" + id);
-					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
+					var ruleName = $selectedTr.find("td#importAs #replacement input#newName").val();
+					
 					if ($.inArray(ruleName.toLowerCase(), selectedRuleName)==-1){
 						selectedRuleName.push(ruleName.toLowerCase());
 					}else{
@@ -408,9 +409,9 @@
 										self.postMsg(data, 'rejected');	
 										self.getImportList(1);
 									},
-									preHook:function(){ 
+									preHook:function(){
 										self.prepareTabContent(); 
-									}	
+									}
 								});
 								break;
 							}
@@ -419,7 +420,6 @@
 				});
 			},
 			
-			// TODO here...
 			submitHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
@@ -427,8 +427,6 @@
 				$selectedTab.find("a#sbmtBtn").on({
 					click: function(evt){
 						var comment = $.trim($selectedTab.find("#comment").val());
-						
-						var test = self.getSelectedRefId('import');
 						
 						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select rule.", self.moduleName);
@@ -442,7 +440,7 @@
 							var validImport = true;
 							
 							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
-								switch($(value).attr('value')) {
+								switch($(value).attr('class')) {
 								case 'import':
 									importedItems.push($(value).attr('name'));
 									break;
@@ -464,7 +462,7 @@
 									validImport = false;
 								}
 							}
-							// TODO double check
+							
 							if(validImport && importedItems.length > 0 && rejectedItems.length <= 0) {
 								RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'), {
 									callback: function(data){									
@@ -485,7 +483,7 @@
 										self.prepareTabContent();
 									}
 								});
-							} else {
+							} else if(validImport) {
 								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
 									callback: function(data){									
@@ -496,7 +494,6 @@
 										self.prepareTabContent(); 
 									}
 								});
-								
 							}
 						}
 					}
@@ -528,12 +525,8 @@
 				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
-//				template += '			If the rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
 				template += '		<p>';
 				template += '	</div>';
-//				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-//				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
-//				template += '	<div class="clearB"></div>';
 				template += '	<div id="btnHolder" align="right" class="padR15 marT10" style="display:none">';
 				template += '		<a id="setImportBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
 				template += '			<div class="buttons fontBold">Set For Import</div>';
@@ -680,7 +673,6 @@
 													}
 												},
 												
-												// TODO here...
 												checkUncheckCheckboxCallback : function(base, ruleId, pub) {
 													switch(pub) {
 													case 'import':
@@ -697,12 +689,10 @@
 													$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
 												},
 												changeImportAsCallback : function(base, ruleId, importAs, ruleName, newName) {
-													$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
-													$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
-													
-//													if(importAs != 0 || newName.length>0) {
-//														$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").change();
-//													}
+													if(importAs != 0 || newName.length>0) {
+														$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
+														$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
+													}
 												},
 												
 												itemImportTypeListCallback: function(base, contentHolder){
@@ -838,7 +828,7 @@
 					self.getAllRulesToImport(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
 				}
 			},
-
+			
 			toggleCheckbox : function() {
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
