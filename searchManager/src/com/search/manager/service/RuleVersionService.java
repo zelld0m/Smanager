@@ -99,14 +99,15 @@ public class RuleVersionService{
 
 	@RemoteMethod
 	public RuleXml getCurrentRuleXml(String ruleType, String ruleId) {
-		RuleXml rXml = RuleXmlUtil.currentRuleToXml(UtilityService.getStoreName(), ruleType, ruleId);
+		String store = UtilityService.getStoreName();
+		RuleXml rXml = RuleXmlUtil.currentRuleToXml(store, ruleType, ruleId);
 
 		if (rXml instanceof ElevateRuleXml){
-			((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+			((ElevateRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
 		}else if (rXml instanceof ExcludeRuleXml){
-			((ExcludeRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+			((ExcludeRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
 		}else if (rXml instanceof DemoteRuleXml){
-			((DemoteRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml));
+			((DemoteRuleXml) rXml).setProducts(RuleXmlUtil.getProductDetails(rXml, store));
 		}
 
 		return rXml;

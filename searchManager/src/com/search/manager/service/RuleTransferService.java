@@ -22,6 +22,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.ExportRuleMapSortType;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
@@ -34,6 +35,7 @@ import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
@@ -62,18 +64,46 @@ public class RuleTransferService {
 	}
 	
 	/*
-	 * ruleType - elevate | exclude | demote | facetSort | queryCleaning | rankingRule
+	 * ruleType - elevate | exclude | demote | facet sort | query cleaning | ranking rule
 	 * keywordFilter - keyword filter
 	 * page - page number
 	 * itemsPerPage - rows per page
 	 * ruleFilter - all | rejected | nonrejected
-	 * orderByExportDate - ASC | DESC
-	 * orderByPublishDate - ASC | DESC
+	 * orderBy - EXPORT_DATE_DESC, EXPORT_DATE_ASC, RULE_NAME_DESC, RULE_NAME_ASC, PUBLISHED_DATE_DESC, PUBLISHED_DATE_ASC
 	 * */
 	@RemoteMethod
-	public List<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderByExportDate, String orderByPublishDate){
-		//TODO
-		return getAllRulesToImport(ruleType);
+	public RecordSet<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderBy) {
+		String store = UtilityService.getStoreName();
+		RuleEntity ruleEntity = RuleEntity.find(ruleType);
+		List<RuleXml> list = new ArrayList<RuleXml>();
+		RecordSet<ExportRuleMap> exportList = null;
+
+		if (ruleEntity != null) {
+			Boolean rejectStatus = null;
+			if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
+				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
+			}
+			ExportRuleMap searchExportRuleMap = new ExportRuleMap(null, null, keywordFilter, store, null, null, null, null, null, false, rejectStatus, ruleEntity);
+	
+			try {
+				exportList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(searchExportRuleMap, page, itemsPerPage), ExportRuleMapSortType.find(orderBy));
+				if (exportList != null && CollectionUtils.isNotEmpty(exportList.getList())) {
+					for (ExportRuleMap ruleMap: exportList.getList()) {
+						String ruleId = ruleMap.getRuleIdOrigin();
+						RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
+						if (ruleXml != null) {
+							list.add(ruleXml);
+						}
+						else {
+							logger.warn(String.format("Missing ruleXml for store:%s, ruleEntity:%s, ruleId: %s", store, ruleType, ruleId));
+						}
+					}
+				}
+			} catch (DaoException e) {
+				logger.error("Failed to retrieve rules for import", e);
+			}
+		}
+		return new RecordSet<RuleXml>(list, (exportList == null) ? 0 : exportList.getTotalSize());
 	}
 
 	@RemoteMethod
@@ -89,57 +119,24 @@ public class RuleTransferService {
 
 	@RemoteMethod
 	public List<String> exportRule(String ruleType, String[] ruleRefIdList, String comment) {
-		String store = UtilityService.getStoreName();
-		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		List<String> successList = new ArrayList<String>();
-		List<String> successRuleStatusIdList = new ArrayList<String>();
-
-		AuditTrail auditTrail = new AuditTrail();
-		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
-		auditTrail.setUsername(UtilityService.getUsername());
-		auditTrail.setStoreId(store);
-
-		for(int i = 0 ; i < ruleRefIdList.length; i++){
-			String ruleId = ruleRefIdList[i];
-			RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
-
-			if(ruleXml != null && StringUtils.isNotBlank(ruleXml.getRuleId())){
-				if(RuleTransferUtil.exportRule(store, ruleEntity, ruleId, ruleXml)){
-					logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully exported.", store, ruleEntity.name(), ruleId));
-					RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, ruleId);
-					SearchCriteria<RuleStatus> searchCriteria =new SearchCriteria<RuleStatus>(ruleStatus,null,null,null,null);
-	
+		if (ArrayUtils.isNotEmpty(ruleRefIdList)) {
+			String store = UtilityService.getStoreName();
+			RuleEntity ruleEntity = RuleEntity.find(ruleType);
+			for (String ruleId: ruleRefIdList){
+				RuleXml ruleXml = getRuleToExport(ruleType, ruleId); //get latest version
+				if(ruleXml != null && StringUtils.isNotBlank(ruleXml.getRuleId())){
 					try {
-						RecordSet<RuleStatus> approvedRset = daoService.getRuleStatus(searchCriteria);
-						if (approvedRset.getTotalSize() > 0) {
-							ruleStatus = approvedRset.getList().get(0);
-	
-							if(ruleStatus != null){
-								auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
-								auditTrail.setDate(new Date());
-								auditTrail.setReferenceId(ruleStatus.getRuleRefId());
-								if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
-									auditTrail.setKeyword(ruleStatus.getRuleRefId());
-								}
-								auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
-										auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.MANUAL));
-								daoService.addAuditTrail(auditTrail);
-	
-								daoService.updateRuleStatusExportInfo(ruleStatus, UtilityService.getUsername(), ExportType.MANUAL, new Date());
-								successList.add(getSuccessRule(ruleEntity, ruleId, ruleStatus.getRuleName()));
-								successRuleStatusIdList.add(ruleStatus.getRuleStatusId());
-							}
-						}
-						else {
-							logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+						if(daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.MANUAL, UtilityService.getUsername(), comment)) {
+							successList.add(getSuccessRule(ruleEntity, ruleId, ruleXml.getRuleName()));
 						}
 					} catch (DaoException e) {
-						logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
+						// TODO: make more detailed
+						logger.error("Error occurred while exporting rule: ", e);
 					}
 				}
 			}
 		}
-		daoService.addRuleStatusComment(null, "[EXPORTED] " + comment, successRuleStatusIdList.toArray(new String[0]));
 		return successList;
 	}
 
@@ -153,7 +150,7 @@ public class RuleTransferService {
 
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.importRule));
-		auditTrail.setUsername(UtilityService.getUsername());
+		auditTrail.setUsername(userName);
 		auditTrail.setStoreId(store);
 		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
 
@@ -266,7 +263,7 @@ public class RuleTransferService {
 
 			}
 		}
-		daoService.addRuleStatusComment(null, "[IMPORTED] " + comment, importedRuleStatusIds.toArray(new String[0]));
+		daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, importedRuleStatusIds.toArray(new String[0]));
 		return successList;
 	}
 
@@ -285,7 +282,8 @@ public class RuleTransferService {
 		}
 	}
 
-	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName){
+	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
+		boolean success = false;
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
 
@@ -298,13 +296,19 @@ public class RuleTransferService {
 		ruleXml.setRuleName(ruleName);
 
 		if(RuleTransferUtil.importRule(store, importAsRefId, ruleXml)){
+			success = true;
 			logger.info(String.format("Rule Xml [store=%s, ruleEntity=%s, ruleId=%s] successfully imported.", store, ruleEntity.name(), ruleId));
-			if(ruleEntity == RuleEntity.RANKING_RULE || ruleEntity == RuleEntity.QUERY_CLEANING){
-				addRuleTransferMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
+			ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
+			exportRuleMap.setDeleted(RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment));
+			exportRuleMap.setRejected(false);
+			exportRuleMap.setImportDate(new Date());
+			try {
+				daoService.saveExportRuleMap(exportRuleMap);
+			} catch (DaoException e) {
+				logger.error("Failed to add mapping of ruleId", e);
 			}
-			return RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment);
 		}
-		return false;
+		return success;
 	}
 
 	/**
@@ -337,7 +341,16 @@ public class RuleTransferService {
 				break;
 			}
 
-			if(RuleTransferUtil.deleteRuleFile(ruleEntity, store, refId, comment)){
+			RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, RuleXmlUtil.getRuleId(ruleEntity, refId));
+			if(RuleTransferUtil.deleteRuleFile(ruleEntity, store, refId, comment)) {
+				ExportRuleMap exportRuleMap = new ExportRuleMap(ruleXml.getStore(), refId, null, store, null, null, ruleEntity);
+				exportRuleMap.setDeleted(true);
+				exportRuleMap.setRejected(true);
+				try {
+					daoService.saveExportRuleMap(exportRuleMap);
+				} catch (DaoException e) {
+					logger.error("Failed to add mapping of ruleId", e);
+				}
 				//TODO addComment
 				//TODO addAuditTrail
 
@@ -363,7 +376,7 @@ public class RuleTransferService {
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, null,  storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 
 		try {
-			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
+			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap), null).getList();
 
 			if(CollectionUtils.isNotEmpty(rtList)){
 				return rtList.get(0);
@@ -383,7 +396,7 @@ public class RuleTransferService {
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		
 		try {
-			RecordSet<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap));
+			RecordSet<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap), null);
 			
 			if(rtList != null)
 				return rtList.getList();
@@ -402,7 +415,7 @@ public class RuleTransferService {
 		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
 		
 		try {
-			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap)).getList();
+			List<ExportRuleMap> rtList = daoService.getExportRuleMap(new SearchCriteria<ExportRuleMap>(exportRuleMap), null).getList();
 			if(CollectionUtils.isNotEmpty(rtList)) {
 				for (ExportRuleMap item: rtList) {
 					if (returnAllIdsOrigin || ArrayUtils.contains(ruleIdsOrigin, item.getRuleIdOrigin())) {
@@ -421,16 +434,4 @@ public class RuleTransferService {
 		return null;
 	}
 	
-	public int addRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleNameOrigin, String storeIdTarget, String ruleIdTarget, String ruleNameTarget, RuleEntity ruleEntity){
-		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, storeIdTarget, ruleIdTarget, ruleNameTarget, ruleEntity);
-		int result = 0;
-
-		try {
-			result = daoService.addExportRuleMap(exportRuleMap);
-		} catch (DaoException e) {
-			logger.error("Failed to retrive mapping of ruleId", e);
-			return result;
-		}
-		return result;
-	}
 }
