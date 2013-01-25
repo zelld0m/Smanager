@@ -126,7 +126,8 @@
 			switch (ruleEntity) {
 			case "QUERY_CLEANING":
 			case "RANKING_RULE":
-				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])
+						&& $.isNotBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])) {
 					return true;
 				}
 				break;
@@ -1235,9 +1236,8 @@
 									var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
 									var newName = importAsLabel.find("div#replacement input#newName").val();
 									var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
-									var isLocked = base.isLocked();
 									
-									if(!isLocked) {
+									if(!base.isLocked()) {
 										base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
 									}
 									
