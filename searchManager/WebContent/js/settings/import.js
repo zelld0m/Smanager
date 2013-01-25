@@ -628,7 +628,11 @@
 						$selectedTab.html($("div#tabContentTemplate").html());
 						var ruleDiv = $selectedTab.find("#rule").parent()[0];
 
+						$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").hide();
+						
 						if (totalSize>0){
+							$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
+
 							// Populate table row
 							for(var i=0; i < listSize; i++){
 								var rule = list[i];
