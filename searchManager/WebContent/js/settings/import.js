@@ -10,13 +10,16 @@
 			ruleTransferMap: new Object(),
 			ruleTargetList: new Array(),
 			pageSize : 10,
-			defaultText : "Search Rule Info",
+			defaultText : "Search Rule Name",
 			currentPage : 1,
 			searchText : "",
-			pubDateAsc : true,
-
-
-			postMsg : function(data, pub) {
+			pubDateSort : null,
+			expDateSort : null,
+			ruleNameSort : null,
+			activeSortOrder : null,
+			ruleFilterBy : "all",
+			
+			postMsg : function(data,pub){
 				var self = this;
 				var msg_ = pub;
 				var okmsg = '';
@@ -110,6 +113,7 @@
 				$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
 				$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
 				$selectedTab.find("a#downloadIcon").hide();
+				$selectedTab.find("div#ruleFilterDiv").hide();
 			},
 
 			cleanUpTabContent:function(){
@@ -282,16 +286,16 @@
 				return selectedStatusId; 
 			},
 			
-			addFieldValuesPaging : function(selectedTab, curPage, totalItem, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				var $selectedTab = selectedTab;
 				if(totalItem==0){
-					$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
 					$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
 					$selectedTab.find("#downloadIcon").hide();
 				}else{
 					$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
 					$selectedTab.find("#downloadIcon").show();
+					$selectedTab.find("div#ruleFilterDiv").show();
 					$selectedTab.find("#resultsTopPaging, #resultsBottomPaging").paginate({
 						currentPage: curPage, 
 						pageSize: self.pageSize,
@@ -299,45 +303,41 @@
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 						},
-						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter); },
-						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);},
-						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);},
+						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrder, ruleFilter); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrder, ruleFilter);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrder, ruleFilter);},
 						firstLinkCallback: function(e){self.getImportList(1);},
-						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);}
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrder, ruleFilter);}
 					});
 					
-					$selectedTab.find('input#keyword').off().on({
-						focusin: function(e){
-							if ($.trim($(e.currentTarget).val()).toLowerCase() === $.trim(self.defaultText).toLowerCase())
-								$(e.currentTarget).val("");
-						},
-						focusout: function(e){
-							if ($.isBlank($(e.currentTarget).val())) 
-								$(e.currentTarget).val(self.defaultText);
-						},
-						keydown: function(e){
-							var code = (e.keyCode ? e.keyCode : e.which);
-							var keyword = $.trim($(e.target).val());
-
-							if (code == 13 && keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase()) 
-								self.getImportList(1, keyword);
-						}
-					}).val(self.defaultText);
-					
-					$selectedTab.find("a#searchBtn").off().on({
+					$selectedTab.find("img#publishDateSort, img#ruleNameSort, img#exportDateSort").off().on({
 						click: function(e){
-							var keyword = $.trim($selectedTab.find('input#keyword').val());
+							var sortOrder = null;
+							var state = false;
 							
-							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-								self.getImportList(1, keyword);
-						}
-					});
-					
-					$selectedTab.find("img#publishDateSort").off().on({
-						click: function(e){
-							var $pubDateCheckbox = $selectedTab.find("input#pubDate");
-							var inverse = !$pubDateCheckbox.is(":checked");
-							self.getImportList(self.currentPage, self.searchText, inverse);
+							switch($(e.currentTarget).attr("id")){
+							case "ruleNameSort":
+								state = !$selectedTab.find("input#ruleNameInp").is(":checked");
+								sortOrder = state ? "RULE_NAME_DESC" : "RULE_NAME_ASC";
+								break;
+							case "publishDateSort":
+								state = !$selectedTab.find("input#pubDateInp").is(":checked");
+								sortOrder = state ? "PUBLISHED_DATE_DESC" : "PUBLISHED_DATE_ASC";
+								$selectedTab.find("input#pubDateInp").prop("checked", state); //check/uncheck ruleNameInp
+								//$selectedTab.find('.sortGroup:not(#pubDateInp)').prop('checked', false); //uncheck the other options in group
+								break;
+							case "exportDateSort":
+								state = !$selectedTab.find("input#expDateInp").is(":checked");
+								sortOrder = state ? "EXPORT_DATE_DESC" : "EXPORT_DATE_ASC";
+								$selectedTab.find("input#expDateInp").prop("checked", state); //check/uncheck ruleNameInp
+								//$selectedTab.find('.sortGroup:not(#expDateInp)').prop('checked', false); //uncheck the other options in group
+								break;
+							default:
+								$selectedTab.find('.sortGroup').prop('checked', false);
+								break;
+							}
+							
+							self.getImportList(self.currentPage, self.searchText, sortOrder);
 						}
 					});
 					
@@ -363,6 +363,45 @@
 						}
 					});
 				}
+				
+				$selectedTab.find("select#ruleFilter").val(ruleFilter).on({
+					change: function(e){
+						self.getImportList(1, self.searchText, sortOrder, $(this).val());
+					}
+				});
+				
+				$selectedTab.find('input#keyword').off().on({
+					focusin: function(e){
+						if ($.trim($(e.currentTarget).val()).toLowerCase() === $.trim(self.defaultText).toLowerCase())
+							$(e.currentTarget).val("");
+					},
+					focusout: function(e){
+						if ($.isBlank($(e.currentTarget).val())) 
+							$(e.currentTarget).val(self.defaultText);
+					},
+					keydown: function(e){
+						var code = (e.keyCode ? e.keyCode : e.which);
+						var keyword = $.trim($(e.target).val());
+
+						if (code == 13){ 
+							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+								self.getImportList(1, keyword);
+							else
+								self.getImportList(1);
+						}
+					}
+				}).val(self.defaultText);
+				
+				$selectedTab.find("a#searchBtn").off().on({
+					click: function(e){
+						var keyword = $.trim($selectedTab.find('input#keyword').val());
+						
+						if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+							self.getImportList(1, keyword);
+						else
+							self.getImportList(1);
+					}
+				});
 			},
 
 			// not in used.
@@ -559,9 +598,8 @@
 				return template;
 			},
 
-			getRuleTransferMap: function(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
+			getRuleTransferMap: function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
-				//TODO: dynamic origin and target
 				RuleTransferServiceJS.getExportMapList("pcmall", $.makeArray(), self.entityName, {
 					callback: function(exportMapList){
 						if(exportMapList){
@@ -572,26 +610,27 @@
 						}
 					},
 					postHook: function(){
-						self.getAllRulesToImport(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+						self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);
 					}
 				});
 			},
 
-			getAllRulesToImport: function(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			getAllRulesToImport: function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
-				RuleTransferServiceJS.getRulesToImport(self.entityName, keywordFilter, curPage, self.pageSize, ruleFilter, exportDateOrder, publishDateOrder, {
+				RuleTransferServiceJS.getRulesToImport(self.entityName, keywordFilter, curPage, self.pageSize, ruleFilter, sortOrder, {
 					callback:function(data){
-						var list = data;
-						var totalSize = (data) ? data.length : 0;
+						var list = data.list;
+						var listSize = list.length;
+						var totalSize = (data) ? data.totalSize : 0;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
 						var ruleDiv = $selectedTab.find("#rule").parent()[0];
 
 						if (totalSize>0){
 							// Populate table row
-							for(var i=0; i < totalSize; i++){
+							for(var i=0; i < listSize; i++){
 								var rule = list[i];
 								var ruleId = rule["ruleId"];
 								var ruleName = rule["ruleName"];
@@ -782,10 +821,8 @@
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
 						}
-						
+						self.addFiltersHandler($selectedTab, curPage, totalSize, keywordFilter, sortOrder, ruleFilter);
 						self.populateFilters($selectedTab);
-						self.addFieldValuesPaging($selectedTab, curPage, totalSize, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
-
 					},
 					preHook:function(){ 
 						self.prepareTabContent();
@@ -799,33 +836,67 @@
 
 			populateFilters : function($selectedTab){
 				var self = this;
-				var sortPath = "";
-								
-				if(self.pubDateAsc == undefined){
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/bg.gif';
-					$selectedTab.find('input#pubDate').prop("checked", true);
-				}else if(self.pubDateAsc){
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/asc.gif';
-					$selectedTab.find('input#pubDate').prop("checked", true);
-				}else{
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
-					$selectedTab.find('input#pubDate').prop("checked", false);
-				}
+				var defaultSortIcon = GLOBAL_contextPath + '/images/tablesorter/bg.gif';
+				var ascSortIcon = GLOBAL_contextPath + '/images/tablesorter/asc.gif';
+				var descSortIcon = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
 				
-				$selectedTab.find('img#publishDateSort').attr('src', sortPath);
-				$selectedTab.find('input#keyword').val(self.searchText);
+				//populate ruleFilter
+				$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				
+				//populate search keyword input
+				if($.isBlank(self.searchText))
+					$selectedTab.find('input#keyword').val(self.defaultText);
+				else
+					$selectedTab.find('input#keyword').val(self.searchText);
+				
+				//populate sort icon
+				//1. initialize as no active sort Order
+				$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").attr("src", defaultSortIcon);
+				
+				//2. change sort icon of active sort order
+				//activeSortOrder - EXPORT_DATE_DESC, EXPORT_DATE_ASC, RULE_NAME_DESC, RULE_NAME_ASC, PUBLISHED_DATE_DESC, PUBLISHED_DATE_ASC
+				switch(self.activeSortOrder){ 
+				case "RULE_NAME_ASC":
+					$selectedTab.find("img#ruleNameSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#ruleNameInp").prop("checked", false); 
+					break;
+				case "PUBLISHED_DATE_ASC":
+					$selectedTab.find("img#publishDateSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#pubDateInp").prop("checked", false); 
+					break;
+				case "EXPORT_DATE_ASC":
+					$selectedTab.find("img#exportDateSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#expDateInp").prop("checked", false); 
+					break;
+				case "RULE_NAME_DESC":
+					$selectedTab.find("img#ruleNameSort").attr("src",descSortIcon);
+					$selectedTab.find("input#ruleNameInp").prop("checked", true); 
+					break;
+				case "PUBLISHED_DATE_DESC":
+					$selectedTab.find("img#publishDateSort").attr("src",descSortIcon);
+					$selectedTab.find("input#pubDateInp").prop("checked", true); 
+					break;
+				case "EXPORT_DATE_DESC":
+					$selectedTab.find("img#exportDateSort").attr("src",descSortIcon);
+					$selectedTab.find("input#expDateInp").prop("checked", true);
+					break;
+					break;
+				default: //if no pubDate order is specified, default is ascending
+					break;
+				}
 			},
 
-			getImportList : function(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			getImportList : function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				self.currentPage = curPage;
 				self.searchText = keywordFilter;
-				self.pubDateAsc = publishDateOrder;
-
+				self.activeSortOrder = sortOrder;
+				self.ruleFilterBy = ruleFilter;
+				
 				if(GLOBAL_store==="pcmallcap"){
-					self.getRuleTransferMap(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+					self.getRuleTransferMap(curPage, keywordFilter, sortOrder, ruleFilter);
 				}else{
-					self.getAllRulesToImport(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+					self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);
 				}
 			},
 			

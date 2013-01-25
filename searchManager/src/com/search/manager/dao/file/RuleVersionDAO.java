@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
@@ -145,7 +146,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 					if(!ruleVersion.isDeleted()){
 						if(ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml){
 							ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
-							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion));
+							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreName()));
 							ruleVersionInfoList.add((RuleXml) productDetailsAware);
 						}else{
 							ruleVersionInfoList.add(ruleVersion);
