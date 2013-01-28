@@ -105,8 +105,8 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select">
-								<input class="import" type="checkbox"><label for="import">import</label>
-								<input class="reject" type="checkbox"><label for="reject">reject</label>
+								<input class="import" type="checkbox"><img class="importReject import" src="<spring:url value="/images/approve_gray.png" />" alt="Approve" title="Approve"/>
+								<input class="reject" type="checkbox"><img class="importReject reject" src="<spring:url value="/images/reject_gray.png" />" alt="Reject" title="Reject"/>
 							</td>
 							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
