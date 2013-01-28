@@ -667,7 +667,7 @@
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
 								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
-								
+								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 								if (rule["updateStatus"]!=="DELETE"){
@@ -731,12 +731,10 @@
 												checkUncheckCheckboxCallback : function(base, ruleId, pub) {
 													switch(pub) {
 													case 'import':
-														$("#"+$.formatAsId(ruleId)+".import").attr('checked', true);
-														$("#"+$.formatAsId(ruleId)+".reject").attr('checked', false);
+														self.toggleImportCheckbox($.formatAsId(ruleId));
 														break;
 													case 'reject':
-														$("#"+$.formatAsId(ruleId)+".import").attr('checked', false);
-														$("#"+$.formatAsId(ruleId)+".reject").attr('checked', true);
+														self.toggleRejectCheckbox($.formatAsId(ruleId));
 														break;
 													}
 												},
@@ -923,21 +921,64 @@
 				$selectedTab.find(".import, .reject").on({
 					click: function(evt) {
 						var id = $(this).attr('id');
+						var isChecked = $('input[type="checkbox"]#'+id+'.import').attr('checked');
 						
 						switch($(this).attr('class')) {
 						case 'import':
-							if($(this).attr('checked') == 'checked') {
-								$selectedTab.find("#" + id + ".reject").attr('checked', false);
+							if(isChecked == 'checked') {
+								self.toggleImportCheckbox(id);
+							} else {
+								self.untoggleImportCheckbox(id);
+							}
+							break;
+						case 'importReject import':
+							if(isChecked != 'checked') {
+								self.toggleImportCheckbox(id);
+							} else {
+								self.untoggleImportCheckbox(id);
 							}
 							break;
 						case 'reject':
-							if($(this).attr('checked') == 'checked') {
-								$selectedTab.find("#" + id + ".import").attr('checked', false);
+							if(isChecked == 'checked') {
+								self.toggleRejectCheckbox(id);
+							} else {
+								self.untoggleRejectCheckbox(id);
+							}
+							break;
+						case 'importReject reject':
+							if(isChecked != 'checked') {
+								self.toggleRejectCheckbox(id);
+							} else {
+								self.untoggleRejectCheckbox(id);
 							}
 							break;
 						}
 					}
 				});
+			},
+			
+			toggleImportCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', true);
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_active.png');
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
+			},
+			
+			untoggleImportCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
+			},
+			
+			toggleRejectCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', true);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_active.png');
+			},
+			
+			untoggleRejectCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
 			},
 			
 			init : function() {
