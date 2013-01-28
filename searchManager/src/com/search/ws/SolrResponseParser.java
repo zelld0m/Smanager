@@ -1,5 +1,7 @@
 package com.search.ws;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -11,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.DemoteResult;
@@ -21,6 +25,8 @@ import com.search.manager.model.SearchResult;
 
 public abstract class SolrResponseParser {
  
+	private static Logger logger = Logger.getLogger(SolrResponseParser.class);
+
 	/* Sends the original Solr Query Parameters, in case implementation needs to do something with it. Example JSON implemenation would need to get wrf parameter */
 	public abstract int getTemplateCounts(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
@@ -380,4 +386,18 @@ public abstract class SolrResponseParser {
 		return addedRecords;
 	}
 	
+	protected void logSolrError(HttpPost post, String description, Exception e) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(description).append(": ").append(requestPath);
+		if (post != null && post.getEntity() != null) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				post.getEntity().writeTo(baos);
+				builder.append("?").append(baos.toString("UTF-8"));
+			} catch (IOException e1) {
+			}
+		}
+		logger.error(builder.toString());
+	}
+
 }
