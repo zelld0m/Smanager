@@ -85,13 +85,13 @@
 			      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${store}">Push to Prod</a></li>
 		      		</sec:authorize>
 		      		
-		      		<c:if test="${store eq 'pcmallcap'}">
+		      		<c:if test="${store eq 'pcmallcap' or store eq 'pcmgbd' or store eq 'macmallbd'}">
 		      		<sec:authorize access="hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'import'? 'class="active"': ''}><a href="<spring:url value="/import/"/>${store}">Import Rule</a></li>
 		      		</sec:authorize>
 		      		</c:if>
 		      		
-		      		<c:if test="${store eq 'pcmall'}">
+		      		<c:if test="${store eq 'pcmall' or store eq 'macmall'}">
 		      		<sec:authorize access="hasRole('PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'export'? 'class="active"': ''}><a href="<spring:url value="/export/"/>${store}">Export Rule</a></li>
 		      		</sec:authorize>	      		
