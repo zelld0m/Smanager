@@ -88,12 +88,6 @@
 								<img id="publishDateSort" class="publishDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
 								<input id="pubDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
 							</th>
-							<!-- Do not delete. Will be used for future purposes.
-							<th width="50px">Export Date 
-								<img id="exportDateSort" class="exportDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
-								<input id="expDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
-							</th>
-							 -->
 							<th width="85px">Import Type</th>
 							<th>Import As</th>
 						</tr>
@@ -105,8 +99,8 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select">
-								<input class="import" type="checkbox"><img class="importReject import" src="<spring:url value="/images/approve_gray.png" />" alt="Approve" title="Approve"/>
-								<input class="reject" type="checkbox"><img class="importReject reject" src="<spring:url value="/images/reject_gray.png" />" alt="Reject" title="Reject"/>
+								<input class="import" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Approve</a></div>
+								<input class="reject" type="checkbox"><div class="reject_btn"><a href="javascript:void(0);" id="link_btn">Reject</a></div>
 							</td>
 							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
