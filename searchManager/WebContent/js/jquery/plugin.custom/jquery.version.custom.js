@@ -72,6 +72,7 @@
 					}
 					else{
 						base.setCompare();
+						$('ul#rowLabel').css('margin-top', '25px');
 					}
 				}
 			});
@@ -128,8 +129,12 @@
 
 				$li.attr("id","ver_" + index);
 				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
-				$li.find("#restoreLink").hide();
-
+				if($li.find("#restoreLink").hide()){
+					$('li#ver_current').css('margin-top', '31px');
+					
+				}
+				
+				
 				if(index !== "current"){
 					$li.find("#restoreLink").off().on({
 						click:function(e){
@@ -574,8 +579,8 @@
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
 			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
-			template += '							<label class="restoreIcon floatL w20 posRel topn2 mPointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
-			template += '							<label class="deleteIcon floatL w20 posRel topn2 mPointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
 			template += '					</tr>';
 			template += '					<tr id="preloader">';
@@ -657,7 +662,7 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden;overflow-y:auto; height:343px">';			
 			template += '		<div style="float:left; width:120px">';// label
-			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:23px;background:#cbd4e6;">';
+			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:-6px;background:#cbd4e6;">';
 			template += '				<li style="background:#fff;"></li>';
 			template += '				<li>Created By</li>';
 			template += '				<li style="height:24px">Date</li>';

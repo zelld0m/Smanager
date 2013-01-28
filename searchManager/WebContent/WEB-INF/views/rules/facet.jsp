@@ -110,7 +110,7 @@
 		   	
 		   	<div id="keywordinput">
 	  		<label class="floatL w80 txtLabel">Keyword </label> 
-			<label class="floatL"><input id="popKeywordName" type="text" class="w188" maxlength="100"></label>
+			<label class="floatL"><input id="popKeywordName" type="text" maxlength="100" style="width:162px"></label>
 			</div>
 			<div class="clearB"></div>
 			

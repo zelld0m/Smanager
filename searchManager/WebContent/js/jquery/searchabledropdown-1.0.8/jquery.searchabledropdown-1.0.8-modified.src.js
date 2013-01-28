@@ -403,7 +403,7 @@
 			else if($.browser.chrome) {
 				input.height(self.innerHeight());
 				input.css("text-transform", "none");
-				input.css("padding", "2px 5px 0px 5px");
+				input.css("padding", "6px 5px 0px 5px");
 				//input.css("padding-left", parseFloatPx(input.css("padding-left"))+3);
 				//input.css("padding-top", 2);
 			}
@@ -430,7 +430,7 @@
 			else {
 				//input.css("padding-left", parseFloatPx(self.css("padding-left"))+3);
 				//input.css("padding-top", parseFloatPx(self.css("padding-top"))+1);
-				input.css("padding", '0px 5px');
+				input.css("padding", '0px 5px ');
 			}
 
 			// adjust width of search field
