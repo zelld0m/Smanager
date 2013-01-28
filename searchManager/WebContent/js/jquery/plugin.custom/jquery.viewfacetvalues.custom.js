@@ -201,7 +201,7 @@
 				content+= '<div class="searchBoxHolder w120 marT10 marR4 floatL">';
 				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w100" id="searchField" name="searchField">';				
 				content+= '</div>';
-				content+= 	'<div class="floatL fsize11 searchCount marT10 w93 txtAR padT8 fLgray marL0"></div>';
+				content+= 	'<div class="floatL fsize10 searchCount marT10 w93 txtAR padT8 fLgray marL0"></div>';
 				content+= '</div>';
 			}
 

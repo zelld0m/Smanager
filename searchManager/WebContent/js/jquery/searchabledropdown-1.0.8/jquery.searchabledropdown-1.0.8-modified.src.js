@@ -360,7 +360,7 @@
 			// default styles for text field
 			input.css({
 				"position": "absolute",
-				"top": 0,
+				"top": "5px",
 				"left": 0,
 				"margin": "0px",
 				"padding": "0px",

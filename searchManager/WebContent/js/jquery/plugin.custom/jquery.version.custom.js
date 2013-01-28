@@ -574,8 +574,8 @@
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
 			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
-			template += '							<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
-			template += '							<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			template += '							<label class="restoreIcon floatL w20 posRel topn2 mPointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+			template += '							<label class="deleteIcon floatL w20 posRel topn2 mPointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
 			template += '					</tr>';
 			template += '					<tr id="preloader">';
@@ -677,11 +677,11 @@
 
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
 			template += '			<ul id="versionList">';
-			template += '				<li id="itemPattern" class="item" style="display:none;border:0">';
+			template += '				<li id="itemPattern" class="item" style="display:none;border:0; padding-top: 35px;">';
 			template += '					<ul id="ruleDetails" style="border:0">';
 			template += '						<li id="restoreLink" style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy">Not Available</li>'; 
-			template += '						<li id="verDate">Not Available</li>';
+			template += '						<li id="verDate" style="height: 24px;">Not Available</li>';
 			template += '						<li id="verName">Not Available</li>'; 
 			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 

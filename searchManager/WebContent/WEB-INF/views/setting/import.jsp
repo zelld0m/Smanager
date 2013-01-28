@@ -50,7 +50,7 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div id="ruleFilterDiv" class="floatL">
+				<div class="floatL" style="display: none;">
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="all">All Rules</option>
@@ -105,8 +105,12 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="24px" class="txtAC" id="select">
-								<input class="import" type="checkbox"><label for="import">import</label>
-								<input class="reject" type="checkbox"><label for="reject">reject</label>
+								<div class="approve_btn"><a href="javascript:void(0);" id="link_btn">
+									Approve
+								</a></div>
+								<div class="reject_btn"><a href="javascript:void(0);" id="link_btn">
+									Reject
+								</a></div>
 							</td>
 							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
