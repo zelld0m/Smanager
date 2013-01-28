@@ -921,32 +921,30 @@
 				$selectedTab.find(".import, .reject").on({
 					click: function(evt) {
 						var id = $(this).attr('id');
-						var isChecked = $('input[type="checkbox"]#'+id+'.import').attr('checked');
-						
 						switch($(this).attr('class')) {
 						case 'import':
-							if(isChecked == 'checked') {
+							if($('input[type="checkbox"]#'+id+'.import').attr('checked') == 'checked') {
 								self.toggleImportCheckbox(id);
 							} else {
 								self.untoggleImportCheckbox(id);
 							}
 							break;
 						case 'importReject import':
-							if(isChecked != 'checked') {
+							if($('input[type="checkbox"]#'+id+'.import').attr('checked') != 'checked') {
 								self.toggleImportCheckbox(id);
 							} else {
 								self.untoggleImportCheckbox(id);
 							}
 							break;
 						case 'reject':
-							if(isChecked == 'checked') {
+							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') == 'checked') {
 								self.toggleRejectCheckbox(id);
 							} else {
 								self.untoggleRejectCheckbox(id);
 							}
 							break;
 						case 'importReject reject':
-							if(isChecked != 'checked') {
+							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
 								self.toggleRejectCheckbox(id);
 							} else {
 								self.untoggleRejectCheckbox(id);
