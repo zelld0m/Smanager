@@ -667,7 +667,10 @@
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
 								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
-								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
+//								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
+								$tr.find("td#select > div.approve_btn").attr({"id": $.formatAsId(ruleId)});
+								$tr.find("td#select > div.reject_btn").attr({"id": $.formatAsId(ruleId)});
+								
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 								if (rule["updateStatus"]!=="DELETE"){
@@ -918,32 +921,18 @@
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 				
-				$selectedTab.find(".import, .reject").on({
+				$selectedTab.find(".approve_btn, .reject_btn").on({
 					click: function(evt) {
 						var id = $(this).attr('id');
 						switch($(this).attr('class')) {
-						case 'import':
-							if($('input[type="checkbox"]#'+id+'.import').attr('checked') == 'checked') {
-								self.toggleImportCheckbox(id);
-							} else {
-								self.untoggleImportCheckbox(id);
-							}
-							break;
-						case 'importReject import':
+						case 'approve_btn':
 							if($('input[type="checkbox"]#'+id+'.import').attr('checked') != 'checked') {
 								self.toggleImportCheckbox(id);
 							} else {
 								self.untoggleImportCheckbox(id);
 							}
 							break;
-						case 'reject':
-							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') == 'checked') {
-								self.toggleRejectCheckbox(id);
-							} else {
-								self.untoggleRejectCheckbox(id);
-							}
-							break;
-						case 'importReject reject':
+						case 'reject_btn':
 							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
 								self.toggleRejectCheckbox(id);
 							} else {
@@ -958,25 +947,25 @@
 			toggleImportCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', true);
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
-				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_active.png');
-				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
+				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_active.png)');
+				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
 			},
 			
 			untoggleImportCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
-				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
+				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_gray.png)');
 			},
 			
 			toggleRejectCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', true);
-				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
-				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_active.png');
+				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_gray.png)');
+				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_active.png)');
 			},
 			
 			untoggleRejectCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
-				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
+				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
 			},
 			
 			init : function() {
