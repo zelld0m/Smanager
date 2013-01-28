@@ -465,6 +465,18 @@ body 							{ margin: 0px; min-width:1200px }
 .ui-widget li.ui-menu-item		{ list-style: none !important; padding: 8px 0 0 0 !important;}
 .cursorText { cursor: text !important }
 
+input[type="checkbox"].import,
+input[type="checkbox"].reject {
+	border: 0 none;
+	clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
 .approve_btn {
 	width: 80px;
 	height: 25px;
