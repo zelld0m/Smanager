@@ -1,5 +1,18 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.errorRequest = function(error){
+		var template = '';
+		template += '<div class="error border fsize14 marB20">';
+		template += '	<h1>Error Code: ' + error["status"] + " " + error["statusText"] + '</h1>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>An error was encountered while processing your request. Kindly refresh this page and retry your request.</span>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>If problem persists, please contact the Search Team and inform them of the time the error occurred, and anything you might have done that may have caused the error.</span>';
+		template += '	<div class="clearB"/>';
+		template += '</div>'; 
+		return $(template);
+	};
+	
 	AjaxSolr.theme.prototype.searchKeyword = function(){
 		var template = '';
 		template += '<a id="statisticIcon" href="javascript:void(0);">';
@@ -620,6 +633,8 @@
 		}
 		return h += html ? ">" + html + "</" + tag + ">" : "/>";
 	};
+	
+	
 
 	$.fn.outerHTML = function() {
 		var doc = this[0] ? this[0].ownerDocument : document;
