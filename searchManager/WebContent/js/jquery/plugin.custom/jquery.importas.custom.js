@@ -69,10 +69,10 @@
 			var template = "";
 
 			template += '<div>';
-			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	<select id="importAsSelect" title="Select rule" class="searchable">';
 			template += '		<option value="0">' + base.options.newRuleText + '</option>';
 			template += '	</select>';
+			template += '	<img id="preloader" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
 			template += '	<div id="replacement" style="display:none">';
 			template += '		<p>Use custom name for <strong><a id="selectedRule" href="javascript:void(0);"></a></strong> rule: </p>';
 			template += '		<input id="newName" type="text"/>';
@@ -160,7 +160,7 @@
 					switch (ruleEntity) {
 					case "QUERY_CLEANING":
 					case "RANKING_RULE":
-						if($.isEmptyObject(excList[this.ruleId])){
+						if($.isBlank(excList[this.ruleId])){
 						optionString += "<option value='" + this.ruleId + "'>"
 								+ this.ruleName + "</option>";
 						}
@@ -171,16 +171,19 @@
 			switch(ruleEntity) {
 			    case "QUERY_CLEANING":
 			    case "RANKING_RULE":
+			    	$importAsSelect.prop("disabled", true);
 					if (!$.importas.selectOptions[ruleEntity]) {
 						$.importas.selectOptions[ruleEntity] = optionString;
 					}
 
-					if ($.isEmptyObject(base.options.ruleTransferMap) || (!$.isEmptyObject(base.options.ruleTransferMap) && $.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]]))) {
+					if ($.isEmptyObject(base.options.ruleTransferMap) || 
+							(!$.isEmptyObject(base.options.ruleTransferMap) && $.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]] && $.isBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])))) {
 						$importAsSelect.append($.importas.selectOptions[ruleEntity]);
 					}
 			}
 
 			base.$el.find("#preloader").hide();
+			$importAsSelect.prop("disabled", false);
 
 			var $replacement = base.$el.find("#replacement");
 			var $option = $importAsSelect.find('option:eq(0)');
@@ -202,7 +205,8 @@
 				break;
 			case "RANKING_RULE":	
 			case "QUERY_CLEANING":
-				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])){ //TODO:
+				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])
+						&& $.isNotBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])){ //TODO:
 					$option.attr({value: base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"], selected: true});
 					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);

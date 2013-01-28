@@ -8,6 +8,10 @@
 			$(this.target).html(AjaxSolr.theme('showAjaxLoader',"Please wait..."));
 		},
 
+		errorRequest: function () {
+			$(this.target).empty().append(AjaxSolr.theme('errorRequest', this.manager.response));
+		},
+		
 		afterRequest: function () {
 			var self = this;
 			$(self.target).empty(); 

@@ -1271,10 +1271,23 @@
 				var $input = $ims.find("input#catcode");
 
 				$input.off().on({
+					mouseenter: function(e){
+						e.data.input = $.trim($(e.currentTarget).val());
+					},
+					mouseleave: function(e){
+						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+							self.populateIMSManufacturers(e.data.ui, e.data.condition);
+						}
+					},
+					focusin: function(e){
+						e.data.input = $.trim($(e.currentTarget).val());
+					},
 					focusout: function(e){
-						self.populateIMSManufacturers(ui, e.data.condition);
+						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+							self.populateIMSManufacturers(e.data.ui, e.data.condition);
+						}
 					}
-				},{condition: condition});
+				},{ui:ui, condition: condition, input: ""});
 			},
 
 			checkDisplay: function(ui, condition){

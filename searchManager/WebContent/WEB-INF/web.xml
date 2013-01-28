@@ -240,6 +240,7 @@
 				com.search.manager.report.model.xml.RedirectRuleXml,
 				com.search.manager.report.model.xml.RuleKeywordXml,
 				com.search.manager.report.model.xml.RuleConditionXml,
+				com.search.manager.report.model.xml.RuleXml,
 				com.search.manager.schema.model.Field,
 				com.search.manager.schema.model.FieldType,
 				com.search.manager.schema.model.GenericType,

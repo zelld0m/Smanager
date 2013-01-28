@@ -3,13 +3,17 @@ package com.search.manager.service;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -24,6 +28,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
+import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.utility.PropsUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
@@ -206,4 +211,18 @@ public class UtilityService {
 		return ConfigManager.getInstance().setStoreSetting(getStoreName(), property, value);
 	}
 
+	public static String getStoreSetting(String storeName, String property) {
+		return ConfigManager.getInstance().getStoreSetting(storeName, property);
+	}
+	
+	public static List<String> getStoresToExport(String storeName) {
+		List<String> list = new ArrayList<String>();
+		String[] stores = org.springframework.util.StringUtils.tokenizeToStringArray(
+				UtilityService.getStoreSetting(storeName, DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
+		if (ArrayUtils.isNotEmpty(stores)) {
+			CollectionUtils.addAll(list, stores);
+		}
+		return list;
+	}
+	
 }

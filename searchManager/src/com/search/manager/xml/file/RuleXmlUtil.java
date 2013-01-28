@@ -197,18 +197,17 @@ public class RuleXmlUtil{
 		return ruleXml;
 	}
 
-	public static List<Product> getProductDetails(RuleXml ruleXml){
+	public static List<Product> getProductDetails(RuleXml ruleXml, String targetStore){
 
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 		List<Product> productList = new ArrayList<Product>();
 		ProductDetailsAware prodDetails = (ProductDetailsAware) ruleXml;
 		List<? extends RuleItemXml> ruleItemList = prodDetails.getItem();
 		String mapKey = "";
-		String store = ruleXml.getStore();
 		String keyword = ruleXml.getRuleId();
 		
 
-		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
+		StoreKeyword storeKeyword = new StoreKeyword(targetStore, keyword);
 
 		if(CollectionUtils.isNotEmpty(ruleItemList)){
 			for (RuleItemXml ruleItem : ruleItemList) {
@@ -226,7 +225,7 @@ public class RuleXmlUtil{
 		}
 
 		if (MapUtils.isNotEmpty(map)){
-			SearchHelper.getProductsIgnoreKeyword(map, store, keyword);
+			SearchHelper.getProductsIgnoreKeyword(map, targetStore, keyword);
 			productList = new ArrayList<Product>(map.values());
 		} 
 

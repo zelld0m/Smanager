@@ -1,5 +1,18 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.errorRequest = function(error){
+		var template = '';
+		template += '<div class="error border fsize14 marB20">';
+		template += '	<h1>Error Code: ' + error["status"] + " " + error["statusText"] + '</h1>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>An error was encountered while processing your request. Kindly refresh this page and retry your request.</span>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>If problem persists, please contact the Search Team and inform them of the time the error occurred, and anything you might have done that may have caused the error.</span>';
+		template += '	<div class="clearB"/>';
+		template += '</div>'; 
+		return $(template);
+	};
+	
 	AjaxSolr.theme.prototype.searchKeyword = function(){
 		var template = '';
 		template += '<a id="statisticIcon" href="javascript:void(0);">';
@@ -303,9 +316,9 @@
 		secObj.find("div#cartPriceHolder").append('$' + doc[GLOBAL_storeFacetName + "_CartPrice"]);
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
-		var manufacturer = '<span class="txtManufact">' + doc.Manufacturer + '</span>';
+		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';
 		
-		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', manufacturer + name, docHandler));
+		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler)).prepend(manufacturer);
 
 		//Add Audit Button
 		secObj.find("div#auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
@@ -587,7 +600,7 @@
 
 
 	AjaxSolr.theme.prototype.createLink = function (value, handler, id) {
-		var $a = $('<a href="javascript:void(0)"/>').html(value).click(handler);
+		var $a = $('<a href="javascript:void(0)"/>').text(value).click(handler);
 		if ($.isNotBlank(id)){
 			$a.prop("id", id);
 		}
@@ -620,6 +633,8 @@
 		}
 		return h += html ? ">" + html + "</" + tag + ">" : "/>";
 	};
+	
+	
 
 	$.fn.outerHTML = function() {
 		var doc = this[0] ? this[0].ownerDocument : document;

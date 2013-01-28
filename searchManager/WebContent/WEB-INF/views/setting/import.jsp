@@ -50,7 +50,7 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div class="floatL" style="display: none;">
+				<div id="ruleFilterDiv" class="floatL">
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="all">All Rules</option>
@@ -80,11 +80,20 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
 							<th width="24px"></th>
-							<th width="150px">Rule Info</th>
+							<th width="150px">Rule Info
+								<img id="ruleNameSort" class="ruleNameSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="ruleNameInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
+							</th>
 							<th width="50px">Published Date 
 								<img id="publishDateSort" class="publishDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
-								<input id="pubDate" checked type="checkbox" style="display: none;"/>
+								<input id="pubDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
 							</th>
+							<!-- Do not delete. Will be used for future purposes.
+							<th width="50px">Export Date 
+								<img id="exportDateSort" class="exportDateSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
+								<input id="expDateInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
+							</th>
+							 -->
 							<th width="85px">Import Type</th>
 							<th>Import As</th>
 						</tr>
@@ -95,7 +104,10 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
-							<td width="24px" class="txtAC" id="select"><input type="checkbox" class="selectItem"></td>
+							<td width="24px" class="txtAC" id="select">
+								<input class="import" type="checkbox"><img class="importReject import" src="<spring:url value="/images/approve_gray.png" />" alt="Approve" title="Approve"/>
+								<input class="reject" type="checkbox"><img class="importReject reject" src="<spring:url value="/images/reject_gray.png" />" alt="Reject" title="Reject"/>
+							</td>
 							<td class="txtAC" width="24px" id="ruleOption">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 							</td>
@@ -134,11 +146,8 @@
 				<label class="floatL w480"><textarea id="comment" class="w510" style="height:32px"></textarea></label>
 				<div class="clearB"></div>
 				<div align="right" class="padR15 marT10">
-					<a id="okBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Import</div>
-					</a>
-					<a id="rejectBtn" href="javascript:void(0);"
-						class="buttons btnGray clearfix"><div class="buttons fontBold">Reject</div>
+					<a id="sbmtBtn" href="javascript:void(0);"
+						class="buttons btnGray clearfix"><div class="buttons fontBold">Submit</div>
 					</a>
 				</div>
 			</div>

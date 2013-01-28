@@ -1,7 +1,7 @@
 (function($){
 
 	var Import = {
-			moduleName : "Import Rule",	
+			moduleName : "Import Rule",
 			tabSelected : "",
 			entityName : "",
 			ruleEntityList : null,
@@ -10,28 +10,80 @@
 			ruleTransferMap: new Object(),
 			ruleTargetList: new Array(),
 			pageSize : 10,
-			defaultText : "Search Rule Info",
+			defaultText : "Search Rule Name",
 			currentPage : 1,
 			searchText : "",
-			pubDateAsc : true,
-
-
-			postMsg : function(data,pub){
+			pubDateSort : null,
+			expDateSort : null,
+			ruleNameSort : null,
+			activeSortOrder : null,
+			ruleFilterBy : "all",
+			
+			postMsg : function(data, pub){
 				var self = this;
-				var msg_ = pub ? 'imported:' : 'rejected:';
-				var okmsg = '';	
+				var msg_ = pub;
+				var okmsg = '';
 
-				if(data.length > 0){
-					okmsg = 'Following rules were successfully ' + msg_;	
-
-					for(var i=0; i<data.length; i++){	
-						okmsg += '\n-'+ data[i];	
+				if(!$.isEmptyObject(data)) {
+					var importFail = '';
+					var importSuccessSubmitForApprovalFail = '';
+					var importSuccessPublishFail ='';
+					var importSuccess = '';
+					var rejectFail = '';
+					var rejectSuccess = '';
+					
+					for(key in data) {
+						switch(data[key]) {
+						case 'import_fail':
+							importFail += '\n-' + key;
+							break;
+						case 'import_success_submit_for_approval_fail':
+							importSuccessSubmitForApprovalFail += '\n-' + key;
+							break;
+						case 'import_success_publish_fail':
+							importSuccessPublishFail += '\n-' + key;
+							break;
+						case 'import_success':
+							importSuccess += '\n-' + key;
+							break;
+						case 'reject_fail':
+							rejectFail += '\n-' + key;
+							break;
+						case 'reject_success':
+							rejectSuccess += '\n-' + key;
+							break;
+						}
+						
 					}
+					
+					if(importFail.length > 0) {
+						okmsg += 'Failed to import the following rules:';	
+						okmsg += importFail + '\n';
+					}
+					if(importSuccessSubmitForApprovalFail.length > 0) {
+						okmsg += 'Failed to submit for approval the following imported rules:';	
+						okmsg += importSuccessSubmitForApprovalFail + '\n';
+					}
+					if(importSuccessPublishFail.length > 0) {
+						okmsg += 'Failed to auto-publish the following imported rules:';
+						okmsg += importSuccessPublishFail + '\n';
+					}
+					if(importSuccess.length > 0) {
+						okmsg += 'Following rules were successfully imported:';	
+						okmsg += importSuccess + '\n';
+					}
+					if(rejectFail.length > 0) {
+						okmsg += 'Following rules were fail to import:';	
+						okmsg += rejectFail + '\n';
+					}
+					if(rejectSuccess.length > 0) {
+						okmsg += 'Following rules were successfully rejected:';	
+						okmsg += rejectSuccess + '\n';
+					}
+				} else {
+					okmsg = 'No rules were successfully imported and rejected.';
 				}
-				else{
-					okmsg = 'No rules were successfully ' + msg_ +'.';
-				}
-
+				
 				jAlert(okmsg, self.entityName);
 			},
 
@@ -87,6 +139,7 @@
 				$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
 				$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
 				$selectedTab.find("a#downloadIcon").hide();
+				$selectedTab.find("div#ruleFilterDiv").hide();
 			},
 
 			cleanUpTabContent:function(){
@@ -109,33 +162,36 @@
 				return "";
 			},
 
-			getSelectedImportAsRefId : function(){
+			getSelectedImportAsRefId : function(value){
 				var self = this;
 				var selectedImportAsRefId = [];
 				var $selectedTab = $("#"+self.tabSelected);
-
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
+				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
-					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val()); 
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
+					selectedImportAsRefId.push($selectedTr.find("td#importAs").find("select#importAsSelect > option:selected").val());
 				}
+				
 				return selectedImportAsRefId;
-			}, 
-
-			getSelectedImportType : function(){
+			},
+			
+			getSelectedImportType : function(value){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
+				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+id);
 					selectedItems.push($selectedTr.find("td#type > select#importTypeList > option:selected").text()); 
 				}
+				
 				return selectedItems;
-			}, 
+			},
 
-			checkSelectedImportAsName : function(){
+			checkSelectedImportAsName : function(value){
 				var self = this;
-				var selectedNames = self.getSelectedRuleName();
+				var selectedNames = self.getSelectedRuleName(value);
 
 				if(selectedNames == null || selectedNames.length==0)
 					return false;
@@ -149,14 +205,15 @@
 				return true;
 			},
 
-			hasDuplicateImportAsId: function(){
+			hasDuplicateImportAsId: function(value){
+
 				var self = this;
 				var selectedRuleId = new Array();
 				var $selectedTab = $("#" + self.tabSelected);
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
 
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + id);
 					var $importAsSelect = $selectedTr.find("td#importAs").find("select#importAsSelect > option:selected");
 					var ruleId = $importAsSelect.val();
 					if ($.inArray(ruleId, selectedRuleId)==-1){
@@ -171,15 +228,16 @@
 				return false;
 			},
 
-			hasDuplicateImportAsName: function(){
+			hasDuplicateImportAsName: function(value) {
 				var self = this;
 				var selectedRuleName = new Array();
 				var $selectedTab = $("#" + self.tabSelected);
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
 
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem" + $.formatAsId(id));
-					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
+					var $selectedTr = $selectedTab.find("tr#ruleItem" + id);
+					var ruleName = $selectedTr.find("td#importAs #replacement input#newName").val();
+					
 					if ($.inArray(ruleName.toLowerCase(), selectedRuleName)==-1){
 						selectedRuleName.push(ruleName.toLowerCase());
 					}else{
@@ -190,59 +248,80 @@
 				return false;
 			},
 
-			getSelectedRuleName : function(){
+			getSelectedRuleName : function(value){
+
 				var self = this;
 				var selectedRuleNames = [];
 				var $selectedTab = $("#"+self.tabSelected);
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
+				
 				for (var id in selectedItems){
-					var $selectedTr = $selectedTab.find("tr#ruleItem"+$.formatAsId(id));
+					var $selectedTr = $selectedTab.find("tr#ruleItem"+ id);
 					var ruleName = $selectedTr.find("td#importAs").find("input#newName").val();
 					selectedRuleNames.push(ruleName);
 				}
+				
 				return selectedRuleNames;
 			},
-
-			getSelectedItems : function(){
+			
+			getSelectedItems : function(flag) {
 				var self = this;
 				var selectedItems = [];
 				var $selectedTab = $("#"+self.tabSelected);
-				$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
-					selectedItems[$(this).attr("id")] = $(this).attr("name");
-				});
+				
+				if(flag == 'all') {
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedItems[$(this).attr("id")] = $(this).attr("name");
+					});
+				} else {
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input."+flag+"[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedItems[$(this).attr("id")] = $(this).attr("name");
+					});
+				}
+				
 				return selectedItems;
 			},
-
-			getSelectedRefId : function(){
+			
+			getSelectedRefId : function(flag){
 				var self = this;
 				var selectedRefIds = [];
-				var selectedItems = self.getSelectedItems();
-				for (var i in selectedItems){
-					selectedRefIds.push(i); 
+				var $selectedTab = $("#"+self.tabSelected);
+				
+				if(flag == 'all') {
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedRefIds.push($(this).attr("value"));
+					});
+				} else {
+					$selectedTab.find("tr:not(#ruleItemPattern) td#select > input."+flag+"[type='checkbox']:not([readonly]):checked").each(function(index, value){
+						selectedRefIds.push($(this).attr("value"));
+					});
 				}
+				
 				return selectedRefIds; 
 			},
 
-			getSelectedStatusId : function(){
+			getSelectedStatusId : function(value){
 				var self = this;
 				var selectedStatusId = [];
-				var selectedItems = self.getSelectedItems();
+				var selectedItems = self.getSelectedItems(value);
+				
 				for (var i in selectedItems){
 					selectedStatusId.push(selectedItems[i]); 
 				}
+				
 				return selectedStatusId; 
 			},
 			
-			addFieldValuesPaging : function(selectedTab, curPage, totalItem, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				var $selectedTab = selectedTab;
 				if(totalItem==0){
-					$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
 					$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").empty();
 					$selectedTab.find("#downloadIcon").hide();
 				}else{
 					$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
 					$selectedTab.find("#downloadIcon").show();
+					$selectedTab.find("div#ruleFilterDiv").show();
 					$selectedTab.find("#resultsTopPaging, #resultsBottomPaging").paginate({
 						currentPage: curPage, 
 						pageSize: self.pageSize,
@@ -250,45 +329,41 @@
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 						},
-						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter); },
-						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);},
-						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);},
+						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrder, ruleFilter); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrder, ruleFilter);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrder, ruleFilter);},
 						firstLinkCallback: function(e){self.getImportList(1);},
-						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);}
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrder, ruleFilter);}
 					});
 					
-					$selectedTab.find('input#keyword').off().on({
-						focusin: function(e){
-							if ($.trim($(e.currentTarget).val()).toLowerCase() === $.trim(self.defaultText).toLowerCase())
-								$(e.currentTarget).val("");
-						},
-						focusout: function(e){
-							if ($.isBlank($(e.currentTarget).val())) 
-								$(e.currentTarget).val(self.defaultText);
-						},
-						keydown: function(e){
-							var code = (e.keyCode ? e.keyCode : e.which);
-							var keyword = $.trim($(e.target).val());
-
-							if (code == 13 && keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase()) 
-								self.getImportList(1, keyword);
-						}
-					}).val(self.defaultText);
-					
-					$selectedTab.find("a#searchBtn").off().on({
+					$selectedTab.find("img#publishDateSort, img#ruleNameSort, img#exportDateSort").off().on({
 						click: function(e){
-							var keyword = $.trim($selectedTab.find('input#keyword').val());
+							var sortOrder = null;
+							var state = false;
 							
-							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-								self.getImportList(1, keyword);
-						}
-					});
-					
-					$selectedTab.find("img#publishDateSort").off().on({
-						click: function(e){
-							var $pubDateCheckbox = $selectedTab.find("input#pubDate");
-							var inverse = !$pubDateCheckbox.is(":checked");
-							self.getImportList(self.currentPage, self.searchText, inverse);
+							switch($(e.currentTarget).attr("id")){
+							case "ruleNameSort":
+								state = !$selectedTab.find("input#ruleNameInp").is(":checked");
+								sortOrder = state ? "RULE_NAME_DESC" : "RULE_NAME_ASC";
+								break;
+							case "publishDateSort":
+								state = !$selectedTab.find("input#pubDateInp").is(":checked");
+								sortOrder = state ? "PUBLISHED_DATE_DESC" : "PUBLISHED_DATE_ASC";
+								$selectedTab.find("input#pubDateInp").prop("checked", state); //check/uncheck ruleNameInp
+								//$selectedTab.find('.sortGroup:not(#pubDateInp)').prop('checked', false); //uncheck the other options in group
+								break;
+							case "exportDateSort":
+								state = !$selectedTab.find("input#expDateInp").is(":checked");
+								sortOrder = state ? "EXPORT_DATE_DESC" : "EXPORT_DATE_ASC";
+								$selectedTab.find("input#expDateInp").prop("checked", state); //check/uncheck ruleNameInp
+								//$selectedTab.find('.sortGroup:not(#expDateInp)').prop('checked', false); //uncheck the other options in group
+								break;
+							default:
+								$selectedTab.find('.sortGroup').prop('checked', false);
+								break;
+							}
+							
+							self.getImportList(self.currentPage, self.searchText, sortOrder);
 						}
 					});
 					
@@ -314,17 +389,57 @@
 						}
 					});
 				}
+				
+				$selectedTab.find("select#ruleFilter").val(ruleFilter).on({
+					change: function(e){
+						self.getImportList(1, self.searchText, sortOrder, $(this).val());
+					}
+				});
+				
+				$selectedTab.find('input#keyword').off().on({
+					focusin: function(e){
+						if ($.trim($(e.currentTarget).val()).toLowerCase() === $.trim(self.defaultText).toLowerCase())
+							$(e.currentTarget).val("");
+					},
+					focusout: function(e){
+						if ($.isBlank($(e.currentTarget).val())) 
+							$(e.currentTarget).val(self.defaultText);
+					},
+					keydown: function(e){
+						var code = (e.keyCode ? e.keyCode : e.which);
+						var keyword = $.trim($(e.target).val());
+
+						if (code == 13){ 
+							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+								self.getImportList(1, keyword);
+							else
+								self.getImportList(1);
+						}
+					}
+				}).val(self.defaultText);
+				
+				$selectedTab.find("a#searchBtn").off().on({
+					click: function(e){
+						var keyword = $.trim($selectedTab.find('input#keyword').val());
+						
+						if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
+							self.getImportList(1, keyword);
+						else
+							self.getImportList(1);
+					}
+				});
 			},
 
+			// not in used.
 			importHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-
+				
 				$selectedTab.find("a#okBtn, a#rejectBtn").on({
 					click: function(evt){
 						var comment = $.trim($selectedTab.find("#comment").val());
-
-						if(self.getSelectedRefId().length==0){
+						
+						if(self.getSelectedRefId('all').length==0){
 							jAlert("Please select rule.", self.moduleName);
 						}else if ($.isBlank(comment)){
 							jAlert("Please add comment.", self.moduleName);
@@ -334,17 +449,17 @@
 							switch($(evt.currentTarget).attr("id")){
 							case "okBtn":
 								setTimeout(function() {
-									if(self.hasDuplicateImportAsId()){	//check if all selected rules have ruleName value
+									if(self.hasDuplicateImportAsId('all')){	//check if all selected rules have ruleName value
 										jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
-									}else if(self.hasDuplicateImportAsName()){	//check if all selected rules have ruleName value
+									}else if(self.hasDuplicateImportAsName('all')){	//check if all selected rules have ruleName value
 										jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
-									}else if(!self.checkSelectedImportAsName()){	//check if all selected rules have ruleName value
+									}else if(!self.checkSelectedImportAsName('all')){	//check if all selected rules have ruleName value
 										jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 									}else{
 										RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
-											callback: function(data){									
-												self.postMsg(data,true);	
-												self.getImportList(1);
+											callback: function(data) {									
+												self.postMsg(data, 'imported');	
+												self.getImportList(1);	
 											},
 											preHook:function(){ 
 												self.prepareTabContent(); 
@@ -356,12 +471,12 @@
 							case "rejectBtn": 
 								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {
 									callback: function(data){
-										self.postMsg(data,false);	
+										self.postMsg(data, 'rejected');	
 										self.getImportList(1);
 									},
-									preHook:function(){ 
+									preHook:function(){
 										self.prepareTabContent(); 
-									}	
+									}
 								});
 								break;
 							}
@@ -369,7 +484,61 @@
 					}
 				});
 			},
-
+			
+			submitHandler : function(){
+				var self = this;
+				var $selectedTab = $("#"+self.tabSelected);
+				
+				$selectedTab.find("a#sbmtBtn").on({
+					click: function(evt){
+						var comment = $.trim($selectedTab.find("#comment").val());
+						
+						if(self.getSelectedRefId('all').length==0){
+							jAlert("Please select rule.", self.moduleName);
+						}else if($.isBlank(comment)){
+							jAlert("Please add comment.", self.moduleName);
+						}else if(!isXSSSafe(comment)){
+							jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+						}else{
+							var importedItems = [];
+							var rejectedItems = [];
+							
+							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
+								switch($(value).attr('class')) {
+								case 'import':
+									importedItems.push($(value).attr('name'));
+									break;
+								case 'reject':
+									rejectedItems.push($(value).attr('name'));
+									break;
+								}
+							});
+							
+							if(importedItems.length > 0) {
+								if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
+									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+								}else if(self.hasDuplicateImportAsName('import')){	//check if all selected rules have ruleName value
+									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
+								}else if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
+									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+								} else {
+									RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+											self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
+										callback: function(data){									
+											self.postMsg(data, 'all');	
+											self.getImportList();
+										},
+										preHook:function() { 
+											self.prepareTabContent(); 
+										}
+									});
+								}
+							}
+						}
+					}
+				});
+			},
+			
 			getPreTemplate : function(selectedType){
 				var template = '';
 				template  = '<div class="rulePreview w590 marB20">';
@@ -395,18 +564,14 @@
 				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
-				template += '			If the rule is ready to be imported, click on <strong>Import</strong>. Provide notes in the <strong>Comment</strong> box.';
 				template += '		<p>';
 				template += '	</div>';
-				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-				template += '	<label class="floatL w480"><textarea id="comment" rows="5" class="w460" style="height:32px"></textarea></label>';
-				template += '	<div class="clearB"></div>';
 				template += '	<div id="btnHolder" align="right" class="padR15 marT10" style="display:none">';
-				template += '		<a id="okBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Import</div>';
+				template += '		<a id="setImportBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Set For Import</div>';
 				template += '		</a>';
-				template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Reject</div>';
+				template += '		<a id="setRejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+				template += '			<div class="buttons fontBold">Set For Reject</div>';
 				template += '		</a>';
 				template += '	</div>';
 				template += '</div>';
@@ -433,42 +598,47 @@
 				return template;
 			},
 
-			getRuleTransferMap: function(curPage, keywordFilter, ruleFilter, exportDateOrder, publishDateOrder){
+			getRuleTransferMap: function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
-				//TODO: dynamic origin and target
 				RuleTransferServiceJS.getExportMapList("pcmall", $.makeArray(), self.entityName, {
 					callback: function(exportMapList){
 						if(exportMapList){
 							for(var index in exportMapList){
 								self.ruleTransferMap[exportMapList[index]["ruleIdOrigin"]] = exportMapList[index];
-								self.ruleTargetList[exportMapList[index]["ruleIdTarget"]] = exportMapList[index]["ruleIdTarget"];
+								if(exportMapList[index]["ruleIdTarget"])
+									self.ruleTargetList[exportMapList[index]["ruleIdTarget"]] = exportMapList[index]["ruleIdTarget"];
 							}
 						}
 					},
 					postHook: function(){
-						self.getAllRulesToImport(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+						self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);
 					}
 				});
 			},
 
-			getAllRulesToImport: function(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			getAllRulesToImport: function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 
-				RuleTransferServiceJS.getRulesToImport(self.entityName, keywordFilter, curPage, self.pageSize, ruleFilter, exportDateOrder, publishDateOrder, {
+				RuleTransferServiceJS.getRulesToImport(self.entityName, keywordFilter, curPage, self.pageSize, ruleFilter, sortOrder, {
 					callback:function(data){
-						var list = data;
-						var totalSize = (data) ? data.length : 0;
+						var list = data.list;
+						var listSize = list.length;
+						var totalSize = (data) ? data.totalSize : 0;
+						//var enableSorting = false;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
 						var ruleDiv = $selectedTab.find("#rule").parent()[0];
 
+						$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").hide();
+						
 						if (totalSize>0){
 							// Populate table row
-							for(var i=0; i < totalSize; i++){
+							for(var i=0; i < listSize; i++){
 								var rule = list[i];
 								var ruleId = rule["ruleId"];
 								var ruleName = rule["ruleName"];
+								var storeOrigin = rule["store"];
 								var dbRuleId = "";
 
 								switch(self.entityName.toLowerCase()){
@@ -483,11 +653,22 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
+								
+								if(rule["deleted"]){
+									$tr.find("td#ruleRefId").html("Data for rule <b>" + ruleName + "</b> is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.")
+										.prop("colspan",6);
+									$tr.find("td#select,td#ruleOption,td#publishDate,td#type,td#importAs").remove();
+								}
+								else{
+								/*if(!enableSorting){
+									enableSorting = true;
+									$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
+								}*/
 								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
-
-								$tr.find("td#select > input[type='checkbox']").attr({"id":ruleId, "name": rule["ruleName"]});
-
-								$tr.find("td#ruleOption > img.previewIcon").attr("id", ruleId);
+								
+								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
+								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("td#ruleOption > img.previewIcon")
@@ -545,6 +726,54 @@
 															}
 														});
 													}
+												},
+												
+												checkUncheckCheckboxCallback : function(base, ruleId, pub) {
+													switch(pub) {
+													case 'import':
+														self.toggleImportCheckbox($.formatAsId(ruleId));
+														break;
+													case 'reject':
+														self.toggleRejectCheckbox($.formatAsId(ruleId));
+														break;
+													}
+												},
+												changeImportTypeCallback : function(base, ruleId, opt) {
+													$("#ruleItem"+$.formatAsId(ruleId)+" #type select").val(opt);
+												},
+												changeImportAsCallback : function(base, ruleId, importAs, ruleName, newName) {
+													if(importAs != 0 || newName.length>0) {
+														$("#ruleItem"+$.formatAsId(ruleId)+" #importAs select").val(importAs).change();
+														$("#ruleItem"+$.formatAsId(ruleId)+" #importAs #replacement #newName").val(newName);
+													}
+												},
+												
+												itemImportTypeListCallback: function(base, contentHolder){
+													base.populateImportTypeList(self.importTypeList, contentHolder);
+												},
+												itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
+												},
+												itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+													if (self.entityName === "elevate"){
+														ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+															callback:function(data){
+																base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+															},
+															preHook: function(){
+																base.prepareForceAddStatus(contentHolder);
+															}
+														});
+													}
 												}
 									});
 								}else{
@@ -566,7 +795,7 @@
 										$importTypeSelect.append($("<option>", {value: importType}).text(self.importTypeList[importType]));
 									}
 								}
-
+								
 								//import as
 								$tr.find("td#importAs").importas({
 									container: ruleDiv,
@@ -590,7 +819,7 @@
 										}
 									}
 								});
-
+								}
 								$tr.appendTo($table);
 							}
 
@@ -600,15 +829,14 @@
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
-							self.importHandler();
+							self.submitHandler();
+							self.toggleCheckbox();
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
 						}
-						
+						self.addFiltersHandler($selectedTab, curPage, totalSize, keywordFilter, sortOrder, ruleFilter);
 						self.populateFilters($selectedTab);
-						self.addFieldValuesPaging($selectedTab, curPage, totalSize, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
-
 					},
 					preHook:function(){ 
 						self.prepareTabContent();
@@ -616,42 +844,141 @@
 					postHook:function(){ 
 						self.cleanUpTabContent();
 					}
-				});			
+				});
 			},
 			
 
 			populateFilters : function($selectedTab){
 				var self = this;
-				var sortPath = "";
-								
-				if(self.pubDateAsc == undefined){
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/bg.gif';
-					$selectedTab.find('input#pubDate').prop("checked", true);
-				}else if(self.pubDateAsc){
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/asc.gif';
-					$selectedTab.find('input#pubDate').prop("checked", true);
-				}else{
-					sortPath = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
-					$selectedTab.find('input#pubDate').prop("checked", false);
-				}
+				var defaultSortIcon = GLOBAL_contextPath + '/images/tablesorter/bg.gif';
+				var ascSortIcon = GLOBAL_contextPath + '/images/tablesorter/asc.gif';
+				var descSortIcon = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
 				
-				$selectedTab.find('img#publishDateSort').attr('src', sortPath);
-				$selectedTab.find('input#keyword').val(self.searchText);
+				//populate ruleFilter
+				$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				
+				//populate search keyword input
+				if($.isBlank(self.searchText))
+					$selectedTab.find('input#keyword').val(self.defaultText);
+				else
+					$selectedTab.find('input#keyword').val(self.searchText);
+				
+				//populate sort icon
+				//1. initialize as no active sort Order
+				$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").attr("src", defaultSortIcon);
+				
+				//2. change sort icon of active sort order
+				//activeSortOrder - EXPORT_DATE_DESC, EXPORT_DATE_ASC, RULE_NAME_DESC, RULE_NAME_ASC, PUBLISHED_DATE_DESC, PUBLISHED_DATE_ASC
+				switch(self.activeSortOrder){ 
+				case "RULE_NAME_ASC":
+					$selectedTab.find("img#ruleNameSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#ruleNameInp").prop("checked", false); 
+					break;
+				case "PUBLISHED_DATE_ASC":
+					$selectedTab.find("img#publishDateSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#pubDateInp").prop("checked", false); 
+					break;
+				case "EXPORT_DATE_ASC":
+					$selectedTab.find("img#exportDateSort").attr("src",ascSortIcon);
+					$selectedTab.find("input#expDateInp").prop("checked", false); 
+					break;
+				case "RULE_NAME_DESC":
+					$selectedTab.find("img#ruleNameSort").attr("src",descSortIcon);
+					$selectedTab.find("input#ruleNameInp").prop("checked", true); 
+					break;
+				case "PUBLISHED_DATE_DESC":
+					$selectedTab.find("img#publishDateSort").attr("src",descSortIcon);
+					$selectedTab.find("input#pubDateInp").prop("checked", true); 
+					break;
+				case "EXPORT_DATE_DESC":
+					$selectedTab.find("img#exportDateSort").attr("src",descSortIcon);
+					$selectedTab.find("input#expDateInp").prop("checked", true);
+					break;
+					break;
+				default: //if no pubDate order is specified, default is ascending
+					break;
+				}
 			},
 
-			getImportList : function(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter){
+			getImportList : function(curPage, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				self.currentPage = curPage;
 				self.searchText = keywordFilter;
-				self.pubDateAsc = publishDateOrder;
-
+				self.activeSortOrder = sortOrder;
+				self.ruleFilterBy = ruleFilter;
+				
 				if(GLOBAL_store==="pcmallcap"){
-					self.getRuleTransferMap(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+					self.getRuleTransferMap(curPage, keywordFilter, sortOrder, ruleFilter);
 				}else{
-					self.getAllRulesToImport(curPage, keywordFilter, publishDateOrder, exportDateOrder, ruleFilter);
+					self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);
 				}
 			},
-
+			
+			toggleCheckbox : function() {
+				var self = this;
+				var $selectedTab = $("#"+self.tabSelected);
+				
+				$selectedTab.find(".import, .reject").on({
+					click: function(evt) {
+						var id = $(this).attr('id');
+						switch($(this).attr('class')) {
+						case 'import':
+							if($('input[type="checkbox"]#'+id+'.import').attr('checked') == 'checked') {
+								self.toggleImportCheckbox(id);
+							} else {
+								self.untoggleImportCheckbox(id);
+							}
+							break;
+						case 'importReject import':
+							if($('input[type="checkbox"]#'+id+'.import').attr('checked') != 'checked') {
+								self.toggleImportCheckbox(id);
+							} else {
+								self.untoggleImportCheckbox(id);
+							}
+							break;
+						case 'reject':
+							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') == 'checked') {
+								self.toggleRejectCheckbox(id);
+							} else {
+								self.untoggleRejectCheckbox(id);
+							}
+							break;
+						case 'importReject reject':
+							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
+								self.toggleRejectCheckbox(id);
+							} else {
+								self.untoggleRejectCheckbox(id);
+							}
+							break;
+						}
+					}
+				});
+			},
+			
+			toggleImportCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', true);
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_active.png');
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
+			},
+			
+			untoggleImportCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
+			},
+			
+			toggleRejectCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', true);
+				$('img#'+id+'.import').attr('src', GLOBAL_contextPath+'/images/approve_gray.png');
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_active.png');
+			},
+			
+			untoggleRejectCheckbox : function(id) {
+				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
+				$('img#'+id+'.reject').attr('src', GLOBAL_contextPath+'/images/reject_gray.png');
+			},
+			
 			init : function() {
 				var self = this;
 				$("#titleText").html(self.moduleName);
@@ -662,6 +989,6 @@
 
 	$(document).ready(function() {
 		Import.init();
-	});	
-
-})(jQuery);	
+	});
+	
+})(jQuery);

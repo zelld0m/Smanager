@@ -610,6 +610,7 @@ body .tabvs .ui-widget-content.contentWrapper	{ border:1px solid #bdbdbd; margin
 .qtip .ui-tabs-panel h3			{ border-top:1px solid #bdbdbd; background:none; padding:3px 8px; margin-bottom:0 }
 .qtip .alert					{ background: url(images/icon_alert.png) 8px 4px no-repeat #eee; padding:6px 5px 6px 26px !important; }
 .notification					{ background: url(images/icon_notification.png) 8px 8px no-repeat #F1F4F9; padding:6px 5px 6px 26px !important; }
+.error				 		    { background: url(images/icon_alert.png) 8px 8px no-repeat #F1F4F9; padding:6px 5px 6px 26px !important; }
 .qtip .ui-widget-content label	{ vertical-align: middle; }
 
 
