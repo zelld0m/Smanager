@@ -139,10 +139,10 @@ public class DAOConstants {
 	public static final String SP_GET_GROUP_SECURITY				= "usp_Get_Manager_Group_Security";
 
 	//EXPORT_RULE_MAP
-	public static final String SP_GET_EXPORT_RULE_MAP				= "usp_Get_Export_Rule_Map_Temp";
-	public static final String SP_ADD_EXPORT_RULE_MAP				= "usp_Add_Export_Rule_Map_Temp";
-	public static final String SP_UPDATE_EXPORT_RULE_MAP			= "usp_Update_Export_Rule_Map_Temp";
-	public static final String SP_DELETE_EXPORT_RULE_MAP			= "usp_Delete_Export_Rule_Map_Temp";
+	public static final String SP_GET_EXPORT_RULE_MAP				= "usp_Get_Export_Rule_Map";
+	public static final String SP_ADD_EXPORT_RULE_MAP				= "usp_Add_Export_Rule_Map";
+	public static final String SP_UPDATE_EXPORT_RULE_MAP			= "usp_Update_Export_Rule_Map";
+	public static final String SP_DELETE_EXPORT_RULE_MAP			= "usp_Delete_Export_Rule_Map";
 	
 	/* Stored Procedure Parameter Names */
 	public static final String PARAM_STORE_ID 						= "store_id";
