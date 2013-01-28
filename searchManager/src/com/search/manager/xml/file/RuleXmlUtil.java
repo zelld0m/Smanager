@@ -643,7 +643,8 @@ public class RuleXmlUtil{
 
 				RedirectRule addRel = new RedirectRule(ruleId, qRXml.getRedirectType(), qRXml.getRuleName(), qRXml.getDescription(), store,
 						(Integer)null, (String)null, (String)null, qRXml.getCreatedBy(), qRXml.getLastModifiedBy(),
-						qRXml.getCreatedDate(), qRXml.getLastModifiedDate(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword);
+						qRXml.getCreatedDate(), qRXml.getLastModifiedDate(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword, 
+						qRXml.getReplaceKeywordMessageType(), qRXml.getReplaceKeywordMessageCustomText());
 
 				if (daoService.addRedirectRule(addRel) <= 0) {
 					RedirectRule delRel = new RedirectRule(ruleId);
