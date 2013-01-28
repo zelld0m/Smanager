@@ -19,43 +19,69 @@
 			activeSortOrder : null,
 			ruleFilterBy : "all",
 			
-			postMsg : function(data,pub){
+			postMsg : function(data, pub){
 				var self = this;
 				var msg_ = pub;
 				var okmsg = '';
 
-				if(pub == 'all') { // Rules imported and rejected message.
-					if(!$.isEmptyObject(data)) {
-						var imported = '';
-						var rejected = '';
-						
-						for(key in data) {
-							if(data[key] == 'import_success') {
-								imported += '\n-' + key;
-							} else {
-								rejected += '\n-' + key;
-							}
+				if(!$.isEmptyObject(data)) {
+					var importFail = '';
+					var importSuccessSubmitForApprovalFail = '';
+					var importSuccessPublishFail ='';
+					var importSuccess = '';
+					var rejectFail = '';
+					var rejectSuccess = '';
+					
+					for(key in data) {
+						switch(data[key]) {
+						case 'import_fail':
+							importFail += '\n-' + key;
+							break;
+						case 'import_success_submit_for_approval_fail':
+							importSuccessSubmitForApprovalFail += '\n-' + key;
+							break;
+						case 'import_success_publish_fail':
+							importSuccessPublishFail += '\n-' + key;
+							break;
+						case 'import_success':
+							importSuccess += '\n-' + key;
+							break;
+						case 'reject_fail':
+							rejectFail += '\n-' + key;
+							break;
+						case 'reject_success':
+							rejectSuccess += '\n-' + key;
+							break;
 						}
 						
-						okmsg = 'Following rules were successfully imported:';	
-						// Imported rules
-						okmsg += imported;
-						okmsg += '\nFollowing rules were successfully rejected:';
-						// Rejected rules
-						okmsg += rejected;
-					} else {
-						okmsg = 'No rules were successfully imported and rejected.';
+					}
+					
+					if(importFail.length > 0) {
+						okmsg += 'Failed to import the following rules:';	
+						okmsg += importFail + '\n';
+					}
+					if(importSuccessSubmitForApprovalFail.length > 0) {
+						okmsg += 'Failed to submit for approval the following imported rules:';	
+						okmsg += importSuccessSubmitForApprovalFail + '\n';
+					}
+					if(importSuccessPublishFail.length > 0) {
+						okmsg += 'Failed to auto-publish the following imported rules:';
+						okmsg += importSuccessPublishFail + '\n';
+					}
+					if(importSuccess.length > 0) {
+						okmsg += 'Following rules were successfully imported:';	
+						okmsg += importSuccess + '\n';
+					}
+					if(rejectFail.length > 0) {
+						okmsg += 'Following rules were fail to import:';	
+						okmsg += rejectFail + '\n';
+					}
+					if(rejectSuccess.length > 0) {
+						okmsg += 'Following rules were successfully rejected:';	
+						okmsg += rejectSuccess + '\n';
 					}
 				} else {
-					if(data.length > 0) {
-						okmsg = 'Following rules were successfully ' + msg_ + ':';
-						
-						for(var i=0; i<data.length; i++){	
-							okmsg += '\n-'+ data[i];	
-						}	
-					} else {
-						okmsg = 'No rules were successfully ' + msg_ +'.';
-					}
+					okmsg = 'No rules were successfully imported and rejected.';
 				}
 				
 				jAlert(okmsg, self.entityName);
@@ -476,7 +502,6 @@
 						}else{
 							var importedItems = [];
 							var rejectedItems = [];
-							var validImport = true;
 							
 							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
 								switch($(value).attr('class')) {
@@ -492,47 +517,22 @@
 							if(importedItems.length > 0) {
 								if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
-									validImport = false;
 								}else if(self.hasDuplicateImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
-									validImport = false;
 								}else if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
-									validImport = false;
+								} else {
+									RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+											self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
+										callback: function(data){									
+											self.postMsg(data, 'all');	
+											self.getImportList();
+										},
+										preHook:function() { 
+											self.prepareTabContent(); 
+										}
+									});
 								}
-							}
-							
-							if(validImport && importedItems.length > 0 && rejectedItems.length <= 0) {
-								RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'), {
-									callback: function(data){									
-										self.postMsg(data, 'imported');	
-										self.getImportList();	
-									},
-									preHook:function() { 
-										self.prepareTabContent(); 
-									}	
-								});
-							} else if(validImport && importedItems.length <=0 && rejectedItems.length > 0) {
-								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId('reject'), comment, self.getSelectedStatusId('reject'), {
-									callback: function(data){
-										self.postMsg(data, 'rejected');
-										self.getImportList();
-									},
-									preHook:function(){
-										self.prepareTabContent();
-									}
-								});
-							} else if(validImport) {
-								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
-										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
-									callback: function(data){									
-										self.postMsg(data, 'all');	
-										self.getImportList();
-									},
-									preHook:function() { 
-										self.prepareTabContent(); 
-									}
-								});
 							}
 						}
 					}
@@ -605,7 +605,8 @@
 						if(exportMapList){
 							for(var index in exportMapList){
 								self.ruleTransferMap[exportMapList[index]["ruleIdOrigin"]] = exportMapList[index];
-								self.ruleTargetList[exportMapList[index]["ruleIdTarget"]] = exportMapList[index]["ruleIdTarget"];
+								if(exportMapList[index]["ruleIdTarget"])
+									self.ruleTargetList[exportMapList[index]["ruleIdTarget"]] = exportMapList[index]["ruleIdTarget"];
 							}
 						}
 					},
