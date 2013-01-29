@@ -487,7 +487,7 @@ input[type="checkbox"].reject {
 }
 
 .approve_btn:hover {
-	background-image: url("../images/approve_active.png");	
+	background-image: url("../images/approve_active.png")!important;	
 }
 
 .reject_btn {
@@ -500,7 +500,7 @@ input[type="checkbox"].reject {
 }
 
 .reject_btn:hover {
-	background-image: url("../images/reject_active.png");	
+	background-image: url("../images/reject_active.png")!important;	
 }
 
 #link_btn{

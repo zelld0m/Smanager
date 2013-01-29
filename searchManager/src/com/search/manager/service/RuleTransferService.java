@@ -97,7 +97,16 @@ public class RuleTransferService {
 							list.add(ruleXml);
 						}
 						else {
-							list.add(new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true));
+							ruleXml = new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true);
+
+							RuleStatus ruleStatus = new RuleStatus();
+
+							ruleStatus.setLastPublishedDate(ruleMap.getPublishedDate());
+							ruleStatus.setLastExportDate(ruleMap.getExportDate());
+							ruleXml.setRuleStatus(ruleStatus);
+
+							list.add(ruleXml);
+
 							logger.warn(String.format("Missing ruleXml for store:%s, ruleEntity:%s, ruleId: %s", store, ruleType, ruleId));
 						}
 					}

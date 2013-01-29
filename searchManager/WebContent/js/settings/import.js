@@ -502,7 +502,7 @@
 						}else{
 							var importedItems = [];
 							var rejectedItems = [];
-							
+							var validImport = true;
 							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
 								switch($(value).attr('class')) {
 								case 'import':
@@ -517,22 +517,29 @@
 							if(importedItems.length > 0) {
 								if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								}else if(self.hasDuplicateImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								}else if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								} else {
-									RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
-											self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
-										callback: function(data){									
-											self.postMsg(data, 'all');	
-											self.getImportList();
-										},
-										preHook:function() { 
-											self.prepareTabContent(); 
-										}
-									});
+									validImport = true;
 								}
+							}
+							
+							if(validImport) {
+								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
+									callback: function(data){									
+										self.postMsg(data, 'all');	
+										self.getImportList(1);
+									},
+									preHook:function() { 
+										self.prepareTabContent();
+									}
+								});
 							}
 						}
 					}
@@ -625,7 +632,6 @@
 						var list = data.list;
 						var listSize = list.length;
 						var totalSize = (data) ? data.totalSize : 0;
-						//var enableSorting = false;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
 						var ruleDiv = $selectedTab.find("#rule").parent()[0];
@@ -633,6 +639,7 @@
 						$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").hide();
 						
 						if (totalSize>0){
+							$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
 							// Populate table row
 							for(var i=0; i < listSize; i++){
 								var rule = list[i];
@@ -640,7 +647,7 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
-
+								
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
 								case "exclude":
@@ -653,19 +660,17 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
 								if(rule["deleted"]){
-									$tr.find("td#ruleRefId").html("Data for rule <b>" + ruleName + "</b> is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.")
+									var msg = "Data for rule <b>" + ruleName + "</b> ";
+									msg += $.isNotBlank(lastPublishedDate) ? " published on <b>"+lastPublishedDate+"</b> " : " ";
+									msg += "is not available. <br/>Please re-export rule from "+ getStoreLabel(storeOrigin) +" or contact Search Manager Team.";
+									$tr.find("td#ruleRefId").html(msg)
 										.prop("colspan",6);
 									$tr.find("td#select,td#ruleOption,td#publishDate,td#type,td#importAs").remove();
 								}
 								else{
-								/*if(!enableSorting){
-									enableSorting = true;
-									$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
-								}*/
-								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
-								
 								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
 //								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
 								$tr.find("td#select > div.approve_btn").attr({"id": $.formatAsId(ruleId)});
