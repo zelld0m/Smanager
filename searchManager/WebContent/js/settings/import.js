@@ -534,7 +534,7 @@
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
 									callback: function(data){									
 										self.postMsg(data, 'all');	
-										self.getImportList();
+										self.getImportList(1);
 									},
 									preHook:function() { 
 										self.prepareTabContent();
