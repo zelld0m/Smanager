@@ -502,7 +502,7 @@
 						}else{
 							var importedItems = [];
 							var rejectedItems = [];
-							
+							var validImport = true;
 							$selectedTab.find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:not([readonly]):checked").each(function(index, value){
 								switch($(value).attr('class')) {
 								case 'import':
@@ -517,22 +517,29 @@
 							if(importedItems.length > 0) {
 								if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								}else if(self.hasDuplicateImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								}else if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+									validImport = false;
 								} else {
-									RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
-											self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
-										callback: function(data){									
-											self.postMsg(data, 'all');	
-											self.getImportList();
-										},
-										preHook:function() { 
-											self.prepareTabContent(); 
-										}
-									});
+									validImport = true;
 								}
+							}
+							
+							if(validImport) {
+								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
+									callback: function(data){									
+										self.postMsg(data, 'all');	
+										self.getImportList();
+									},
+									preHook:function() { 
+										self.prepareTabContent();
+									}
+								});
 							}
 						}
 					}
