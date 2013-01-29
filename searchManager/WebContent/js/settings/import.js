@@ -665,7 +665,7 @@
 								if(rule["deleted"]){
 									var msg = "Data for rule <b>" + ruleName + "</b> ";
 									msg += $.isNotBlank(lastPublishedDate) ? " published on <b>"+lastPublishedDate+"</b> " : " ";
-									msg += "is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.";
+									msg += "is not available. <br/>Please re-export rule from "+ getStoreLabel(storeOrigin) +" or contact Search Manager Team.";
 									$tr.find("td#ruleRefId").html(msg)
 										.prop("colspan",6);
 									$tr.find("td#select,td#ruleOption,td#publishDate,td#type,td#importAs").remove();
