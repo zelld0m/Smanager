@@ -679,7 +679,7 @@
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
 
 								if (rule["updateStatus"]!=="DELETE"){
-									$tr.find("td#ruleOption > img.previewIcon")
+									$tr.find("img.previewIcon")
 									.xmlpreview({
 										transferType: "import",
 										ruleType: self.entityName,
