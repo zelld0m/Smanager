@@ -411,11 +411,38 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 
-			if (StringUtils.isNotBlank(changedKeyword)) {
+			if(redirectRule != null) {
 				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
-				redirectNode.appendChild(mainDoc.createTextNode(changedKeyword));				
+				Node origKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD);
+				Node replacementKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD);
+				Node replacementTypeNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE);
+				Node customTextNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT);
+				
+				if(StringUtils.isNotBlank(originalKeyword)) {
+					origKeywordNode.appendChild(mainDoc.createTextNode(originalKeyword));
+					redirectNode.appendChild(origKeywordNode);
+				}
+				if(StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
+					replacementKeywordNode.appendChild(mainDoc.createTextNode(redirectRule.getChangeKeyword()));
+					redirectNode.appendChild(replacementKeywordNode);
+				}
+				if(redirectRule.getReplaceKeywordMessageType() != null) {
+					replacementTypeNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageType()+""));
+					redirectNode.appendChild(replacementTypeNode);
+				}
+				if(StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
+					customTextNode.appendChild(mainDoc.createTextNode(redirectRule.getReplaceKeywordMessageCustomText()));
+					redirectNode.appendChild(customTextNode);
+				}
+				
 				responseHeaderNode.appendChild(redirectNode);
 			}
+			
+//			if (StringUtils.isNotBlank(changedKeyword)) {
+//				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
+//				redirectNode.appendChild(mainDoc.createTextNode(changedKeyword));				
+//				responseHeaderNode.appendChild(redirectNode);
+//			}
 			
 			if (activeRules != null) {
 				Node activeRuleNode = mainDoc.createElement(SolrConstants.TAG_SEARCH_RULES);

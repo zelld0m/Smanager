@@ -134,9 +134,31 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			initialJson.getJSONObject(SolrConstants.TAG_RESPONSE).put(SolrConstants.SOLR_PARAM_START, startRow);
 			// put back rows in header
 			responseHeader = initialJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
-			if (StringUtils.isNotEmpty(changedKeyword)) {
-				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
+			
+			if(redirectRule != null) {
+				JSONObject redirectObject = new JSONObject();
+				Map<String, String> fields = new HashMap<String, String>();
+				
+				if(StringUtils.isNotBlank(originalKeyword)) {
+					fields.put(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD, originalKeyword);
+				}
+				if(StringUtils.isNotBlank(redirectRule.getChangeKeyword())) {
+					fields.put(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD, redirectRule.getChangeKeyword());
+				}
+				if(redirectRule.getReplaceKeywordMessageType() != null) {
+					fields.put(SolrConstants.TAG_REDIRECT_REPLACEMENT_TYPE, redirectRule.getReplaceKeywordMessageType()+"");
+				}
+				if(StringUtils.isNotBlank(redirectRule.getReplaceKeywordMessageCustomText())) {
+					fields.put(SolrConstants.TAG_REDIRECT_CUSTOM_TEXT, redirectRule.getReplaceKeywordMessageCustomText());
+				}
+				redirectObject.putAll(fields);
+				responseHeader.element(SolrConstants.TAG_REDIRECT, redirectObject);
 			}
+			
+//			if (StringUtils.isNotEmpty(changedKeyword)) {
+//				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
+//			}
+			
 			// TODO: make this get value from solr.xml
 			facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", "PCMall_FacetTemplate"});
 			facetFields = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"});
