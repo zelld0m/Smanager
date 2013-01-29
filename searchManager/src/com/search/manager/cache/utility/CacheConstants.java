@@ -35,8 +35,10 @@ public class CacheConstants {
 			storeId = "bd";			
 		}else if("ecost".equalsIgnoreCase(storeId)) {
 			storeId = "ec";			
-		}else if("sbn".equalsIgnoreCase(storeId)) {
-			storeId = "sbn";			
+		}else if("pcmgbd".equalsIgnoreCase(storeId)) {
+			storeId = "pg";			
+		}else if("macmallbd".equalsIgnoreCase(storeId)){
+			storeId = "mb";
 		}else {
 			throw new DataException("Unrecognized Store: " + storeId);
 		}

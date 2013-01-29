@@ -847,11 +847,23 @@
 			});
 
 			$catcode.off().on({
+				mouseenter: function(e){
+					e.data.input = $.trim($(e.currentTarget).val());
+				},
 				mouseleave: function(e){
-					if ($catcode.is(":visible"))
+					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
 						base.populateIMSManufacturers(e);
-				}
-			});
+					}
+				},
+				focusin: function(e){
+					e.data.input = $.trim($(e.currentTarget).val());
+				},
+				focusout: function(e){
+					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+						base.populateIMSManufacturers(e);
+					}
+				},
+			},{input: ""});
 
 			base.addDynamicAttributeListener();
 			base.addFacetListener();
@@ -1399,7 +1411,7 @@
 				base.contentHolder.find('a[href="#cnet"]').parent('li').remove();
 				base.contentHolder.find("div#cnet").remove();
 
-				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="sbn"){
+				if(GLOBAL_store==="pcmall" || GLOBAL_store==="pcmallcap" || GLOBAL_store==="pcmgbd"){
 					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
 					base.contentHolder.find("div#dynamicAttribute").remove();
 				}

@@ -182,9 +182,10 @@ AjaxSolr.AbstractManager = AjaxSolr.Class.extend(
    */
   handleResponse: function (data) {
     this.response = data;
-
+    var validResponse = !$.isEmptyObject(data) && !$.isEmptyObject(data["response"]);
+    
     for (var widgetId in this.widgets) {
-      this.widgets[widgetId].afterRequest();
+        validResponse? this.widgets[widgetId].afterRequest(): this.widgets[widgetId].errorRequest();
     }
   }
 });

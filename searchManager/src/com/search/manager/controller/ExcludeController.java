@@ -133,7 +133,7 @@ public class ExcludeController {
 
 		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 		
-		String subTitle = "List of %%Filter%%Demoted Items for [" + keyword + "]";
+		String subTitle = "List of %%Filter%%Excluded Items for [" + keyword + "]";
 		if ("active".equalsIgnoreCase(filter)) {
 			subTitle = StringUtils.replace(subTitle, "%%Filter%%", "Active ");
 		}

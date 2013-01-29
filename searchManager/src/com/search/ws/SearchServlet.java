@@ -200,15 +200,20 @@ public class SearchServlet extends HttpServlet {
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
+			
+			if(StringUtils.equalsIgnoreCase(coreName, "pcmbd")){
+				coreName = "pcmallcap";
+			}
+			
 			String storeName = configManager.getStoreName(coreName);
-
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Server name: " + serverName);
 				logger.debug("Solr path: " + solr);
 				logger.debug("Core name: " + coreName);
 				logger.debug("store name: " + storeName);
 			}
-
+			
 			// parse the parameters, construct POST form
 			final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			Set<String> paramNames = request.getParameterMap().keySet();
