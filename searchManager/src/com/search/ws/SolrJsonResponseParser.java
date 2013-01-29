@@ -26,7 +26,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
@@ -87,7 +86,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			return (JSONObject)slurper.parseText(jsonText.toString());
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		finally {
 			try { if (in != null) in.close();  } catch (IOException e) { }
@@ -113,6 +112,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int numFound = -1;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -122,7 +123,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			initialJson = parseJsonResponse(slurper, solrResponse);
 			// locate the result node and reference it <result name="response" maxScore="23.015398" start="0" numFound="360207">
 			// results will be added here
@@ -156,15 +157,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			paramsHeader.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
 			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get template counts" ,e);
+			String error = "Error occured while trying to get template counts";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return numFound;
@@ -175,6 +179,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int numFound = -1;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -184,19 +190,22 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			numFound = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getInt(SolrConstants.ATTR_NUM_FOUND);
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get number of items" ,e);
+			String error = "Error occured while trying to get number of items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}			
 		}
 		return numFound;
@@ -235,6 +244,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -244,7 +255,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -287,15 +298,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				}
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get items" ,e);
+			String error = "Error occured while trying to get items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return addedRecords;
@@ -306,6 +320,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -315,7 +331,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -339,15 +355,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				}
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get items" ,e);
+			String error = "Error occured while trying to get items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return addedRecords;
@@ -358,6 +377,8 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		int addedRecords = 0;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -367,7 +388,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
 			JSONArray docs = tmpJson.getJSONObject(SolrConstants.TAG_RESPONSE).getJSONArray(SolrConstants.TAG_DOCS);
 			JSONObject tmpExplain = null;
@@ -393,15 +414,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				}
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get non-elevated items" ,e);
+			String error = "Error occured while trying to get non-elevated items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
-			}			
+			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return addedRecords;
@@ -477,7 +501,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
 			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || 
-					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId())) {
+					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
 				for (String lvl1Key: root.getFacets()) {
 					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
 					lvl1Map.put(lvl1Key, lvl1.getCount());
@@ -592,13 +616,14 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void applyFacetSort() {
 		if (facetSortRule == null || facetFields == null) {
 			return;
 		}
 
 		for (String key: facetSortRule.getItems().keySet()) {
-			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "sbn"}, facetSortRule.getStoreId()))) {
+			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId()))) {
 				
 				// grab a copy of the fields
 				List<FacetEntry> entries = new ArrayList<FacetEntry>();
@@ -627,11 +652,14 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException {
 		String templateName = "";
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+
 		try {
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
@@ -641,7 +669,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + requestParams);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JSONObject facetFields = locateJSONObject(parseJsonResponse(slurper, solrResponse), 
 					new String[] { SolrConstants.TAG_FACET_COUNTS, SolrConstants.TAG_FACET_FIELDS, templateNameField });
 			Set<String> set = facetFields.keySet();
@@ -649,15 +677,18 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				templateName = set.toArray(new String[0])[0];
 			}
 		} catch (Exception e) {
-			throw new SearchException("Error occured while trying to get common template name" ,e);
+			String error = "Error occured while trying to get common template name";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return templateName;

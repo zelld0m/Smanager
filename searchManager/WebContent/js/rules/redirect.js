@@ -1276,10 +1276,23 @@
 				var $input = $ims.find("input#catcode");
 
 				$input.off().on({
+					mouseenter: function(e){
+						e.data.input = $.trim($(e.currentTarget).val());
+					},
+					mouseleave: function(e){
+						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+							self.populateIMSManufacturers(e.data.ui, e.data.condition);
+						}
+					},
+					focusin: function(e){
+						e.data.input = $.trim($(e.currentTarget).val());
+					},
 					focusout: function(e){
-						self.populateIMSManufacturers(ui, e.data.condition);
+						if(e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
+							self.populateIMSManufacturers(e.data.ui, e.data.condition);
+						}
 					}
-				},{condition: condition});
+				},{ui:ui, condition: condition, input: ""});
 			},
 
 			checkDisplay: function(ui, condition){
@@ -1302,7 +1315,7 @@
 				else if(($.isBlank(condition) && selectedFilter === "ims") ||  ($.isNotBlank(condition) && condition.IMSFilter)){
 					ui.find("div.ims, div.dynamicAttribute").show();
 
-					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'sbn'){
+					if(GLOBAL_store === 'pcmall' || GLOBAL_store === 'pcmallcap' || GLOBAL_store === 'pcmgbd'){
 						ui.find("div.dynamicAttribute").hide();
 					}
 

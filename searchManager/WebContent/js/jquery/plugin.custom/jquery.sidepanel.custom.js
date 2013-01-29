@@ -19,7 +19,7 @@
 
 					if(base.options.customAddRule){
 						//Skip validation
-					}else if ($.isBlank(ruleName) ||  ruleName.toLowerCase() === base.options.searchText.toLowerCase()){
+					}else if ($.isBlank(ruleName) ||  ruleName.replace(/\s+(?=\s)/g,'').toLowerCase() === $.trim(base.options.searchText.replace(/\s+(?=\s)/g,'')).toLowerCase()){
 						jAlert(alertMsg + " is required.", base.options.headerText);
 						return
 					}else if (!isAllowedName(ruleName)){
@@ -27,16 +27,16 @@
 						return
 					}
 
-					base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? ruleName: ""); 
+					base.options.itemAddCallback(base, ruleName.toLowerCase() !== base.options.searchText.toLowerCase()? $.trim(ruleName.replace(/\s+(?=\s)/g,'')): ""); 
 				}
 			});
 		};
 
 		base.sendRequest = function(event){
 			setTimeout(function(){
-				base.newSearch = $.trim($(event.target).val());
+				base.newSearch = $.trim($(event.target).val().replace(/\s+(?=\s)/g,''));
 
-				if (base.newSearch === base.options.searchText) {
+				if (base.newSearch === $.trim(base.options.searchText.replace(/\s+(?=\s)/g,''))) {
 					base.newSearch = "";
 				};
 

@@ -59,5 +59,12 @@ AjaxSolr.AbstractWidget = AjaxSolr.Class.extend(
    *
    * <p>This method is executed after the Solr response is received.</p>
    */
-  afterRequest: function () {}
+  afterRequest: function () {},
+  
+  /**
+   * An abstract hook for child implementations.
+   *
+   * <p>This method is executed when Solr response is an error.</p>
+   */
+  errorRequest: function () {}
 });

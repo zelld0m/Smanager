@@ -62,8 +62,8 @@
 						   }
 					   });
 					
-					$li.find("label.ruleType").html(rule["type"]);
-					$li.find("label.name").html(rule["name"]);
+					$li.find("label.ruleType").text(rule["type"]);
+					$li.find("label.name").text(rule["name"]);
 					
 					$li.find("label.imageIcon > img").preview({
 						ruleType: rule["type"],

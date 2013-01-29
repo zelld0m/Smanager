@@ -26,23 +26,7 @@
 						$rankingRuleSelect.find('option[value="' + relevancyId + '"]').prop('selected', true);
 					}
 					
-//					$rankingRuleSelect.msDropdown({
-//						on: {
-//							change: function(data, ui){
-//								console.log(data);
-//								var key = self.manager.store.values('q');
-//								var selectedVal = data.value;
-//								self.manager.store.addByValue('relevancyId', selectedVal==="keyword_default"? "":selectedVal);
-//								if($.isNotBlank(key)) 
-//									self.manager.doRequest();
-//							}
-//						}
-//					});
-					
 					$rankingRuleSelect.searchable({
-						maxListSize: 10, 
-						maxMultiMatch: 10,
-						exactMatch: true,
 						change: function(u, e){
 							var key = self.manager.store.values('q');
 							var selectedVal = u.value;

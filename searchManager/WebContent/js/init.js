@@ -21,6 +21,19 @@ resetInputFields = function(selector){
 	$(selector).filter("input,textarea").val("");
 };
 
+getStoreLabel = function(storeName){
+	var storeLabel = storeName;
+	switch(storeName){
+	case "pcmall": storeLabel = "PCM"; break;
+	case "macmall": storeLabel = "MacMall"; break;
+	case "pcmallcap": storeLabel = "PCM BD"; break;
+	case "pcmgbd": storeLabel = "PCMG BD"; break;
+	case "macmallbd": storeLabel = "MacMall BD"; break;
+	default: break;
+	}
+	return storeLabel;
+};
+
 getRuleNameSubTextStatus = function(ruleStatus){
 	if (ruleStatus==null) 
 		return "Unknown Status";

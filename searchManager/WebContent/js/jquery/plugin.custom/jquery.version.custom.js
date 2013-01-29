@@ -72,6 +72,7 @@
 					}
 					else{
 						base.setCompare();
+						$('ul#rowLabel').css('margin-top', '25px');
 					}
 				}
 			});
@@ -128,8 +129,12 @@
 
 				$li.attr("id","ver_" + index);
 				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
-				$li.find("#restoreLink").hide();
-
+				if($li.find("#restoreLink").hide()){
+					$('li#ver_current').css('margin-top', '31px');
+					
+				}
+				
+				
 				if(index !== "current"){
 					$li.find("#restoreLink").off().on({
 						click:function(e){
@@ -574,8 +579,8 @@
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
 			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
-			template += '							<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
-			template += '							<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
 			template += '					</tr>';
 			template += '					<tr id="preloader">';
@@ -657,7 +662,7 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden;overflow-y:auto; height:343px">';			
 			template += '		<div style="float:left; width:120px">';// label
-			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:23px;background:#cbd4e6;">';
+			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:-6px;background:#cbd4e6;">';
 			template += '				<li style="background:#fff;"></li>';
 			template += '				<li>Created By</li>';
 			template += '				<li style="height:24px">Date</li>';
@@ -677,11 +682,11 @@
 
 			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
 			template += '			<ul id="versionList">';
-			template += '				<li id="itemPattern" class="item" style="display:none;border:0">';
+			template += '				<li id="itemPattern" class="item" style="display:none;border:0; padding-top: 5px;">';
 			template += '					<ul id="ruleDetails" style="border:0">';
 			template += '						<li id="restoreLink" style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy">Not Available</li>'; 
-			template += '						<li id="verDate">Not Available</li>';
+			template += '						<li id="verDate" style="height: 24px;">Not Available</li>';
 			template += '						<li id="verName">Not Available</li>'; 
 			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 
