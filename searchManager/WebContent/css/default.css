@@ -482,8 +482,8 @@ input[type="checkbox"].reject {
 	height: 25px;
 	background-image: url("../images/approve_gray.png");
 	background-position: center;
-	display: inline-block;
-	vertical-align: middle;
+	background-repeat: no-repeat;
+	line-height: 25px;
 }
 
 .approve_btn:hover {
@@ -495,8 +495,8 @@ input[type="checkbox"].reject {
 	height: 25px;
 	background-image: url("../images/reject_gray.png");
 	background-position: center;
-	display: inline-block;
-	vertical-align: middle;
+	background-repeat: no-repeat;
+	line-height: 25px;
 }
 
 .reject_btn:hover {
@@ -510,5 +510,4 @@ input[type="checkbox"].reject {
 	text-decoration: none;
 	text-align: center;
 	vertical-align: middle;
-	padding-top: 10px;
 }

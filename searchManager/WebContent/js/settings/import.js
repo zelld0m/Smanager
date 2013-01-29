@@ -788,6 +788,8 @@
 
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
 
+								$tr.find("td#ruleRefId > p#ruleName").prepend($tr.find("img.previewIcon"));
+								
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
 
 								//import type
