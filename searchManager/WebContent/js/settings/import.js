@@ -632,6 +632,7 @@
 						$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").hide();
 						
 						if (totalSize>0){
+							$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
 							// Populate table row
 							for(var i=0; i < listSize; i++){
 								var rule = list[i];
@@ -639,7 +640,7 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
-
+								
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
 								case "exclude":
@@ -656,14 +657,13 @@
 								
 								if(rule["deleted"]){
 									var msg = "Data for rule <b>" + ruleName + "</b> ";
-									msg += lastPublishDate ? " published on <b>"+lastPublishDate+"</b> " : " ";
+									msg += $.isNotBlank(lastPublishedDate) ? " published on <b>"+lastPublishedDate+"</b> " : " ";
 									msg += "is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.";
 									$tr.find("td#ruleRefId").html(msg)
 										.prop("colspan",6);
 									$tr.find("td#select,td#ruleOption,td#publishDate,td#type,td#importAs").remove();
 								}
 								else{
-								$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
 								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
 //								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
 								$tr.find("td#select > div.approve_btn").attr({"id": $.formatAsId(ruleId)});
