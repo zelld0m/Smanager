@@ -625,7 +625,6 @@
 						var list = data.list;
 						var listSize = list.length;
 						var totalSize = (data) ? data.totalSize : 0;
-						//var enableSorting = false;
 
 						$selectedTab.html($("div#tabContentTemplate").html());
 						var ruleDiv = $selectedTab.find("#rule").parent()[0];
@@ -653,19 +652,18 @@
 
 								var $table = $selectedTab.find("table#rule");
 								var $tr = $selectedTab.find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(ruleId)).show();
+								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
 								
 								if(rule["deleted"]){
-									$tr.find("td#ruleRefId").html("Data for rule <b>" + ruleName + "</b> is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.")
+									var msg = "Data for rule <b>" + ruleName + "</b> ";
+									msg += lastPublishDate ? " published on <b>"+lastPublishDate+"</b> " : " ";
+									msg += "is not available. <br/>Please re-export rule from "+ storeOrigin +" or contact Search Manager Team.";
+									$tr.find("td#ruleRefId").html(msg)
 										.prop("colspan",6);
 									$tr.find("td#select,td#ruleOption,td#publishDate,td#type,td#importAs").remove();
 								}
 								else{
-								/*if(!enableSorting){
-									enableSorting = true;
-									$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
-								}*/
-								var lastPublishedDate = (rule["ruleStatus"] && $.isNotBlank(rule["ruleStatus"]["lastPublishedDate"]))? rule["ruleStatus"]["lastPublishedDate"].toUTCString(): "";
-								
+								$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
 								$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
 //								$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
 								$tr.find("td#select > div.approve_btn").attr({"id": $.formatAsId(ruleId)});
