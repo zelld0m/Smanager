@@ -1,24 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
 
-   <store name="SBN">
-    <core>sbn</core>
-    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
-    <qt>dismaxsbnrelevancy</qt>
-    <facet-name>SBN</facet-name>
-    <solr-param-name>
-    	<param-name>fq</param-name>
-    </solr-param-name>
-    <solr-param-value name="fq">
-    	<param-value>SBN_StoreFlag:true</param-value>
-    </solr-param-value>
-    <dateformat>MM/dd/yyyy</dateformat>
-    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
-    <default-server>search.pcmall.com</default-server>
-    <facet-template>PCMall_FacetTemplate</facet-template>
-    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
-  </store>
-
   <store name="PCMall">
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -71,31 +53,66 @@
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
+  <store name="PCMG BD">
+    <core>pcmgbd</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxpcmallrelevancy</qt>
+    <facet-name>PcMallGov</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+    	<param-value>PcMall_StoreFlag:true</param-value>
+    </solr-param-value>    
+    <dateformat>MM/dd/yyyy</dateformat>
+    <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
+    <default-server>afs-pl-schpd01</default-server>
+    <facet-template>PCMall_FacetTemplate</facet-template>
+    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
+  </store>
+  
+  <store name="MacMall BD">
+    <core>macmallbd</core>
+    <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
+    <qt>dismaxmacmallrelevancy</qt>
+    <facet-name>MacMallBD</facet-name>
+    <solr-param-name>
+    	<param-name>fq</param-name>
+    </solr-param-name>
+    <solr-param-value name="fq">
+    	<param-value>MacMall_StoreFlag:true</param-value>
+    </solr-param-value>
+    <dateformat>MM/dd/yyyy</dateformat>    
+    <default-server>afs-pl-schpd01</default-server>
+    <facet-template>xxx</facet-template>
+    <facet-template-name>TemplateName</facet-template-name>
+  </store>
+  
   <!-- 
   <server name='vtorschstg01'> 										<- name of the server to display in gui
     <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 	<- the url of solr
-    <store>pcmall,macmall,onsale,ecost</store> 						<- stores whose data is inside the solr server
+    <store>pcmall,macmall,ecost</store> 						<- stores whose data is inside the solr server
   </server>
    -->  
   <server name='vtorschstg01'>
     <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url>
-    <store>pcmall,macmall,onsale,ecost</store>
+    <store>pcmall,macmall,ecost</store>
   </server>
   <server name='vtorschstg02'>
     <url>http://vtorschstg02.pcmall.com:8080/solr14/(store)/</url>
-    <store>pcmall,macmall,onsale,ecost</store>
+    <store>pcmall,macmall,ecost</store>
   </server>
   <server name='vtorschstg03'>
     <url>http://vtorschstg03.pcmall.com:8080/solr14/(store)/</url>
-    <store>pcmall,macmall,onsale,ecost</store>
+    <store>pcmall,macmall,ecost</store>
   </server>
   <server name='afs-pl-schpd07'>
     <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
-    <store>pcmall,macmall,onsale,ecost</store>
+    <store>pcmall,macmall,ecost</store>
   </server>
   <server name='search'>
     <url>http://10.17.35.36:8080/solr14/(store)/</url>
-    <store>pcmall,macmall,onsale,ecost</store>
+    <store>pcmall,macmall,ecost</store>
   </server>
   <server name='search.pcmall.com'>
     <url>http://search.pcmall.com:8080/solr14/(store)/</url>
@@ -104,6 +121,10 @@
   <server name='afs-pl-schpd04'>
     <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(store)/</url>
     <store>pcmallcap</store>
+  </server>
+   <server name='afs-pl-schpd01'>
+    <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(store)/</url>
+    <store>pcmgbd,macmallbd</store>
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>

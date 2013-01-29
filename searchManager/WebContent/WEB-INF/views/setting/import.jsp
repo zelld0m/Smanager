@@ -50,7 +50,7 @@
 		
 		<div id="tabContentTemplate" style="display: none">
 			<div class="filter padT5 fsize12 marT8">
-				<div class="floatL" style="display: none;">
+				<div id="ruleFilterDiv" class="floatL">
 					<span>Show:</span> 
 					<select id="ruleFilter">
 						<option value="all">All Rules</option>
@@ -78,8 +78,7 @@
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="24px" id="selectAll"><input type="checkbox" style="display:none"></th>
-							<th width="24px"></th>
+							<th width="48px" id="selectAll"><input type="checkbox" style="display:none"></th>
 							<th width="150px">Rule Info
 								<img id="ruleNameSort" class="ruleNameSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
 								<input id="ruleNameInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
@@ -98,16 +97,14 @@
 				<table id="rule" class="tblItems w100p">
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
-							<td width="24px" class="txtAC" id="select">
+							<td width="48px" class="txtAC" id="select">
 								<input class="import" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Approve</a></div>
 								<input class="reject" type="checkbox"><div class="reject_btn"><a href="javascript:void(0);" id="link_btn">Reject</a></div>
 							</td>
-							<td class="txtAC" width="24px" id="ruleOption">
-								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
-							</td>
 							<td width="150px" id="ruleRefId">
+								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 
 								<p class="breakWord" id="ruleName"></p>
-								<p id="ruleId" class="fsize11 breakWord"></p>
+								<!--p id="ruleId" class="fsize11 breakWord"></p-->
 							</td>
 							<td width="50px" class="txtAL" id="publishDate">
 								<p id="publishDate" class="fsize11"></p>
