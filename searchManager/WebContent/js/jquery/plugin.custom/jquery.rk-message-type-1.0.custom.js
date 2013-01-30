@@ -42,7 +42,7 @@
 						alert('Custom text contains invalid character/s');
 						return false;
 					}else{
-						RedirectServiceJS.updateRKMessageType(ruleId, selectedOption, customText, {
+						RedirectServiceJS.updateRKMessageType(evt.data.rule["ruleId"], selectedOption, customText, {
 							callback: function(e){
 								
 							},
@@ -55,7 +55,7 @@
 						});
 					}
 				}
-			});
+			}, {rule: base.options.rule});
 			
 		};
 

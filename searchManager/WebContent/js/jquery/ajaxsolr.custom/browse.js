@@ -46,7 +46,12 @@
 			id: 'ruleSelector',
 			target: '#ruleSelector'
 		}));
-
+		
+		Manager.addWidget(new AjaxSolr.SearchResultHeaderWidget({
+			id: 'searchResultHeader',
+			target: '#searchResultHeader'
+		}));
+		
 		var sortWidget = new AjaxSolr.SortResultWidget({
 			id: 'sortResult',
 			target: '#sortResult',

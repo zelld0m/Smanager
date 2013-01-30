@@ -85,12 +85,12 @@
 					$ul.append($li);
 				}
 				
-				if ($.isNotBlank(self.manager.response.responseHeader["Redirect"])){
+				if (!$.isEmptyObject(self.manager.response.responseHeader["replacement_keyword"]) && $.isNotBlank(self.manager.response.responseHeader["replacement_keyword"]["replacement_keyword"])){
 					var $li = $ul.find("li#itemPattern").clone().prop("id", "rrNote");
 					$li.find("label.ruleType").removeClass("fbold")
 											  .removeClass("w310")
 											  .addClass("w95p")								
-											  .html('<div class="alert padL10">Search results displayed are for <span class="fbold fred">' + self.manager.response.responseHeader["Redirect"] + "</span>");
+											  .html('<div class="alert padL10">Search results displayed are for <span class="fbold fred">' + self.manager.response.responseHeader["replacement_keyword"]["replacement_keyword"] + "</span>");
 					$li.find("label.select,label.imageIcon,label.name").remove();
 					$li.show();
 					$ul.append($li);
