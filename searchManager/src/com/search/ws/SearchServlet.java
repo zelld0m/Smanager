@@ -343,6 +343,7 @@ public class SearchServlet extends HttpServlet {
 							break;
 						}
 						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						appliedRedirect = redirect;
 						
 						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
 						sk.setKeyword(new Keyword(keyword));
@@ -354,8 +355,7 @@ public class SearchServlet extends HttpServlet {
 							sk.setKeyword(null);
 							keywordPresent = false;
 							break;
-						} else {
-							appliedRedirect = redirect;
+						} else {	
 							// set the new keyword
 							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 							if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
@@ -382,6 +382,7 @@ public class SearchServlet extends HttpServlet {
 				
 				if (redirect != null && !redirect.isRedirectChangeKeyword()) {
 					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+					appliedRedirect = redirect;
 					if (redirect.isRedirectToPage()) {
 						// TODO: fix redirect to page implementation
 						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());

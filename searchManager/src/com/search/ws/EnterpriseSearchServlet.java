@@ -351,8 +351,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 						if (redirect == null) {
 							break;
 						}
-						else {
-							
+						else {	
 							boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 							
 							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
@@ -366,6 +365,8 @@ public class EnterpriseSearchServlet extends HttpServlet {
 								break;
 							}
 							logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+							appliedRedirect = redirect;
+							
 							keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
 							sk.setKeyword(new Keyword(keyword));
 							// remove the original keyword
@@ -377,7 +378,6 @@ public class EnterpriseSearchServlet extends HttpServlet {
 								keywordPresent = false;
 								break;
 							} else {
-								appliedRedirect = redirect;
 								// set the new keyword
 								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
@@ -403,6 +403,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					
 					if (redirect != null && !redirect.isRedirectChangeKeyword()) {
 						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						appliedRedirect = redirect;
 						if (redirect.isRedirectToPage()) {
 							// TODO: fix redirect to page implementation
 							nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
