@@ -107,7 +107,8 @@
 						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					}
 
-					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
+					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"]);
+					else base.getRuleData(contentHolder.find("div#rightPreview"));
 					
 					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
 					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
@@ -240,7 +241,8 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
-		base.getDatabaseData = function($content, ruleId, sourceData){
+		base.getDatabaseData = function($content, ruleId){
+			var sourceData = base.DATABASE_SOURCE;
 			var ruleType = base.options.ruleType;
 			var ruleName = base.options.ruleName;
 
@@ -467,7 +469,8 @@
 			}
 		};
 
-		base.getRuleData = function($content, sourceData){
+		base.getRuleData = function($content){
+			var sourceData = base.XML_SOURCE;
 			var products = (base.options.ruleXml) ? base.options.ruleXml["products"] : new Array();
 			var ruleType = base.options.ruleType;
 			var ruleId = base.options.ruleId;
@@ -669,18 +672,6 @@
 				break;
 			}
 		};
-
-		base.postMsg = function(data,msg_){
-			var self = this;
-
-			var okmsg = 'Following rules were successfully ' + msg_ +':';	
-
-			for(var i=0; i<data.length; i++){	
-				okmsg += '\n-'+ data[i];	
-			}
-
-			jAlert(okmsg, base.options.transferType);
-		},
 
 		base.toStringArray = function(relKeyObj){
 			var keyList = new Array();
@@ -1126,33 +1117,42 @@
 						//left pane is shown by default
 						base.contentHolder.append(base.showLeftPane());
 
-						if(base.XML_SOURCE === base.options.leftPanelSourceData){
-							if(base.options.ruleXml == null){
-								//retrieve xml data first
+						switch(base.options.leftPanelSourceData){
+						case base.XML_SOURCE: 
+							if(base.options.ruleXml != null){
+								base.getRuleData(base.contentHolder.find("#leftPreview"));
+							}else{
 								base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#leftPreview"), base.options.ruleType, base.options.ruleId, base.options.leftPanelSourceData);
 							}
-							else{
-								base.getRuleData(base.contentHolder.find("#leftPreview"), base.options.leftPanelSourceData);
-							}
-						}
-						else if(base.DATABASE_SOURCE === base.options.leftPanelSourceData){
-							base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.dbRuleId, base.options.leftPanelSourceData);
-						}
+							break;
+						case base.DATABASE_SOURCE:
+							base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.dbRuleId);
+							break;
+						default: break;
+						}				
 						base.options.itemImportTypeListCallback(base, base.contentHolder.find("#leftPreview"));
-
 
 						if(base.options.enableRightPanel){
 							base.contentHolder.append(base.showRightPane());
-							if(base.XML_SOURCE === base.options.rightPanelSourceData){
-								if(base.options.ruleXml == null){
+							
+							switch(base.options.rightPanelSourceData){
+							case base.XML_SOURCE:
+								if(base.options.ruleXml != null){
+									base.getRuleData(base.contentHolder.find("#rightPreview"));
+								}
+								else{ //if ruleXml is null, try to retrieve it
 									base.options.itemGetRuleXmlCallback(base, base.contentHolder.find("#rightPreview"), base.options.ruleType, base.options.ruleId, base.options.rightPanelSourceData);
 								}
-								else{
-									base.getRuleData(base.contentHolder.find("#rightPreview"), base.options.rightPanelSourceData);
+								break;
+							case base.DATABASE_SOURCE:
+								if($.isBlank(base.options.dbRuleId)){ //if dbRuleId is blank, selected option is "Import As New Rule", display preview of ruleXml
+									base.getRuleData(base.contentHolder.find("#rightPreview"));
 								}
-							}
-							else if(base.DATABASE_SOURCE === base.options.rightPanelSourceData){
-								base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId, base.options.rightPanelSourceData);
+								else{ //if dbRuleId is not blank, display preview of rule from database
+									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId);
+								}
+								break;
+							default: break;
 							}
 							base.options.itemImportAsListCallback(base, base.contentHolder, base.options.rightPanelSourceData);
 						}
@@ -1170,7 +1170,8 @@
 											RuleTransferServiceJS.exportRule(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
 												callback: function(data){									
 													base.api.hide();
-													base.postMsg(data, "exported");
+													showActionResponseFromMap(data, "export", base.options.transferType,
+														"Unable to find published data for this rule. Please contact Search Manager Team.");
 												},
 												postHook: function(){
 													base.options.postButtonClick(base);
@@ -1192,7 +1193,8 @@
 													RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
 														callback: function(data){									
 															base.api.hide();
-															base.postMsg(data, "imported");
+															showActionResponseFromMap(data, "import", base.options.transferType,
+																"Unable to find published data for this rule. Please contact Search Manager Team.");
 														},
 														postHook: function(){
 															base.options.postButtonClick(base);
@@ -1214,7 +1216,8 @@
 											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(ruleName),{
 												callback: function(data){
 													base.api.hide();
-													base.postMsg(data, "rejected");
+													showActionResponseFromMap(data, "reject", base.options.transferType,
+														"Unable to find published data for this rule. Please contact Search Manager Team.");
 												},
 												postHook: function(){
 													base.options.postButtonClick(base);
