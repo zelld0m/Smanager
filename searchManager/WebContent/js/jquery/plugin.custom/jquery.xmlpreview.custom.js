@@ -673,18 +673,6 @@
 			}
 		};
 
-		base.postMsg = function(data,msg_){
-			var self = this;
-
-			var okmsg = 'Following rules were successfully ' + msg_ +':';	
-
-			for(var i=0; i<data.length; i++){	
-				okmsg += '\n-'+ data[i];	
-			}
-
-			jAlert(okmsg, base.options.transferType);
-		},
-
 		base.toStringArray = function(relKeyObj){
 			var keyList = new Array();
 			var i = 0;
@@ -1182,7 +1170,8 @@
 											RuleTransferServiceJS.exportRule(base.options.ruleType, $.makeArray(base.options.ruleId), comment, {
 												callback: function(data){									
 													base.api.hide();
-													base.postMsg(data, "exported");
+													showActionResponseFromMap(data, "export", base.options.transferType,
+														"Unable to find published data for this rule. Please contact Search Manager Team.");
 												},
 												postHook: function(){
 													base.options.postButtonClick(base);
@@ -1204,7 +1193,8 @@
 													RuleTransferServiceJS.importRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(importType), $.makeArray(importAs), $.makeArray(ruleName), {
 														callback: function(data){									
 															base.api.hide();
-															base.postMsg(data, "imported");
+															showActionResponseFromMap(data, "import", base.options.transferType,
+																"Unable to find published data for this rule. Please contact Search Manager Team.");
 														},
 														postHook: function(){
 															base.options.postButtonClick(base);
@@ -1226,7 +1216,8 @@
 											RuleTransferServiceJS.unimportRules(base.options.ruleType, $.makeArray(base.options.ruleId), comment, $.makeArray(ruleName),{
 												callback: function(data){
 													base.api.hide();
-													base.postMsg(data, "rejected");
+													showActionResponseFromMap(data, "reject", base.options.transferType,
+														"Unable to find published data for this rule. Please contact Search Manager Team.");
 												},
 												postHook: function(){
 													base.options.postButtonClick(base);

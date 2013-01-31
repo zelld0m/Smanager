@@ -225,7 +225,7 @@ public class DeploymentService {
 						RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
 						if (ruleXml != null) {
 							try {
-								daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, "SYSTEM", "Automatic Export on Publish");
+								daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, username, "Automatic Export on Publish");
 							} catch (DaoException e) {
 								// TODO: make more detailed
 								logger.error("Error occurred while exporting rule: ", e);

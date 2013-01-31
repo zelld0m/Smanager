@@ -57,27 +57,30 @@ showActionResponse = function(code, action, param){
 	}
 };
 
-showActionResponseFromMap = function(code, action, param, additionalFailMessage){
+showActionResponseFromMap = function(code, action, title, additionalFailMessage){
 	var message = "";
-	
-	if (code["FORCED"] && code["FORCED"].length > 0) {
-		message += "Successful force " + action + " request for " + code["FORCED"] + ".";
-	}
-	
+
 	if (code["PASSED"] && code["PASSED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Successful " + action + " request for " + code["PASSED"] + ".";
+		message += "Successful " + action + " request for:";
+		for(var i=0; i< code["PASSED"].length; i++){	
+			message += '\n-'+ code["PASSED"][i];	
+		}
 	}
 	
 	if (code["FAILED"] && code["FAILED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
+		message += "Failed " + action + " request for:";
+		for(var i=0; i< code["FAILED"].length; i++){	
+			message += '\n-'+ code["FAILED"][i];	
+		}
+
 		if (additionalFailMessage) {
-			message += "\n" + additionalFailMessage;
+			message += "\n\n" + additionalFailMessage;
 		}
 	}
 	
-	jAlert(message,"Multiple Rule Item Add"); 
+	jAlert(message, title); 
 };
 
 /** Style for HTML upload tag */
