@@ -87,10 +87,10 @@
 		};
 
 		base.showAlert = function(item, id){
-			var ruleStatus = base.rsLookup[id];
+			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
-			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
+			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
 				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
 				$importAlert.show();
 			}else{
@@ -225,14 +225,14 @@
 				rendered: function(item){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
-						if (rs) base.showAlert(item, rs["ruleId"]);
+						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
 					}else{
 						base.showAlert(item, item.val());
+						base.options.afterUIRendered();
 					};
 				}
 			});
 
-			base.options.afterUIRendered();
 		};
 
 		// Run initializer
