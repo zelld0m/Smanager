@@ -249,7 +249,7 @@ public class RuleTransferService {
 						//submit rule for approval
 						ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
 						status++;
-						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
+						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {
 							//approve rule
 							if (CollectionUtils.isNotEmpty(deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, 
 									new String[] {ruleStatus.getRuleStatusId()}))) {
@@ -261,8 +261,13 @@ public class RuleTransferService {
 									status++;
 								}
 							}
+						} else {
+							status = 5;
 						}
+					} else {
+						status = 5;
 					}
+					
 					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException de) {
 					String msg = "";
