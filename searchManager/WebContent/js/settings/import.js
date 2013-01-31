@@ -647,6 +647,7 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
+								var isRejected = rule["rejected"];
 								
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -840,7 +841,7 @@
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
 							self.submitHandler();
-							self.toggleCheckbox();
+							self.toggleCheckbox(isRejected);
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
@@ -924,7 +925,7 @@
 				}
 			},
 			
-			toggleCheckbox : function() {
+			toggleCheckbox : function(isRejected) {
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
 				
@@ -940,10 +941,15 @@
 							}
 							break;
 						case 'reject_btn':
-							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
-								self.toggleRejectCheckbox(id);
-							} else {
-								self.untoggleRejectCheckbox(id);
+							if(isRejected){ //lock reject icon
+								$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray_lock.png)');
+							}
+							else{	//add toggle event
+								if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
+									self.toggleRejectCheckbox(id);
+								} else {
+									self.untoggleRejectCheckbox(id);
+								}
 							}
 							break;
 						}
