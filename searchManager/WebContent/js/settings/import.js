@@ -639,6 +639,7 @@
 						$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").hide();
 						
 						if (totalSize>0){
+							self.toggleCheckbox();
 							$selectedTab.find("img#ruleNameSort, img#publishDateSort, img#exportDateSort").show();
 							// Populate table row
 							for(var i=0; i < listSize; i++){
@@ -647,7 +648,6 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
-								var isRejected = rule["rejected"];
 								
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -806,8 +806,6 @@
 									}
 								}
 								
-								self.toggleCheckbox(isRejected);
-								
 								//import as
 								$tr.find("td#importAs").importas({
 									container: ruleDiv,
@@ -824,21 +822,34 @@
 										
 										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
 										
-										if(locked){
-											item.parents("tr.ruleItem").find("div#" + id + ".approve_btn, " + "div#" + id + ".reject_btn")
-																	   .css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
-																	   .find("a")
-																	   .off("click")
-																	   .on({
-																		   click: function(e){
-																			   jAlert("Rule is currently in read-only mode.");
-																		   }
-																	   });
-											
+										if(r["rejected"]){
+											$("#"+self.tabSelected).off("click.btnToggler");
+											item.parents("tr.ruleItem").find("div#" + id + ".reject_btn")
+											.css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+											.find("a")
+											.on({ 
+												click: function(e){
+													
+												},
+												mouseenter: showHoverInfo
+											},{locked: true});
 											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
-										}else{
-											self.toggleCheckbox(r["rejected"]);
 										}
+										
+										if(locked){
+											$("#"+self.tabSelected).off("click.btnToggler");
+											item.parents("tr.ruleItem").find("div#" + id + ".approve_btn, " + "div#" + id + ".reject_btn")
+											.css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+											.find("a")
+											.on({
+												click: function(e){
+													
+												},
+												mouseenter: showHoverInfo
+											},{locked: true});
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+										}
+										
 									}
 								});
 								}
@@ -850,7 +861,6 @@
 
 							// Alternate row style
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
-
 							self.submitHandler();
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
@@ -935,37 +945,32 @@
 				}
 			},
 			
-			toggleCheckbox : function(isRejected) {
+			toggleCheckbox : function() {
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				 console.log("#"+self.tabSelected);
-				$selectedTab.find(".approve_btn, .reject_btn").off("click").on({
-					click: function(evt) {
-						alert("clicked " + $(this).attr('id') + " " + $(this).attr('class'));
-						var id = $(this).attr('id');
-						switch($(this).attr('class')) {
-						case 'approve_btn':
-							if($('input[type="checkbox"]#'+id+'.import').is(":not(:checked)")) {
-								self.toggleImportCheckbox(id);
-							} else {
-								self.untoggleImportCheckbox(id);
-							}
-							break;
-						case 'reject_btn':
-							if(evt.data.isRejected){ //lock reject icon
-								$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
-							}
-							else{	//add toggle event
-								if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
-									self.toggleRejectCheckbox(id);
-								} else {
-									self.untoggleRejectCheckbox(id);
-								}
-							}
-							break;
+				
+				var clickHandler =  function(evt) {
+					var id = $(this).attr('id');
+					switch($(this).attr('class')) {
+					case 'approve_btn':
+						if($('input[type="checkbox"]#'+id+'.import').attr("checked") !== 'checked') {
+							self.toggleImportCheckbox(id);
+						} else {
+							self.untoggleImportCheckbox(id);
 						}
+						break;
+					case 'reject_btn':
+						if($('input[type="checkbox"]#'+id+'.reject').attr('checked') !== 'checked') {
+								self.toggleRejectCheckbox(id);
+						} else {
+							self.untoggleRejectCheckbox(id);
+						}
+						break;
 					}
-				}, {isRejected: isRejected});
+				};
+				
+				$selectedTab.on("click.btnApproveToggler", ".approve_btn", {}, clickHandler);
+				$selectedTab.on("click.btnRejectToggler", ".reject_btn", {}, clickHandler);
 			},
 			
 			toggleImportCheckbox : function(id) {
