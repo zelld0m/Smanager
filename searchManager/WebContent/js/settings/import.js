@@ -817,7 +817,7 @@
 										self.ruleStatusMap[self.entityName]= list;
 									},
 									targetRuleStatusCallback: function(item, r, rs){
-										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+										var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
 
 										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
 											disabled: locked,
