@@ -103,7 +103,6 @@
 
 		base.toggleFields = function(u, evt, rule, selectRule){
 			var $replacement = $(u).parent("div.ss-wrapper").siblings("#replacement");
-			base.options.selectedOptionChanged(u.value);
 
 			if(selectRule){
 				$(u).show();
@@ -246,7 +245,6 @@
 			newRuleText: "Import As New Rule",
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
-			selectedOptionChanged: function(ruleId){},
 			setRuleStatusListCallback: function(base, list){},
 			afterUIRendered: function(){}
 	};
