@@ -92,12 +92,14 @@ public class RuleTransferService {
 				if (exportList != null && CollectionUtils.isNotEmpty(exportList.getList())) {
 					for (ExportRuleMap ruleMap: exportList.getList()) {
 						String ruleId = ruleMap.getRuleIdOrigin();
+						boolean isRejected =  BooleanUtils.isTrue(ruleMap.getRejected());
 						RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
 						if (ruleXml != null) {
+							ruleXml.setRejected(isRejected);
 							list.add(ruleXml);
 						}
 						else {
-							ruleXml = new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true);
+							ruleXml = new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true, isRejected);
 
 							RuleStatus ruleStatus = new RuleStatus();
 
