@@ -416,19 +416,19 @@ public class RuleTransferService {
 			}
 
 			RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, RuleXmlUtil.getRuleId(ruleEntity, refId));
-			if(RuleTransferUtil.deleteRuleFile(ruleEntity, store, refId, comment)) {
+			if(ruleXml != null) {
 				ExportRuleMap exportRuleMap = new ExportRuleMap(ruleXml.getStore(), refId, null, store, null, null, ruleEntity);
-				exportRuleMap.setDeleted(true);
+				exportRuleMap.setDeleted(false);
 				exportRuleMap.setRejected(true);
 				try {
 					daoService.saveExportRuleMap(exportRuleMap);
 					status++;
+					//TODO addComment
+					//TODO addAuditTrail
+					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException e) {
 					logger.error("Failed to add mapping of ruleId", e);
 				}
-				//TODO addComment
-				//TODO addAuditTrail
-				statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 			}
 		}
 		return statusMap;
