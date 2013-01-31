@@ -7,23 +7,6 @@
 		autoExport : false,
 		ruleEntityList : null,
 		
-		postMsg : function(data,msg_){
-			var self = this;
-			var okmsg = '';	
-
-			if(data.length > 0){
-				okmsg = 'Following rules were successfully ' + msg_ +':';
-				for(var i=0; i<data.length; i++){	
-					okmsg += '\n-'+ data[i];	
-				}
-			}
-			else{
-				okmsg = 'No rules were successfully ' + msg_ +'.';
-			}
-
-			jAlert(okmsg, self.entityName);
-		},
-
 		populateTabContent: function(){
 			var self = this;
 
@@ -153,8 +136,9 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
 						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
-							callback: function(data){									
-								self.postMsg(data, "exported");	
+							callback: function(data){
+								showActionResponseFromMap(data, "export", "Export",
+									"Unable to find published data for this rule. Please contact Search Manager Team.");
 								self.getExportList();	
 							},
 							preHook:function(){ 
@@ -254,8 +238,14 @@
 									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
 										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
 											callback: function(xml){
-												base.options.ruleXml = xml;
-												base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+												if (xml == null || $.isEmptyObject(xml)) {
+													jAlert("Unable to find published data for this rule. Please contact Search Manager Team.", self.moduleName,
+															function() {base.api.hide()});
+												}
+												else {
+													base.options.ruleXml = xml;
+													base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+												}
 											}
 										});
 									},
