@@ -79,7 +79,7 @@
 					<tbody>
 						<tr>
 							<th width="48px" id="selectAll"><input type="checkbox" style="display:none"></th>
-							<th width="150px">Rule Info
+							<th width="150px">Rule Name
 								<img id="ruleNameSort" class="ruleNameSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
 								<input id="ruleNameInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
 							</th>
@@ -98,7 +98,7 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="48px" class="txtAC" id="select">
-								<input class="import" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Approve</a></div>
+								<input class="import" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Import</a></div>
 								<input class="reject" type="checkbox"><div class="reject_btn"><a href="javascript:void(0);" id="link_btn">Reject</a></div>
 							</td>
 							<td width="150px" id="ruleRefId">
