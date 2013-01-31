@@ -98,8 +98,8 @@
 					<tbody>
 						<tr id="ruleItemPattern" class="ruleItem" style="display: none">
 							<td width="48px" class="txtAC" id="select">
-								<input class="import" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Import</a></div>
-								<input class="reject" type="checkbox"><div class="reject_btn"><a href="javascript:void(0);" id="link_btn">Reject</a></div>
+								<input class="import selectItem" type="checkbox"><div class="approve_btn"><a href="javascript:void(0);" id="link_btn">Import</a></div>
+								<input class="reject selectItem" type="checkbox"><div class="reject_btn"><a href="javascript:void(0);" id="link_btn">Reject</a></div>
 							</td>
 							<td width="150px" id="ruleRefId">
 								<img class="previewIcon pointer" src="<spring:url value="/images/icon_reviewContent.png" />" alt="Preview Content" title="Preview Content"> 

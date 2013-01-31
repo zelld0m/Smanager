@@ -678,7 +678,7 @@
 								$tr.find("td#select > div.reject_btn").attr({"id": $.formatAsId(ruleId)});
 								
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
-
+								
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("img.previewIcon")
 									.xmlpreview({
@@ -792,9 +792,8 @@
 								if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
-								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
-
-								$tr.find("td#ruleRefId > p#ruleName").prepend($tr.find("img.previewIcon"));
+								$tr.find("td#ruleRefId > p#ruleName").html(" ").append(list[i]["ruleName"])
+																	 .prepend($tr.find("img.previewIcon"));
 								
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
 
@@ -806,6 +805,8 @@
 										$importTypeSelect.append($("<option>", {value: importType}).text(self.importTypeList[importType]));
 									}
 								}
+								
+								self.toggleCheckbox(isRejected);
 								
 								//import as
 								$tr.find("td#importAs").importas({
@@ -819,14 +820,24 @@
 									},
 									targetRuleStatusCallback: function(item, r, rs){
 										var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-
-										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
-											disabled: locked,
-											readonly: locked
-										});
-
+										var id = $.formatAsId(r["ruleId"]);
+										
+										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
+										
 										if(locked){
-											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({checked:false});
+											item.parents("tr.ruleItem").find("div#" + id + ".approve_btn, " + "div#" + id + ".reject_btn")
+																	   .css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+																	   .find("a")
+																	   .off("click")
+																	   .on({
+																		   click: function(e){
+																			   jAlert("Rule is currently in read-only mode.");
+																		   }
+																	   });
+											
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+										}else{
+											self.toggleCheckbox(r["rejected"]);
 										}
 									}
 								});
@@ -841,7 +852,6 @@
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
 							self.submitHandler();
-							self.toggleCheckbox(isRejected);
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
@@ -928,21 +938,22 @@
 			toggleCheckbox : function(isRejected) {
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				
-				$selectedTab.find(".approve_btn, .reject_btn").on({
+				 console.log("#"+self.tabSelected);
+				$selectedTab.find(".approve_btn, .reject_btn").off("click").on({
 					click: function(evt) {
+						alert("clicked " + $(this).attr('id') + " " + $(this).attr('class'));
 						var id = $(this).attr('id');
 						switch($(this).attr('class')) {
 						case 'approve_btn':
-							if($('input[type="checkbox"]#'+id+'.import').attr('checked') != 'checked') {
+							if($('input[type="checkbox"]#'+id+'.import').is(":not(:checked)")) {
 								self.toggleImportCheckbox(id);
 							} else {
 								self.untoggleImportCheckbox(id);
 							}
 							break;
 						case 'reject_btn':
-							if(isRejected){ //lock reject icon
-								$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray_lock.png)');
+							if(evt.data.isRejected){ //lock reject icon
+								$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 							}
 							else{	//add toggle event
 								if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
@@ -954,7 +965,7 @@
 							break;
 						}
 					}
-				});
+				}, {isRejected: isRejected});
 			},
 			
 			toggleImportCheckbox : function(id) {
