@@ -99,14 +99,15 @@
 				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
-					var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+					
 					if (locked){
 						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
 					}else{
 						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					}
 
-					if(rs!=null) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
+					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], sourceData);
 					
 					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
 					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
@@ -271,7 +272,8 @@
 			case "facetsort": 
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("#ruleInfo");
-
+				$table.find("tr:not(#itemPattern)").remove();
+				
 				FacetSortServiceJS.getRuleByName(ruleName, {
 					callback: function(data){
 						if(data == null){

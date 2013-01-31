@@ -215,14 +215,12 @@ public class UtilityService {
 		return ConfigManager.getInstance().getStoreSetting(storeName, property);
 	}
 	
-	public static List<String> getStoresToExport(String storeName) {
-		List<String> list = new ArrayList<String>();
-		String[] stores = org.springframework.util.StringUtils.tokenizeToStringArray(
-				UtilityService.getStoreSetting(storeName, DAOConstants.SETTINGS_EXPORT_TARGET), ",", true, true);
-		if (ArrayUtils.isNotEmpty(stores)) {
-			CollectionUtils.addAll(list, stores);
-		}
-		return list;
+	public static List<String> getStoreSettings(String storeName, String property) {
+		return ConfigManager.getInstance().getStoreSettings(storeName, property);
 	}
 	
+	public static List<String> getStoresToExport(String storeName) {
+		List<String> list = UtilityService.getStoreSettings(storeName, DAOConstants.SETTINGS_EXPORT_TARGET);
+		return list;
+	}
 }

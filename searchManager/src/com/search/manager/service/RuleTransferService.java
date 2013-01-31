@@ -92,12 +92,14 @@ public class RuleTransferService {
 				if (exportList != null && CollectionUtils.isNotEmpty(exportList.getList())) {
 					for (ExportRuleMap ruleMap: exportList.getList()) {
 						String ruleId = ruleMap.getRuleIdOrigin();
+						boolean isRejected =  BooleanUtils.isTrue(ruleMap.getRejected());
 						RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, StringUtil.escapeKeyword(ruleId));
 						if (ruleXml != null) {
+							ruleXml.setRejected(isRejected);
 							list.add(ruleXml);
 						}
 						else {
-							ruleXml = new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true);
+							ruleXml = new RuleXml(ruleMap.getStoreIdOrigin(), ruleMap.getRuleIdOrigin(), ruleMap.getRuleNameOrigin(), true, isRejected);
 
 							RuleStatus ruleStatus = new RuleStatus();
 
@@ -277,7 +279,7 @@ public class RuleTransferService {
 						//submit rule for approval
 						ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
 						status++;
-						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
+						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {
 							//approve rule
 							if (CollectionUtils.isNotEmpty(deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, 
 									new String[] {ruleStatus.getRuleStatusId()}))) {
@@ -289,8 +291,13 @@ public class RuleTransferService {
 									status++;
 								}
 							}
+						} else {
+							status = 5;
 						}
+					} else {
+						status = 5;
 					}
+					
 					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException de) {
 					String msg = "";
@@ -439,19 +446,19 @@ public class RuleTransferService {
 			}
 
 			RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, RuleXmlUtil.getRuleId(ruleEntity, refId));
-			if(RuleTransferUtil.deleteRuleFile(ruleEntity, store, refId, comment)) {
+			if(ruleXml != null) {
 				ExportRuleMap exportRuleMap = new ExportRuleMap(ruleXml.getStore(), refId, null, store, null, null, ruleEntity);
-				exportRuleMap.setDeleted(true);
+				exportRuleMap.setDeleted(false);
 				exportRuleMap.setRejected(true);
 				try {
 					daoService.saveExportRuleMap(exportRuleMap);
 					status++;
+					//TODO addComment
+					//TODO addAuditTrail
+					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException e) {
 					logger.error("Failed to add mapping of ruleId", e);
 				}
-				//TODO addComment
-				//TODO addAuditTrail
-				statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 			}
 		}
 		return statusMap;

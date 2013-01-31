@@ -36,6 +36,7 @@ public class RuleXml extends BaseEntityXml{
 	private String name;
 	private long serial;
 	private boolean deleted;
+	private boolean rejected;
 	private RuleStatus ruleStatus;
 	private boolean fileExists;
 	
@@ -57,11 +58,12 @@ public class RuleXml extends BaseEntityXml{
 		setCreatedBy(createdBy);
 	}
 
-	public RuleXml(String store, String ruleId, String ruleName, boolean deleted) {
+	public RuleXml(String store, String ruleId, String ruleName, boolean deleted, boolean rejected) {
 		this.store = store;
 		this.ruleName = ruleName;
 		this.ruleId = ruleId;
 		this.deleted = deleted;
+		this.rejected = rejected;
 	}
 
 	public RuleStatus getRuleStatus() {
@@ -131,13 +133,22 @@ public class RuleXml extends BaseEntityXml{
 		return version;
 	}
 
-	@XmlAttribute
+	@XmlTransient
 	public boolean isDeleted() {
 		return deleted;
 	}
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@XmlTransient
+	public boolean isRejected() {
+		return rejected;
+	}
+
+	public void setRejected(boolean rejected) {
+		this.rejected = rejected;
 	}
 
 	@XmlTransient

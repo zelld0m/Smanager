@@ -550,7 +550,7 @@
 				var template = '';
 				template  = '<div class="rulePreview w590 marB20">';
 				template += '	<div class="alert marB10">The rule below is pending for import. Please examine carefully the details</div>';
-				template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '	<div class="clearB"></div>';
 				template += '	<label class="w110 floatL marL20 fbold">Import Type:</label>';
@@ -594,7 +594,7 @@
 				template += '			Selected rule below will be overwritten when import button is clicked.';
 				template += '			It is advisable to review both rules as this action cannot be undone.';
 				template += '		</div>';
-				template += '		<label class="w110 floatL marL20 fbold">Rule Info:</label>';
+				template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
 				template += '		<label class="wAuto floatL" id="ruleInfo" style="margin-left: 90px;"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
@@ -647,6 +647,7 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
+								var isRejected = rule["rejected"];
 								
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -677,7 +678,7 @@
 								$tr.find("td#select > div.reject_btn").attr({"id": $.formatAsId(ruleId)});
 								
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", $.formatAsId(ruleId));
-
+								
 								if (rule["updateStatus"]!=="DELETE"){
 									$tr.find("img.previewIcon")
 									.xmlpreview({
@@ -791,9 +792,8 @@
 								if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
 									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
-								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["ruleName"]);
-
-								$tr.find("td#ruleRefId > p#ruleName").prepend($tr.find("img.previewIcon"));
+								$tr.find("td#ruleRefId > p#ruleName").html(" ").append(list[i]["ruleName"])
+																	 .prepend($tr.find("img.previewIcon"));
 								
 								$tr.find("td#publishDate > p#publishDate").html(lastPublishedDate);
 
@@ -806,6 +806,8 @@
 									}
 								}
 								
+								self.toggleCheckbox(isRejected);
+								
 								//import as
 								$tr.find("td#importAs").importas({
 									container: ruleDiv,
@@ -817,15 +819,25 @@
 										self.ruleStatusMap[self.entityName]= list;
 									},
 									targetRuleStatusCallback: function(item, r, rs){
-										var locked = rs!=undefined && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
-
-										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({
-											disabled: locked,
-											readonly: locked
-										});
-
+										var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+										var id = $.formatAsId(r["ruleId"]);
+										
+										item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
+										
 										if(locked){
-											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem:eq(0)').prop({checked:false});
+											item.parents("tr.ruleItem").find("div#" + id + ".approve_btn, " + "div#" + id + ".reject_btn")
+																	   .css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+																	   .find("a")
+																	   .off("click")
+																	   .on({
+																		   click: function(e){
+																			   jAlert("Rule is currently in read-only mode.");
+																		   }
+																	   });
+											
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+										}else{
+											self.toggleCheckbox(r["rejected"]);
 										}
 									}
 								});
@@ -840,7 +852,6 @@
 							$selectedTab.find("tr:not(#ruleItemPattern):even").addClass("alt");
 
 							self.submitHandler();
-							self.toggleCheckbox();
 						}else{
 							$selectedTab.find("table#rule").append('<tr><td class="txtAC" colspan="5">No pending rules found</td></tr>');
 							$selectedTab.find('div#actionBtn').hide();
@@ -924,31 +935,37 @@
 				}
 			},
 			
-			toggleCheckbox : function() {
+			toggleCheckbox : function(isRejected) {
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
-				
-				$selectedTab.find(".approve_btn, .reject_btn").on({
+				 console.log("#"+self.tabSelected);
+				$selectedTab.find(".approve_btn, .reject_btn").off("click").on({
 					click: function(evt) {
+						alert("clicked " + $(this).attr('id') + " " + $(this).attr('class'));
 						var id = $(this).attr('id');
 						switch($(this).attr('class')) {
 						case 'approve_btn':
-							if($('input[type="checkbox"]#'+id+'.import').attr('checked') != 'checked') {
+							if($('input[type="checkbox"]#'+id+'.import').is(":not(:checked)")) {
 								self.toggleImportCheckbox(id);
 							} else {
 								self.untoggleImportCheckbox(id);
 							}
 							break;
 						case 'reject_btn':
-							if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
-								self.toggleRejectCheckbox(id);
-							} else {
-								self.untoggleRejectCheckbox(id);
+							if(evt.data.isRejected){ //lock reject icon
+								$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
+							}
+							else{	//add toggle event
+								if($('input[type="checkbox"]#'+id+'.reject').attr('checked') != 'checked') {
+									self.toggleRejectCheckbox(id);
+								} else {
+									self.untoggleRejectCheckbox(id);
+								}
 							}
 							break;
 						}
 					}
-				});
+				}, {isRejected: isRejected});
 			},
 			
 			toggleImportCheckbox : function(id) {
