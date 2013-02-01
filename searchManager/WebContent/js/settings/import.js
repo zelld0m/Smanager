@@ -595,10 +595,10 @@
 				template += '			It is advisable to review both rules as this action cannot be undone.';
 				template += '		</div>';
 				template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo" style="margin-left: 90px;"></label>';
+				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<div id="importAs" class="wAuto floatL" style="margin-left: 90px;"></div>';
+				template += '		<div id="importAs" class="wAuto floatL"></div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
 
