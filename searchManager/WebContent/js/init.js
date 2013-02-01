@@ -40,15 +40,17 @@ getRuleNameSubTextStatus = function(ruleStatus){
 
 	switch (ruleStatus["approvalStatus"]){
 	case "REJECTED": return "Action Required";
-	case "PENDING": return "Awaiting Approval";
-	case "APPROVED": return "Ready For Production";
+	case "PENDING": 
+		if(ruleStatus["updateStatus"] === 'DELETE') 
+			return "Awaiting Approval for Delete";
+		return "Awaiting Approval";
+	case "APPROVED": 
+		if(ruleStatus["updateStatus"] === 'DELETE')
+			return "Awaiting Unpublishing";
+		return "Ready For Production";
 	default: 
 		if(ruleStatus["updateStatus"] === 'DELETE'){
-			switch(ruleStatus["updateStatus"]){
-				case "PENDING": return "Awaiting Approval - Delete";
-				case "APPROVED": return "Ready For Production - Delete";
-				default: return "Deleted Rule";
-			}
+			return "Rule was deleted";
 		}else if($.isBlank(ruleStatus["approvalStatus"])){
 			return "Setup a Rule";
 		}
