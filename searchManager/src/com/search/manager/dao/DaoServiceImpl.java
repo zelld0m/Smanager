@@ -1726,7 +1726,7 @@ public class DaoServiceImpl implements DaoService {
 			try {
 				if (ruleStatus != null) {
 					// RULE STATUS
-					updateRuleStatusExportInfo(ruleStatus, "SYSTEM", exportType, exportDate);
+					updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDate);
 					// AUDIT TRAIL
 					auditTrail.setDate(exportDate);
 					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
