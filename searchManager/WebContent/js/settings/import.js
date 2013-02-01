@@ -1006,10 +1006,8 @@
 				filename = filename.substr(fileNameIndex);
 
 				if($.startsWith(filename, 'import_gray_locked')){
-					alert("Approve to locked");
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 				}else{
-					alert("Approve to open");
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
 				}
 			},
