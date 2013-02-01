@@ -150,6 +150,8 @@
 			var optionString = "";
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
+			base.itemCount = 0;
+			
 			
 			$.each(list, function() {
 				base.rsLookup[this.ruleId] = this;
@@ -160,7 +162,8 @@
 					case "QUERY_CLEANING":
 					case "RANKING_RULE":
 						if($.isBlank(excList[this.ruleId])){
-						optionString += "<option value='" + this.ruleId + "'>"
+							base.itemCount++;
+							optionString += "<option value='" + this.ruleId + "'>"
 								+ this.ruleName + "</option>";
 						}
 					}
@@ -221,7 +224,7 @@
 						base.toggleFields(u, e, rule, false);
 					} 
 				},
-				rendered: function(item){
+				rendered: function(item, u){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
 						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
@@ -229,6 +232,11 @@
 						base.showAlert(item, item.val());
 						base.options.afterUIRendered();
 					};
+					
+					//No item for selection
+					if(base.itemCount==0 && $option.val()==0 &&(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
+						base.toggleFields(u, null, rule, false);
+					}
 				}
 			});
 
