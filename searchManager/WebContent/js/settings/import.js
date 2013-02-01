@@ -647,7 +647,6 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
-								var isRejected = rule["rejected"];
 
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -825,8 +824,8 @@
 											var rejectImage = 'url(' + GLOBAL_contextPath + '/images/reject_gray.png)';
 											var lockedImage = 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)';
 											
-											var $importBtn = item.parents("tr.ruleItem").find("div#" + id + ".approve_btn").css('background-image', approveImage);
-											var $rejectBtn = item.parents("tr.ruleItem").find("div#" + id + ".reject_btn").css('background-image', rejectImage);
+											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").css('background-image', approveImage);
+											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").css('background-image', rejectImage);
 											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 
@@ -1002,6 +1001,10 @@
 				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_active.png)');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
+				var filename = $('div#'+id+'.approve_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
+
 				if($.startsWith(filename, 'import_gray_locked')){
 					alert("Approve to locked");
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
