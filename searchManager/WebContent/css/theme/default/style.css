@@ -943,5 +943,8 @@ a:hover .txtManufact, .txtManufact:hover  { color:#282828; text-decoration:none 
 
 .qtip ul#groupList > li.group:even{  background:#ecf0f8 }
 
-input.ss-textbox { font-family: sans-serif, Arial !important; /*Mozilla font issue*/ }
-
+input.ss-textbox { font-family: sans-serif, Arial !important; /*Mozilla font issue*/}
+tr#manufacturer td div.floatL div.ss-wrapper input.ss-textbox {top: 0px !important;}
+div#templatelist div.floatL.w80.txtLabel {margin-top: 10px;}
+td#ruleOption.txtAC {min-width: 50px;}
+td#importAs.txtAL div div.ss-wrapper input.ss-textbox {top: 0px !important;}

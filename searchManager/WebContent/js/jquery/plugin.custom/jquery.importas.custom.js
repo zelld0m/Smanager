@@ -87,11 +87,11 @@
 		};
 
 		base.showAlert = function(item, id){
-			var ruleStatus = base.rsLookup[id];
+			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
-			if(ruleStatus!=undefined && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
-				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
+			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED" || ruleStatus["updateStatus"] === "DELETE")){
+				$importAlert.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 				$importAlert.show();
 			}else{
 				$importAlert.find("#status").empty();
@@ -103,7 +103,6 @@
 
 		base.toggleFields = function(u, evt, rule, selectRule){
 			var $replacement = $(u).parent("div.ss-wrapper").siblings("#replacement");
-			base.options.selectedOptionChanged(u.value);
 
 			if(selectRule){
 				$(u).show();
@@ -225,14 +224,14 @@
 				rendered: function(item){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
-						if (rs) base.showAlert(item, rs["ruleId"]);
+						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
 					}else{
 						base.showAlert(item, item.val());
+						base.options.afterUIRendered();
 					};
 				}
 			});
 
-			base.options.afterUIRendered();
 		};
 
 		// Run initializer
@@ -246,7 +245,6 @@
 			newRuleText: "Import As New Rule",
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
-			selectedOptionChanged: function(ruleId){},
 			setRuleStatusListCallback: function(base, list){},
 			afterUIRendered: function(){}
 	};
