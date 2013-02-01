@@ -99,7 +99,7 @@
 				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
-					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 					
 					if (locked){
 						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();

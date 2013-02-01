@@ -90,8 +90,8 @@
 			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
-			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
-				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
+			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED" || ruleStatus["updateStatus"] === "DELETE")){
+				$importAlert.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 				$importAlert.show();
 			}else{
 				$importAlert.find("#status").empty();

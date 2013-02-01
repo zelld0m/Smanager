@@ -35,17 +35,24 @@ getStoreLabel = function(storeName){
 };
 
 getRuleNameSubTextStatus = function(ruleStatus){
-	if (ruleStatus==null) 
-		return "Unknown Status";
-
-	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
-		return "Setup a Rule";
+	if ($.isEmptyObject(ruleStatus)) 
+		return "Unknown Rule Status";
 
 	switch (ruleStatus["approvalStatus"]){
 	case "REJECTED": return "Action Required";
 	case "PENDING": return "Awaiting Approval";
 	case "APPROVED": return "Ready For Production";
-	}	
+	default: 
+		if(ruleStatus["updateStatus"] === 'DELETE'){
+			switch(ruleStatus["updateStatus"]){
+				case "PENDING": return "Awaiting Approval - Delete";
+				case "APPROVED": return "Ready For Production - Delete";
+				default: return "Deleted Rule";
+			}
+		}else if($.isBlank(ruleStatus["approvalStatus"])){
+			return "Setup a Rule";
+		}
+	}; 
 };
 
 showActionResponse = function(code, action, param){
@@ -67,7 +74,7 @@ showActionResponseFromMap = function(code, action, title, additionalFailMessage)
 			message += '\n-'+ code["PASSED"][i];	
 		}
 	}
-	
+
 	if (code["FAILED"] && code["FAILED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
 		message += "Failed " + action + " request for:";
@@ -79,7 +86,7 @@ showActionResponseFromMap = function(code, action, title, additionalFailMessage)
 			message += "\n\n" + additionalFailMessage;
 		}
 	}
-	
+
 	jAlert(message, title); 
 };
 
@@ -99,7 +106,7 @@ showMessage = function(selector, msg){
 			solo: false,
 			ready: true
 		},
-		hide: 'unfocus, mouseout',
+		hide: 'unfocus, mouseout, mouseleave',
 		style:{width:'auto'},
 		events: {
 			show: function(event, api){
@@ -128,7 +135,7 @@ getLockedRuleHTMLTemplate = function(){
 
 getLastModifiedHTMLTemplate = function(user, date){
 	var template = '';
-	
+
 	template += '<div>';
 	template += '	<div>Modified by <strong>' + user + '</strong><br/>';
 	template += '	on ' + date;
