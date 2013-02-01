@@ -976,7 +976,11 @@
 				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_active.png)');
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
 				
-				if($.endsWith($('div#'+id+'.reject_btn').css('background-image'), 'import_gray_locked.png")')){
+				var filename = $('div#'+id+'.reject_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
+
+				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 				}else{
 					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
@@ -993,9 +997,11 @@
 				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_active.png)');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
-				if($.endsWith($('div#'+id+'.approve_btn').css('background-image'), 'import_gray_locked.png")')){
+				if($.startsWith(filename, 'import_gray_locked')){
+					alert("Approve to locked");
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 				}else{
+					alert("Approve to open");
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
 				}
 			},
