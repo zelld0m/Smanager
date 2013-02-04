@@ -81,7 +81,7 @@
 						<tr>
 							<th width="24px" id="selectAll"><input type="checkbox"></th>
 							<th width="50px">Content</th>
-							<th width="230px">Rule Info</th>
+							<th width="230px">Rule Name</th>
 							<th width="85px">Published Date</th>
 							<th width="85px">Export Date</th>
 							<th>Export Type</th>

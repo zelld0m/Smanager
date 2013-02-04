@@ -47,6 +47,7 @@
 
 #popup_message {
 	padding-left: 48px;
+	word-wrap: break-word;
 }
 
 #popup_panel {

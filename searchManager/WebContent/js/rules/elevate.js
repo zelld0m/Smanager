@@ -569,7 +569,8 @@
 							addProductItemCallback:function(position, expiryDate, comment, skus){
 								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 									callback : function(code){
-										showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+										showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
+												"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										self.populateRuleItem(self.selectedRuleItemPage);
 									},
 									preHook: function(){ 

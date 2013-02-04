@@ -189,10 +189,25 @@ public class ConfigManager {
 		return false;
 	}
 	
+	/** 
+	 * For a property that has multiple values, getString() will return the first value of the list
+	 * */
 	public String getStoreSetting(String coreName, String field) {
 		PropertiesConfiguration config = serverSettingsMap.get(coreName);
 		if (config != null) {
 			return config.getString(field);
+		}
+		return null;
+	}
+	
+	/** 
+	 * For a property that has multiple values, getList() will return the complete list 
+	 * */
+	@SuppressWarnings("unchecked")
+	public List<String> getStoreSettings(String coreName, String field){
+		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+		if (config != null) {
+			return config.getList(field);
 		}
 		return null;
 	}

@@ -35,17 +35,26 @@ getStoreLabel = function(storeName){
 };
 
 getRuleNameSubTextStatus = function(ruleStatus){
-	if (ruleStatus==null) 
-		return "Unknown Status";
-
-	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
-		return "Setup a Rule";
+	if ($.isEmptyObject(ruleStatus)) 
+		return "Unknown Rule Status";
 
 	switch (ruleStatus["approvalStatus"]){
 	case "REJECTED": return "Action Required";
-	case "PENDING": return "Awaiting Approval";
-	case "APPROVED": return "Ready For Production";
-	}	
+	case "PENDING": 
+		if(ruleStatus["updateStatus"] === 'DELETE') 
+			return "Awaiting Approval for Delete";
+		return "Awaiting Approval";
+	case "APPROVED": 
+		if(ruleStatus["updateStatus"] === 'DELETE')
+			return "Awaiting Unpublishing";
+		return "Ready For Production";
+	default: 
+		if(ruleStatus["updateStatus"] === 'DELETE'){
+			return "Rule was deleted";
+		}else if($.isBlank(ruleStatus["approvalStatus"])){
+			return "Setup a Rule";
+		}
+	}; 
 };
 
 showActionResponse = function(code, action, param){
@@ -57,27 +66,30 @@ showActionResponse = function(code, action, param){
 	}
 };
 
-showActionResponseFromMap = function(code, action, param, additionalFailMessage){
+showActionResponseFromMap = function(code, action, title, additionalFailMessage){
 	var message = "";
-	
-	if (code["FORCED"] && code["FORCED"].length > 0) {
-		message += "Successful force " + action + " request for " + code["FORCED"] + ".";
-	}
-	
+
 	if (code["PASSED"] && code["PASSED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Successful " + action + " request for " + code["PASSED"] + ".";
-	}
-	
-	if (code["FAILED"] && code["FAILED"].length > 0) {
-		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
-		if (additionalFailMessage) {
-			message += "\n" + additionalFailMessage;
+		message += "Successful " + action + " request for:";
+		for(var i=0; i< code["PASSED"].length; i++){	
+			message += '\n-'+ code["PASSED"][i];	
 		}
 	}
-	
-	jAlert(message,"Multiple Rule Item Add"); 
+
+	if (code["FAILED"] && code["FAILED"].length > 0) {
+		if ($.isNotBlank(message)) message += "\n\n";
+		message += "Failed " + action + " request for:";
+		for(var i=0; i< code["FAILED"].length; i++){	
+			message += '\n-'+ code["FAILED"][i];	
+		}
+
+		if (additionalFailMessage) {
+			message += "\n\n" + additionalFailMessage;
+		}
+	}
+
+	jAlert(message, title); 
 };
 
 /** Style for HTML upload tag */
@@ -96,7 +108,7 @@ showMessage = function(selector, msg){
 			solo: false,
 			ready: true
 		},
-		hide: 'unfocus, mouseout',
+		hide: 'unfocus, mouseout, mouseleave',
 		style:{width:'auto'},
 		events: {
 			show: function(event, api){
@@ -125,7 +137,7 @@ getLockedRuleHTMLTemplate = function(){
 
 getLastModifiedHTMLTemplate = function(user, date){
 	var template = '';
-	
+
 	template += '<div>';
 	template += '	<div>Modified by <strong>' + user + '</strong><br/>';
 	template += '	on ' + date;
