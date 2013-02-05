@@ -133,8 +133,7 @@
 				var $facetDiv = $("div#facetsort div#"+self.tabSelectedId);
 
 				var $select = $facetDiv.find("select#facetValuesPattern");
-
-				$select.find("option.not:('valuePattern')").remove();
+				$select.find("option").remove();
 				//$select.prop({id : "_items"+self.tabSelectedId});
 
 				if(self.facetValueList){
@@ -222,10 +221,13 @@
 			populateSelectedValues : function(facetDiv, facetGroupId){
 				var self = this;
 				var $ul = facetDiv.find("ul#selectedFacetValueList");
-
+				$ul.find('li:not(#addFacetValuePattern)').remove();
+				
 				FacetSortServiceJS.getAllFacetGroupItem(self.selectedRule["ruleId"], facetGroupId, {
 					callback: function(data){
 						var facetGroupItems = data.list;
+						
+						$ul.find('li:not(#addFacetValuePattern)').remove();
 						for(var index in facetGroupItems){
 							var item = facetGroupItems[index];
 							var itemName = item["name"];
