@@ -262,7 +262,7 @@
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';
-		output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
+		//output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '				<div id="demotePosition" class="floatL"></div>';
