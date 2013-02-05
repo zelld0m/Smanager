@@ -84,6 +84,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
+			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
 			<div id="daily-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-2" class="filter padT5 fsize12 marT1">
@@ -102,6 +103,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
+			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
 			<div id="weekly-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-3" class="filter padT5 fsize12 marT1">
@@ -157,6 +159,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
+			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
 			<div id="monthly-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 	</div>

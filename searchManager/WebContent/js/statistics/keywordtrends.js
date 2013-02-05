@@ -110,6 +110,15 @@
 					break;
 				}
 			}
+		},
+		hasData: function() {
+			for ( var i = 0; i < this.seriesList.length; i++) {
+				if (this.seriesList[i].data.length > 0) {
+					return true;
+				} 
+			}
+
+			return false;
 		}
 	};
 
@@ -117,8 +126,6 @@
 	 * Daily tab.
 	 */
 	Tabs.daily = $.extend(true, {
-		el : $("#tabs-1"),
-		activator : $("#daily-link"),
 		isValid : function() {
 			var fromDate = $("#fromDate").datepicker("getDate");
 			var toDate = $("#toDate").datepicker("getDate");
@@ -135,6 +142,8 @@
 		collation : 'daily',
 		init: function() {
 			var self = this;
+			this.el = $("#tabs-1");
+			this.activator = $("#daily-link");
 			KeywordTrendsServiceJS.getMostRecentStatsDate({callback: function(date) {
 				var from = new Date(date);
 				var to = new Date(date);
@@ -165,8 +174,6 @@
 	 * Weekly tab.
 	 */
 	Tabs.weekly = $.extend(true, {
-		el : $("#tabs-2"),
-		activator : $("#weekly-link"),
 		isValid : function() {
 			var fromDate = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
 			var toDate = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
@@ -185,6 +192,9 @@
 			var self = this;
 			var now = $.getFirstDayOfWeek(new Date());
 			var before = new Date(now);
+			
+			this.el = $("#tabs-2");
+			this.activator = $("#weekly-link");
 			
 			before.setDate(before.getDate() - 70);
 			before = $.getFirstDayOfWeek(before);
@@ -229,8 +239,6 @@
 	 * Monthly tab.
 	 */
 	Tabs.monthly = $.extend(true, {
-		el : $("#tabs-3"),
-		activator : $("#monthly-link"),
 		isValid : function() {
 			var fromYear = $("#fromYear").val();
 			var toYear = $("#toYear").val();
@@ -253,6 +261,9 @@
 			var date = new Date();
 			var toMonth = date.getMonth() + 1;
 			var toYear = date.getFullYear();
+			
+			this.el = $("#tabs-3");
+			this.activator = $("#monthly-link");
 			
 			date.setMonth(date.getMonth() - 9);
 
@@ -470,12 +481,17 @@
 			},
 			series : tab.seriesList
 		};
-		
+
 		if (tab.chart) {
 			tab.chart.destroy();
 		}
-		
-		tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
+
+		if (tab.hasData()) {
+			tab.el.find("#message").hide();
+			tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
+		} else {
+			tab.el.find("#message").show();
+		}
 	};
 
 	/*
