@@ -90,8 +90,8 @@
 			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
-			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED")){
-				$importAlert.find("#status").text("Rule is in " + getRuleNameSubTextStatus(ruleStatus));
+			if(!$.isEmptyObject(ruleStatus) && (ruleStatus["approvalStatus"] === "PENDING" || ruleStatus["approvalStatus"] === "APPROVED" || ruleStatus["updateStatus"] === "DELETE")){
+				$importAlert.find("#status").text(getRuleNameSubTextStatus(ruleStatus));
 				$importAlert.show();
 			}else{
 				$importAlert.find("#status").empty();
@@ -150,6 +150,7 @@
 			var optionString = "";
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
+			base.itemCount = 0;
 			
 			$.each(list, function() {
 				base.rsLookup[this.ruleId] = this;
@@ -160,7 +161,7 @@
 					case "QUERY_CLEANING":
 					case "RANKING_RULE":
 						if($.isBlank(excList[this.ruleId])){
-						optionString += "<option value='" + this.ruleId + "'>"
+							optionString += "<option value='" + this.ruleId + "'>"
 								+ this.ruleName + "</option>";
 						}
 					}
@@ -221,7 +222,7 @@
 						base.toggleFields(u, e, rule, false);
 					} 
 				},
-				rendered: function(item){
+				rendered: function(item, u){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
 						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
@@ -229,6 +230,11 @@
 						base.showAlert(item, item.val());
 						base.options.afterUIRendered();
 					};
+					
+					//No item for selection
+					if(!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
+						base.toggleFields(u, null, rule, false);
+					}
 				}
 			});
 

@@ -227,7 +227,7 @@
 
 									$content.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
 
-										var val = $.addSlashes($.trim($(value).find(".txtHolder").html())); 
+										var val = $.addSlashes($.trim($(value).find(".txtHolder").text())); 
 										if (index >0) finalVal += " ";											
 										finalVal += $content.find("select#facetName").val();
 										finalVal += ":(";

@@ -595,10 +595,10 @@
 				template += '			It is advisable to review both rules as this action cannot be undone.';
 				template += '		</div>';
 				template += '		<label class="w110 floatL marL20 fbold">Rule Name:</label>';
-				template += '		<label class="wAuto floatL" id="ruleInfo" style="margin-left: 90px;"></label>';
+				template += '		<label class="wAuto floatL" id="ruleInfo"></label>';
 				template += '		<div class="clearB"></div>';
 				template += '		<label class="w110 floatL marL20 fbold">Import As:</label>';
-				template += '		<div id="importAs" class="wAuto floatL" style="margin-left: 90px;"></div>';
+				template += '		<div id="importAs" class="wAuto floatL"></div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';
 
@@ -647,7 +647,6 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
-								var isRejected = rule["rejected"];
 
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -819,15 +818,20 @@
 											self.ruleStatusMap[self.entityName]= list;
 										},
 										targetRuleStatusCallback: function(item, r, rs){
-											var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+											var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 											var id = $.formatAsId(r["ruleId"]);
-
+											var approveImage = 'url(' + GLOBAL_contextPath + '/images/approve_gray.png)';
+											var rejectImage = 'url(' + GLOBAL_contextPath + '/images/reject_gray.png)';
+											var lockedImage = 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)';
+											
+											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").css('background-image', approveImage);
+											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").css('background-image', rejectImage);
 											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 
 											if(r["rejected"]){
-												item.parents("tr.ruleItem").find("div#" + id + ".reject_btn")
-												.css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+												$rejectBtn
+												.css('background-image', lockedImage)
 												.off("click")
 												.on({
 													click: function(e){
@@ -839,8 +843,8 @@
 											}
 											
 											if(locked){
-												item.parents("tr.ruleItem").find("div#" + id + ".approve_btn")
-												.css('background-image', 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)')
+												$importBtn
+												.css('background-image', lockedImage)
 												.off("click")
 												.on({
 													click: function(e){
@@ -976,7 +980,11 @@
 				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_active.png)');
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
 				
-				if($.endsWith($('div#'+id+'.reject_btn').css('background-image'), 'import_gray_locked.png")')){
+				var filename = $('div#'+id+'.reject_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
+
+				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 				}else{
 					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
@@ -993,7 +1001,11 @@
 				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_active.png)');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
-				if($.endsWith($('div#'+id+'.approve_btn').css('background-image'), 'import_gray_locked.png")')){
+				var filename = $('div#'+id+'.approve_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
+
+				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
 				}else{
 					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');

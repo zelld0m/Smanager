@@ -60,17 +60,16 @@
 			case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
 			case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
 			case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			}
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					tr.find("td#itemImage > img").attr("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				tr.find("td#itemImage > img").attr("src", imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+					}
+				});
+			},10);
 		};
 
 		base.getItemType = function(item){
@@ -99,7 +98,7 @@
 				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
-					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED");
+					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 					
 					if (locked){
 						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
