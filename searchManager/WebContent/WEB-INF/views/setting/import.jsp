@@ -78,8 +78,8 @@
 				<table class="tblItems w100p marT5">
 					<tbody>
 						<tr>
-							<th width="48px" id="selectAll"><input type="checkbox" style="display:none"></th>
-							<th width="100px">Rule Name
+							<th width="80px" id="selectAll"><input type="checkbox" style="display:none"></th>
+							<th width="150px">Rule Name
 								<img id="ruleNameSort" class="ruleNameSort pointer" src="<spring:url value="/images/tablesorter/bg.gif" />"/>
 								<input id="ruleNameInp" name="sortGroup" type="radio" class="sortGroup" style="display: none;"/>
 							</th>
