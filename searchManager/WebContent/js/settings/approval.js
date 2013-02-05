@@ -161,8 +161,8 @@
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}
 
-							if(showId) 
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							//if(showId) 
+							//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
@@ -467,7 +467,7 @@
 			case "Query Cleaning": 
 				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
@@ -548,7 +548,7 @@
 
 				});
 
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {

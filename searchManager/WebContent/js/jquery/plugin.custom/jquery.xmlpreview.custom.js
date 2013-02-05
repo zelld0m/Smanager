@@ -287,7 +287,7 @@
 							$table.append($tr);
 						}
 						else{
-							$ruleInfo.text(data.name + "[" + data.ruleId + "]");
+							$ruleInfo.text(data.name);
 
 							if(data.items && data.items.length == 0){
 								var $tr = $table.find("tr#itemPattern").clone();
@@ -371,7 +371,7 @@
 							}
 
 							$table.find("tr:even").addClass("alt");
-							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+							$content.find("#ruleInfo").html(data["ruleName"]);
 							$content.find("#description").html(data["description"]);
 							switch (data["redirectTypeId"]) {
 							case "1":
@@ -432,7 +432,7 @@
 							$content.find("#description").html("");
 						}
 						else{
-							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+							$content.find("#ruleInfo").html(data["ruleName"]);
 							$content.find("#startDate").html(data["formattedStartDate"]);
 							$content.find("#endDate").html(data["formattedEndDate"]);
 							$content.find("#description").html(data["description"]);
@@ -499,7 +499,7 @@
 					$table.append($tr);
 				}
 				else{
-					$ruleInfo.text(xml.ruleName + " [" + xml.ruleId + "]");
+					$ruleInfo.text(xml.ruleName);
 					
 					if(xml.groups && xml.groups.length == 0){
 						var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -570,7 +570,7 @@
 				}
 
 				$table.find("tr:even").addClass("alt");
-				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#ruleInfo").html(xml["ruleName"]);
 				$content.find("#description").html(xml["description"]);
 
 				switch (xml["redirectType"]) {
@@ -616,7 +616,7 @@
 
 				var xml = base.options.ruleXml;
 
-				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#ruleInfo").html(xml["ruleName"]);
 				$content.find("#startDate").html(xml["formattedStartDate"]);
 				$content.find("#endDate").html(xml["formattedEndDate"]);
 				$content.find("#description").html(xml["description"]);
@@ -714,7 +714,7 @@
 				case "demote":
 					template  = '<div class="rulePreview w600">';
 					//template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
@@ -726,7 +726,7 @@
 				case "facetsort":
 					template  = '<div class="rulePreview w600">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
@@ -738,7 +738,7 @@
 				case "querycleaning":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
@@ -756,7 +756,7 @@
 				case "rankingrule":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';
@@ -1146,7 +1146,14 @@
 								break;
 							case base.DATABASE_SOURCE:
 								if($.isBlank(base.options.dbRuleId)){ //if dbRuleId is blank, selected option is "Import As New Rule", display preview of ruleXml
-									base.getRuleData(base.contentHolder.find("#rightPreview"));
+									
+									switch(base.options.ruleType.toLowerCase()){ //do only if ruleType is either Query Cleaning or Ranking Rule
+										case "querycleaning":
+										case "rankingrule":
+											base.getRuleData(base.contentHolder.find("#rightPreview"));
+											break;
+										default: break;
+									}
 								}
 								else{ //if dbRuleId is not blank, display preview of rule from database
 									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId);
