@@ -18,7 +18,7 @@
 		};
 		
 		base.setInitSelectedOption = function(){
-			var name = "rkMessageTypeOpt_" +  base.options.id;
+			var name = "rkMessageTypeOpt" +  $.formatAsId(base.options.id);
 			var selectedIndex = base.options.defaultSelectedOption;
 			
 			if(base.options.rule && $.isNumeric(base.options.rule["replaceKeywordMessageType"]) && base.options.rule["replaceKeywordMessageType"] > 0){
@@ -27,33 +27,83 @@
 			
 			base.$el.find('input:radio[name=' + name + ']:nth(' +  (selectedIndex - 1) + ')').prop("checked", true);
 			
+			var customTextListener = function(e){
+				var customText = $.trim($(e.currentTarget).val().replace(/\s+(?=\s)/g,'')); 
+				var customTextRegExpression = /^[a-zA-Z0-9\s\-\.,:;\?!\(\)'"\\\/]{0,160}$/;
+				
+				if(customText.length > 160){
+					jAlert('Must be at most 160 characters long.');
+				}else if (!customTextRegExpression.test(customText)) {
+					jAlert('Custom text contains invalid character/s');
+				}else{
+					if($.isNotBlank(customText) && 
+							customText.toLowerCase() !== base.options.customText.toLowerCase() && 
+							customText.toLowerCase() !== e.data.rule["replaceKeywordMessageCustomText"].toLowerCase()){
+						
+						RedirectServiceJS.updateRKMessageType(e.data.rule["ruleId"], 3, customText, {
+							callback: function(data){
+								if (data > 0){
+									console.log("Pre: " + e.data.rule["replaceKeywordMessageCustomText"]);
+									e.data.rule["replaceKeywordMessageCustomText"] = customText;
+									console.log("Post: " + e.data.rule["replaceKeywordMessageCustomText"]);
+									base.options.successCustomTextUpdateCallback(customText);
+								}
+							},
+							preHook: function(){
+								base.$el.find('input:radio[name=' + name + ']').prop({
+									disabled: true
+								});
+							},
+							postHook: function(){
+								base.$el.find('input:radio[name=' + name + ']').prop({
+									disabled: false
+								});
+							},
+						});						
+					}
+				}				
+			};			
+			
+			if(base.options.rule && $.isNotBlank(base.options.rule["replaceKeywordMessageCustomText"])){
+				base.$el.find('#customText' + $.formatAsId(base.options.id)).val(base.options.rule["replaceKeywordMessageCustomText"]);
+			}
+			
+			// Add listener to custom text
+			base.$el.find('#customText' + $.formatAsId(base.options.id)).prop({
+				readonly: base.$el.find('input:radio[id=' + "rkMessageTypeOpt3" +  $.formatAsId(base.options.id) + ']').is(':not(:checked)'),
+				disabled: base.$el.find('input:radio[id=' + "rkMessageTypeOpt3" +  $.formatAsId(base.options.id) + ']').is(':not(:checked)')
+			}).off('focusout blur mouseleave').on({
+				focusout: customTextListener,
+				mouseleave: customTextListener
+			}, {rule: base.options.rule});
+			
+			// add listener to radio button
 			base.$el.find('input:radio[name=' + name + ']').off('change').on({
 				change: function(evt){
 					var selectedOption = $(evt.currentTarget).val();
-					var customText = $.trim($(evt.currentTarget).parent('.optionContainer').find('#customText_' + base.options.id).val());
-					customText = $.trim(customText.replace(/ +(?= )/g,''));
 					
-					// Custom text validation, allowing set of characters
-					var customTextRegExpression = /^[a-zA-Z0-9\s\-\.,:;\?!\(\)'"\\\/]{0,160}$/;
-					if(customText.length > 160){
-						alert('Must be at most 160 characters long.');
-						return false;
-					}else if (!customTextRegExpression.test(customText)) {
-						alert('Custom text contains invalid character/s');
-						return false;
-					}else{
-						RedirectServiceJS.updateRKMessageType(evt.data.rule["ruleId"], selectedOption, customText, {
+					base.$el.find('#customText_' + base.options.id).prop({
+						readonly: selectedOption!=3,
+						disabled: selectedOption!=3
+					});
+					
+					RedirectServiceJS.updateRKMessageType(evt.data.rule["ruleId"], selectedOption, null, {
 							callback: function(e){
-								
+								if (e > 0){
+									base.options.successTypeUpdateCallback(selectedOption);
+								}
 							},
 							preHook: function(){
-								
+								base.$el.find('input:radio[name=' + name + ']').prop({
+									disabled: true
+								});
 							},
 							postHook: function(){
-								
+								base.$el.find('input:radio[name=' + name + ']').prop({
+									disabled: false
+								});
 							},
 						});
-					}
 				}
 			}, {rule: base.options.rule});
 			
@@ -77,7 +127,7 @@
 			template += '	<div id="rkMessageType3_' + base.options.id + '" class="optionContainer">';
 			template += '		<input type="radio" id="rkMessageTypeOpt3_' + base.options.id + '" name="rkMessageTypeOpt_' + base.options.id + '" value="3">';
 			template += '		<label for="rkMessageTypeTxt3_' + base.options.id + '">';
-			template += ' 			Display custom text &nbsp;<input type="text" id="customText_' + base.options.id + '" class="w500" placeholder="Your search query did not yield any results. You might be interested in the following items instead:" />';
+			template += ' 			Display custom text &nbsp;<input type="text" readonly="readonly" disabled="disabled" id="customText_' + base.options.id + '" class="w500" placeholder="' + base.options.customText + '"/>';
 			template += '		</label>';
 			template += '	</div>';
 			template += '</div>';
@@ -91,7 +141,10 @@
 	$.rkMessageType.defaultOptions = {
 			id: 1,
 			defaultSelectedOption: 1, 
-			rule: null
+			customText: "Your search query did not yield any results. You might be interested in the following items instead.",
+			rule: null,
+			successTypeUpdateCallback: function(value){},
+			successCustomTextUpdateCallback: function(customText){}
 	};
 
 	$.fn.rkMessageType = function(options){

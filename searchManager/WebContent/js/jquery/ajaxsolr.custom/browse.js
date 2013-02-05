@@ -49,7 +49,8 @@
 		
 		Manager.addWidget(new AjaxSolr.SearchResultHeaderWidget({
 			id: 'searchResultHeader',
-			target: '#searchResultHeader'
+			target: '#searchResultHeader',
+			maxRelatedSearch: 3
 		}));
 		
 		var sortWidget = new AjaxSolr.SortResultWidget({
