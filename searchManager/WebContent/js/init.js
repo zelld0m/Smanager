@@ -122,12 +122,16 @@ showMessage = function(selector, msg){
 	});
 };
 
-getLockedRuleHTMLTemplate = function(){
+getLockedRuleHTMLTemplate = function(message){
 	var template = '';
-
+	
 	template += '<div id="ruleIsLocked" class="w180">';
 	template += '	<div class="w180 alert">';
-	template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	if(message != null && message.length > 0) {
+		template += '		'+message;
+	} else {
+		template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	}
 	template += '	</div>';
 	template += '</div>';
 
@@ -154,7 +158,7 @@ showLastModified = function(e){
 /** Style for HTML upload tag */
 showHoverInfo = function(e){
 	if(e.data.locked){
-		showMessage(e.target, getLockedRuleHTMLTemplate());
+		showMessage(e.target, getLockedRuleHTMLTemplate(e.data.message));
 	}
 };
 

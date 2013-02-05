@@ -123,6 +123,7 @@
 				});
 			}
 
+			
 			base.contentHolder.find("#selItemValidityDate").prop({readonly: true}).datepicker({
 				showOn: "both",
 				disabled: base.options.locked,
@@ -448,7 +449,8 @@
 
 			base.contentHolder.find("#saveBtn").off().on({
 				click: function(e){
-					var position = parseInt($.trim(base.contentHolder.find("#selItemPosition").val()));
+					var origPostion = $.trim(base.contentHolder.find("#selItemPosition").val());
+					var position = parseInt(origPostion);
 					position = isNaN(position) ? base.options.defaultPosition : position;
 					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
@@ -461,6 +463,8 @@
 					}else if (base.selectedItem==null && position > (base.maxItemPosition + 1)){
 						jAlert("Please specify position. Max allowed position is " + (base.maxItemPosition + 1), "Search Simulator");
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
+					}else if(origPostion!=null && origPostion.length>0 && !$.isNumeric(origPostion)) {
+						jAlert("Invalid position value.", "Search Simulator");
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 					}else if(today.getTime() > new Date(validityDate).getTime()){

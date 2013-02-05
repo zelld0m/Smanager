@@ -17,7 +17,7 @@
 			expDateSort : null,
 			ruleNameSort : null,
 			activeSortOrder : null,
-			ruleFilterBy : "all",
+			ruleFilterBy : "rejected",
 
 			postMsg : function(data, pub){
 				var self = this;
@@ -672,7 +672,6 @@
 								}
 								else{
 									$tr.find("td#select > input[type='checkbox']").attr({"id": $.formatAsId(ruleId), "value": ruleId, "name": rule["ruleName"]});
-//									$tr.find("td#select > img.importReject").attr({"id": $.formatAsId(ruleId)});
 									$tr.find("td#select > div.approve_btn").attr({"id": $.formatAsId(ruleId)});
 									$tr.find("td#select > div.reject_btn").attr({"id": $.formatAsId(ruleId)});
 
@@ -820,38 +819,35 @@
 										targetRuleStatusCallback: function(item, r, rs){
 											var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 											var id = $.formatAsId(r["ruleId"]);
-											var approveImage = 'url(' + GLOBAL_contextPath + '/images/approve_gray.png)';
-											var rejectImage = 'url(' + GLOBAL_contextPath + '/images/reject_gray.png)';
-											var lockedImage = 'url(' + GLOBAL_contextPath + '/images/import_gray_locked.png)';
 											
-											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").css('background-image', approveImage);
-											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").css('background-image', rejectImage);
+											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").addClass('approve_gray');
+											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").addClass('reject_gray');
 											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly: locked});
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 
 											if(r["rejected"]){
 												$rejectBtn
-												.css('background-image', lockedImage)
+												.addClass('import_locked')
 												.off("click")
 												.on({
 													click: function(e){
 														
 													},
 													mouseenter: showHoverInfo
-												}, {locked: true});
+												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
 												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
 											}
 											
 											if(locked){
 												$importBtn
-												.css('background-image', lockedImage)
+												.addClass('import_locked')
 												.off("click")
 												.on({
 													click: function(e){
 														
 													},
 													mouseenter: showHoverInfo
-												}, {locked: true});
+												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
 											}
 										}
@@ -957,6 +953,8 @@
 						var id = $(this).attr('id');
 						switch($(this).attr('class')) {
 						case 'approve_btn':
+						case 'approve_btn approve_gray':
+						case 'approve_btn approve_active':
 							if($('input[type="checkbox"]#'+id+'.import').is(":not(:checked)")) {
 								self.toggleImportCheckbox(id);
 							} else {
@@ -964,6 +962,8 @@
 							}
 							break;
 						case 'reject_btn':
+						case 'reject_btn reject_gray':
+						case 'reject_btn reject_active':
 							if($('input[type="checkbox"]#'+id+'.reject').is(":not(:checked)")) {
 								self.toggleRejectCheckbox(id);
 							} else {
@@ -977,7 +977,7 @@
 
 			toggleImportCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', true);
-				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_active.png)');
+				$('div#'+id+'.approve_btn').removeClass('approve_gray').addClass('approve_active');
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
 				
 				var filename = $('div#'+id+'.reject_btn').css('background-image');
@@ -985,20 +985,20 @@
 				filename = filename.substr(fileNameIndex);
 
 				if($.startsWith(filename, 'import_gray_locked')){
-					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
+					$('div#'+id+'.reject_btn').addClass('import_locked');
 				}else{
-					$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
+					$('div#'+id+'.reject_btn').removeClass('reject_active').addClass('reject_gray');
 				}
 			},
 
 			untoggleImportCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
-				$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/approve_gray.png)');
+				$('div#'+id+'.approve_btn').removeClass('approve_active').addClass('approve_gray');
 			},
 
 			toggleRejectCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', true);
-				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_active.png)');
+				$('div#'+id+'.reject_btn').removeClass('reject_gray').addClass('reject_active');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
 				var filename = $('div#'+id+'.approve_btn').css('background-image');
@@ -1006,15 +1006,15 @@
 				filename = filename.substr(fileNameIndex);
 
 				if($.startsWith(filename, 'import_gray_locked')){
-					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
+					$('div#'+id+'.approve_btn').addClass('import_locked');
 				}else{
-					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
+					$('div#'+id+'.approve_btn').removeClass('approve_active').addClass('approve_gray');
 				}
 			},
 
 			untoggleRejectCheckbox : function(id) {
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', false);
-				$('div#'+id+'.reject_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
+				$('div#'+id+'.reject_btn').removeClass('reject_active').addClass('reject_gray');
 			},
 
 			init : function() {
