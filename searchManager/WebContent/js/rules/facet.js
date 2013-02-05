@@ -54,7 +54,14 @@
 					authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
 					postRestoreCallback: function(base, rule){
 						base.api.destroy();
-						self.showFacetSort();
+						FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
+							callback: function(data){
+								self.setFacetSort(data);
+							},
+							preHook: function(){
+								self.prepareFacetSort();
+							}
+						});
 					},
 					afterSubmitForApprovalRequest:function(ruleStatus){
 						self.showFacetSort();

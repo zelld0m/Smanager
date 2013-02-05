@@ -1200,10 +1200,6 @@
 			enableVersion: true,
 			authorizeRuleBackup: allowModify,
 			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
-			postRestoreCallback: function(base, rule){
-				base.api.destroy();
-				showRelevancy();
-			},
 			afterSubmitForApprovalRequest:function(ruleStatus){
 				selectedRuleStatus = ruleStatus;
 				showRelevancy();
@@ -1215,7 +1211,15 @@
 
 			},
 			postRestoreCallback: function(base, rule){
-				setRelevancy(rule);
+				base.api.destroy();
+				RelevancyServiceJS.getRule(selectedRule.ruleId, {
+					callback:function(data){
+						setRelevancy(data);
+					},
+					preHook:function(){
+						prepareRelevancy();
+					}
+				});
 			},
 			afterRuleStatusRequest: function(ruleStatus){
 				resetInputFields("#relevancy");
