@@ -481,7 +481,7 @@
 			self.after(overlay);
 			self.after(input);
 			self.after(selector);
-			settings.rendered(self, self.get(0));
+			settings.rendered(self);
 		};
 
 		/**

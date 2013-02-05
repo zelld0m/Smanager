@@ -289,8 +289,6 @@ public class RuleTransferService {
 								if (deploymentRS == null  || CollectionUtils.isEmpty(deploymentRS.getList()) 
 										|| deploymentRS.getList().get(0).getPublished() != 1) {
 									status++;
-								} else {
-									status = 5;
 								}
 							}
 						} else {
