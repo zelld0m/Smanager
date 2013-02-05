@@ -568,7 +568,7 @@
 
 				template  = '<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">';
 				template += '	<h3 style="border:none">Import Rule Guidelines</h3>';
-				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
+				template += '	<div class="fgray padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
 				template += '		<p>';

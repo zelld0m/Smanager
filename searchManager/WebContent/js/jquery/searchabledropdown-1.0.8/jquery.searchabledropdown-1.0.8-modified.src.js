@@ -231,7 +231,9 @@
 				fsdiff = 3;
 			fs += Math.round(fs / fsdiff);
 			// set selectedIndex depends on mouse position and line height
-			selectorHelper.selectedIndex(Math.floor((e.pageY - selector.offset().top + this.scrollTop) / fs));
+			
+			//the code line below has been commented to disable auto scroll of <select>
+			//selectorHelper.selectedIndex(Math.floor((e.pageY - selector.offset().top + this.scrollTop) / fs));
 		});
 
 		// custom callback handler
