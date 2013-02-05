@@ -171,17 +171,16 @@
 			case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
 			case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
 			case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			};
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					$li.find("img#productImage").prop("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				$li.find("img#productImage").prop("src", imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
+					}
+				});
+			},10);
 		};
 
 		base.prepareList = function(){

@@ -511,3 +511,8 @@ input[type="checkbox"].reject {
 	text-align: center;
 	vertical-align: middle;
 }
+div#ruleSelector div div.ss-wrapper  input.ss-textbox{top: 0px !important;}
+table.imsFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
+table.cnetFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
+table.dynamicAttribFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
+div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper input.ss-textbox{top: 6px !important;}
