@@ -75,25 +75,19 @@
     <!-- Start Right Side -->	  
 	<div class="floatL w730 marL10 marT27" style="min-height:550px">
 		  <!-- Text Widget -->
-		  <div id="search" class="floatL w730 titlePlacer">
+		  <div id="search" class="floatL w730 titlePlacer marB10">
 			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
-        	<div id="searchKeyword" class="floatL w460 txtAR padT7"></div>			
 		  </div>
-		   
+           
 		   <!-- Rule Selector Widget -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR" style="display:none">
-	        	 	<label class="floatR"> 
-			        	<select>	
-			        		<option>DEFAULT</option>
-			        	</select>
-		        	</label>
-	        	 	<label class="floatR w90 padT5">Select Catalog:</label>		        	
+		   		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR">
+	        	 	<div id="searchKeyword"></div>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
 	        		<div class="floatL w150 padT5">Select Ranking Rule:</div>
 		        	<div class="floatL w200">
-			        	<select id="rankingRule" class="w178"></select>
+			        	<select id="rankingRule" class="w178 marT5"></select>
 		        	</div>	        	
 			  	</div>
 	      </div>
