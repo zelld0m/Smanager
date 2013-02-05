@@ -107,7 +107,7 @@
 		<div id="previewTemplate1" style="display: none;">
 			<div class="rulePreview w600">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w110 floatL fbold">Rule Name:</label>
 				<label class="wAuto floatL" id="ruleInfo"></label>
 				<div class="clearB"></div>
 				<label class="w110 floatL marL20 fbold">Request Type:</label>
@@ -243,7 +243,7 @@
 		<div id="queryCleaningTemplate" style="display: none;">
 			<div class="rulePreview w590 marB20">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w110 floatL fbold">Rule Name:</label>
 				<label class="wAuto floatL" id="ruleInfo"></label>
 				<div class="clearB"></div>
 				<label class="w110 floatL marL20 fbold">Request Type:</label>
@@ -373,7 +373,7 @@
 		<div id="previewTemplate2" style="display: none;">
 			<div class="rulePreview w590 marB20">
 				<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>
-				<label class="w110 floatL fbold">Rule Info:</label>
+				<label class="w110 floatL fbold">Rule Name:</label>
 				<label class="wAuto floatL" id="ruleInfo"></label>
 				<div class="clearB"></div>
 				<label class="w110 floatL marL20 fbold">Request Type:</label>
