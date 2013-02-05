@@ -72,6 +72,7 @@
 					}
 				}
 
+				delete Keywords[keyword];
 				this.el.remove();
 			}
 		};

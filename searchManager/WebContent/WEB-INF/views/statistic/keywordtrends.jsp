@@ -30,13 +30,13 @@
 		<div id="keyword-list" class="filter padT5 padL5 fsize12 marT8 w95p marRLauto">
 		    <div id="keywordWidgetTemplate" class="itemRow" style="display:none">
 	            <div class="keywordIcons floatR">
-	                <a href="javascript:void();" class="active-chart">
+	                <a href="javascript:void(0);" class="active-chart">
 	                    <img src="/searchManager/images/chart_active.png">
 	                </a>
-	                <a href="javascript:void();" class="inactive-chart" style="display:none">
+	                <a href="javascript:void(0);" class="inactive-chart" style="display:none">
 	                    <img src="/searchManager/images/chart_inactive.png">
 	                </a>
-	                <a href="javascript:void();" class="keyword-delete">
+	                <a href="javascript:void(0);" class="keyword-delete">
 	                    <img src="/searchManager/images/icon_del.png">
 	                </a>
 	            </div>
