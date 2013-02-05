@@ -158,11 +158,11 @@
 						else{
 							continue;
 						}
-						paramString += "&" + name + "=" + paramVal;
+						paramString += "&" + name + "=" + encodeURIComponent(paramVal);
 					}
 				}else{
 					if(name.toLowerCase() !== "sort".toLowerCase())
-						paramString += "&" + name + "=" + params[name];
+						paramString += "&" + name + "=" + encodeURIComponent(params[name]);
 				}
 			}
 

@@ -270,7 +270,8 @@ public class ElevateService extends RuleService{
 			ElevateResult e = new ElevateResult(new StoreKeyword(store, keyword), memberId);
 			e.setLastModifiedBy(UtilityService.getUsername());
 			e.setComment(UtilityService.formatComment(comment));
-			return daoService.appendElevateResultComment(e);
+			daoService.appendElevateResultComment(e);
+			return addComment(comment, e);
 		} catch (DaoException e) {
 			logger.error("Failed during addComment()",e);
 		}
