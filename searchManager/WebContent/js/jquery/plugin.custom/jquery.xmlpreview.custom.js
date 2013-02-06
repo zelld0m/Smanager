@@ -137,7 +137,7 @@
 					
 					contentHolder.find("div#leftPreview").find("div#btnHolder").show();
 					
-					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"]);
+					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"], rs["ruleName"]);
 				}
 			});
 		};
@@ -262,10 +262,10 @@
 			$content.find("tr:not(#itemPattern):even").addClass("alt");
 		};
 
-		base.getDatabaseData = function($content, ruleId){
+		base.getDatabaseData = function($content, ruleId, ruleName){
 			var sourceData = base.DATABASE_SOURCE;
 			var ruleType = base.options.ruleType;
-			var ruleName = base.options.ruleName;
+			//var ruleName = base.options.ruleName;
 
 			switch(ruleType.toLowerCase()){
 			case "elevate": 
@@ -365,8 +365,8 @@
 						var searchTerms = null;
 						$table.find("tr:not(#itemPattern)").remove();
 						$table.find("tr").removeClass("alt");
+						$content.find("#ruleInfo").html(ruleName);
 						if(data == null){
-							$content.find("#ruleInfo").html("");
 							$content.find("#description").html("");
 
 							$content.find("div.ruleFilter div#includeKeywordInSearchText").hide();
@@ -448,8 +448,9 @@
 						
 						$table.find("tr:not(#itemPattern)").remove();
 						$table.find("tr").removeClass("alt");
+						$content.find("#ruleInfo").html(ruleName);
+						
 						if(data == null){
-							$content.find("#ruleInfo").html("");
 							$content.find("#startDate").html("");
 							$content.find("#endDate").html("");
 							$content.find("#description").html("");
@@ -1141,7 +1142,7 @@
 							}
 							break;
 						case base.DATABASE_SOURCE:
-							base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.dbRuleId);
+							base.getDatabaseData(base.contentHolder.find("#leftPreview"), base.options.dbRuleId, base.options.ruleName);
 							break;
 						default: break;
 						}				
@@ -1171,7 +1172,7 @@
 									}
 								}
 								else{ //if dbRuleId is not blank, display preview of rule from database
-									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId);
+									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId, base.options.ruleName);
 								}
 								break;
 							default: break;
