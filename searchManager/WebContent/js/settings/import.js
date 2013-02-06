@@ -441,7 +441,7 @@
 						var comment = $.trim($selectedTab.find("#comment").val());
 
 						if(self.getSelectedRefId('all').length==0){
-							jAlert("Please select rule.", self.moduleName);
+							jAlert("Please select Import/Reject on a rule.", self.moduleName);
 						}else if ($.isBlank(comment)){
 							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
@@ -645,7 +645,7 @@
 								case "exclude":
 								case "demote":
 								case "facetsort":
-									dbRuleId = ruleId;
+									dbRuleId = ruleName;
 									break;
 								default: break;
 								}
@@ -779,8 +779,8 @@
 										$tr.find("td#ruleOption > img.previewIcon").hide();
 									}
 
-									if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
-										$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
+									//if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
+									//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 									$tr.find("td#ruleRefId > p#ruleName").html(" ").append(list[i]["ruleName"])
 									.prepend($tr.find("img.previewIcon"));

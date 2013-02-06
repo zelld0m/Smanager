@@ -404,6 +404,7 @@ public class RuleTransferService {
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
+		ruleXml.setCreatedBy(UtilityService.getUsername());
 
 		if(RuleTransferUtil.importRule(store, importAsRefId, ruleXml)){
 			success = true;

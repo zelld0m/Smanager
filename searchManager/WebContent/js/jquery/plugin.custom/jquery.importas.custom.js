@@ -86,7 +86,7 @@
 			base.$el.append(template);
 		};
 
-		base.showAlert = function(item, id){
+		base.showAlert = function(item, id, rule){
 			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
@@ -98,7 +98,7 @@
 				$importAlert.hide();
 			};
 
-			base.options.targetRuleStatusCallback(item, base.options.rule, ruleStatus);
+			base.options.targetRuleStatusCallback(item, rule, ruleStatus);
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
@@ -139,7 +139,7 @@
 				});
 			}
 
-			base.showAlert($(u), u.value);
+			base.showAlert($(u), u.value, rule);
 		};
 
 		base.populateOptions = function(list, excList){
@@ -229,12 +229,12 @@
 						base.toggleFields(u, e, rule, false);
 					} 
 				},
-				rendered: function(item, u){
+				rendered: function(item, u, rule){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
-						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
+						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"], rule);
 					}else{
-						base.showAlert(item, item.val());
+						base.showAlert(item, item.val(), rule);
 						base.options.afterUIRendered();
 					};
 					

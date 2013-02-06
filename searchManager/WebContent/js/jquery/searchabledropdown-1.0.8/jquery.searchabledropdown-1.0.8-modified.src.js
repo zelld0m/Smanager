@@ -45,7 +45,7 @@
 			latency: 200,
 			zIndex: "auto",
 			change: function(u, e, rule){},
-			rendered: function(item){}
+			rendered: function(item, u, rule){}
 	};
 
 	/**
@@ -481,7 +481,7 @@
 			self.after(overlay);
 			self.after(input);
 			self.after(selector);
-			settings.rendered(self, self.get(0));
+			settings.rendered(self, self.get(0), settings.rule);
 		};
 
 		/**
