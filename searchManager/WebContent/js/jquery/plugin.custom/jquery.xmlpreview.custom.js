@@ -92,30 +92,53 @@
 		};
 		
 		base.populateImportAsList = function(data, contentHolder, sourceData){
+			var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
+			var strNewName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
+			
 			contentHolder.find("#importAs").importas({
 				inPreview: true,
 				rule: base.options.ruleXml,
+				selectedOpt:opt,
+				newName:strNewName,
 				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
 					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 					
-					if (locked){
-						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
-					}else{
-						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+					var $importBtn = contentHolder.find("div#setImportBtn").removeClass('import_locked').removeClass('approve_active').addClass('approve_gray');
+					var $rejectBtn = contentHolder.find("div#setRejectBtn").removeClass('import_locked').removeClass('reject_active').addClass('reject_gray');
+			
+					base.buttonHandler($importBtn);
+					base.buttonHandler($rejectBtn);
+					
+					if(r["rejected"]){
+						$rejectBtn
+						.addClass('import_locked')
+						.off("click mouseenter")
+						.on({
+							click: function(e){
+								
+							},
+							mouseenter: showHoverInfo
+						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
 					}
-
+					
+					if (locked){
+						$importBtn
+						.addClass('import_locked')
+						.off("click mouseenter")
+						.on({
+							click: function(e){
+								
+							},
+							mouseenter: showHoverInfo
+						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
+					}
+					
+					contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+					
 					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"]);
 					else base.getRuleData(contentHolder.find("div#rightPreview"));
-					
-					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
-					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
-					
-					if(opt != 0 || newName.length > 0) {
-						contentHolder.find("div#rightPreview div#importAs div#replacement input#newName").val(newName);
-						contentHolder.find("div#rightPreview div#importAs select#importAsSelect").val(opt);
-					}
 				}
 			});
 		};
@@ -1087,6 +1110,31 @@
 			return '';
 		};
 		
+		base.buttonHandler = function(elem) {
+			elem.off("click mouseenter").on({
+				click: function(evt){
+					switch($(evt.currentTarget).attr("id")){
+					case 'setImportBtn':
+						var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
+						var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
+						var newName = importAsLabel.find("div#replacement input#newName").val();
+						var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
+						if(!base.isLocked()) {
+							base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
+						}
+						base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
+						base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
+						base.api.hide();
+						break;
+					case 'setRejectBtn':
+						base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
+						base.api.hide();
+						break;
+					}
+				}
+			});
+		};
+		
 		base.showQtipPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -1230,37 +1278,11 @@
 								
 							}
 						});
-						
-						// set for import and set for reject button.
-						base.contentHolder.find('a#setImportBtn, a#setRejectBtn').off().on({
-							click: function(evt){
-								switch($(evt.currentTarget).attr("id")){
-								case 'setImportBtn':
-									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
-									var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
-									var newName = importAsLabel.find("div#replacement input#newName").val();
-									var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
-									
-									if(!base.isLocked()) {
-										base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
-									}
-									
-									base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
-									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
-									base.api.hide();
-									break;
-								case 'setRejectBtn':
-									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
-									base.api.hide();
-									break;
-								}
-							}
-						});
-						
 					},
 					
 					hide:function(event, api){
 						api.destroy();
+						
 					}
 				}
 			});
