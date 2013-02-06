@@ -653,7 +653,7 @@
 								case "exclude":
 								case "demote":
 								case "facetsort":
-									dbRuleId = ruleId;
+									dbRuleId = ruleName;
 									break;
 								default: break;
 								}
