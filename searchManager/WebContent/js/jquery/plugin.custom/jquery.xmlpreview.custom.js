@@ -107,16 +107,6 @@
 					}
 
 					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"]);
-					else{
-						/*switch(base.options.ruleType.toLowerCase()){
-						case "querycleaning":
-						case "rankingrule":
-							base.getRuleData(contentHolder.find("div#rightPreview")); //do this only if ruleType is either querycleaning or rankingrule
-							break;
-						default: break;
-						}*/
-						
-					}
 					
 					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
 					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
@@ -166,6 +156,7 @@
 			base.memberIdToItem = new Object();
 
 			$table.find("tr:not(#itemPattern)").remove();
+			$table.find("tr").removeClass("alt");
 
 			$content.find("#ruleInfo").text($.trim(ruleName));
 			$content.find("#requestType").text(base.options.requestType);
@@ -283,11 +274,12 @@
 				var $ruleInfo = $content.find("#ruleInfo");
 				$table.find("tr:not(#itemPattern)").remove();
 				
-				FacetSortServiceJS.getRuleByName(ruleId, {
+				FacetSortServiceJS.getRuleByName(ruleName, {
 					callback: function(data){
 						$table.find("tr:not(#itemPattern)").remove();
+						$table.find("tr").removeClass("alt");
 						if(data == null){
-							$ruleInfo.text(ruleId);
+							$ruleInfo.text(ruleName);
 							
 							var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
@@ -339,8 +331,8 @@
 				break;
 			case "querycleaning": 
 				var $table = $content.find("div.ruleFilter table#item");
-				$content.find(".infoTabs").tabs({});
 				$table.find("tr:not(#itemPattern)").remove();
+				$content.find(".infoTabs").tabs({});
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
@@ -349,7 +341,7 @@
 					callback: function(data){
 						var searchTerms = null;
 						$table.find("tr:not(#itemPattern)").remove();
-
+						$table.find("tr").removeClass("alt");
 						if(data == null){
 							$content.find("#ruleInfo").html("");
 							$content.find("#description").html("");
@@ -430,10 +422,9 @@
 				RelevancyServiceJS.getRule(ruleId, {
 					callback: function(data){
 						var relKeyword = null;
-
 						
 						$table.find("tr:not(#itemPattern)").remove();
-
+						$table.find("tr").removeClass("alt");
 						if(data == null){
 							$content.find("#ruleInfo").html("");
 							$content.find("#startDate").html("");
@@ -499,9 +490,8 @@
 				var $ruleInfo = $content.find("#ruleInfo");
 				var xml = base.options.ruleXml;
 
+				$ruleInfo.text(ruleId);
 				if(xml == null){
-					$ruleInfo.text("");
-					
 					var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
 					$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
 					$tr.find("td#itemHighlightedItem, td#itemSortType").remove();
@@ -562,6 +552,7 @@
 
 				var $table = $content.find("div.ruleFilter table#item");
 				$table.find("tr:not(#itemPattern)").remove();
+				$table.find("tr").removeClass("alt");
 
 				if($.isBlank(xml["ruleCondition"]["ruleCondition"])){
 					$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
@@ -632,6 +623,7 @@
 
 				var $table = $content.find("div.ruleField table#item");
 				$table.find("tr:not(#itemPattern)").remove();
+				$table.find("tr").removeClass("alt");
 
 				for(var field in xml.parameters){
 					$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
@@ -643,40 +635,6 @@
 				$table.find("tr:even").addClass("alt");
 
 				base.populateKeywordInRule($content, xml["ruleKeyword"]["keyword"]);
-
-				break;
-			}
-		};
-
-		base.getFileData = function(){
-			var $content = base.contentHolder;
-			var $table = $content.find("div.ruleField table#item");
-			switch(base.options.ruleType.toLowerCase()){
-			case "rankingrule": 
-				$content.find(".infoTabs").tabs({});
-				$table.find("tr:not(#itemPattern)").remove();
-				RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
-					callback: function(data){
-						$content.find("#ruleInfo").html("<strong>Version " + base.options.version  + "</strong> of " + data["ruleName"]);
-						$content.find("#startDate").html(data["formattedStartDate"]);
-						$content.find("#endDate").html(data["formattedEndDate"]);
-						$content.find("#description").html(data["description"]);
-
-						
-						$table.find("tr:not(#itemPattern)").remove();
-
-						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
-						}	
-
-						$table.find("tr:even").addClass("alt");
-
-						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
-					}
-				});
 
 				break;
 			}
@@ -695,6 +653,7 @@
 			var $content = content;
 			var $table = $content.find("div.ruleKeyword table#item");
 			$table.find("tr:not(#itemPattern)").remove();
+			$table.find("tr").removeClass("alt");
 
 			if (list==null || list.length==0){
 				$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
