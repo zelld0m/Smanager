@@ -91,11 +91,11 @@
 			for (var name in params) {
 				if ($.isArray(params[name])){
 					for (var param in params[name]){
-						paramString += "&" + name + "=" + encodeURIComponent(params[name][param]);
+						paramString += "&" + name + "=" + (name.toLowerCase()==="q"? encodeURIComponent(params[name][param]) : params[name][param]) ;
 					}
 				}else{
 					if(name.toLowerCase() !== "sort".toLowerCase())
-						paramString += "&" + name + "=" + encodeURIComponent(params[name]);
+						paramString += "&" + name + "=" + (name.toLowerCase()==="q"? encodeURIComponent(params[name]): params[name]);
 				}
 			}
 
