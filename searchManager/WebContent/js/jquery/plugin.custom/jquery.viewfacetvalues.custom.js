@@ -56,8 +56,8 @@
 							query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
 							query = query.replace(/ /gi, '|'); //add OR for regex query  
 
-							content.find('li#facetValue').each(function() {  
-								($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');  
+							content.find('li#facetValue > span#facetName').each(function() {  
+								($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).parent('li').hide().removeClass('visible') : $(this).parent('li').show().addClass('visible');  
 							}); 
 						}  
 

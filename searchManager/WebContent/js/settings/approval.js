@@ -39,7 +39,6 @@
 				click: function(evt){
 					var selectAll = $(this).is(":checked");
 					$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").attr("checked", selectAll);
-					selectAll? $(tabSelected).find("#actionBtn").show() : $(tabSelected).find("#actionBtn").hide();
 				}
 			});
 		};
