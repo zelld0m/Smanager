@@ -120,9 +120,9 @@
 				$replacement.slideDown('slow', function() {
 					$(u).parent("div.ss-wrapper").siblings("#replacement").find("#selectedRule").off().on({
 						click: function(e){
-							base.toggleFields(e.data.u, e.data.evt, e.data.rule, true);
+							e.data.base.toggleFields(e.data.u, e.data.evt, e.data.rule, true);
 						}
-					},{u: u, evt: evt, rule: rule});
+					},{base: base, u: u, evt: evt, rule: rule});
 				});
 
 				$input.off().on({
@@ -224,12 +224,13 @@
 
 			$importAsSelect.searchable({
 				rule: rule,
-				change: function(u, e, rule){
+				base: base,
+				change: function(u, e, rule, mybase){
 					if(ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING"){
-						base.toggleFields(u, e, rule, false);
+						mybase.toggleFields(u, e, rule, false);
 					} 
 				},
-				rendered: function(item, u, rule){
+				rendered: function(item, u, rule, mybase){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
 						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"], rule);
@@ -241,7 +242,7 @@
 					//No item for selection
 					if((!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")) ||
 							base.options.inPreview && item.val() === '0'){
-						base.toggleFields(u, null, rule, false);
+						mybase.toggleFields(u, null, rule, false);
 					}
 				}
 			});

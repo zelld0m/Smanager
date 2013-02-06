@@ -117,7 +117,7 @@
 						.off("click mouseenter")
 						.on({
 							click: function(e){
-								
+							
 							},
 							mouseenter: showHoverInfo
 						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
@@ -129,7 +129,7 @@
 						.off("click mouseenter")
 						.on({
 							click: function(e){
-								
+							
 							},
 							mouseenter: showHoverInfo
 						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
@@ -1088,9 +1088,8 @@
 						var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
 						var newName = importAsLabel.find("div#replacement input#newName").val();
 						var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
-						if(!base.isLocked()) {
-							base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
-						}
+						
+						base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
 						base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
 						base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
 						base.api.hide();
@@ -1257,8 +1256,7 @@
 					},
 					
 					hide:function(event, api){
-						api.destroy();
-						
+						base.api.destroy();
 					}
 				}
 			});
