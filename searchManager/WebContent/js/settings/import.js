@@ -17,7 +17,7 @@
 			expDateSort : null,
 			ruleNameSort : null,
 			activeSortOrder : null,
-			ruleFilterBy : "all",
+			ruleFilterBy : "rejected",
 
 			postMsg : function(data, pub){
 				var self = this;
@@ -878,7 +878,11 @@
 				var descSortIcon = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
 
 				//populate ruleFilter
-				$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				if($.isBlank(self.ruleFilterBy)) { // set rejected as default
+					$selectedTab.find("select#ruleFilter").val('rejected');	
+				} else {
+					$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				}
 
 				//populate search keyword input
 				if($.isBlank(self.searchText))
@@ -929,7 +933,7 @@
 				self.searchText = keywordFilter;
 				self.activeSortOrder = sortOrder;
 				self.ruleFilterBy = ruleFilter;
-
+				
 				if(GLOBAL_store==="pcmallcap" || GLOBAL_store==="pcmgbd" || GLOBAL_store==="macmallbd"){
 					self.getRuleTransferMap(curPage, keywordFilter, sortOrder, ruleFilter);
 				}else{
