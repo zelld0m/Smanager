@@ -136,7 +136,7 @@
 				
 				
 				if(index !== "current"){
-					$li.find("#restoreLink").off().on({
+					$li.find("label.restoreIcon, a#restoreBtn").off().on({
 						click:function(e){
 							jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
 								if(result){
@@ -144,7 +144,8 @@
 								}
 							});
 						}
-					},{item: item}).show();
+					},{item: item})
+					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
 					$li.find("#verDate").text(item["createdDate"] ? item["createdDate"].toUTCString() : "");
@@ -438,9 +439,15 @@
 						if(result){
 							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
-									$content.find("li#ver_" + e.data.item["version"]).remove();
-									$content.find("div#vHeader_" + e.data.item["version"]).remove();
-									base.getAvailableVersion();
+									if(data){
+										jAlert("Rule version "+e.data.item["name"]+" successfully deleted.","Delete Version");
+										$content.find("li#ver_" + e.data.item["version"]).remove();
+										$content.find("div#vHeader_" + e.data.item["version"]).remove();
+										base.getAvailableVersion();
+									}
+									else{
+										jAlert("Failed to delete rule version "+e.data.item["name"] + ".","Delete Version");
+									}
 								}
 							});
 						}
@@ -509,16 +516,18 @@
 								var version = item["version"];
 								var $tr = $table.find("tr#itemPattern").clone();
 
-								base.ruleMap[version] = item;
-								$tr.prop("id", "item" + $.formatAsId(version));
-								$tr.find("td#itemId").html(item["version"]);
-								$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
-								$tr.find("td#itemInfo > p#name").html(item["name"]);
-								$tr.find("td#itemInfo > p#notes").html(item["notes"]);
-								base.addDeleteVersionListener($tr, item);
-								base.addRestoreVersionListener($tr, item);
-								$tr.show();
-								$table.append($tr);
+								if(!item["deleted"]){
+									base.ruleMap[version] = item;
+									$tr.prop("id", "item" + $.formatAsId(version));
+									$tr.find("td#itemId").html(item["version"]);
+									$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
+									$tr.find("td#itemInfo > p#name").html(item["name"]);
+									$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+									base.addDeleteVersionListener($tr, item);
+									base.addRestoreVersionListener($tr, item);
+									$tr.show();
+									$table.append($tr);
+								}
 							}
 							$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
 						},
