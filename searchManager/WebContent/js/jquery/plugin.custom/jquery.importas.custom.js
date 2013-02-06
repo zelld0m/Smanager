@@ -203,7 +203,7 @@
 				$replacement.find("input#newName").val(rule["ruleName"]);
 				$importAsSelect.prop("disabled", true);
 				break;
-			case "RANKING_RULE":	
+			case "RANKING_RULE":
 			case "QUERY_CLEANING":
 				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])
 						&& $.isNotBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])){ //TODO:
@@ -211,6 +211,13 @@
 					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$importAsSelect.prop("disabled", true);
+				}
+				
+				if($.isNotBlank(base.options.selectedOpt)) {
+					$importAsSelect.val(base.options.selectedOpt);
+				}
+				if($.isNotBlank(base.options.newName)) {
+					$replacement.find("input#newName").val(base.options.newName);
 				}
 				break;
 			}
@@ -252,7 +259,9 @@
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
 			setRuleStatusListCallback: function(base, list){},
-			afterUIRendered: function(){}
+			afterUIRendered: function(){},
+			selectedOpt: null,
+			newName: ""
 	};
 
 	$.importas.selectOptions = new Array();
