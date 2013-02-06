@@ -240,8 +240,7 @@
 					};
 					
 					//No item for selection
-					if((!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")) ||
-							base.options.inPreview && item.val() === '0'){
+					if(!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
 						mybase.toggleFields(u, null, rule, false);
 					}
 				}
