@@ -268,8 +268,8 @@
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}
 
-							if(showId) 
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							//if(showId) 
+							//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["exportType"]);

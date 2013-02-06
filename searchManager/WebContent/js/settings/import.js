@@ -653,7 +653,7 @@
 								case "exclude":
 								case "demote":
 								case "facetsort":
-									dbRuleId = ruleId;
+									dbRuleId = ruleName;
 									break;
 								default: break;
 								}
@@ -787,8 +787,8 @@
 										$tr.find("td#ruleOption > img.previewIcon").hide();
 									}
 
-									if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
-										$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
+									//if(ruleId.toLowerCase() !== rule["ruleName"].toLowerCase())	
+									//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleId"]);
 
 									$tr.find("td#ruleRefId > p#ruleName").html(" ").append(list[i]["ruleName"])
 									.prepend($tr.find("img.previewIcon"));
