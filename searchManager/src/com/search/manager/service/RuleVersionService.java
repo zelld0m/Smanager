@@ -76,6 +76,7 @@ public class RuleVersionService{
 		boolean success = false;
 		RuleXml rule = RuleVersionUtil.getRuleVersion(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId, version);
 		if (rule != null) {
+			rule.setCreatedBy(UtilityService.getUsername());
 			success = daoService.restoreRuleVersion(rule);
 			switch (RuleEntity.find(ruleType)) {
 			case ELEVATE:
