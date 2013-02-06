@@ -995,19 +995,9 @@
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
 				if($.startsWith(filename, 'import_gray_locked')){
-<<<<<<< HEAD
-					alert("Approve to locked");
-					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/import_gray_locked.png)');
-=======
 					$('div#'+id+'.approve_btn').addClass('import_locked');
->>>>>>> refs/remotes/origin/sprint_multi_bd
 				}else{
-<<<<<<< HEAD
-					alert("Approve to open");
-					$('div#'+id+'.approve_btn').css('background-image', 'url('+GLOBAL_contextPath+'/images/reject_gray.png)');
-=======
 					$('div#'+id+'.approve_btn').removeClass('approve_active').addClass('approve_gray');
->>>>>>> refs/remotes/origin/sprint_multi_bd
 				}
 			},
 
