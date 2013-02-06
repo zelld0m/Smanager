@@ -86,7 +86,7 @@
 			base.$el.append(template);
 		};
 
-		base.showAlert = function(item, id){
+		base.showAlert = function(item, id, rule){
 			var ruleStatus = $.isBlank(id)? undefined: base.rsLookup[id];
 			var $importAlert = item.parent("div.ss-wrapper").siblings("#importAlert");
 
@@ -98,7 +98,7 @@
 				$importAlert.hide();
 			};
 
-			base.options.targetRuleStatusCallback(item, base.options.rule, ruleStatus);
+			base.options.targetRuleStatusCallback(item, rule, ruleStatus);
 		};
 
 		base.toggleFields = function(u, evt, rule, selectRule){
@@ -139,7 +139,7 @@
 				});
 			}
 
-			base.showAlert($(u), u.value);
+			base.showAlert($(u), u.value, rule);
 		};
 
 		base.populateOptions = function(list, excList){
@@ -203,7 +203,7 @@
 				$replacement.find("input#newName").val(rule["ruleName"]);
 				$importAsSelect.prop("disabled", true);
 				break;
-			case "RANKING_RULE":	
+			case "RANKING_RULE":
 			case "QUERY_CLEANING":
 				if(!$.isEmptyObject(base.options.ruleTransferMap) && !$.isEmptyObject(base.options.ruleTransferMap[rule["ruleId"]])
 						&& $.isNotBlank(base.options.ruleTransferMap[rule["ruleId"]]["ruleIdTarget"])){ //TODO:
@@ -211,6 +211,13 @@
 					$option.text(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$replacement.find("input#newName").val(base.options.ruleTransferMap[rule["ruleId"]]["ruleNameTarget"]);
 					$importAsSelect.prop("disabled", true);
+				}
+				
+				if($.isNotBlank(base.options.selectedOpt)) {
+					$importAsSelect.val(base.options.selectedOpt);
+				}
+				if($.isNotBlank(base.options.newName)) {
+					$replacement.find("input#newName").val(base.options.newName);
 				}
 				break;
 			}
@@ -222,17 +229,18 @@
 						base.toggleFields(u, e, rule, false);
 					} 
 				},
-				rendered: function(item, u){
+				rendered: function(item, u, rule){
 					if(ruleEntity==="FACET_SORT"){
 						var rs = base.rsLookupByName[rule["ruleName"]];
-						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"]);
+						base.showAlert(item, $.isEmptyObject(rs)? undefined: rs["ruleId"], rule);
 					}else{
-						base.showAlert(item, item.val());
+						base.showAlert(item, item.val(), rule);
 						base.options.afterUIRendered();
 					};
 					
 					//No item for selection
-					if(!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
+					if((!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")) ||
+							base.options.inPreview && item.val() === '0'){
 						base.toggleFields(u, null, rule, false);
 					}
 				}
@@ -252,7 +260,9 @@
 			inPreview: false,
 			targetRuleStatusCallback: function(base, rule, ruleStatus){},
 			setRuleStatusListCallback: function(base, list){},
-			afterUIRendered: function(){}
+			afterUIRendered: function(){},
+			selectedOpt: null,
+			newName: ""
 	};
 
 	$.importas.selectOptions = new Array();

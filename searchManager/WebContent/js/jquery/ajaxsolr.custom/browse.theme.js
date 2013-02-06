@@ -262,7 +262,7 @@
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';
-		output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
+		//output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '				<div id="demotePosition" class="floatL"></div>';
@@ -313,7 +313,7 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + doc[GLOBAL_storeFacetName + "_CartPrice"]);
+		secObj.find("div#cartPriceHolder").append('$' + $.toCurrencyFormat(doc[GLOBAL_storeFacetName + "_CartPrice"]));
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';

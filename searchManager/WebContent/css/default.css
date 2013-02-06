@@ -486,8 +486,16 @@ input[type="checkbox"].reject {
 	line-height: 25px;
 }
 
+.approve_active {
+	background-image: url("../images/approve_active.png");
+}
+
+.approve_gray {
+	background-image: url("../images/approve_gray.png");
+}
+
 .approve_btn:hover {
-	background-image: url("../images/approve_active.png")!important;	
+	background-image: url("../images/approve_active.png");	
 }
 
 .reject_btn {
@@ -499,8 +507,21 @@ input[type="checkbox"].reject {
 	line-height: 25px;
 }
 
+.reject_active {
+	background-image: url("../images/reject_active.png");
+}
+
+.reject_gray {
+	background-image: url("../images/reject_gray.png");
+}
+
 .reject_btn:hover {
-	background-image: url("../images/reject_active.png")!important;	
+	background-image: url("../images/reject_active.png");	
+}
+
+.import_locked,
+.reject_locked {
+	background-image: url("../images/import_gray_locked.png")!important;
 }
 
 #link_btn{
@@ -516,3 +537,4 @@ table.imsFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !impor
 table.cnetFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
 table.dynamicAttribFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
 div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper input.ss-textbox{top: 6px !important; width: 85% !important;}
+

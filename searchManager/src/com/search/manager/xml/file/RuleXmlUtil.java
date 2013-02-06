@@ -352,7 +352,7 @@ public class RuleXmlUtil{
 		String ruleId = xml.getRuleId();
 		RuleEntity ruleEntity = xml.getRuleEntity();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
-
+		
 		ElevateResult model = new ElevateResult(storeKeyword);
 		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(model);
 
@@ -361,7 +361,8 @@ public class RuleXmlUtil{
 			List<ElevateResult> preImportlist = daoService.getElevateResultList(criteria).getList();
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
-				if(createPreRestore){			
+				if(createPreRestore){
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -382,6 +383,7 @@ public class RuleXmlUtil{
 			
 			if(CollectionUtils.isNotEmpty(eItemXmlList)){
 				for (ElevateItemXml eItemXml : eItemXmlList){
+					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					elevateResult = new ElevateResult(storeKeyword, eItemXml);
 					processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
 				}
@@ -421,7 +423,8 @@ public class RuleXmlUtil{
 
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
-				if(createPreRestore){			
+				if(createPreRestore){		
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -442,6 +445,7 @@ public class RuleXmlUtil{
 
 			if(CollectionUtils.isNotEmpty(eItemXmlList)){
 				for (ExcludeItemXml eItemXml : eItemXmlList){
+					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					excludeResult = new ExcludeResult(storeKeyword,eItemXml);
 					processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
 				}
@@ -482,6 +486,7 @@ public class RuleXmlUtil{
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
 				if(createPreRestore){			
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, dXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -502,6 +507,7 @@ public class RuleXmlUtil{
 
 			if(CollectionUtils.isNotEmpty(dItemXmlList)){
 				for (DemoteItemXml dItemXml : dItemXmlList){
+					dItemXml.setCreatedBy(dXml.getCreatedBy());
 					demoteResult = new DemoteResult(storeKeyword, dItemXml);
 					processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
 				}
@@ -533,7 +539,7 @@ public class RuleXmlUtil{
 		RuleEntity ruleEntity = xml.getRuleEntity();
 		String store = DAOUtils.getStoreId(restoreVersion.getStore());
 		String ruleId = xml.getRuleId();
-
+		
 		try {
 			FacetSort rule = new FacetSort();
 			rule.setRuleId(ruleId);
@@ -543,6 +549,7 @@ public class RuleXmlUtil{
 
 			if(rule != null){
 				if(createPreRestore){
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, fXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -580,6 +587,7 @@ public class RuleXmlUtil{
 					facetGroup.setName(facetSort.getGroupName());
 					facetGroup.setSortType(facetSort.getSortType());
 					facetGroup.setId(groupId);
+					facetGroup.setCreatedBy(fXml.getCreatedBy());
 					totalItems++;
 					processedItems += daoService.addFacetGroup(facetGroup);
 
@@ -587,7 +595,9 @@ public class RuleXmlUtil{
 					if (CollectionUtils.isNotEmpty(facetSort.getGroupItem())) {
 						int i = 0;
 						for (String item: facetSort.getGroupItem()) {
-							groupItems.add(new FacetGroupItem(ruleId, groupId, DAOUtils.generateUniqueId(), item, ++i, xml.getLastModifiedBy()));
+							FacetGroupItem facetGroupItem = new FacetGroupItem(ruleId, groupId, DAOUtils.generateUniqueId(), item, ++i, xml.getLastModifiedBy());
+							facetGroupItem.setCreatedBy(fXml.getCreatedBy());
+							groupItems.add(facetGroupItem);
 						}
 						totalItems += facetSort.getGroupItem().size();
 						processedItems += daoService.addFacetGroupItems(groupItems);
@@ -621,6 +631,7 @@ public class RuleXmlUtil{
 
 				if(redirectRule != null){
 					if(createPreRestore){
+						//TODO: Save existing rule not the rule to be restored
 						if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, qRXml, path)){
 							logger.error("Failed to create pre-import rule");
 							return false;
@@ -663,6 +674,7 @@ public class RuleXmlUtil{
 				RedirectRule rule = new RedirectRule();
 				rule.setRuleId(addRel.getRuleId());
 				rule.setStoreId(store);
+				rule.setCreatedBy(qRXml.getCreatedBy());
 				rule.setLastModifiedBy(qRXml.getLastModifiedBy());
 				List<String> keywords = keywordsXml.getKeyword();
 
@@ -683,6 +695,7 @@ public class RuleXmlUtil{
 						RedirectRuleCondition condition = new RedirectRuleCondition();
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
+						condition.setCreatedBy(qRXml.getCreatedBy());
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
 						
 						if(qRXml.getRuleCondition()!=null && CollectionUtils.isNotEmpty(qRXml.getRuleCondition().getCondition())){
@@ -771,6 +784,7 @@ public class RuleXmlUtil{
 						for (RelevancyKeyword relKeyword : keywords) {
 							daoService.addKeyword(new StoreKeyword(store, relKeyword.getKeyword().getKeywordId()));
 							relKeyword.setRelevancy(restoreVersion);
+							relKeyword.setCreatedBy(rRXml.getCreatedBy());
 							processedItem += daoService.addRelevancyKeyword(relKeyword);
 						}
 						if (processedItem != keywords.size()) {
