@@ -136,7 +136,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			// put back rows in header
 			responseHeader = initialJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 			
-			if(redirectRule != null) {
+			if(redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
 				JSONObject redirectObject = new JSONObject();
 				Map<String, String> fields = new HashMap<String, String>();
 				

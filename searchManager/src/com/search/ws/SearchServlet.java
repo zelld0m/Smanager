@@ -315,6 +315,7 @@ public class SearchServlet extends HttpServlet {
 			
 			// redirect 
 			RedirectRule redirect = null;
+			RedirectRule originalRedirect = null;
 			RedirectRule appliedRedirect = null;
 			NameValuePair redirectFqNvp = null; 
 			try {
@@ -330,6 +331,10 @@ public class SearchServlet extends HttpServlet {
 					if (redirect == null) {
 						break;
 					} else {
+						if(originalRedirect == null && redirect != null){
+							originalRedirect = redirect;
+						}
+						
 						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 						
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
@@ -378,6 +383,12 @@ public class SearchServlet extends HttpServlet {
 						}
 						
 					}
+				}
+				
+				if (originalRedirect != null) {
+					appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
+					appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
+					appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
 				}
 				
 				if (redirect != null && !redirect.isRedirectChangeKeyword()) {
