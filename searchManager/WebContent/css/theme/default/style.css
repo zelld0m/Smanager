@@ -948,3 +948,5 @@ tr#manufacturer td div.floatL div.ss-wrapper input.ss-textbox {top: 0px !importa
 div#templatelist div.floatL.w80.txtLabel {margin-top: 10px;}
 td#ruleOption.txtAC {min-width: 50px;}
 td#importAs.txtAL div div.ss-wrapper input.ss-textbox {top: 0px !important;}
+div#rightPreview div.rulePreview div#importAs.wAuto div div.ss-wrapper input.ss-textbox {top: 0px !important;}
+div#rightPreview div.rulePreview div#importAs.wAuto div div.ss-wrapper select.ss-selector {z-index: 101 !important;}
