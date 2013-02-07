@@ -814,13 +814,12 @@
 											
 											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").removeClass('import_locked').removeClass('approve_active').addClass('approve_gray');
 											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").removeClass('import_locked').removeClass('reject_active').addClass('reject_gray');
-											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly:locked});
-
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 											
 											if(r["rejected"]){
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].reject#'+id).prop({disabled:true, readonly:true, checked:false});
 												$rejectBtn
-												.removeClass('approve_gray').addClass('import_locked')
+												.addClass('import_locked').removeClass('reject_gray')
 												.off("click mouseenter")
 												.on({
 													click: function(e){
@@ -828,11 +827,14 @@
 													},
 													mouseenter: showHoverInfo
 												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
+											} else {
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].reject#'+id).prop({disabled:false, readonly:false});
 											}
 											
 											if(locked){
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].import#'+id).prop({disabled:true, readonly:true, checked:false});
 												$importBtn
-												.removeClass('reject_gray').addClass('import_locked')
+												.addClass('import_locked').removeClass('approve_gray')
 												.off("click mouseenter")
 												.on({
 													click: function(e){
@@ -841,6 +843,8 @@
 													mouseenter: showHoverInfo
 												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+											} else {
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].import#'+id).prop({disabled:false, readonly:false});
 											}
 										}
 									});
