@@ -17,7 +17,7 @@
 			expDateSort : null,
 			ruleNameSort : null,
 			activeSortOrder : null,
-			ruleFilterBy : "all",
+			ruleFilterBy : "rejected",
 
 			postMsg : function(data, pub){
 				var self = this;
@@ -495,7 +495,7 @@
 						var comment = $.trim($selectedTab.find("#comment").val());
 
 						if(self.getSelectedRefId('all').length==0){
-							jAlert("Please select rule.", self.moduleName);
+							jAlert("Please select Import/Reject on a rule.", self.moduleName);
 						}else if($.isBlank(comment)){
 							jAlert("Please add comment.", self.moduleName);
 						}else if(!isXSSSafe(comment)){
@@ -558,7 +558,7 @@
 
 				template  = '<div id="actionBtn" class="marT10 fsize12 border pad10 w580 mar0 marB20" style="background: #f3f3f3;">';
 				template += '	<h3 style="border:none">Import Rule Guidelines</h3>';
-				template += '	<div class="fgray padL15 padR10 padB15 fsize11">';
+				template += '	<div class="fgray padR10 padB15 fsize11">';
 				template += '		<p align="justify">';
 				template += '			Before importing any rule, it is advisable to review rule details.<br/><br/>';
 				template += '		<p>';
@@ -815,13 +815,14 @@
 											
 											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").removeClass('import_locked').removeClass('approve_active').addClass('approve_gray');
 											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").removeClass('import_locked').removeClass('reject_active').addClass('reject_gray');
-											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({disabled:locked, readonly:locked});
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
 
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 											
 											if(r["rejected"]){
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].reject#'+id).prop({disabled:true, readonly:true, checked:false});
 												$rejectBtn
-												.removeClass('approve_gray').addClass('import_locked')
+												.addClass('import_locked').removeClass('reject_gray')
 												.off("click mouseenter")
 												.on({
 													click: function(e){
@@ -829,11 +830,14 @@
 													},
 													mouseenter: showHoverInfo
 												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
+											} else {
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].reject#'+id).prop({disabled:false, readonly:false});
 											}
 											
 											if(locked){
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].import#'+id).prop({disabled:true, readonly:true, checked:false});
 												$importBtn
-												.removeClass('reject_gray').addClass('import_locked')
+												.addClass('import_locked').removeClass('approve_gray')
 												.off("click mouseenter")
 												.on({
 													click: function(e){
@@ -842,6 +846,8 @@
 													mouseenter: showHoverInfo
 												}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+											} else {
+												item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].import#'+id).prop({disabled:false, readonly:false});
 											}
 										}
 									});
@@ -879,7 +885,11 @@
 				var descSortIcon = GLOBAL_contextPath + '/images/tablesorter/desc.gif';
 
 				//populate ruleFilter
-				$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				if($.isBlank(self.ruleFilterBy)) { // set rejected as default
+					$selectedTab.find("select#ruleFilter").val('rejected');	
+				} else {
+					$selectedTab.find("select#ruleFilter").val(self.ruleFilterBy);
+				}
 
 				//populate search keyword input
 				if($.isBlank(self.searchText))
@@ -930,8 +940,8 @@
 				self.searchText = keywordFilter;
 				self.activeSortOrder = sortOrder;
 				self.ruleFilterBy = ruleFilter;
-
-				if(GLOBAL_store==="pcmallcap"){
+				
+				if(GLOBAL_store==="pcmallcap" || GLOBAL_store==="pcmgbd" || GLOBAL_store==="macmallbd"){
 					self.getRuleTransferMap(curPage, keywordFilter, sortOrder, ruleFilter);
 				}else{
 					self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);

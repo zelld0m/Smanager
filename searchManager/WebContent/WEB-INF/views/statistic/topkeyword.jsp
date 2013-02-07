@@ -27,17 +27,6 @@
 	
 	<div class="clearB"></div>
 	
-	<div style="width:95%" class="dashboard marT20 mar0 fsize12">
-	This displays keywords statistics for a given period of time(e.g. <i>${store}_<b>summary</b>_&lt;date&gt;-splunk.csv</i> shows statistics for the whole week ending on the given date while <i>${store}_<b>daily_summary</b>_&lt;date&gt;-splunk.csv</i> shows daily statistics for the given day).
-	<ul class="marL15">
-		<li>You may specify custom date range of keyword statistics in the "Custom Range" tab.</li>
-		<li>If you want to obtain a copy of the report, click on the download icon to download as CSV or send as email attachment to a specific recipient. The CSV file contains the list of keywords and search count.
-		The search result count and first SKU takes a time to process so it is available only in email. If you want to obtain these information as well, please send report as email attachment.</li>
-	</ul>
-	</div>
-	
-	<div class="clearB"></div>
-	
 	<div id="tabs">
 		<ul>
 		    <li><a id="report-link" href="#report-tab">Reports</a></li>
@@ -102,6 +91,7 @@
 		</div>
 		<div id="custom-tab">
 			<div class="filter padT5 fsize12 marT8 w95p marRLauto">
+				<div id="customRangeInfo" class="alert marB10 w100p">To generate on-demand statistics of the keywords listed below, please select Mail when choosing to download the report.</div>
 				<div class="floatL w50p">
 					<div class="floatL w500 padTB5 padR5 marL20">
 					    <span>From:</span>

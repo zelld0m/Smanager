@@ -231,15 +231,17 @@
 				fsdiff = 3;
 			fs += Math.round(fs / fsdiff);
 			// set selectedIndex depends on mouse position and line height
-			selectorHelper.selectedIndex(Math.floor((e.pageY - selector.offset().top + this.scrollTop) / fs));
+			
+			//the code line below has been commented to disable auto scroll of <select>
+			//selectorHelper.selectedIndex(Math.floor((e.pageY - selector.offset().top + this.scrollTop) / fs));
 		});
 
 		// custom callback handler
 		self.off("change").on({
 			change:function(e){
-				settings.change($(e.currentTarget).get(0), e, e.data.rule);
+				settings.change($(e.currentTarget).get(0), e, e.data.rule, e.data.base);
 			}
-		}, {rule: settings.rule});
+		}, {base: settings.base, rule: settings.rule});
 
 		// toggle click event on overlay div
 		overlay.click(function(e) {
@@ -481,7 +483,7 @@
 			self.after(overlay);
 			self.after(input);
 			self.after(selector);
-			settings.rendered(self, self.get(0), settings.rule);
+			settings.rendered(self, self.get(0), settings.rule, settings.base);
 		};
 
 		/**

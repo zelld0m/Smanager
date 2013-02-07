@@ -484,6 +484,7 @@ input[type="checkbox"].reject {
 	background-position: center;
 	background-repeat: no-repeat;
 	line-height: 25px;
+	text-align: center;
 }
 
 .approve_active {
@@ -505,6 +506,7 @@ input[type="checkbox"].reject {
 	background-position: center;
 	background-repeat: no-repeat;
 	line-height: 25px;
+	text-align: center;
 }
 
 .reject_active {
@@ -536,4 +538,5 @@ div#ruleSelector div div.ss-wrapper  input.ss-textbox{top: 0px !important;}
 table.imsFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
 table.cnetFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
 table.dynamicAttribFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
-div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper input.ss-textbox{top: 6px !important;}
+div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper input.ss-textbox{top: 6px !important; width: 85% !important;}
+
