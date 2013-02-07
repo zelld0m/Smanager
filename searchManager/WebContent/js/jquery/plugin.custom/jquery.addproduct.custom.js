@@ -1468,6 +1468,10 @@
 							valid = false;
 							jAlert('Please specify at least one filter condition');
 						}
+						else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
+							valid = false;
+							jAlert("Position value should be from 1 - " + base.options.maxPosition + ".", "Max Value Exceeded");
+						}
 
 						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Catergory Code", condMap["CatCode"])){
 							valid = false;
@@ -1554,6 +1558,9 @@
 					}							
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 						jAlert("Invalid date specified.", "Invalid Input");
+					}
+					else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
+						jAlert("Position value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");
@@ -1661,6 +1668,7 @@
 			locked: true,
 			newRecord: true,
 			item: null,
+			maxPosition: 1,
 			dateMinDate: 0,
 			dateMaxDate: "+1Y",
 			defaultIMSType: "CatCode",

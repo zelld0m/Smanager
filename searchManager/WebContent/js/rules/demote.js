@@ -141,6 +141,7 @@
 								newRecord: false,
 								item: e.data.item,
 								showPosition: true,
+								maxPosition: self.selectedRuleItemTotal,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									DemoteServiceJS.updateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
@@ -497,6 +498,7 @@
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
 											showPosition: true,
+											maxPosition: self.selectedRuleItemTotal + 1,
 											addProductItemCallback:function(position, expiryDate, comment, skus){
 												DemoteServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
