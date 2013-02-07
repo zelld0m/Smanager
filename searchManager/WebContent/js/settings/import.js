@@ -11,10 +11,6 @@
 			ruleTargetList: new Array(),
 			pageSize : 10,
 			defaultText : "Search Rule Name",
-			defaultPage : 1,
-			defaultKeywordFilter : null,
-			defaultSortOrder: "PUBLISHED_DATE_DESC",
-			defaultRuleFilterBy: "rejected",
 			currentPage : 1,
 			searchText : "",
 			pubDateSort : null,
@@ -116,7 +112,7 @@
 						ctr++;
 					}, 
 					postHook: function(){
-						if (ctr==max) self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+						if (ctr==max) self.getImportList(1);
 					}
 				});
 
@@ -126,7 +122,7 @@
 						ctr++;
 					},
 					postHook: function(){
-						if (ctr==max) self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+						if (ctr==max) self.getImportList(1);
 					}
 				});
 			}, 
@@ -317,7 +313,7 @@
 				return selectedStatusId; 
 			},
 
-			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrderFilter, ruleFilter){
+			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrder, ruleFilter){
 				var self = this;
 				var $selectedTab = selectedTab;
 				if(totalItem==0){
@@ -334,11 +330,11 @@
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 						},
-						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrderFilter, ruleFilter); },
-						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrderFilter, ruleFilter);},
-						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrderFilter, ruleFilter);},
-						firstLinkCallback: function(e){self.getImportList(self.defaultPage, keywordFilter, sortOrderFilter, ruleFilter);},
-						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrderFilter, ruleFilter);}
+						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrder, ruleFilter); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrder, ruleFilter);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrder, ruleFilter);},
+						firstLinkCallback: function(e){self.getImportList(1);},
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrder, ruleFilter);}
 					});
 
 					$selectedTab.find("img#publishDateSort, img#ruleNameSort, img#exportDateSort").off().on({
@@ -368,7 +364,7 @@
 							break;
 							}
 
-							self.getImportList(curPage, keywordFilter, sortOrder, ruleFilter);
+							self.getImportList(self.currentPage, self.searchText, sortOrder);
 						}
 					});
 
@@ -397,7 +393,7 @@
 
 				$selectedTab.find("select#ruleFilter").val(ruleFilter).on({
 					change: function(e){
-						self.getImportList(self.defaultPage, keywordFilter, self.defaultSortOrder, $(this).val());
+						self.getImportList(1, self.searchText, sortOrder, $(this).val());
 					}
 				});
 
@@ -416,9 +412,9 @@
 
 						if (code == 13){ 
 							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-								self.getImportList(self.defaultPage, keyword, self.defaultSortOrder, ruleFilter);
+								self.getImportList(1, keyword);
 							else
-								self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, ruleFilter);
+								self.getImportList(1);
 						}
 					}
 				}).val(self.defaultText);
@@ -428,9 +424,9 @@
 						var keyword = $.trim($selectedTab.find('input#keyword').val());
 
 						if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-							self.getImportList(self.defaultPage, keyword, self.defaultSortOrder, ruleFilter);
+							self.getImportList(1, keyword);
 						else
-							self.getImportList(self.defaultPage,self.defaultKeywordFilter,self.defaultSortOrder,ruleFilter);
+							self.getImportList(1);
 					}
 				});
 			},
@@ -464,7 +460,7 @@
 										RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 											callback: function(data) {									
 												self.postMsg(data, 'imported');	
-												self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);	
+												self.getImportList(1);	
 											},
 											preHook:function(){ 
 												self.prepareTabContent(); 
@@ -477,7 +473,7 @@
 								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {
 									callback: function(data){
 										self.postMsg(data, 'rejected');	
-										self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+										self.getImportList(1);
 									},
 									preHook:function(){
 										self.prepareTabContent(); 
@@ -528,7 +524,7 @@
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
 									callback: function(data){									
 										self.postMsg(data, 'all');	
-										self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+										self.getImportList(1);
 									},
 									preHook:function() { 
 										self.prepareTabContent();
@@ -694,7 +690,7 @@
 													preTemplate: self.getPreTemplate(rule["importType"]),
 													rightPanelTemplate: self.getRightPanelTemplate(),
 													postButtonClick: function(){
-														self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+														self.getImportList(1);
 													},
 													itemImportAsListCallback: function(base, contentHolder, sourceData){
 														DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
@@ -818,6 +814,8 @@
 											
 											var $importBtn = item.parents("tr.ruleItem").find("td#select > div.approve_btn").removeClass('import_locked').removeClass('approve_active').addClass('approve_gray');
 											var $rejectBtn = item.parents("tr.ruleItem").find("td#select > div.reject_btn").removeClass('import_locked').removeClass('reject_active').addClass('reject_gray');
+											item.parents("tr.ruleItem").find('td#select > input[type="checkbox"].selectItem').prop({checked:false});
+
 											self.toggleCheckbox(item.parents("tr.ruleItem").find("td#select > div.approve_btn, td#select > div.reject_btn"));
 											
 											if(r["rejected"]){
