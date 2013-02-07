@@ -424,9 +424,9 @@
 						var keyword = $.trim($selectedTab.find('input#keyword').val());
 
 						if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-							self.getImportList(1, keyword);
+							self.getImportList(1, keyword, null, self.ruleFilterBy);
 						else
-							self.getImportList(1);
+							self.getImportList(1,null,null,self.ruleFilterBy);
 					}
 				});
 			},
