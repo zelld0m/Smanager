@@ -72,31 +72,31 @@
 
 		auditHandler: function (doc) {
 
-			return function () {
-				var selector  = "#resultItem_" + doc.EDP + " div#auditHolder";
-
-				$(selector).off().on({
-					click: function(e){
-						$(e.currentTarget).viewaudit({
-							itemDataCallback: function(base, page){
-								AuditServiceJS.getItemTrail(e.data.doc["EDP"], base.options.page, base.options.pageSize, {
-									callback: function(data){
-										var total = data.totalSize;
-										base.populateList(data);
-										base.addPaging(base.options.page, total);
-									},
-									preHook: function(){
-										base.prepareList();
-									},
-									postHook:function(){
-										base.api.reposition();
-									}
-								});
-							}
-						});
-					}
-				},{doc: doc});
-			}
+//			return function () {
+//				var selector  = "#resultItem_" + doc.EDP + " div#auditHolder";
+//
+//				$(selector).off().on({
+//					click: function(e){
+//						$(e.currentTarget).viewaudit({
+//							itemDataCallback: function(base, page){
+//								AuditServiceJS.getItemTrail(e.data.doc["EDP"], base.options.page, base.options.pageSize, {
+//									callback: function(data){
+//										var total = data.totalSize;
+//										base.populateList(data);
+//										base.addPaging(base.options.page, total);
+//									},
+//									preHook: function(){
+//										base.prepareList();
+//									},
+//									postHook:function(){
+//										base.api.reposition();
+//									}
+//								});
+//							}
+//						});
+//					}
+//				},{doc: doc});
+//			}
 		},
 
 		debugHandler: function (doc) {

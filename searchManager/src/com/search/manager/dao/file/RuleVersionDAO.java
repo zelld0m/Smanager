@@ -121,6 +121,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			writer = new FileWriter(filename);
 			m.marshal(prefsJaxb, writer);
 
+			return true;
 		} catch (JAXBException e) {
 			logger.error("JAXBException");
 		} catch (ParserConfigurationException e) {

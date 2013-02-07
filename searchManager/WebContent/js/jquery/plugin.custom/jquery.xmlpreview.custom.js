@@ -92,30 +92,52 @@
 		};
 		
 		base.populateImportAsList = function(data, contentHolder, sourceData){
+			var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
+			var strNewName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
+			
 			contentHolder.find("#importAs").importas({
 				inPreview: true,
 				rule: base.options.ruleXml,
+				selectedOpt:opt,
+				newName:strNewName,
 				ruleStatusList: base.options.ruleStatusMap==null? null : base.options.ruleStatusMap[base.options.ruleType],
 				ruleTransferMap: base.options.ruleTransferMap,
 				targetRuleStatusCallback: function(item, r, rs){
 					var locked = !$.isEmptyObject(rs) && (rs["approvalStatus"]==="PENDING" || rs["approvalStatus"]==="APPROVED" || rs["updateStatus"] === "DELETE");
 					
+					var $importBtn = contentHolder.find("div#setImportBtn").removeClass('import_locked').removeClass('approve_active').addClass('approve_gray');
+					var $rejectBtn = contentHolder.find("div#setRejectBtn").removeClass('import_locked').removeClass('reject_active').addClass('reject_gray');
+			
+					base.buttonHandler($importBtn);
+					base.buttonHandler($rejectBtn);
+					
+					if(r["rejected"]){
+						$rejectBtn
+						.addClass('import_locked')
+						.off("click mouseenter")
+						.on({
+							click: function(e){
+								
+							},
+							mouseenter: showHoverInfo
+						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule has been previously rejected."});
+					}
+					
 					if (locked){
-						contentHolder.find("div#leftPreview").find("div#btnHolder").hide();
-					}else{
-						contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+						$importBtn
+						.addClass('import_locked')
+						.off("click mouseenter")
+						.on({
+							click: function(e){
+								
+							},
+							mouseenter: showHoverInfo
+						}, {locked: true, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 					}
-
+					
+					contentHolder.find("div#leftPreview").find("div#btnHolder").show();
+					
 					if(!$.isEmptyObject(rs)) base.getDatabaseData(contentHolder.find("div#rightPreview"), rs["ruleId"]);
-					else base.getRuleData(contentHolder.find("div#rightPreview"));
-					
-					var opt = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs select").val();
-					var newName = $("#ruleItem"+$.formatAsId(base.options.ruleId)+" #importAs #replacement #newName").val();
-					
-					if(opt != 0 || newName.length > 0) {
-						contentHolder.find("div#rightPreview div#importAs div#replacement input#newName").val(newName);
-						contentHolder.find("div#rightPreview div#importAs select#importAsSelect").val(opt);
-					}
 				}
 			});
 		};
@@ -157,6 +179,7 @@
 			base.memberIdToItem = new Object();
 
 			$table.find("tr:not(#itemPattern)").remove();
+			$table.find("tr").removeClass("alt");
 
 			$content.find("#ruleInfo").text($.trim(ruleName));
 			$content.find("#requestType").text(base.options.requestType);
@@ -172,7 +195,6 @@
 				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
 				$tr.appendTo($table);
 			}else{
-
 				for (var i = 0; i < list.length; i++) {
 					memberIds.push(list[i]["memberId"]);
 					base.memberIdToItem[list[i]["memberId"]] = $.makeArray(list[i]);
@@ -277,8 +299,10 @@
 				
 				FacetSortServiceJS.getRuleByName(ruleName, {
 					callback: function(data){
+						$table.find("tr:not(#itemPattern)").remove();
+						$table.find("tr").removeClass("alt");
 						if(data == null){
-							$ruleInfo.text("");
+							$ruleInfo.text(ruleName);
 							
 							var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
 							$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
@@ -286,7 +310,7 @@
 							$table.append($tr);
 						}
 						else{
-							$ruleInfo.text(data.name + "[" + data.ruleId + "]");
+							$ruleInfo.text(data.name);
 
 							if(data.items && data.items.length == 0){
 								var $tr = $table.find("tr#itemPattern").clone();
@@ -329,18 +353,18 @@
 				});
 				break;
 			case "querycleaning": 
+				var $table = $content.find("div.ruleFilter table#item");
+				$table.find("tr:not(#itemPattern)").remove();
 				$content.find(".infoTabs").tabs({});
-
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
 				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 
 				RedirectServiceJS.getRule(ruleId, {
 					callback: function(data){
-						var $table = $content.find("div.ruleFilter table#item");
 						var searchTerms = null;
 						$table.find("tr:not(#itemPattern)").remove();
-
+						$table.find("tr").removeClass("alt");
 						if(data == null){
 							$content.find("#ruleInfo").html("");
 							$content.find("#description").html("");
@@ -370,7 +394,7 @@
 							}
 
 							$table.find("tr:even").addClass("alt");
-							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+							$content.find("#ruleInfo").html(data["ruleName"]);
 							$content.find("#description").html(data["description"]);
 							switch (data["redirectTypeId"]) {
 							case "1":
@@ -415,15 +439,15 @@
 
 				break;
 			case "rankingrule": 
+				var $table = $content.find("div.ruleField table#item");
 				$content.find(".infoTabs").tabs({});
-
+				$table.find("tr:not(#itemPattern)").remove();
 				RelevancyServiceJS.getRule(ruleId, {
 					callback: function(data){
 						var relKeyword = null;
-
-						var $table = $content.find("div.ruleField table#item");
+						
 						$table.find("tr:not(#itemPattern)").remove();
-
+						$table.find("tr").removeClass("alt");
 						if(data == null){
 							$content.find("#ruleInfo").html("");
 							$content.find("#startDate").html("");
@@ -431,7 +455,7 @@
 							$content.find("#description").html("");
 						}
 						else{
-							$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+							$content.find("#ruleInfo").html(data["ruleName"]);
 							$content.find("#startDate").html(data["formattedStartDate"]);
 							$content.find("#endDate").html(data["formattedEndDate"]);
 							$content.find("#description").html(data["description"]);
@@ -489,16 +513,15 @@
 				var $ruleInfo = $content.find("#ruleInfo");
 				var xml = base.options.ruleXml;
 
+				$ruleInfo.text(ruleId);
 				if(xml == null){
-					$ruleInfo.text("");
-					
 					var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
 					$tr.find("#itemName").html("No items specified for this rule.").attr("colspan","3");
 					$tr.find("td#itemHighlightedItem, td#itemSortType").remove();
 					$table.append($tr);
 				}
 				else{
-					$ruleInfo.text(xml.ruleName + " [" + xml.ruleId + "]");
+					$ruleInfo.text(xml.ruleName);
 					
 					if(xml.groups && xml.groups.length == 0){
 						var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -552,24 +575,25 @@
 
 				var $table = $content.find("div.ruleFilter table#item");
 				$table.find("tr:not(#itemPattern)").remove();
+				$table.find("tr").removeClass("alt");
 
-				if($.isBlank(xml["ruleCondition"]["condition"])){
+				if($.isBlank(xml["ruleCondition"]["ruleCondition"])){
 					$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
 					$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
 					$tr.find("td#fieldValue").remove();
 					$tr.appendTo($table);
 
 				}else{
-					for(var field in xml["ruleCondition"]["condition"]){
+					for(var field in xml["ruleCondition"]["ruleCondition"]){
 						$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 						$tr.find("td#fieldName").html(parseInt(field)+1);
-						$tr.find("td#fieldValue").html(xml["ruleCondition"]["condition"][field]);
+						$tr.find("td#fieldValue").html(xml["ruleCondition"]["ruleCondition"][field].readableString);
 						$tr.appendTo($table);
 					}	
 				}
 
 				$table.find("tr:even").addClass("alt");
-				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#ruleInfo").html(xml["ruleName"]);
 				$content.find("#description").html(xml["description"]);
 
 				switch (xml["redirectType"]) {
@@ -615,13 +639,14 @@
 
 				var xml = base.options.ruleXml;
 
-				$content.find("#ruleInfo").html(xml["ruleName"] + " [ " + xml["ruleId"] + " ]");
+				$content.find("#ruleInfo").html(xml["ruleName"]);
 				$content.find("#startDate").html(xml["formattedStartDate"]);
 				$content.find("#endDate").html(xml["formattedEndDate"]);
 				$content.find("#description").html(xml["description"]);
 
 				var $table = $content.find("div.ruleField table#item");
 				$table.find("tr:not(#itemPattern)").remove();
+				$table.find("tr").removeClass("alt");
 
 				for(var field in xml.parameters){
 					$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
@@ -633,40 +658,6 @@
 				$table.find("tr:even").addClass("alt");
 
 				base.populateKeywordInRule($content, xml["ruleKeyword"]["keyword"]);
-
-				break;
-			}
-		};
-
-		base.getFileData = function(){
-			var $content = base.contentHolder;
-
-			switch(base.options.ruleType.toLowerCase()){
-			case "rankingrule": 
-				$content.find(".infoTabs").tabs({});
-
-				RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
-					callback: function(data){
-						$content.find("#ruleInfo").html("<strong>Version " + base.options.version  + "</strong> of " + data["ruleName"]);
-						$content.find("#startDate").html(data["formattedStartDate"]);
-						$content.find("#endDate").html(data["formattedEndDate"]);
-						$content.find("#description").html(data["description"]);
-
-						var $table = $content.find("div.ruleField table#item");
-						$table.find("tr:not(#itemPattern)").remove();
-
-						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
-						}	
-
-						$table.find("tr:even").addClass("alt");
-
-						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
-					}
-				});
 
 				break;
 			}
@@ -685,6 +676,7 @@
 			var $content = content;
 			var $table = $content.find("div.ruleKeyword table#item");
 			$table.find("tr:not(#itemPattern)").remove();
+			$table.find("tr").removeClass("alt");
 
 			if (list==null || list.length==0){
 				$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
@@ -713,7 +705,7 @@
 				case "demote":
 					template  = '<div class="rulePreview w600">';
 					//template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
@@ -725,7 +717,7 @@
 				case "facetsort":
 					template  = '<div class="rulePreview w600">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
@@ -737,7 +729,7 @@
 				case "querycleaning":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
@@ -755,7 +747,7 @@
 				case "rankingrule":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';
@@ -1087,6 +1079,31 @@
 			return '';
 		};
 		
+		base.buttonHandler = function(elem) {
+			elem.off("click mouseenter").on({
+				click: function(evt){
+					switch($(evt.currentTarget).attr("id")){
+					case 'setImportBtn':
+						var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
+						var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
+						var newName = importAsLabel.find("div#replacement input#newName").val();
+						var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
+						if(!base.isLocked()) {
+							base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
+						}
+						base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
+						base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
+						base.api.hide();
+						break;
+					case 'setRejectBtn':
+						base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
+						base.api.hide();
+						break;
+					}
+				}
+			});
+		};
+		
 		base.showQtipPreview = function(){
 			base.$el.qtip({
 				content: {
@@ -1145,7 +1162,14 @@
 								break;
 							case base.DATABASE_SOURCE:
 								if($.isBlank(base.options.dbRuleId)){ //if dbRuleId is blank, selected option is "Import As New Rule", display preview of ruleXml
-									base.getRuleData(base.contentHolder.find("#rightPreview"));
+									
+									switch(base.options.ruleType.toLowerCase()){ //do only if ruleType is either Query Cleaning or Ranking Rule
+										case "querycleaning":
+										case "rankingrule":
+											base.getRuleData(base.contentHolder.find("#rightPreview"));
+											break;
+										default: break;
+									}
 								}
 								else{ //if dbRuleId is not blank, display preview of rule from database
 									base.getDatabaseData(base.contentHolder.find("#rightPreview"), base.options.dbRuleId);
@@ -1230,37 +1254,11 @@
 								
 							}
 						});
-						
-						// set for import and set for reject button.
-						base.contentHolder.find('a#setImportBtn, a#setRejectBtn').off().on({
-							click: function(evt){
-								switch($(evt.currentTarget).attr("id")){
-								case 'setImportBtn':
-									var importAsLabel = base.contentHolder.find("#rightPreview > div.rulePreview > div#importAs");
-									var importAs = importAsLabel.find("select#importAsSelect > option:selected").val();
-									var newName = importAsLabel.find("div#replacement input#newName").val();
-									var opt = base.contentHolder.find("#leftPreview > div.rulePreview > label#importType > select#importType > option:selected").val();
-									
-									if(!base.isLocked()) {
-										base.options.changeImportAsCallback(base, base.options.ruleId, importAs, base.options.ruleName, newName);
-									}
-									
-									base.options.changeImportTypeCallback(base, base.options.ruleId, opt);
-									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'import');
-									base.api.hide();
-									break;
-								case 'setRejectBtn':
-									base.options.checkUncheckCheckboxCallback(base, base.options.ruleId, 'reject');
-									base.api.hide();
-									break;
-								}
-							}
-						});
-						
 					},
 					
 					hide:function(event, api){
 						api.destroy();
+						
 					}
 				}
 			});

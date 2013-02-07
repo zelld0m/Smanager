@@ -432,7 +432,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 					mainDoc, SolrConstants.TAG_RESPONSE),
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER);
 
-			if(redirectRule != null) {
+			if(redirectRule != null && redirectRule.isRedirectChangeKeyword()) {
 				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
 				Node origKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_ORIGINAL_KEYWORD);
 				Node replacementKeywordNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT_REPLACEMENT_KEYWORD);

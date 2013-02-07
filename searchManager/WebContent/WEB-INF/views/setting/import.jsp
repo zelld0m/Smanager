@@ -53,9 +53,9 @@
 				<div id="ruleFilterDiv" class="floatL">
 					<span>Show:</span> 
 					<select id="ruleFilter">
-						<option value="all">All Rules</option>
-						<option value="nonrejected">Non-rejected Rules</option>
 						<option value="rejected">Previously Rejected Rules</option>
+						<option value="nonrejected">Non-rejected Rules</option>
+						<option value="all">All Rules</option>
 					</select>
 				</div>
 				<a id="searchBtn" href="javascript:void(0);">

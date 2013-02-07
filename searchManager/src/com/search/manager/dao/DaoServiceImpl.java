@@ -1516,7 +1516,7 @@ public class DaoServiceImpl implements DaoService {
 				exportRuleMap.getStoreIdTarget(), null, null, exportRuleMap.getRuleType());
 		List<ExportRuleMap> rtList = getExportRuleMap(new SearchCriteria<ExportRuleMap>(searchExportRuleMap), null).getList();
 		if (CollectionUtils.isEmpty(rtList)) {
-			searchExportRuleMap.setRejected(false);
+			exportRuleMap.setRejected(false);
 			exportRuleMapDAO.addExportRuleMap(searchExportRuleMap);
 		}
 		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);

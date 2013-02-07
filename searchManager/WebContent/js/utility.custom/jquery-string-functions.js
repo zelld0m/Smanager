@@ -94,6 +94,11 @@ jQuery.extend(
 				
 				capitalize: function(obj) {
 					return obj.charAt(0).toUpperCase() + obj.slice(1);
+				},
+				
+				toCurrencyFormat: function(val, dec) {
+					 if(isNaN(parseFloat(val))) return val;
+	                 return parseFloat(val).toFixed($.isBlank(dec)? 2: dec);
 				}
 			};  
 		}(jQuery))  
