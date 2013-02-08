@@ -39,7 +39,6 @@
 				click: function(evt){
 					var selectAll = $(this).is(":checked");
 					$(tabSelected).find("tr:not(#ruleItemPattern) > td#select > input[type='checkbox']").attr("checked", selectAll);
-					selectAll? $(tabSelected).find("#actionBtn").show() : $(tabSelected).find("#actionBtn").hide();
 				}
 			});
 		};
@@ -53,7 +52,7 @@
 						$(tabSelected).find("#actionBtn").show();
 					}
 					else{
-						$(tabSelected).find("#actionBtn").hide();
+						//$(tabSelected).find("#actionBtn").hide();
 						$(tabSelected).find("th#selectAll > input[type='checkbox']").attr("checked", false); 
 					}
 				}
@@ -161,8 +160,8 @@
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}
 
-							if(showId) 
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							//if(showId) 
+							//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["updateStatus"]);
@@ -238,20 +237,19 @@
 		var setImage = function(tr, item){
 			var imagePath = item["imagePath"];
 			switch(getItemType(item)){
-			case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
-			case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
-			case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+				case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+				case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+				case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+				default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			}
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					tr.find("td#itemImage > img").attr("src",imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				tr.find("td#itemImage > img").attr("src",imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+					}
+				});
+			},10);
 		};
 
 		var prepareForceAddStatus = function(){
@@ -467,7 +465,7 @@
 			case "Query Cleaning": 
 				$content.html($("#queryCleaningTemplate").html());
 				$content.find(".infoTabs").tabs({});
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
@@ -548,7 +546,7 @@
 
 				});
 
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]) + " [ " + $.trim(ruleStatus["ruleRefId"] + " ]"));
+				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
 				$content.find("#requestType").text(ruleStatus["updateStatus"]);
 
 				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {

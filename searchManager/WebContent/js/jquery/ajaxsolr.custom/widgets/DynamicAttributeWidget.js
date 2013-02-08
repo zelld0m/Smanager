@@ -158,11 +158,11 @@
 						else{
 							continue;
 						}
-						paramString += "&" + name + "=" + paramVal;
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(paramVal):paramVal);
 					}
 				}else{
 					if(name.toLowerCase() !== "sort".toLowerCase())
-						paramString += "&" + name + "=" + params[name];
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(params[name]): params[name]);
 				}
 			}
 

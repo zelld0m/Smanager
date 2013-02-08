@@ -79,12 +79,16 @@ public class RuleTransferService {
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		List<RuleXml> list = new ArrayList<RuleXml>();
 		RecordSet<ExportRuleMap> exportList = null;
-
+		
 		if (ruleEntity != null) {
 			Boolean rejectStatus = null;
-			if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
+			
+			if(StringUtils.isBlank(ruleFilter)) {
+				rejectStatus = true; // set default value
+			} else if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
 				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
 			}
+			
 			ExportRuleMap searchExportRuleMap = new ExportRuleMap(null, null, keywordFilter, store, null, null, null, null, null, false, rejectStatus, ruleEntity);
 	
 			try {
@@ -400,6 +404,7 @@ public class RuleTransferService {
 		ruleXml.setStore(store);
 		ruleXml.setRuleId(importAsRefId);
 		ruleXml.setRuleName(ruleName);
+		ruleXml.setCreatedBy(UtilityService.getUsername());
 
 		if(RuleTransferUtil.importRule(store, importAsRefId, ruleXml)){
 			success = true;

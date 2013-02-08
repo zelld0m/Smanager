@@ -133,7 +133,7 @@ public class RuleXml extends BaseEntityXml{
 		return version;
 	}
 
-	@XmlTransient
+	@XmlAttribute
 	public boolean isDeleted() {
 		return deleted;
 	}

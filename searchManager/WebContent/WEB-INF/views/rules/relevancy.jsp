@@ -74,7 +74,7 @@
 		<div id="relevancy" class="relevancy fsize12" style="display:none">			
 			<div class="landingCont w45p83 minHeight185 floatL">	
 				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
-					<div class="floatL">Rule Info</div>
+					<div class="floatL">Rule Name</div>
 					<div class="floatR">
 						<span class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></span>
 						<span class="floatR"><img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History"></span>

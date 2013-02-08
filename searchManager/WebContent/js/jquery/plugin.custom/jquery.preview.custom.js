@@ -52,17 +52,16 @@
 			case "ims" : imagePath = GLOBAL_contextPath + 'ims_img.jpg'; break;
 			case "cnet" : imagePath = GLOBAL_contextPath + 'productSiteTaxonomy_img.jpg'; break;
 			case "facet" : imagePath = GLOBAL_contextPath + 'facet_img.jpg'; break;
+			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			}
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					tr.find("td#itemImage > img").attr("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				tr.find("td#itemImage > img").attr("src", imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
+					}
+				});
+			},10);
 		};
 
 		base.getItemType = function(item){
@@ -261,7 +260,7 @@
 						}
 
 						$table.find("tr:even").addClass("alt");
-						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+						$content.find("#ruleInfo").html(data["ruleName"]);
 						$content.find("#description").html(data["description"]);
 						switch (data["redirectTypeId"]) {
 						case "1":
@@ -308,7 +307,7 @@
 
 				RelevancyServiceJS.getRule(base.options.ruleId, {
 					callback: function(data){
-						$content.find("#ruleInfo").html(data["ruleName"] + " [ " + data["ruleId"] + " ]");
+						$content.find("#ruleInfo").html(data["ruleName"]);
 						$content.find("#startDate").html(data["formattedStartDate"]);
 						$content.find("#endDate").html(data["formattedEndDate"]);
 						$content.find("#description").html(data["description"]);
@@ -408,7 +407,7 @@
 				case "demote":
 					template  = '<div class="rulePreview w600">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
@@ -420,7 +419,7 @@
 				case "facet sort":
 					template  = '<div class="rulePreview w600">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
@@ -432,7 +431,7 @@
 				case "query cleaning":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
@@ -450,7 +449,7 @@
 				case "ranking rule":
 					template  = '<div class="rulePreview w590 marB20">';
 					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Info:</label>';
+					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
 					template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';

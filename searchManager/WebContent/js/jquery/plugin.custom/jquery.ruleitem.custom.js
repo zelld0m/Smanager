@@ -123,6 +123,7 @@
 				});
 			}
 
+			
 			base.contentHolder.find("#selItemValidityDate").prop({readonly: true}).datepicker({
 				showOn: "both",
 				disabled: base.options.locked,
@@ -171,17 +172,16 @@
 			case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
 			case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
 			case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			};
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					$li.find("img#productImage").prop("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				$li.find("img#productImage").prop("src", imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
+					}
+				});
+			},10);
 		};
 
 		base.prepareList = function(){
@@ -449,7 +449,8 @@
 
 			base.contentHolder.find("#saveBtn").off().on({
 				click: function(e){
-					var position = parseInt($.trim(base.contentHolder.find("#selItemPosition").val()));
+					var origPostion = $.trim(base.contentHolder.find("#selItemPosition").val());
+					var position = parseInt(origPostion);
 					position = isNaN(position) ? base.options.defaultPosition : position;
 					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
@@ -462,6 +463,8 @@
 					}else if (base.selectedItem==null && position > (base.maxItemPosition + 1)){
 						jAlert("Please specify position. Max allowed position is " + (base.maxItemPosition + 1), "Search Simulator");
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
+					}else if(origPostion!=null && origPostion.length>0 && !$.isNumeric(origPostion)) {
+						jAlert("Invalid position value.", "Search Simulator");
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
 					}else if(today.getTime() > new Date(validityDate).getTime()){
