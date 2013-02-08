@@ -52,7 +52,7 @@
 						$(tabSelected).find("#actionBtn").show();
 					}
 					else{
-						$(tabSelected).find("#actionBtn").hide();
+						//$(tabSelected).find("#actionBtn").hide();
 						$(tabSelected).find("th#selectAll > input[type='checkbox']").attr("checked", false); 
 					}
 				}
