@@ -33,7 +33,7 @@ public class CommandExecutor extends TimerTask {
         log.info("Starting command executor.");
 
         commands = new ArrayBlockingQueue<Command>(maxCount);
-        timer.scheduleAtFixedRate(this, 500, interval);
+        timer.schedule(this, 500, interval);
     }
 
     public void destroy() {
@@ -45,7 +45,7 @@ public class CommandExecutor extends TimerTask {
 
     public boolean addCommand(Command command) {
         if (commands.offer(command) && !stopped.get()) {
-            log.info("New command added to queue.");
+            log.info("New command added to queue. " + command);
             return true;
         } else {
             log.info("Unable to append command to queue.");
@@ -55,6 +55,8 @@ public class CommandExecutor extends TimerTask {
     }
 
     public void run() {
+        log.info("Running command executor.");
+
         if (!running.get()) {
             running.set(true);
 
@@ -62,13 +64,14 @@ public class CommandExecutor extends TimerTask {
                 Command command = commands.poll();
 
                 while (command != null && !stopped.get()) {
+                    log.info("Running command " + command);
                     command.execute();
                     command = commands.poll();
                 }
             } finally {
+                log.info("Command executor stopped.");
                 running.set(false);
             }
-
         }
     }
 }
