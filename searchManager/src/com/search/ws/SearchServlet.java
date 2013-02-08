@@ -52,19 +52,25 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.solr.service.SolrService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
 
-	@Autowired DaoService daoService;
-	@Autowired DaoCacheService daoCacheService;
-
+	@Autowired 
+	DaoService daoService;
+	@Autowired
+	DaoCacheService daoCacheService;
+	@Autowired
+	SolrService solrService;
+	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 
 	private ConfigManager configManager;
+	private boolean isCache = false; // TODO transfer to config file
 	
 	// these fields should not contain multiple entries
 	private final static String[] uniqueFields = {
@@ -78,6 +84,10 @@ public class SearchServlet extends HttpServlet {
 
 	public void setDaoCacheService(DaoCacheService daoCacheService) {
 		this.daoCacheService = daoCacheService;
+	}
+	
+	public void setSolrService(SolrService solrService) {
+		this.solrService = solrService;
 	}
 	
 	@Override
@@ -323,12 +333,20 @@ public class SearchServlet extends HttpServlet {
 						break;
 					}
 					keywordHistory.add(StringUtils.lowerCase(keyword));
-					redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
-							: daoCacheService.getRedirectRule(sk);
+					
+					if(fromSearchGui) {
+						redirect = daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()));
+					} else {
+//						redirect = solrService.getRedirectRule(sk);
+//						if(redirect == null) {
+//							redirect = daoCacheService.getRedirectRule(sk);
+//						}
+						redirect = isCache ? daoCacheService.getRedirectRule(sk) : solrService.getRedirectRule(sk);
+					}
+					
 					if (redirect == null) {
 						break;
-					}
-					else {
+					} else {
 						
 						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 						
@@ -411,11 +429,14 @@ public class SearchServlet extends HttpServlet {
 			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
 			Relevancy relevancy = null;
 			if (!fromSearchGui) {
-				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
+				if(isCache) {
+					relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
+				} else {
+					relevancy = keywordPresent ? solrService.getRelevancyRule(sk) : solrService.getDefaultRelevancyRule(new Store(coreName));
+				}
 				if (relevancy != null) {
 					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());					
-				}
-				else {
+				} else {
 					logger.error("Unable to find default relevancy!");
 				}
 			}
@@ -585,7 +606,7 @@ public class SearchServlet extends HttpServlet {
 					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					if (keywordPresent) {
 						if (!disableElevate) {
-							elevatedList = daoCacheService.getElevateRules(sk);
+							elevatedList = (List<ElevateResult>) (isCache ? daoCacheService.getElevateRules(sk) : solrService.getElevateRules(sk));
 							// prepare force added list
 							for (ElevateResult elevateResult : elevatedList) {
 								if (elevateResult.isForceAdd()) {
@@ -597,10 +618,10 @@ public class SearchServlet extends HttpServlet {
 							}	
 						}
 						if (!disableDemote && bestMatchFlag) {
-							demoteList = daoCacheService.getDemoteRules(sk);			
+							demoteList = (List<DemoteResult>) (isCache ? daoCacheService.getDemoteRules(sk) : solrService.getDemoteRules(sk));
 						}
 						if (!disableExclude) {
-							excludeList = daoCacheService.getExcludeRules(sk);						
+							excludeList = (List<ExcludeResult>) (isCache ? daoCacheService.getExcludeRules(sk) : solrService.getExcludeRules(sk));						
 						}
 					}
 				}			
@@ -751,15 +772,21 @@ public class SearchServlet extends HttpServlet {
 			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
 
 			if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
-				facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
-						: daoCacheService.getFacetSortRule(sk);
+				if(fromSearchGui) {
+					facetSort = daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore()));
+				} else {
+					facetSort = isCache ? daoCacheService.getFacetSortRule(sk) : solrService.getFacetSortRule(sk.getStore(), sk.getKeywordId(), RuleType.KEYWORD);
+				}
 			}
 			if (facetSort == null) {
 				// get facetSortRule based on template name
 				templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
 				if (StringUtils.isNotBlank(templateName)) {
-					facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore())) 
-							: daoCacheService.getFacetSortRule(sk.getStore(), templateName);					
+					if(fromSearchGui) {
+						facetSort = daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore()));
+					} else {
+						facetSort = isCache ? daoCacheService.getFacetSortRule(sk.getStore(), templateName) : solrService.getFacetSortRule(sk.getStore(), templateName, RuleType.TEMPLATE); 
+					}
 				}
 			}
 			
