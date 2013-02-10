@@ -38,7 +38,8 @@
 				base.$el.after('<div class="' + setClass + '" rel="'+ thisID +'"/>');
 
 			base.$el.siblings("div." + setClass)
-					.addClass(base.$el.is(":checked")? "on":"off")
+					//.addClass(base.$el.is(":checked")? "on":"off")
+					.addClass(base.options.initOn? "on":"off")
 					.addClass(divClass)
 					.show()
 					.css("background", "url('" + imagePath + "') no-repeat")
@@ -60,7 +61,7 @@
 								              .css("background-position", "100% 0%");
 							}
 		
-							base.options.changeStatusCallback(base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked")});
+							base.options.changeStatusCallback(base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
 						}
 					},{initOn: base.options.initOn, id: base.options.id, item: base.options.item});
 			

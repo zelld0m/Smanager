@@ -42,25 +42,25 @@
 						case "facet sort": checkboxId="disableFacetSort"; break;
 					}
 					
-					$li.find('label.select > input[type="checkbox"]')
-					   .prop("checked", rule["active"]!=="false")
-					   .prop("id", checkboxId)
-					   .prop("value", rule["id"])
-					   .off()
-					   .on({
-						   click:function(evt){
-							   var cid = $(this).prop("id"); 
-							   var cval = $(this).prop("value"); 
-							
-							   if($(this).is(":checked")){
-								   self.manager.store.remove(cid);
-							   }else{
-								   self.manager.store.addByValue(cid, AjaxSolr.Parameter.escapeValue(cval));
-							   }
-							   
-							   self.manager.doRequest();
-						   }
-					   });
+					$li.find('label.select > input[type="checkbox"]').prop({
+						"id": checkboxId
+						}).val(rule["id"]).slidecheckbox({
+						id: checkboxId,
+						initOn: rule["active"],
+						locked: false, //TODO:
+						changeStatusCallback: function(base, dt){
+							var cid = dt.id;
+							var cval = dt.value; 
+
+							if(dt.status){
+								self.manager.store.remove(cid);
+							}else{
+								self.manager.store.addByValue(cid, AjaxSolr.Parameter.escapeValue(cval));
+							}
+
+							self.manager.doRequest();
+						}
+					});
 					
 					$li.find("label.ruleType").text(rule["type"]);
 					$li.find("label.name").text(rule["name"]);

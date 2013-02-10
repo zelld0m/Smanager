@@ -31,15 +31,15 @@
 			target: WIDGET_TARGET_cnetFacet
 		}));
 
-		Manager.addWidget(new AjaxSolr.PagerWidget({
-			id: WIDGET_ID_pager,
-			target: WIDGET_TARGET_pager,
-			innerWindow: 1,
-			renderHeader: function (perPage, offset, total, qTime) {
-				var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
-				$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
-				$('#top-pager-text,#bottom-pager-text').html($pagerText);
-			}
+		Manager.addWidget(new AjaxSolr.CustomPagerWidget({
+			id: "customPager",
+			style: "style1", 
+			target: '#top-paging, #bottom-paging'
+//			renderHeader: function (perPage, offset, total, qTime) {
+//				var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
+//				$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
+//				$('#top-pager-text,#bottom-pager-text').html($pagerText);
+//			}
 		}));
 
 		Manager.addWidget(new AjaxSolr.RuleSelectorWidget({

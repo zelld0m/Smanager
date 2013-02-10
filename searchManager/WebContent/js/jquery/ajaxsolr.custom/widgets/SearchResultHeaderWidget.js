@@ -33,13 +33,15 @@
 				var i=0;
 
 				for (var key in $ft){
-					i++;
-					relatedSearch += i <= maxRelatedSearch? key: "";
-					relatedSearch += Object.keys($ft).length > i && i < maxRelatedSearch ? ", ": "";
+					if($.isNotBlank(key)){
+						i++;
+						relatedSearch += i <= maxRelatedSearch ? key: "";
+						relatedSearch += Object.keys($ft).length > i && i < maxRelatedSearch ? ", ": "";
+					}
 				}
 
 				if($.isNotBlank(relatedSearch)){
-					template = template.replace("%%label2%%", "Related Searches:")
+					template = template.replace("%%label2%%", "Related Searches: ")
 					.replace("%%keyword2%%", relatedSearch);
 					return template;
 				}else{

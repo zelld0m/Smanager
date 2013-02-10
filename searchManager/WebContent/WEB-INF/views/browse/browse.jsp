@@ -34,7 +34,7 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractWidget.js" />"></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractFacetWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/widgets/jquery/PagerWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/widgets/jquery/CustomPagerWidget.js" />" ></script>
 
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
@@ -109,9 +109,7 @@
 		  <div>
 		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
 			  <div class="floatR farial fsize11 fgray txtAR padT10">
-			  <div class="txtAR">
-				  <ul id="top-pager" class="pagination"></ul>
-				  </div>
+			  		<div id="top-paging"></div>
 			  </div>
 			  <div class="clearB"></div>
 		  	  
@@ -122,9 +120,7 @@
 		  	  <div class="clearB"></div>
 		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
 			  <div class="floatR farial fsize11 fgray txtAR padT10">
-				  <div class="txtAR">
-				  	<ul id="bottom-pager" class="pagination"></ul>
-				  </div>
+				  	<div id="bottom-paging"></div>
 			  </div>
 		  </div>
 		  
