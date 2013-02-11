@@ -534,6 +534,12 @@ public class DaoServiceImpl implements DaoService {
 		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
+	
+	@Override
+	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException {
+	    return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
+	}
+	
 	@Override
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException {
 		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, ""), null, null, page, itemsPerPage);
@@ -1747,7 +1753,6 @@ public class DaoServiceImpl implements DaoService {
 			}
 		}
 		return exported;
-	}	
-
+	}
 	
 }

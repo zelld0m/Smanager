@@ -1,5 +1,6 @@
 package com.search.manager.dao;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Group;
+import com.search.manager.model.Keyword;
 import com.search.manager.model.Product;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -53,6 +55,7 @@ public interface DaoService {
 	public StoreKeyword updateKeyword(String storeId, String oldKeyword, String newKeyword) throws DaoException;
 	public int deleteKeyword(String storeId, String keyword) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId) throws DaoException;
+	public Collection<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) throws DaoException;

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -122,5 +124,33 @@ public class StoreKeywordDAO {
         inputs.put(DAOConstants.PARAM_EXACT_MATCH, 1);
         return DAOUtils.getItem(getSp.execute(inputs));
     }
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) {
+		String sql = "";
+
+		switch (ruleEntity.getCode()) {
+
+		case 1:
+			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
+			break;
+		case 2:
+			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
+			break;
+		case 10:
+			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
+			break;
+		default:
+			return null;
+		}
+
+		return getSp.getJdbcTemplate().query(sql, new String[] { storeId },
+				new RowMapper() {
+					public Keyword mapRow(ResultSet resultSet, int i)
+							throws SQLException {
+						return new Keyword(resultSet.getString(1));
+					}
+				});
+	}
     
 }
