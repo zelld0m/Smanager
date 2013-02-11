@@ -17,8 +17,14 @@
 				var totalResults = this.manager.response.response.numFound;
 
 				var solrSortBest = "CatCodeOrder asc, score desc, Popularity desc";
-				var solrSortLowest = GLOBAL_storeFacetName + "_CartPrice asc, CatCodeOrder asc, score desc, Popularity desc";
-				var solrSortHighest = GLOBAL_storeFacetName + "_CartPrice desc, CatCodeOrder asc, score desc, Popularity desc";	
+				
+				var priceSorting = GLOBAL_storeFacetName + "_CartPrice";
+				if(GLOBAL_storeFacetName.toLowerCase()==="pcmallgov"){
+					priceSorting = GLOBAL_storeFacetName + "_GovCartPrice";
+				}
+				
+				var solrSortLowest = priceSorting + " asc, CatCodeOrder asc, score desc, Popularity desc";
+				var solrSortHighest = priceSorting + " desc, CatCodeOrder asc, score desc, Popularity desc";	
 
 				var sort = {
 						best: 'Best Match',

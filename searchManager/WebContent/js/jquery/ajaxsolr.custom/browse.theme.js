@@ -313,7 +313,12 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + $.toCurrencyFormat(doc[GLOBAL_storeFacetName + "_CartPrice"]));
+		var priceDisplay = doc[GLOBAL_storeFacetName + "_CartPrice"];
+		if(GLOBAL_storeFacetName.toLowerCase()==="pcmallgov"){
+			priceDisplay = doc[GLOBAL_storeFacetName + "_GovCartPrice"];
+		}
+		
+		secObj.find("div#cartPriceHolder").append('$' + $.toCurrencyFormat(priceDisplay));
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';
