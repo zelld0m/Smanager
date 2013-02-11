@@ -1,0 +1,178 @@
+package com.search.manager.solr.service;
+
+import java.util.Collection;
+
+import com.search.manager.dao.DaoException;
+import com.search.manager.enums.RuleType;
+import com.search.manager.model.DemoteResult;
+import com.search.manager.model.ElevateResult;
+import com.search.manager.model.ExcludeResult;
+import com.search.manager.model.FacetSort;
+import com.search.manager.model.RedirectRule;
+import com.search.manager.model.Relevancy;
+import com.search.manager.model.Store;
+import com.search.manager.model.StoreKeyword;
+
+public interface SolrService {
+
+	/* Elevate */
+	Collection<ElevateResult> getElevateRules(Store store) throws DaoException;
+
+	Collection<ElevateResult> getElevateRules(StoreKeyword storeKeyword)
+			throws DaoException;
+
+	boolean loadElevateRules(Store store) throws DaoException;
+
+	boolean loadElevateRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean resetElevateRules(Store store) throws DaoException;
+
+	boolean resetElevateRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean deleteElevateRules(Store store) throws DaoException;
+
+	boolean deleteElevateRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean updateElevateRule(ElevateResult elevateResult) throws DaoException;
+
+	/* Exclude */
+	Collection<ExcludeResult> getExcludeRules(Store store) throws DaoException;
+
+	Collection<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword)
+			throws DaoException;
+
+	boolean loadExcludeRules(Store store) throws DaoException;
+
+	boolean loadExcludeRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean resetExcludeRules(Store store) throws DaoException;
+
+	boolean resetExcludeRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean deleteExcludeRules(Store store) throws DaoException;
+
+	boolean deleteExcludeRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean updateExcludeRule(ExcludeResult excludeResult) throws DaoException;
+
+	/* Demote */
+	Collection<DemoteResult> getDemoteRules(Store store) throws DaoException;
+
+	Collection<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
+			throws DaoException;
+
+	boolean loadDemoteRules(Store store) throws DaoException;
+
+	boolean loadDemoteRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean resetDemoteRules(Store store) throws DaoException;
+
+	boolean resetDemoteRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean deleteDemoteRules(Store store) throws DaoException;
+
+	boolean deleteDemoteRules(StoreKeyword storeKeyword) throws DaoException;
+
+	boolean updateDemoteRule(DemoteResult demoteResult) throws DaoException;
+
+	/* Facet Sort */
+	Collection<FacetSort> getFacetSortRules(Store store) throws DaoException;
+
+	FacetSort getFacetSortRule(Store store, String name, RuleType ruleType)
+			throws DaoException;
+
+	FacetSort getFacetSortRuleById(Store store, String id)
+			throws DaoException;
+
+	boolean loadFacetSortRules(Store store) throws DaoException;
+
+	boolean loadFacetSortRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean loadFacetSortRuleById(Store store, String id)
+			throws DaoException;
+
+	boolean resetFacetSortRules(Store store) throws DaoException;
+
+	boolean resetFacetSortRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean resetFacetSortRuleById(Store store, String id)
+			throws DaoException;
+
+	boolean deleteFacetSortRules(Store store) throws DaoException;
+
+	boolean deleteFacetSortRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean deleteFacetSortRuleById(Store store, String id)
+			throws DaoException;
+
+	boolean updateFacetSortRule(FacetSort facetSort) throws DaoException;
+
+	/* Redirect */
+	Collection<RedirectRule> getRedirectRules(Store store) throws DaoException;
+
+	RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException;
+
+	RedirectRule getRedirectRuleByName(Store store, String name)
+			throws DaoException;
+
+	RedirectRule getRedirectRuleById(Store store, String id) throws DaoException;
+
+	boolean loadRedirectRules(Store store) throws DaoException;
+
+	boolean loadRedirectRuleByName(Store store, String name) throws DaoException;
+
+	boolean loadRedirectRuleById(Store store, String id) throws DaoException;
+
+	boolean resetRedirectRules(Store store) throws DaoException;
+
+	boolean resetRedirectRuleByName(Store store, String name) throws DaoException;
+
+	boolean resetRedirectRuleById(Store store, String id) throws DaoException;
+
+	boolean deleteRedirectRules(Store store) throws DaoException;
+
+	boolean deleteRedirectRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean deleteRedirectRuleById(Store store, String id) throws DaoException;
+
+	boolean updateRedirectRule(RedirectRule redirectRule) throws DaoException;
+
+	/* Relevancy */
+	Collection<Relevancy> getRelevancyRules(Store store) throws DaoException;
+
+	Relevancy getDefaultRelevancyRule(Store store) throws DaoException;
+
+	Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException;
+
+	Relevancy getRelevancyRuleByName(Store store, String name)
+			throws DaoException;
+
+	Relevancy getRelevancyRuleById(Store store, String id) throws DaoException;
+
+	boolean loadRelevancyRules(Store store) throws DaoException;
+
+	boolean loadRelevancyRuleByName(Store store, String name) throws DaoException;
+
+	boolean loadRelevancyRuleById(Store store, String id) throws DaoException;
+
+	boolean resetRelevancyRules(Store store) throws DaoException;
+
+	boolean resetRelevancyRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean resetRelevancyRuleById(Store store, String id) throws DaoException;
+
+	boolean deleteRelevancyRules(Store store) throws DaoException;
+
+	boolean deleteRelevancyRuleByName(Store store, String name)
+			throws DaoException;
+
+	boolean deleteRelevancyRuleById(Store store, String id) throws DaoException;
+
+	boolean updateRelevancyRule(Relevancy relevancy) throws DaoException;
+
+}
