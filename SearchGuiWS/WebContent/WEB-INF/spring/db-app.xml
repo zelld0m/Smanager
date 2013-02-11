@@ -84,6 +84,14 @@
 		<beans:constructor-arg ref="jdbcTemplate" />
 	</beans:bean>
 
+	<beans:bean name="elevateVersionDAO" id="elevateVersionDAO" class="com.search.manager.dao.file.ElevateVersionDAO" scope="singleton" />
+	<beans:bean name="excludeVersionDAO" id="excludeVersionDAO" class="com.search.manager.dao.file.ExcludeVersionDAO" scope="singleton" />
+	<beans:bean name="demoteVersionDAO" id="demoteVersionDAO" class="com.search.manager.dao.file.DemoteVersionDAO" scope="singleton" />
+	<beans:bean name="facetSortVersionDAO" id="facetSortVersionDAO" class="com.search.manager.dao.file.FacetSortVersionDAO" scope="singleton" />
+	<beans:bean name="queryCleaningVersionDAO" id="queryCleaningVersionDAO" class="com.search.manager.dao.file.RedirectRuleVersionDAO" scope="singleton" />
+	<beans:bean name="rankingRuleVersionDAO" id="rankingRuleVersionDAO" class="com.search.manager.dao.file.RankingRuleVersionDAO" scope="singleton" />
+	<beans:bean name="exportRuleMapDAO" id="exportRuleMapDAO" class="com.search.manager.dao.sp.ExportRuleMapDAO" scope="singleton" />
+	
 	<beans:bean name="daoService" id="daoService" class="com.search.manager.dao.DaoServiceImpl" scope="singleton">
 		<beans:property name="elevateDAO" ref="elevateDAO"/>
 		<beans:property name="excludeDAO" ref="excludeDAO"/>
