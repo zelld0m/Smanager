@@ -13,8 +13,12 @@
 		 @Controller, @Service, @Configuration, etc. -->
 	<context:component-scan base-package="com.search.manager.solr" />
 	
+	<!-- Local Cache Service -->
+	<bean name="localCacheService" class="com.search.manager.cache.service.LocalCacheService" scope="singleton" />
+	
+	<!-- Solr Server Factory -->
 	<bean id="solrServerFactory" class="com.mall.solr.SolrServerFactory" scope="singleton">
-		<property name="solrUrl" value="http://localhost:8983/apache-solr-4.0.0" />
+		<property name="solrUrl" value="http://localhost:8983/solr-4.1.0" />
 		<property name="cores">
 			<list>
 				<value>demoterule</value>
