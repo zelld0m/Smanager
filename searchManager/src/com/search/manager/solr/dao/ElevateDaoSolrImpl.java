@@ -193,7 +193,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 								.addDocs(solrInputDocuments);
 						solrServers.getCoreInstance(
 								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-								.commit();
+								.softCommit();
 					} catch (Exception e) {
 						logger.error(e);
 						throw new DaoException(e.getMessage(), e);
