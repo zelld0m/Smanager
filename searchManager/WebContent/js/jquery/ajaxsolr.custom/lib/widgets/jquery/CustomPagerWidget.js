@@ -2,7 +2,7 @@
 
 AjaxSolr.CustomPagerWidget = AjaxSolr.AbstractWidget.extend({
   beforeRequest: function(){
-	  $(this.target).empty();
+	  $(this.target).siblings().empty().end().empty();
   },
   
   afterRequest: function () {

@@ -8,8 +8,17 @@
 
 		afterRequest: function () {
 			var self = this;
-			if (self.manager.response.response.docs.length > 0)
+			if (self.manager.response.response.docs.length > 0){
 				$(self.target).html(self.getTemplate());
+				$(self.target).find('#line2 > .val > a').off().on({
+					click: function(e){
+						if($.isNotBlank($(this).prop("title"))){
+							self.manager.store.addByValue('q', $.trim($(this).prop("title")));
+							self.manager.doRequest(0);
+						}
+					}
+				});
+			}
 		},
 
 		getTemplate : function(){
@@ -19,9 +28,16 @@
 			var template = '';
 
 			template += '<div>';
-			template += '	<div><span>%%label1%%</span> for <span>"%%keyword1%%"</span></div>';
+			template += '	<div id="line1">';
+			template += '		<span class="label">%%label1%%</span>';
+			template += '		<span class="label-to-val">for</span>';
+			template += '		<span class="val">"%%keyword1%%"</span>';
+			template += '	</div>';
 			template += '	<div class="clearB"></div>';
-			template += '	<div><span>%%label2%%</span><span>%%keyword2%%</span></div>';
+			template += '	<div id="line2">';
+			template += '		<span class="label">%%label2%%</span>';
+			template += '		<span class="val">%%keyword2%%</span>';
+			template += '	</div>';
 			template += '</div>';
 
 			var setDefaultTextDisplay = function(){
@@ -35,7 +51,7 @@
 				for (var key in $ft){
 					if($.isNotBlank(key)){
 						i++;
-						relatedSearch += i <= maxRelatedSearch ? key: "";
+						relatedSearch += i <= maxRelatedSearch ? '<a href="javascript:void(0);" alt="' + key + '" title="' + key + '">' + key + '</a>': "";
 						relatedSearch += Object.keys($ft).length > i && i < maxRelatedSearch ? ", ": "";
 					}
 				}
