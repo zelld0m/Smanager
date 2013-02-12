@@ -84,7 +84,7 @@ public class RuleTransferService {
 			Boolean rejectStatus = null;
 			
 			if(StringUtils.isBlank(ruleFilter)) {
-				rejectStatus = true; // set default value
+				rejectStatus = false; // set default value
 			} else if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
 				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
 			}
