@@ -10,9 +10,9 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.mall.solr.LocalSolrServerRunner;
-import com.mall.solr.SolrServerFactory;
-import com.mall.constants.Constants;
+import com.search.manager.solr.constants.Constants;
+import com.search.manager.solr.util.LocalSolrServerRunner;
+import com.search.manager.solr.util.SolrServerFactory;
 
 public class RuleIndexMigrator {
 

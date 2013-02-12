@@ -14,17 +14,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.xml.sax.SAXException;
 
-import com.mall.constants.Constants;
 import com.mall.mail.MailNotifier;
-import com.mall.solr.LocalSolrServerRunner;
-import com.mall.solr.SolrServerFactory;
-import com.mall.util.IndexBuilderUtil;
-import com.mall.util.SolrDocUtil;
 import com.search.manager.dao.DaoService;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
+import com.search.manager.solr.constants.Constants;
+import com.search.manager.solr.util.IndexBuilderUtil;
+import com.search.manager.solr.util.LocalSolrServerRunner;
+import com.search.manager.solr.util.SolrDocUtil;
+import com.search.manager.solr.util.SolrServerFactory;
 
 public class RedirectRuleBuilder implements Runnable {
 
