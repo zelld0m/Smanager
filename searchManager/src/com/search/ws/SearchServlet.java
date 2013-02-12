@@ -331,7 +331,7 @@ public class SearchServlet extends HttpServlet {
 					if (redirect == null) {
 						break;
 					} else {
-						if(originalRedirect == null && redirect != null){
+						if(originalRedirect == null){
 							originalRedirect = redirect;
 						}
 						
@@ -385,12 +385,6 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				
-				if (originalRedirect != null) {
-					appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
-					appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
-					appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
-				}
-				
 				if (redirect != null && !redirect.isRedirectChangeKeyword()) {
 					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
 					appliedRedirect = redirect;
@@ -418,6 +412,13 @@ public class SearchServlet extends HttpServlet {
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
 						}
 					}
+				}
+				
+				if (originalRedirect != null) {
+					appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
+					appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
+					appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
+					appliedRedirect.setChangeKeyword(keywordHistory.isEmpty() ? "" : keywordHistory.get(keywordHistory.size()-1));
 				}
 			} catch (Exception e) {
 				logger.error("Failed to get redirect for keyword: " + originalKeyword, e);
