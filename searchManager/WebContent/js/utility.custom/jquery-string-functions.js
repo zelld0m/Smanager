@@ -96,9 +96,10 @@ jQuery.extend(
 					return obj.charAt(0).toUpperCase() + obj.slice(1);
 				},
 				
-				toCurrencyFormat: function(val, dec) {
-					 if(isNaN(parseFloat(val))) return val;
-	                 return parseFloat(val).toFixed($.isBlank(dec)? 2: dec);
+				toCurrencyFormat: function(sSymbol, vValue) {
+					aDigits = vValue.toFixed(2).split(".");
+					aDigits[0] = aDigits[0].split("").reverse().join("").replace(/(\d{3})(?=\d)/g, "$1,").split("").reverse().join("");
+					return sSymbol + aDigits.join(".");
 				}
 			};  
 		}(jQuery))  

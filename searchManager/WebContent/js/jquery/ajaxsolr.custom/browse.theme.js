@@ -313,7 +313,7 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + $.toCurrencyFormat(doc[GLOBAL_storeFacetName + "_CartPrice"]));
+		secObj.find("div#cartPriceHolder").append($.toCurrencyFormat('$', doc[GLOBAL_storeFacetName + "_CartPrice"]));
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
 		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';
