@@ -1,6 +1,8 @@
 package com.search.manager.solr.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -435,6 +437,72 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean updateRelevancyRule(Relevancy relevancy) throws DaoException {
 		return relevancyDao.updateRelevancyRule(relevancy);
+	}
+
+	@Override
+	public Map<String, Boolean> resetElevateRules(Store store,
+			Collection<String> keywords) throws DaoException {
+		return elevateDao.resetElevateRules(store, keywords);
+	}
+
+	@Override
+	public Map<String, Boolean> resetExcludeRules(Store store,
+			Collection<String> keywords) throws DaoException {
+		return excludeDao.resetExcludeRules(store, keywords);
+	}
+
+	@Override
+	public Map<String, Boolean> resetDemoteRules(Store store,
+			Collection<String> keywords) throws DaoException {
+		return demoteDao.resetDemoteRules(store, keywords);
+	}
+
+	@Override
+	public Map<String, Boolean> resetFacetSortRuleById(Store store,
+			Collection<String> ids) throws DaoException {
+		return facetSortDao.resetFacetSortRulesById(store, ids);
+	}
+
+	@Override
+	public Map<String, Boolean> resetRedirectRulesById(Store store,
+			Collection<String> ids) throws DaoException {
+		return redirectDao.resetRedirectRulesById(store, ids);
+	}
+
+	@Override
+	public Map<String, Boolean> resetRelevancyRulesById(Store store,
+			Collection<String> ids) throws DaoException {
+		return redirectDao.resetRedirectRulesById(store, ids);
+	}
+
+	@Override
+	public boolean commitElevateRule() throws DaoException {
+		return elevateDao.commitElevateRule();
+	}
+
+	@Override
+	public boolean commitExcludeRule() throws DaoException {
+		return excludeDao.commitExcludeRule();
+	}
+
+	@Override
+	public boolean commitDemoteRule() throws DaoException {
+		return demoteDao.commitDemoteRule();
+	}
+
+	@Override
+	public boolean commitFacetSortRule() throws DaoException {
+		return facetSortDao.commitFacetSortRule();
+	}
+
+	@Override
+	public boolean commitRedirectRule() throws DaoException {
+		return redirectDao.commitRedirectRule();
+	}
+
+	@Override
+	public boolean commitRelevancyRule() throws DaoException {
+		return relevancyDao.commitRelevancyRule();
 	}
 
 }
