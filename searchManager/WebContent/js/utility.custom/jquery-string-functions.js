@@ -97,6 +97,7 @@ jQuery.extend(
 				},
 				
 				toCurrencyFormat: function(sSymbol, vValue) {
+					if(isNaN(parseFloat(vValue))) return vValue;
 					aDigits = vValue.toFixed(2).split(".");
 					aDigits[0] = aDigits[0].split("").reverse().join("").replace(/(\d{3})(?=\d)/g, "$1,").split("").reverse().join("");
 					return sSymbol + aDigits.join(".");
