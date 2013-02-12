@@ -88,7 +88,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					if (!solrService.resetElevateRules(storeKeyword)) {
-						logger.error("Failed to index elevate rule: " + key);
+						logger.error("Failed to index the following elevate rule: "
+								+ key);
 					}
 
 					keywordStatus.put(key, true);
@@ -96,6 +97,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					logger.error("Failed to publish elevate rule: " + key, e);
 					keywordStatus.put(key, false);
 				}
+			}
+
+			if (!solrService.commitElevateRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported elevate rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -135,7 +148,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					if (!solrService.resetExcludeRules(storeKeyword)) {
-						logger.error("Failed to index exclude rule: " + key);
+						logger.error("Failed to index the following exclude rule: "
+								+ key);
 					}
 
 					keywordStatus.put(key, true);
@@ -143,6 +157,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					logger.error("Failed to publish exclude rule: " + key, e);
 					keywordStatus.put(key, false);
 				}
+			}
+
+			if (!solrService.commitExcludeRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported exclude rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -182,7 +208,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					}
 
 					if (!solrService.resetDemoteRules(storeKeyword)) {
-						logger.error("Failed to index demote rule: " + key);
+						logger.error("Failed to index the following demote rule: "
+								+ key);
 					}
 
 					keywordStatus.put(key, true);
@@ -190,6 +217,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					logger.error("Failed to publish demote rule: " + key, e);
 					keywordStatus.put(key, false);
 				}
+			}
+
+			if (solrService.commitDemoteRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported demote rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -253,7 +292,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						if (!solrService.resetFacetSortRuleById(
 								new Store(store), key)) {
-							logger.error("Failed to index facet sort rule: "
+							logger.error("Failed to index the following facet sort rule: "
 									+ key);
 						}
 
@@ -272,6 +311,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						}
 					}
 				}
+			}
+
+			if (!solrService.commitFacetSortRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported facet sort rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -344,7 +395,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						if (!solrService.resetRedirectRuleById(
 								new Store(store), key)) {
-							logger.error("Failed to index redirect rule: "
+							logger.error("Failed to index the following redirect rule: "
 									+ key);
 						}
 					}
@@ -353,6 +404,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					keywordStatus.put(key, false);
 					logger.error("Failed to publish redirect rule: " + key, e);
 				}
+			}
+
+			if (!solrService.commitRedirectRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported redirect rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -415,7 +478,8 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 					if (!solrService.resetRelevancyRuleById(new Store(store),
 							key)) {
-						logger.error("Failed to index relevancy rule: " + key);
+						logger.error("Failed to index the following relevancy rule: "
+								+ key);
 					}
 
 					keywordStatus.put(key, true);
@@ -423,6 +487,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 					logger.error("Failed to publish relevancy rule: " + key, e);
 					keywordStatus.put(key, false);
 				}
+			}
+
+			if (!solrService.commitRelevancyRule()) {
+				String msg = "";
+				for (String key : keywordStatus.keySet()) {
+					boolean status = keywordStatus.get(key);
+					if (status) {
+						msg += "- " + key + "\n";
+					}
+				}
+				logger.error("Failed to commit the following imported relevancy rules: \n"
+						+ msg);
 			}
 		} catch (Exception e) {
 			logger.error(e, e);
@@ -552,7 +628,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						daoService.clearElevateResult(storeKeyword); // prod
 
 						if (!solrService.resetElevateRules(storeKeyword)) {
-							logger.error("Failed to index(unpublish) elevate rule: "
+							logger.error("Failed to unpublish the following elevate rule: "
 									+ key);
 						}
 
@@ -562,6 +638,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								"Failed to unpublish elevate rule: " + key, e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitElevateRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish elevate rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
@@ -584,7 +672,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						daoService.clearExcludeResult(storeKeyword); // prod
 
 						if (!solrService.resetExcludeRules(storeKeyword)) {
-							logger.error("Failed to index(unpublish) exclude rule: "
+							logger.error("Failed to unpublish the following exclude rule: "
 									+ key);
 						}
 
@@ -594,6 +682,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								"Failed to unpublish exclude rule: " + key, e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitExcludeRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish exclude rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
@@ -616,7 +716,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						daoService.clearDemoteResult(storeKeyword); // prod
 
 						if (!solrService.resetDemoteRules(storeKeyword)) {
-							logger.error("Failed to index(unpublish) demote rule: "
+							logger.error("Failed to unpublish the following demote rule: "
 									+ key);
 						}
 
@@ -626,6 +726,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitDemoteRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish demote rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
@@ -653,7 +765,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						if (!solrService.resetFacetSortRuleById(
 								new Store(store), key)) {
-							logger.error("Failed to index(unpublish) facet sort rule: "
+							logger.error("Failed to unpublish the following facet sort rule: "
 									+ key);
 						}
 
@@ -663,6 +775,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								+ key, e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitFacetSortRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish facet sort rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
@@ -702,7 +826,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						if (!solrService.resetRedirectRuleById(
 								new Store(store), key)) {
-							logger.error("Failed to index(unpublish) redirect rule: "
+							logger.error("Failed to unpublish the following redirect rule: "
 									+ key);
 						}
 
@@ -712,6 +836,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								+ key, e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitRedirectRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish redirect rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
@@ -748,7 +884,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 						daoService.deleteRelevancy(relevancy); // prod
 
 						if (!solrService.resetRelevancyRuleById(store, key)) {
-							logger.error("Failed to index(unpublish) relevancy rule: "
+							logger.error("Failed to unpublish the following relevancy rule: "
 									+ key);
 						}
 
@@ -758,6 +894,18 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 								+ key, e);
 						keywordStatus.put(key, false);
 					}
+				}
+
+				if (!solrService.commitRelevancyRule()) {
+					String msg = "";
+					for (String key : keywordStatus.keySet()) {
+						boolean status = keywordStatus.get(key);
+						if (status) {
+							msg += "- " + key + "\n";
+						}
+					}
+					logger.error("Failed to commit the following unpublish relevancy rules: \n"
+							+ msg);
 				}
 			}
 		} catch (Exception e) {
