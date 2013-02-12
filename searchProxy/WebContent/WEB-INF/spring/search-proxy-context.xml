@@ -29,8 +29,8 @@
 		<constructor-arg ref="dataSource_solr" />
 	</bean>
 	
-	<bean id="solrServerFactory" class="com.mall.solr.SolrServerFactory" scope="singleton">
-		<property name="solrUrl" value="http://10.17.12.122:8081/solr" />
+	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
+		<property name="solrUrl" value="http://localhost:8983/solr-4.1.0" />
 		<property name="cores">
 			<list>
 				<value>demoterule</value>
