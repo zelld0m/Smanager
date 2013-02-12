@@ -162,6 +162,9 @@ public class ForceSolrServlet extends HttpServlet {
 					msg = "Invalid paramter!";
 					msg += "\nError: You need to specify 'name=' parameter.";
 				}
+			} else if (action.equalsIgnoreCase("commit")) {
+				out.println("Calling method: commit()");
+				msg = commit(rule, store);
 			} else {
 				msg = "Invalid paramter!";
 				if (StringUtils.isNotEmpty(action)) {
@@ -892,6 +895,63 @@ public class ForceSolrServlet extends HttpServlet {
 		} else {
 			msg = "Unable to delete " + rule.toUpperCase() + " rule for store["
 					+ store.getStoreId() + "] name[" + name + "].";
+		}
+
+		return msg;
+	}
+
+	/* COMMIT */
+	private String commit(String rule, Store store) {
+		String msg = "";
+		String status = "";
+
+		if (rule.equalsIgnoreCase("demote")) {
+			try {
+				status = "" + solrService.commitDemoteRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("elevate")) {
+			try {
+				status = "" + solrService.commitElevateRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("exclude")) {
+			try {
+				status = "" + solrService.commitExcludeRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("facetsort")) {
+			try {
+				status = "" + solrService.commitFacetSortRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("redirect")) {
+			try {
+				status = "" + solrService.commitRedirectRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		} else if (rule.equalsIgnoreCase("relevancy")) {
+			try {
+				status = "" + solrService.commitRelevancyRule();
+			} catch (Exception e) {
+				status = "error";
+			}
+		}
+
+		if (status.equals("error")) {
+			msg = "Error commiting " + rule.toUpperCase() + " rules for store["
+					+ store.getStoreId() + "].";
+		} else if (status.equals("true")) {
+			msg = rule.toUpperCase() + " rules successfully commited: store["
+					+ store.getStoreId() + "].";
+		} else {
+			msg = "Unable to commit " + rule.toUpperCase()
+					+ " rules for store[" + store.getStoreId() + "].";
 		}
 
 		return msg;
