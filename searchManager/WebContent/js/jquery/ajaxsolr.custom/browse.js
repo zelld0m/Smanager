@@ -33,13 +33,13 @@
 
 		Manager.addWidget(new AjaxSolr.CustomPagerWidget({
 			id: "customPager",
-			style: "style1", 
-			target: '#top-paging, #bottom-paging'
-//			renderHeader: function (perPage, offset, total, qTime) {
-//				var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
-//				$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
-//				$('#top-pager-text,#bottom-pager-text').html($pagerText);
-//			}
+			style: "style2", 
+			target: '#top-pager, #bottom-pager',
+			renderHeader: function (perPage, offset, total, qTime) {
+				var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
+				$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
+				$('#top-pager-text,#bottom-pager-text').html($pagerText);
+			}
 		}));
 
 		Manager.addWidget(new AjaxSolr.RuleSelectorWidget({
@@ -115,6 +115,7 @@
 				'facet.field': facetTemplate,
 				'rows': sortWidget.perPageInterval,
 				'facet.mincount': 1,
+				'start': 0,
 				'sort':'CatCodeOrder asc, score desc, Popularity desc',
 				'relevancyId': '',
 				'spellcheck': true,

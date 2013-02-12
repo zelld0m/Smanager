@@ -107,9 +107,9 @@
 		  
 		  <!-- Result & Pager Widget -->
 		  <div>
-		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10">
-			  		<div id="top-paging"></div>
+			  <div class="farial fsize11 fgray padT10">
+		 	  		<div id="top-pager-text" class="floatL fDblue w300"></div>
+			  		<div id="top-pager" class="floatR fDblue w300"></div>
 			  </div>
 			  <div class="clearB"></div>
 		  	  
@@ -118,9 +118,9 @@
 		  	  <div id="docs" class="clearB floatL w730"></div>
 		  	  
 		  	  <div class="clearB"></div>
-		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10">
-				  	<div id="bottom-paging"></div>
+			  <div class="farial fsize11 fgraypadT10">
+		  	  		<div id="bottom-pager-text" class="floatL fDblue w300"></div>
+				  	<div id="bottom-pager" class="floatR fDblue w300"></div>
 			  </div>
 		  </div>
 		  
