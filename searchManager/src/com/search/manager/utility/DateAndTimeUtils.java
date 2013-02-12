@@ -267,7 +267,7 @@ public final class DateAndTimeUtils {
 	 * @return
 	 */
 	public static boolean isValidDateIso8601Format(String date) {
-		Matcher m = Pattern.compile("(\\d{4})\\-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d{7}))??(?:Z|[+-](\\d{2}):(\\d{2}))??").matcher(date);
+		Matcher m = Pattern.compile("(\\d{4})\\-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})(?:\\.(\\d{1,7}))??(?:Z|[+-](\\d{2}):(\\d{2}))??").matcher(date);
 		boolean valid = m.matches();
 		if (valid) {
 			int year = Integer.parseInt(m.group(1));
@@ -279,7 +279,7 @@ public final class DateAndTimeUtils {
 			// year cannot be 0
 			valid = valid && year > 0;
 			// range for month and day
-			valid = valid && month > 0 && month < 12 && day > 0 && day < 32 && hour < 24 && minute < 60 && second < 60;
+			valid = valid && month > 0 && month < 13 && day > 0 && day < 32 && hour < 24 && minute < 60 && second < 60;
 			// month with 30 days only
 			valid = valid && !(day == 31 && (month == 4 || month == 6 || month == 9 || month == 11));
 			// feb 30 or 31
