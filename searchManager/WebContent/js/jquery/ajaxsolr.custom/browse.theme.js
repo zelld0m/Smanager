@@ -90,31 +90,6 @@
 		return $(output);
 	};
 
-	AjaxSolr.theme.prototype.activeRule = function () {
-		var output  = '';
-
-		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-		output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
-		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
-		output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
-		output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
-		output  +='			<label class="ruleType floatL fbold w310"></label>';
-		output  +='			<label class="imageIcon floatL w20 posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
-		output  +='			<label class="name w310 floatL"><span class="fbold"></span></label>';
-		output  +='		</li>';
-		output  +='	</ul>';
-		output  +='<div class="clearB"></div>';
-		output  +='</div>';
-		output  +='<a href="javascript:void(0);">';
-		output  +='<div class="minW100 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
-		output  +='	<img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_arrowDownBlue.png")  + '" class="top2 posRel marL5 marR3">';
-		output  +='	<span>Active Rules</span>';
-		output  +='</div>';
-		output  +='</a>';
-
-		return $(output);
-	};
-
 	AjaxSolr.theme.prototype.noSearchResult = function (keyword) {
 		var output  = '';
 
