@@ -1,6 +1,7 @@
 package com.search.manager.solr.service;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleType;
@@ -29,11 +30,16 @@ public interface SolrService {
 
 	boolean resetElevateRules(StoreKeyword storeKeyword) throws DaoException;
 
+	Map<String, Boolean> resetElevateRules(Store store,
+			Collection<String> keywords) throws DaoException;
+
 	boolean deleteElevateRules(Store store) throws DaoException;
 
 	boolean deleteElevateRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean updateElevateRule(ElevateResult elevateResult) throws DaoException;
+
+	boolean commitElevateRule() throws DaoException;
 
 	/* Exclude */
 	Collection<ExcludeResult> getExcludeRules(Store store) throws DaoException;
@@ -49,11 +55,16 @@ public interface SolrService {
 
 	boolean resetExcludeRules(StoreKeyword storeKeyword) throws DaoException;
 
+	Map<String, Boolean> resetExcludeRules(Store store,
+			Collection<String> keywords) throws DaoException;
+
 	boolean deleteExcludeRules(Store store) throws DaoException;
 
 	boolean deleteExcludeRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean updateExcludeRule(ExcludeResult excludeResult) throws DaoException;
+
+	boolean commitExcludeRule() throws DaoException;
 
 	/* Demote */
 	Collection<DemoteResult> getDemoteRules(Store store) throws DaoException;
@@ -69,11 +80,16 @@ public interface SolrService {
 
 	boolean resetDemoteRules(StoreKeyword storeKeyword) throws DaoException;
 
+	Map<String, Boolean> resetDemoteRules(Store store,
+			Collection<String> keywords) throws DaoException;
+
 	boolean deleteDemoteRules(Store store) throws DaoException;
 
 	boolean deleteDemoteRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean updateDemoteRule(DemoteResult demoteResult) throws DaoException;
+
+	boolean commitDemoteRule() throws DaoException;
 
 	/* Facet Sort */
 	Collection<FacetSort> getFacetSortRules(Store store) throws DaoException;
@@ -81,34 +97,35 @@ public interface SolrService {
 	FacetSort getFacetSortRule(Store store, String name, RuleType ruleType)
 			throws DaoException;
 
-	FacetSort getFacetSortRuleById(Store store, String id)
-			throws DaoException;
+	FacetSort getFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean loadFacetSortRules(Store store) throws DaoException;
 
 	boolean loadFacetSortRuleByName(Store store, String name)
 			throws DaoException;
 
-	boolean loadFacetSortRuleById(Store store, String id)
-			throws DaoException;
+	boolean loadFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean resetFacetSortRules(Store store) throws DaoException;
 
 	boolean resetFacetSortRuleByName(Store store, String name)
 			throws DaoException;
 
-	boolean resetFacetSortRuleById(Store store, String id)
-			throws DaoException;
+	boolean resetFacetSortRuleById(Store store, String id) throws DaoException;
+
+	Map<String, Boolean> resetFacetSortRuleById(Store store,
+			Collection<String> ids) throws DaoException;
 
 	boolean deleteFacetSortRules(Store store) throws DaoException;
 
 	boolean deleteFacetSortRuleByName(Store store, String name)
 			throws DaoException;
 
-	boolean deleteFacetSortRuleById(Store store, String id)
-			throws DaoException;
+	boolean deleteFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean updateFacetSortRule(FacetSort facetSort) throws DaoException;
+
+	boolean commitFacetSortRule() throws DaoException;
 
 	/* Redirect */
 	Collection<RedirectRule> getRedirectRules(Store store) throws DaoException;
@@ -118,19 +135,25 @@ public interface SolrService {
 	RedirectRule getRedirectRuleByName(Store store, String name)
 			throws DaoException;
 
-	RedirectRule getRedirectRuleById(Store store, String id) throws DaoException;
+	RedirectRule getRedirectRuleById(Store store, String id)
+			throws DaoException;
 
 	boolean loadRedirectRules(Store store) throws DaoException;
 
-	boolean loadRedirectRuleByName(Store store, String name) throws DaoException;
+	boolean loadRedirectRuleByName(Store store, String name)
+			throws DaoException;
 
 	boolean loadRedirectRuleById(Store store, String id) throws DaoException;
 
 	boolean resetRedirectRules(Store store) throws DaoException;
 
-	boolean resetRedirectRuleByName(Store store, String name) throws DaoException;
+	boolean resetRedirectRuleByName(Store store, String name)
+			throws DaoException;
 
 	boolean resetRedirectRuleById(Store store, String id) throws DaoException;
+
+	Map<String, Boolean> resetRedirectRulesById(Store store,
+			Collection<String> ids) throws DaoException;
 
 	boolean deleteRedirectRules(Store store) throws DaoException;
 
@@ -140,6 +163,8 @@ public interface SolrService {
 	boolean deleteRedirectRuleById(Store store, String id) throws DaoException;
 
 	boolean updateRedirectRule(RedirectRule redirectRule) throws DaoException;
+
+	boolean commitRedirectRule() throws DaoException;
 
 	/* Relevancy */
 	Collection<Relevancy> getRelevancyRules(Store store) throws DaoException;
@@ -155,7 +180,8 @@ public interface SolrService {
 
 	boolean loadRelevancyRules(Store store) throws DaoException;
 
-	boolean loadRelevancyRuleByName(Store store, String name) throws DaoException;
+	boolean loadRelevancyRuleByName(Store store, String name)
+			throws DaoException;
 
 	boolean loadRelevancyRuleById(Store store, String id) throws DaoException;
 
@@ -166,6 +192,9 @@ public interface SolrService {
 
 	boolean resetRelevancyRuleById(Store store, String id) throws DaoException;
 
+	Map<String, Boolean> resetRelevancyRulesById(Store store,
+			Collection<String> ids) throws DaoException;
+
 	boolean deleteRelevancyRules(Store store) throws DaoException;
 
 	boolean deleteRelevancyRuleByName(Store store, String name)
@@ -174,5 +203,7 @@ public interface SolrService {
 	boolean deleteRelevancyRuleById(Store store, String id) throws DaoException;
 
 	boolean updateRelevancyRule(Relevancy relevancy) throws DaoException;
+
+	boolean commitRelevancyRule() throws DaoException;
 
 }

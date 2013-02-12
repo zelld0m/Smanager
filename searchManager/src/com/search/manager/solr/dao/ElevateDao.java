@@ -1,6 +1,7 @@
 package com.search.manager.solr.dao;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.ElevateResult;
@@ -20,6 +21,9 @@ public interface ElevateDao {
 
 	boolean resetElevateRules(Store store) throws DaoException;
 
+	Map<String, Boolean> resetElevateRules(Store store, Collection<String> keywords)
+			throws DaoException;
+
 	boolean resetElevateRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean deleteElevateRules(Store store) throws DaoException;
@@ -27,5 +31,7 @@ public interface ElevateDao {
 	boolean deleteElevateRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean updateElevateRule(ElevateResult elevateResult) throws DaoException;
+
+	boolean commitElevateRule() throws DaoException;
 
 }

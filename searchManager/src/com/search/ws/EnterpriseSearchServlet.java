@@ -54,14 +54,19 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.solr.service.SolrService;
 import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
 public class EnterpriseSearchServlet extends HttpServlet {
 
-	@Autowired DaoService daoService;
-	@Autowired DaoCacheService daoCacheService;
-
+	@Autowired 
+	DaoService daoService;
+	@Autowired 
+	DaoCacheService daoCacheService;
+	@Autowired
+	SolrService solrService;
+	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
@@ -90,6 +95,10 @@ public class EnterpriseSearchServlet extends HttpServlet {
 
 	public void setDaoCacheService(DaoCacheService daoCacheService) {
 		this.daoCacheService = daoCacheService;
+	}
+	
+	public void setSolrService(SolrService solrService) {
+		this.solrService = solrService;
 	}
 	
 	@Override
@@ -343,8 +352,17 @@ public class EnterpriseSearchServlet extends HttpServlet {
 							break;
 						}
 						keywordHistory.add(StringUtils.lowerCase(keyword));
-						redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
-								: daoCacheService.getRedirectRule(sk);
+						
+						if(fromSearchGui) {
+							redirect = daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()));
+						} else {
+							try {
+								redirect = solrService.getRedirectRule(sk);
+							} catch(Exception e) {
+								redirect = daoCacheService.getRedirectRule(sk);
+							}
+						}
+						
 						if (redirect == null) {
 							break;
 						}
@@ -437,7 +455,12 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				// set relevancy filters if any was specified
 				Relevancy relevancy = null;
 				if (!fromSearchGui) {
-					relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(storeOverride));
+					try {
+						relevancy = keywordPresent ? solrService.getRelevancyRule(sk) : solrService.getDefaultRelevancyRule(new Store(storeOverride));
+					} catch(Exception e) {
+						relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(storeOverride));
+					}
+					
 					if (relevancy != null) {
 						logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());					
 					}
@@ -654,13 +677,25 @@ public class EnterpriseSearchServlet extends HttpServlet {
 							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
 							String storeOverride = enterpriseSearchConfigManager.getSearchRuleCore(storeName, RuleEntity.EXCLUDE);
 							StoreKeyword sk = new StoreKeyword(storeOverride, keyword);
-							excludeList = daoCacheService.getExcludeRules(sk);
+							
+							try {
+								excludeList = (List<ExcludeResult>) solrService.getExcludeRules(sk);
+							} catch(Exception e) {
+								excludeList = (List<ExcludeResult>) daoCacheService.getExcludeRules(sk);
+							}
+							
 						}
 						if (!disableDemote && bestMatchFlag && enterpriseSearchConfigManager.isActiveSearchRule(storeName, RuleEntity.DEMOTE)) {
 							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
 							String storeOverride = enterpriseSearchConfigManager.getSearchRuleCore(storeName, RuleEntity.DEMOTE);
 							StoreKeyword sk = new StoreKeyword(storeOverride, keyword);
-							demoteList = daoCacheService.getDemoteRules(sk);
+							
+							try {
+								demoteList = (List<DemoteResult>) solrService.getDemoteRules(sk);
+							} catch(Exception e) {
+								demoteList = (List<DemoteResult>) daoCacheService.getDemoteRules(sk);
+							}
+							
 							demoteOverrideMap = enterpriseSearchConfigManager.getFieldOverrideMap(storeName, storeOverride);
 							solrHelper.setEnterpriseSearchDemoteFieldOverrides(demoteOverrideMap);
 						}
@@ -668,7 +703,13 @@ public class EnterpriseSearchServlet extends HttpServlet {
 							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 							String storeOverride = enterpriseSearchConfigManager.getSearchRuleCore(storeName, RuleEntity.ELEVATE);
 							StoreKeyword sk = new StoreKeyword(storeOverride, keyword);
-							elevatedList = daoCacheService.getElevateRules(sk);
+							
+							try {
+								elevatedList = (List<ElevateResult>) solrService.getElevateRules(sk);
+							} catch(Exception e) {
+								elevatedList = (List<ElevateResult>) daoCacheService.getElevateRules(sk);
+							}
+							
 							elevateOverrideMap = enterpriseSearchConfigManager.getFieldOverrideMap(storeName, storeOverride);
 							solrHelper.setEnterpriseSearchElevateFieldOverrides(elevateOverrideMap);
 							// prepare force added list
@@ -818,16 +859,30 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
 	
-				if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
-					facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
-							: daoCacheService.getFacetSortRule(sk);
+				if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {	
+					if(fromSearchGui) {
+						facetSort = daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore()));
+					} else {
+						try {
+							facetSort = solrService.getFacetSortRule(sk.getStore(), sk.getKeywordId(), RuleType.KEYWORD);
+						} catch(Exception e) {
+							facetSort = daoCacheService.getFacetSortRule(sk);
+						}
+					}
 				}
 				if (facetSort == null) {
 					// get facetSortRule based on template name
 					templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
 					if (StringUtils.isNotBlank(templateName)) {
-						facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore())) 
-								: daoCacheService.getFacetSortRule(sk.getStore(), templateName);					
+						if(fromSearchGui) {
+							facetSort = daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore()));
+						} else {
+							try {
+								facetSort = solrService.getFacetSortRule(sk.getStore(), templateName, RuleType.TEMPLATE);
+							} catch(Exception e) {
+								facetSort = daoCacheService.getFacetSortRule(sk.getStore(), templateName);
+							}
+						}
 					}
 				}
 				

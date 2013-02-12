@@ -1,6 +1,7 @@
 package com.search.manager.solr.dao;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.ExcludeResult;
@@ -22,10 +23,15 @@ public interface ExcludeDao {
 
 	boolean resetExcludeRules(StoreKeyword storeKeyword) throws DaoException;
 
+	Map<String, Boolean> resetExcludeRules(Store store,
+			Collection<String> keywords) throws DaoException;
+
 	boolean deleteExcludeRules(Store store) throws DaoException;
 
 	boolean deleteExcludeRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean updateExcludeRule(ExcludeResult excludeResult) throws DaoException;
+
+	boolean commitExcludeRule() throws DaoException;
 
 }

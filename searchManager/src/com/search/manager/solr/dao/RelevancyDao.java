@@ -1,6 +1,7 @@
 package com.search.manager.solr.dao;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.Relevancy;
@@ -22,7 +23,8 @@ public interface RelevancyDao {
 
 	boolean loadRelevancyRules(Store store) throws DaoException;
 
-	boolean loadRelevancyRuleByName(Store store, String name) throws DaoException;
+	boolean loadRelevancyRuleByName(Store store, String name)
+			throws DaoException;
 
 	boolean loadRelevancyRuleById(Store store, String id) throws DaoException;
 
@@ -33,6 +35,9 @@ public interface RelevancyDao {
 
 	boolean resetRelevancyRuleById(Store store, String id) throws DaoException;
 
+	Map<String, Boolean> resetRelevancyRulesById(Store store,
+			Collection<String> ids) throws DaoException;
+
 	boolean deleteRelevancyRules(Store store) throws DaoException;
 
 	boolean deleteRelevancyRuleByName(Store store, String name)
@@ -41,5 +46,7 @@ public interface RelevancyDao {
 	boolean deleteRelevancyRuleById(Store store, String id) throws DaoException;
 
 	boolean updateRelevancyRule(Relevancy relevancy) throws DaoException;
+
+	boolean commitRelevancyRule() throws DaoException;
 
 }
