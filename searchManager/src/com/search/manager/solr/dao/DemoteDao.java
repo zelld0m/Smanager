@@ -1,6 +1,7 @@
 package com.search.manager.solr.dao;
 
 import java.util.Collection;
+import java.util.Map;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.DemoteResult;
@@ -21,6 +22,8 @@ public interface DemoteDao {
 	boolean resetDemoteRules(Store store) throws DaoException;
 
 	boolean resetDemoteRules(StoreKeyword storeKeyword) throws DaoException;
+	
+	Map<String, Boolean> resetDemoteRules(Store store, Collection<String> keywords) throws DaoException;
 
 	boolean deleteDemoteRules(Store store) throws DaoException;
 
@@ -28,4 +31,6 @@ public interface DemoteDao {
 
 	boolean updateDemoteRule(DemoteResult demoteResult) throws DaoException;
 
+	boolean commitDemoteRule() throws DaoException;
+	
 }

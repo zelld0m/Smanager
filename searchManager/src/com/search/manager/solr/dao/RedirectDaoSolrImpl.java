@@ -1,11 +1,14 @@
 package com.search.manager.solr.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
@@ -19,9 +22,9 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.proxy.constants.Constants;
 
 @Repository("redirectDaoSolr")
@@ -281,9 +284,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					solrServers.getCoreInstance(
 							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-							.softCommit();
+//					solrServers.getCoreInstance(
+//							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+//							.softCommit();
 					return true;
 				}
 			}
@@ -340,6 +343,72 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 		}
 
 		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> resetRedirectRulesById(Store store,
+			Collection<String> ids) throws DaoException {
+		Map<String, Boolean> idStatus = getKeywordStatusMap((List<String>) ids);
+
+		for (String id : ids) {
+			boolean hasError = false;
+			try {
+				String storeId = StringUtils.lowerCase(StringUtils.trim(store
+						.getStoreId()));
+				id = StringUtils.trim(id);
+
+				StringBuffer strQuery = new StringBuffer();
+				strQuery.append(
+						"storeId:" + ClientUtils.escapeQueryChars(storeId))
+						.append(" AND ruleId:"
+								+ ClientUtils.escapeQueryChars(id));
+
+				solrServers.getCoreInstance(
+						Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+						.deleteByQuery(strQuery.toString());
+
+				List<RedirectRule> redirectRules = null;
+				RedirectRule redirectRuleFilter = new RedirectRule();
+				redirectRuleFilter.setStoreId(store.getStoreId());
+				redirectRuleFilter.setRuleId(id);
+				SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
+						redirectRuleFilter, null, null, 0, 0);
+
+				RecordSet<RedirectRule> recordSet = daoService
+						.searchRedirectRule(criteria, MatchType.MATCH_ID);
+
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					redirectRules = recordSet.getList();
+
+					List<SolrInputDocument> solrInputDocuments = SolrDocUtil
+							.composeSolrDocsRedirectRule(redirectRules);
+
+					if (solrInputDocuments != null
+							&& solrInputDocuments.size() > 0) {
+						solrServers
+								.getCoreInstance(
+										Constants.Core.REDIRECT_RULE_CORE
+												.getCoreName()).addDocs(
+										solrInputDocuments);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e);
+				hasError = true;
+			}
+
+			idStatus.put(id, !hasError);
+		}
+
+		try {
+			solrServers.getCoreInstance(
+					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+					.softCommit();
+		} catch (Exception e) {
+			return null;
+		}
+
+		return idStatus;
 	}
 
 	@Override
@@ -417,9 +486,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			solrServers.getCoreInstance(
-					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-					.softCommit();
+//			solrServers.getCoreInstance(
+//					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+//					.softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;
@@ -458,6 +527,17 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean commitRedirectRule() throws DaoException {
+		try {
+			return commit(solrServers
+					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
+							.getCoreName()));
+		} catch (SolrServerException e) {
+			return false;
+		}
 	}
 
 }

@@ -1,11 +1,14 @@
 package com.search.manager.solr.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
@@ -251,9 +254,9 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-					solrServers.getCoreInstance(
-							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-							.commit();
+//					solrServers.getCoreInstance(
+//							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+//							.commit();
 					return true;
 				}
 			}
@@ -310,6 +313,71 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 		}
 
 		return false;
+	}
+
+	@Override
+	public Map<String, Boolean> resetFacetSortRulesById(Store store,
+			Collection<String> ids) throws DaoException {
+		Map<String, Boolean> idStatus = getKeywordStatusMap((List<String>) ids);
+
+		for (String id : ids) {
+			boolean hasError = false;
+
+			try {
+				String storeId = StringUtils.lowerCase(StringUtils.trim(store
+						.getStoreId()));
+				id = StringUtils.trim(id);
+
+				StringBuffer strQuery = new StringBuffer();
+				strQuery.append(
+						"store:" + ClientUtils.escapeQueryChars(storeId))
+						.append(" AND facetSortId:"
+								+ ClientUtils.escapeQueryChars(id));
+
+				solrServers.getCoreInstance(
+						Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+						.deleteByQuery(strQuery.toString());
+
+				List<FacetSort> facetSorts = null;
+				FacetSort facetSortFilter = new FacetSort();
+				facetSortFilter.setStore(store);
+				facetSortFilter.setRuleId(id);
+				SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
+						facetSortFilter, null, null, 0, 0);
+
+				RecordSet<FacetSort> recordSet = daoService.searchFacetSort(
+						criteria, MatchType.MATCH_ID);
+
+				if (recordSet != null && recordSet.getTotalSize() > 0) {
+					facetSorts = recordSet.getList();
+					List<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
+					solrInputDocuments.addAll(SolrDocUtil
+							.composeSolrDocsFacetSort(facetSorts));
+					if (solrInputDocuments != null
+							&& solrInputDocuments.size() > 0) {
+						solrServers.getCoreInstance(
+								Constants.Core.FACET_SORT_RULE_CORE
+										.getCoreName()).addDocs(
+								solrInputDocuments);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e);
+				hasError = true;
+			}
+
+			idStatus.put(id, !hasError);
+		}
+
+		try {
+			solrServers.getCoreInstance(
+					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+					.softCommit();
+		} catch (Exception e) {
+			return null;
+		}
+
+		return idStatus;
 	}
 
 	@Override
@@ -388,9 +456,9 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			solrServers.getCoreInstance(
-					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-					.softCommit();
+//			solrServers.getCoreInstance(
+//					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+//					.softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;
@@ -428,6 +496,17 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean commitFacetSortRule() throws DaoException {
+		try {
+			return commit(solrServers
+					.getCoreInstance(Constants.Core.FACET_SORT_RULE_CORE
+							.getCoreName()));
+		} catch (SolrServerException e) {
+			return false;
+		}
 	}
 
 }

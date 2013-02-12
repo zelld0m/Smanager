@@ -1,12 +1,15 @@
 package com.search.manager.solr.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
@@ -18,6 +21,7 @@ import com.mall.util.SolrDocUtil;
 import com.mall.util.SolrResultUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.SearchCriteria;
@@ -189,9 +193,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						solrServers.getCoreInstance(
 								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-						solrServers.getCoreInstance(
-								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-								.commit();
+//						solrServers.getCoreInstance(
+//								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+//								.commit();
 					} catch (Exception e) {
 						logger.error(e);
 						throw new DaoException(e.getMessage(), e);
@@ -240,6 +244,80 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 	}
 
 	@Override
+	public Map<String, Boolean> resetExcludeRules(Store store,
+			Collection<String> keywords) throws DaoException {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap((List<String>) keywords);
+
+		for (String keyword : keywords) {
+			boolean hasError = false;
+			try {
+				// delete existing rule/s indexed
+				String storeId = StringUtils.lowerCase(StringUtils
+						.trim(keyword));
+				String key = StringUtils.lowerCase(StringUtils.trim(keyword));
+
+				StringBuffer strQuery = new StringBuffer();
+				strQuery.append(
+						"store:" + ClientUtils.escapeQueryChars(storeId))
+						.append(" AND keyword1:"
+								+ ClientUtils.escapeQueryChars(key));
+
+				solrServers.getCoreInstance(
+						Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+						.deleteByQuery(strQuery.toString());
+
+				// retrieve new rules
+				DemoteResult demoteFilter = new DemoteResult();
+				demoteFilter.setStoreKeyword(new StoreKeyword(storeId, key));
+				List<SolrInputDocument> solrInputDocuments = null;
+
+				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
+						demoteFilter, null, null, 0, 0);
+				List<DemoteResult> demoteResults = daoService
+						.getDemoteResultList(criteria).getList();
+
+				if (demoteResults != null && demoteResults.size() > 0) {
+					try {
+						solrInputDocuments = SolrDocUtil
+								.composeSolrDocs(demoteResults);
+					} catch (Exception e) {
+						hasError = true;
+						logger.error(e);
+					}
+
+					if (!hasError && solrInputDocuments != null
+							&& solrInputDocuments.size() > 0) {
+						try {
+							solrServers.getCoreInstance(
+									Constants.Core.EXCLUDE_RULE_CORE
+											.getCoreName()).addDocs(
+									solrInputDocuments);
+						} catch (Exception e) {
+							logger.error(e);
+							hasError = true;
+						}
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error(e);
+				hasError = true;
+			}
+
+			keywordStatus.put(keyword, !hasError);
+		}
+
+		try {
+			solrServers.getCoreInstance(
+					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).softCommit();
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		return keywordStatus;
+	}
+
+	@Override
 	public boolean deleteExcludeRules(Store store) throws DaoException {
 
 		try {
@@ -285,9 +363,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-			solrServers.getCoreInstance(
-					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-					.softCommit();
+//			solrServers.getCoreInstance(
+//					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+//					.softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;
@@ -326,6 +404,17 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean commitExcludeRule() throws DaoException {
+		try {
+			return commit(solrServers
+					.getCoreInstance(Constants.Core.EXCLUDE_RULE_CORE
+							.getCoreName()));
+		} catch (SolrServerException e) {
+			return false;
+		}
 	}
 
 }
