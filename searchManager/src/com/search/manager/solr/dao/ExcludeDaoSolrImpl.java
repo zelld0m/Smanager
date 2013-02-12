@@ -16,9 +16,6 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Repository;
 
-import com.mall.model.RuleSolrResult;
-import com.mall.util.SolrDocUtil;
-import com.mall.util.SolrResultUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
@@ -27,7 +24,10 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.proxy.constants.Constants;
+import com.search.manager.solr.constants.Constants;
+import com.search.manager.solr.model.RuleSolrResult;
+import com.search.manager.solr.util.SolrDocUtil;
+import com.search.manager.solr.util.SolrResultUtil;
 
 @Repository("excludeDaoSolr")
 public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
@@ -193,9 +193,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						solrServers.getCoreInstance(
 								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-//						solrServers.getCoreInstance(
-//								Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-//								.commit();
+						// solrServers.getCoreInstance(
+						// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+						// .commit();
 					} catch (Exception e) {
 						logger.error(e);
 						throw new DaoException(e.getMessage(), e);
@@ -309,7 +309,8 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 
 		try {
 			solrServers.getCoreInstance(
-					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).softCommit();
+					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+					.softCommit();
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -363,9 +364,9 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
-//					.softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
+			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

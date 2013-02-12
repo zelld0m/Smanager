@@ -15,9 +15,6 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Repository;
 
-import com.mall.model.RelevancyRuleSolr;
-import com.mall.util.SolrDocUtil;
-import com.mall.util.SolrResultUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -25,7 +22,10 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.proxy.constants.Constants;
+import com.search.manager.solr.constants.Constants;
+import com.search.manager.solr.model.RelevancyRuleSolr;
+import com.search.manager.solr.util.SolrDocUtil;
+import com.search.manager.solr.util.SolrResultUtil;
 
 @Repository("relevancyDaoSolr")
 public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
@@ -574,9 +574,9 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
-//					.softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
+			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

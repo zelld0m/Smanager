@@ -7,9 +7,9 @@ import java.util.Map;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.mall.solr.LocalSolrServerRunner;
-import com.mall.solr.SolrServerFactory;
 import com.search.manager.dao.DaoService;
+import com.search.manager.solr.util.LocalSolrServerRunner;
+import com.search.manager.solr.util.SolrServerFactory;
 
 public class BaseDaoSolr {
 

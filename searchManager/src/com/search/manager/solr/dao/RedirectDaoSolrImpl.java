@@ -15,9 +15,6 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrInputDocument;
 import org.springframework.stereotype.Repository;
 
-import com.mall.model.RedirectRuleSolr;
-import com.mall.util.SolrDocUtil;
-import com.mall.util.SolrResultUtil;
 import com.search.manager.dao.DaoException;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
@@ -25,7 +22,10 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.proxy.constants.Constants;
+import com.search.manager.solr.constants.Constants;
+import com.search.manager.solr.model.RedirectRuleSolr;
+import com.search.manager.solr.util.SolrDocUtil;
+import com.search.manager.solr.util.SolrResultUtil;
 
 @Repository("redirectDaoSolr")
 public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
