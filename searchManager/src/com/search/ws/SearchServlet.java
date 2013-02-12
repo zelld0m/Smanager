@@ -634,7 +634,7 @@ public class SearchServlet extends HttpServlet {
 								excludeList = (List<ExcludeResult>) solrService.getExcludeRules(sk);
 							} catch(Exception e) {
 								excludeList = (List<ExcludeResult>) daoCacheService.getExcludeRules(sk);
-							}						
+							}			
 						}
 					}
 				}			
