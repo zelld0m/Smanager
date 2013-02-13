@@ -10,7 +10,17 @@
         				 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         				 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
 						 http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
+    
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+         <property name="locations">
+         	<list>
+         		<value>file:/home/solr/bin/ws/config/database.properties</value>
+         		<value>file:/home/solr/bin/ws/config/mail.properties</value>
+         	</list>
+         </property>
+    </bean>
+    
+    <import resource="./mail-app.xml"/>
 	<import resource="./init-app.xml"/>
 	<import resource="./db-app.xml"/>
 	<!--import resource="./cache-app.xml"/-->
