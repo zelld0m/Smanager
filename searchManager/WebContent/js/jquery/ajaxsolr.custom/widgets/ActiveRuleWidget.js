@@ -27,6 +27,9 @@
 			var output  = '';
 
 			output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
+			output  +='	<div id="activeRuleNote" class="info notification border fsize14 marB20 marT10">';
+			output  +=' 	Below are rules applied to your current search. You can toggle ON/OFF of each active rules to examine its effect on search results';
+			output  +=' </div>';
 			output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
 			output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
 			output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
