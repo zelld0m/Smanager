@@ -6,7 +6,8 @@
 			DeploymentServiceJS.getRuleStatus(rule["type"], rule["id"], {
 				callback:function(data){
 					if(!$.isEmptyObject(data)){
-						$li.find('.ruleStatus').text(getRuleNameSubTextStatus(data));
+						$li.find('.ruleStatus > .status').text(getRuleNameSubTextStatus(data));
+						$li.find('.ruleStatus > .statusMode').text($.isNotBlank(data["locked"]) && data["locked"]? " [ Read-Only ]" : "");
 						$li.find('.lastPublished').text($.isNotBlank(data["lastPublishedDate"])? 'Last Published: ' + data["lastPublishedDate"].toUTCString(): '');
 					}
 				}
@@ -29,11 +30,14 @@
 			output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
 			output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
 			output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
-			output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
 			output  +='			<label class="ruleType floatL fbold w310"></label>';
 			output  +='			<label class="imageIcon floatL w20 posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
 			output  +='			<label class="name w310 floatL"><span class="fbold"></span></label>';
-			output  +='			<label class="ruleStatus"></label>';
+			output  +='			<label class="ruleStatus">';
+			output  +='				<span class="status"></span>';
+			output  +='				<span class="statusMode fsize11 forange padL5"></span>';
+			output  +='			</label>';
+			output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
 			output  +='			<label class="lastPublished"></label>';
 			output  +='		</li>';
 			output  +='	</ul>';
@@ -85,12 +89,11 @@
 						"id": checkboxId
 						}).val(rule["id"]).slidecheckbox({
 						id: checkboxId,
-						initOn: rule["active"],
+						initOn: rule["active"]==="true",
 						locked: false, //TODO:
 						changeStatusCallback: function(base, dt){
 							var cid = dt.id;
 							var cval = dt.value; 
-
 							if(dt.status){
 								self.manager.store.remove(cid);
 							}else{

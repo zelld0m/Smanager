@@ -30,15 +30,12 @@
 
 			var divClass = imagePath.substring(imagePath.indexOf('-')+1, imagePath.lastIndexOf('.'));
 
-			base.$el.addClass('hidden');
-
-			base.$el.attr({"checked":base.options.initOn});
+			base.$el.addClass('hidden').prop({checked:base.options.initOn});
 
 			if(base.$el.siblings("div." + setClass).length==0)
 				base.$el.after('<div class="' + setClass + '" rel="'+ thisID +'"/>');
 
 			base.$el.siblings("div." + setClass)
-					//.addClass(base.$el.is(":checked")? "on":"off")
 					.addClass(base.options.initOn? "on":"off")
 					.addClass(divClass)
 					.show()
@@ -61,9 +58,9 @@
 								              .css("background-position", "100% 0%");
 							}
 		
-							base.options.changeStatusCallback(base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
+							base.options.changeStatusCallback(e.data.base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
 						}
-					},{initOn: base.options.initOn, id: base.options.id, item: base.options.item});
+					},{initOn: base.options.initOn, id: base.options.id, item: base.options.item, base: base});
 			
 			if(base.options.locked){
 				base.$el.siblings("div." + setClass).remove();
