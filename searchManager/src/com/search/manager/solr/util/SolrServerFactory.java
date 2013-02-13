@@ -21,7 +21,8 @@ public class SolrServerFactory {
 		// do nothing...
 	}
 
-	public static SolrServerFactory getInstance(String solrUrl, List<String> cores) {
+	public static SolrServerFactory getInstance(String solrUrl,
+			List<String> cores) {
 		if (instance == null) {
 			instance = new SolrServerFactory();
 			instance.solrUrl = solrUrl;
@@ -58,18 +59,8 @@ public class SolrServerFactory {
 		if (instance == null) {
 			getInstance(solrUrl, cores);
 		}
-
 		LocalSolrServerRunner server = solrServers.get(core);
 		if (server != null) {
-			if (1 == server.ping()) {
-				try {
-					server = new LocalSolrServerRunner(server.getSolrUrl(),
-							core);
-					solrServers.put(core, server);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
 			return server;
 		}
 		logger.debug("Core not found. " + core);
