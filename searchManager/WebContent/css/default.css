@@ -540,3 +540,5 @@ table.cnetFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !impo
 table.dynamicAttribFields tr td div.floatL div.ss-wrapper input.ss-textbox{top: 0px !important;}
 div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper input.ss-textbox{top: 6px !important; width: 85% !important;}
 
+div#top-pager-text{ position:relative; top:8px; }
+div#bottom-pager-text{ position:relative; top:10px; }
