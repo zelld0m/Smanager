@@ -18,6 +18,8 @@
 		<beans:property name="daoService" ref="daoService"/>
 		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
 		<beans:property name="fileService" ref="fileService"/>
+		<beans:property name="mailSender" ref="mailSender"/>
+		<beans:property name="mailDetails" ref="mailDetails"/>
 	</beans:bean>
 	
 	<beans:bean name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
