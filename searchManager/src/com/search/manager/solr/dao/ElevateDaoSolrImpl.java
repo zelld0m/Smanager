@@ -129,16 +129,16 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				List<ElevateResult> elevateResults = daoService
 						.getElevateResultList(criteria).getList();
 
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
 				if (elevateResults != null && elevateResults.size() > 0) {
+					List<SolrInputDocument> solrInputDocuments = null;
+					boolean hasError = false;
+
 					try {
 						solrInputDocuments = SolrDocUtil
 								.composeSolrDocs(elevateResults);
 					} catch (Exception e) {
-						hasError = true;
 						logger.error(e);
+						hasError = true;
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -177,16 +177,16 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			List<ElevateResult> elevateResults = daoService
 					.getElevateResultList(criteria).getList();
 
-			List<SolrInputDocument> solrInputDocuments = null;
-			boolean hasError = false;
-
 			if (elevateResults != null && elevateResults.size() > 0) {
+				List<SolrInputDocument> solrInputDocuments = null;
+				boolean hasError = false;
+
 				try {
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(elevateResults);
 				} catch (Exception e) {
-					hasError = true;
 					logger.error(e);
+					hasError = true;
 				}
 
 				if (!hasError && solrInputDocuments != null
@@ -195,12 +195,12 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						solrServers.getCoreInstance(
 								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-//						solrServers.getCoreInstance(
-//								Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-//								.softCommit();
+						// solrServers.getCoreInstance(
+						// Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+						// .softCommit();
 					} catch (Exception e) {
 						logger.error(e);
-						throw new DaoException(e.getMessage(), e);
+						hasError = true;
 					}
 				}
 
@@ -364,9 +364,9 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-//					.softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.ELEVATE_RULE_CORE.getCoreName())
+			// .softCommit();
 			if (updateResponse.getStatus() == 0) {
 				return true;
 			}

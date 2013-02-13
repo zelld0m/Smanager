@@ -284,9 +284,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					solrServers.getCoreInstance(
 							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-//					solrServers.getCoreInstance(
-//							Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-//							.softCommit();
+					// solrServers.getCoreInstance(
+					// Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+					// .softCommit();
 					return true;
 				}
 			}
@@ -486,9 +486,9 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
-//					.softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.REDIRECT_RULE_CORE.getCoreName())
+			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;

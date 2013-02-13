@@ -129,10 +129,10 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				List<ExcludeResult> excludeResults = daoService
 						.getExcludeResultList(criteria).getList();
 
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
 				if (excludeResults != null && excludeResults.size() > 0) {
+					List<SolrInputDocument> solrInputDocuments = null;
+					boolean hasError = false;
+
 					try {
 						solrInputDocuments = SolrDocUtil
 								.composeSolrDocs(excludeResults);
@@ -176,10 +176,10 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 			List<ExcludeResult> excludeResults = daoService
 					.getExcludeResultList(criteria).getList();
 
-			List<SolrInputDocument> solrInputDocuments = null;
-			boolean hasError = false;
-
 			if (excludeResults != null && excludeResults.size() > 0) {
+				List<SolrInputDocument> solrInputDocuments = null;
+				boolean hasError = false;
+
 				try {
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(excludeResults);
@@ -187,6 +187,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					hasError = true;
 					logger.error(e);
 				}
+
 				if (!hasError && solrInputDocuments != null
 						&& solrInputDocuments.size() > 0) {
 					try {

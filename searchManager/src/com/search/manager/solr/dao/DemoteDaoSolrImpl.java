@@ -126,10 +126,10 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				List<DemoteResult> demoteResults = daoService
 						.getDemoteResultList(criteria).getList();
 
-				List<SolrInputDocument> solrInputDocuments = null;
-				boolean hasError = false;
-
 				if (demoteResults != null && demoteResults.size() > 0) {
+					List<SolrInputDocument> solrInputDocuments = null;
+					boolean hasError = false;
+
 					try {
 						solrInputDocuments = SolrDocUtil
 								.composeSolrDocs(demoteResults);
@@ -168,8 +168,6 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 		try {
 			DemoteResult demoteFilter = new DemoteResult();
 			demoteFilter.setStoreKeyword(storeKeyword);
-			List<SolrInputDocument> solrInputDocuments = null;
-			boolean hasError = false;
 
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
 					demoteFilter, null, null, 0, 0);
@@ -177,6 +175,9 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 					criteria).getList();
 
 			if (demoteResults != null && demoteResults.size() > 0) {
+				List<SolrInputDocument> solrInputDocuments = null;
+				boolean hasError = false;
+
 				try {
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(demoteResults);
@@ -191,9 +192,9 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 						solrServers.getCoreInstance(
 								Constants.Core.DEMOTE_RULE_CORE.getCoreName())
 								.addDocs(solrInputDocuments);
-//						solrServers.getCoreInstance(
-//								Constants.Core.DEMOTE_RULE_CORE.getCoreName())
-//								.softCommit();
+						// solrServers.getCoreInstance(
+						// Constants.Core.DEMOTE_RULE_CORE.getCoreName())
+						// .softCommit();
 					} catch (Exception e) {
 						logger.error(e);
 						hasError = true;
@@ -327,8 +328,8 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.DEMOTE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
 			if (updateResponse.getStatus() == 0) {
 				return true;
 			}
@@ -358,8 +359,8 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.DEMOTE_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
 			if (updateResponse.getStatus() == 0) {
 				return true;
 			}

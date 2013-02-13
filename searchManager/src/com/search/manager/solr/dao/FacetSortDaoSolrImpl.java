@@ -254,9 +254,9 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					solrServers.getCoreInstance(
 							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 							.addDocs(solrInputDocuments);
-//					solrServers.getCoreInstance(
-//							Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-//							.commit();
+					// solrServers.getCoreInstance(
+					// Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+					// .commit();
 					return true;
 				}
 			}
@@ -456,9 +456,9 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 					.deleteByQuery(strQuery.toString());
-//			solrServers.getCoreInstance(
-//					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
-//					.softCommit();
+			// solrServers.getCoreInstance(
+			// Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
+			// .softCommit();
 
 			if (updateResponse.getStatus() == 0) {
 				return true;
