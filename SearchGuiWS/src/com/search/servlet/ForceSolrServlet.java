@@ -113,6 +113,7 @@ public class ForceSolrServlet extends HttpServlet {
 							keyword);
 					DAOValidation.checkStoreKeywordPK(storeKeyword);
 					msg = resetByStoreKeyword(rule, storeKeyword);
+					msg += "\n" + commit(rule, store);
 				} catch (DaoException e) {
 					msg = "Invalid paramter!";
 					msg += "\nError: Invalid 'store' or 'keyword' parameter.";
@@ -143,6 +144,7 @@ public class ForceSolrServlet extends HttpServlet {
 							keyword);
 					DAOValidation.checkStoreKeywordPK(storeKeyword);
 					msg = deleteByStoreKeyword(rule, storeKeyword);
+					msg += "\n" + commit(rule, store);
 				} catch (DaoException e) {
 					msg = "Invalid paramter!";
 				}
