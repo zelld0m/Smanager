@@ -35,7 +35,7 @@
 			template += '	</div>';
 			template += '	<div class="clearB"></div>';
 			template += '	<div id="line2">';
-			template += '		<span class="label">%%label2%%</span>';
+			template += '		<span class="label related-search">%%label2%%</span>';
 			template += '		<span class="val">%%keyword2%%</span>';
 			template += '	</div>';
 			template += '</div>';
