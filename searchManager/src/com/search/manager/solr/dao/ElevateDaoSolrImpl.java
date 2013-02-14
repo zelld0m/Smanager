@@ -46,14 +46,15 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 
-			SolrQuery query = new SolrQuery();
-			query.setQuery(strQuery.toString());
-			logger.info(query.toString());
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
 					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-					.query(query);
+					.query(solrQuery);
 
 			if (queryResponse != null) {
 				elevateResults = SolrResultUtil.toElevateResult(queryResponse
@@ -82,15 +83,16 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
-
-			SolrQuery query = new SolrQuery();
-			query.setQuery(strQuery.toString());
-			logger.info(query.toString());
+			
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
 					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
-					.query(query);
+					.query(solrQuery);
 
 			if (queryResponse != null) {
 				elevateResults = SolrResultUtil.toElevateResult(queryResponse

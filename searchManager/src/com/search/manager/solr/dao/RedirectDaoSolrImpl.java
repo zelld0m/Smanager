@@ -45,6 +45,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			strQuery.append("storeId:" + ClientUtils.escapeQueryChars(storeId));
 
 			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;

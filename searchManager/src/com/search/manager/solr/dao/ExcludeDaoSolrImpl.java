@@ -47,6 +47,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 
 			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
@@ -84,6 +85,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					+ ClientUtils.escapeQueryChars(keyword));
 
 			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
