@@ -319,7 +319,7 @@ public class RuleTransferService {
 			}
 		}
 			
-		if(forPublishingMap != null && CollectionUtils.sizeIsEmpty(forPublishingMap)) {
+		if(forPublishingMap != null && !CollectionUtils.sizeIsEmpty(forPublishingMap)) {
 			int status = APPROVE_RULE;
 			String[] ruleRefIds = forPublishingMap.keySet().toArray(new String[0]);
 			String[] ruleStatusIds = forPublishingMap.values().toArray(new String[0]);
