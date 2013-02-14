@@ -238,6 +238,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marL8, .marL8		{margin-left:8px}
 .cssReset .marL10, .marL10		{margin-left:10px}
 .cssReset .marL13, .marL13		{margin-left:13px}
+.cssReset .marL14, .marL14		{margin-left:14px}
 .cssReset .marL15, .marL15		{margin-left:15px}
 .cssReset .marL20, .marL20		{margin-left:20px}
 .cssReset .marL22				{margin-left:22px}
@@ -546,3 +547,5 @@ div#bottom-pager-text{ position:relative; top:10px; }
 .clearB{ clear:both; }
 .lastPublished { width:300px;text-align:right; }
 .firerift-style { float:right; }
+
+

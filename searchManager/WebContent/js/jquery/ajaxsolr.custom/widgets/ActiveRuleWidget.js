@@ -26,8 +26,8 @@
 		getTemplate: function(){
 			var output  = '';
 
-			output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-			output  +='	<div id="activeRuleNote" class="info notification border fsize14 marB20 marT10">';
+			output  +='<div style="display:block;" class="fsize11 marT10 fDGray border">';
+			output  +='	<div id="activeRuleNote" class="w655 marL20 info notification border fsize11 marB20 marT10">';
 			output  +=' 	Below are rules applied to your current search. You can toggle ON/OFF of each active rules to examine its effect on search results';
 			output  +=' </div>';
 			output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
@@ -35,8 +35,8 @@
 			output  +='			<div class="floatL"><label class="ruleType fbold w160"></label></div>';
 			output	+='			<div class="floatL">';
 			output  +='				<div class="w230"><label class="imageIcon w20 floatL posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
-			output  +='				<label class="name floatL w210"><span class="fbold"></span></label></div>';
-			output  +='				<div class="w230"><label class="ruleStatus w230">';
+			output  +='				<label class="name floatL w210"><span class="fbold"></span></label></div><div class="clearB"></div>';
+			output  +='				<div class="w230"><label class="ruleStatus w230 marT6">';
 			output  +='					<span class="status"></span>';
 			output  +='					<span class="statusMode fsize11 forange padL5"></span>';
 			output  +='				</label></div>';
