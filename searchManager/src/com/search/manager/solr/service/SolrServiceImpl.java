@@ -1,5 +1,6 @@
 package com.search.manager.solr.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -503,6 +504,39 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public boolean commitRelevancyRule() throws DaoException {
 		return relevancyDao.commitRelevancyRule();
+	}
+
+	@Override
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO: implement?
+		return new ArrayList<ElevateResult>();
+	}
+
+	@Override
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO: implement?
+		return new ArrayList<ExcludeResult>();
+	}
+
+	@Override
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO Auto-generated method stub
+		return new ArrayList<DemoteResult>();
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
+		return getFacetSortRule(storeKeyword.getStore(), storeKeyword.getKeywordId(), RuleType.KEYWORD);
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(Store store, String templateName) throws DaoException {
+		return getFacetSortRule(store, templateName, RuleType.TEMPLATE);
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(Store store, String relevancyId) throws DaoException {
+		return getRelevancyRuleById(store, relevancyId);
 	}
 
 }

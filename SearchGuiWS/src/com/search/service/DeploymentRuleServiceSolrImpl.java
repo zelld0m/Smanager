@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
-import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
@@ -48,8 +47,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 	@Autowired
 	private DaoService daoServiceStg;
 	@Autowired
-	private FileService fileService;
-	@Autowired
 	private MailSender mailSender;
 	@Autowired
 	private SimpleMailMessage mailDetails;
@@ -64,10 +61,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	public void setDaoServiceStg(DaoService daoServiceStg) {
 		this.daoServiceStg = daoServiceStg;
-	}
-
-	public void setFileService(FileService fileService) {
-		this.fileService = fileService;
 	}
 
 	public void setMailSender(MailSender mailSender) {
@@ -86,8 +79,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		ElevateResult elevateFilter = new ElevateResult();
 
 		try {
-			// create backup
-			fileService.createBackup(store, keywords, RuleEntity.ELEVATE);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -159,8 +150,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		ExcludeResult excludeFilter = new ExcludeResult();
 
 		try {
-			// create backup
-			fileService.createBackup(store, keywords, RuleEntity.EXCLUDE);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -232,8 +221,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		DemoteResult demoteFilter = new DemoteResult();
 
 		try {
-			// create backup
-			fileService.createBackup(store, keywords, RuleEntity.DEMOTE);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -303,8 +290,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		Map<String, Boolean> keywordStatus = getKeywordStatusMap(keywords);
 
 		try {
-			// Create backup
-			fileService.createBackup(store, keywords, RuleEntity.FACET_SORT);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -410,9 +395,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		Map<String, Boolean> keywordStatus = getKeywordStatusMap(keywords);
 
 		try {
-			// Create backup
-			fileService
-					.createBackup(store, keywords, RuleEntity.QUERY_CLEANING);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -516,8 +498,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		Map<String, Boolean> keywordStatus = getKeywordStatusMap(keywords);
 
 		try {
-			// Create backup
-			fileService.createBackup(store, keywords, RuleEntity.RANKING_RULE);
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
@@ -607,55 +587,12 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 	}
 
 	@Override
-	public Map<String, Boolean> recallElevateRulesMap(String store,
-			List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> recallExcludeRulesMap(String store,
-			List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> recallDemoteRulesMap(String store,
-			List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> recallFacetSortRulesMap(String store,
-			List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> recallRedirectRulesMap(String store,
-			List<String> list) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<String, Boolean> recallRankingRulesMap(String store,
-			List<String> keywords) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean loadElevateRules(String store) {
 		try {
 			solrService.loadElevateRules(new Store(store));
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 
@@ -666,7 +603,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 
@@ -677,7 +613,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 
@@ -688,7 +623,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 
@@ -699,7 +633,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 
@@ -710,7 +643,6 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 		} catch (DaoException e) {
 			logger.error(e);
 		}
-
 		return false;
 	}
 

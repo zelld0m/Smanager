@@ -55,7 +55,7 @@ public class CommandExecutor extends TimerTask {
     }
 
     public void run() {
-        log.info("Running command executor.");
+        log.trace("Running command executor.");
 
         if (!running.get()) {
             running.set(true);
@@ -69,7 +69,7 @@ public class CommandExecutor extends TimerTask {
                     command = commands.poll();
                 }
             } finally {
-                log.info("Command executor stopped.");
+                log.trace("Command executor stopped.");
                 running.set(false);
             }
         }
