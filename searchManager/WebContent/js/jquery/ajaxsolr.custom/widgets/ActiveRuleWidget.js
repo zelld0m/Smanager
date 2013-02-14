@@ -37,7 +37,7 @@
 			output  +='				<div class="w230"><label class="imageIcon w20 floatL posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
 			output  +='				<label class="name floatL w210"><span class="fbold"></span></label></div><div class="clearB"></div>';
 			output  +='				<div class="w230"><label class="ruleStatus w230 marT6">';
-			output  +='					<span class="status"></span>';
+			output  +='					<span class="status fgray"></span>';
 			output  +='					<span class="statusMode fsize11 forange padL5"></span>';
 			output  +='				</label></div>';
 			output	+='			</div>';
@@ -46,7 +46,7 @@
 			output  +='					<label class="select floatR w20 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
 			output  +='					<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
 			output  +='				</div>';
-			output  +='				<div class="w300 floatR"><label class="lastPublished"></label></div>';
+			output  +='				<div class="w300 floatR"><label class="lastPublished fgray"></label></div>';
 			output	+='			</div>';
 			output  +='		</li>';
 			output  +='	</ul>';

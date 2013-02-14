@@ -547,5 +547,4 @@ div#bottom-pager-text{ position:relative; top:10px; }
 .clearB{ clear:both; }
 .lastPublished { width:300px;text-align:right; }
 .firerift-style { float:right; }
-
-
+#rankingRule { margin-top:2px !important; }
