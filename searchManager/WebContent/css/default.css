@@ -542,3 +542,7 @@ div.catValueTop div ul#selectedFacetValueList li.handle div.marL5 div.ss-wrapper
 
 div#top-pager-text{ position:relative; top:8px; }
 div#bottom-pager-text{ position:relative; top:10px; }
+
+.clearB{ clear:both; }
+.lastPublished { width:300px;text-align:right; }
+.firerift-style { float:right; }
