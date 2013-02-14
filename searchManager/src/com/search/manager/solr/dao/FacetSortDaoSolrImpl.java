@@ -45,6 +45,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 
 			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
@@ -73,8 +74,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 		try {
 			String storeId = StringUtils.lowerCase(StringUtils.trim(store
 					.getStoreId()));
-			String strRuleType = StringUtils.lowerCase(StringUtils
-					.trim(ruleType.getDescription()));
+			String strRuleType = StringUtils.trim(ruleType.toString());
 			name = StringUtils.lowerCase(StringUtils.trim(name));
 
 			StringBuffer strQuery = new StringBuffer();

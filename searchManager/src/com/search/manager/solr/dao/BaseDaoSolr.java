@@ -19,6 +19,8 @@ public class BaseDaoSolr {
 	@Autowired
 	SolrServerFactory solrServers;
 
+	public static final Integer MAX_ROWS = 1000;
+
 	protected boolean commit(LocalSolrServerRunner localSolrServer) {
 		try {
 			UpdateResponse updateResponse = localSolrServer.commit();

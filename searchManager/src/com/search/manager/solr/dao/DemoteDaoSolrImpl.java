@@ -45,13 +45,14 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 
-			SolrQuery query = new SolrQuery();
-			query.setQuery(strQuery.toString());
-			logger.info(query.toString());
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(query);
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(solrQuery);
 
 			if (queryResponse != null) {
 				demoteResults = SolrResultUtil.toDemoteResult(queryResponse
@@ -81,13 +82,14 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
 
-			SolrQuery query = new SolrQuery();
-			query.setQuery(strQuery.toString());
-			logger.info(query.toString());
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(query);
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(solrQuery);
 
 			if (queryResponse != null) {
 				demoteResults = SolrResultUtil.toDemoteResult(queryResponse

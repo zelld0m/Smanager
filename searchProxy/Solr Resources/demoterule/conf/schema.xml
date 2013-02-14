@@ -22,6 +22,7 @@
    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0" />
    <fieldType name="sint" class="solr.SortableIntField" sortMissingLast="true" omitNorms="true" />
    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true" />
+   <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0" />
    <fieldType name="text_lwrcase" class="solr.TextField" positionIncrementGap="100">
 	<analyzer type="index">
 	    <tokenizer class="solr.KeywordTokenizerFactory" />
@@ -43,7 +44,7 @@
   <field name="store" type="text_lwrcase" stored="true" multiValued="false" indexed="true" />
   <field name="keyword" type="string" stored="true" multiValued="false" indexed="true" />
   <field name="keyword1" type="text_lwrcase" stored="true" multiValued="false" indexed="true"  />
-  <field name="expiryDate" type="string" stored="true" multiValued="false" />
+  <field name="expiryDate" type="date" stored="true" multiValued="false" />
   <field name="entity" type="string" stored="true" multiValued="false" />
   <field name="value" type="string" stored="true" multiValued="false" />
   <field name="memberId" type="string" stored="true" multiValued="false" /> 

@@ -45,6 +45,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 			strQuery.append("store:" + storeId);
 
 			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
 			logger.info(solrQuery.toString());
 			QueryResponse queryResponse = null;
