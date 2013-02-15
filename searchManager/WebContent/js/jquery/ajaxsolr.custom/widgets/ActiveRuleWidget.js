@@ -22,8 +22,6 @@
 		
 		beforeRequest:function(){
 			var self = this;
-	
-			$.cookie('ar.' + GLOBAL_username, "expand" ,{path:GLOBAL_contextPath});
 			$(self.target).find('#switcher').off();
 			$(self.target).find('#switcherText').text("Active Rule");
 			
