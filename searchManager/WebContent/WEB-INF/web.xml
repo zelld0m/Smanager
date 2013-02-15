@@ -266,7 +266,8 @@
 				com.search.manager.enums.MemberTypeEntity,		
 				com.search.manager.enums.RuleEntity,		
 				com.search.manager.enums.RuleType,				
-				com.search.manager.enums.SortType,				
+				com.search.manager.enums.SortType,	
+				com.search.manager.exception.PublishLockException,			
 			</param-value>
 		</init-param>
 	</servlet>

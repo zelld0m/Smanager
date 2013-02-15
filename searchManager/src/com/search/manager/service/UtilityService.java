@@ -3,17 +3,16 @@ package com.search.manager.service;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -29,6 +28,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.enums.RuleEntity;
+import com.search.manager.exception.PublishLockException;
 import com.search.manager.utility.PropsUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
@@ -43,6 +44,55 @@ public class UtilityService {
 
 	private static final Logger logger = Logger.getLogger(UtilityService.class);
 
+    private final static Map<RuleEntity, AtomicReference<String>> lockService;
+    static {
+    	lockService = new HashMap<RuleEntity, AtomicReference<String>>();
+    	for (RuleEntity ruleEntity: RuleEntity.values()) {
+        	lockService.put(ruleEntity, new AtomicReference<String>());
+    	}
+    }
+
+    public static boolean obtainPublishLock(RuleEntity ruleType) throws PublishLockException {
+    	String username = getUsername();
+    	String storeName = getStoreName();
+    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(username)) {
+        	if (!lockService.get(ruleType).compareAndSet(null, storeName + "^" + username)) {
+        		String info = getPublishLockInfo(ruleType);
+        		username = null;
+        		String storeLabel = null;
+        		if (StringUtils.isNotBlank(info)) {
+        			String[] infoArray = info.split("\\^", 2);
+        			if (infoArray.length > 0) {
+        				// TODO: get store label
+        				storeLabel = infoArray[0];
+            			if (infoArray.length > 1) {
+            				username = infoArray[1];
+            			}
+        			}
+            		throw new PublishLockException(String.format("%s is currently publishing %s rules for %s, please try again in a while.", 
+            				username, ruleType.toString(), storeLabel), username, storeLabel);
+        		}
+        	}
+    	}
+    	return false;
+    }
+
+    public static String getPublishLockInfo(RuleEntity ruleType) {
+    	if (ruleType != null) {
+        	return lockService.get(ruleType).get();
+    	}
+    	return "";
+    }
+
+    public static boolean releasePublishLock(RuleEntity ruleType) {
+    	String username = getUsername();
+    	String storeName = getStoreName();
+    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(username)) {
+        	return lockService.get(ruleType).compareAndSet(storeName + "^" + username, null);
+    	}
+    	return false;
+    }
+    
 	@RemoteMethod
 	public static String getUsername(){
 		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -113,7 +163,7 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
-	public Map<String,String> getServerListForSelectedStore(boolean includeSelectedStore){
+	public static Map<String,String> getServerListForSelectedStore(boolean includeSelectedStore){
 		Map<String,String> map = ConfigManager.getInstance().getServersByCore(getStoreName());
 		if (!includeSelectedStore) {
 			map.remove(getServerName());			
@@ -223,4 +273,6 @@ public class UtilityService {
 		List<String> list = UtilityService.getStoreSettings(storeName, DAOConstants.SETTINGS_EXPORT_TARGET);
 		return list;
 	}
+	
+	
 }
