@@ -110,8 +110,9 @@
 		getTemplate: function(){
 			var output = "";
 			output += '<div>';
+			output += '	<span>Catalog: </span>';
 			output += '	<ul>';
-			output += '		<li><input type="checkbox" id="open" class="pcmgselector"><label for="open">Public</label></li>';
+			output += '		<li><input type="checkbox" id="open" class="pcmgselector"><label for="open">Open</label></li>';
 			output += '		<li><input type="checkbox" id="acad" class="pcmgselector"><label for="aca">Academic</label></li>';
 			output += '		<li><input type="checkbox" id="govt" class="pcmgselector"><label for="gov">Government</label></li>';
 			output += '	</ul>';
