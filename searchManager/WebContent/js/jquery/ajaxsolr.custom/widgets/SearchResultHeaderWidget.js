@@ -8,17 +8,15 @@
 
 		afterRequest: function () {
 			var self = this;
-			if (self.manager.response.response.docs.length > 0){
-				$(self.target).html(self.getTemplate());
-				$(self.target).find('#line2 > .val > a').off().on({
-					click: function(e){
-						if($.isNotBlank($(this).prop("title"))){
-							self.manager.store.addByValue('q', $.trim($(this).prop("title")));
-							self.manager.doRequest(0);
-						}
+			$(self.target).html(self.getTemplate());
+			$(self.target).find('#line2 > .val > a').off().on({
+				click: function(e){
+					if($.isNotBlank($(this).prop("title"))){
+						self.manager.store.addByValue('q', $.trim($(this).prop("title")));
+						self.manager.doRequest(0);
 					}
-				});
-			}
+				}
+			});
 		},
 
 		getTemplate : function(){
