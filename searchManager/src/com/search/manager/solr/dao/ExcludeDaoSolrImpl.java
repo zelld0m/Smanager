@@ -83,6 +83,46 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(" AND (expiryDate:[NOW/DAY+1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))");
+			
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
+			QueryResponse queryResponse = null;
+
+			queryResponse = solrServers.getCoreInstance(
+					Constants.Core.EXCLUDE_RULE_CORE.getCoreName()).query(
+					solrQuery);
+
+			if (queryResponse != null) {
+				excludeResults = SolrResultUtil.toExcludeResult(queryResponse
+						.getBeans(RuleSolrResult.class));
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return excludeResults;
+	}
+
+	@Override
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		List<ExcludeResult> excludeResults = new ArrayList<ExcludeResult>();
+
+		try {
+			String storeId = StringUtils.lowerCase(StringUtils
+					.trim(storeKeyword.getStoreId()));
+			String keyword = StringUtils.lowerCase(StringUtils
+					.trim(storeKeyword.getKeywordId()));
+
+			StringBuffer strQuery = new StringBuffer();
+			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(" AND keyword1:"
+					+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(" AND expiryDate:[* TO NOW/DAY]");
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);

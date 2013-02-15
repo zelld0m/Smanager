@@ -15,6 +15,9 @@ public interface ExcludeDao {
 	Collection<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword)
 			throws DaoException;
 
+	Collection<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword)
+			throws DaoException;
+
 	boolean loadExcludeRules(Store store) throws DaoException;
 
 	boolean loadExcludeRules(StoreKeyword storeKeyword) throws DaoException;

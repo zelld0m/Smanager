@@ -1,5 +1,7 @@
 package com.search.manager.solr.dao;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,7 @@ public class BaseDaoSolr {
 	SolrServerFactory solrServers;
 
 	public static final Integer MAX_ROWS = 1000;
+	public static final String SOLR_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:sss'Z'";
 
 	protected boolean commit(LocalSolrServerRunner localSolrServer) {
 		try {
@@ -41,6 +44,14 @@ public class BaseDaoSolr {
 		}
 
 		return keywordStatus;
+	}
+
+	public String getCurrentDate() {
+		Date date = new Date();
+		String formatedDate = (new SimpleDateFormat(SOLR_DATE_FORMAT))
+				.format(date);
+
+		return formatedDate;
 	}
 
 }

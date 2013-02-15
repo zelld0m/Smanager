@@ -15,6 +15,9 @@ public interface DemoteDao {
 	Collection<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
 			throws DaoException;
 
+	Collection<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword)
+		throws DaoException;
+	
 	boolean loadDemoteRules(Store store) throws DaoException;
 
 	boolean loadDemoteRules(StoreKeyword storeKeyword) throws DaoException;
