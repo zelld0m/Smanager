@@ -302,7 +302,7 @@
 
 					if(FACET){
 						setImage($tr,list[i]);
-						$tr.find("td#itemMan").html(list[i].condition["readableString"])
+						$tr.find("td#itemMan").text(list[i].condition["readableString"])
 						.prop("colspan",3)
 						.removeClass("txtAC")
 						.addClass("txtAL")
