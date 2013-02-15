@@ -28,6 +28,7 @@ import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.Comment;
 import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.RecordSet;
@@ -172,75 +173,83 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
-		String store = UtilityService.getStoreName();
-		String username = UtilityService.getUsername();
-		boolean isAutoExport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
-		List<String> approvedRuleList = null;
-		List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
-
+	public RecordSet<DeploymentModel> publishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
+		boolean obtainedLock = false;
 		try {
-			if(ArrayUtils.isEmpty(ruleRefIdList)){
-				logger.error("No rule id specified");	
-			}else if(ArrayUtils.getLength(ruleRefIdList)!=ArrayUtils.getLength(ruleStatusIdList)){
-				logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));	
-			}else{
-				approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			String store = UtilityService.getStoreName();
+			String username = UtilityService.getUsername();
+			boolean isAutoExport = BooleanUtils.toBoolean(UtilityService.getStoreSetting(DAOConstants.SETTINGS_AUTO_EXPORT));
+			List<String> approvedRuleList = null;
+			List<DeploymentModel> publishingResultList = new ArrayList<DeploymentModel>();
+	
+			try {
+				if(ArrayUtils.isEmpty(ruleRefIdList)){
+					logger.error("No rule id specified");	
+				}else if(ArrayUtils.getLength(ruleRefIdList)!=ArrayUtils.getLength(ruleStatusIdList)){
+					logger.error(String.format("Inconsistent rule id & rule status id count, RuleID: %s, RuleStatusID: %s", StringUtils.join(ruleRefIdList), StringUtils.join(ruleStatusIdList)));	
+				}else{
+					approvedRuleList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), null, RuleStatusEntity.APPROVED.toString());
+				}
+			} catch (DaoException e) {
+				logger.error("Failed during retrieval of approved rules list", e);
 			}
-		} catch (DaoException e) {
-			logger.error("Failed during retrieval of approved rules list", e);
-		}
-
-		Map<String,Boolean> ruleMap = new HashMap<String, Boolean>();
-
-		//publish qualified rule, only approved rule
-		if (CollectionUtils.isEmpty(approvedRuleList)){
-			logger.error("No approved rules retrieved for publishing");					
-		}else{
-			ruleMap = publishRule(ruleType, approvedRuleList);
-		}
-
-		if (MapUtils.isEmpty(ruleMap)){
-			logger.error(String.format("No rules were published from the list of rule id: %s", StringUtils.join(ruleRefIdList, ',')));
-		}
-
-		DeploymentModel deploymentModel = null;
-		RuleEntity ruleEntity = null;
-		List<String> publishedRuleStatusIdList =  new ArrayList<String>();
-		String ruleId = "";
-
-		//Populate deployment model for all rules queued for publishing
-		for(int i=0; i < Array.getLength(ruleRefIdList); i++) {	
-			ruleId = ruleRefIdList[i];
-			deploymentModel = new DeploymentModel(ruleId, 0);
-
-			if(MapUtils.isNotEmpty(ruleMap) && ruleMap.containsKey(ruleId) && BooleanUtils.isTrue(ruleMap.get(ruleId))) {
-				ruleEntity = RuleEntity.find(ruleType);
-				deploymentModel.setPublished(1);
-				publishedRuleStatusIdList.add(ruleStatusIdList[i]);
-				if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, null, comment)) {
-					daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
-					logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
-					if (isAutoExport) {
-						RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
-						if (ruleXml != null) {
-							try {
-								daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, username, "Automatic Export on Publish");
-							} catch (DaoException e) {
-								// TODO: make more detailed
-								logger.error("Error occurred while exporting rule: ", e);
+	
+			Map<String,Boolean> ruleMap = new HashMap<String, Boolean>();
+	
+			//publish qualified rule, only approved rule
+			if (CollectionUtils.isEmpty(approvedRuleList)){
+				logger.error("No approved rules retrieved for publishing");					
+			}else{
+				ruleMap = publishRule(ruleType, approvedRuleList);
+			}
+	
+			if (MapUtils.isEmpty(ruleMap)){
+				logger.error(String.format("No rules were published from the list of rule id: %s", StringUtils.join(ruleRefIdList, ',')));
+			}
+	
+			DeploymentModel deploymentModel = null;
+			RuleEntity ruleEntity = null;
+			List<String> publishedRuleStatusIdList =  new ArrayList<String>();
+			String ruleId = "";
+	
+			//Populate deployment model for all rules queued for publishing
+			for(int i=0; i < Array.getLength(ruleRefIdList); i++) {	
+				ruleId = ruleRefIdList[i];
+				deploymentModel = new DeploymentModel(ruleId, 0);
+	
+				if(MapUtils.isNotEmpty(ruleMap) && ruleMap.containsKey(ruleId) && BooleanUtils.isTrue(ruleMap.get(ruleId))) {
+					ruleEntity = RuleEntity.find(ruleType);
+					deploymentModel.setPublished(1);
+					publishedRuleStatusIdList.add(ruleStatusIdList[i]);
+					if(daoService.createPublishedVersion(store, ruleEntity, ruleId, username, null, comment)) {
+						daoService.addRuleStatusComment(RuleStatusEntity.PUBLISHED, store, username, comment, publishedRuleStatusIdList.toArray(new String[0]));
+						logger.info(String.format("Published Rule XML created: %s %s", ruleEntity, ruleId));	
+						if (isAutoExport) {
+							RuleXml ruleXml = RuleXmlUtil.getLatestVersion(daoService.getPublishedRuleVersions(store, ruleType, ruleId));
+							if (ruleXml != null) {
+								try {
+									daoService.exportRule(store, ruleEntity, ruleId, ruleXml, ExportType.AUTOMATIC, username, "Automatic Export on Publish");
+								} catch (DaoException e) {
+									// TODO: make more detailed
+									logger.error("Error occurred while exporting rule: ", e);
+								}
 							}
 						}
 					}
+					else {
+						logger.error(String.format("Failed to create published rule xml: %s %s", ruleEntity, ruleId));	
+					}
 				}
-				else {
-					logger.error(String.format("Failed to create published rule xml: %s %s", ruleEntity, ruleId));	
-				}
+	
+				publishingResultList.add(deploymentModel);
 			}
-
-			publishingResultList.add(deploymentModel);
+			return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
+		} finally {
+			if (obtainedLock) {
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+			}
 		}
-		return new RecordSet<DeploymentModel>(publishingResultList, publishingResultList.size());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -260,35 +269,43 @@ public class DeploymentService {
 	}
 
 	@RemoteMethod
-	public RecordSet<DeploymentModel> unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) {
-		//clean list, only approved rules should be published
-		List<String> cleanList = null;
-		List<String> publishedRuleIds = new ArrayList<String>();
-		List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
+	public RecordSet<DeploymentModel> unpublishRule(String ruleType, String[] ruleRefIdList, String comment, String[] ruleStatusIdList) throws PublishLockException {
+		boolean obtainedLock = false;
 		try {
-			cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
-		} catch (DaoException e) {
-			logger.error("Failed during getCleanList()",e);
-		}
-		Map<String,Boolean> ruleMap = unpublishRule(ruleType, cleanList);
-
-		for(String ruleId : ruleRefIdList){	
-			DeploymentModel deploy = new DeploymentModel();
-			deploy.setRuleId(ruleId);
-			deploy.setPublished(0);
-
-			if(ruleMap != null && ruleMap.size() > 0){
-				if(ruleMap.containsKey(ruleId)){
-					if(ruleMap.get(ruleId)) {
-						deploy.setPublished(1);
-						publishedRuleIds.add(ruleId);
+			obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			//clean list, only approved rules should be published
+			List<String> cleanList = null;
+			List<String> publishedRuleIds = new ArrayList<String>();
+			List<DeploymentModel> deployList = new ArrayList<DeploymentModel>();
+			try {
+				cleanList = daoService.getCleanList(Arrays.asList(ruleRefIdList), RuleEntity.getId(ruleType), RuleStatusEntity.PUBLISHED.toString(), null);
+			} catch (DaoException e) {
+				logger.error("Failed during getCleanList()",e);
+			}
+			Map<String,Boolean> ruleMap = unpublishRule(ruleType, cleanList);
+	
+			for(String ruleId : ruleRefIdList){	
+				DeploymentModel deploy = new DeploymentModel();
+				deploy.setRuleId(ruleId);
+				deploy.setPublished(0);
+	
+				if(ruleMap != null && ruleMap.size() > 0){
+					if(ruleMap.containsKey(ruleId)){
+						if(ruleMap.get(ruleId)) {
+							deploy.setPublished(1);
+							publishedRuleIds.add(ruleId);
+						}
 					}
 				}
+				deployList.add(deploy);
 			}
-			deployList.add(deploy);
+			daoService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, UtilityService.getStoreName(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
+			return new RecordSet<DeploymentModel>(deployList,deployList.size());
+		} finally {
+			if (obtainedLock) {
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
+			}
 		}
-		daoService.addRuleStatusComment(RuleStatusEntity.UNPUBLISHED, UtilityService.getStoreName(), UtilityService.getUsername(), comment, getRuleStatusIdList(ruleRefIdList, ruleStatusIdList, publishedRuleIds));
-		return new RecordSet<DeploymentModel>(deployList,deployList.size());
 	}
 
 	@SuppressWarnings("unchecked")

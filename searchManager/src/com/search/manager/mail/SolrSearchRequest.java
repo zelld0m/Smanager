@@ -54,7 +54,7 @@ public class SolrSearchRequest implements Runnable {
             }
 
             try {
-                log.info("processing keyword {}", keywordStats.getKeyword());
+                log.trace("processing keyword {}", keywordStats.getKeyword());
 
                 keywordStats.incrementTries();
                 post.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("q", keywordStats
@@ -82,17 +82,17 @@ public class SolrSearchRequest implements Runnable {
                 keywordStats.setSku(edp);
                 keywordStats.setResultCount(count);
 
-                log.info("Solr stats successfully retrieved: count: {}, keyword: {}, results: {},  edpt: {}",
+                log.trace("Solr stats successfully retrieved: count: {}, keyword: {}, results: {},  edpt: {}",
                         keywordStats.toStringArray());
             } catch (Exception e) {
                 log.error("Exception occured during solr search.", e);
 
                 try {
                     if (keywordStats.continueProcessing(MAX_TRIES)) {
-                        log.info("Putting back keyword {} to queue for reprocessing.", keywordStats.getKeyword());
+                        log.trace("Putting back keyword {} to queue for reprocessing.", keywordStats.getKeyword());
                         stats.put(keywordStats);
                     } else {
-                        log.info("Maximum tries for solr request keyword '{}' was reached.", keywordStats.getKeyword());
+                        log.trace("Maximum tries for solr request keyword '{}' was reached.", keywordStats.getKeyword());
                         keywordStats.stopProcessing();
                     }
                 } catch (InterruptedException ex) {
@@ -104,6 +104,6 @@ public class SolrSearchRequest implements Runnable {
         }
 
         client.getConnectionManager().shutdown();
-        log.info("Search thread destroyed.");
+        log.trace("Search thread destroyed.");
     }
 }

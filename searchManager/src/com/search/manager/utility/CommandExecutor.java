@@ -30,25 +30,25 @@ public class CommandExecutor extends TimerTask {
     }
 
     public void init() {
-        log.trace("Starting command executor.");
+        log.info("Starting command executor.");
 
         commands = new ArrayBlockingQueue<Command>(maxCount);
         timer.schedule(this, 500, interval);
     }
 
     public void destroy() {
-        log.trace("Stopping command executor.");
+        log.info("Stopping command executor.");
         timer.cancel();
         stopped.set(true);
-        log.trace("Command executor stopped.");
+        log.info("Command executor stopped.");
     }
 
     public boolean addCommand(Command command) {
         if (commands.offer(command) && !stopped.get()) {
-            log.trace("New command added to queue. " + command);
+            log.info("New command added to queue. " + command);
             return true;
         } else {
-            log.trace("Unable to append command to queue.");
+            log.warn("Unable to append command to queue.");
         }
 
         return false;
@@ -64,12 +64,12 @@ public class CommandExecutor extends TimerTask {
                 Command command = commands.poll();
 
                 while (command != null && !stopped.get()) {
-                    log.trace("Running command " + command);
+                    log.info("Running command " + command);
                     command.execute();
                     command = commands.poll();
                 }
             } finally {
-                log.trace("Command executor stopped.");
+                log.trace("Command executor going to sleep.");
                 running.set(false);
             }
         }
