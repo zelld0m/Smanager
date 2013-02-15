@@ -31,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.dao.DaoException;
@@ -51,11 +52,14 @@ import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
 
-	@Autowired 
+	@Autowired
+	@Qualifier("daoService")
 	SearchDaoService daoService;
 	@Autowired
+	@Qualifier("daoCacheService")
 	SearchDaoService daoCacheService;
 	@Autowired
+	@Qualifier("solrService")
 	SearchDaoService solrService;
 	
 	private static final long serialVersionUID = 1L;
