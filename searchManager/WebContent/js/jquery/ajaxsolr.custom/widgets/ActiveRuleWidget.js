@@ -203,7 +203,7 @@
 			output  +='	</div>';
 			output  +='	<div id="collapse" style="display:none">';
 			output  +='		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB20 marT10">';
-			output  +=' 		<label>Toggle this section to view all rules applied to this rule</label>';
+			output  +=' 		<label>Toggle this section to view all rules applied to current search</label>';
 			output  +=' 	</div>';
 			output  +='	</div>';
 			output  +='</div>';
