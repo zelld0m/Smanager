@@ -147,7 +147,9 @@
 			var self = this;
 			$(self.target).find("#collapse").fadeOut("slow", function(foe){
 				$(self.target).find("#expand").slideDown("slow", function(sde){
-					
+					$(self.target).find("#switcherIcon").prop({
+						src: GLOBAL_contextPath + "/images/icon_expand.png"
+					});
 				});
 			});
 		},
@@ -157,7 +159,9 @@
 			
 			$(self.target).find("#expand").fadeOut("slow", function(foe){
 				$(self.target).find("#collapse").slideDown("slow", function(sde){
-					
+					$(self.target).find("#switcherIcon").prop({
+						src: GLOBAL_contextPath + "/images/icon_collapse.png"
+					});
 				});
 			});
 		},
@@ -206,8 +210,8 @@
 			
 			output  +='<a id="switcher" href="javascript:void(0);">';
 			output  +='	<div class="minW100 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
-			output  +='		<img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_arrowDownBlue.png")  + '" class="top2 posRel marL5 marR3">';
-			output  +='		<span id="switcherText"></span>';
+			output  +='		<img id="switcherIcon" src="' + GLOBAL_contextPath + '/images/icon_expand.png" class="posRel marL5 marR3">';
+			output  +='		<span id="switcherText" class="marB5"></span>';
 			output  +='	</div>';
 			output  +='</a>';
 
