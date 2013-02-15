@@ -397,7 +397,7 @@
 							preHook: function() { 
 								base.prepareList(); 
 								if($.isNotBlank(comment)){
-									ExcludeServiceJS.addComment(keyword, memberId, comment, {
+									ExcludeServiceJS.addRuleComment(keyword, memberId, comment, {
 										callback : function(data){
 											if (data>0) base.hasChanges++;
 										}
