@@ -62,70 +62,91 @@ public class AuditTrailConstants {
 		exportRule
 	}
 
+	public static Entity[] ENTITY_LIST_ASC = {
+		Entity.banner,
+		Entity.campaign,
+		Entity.demote,
+		Entity.elevate,
+		Entity.exclude,
+		Entity.facetSort,
+		Entity.keyword,
+		Entity.queryCleaning,
+		Entity.relevancy,
+		Entity.ruleStatus,
+		Entity.security,
+		Entity.storeKeyword
+	};
+	
 	public static Operation[] elevateOperations = {
 		Operation.add,
-		Operation.update,
-		Operation.delete,
+		Operation.appendComment,
 		Operation.clear,
-		Operation.updateExpiryDate,
+		Operation.delete,
+		Operation.update,
 		Operation.updateComment,
-		Operation.appendComment };
+		Operation.updateExpiryDate
+		 };
 	
 	public static Operation[] excludeOperations = {
 		Operation.add,
+		Operation.appendComment, 
 		Operation.update,
-		Operation.delete,
 		Operation.clear,
-		Operation.updateExpiryDate,
+		Operation.delete,
 		Operation.updateComment,
-		Operation.appendComment };
+		Operation.updateExpiryDate
+		};
 	
 	public static Operation[] demoteOperations = {
 		Operation.add,
+		Operation.appendComment, 
 		Operation.update,
-		Operation.delete,
 		Operation.clear,
-		Operation.updateExpiryDate,
+		Operation.delete,
 		Operation.updateComment,
-		Operation.appendComment };
+		Operation.updateExpiryDate
+		};
 	
 	public static Operation[] keywordOperations = {
 		Operation.add,
-		Operation.update,
 		Operation.delete,
+		Operation.update,
 		Operation.updateComment };
 	
 	public static Operation[] storeKeywordOperations = {
 		Operation.add,
-		Operation.update,
+		Operation.appendComment,
 		Operation.delete,
-		Operation.updateComment,
-		Operation.appendComment };
+		Operation.update,
+		Operation.updateComment
+		 };
 	
 	public static Operation[] campaignOperations = {
 		Operation.add,
-		Operation.update,
+		Operation.appendComment, 
 		Operation.delete,
+		Operation.update,
 		Operation.updateComment,
-		Operation.appendComment };
+		};
 	
 	public static Operation[] bannerOperations = {
 		Operation.add,
-		Operation.update,
+		Operation.appendComment,
 		Operation.delete,
-		Operation.updateComment,
-		Operation.appendComment };
+		Operation.update,
+		Operation.updateComment
+		 };
 
 	public static Operation[] queryCleaningOperations = {
 		Operation.add,
-		Operation.update,
 		Operation.delete,
+		Operation.update,
 	};
 	
 	public static Operation[] facetSortOperations = {
 		Operation.add,
+		Operation.delete,
 		Operation.update,
-		Operation.delete
 	};
 	
 	public static Operation[] facetSortGroupOperations = {
@@ -143,40 +164,44 @@ public class AuditTrailConstants {
 
 	public static Operation[] queryCleaningConditionOperations = {
 		Operation.addCondition,
-		Operation.updateCondition,
 		Operation.removeCondition,
+		Operation.updateCondition,
 	};
 
 	public static Operation[] relevancyOperations = {
 		Operation.add,
-		Operation.update,
+		Operation.appendComment,
 		Operation.delete,
+		Operation.update,
 		Operation.updateComment,
-		Operation.appendComment };
+		 };
 
 	public static Operation[] relevancyFieldOperations = {
 		Operation.addRelevancyField,
-		Operation.updateRelevancyField,
+		Operation.deleteRelevancyField,
 		Operation.saveRelevancyField,
-		Operation.deleteRelevancyField, };
+		Operation.updateRelevancyField,
+		};
 
 	public static Operation[] relevancyKeywordOperations = {
 		Operation.mapKeyword,
+		Operation.updateKeywordMapping,
 		Operation.unmapKeyword,
-		Operation.updateKeywordMapping };
+		};
 
 	public static Operation[] ruleStatusOperations = {
 		Operation.add,
-		Operation.update,
 		Operation.delete,
 		Operation.exportRule,
-		Operation.importRule };
+		Operation.importRule,
+		Operation.update,
+		};
 
 	public static Operation[] securityOperations = {
 		Operation.add,
-		Operation.update,
 		Operation.delete, 
-		Operation.resetPassword
+		Operation.resetPassword,
+		Operation.update,
 		};
 
 	public static Map<Entity, Operation[]> entityOperationMap;

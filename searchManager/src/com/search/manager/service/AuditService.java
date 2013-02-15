@@ -290,7 +290,7 @@ public class AuditService {
 			}
 			break;
 			case 3 : {
-				for(Object opt: Arrays.asList(AuditTrailConstants.Entity.values())){
+				for(Object opt: Arrays.asList(AuditTrailConstants.ENTITY_LIST_ASC)){
 					if(opt.toString().equals(AuditTrailConstants.Entity.security) && UtilityService.hasPermission("CREATE_RULE") || !opt.toString().equals(AuditTrailConstants.Entity.security)){
 						ddList.add(opt.toString());
 					}
