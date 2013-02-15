@@ -491,6 +491,10 @@
 			base.ruleMap = {};
 
 			$content.find("#preloader").show();
+			
+			$content.find("input#name").val('');
+			$content.find("textarea#notes").val('');
+			
 			$content.find("#compareSection").hide();
 			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){

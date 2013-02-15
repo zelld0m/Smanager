@@ -218,7 +218,7 @@
 					conditionText  = conditionText.substring(0,100) + "...";
 				}
 
-				$li.find("#conditionText").html(conditionText);
+				$li.find("#conditionText").text(conditionText);
 			}
 
 			var validityDate = item["formattedExpiryDate"];
