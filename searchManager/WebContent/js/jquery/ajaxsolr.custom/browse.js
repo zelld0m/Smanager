@@ -13,6 +13,13 @@
 			defaultText: WIDGET_TEXTDEFAULT_searchKeyword,
 			minCharRequired: 2
 		}));
+		
+		if(GLOBAL_store.toLowerCase() === "pcmgbd"){
+			Manager.addWidget(new AjaxSolr.PCMGSelectorWidget({
+				id: "pcmgSelector",
+				target: "#pcmgSelector"
+			}));
+		}
 
 		Manager.addWidget(new AjaxSolr.SearchWithinWidget({
 			id: WIDGET_ID_searchWithin,

@@ -39,6 +39,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentSearchWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultHeaderWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>
@@ -76,7 +77,8 @@
 	<div class="floatL w730 marL10 marT27" style="min-height:550px">
 		  <!-- Text Widget -->
 		  <div id="search" class="floatL w730 titlePlacer marB10">
-			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
+			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>
+			<div id="pcmgSelector" class="floatR"></div>			         	
 		  </div>
            
 		   <!-- Rule Selector Widget -->
@@ -101,9 +103,9 @@
 			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			<div class="clearB"></div>
 		  </div>
-		  
+
 		  <!-- Search Result Header Widget -->
-		  <div id="searchResultHeader"></div>
+		  <div id="searchResultHeader" class="padT10"></div>
 		  
 		  <!-- Result & Pager Widget -->
 		  <div>
