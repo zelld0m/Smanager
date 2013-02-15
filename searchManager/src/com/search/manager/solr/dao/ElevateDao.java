@@ -15,14 +15,17 @@ public interface ElevateDao {
 	Collection<ElevateResult> getElevateRules(StoreKeyword storeKeyword)
 			throws DaoException;
 
+	Collection<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword)
+			throws DaoException;
+
 	boolean loadElevateRules(Store store) throws DaoException;
 
 	boolean loadElevateRules(StoreKeyword storeKeyword) throws DaoException;
 
 	boolean resetElevateRules(Store store) throws DaoException;
 
-	Map<String, Boolean> resetElevateRules(Store store, Collection<String> keywords)
-			throws DaoException;
+	Map<String, Boolean> resetElevateRules(Store store,
+			Collection<String> keywords) throws DaoException;
 
 	boolean resetElevateRules(StoreKeyword storeKeyword) throws DaoException;
 

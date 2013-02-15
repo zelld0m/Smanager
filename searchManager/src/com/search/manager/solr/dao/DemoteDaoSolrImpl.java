@@ -52,7 +52,8 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(solrQuery);
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(
+					solrQuery);
 
 			if (queryResponse != null) {
 				demoteResults = SolrResultUtil.toDemoteResult(queryResponse
@@ -81,6 +82,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
 			strQuery.append(" AND keyword1:"
 					+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(" AND (expiryDate:[NOW/DAY+1DAY TO *] OR (*:* AND -expiryDate:[* TO *]))");
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
@@ -89,7 +91,47 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
-					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(solrQuery);
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(
+					solrQuery);
+
+			if (queryResponse != null) {
+				demoteResults = SolrResultUtil.toDemoteResult(queryResponse
+						.getBeans(RuleSolrResult.class));
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			throw new DaoException(e.getMessage(), e);
+		}
+
+		return demoteResults;
+	}
+
+	@Override
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		List<DemoteResult> demoteResults = new ArrayList<DemoteResult>();
+
+		try {
+			String storeId = StringUtils.lowerCase(StringUtils
+					.trim(storeKeyword.getStoreId()));
+			String keyword = StringUtils.lowerCase(StringUtils
+					.trim(storeKeyword.getKeywordId()));
+
+			StringBuffer strQuery = new StringBuffer();
+			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId));
+			strQuery.append(" AND keyword1:"
+					+ ClientUtils.escapeQueryChars(keyword));
+			strQuery.append(" AND expiryDate:[* TO NOW/DAY]");
+
+			SolrQuery solrQuery = new SolrQuery();
+			solrQuery.setRows(MAX_ROWS);
+			solrQuery.setQuery(strQuery.toString());
+			logger.info(solrQuery.toString());
+			QueryResponse queryResponse = null;
+
+			queryResponse = solrServers.getCoreInstance(
+					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).query(
+					solrQuery);
 
 			if (queryResponse != null) {
 				demoteResults = SolrResultUtil.toDemoteResult(queryResponse

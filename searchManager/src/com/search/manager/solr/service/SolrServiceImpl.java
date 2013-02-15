@@ -1,6 +1,5 @@
 package com.search.manager.solr.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -507,35 +506,42 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
-	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
-		// TODO: implement?
-		return new ArrayList<ElevateResult>();
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return (List<ElevateResult>) elevateDao
+				.getExpiredElevateRules(storeKeyword);
 	}
 
 	@Override
-	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
-		// TODO: implement?
-		return new ArrayList<ExcludeResult>();
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return (List<ExcludeResult>) excludeDao
+				.getExpiredExcludeRules(storeKeyword);
 	}
 
 	@Override
-	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
-		// TODO Auto-generated method stub
-		return new ArrayList<DemoteResult>();
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword)
+			throws DaoException {
+		return (List<DemoteResult>) demoteDao
+				.getExpiredDemoteRules(storeKeyword);
 	}
 
 	@Override
-	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
-		return getFacetSortRule(storeKeyword.getStore(), storeKeyword.getKeywordId(), RuleType.KEYWORD);
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword)
+			throws DaoException {
+		return getFacetSortRule(storeKeyword.getStore(),
+				storeKeyword.getKeywordId(), RuleType.KEYWORD);
 	}
 
 	@Override
-	public FacetSort getFacetSortRule(Store store, String templateName) throws DaoException {
+	public FacetSort getFacetSortRule(Store store, String templateName)
+			throws DaoException {
 		return getFacetSortRule(store, templateName, RuleType.TEMPLATE);
 	}
 
 	@Override
-	public Relevancy getRelevancyRule(Store store, String relevancyId) throws DaoException {
+	public Relevancy getRelevancyRule(Store store, String relevancyId)
+			throws DaoException {
 		return getRelevancyRuleById(store, relevancyId);
 	}
 
