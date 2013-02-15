@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.SearchDaoService;
 import com.search.manager.exception.DataException;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -14,7 +15,7 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
-public interface DaoCacheService {
+public interface DaoCacheService extends SearchDaoService {
 
 	/* Keywords */
 	public List<String> getAllKeywords(Store store) throws DaoException, DataException;
@@ -23,40 +24,33 @@ public interface DaoCacheService {
 	public boolean reloadAllKeywords(Store store) throws DaoException, DataException;
 
 	/* Elevate */
-	public boolean loadElevateRules(Store store) throws DaoException, DataException, DataException;
-	public List<ElevateResult> getElevateRules(StoreKeyword storeKeyword) throws DaoException, DataException;
+	public boolean loadElevateRules(Store store) throws DaoException, DataException;
 	public boolean updateElevateRule(ElevateResult elevateResult) throws DaoException, DataException;
 	public boolean resetElevateRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 	/* Exclude */
 	public boolean loadExcludeRules(Store store) throws DaoException, DataException;
-	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public boolean updateExcludeRules(ExcludeResult excludeResult) throws DaoException, DataException;
 	public boolean resetExcludeRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 	/* Demote */
 	public boolean loadDemoteRules(Store store) throws DaoException, DataException;
-	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public boolean updateDemoteRules(DemoteResult demoteResult) throws DaoException, DataException;
 	public boolean resetDemoteRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 	/* Facet Sort */
 	public boolean loadFacetSortRules(Store store) throws DaoException, DataException;
-	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public boolean updateFacetSortRule(FacetSort facetSort) throws DaoException, DataException;
 	public boolean resetFacetSortRule(StoreKeyword storeKeyword) throws DaoException, DataException;
-	public FacetSort getFacetSortRule(Store store, String name) throws DaoException, DataException;
 	public boolean resetFacetSortRule(Store store, String name) throws DaoException, DataException;
 	
 	/* Redirect */
 	public boolean loadRedirectRules(Store store) throws DaoException, DataException;
 	public boolean updateRedirectRule(RedirectRule redirectRule) throws DaoException, DataException;
-	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public boolean resetRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	
 	/* Relevancy */
 	public boolean loadRelevancyRules(Store store) throws DaoException, DataException;
-	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;
 	public Relevancy getDefaultRelevancyRule(Store store) throws DaoException, DataException;
 	public boolean updateRelevancyRule(Relevancy relevancy) throws DaoException, DataException;
 	public boolean resetRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException;

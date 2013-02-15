@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.RuleType;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
@@ -14,13 +15,10 @@ import com.search.manager.model.Relevancy;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 
-public interface SolrService {
+public interface SolrService extends SearchDaoService {
 
 	/* Elevate */
 	Collection<ElevateResult> getElevateRules(Store store) throws DaoException;
-
-	Collection<ElevateResult> getElevateRules(StoreKeyword storeKeyword)
-			throws DaoException;
 
 	boolean loadElevateRules(Store store) throws DaoException;
 
@@ -44,9 +42,6 @@ public interface SolrService {
 	/* Exclude */
 	Collection<ExcludeResult> getExcludeRules(Store store) throws DaoException;
 
-	Collection<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword)
-			throws DaoException;
-
 	boolean loadExcludeRules(Store store) throws DaoException;
 
 	boolean loadExcludeRules(StoreKeyword storeKeyword) throws DaoException;
@@ -68,9 +63,6 @@ public interface SolrService {
 
 	/* Demote */
 	Collection<DemoteResult> getDemoteRules(Store store) throws DaoException;
-
-	Collection<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
-			throws DaoException;
 
 	boolean loadDemoteRules(Store store) throws DaoException;
 

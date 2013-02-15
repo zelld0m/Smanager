@@ -183,8 +183,10 @@ public class ConfigManager {
 	public boolean setStoreSetting(String coreName, String field, String value) {
 		PropertiesConfiguration config = serverSettingsMap.get(coreName);
 		if (config != null) {
-			config.setProperty(field, value);
-			return StringUtils.equals(config.getString(field), value);
+			synchronized(config) {
+				config.setProperty(field, value);
+				return StringUtils.equals(config.getString(field), value);
+			}
 		}
 		return false;
 	}
@@ -195,7 +197,9 @@ public class ConfigManager {
 	public String getStoreSetting(String coreName, String field) {
 		PropertiesConfiguration config = serverSettingsMap.get(coreName);
 		if (config != null) {
-			return config.getString(field);
+			synchronized(config) {
+				return config.getString(field);
+			}
 		}
 		return null;
 	}
@@ -207,13 +211,15 @@ public class ConfigManager {
 	public List<String> getStoreSettings(String coreName, String field){
 		PropertiesConfiguration config = serverSettingsMap.get(coreName);
 		if (config != null) {
-			return config.getList(field);
+			synchronized(config) {
+				return config.getList(field);
+			}
 		}
 		return null;
 	}
 	
     public static void main(String[] args) {
-    	ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
+    	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
 		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
@@ -237,10 +243,22 @@ public class ConfigManager {
 			System.out.println("core: " + key);
 		}
 		
-//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
-		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
-//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
-		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+		for (int i =0; i < 20; i++) {
+			(new Thread() {
+				public void run() {
+					for (int i = 1; i < 50; i++) {
+						try {
+							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+							System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+							System.out.println( configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			}).start();
+		}
 		
     }
     
