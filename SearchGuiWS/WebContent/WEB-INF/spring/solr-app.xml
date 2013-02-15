@@ -18,7 +18,7 @@
 	
 	<!-- Solr Server Factory -->
 	<bean id="solrServerFactory" class="com.search.manager.solr.util.SolrServerFactory" scope="singleton">
-		<property name="solrUrl" value="http://10.17.12.123/solr/" />
+		<property name="solrUrl" value="http://10.17.12.123:8983/solr41/" />
 		<property name="cores">
 			<list>
 				<value>demoterule</value>
