@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -320,7 +321,7 @@ public class RuleTransferService {
 			}
 		}
 			
-		if(forPublishingMap != null && !CollectionUtils.sizeIsEmpty(forPublishingMap)) {
+		if(MapUtils.isNotEmpty(forPublishingMap)) {
 			int status = APPROVE_RULE;
 			String[] ruleRefIds = forPublishingMap.keySet().toArray(new String[0]);
 			String[] ruleStatusIds = forPublishingMap.values().toArray(new String[0]);
@@ -330,7 +331,7 @@ public class RuleTransferService {
 					status = PUBLISH_RULE;
 					
 					//publish rule
-					RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRule(ruleType, 
+					RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRuleNoLock(ruleType, 
 							ruleRefIds, comment, ruleStatusIds);
 					if (deploymentRS == null  || CollectionUtils.isEmpty(deploymentRS.getList()) 
 							|| deploymentRS.getList().get(0).getPublished() != 1) {
