@@ -180,12 +180,12 @@
 			output	+='				<div class="floatR w300">';
 			output  +='					<div class="w300">';
 			output  +='						<label class="w30 preloader" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
-			output  +='						<label class="ruleStatus w230 marT6">';
+			output  +='						<label class="ruleStatus w240 marT6">';
 			output  +='							<span class="status fgray"></span>';
 			output  +='							<span class="statusMode fsize11 forange padL5"></span>';
 			output  +='						</label>';
+			output  +='						<label class="lastPublished w240 fgray"></label>';
 			output  +='					</div>';
-			output  +='					<div class="w300 floatR"><label class="lastPublished fgray"></label></div>';
 			output	+='				</div>';
 			output	+='				<div class="floatR">';
 			output  +='					<div class="w230">';
@@ -201,15 +201,15 @@
 			output  +='	</div>';
 			output  +='	<div id="collapse" style="display:none">';
 			output  +='		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB20 marT10">';
-			output  +=' 		<label>Toggle this section to view all rules applied to current search</label>';
+			output  +=' 		Toggle this section to view all rules applied to current search';
 			output  +=' 	</div>';
 			output  +='	</div>';
 			output  +='</div>';
 			
 			output  +='<a id="switcher" href="javascript:void(0);">';
-			output  +='	<div class="minW100 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
-			output  +='		<img id="switcherIcon" src="' + GLOBAL_contextPath + '/images/icon_expand.png" class="posRel marL5 marR3">';
-			output  +='		<span id="switcherText" class="marB5"></span>';
+			output  +='	<div class="minW140 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
+			output  +='		<img id="switcherIcon" src="' + GLOBAL_contextPath + '/images/icon_expand.png" class="posRel marL20 marR3 marTn2 floatL">';
+			output  +='		<span id="switcherText" class="posRel marB6 floatL"></span>';
 			output  +='	</div>';
 			output  +='</a>';
 

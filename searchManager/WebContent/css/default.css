@@ -316,6 +316,7 @@ body 							{ margin: 0px; min-width:1200px }
 .height66						{height:66px; }
 
 .cssReset .minW100				{ min-width:100px !important; }
+.cssReset .minW140				{ min-width:140px !important; }
 .cssReset .minW110				{ min-width:110px !important; }
 .cssReset .minW240				{ min-width:240px !important; }
 
@@ -545,6 +546,7 @@ div#top-pager-text{ position:relative; top:8px; }
 div#bottom-pager-text{ position:relative; top:10px; }
 
 .clearB{ clear:both; }
-.lastPublished { width:300px;text-align:right; }
 .firerift-style { float:right; }
 #rankingRule { margin-top:2px !important; }
+
+.catalog_list { list-style-type: none; display: inline; }

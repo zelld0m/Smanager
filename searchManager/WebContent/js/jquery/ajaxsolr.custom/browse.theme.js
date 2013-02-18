@@ -24,7 +24,7 @@
 		template += '<div class="searchBoxHolder w150 floatR marT1 marR8">';
 		template += '	<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">';
 		template += '</div>'; 
-		template += '<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none">';
+		template += '<div class="floatR posRel txtAL w240 marR5" id="refinementHolder" style="display:none">';
 		template += '	<input id="keepRefinement" name="keepRefinement" type="checkbox">';
 		template += '	<span class="fsize11">Keep Refinements</span>';
 		template += '</div>';     	 

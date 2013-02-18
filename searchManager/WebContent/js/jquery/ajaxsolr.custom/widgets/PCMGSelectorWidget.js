@@ -109,14 +109,12 @@
 		
 		getTemplate: function(){
 			var output = "";
-			output += '<div>';
-			output += '	<span>Catalog: </span>';
-			output += '	<ul>';
-			output += '		<li><input type="checkbox" id="open" class="pcmgselector"><label for="open">Open</label></li>';
-			output += '		<li><input type="checkbox" id="acad" class="pcmgselector"><label for="aca">Academic</label></li>';
-			output += '		<li><input type="checkbox" id="govt" class="pcmgselector"><label for="gov">Government</label></li>';
-			output += '	</ul>';
-			output += '</div';
+			output += '<div class="padT12 padR10 fsize12">';
+			output += '	<span class="fbold">Catalog: </span>';
+			output += '		<input type="checkbox" id="open" class="pcmgselector"><label for="open" class="label_catalog">Open</label>';
+			output += '		<input type="checkbox" id="acad" class="pcmgselector"><label for="acad" class="label_catalog">Academic</label>';
+			output += '		<input type="checkbox" id="govt" class="pcmgselector"><label for="govt" class="label_catalog">Government</label>';
+			output += '</div>';
 			return output;
 		}
 	});
