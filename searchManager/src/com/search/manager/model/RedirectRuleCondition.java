@@ -20,6 +20,7 @@ import com.search.manager.service.CategoryService;
 import com.search.manager.utility.CatCodeUtil;
 import com.search.manager.utility.CatCodeUtil.Attribute;
 import com.search.ws.ConfigManager;
+import com.search.ws.SolrConstants;
 
 @DataTransferObject(converter=BeanConverter.class)
 public class RedirectRuleCondition extends ModelBean {
@@ -114,16 +115,21 @@ public class RedirectRuleCondition extends ModelBean {
 			map = getCNetFilters();
 			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
 				String value = map.get("Level1Category").get(0);
-				builder.append("PCMall_FacetTemplate:").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-				if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
-					value = map.get("Level2Category").get(0);
-					builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
-					if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
-						value = map.get("Level3Category").get(0);
+				
+				ConfigManager cm = ConfigManager.getInstance();
+				if (cm != null && StringUtils.isNotBlank(storeId)) {
+					builder.append(cm.getParameterByCore(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))
+						.append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+					if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
+						value = map.get("Level2Category").get(0);
 						builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+						if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
+							value = map.get("Level3Category").get(0);
+							builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+						}
 					}
+					builder.append(forSolr ? "*" : "").append(" AND ");
 				}
-				builder.append(forSolr ? "*" : "").append(" AND ");
 			}
 			
 			String key = "Manufacturer";
