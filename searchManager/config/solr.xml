@@ -67,8 +67,8 @@
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>afs-pl-schpd01</default-server>
-    <facet-template>PCMall_FacetTemplate</facet-template>
-    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
+    <facet-template>PCMallGov_FacetTemplate</facet-template>
+    <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
   </store>
   
   <store name="MacMall BD">
