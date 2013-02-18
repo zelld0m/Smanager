@@ -548,12 +548,13 @@ public class SearchServlet extends HttpServlet {
 				relevancy = new Relevancy();
 				relevancy.setRelevancyId(relevancyId);
 				relevancy = getRelevancyRule(store, relevancyId, fromSearchGui);
-				if (relevancy == null) {
-					relevancy = getDefaultRelevancyRule(store, fromSearchGui);
-				}
 			}
-			else {
-				relevancy = keywordPresent ? getRelevancyRule(sk, fromSearchGui) : getDefaultRelevancyRule(store, fromSearchGui);
+			else if (keywordPresent) {
+				relevancy = getRelevancyRule(sk, fromSearchGui);
+			}
+			
+			if (relevancy == null) {
+				relevancy = getDefaultRelevancyRule(store, fromSearchGui);
 			}
 			
 			if (relevancy != null) {

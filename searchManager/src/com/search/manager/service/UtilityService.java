@@ -55,8 +55,10 @@ public class UtilityService {
     public static boolean obtainPublishLock(RuleEntity ruleType) throws PublishLockException {
     	String username = getUsername();
     	String storeName = getStoreName();
-    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(username)) {
-        	if (!lockService.get(ruleType).compareAndSet(null, storeName + "^" + username)) {
+    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
+    		String lock = storeName + "^" + username;
+    		lock = lock.intern();
+        	if (!lockService.get(ruleType).compareAndSet(null, lock)) {
         		String info = getPublishLockInfo(ruleType);
         		username = null;
         		String storeLabel = null;
@@ -69,12 +71,14 @@ public class UtilityService {
             				username = infoArray[1];
             			}
         			}
-            		throw new PublishLockException(String.format("%s is currently publishing %s rules for %s, please try again in a while.", 
-            				username, ruleType.toString(), storeLabel), username, storeLabel);
         		}
+        		throw new PublishLockException(String.format("%s is currently publishing %s rules for %s, please try again in a while.", 
+        				username, ruleType.toString(), storeLabel), username, storeLabel);
         	}
+        	return true;
     	}
-    	return false;
+		throw new PublishLockException(String.format("Another user is currently publishing %s rules. Please try again in a while.", 
+				ruleType != null ? ruleType.toString(): ""), null, null);
     }
 
     public static String getPublishLockInfo(RuleEntity ruleType) {
@@ -87,8 +91,11 @@ public class UtilityService {
     public static boolean releasePublishLock(RuleEntity ruleType) {
     	String username = getUsername();
     	String storeName = getStoreName();
-    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(username)) {
-        	return lockService.get(ruleType).compareAndSet(storeName + "^" + username, null);
+    	if (ruleType != null && StringUtils.isNotBlank(username) && StringUtils.isNotBlank(storeName)) {
+    		String lock = storeName + "^" + username;
+    		lock = lock.intern();
+    		boolean released = lockService.get(ruleType).compareAndSet(lock, null);
+        	return released;
     	}
     	return false;
     }

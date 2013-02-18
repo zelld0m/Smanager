@@ -574,12 +574,13 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					relevancy = new Relevancy();
 					relevancy.setRelevancyId(relevancyId);
 					relevancy = getRelevancyRule(storeOverride, relevancyId, fromSearchGui);
-					if (relevancy == null) {
-						relevancy = getDefaultRelevancyRule(storeOverride, fromSearchGui);
-					}
 				}
-				else {
-					relevancy = keywordPresent ? getRelevancyRule(sk, fromSearchGui) : getDefaultRelevancyRule(storeOverride, fromSearchGui);
+				else if (keywordPresent) {
+					relevancy = getRelevancyRule(sk, fromSearchGui);
+				}
+				
+				if (relevancy == null) {
+					relevancy = getDefaultRelevancyRule(storeOverride, fromSearchGui);
 				}
 				
 				if (relevancy != null) {
