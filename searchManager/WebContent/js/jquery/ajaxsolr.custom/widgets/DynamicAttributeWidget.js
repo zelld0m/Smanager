@@ -137,7 +137,7 @@
 			for(var name in storeparams){
 				if(!params[name]){
 					if ($.isArray(storeparams[name])){
-						if(storeparams[name]){
+						if(!$.isEmptyObject(storeparams[name])){
 							params[name] = storeparams[name];
 						}
 					}
