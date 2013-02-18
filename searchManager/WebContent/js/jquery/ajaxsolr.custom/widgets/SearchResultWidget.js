@@ -397,6 +397,7 @@
 							preHook: function() { 
 								base.prepareList(); 
 								if($.isNotBlank(comment)){
+									var nl2br = comment.replace(/\n\r?/g, '<br/>');
 									ExcludeServiceJS.addRuleComment(keyword, memberId, comment, {
 										callback : function(data){
 											if (data>0) base.hasChanges++;

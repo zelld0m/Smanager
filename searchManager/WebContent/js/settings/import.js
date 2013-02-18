@@ -1039,6 +1039,10 @@
 				$('div#'+id+'.reject_btn').removeClass('import_locked').removeClass('reject_gray').addClass('reject_active');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
 				
+				var filename = $('div#'+id+'.approve_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
+				
 				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.approve_btn').addClass('import_locked');
 				}else{
