@@ -166,15 +166,6 @@
 		var output  = '';
 
 		output  += '<div class="box marT8">';
-		output  += '	<h2>Condition</h2>';
-		output  += '	<ul>';
-		output  += '		<li><input type="checkbox" id="Refurbished_Flag" class="checkboxFilter"> Refurbished </li>';
-		output  += '		<li><input type="checkbox" id="OpenBox_Flag" class="checkboxFilter"> Open Box </li>';
-		output  += '		<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>';
-		output  += '	</ul>';
-		output  += '</div>';
-
-		output  += '<div class="box marT8">';
 		output  += '	<h2>License Product</h2>';
 		output  += '	<select class="dropdownFilter mar10 w215" id="licenseFilter">';
 		output  += '		<option value="all">Both License & Non-License</option>';
