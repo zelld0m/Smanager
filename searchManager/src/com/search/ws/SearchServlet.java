@@ -210,7 +210,7 @@ public class SearchServlet extends HttpServlet {
 	}
 	
 	private Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
-		return getRelevancyRule(store, store + "_default" + store, fromSearchGui);
+		return getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
 	}
 	
 	private FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
@@ -618,38 +618,38 @@ public class SearchServlet extends HttpServlet {
 				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
 				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 				
-				if (keywordPresent) {
-					if (!disableElevate) {
-						elevatedList = getElevateRules(sk, fromSearchGui);
-						if (CollectionUtils.isNotEmpty(elevatedList)) {
-							// prepare force added list
-							for (ElevateResult elevateResult : elevatedList) {
-								if (elevateResult.isForceAdd()) {
-									forceAddList.add(elevateResult);
-								}
-							}
-						}
-						if (!bestMatchFlag) {
-							elevatedList.clear();
-						}
-						else if (fromSearchGui) { // && bestMatchFlag
-							List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Expired Elevated List: ");
-							}
-							for (ElevateResult expired: expiredList) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("\t" + expired.getEdp());
-								}
-								if (MemberTypeEntity.PART_NUMBER.equals(expired.getElevateEntity())) {
-									expiredElevatedList.add(expired.getEdp());
-								}
+				if (!disableElevate) {
+					elevatedList = getElevateRules(sk, fromSearchGui);
+					if (CollectionUtils.isNotEmpty(elevatedList)) {
+						// prepare force added list
+						for (ElevateResult elevateResult : elevatedList) {
+							if (elevateResult.isForceAdd()) {
+								forceAddList.add(elevateResult);
 							}
 						}
 					}
-					
-					if (!disableDemote && bestMatchFlag) {
-						demoteList = getDemoteRules(sk, fromSearchGui);
+					if (!bestMatchFlag) {
+						elevatedList.clear();
+					}
+					else if (fromSearchGui) { // && bestMatchFlag
+						List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Expired Elevated List: ");
+						}
+						for (ElevateResult expired: expiredList) {
+							if (logger.isDebugEnabled()) {
+								logger.debug("\t" + expired.getEdp());
+							}
+							if (MemberTypeEntity.PART_NUMBER.equals(expired.getElevateEntity())) {
+								expiredElevatedList.add(expired.getEdp());
+							}
+						}
+					}
+				}
+				
+				if (!disableDemote && bestMatchFlag) {
+					demoteList = getDemoteRules(sk, fromSearchGui);
+					if (fromSearchGui) {
 						List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui);
 						if (logger.isDebugEnabled()) {
 							logger.debug("Expired Demoted List: ");
@@ -663,9 +663,11 @@ public class SearchServlet extends HttpServlet {
 							}
 						}
 					}
-					
-					if (!disableExclude) {
-						excludeList = getExcludeRules(sk, fromSearchGui);
+				}
+				
+				if (!disableExclude) {
+					excludeList = getExcludeRules(sk, fromSearchGui);
+					if (fromSearchGui) {
 						List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui);
 						if (logger.isDebugEnabled()) {
 							logger.debug("Expired Demoted List: ");
@@ -679,7 +681,7 @@ public class SearchServlet extends HttpServlet {
 							}
 						}
 					}
-				}			
+				}
 			}
 
 			/* First Request */
