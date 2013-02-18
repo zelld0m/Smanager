@@ -512,7 +512,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 		
 		// remove the facet template
-		locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"}).remove("PCMall_FacetTemplate");
+		if (StringUtils.isNotEmpty(facetTemplateName)) {
+			locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"}).remove(facetTemplateName);
+		}
 		
 		LinkedHashMap<String, Long> lvl1Map = new LinkedHashMap<String, Long>();
 		LinkedHashMap<String, Long> lvl2Map = new LinkedHashMap<String, Long>();
