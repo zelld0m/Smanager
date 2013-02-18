@@ -244,6 +244,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .marL22				{margin-left:22px}
 .cssReset .marL30, .marL30, 
 .qtip .marL30					{margin-left:30px}
+.cssReset .marL60, .marL60		{margin-left:60px}
 .cssReset .marL70, .marL70		{margin-left:70px}
 .cssReset .marRL3 				{margin-left:3px; margin-right:3px }
 .cssReset .marRLauto, .marRLauto{margin-left:auto; margin-right:auto }
@@ -337,6 +338,7 @@ body 							{ margin: 0px; min-width:1200px }
 .cssReset .top14, .top14		{ top:14px; }
 .cssReset .right4				{ right:4px }
 .cssReset .left5, .left5		{ left:5px }
+.cssReset .left100, .left100		{ left:100px }
 .cssReset .leftn2				{ left:-2px !important }
 .cssReset .leftn22				{ left:-22px }
 .cssReset .bottomn4, .bottomn4		{ bottom:-4px; }
@@ -549,4 +551,4 @@ div#bottom-pager-text{ position:relative; top:10px; }
 .firerift-style { float:right; }
 #rankingRule { margin-top:2px !important; }
 
-.catalog_list { list-style-type: none; display: inline; }
+.label_condition { display:inline; float:none; }
