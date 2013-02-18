@@ -114,9 +114,9 @@
 			output  += '<div class="box marT8">';
 			output  += '	<h2>Condition</h2>';
 			output  += '	<ul>';
-			output  += '		<li><input type="checkbox" id="refurbished" class="condselector"><label for="refurbished">Refurbished</label></li>';
-			output  += '		<li><input type="checkbox" id="openbox" class="condselector"><label for="openbox">Open Box</label></li>';
-			output  += '		<li><input type="checkbox" id="clearance" class="condselector"><label for="clearance">Clearance</label></li>';
+			output  += '		<li><input type="checkbox" id="refurbished" class="condselector"><label for="refurbished" class="label_condition">Refurbished</label></li>';
+			output  += '		<li><input type="checkbox" id="openbox" class="condselector"><label for="openbox" class="label_condition">Open Box</label></li>';
+			output  += '		<li><input type="checkbox" id="clearance" class="condselector"><label for="clearance" class="label_condition">Clearance</label></li>';
 			output  += '	</ul>';
 			output  += '</div>';
 			
