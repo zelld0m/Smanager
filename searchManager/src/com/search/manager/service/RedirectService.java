@@ -94,6 +94,23 @@ public class RedirectService extends RuleService{
 		}
 		return result;
 	}
+	
+	@RemoteMethod
+	public int updateRKMessageType(String ruleId, int type, String customText) {
+		int result = -1;
+		try {
+			RedirectRule rule = new RedirectRule();
+			rule.setRuleId(ruleId);
+			rule.setReplaceKeywordMessageType(type);
+			if(type == 3) rule.setReplaceKeywordMessageCustomText(customText);
+			rule.setStoreId(UtilityService.getStoreName());
+			rule.setLastModifiedBy(UtilityService.getUsername());
+			result = daoService.updateRedirectRule(rule);
+		} catch (DaoException e) {
+			logger.error("Failed during updateRule()",e);
+		}
+		return result;
+	}
 
 	@RemoteMethod
 	public int setRedirectType(String ruleId, String redirectTypeId) {

@@ -57,18 +57,18 @@
     <core>pcmgbd</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
-    <facet-name>PcMallGov</facet-name>
+    <facet-name>PCMallGov</facet-name>
     <solr-param-name>
     	<param-name>fq</param-name>
     </solr-param-name>
     <solr-param-value name="fq">
-    	<param-value>PcMall_StoreFlag:true</param-value>
+    	<param-value>PCMallGov_GovStoreFlag:true PCMallGov_OpenStoreFlag:true PCMallGov_ACAStoreFlag:true</param-value>
     </solr-param-value>    
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>afs-pl-schpd01</default-server>
-    <facet-template>PCMall_FacetTemplate</facet-template>
-    <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
+    <facet-template>PCMallGov_FacetTemplate</facet-template>
+    <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
   </store>
   
   <store name="MacMall BD">
@@ -128,6 +128,6 @@
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
-    <query>json.nl=map%amp;wt=json%amp;fl=%amp;fq=(facet)_StoreFlag=true%amp;start=0</query>
+    <query>json.nl=map%amp;wt=json%amp;fl=%amp;start=0</query>
   </big-bets>
 </solr-config>

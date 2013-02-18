@@ -51,7 +51,13 @@ public class SolrConstants {
 	public final static String TAG_DEMOTE_EXPIRED = "DemoteExpired";
 	
 	public final static String TAG_EXCLUDE = "Exclude";
-	public final static String TAG_REDIRECT = "Redirect";
+	
+	public final static String TAG_REDIRECT = "redirect_keyword";
+	public final static String TAG_REDIRECT_ORIGINAL_KEYWORD = "original_keyword";
+	public final static String TAG_REDIRECT_REPLACEMENT_KEYWORD = "replacement_keyword";
+	public final static String TAG_REDIRECT_REPLACEMENT_TYPE = "message_type";
+	public final static String TAG_REDIRECT_CUSTOM_TEXT = "custom_text";
+	
 	public final static String TAG_BANNER = "Banner";
 	public final static String TAG_REDIRECT_ID = "Redirect_Id";
 	public final static String TAG_REDIRECT_PARAM = "Redirect_Param";

@@ -21,6 +21,7 @@ import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetSort;
+import com.search.manager.model.RedirectRule;
 import com.search.manager.model.SearchResult;
 
 public abstract class SolrResponseParser {
@@ -39,6 +40,7 @@ public abstract class SolrResponseParser {
 	protected int requestedRows;
 	protected String changedKeyword;
 	protected String facetTemplateName;
+	protected String originalKeyword;
 	
 	protected List<ElevateResult> elevatedList = null;
 	protected List<String> expiredElevatedEDPs = null;
@@ -48,6 +50,7 @@ public abstract class SolrResponseParser {
 	protected List<String> expiredDemotedEDPs = null;
 
 	protected FacetSort facetSortRule;
+	protected RedirectRule redirectRule;
 	
 	/* Enterprise Search start */
 	protected boolean forEnterpriseSearch;
@@ -107,6 +110,10 @@ public abstract class SolrResponseParser {
 		this.changedKeyword = changedKeyword;
 	}
 	
+	public final void setOriginalKeyword(String originalKeyword) throws SearchException {
+		this.originalKeyword = originalKeyword;
+	}
+	
 	public final void setDemotedItems(List<DemoteResult> list) throws SearchException {
 		demotedList = list;
 	}
@@ -123,6 +130,10 @@ public abstract class SolrResponseParser {
 		this.facetTemplateName = facetTemplateName;
 	}
 
+	public final void setRedirectRule(RedirectRule redirectRule) throws SearchException {
+		this.redirectRule = redirectRule;
+	}
+	
 	/* Used by both elevate and demote */
 	private static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> list) {
 		if (CollectionUtils.isNotEmpty(list)) {

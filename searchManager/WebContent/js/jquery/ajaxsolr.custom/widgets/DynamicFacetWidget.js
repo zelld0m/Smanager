@@ -114,10 +114,14 @@
 					for(var name in storeparams){
 						if(!params[name]){
 							if ($.isArray(storeparams[name])){
-								params[name] = storeparams[name];
+								if(storeparams[name]){
+									params[name] = storeparams[name];
+								}
 							}
 							else{
-								params[name] = storeparams[name].value;
+								if(storeparams[name]){
+									params[name] = storeparams[name].value;
+								}
 							}
 						}
 					}

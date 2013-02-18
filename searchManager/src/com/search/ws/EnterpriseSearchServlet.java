@@ -465,11 +465,14 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			
+			RedirectRule appliedRedirect = null;
+			
 			// redirect 
 			if (enterpriseSearchConfigManager.isActiveSearchRule(storeName, RuleEntity.QUERY_CLEANING)) {
 				String storeOverride = enterpriseSearchConfigManager.getSearchRuleCore(storeName, RuleEntity.QUERY_CLEANING);
 				StoreKeyword sk = new StoreKeyword(storeOverride, keyword);
 				RedirectRule redirect = null;
+				
 				try {
 					List<String> keywordHistory = new ArrayList<String>();
 					while (true) { // look for change keyword
@@ -481,8 +484,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 						if (redirect == null) {
 							break;
 						}
-						else {
-							
+						else {	
 							boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
 							
 							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
@@ -496,25 +498,28 @@ public class EnterpriseSearchServlet extends HttpServlet {
 								break;
 							}
 							logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+							appliedRedirect = redirect;
+							
 							keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
 							sk.setKeyword(new Keyword(keyword));
 							// remove the original keyword
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+							
 							if (StringUtils.isEmpty(keyword)) {
 								sk.setKeyword(null);
 								keywordPresent = false;
 								break;
-							}
-							else {
+							} else {
 								// set the new keyword
-								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, redirect.getChangeKeyword());
+								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 									nameValuePairs.add(nvp);
 								}
 								if (keywordHistory.contains(StringUtils.lowerCase(keyword))) {
 									logger.warn("Loop in change keywords detected. Aborting search for new keyword. Reverting to original keyword.");
 									redirect = null;
+									appliedRedirect = null;
 									keyword = originalKeyword;
 									sk.setKeyword(new Keyword(keyword));
 									nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
@@ -531,6 +536,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					
 					if (redirect != null && !redirect.isRedirectChangeKeyword()) {
 						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						appliedRedirect = redirect;
 						if (redirect.isRedirectToPage()) {
 							// TODO: fix redirect to page implementation
 							nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
@@ -765,6 +771,8 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
+			solrHelper.setRedirectRule(appliedRedirect);
+			solrHelper.setOriginalKeyword(originalKeyword);
 			
 			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
 				solrHelper.setChangeKeyword(keyword);				
