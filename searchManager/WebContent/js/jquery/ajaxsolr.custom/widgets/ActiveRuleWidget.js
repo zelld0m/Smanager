@@ -179,9 +179,9 @@
 			output  +='				</div>';
 			output	+='				<div class="floatR w300">';
 			output  +='					<div class="w300">';
-			output  +='						<label class="w30 preloader" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
-			output  +='						<label class="ruleStatus w240 marT6">';
-			output  +='							<span class="status fgray"></span>';
+			output  +='						<label class="w30 preloader posRel floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
+			output  +='						<label class="ruleStatus w240 marT6 posRel floatL">';
+			output  +='							<span class="status fgray marL60"></span>';
 			output  +='							<span class="statusMode fsize11 forange padL5"></span>';
 			output  +='						</label>';
 			output  +='						<label class="lastPublished w240 fgray"></label>';
