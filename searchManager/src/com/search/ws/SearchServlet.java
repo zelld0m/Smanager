@@ -706,6 +706,7 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
+			solrHelper.setFacetTemplateName(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
 			
 			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
 				solrHelper.setChangeKeyword(keyword);				

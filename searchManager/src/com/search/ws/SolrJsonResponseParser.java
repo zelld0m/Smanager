@@ -139,7 +139,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
 			}
 			// TODO: make this get value from solr.xml
-			facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", "PCMall_FacetTemplate"});
+			if (StringUtils.isNotEmpty(facetTemplateName)) {
+				facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", facetTemplateName});
+			}
 			facetFields = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"});
 			
 			if (activeRules != null) {

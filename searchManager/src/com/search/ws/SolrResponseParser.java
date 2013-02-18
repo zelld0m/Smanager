@@ -38,6 +38,7 @@ public abstract class SolrResponseParser {
 	protected int startRow;
 	protected int requestedRows;
 	protected String changedKeyword;
+	protected String facetTemplateName;
 	
 	protected List<ElevateResult> elevatedList = null;
 	protected List<String> expiredElevatedEDPs = null;
@@ -118,6 +119,10 @@ public abstract class SolrResponseParser {
 		this.facetSortRule = facetSortRule;
 	}
 	
+	public void setFacetTemplateName(String facetTemplateName) {
+		this.facetTemplateName = facetTemplateName;
+	}
+
 	/* Used by both elevate and demote */
 	private static void generateEdpList(StringBuilder values, Collection<? extends SearchResult> list) {
 		if (CollectionUtils.isNotEmpty(list)) {
