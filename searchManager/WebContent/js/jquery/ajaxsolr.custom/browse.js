@@ -100,6 +100,11 @@
 			limit: 25
 		}));
 
+		Manager.addWidget(new AjaxSolr.ProductConditionSelectorWidget({
+			id: "prodCondSelector",
+			target: "#prodCondSelector"
+		}));
+		
 		Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
 			id: 'prodAttribFilter',
 			target: '#prodAttribFilter'
