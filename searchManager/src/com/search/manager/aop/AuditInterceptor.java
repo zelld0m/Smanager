@@ -110,7 +110,7 @@ public class AuditInterceptor {
 				logDemote(jp, auditable, auditTrail);
 				break;
 			case facetSort:
-				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
+				if (ArrayUtils.contains(AuditTrailConstants.facetSortOperations, auditable.operation())) {
 					logFacetSort(jp, auditable, auditTrail);
 				}
 				else if (ArrayUtils.contains(AuditTrailConstants.facetSortGroupOperations, auditable.operation())) {
@@ -583,6 +583,15 @@ public class AuditInterceptor {
 				}
 				if (rule.getRedirectType() != null) {
 					log.append(String.format("redirect type = [%1$s];", rule.getRedirectType()));
+					
+					if(rule.isRedirectChangeKeyword()){
+						int msgType = rule.getReplaceKeywordMessageType();
+						log.append(String.format("replace keyword message type = [%1$s];", msgType));
+						
+						if(msgType == 3){ //with custom message
+							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
+						}
+					}
 				}
 				if (rule.getIncludeKeyword() != null) {
 					log.append(String.format("include keyword = [%1$s];", rule.getIncludeKeyword()));
