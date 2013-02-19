@@ -11,13 +11,17 @@
 			ruleTargetList: new Array(),
 			pageSize : 10,
 			defaultText : "Search Rule Name",
+			defaultPage : 1,
+			defaultKeywordFilter : null,
+			defaultSortOrder: "PUBLISHED_DATE_DESC",
+			defaultRuleFilterBy: "nonrejected",
 			currentPage : 1,
 			searchText : "",
 			pubDateSort : null,
 			expDateSort : null,
 			ruleNameSort : null,
 			activeSortOrder : null,
-			ruleFilterBy : "rejected",
+			ruleFilterBy : null,
 
 			postMsg : function(data, pub){
 				var self = this;
@@ -112,7 +116,7 @@
 						ctr++;
 					}, 
 					postHook: function(){
-						if (ctr==max) self.getImportList(1);
+						if (ctr==max) self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
 					}
 				});
 
@@ -122,7 +126,7 @@
 						ctr++;
 					},
 					postHook: function(){
-						if (ctr==max) self.getImportList(1);
+						if (ctr==max) self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
 					}
 				});
 			}, 
@@ -313,7 +317,7 @@
 				return selectedStatusId; 
 			},
 
-			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrder, ruleFilter){
+			addFiltersHandler : function(selectedTab, curPage, totalItem, keywordFilter, sortOrderFilter, ruleFilter){
 				var self = this;
 				var $selectedTab = selectedTab;
 				if(totalItem==0){
@@ -330,11 +334,11 @@
 						callbackText: function(itemStart, itemEnd, itemTotal){
 							return "Displaying " + itemStart + "-" + itemEnd + " of " + itemTotal + " Items";
 						},
-						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrder, ruleFilter); },
-						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrder, ruleFilter);},
-						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrder, ruleFilter);},
-						firstLinkCallback: function(e){self.getImportList(1);},
-						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrder, ruleFilter);}
+						pageLinkCallback: function(e){ self.getImportList(e.data.page, keywordFilter, sortOrderFilter, ruleFilter); },
+						nextLinkCallback: function(e){ self.getImportList(e.data.page+1, keywordFilter, sortOrderFilter, ruleFilter);},
+						prevLinkCallback: function(e){ self.getImportList(e.data.page-1, keywordFilter, sortOrderFilter, ruleFilter);},
+						firstLinkCallback: function(e){self.getImportList(self.defaultPage, keywordFilter, sortOrderFilter, ruleFilter);},
+						lastLinkCallback: function(e){ self.getImportList(e.data.totalPages, keywordFilter, sortOrderFilter, ruleFilter);}
 					});
 
 					$selectedTab.find("img#publishDateSort, img#ruleNameSort, img#exportDateSort").off().on({
@@ -364,7 +368,7 @@
 							break;
 							}
 
-							self.getImportList(self.currentPage, self.searchText, sortOrder);
+							self.getImportList(curPage, keywordFilter, sortOrder, ruleFilter);
 						}
 					});
 
@@ -393,7 +397,7 @@
 
 				$selectedTab.find("select#ruleFilter").val(ruleFilter).on({
 					change: function(e){
-						self.getImportList(1, self.searchText, sortOrder, $(this).val());
+						self.getImportList(self.defaultPage, keywordFilter, self.defaultSortOrder, $(this).val());
 					}
 				});
 
@@ -412,9 +416,9 @@
 
 						if (code == 13){ 
 							if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-								self.getImportList(1, keyword);
+								self.getImportList(self.defaultPage, keyword, self.defaultSortOrder, ruleFilter);
 							else
-								self.getImportList(1);
+								self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, ruleFilter);
 						}
 					}
 				}).val(self.defaultText);
@@ -424,14 +428,15 @@
 						var keyword = $.trim($selectedTab.find('input#keyword').val());
 
 						if(keyword.toLowerCase() !== $.trim(self.defaultText).toLowerCase())
-							self.getImportList(1, keyword);
+							self.getImportList(self.defaultPage, keyword, self.defaultSortOrder, ruleFilter);
 						else
-							self.getImportList(1);
+							self.getImportList(self.defaultPage,self.defaultKeywordFilter,self.defaultSortOrder,ruleFilter);
 					}
 				});
 			},
 
 			// not in used.
+/*			
 			importHandler : function(){
 				var self = this;
 				var $selectedTab = $("#"+self.tabSelected);
@@ -460,7 +465,7 @@
 										RuleTransferServiceJS.importRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedImportType(), self.getSelectedImportAsRefId(), self.getSelectedRuleName(), {
 											callback: function(data) {									
 												self.postMsg(data, 'imported');	
-												self.getImportList(1);	
+												self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);		
 											},
 											preHook:function(){ 
 												self.prepareTabContent(); 
@@ -473,7 +478,7 @@
 								RuleTransferServiceJS.unimportRules(self.entityName, self.getSelectedRefId(), comment, self.getSelectedStatusId(), {
 									callback: function(data){
 										self.postMsg(data, 'rejected');	
-										self.getImportList(1);
+										self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
 									},
 									preHook:function(){
 										self.prepareTabContent(); 
@@ -485,6 +490,7 @@
 					}
 				});
 			},
+*/			
 
 			submitHandler : function(){
 				var self = this;
@@ -520,15 +526,44 @@
 							}
 
 							if(validImport) {
+								var exception = false;
 								RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
 										self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
-									callback: function(data){									
+									callback: function(data){
 										self.postMsg(data, 'all');	
-										self.getImportList(1);
 									},
 									preHook:function() { 
-										self.prepareTabContent();
-									}
+										var $selectedTab = $("#"+self.tabSelected);
+										if (!$("div.circlePreloader").is(":visible")){
+											$('<div class="circlePreloader"><img src="../images/ajax-loader-circ.gif"></div>').prependTo($selectedTab);
+										} 
+										$selectedTab.find('table.tblItems, div#actionBtn').hide();
+										$selectedTab.find("div#ruleCount").hide();
+										$selectedTab.find("div.searchBoxHolder, a#searchBtn").hide();
+										$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").hide();
+										$selectedTab.find("a#downloadIcon").hide();
+										$selectedTab.find("div#ruleFilterDiv").hide();
+									},
+									postHook:function(){ 
+										if (!exception) {
+											self.prepareTabContent();
+											self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+										}
+										else {
+											var $selectedTab = $("#"+self.tabSelected);
+											$("div.circlePreloader").hide();
+											$selectedTab.find('table.tblItems, div#actionBtn').show();
+											$selectedTab.find("div#ruleCount").show();
+											$selectedTab.find("div.searchBoxHolder, a#searchBtn").show();
+											$selectedTab.find("div#resultsTopPaging, div#resultsBottomPaging").show();
+											$selectedTab.find("a#downloadIcon").show();
+											$selectedTab.find("div#ruleFilterDiv").show();
+										}; 
+									},
+									exceptionHandler: function(message, exc){ 
+										exception = true; 
+										jAlert(message, "Import Rule"); 
+									}									
 								});
 							}
 						}
@@ -691,7 +726,7 @@
 													preTemplate: self.getPreTemplate(rule["importType"]),
 													rightPanelTemplate: self.getRightPanelTemplate(),
 													postButtonClick: function(){
-														self.getImportList(1);
+														self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
 													},
 													itemImportAsListCallback: function(base, contentHolder, sourceData){
 														DeploymentServiceJS.getDeployedRules(self.entityName, "published", {
@@ -1003,6 +1038,10 @@
 				$('input[type="checkbox"]#'+id+'.reject').attr('checked', true);
 				$('div#'+id+'.reject_btn').removeClass('import_locked').removeClass('reject_gray').addClass('reject_active');
 				$('input[type="checkbox"]#'+id+'.import').attr('checked', false);
+				
+				var filename = $('div#'+id+'.approve_btn').css('background-image');
+				var fileNameIndex = filename.lastIndexOf("/") + 1;
+				filename = filename.substr(fileNameIndex);
 				
 				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.approve_btn').addClass('import_locked');

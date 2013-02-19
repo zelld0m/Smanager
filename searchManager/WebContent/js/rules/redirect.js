@@ -1631,7 +1631,7 @@
 										var list = data.list;
 										var newItem = list[data.totalSize-1];
 										$item.removeClass("tempConditionItem");
-										$item.find("a.conditionFormattedText").html(newItem["readableString"]);
+										$item.find("a.conditionFormattedText").text(newItem["readableString"]);
 										$item.attr("id",newItem["sequenceNumber"]);
 										self.addToggleListener($item, newItem);
 										self.addCloneFilterGroupListener($item, newItem);
@@ -1658,7 +1658,7 @@
 												updatedItem = list[item];
 											};
 										}	
-										$item.find("a.conditionFormattedText").html(updatedItem["readableString"]);
+										$item.find("a.conditionFormattedText").html($.escapeHtml(updatedItem["readableString"]));
 										self.addToggleListener($item, updatedItem);
 										self.addCloneFilterGroupListener($item, updatedItem);
 										self.addDeleteFilterGroupListener($item, updatedItem);
@@ -1714,7 +1714,7 @@
 								return;
 							}
 
-							var readableString = e.data.condition["readableString"];
+							var readableString = $.escapeHtml(e.data.condition["readableString"]);
 
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 
@@ -1822,7 +1822,7 @@
 						if(e.data.locked) return;
 
 						var $item = $(this).parents(".conditionItem");
-						var readableString = $.isNotBlank(e.data.condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
+						var readableString = $.isNotBlank(e.data.condition)? $.escapeHtml(e.data.condition["readableString"]) : $item.find(".conditionFormattedText").html();
 
 						jConfirm("Delete " + readableString, "Delete Rule Condition", function(result){
 							if(result){
@@ -1868,7 +1868,7 @@
 								var item = list[i];
 								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 								$divItem.prop("id", item["sequenceNumber"]);
-								$divItem.find(".conditionFormattedText").html(item["readableString"]);
+								$divItem.find(".conditionFormattedText").html($.escapeHtml(item["readableString"]));
 								$divItem.find("tr.catCode,tr.catName").hide();
 								$divItem.show();
 								$divItemList.append($divItem);

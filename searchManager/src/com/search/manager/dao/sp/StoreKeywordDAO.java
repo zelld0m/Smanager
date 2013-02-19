@@ -125,7 +125,6 @@ public class StoreKeywordDAO {
         return DAOUtils.getItem(getSp.execute(inputs));
     }
     
-
 	private final static String GET_ELEVATE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
 	private final static String GET_EXCLUDE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
 	private final static String GET_DEMOTE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
@@ -152,6 +151,4 @@ public class StoreKeywordDAO {
 					}
 				});
     }
-  
-    
 }

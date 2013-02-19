@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +29,7 @@ import com.search.manager.enums.ExportType;
 import com.search.manager.enums.ImportType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.DeploymentModel;
 import com.search.manager.model.ExportRuleMap;
@@ -54,6 +56,13 @@ public class RuleTransferService {
 	@Autowired private FacetSortService facetSortService;
 
 	private static final Logger logger = Logger.getLogger(RuleTransferService.class);
+
+	private static final int CREATE_RULE_STATUS = 0;
+	private static final int SUBMIT_FOR_APPROVAL = 1;
+	private static final int APPROVE_RULE = 2;
+	private static final int PUBLISH_RULE = 3;
+	private static final int PUBLISH_FAILED = 4;
+	private static final int IMPORT_SUCCESS = 5;
 
 	@RemoteMethod
 	public RecordSet<RuleStatus> getPublishedRules(String ruleType){
@@ -84,7 +93,7 @@ public class RuleTransferService {
 			Boolean rejectStatus = null;
 			
 			if(StringUtils.isBlank(ruleFilter)) {
-				rejectStatus = true; // set default value
+				rejectStatus = false; // set default value
 			} else if (StringUtils.isNotBlank(ruleFilter) && !StringUtils.equalsIgnoreCase("all", ruleFilter)) {
 				rejectStatus = BooleanUtils.toBoolean(ruleFilter, "rejected", "nonrejected");
 			}
@@ -161,7 +170,7 @@ public class RuleTransferService {
 						logger.error("Error occurred while exporting rule: ", e);
 					}
 				}
-				String ruleName = getSuccessRule(ruleEntity, ruleId, ruleXml == null ? null : ruleXml.getRuleName());
+				String ruleName = getRuleName(ruleEntity, ruleId, ruleXml == null ? null : ruleXml.getRuleName());
 				if (ruleName == null) {
 					// get from ruleStatus
 					SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(new RuleStatus(RuleEntity.getId(ruleType), store, ruleId));
@@ -186,7 +195,7 @@ public class RuleTransferService {
 		return resultMap;
 	}
 
-	public Map<String, Integer> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
+	private Map<String, Integer> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
 		Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
@@ -198,6 +207,9 @@ public class RuleTransferService {
 		auditTrail.setStoreId(store);
 		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
 
+		Map<String, String> forPublishingMap = new LinkedHashMap<String, String>();
+		Map<String, String> ruleNameMap = new LinkedHashMap<String, String>();
+		
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
 			
 			String ruleId = ruleRefIdList[i];
@@ -206,7 +218,7 @@ public class RuleTransferService {
 			String importAsId = importAsRefIdList[i];
 
 			// initialize to status to 0
-			int status = 0;
+			int status = CREATE_RULE_STATUS;
 
 			//if importAsId is null, generate a new id
 			switch(ruleEntity){
@@ -224,6 +236,7 @@ public class RuleTransferService {
 				else {
 					importAsId = DAOUtils.generateUniqueId();
 				}
+				break;
 			case QUERY_CLEANING:
 			case RANKING_RULE:
 				if(StringUtils.isBlank(importAsId) || "0".equalsIgnoreCase(importAsId)){
@@ -238,7 +251,7 @@ public class RuleTransferService {
 				try {
 					daoService.addRuleStatus(new RuleStatus(ruleEntity, store, importAsId, ruleName, userName, userName, 
 							RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
-					status++;
+					status = SUBMIT_FOR_APPROVAL;
 					RuleStatus ruleStatus = new RuleStatus(RuleEntity.getId(ruleType), store, importAsId);
 					SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(ruleStatus);
 					RuleStatus currRuleStatus = null;
@@ -278,42 +291,68 @@ public class RuleTransferService {
 					} catch (DaoException e) {
 						logger.error("Failed to get rule status for " + ruleEntity + " : "  + importAsId, e);
 					}
-
+					
 					if(ImportType.FOR_APPROVAL == importType || ImportType.AUTO_PUBLISH == importType){
 						//submit rule for approval
 						ruleStatus = deploymentService.processRuleStatus(ruleType, importAsId, ruleName, false);
 						status++;
-						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType) {
-							//approve rule
-							if (CollectionUtils.isNotEmpty(deploymentService.approveRule(ruleType, new String[] {ruleStatus.getRuleRefId()}, comment, 
-									new String[] {ruleStatus.getRuleStatusId()}))) {
-								status++;
-								RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRule(ruleType, 
-										new String[] {ruleStatus.getRuleRefId()}, comment, new String[] {ruleStatus.getRuleStatusId()});
-								if (deploymentRS == null  || CollectionUtils.isEmpty(deploymentRS.getList()) 
-										|| deploymentRS.getList().get(0).getPublished() != 1) {
-									status++;
-								}
-							}
-						} else {
-							status = 5;
+						
+						if(ruleStatus != null && ImportType.AUTO_PUBLISH == importType){
+							forPublishingMap.put(ruleStatus.getRuleRefId(), ruleStatus.getRuleStatusId());
+							ruleNameMap.put(ruleStatus.getRuleRefId(), getRuleName(ruleEntity, ruleId, ruleName));
+						}
+						else{
+							status = IMPORT_SUCCESS;
 						}
 					} else {
-						status = 5;
+						status = IMPORT_SUCCESS;
 					}
 					
-					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException de) {
 					String msg = "";
 					switch (status) {
-						case 0: msg = "Failed to create rule status for: "; break;
-						case 1: msg = "Failed to submit rule for approval: "; break;
-						case 2: msg = "Failed to approve rule: "; break;
-						case 3: msg = "Failed to publish rule: "; break;
+						case CREATE_RULE_STATUS: msg = "Failed to create rule status for: "; break;
+						case SUBMIT_FOR_APPROVAL: msg = "Failed to submit rule for approval: "; break;
 					}
 					logger.error(msg + importAsId);
+				}finally{
+					statusMap.put(getRuleName(ruleEntity, ruleId, ruleName), status);
 				}
-
+			}
+		}
+			
+		if(MapUtils.isNotEmpty(forPublishingMap)) {
+			int status = APPROVE_RULE;
+			String[] ruleRefIds = forPublishingMap.keySet().toArray(new String[0]);
+			String[] ruleStatusIds = forPublishingMap.values().toArray(new String[0]);
+			try{
+				//approve rule
+				if (CollectionUtils.isNotEmpty(deploymentService.approveRule(ruleType, ruleRefIds, comment, ruleStatusIds))) {
+					status = PUBLISH_RULE;
+					
+					//publish rule
+					RecordSet<DeploymentModel> deploymentRS = deploymentService.publishRuleNoLock(ruleType, 
+							ruleRefIds, comment, ruleStatusIds);
+					if (deploymentRS == null  || CollectionUtils.isEmpty(deploymentRS.getList()) 
+							|| deploymentRS.getList().get(0).getPublished() != 1) {
+						status = PUBLISH_FAILED;
+					} else {
+						status = IMPORT_SUCCESS;
+					}
+				}
+			}catch (Exception de) {
+				String msg = "";
+				switch (status) {
+					case APPROVE_RULE: msg = "Failed to approve rules: "; break;
+					case PUBLISH_RULE: msg = "Failed to publish rules: "; break;
+				}
+				logger.error(msg + ruleRefIds);
+			}finally{
+				if(ruleRefIds != null){
+					for(String ruleRefId : ruleRefIds){
+						statusMap.put(ruleNameMap.get(ruleRefId), status);
+					}
+				}
 			}
 		}
 		return statusMap;
@@ -324,58 +363,80 @@ public class RuleTransferService {
 			String[] importRuleRefIdList, String comment,
 			String[] importTypeList, String[] importAsRefIdList,
 			String[] ruleNameList, String[] rejectRuleRefIdList,
-			String[] rejectRuleNameList) {
+			String[] rejectRuleNameList) throws PublishLockException {
 		Map<String, String> successList = new HashMap<String, String>();
 
 		Integer status = null;
-		if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
-			Map<String, Integer> statusMap = importRules(ruleType, importRuleRefIdList, comment,
-					importTypeList, importAsRefIdList, ruleNameList);
-			for (String key : statusMap.keySet()) {
-				status = statusMap.get(key);
-				if (status != null) {
-					switch (status) {
-						case 0:	
-							successList.put(key, "import_fail");
-							break;
-						case 1:
-						case 2:
-							successList.put(key, "import_success_submit_for_approval_fail");
-							break;
-						case 3:	
-						case 4:	
-							successList.put(key, "import_success_publish_fail");
-							break;
-						case 5:	
-							successList.put(key, "import_success"); 
-							break;
-					}
+		boolean autoPublish = false;
+		boolean obtainedLock = false;
+		
+		if (ArrayUtils.isNotEmpty(importTypeList)) {
+			for (String importType: importTypeList) {
+				if (ImportType.AUTO_PUBLISH.equals(ImportType.getByDisplayText(importType))) {
+					autoPublish = true;
+					break;
 				}
-				
 			}
 		}
 		
-		if (ArrayUtils.isNotEmpty(rejectRuleRefIdList)) {
-			Map<String, Integer> statusMap = unimportRules(ruleType, rejectRuleRefIdList,
-					comment, rejectRuleNameList);
-			for (String key : statusMap.keySet()) {
-				status = statusMap.get(key);
-				if (status != null) {
-					switch (status) {
-						case 0:	
-							successList.put(key, "reject_fail");
-							break;
-						case 1:	
-							successList.put(key, "reject_success");
-							break;
+		try {
+			if (autoPublish) {
+				obtainedLock = UtilityService.obtainPublishLock(RuleEntity.find(ruleType));
+			}
+			if (ArrayUtils.isNotEmpty(importRuleRefIdList)) {
+				Map<String, Integer> statusMap = importRules(ruleType, importRuleRefIdList, comment,
+						importTypeList, importAsRefIdList, ruleNameList);
+				
+				for (String key : statusMap.keySet()) {
+					status = statusMap.get(key);
+					if (status != null) {
+						switch (status) {
+							case 0:	
+								successList.put(key, "import_fail");
+								break;
+							case 1:
+							case 2:
+								successList.put(key, "import_success_submit_for_approval_fail");
+								break;
+							case 3:	
+							case 4:	
+								successList.put(key, "import_success_publish_fail");
+								break;
+							case 5:	
+								successList.put(key, "import_success"); 
+								break;
+						}
 					}
 				}
+			}
+		
+			if (ArrayUtils.isNotEmpty(rejectRuleRefIdList)) {
+				Map<String, Integer> statusMap = unimportRules(ruleType, rejectRuleRefIdList,
+						comment, rejectRuleNameList);
+				for (String key : statusMap.keySet()) {
+					status = statusMap.get(key);
+					if (status != null) {
+						switch (status) {
+							case 0:	
+								successList.put(key, "reject_fail");
+								break;
+							case 1:	
+								successList.put(key, "reject_success");
+								break;
+						}
+					}
+				}
+			}
+			
+		} finally {
+			if (obtainedLock) {
+				UtilityService.releasePublishLock(RuleEntity.find(ruleType));
 			}
 		}
 		return successList;
 	}
 	
-	private String getSuccessRule(RuleEntity ruleEntity, String ruleId, String ruleName){
+	private String getRuleName(RuleEntity ruleEntity, String ruleId, String ruleName){
 		switch(ruleEntity){
 		case ELEVATE:
 		case EXCLUDE:
@@ -390,7 +451,7 @@ public class RuleTransferService {
 		}
 	}
 
-	public boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
+	private boolean importRule(RuleEntity ruleEntity, String store, String ruleId, String comment, ImportType importType, String importAsRefId, String ruleName) {
 		boolean success = false;
 		String id = RuleXmlUtil.getRuleId(ruleEntity, ruleId);
 		RuleXml ruleXml = RuleTransferUtil.getRuleToImport(store, ruleEntity, id);
@@ -424,7 +485,7 @@ public class RuleTransferService {
 	 * Deletes xml file of rejected rule  
 	 * @return list of rule name of successfully rejected rule
 	 */
-	public Map<String, Integer> unimportRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList){
+	private Map<String, Integer> unimportRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList){
 		Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
 		String store = UtilityService.getStoreName();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
@@ -460,7 +521,7 @@ public class RuleTransferService {
 					status++;
 					//TODO addComment
 					//TODO addAuditTrail
-					statusMap.put(getSuccessRule(ruleEntity, ruleId, ruleName), status);
+					statusMap.put(getRuleName(ruleEntity, ruleId, ruleName), status);
 				} catch (DaoException e) {
 					logger.error("Failed to add mapping of ruleId", e);
 				}

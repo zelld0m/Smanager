@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<schema name="demote rule" version="1.0">
+  <types>
+   <fieldtype name="string"  class="solr.StrField" sortMissingLast="true" omitNorms="true" />
+   <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0" />
+   <fieldType name="sint" class="solr.SortableIntField" sortMissingLast="true" omitNorms="true" />
+   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true" omitNorms="true" />
+   <fieldType name="date" class="solr.TrieDateField" omitNorms="true" precisionStep="0" positionIncrementGap="0" />
+   <fieldType name="text_lwrcase" class="solr.TextField" positionIncrementGap="100">
+	<analyzer type="index">
+	    <tokenizer class="solr.KeywordTokenizerFactory" />
+        <filter class="solr.LowerCaseFilterFactory" />
+    </analyzer>
+	<analyzer type="query">
+	    <tokenizer class="solr.KeywordTokenizerFactory" />
+        <filter class="solr.LowerCaseFilterFactory" />
+    </analyzer>
+   </fieldType>
+  </types>
+
+ <fields>   
+  <!-- general -->
+  <!-- demote key: store + "_" + keyword + "_" + rule_type + "_" + memberId -->
+  <field name="id" type="string" stored="true" multiValued="false" indexed="true" required="true" />
+  <field name="location" type="sint" stored="true" multiValued="false" /> 
+  <field name="forceAdd" type="boolean" stored="true" multiValued="false" />
+  <field name="store" type="text_lwrcase" stored="true" multiValued="false" indexed="true" />
+  <field name="keyword" type="string" stored="true" multiValued="false" indexed="true" />
+  <field name="keyword1" type="text_lwrcase" stored="true" multiValued="false" indexed="true"  />
+  <field name="expiryDate" type="date" stored="true" multiValued="false" />
+  <field name="entity" type="string" stored="true" multiValued="false" />
+  <field name="value" type="string" stored="true" multiValued="false" />
+  <field name="memberId" type="string" stored="true" multiValued="false" /> 
+  <field name="ruleType" type="text_lwrcase" stored="true" multiValued="false" />
+  <field name="_version_" type="long" stored="true" multiValued="false" indexed="true"	/>
+ </fields>
+
+ <copyField source="keyword" dest="keyword1" />
+ 
+ <!-- field to use to determine and enforce document uniqueness. -->
+ <uniqueKey>id</uniqueKey>
+
+ <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+ <defaultSearchField>id</defaultSearchField>
+
+ <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+ <solrQueryParser defaultOperator="AND" />
+</schema>

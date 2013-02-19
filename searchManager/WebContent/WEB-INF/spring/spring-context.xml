@@ -67,6 +67,9 @@
 	<!-- Loads DataSources configuration -->      
 	<import resource="spring-datasource.xml" />
 	
+	<!-- Loads Search Proxy Solr configuration -->      
+	<import resource="search-proxy-context.xml" />
+	
 	<!-- Velocity integration for template -->	
 	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
 	  <property name="configLocation" value="file:/home/solr/conf/velocity.properties"/>

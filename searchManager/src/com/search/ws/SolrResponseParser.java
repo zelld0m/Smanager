@@ -39,6 +39,7 @@ public abstract class SolrResponseParser {
 	protected int startRow;
 	protected int requestedRows;
 	protected String changedKeyword;
+	protected String facetTemplateName;
 	protected String originalKeyword;
 	
 	protected List<ElevateResult> elevatedList = null;
@@ -125,6 +126,10 @@ public abstract class SolrResponseParser {
 		this.facetSortRule = facetSortRule;
 	}
 	
+	public void setFacetTemplateName(String facetTemplateName) {
+		this.facetTemplateName = facetTemplateName;
+	}
+
 	public final void setRedirectRule(RedirectRule redirectRule) throws SearchException {
 		this.redirectRule = redirectRule;
 	}

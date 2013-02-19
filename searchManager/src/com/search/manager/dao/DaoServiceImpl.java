@@ -44,6 +44,7 @@ import com.search.manager.enums.ExportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -82,6 +83,7 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.SearchHelper;
 
@@ -534,8 +536,10 @@ public class DaoServiceImpl implements DaoService {
 		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
+	
+	@Override
 	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException {
-		return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
+	    return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
 	}
 	
 	@Override
@@ -1751,7 +1755,75 @@ public class DaoServiceImpl implements DaoService {
 			}
 		}
 		return exported;
-	}	
+	}
 
+	/* Used by SearchServlet */
+	
+	@Override
+	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException {
+		return getRedirectRule(new RedirectRule(storeKeyword.getStoreId(), storeKeyword.getKeywordId()));
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException {
+		Relevancy relevancy = new Relevancy();
+		relevancy.setStore(storeKeyword.getStore());
+		RecordSet<RelevancyKeyword>relevancyKeywords = searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				MatchType.LIKE_NAME, ExactMatch.MATCH);
+		return (relevancyKeywords.getTotalSize() > 0) ? getRelevancyRule(relevancy.getStore(), 
+				relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId()): null;
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(Store store, String relevancyId) throws DaoException {
+		return getRelevancyDetails(new Relevancy(relevancyId));
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
+		return getFacetSort(new FacetSort(storeKeyword.getKeywordTerm(), RuleType.KEYWORD, null, storeKeyword.getStore()));
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(Store store, String templateName) throws DaoException {
+		return getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, store));
+	}
+
+	@Override
+	public List<ElevateResult> getElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		return getElevateResultList(new SearchCriteria<ElevateResult>(
+				new ElevateResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		return getElevateResultList(new SearchCriteria<ElevateResult>(
+				new ElevateResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+	}
+
+	@Override
+	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
+				new ExcludeResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
+				new ExcludeResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+	}
+
+	@Override
+	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		return getDemoteResultList(new SearchCriteria<DemoteResult>(
+				new DemoteResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		return getDemoteResultList(new SearchCriteria<DemoteResult>(
+				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+	}
 	
 }

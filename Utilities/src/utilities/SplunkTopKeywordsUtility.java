@@ -94,7 +94,7 @@ public class SplunkTopKeywordsUtility {
 			SimpleDateFormat df = new SimpleDateFormat("MM-dd-yyyy");
 			
 			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DATE, -1); // date yesterday  - for PCMALL only
+			cal.add(Calendar.DATE, -1); // date yesterday  -2 for PCMALL only. -1 for macmall 
 			Date dateYesterday = cal.getTime();
 			cal.add(Calendar.DATE, -6); // date 1 week ago
 			Date dateLastWeek = cal.getTime();

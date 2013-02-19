@@ -213,7 +213,7 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 	
 	@Override
-	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException, DataException {
+	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) {
 		CacheModel<RedirectRule> rule = null;
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
@@ -233,16 +233,21 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException, DataException {
-		CacheModel<Relevancy> cache = relevancyCacheDao.getCachedObject(storeKeyword);
-		if (cache == null || cache.getObj() == null) {
-			cache = relevancyCacheDao.getDefaultRelevancy(storeKeyword.getStore());
+	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) {
+		try {
+			CacheModel<Relevancy> cache = relevancyCacheDao.getCachedObject(storeKeyword);
+			if (cache == null || cache.getObj() == null) {
+				cache = relevancyCacheDao.getDefaultRelevancy(storeKeyword.getStore());
+			}
+			Relevancy relevancy = null;
+			if (cache != null) {
+				relevancy = cache.getObj();
+			}
+			return relevancy;
+		} catch (Exception e) {
+			logger.error("Failed to retrieve relevancy rule", e);
 		}
-		Relevancy relevancy = null;
-		if (cache != null) {
-			relevancy = cache.getObj();
-		}
-		return relevancy;
+		return null;
 	}
 
 	@Override
@@ -388,16 +393,13 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword)
-			throws DaoException, DataException {
+	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
-			//if(hasExactMatchKey(storeKeyword)){
-				CacheModel<DemoteResult> cache = demoteCacheDao.getCachedObject(storeKeyword);
-				if (cache != null && CollectionUtils.isNotEmpty(cache.getList())) {
-					return cache.getList();					
-				}
-			//}
+			CacheModel<DemoteResult> cache = demoteCacheDao.getCachedObject(storeKeyword);
+			if (cache != null && CollectionUtils.isNotEmpty(cache.getList())) {
+				return cache.getList();					
+			}
 		}catch (Exception e) {
 			logger.error(e,e);
 		}
@@ -440,32 +442,28 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 	}
 
 	@Override
-	public FacetSort getFacetSortRule(StoreKeyword storeKeyword)
-			throws DaoException, DataException {
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) {
 		try {
 			DAOValidation.checkStoreKeywordPK(storeKeyword);
-			//if(hasExactMatchKey(storeKeyword)){
-				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(storeKeyword);
-				if (cache != null) {
-					return cache.getObj();					
-				}
-			//}
-		}catch (Exception e) {
+			CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(storeKeyword);
+			if (cache != null) {
+				return cache.getObj();					
+			}
+		} catch (Exception e) {
 			logger.error(e,e);
 		}
 		return null;
 	}
 	
 	@Override
-	public FacetSort getFacetSortRule(Store store, String name)
-			throws DaoException, DataException {
+	public FacetSort getFacetSortRule(Store store, String name) {
 		try {
 			DAOValidation.checkFacetSortPK(store, name);
 				CacheModel<FacetSort> cache = facetSortCacheDao.getCachedObject(store, name);
 				if (cache != null) {
 					return cache.getObj();					
 				}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			logger.error(e,e);
 		}
 		return null;
@@ -505,4 +503,28 @@ public class DaoCacheServiceImpl implements DaoCacheService {
 		}
 		return result;
 	}
+
+	@Override
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO: implement
+		return new ArrayList<ElevateResult>();
+	}
+
+	@Override
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO: implement
+		return new ArrayList<ExcludeResult>();
+	}
+
+	@Override
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		// TODO: implement
+		return new ArrayList<DemoteResult>();
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(Store store, String relevancyId) throws DaoException {
+		return getRelevancyRule(store, relevancyId);
+	}
+	
 }

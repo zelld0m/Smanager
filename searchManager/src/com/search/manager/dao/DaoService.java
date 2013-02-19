@@ -1,5 +1,6 @@
 package com.search.manager.dao;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
 import com.search.manager.report.model.xml.RuleXml;
 
-public interface DaoService {
+public interface DaoService extends SearchDaoService {
 	
 	/* Store */
 	public Store addStore(String storeId, String storeName) throws DaoException;

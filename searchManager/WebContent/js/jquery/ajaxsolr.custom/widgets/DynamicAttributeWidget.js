@@ -1,6 +1,7 @@
 (function ($) {
 
 	AjaxSolr.DynamicAttributeWidget = AjaxSolr.AbstractFacetWidget.extend({	
+		moreOptionContainer: null,
 		afterRequest: function () {
 			var self = this;
 			$(self.target).empty();
@@ -93,7 +94,7 @@
 			var i = 0;
 			var selectedItems = [];
 
-			$('.firerift-style').each(function() {
+			self.moreOptionContainer.find('.firerift-style').each(function() {
 				if ($(this).hasClass("on")){
 					var sel = $.trim($('#' + $(this).attr('rel')).val());
 					if ($.isNotBlank(sel)){
@@ -136,10 +137,14 @@
 			for(var name in storeparams){
 				if(!params[name]){
 					if ($.isArray(storeparams[name])){
-						params[name] = storeparams[name];
+						if(!$.isEmptyObject(storeparams[name])){
+							params[name] = storeparams[name];
+						}
 					}
 					else{
-						params[name] = storeparams[name].value;
+						if(storeparams[name]){
+							params[name] = storeparams[name].value;
+						}
 					}
 				}
 			}
@@ -232,7 +237,7 @@
 					events: {
 						show: function(event, api) {
 							contentHolder = $('div', api.elements.content);
-
+self.moreOptionContainer = contentHolder;
 							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
 
 							$.getJSON(

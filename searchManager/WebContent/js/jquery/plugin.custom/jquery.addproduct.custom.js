@@ -1367,7 +1367,7 @@
 			if ($.isBlank(base.options.item)){
 				base.contentHolder.find("#conditionText").hide();
 			}else{
-				base.contentHolder.find("#conditionText").html(base.options.item.condition["readableString"]);
+				base.contentHolder.find("#conditionText").text(base.options.item.condition["readableString"]);
 
 				var formattedExpiryDate = base.options.item["formattedExpiryDate"];
 				if($.isNotBlank(formattedExpiryDate)){

@@ -208,7 +208,7 @@
 					if(FACET){
 						memberConditions.push(list[i].condition["conditionForSolr"]);
 						base.setImage($tr,list[i]);
-						$tr.find("td#itemMan").html(list[i].condition["readableString"])
+						$tr.find("td#itemMan").text(list[i].condition["readableString"])
 						.prop("colspan",3)
 						.removeClass("txtAC")
 						.addClass("txtAL")
@@ -588,7 +588,7 @@
 					for(var field in xml["ruleCondition"]["ruleCondition"]){
 						$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 						$tr.find("td#fieldName").html(parseInt(field)+1);
-						$tr.find("td#fieldValue").html(xml["ruleCondition"]["ruleCondition"][field].readableString);
+						$tr.find("td#fieldValue").text(xml["ruleCondition"]["ruleCondition"][field].readableString);
 						$tr.appendTo($table);
 					}	
 				}
