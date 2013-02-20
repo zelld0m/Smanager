@@ -18,7 +18,6 @@
 			base.$el.off().on({
 				click: base.showQtipPreview()
 			});
-			
 		};
 
 		base.prepareForceAddStatus = function(){
@@ -398,7 +397,7 @@
 		};
 
 		base.getPreTemplate = function(){
-			var template = '';
+			var template = base.options.preTemplate;
 
 			if (base.options.enablePreTemplate && $.isBlank(base.options.preTemplate)){
 				switch(base.options.ruleType.toLowerCase()){
@@ -471,9 +470,6 @@
 					break;
 				default: template = '';
 				}
-			}
-			else if(base.options.enablePreTemplate && $.isNotBlank(base.options.preTemplate)){
-				template = base.options.preTemplate;
 			}
 
 			return template;
@@ -716,7 +712,7 @@
 		};
 
 		base.getPostTemplate = function(){
-			var template = '';
+			var template = base.options.postTemplate;
 
 			if (base.options.enablePostTemplate && $.isBlank(base.options.postTemplate)){
 				template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
@@ -741,42 +737,15 @@
 				template += '	</div>';
 				template += '</div>';
 			}
-			else if(base.options.enablePostTemplate && $.isNotBlank(base.options.postTemplate)){
-				template = base.options.postTemplate;
-			}
 
 			return template;
 		};
 
-		base.getRightPanelTemplate = function(){
-			var template = '';
-
-			if (base.options.enableRightPanel && $.isBlank(base.options.rightPanelTemplate)){
-				//TODO
-				template  = '	<div class="w280 floatR border" style="height:500px">';
-				template += '		<div> lorem ipsum dolor sit amet </div>';
-				template += '	</div>';
-			}
-			else if(base.options.enableRightPanel && $.isNotBlank(base.options.rightPanelTemplate)){
-				template = base.options.rightPanelTemplate;
-			}
-
-			return template;
-		};
-		
 		base.showLeftPane = function(ruleId, ruleType){
 			var $div = $('<div id="leftPreview" class="floatL"></div>');
 			$div.append(base.getPreTemplate());
 			$div.append(base.getTemplate());
 			$div.append(base.getPostTemplate());
-			
-			return $div;
-		};
-		
-		base.showRightPane = function(ruleId, ruleType){
-			var $div = $('<div id="rightPreview" class="floatR"></div>');
-			
-			$div.append(base.getRightPanelTemplate());
 			
 			return $div;
 		};
@@ -802,13 +771,9 @@
 					show: function(event, api){
 						base.contentHolder = $("div", api.elements.content);
 						base.api = api;
-						
-						base.contentHolder.append(base.showRightPane);
 						base.contentHolder.append(base.showLeftPane);
-						
 						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
-
-						
+					
 					},
 					hide:function(event, api){
 						$("div", api.elements.content).empty();
@@ -830,13 +795,10 @@
 			version: "",
 			enablePreTemplate: false,
 			enablePostTemplate: false,
-			enableRightPanel: false,
 			preTemplate: "",
 			postTemplate: "",
-			rightPanelTemplate: "",
 			itemForceAddStatusCallback: function(base, memberIds){},
 			setSelectedOverwriteRulePreview: function(base, rulename){}
-	
 	};
 
 	$.fn.preview = function(options){
