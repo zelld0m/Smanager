@@ -30,6 +30,7 @@ public class SolrConstants {
 
 	public final static String TAG_RESPONSE = "response";
 	public final static String TAG_LIST = "lst";
+	public final static String TAG_SPELLCHECK = "spellcheck";
 	
 	public final static String TAG_RESULT = "result";
 	public final static String TAG_STR = "str";
@@ -83,6 +84,7 @@ public class SolrConstants {
 	public final static String ATTR_NAME_VALUE_PARAMS = "params";
 	public final static String ATTR_NAME_VALUE_DEBUG = "debug";
 	public final static String ATTR_NAME_VALUE_EXPLAIN = "explain";
+	public final static String ATTR_NAME_VALUE_SPELLCHECK = "spellcheck";
 	
 	// active rules
 	// params submitted by simulator

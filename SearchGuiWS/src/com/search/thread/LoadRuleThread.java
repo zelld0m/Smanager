@@ -1,49 +1,50 @@
 package com.search.thread;
 
 import org.apache.log4j.Logger;
+
 import com.search.manager.enums.RuleEntity;
 import com.search.service.DeploymentRuleService;
-import com.search.service.DeploymentRuleServiceImpl;
+import com.search.service.DeploymentRuleServiceCacheImpl;
 
-public class LoadRuleThread extends Thread{
-	
+public class LoadRuleThread extends Thread {
+
 	private static final Logger logger = Logger.getLogger(LoadRuleThread.class);
 	private String store;
 	private RuleEntity entity;
 	private static DeploymentRuleService deploymentRuleService;
-	
-	static{
+
+	static {
 		try {
-			deploymentRuleService = new DeploymentRuleServiceImpl();
+			deploymentRuleService = new DeploymentRuleServiceCacheImpl();
 		} catch (Exception e) {
-			logger.error(e,e);
+			logger.error(e, e);
 		}
 	}
-	
-	public LoadRuleThread(String store, RuleEntity entity){
-		this.store=store;
-		this.entity=entity;
+
+	public LoadRuleThread(String store, RuleEntity entity) {
+		this.store = store;
+		this.entity = entity;
 	}
-	
+
 	@Override
 	public void run() {
-		try {	
+		try {
 			switch (this.entity) {
-			case ELEVATE:	
+			case ELEVATE:
 				deploymentRuleService.loadElevateRules(store);
 				break;
-			case EXCLUDE:	
+			case EXCLUDE:
 				deploymentRuleService.loadExcludeRules(store);
 				break;
-			case DEMOTE:	
+			case DEMOTE:
 				deploymentRuleService.loadDemoteRules(store);
 				break;
-			case FACET_SORT:	
+			case FACET_SORT:
 				deploymentRuleService.loadFacetSortRules(store);
 				break;
-			case KEYWORD: 
+			case KEYWORD:
 				break;
-			case STORE_KEYWORD: 
+			case STORE_KEYWORD:
 				break;
 			case CAMPAIGN:
 				break;
@@ -58,8 +59,9 @@ public class LoadRuleThread extends Thread{
 			default:
 				break;
 			}
-		}catch (Exception e) {
-			logger.error(e,e);
+		} catch (Exception e) {
+			logger.error(e, e);
 		}
 	}
+	
 }
