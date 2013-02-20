@@ -1,6 +1,26 @@
 (function ($) {
 
 	AjaxSolr.CurrentSearchWidget = AjaxSolr.AbstractWidget.extend({
+		solrFieldToTextDisplayMap: [],
+		
+		init: function(){
+			var self = this;
+			
+			self.solrFieldToTextDisplayMap["Licence_Flag:1"] = "License Products Only";
+			self.solrFieldToTextDisplayMap["Licence_Flag:0"] = "Non-License Products Only";
+			self.solrFieldToTextDisplayMap["ImageExists:1"] = "With Product Image Only";
+			self.solrFieldToTextDisplayMap["ImageExists:0"] = "Without Product Image Only";
+
+			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Products";
+			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Products";
+			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Products";
+
+			self.solrFieldToTextDisplayMap["Refurbished_Flag:1"] = "Refurbished Products";
+			self.solrFieldToTextDisplayMap["OpenBox_Flag:1"] = "Open Box Products";
+			self.solrFieldToTextDisplayMap["Clearance_Flag:1"] = "Clearance Products";
+			
+		},
+		
 		afterRequest: function () {
 			var self = this;
 			var links = [];
@@ -21,6 +41,9 @@
 				var filterFieldName = facetValue.substr(0, facetValue.indexOf(':'));
 				var filterFieldValue = facetValue.substr(facetValue.indexOf(':') + 1);
 				
+				var colonCheck = facetValue.match(/:+/g);
+				var spaceCheck = facetValue.match(/\s+/g);
+				
 				if (facetValue === searchWithin){
 					links.push(AjaxSolr.theme('createLink', "Search Within: " + facetValue  , self.removeFacetTemplate(facetValue), "single"));
 				}else if(GLOBAL_storeFacetTemplate === filterFieldName){ // Facet Hierarchical display
@@ -32,18 +55,53 @@
 						links.push(AjaxSolr.theme('createLink', j==0? "Category: " + trimmed : trimmed , self.removeFacetTemplate(fq[i], facetTempArr, (parseInt(j) + 1)), "level" + (parseInt(j) + 1)));
 					}
 				}
-				else {
+				// Multiple solr field in one fq
+				else if(!$.isEmptyObject(colonCheck) && colonCheck.length > 1 && !$.isEmptyObject(spaceCheck) && spaceCheck.length > 0){ 
+					var clickHandler = self.removeFacet(facetValue);
+					var displayFieldName = filterFieldName;
+
+					var conditionSelector = facetValue.match(/Refurbished_Flag|OpenBox_Flag|Clearance_Flag/g);
+					var pcmgSelector = facetValue.match(/PCMallGov_ACAStoreFlag|PCMallGov_OpenStoreFlag|PCMallGov_GovStoreFlag/g);
+					
+					displayFieldName = !$.isEmptyObject(conditionSelector) && conditionSelector.length > 0 ? "Condition" : displayFieldName;
+					displayFieldName = !$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0 ? "Catalog" : displayFieldName;
+					
+					links.push(AjaxSolr.theme('createLink', "Remove All " + displayFieldName, clickHandler, "removeMultiple"));
+					
+					//TODO: remove single value in one fq
+					var arrCurrentSelection = facetValue.split(' ');
+					if(!$.isEmptyObject(arrCurrentSelection)){
+						for(var j=0; j < arrCurrentSelection.length; j++){
+							var displayOverride = self.solrFieldToTextDisplayMap[arrCurrentSelection[j]];
+							if($.isNotBlank(displayOverride)){
+								displayText = displayOverride;
+							}else{
+								displayText = arrCurrentSelection[i];
+							}
+							links.push(AjaxSolr.theme('createLink', displayText, self.removeMultiFieldFacet(arrCurrentSelection, j, facetValue), "multiple"));
+						}
+					}	
+				}
+				else { // Multiple value for single field
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
 					var arrSelection = filterFieldValue.match(/("[^"]+")|(\b\w+\b)/g);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
+					var hasDisplayOverride = false;
 					
 					if($.startsWith(facetValue, GLOBAL_storeFacetTemplateName)){
 						displayFieldName = "Or Find By";
 					}
 					else if(isDynamicAttr){
 						displayFieldName = dynamicAttr[filterFieldName].attributeDisplayName;
+					}else{
+						var displayOverride = self.solrFieldToTextDisplayMap[displayFieldName + ":" + arrSelection[0]];
+
+						if($.isNotBlank(displayOverride)){
+							displayOverrideText = displayOverride;
+							hasDisplayOverride = true;
+						}
 					}
 
 					if(isMultipleSelection){
@@ -65,7 +123,7 @@
 							selectedItem = selectedItem.substr(selectedItem.indexOf('|') + 1);
 						}
 						
-						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? displayFieldName + ": " + selectedItem: selectedItem, clickHandler, isMultipleSelection? "multiple" : "single"));
+						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection? "multiple" : "single"));
 					}
 				}
 			}
@@ -158,8 +216,18 @@
 				self.manager.doRequest(0);
 				return false;
 			};
-		}
-
+		},
+		
+		removeMultiFieldFacet: function(arr, ind, fVal){
+			var self = this;
+			return function () {
+				arr.splice(ind,1);
+				self.manager.store.removeByValue("fq", fVal);
+				self.manager.store.addByValue("fq", arr.join(' '));
+				self.manager.doRequest(0);
+				return false;
+			};
+		} 
 	});
 
 })(jQuery);

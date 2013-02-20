@@ -674,6 +674,7 @@
 								var ruleName = rule["ruleName"];
 								var storeOrigin = rule["store"];
 								var dbRuleId = "";
+								var isRejected = rule["rejected"];
 
 								switch(self.entityName.toLowerCase()){
 								case "elevate":
@@ -1041,7 +1042,7 @@
 				var filename = $('div#'+id+'.approve_btn').css('background-image');
 				var fileNameIndex = filename.lastIndexOf("/") + 1;
 				filename = filename.substr(fileNameIndex);
-
+				
 				if($.startsWith(filename, 'import_gray_locked')){
 					$('div#'+id+'.approve_btn').addClass('import_locked');
 				}else{

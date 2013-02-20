@@ -198,6 +198,8 @@ public class DAOConstants {
 	public static final String PARAM_ACTIVE_FLAG		 			= "active_flag";
 	public static final String PARAM_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String PARAM_CHANGE_KEYWORD		 			= "change_keyword";
+	public static final String PARAM_RK_MSG_TYPE		 			= "replace_keyword_id";
+	public static final String PARAM_RK_MSG_CUSTOM_TEXT		 		= "replace_keyword_cus_text";
 	public static final String PARAM_RESULT 						= "result";
 
 	public static final String PARAM_RULE_STATUS_ID		 			= "rule_status_id";
@@ -327,7 +329,9 @@ public class DAOConstants {
 	public static final String COLUMN_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String COLUMN_REDIRECT_URL 	 				= "redirect_url";
 	public static final String COLUMN_INCLUDE_KEYWORD 	 			= "include_keyword";
-
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE  = "replace_keyword_message_type";
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";
+	
 	public static final String COLUMN_RULE_STATUS_ID		 		= "rule_status_id";
 	public static final String COLUMN_RULE_TYPE_ID		 			= "rule_type_id";
 	public static final String COLUMN_REFERENCE_ID		 			= "reference_id";

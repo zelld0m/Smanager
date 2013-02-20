@@ -106,7 +106,9 @@ public class RedirectRuleDAO {
 	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
-	                		isIncludeKeyword	                				
+	                		isIncludeKeyword,
+	                		0,//rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE),
+	                		"" //rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
 	                		);
 	        	}
 	        }));
@@ -182,6 +184,8 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
+			//declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_TYPE, Types.INTEGER));
+			//declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
@@ -401,6 +405,8 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
 			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
+			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType());
+			inputs.put(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, rule.getReplaceKeywordMessageCustomText());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_ACTIVE_FLAG, "ENABLED");
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getLastModifiedBy());

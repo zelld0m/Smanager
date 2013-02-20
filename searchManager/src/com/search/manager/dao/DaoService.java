@@ -55,7 +55,7 @@ public interface DaoService extends SearchDaoService {
 	public StoreKeyword updateKeyword(String storeId, String oldKeyword, String newKeyword) throws DaoException;
 	public int deleteKeyword(String storeId, String keyword) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId) throws DaoException;
-	public Collection<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException;
+	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword) throws DaoException;
 	public RecordSet<StoreKeyword> getAllKeywordsMatching(String storeId, String keyword, Integer page, Integer itemsPerPage) throws DaoException;
@@ -276,8 +276,8 @@ public interface DaoService extends SearchDaoService {
 	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException;
 	
 	/* Export Rule Map */
-    public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
+	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException;
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
-	
+
 }

@@ -28,3 +28,9 @@ label {
 .hidden {
 	display: none;
 }
+
+.label_catalog{
+	display: inline;
+	float: none;
+
+}

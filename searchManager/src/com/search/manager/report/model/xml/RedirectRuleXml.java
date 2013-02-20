@@ -27,6 +27,8 @@ public class RedirectRuleXml extends RuleXml{
 	private String directHit;
 	private RuleKeywordXml ruleKeyword;
 	private RuleConditionXml ruleCondition;
+	private Integer replaceKeywordMessageType;
+	private String replaceKeywordMessageCustomText;
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
@@ -117,5 +119,23 @@ public class RedirectRuleXml extends RuleXml{
 			return ruleCondition.isIncludeKeyword();
 		return false;
 	}
-	
+
+	@XmlElement(name="replace-kw-msg-type")
+	public Integer getReplaceKeywordMessageType() {
+		return replaceKeywordMessageType;
+	}
+
+	public void setReplaceKeywordMessageType(Integer replaceKeywordMessageType) {
+		this.replaceKeywordMessageType = replaceKeywordMessageType;
+	}
+
+	@XmlElement(name="replace-kw-msg-custom-text")
+	public String getReplaceKeywordMessageCustomText() {
+		return replaceKeywordMessageCustomText;
+	}
+
+	public void setReplaceKeywordMessageCustomText(
+			String replaceKeywordMessageCustomText) {
+		this.replaceKeywordMessageCustomText = replaceKeywordMessageCustomText;
+	}
 }

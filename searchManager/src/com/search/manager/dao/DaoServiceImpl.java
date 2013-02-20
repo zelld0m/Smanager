@@ -1494,7 +1494,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return new ArrayList<RuleXml>();
 	}
-	
+
 	@Override
 	public int getRuleVersionsCount(String store, String ruleType, String ruleId) {
 		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
@@ -1503,7 +1503,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return 0;
 	}
-
+	
 	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
@@ -1529,7 +1529,7 @@ public class DaoServiceImpl implements DaoService {
 		}
 		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);
 	}
-
+	
 	@Override
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
@@ -1766,7 +1766,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException {
-		Relevancy relevancy = new Relevancy();
+		Relevancy relevancy = new Relevancy("", "");
 		relevancy.setStore(storeKeyword.getStore());
 		RecordSet<RelevancyKeyword>relevancyKeywords = searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),

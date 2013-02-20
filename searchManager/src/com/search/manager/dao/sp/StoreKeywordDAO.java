@@ -125,32 +125,30 @@ public class StoreKeywordDAO {
         return DAOUtils.getItem(getSp.execute(inputs));
     }
     
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) {
+	private final static String GET_ELEVATE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
+	private final static String GET_EXCLUDE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
+	private final static String GET_DEMOTE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
+    
+    public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) {
 		String sql = "";
-
-		switch (ruleEntity.getCode()) {
-
-		case 1:
-			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
-			break;
-		case 2:
-			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
-			break;
-		case 10:
-			sql = "select DISTINCT(PROD_KEYWORD_ID) from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
-			break;
-		default:
-			return null;
-		}
-
-		return getSp.getJdbcTemplate().query(sql, new String[] { storeId },
-				new RowMapper() {
-					public Keyword mapRow(ResultSet resultSet, int i)
-							throws SQLException {
+    	switch (ruleEntity) {
+	    	case ELEVATE:
+	    		sql = GET_ELEVATE_KEYWORDS_SQL;
+	    		break;
+	    	case EXCLUDE:
+	    		sql = GET_EXCLUDE_KEYWORDS_SQL;
+	    		break;
+	    	case DEMOTE:
+	    		sql = GET_DEMOTE_KEYWORDS_SQL;
+	    		break;
+	    	default: return null;
+    	}
+		
+		return getSp.getJdbcTemplate().query(
+				sql, new String[] {storeId}, new RowMapper<Keyword>() {
+					public Keyword mapRow(ResultSet resultSet, int i) throws SQLException {
 						return new Keyword(resultSet.getString(1));
 					}
 				});
-	}
-    
+    }
 }

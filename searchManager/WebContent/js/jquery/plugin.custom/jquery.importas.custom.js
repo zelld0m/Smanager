@@ -150,7 +150,6 @@
 			var optionString = "";
 			base.rsLookup = new Array();
 			base.rsLookupByName = new Array();
-			base.itemCount = 0;
 			
 			$.each(list, function() {
 				base.rsLookup[this.ruleId] = this;
@@ -161,7 +160,7 @@
 					case "QUERY_CLEANING":
 					case "RANKING_RULE":
 						if($.isBlank(excList[this.ruleId])){
-							optionString += "<option value='" + this.ruleId + "'>"
+						optionString += "<option value='" + this.ruleId + "'>"
 								+ this.ruleName + "</option>";
 						}
 					}
@@ -238,7 +237,7 @@
 						base.showAlert(item, item.val(), rule);
 						base.options.afterUIRendered();
 					};
-					
+
 					//No item for selection
 					if(!$.isEmptyObject(item.get(0)) && item.get(0).length == 1 && $(item.get(0)).is(":not(:disabled)") && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
 						mybase.toggleFields(u, null, rule, false);

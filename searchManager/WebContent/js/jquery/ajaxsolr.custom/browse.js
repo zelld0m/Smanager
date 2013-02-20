@@ -13,6 +13,13 @@
 			defaultText: WIDGET_TEXTDEFAULT_searchKeyword,
 			minCharRequired: 2
 		}));
+		
+		if(GLOBAL_store.toLowerCase() === "pcmgbd"){
+			Manager.addWidget(new AjaxSolr.PCMGSelectorWidget({
+				id: "pcmgSelector",
+				target: "#pcmgSelector"
+			}));
+		}
 
 		Manager.addWidget(new AjaxSolr.SearchWithinWidget({
 			id: WIDGET_ID_searchWithin,
@@ -31,10 +38,10 @@
 			target: WIDGET_TARGET_cnetFacet
 		}));
 
-		Manager.addWidget(new AjaxSolr.PagerWidget({
-			id: WIDGET_ID_pager,
-			target: WIDGET_TARGET_pager,
-			innerWindow: 1,
+		Manager.addWidget(new AjaxSolr.CustomPagerWidget({
+			id: "customPager",
+			style: "style2", 
+			target: '#top-pager, #bottom-pager',
 			renderHeader: function (perPage, offset, total, qTime) {
 				var $pagerText = $('<span/>').text('Showing ' + Math.min(total, offset + 1) + '-' + Math.min(total, offset + perPage) + ' of ' + total + " Products");
 				$pagerText.append('<span class="fgray"> (' + qTime/1000 + ' seconds)</span>');
@@ -46,7 +53,13 @@
 			id: 'ruleSelector',
 			target: '#ruleSelector'
 		}));
-
+		
+		Manager.addWidget(new AjaxSolr.SearchResultHeaderWidget({
+			id: 'searchResultHeader',
+			target: '#searchResultHeader',
+			maxRelatedSearch: 3
+		}));
+		
 		var sortWidget = new AjaxSolr.SortResultWidget({
 			id: 'sortResult',
 			target: '#sortResult',
@@ -87,6 +100,11 @@
 			limit: 25
 		}));
 
+		Manager.addWidget(new AjaxSolr.ProductConditionSelectorWidget({
+			id: "prodCondSelector",
+			target: "#prodCondSelector"
+		}));
+		
 		Manager.addWidget(new AjaxSolr.ProductAttributeFilterWidget({
 			id: 'prodAttribFilter',
 			target: '#prodAttribFilter'
@@ -109,6 +127,7 @@
 				'facet.field': facetTemplate,
 				'rows': sortWidget.perPageInterval,
 				'facet.mincount': 1,
+				'start': 0,
 				'sort':'CatCodeOrder asc, score desc, Popularity desc',
 				'relevancyId': '',
 				'spellcheck': true,

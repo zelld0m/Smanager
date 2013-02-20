@@ -42,7 +42,7 @@
 
 						base.$el.find("a#submitForApprovalBtn").show();
 						if(ruleStatus["locked"]){
-							base.$el.find("span#statusMode").append("[Read-Only]");
+							base.$el.find("span#statusMode").append("[ Read-Only ]");
 							base.$el.find("a#submitForApprovalBtn").hide();
 						}
 						base.$el.find("div#versionHolder").show();
