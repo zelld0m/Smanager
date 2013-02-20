@@ -44,12 +44,16 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 	private Node resultNode = null;
 	private Node explainNode = null;
 	private Node qtimeNode = null;
+	private Node responseHeaderParamsNode = null;
 	private Node placeHolderNode = null;
 	private Node facetFieldsNode = null;
 
 	private List<Node> demotedEntries = new ArrayList<Node>();
 	private List<Node> elevatedEntries = new ArrayList<Node>();
 
+	private Node spellcheckNode = null;
+	private List<Node> spellCheckParams = new ArrayList<Node>();
+	
 	private static Node locateElementNode(Node startingNode, String nodeName) throws SearchException {
 		return locateElementNode(startingNode, nodeName, null);
 	}
@@ -147,7 +151,6 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		HttpResponse solrResponse = null;
 
 		try {
-			client = new DefaultHttpClient();
 			client = new DefaultHttpClient();
 			post = new HttpPost(requestPath);
 			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
@@ -481,7 +484,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				responseHeaderNode.appendChild(activeRuleNode);
 			}		
 			
-			Node responseHeaderParamsNode = locateElementNode(responseHeaderNode,
+			responseHeaderParamsNode = locateElementNode(responseHeaderNode,
 					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS);
 			locateElementNode(responseHeaderParamsNode,SolrConstants.TAG_STR, SolrConstants.SOLR_PARAM_ROWS)
 					.setTextContent(String.valueOf(requestedRows));
@@ -513,6 +516,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		try {
 			addElevatedEntries();
 			addDemotedEntries();
+			addSpellcheckEntries();
 			applyFacetSort();
 			resultNode.removeChild(placeHolderNode);
 			qtimeNode.setTextContent(String.valueOf(totalTime));
@@ -538,6 +542,15 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		}
 	}
 
+	private void addSpellcheckEntries() throws SearchException {
+		if (spellcheckNode != null) {
+			locateElementNode(mainDoc, SolrConstants.TAG_RESPONSE).appendChild(mainDoc.importNode(spellcheckNode, true));
+		}
+		for (Node node: spellCheckParams) {
+			responseHeaderParamsNode.appendChild(mainDoc.importNode(node, true));
+		}
+	}
+	
 	private void applyFacetSort() {
 		if (facetSortRule == null || facetFieldsNode == null) {
 			return;
@@ -644,6 +657,58 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 		}
 		return templateName;
+	}
+
+	@Override
+	public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
+		HttpClient client  = null;
+		HttpPost post = null;
+		InputStream in = null;
+		HttpResponse solrResponse = null;
+
+		try {
+			client = new DefaultHttpClient();
+			post = new HttpPost(getSpellCheckRequestPath());
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			solrResponse = client.execute(post);
+			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			in = solrResponse.getEntity().getContent();
+			Document currentDoc  = docBuilder.parse(in);
+
+			Node responseNode = locateElementNode(currentDoc, SolrConstants.TAG_RESPONSE);
+			spellcheckNode = locateElementNode(responseNode, SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_SPELLCHECK);
+
+			NodeList paramNodes = locateElementNode(locateElementNode(responseNode, SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER), 
+					SolrConstants.TAG_LIST, SolrConstants.ATTR_NAME_VALUE_PARAMS).getChildNodes();
+			for (int i = 0, size = paramNodes.getLength(); i < size; i++) {
+				Node kNode = paramNodes.item(i);
+				if (kNode.getNodeType() == Node.ELEMENT_NODE && kNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_STR) 
+						&& kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue().startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
+					spellCheckParams.add(kNode);
+				}
+			}
+			
+		} catch (Exception e) {
+			String error = "Error occured while trying to get items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
+		} finally {
+			try { if (in != null) in.close();  } catch (IOException e) { }
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
 	}
 	
 }
