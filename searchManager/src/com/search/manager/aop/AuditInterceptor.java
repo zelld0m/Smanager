@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
@@ -583,21 +584,24 @@ public class AuditInterceptor {
 				}
 				if (rule.getRedirectType() != null) {
 					log.append(String.format("redirect type = [%1$s];", rule.getRedirectType()));
-					
-					if(rule.isRedirectChangeKeyword()){
-						int msgType = rule.getReplaceKeywordMessageType();
-						log.append(String.format("replace keyword message type = [%1$s];", msgType));
-						
-						if(msgType == 3){ //with custom message
-							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
-						}
-					}
 				}
 				if (rule.getIncludeKeyword() != null) {
 					log.append(String.format("include keyword = [%1$s];", rule.getIncludeKeyword()));
 				}
 				if (rule.getChangeKeyword() != null) {
 					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));
+				}
+				if(rule.getReplaceKeywordMessageType() != null){
+					int msgType = rule.getReplaceKeywordMessageType();
+					ReplaceKeywordMessageType messageType = ReplaceKeywordMessageType.get(msgType);
+					
+					if(messageType != null){
+						log.append(String.format("replace keyword message type = [%1$s];", messageType.getDisplayText()));
+						
+						if(messageType == ReplaceKeywordMessageType.DISPLAY_CUSTOM_TEXT){ //with custom message
+							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
+						}
+					}
 				}
 				auditTrail.setDetails(log.toString());
 				break;

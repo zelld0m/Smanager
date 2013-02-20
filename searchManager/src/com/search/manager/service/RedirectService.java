@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.sp.DAOConstants;
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.Keyword;
@@ -102,7 +104,7 @@ public class RedirectService extends RuleService{
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setReplaceKeywordMessageType(type);
-			if(type == 3) rule.setReplaceKeywordMessageCustomText(customText);
+			if(ReplaceKeywordMessageType.DISPLAY_CUSTOM_TEXT.getIntValue() == type) rule.setReplaceKeywordMessageCustomText(customText);
 			rule.setStoreId(UtilityService.getStoreName());
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
