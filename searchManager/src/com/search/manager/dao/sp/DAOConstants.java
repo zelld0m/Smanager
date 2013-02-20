@@ -332,6 +332,10 @@ public class DAOConstants {
 	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE  = "replace_keyword_message_type";
 	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";
 	
+	public static final int REPLACE_KEYWORD_NO_ADDITIONAL_TEXT = 1;
+	public static final int REPLACE_KEYWORD_STANDARD_TEXT = 2;
+	public static final int REPLACE_KEYWORD_CUSTOM_TEXT = 3;
+	
 	public static final String COLUMN_RULE_STATUS_ID		 		= "rule_status_id";
 	public static final String COLUMN_RULE_TYPE_ID		 			= "rule_type_id";
 	public static final String COLUMN_REFERENCE_ID		 			= "reference_id";

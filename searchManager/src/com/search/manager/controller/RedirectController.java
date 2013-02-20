@@ -30,6 +30,8 @@ import com.search.manager.report.model.RedirectRuleConditionReportBean;
 import com.search.manager.report.model.RedirectRuleConditionReportModel;
 import com.search.manager.report.model.RedirectRuleReportBean;
 import com.search.manager.report.model.RedirectRuleReportModel;
+import com.search.manager.report.model.ReplaceKeywordReportBean;
+import com.search.manager.report.model.ReplaceKeywordReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
@@ -105,6 +107,9 @@ public class RedirectController {
 		List<RedirectRuleReportBean> list = new ArrayList<RedirectRuleReportBean>();
 		list.add(new RedirectRuleReportBean(redirectRule));
 		
+		List<ReplaceKeywordReportBean> rrList = new ArrayList<ReplaceKeywordReportBean>();
+		rrList.add(new ReplaceKeywordReportBean(redirectRule));
+		
 		String subTitle = "Query Cleaning Rule [" + redirectRule.getRuleName() + "]";
 		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);
 		RedirectRuleReportModel reportModel = new RedirectRuleReportModel(reportHeader, list);
@@ -112,6 +117,7 @@ public class RedirectController {
 		List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 		subReports.add(new KeywordReportModel(null, keywords));
 		subReports.add(new RedirectRuleConditionReportModel(null, conditions));
+		subReports.add(new ReplaceKeywordReportModel(null, rrList));
 		
 		// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse
 		if (DownloadService.downloadType.EXCEL.toString().equalsIgnoreCase(type)) {
