@@ -107,15 +107,11 @@
 					$ul.append($li);
 				}
 				
-				if (!$.isEmptyObject(self.manager.response.responseHeader["replacement_keyword"]) && $.isNotBlank(self.manager.response.responseHeader["replacement_keyword"]["replacement_keyword"])){
-					var $li = $ul.find("li#itemPattern").clone().prop("id", "rrNote");
-					$li.find(".ruleType").removeClass("fbold")
-											  .removeClass("w310")
-											  .addClass("w95p")								
-											  .html('<div class="alert padL10">Search results displayed are for <span class="fbold fred">' + self.manager.response.responseHeader["replacement_keyword"]["replacement_keyword"] + "</span>");
-					$li.find(".select,.imageIcon,.name").remove();
-					$li.show();
-					$ul.append($li);
+				var redirectKeyword = self.manager.response.responseHeader["redirect_keyword"];
+				
+				if (!$.isEmptyObject(redirectKeyword) && 
+						$.isNotBlank(redirectKeyword["replacement_keyword"])){
+					$(self.target).find("#hasReplacement").show().find("#replacement").text(redirectKeyword["replacement_keyword"]);
 				}
 				
 				$ul.find("li").removeClass("alt");
@@ -198,6 +194,12 @@
 			output	+='				</div>';
 			output  +='			</li>';
 			output  +='		</ul>';
+			output  +='		<div id="hasReplacement" style="display:none">';
+			output  +='			<div class="alert w655 marL20 marB10">';
+			output  +='				Search results displayed are for';
+			output  +='				<span id="replacement" class="fbold fred"></span>';
+			output  +='			</div>';
+			output  +='		</div>';
 			output  +='	</div>';
 			output  +='	<div id="collapse" style="display:none">';
 			output  +='		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB10 marT10">';
