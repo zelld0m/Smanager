@@ -172,7 +172,7 @@
 			output  +='		<div id="activeRuleNoteHide" class="w655 marL20 info notification border fsize11 marB20 marT10">';
 			output  +=' 		Below are rules applied to your current search. You can toggle ON/OFF of each active rules to examine its effect on search results';
 			output  +=' 	</div>';
-			output  +='		<ul id="itemListing" class="mar16 marB20 marL20" >';
+			output  +='		<ul id="itemListing" class="mar16 marB10 marL20" >';
 			output  +='			<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
 			output  +='				<div class="floatL marT6">';
 			output  +='					<label class="select floatL w80 posRel topn3"><input type="checkbox" class="firerift-style-checkbox on-off ruleControl"></label>';
@@ -200,7 +200,7 @@
 			output  +='		</ul>';
 			output  +='	</div>';
 			output  +='	<div id="collapse" style="display:none">';
-			output  +='		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB20 marT10">';
+			output  +='		<div id="activeRuleNoteShow" class="w655 marL20 info notification border fsize11 marB10 marT10">';
 			output  +=' 		Toggle this section to view all rules applied to current search';
 			output  +=' 	</div>';
 			output  +='	</div>';

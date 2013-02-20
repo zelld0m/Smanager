@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.dao.DaoService;
 import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.model.DemoteResult;
@@ -118,6 +119,15 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
+	private boolean isRegisteredKeyword(StoreKeyword storeKeyword) {
+		if (daoService instanceof DaoService) {
+			try {
+				return ((DaoService)daoService).getKeyword(storeKeyword.getStoreId(), storeKeyword.getKeywordId()) != null;
+			} catch (DaoException e) { }
+		}
+		return false;
+	}
+	
 	private static boolean generateFilterList(StringBuilder allValues, Collection<? extends SearchResult> list) {
 		StringBuilder edpValues = new StringBuilder();
 		StringBuilder facetValues = new StringBuilder();
@@ -307,7 +317,6 @@ public class SearchServlet extends HttpServlet {
 		// remove the exclude list from the result header
 		// fix if EDP not part of fl
 
-		// to track asynchronous task completion
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
 		int tasks = 0;
 
@@ -354,8 +363,9 @@ public class SearchServlet extends HttpServlet {
 			Set<String> paramNames = request.getParameterMap().keySet();
 
 			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
-			
-			// workaround for spellchecker
+			List<NameValuePair> spellcheckParams = new ArrayList<NameValuePair>();
+			boolean performSpellCheck = false;
+
 			nvp = new BasicNameValuePair("echoParams", "explicit");
 			if (addNameValuePairToMap(paramMap, "echoParams", nvp)) {
 				nameValuePairs.add(nvp);
@@ -382,6 +392,13 @@ public class SearchServlet extends HttpServlet {
 						logger.info(String.format("CLEANUP %s keyword: %s[%s] %s[%s]", storeName,
 								origKeyword, HexUtils.convert(origKeyword.getBytes()),
 								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
+					}
+					else if (paramName.startsWith(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+						if (paramName.equals(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+							performSpellCheck = true;
+						}
+						spellcheckParams.add(new BasicNameValuePair(paramName, paramValue));
+						continue;
 					}
 					
 					nvp = new BasicNameValuePair(paramName, paramValue);
@@ -634,9 +651,11 @@ public class SearchServlet extends HttpServlet {
 
 			if (keywordPresent) {
 				
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+				if (!fromSearchGui || (isRegisteredKeyword(sk))) {
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+				}
 				
 				if (!disableElevate) {
 					elevatedList = getElevateRules(sk, fromSearchGui);
@@ -705,6 +724,9 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			/* First Request */
+			// run spellcheck if requested and if keyword is present
+			performSpellCheck &= StringUtils.isNotBlank(originalKeyword);
+
 			// get expected resultformat
 			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_WRITER_TYPE);
 			if (SolrConstants.SOLR_PARAM_VALUE_JSON.equalsIgnoreCase(tmp)) {
@@ -715,7 +737,7 @@ public class SearchServlet extends HttpServlet {
 				solrHelper = new SolrXmlResponseParser();
 			}
 			else { // unsupported writer type
-				response.sendError(500);
+				response.sendError(500, "Unsupported writer type");
 				return;
 			}
 			// set Solr URL
@@ -789,13 +811,6 @@ public class SearchServlet extends HttpServlet {
 			Integer numDemoteFound = 0;
 
 			// send solr request
-
-			// TODO: workaround for spellchecker
-			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
-				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
-				solrHelper.setSolrUrl(requestPath);
-			}
-			
 			solrHelper.setActiveRules(activeRules);
 
 			// create force add filters
@@ -880,8 +895,24 @@ public class SearchServlet extends HttpServlet {
 			});
 			tasks++;
 
-			// TASK 1B - get count of force added items (should be merged with task 1A) 
-			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
+			// TASK 1B - get spellcheck if requested
+			/* Run spellcheck if needed */
+			if (performSpellCheck) {
+				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
+				getSpellingSuggestionsParams.add(defTypeNVP);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
+				getSpellingSuggestionsParams.addAll(spellcheckParams);
+				completionService.submit(new Callable<Integer>() {
+					@Override
+					public Integer call() throws Exception {
+						solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+						return 0;
+					}
+				});
+				tasks++;
+			}
+
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
 			// exclude demoted items

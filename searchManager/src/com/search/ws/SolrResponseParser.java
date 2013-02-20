@@ -33,6 +33,7 @@ public abstract class SolrResponseParser {
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException;
 	public abstract String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException;
+	public abstract void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException;
 	public abstract boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException;
 	
 	protected String requestPath;
@@ -414,6 +415,10 @@ public abstract class SolrResponseParser {
 			}
 		}
 		logger.error(builder.toString());
+	}
+
+	protected String getSpellCheckRequestPath() {
+		return StringUtils.replaceOnce(requestPath, "select", "spellCheckCompRH");
 	}
 
 }

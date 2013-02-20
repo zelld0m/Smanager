@@ -104,7 +104,7 @@
 						}
 					}
 
-					if(isMultipleSelection){
+					if(isMultipleSelection && arrSelection.length>1){
 						links.push(AjaxSolr.theme('createLink', "Remove All " + displayFieldName, clickHandler, "removeMultiple"));
 					}
 					
@@ -123,7 +123,7 @@
 							selectedItem = selectedItem.substr(selectedItem.indexOf('|') + 1);
 						}
 						
-						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection? "multiple" : "single"));
+						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection && arrSelection.length > 1? "multiple" : "single"));
 					}
 				}
 			}

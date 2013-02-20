@@ -1766,7 +1766,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException {
-		Relevancy relevancy = new Relevancy();
+		Relevancy relevancy = new Relevancy("", "");
 		relevancy.setStore(storeKeyword.getStore());
 		RecordSet<RelevancyKeyword>relevancyKeywords = searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
 				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),

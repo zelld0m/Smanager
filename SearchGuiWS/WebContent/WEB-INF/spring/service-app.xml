@@ -8,8 +8,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
-	<beans:bean id="deploymentRuleService" name="deploymentRuleService" class="com.search.service.DeploymentRuleServiceSolrImpl" scope="singleton">
-		<!--beans:property name="daoCacheService" ref="daoCacheService"/-->
+	<beans:bean id="deploymentRuleSolrService" name="deploymentRuleSolrService" class="com.search.service.DeploymentRuleServiceSolrImpl" scope="singleton">
 		<beans:property name="solrService" ref="solrService"/>
 		<beans:property name="daoService" ref="daoService"/>
 		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
@@ -17,7 +16,14 @@
 		<beans:property name="mailDetails" ref="mailDetails"/>
 	</beans:bean>
 	
-	<beans:bean name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
-		<beans:property name="deploymentRuleService" ref="deploymentRuleService"/>
+	<beans:bean id="deploymentRuleCacheService" name="deploymentRuleCacheService" class="com.search.service.DeploymentRuleServiceCacheImpl" scope="singleton">
+		<beans:property name="daoCacheService" ref="daoCacheService"/>
+		<beans:property name="daoService" ref="daoService"/>
+		<beans:property name="daoServiceStg" ref="daoServiceStg"/>
 	</beans:bean>
+	
+	<beans:bean name="searchGuiService" class="com.search.webservice.SearchGuiServiceImpl" scope="singleton">
+		<beans:property name="deploymentRuleService" ref="deploymentRuleSolrService"/>
+	</beans:bean>
+	
 </beans:beans>
