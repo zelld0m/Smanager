@@ -107,8 +107,8 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
 	                		isIncludeKeyword,
-	                		0,//rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE),
-	                		"" //rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
+	                		rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE),
+	                		rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
 	                		);
 	        	}
 	        }));
@@ -184,8 +184,8 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
-			//declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_TYPE, Types.INTEGER));
-			//declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_TYPE, Types.INTEGER));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_ACTIVE_FLAG, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));

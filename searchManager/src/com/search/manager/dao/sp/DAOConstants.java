@@ -106,9 +106,9 @@ public class DAOConstants {
 	public static final String SP_DELETE_RELEVANCY_KEYWORD 			= "usp_Delete_Relevancy_Prod_Keyword_Relationship";
 	//REDIRECT_RULE
 	public static final String SP_ADD_REDIRECT						= "usp_Add_Redirect_Rule";
-	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule";
+	public static final String SP_UPDATE_REDIRECT					= "usp_Update_Redirect_Rule_New";
 	public static final String SP_DELETE_REDIRECT					= "usp_Delete_Redirect_Rule";
-	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule";
+	public static final String SP_GET_REDIRECT						= "usp_Get_Redirect_Rule_New";
 	//REDIRECT_RULE_KEYWORD
 	public static final String SP_ADD_REDIRECT_KEYWORD				= "usp_Add_Redirect_Rule_Keyword_Relationship";
 	public static final String SP_DELETE_REDIRECT_KEYWORD			= "usp_Delete_Redirect_Rule_Keyword_Relationship";
