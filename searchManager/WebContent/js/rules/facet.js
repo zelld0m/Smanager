@@ -74,8 +74,8 @@
 						$("#submitForApproval").show();
 						$("#titleText").html(self.moduleName + " for ");
 						$("#titleHeader").text(self.selectedRule["ruleName"]);
-						$("#readableString").text(self.selectedRule["readableString"]);
-
+						$("#readableString").html(self.selectedRule["readableString"]);
+						
 						switch(self.selectedRule["ruleType"].toLowerCase()){
 						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
 						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
