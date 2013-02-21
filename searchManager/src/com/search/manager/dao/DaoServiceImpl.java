@@ -1632,6 +1632,7 @@ public class DaoServiceImpl implements DaoService {
 			updateRuleStatus.setApprovalStatus(StringUtils.equalsIgnoreCase(rSet.getList().get(0).getPublishedStatus(), 
 					String.valueOf(RuleStatusEntity.UNPUBLISHED)) ? "" : String.valueOf(RuleStatusEntity.PENDING));
 			updateRuleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
+			updateRuleStatus.setLastModifiedBy(deletedBy);
 			result = updateRuleStatus(updateRuleStatus);
 		} 
 		return result;
