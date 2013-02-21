@@ -93,11 +93,15 @@ public class ElevateService extends RuleService{
 	public int updateElevateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 
+		String storeId = UtilityService.getStoreName();
 		ElevateResult elevate = new ElevateResult();
-		elevate.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		elevate.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		elevate.setMemberId(memberId);
+		
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		
 		try {
 			elevate = daoService.getElevateItem(elevate);
 		} catch (DaoException e) {
@@ -234,7 +238,9 @@ public class ElevateService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
+		rrCondition.setStoreId(UtilityService.getStoreName());
+		return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
 	}
 
 	@RemoteMethod
@@ -306,7 +312,7 @@ public class ElevateService extends RuleService{
 			}
 			if (elevate!=null) {
 				if (!StringUtils.isBlank(condition)) {
-					elevate.setCondition(new RedirectRuleCondition((condition)));
+					elevate.setCondition(new RedirectRuleCondition(condition));
 				}
 				elevate.setLocation(sequence);
 				elevate.setLastModifiedBy(UtilityService.getUsername());
