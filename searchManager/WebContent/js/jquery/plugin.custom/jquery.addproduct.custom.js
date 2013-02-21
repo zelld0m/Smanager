@@ -1559,8 +1559,8 @@
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 						jAlert("Invalid date specified.", "Invalid Input");
 					}
-					else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
-						jAlert("Position value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
+					else if(base.options.showPosition && (sequence < 1 || sequence > base.options.maxPosition)){
+						jAlert("Position value should be from 1 - " + (base.options.maxPosition) + ".", "Max Value Exceeded");
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");
