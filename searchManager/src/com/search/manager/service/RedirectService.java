@@ -274,7 +274,9 @@ public class RedirectService extends RuleService{
 	public RecordSet<RedirectRuleCondition> addRuleCondition(String ruleId, Map<String, List<String>> filter) {
 		int result = -1;
 		try {
+			String storeId = UtilityService.getStoreName();
 			RedirectRuleCondition rr = new RedirectRuleCondition();
+			rr.setStoreId(storeId);
 			rr.setRuleId(ruleId);
 			rr.setStoreId(UtilityService.getStoreName());
 			rr.setFilter(filter);
@@ -301,7 +303,7 @@ public class RedirectService extends RuleService{
 		return updateRuleCondition(ruleId, sequenceNumber, listFilter);
 	}
 	
-	public RecordSet<RedirectRuleCondition> updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
+	private RecordSet<RedirectRuleCondition> updateRuleCondition(String ruleId, int sequenceNumber, Map<String, List<String>> filter) {
 		try {
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreName());
@@ -324,7 +326,6 @@ public class RedirectService extends RuleService{
 		int result = -1;
 		try {
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
-			rr.setStoreId(UtilityService.getStoreName());
 			result = daoService.deleteRedirectCondition(rr);
 		} catch (DaoException e) {
 			logger.error("Failed during deleteConditionInRule()",e);

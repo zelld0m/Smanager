@@ -846,36 +846,40 @@ public class SearchServlet extends HttpServlet {
 			FacetSort facetSort = null;
 			boolean applyFacetSort = false;
 
+			String facetTemplateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			String facetTemplate = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
+			for (NameValuePair param: nameValuePairs) {
+				if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 
+					StringUtils.equals(SolrConstants.TAG_FACET, param.getName()) || 
+					StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName()) ||
+					StringUtils.equals(SolrConstants.TAG_FACET_LIMIT, param.getName())){
+					getTemplateNameParams.remove(param);
+				}
+				else if (StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())) {
+					if (StringUtils.equals("Manufacturer", param.getValue()) ||
+						StringUtils.equals("Category", param.getValue()) ||
+						StringUtils.equals(facetTemplate, param.getValue())) {
+						// apply facet sort only if facet.field contains Manufacturer or Category or PCMall_FacetTemplate
+						applyFacetSort = true;
+					}
+					getTemplateNameParams.remove(param);
+				}
+			}
+			
 			if (keywordPresent) {
 				facetSort = getFacetSortRule(sk, fromSearchGui);
 			}
+
 			if (facetSort == null) {
 				// get facetSortRule based on template name
-				String templateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
-				final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
-				for (NameValuePair param: nameValuePairs) {
-					if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 
-						StringUtils.equals(SolrConstants.TAG_FACET, param.getName()) || 
-						StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName())){
-						getTemplateNameParams.remove(param);
-					}
-					else if (StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())) {
-						if (StringUtils.equals("Manufacturer", param.getValue()) ||
-							StringUtils.equals("Category", param.getValue()) ||
-							StringUtils.equals(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE), param.getValue())) {
-							// apply facet sort only if facet.field contains Manufacturer or Category or PCMall_FacetTemplate
-							applyFacetSort = true;
-						}
-						getTemplateNameParams.remove(param);
-					}
-				}
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
-				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
-
-				templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
-				if (StringUtils.isNotBlank(templateName)) {
-					facetSort = getFacetSortRule(store, templateName, fromSearchGui);
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
+				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
+				facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+				if (StringUtils.isNotBlank(facetTemplateName)) {
+					facetSort = getFacetSortRule(store, facetTemplateName, fromSearchGui);
 				}
 			}
 			
