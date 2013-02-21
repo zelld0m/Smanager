@@ -643,6 +643,7 @@ public class SearchServlet extends HttpServlet {
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
+			List<String> forceAddedEDPs = new ArrayList<String>();
 			List<DemoteResult> demoteList = null;
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
@@ -664,6 +665,9 @@ public class SearchServlet extends HttpServlet {
 						for (ElevateResult elevateResult : elevatedList) {
 							if (elevateResult.isForceAdd()) {
 								forceAddList.add(elevateResult);
+								if(MemberTypeEntity.PART_NUMBER.equals(elevateResult.getElevateEntity())) {
+									forceAddedEDPs.add(elevateResult.getEdp());
+								}
 							}
 						}
 					}
@@ -745,6 +749,7 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setSolrQueryParameters(paramMap);
 			solrHelper.setElevatedItems(elevatedList);
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
+			solrHelper.setForceAddedEDPs(forceAddedEDPs);
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
 			solrHelper.setFacetTemplateName(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
