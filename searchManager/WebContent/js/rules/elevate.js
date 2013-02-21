@@ -142,7 +142,7 @@
 								newRecord: false,
 								item: e.data.item,
 								showPosition: true,
-								maxPosition: self.selectedRuleItemTotal,
+								maxPosition: self.selectedRuleItemTotal + 1,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
@@ -572,7 +572,7 @@
 								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 									callback : function(code){
 										showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
-												"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+										"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										self.populateRuleItem(self.selectedRuleItemPage);
 									},
 									preHook: function(){ 
@@ -593,7 +593,9 @@
 							}
 						});
 					}
-				});
+				, 
+				mouseenter: showHoverInfo
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
 			addRuleItemOptionListener: function(){
@@ -617,13 +619,6 @@
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
-
-				$("#addRuleItemIcon").off().on({
-					click: function(e){
-						self.showAddProductItem(e);
-					}, 
-					mouseenter: showHoverInfo
-				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 
 				$("#clearRuleItemIcon").off().on({
 					click: function(e){
