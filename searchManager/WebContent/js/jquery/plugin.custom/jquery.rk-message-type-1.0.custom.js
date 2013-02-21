@@ -43,18 +43,18 @@
 						RedirectServiceJS.updateRKMessageType(e.data.rule["ruleId"], 3, customText, {
 							callback: function(data){
 								if (data > 0){
-									console.log("Pre: " + e.data.rule["replaceKeywordMessageCustomText"]);
 									e.data.rule["replaceKeywordMessageCustomText"] = customText;
-									console.log("Post: " + e.data.rule["replaceKeywordMessageCustomText"]);
 									base.options.successCustomTextUpdateCallback(customText);
 								}
 							},
 							preHook: function(){
+								base.$el.find('.preloader').show();
 								base.$el.find('input:radio[name=' + name + ']').prop({
 									disabled: true
 								});
 							},
 							postHook: function(){
+								base.$el.find('.preloader').hide();
 								base.$el.find('input:radio[name=' + name + ']').prop({
 									disabled: false
 								});
@@ -94,11 +94,13 @@
 								}
 							},
 							preHook: function(){
+								base.$el.find('.preloader').show();
 								base.$el.find('input:radio[name=' + name + ']').prop({
 									disabled: true
 								});
 							},
 							postHook: function(){
+								base.$el.find('.preloader').hide();
 								base.$el.find('input:radio[name=' + name + ']').prop({
 									disabled: false
 								});
@@ -115,20 +117,21 @@
 			template += '	<div id="rkMessageType1_' + base.options.id + '" class="optionContainer">';
 			template += '		<input type="radio" id="rkMessageTypeOpt1_' + base.options.id + '" name="rkMessageTypeOpt_' + base.options.id + '" value="1">';
 			template +=	'		<label for="rkMessageTypeTxt1_' + base.options.id + '">';
-			template += '			Do not display any additional text in search results (<span class="fbold">Search Result for <span class="fitalic">"original keyword"</span></span>)';
+			template += '			Default text: <span class="fbold">Search Result for <span class="fitalic">"original keyword"</span></span>';
 			template += '		</label>';
 			template += '	</div>';
 			template += '	<div id="rkMessageType2_' + base.options.id + '" class="optionContainer">';
 			template += '		<input type="radio" id="rkMessageTypeOpt2_' + base.options.id + '" name="rkMessageTypeOpt_' + base.options.id + '" value="2">';
 			template += '		<label for="rkMessageTypeTxt2_' + base.options.id + '">';
-			template += '			Display standard text (<span class="fbold">Showing Result for <span class="fitalic">"replacement keyword"</span> / Search instead for: original Keyword</span>)';
+			template += '			Standard text: <span class="fbold">Showing Result for <span class="fitalic">"replacement keyword"</span> / Search instead for: original Keyword</span>';
 			template += '		</label>';
 			template += '	</div>';
 			template += '	<div id="rkMessageType3_' + base.options.id + '" class="optionContainer">';
 			template += '		<input type="radio" id="rkMessageTypeOpt3_' + base.options.id + '" name="rkMessageTypeOpt_' + base.options.id + '" value="3">';
 			template += '		<label for="rkMessageTypeTxt3_' + base.options.id + '">';
-			template += ' 			Display custom text &nbsp;<input type="text" readonly="readonly" disabled="disabled" id="customText_' + base.options.id + '" class="w500" placeholder="' + base.options.customText + '"/>';
+			template += ' 			Custom text: &nbsp;<input type="text" readonly="readonly" disabled="disabled" id="customText_' + base.options.id + '" class="w500" placeholder="' + base.options.customText + '"/>';
 			template += '		</label>';
+			template += '		<label class="w30 preloader posRel floatR" style="display:none"><img src="' + GLOBAL_contextPath  + '/images/ajax-loader-rect.gif"></label>';
 			template += '	</div>';
 			template += '</div>';
 			return template;
