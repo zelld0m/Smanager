@@ -67,12 +67,11 @@ public class SolrSchemaUtility {
 
 				@Override
 				public void endElement(String uri, String localName, String qName) throws SAXException {
-					logger.debug("<<<END " + paramStack.pop());
+					paramStack.pop();
 				}
 
 				@Override
 				public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-					logger.debug(">>>START qName: " + qName);
 					// TODO: add checking of hierarchy of anscestors in stack
 					if (StringUtils.equals(qName, "fieldType")) {
 						currFieldType = new FieldType();
@@ -238,10 +237,9 @@ public class SolrSchemaUtility {
 					paramStack.clear();
 				}
 			});
+			fields.put("GenericUser_Keywords", new Field("GenericUser_Keywords", fieldTypes.get("text"), true, true));
 			schema = new Schema();
 			schema.setFields(fields);
-			schema.setFieldTypes(fieldTypes);
-			logger.info("Done");
 		} catch (Exception e) {
 			logger.error("Invalid schema file: " + url);
 		} finally {
@@ -371,34 +369,34 @@ public class SolrSchemaUtility {
 			}
 		}
 		
-		String[] mms = {
-				"2",
-				"-1",
-				"5%",
-				"-10%",
-				"1<5",
-				"1<5%",
-				"1%<5",
-				"3<67% 5<50",
-				"3<67% -5<50",
-				"3<67% 5",
-				"3<67% 5%",
-				"2<5 3<67 5%<50",
-				"2<5 3<67% 5<50",
-				"2<5 3<67 2<50"
-		};
-
-
-		for (String mm: mms) {
-			try {
-				VerifiableModel model = MinimumToMatchModel.toModel(mm, false);
-				if (model.validate()) {
-					logger.debug(model + " is valid");
-				}
-			} catch (Exception e) {
-				logger.debug(mm + " is invalid: " + e.getMessage());
-			}
-		}
+//		String[] mms = {
+//				"2",
+//				"-1",
+//				"5%",
+//				"-10%",
+//				"1<5",
+//				"1<5%",
+//				"1%<5",
+//				"3<67% 5<50",
+//				"3<67% -5<50",
+//				"3<67% 5",
+//				"3<67% 5%",
+//				"2<5 3<67 5%<50",
+//				"2<5 3<67% 5<50",
+//				"2<5 3<67 2<50"
+//		};
+//
+//
+//		for (String mm: mms) {
+//			try {
+//				VerifiableModel model = MinimumToMatchModel.toModel(mm, false);
+//				if (model.validate()) {
+//					logger.debug(model + " is valid");
+//				}
+//			} catch (Exception e) {
+//				logger.debug(mm + " is invalid: " + e.getMessage());
+//			}
+//		}
 		
 //		schema = SolrSchemaUtility.getSchema("search", "pcmall");
 //		for (Field field: schema.getFields()) {
@@ -411,7 +409,8 @@ public class SolrSchemaUtility {
 //
 //
 //
-//		String[] qfs = {
+		String[] qfs = {
+			"GenericUser_Keywords^2",
 //			"Manufacturer^10.0",
 //			"Manufacturer^10.",
 //			"Manufacturer^.0",
@@ -421,24 +420,24 @@ public class SolrSchemaUtility {
 //			"Manufacturer^10.0 ManufacturerIndex^5.2 Manufacturer^1",
 //			"Manufacturer^10.0 ManufacturerIndex^-2 Manufacturer^1",
 //			"Manufacturer^10.0 ManufacturerIndex^2Manufacturer^1",
-//		};
-//
-//		for (String string: qfs) {
-//			try {
-//				VerifiableModel model = QueryFieldsModel.toModel(schema, string, false);
-//				try {
-//					if (model.validate()) {
-//						logger.debug(model + " is valid");
-//					}
-//				} catch (Exception e) {
-//					logger.debug(model + " is invalid: " + e.getMessage());
-//				}
-//			} catch (Exception e) {
-//				logger.debug(string + " is invalid: " + e.getMessage());
-//			}
-//		}
-//
-//		logger.debug("***************************************************");
+		};
+
+		for (String string: qfs) {
+			try {
+				VerifiableModel model = QueryFieldsModel.toModel(schema, string, false);
+				try {
+					if (model.validate()) {
+						logger.debug(model + " is valid");
+					}
+				} catch (Exception e) {
+					logger.debug(model + " is invalid: " + e.getMessage());
+				}
+			} catch (Exception e) {
+				logger.debug(string + " is invalid: " + e.getMessage());
+			}
+		}
+
+		logger.debug("***************************************************");
 //
 //
 //

@@ -108,6 +108,7 @@ public class CategoryService {
 		}
 		filters = new ArrayList<String>();
 		RedirectRuleCondition rr = new RedirectRuleCondition();
+		rr.setStoreId(UtilityService.getStoreName());
 		rr.setFilter(filter);
 		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);

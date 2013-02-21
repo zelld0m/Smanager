@@ -49,7 +49,8 @@ public abstract class SolrResponseParser {
 	
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
-
+	protected List<String> forceAddedEDPs = null;
+	
 	protected FacetSort facetSortRule;
 	protected RedirectRule redirectRule;
 	
@@ -93,6 +94,10 @@ public abstract class SolrResponseParser {
 
 	public final void setExpiredElevatedEDPs(List<String> list) throws SearchException {
 		expiredElevatedEDPs = list;
+	}
+	
+	public final void setForceAddedEDPs(List<String> list) throws SearchException {
+		forceAddedEDPs = list;
 	}
 	
 	public final void setSolrUrl(String solrUrl) {

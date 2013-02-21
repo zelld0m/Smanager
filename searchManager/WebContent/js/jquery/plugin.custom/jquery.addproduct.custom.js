@@ -862,7 +862,7 @@
 					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
 						base.populateIMSManufacturers(e);
 					}
-				},
+				}
 			},{input: ""});
 
 			base.addDynamicAttributeListener();
@@ -1546,6 +1546,7 @@
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
+					var position = 1;
 					var valid = false;
 
 					sequence = $.isBlank(sequence) || isNaN(sequence)? 1 : sequence;
