@@ -15,16 +15,23 @@
          <property name="locations">
          	<list>
          		<value>file:/home/solr/bin/ws/config/database.properties</value>
+         		<value>file:/home/solr/bin/ws/config/solr.properties</value>
          		<value>file:/home/solr/bin/ws/config/mail.properties</value>
          	</list>
          </property>
     </bean>
     
+    <import resource="./init-app.xml"/>
+    
+    <!-- Scans within the base package of the application for @Components to configure as beans,
+		 @Controller, @Service, @Configuration, etc. -->
+	<context:component-scan base-package="com.search.manager.solr, com.search.manager.cache, com.search.service, com.search.manager.authentication.dao" />
+	
     <import resource="./mail-app.xml"/>
-	<import resource="./init-app.xml"/>
 	<import resource="./db-app.xml"/>
-	<!--import resource="./cache-app.xml"/-->
+	<import resource="./cache-app.xml"/>
 	<import resource="./solr-app.xml"/>
 	<import resource="./service-app.xml"/>
 	<import resource="file:/home/solr/bin/ws/config/cron-app.xml"/>
+	
 </beans>

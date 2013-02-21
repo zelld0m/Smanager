@@ -34,7 +34,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
 
-@Service
+@Service("deploymentRuleServiceSolrImpl")
 public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	private Logger logger = Logger

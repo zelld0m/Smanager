@@ -377,7 +377,9 @@ public class EnterpriseSearchServlet extends HttpServlet {
 
 			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
 			
-			// workaround for spellchecker
+			List<NameValuePair> spellcheckParams = new ArrayList<NameValuePair>();
+			boolean performSpellCheck = false;
+			
 			nvp = new BasicNameValuePair("echoParams", "explicit");
 			if (addNameValuePairToMap(paramMap, "echoParams", nvp)) {
 				nameValuePairs.add(nvp);
@@ -405,6 +407,13 @@ public class EnterpriseSearchServlet extends HttpServlet {
 								origKeyword, HexUtils.convert(origKeyword.getBytes()),
 								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
 					}
+					else if (paramName.startsWith(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+						if (paramName.equals(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+							performSpellCheck = true;
+						}
+						spellcheckParams.add(new BasicNameValuePair(paramName, paramValue));
+						continue;
+					}
 					
 					nvp = new BasicNameValuePair(paramName, paramValue);
 					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
@@ -423,7 +432,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				solrHelper = new SolrXmlResponseParser();
 			}
 			else { // unsupported writer type
-				response.sendError(500);
+				response.sendError(500, "Unsupported writer type");
 				return;
 			}
 			solrHelper.setForEnterpriseSearch(true);
@@ -764,6 +773,9 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			}
 
 			/* First Request */
+			// run spellcheck if requested and if keyword is present
+			performSpellCheck &= StringUtils.isNotBlank(originalKeyword);
+			
 			// set Solr URL
 			solrHelper.setSolrUrl(requestPath);
 			solrHelper.setSolrQueryParameters(paramMap);
@@ -833,13 +845,6 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			Integer numDemoteFound = 0;
 
 			// send solr request
-
-			// TODO: workaround for spellchecker
-			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
-				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
-				solrHelper.setSolrUrl(requestPath);
-			}
-			
 			solrHelper.setActiveRules(activeRules);
 
 			// create force add filters
@@ -928,8 +933,24 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			});
 			tasks++;
 
-			// TASK 1B - get count of force added items (should be merged with task 1A) 
-			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
+			// TASK 1B - get spellcheck if requested
+			/* Run spellcheck if needed */
+			if (performSpellCheck) {
+				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
+				getSpellingSuggestionsParams.add(defTypeNVP);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
+				getSpellingSuggestionsParams.addAll(spellcheckParams);
+				completionService.submit(new Callable<Integer>() {
+					@Override
+					public Integer call() throws Exception {
+						solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+						return 0;
+					}
+				});
+				tasks++;
+			}
+
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
 			// exclude demoted items

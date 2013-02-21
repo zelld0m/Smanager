@@ -41,16 +41,19 @@ import com.search.manager.model.SearchResult;
 public class SolrJsonResponseParser extends SolrResponseParser {
 
 	private JSONObject initialJson = null;
-	//    private JSONObject tmpJson = null;
 	private JsonSlurper slurper = null;
 	private JSONArray resultArray  = null; // DOCS entry
 	private JSONObject explainObject  = null; // DOCS entry
 	private JSONObject facetTemplate  = null; // Facet Template
 	private JSONObject facetFields  = null; // Facet Sort
 	private JSONObject responseHeader = null;
+	private JSONObject responseHeaderParams = null;
 	private List<JSONObject> elevatedResults = new ArrayList<JSONObject>();
 	private List<JSONObject> demotedResults = new ArrayList<JSONObject>();
 	
+	private JSONObject spellcheckObject = null;
+	private JSONObject spellcheckParams = null;
+
 	private String wrf = "";
 
 	private static Logger logger = Logger.getLogger(SolrJsonResponseParser.class);
@@ -177,9 +180,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				responseHeader.element(SolrConstants.TAG_SEARCH_RULES, searchRules);
 			}
 			
-			JSONObject paramsHeader = responseHeader.getJSONObject(SolrConstants.ATTR_NAME_VALUE_PARAMS);
-			paramsHeader.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
-			paramsHeader.put(SolrConstants.SOLR_PARAM_START, startRow);
+			responseHeaderParams = responseHeader.getJSONObject(SolrConstants.ATTR_NAME_VALUE_PARAMS);
+			responseHeaderParams.put(SolrConstants.SOLR_PARAM_ROWS, requestedRows);
+			responseHeaderParams.put(SolrConstants.SOLR_PARAM_START, startRow);
 		} catch (Exception e) {
 			String error = "Error occured while trying to get template counts";
 			logSolrError(post, error, e);
@@ -601,6 +604,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		try {
 			addElevatedEntries();
 			addDemotedEntries();
+			addSpellcheckEntries();
 			getFacetTemplates();
 			applyFacetSort();
 			responseHeader.put(SolrConstants.ATTR_NAME_VALUE_QTIME, totalTime);
@@ -642,6 +646,21 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 	}
 
+	private void addSpellcheckEntries() throws SearchException {
+		if (spellcheckObject != null) {
+			initialJson.element(SolrConstants.TAG_SPELLCHECK, spellcheckObject);
+		}
+		if (spellcheckParams != null) {
+			JSONArray names = spellcheckParams.names();
+			for (int i = 0; i < names.size(); i++) {
+				String name = String.valueOf(names.get(i));
+				if (name.startsWith(SolrConstants.ATTR_NAME_VALUE_SPELLCHECK)) {
+					responseHeaderParams.element(name, spellcheckParams.get(name));
+				}
+			}
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void applyFacetSort() {
 		if (facetSortRule == null || facetFields == null) {
@@ -718,6 +737,43 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		}
 		return templateName;
+	}
+
+	@Override
+	public void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException {
+		HttpClient client  = null;
+		HttpPost post = null;
+		HttpResponse solrResponse = null;
+
+		try {
+			client = new DefaultHttpClient();
+			post = new HttpPost(getSpellCheckRequestPath());
+			post.setEntity(new UrlEncodedFormEntity(requestParams, "UTF-8"));
+			post.addHeader("Connection", "close");
+			if (logger.isDebugEnabled()) {
+				logger.debug("URL: " + post.getURI());
+				logger.debug("Parameter: " + requestParams);
+			}
+			solrResponse = client.execute(post);
+			JSONObject tmpJson = parseJsonResponse(slurper, solrResponse);
+			spellcheckObject = tmpJson.getJSONObject(SolrConstants.TAG_SPELLCHECK);
+			spellcheckParams = tmpJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER)
+								 	.getJSONObject(SolrConstants.ATTR_NAME_VALUE_PARAMS);
+		} catch (Exception e) {
+			String error = "Error occured while trying to get items";
+			logSolrError(post, error, e);
+			throw new SearchException(error ,e);
+		} finally {
+			if (post != null) {
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
+				post.releaseConnection();
+			}
+			if (client != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
 	}
 	
 }
