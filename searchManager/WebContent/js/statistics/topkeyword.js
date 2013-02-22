@@ -134,7 +134,7 @@
 
 					if (isType2) {
 						$divItem.find("label.results").html(list[i]["resultCount"]);
-						$divItem.find("label.sku").html(list[i]["sku"]);
+						$divItem.find("label.sku").html($.isNotBlank(list[i]["sku"]) ? list[i]["sku"]: "&nbsp;");
 					}
 
 					$divItem.find("a.toggle").text("Show Active Rule").on({
