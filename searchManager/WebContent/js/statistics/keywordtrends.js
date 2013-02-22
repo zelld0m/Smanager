@@ -372,11 +372,13 @@
 		}
 	};
 
-	Handler.reset = function() {
+	Handler.clear = function() {
 		for(key in Keywords) {
 			Keywords[key].destroy();
 		}
+	};
 
+	Handler.reset = function() {
 		loadInitialData();
 	};
 	
@@ -577,6 +579,7 @@
 		if (Object.keys(Keywords).length) {
 			$("#button-controls #hide-all-button").show();
 			$("#button-controls #show-all-button").show();
+			$("#button-controls #reset-button").text("Clear").off().on({click: Handler.clear});
 
 			if (Utils.hasVisibleKeyword()) {
 				$("#button-controls #hide-all-button").removeClass("disabled-button").addClass("enabled-button").off().on({click: Handler.hideAll});
@@ -592,6 +595,7 @@
 		} else {
 			$("#button-controls #hide-all-button").hide();
 			$("#button-controls #show-all-button").hide();
+			$("#button-controls #reset-button").text("Reset").off().on({click: Handler.reset});
 		}
 	};
 
@@ -666,8 +670,6 @@
 				addKeywordHandler(e);
 			}
 		});
-
-		$("#button-controls #reset-button").on({click: Handler.reset});
 	};
 
 	/*
