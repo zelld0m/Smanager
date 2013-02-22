@@ -415,7 +415,7 @@
 			template += '							<li id="mfrNoLabel" class="label">Mfr Part #:</li><li class="value" id="mfrNo"></label>';
 			template += '				  		</ul>';
 			template += '					</div>';
-			template += '					<div id="conditionText" class="label w125 floatL marL8 posRel" ></div>';
+			template += '					<div id="conditionText" class="w125 floatL marL8 posRel" ></div>';
 			template += '			</li>';
 			template += '		</ul>';
 			template += '	</div>';
