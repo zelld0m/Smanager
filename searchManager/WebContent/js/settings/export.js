@@ -135,18 +135,23 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
-							callback: function(data){
-								showActionResponseFromMap(data, "export", "Export",
-									"Unable to find published data for this rule. Please contact Search Manager Team.");
-								self.getExportList();	
-							},
-							preHook:function(){ 
-								self.prepareTabContent(); 
-							},
-							postHook:function(){ 
-								self.cleanUpTabContent(); 
-							}	
+						var confirmMsg = "Continue export of the following rules:\n" + Object.keys(self.getSelectedItems()).join('\n');
+						jConfirm(confirmMsg, "Confirm Export", function(status){
+							if(status){
+								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
+									callback: function(data){
+										showActionResponseFromMap(data, "export", "Export",
+										"Unable to find published data for this rule. Please contact Search Manager Team.");
+										self.getExportList();	
+									},
+									preHook:function(){ 
+										self.prepareTabContent(); 
+									},
+									postHook:function(){ 
+										self.cleanUpTabContent(); 
+									}	
+								});
+							}
 						});
 					}
 				}

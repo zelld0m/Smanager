@@ -102,31 +102,37 @@
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
-							var exception = false;
-							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){									
-									postMsg(data,true);	
-									getForProductionList(selRuleFltr);	
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									if (!exception) {
-										cleanUpTabContent()
-									}
-									else {
-										$("div.circlePreloader").hide();
-										$(tabSelected).find('table.tblItems').show();
-										$(tabSelected).find('div.filter').show();
-										$(tabSelected).find('div#actionBtn').show();
-									}; 
-								},
-								exceptionHandler: function(message, exc){ 
-									exception = true; 
-									jAlert(message, "Publish Rule"); 
+							var confirmMsg = "Continue publishing of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							jConfirm(confirmMsg, "Confirm Publish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){									
+											postMsg(data,true);	
+											getForProductionList(selRuleFltr);	
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Publish Rule"); 
+										}
+									});
 								}
-							});break;
+							});
+							break;
 							
 						case "unpublishBtn": 
 							var exception = false;
