@@ -253,8 +253,10 @@
 								}
 							});
 
-							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')").prop("selected", true);
-
+							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')")
+								.filter(function() { return $(this).text() === itemName; })
+								.prop("selected", true);
+							
 							$ul.append($li);
 							self.addDeleteFacetValueListener($li);
 						}

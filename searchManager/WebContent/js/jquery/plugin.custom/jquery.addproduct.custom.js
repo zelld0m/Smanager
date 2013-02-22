@@ -750,7 +750,7 @@
 			CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
 				callback: function(data){
 					var list = data;
-					$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
+					$select.empty().append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 					for(var i=0; i<list.length; i++){
 						if($.isNotBlank(list[i]))
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
@@ -1451,6 +1451,8 @@
 							position = base.contentHolder.find("#addItemPosition").val();
 						}
 
+						position = $.isBlank(position) || isNaN(position)? 1 : position;
+						
 						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 						var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
@@ -1547,8 +1549,9 @@
 					var position = 1;
 					var valid = false;
 
+					sequence = $.isBlank(sequence) || isNaN(sequence)? 1 : sequence;
+					
 					today.setHours(0,0,0,0); //ignore time of current date 
-
 					base.contentHolder.find("#addItemDate_1").datepicker('disable');
 
 					if ($.isBlank(skus)) {
