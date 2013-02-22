@@ -119,18 +119,26 @@
 								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
-							DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									postMsg(data,false);	
-									getApprovalList();
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									cleanUpTabContent(); 
-								}	
-							});break;
+							
+							var confirmMsg = "Continue reject of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							jConfirm(confirmMsg, "Confirm Reject", function(status){
+								if(status){
+									DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											postMsg(data,false);	
+											getApprovalList();
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											cleanUpTabContent(); 
+										}	
+									});
+								}
+							});
+							
+							break;
 						}	
 					}
 

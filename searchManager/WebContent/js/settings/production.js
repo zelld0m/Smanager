@@ -135,31 +135,37 @@
 							break;
 							
 						case "unpublishBtn": 
-							var exception = false;
-							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									postMsg(data,false);	
-									getForProductionList(selRuleFltr);
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									if (!exception) {
-										cleanUpTabContent()
-									}
-									else {
-										$("div.circlePreloader").hide();
-										$(tabSelected).find('table.tblItems').show();
-										$(tabSelected).find('div.filter').show();
-										$(tabSelected).find('div#actionBtn').show();
-									}; 
-								},
-								exceptionHandler: function(message, exc){ 
-									exception = true; 
-									jAlert(message, "Unpublish Rule"); 
+							var confirmMsg = "Continue unpublishing of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											postMsg(data,false);	
+											getForProductionList(selRuleFltr);
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Unpublish Rule"); 
+										}
+									});
 								}
-							});break;
+							});
+							break;
 						}	
 					}
 				}
