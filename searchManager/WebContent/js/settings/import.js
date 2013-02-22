@@ -557,8 +557,6 @@
 									});
 								}
 								else {
-									alert("no match");
-									return;
 									self.importRejectRules();
 								}
 							}
@@ -593,31 +591,71 @@
 				$selectedTab.find("div#ruleFilterDiv").show();
 			},
 			
+			getConfirmationMessage: function(){
+				var self = this;
+				var arrImportIds = self.getSelectedRefId('import');
+				var arrRejectIds = self.getSelectedRefId('reject');
+				var confirmationMessage = "";
+				var $row = null;
+				var rName = "";
+				var iType = "";
+				var iAs = "";
+				
+				if(arrImportIds.length>0){
+					confirmationMessage += "Rules to be imported:\n";
+				}
+				for(var i=0; i < arrImportIds.length; i++){
+					$row = $("tr#ruleItem" + $.formatAsId(arrImportIds[i]));
+					rName = $row.find("#ruleName").text();
+					iType = $row.find("#importTypeList option:selected:eq(0)").text();
+					iAs = $row.find("#newName").val();
+					confirmationMessage += arrImportIds.length >1 ? (i+1) + ". ": "";
+					confirmationMessage += iType + ": " + rName + " -> " + iAs + "\n";
+				}
+				
+				if(arrRejectIds.length>0){
+					confirmationMessage += "\nRules to be rejected:\n";
+				}
+				for(var i=0; i < arrRejectIds.length; i++){
+					$row = $("tr#ruleItem" + $.formatAsId(arrRejectIds[i]));
+					confirmationMessage += arrRejectIds.length >1 ? (i+1) + ". ": "";
+					confirmationMessage += $row.find("#ruleName").text() + "\n";
+				}
+				
+				return confirmationMessage;
+			},
+			
 			importRejectRules: function() {
 				var self = this;
-				var exception = false;
-				RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
-						self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
-					callback: function(data){
-						self.postMsg(data, 'all');	
-					},
-					preHook:function() { 
-						self.hideData();
-					},
-					postHook:function(){ 
-						if (!exception) {
-							self.prepareTabContent();
-							self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
-						}
-						else {
-							self.showData();
-						}; 
-					},
-					exceptionHandler: function(message, exc){ 
-						exception = true; 
-						jAlert(message, "Import Rule"); 
-					}									
-				});				
+				
+				jConfirm(self.getConfirmationMessage(), "Confirm Import", function(status){
+					if(status){
+						var self = this;
+						var exception = false;
+						RuleTransferServiceJS.importRejectRules(self.entityName, self.getSelectedRefId('import'), comment, self.getSelectedImportType('import'), self.getSelectedImportAsRefId('import'), self.getSelectedRuleName('import'),
+								self.getSelectedRefId('reject'), self.getSelectedStatusId('reject'), {
+							callback: function(data){
+								self.postMsg(data, 'all');	
+							},
+							preHook:function() { 
+								self.hideData();
+							},
+							postHook:function(){ 
+								if (!exception) {
+									self.prepareTabContent();
+									self.getImportList(self.defaultPage, self.defaultKeywordFilter, self.defaultSortOrder, self.defaultRuleFilterBy);
+								}
+								else {
+									self.showData();
+								}; 
+							},
+							exceptionHandler: function(message, exc){ 
+								exception = true; 
+								jAlert(message, "Import Rule"); 
+							}									
+						});
+					}
+				});
 			},
 
 			getPreTemplate : function(selectedType){
