@@ -134,7 +134,9 @@ public class ExcludeService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		return addItem(keyword, null, new RedirectRuleCondition(filter), expiryDate, comment, MemberTypeEntity.FACET);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
+		rrCondition.setStoreId(UtilityService.getStoreName());
+		return addItem(keyword, null, rrCondition, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
 
@@ -142,7 +144,7 @@ public class ExcludeService extends RuleService{
 	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate, String comment) {
 		MemberTypeEntity memberTypeEntity = MemberTypeEntity.valueOf(memberTypeId);
 		return addItem(keyword, memberTypeEntity == MemberTypeEntity.PART_NUMBER ? value : null, 
-				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(value) : null, 
+				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(UtilityService.getStoreName(), value) : null, 
 				expiryDate, comment, memberTypeEntity);
 	}
 
@@ -354,8 +356,7 @@ public class ExcludeService extends RuleService{
 		return -1;
 	}
 	
-	@RemoteMethod
-	public int updateExclude(String keyword, String memberId, String condition) {
+	private int updateExclude(String keyword, String memberId, String condition) {
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, condition));
 			ExcludeResult exclude = new ExcludeResult();
@@ -368,7 +369,7 @@ public class ExcludeService extends RuleService{
 			}
 			if (exclude!=null) {
 				if (!StringUtils.isBlank(condition)) {
-					exclude.setCondition(new RedirectRuleCondition((condition)));
+					exclude.setCondition(new RedirectRuleCondition(condition));
 				}
 				
 				exclude.setLastModifiedBy(UtilityService.getUsername());
@@ -384,11 +385,15 @@ public class ExcludeService extends RuleService{
 	public int updateExcludeFacet(String keyword, String memberId, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
+		String storeId = UtilityService.getStoreName();
 		ExcludeResult exclude = new ExcludeResult();
-		exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		exclude.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		exclude.setMemberId(memberId);
+		
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		
 		try {
 			exclude = daoService.getExcludeItem(exclude);
 		} catch (DaoException e) {

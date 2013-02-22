@@ -32,6 +32,10 @@ public class Field implements Serializable, FunctionModelComponent, QueryFieldMo
 	}
 	
 	public Field(String name, FieldType fieldType, boolean indexed, boolean stored){
+		this.name = name;
+		this.fieldType = fieldType;
+		this.indexed = indexed;
+		this.stored = stored;
 	}
 	
 	public Field(String name, FieldType fieldType, boolean indexed, boolean stored, boolean multiValued, boolean dynamic, boolean ignored) {

@@ -750,7 +750,7 @@
 			CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
 				callback: function(data){
 					var list = data;
-					$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
+					$select.empty().append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 					for(var i=0; i<list.length; i++){
 						if($.isNotBlank(list[i]))
 						$select.append($("<option>", {value: list[i]}).text(list[i]));
@@ -862,7 +862,7 @@
 					if($(e.currentTarget).is(":visible") && e.data.input.toLowerCase() !== $.trim($(e.currentTarget).val()).toLowerCase()){
 						base.populateIMSManufacturers(e);
 					}
-				},
+				}
 			},{input: ""});
 
 			base.addDynamicAttributeListener();
@@ -1451,6 +1451,8 @@
 							position = base.contentHolder.find("#addItemPosition").val();
 						}
 
+						position = $.isBlank(position) || isNaN(position)? 1 : position;
+						
 						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 						var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 
@@ -1544,10 +1546,12 @@
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
 					var today = new Date();
+					var position = 1;
 					var valid = false;
 
+					sequence = $.isBlank(sequence) || isNaN(sequence)? 1 : sequence;
+					
 					today.setHours(0,0,0,0); //ignore time of current date 
-
 					base.contentHolder.find("#addItemDate_1").datepicker('disable');
 
 					if ($.isBlank(skus)) {
@@ -1559,8 +1563,8 @@
 					else if (!$.isBlank(expDate) && !$.isDate(expDate)){
 						jAlert("Invalid date specified.", "Invalid Input");
 					}
-					else if(base.options.showPosition && (position < 1 || position > base.options.maxPosition)){
-						jAlert("Position value should be from 1 - " + (self.selectedRuleItemTotal) + ".", "Max Value Exceeded");
+					else if(base.options.showPosition && (sequence < 1 || sequence > base.options.maxPosition)){
+						jAlert("Position value should be from 1 - " + (base.options.maxPosition) + ".", "Max Value Exceeded");
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");

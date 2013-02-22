@@ -664,7 +664,8 @@
 
 				DemoteServiceJS.update(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						showActionResponse(code, "update position", updateMessage);
 						self.populateRuleItem();
 					},
 					preHook: function(){

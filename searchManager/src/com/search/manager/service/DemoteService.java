@@ -91,11 +91,16 @@ public class DemoteService extends RuleService{
 	public int updateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
+		String storeId = UtilityService.getStoreName();
+
 		DemoteResult demote = new DemoteResult();
-		demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		demote.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		demote.setMemberId(memberId);
+		
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		
 		try {
 			demote = daoService.getDemoteItem(demote);
 		} catch (DaoException e) {
@@ -224,7 +229,9 @@ public class DemoteService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
+		rrCondition.setStoreId(UtilityService.getStoreName());
+		return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
 	@RemoteMethod
@@ -298,7 +305,7 @@ public class DemoteService extends RuleService{
 			}
 			if (demote!=null) {
 				if (!StringUtils.isBlank(condition)) {
-					demote.setCondition(new RedirectRuleCondition((condition)));
+					demote.setCondition(new RedirectRuleCondition(condition));
 				}
 				demote.setLocation(sequence);
 				demote.setLastModifiedBy(UtilityService.getUsername());

@@ -478,16 +478,16 @@
 				var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
 				var $preloader = $("div#keyword").find('#preloader');
 				
-				$("div#searchHeaderText").rkMessageType({
-					id: 1,
-					rule: self.selectedRule,
-					successTypeUpdateCallback: function(value){
-						self.selectedRule["replaceKeywordMessageType"] = value;
-					},
-					successCustomTextUpdateCallback: function(customText){
-						self.selectedRule["replaceKeywordMessageCustomText"] = customText;
-					}
-				});
+//				$("div#searchHeaderText").rkMessageType({
+//					id: 1,
+//					rule: self.selectedRule,
+//					successTypeUpdateCallback: function(value){
+//						self.selectedRule["replaceKeywordMessageType"] = value;
+//					},
+//					successCustomTextUpdateCallback: function(customText){
+//						self.selectedRule["replaceKeywordMessageCustomText"] = customText;
+//					}
+//				});
 				
 				$input.val(self.selectedRule["changeKeyword"]).prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
 
@@ -1658,7 +1658,7 @@
 												updatedItem = list[item];
 											};
 										}	
-										$item.find("a.conditionFormattedText").html($.escapeHtml(updatedItem["readableString"]));
+										$item.find("a.conditionFormattedText").text(updatedItem["readableString"]);
 										self.addToggleListener($item, updatedItem);
 										self.addCloneFilterGroupListener($item, updatedItem);
 										self.addDeleteFilterGroupListener($item, updatedItem);
@@ -1714,7 +1714,7 @@
 								return;
 							}
 
-							var readableString = $.escapeHtml(e.data.condition["readableString"]);
+							var readableString = e.data.condition["readableString"];
 
 							var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 
@@ -1822,7 +1822,7 @@
 						if(e.data.locked) return;
 
 						var $item = $(this).parents(".conditionItem");
-						var readableString = $.isNotBlank(e.data.condition)? $.escapeHtml(e.data.condition["readableString"]) : $item.find(".conditionFormattedText").html();
+						var readableString = $.isNotBlank(e.data.condition)? e.data.condition["readableString"] : $item.find(".conditionFormattedText").html();
 
 						jConfirm("Delete " + readableString, "Delete Rule Condition", function(result){
 							if(result){
@@ -1868,7 +1868,8 @@
 								var item = list[i];
 								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 								$divItem.prop("id", item["sequenceNumber"]);
-								$divItem.find(".conditionFormattedText").html($.escapeHtml(item["readableString"]));
+								
+								$divItem.find(".conditionFormattedText").text(item["readableString"]);
 								$divItem.find("tr.catCode,tr.catName").hide();
 								$divItem.show();
 								$divItemList.append($divItem);
