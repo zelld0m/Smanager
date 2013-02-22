@@ -40,8 +40,11 @@ public enum ReplaceKeywordMessageType {
 		return lookup.get(displayText); 
 	}
 	
-	public static ReplaceKeywordMessageType get(Integer intValue) { 
-        return ReplaceKeywordMessageType.values()[intValue-1];
+	public static ReplaceKeywordMessageType get(Integer intValue) {
+		if(intValue != null)
+			return ReplaceKeywordMessageType.values()[intValue-1];
+		
+		return null;
     }
 	
 	public int getIntValue(){

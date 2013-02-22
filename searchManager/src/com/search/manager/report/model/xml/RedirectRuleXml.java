@@ -50,6 +50,9 @@ public class RedirectRuleXml extends RuleXml{
 			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
 			this.setLastModifiedDate(rr.getLastModifiedDate());
+			this.setReplacementKeyword(rr.getChangeKeyword());
+			this.setReplaceKeywordMessageType(rr.getReplaceKeywordMessageType());
+			this.setReplaceKeywordMessageCustomText(rr.getReplaceKeywordMessageCustomText());
 		}
 		
 		setVersion(version);

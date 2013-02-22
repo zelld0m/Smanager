@@ -14,10 +14,14 @@ public class ReplaceKeywordReportBean extends ReportBean<RedirectRule> {
 
 	@ReportField(label="ReplaceKeyword", size=20, sortOrder=1)
 	public String getReplaceKeywordMessage(){
-		int msgType = model.getReplaceKeywordMessageType();
-		ReplaceKeywordMessageType messageType = ReplaceKeywordMessageType.get(msgType);
-
+		Integer msgType = model.getReplaceKeywordMessageType();
+		
+		if(msgType == null){
+			return "";
+		}
+		
 		StringBuilder sb = new StringBuilder();
+		ReplaceKeywordMessageType messageType = ReplaceKeywordMessageType.get(msgType);
 		
 		if(messageType != null){
 			sb.append(messageType.getDescription());
@@ -29,8 +33,6 @@ public class ReplaceKeywordReportBean extends ReportBean<RedirectRule> {
 				}
 			}
 		}
-		
 		return sb.toString();
 	}
-
 }

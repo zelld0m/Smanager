@@ -35,6 +35,8 @@ import com.search.manager.report.model.RelevancyFieldReportBean;
 import com.search.manager.report.model.RelevancyFieldReportModel;
 import com.search.manager.report.model.RelevancyReportBean;
 import com.search.manager.report.model.RelevancyReportModel;
+import com.search.manager.report.model.ReplaceKeywordReportBean;
+import com.search.manager.report.model.ReplaceKeywordReportModel;
 import com.search.manager.report.model.ReportBean;
 import com.search.manager.report.model.ReportHeader;
 import com.search.manager.report.model.ReportModel;
@@ -191,6 +193,11 @@ public class RuleXmlReportUtil{
 		return (redirectRule != null) ? new RedirectRuleReportBean(redirectRule) : null;
 	}
 	
+	public static ReplaceKeywordReportBean getReplaceKeywordReportBean(RedirectRuleXml xml){
+		RedirectRule redirectRule = new RedirectRule(xml);
+		return (redirectRule != null) ? new ReplaceKeywordReportBean(redirectRule) : null;
+	}
+	
 	public static List<ReportModel<? extends ReportBean<?>>> getRedirectSubReports(RedirectRuleXml xml, ReportHeader reportHeader, SubReportHeader subReportHeader){
 		List<ReportModel<? extends ReportBean<?>>> subReports = new ArrayList<ReportModel<? extends ReportBean<?>>>();
 		
@@ -211,6 +218,13 @@ public class RuleXmlReportUtil{
 			subReports.add(new RedirectRuleConditionReportModel(reportHeader, (CollectionUtils.isEmpty(subReports)) ? subReportHeader : null, getRedirectRuleConditionReportBeanList(ruleCondition)));
 		}
 			
+		List<ReplaceKeywordReportBean> rrList = new ArrayList<ReplaceKeywordReportBean>();
+		rrList.add(getReplaceKeywordReportBean(xml));
+		
+		if(CollectionUtils.isNotEmpty(rrList)){
+			subReports.add(new ReplaceKeywordReportModel(null, rrList));
+		}
+		
 		return subReports;
 	}
 	

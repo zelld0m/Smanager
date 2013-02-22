@@ -163,6 +163,9 @@ public class RedirectRule extends ModelBean {
 		}
 		
 		this.changeKeyword = xml.getReplacementKeyword();
+		this.replaceKeywordMessageType = xml.getReplaceKeywordMessageType();
+		this.replaceKeywordMessageCustomText = xml.getReplaceKeywordMessageCustomText();
+		
 		if(xml.getRuleCondition()!=null)
 			this.includeKeyword = xml.getRuleCondition().isIncludeKeyword();
 		this.redirectUrl = xml.getDirectHit();
