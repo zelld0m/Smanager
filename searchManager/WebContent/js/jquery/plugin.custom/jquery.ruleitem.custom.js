@@ -347,7 +347,7 @@
 			template += '		<h2 id="rulestatus" class="confirmTitle" style="display:none"></h2>';
 			template += '		<div class="marT10"><center><img id="selItemProductImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg" class="border" style="width:116px; height:100px"></center></div>';
 			template += '		<div><center><span id="selItemManufacturer" class="fbold">' + base.doc["Manufacturer"] + '</span></center></div>';
-			template += ' 		<div style="position:absolute; float:right; top:50px; left:224px">';
+			template += ' 		<div style="position:absolute; float:right; top:40px; left:224px">';
 			template += '			<a href="javascript:void(0);" id="toggleHideCurrent"><img src="' + GLOBAL_contextPath + '/images/btnTonggleHide.png"></a>';
 			template += '		</div>';
 			template += '	<div>';
