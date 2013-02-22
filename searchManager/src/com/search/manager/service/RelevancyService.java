@@ -77,6 +77,18 @@ public class RelevancyService extends RuleService{
 	}
 
 	@RemoteMethod
+	public List<String> checkForRuleNameDuplicates(String[] ruleIds, String[] ruleNames) throws DaoException {
+		List<String> duplicateRuleNames = new ArrayList<String>();
+		for (int i = 0; i < ruleIds.length; i++) {
+			String ruleName = ruleNames[i];
+			if (checkForRuleNameDuplicate(ruleIds[i], ruleName)) {
+				duplicateRuleNames.add(ruleName);				
+			}
+		}
+		return duplicateRuleNames;
+	}
+	
+	@RemoteMethod
 	public boolean checkForRuleNameDuplicate(String ruleId, String ruleName) throws DaoException {
 		Relevancy relevancy = new Relevancy();
 		relevancy.setStore(new Store(UtilityService.getStoreName()));
