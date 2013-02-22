@@ -96,17 +96,22 @@
 					}else{
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
-							DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									postMsg(data,true);	
-									getApprovalList();
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									cleanUpTabContent(); 
-								}	
+							var confirmMsg = "Continue approval of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							jConfirm(confirmMsg, "Confirm Approval", function(status){
+								if(status){
+									DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											postMsg(data,true);	
+											getApprovalList();
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											cleanUpTabContent(); 
+										}	
+									});
+								}
 							});
 							break;
 						case "rejectBtn": 
