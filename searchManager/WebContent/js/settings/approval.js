@@ -94,9 +94,17 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
 					}else{
+						var a = [];
+						var arrSelectedKeys = Object.keys(getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+					
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
-							var confirmMsg = "Continue approval of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							
+							var confirmMsg = "Continue approval of the following rules:\n" + a.join('\n');
 							jConfirm(confirmMsg, "Confirm Approval", function(status){
 								if(status){
 									DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -120,7 +128,7 @@
 								return;
 							}
 							
-							var confirmMsg = "Continue reject of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							var confirmMsg = "Continue reject of the following rules:\n" + a.join('\n');
 							jConfirm(confirmMsg, "Confirm Reject", function(status){
 								if(status){
 									DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
