@@ -22,7 +22,7 @@
 				var self = this;
 
 				this.el.attr("id", "keyword-" + keyword);
-				this.el.find(".keyword").html(keyword);
+				this.el.find(".keyword").text(keyword);
 				$("#keyword-list").append(this.el);
 
 				// add event listeners
@@ -439,7 +439,7 @@
 	Utils.addKeyword = function(keyword) {
 		keyword = keyword && keyword.toLowerCase().trim();
 
-		if (keyword && keyword != "search keyword" && !Keywords[keyword]) {
+		if (keyword && keyword != "search keyword" && !Keywords[keyword] && validateGeneric("Keyword", keyword, 0, 50)) {
 			new Keyword(keyword);
 
 			for (tab in Tabs) {
