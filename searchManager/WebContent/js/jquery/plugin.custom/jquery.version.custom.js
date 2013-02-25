@@ -151,9 +151,9 @@
 					$li.find("#verDate").text(item["createdDate"] ? item["createdDate"].toUTCString() : "");
 				}
 				else {
-					$li.find("#verName").text("Current Rule");
-					$li.find("#verNote").text("Current Rule");
-					$li.find("#verDate").text(item["lastModifiedDate"] ? item["lastModifiedDate"].toUTCString() : "");
+					$li.find("#verName").text("Not Available");
+					$li.find("#verNote").text("Not Available");
+					if(item["lastModifiedDate"]) $li.find("#verDate").text(item["lastModifiedDate"].toUTCString());
 				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
