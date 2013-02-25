@@ -140,11 +140,16 @@
 						base.contentHolder.find("#addCommentBtn").off().on({
 							click: function(e){
 								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "");
-								if(!isXSSSafe(comment)){
+								if ($.isBlank(comment)){
+									jAlert("Comment cannot be blank.","Comment");
+								}
+								else if(!isXSSSafe(comment)){
 									jAlert("Invalid comment. HTML/XSS is not allowed.","Comment");
-								}else if ($.isNotBlank(comment))
+								} 
+								else{
 									var nl2br = comment.replace(/\n\r?/g, '<br/>');
 									base.options.itemAddComment(base, nl2br);
+								}
 							}
 						});
 					},
