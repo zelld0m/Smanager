@@ -279,7 +279,11 @@
 							$content.find("div#ruleChange").find("#replaceKeywordVal").html(data["changeKeyword"]);
 						}
 					
-						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(data["replaceKeywordMessageType"]["description"]);
+						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
+								data["replaceKeywordMessageType"]["intValue"] == 3 ? 
+								data["replaceKeywordMessageCustomText"] :
+								data["replaceKeywordMessageType"]["description"]
+						);
 
 						var includeKeywordText = "Include keyword in search: <b>NO</b>";
 						if($.isNotBlank(data["includeKeyword"])){
