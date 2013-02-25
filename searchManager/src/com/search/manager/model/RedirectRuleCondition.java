@@ -99,10 +99,7 @@ public class RedirectRuleCondition extends ModelBean {
 						// TODO: move to a method
 						// temp workaround for old data
 						String value = values.get(0);
-						if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-							value = String.format("\"%s\"", value);
-						}
-						builder.append(value);						
+						builder.append(forSolr? ClientUtils.escapeQueryChars(value) : value);						
 					}
 				}
 				else {
@@ -137,10 +134,7 @@ public class RedirectRuleCondition extends ModelBean {
 			if (values != null && values.size() == 1) {
 				// temp workaround for old data
 				String value = values.get(0);
-				if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-					value = String.format("\"%s\"", value);
-				}
-				builder.append("Manufacturer:").append(value);
+				builder.append("Manufacturer:").append(forSolr? ClientUtils.escapeQueryChars(value) : value);
 				builder.append(" AND ");
 				}
 			else {
@@ -156,10 +150,7 @@ public class RedirectRuleCondition extends ModelBean {
 				if (StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName")) {
 					templateName = map.get(key).get(0);
 					String value = templateName;
-					if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-						value = String.format("\"%s\"", value);
-					}
-					builder.append(key).append(":").append(value).append(" AND ");
+					builder.append(key).append(":").append(forSolr? ClientUtils.escapeQueryChars(value) : value).append(" AND ");
 					break;
 				}
 			}
@@ -175,11 +166,7 @@ public class RedirectRuleCondition extends ModelBean {
 								builder.append("(");
 							}
 							for (String value: values) {
-								// TODO: convert to encloseInQuotes method
-								if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-									value = String.format("\"%s\"", value);
-								}
-								builder.append(value);
+								builder.append(forSolr? ClientUtils.escapeQueryChars(value) : value);
 								builder.append(forSolr ? " " : " OR ");
 							}
 							if (forSolr) {
@@ -294,18 +281,6 @@ public class RedirectRuleCondition extends ModelBean {
 			builder.replace(builder.length() - 5, builder.length(), "");
 		}
 		return builder.toString();		
-	}
-	
-	private static String[] encloseInQuotesList = {
-		 "Category", 
-		 "SubCategory", 
-		 "Class", 
-		 "SubClass", 
-		 "Manufacturer"
-	};
-	
-	private boolean isEncloseInQuotes(String key) {
-		return ArrayUtils.contains(encloseInQuotesList, key);
 	}
 	
 	public void setFilter(Map<String, List<String>> filter) {
