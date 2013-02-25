@@ -452,7 +452,7 @@
 					var origPostion = $.trim(base.contentHolder.find("#selItemPosition").val());
 					var position = parseInt(origPostion);
 					position = isNaN(position) ? base.options.defaultPosition : position;
-					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
+					var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#selItemComment").val()),"");
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
 					var today = new Date();
 					today.setHours(0,0,0,0); //ignore time of current date 
@@ -465,13 +465,15 @@
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
 					}else if(origPostion!=null && origPostion.length>0 && !$.isNumeric(origPostion)) {
 						jAlert("Invalid position value.", "Search Simulator");
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
+					}else if(!validateComment("Search Simulator",comment,1)){
+						//alert is inside validateComment
 					}else if(today.getTime() > new Date(validityDate).getTime()){
 						jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 					}else if(base.selectedItem==null){
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemAddItemCallback(base, base.doc["EDP"], position, validityDate, comment);
 					}else if(base.selectedItem!=null){
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemUpdateItemCallback(base, base.selectedItem["memberId"], position, validityDate, comment);
 					}
 				}

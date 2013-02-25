@@ -1454,14 +1454,18 @@
 						position = $.isBlank(position) || isNaN(position)? 1 : position;
 						
 						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-						var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+						var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "");
 
 						if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
 							valid = false;
 						}
 
-						if ($.isNotBlank(comment) && !validateGeneric("Comment", comment)){
-							valid = false;
+						if ($.isNotBlank(comment)){
+							if(validateComment("Comment",comment,1)){
+								comment = comment.replace(/\n\r?/g, '<br/>');
+							}else{
+								valid = false;
+							}
 						}
 
 						var condMap = base.getSelectedFacetFieldValues();
@@ -1544,7 +1548,7 @@
 					var skus = $.trim(base.contentHolder.find("#addItemDPNo").val());
 					var sequence = $.trim(base.contentHolder.find("#addItemPosition").val());
 					var expDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
-					var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "").replace(/\n\r?/g, '<br/>');
+					var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "");
 					var today = new Date();
 					var position = 1;
 					var valid = false;
@@ -1568,11 +1572,16 @@
 					}
 					else if(today.getTime() > new Date(expDate).getTime())
 						jAlert("Start date cannot be earlier than today", "Invalid Input");
-					else if (!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", "Invalid Input");
+					else if ($.isNotBlank(comment) && !validateComment("Invalid Input",comment,1)){
+						//error alert in function validateComment
 					}
 					else {
 						valid = true;
+						
+						if($.isNotBlank(comment)){
+							comment = comment.replace(/\n\r?/g, '<br/>');
+						}
+						
 						base.api.destroy();
 						base.options.addProductItemCallback(sequence, expDate, comment, skus.split(/[\s,]+/));						
 					}

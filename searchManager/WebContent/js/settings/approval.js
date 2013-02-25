@@ -85,7 +85,7 @@
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
-					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 
 					if (getSelectedRefId().length==0){
 						jAlert("Please select rule","Approval");
@@ -94,9 +94,17 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.","Approval");
 					}else{
+						var a = [];
+						var arrSelectedKeys = Object.keys(getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+					
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
-							var confirmMsg = "Continue approval of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							
+							var confirmMsg = "Continue approval of the following rules:\n" + a.join('\n');
 							jConfirm(confirmMsg, "Confirm Approval", function(status){
 								if(status){
 									DeploymentServiceJS.approveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -120,7 +128,7 @@
 								return;
 							}
 							
-							var confirmMsg = "Continue reject of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
+							var confirmMsg = "Continue reject of the following rules:\n" + a.join('\n');
 							jConfirm(confirmMsg, "Confirm Reject", function(status){
 								if(status){
 									DeploymentServiceJS.unapproveRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
@@ -593,9 +601,11 @@
 
 			$content.find("a#approveBtn, a#rejectBtn").off().on({
 				click: function(evt){
-					var comment = $content.find("#approvalComment").val();
+					var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
 
-					if ($.isNotBlank(comment)){
+					if (validateComment("Approval",comment,1)){
+						comment = comment.replace(/\n\r?/g, '<br/>');
+						
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
 							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
@@ -623,8 +633,6 @@
 								}
 							});break;
 						}	
-					}else{
-						jAlert("Please add comment.","Approval");
 					}
 				}
 			});
