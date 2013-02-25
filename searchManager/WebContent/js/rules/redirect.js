@@ -478,16 +478,19 @@
 				var $input = $("div#keyword").find('input[type="text"]#changeKeyword');
 				var $preloader = $("div#keyword").find('#preloader');
 				
-//				$("div#searchHeaderText").rkMessageType({
-//					id: 1,
-//					rule: self.selectedRule,
-//					successTypeUpdateCallback: function(value){
-//						self.selectedRule["replaceKeywordMessageType"] = value;
-//					},
-//					successCustomTextUpdateCallback: function(customText){
-//						self.selectedRule["replaceKeywordMessageCustomText"] = customText;
-//					}
-//				});
+				$("div#searchHeaderText").rkMessageType({
+					id: 1,
+					rule: self.selectedRule,
+					successTypeUpdateCallback: function(value){
+						self.selectedRule["replaceKeywordMessageType"] = value;
+					},
+					successCustomTextUpdateCallback: function(customText){
+						self.selectedRule["replaceKeywordMessageCustomText"] = customText;
+					},
+					afterUpdateCallback: function(){
+						self.getRedirectRuleList();
+					}
+				});
 				
 				$input.val(self.selectedRule["changeKeyword"]).prop({disabled: self.selectedRuleStatus["locked"] || !allowModify});
 

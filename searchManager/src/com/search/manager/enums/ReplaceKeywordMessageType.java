@@ -5,13 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.directwebremoting.annotations.DataTransferObject;
-import org.directwebremoting.convert.EnumConverter;
+import org.directwebremoting.annotations.Param;
+import org.directwebremoting.convert.BeanConverter;
 
-@DataTransferObject(converter=EnumConverter.class)
+@DataTransferObject(converter=BeanConverter.class, 
+					params=@Param(name="exclude", value="declaringClass"))
 public enum ReplaceKeywordMessageType {
-	STORE_DEFAULT_TEXT("No additional text", "Do not display any additional text in search results"),
-	DISPLAY_STANDARD_TEXT("Display standard text", "Display standard text (Showing Result for \"replacement keyword\" / Search instead for: original Keyword) "),
-	DISPLAY_CUSTOM_TEXT("Display custom text", "Display custom text");
+	DEFAULT_TEXT("Default Text", "Do not display any additional text in search results"),
+	STANDARD_TEXT("Standard Text", "Display standard text (Showing Result for \"replacement keyword\" / Search instead for: original Keyword) "),
+	CUSTOM_TEXT("Custom Text", "Display custom text");
    
 	private final String displayText;
 	private final String description;
@@ -42,8 +44,7 @@ public enum ReplaceKeywordMessageType {
 	
 	public static ReplaceKeywordMessageType get(Integer intValue) {
 		if(intValue != null)
-			return ReplaceKeywordMessageType.values()[intValue-1];
-		
+			return ReplaceKeywordMessageType.values()[intValue-1];		
 		return null;
     }
 	

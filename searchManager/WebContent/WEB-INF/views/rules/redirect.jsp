@@ -85,13 +85,13 @@
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
     			
-    			<!-- div class="landingCont bgboxGray w96p50p floatL">
+    			<div class="landingCont bgboxGray w96p50p floatL">
     				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						Search Header Text
 					</div>
     				<div id="searchHeaderText"></div>
     				<div class="clearB"></div>
-    			</div -->
+    			</div>
     			
     			<div class="landingCont bgboxGray w96p50p floatL">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">

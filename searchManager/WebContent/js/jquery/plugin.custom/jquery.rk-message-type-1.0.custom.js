@@ -21,8 +21,8 @@
 			var name = "rkMessageTypeOpt" +  $.formatAsId(base.options.id);
 			var selectedIndex = base.options.defaultSelectedOption;
 			
-			if(base.options.rule && $.isNumeric(base.options.rule["replaceKeywordMessageType"]) && base.options.rule["replaceKeywordMessageType"] > 0){
-				selectedIndex = base.options.rule["replaceKeywordMessageType"];
+			if(base.options.rule && $.isNumeric(base.options.rule["replaceKeywordMessageType"]["intValue"]) && base.options.rule["replaceKeywordMessageType"]["intValue"] > 0){
+				selectedIndex = base.options.rule["replaceKeywordMessageType"]["intValue"];
 			}
 			
 			base.$el.find('input:radio[name=' + name + ']:nth(' +  (selectedIndex - 1) + ')').prop("checked", true);
@@ -45,6 +45,7 @@
 								if (data > 0){
 									e.data.rule["replaceKeywordMessageCustomText"] = customText;
 									base.options.successCustomTextUpdateCallback(customText);
+									base.options.afterUpdateCallback();
 								}
 							},
 							preHook: function(){
@@ -91,6 +92,7 @@
 							callback: function(e){
 								if (e > 0){
 									base.options.successTypeUpdateCallback(selectedOption);
+									base.options.afterUpdateCallback();
 								}
 							},
 							preHook: function(){
@@ -147,7 +149,8 @@
 			customText: "Your search query did not yield any results. You might be interested in the following items instead.",
 			rule: null,
 			successTypeUpdateCallback: function(value){},
-			successCustomTextUpdateCallback: function(customText){}
+			successCustomTextUpdateCallback: function(customText){},
+			afterUpdateCallback: function(){}
 	};
 
 	$.fn.rkMessageType = function(options){

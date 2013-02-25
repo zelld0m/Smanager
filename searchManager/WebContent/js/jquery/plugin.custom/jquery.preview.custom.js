@@ -235,7 +235,6 @@
 
 				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
 				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
-				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
 
 				RedirectServiceJS.getRule(base.options.ruleId, {
 					callback: function(data){
@@ -277,11 +276,10 @@
 						}
 
 						if ($.isNotBlank(data["changeKeyword"])){
-							$content.find("div#ruleChange > div#hasChangeKeyword").show();
-							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
-						}else{
-							$content.find("div#ruleChange > #noChangeKeyword").show();
+							$content.find("div#ruleChange").find("#replaceKeywordVal").html(data["changeKeyword"]);
 						}
+					
+						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(data["replaceKeywordMessageType"]["description"]);
 
 						var includeKeywordText = "Include keyword in search: <b>NO</b>";
 						if($.isNotBlank(data["includeKeyword"])){
@@ -636,13 +634,13 @@
 				template += '	<div class="clearB"></div>';
 
 				template += '	<div id="ruleChange" class="ruleChange marB10 w602">';
-				template += '		<div id="noChangeKeyword" class="txtAC mar20" style="display:none">';
-				template += '			<span class="fsize11">No replacement keyword associated to this rule</span>';
+				template += '		<div id="replaceKeyword" class="txtAL border bgf6f6f6 pad5 mar10">';
+				template += '			<span>Replacement Keyword:</span>';
+				template += '			<span id="replaceKeywordVal" class="fbold">None</span>';
 				template += '		</div>';
-				template += '		<div id="hasChangeKeyword" style="display:none">';
-				template += '			<div class="fsize12 txtAL mar20">';
-				template += '				Replace Keyword: <span id="changeKeyword" class="fbold"></span>';
-				template += '			</div>';
+				template += '		<div id="searchHeaderText" class="txtAL border bgf6f6f6 pad5 mar10">';
+				template += '			<span>Search Header Text:</span>';
+				template += '			<span id="searchHeaderTextOpt" class="fbold">None</span>';
 				template += '		</div>';
 				template += '		<div class="clearB"></div>';
 				template += '	</div>';

@@ -592,13 +592,12 @@ public class AuditInterceptor {
 					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));
 				}
 				if(rule.getReplaceKeywordMessageType() != null){
-					int msgType = rule.getReplaceKeywordMessageType();
-					ReplaceKeywordMessageType messageType = ReplaceKeywordMessageType.get(msgType);
+					ReplaceKeywordMessageType messageType = rule.getReplaceKeywordMessageType();
 					
 					if(messageType != null){
 						log.append(String.format("replace keyword message type = [%1$s];", messageType.getDisplayText()));
 						
-						if(messageType == ReplaceKeywordMessageType.DISPLAY_CUSTOM_TEXT && StringUtils.isNotBlank(rule.getReplaceKeywordMessageCustomText())){ //with custom message
+						if(messageType == ReplaceKeywordMessageType.CUSTOM_TEXT && StringUtils.isNotBlank(rule.getReplaceKeywordMessageCustomText())){ //with custom message
 							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
 						}
 					}

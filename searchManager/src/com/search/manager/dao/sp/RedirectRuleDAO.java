@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -107,7 +108,7 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
 	                		isIncludeKeyword,
-	                		rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE),
+	                		ReplaceKeywordMessageType.get(rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE)),
 	                		rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
 	                		);
 	        	}
@@ -405,7 +406,7 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
 			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
-			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType());
+			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType().getIntValue());
 			inputs.put(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, rule.getReplaceKeywordMessageCustomText());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_ACTIVE_FLAG, "ENABLED");
