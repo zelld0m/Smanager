@@ -540,6 +540,13 @@ public class RedirectRuleCondition extends ModelBean {
 			// CNET
 			// TODO: update when MacMall and other stores support CNET Facet Template
 			else if (fieldName.endsWith("_FacetTemplate")) {
+				
+				// get store name here
+				if (StringUtils.isBlank(storeId)) {
+					storeId = StringUtils.lowerCase(StringUtils.substring(fieldName, 0, 
+							StringUtils.indexOf(fieldName, "_FacetTemplate")));
+				}
+				
 				if (fieldValue.endsWith("*")) {
 					fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
 				}

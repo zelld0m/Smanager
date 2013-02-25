@@ -27,7 +27,13 @@
 			    <div class="clearB"></div>
 		    </span>
 		</div>
-		<div id="keyword-list" class="filter padT5 padL5 fsize12 marT8 w95p marRLauto">
+		<div id="button-controls">
+            <a href="javascript:void(0);" id="show-all-button" class="disabled-button">Show All</a>
+            <a href="javascript:void(0);" id="hide-all-button" class="enabled-button">Hide All</a>
+            <a href="javascript:void(0);" id="reset-button" class="enabled-button">Reset</a>
+            <div class="clearB"></div>
+		</div>
+		<div id="keyword-list" class="filter padL5 fsize12 marT8 w95p marRLauto">
 		    <div id="keywordWidgetTemplate" class="itemRow" style="display:none">
 	            <div class="keywordIcons floatR">
 	                <a href="javascript:void(0);" class="active-chart">
@@ -84,7 +90,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
-			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
+			<div id="message" style="font-size: 12px;display:none;">No data to display.</div>
 			<div id="daily-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-2" class="filter padT5 fsize12 marT1">
@@ -103,7 +109,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
-			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
+			<div id="message" style="font-size: 12px;display:none;">No data to display.</div>
 			<div id="weekly-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 		<div id="tabs-3" class="filter padT5 fsize12 marT1">
@@ -159,7 +165,7 @@
 			</div>
 			<div class="clearB"></div>
 			<hr />
-			<div id="message" style="font-size: 12px;display:none;">No data for given date range.</div>
+			<div id="message" style="font-size: 12px;display:none;">No data to display.</div>
 			<div id="monthly-chart" class="chart" style="font-size: 12px;"></div>
 		</div>
 	</div>

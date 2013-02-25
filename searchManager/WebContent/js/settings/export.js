@@ -135,7 +135,16 @@
 					}else if(!isXSSSafe(comment)){
 						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
 					}else{
-						var confirmMsg = "Continue export of the following rules:\n" + Object.keys(self.getSelectedItems()).join('\n');
+						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(self.getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+						
+						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+
 						jConfirm(confirmMsg, "Confirm Export", function(status){
 							if(status){
 								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {

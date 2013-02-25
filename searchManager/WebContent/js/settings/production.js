@@ -100,10 +100,17 @@
 						jAlert("Invalid comment. HTML/XSS is not allowed.","Push to Prod");
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+						
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
+							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
 
-							var confirmMsg = "Continue publishing of the following rules:\n" + Object.keys(getSelectedItems()).join('\n');
 							jConfirm(confirmMsg, "Confirm Publish", function(status){
 								if(status){
 									var exception = false;
@@ -136,31 +143,37 @@
 							break;
 							
 						case "unpublishBtn": 
-							var exception = false;
-							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									postMsg(data,false);	
-									getForProductionList(selRuleFltr);
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									if (!exception) {
-										cleanUpTabContent()
-									}
-									else {
-										$("div.circlePreloader").hide();
-										$(tabSelected).find('table.tblItems').show();
-										$(tabSelected).find('div.filter').show();
-										$(tabSelected).find('div#actionBtn').show();
-									}; 
-								},
-								exceptionHandler: function(message, exc){ 
-									exception = true; 
-									jAlert(message, "Unpublish Rule"); 
+							var confirmMsg = "Continue unpublishing of the following rules:\n" + a.join('\n');
+							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											postMsg(data,false);	
+											getForProductionList(selRuleFltr);
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Unpublish Rule"); 
+										}
+									});
 								}
-							});break;
+							});
+							break;
 						}	
 					}
 				}

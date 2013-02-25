@@ -261,6 +261,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			resultObject.element(SolrConstants.TAG_DEMOTE_TYPE, String.valueOf(result.getEntity()));
 			if (result.getEntity() == MemberTypeEntity.FACET) {
 				resultObject.element(SolrConstants.TAG_DEMOTE_CONDITION, result.getCondition().getReadableString());						
+			} else {
+				if(forceAddedEDPs != null && forceAddedEDPs.contains(((DemoteResult) result).getEdp())) {
+					resultObject.element(SolrConstants.TAG_FORCE_ADD, "");
+				}
 			}
 			resultObject.element(SolrConstants.TAG_DEMOTE_ID, String.valueOf(result.getMemberId()));
 		}

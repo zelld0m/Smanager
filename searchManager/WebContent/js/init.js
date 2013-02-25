@@ -59,7 +59,6 @@ showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
 	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
-	case  2: jAlert("Successful force " + action + " request for " + param, "Successful Request"); break;
 	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };

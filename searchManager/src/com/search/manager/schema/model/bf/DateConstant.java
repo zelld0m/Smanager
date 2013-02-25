@@ -98,9 +98,9 @@ public class DateConstant extends Constant {
 		else {
 			isValid = false;
 		}
-		if (!isValid) {
+		/*if (!isValid) {
 			throw new SchemaException("Invalid Date Format: " + value + "! Date should be either in ISO8601 Canonical Date Format (e.g. 2000-01-01T00:00:00Z) or the value \"NOW\". ");
-		}
+		}*/
 		return isValid;
 	}
 	

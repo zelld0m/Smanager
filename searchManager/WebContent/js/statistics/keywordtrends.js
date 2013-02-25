@@ -36,6 +36,7 @@
 					self.showChart();
 				});
 				this.show();
+				Utils.setControlButtons();
 			},
 			show : function() {
 				this.el.show();
@@ -43,19 +44,23 @@
 			hide : function() {
 				this.el.hide();
 			},
-			showChart : function() {
+			showChart : function(defer) {
 				this.chartVisible = true;
 				this.el.find(".inactive-chart").hide();
 				this.el.find(".active-chart").show();
-				Utils.setChartVisible(keyword, true);
+				Utils.setChartVisible(keyword, true, defer);
+				Utils.setControlButtons();
 			},
-			hideChart : function() {
+			hideChart : function(defer) {
 				this.chartVisible = false;
 				this.el.find(".active-chart").hide();
 				this.el.find(".inactive-chart").show();
-				Utils.setChartVisible(keyword, false);
+				Utils.setChartVisible(keyword, false, defer);
+				Utils.setControlButtons();
 			},
 			destroy : function() {
+				delete Keywords[keyword];
+
 				for (tab in Tabs) {
 					var idx = -1;
 
@@ -72,11 +77,13 @@
 					}
 				}
 
-				delete Keywords[keyword];
+				Utils.refreshSelection();
+				Utils.setControlButtons();
 				this.el.remove();
 			}
 		};
 
+		Keywords[keyword] = k;
 		k.init();
 
 		return k;
@@ -166,6 +173,11 @@
 
 				self.fromDate = $("#fromDate").datepicker("getDate");
 				self.toDate = $("#toDate").datepicker("getDate");
+				Utils.dateLoaded = true;
+
+				if (!Utils.fullyLoaded) {
+					loadInitialData();
+				}
 			}});
 			$("#updateDateBtn").click(new Handler.UpdateHandler(this));
 		}
@@ -321,7 +333,8 @@
 	Handler.AddKeywordHandler = function() {
 		return function(e) {
 			Utils.addKeyword($("#searchTextbox").val());
-			$("#searchTextbox").val("Search Keyword");
+			$("#searchTextbox").val("");
+			$("#searchTextbox").blur();
 		};
 	};
 
@@ -335,6 +348,40 @@
 			}
 		};
 	};
+	
+	/*
+	 * Click handlers for buttons
+	 */
+	Handler.showAll = function() {
+		for(key in Keywords) {
+			Keywords[key].showChart(true);
+		}
+
+		for (tab in Tabs) {
+			Utils.drawChart(Tabs[tab]);
+		}
+	};
+
+	Handler.hideAll = function() {
+		for(key in Keywords) {
+			Keywords[key].hideChart(true);
+		}
+
+		for (tab in Tabs) {
+			Utils.drawChart(Tabs[tab]);
+		}
+	};
+
+	Handler.clear = function() {
+		for(key in Keywords) {
+			Keywords[key].destroy();
+		}
+	};
+
+	Handler.reset = function() {
+		loadInitialData();
+	};
+	
 
 	//////////////////////////////////////////////////////////////////
 	//                     Utility methods                          //
@@ -393,11 +440,44 @@
 		keyword = keyword && keyword.toLowerCase().trim();
 
 		if (keyword && keyword != "search keyword" && !Keywords[keyword]) {
-			Keywords[keyword] = new Keyword(keyword);
+			new Keyword(keyword);
 
 			for (tab in Tabs) {
 				Utils.getStatsForNewKeyword(keyword, Tabs[tab]);
 			}
+
+			Utils.addToSelection(keyword);
+		}
+	};
+
+	Utils.addToSelection = function(keyword) {
+		var currentSelection = Utils.getCurrentSelection();
+
+		currentSelection.push(keyword);
+		Utils.setCurrentSelection(currentSelection);
+	}; 
+
+	Utils.getCurrentSelection = function() {
+		var str = $.cookie("selected-keywords");
+
+		if (str) {
+			return JSON.parse(str);
+		} else {
+			return new Array();
+		}
+	};
+
+	Utils.setCurrentSelection = function(keywords) {
+		$.cookie("selected-keywords", JSON.stringify(keywords), {path:GLOBAL_contextPath});
+	};
+
+	Utils.refreshSelection = function() {
+		Utils.setCurrentSelection(Utils.getSelectedKeywords());
+	};
+
+	Utils.addAll = function(keywords) {
+		for (var i = 0; i < keywords.length; i++) {
+			Utils.addKeyword(keywords[i]);
 		}
 	};
 
@@ -486,19 +566,43 @@
 		if (tab.chart) {
 			tab.chart.destroy();
 		}
-
-		if (tab.hasData()) {
+		
+		if (tab.hasData() && Utils.hasVisibleKeyword()) {
 			tab.el.find("#message").hide();
 			tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
 		} else {
 			tab.el.find("#message").show();
 		}
 	};
+	
+	Utils.setControlButtons = function() {
+		if (Object.keys(Keywords).length) {
+			$("#button-controls #hide-all-button").show();
+			$("#button-controls #show-all-button").show();
+			$("#button-controls #reset-button").text("Clear").off().on({click: Handler.clear});
+
+			if (Utils.hasVisibleKeyword()) {
+				$("#button-controls #hide-all-button").removeClass("disabled-button").addClass("enabled-button").off().on({click: Handler.hideAll});
+			} else {
+				$("#button-controls #hide-all-button").removeClass("enabled-button").addClass("disabled-button").off();
+			}
+
+			if (Utils.hasInvisibleKeyword()) {
+				$("#button-controls #show-all-button").removeClass("disabled-button").addClass("enabled-button").off().on({click: Handler.showAll});
+			} else {
+				$("#button-controls #show-all-button").removeClass("enabled-button").addClass("disabled-button").off();
+			}
+		} else {
+			$("#button-controls #hide-all-button").hide();
+			$("#button-controls #show-all-button").hide();
+			$("#button-controls #reset-button").text("Reset").off().on({click: Handler.reset});
+		}
+	};
 
 	/*
 	 * Set plot for given keyword visible/invisible on all charts.
 	 */
-	Utils.setChartVisible = function(keyword, visibility) {
+	Utils.setChartVisible = function(keyword, visibility, deferDrawing) {
 		for (tab in Tabs) {
 			for (var i = 0; i < Tabs[tab].seriesList.length; i++) {
 				if (Tabs[tab].seriesList[i].label == keyword) {
@@ -507,8 +611,36 @@
 				}
 			}
 			
-			Utils.drawChart(Tabs[tab]);
+			if (!deferDrawing) {
+				Utils.drawChart(Tabs[tab]);
+			}
 		}
+	};
+
+	/*
+	 * Set plot for given keyword visible/invisible on all charts.
+	 */
+	Utils.hasVisibleKeyword = function() {
+		for (key in Keywords) {
+			if (Keywords[key].chartVisible) {
+				return true;
+			}
+		}
+		
+		return false;
+	};
+
+	/*
+	 * Set plot for given keyword visible/invisible on all charts.
+	 */
+	Utils.hasInvisibleKeyword = function() {
+		for (key in Keywords) {
+			if (!Keywords[key].chartVisible) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 	
 	Utils.getLastDayOfMonth = function(date) {
@@ -565,11 +697,18 @@
 	 * Load top ten keywords from most recent log. 
 	 */
 	var loadInitialData = function() {
-		KeywordTrendsServiceJS.getTopTenKeywords({callback: function(list) {
-			for (var i = 0; i < list.length; i++) {
-				Utils.addKeyword(list[i]);
+		if (Utils.dateLoaded) {
+			var currentSelection = Utils.getCurrentSelection();
+	
+			if (currentSelection.length) {
+				Utils.setCurrentSelection([]);
+				Utils.addAll(currentSelection);
+			} else {
+				KeywordTrendsServiceJS.getTopTenKeywords({callback: Utils.addAll});
 			}
-		}});
+
+			Utils.fullyLoaded = true;
+		}
 	};
 
 	/*

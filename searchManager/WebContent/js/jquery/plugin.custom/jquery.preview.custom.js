@@ -554,7 +554,7 @@
 				
 
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
-				template += '		<ul class="posRel top5" style="z-index:100">';
+				template += '		<ul class="posRel top5 padB0" style="z-index:100">';
 
 				if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
 					template += '			<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
@@ -564,7 +564,7 @@
 				template += '		</ul>';
 
 				template += '		<div id="ruleField" class="ruleField">';
-				template += '			<div class="w580 mar0 padLR5">';
+				template += '			<div class="w582 mar0 padLR10">';
 				template += '				<table class="tblItems w100p marT10" id="itemHeader">';
 				template += '					<tbody>';
 				template += '						<tr>';
@@ -574,7 +574,7 @@
 				template += '					<tbody>';
 				template += '				</table>';
 				template += '			</div>';
-				template += '			<div style="max-height:180px; overflow-y:auto;" class="w580 mar0">';
+				template += '			<div style="max-height:180px; overflow-y:auto;" class="w582 marLRB10">';
 				template += '				<table id="item" style="border-collapse:collapse" class="tblItems w100p marB10">';
 				template += '					<tbody>';
 				template += '						<tr id="itemPattern" class="itemRow" style="display: none">';
@@ -628,14 +628,14 @@
 			case "query cleaning": 
 				template += '<div id="rankingSummary" class="infoTabs marB20 tabs">';
 
-				template += '	<ul class="posRel top5" style="z-index:100">';
+				template += '	<ul class="posRel top5 padB0" style="z-index:100">';
 				template += '		<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
 				template += '		<li><a href="#ruleFilter"><span>Filter</span></a></li>';
 				template += '		<li><a href="#ruleChange"><span>Replace KW</span></a></li>';
 				template += '	</ul>';
 				template += '	<div class="clearB"></div>';
 
-				template += '	<div id="ruleChange" class="ruleChange marB10">';
+				template += '	<div id="ruleChange" class="ruleChange marB10 w602">';
 				template += '		<div id="noChangeKeyword" class="txtAC mar20" style="display:none">';
 				template += '			<span class="fsize11">No replacement keyword associated to this rule</span>';
 				template += '		</div>';
@@ -648,7 +648,7 @@
 				template += '	</div>';
 
 				template += '	<div class="clearB"></div>';
-				template += '	<div id="ruleFilter" class="ruleFilter marB10">';
+				template += '	<div id="ruleFilter" class="ruleFilter marB10 w602">';
 				template += '		<div id="includeKeywordInSearchText" class="includeKeywordInSearchText border bgf6f6f6 w570 pad5 mar10"></div>';
 				template += '		<div class="w580 mar0 padLR5">';
 				template += '			<table class="tblItems w100p marT10" id="itemHeader">';
@@ -678,7 +678,7 @@
 				template += '	</div>';
 
 				template += '	<div class="clearB"></div>';
-				template += '	<div id="ruleKeyword" class="ruleKeyword marB10">';
+				template += '	<div id="ruleKeyword" class="ruleKeyword marB10 w602">';
 				template += '		<div class="w580 mar0 padLR5">';
 				template += '			<table class="tblItems w100p marT10" id="itemHeader">';
 				template += '				<tbody>';
