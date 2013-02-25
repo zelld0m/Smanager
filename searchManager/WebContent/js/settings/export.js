@@ -133,7 +133,15 @@
 					}else if (!validateComment(self.moduleName,comment,1)){
 						//error message in validateComment
 					}else{
-						var confirmMsg = "Continue export of the following rules:\n" + Object.keys(self.getSelectedItems()).join('\n');
+						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(self.getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+						
+						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
 						comment = comment.replace(/\n\r?/g, '<br/>');
 						jConfirm(confirmMsg, "Confirm Export", function(status){
 							if(status){
