@@ -35,6 +35,10 @@ public class ConfigManager {
     //TODO: will eventually move out if settings is migrated to DB instead of file
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
     
+    private ConfigManager() {
+    	// do nothing...
+    }
+    
     private ConfigManager(String configPath) {
 		try {
 			xmlConfig = new XMLConfiguration();
@@ -174,6 +178,10 @@ public class ConfigManager {
         	instance = new ConfigManager(configPath);
     	}
     	return instance;
+    }
+    
+    public void setInstance(String configPath) {
+    	getInstance(configPath);
     }
     
     public static ConfigManager getInstance() {
