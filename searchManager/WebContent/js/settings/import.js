@@ -628,6 +628,8 @@
 			importRejectRules: function() {
 				var self = this;
 				var exception = false;
+				var $selectedTab = $("#"+self.tabSelected);
+				var comment = $.trim($selectedTab.find("#comment").val());
 					
 				jConfirm(self.getConfirmationMessage(), "Confirm Import", function(status){
 					if(status){
