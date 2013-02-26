@@ -1614,6 +1614,7 @@
 
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
+						var valid = true;
 
 						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Category Code", condMap["CatCode"])){
 							return;
@@ -1621,6 +1622,19 @@
 
 						if ($.isEmptyObject(condMap)){
 							jAlert('Please specify at least one filter condition',"Query Cleaning");
+							return;
+						}else{
+							$.each(condMap, function(idx, el){
+								$.each(el, function(i,elem){
+									if(!validateGeneric("Input", elem)) {
+										valid = false;
+										return;
+									}
+								});
+							});
+						}
+						
+						if(!valid){
 							return;
 						}
 
