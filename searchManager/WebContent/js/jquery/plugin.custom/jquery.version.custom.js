@@ -138,13 +138,16 @@
 				if(index !== "current"){
 					$li.find("label.restoreIcon, a#restoreBtn").off().on({
 						click:function(e){
-							jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-								if(result){
-									base.restoreVersion(e.data.item);
-								}
-							});
-						}
-					},{item: item})
+							if (!e.data.locked) {
+								jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+									if(result){
+										base.restoreVersion(e.data.item);
+									}
+								});
+							}
+						},
+						mouseenter: showHoverInfo
+					},{item: item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."})
 					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
@@ -462,13 +465,16 @@
 
 			$tr.find(".restoreIcon").off().on({
 				click:function(e){
-					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-						if(result){
-							base.restoreVersion(e.data.item);
-						}
-					});
-				}
-			},{item: $item});
+					if (!e.data.locked) {
+						jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+							if(result){
+								base.restoreVersion(e.data.item);
+							}
+						});
+					}
+				},
+				mouseenter: showHoverInfo,
+			},{item: $item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 		};
 
 		base.restoreVersion = function(item){
