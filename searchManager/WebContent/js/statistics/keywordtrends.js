@@ -22,7 +22,7 @@
 				var self = this;
 
 				this.el.attr("id", "keyword-" + keyword);
-				this.el.find(".keyword").html(keyword);
+				this.el.find(".keyword").text(keyword);
 				$("#keyword-list").append(this.el);
 
 				// add event listeners
@@ -439,7 +439,17 @@
 	Utils.addKeyword = function(keyword) {
 		keyword = keyword && keyword.toLowerCase().trim();
 
-		if (keyword && keyword != "search keyword" && !Keywords[keyword]) {
+		if (keyword == "search keyword") {
+			keyword = "";
+		}
+
+		var valid = validateGeneric("Keyword", keyword, 0, 50);
+
+		if (valid && !keyword) {
+			jAlert("Keyword is required.");
+		} else if (valid && Keywords[keyword]) {
+			jAlert("Keyword <b>" + keyword + "</b> already exists.");
+		} else if (valid) {
 			new Keyword(keyword);
 
 			for (tab in Tabs) {
