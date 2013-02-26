@@ -43,6 +43,31 @@ validateEmail = function(fieldName, fieldValue, length) {
 	return true;
 };
 
+validateComment = function(moduleName, comment, minLength, maxLength){
+	if(minLength != undefined && minLength > 0) {
+		if ($.isBlank(comment)) {
+			jAlert("Please add a comment.",moduleName);
+			return false;
+		}
+		else if (comment.length < minLength){
+			jAlert("Comment should be at least " + minLength + " characters.",moduleName);
+			return false;
+		}
+	}
+	
+	if (maxLength != undefined && $.isNotBlank(comment) && comment.length > maxLength){
+		jAlert("Comment cannot exceed " + maxLength + " characters.",moduleName);
+		return false;
+	}
+	
+	if(!isXSSSafe(comment)){
+		jAlert("Invalid comment. HTML/XSS is not allowed.",moduleName);
+		return false;
+	}
+	
+	return true;
+};
+
 validateDate = function(fieldName, fieldValue, length, minDate) {
 	if (!validateGeneric(fieldName, fieldValue, length)) {
 		return false;

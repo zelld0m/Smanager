@@ -46,6 +46,7 @@ import com.search.manager.model.Keyword;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
+import com.search.manager.model.Relevancy.Parameter;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
@@ -622,6 +623,11 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					for (String paramName: parameters.keySet()) {
 						String paramValue = parameters.get(paramName);
 						if (StringUtils.isNotEmpty(paramValue)) {
+							if (StringUtils.equals(Parameter.PARAM_QUERY_FIELDS.toString(), paramName)) {
+								// insert VW into possible matches
+								// TODO: put in config file?
+								paramValue += " VW_DPNo_Index^0 VW_PN_Index^0";
+							}
 							paramValue = StringUtils.replaceEach(paramValue, map.keySet().toArray(new String[0]), map.values().toArray(new String[0]));
 							logger.debug("adding " + paramName + ": " + paramValue);
 							nvp = new BasicNameValuePair(paramName, paramValue);
@@ -647,6 +653,11 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					for (String paramName: parameters.keySet()) {
 						String paramValue = parameters.get(paramName);
 						if (StringUtils.isNotEmpty(paramValue)) {
+							if (StringUtils.equals(Parameter.PARAM_QUERY_FIELDS.toString(), paramName)) {
+								// insert VW into possible matches
+								// TODO: put in config file?
+								paramValue += " VW_DPNo_Index^0 VW_PN_Index^0";
+							}
 							logger.debug("adding " + paramName + ": " + paramValue);
 							nvp = new BasicNameValuePair(paramName, paramValue);
 							if (addNameValuePairToMap(paramMap, paramName, nvp)) {
