@@ -1182,10 +1182,11 @@
 
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
-								var comment = base.contentHolder.find("#comment").val();
-								if ($.isBlank(comment)){
-									jAlert("Please add comment.", base.options.transferType);
+								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "");
+								if(!validateComment(base.options.transferType, comment, 1)){
+									//error message in validateComment
 								}else{
+									comment = comment.replace(/\n\r?/g, '<br/>');
 									switch($(evt.currentTarget).attr("id")){
 									case "okBtn": 
 										switch(base.options.transferType.toLowerCase()){

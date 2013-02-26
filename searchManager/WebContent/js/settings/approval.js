@@ -85,7 +85,7 @@
 		var approvalHandler = function(){
 			$(tabSelected).find("a#approveBtn, a#rejectBtn").on({
 				click: function(evt){
-					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 
 					if (getSelectedRefId().length==0){
 						jAlert("Please select rule","Approval");
@@ -601,9 +601,11 @@
 
 			$content.find("a#approveBtn, a#rejectBtn").off().on({
 				click: function(evt){
-					var comment = $content.find("#approvalComment").val();
+					var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
 
-					if ($.isNotBlank(comment)){
+					if (validateComment("Approval",comment,1)){
+						comment = comment.replace(/\n\r?/g, '<br/>');
+						
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn": 
 							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
@@ -631,8 +633,6 @@
 								}
 							});break;
 						}	
-					}else{
-						jAlert("Please add comment.","Approval");
 					}
 				}
 			});

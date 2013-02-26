@@ -396,7 +396,8 @@
 											var sortType = $.trim($contentHolder.find("select#popSortOrder >option:selected:eq(0)").val());
 
 											if($contentHolder.find('div#keywordinput').is(":visible")){
-												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
+												popName = $contentHolder.find('input[id="popKeywordName"]').val();
+												popName = $.trim(popName.replace(/\s+(?=\s)/g,''));
 												ruleNameLabel = "Keyword";
 											}
 											else if($contentHolder.find('div#templatelist').is(":visible")){

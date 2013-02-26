@@ -90,14 +90,12 @@
 		var publishHandler = function(){
 			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
-					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 					
 					if(getSelectedRefId().length==0){
 						jAlert("Please select rule","Push to Prod");
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment","Push to Prod");
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.","Push to Prod");
+					}else if (!validateComment("Push to Prod", comment, 1)){
+						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						var a = [];
@@ -106,7 +104,8 @@
 						$.each(arrSelectedKeys, function(k){ 
 							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
-						
+
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
 							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');

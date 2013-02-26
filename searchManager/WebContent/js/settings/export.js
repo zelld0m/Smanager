@@ -126,14 +126,12 @@
 			
 			$selectedTab.find("a#okBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#comment").val());
+					var comment = $.defaultIfBlank($.trim($selectedTab.find("#comment").val()), "");
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment", self.moduleName);
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+					}else if (!validateComment(self.moduleName,comment,1)){
+						//error message in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
 						var a = [];
@@ -144,6 +142,7 @@
 						});
 						
 						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						jConfirm(confirmMsg, "Confirm Export", function(status){
 							if(status){
 								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
