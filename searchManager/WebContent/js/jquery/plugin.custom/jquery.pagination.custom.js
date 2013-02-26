@@ -187,7 +187,7 @@
 			}
 
 			var page = $.trim($(e.target).val());
-			if (charCode == 13 && $.isNumeric(page)){
+			if (charCode == 13 && $.isNumeric(page) && page>0){
 				if (page != e.data.currentPage && page <= e.data.totalPages){
 					e.data.page = page;
 					base.options.pageLinkCallback(e);
