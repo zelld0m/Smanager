@@ -949,6 +949,8 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			});
 			tasks++;
 
+			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
+			
 			// TASK 1B - get spellcheck if requested
 			/* Run spellcheck if needed */
 			if (performSpellCheck) {
@@ -966,8 +968,6 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				});
 				tasks++;
 			}
-
-			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
 
 			// exclude demoted items
 			if (demoteFilters.length() > 0) {

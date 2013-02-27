@@ -410,7 +410,7 @@ public abstract class SolrResponseParser {
 	
 	protected void logSolrError(HttpPost post, String description, Exception e) {
 		StringBuilder builder = new StringBuilder();
-		builder.append(description).append(": ").append(requestPath);
+		builder.append(description).append(": ").append(post.getRequestLine().getUri());
 		if (post != null && post.getEntity() != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
@@ -419,7 +419,7 @@ public abstract class SolrResponseParser {
 			} catch (IOException e1) {
 			}
 		}
-		logger.error(builder.toString());
+		logger.error(builder.toString(), e);
 	}
 
 	protected String getSpellCheckRequestPath() {

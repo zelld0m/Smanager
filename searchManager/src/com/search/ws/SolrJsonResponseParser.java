@@ -764,7 +764,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			spellcheckParams = tmpJson.getJSONObject(SolrConstants.ATTR_NAME_VALUE_RESPONSE_HEADER)
 								 	.getJSONObject(SolrConstants.ATTR_NAME_VALUE_PARAMS);
 		} catch (Exception e) {
-			String error = "Error occured while trying to get items";
+			String error = "Error occured while trying to get spelling suggestion";
 			logSolrError(post, error, e);
 			throw new SearchException(error ,e);
 		} finally {
