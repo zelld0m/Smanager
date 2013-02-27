@@ -1,5 +1,6 @@
 package com.search.manager.solr.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,40 +16,25 @@ public class SolrServerFactory {
 	private static SolrServerFactory instance = null;
 	private static Map<String, LocalSolrServerRunner> solrServers;
 	private List<String> cores;
-	private String solrUrl;
 
 	private SolrServerFactory() {
 		// do nothing...
 	}
 
-	public static SolrServerFactory getInstance(String solrUrl,
-			List<String> cores) {
-		if (instance == null) {
+	public SolrServerFactory(List<LocalSolrServerRunner> localSolrServerRunners) {
+		if (localSolrServerRunners != null) {
 			instance = new SolrServerFactory();
-			instance.solrUrl = solrUrl;
-			instance.cores = cores;
-			initCores(solrUrl, cores);
-		}
-
-		return instance;
-	}
-
-	private static void initCores(String solrUrl, List<String> cores) {
-		if (solrServers == null) {
 			solrServers = new HashMap<String, LocalSolrServerRunner>();
-			for (String core : cores) {
-				try {
-					LocalSolrServerRunner server = new LocalSolrServerRunner(
-							solrUrl, core);
-					if (!solrServers.containsKey(core)) {
-						solrServers.put(core, server);
-						logger.info("Core instance = " + core + "[" + server
-								+ "]");
-					} else {
-						logger.info("Duplicate core = " + core);
-					}
-				} catch (SolrServerException e) {
-					logger.error("Error in creating solrServer for " + core, e);
+			cores = new ArrayList<String>();
+
+			for (LocalSolrServerRunner localSolrServerRunner : localSolrServerRunners) {
+				cores.add(localSolrServerRunner.getCoreName());
+				if (localSolrServerRunner.initLocalSolrServerRunner()) {
+					solrServers.put(localSolrServerRunner.getCoreName(),
+							localSolrServerRunner);
+				} else {
+					logger.error("Unable to initialize localSolrServerRunner for "
+							+ localSolrServerRunner.getCoreName() + ".");
 				}
 			}
 		}
@@ -56,15 +42,51 @@ public class SolrServerFactory {
 
 	public LocalSolrServerRunner getCoreInstance(String core)
 			throws SolrServerException {
-		if (instance == null) {
-			getInstance(solrUrl, cores);
+		if (instance != null) {
+			LocalSolrServerRunner server = solrServers.get(core);
+			if (server != null) {
+				return server;
+			}
+			throw new SolrServerException("Core not found exception. " + core);
 		}
-		LocalSolrServerRunner server = solrServers.get(core);
-		if (server != null) {
-			return server;
+		throw new SolrServerException("SolrServerFactory not initialized. ");
+	}
+
+	public boolean resetSolrServers() {
+		if (cores != null) {
+			for (String core : cores) {
+				LocalSolrServerRunner localSolrServerRunner = solrServers
+						.get(core);
+				if (localSolrServerRunner.initLocalSolrServerRunner()) {
+					solrServers.put(core, localSolrServerRunner);
+				} else {
+					logger.error("Unable to reset localSolrServerRunner for "
+							+ core + ".");
+				}
+				return true;
+			}
 		}
-		logger.debug("Core not found. " + core);
-		throw new SolrServerException("Core not found exception. " + core);
+		return false;
+	}
+
+	public boolean resetSolrServer(String core) {
+		if (instance != null) {
+			if (solrServers.containsKey(core)) {
+				LocalSolrServerRunner localSolrServerRunner = solrServers
+						.get(core);
+				if (localSolrServerRunner.initLocalSolrServerRunner()) {
+					solrServers.put(core, localSolrServerRunner);
+				} else {
+					logger.error("Unable to reset localSolrServerRunner for "
+							+ core + ".");
+					return false;
+				}
+
+			}
+			return false;
+		}
+
+		return false;
 	}
 
 	public boolean shutdown() {
@@ -72,11 +94,12 @@ public class SolrServerFactory {
 			for (String core : cores) {
 				if (solrServers.containsKey(core)) {
 					try {
-						logger.info("Shutting down Core = "
-								+ solrServers.get(core));
+						logger.info("Shutting down core = "
+								+ solrServers.get(core) + ".");
 						solrServers.get(core).shutdown();
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.error("Error in shutting down core = "
+								+ solrServers.get(core) + ".");
 					}
 				}
 			}
@@ -84,14 +107,6 @@ public class SolrServerFactory {
 		}
 
 		return false;
-	}
-
-	public String getSolrUrl() {
-		return solrUrl;
-	}
-
-	public void setSolrUrl(String solrUrl) {
-		this.solrUrl = solrUrl;
 	}
 
 	public List<String> getCores() {
