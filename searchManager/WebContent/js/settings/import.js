@@ -511,14 +511,14 @@
 							var validImport = true;
 
 							if(importedItems.length > 0) {
-								if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
+								if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
+									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
+									validImport = false;
+								}else if(self.hasDuplicateImportAsId('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as value. Please check selected rules to import.", self.moduleName);
 									validImport = false;
 								}else if(self.hasDuplicateImportAsName('import')){	//check if all selected rules have ruleName value
 									jAlert("Duplicate selected import as new name. Please check selected rules to import.", self.moduleName);
-									validImport = false;
-								}else if(!self.checkSelectedImportAsName('import')){	//check if all selected rules have ruleName value
-									jAlert("Import As name is required. Please check selected rules to import.", self.moduleName);
 									validImport = false;
 								} else {
 									validImport = true;

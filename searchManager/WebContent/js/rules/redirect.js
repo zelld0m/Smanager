@@ -729,6 +729,7 @@
 				CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
 					callback: function(data){
 						var list = data;
+						$select.find("option").remove();
 						$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 						for(var i=0; i<list.length; i++){
 							$select.append($("<option>", {value: list[i]}).text(list[i]));
@@ -1008,6 +1009,7 @@
 				CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
 					callback: function(data){
 						var list = data;
+						$select.find("option").remove();
 						$select.append($("<option>", {value: ""}).text("-Select Manufacturer-"));
 						for(var i=0; i<list.length; i++){
 							if($.isNotBlank(list[i]))
@@ -1341,6 +1343,11 @@
 					}else{
 						$table.find("tr.catName").hide();
 						$table.find("tr.catCode").show();
+						
+						if ($.isNotBlank(condition)){
+							$table.find("input#catcode").val(condition.IMSFilters["CatCode"]);
+						}
+						
 						self.populateIMSManufacturers(ui, condition);
 					}
 					self.populateIMSTemplateNames(ui, condition);
@@ -1617,6 +1624,7 @@
 
 						var $item = $(this).parents(".conditionItem");
 						var condMap = self.buildConditionAsMap($item);
+						var valid = true;
 
 						if (!$.isBlank(condMap["CatCode"]) && !validateCatCode("Category Code", condMap["CatCode"])){
 							return;
@@ -1624,6 +1632,19 @@
 
 						if ($.isEmptyObject(condMap)){
 							jAlert('Please specify at least one filter condition',"Query Cleaning");
+							return;
+						}else{
+							$.each(condMap, function(idx, el){
+								$.each(el, function(i,elem){
+									if(!validateGeneric("Input", elem)) {
+										valid = false;
+										return;
+									}
+								});
+							});
+						}
+						
+						if(!valid){
 							return;
 						}
 
@@ -1871,7 +1892,6 @@
 								var item = list[i];
 								var $divItem = $divItemList.find('div#conditionItemPattern').clone();
 								$divItem.prop("id", item["sequenceNumber"]);
-								
 								$divItem.find(".conditionFormattedText").text(item["readableString"]);
 								$divItem.find("tr.catCode,tr.catName").hide();
 								$divItem.show();

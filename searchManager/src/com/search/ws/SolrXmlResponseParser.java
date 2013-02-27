@@ -694,7 +694,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 			
 		} catch (Exception e) {
-			String error = "Error occured while trying to get items";
+			String error = "Error occured while trying to get spelling suggestion";
 			logSolrError(post, error, e);
 			throw new SearchException(error ,e);
 		} finally {

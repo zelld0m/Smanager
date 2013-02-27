@@ -215,9 +215,7 @@
 				if($.isNotBlank(base.options.selectedOpt)) {
 					$importAsSelect.val(base.options.selectedOpt);
 				}
-				if($.isNotBlank(base.options.newName)) {
-					$replacement.find("input#newName").val(base.options.newName);
-				}
+				
 				break;
 			}
 
@@ -244,6 +242,14 @@
 					}
 				}
 			});
+			
+			if(base.options.inPreview && (ruleEntity==="RANKING_RULE" || ruleEntity==="QUERY_CLEANING")){
+				if($.isNotBlank(base.options.newName)) {
+					base.toggleFields($importAsSelect, null, rule, false);
+					$replacement.find("input#newName").val(base.options.newName);
+				}
+			}
+			
 
 		};
 
