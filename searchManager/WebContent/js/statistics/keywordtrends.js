@@ -16,6 +16,7 @@
 		var k = {
 			el : $("#keywordWidgetTemplate").clone(),
 			keyword : keyword,
+			color: Utils.color(),
 			chartVisible : true,
 			init : function() {
 				// use self to refer to this object inside event handlers
@@ -79,6 +80,7 @@
 
 				Utils.refreshSelection();
 				Utils.setControlButtons();
+				Utils.returnColor(this.color);
 				this.el.remove();
 			}
 		};
@@ -418,11 +420,11 @@
 	/*
 	 * Retrieve stats for all keywords for a given tab.
 	 */
-	Utils.updateAllStats = function(tab) {
+	Utils.updateAllStats = function(tab, callback) {
 		// Get stats for all listed keywords
 		KeywordTrendsServiceJS.getStats(Utils.getSelectedKeywords(),
 				$.asUTC(tab.fromDate), $.asUTC(tab.toDate), tab.collation, {
-					callback : function(data) {
+					callback : callback || function(data) {
 						for ( var i = 0; i < data.length; i++) {
 							tab.setData(data[i].keyword, data[i].stats);
 						}
@@ -450,10 +452,10 @@
 		} else if (valid && Keywords[keyword]) {
 			jAlert("Keyword <b>" + keyword + "</b> already exists.");
 		} else if (valid) {
-			new Keyword(keyword);
+			var kw = new Keyword(keyword);
 
 			for (tab in Tabs) {
-				Utils.getStatsForNewKeyword(keyword, Tabs[tab]);
+				Utils.getStatsForNewKeyword(kw, Tabs[tab]);
 			}
 
 			Utils.addToSelection(keyword);
@@ -487,7 +489,22 @@
 
 	Utils.addAll = function(keywords) {
 		for (var i = 0; i < keywords.length; i++) {
-			Utils.addKeyword(keywords[i]);
+			new Keyword(keywords[i]);
+			Utils.addToSelection(keywords[i]);
+		}
+
+		for (tab in Tabs) {
+			Utils.updateAllStats(Tabs[tab], new function(curtab) {
+				return function(data) {
+					for ( var i = 0; i < data.length; i++) {
+						var series = new Series(data[i]);
+						series.color = Keywords[data[i].keyword].color;
+
+						curtab.seriesList.push(series);
+						Utils.drawChart(curtab);
+					}
+				};
+			}(Tabs[tab]));
 		}
 	};
 
@@ -495,10 +512,11 @@
 	 * Retrieve stats for newly added keyword.
 	 */
 	Utils.getStatsForNewKeyword = function(keyword, tab) {
-		KeywordTrendsServiceJS.getStats(keyword, $.asUTC(tab.fromDate), $.asUTC(tab.toDate),
+		KeywordTrendsServiceJS.getStats(keyword.keyword, $.asUTC(tab.fromDate), $.asUTC(tab.toDate),
 				tab.collation, {
 					callback : function(data) {
 						var series = new Series(data);
+						series.color = keyword.color;
 
 						tab.seriesList.push(series);
 						Utils.drawChart(tab);
@@ -625,6 +643,23 @@
 				Utils.drawChart(Tabs[tab]);
 			}
 		}
+	};
+	
+	Utils.colors =  ["#4bb2c5", "#EAA228", "#c5b47f", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc", "#c747a3", "#cddf54", "#FBD178", "#26B4E3", "#bd70c7",
+          "#498991", "#C08840", "#9F9274", "#546D61", "#646C4A", "#6F6621", "#6E3F5F", "#4F64B0", "#A89050", "#C45923", "#187399", "#945381", "#959E5C", "#C7AF7B", "#478396", "#907294"];
+
+	Utils.color = function() {
+		if (Utils.colors.length == 0) {
+			Utils.colors.push("#" + ("000000" + Math.floor(Math.random() * 0x1000000).toString(16)).slice(-6));
+		}
+
+		var c = Utils.colors[0];
+		Utils.colors.splice(0, 1);
+		return c;
+	};
+
+	Utils.returnColor = function(c) {
+		Utils.colors.push(c);
 	};
 
 	/*
