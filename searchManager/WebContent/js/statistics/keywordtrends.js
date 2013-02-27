@@ -650,7 +650,7 @@
 
 	Utils.color = function() {
 		if (Utils.colors.length == 0) {
-			Utils.colors.push("#" + Math.lower((Math.random() * 0x1000000)).toString(16).substring(0, 6));
+			Utils.colors.push("#" + ("000000" + Math.floor(Math.random() * 0x1000000).toString(16)).slice(-6));
 		}
 
 		var c = Utils.colors[0];
