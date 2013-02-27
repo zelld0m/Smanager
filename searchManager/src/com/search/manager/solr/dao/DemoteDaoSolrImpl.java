@@ -48,7 +48,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -87,7 +87,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -126,7 +126,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
