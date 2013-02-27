@@ -48,9 +48,9 @@
 
 			var imagePath = item["imagePath"];
 			switch(base.getItemType(item)){
-			case "ims" : imagePath = GLOBAL_contextPath + 'ims_img.jpg'; break;
-			case "cnet" : imagePath = GLOBAL_contextPath + 'productSiteTaxonomy_img.jpg'; break;
-			case "facet" : imagePath = GLOBAL_contextPath + 'facet_img.jpg'; break;
+			case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
+			case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
+			case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
 			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			}
 
@@ -91,10 +91,10 @@
 			base.memberIdToItem = new Array();
 
 			$table.find("tr:not(#itemPattern)").remove();
-			
+
 			$content.find("#ruleInfo").text($.trim(base.options.ruleInfo));
 			$content.find("#requestType").text(base.options.requestType);
-			
+
 			if (data.totalSize==0){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
 				$tr.find("td:not(#itemPosition)").remove();
@@ -169,6 +169,9 @@
 				ElevateServiceJS.getAllElevatedProductsIgnoreKeyword(base.options.ruleId, 0, 0,{
 					callback: function(data){
 						base.populateItemTable("Elevate", data);
+					},
+					postHook:function(){
+						base.options.templateEvent(base);
 					}
 				});
 				break;
@@ -176,6 +179,9 @@
 				ExcludeServiceJS.getAllExcludedProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
 					callback: function(data){
 						base.populateItemTable("Exclude", data);
+					},
+					postHook:function(){
+						base.options.templateEvent(base);
 					}
 				});
 				break;
@@ -183,9 +189,13 @@
 				DemoteServiceJS.getAllProductsIgnoreKeyword(base.options.ruleId , 0, 0,{
 					callback: function(data){
 						base.populateItemTable("Demote", data);
+					},
+					postHook:function(){
+						base.options.templateEvent(base);
 					}
 				});
 				break;
+			case "facetsort": 
 			case "facet sort": 
 				var $table = $content.find("table#item");
 				var $ruleInfo = $content.find("div#ruleInfo");
@@ -227,9 +237,11 @@
 					},
 					postHook:function(){
 						$table.find("tr#preloader").hide();
+						base.options.templateEvent(base);
 					}
 				});
 				break;
+			case "querycleaning": 
 			case "query cleaning": 
 				$content.find(".infoTabs").tabs({});
 
@@ -278,11 +290,11 @@
 						if ($.isNotBlank(data["changeKeyword"])){
 							$content.find("div#ruleChange").find("#replaceKeywordVal").html(data["changeKeyword"]);
 						}
-					
+
 						$content.find("div#ruleChange").find("#searchHeaderTextOpt").text(
 								data["replaceKeywordMessageType"]["intValue"] == 3 ? 
-								data["replaceKeywordMessageCustomText"] :
-								data["replaceKeywordMessageType"]["description"]
+										data["replaceKeywordMessageCustomText"] :
+											data["replaceKeywordMessageType"]["description"]
 						);
 
 						var includeKeywordText = "Include keyword in search: <b>NO</b>";
@@ -299,10 +311,14 @@
 						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
 
 						base.populateKeywordInRule($content, data["searchTerms"]);
+					},
+					postHook: function(){
+						base.options.templateEvent(base);
 					}
 				});
 
 				break;
+			case "rankingrule": 
 			case "ranking rule": 
 				$content.find(".infoTabs").tabs({});
 
@@ -326,40 +342,9 @@
 						$table.find("tr:even").addClass("alt");
 
 						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
-					}
-				});
-
-				break;
-			}
-		};
-
-		base.getFileData = function(){
-			var $content = base.contentHolder;
-
-			switch(base.options.ruleType.toLowerCase()){
-			case "ranking rule": 
-				$content.find(".infoTabs").tabs({});
-
-				RuleVersioningServiceJS.getRankingRuleVersion(base.options.ruleId, base.options.version, {
-					callback: function(data){
-						$content.find("#ruleInfo").html("<strong>Version " + base.options.version  + "</strong> of " + data["ruleName"]);
-						$content.find("#startDate").html(data["formattedStartDate"]);
-						$content.find("#endDate").html(data["formattedEndDate"]);
-						$content.find("#description").html(data["description"]);
-
-						var $table = $content.find("div.ruleField table#item");
-						$table.find("tr:not(#itemPattern)").remove();
-
-						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
-						}	
-
-						$table.find("tr:even").addClass("alt");
-
-						base.populateKeywordInRule($content, base.toStringArray(data["relKeyword"]));
+					},
+					postHook: function(){
+						base.options.templateEvent(base);
 					}
 				});
 
@@ -399,82 +384,15 @@
 		};
 
 		base.getPreTemplate = function(){
-			var template = base.options.preTemplate;
-
-			if (base.options.enablePreTemplate && $.isBlank(base.options.preTemplate)){
-				switch(base.options.ruleType.toLowerCase()){
-				case "elevate": 
-				case "exclude":
-				case "demote":
-					template  = '<div class="rulePreview w600">';
-					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
-					template += '	<label class="wAuto floatL" id="requestType"></label>';					
-					template += '	<div class="clearB"></div>';
-					template += '</div>';
-					template += '<div class="clearB"></div>';
-					break;
-				case "facet sort":
-					template  = '<div class="rulePreview w600">';
-					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
-					template += '	<label class="wAuto floatL" id="ruleType"></label>';					
-					template += '	<div class="clearB"></div>';
-					template += '</div>';
-					template += '<div class="clearB"></div>';
-					break;
-				case "query cleaning":
-					template  = '<div class="rulePreview w590 marB20">';
-					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
-					template += '	<label class="wAuto floatL" id="description">';
-					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-					template += '	</label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Active Type:</label>';
-					template += '	<label class="wAuto floatL" id="redirectType">';
-					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-					template += '	</label>';
-					template += '	<div class="clearB"></div>';							
-					template += '</div>';
-					break;
-				case "ranking rule":
-					template  = '<div class="rulePreview w590 marB20">';
-					template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
-					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
-					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';
-					template += '	<label class="wAuto floatL" id="startDate">';
-					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-					template += '	</label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">End Date:</label>';
-					template += '	<label class="wAuto floatL" id="endDate">';
-					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-					template += '	</label>';
-					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
-					template += '	<label class="wAuto floatL" id="description">';
-					template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
-					template += '	</label>';
-					template += '	<div class="clearB"></div>';					
-					template += '</div>';
-					break;
-				default: template = '';
-				}
+			if (base.options.enablePreTemplate){
+				return base.options.preTemplate(base);
 			}
+		};
 
-			return template;
+		base.getPostTemplate = function(){
+			if (base.options.enablePostTemplate){
+				return base.options.postTemplate(base);
+			}
 		};
 
 		base.getTemplate = function(){
@@ -523,6 +441,7 @@
 				template += '		</table>';
 				template += '</div>';
 				break;
+			case "facetsort":
 			case "facet sort":
 				template += '	<div class="w600 mar0 pad0">';
 				template += '		<table class="tblItems w100p marT5">';
@@ -552,8 +471,9 @@
 				template += '		</table>';
 				template += '	</div>';
 				break;
+			case "rankingrule": 
 			case "ranking rule": 
-				
+
 
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 				template += '		<ul class="posRel top5 padB0" style="z-index:100">';
@@ -627,6 +547,8 @@
 				template += '	</div>';
 				template += '</div>';
 				break;
+
+			case "querycleaning": 
 			case "query cleaning": 
 				template += '<div id="rankingSummary" class="infoTabs marB20 tabs">';
 
@@ -713,75 +635,79 @@
 			return template;
 		};
 
-		base.getPostTemplate = function(){
-			var template = base.options.postTemplate;
-
-			if (base.options.enablePostTemplate && $.isBlank(base.options.postTemplate)){
-				template  = '<div id="actionBtn" class="floatR fsize12 border pad5 w580 marB20" style="background: #f3f3f3;">';
-				template += '	<h3 class="padL15" style="border:none">Approval Guidelines</h3>';
-				template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
-				template += '		<p align="justify">';
-				template += '			Before approving any rule, it is advisable to review rule details.<br/><br/>';
-				template += '			If the rule is ready to be pushed to production, click on <strong>Approve</strong>.';
-				template += '			If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.';
-				template += '		<p>';
-				template += '	</div>';
-				template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
-				template += '	<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea></label>';
-				template += '	<div class="clearB"></div>';
-				template += '	<div align="right" class="padR15 marT10">';
-				template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Approve</div>';
-				template += '		</a>';
-				template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
-				template += '			<div class="buttons fontBold">Reject</div>';
-				template += '		</a>';
-				template += '	</div>';
-				template += '</div>';
-			}
-
-			return template;
-		};
-
-		base.showLeftPane = function(ruleId, ruleType){
-			var $div = $('<div id="leftPreview" class="floatL"></div>');
-			$div.append(base.getPreTemplate());
-			$div.append(base.getTemplate());
-			$div.append(base.getPostTemplate());
+		base.showQtipPreview = function(e){
+			var showContent = function(){
+				var $div = $('<div id="leftPreview" class="floatL"></div>');
+				$div.append(base.getPreTemplate());
+				$div.append(base.getTemplate());
+				$div.append(base.getPostTemplate());
+				base.contentHolder.html($div);
+				base.getDatabaseData();
+			};
 			
-			return $div;
-		};
-		
-		base.showQtipPreview = function(){
-			base.$el.qtip({
-				content: {
-					text: $('<div/>'),
-					title: { 
-						text: base.options.headerText, 
-						button: true
-					}
-				},
-				position:{
-					at: 'top center',
-					my: 'bottom center',
-					target: base.$el
-				},
-				style: {
-					width: 'auto'
-				},
-				events: { 
-					show: function(event, api){
-						base.contentHolder = $("div", api.elements.content);
-						base.api = api;
-						base.contentHolder.append(base.showLeftPane);
-						$.isNotBlank(base.options.version) ? base.getFileData() : base.getDatabaseData() ;
-					
+			if(base.options.center){
+				base.$el.qtip({
+					id: "rule-preview",
+					content: {
+						text: $('<div/>'),
+						title: { 
+							text: base.options.headerText, 
+							button: true
+						}
 					},
-					hide:function(event, api){
-						$("div", api.elements.content).empty();
+					position: {
+						my: 'center',
+						at: 'center',
+						target: $(window)
+					},
+					show: {
+						modal: true,
+						solo: true
+					},
+					style: {
+						width: 'auto'
+					},
+					events: {
+						show: function(event, api) {
+							base.contentHolder = $("div", api.elements.content);
+							base.api = api;
+							showContent();
+						},
+						hide: function(event, api) {
+							$("div", api.elements.content).empty();
+						}
 					}
-				}
-			});
+				});
+			}else{
+				base.$el.qtip({
+					id: "rule-preview",
+					content: {
+						text: $('<div/>'),
+						title: { 
+							text: base.options.headerText, 
+							button: true
+						}
+					},
+					position:{
+						at: 'top center',
+						my: 'bottom center',
+						target: base.$el
+					},
+					style: {
+						width: 'auto'
+					},
+					events: { 
+						show: function(event, api){
+							base.contentHolder = $("div", api.elements.content);
+							base.api = api;
+							showContent();
+						},
+						hide:function(event, api){
+							$("div", api.elements.content).empty();
+						}
+					}
+				});
+			}
 		};
 
 		// Run initializer
@@ -794,11 +720,12 @@
 			ruleId: "",
 			ruleInfo: "",
 			requestType: "",
-			version: "",
+			center: false,
 			enablePreTemplate: false,
 			enablePostTemplate: false,
-			preTemplate: "",
-			postTemplate: "",
+			preTemplate: function(base){},
+			postTemplate: function(base){},
+			templateEvent: function(base){},
 			itemForceAddStatusCallback: function(base, memberIds){},
 			setSelectedOverwriteRulePreview: function(base, rulename){}
 	};

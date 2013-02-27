@@ -1,13 +1,9 @@
 (function($){
-//Pending optimization and class style
+//	Pending optimization and class style
 	$(document).ready(function(){
 		var entityName = "";
 		var tabSelected = "";
-		var tabSelectedText = "";
-		var refresh = false;
-		var memberIdToItem = new Array();
-		var memberIds = new Array();
-		
+
 		var getSelectedItems = function(){
 			var selectedItems = [];
 			$(tabSelected).find("tr:not(#ruleItemPattern) td#select > input[type='checkbox']:checked").each(function(index, value){
@@ -96,11 +92,11 @@
 					}else{
 						var a = [];
 						var arrSelectedKeys = Object.keys(getSelectedItems());
-						
+
 						$.each(arrSelectedKeys, function(k){ 
 							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
 						});
-					
+
 						switch($(evt.currentTarget).attr("id")){
 						case "approveBtn":
 							var confirmMsg = "Continue approval of the following rules:\n" + a.join('\n');
@@ -126,7 +122,7 @@
 								jAlert("Deleted rules cannot be rejected!","Approval");
 								return;
 							}
-							
+
 							var confirmMsg = "Continue reject of the following rules:\n" + a.join('\n');
 							jConfirm(confirmMsg, "Confirm Reject", function(status){
 								if(status){
@@ -144,13 +140,119 @@
 									});
 								}
 							});
-							
+
 							break;
 						}	
 					}
 
 				}
 			});
+		};
+
+		var postTemplate = function(ruleType){
+			var template = '';
+
+			template  = '<div id="actionBtn" class="floatR fsize12 border w600 marT5 marB8" style="background: #f3f3f3;">';
+			template += '	<h3 class="padL15" style="border:none">Approval Guidelines</h3>';
+			template += '	<div class="fgray padL15 padR12 padB15 fsize11">';
+			template += '		<p align="justify">';
+			template += '			Before approving any rule, it is advisable to review rule details.<br/><br/>';
+			template += '			If the rule is ready to be pushed to production, click on <strong>Approve</strong>.';
+			template += '			If the rule needs to be modified before it can be pushed to production, click on <strong>Reject</strong>. Provide notes in the <strong>Comment</strong> box.';
+			template += '		<p>';
+			template += '	</div>';
+			template += '	<label class="floatL w85 padL13"><span class="fred">*</span> Comment: </label>';
+			template += '	<label class="floatL w480"><textarea id="approvalComment" rows="5" class="w460" style="height:32px"></textarea></label>';
+			template += '	<div class="clearB"></div>';
+			template += '	<div align="right" class="padR15 marT10">';
+			template += '		<a id="approveBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '			<div class="buttons fontBold">Approve</div>';
+			template += '		</a>';
+			template += '		<a id="rejectBtn" href="javascript:void(0);" class="buttons btnGray clearfix">';
+			template += '			<div class="buttons fontBold">Reject</div>';
+			template += '		</a>';
+			template += '	</div>';
+			template += '</div>';
+
+			return template;
+		};
+
+		var preTemplate = function(ruleType){
+			switch(ruleType.toLowerCase()){
+			case "elevate": 
+			case "exclude":
+			case "demote":
+				template  = '<div class="rulePreview w600">';
+				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
+				template += '	<label class="wAuto floatL" id="requestType"></label>';					
+				template += '	<div class="clearB"></div>';
+				template += '</div>';
+				template += '<div class="clearB"></div>';
+				break;
+			case "facetsort":
+			case "facet sort":
+				template  = '<div class="rulePreview w600">';
+				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Rule Type:</label>';
+				template += '	<label class="wAuto floatL" id="ruleType"></label>';					
+				template += '	<div class="clearB"></div>';
+				template += '</div>';
+				template += '<div class="clearB"></div>';
+				break;
+			case "querycleaning":
+			case "query cleaning":
+				template  = '<div class="rulePreview w590 marB20">';
+				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
+				template += '	<label class="wAuto floatL" id="description">';
+				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '	</label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Active Type:</label>';
+				template += '	<label class="wAuto floatL" id="redirectType">';
+				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '	</label>';
+				template += '	<div class="clearB"></div>';							
+				template += '</div>';
+				break;
+			case "rankingrule":
+			case "ranking rule":
+				template  = '<div class="rulePreview w590 marB20">';
+				template += '	<div class="alert marB10">The following rule is pending for your review. This rule will be temporarily locked unless approved or rejected</div>';
+				template += '	<label class="w110 floatL fbold">Rule Name:</label>';
+				template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Start Date:</label>';
+				template += '	<label class="wAuto floatL" id="startDate">';
+				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '	</label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">End Date:</label>';
+				template += '	<label class="wAuto floatL" id="endDate">';
+				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '	</label>';
+				template += '	<div class="clearB"></div>';
+				template += '	<label class="w110 floatL marL20 fbold">Description:</label>';
+				template += '	<label class="wAuto floatL" id="description">';
+				template += '		<img id="preloader" alt="Retrieving" src="' + GLOBAL_contextPath + '/images/ajax-loader-rect.gif">';
+				template += '	</label>';
+				template += '	<div class="clearB"></div>';					
+				template += '</div>';
+				break;
+			default: template = '';
+			}
+
+			return template;
 		};
 
 		var getApprovalList = function(){
@@ -167,6 +269,7 @@
 						for(var i=0; i<data.totalSize ; i++){
 							$table = $(tabSelected).find("table#rule");
 							$tr = $(tabSelected).find("tr#ruleItemPattern").clone().attr("id","ruleItem" + $.formatAsId(list[i]["ruleRefId"])).show();
+							var ruleStatus = list[i];
 							var requestedDate = $.isNotBlank(list[i]["lastModifiedDate"])? list[i]["lastModifiedDate"].toUTCString(): "";
 							var showId = list[i]["ruleRefId"].toLowerCase() !== list[i]["description"].toLowerCase();
 
@@ -175,7 +278,71 @@
 
 							//TODO: Get delete details from file
 							if (list[i]["updateStatus"]!=="DELETE"){
-								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).on({click:previewRow},{ruleStatus:list[i]});
+								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).preview({
+									ruleType: entityName,
+									ruleId: ruleStatus["ruleId"],
+									center: true,
+									enablePreTemplate: true,
+									enablePostTemplate: true,
+									preTemplate: function(base){
+										return preTemplate(base.options.ruleType);
+									},
+									postTemplate: function(base){
+										return postTemplate(base.options.ruleType);
+									},
+									templateEvent: function(base){
+										var $content = base.contentHolder; 
+										$content.find("a#approveBtn, a#rejectBtn").off().on({
+											click: function(evt){
+												var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
+
+												if (validateComment("Approval",comment,1)){
+													comment = comment.replace(/\n\r?/g, '<br/>');
+													
+													switch($(evt.currentTarget).attr("id")){
+													case "approveBtn": 
+														DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+															callback: function(data){
+																postMsg(data,true);	
+																getApprovalList();
+															},
+															preHook: function(){
+																base.api.destroy();
+															}
+														});break;
+
+													case "rejectBtn": 
+														if (checkIfDeleted()) {
+															jAlert("Deleted rules cannot be rejected!","Approval");
+															return;
+														}
+														DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+															callback: function(data){
+																postMsg(data,false);	
+																getApprovalList();
+															},
+															preHook: function(){
+																base.api.destroy();
+															}
+														});break;
+													}	
+												}
+											}
+										});
+									},
+									itemForceAddStatusCallback: function(base, memberIds){
+										if (base.options.ruleType.toLowerCase() === "elevate"){
+											ElevateServiceJS.isRequireForceAdd(base.options.ruleId, memberIds, {
+												callback:function(data){
+													base.updateForceAddStatus(data);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus();
+												}
+											});
+										}
+									}
+								});
 							}else{
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}
@@ -232,448 +399,6 @@
 				getApprovalList();
 			}
 		});
- 
-		
-
-		var getItemType = function(item){
-			var $condition = item.condition;
-			var type = "unknown";
-
-			if($.isBlank($condition)){
-				return type;
-			}
-
-			if (!$condition["CNetFilter"] && !$condition["IMSFilter"]){
-				type="facet";
-			}else if($condition["CNetFilter"]){
-				type="cnet";
-			}else if($condition["IMSFilter"]){
-				type="ims";
-			}
-
-			return type;
-		};
-		
-		var setImage = function(tr, item){
-			var imagePath = item["imagePath"];
-			switch(getItemType(item)){
-				case "ims" : imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
-				case "cnet" : imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
-				case "facet" : imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
-				default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
-			}
-
-			setTimeout(function(){	
-				tr.find("td#itemImage > img").attr("src",imagePath).off().on({
-					error:function(){ 
-						$(this).unbind("error").attr("src", GLOBAL_contextPath + "/images/no-image60x60.jpg"); 
-					}
-				});
-			},10);
-		};
-
-		var prepareForceAddStatus = function(){
-			$('div#forceAdd').show();
-		};
-
-		var updateForceAddStatus = function(data){
-			for(var mapKey in data){
-				var $tr = $('tr#item' + $.formatAsId(mapKey));
-				var $item = memberIdToItem[mapKey];
-
-				// Force Add Color Coding
-				if(data[mapKey] && !$item["forceAdd"]){
-
-				}else if(data[mapKey] && $item["forceAdd"]){
-					$tr.addClass("forceAddBorderErrorClass");
-				}else if(!data[mapKey] && $item["forceAdd"]){
-					$tr.addClass("forceAddClass");
-				}else if(!data[mapKey] && !$item["forceAdd"]){
-					$tr.addClass("forceAddErrorClass");
-				}
-			}
-
-			$('div#forceAdd').hide();
-		};
-
-		var populateItemTable = function(ruleType, content, ruleStatus, data){
-			var $content = content;
-			var list = data.list;
-
-			var $table = $content.find("table#item");
-
-			$table.find("tr:not(#itemPattern)").remove();
-
-			if (data.totalSize==0){
-				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
-				$tr.find("td:not(#itemPosition)").remove();
-				$tr.find("td#itemPosition").attr("colspan", "6").html("No item specified for this rule");
-				$tr.appendTo($table);
-			}else{
-				for (var i = 0; i < data.totalSize; i++) {
-					memberIdToItem[list[i]["memberId"]] = list[i];
-					memberIds.push(list[i]["memberId"]);
-					
-					var $tr = $content.find("tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["memberId"])).show();	
-					$tr.find("td#itemPosition").html(ruleType.toLowerCase()==="elevate"?  list[i]["location"] : parseInt(i) + 1);
-
-					var PART_NUMBER = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "PART_NUMBER";
-					var FACET = $.isNotBlank(list[i]["memberTypeEntity"]) && list[i]["memberTypeEntity"] === "FACET";
-
-					if(FACET){
-						setImage($tr,list[i]);
-						$tr.find("td#itemMan").text(list[i].condition["readableString"])
-						.prop("colspan",3)
-						.removeClass("txtAC")
-						.addClass("txtAL")
-						.attr("width", "363px");
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-
-						if ($.isBlank(list[i]["isExpired"])){
-							$tr.find("#itemValidityDaysExpired").remove();
-						}
-
-						$tr.find("td#itemDPNo,td#itemName").remove();
-					}
-					else if(PART_NUMBER){
-						if($.isNotBlank(list[i]["dpNo"])){
-							setImage($tr,list[i]);
-							$tr.find("td#itemDPNo").html(list[i]["dpNo"]);
-							$tr.find("td#itemMan").html(list[i]["manufacturer"]);
-							$tr.find("td#itemName").html(list[i]["name"]);
-						}else{
-							$tr.find("td#itemImage").html("Product EDP:" + list[i]["edp"] + " is no longer available in the search server you are connected")
-							.prop("colspan",4)
-							.removeClass("txtAC")
-							.addClass("txtAL")
-							.attr("width", "369px");
-							$tr.find("td#itemDPNo,td#itemMan,td#itemName").remove();
-						}
-
-						$tr.find("#itemValidity").html(list[i]["formattedExpiryDate"] + "<br/>" +  list[i]["validityText"]); 
-						if ($.isBlank(list[i]["isExpired"])){
-							$tr.find("#itemValidityDaysExpired").remove();
-						}
-					}
-
-					$tr.appendTo($table);
-				};
-				
-				if (tabSelectedText === "Elevate" && memberIds.length>0){
-					ElevateServiceJS.isRequireForceAdd(ruleStatus["ruleRefId"], memberIds, {
-						callback:function(data){
-							updateForceAddStatus(data);
-						},
-						preHook: function(){
-							prepareForceAddStatus();
-						}
-					});
-				} 
-
-			}
-
-			// Alternate row style
-			$content.find("tr#itemPattern").hide();
-			$content.find("tr:not(#itemPattern):even").addClass("alt");
-
-		};
-
-		var populatePreview = function(api, $content, ruleStatus){
-
-			var populateKeywordInRule = function(data){
-				var list = data.list;
-				var $table = $content.find("div.ruleKeyword table#item");
-				$table.find("tr:not(#itemPattern)").remove();
-
-				if (data.totalSize==0){
-					$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item0").show();
-					$tr.find("td#fieldName").html("No keywords associated to this rule").attr("colspan","2");
-					$tr.find("td#fieldValue").remove();
-					$tr.appendTo($table);
-				}else{
-					for(var i=0; i< data.totalSize; i++){
-						$tr = $content.find("div.ruleKeyword tr#itemPattern").clone().attr("id","item" + $.formatAsId(list[i]["keyword"])).show();
-						$tr.find("td#fieldName").html(parseInt(i)+1);
-						$tr.find("td#fieldValue").html(list[i]["keyword"]);
-						$tr.appendTo($table);
-					}	
-				}
-
-				$table.find("tr:even").addClass("alt");
-			};
-
-			switch(tabSelectedText){
-			case "Elevate": 
-				$content.html($("#previewTemplate1").html());
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
-				ElevateServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
-					callback: function(data){
-						populateItemTable("Elevate", $content, ruleStatus, data);
-					}
-				});
-				break;
-			case "Exclude": 
-				$content.html($("#previewTemplate1").html());
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
-				ExcludeServiceJS.getProducts(null, ruleStatus["ruleRefId"] , 0, 0,{
-					callback: function(data){
-						populateItemTable("Exclude", $content, ruleStatus, data);
-					}
-				});
-				break;
-			case "Demote": 
-				$content.html($("#previewTemplate1").html());
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
-				DemoteServiceJS.getProducts(null, ruleStatus["ruleRefId"], 0, 0,{
-					callback: function(data){
-						populateItemTable("Demote", $content, ruleStatus, data);
-					}
-				});
-				break;
-			case "Facet Sort":
-				$content.html($("#facetSortTemplate").html());
-				var $table = $content.find("table#item");
-				var $ruleInfo = $content.find("div#ruleInfo");
-				
-				FacetSortServiceJS.getRuleById(ruleStatus["ruleRefId"], {
-					callback: function(data){
-						$ruleInfo.find("#ruleName").text(data.name);
-						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
-						
-						for(var facetGroup in data.items){
-							var facetName = facetGroup;
-							var facetValue = data.items[facetGroup];
-							var highlightedItems = "";
-							var $tr = $table.find("tr#itemPattern").clone();
-							$tr.prop({id: $.formatAsId(facetName)});
-							$tr.find("#itemName").text(facetName);
-							
-							if($.isArray(facetValue)){
-								for(var i=0; i < facetValue.length; i++){
-									highlightedItems += (i+1) + ' - ' + facetValue[i] + '<br/>';
-								}
-							}
-							$tr.find("#itemHighlightedItem").html(highlightedItems);
-
-							var sortTypeDisplay = "";
-							var sortType = data.groupSortType[facetGroup] == null ? data.sortType : data.groupSortType[facetGroup];
-							
-							switch(sortType){
-								case "ASC_ALPHABETICALLY": sortTypeDisplay = "A-Z"; break;
-								case "DESC_ALPHABETICALLY": sortTypeDisplay = "Z-A"; break;
-								case "ASC_COUNT": sortTypeDisplay = "Count Asc"; break;
-								case "DESC_COUNT": sortTypeDisplay = "Count Desc"; break;
-							}
-							
-							$tr.find("#itemSortType").text(sortTypeDisplay);
-							$tr.show();
-							$table.append($tr);
-						};						
-					},
-					postHook:function(){
-						$table.find("tr#preloader").hide();
-					}
-				});
-				
-				break;
-			case "Query Cleaning": 
-				$content.html($("#queryCleaningTemplate").html());
-				$content.find(".infoTabs").tabs({});
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
-				$content.find("div.ruleFilter table#itemHeader th#fieldNameHeader").html("#");
-				$content.find("div.ruleFilter table#itemHeader th#fieldValueHeader").html("Rule Filter");
-				$content.find("div.ruleChange > #noChangeKeyword, div.ruleChange > #hasChangeKeyword").hide();
-
-				RedirectServiceJS.getRule(ruleStatus["ruleRefId"], {
-					callback: function(data){
-
-						var $table = $content.find("div.ruleFilter table#item");
-						$table.find("tr:not(#itemPattern)").remove();
-
-						if(data.conditions.length==0){
-							$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html("No filters specified for this rule").attr("colspan","2");
-							$tr.find("td#fieldValue").remove();
-							$tr.appendTo($table);
-
-						}else{
-							for(var field in data.conditions){
-								$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
-								$tr.find("td#fieldName").html(parseInt(field)+1);
-								$tr.find("td#fieldValue").html(data.conditions[field]);
-								$tr.appendTo($table);
-							}	
-						}
-
-						$table.find("tr:even").addClass("alt");
-						$content.find("#description").html(data["description"]);
-						switch (data["redirectTypeId"]) {
-						case "1":
-							$content.find("#redirectType").html("Filter");
-							break;
-						case "2":
-							$content.find("#redirectType").html("Replace Keyword");
-							break;
-						case "3":
-							$content.find("#redirectType").html("Direct Hit");
-							break;
-						default:
-							$content.find("#redirectType").html("");
-						break;									
-						}
-
-						if ($.isNotBlank(data["changeKeyword"])){
-							$content.find("div#ruleChange > div#hasChangeKeyword").show();
-							$content.find("div#ruleChange > div#hasChangeKeyword > div > span#changeKeyword").html(data["changeKeyword"]);
-						}else{
-							$content.find("div#ruleChange > #noChangeKeyword").show();
-						}
-
-						var includeKeywordText = "Include keyword in search: <b>NO</b>";
-						if($.isNotBlank(data["includeKeyword"])){
-							includeKeywordText = "Include keyword in search: ";
-							if(data["includeKeyword"]){
-								includeKeywordText += "<b>YES</b>";
-							}
-							else{
-								includeKeywordText += "<b>NO</b>";
-							}
-						}
-						$content.find("div.ruleFilter div#includeKeywordInSearchText").show();
-						$content.find("div.ruleFilter div#includeKeywordInSearchText").html(includeKeywordText);
-					}
-				});
-
-				RedirectServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
-					callback: function(data){
-						populateKeywordInRule(data);
-					}
-				});
-
-
-				break;
-			case "Ranking Rule": 
-				$content.html($("#previewTemplate2").html());
-				$content.find(".infoTabs").tabs({
-
-				});
-
-				$content.find("#ruleInfo").text($.trim(ruleStatus["description"]));
-				$content.find("#requestType").text(ruleStatus["updateStatus"]);
-
-				RelevancyServiceJS.getRule(ruleStatus["ruleRefId"], {
-					callback: function(data){
-						$content.find("#startDate").html(data["formattedStartDate"]);
-						$content.find("#endDate").html(data["formattedEndDate"]);
-						$content.find("#description").html(data["description"]);
-
-						var $table = $content.find("div.ruleField table#item");
-						$table.find("tr:not(#itemPattern)").remove();
-
-						for(var field in data.parameters){
-							$tr = $content.find("div.ruleField tr#itemPattern").clone().attr("id","item0").show();
-							$tr.find("td#fieldName").html(field);
-							$tr.find("td#fieldValue").html(data.parameters[field]);
-							$tr.appendTo($table);
-						}	
-
-						$table.find("tr:even").addClass("alt");
-					}
-				});
-
-				RelevancyServiceJS.getAllKeywordInRule(ruleStatus["ruleRefId"], "", 0, 0, {
-					callback: function(data){
-						populateKeywordInRule(data);
-					}
-				});
-
-				break;
-			};
-
-			$content.find("a#approveBtn, a#rejectBtn").off().on({
-				click: function(evt){
-					var comment = $.defaultIfBlank($content.find("#approvalComment").val(),"");
-
-					if (validateComment("Approval",comment,1)){
-						comment = comment.replace(/\n\r?/g, '<br/>');
-						
-						switch($(evt.currentTarget).attr("id")){
-						case "approveBtn": 
-							DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
-								callback: function(data){
-									postMsg(data,true);	
-									getApprovalList();
-								},
-								preHook: function(){
-									api.destroy();
-								}
-							});break;
-
-						case "rejectBtn": 
-							if (checkIfDeleted()) {
-								jAlert("Deleted rules cannot be rejected!","Approval");
-								return;
-							}
-							DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
-								callback: function(data){
-									postMsg(data,false);	
-									getApprovalList();
-								},
-								preHook: function(){
-									api.destroy();
-								}
-							});break;
-						}	
-					}
-				}
-			});
-
-			return $content;
-		};
-
-		var previewRow = function(evt){
-
-			$(this).qtip({
-				id: "rule-preview",
-				content: {
-					text: $('<div/>'),
-					title: { 
-						text: (tabSelectedText==="Ranking Rule"? "Ranking Rule Preview" :  tabSelectedText + " Rule Preview"), button:true
-					}
-				},
-				position: {
-					my: 'center',
-					at: 'center',
-					target: $(window)
-				},
-				show: {
-					modal: true,
-					solo: true,
-					ready: true
-				},
-				style: {
-					width: 'auto'
-				},
-				events: {
-					show: function(event, api) {
-						var $content = $("div", api.elements.content);
-						populatePreview(api, $content, evt.data.ruleStatus);
-					},
-					hide: function(event, api) {
-						if (refresh) getApprovalList();
-						api.destroy();
-					}
-				}
-			});
-		};
 
 		var init = function(){
 			tabSelected = $("li.ui-tabs-selected > a").attr("href");
