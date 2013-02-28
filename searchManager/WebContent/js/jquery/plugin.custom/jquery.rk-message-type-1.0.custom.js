@@ -38,7 +38,7 @@
 				}else{
 					if($.isNotBlank(customText) && 
 							customText.toLowerCase() !== base.options.customText.toLowerCase() && 
-							customText.toLowerCase() !== e.data.rule["replaceKeywordMessageCustomText"].toLowerCase()){
+							($.isNotBlank(e.data.rule["replaceKeywordMessageCustomText"]) && customText.toLowerCase() !== e.data.rule["replaceKeywordMessageCustomText"].toLowerCase())){
 						
 						RedirectServiceJS.updateRKMessageType(e.data.rule["ruleId"], 3, customText, {
 							callback: function(data){
@@ -83,12 +83,18 @@
 				change: function(evt){
 					var selectedOption = $(evt.currentTarget).val();
 					
-					base.$el.find('#customText_' + base.options.id).prop({
+					var $customInput = evt.data.base.$el.find('#customText_' + base.options.id);
+					
+					$customInput.prop({
 						readonly: selectedOption!=3,
 						disabled: selectedOption!=3
 					});
 					
-					RedirectServiceJS.updateRKMessageType(evt.data.rule["ruleId"], selectedOption, null, {
+					var customText = $.isBlank($customInput.val()) && $.isBlank(evt.data.base.options.rule["replaceKeywordMessageCustomText"])? 
+							evt.data.base.options.customText : 
+							$customInput.val();
+					
+					RedirectServiceJS.updateRKMessageType(evt.data.rule["ruleId"], selectedOption, selectedOption==3? customText : null, {
 							callback: function(e){
 								if (e > 0){
 									base.options.successTypeUpdateCallback(selectedOption);
@@ -109,7 +115,7 @@
 							},
 						});
 				}
-			}, {rule: base.options.rule});
+			}, {rule: base.options.rule, base: base});
 			
 		};
 
