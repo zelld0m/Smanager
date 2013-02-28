@@ -49,7 +49,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -88,7 +88,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -127,7 +127,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
