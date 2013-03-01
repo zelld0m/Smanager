@@ -2,6 +2,7 @@
 <solr-config>
 
   <store name="PCMall">
+    <id>pcmall</id>
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
@@ -20,6 +21,7 @@
   </store>
   
   <store name="MacMall">
+    <id>macmall</id>
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
@@ -37,7 +39,8 @@
   </store>
 
   <store name="PCMall BD">
-    <core>pcmallcap</core>
+  	<id>pcmallcap</id>
+    <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PcMall</facet-name>
@@ -54,7 +57,8 @@
   </store>
   
   <store name="PCMG BD">
-    <core>pcmgbd</core>
+  	<id>pcmallgov</id>
+    <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PCMallGov</facet-name>
