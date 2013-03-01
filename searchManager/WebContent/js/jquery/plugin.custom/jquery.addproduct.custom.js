@@ -522,12 +522,7 @@
 							$cnetTab.find("tr#level3Cat").hide();
 						case "level3categorylist": 
 							break;
-						case "templatenamelist": 
-							if (base.contentHolder.find("div#ims").length)
-								base.populateIMSTemplateNames();
-							else if (base.contentHolder.find("div#cnet"))
-								base.populateCNETTemplateNames();
-							break;
+						
 						}
 					}
 
