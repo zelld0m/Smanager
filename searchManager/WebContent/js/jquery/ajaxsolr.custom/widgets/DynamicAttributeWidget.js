@@ -163,11 +163,11 @@
 						else{
 							continue;
 						}
-						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(paramVal):paramVal);
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q' || name.toLowerCase()==='fq' ? encodeURIComponent(paramVal):paramVal);
 					}
 				}else{
 					if(name.toLowerCase() !== "sort".toLowerCase())
-						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(params[name]): params[name]);
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q' || name.toLowerCase()==='fq' ? encodeURIComponent(params[name]): params[name]);
 				}
 			}
 
@@ -182,7 +182,8 @@
 					callback: function(data){
 						if(data){
 							self.attribMap = data;
-							self.displayDynamicAttributes(Object.keys(data), data);
+							if(!$.isEmptyObject(Object.keys(data)))
+								self.displayDynamicAttributes(Object.keys(data), data);
 						}
 					}
 				});
@@ -197,7 +198,8 @@
 					callback: function(data){
 						if(data){
 							self.attribMap = data;
-							self.displayDynamicAttributes(Object.keys(data), data);
+							if(!$.isEmptyObject(Object.keys(data)))
+								self.displayDynamicAttributes(Object.keys(data), data);
 						}
 
 					}
