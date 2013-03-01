@@ -56,6 +56,10 @@
 		},
 
 		escapeValue: function (value) {
+			if($.isNotBlank(value) && value.indexOf("\"") > -1){
+				value = value.replace(/\"/g, "\\\"");
+			}
+			
 			return '"' + value + '"';
 		},
 
