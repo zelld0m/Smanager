@@ -47,7 +47,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setRows(MAX_ROWS);
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -84,7 +84,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -123,7 +123,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(
@@ -162,7 +162,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 
 			SolrQuery solrQuery = new SolrQuery();
 			solrQuery.setQuery(strQuery.toString());
-			logger.info(solrQuery.toString());
+			logger.debug(solrQuery.toString());
 			QueryResponse queryResponse = null;
 
 			queryResponse = solrServers.getCoreInstance(

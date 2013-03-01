@@ -74,7 +74,7 @@
 				TopKeywordServiceJS.sendCustomRangeAsEmail(self.fromDate, self.toDate, customFilename, recipients, {
 					callback: function(data){
 						if (data == true) {
-							jAlert("Email request to be processed. This requires 2-4 minutes to finish.","Top Keyword");
+							jAlert("Email request being processed. It will be sent to the specified email addresses once done.","Top Keyword");
 						}
 						else {
 							jAlert("Unable to send email.","Top Keyword");
