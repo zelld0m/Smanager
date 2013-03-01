@@ -58,16 +58,16 @@ public class CategoryService {
 			filters.add(String.format("CatCode: %s", catcode));
 		}
 		if (StringUtils.isNotBlank(category)) {
-			filters.add(String.format("Category: %s", category));
+			filters.add(String.format("Category: \"%s\"", category));
 		}
 		if (StringUtils.isNotBlank(subcategory)) {
-			filters.add(String.format("SubCategory: %s", subcategory));
+			filters.add(String.format("SubCategory: \"%s\"", subcategory));
 		}
 		if (StringUtils.isNotBlank(className)) {
-			filters.add(String.format("Class: %s", className));
+			filters.add(String.format("Class: \"%s\"", className));
 		}
 		if (StringUtils.isNotBlank(subclass)) {
-			filters.add(String.format("SubClass: %s", subclass));
+			filters.add(String.format("SubClass: \"%s\"", subclass));
 		}
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
 	}
