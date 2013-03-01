@@ -179,7 +179,7 @@
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
 
-						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "pcmgbd"){
+						if(GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd"){
 							self.facetValueList["Category"] = [];
 
 							if(json.FacetTemplate){
@@ -293,7 +293,7 @@
 				var $select = contentHolder.find('select[id="popName"]');
 				var count = 0;
 
-				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_store, {
+				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_storeId, {
 					callback: function(data){
 						var list = data;
 						count = list.length;

@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -42,12 +41,11 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 
 		sessionRegistry.registerNewSession(sessionId, principal);
 
-		String storeName = ((UserDetailsImpl)authResult.getPrincipal()).getStoreId();
-		String serverName = ConfigManager.getInstance().getStoreParameter(storeName, "default-server");
-		if (StringUtils.isBlank(storeName)) {
-			storeName = "macmall";			
-		}
+		String storeId = ((UserDetailsImpl)authResult.getPrincipal()).getStoreId();
+		String storeName = ConfigManager.getInstance().getStoreName(storeId);
+		String serverName = ConfigManager.getInstance().getStoreParameter(storeId, "default-server");
 		
+		UtilityService.setStoreId(storeId);
 		UtilityService.setStoreName(storeName);
 		UtilityService.setServerName(serverName);
 		

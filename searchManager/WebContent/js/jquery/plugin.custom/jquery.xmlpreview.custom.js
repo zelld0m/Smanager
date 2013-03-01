@@ -854,7 +854,7 @@
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 				template += '		<ul class="posRel top5" style="z-index:100">';
 
-				if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+				if (base.options.ruleId.toLowerCase()!== (GLOBAL_storeId.toLowerCase()+ "_default")){
 					template += '			<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
 				}
 
@@ -890,7 +890,7 @@
 				template += '		</div>';
 				template += '		<div class="clearB"></div>	';
 
-				if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+				if (base.options.ruleId.toLowerCase()!== (GLOBAL_storeId.toLowerCase()+ "_default")){
 					template += '		<div id="ruleKeyword" class="ruleKeyword marB10">';
 					template += '			<div class="w580 mar0 padLR5">';
 					template += '				<table class="tblItems w100p marT10" id="itemHeader">';

@@ -20,23 +20,25 @@
 
   <!-- TODO: Dynamically modify mall based on logged user -->
   <spring:eval expression="T(com.search.manager.service.UtilityService).getUsername()" var="username" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLabel()" var="storeLabel" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetName()" var="storeFacetName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplateName()" var="storeFacetTemplateName" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
 
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
-    var GLOBAL_scheme = "<%=request.getScheme()%>";  
+    
+	// Request server details
+	var GLOBAL_scheme = "<%=request.getScheme()%>";  
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
-	var GLOBAL_store = "${store}";
-	var GLOBAL_storeLogo = "${storeLogo}";
-	var GLOBAL_storeLabel = "${storeLabel}";
+	
+	var GLOBAL_storeId = "${storeId}";
+	var GLOBAL_storeName = "${storeName}";
+	
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
 	var GLOBAL_storeFacetTemplateName = "${storeFacetTemplateName}";
@@ -145,19 +147,8 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/microgallery/jquery.microgallery.js" />" ></script>
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
-
- <!-- jQuery highcharts, licensed graph -->
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/highcharts.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/canvas-tools.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/exporting.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-blue.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-green.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/gray.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/grid.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/skies.js" />" ></script> --%>
-  
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 
   <!-- /Init -->	  
@@ -196,9 +187,9 @@
         </tr>
       </table>
       <div class="companyLogoImg">
-      	<a href="javascript:void(0);">
-      		<img src="<spring:url value="${storeLogo}" />">
-      	</a>
+      		<script type="text/javascript">
+      			document.write('<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/logo-' + GLOBAL_storeId + '.png"></a>');
+      		</script>
       	<div class="clearB"></div>
       </div>
     </div>

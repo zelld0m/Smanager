@@ -108,7 +108,7 @@
 			var selectedList = base.options.selectedList;
 			var facetValues = [];
 
-			if (base.options.facetField === "Category" && (GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "pcmgbd")){
+			if (base.options.facetField === "Category" && (GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd")){
 				if(data.FacetTemplate)
 					facetValues = data.FacetTemplate.Level1;
 			}
@@ -172,7 +172,7 @@
 		base.getFacetValueList = function () {
 			var self = this;
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_store + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
+					GLOBAL_solrUrl + GLOBAL_storeId + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();

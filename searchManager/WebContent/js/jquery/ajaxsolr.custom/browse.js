@@ -3,7 +3,7 @@
 	$(document).ready(function() {
 		// Initialize manager
 		var Manager = new AjaxSolr.Manager({
-			solrUrl: GLOBAL_solrUrl + GLOBAL_store + '/'
+			solrUrl: GLOBAL_solrUrl + GLOBAL_storeId + '/'
 		});
 
 		// Install component widgets
@@ -14,7 +14,7 @@
 			minCharRequired: 2
 		}));
 		
-		if(GLOBAL_store.toLowerCase() === "pcmgbd"){
+		if(GLOBAL_storeId.toLowerCase() === "pcmgbd"){
 			Manager.addWidget(new AjaxSolr.PCMGSelectorWidget({
 				id: "pcmgSelector",
 				target: "#pcmgSelector"
@@ -116,7 +116,7 @@
 		// TODO: Make this dynamic
 		var facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
-		if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "pcmgbd"){
+		if(GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd"){
 			facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 		};
 
@@ -134,7 +134,7 @@
 				'spellcheck.count': 3,
 				'spellcheck.collate': true,
 				'gui': GLOBAL_isFromGUI,
-				'store': GLOBAL_store,
+				'store': GLOBAL_storeId,
 				'json.nl': 'map'
 		};
 
@@ -153,7 +153,7 @@
 						UtilityServiceJS.getSolrConfig({
 							callback:function(data){	
 								var config = $.parseJSON(data);
-								Manager.setSolrUrl(config.solrUrl + GLOBAL_store + '/');
+								Manager.setSolrUrl(config.solrUrl + GLOBAL_storeId + '/');
 							},
 							postHook:function() {
 								Manager.doRequest();						

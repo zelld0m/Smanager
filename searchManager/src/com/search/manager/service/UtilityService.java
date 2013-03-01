@@ -129,10 +129,23 @@ public class UtilityService {
 	}
 
 	@RemoteMethod
+	public static String getStoreId(){
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		String storeName = (String)attr.getAttribute("storeId", RequestAttributes.SCOPE_SESSION);
+		return storeName;
+	}
+	
+	@RemoteMethod
 	public static String getStoreName(){
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
 		String storeName = (String)attr.getAttribute("storeName", RequestAttributes.SCOPE_SESSION);
 		return storeName;
+	}
+
+	@RemoteMethod
+	public static void setStoreId(String storeId) {
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		attr.setAttribute("storeId", storeId, RequestAttributes.SCOPE_SESSION);
 	}
 
 	@RemoteMethod
@@ -149,11 +162,6 @@ public class UtilityService {
 			storeLabel = cm.getStoreName(getStoreName());
 		}
 		return storeLabel;
-	}
-
-	@RemoteMethod
-	public static String getStoreLogo(){
-		return new StringBuilder("/images/logo").append(getStoreLabel()).append(".png").toString();
 	}
 
 	@RemoteMethod

@@ -22,8 +22,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
-import com.search.manager.dao.sp.DAOConstants;
-
 public class ConfigManager {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -100,14 +98,15 @@ public class ConfigManager {
     	return coreNames;
     }
     
-    public String getStoreParameter(String coreName, String param) {
-    	return (xmlConfig.getString("/store[core='" + StringUtils.lowerCase(coreName) + "']/" + param));
+	
+    public String getStoreName(String storeId) {
+    	return (xmlConfig.getString("/store[@id='" + storeId + "']/@name"));
     }
     
-    public String getStoreName(String coreName) {
-    	return (xmlConfig.getString("/store[core='" + coreName + "']/@name"));
+    public String getStoreParameter(String storeId, String param) {
+    	return (xmlConfig.getString("/store[@id='" + storeId + "']/" + param));
     }
-    
+
     public String getServerParameter(String server, String param) {
     	return (xmlConfig.getString("/server[@name='" + server + "']/" +param));
     }
@@ -228,45 +227,45 @@ public class ConfigManager {
 	
     public static void main(String[] args) {
     	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
-		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
+		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
-		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));
-		System.out.println("bd default solr param: " + configManager.getDefaultSolrParameters("pcmallcap"));
-		System.out.println("query: " + configManager.getStoreName("macmall"));
-		
-		Map<String, String> map = configManager.getServersByCore("macmall");
-		System.out.println("macmall");
-		for (String key: map.keySet()) {
-			System.out.println(key + "\t" + map.get(key));
-		}
-
-		map = configManager.getServersByCore("pcmallcap");
-		System.out.println("pcmallcap");
-		for (String key: map.keySet()) {
-			System.out.println(key + "\t" + map.get(key));
-		}
-
-		for (String key: configManager.getCoreNames()) {
-			System.out.println("core: " + key);
-		}
-		
-		for (int i =0; i < 20; i++) {
-			(new Thread() {
-				public void run() {
-					for (int i = 1; i < 50; i++) {
-						try {
-							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
-							System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
-							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
-							System.out.println( configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-						}
-					}
-				}
-			}).start();
-		}
+//		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));
+//		System.out.println("bd default solr param: " + configManager.getDefaultSolrParameters("pcmallcap"));
+//		System.out.println("query: " + configManager.getStoreName("macmall"));
+//		
+//		Map<String, String> map = configManager.getServersByCore("macmall");
+//		System.out.println("macmall");
+//		for (String key: map.keySet()) {
+//			System.out.println(key + "\t" + map.get(key));
+//		}
+//
+//		map = configManager.getServersByCore("pcmallcap");
+//		System.out.println("pcmallcap");
+//		for (String key: map.keySet()) {
+//			System.out.println(key + "\t" + map.get(key));
+//		}
+//
+//		for (String key: configManager.getCoreNames()) {
+//			System.out.println("core: " + key);
+//		}
+//		
+//		for (int i =0; i < 20; i++) {
+//			(new Thread() {
+//				public void run() {
+//					for (int i = 1; i < 50; i++) {
+//						try {
+//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+//							System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+//							System.out.println( configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+//							Thread.sleep(100);
+//						} catch (InterruptedException e) {
+//						}
+//					}
+//				}
+//			}).start();
+//		}
 		
     }
     

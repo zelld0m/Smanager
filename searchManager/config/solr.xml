@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <solr-config>
 
-  <store name="PCMall">
-    <id>pcmall</id>
+  <store id="pcmall" name="PCM">
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
@@ -20,8 +19,7 @@
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
-  <store name="MacMall">
-    <id>macmall</id>
+  <store id="macmall" name="MacMall">
     <core>macmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
@@ -38,9 +36,8 @@
     <facet-template-name>TemplateName</facet-template-name>
   </store>
 
-  <store name="PCMall BD">
-  	<id>pcmallcap</id>
-    <core>pcmall</core>
+  <store id="pcmallcap" name="PCMall BD">
+  	<core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PcMall</facet-name>
@@ -56,7 +53,7 @@
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
-  <store name="PCMG BD">
+  <store id="pcmgbd" name="PCMG BD">
   	<id>pcmallgov</id>
     <core>pcmall</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
@@ -75,7 +72,7 @@
     <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
   </store>
   
-  <store name="MacMall BD">
+  <store id="macmallbd" name="MacMall BD">
     <core>macmallbd</core>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxmacmallrelevancy</qt>
@@ -99,36 +96,40 @@
   </server>
    -->  
   <server name='vtorschstg01'>
-    <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url>
+    <url>http://vtorschstg01.pcmall.com:8080/solr14/(core)/</url>
     <store>pcmall,macmall,ecost</store>
   </server>
   <server name='vtorschstg02'>
-    <url>http://vtorschstg02.pcmall.com:8080/solr14/(store)/</url>
+    <url>http://vtorschstg02.pcmall.com:8080/solr14/(core)/</url>
     <store>pcmall,macmall,ecost</store>
   </server>
   <server name='vtorschstg03'>
-    <url>http://vtorschstg03.pcmall.com:8080/solr14/(store)/</url>
+    <url>http://vtorschstg03.pcmall.com:8080/solr14/(core)/</url>
     <store>pcmall,macmall,ecost</store>
   </server>
   <server name='afs-pl-schpd07'>
-    <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(store)/</url>
+    <url>http://afs-pl-schpd07.afservice.org:8080/solr14/(core)/</url>
     <store>pcmall,macmall,ecost</store>
   </server>
   <server name='search'>
-    <url>http://10.17.35.36:8080/solr14/(store)/</url>
+    <url>http://10.17.35.36:8080/solr14/(core)/</url>
     <store>pcmall,macmall,ecost</store>
   </server>
   <server name='search.pcmall.com'>
-    <url>http://search.pcmall.com:8080/solr14/(store)/</url>
+    <url>http://search.pcmall.com:8080/solr14/(core)/</url>
     <store>sbn</store>
   </server>
   <server name='afs-pl-schpd04'>
-    <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(store)/</url>
+    <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(core)/</url>
     <store>pcmallcap</store>
   </server>
-   <server name='afs-pl-schpd01'>
-    <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(store)/</url>
+  <server name='afs-pl-schpd01'>
+    <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(core)/</url>
     <store>pcmgbd,macmallbd</store>
+  </server>
+  <server name='afs-pl-schpd02'>
+    <url>http://afs-pl-schpd02.afservice.org:8080/solr14/(core)/</url>
+    <store>pcmall,pcmallcap</store>
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
