@@ -566,7 +566,7 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				
-				if (originalRedirect != null) {
+				if (appliedRedirect != null && originalRedirect != null) {
 					appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
 					appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
 					appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
