@@ -832,7 +832,7 @@ public class SearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (disableRelevancy) {
+				if (skipRelevancy) {
 					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
 						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
 					}

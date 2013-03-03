@@ -474,6 +474,11 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
+			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			if (skipRelevancy) {
+				disableRelevancy = true;
+			}
 			
 			RedirectRule appliedRedirect = null;
 			
@@ -872,7 +877,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (disableRelevancy) {
+				if (skipRelevancy) {
 					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
 						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
 					}
