@@ -882,7 +882,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					}
 				}
 				else {
-					if (!keywordPresent || (appliedRedirect != null && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
+					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
 						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
 					}
 				}
