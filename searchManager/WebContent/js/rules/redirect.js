@@ -786,28 +786,40 @@
 						case "categorylist": 
 							if($.isNotBlank(selectedCategory)){
 								self.populateSubcategories(ui, condition, selectedCategory);
+							}else{
+								self.populateCategories(ui, condition);
 							}
 							break;
 						case "subcategorylist": 
 							if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
 								self.populateClass(ui, condition, selectedCategory, selectedSubcategory);
+							}else if($.isNotBlank(selectedCategory)){
+								self.populateSubcategories(ui, condition, selectedCategory);
 							}
 							break;
 						case "classlist": 
 							if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)  && $.isNotBlank(selectedClass)){
 								self.populateMinor(ui, condition, selectedCategory, selectedSubcategory, selectedClass);
+							}else if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
+								self.populateClass(ui, condition, selectedCategory, selectedSubcategory);
 							}
 							break;
 						case "minorlist":
 							self.populateIMSManufacturers(ui, condition);
 							break;
 						case "level1categorylist": 
-							if($.isNotBlank(selectedLevel1Category))
+							if($.isNotBlank(selectedLevel1Category)){
 								self.populateLevel2Categories(ui, condition, selectedLevel1Category);
+							}else{
+								self.populateLevel1Categories(ui, condition);
+							}
 							break;
 						case "level2categorylist": 
-							if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category))
+							if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category)){
 								self.populateLevel3Categories(ui, condition, selectedLevel1Category, selectedLevel2Category);
+							}else if($.isNotBlank(selectedLevel1Category)){
+								self.populateLevel2Categories(ui, condition, selectedLevel1Category);
+							}
 							break;
 						case "level3categorylist": 
 							self.populateCNETManufacturers(ui, condition);

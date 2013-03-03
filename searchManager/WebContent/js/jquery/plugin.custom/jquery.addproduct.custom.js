@@ -531,27 +531,41 @@
 						if($.isNotBlank(selectedCategory)){
 							base.populateSubcategories(selectedCategory);
 						}
+						else{ //if selection is cleared
+							base.populateCategories();
+						}
 						break;
 					case "subcategorylist": 
 						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
 							base.populateClass(selectedCategory, selectedSubcategory);
+						}else if($.isNotBlank(selectedCategory)){
+							base.populateSubcategories(selectedCategory);
 						}
 						break;
 					case "classlist": 
 						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)  && $.isNotBlank(selectedClass)){
 							base.populateMinor(selectedCategory, selectedSubcategory, selectedClass);
+						}else if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
+							base.populateClass(selectedCategory, selectedSubcategory);
 						}
 						break;
 					case "minorlist":
 						base.populateIMSManufacturers();
 						break;
 					case "level1categorylist": 
-						if($.isNotBlank(selectedLevel1Category))
+						if($.isNotBlank(selectedLevel1Category)){
 							base.populateLevel2Categories(selectedLevel1Category);
+						}
+						else{
+							base.populateLevel1Categories();
+						}
 						break;
 					case "level2categorylist": 
-						if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category))
+						if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category)){
 							base.populateLevel3Categories(selectedLevel1Category, selectedLevel2Category);
+						}else if($.isNotBlank(selectedLevel1Category)){
+							base.populateLevel2Categories(selectedLevel1Category);
+						}
 						break;
 					case "level3categorylist": 
 						base.populateCNETManufacturers();
