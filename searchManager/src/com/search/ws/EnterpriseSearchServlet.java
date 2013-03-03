@@ -873,12 +873,18 @@ public class EnterpriseSearchServlet extends HttpServlet {
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
 				if (keywordNvp != null) {
-					nameValuePairs.remove(defTypeNVP);
-					nameValuePairs.remove(keywordNvp);
-					StringBuilder newQuery = new StringBuilder();
-					newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-					nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+					if (nameValuePairs.remove(defTypeNVP)) {
+						nameValuePairs.remove(keywordNvp);
+						StringBuilder newQuery = new StringBuilder();
+						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+					}
+				}
+				else {
+					if (!keywordPresent || (appliedRedirect != null && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
+						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
+					}
 				}
 			}
 
