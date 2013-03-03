@@ -551,14 +551,17 @@ public class SearchServlet extends HttpServlet {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 								rr.setStoreId(coreName);
-								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
+								String conditionForSolr = rr.getConditionForSolr();
+								if (StringUtils.isNotBlank(conditionForSolr)) {
+									builder.append("(").append(conditionForSolr).append(") OR ");
+								}
 							}	
 						}
 						if (builder.length() > 0) {
 							builder.delete(builder.length() - 4, builder.length());
+							redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+							nameValuePairs.add(redirectFqNvp);
 						}
-						redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-						nameValuePairs.add(redirectFqNvp);
 						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							

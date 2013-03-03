@@ -564,15 +564,18 @@ public class EnterpriseSearchServlet extends HttpServlet {
 									RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 									rr.setStoreId(storeOverride);
 									Map<String, String> map = enterpriseSearchConfigManager.getFieldOverrideMap(storeName, storeOverride);
-									String strCondition = StringUtils.replaceEach(rr.getConditionForSolr(), map.keySet().toArray(new String[0]), map.values().toArray(new String[0]));
-									builder.append("(").append(strCondition).append(") OR ");
+									String conditionForSolr = rr.getConditionForSolr();
+									if (StringUtils.isNotBlank(conditionForSolr)) {
+										String strCondition = StringUtils.replaceEach(conditionForSolr, map.keySet().toArray(new String[0]), map.values().toArray(new String[0]));
+										builder.append("(").append(strCondition).append(") OR ");
+									}
 								}
 							}
 							if (builder.length() > 0) {
 								builder.delete(builder.length() - 4, builder.length());
+								redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+								nameValuePairs.add(redirectFqNvp);
 							}
-							redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-							nameValuePairs.add(redirectFqNvp);
 							if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 								nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
