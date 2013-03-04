@@ -498,13 +498,13 @@
 			select.searchable({
 				change: function(u, e){
 					var $imsTab = base.contentHolder.find("div#ims");
-					var selectedCategory = $.trim($imsTab.find("select#categoryList > option:gt(0):selected:eq(0)").text());
-					var selectedSubcategory = $.trim($imsTab.find("select#subCategoryList > option:gt(0):selected:eq(0)").text());
-					var selectedClass = $.trim($imsTab.find("select#classList > option:gt(0):selected:eq(0)").text());
+					var selectedCategory = $.trim($imsTab.find("select#categoryList > option:selected:eq(0)").val());
+					var selectedSubcategory = $.trim($imsTab.find("select#subCategoryList > option:selected:eq(0)").val());
+					var selectedClass = $.trim($imsTab.find("select#classList > option:selected:eq(0)").val());
 
 					var $cnetTab = base.contentHolder.find("div#cnet");
-					var selectedLevel1Category = $.trim($cnetTab.find("select#level1CategoryList > option:gt(0):selected:eq(0)").text());
-					var selectedLevel2Category = $.trim($cnetTab.find("select#level2CategoryList > option:gt(0):selected:eq(0)").text());
+					var selectedLevel1Category = $.trim($cnetTab.find("select#level1CategoryList > option:selected:eq(0)").val());
+					var selectedLevel2Category = $.trim($cnetTab.find("select#level2CategoryList > option:selected:eq(0)").val());
 
 					if($.isBlank(u.value)){
 						switch($(e.currentTarget).prop("id").toLowerCase()){
@@ -530,23 +530,22 @@
 					case "categorylist": 
 						if($.isNotBlank(selectedCategory)){
 							base.populateSubcategories(selectedCategory);
-						}
-						else{ //if selection is cleared
-							base.populateCategories();
+						}else{
+							base.populateIMSManufacturers();
 						}
 						break;
 					case "subcategorylist": 
 						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
 							base.populateClass(selectedCategory, selectedSubcategory);
-						}else if($.isNotBlank(selectedCategory)){
-							base.populateSubcategories(selectedCategory);
+						}else{
+							base.populateIMSManufacturers();
 						}
 						break;
 					case "classlist": 
 						if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)  && $.isNotBlank(selectedClass)){
 							base.populateMinor(selectedCategory, selectedSubcategory, selectedClass);
-						}else if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
-							base.populateClass(selectedCategory, selectedSubcategory);
+						}else{
+							base.populateIMSManufacturers();
 						}
 						break;
 					case "minorlist":
@@ -555,16 +554,15 @@
 					case "level1categorylist": 
 						if($.isNotBlank(selectedLevel1Category)){
 							base.populateLevel2Categories(selectedLevel1Category);
-						}
-						else{
-							base.populateLevel1Categories();
+						}else{
+							base.populateCNETManufacturers();
 						}
 						break;
 					case "level2categorylist": 
 						if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category)){
 							base.populateLevel3Categories(selectedLevel1Category, selectedLevel2Category);
-						}else if($.isNotBlank(selectedLevel1Category)){
-							base.populateLevel2Categories(selectedLevel1Category);
+						}else{
+							base.populateCNETManufacturers();
 						}
 						break;
 					case "level3categorylist": 
@@ -750,10 +748,10 @@
 			if ($.isNotBlank($catcode.val())){
 				inCatCode = $.trim($catcode.val().toUpperCase());
 			}else{
-				inCategory = $.trim($tab.find("select#categoryList >option:gt(0):selected:eq(0)").text());
-				inSubCategory = $.trim($tab.find("select#subCategoryList >option:gt(0):selected:eq(0)").text());
-				inClass = $.trim($tab.find("select#classList >option:gt(0):selected:eq(0)").text());
-				inMinor = $.trim($tab.find("select#minorList >option:gt(0):selected:eq(0)").text());
+				inCategory = $.trim($tab.find("select#categoryList >option:selected:eq(0)").val());
+				inSubCategory = $.trim($tab.find("select#subCategoryList >option:selected:eq(0)").val());
+				inClass = $.trim($tab.find("select#classList >option:selected:eq(0)").val());
+				inMinor = $.trim($tab.find("select#minorList >option:selected:eq(0)").val());
 			}
 
 			CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {
@@ -998,9 +996,9 @@
 			var $table = $tab.find("table.cnetFields");
 			var $item = base.options.item;
 
-			var inLevel1Category = $.trim($tab.find("select#level1CategoryList").val());
-			var inLevel2Category = $.trim($tab.find("select#level2CategoryList").val());
-			var inLevel3Category = $.trim($tab.find("select#level3CategoryList").val());
+			var inLevel1Category = $.trim($tab.find("select#level1CategoryList >option:selected:eq(0)").val());
+			var inLevel2Category = $.trim($tab.find("select#level2CategoryList >option:selected:eq(0)").val());
+			var inLevel3Category = $.trim($tab.find("select#level3CategoryList >option:selected:eq(0)").val());
 
 			CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
 				callback: function(data){
@@ -1680,7 +1678,7 @@
 					
 					base.contentHolder.find("select#templateNameList").prop("selectedIndex", 0).change();
 				}
-			}, {type: type});
+			}, {type: type, item: base.options.item});
 		};
 
 		// Run initializer
