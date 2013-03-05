@@ -449,11 +449,11 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			
 			// grab the keyword
 			String keyword = StringUtils.trimToEmpty(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-			
+			boolean isCompare = false;
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
-				if (keyword.startsWith("DPNo:")) {
+				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
 					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
@@ -474,12 +474,13 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
-			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
+			
+			/*String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
 			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
 			boolean standardQt = StringUtils.equals(queryType, "standard");
 			if (skipRelevancy) {
 				disableRelevancy = true;
-			}
+			}*/
 			
 			RedirectRule appliedRedirect = null;
 			
@@ -881,32 +882,14 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (skipRelevancy) {
-					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
-						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
-					}
-				}
-				else if (keywordNvp != null) {
+				if (keywordNvp != null) {
 					if (nameValuePairs.remove(defTypeNVP)) { // relevancy != null
 						nameValuePairs.remove(keywordNvp);
 						StringBuilder newQuery = new StringBuilder();
 						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
 						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-						nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", StringUtils.isBlank(keyword) ? "*:*" : keyword));
 					}
-				}
-			}
-
-			if (standardQt) {
-				boolean qFound = false;
-				for (NameValuePair p : nameValuePairs) {
-					if (StringUtils.equals("q", p.getName())) {
-						qFound = true;
-					}
-				}
-
-				if (!qFound) {
-					nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
 				}
 			}
 			
