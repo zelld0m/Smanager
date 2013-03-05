@@ -459,6 +459,7 @@ public class SearchServlet extends HttpServlet {
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
 			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			boolean standardQt = StringUtils.equals(queryType, "standard");
 			if (skipRelevancy) {
 				disableRelevancy = true;
 			}
@@ -851,6 +852,19 @@ public class SearchServlet extends HttpServlet {
 				}
 			}
 
+			if (standardQt) {
+				boolean qFound = false;
+				for (NameValuePair p : nameValuePairs) {
+					if (StringUtils.equals("q", p.getName())) {
+						qFound = true;
+					}
+				}
+
+				if (!qFound) {
+					nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
+				}
+			}
+
 			/* FacetSort */
 			FacetSort facetSort = null;
 			boolean applyFacetSort = false;
@@ -886,9 +900,15 @@ public class SearchServlet extends HttpServlet {
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
-				facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
-				if (StringUtils.isNotBlank(facetTemplateName)) {
-					facetSort = getFacetSortRule(store, facetTemplateName, fromSearchGui);
+				
+				
+				try{
+					facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+					if (StringUtils.isNotBlank(facetTemplateName)) {
+						facetSort = getFacetSortRule(store, facetTemplateName, fromSearchGui);
+					}
+				}catch(Exception e){
+					logger.error("Failed to get template name", e);
 				}
 			}
 			

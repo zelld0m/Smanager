@@ -476,6 +476,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
 			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			boolean standardQt = StringUtils.equals(queryType, "standard");
 			if (skipRelevancy) {
 				disableRelevancy = true;
 			}
@@ -896,6 +897,19 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				}
 			}
 
+			if (standardQt) {
+				boolean qFound = false;
+				for (NameValuePair p : nameValuePairs) {
+					if (StringUtils.equals("q", p.getName())) {
+						qFound = true;
+					}
+				}
+
+				if (!qFound) {
+					nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
+				}
+			}
+			
 			/* FacetSort */
 			if (enterpriseSearchConfigManager.isActiveSearchRule(storeName, RuleEntity.FACET_SORT)) {
 				FacetSort facetSort = null;
@@ -935,10 +949,15 @@ public class EnterpriseSearchServlet extends HttpServlet {
 					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
 					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
 
+					try{
 					facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
 					if (StringUtils.isNotBlank(facetTemplateName)) {
 						facetSort = getFacetSortRule(sk.getStore(), facetTemplateName, fromSearchGui);
 					}
+					}catch(Exception e){
+						logger.error("Failed to get template name", e);
+					}
+					
 				}
 				
 				if (facetSort != null) {
