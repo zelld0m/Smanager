@@ -722,9 +722,9 @@
 				var $select = ui.find("select#cnetmanufacturerList");
 				var $table = ui.find("table.cnetFields");
 
-				var inLevel1Category = $.trim(ui.find("select#level1CategoryList").val());
-				var inLevel2Category = $.trim(ui.find("select#level2CategoryList").val());
-				var inLevel3Category = $.trim(ui.find("select#level3CategoryList").val());
+				var inLevel1Category = $.trim(ui.find("select#level1CategoryList >option:selected:eq(0)").val());
+				var inLevel2Category = $.trim(ui.find("select#level2CategoryList >option:selected:eq(0)").val());
+				var inLevel3Category = $.trim(ui.find("select#level3CategoryList >option:selected:eq(0)").val());
 
 				CategoryServiceJS.getCNETManufacturers(inLevel1Category, inLevel2Category, inLevel3Category, {
 					callback: function(data){
@@ -758,12 +758,12 @@
 				var self = this;
 				select.searchable({
 					change: function(u, e){
-						var selectedCategory = $.trim(ui.find("select#categoryList > option:gt(0):selected:eq(0)").text());
-						var selectedSubcategory = $.trim(ui.find("select#subCategoryList > option:gt(0):selected:eq(0)").text());
-						var selectedClass = $.trim(ui.find("select#classList > option:gt(0):selected:eq(0)").text());
+						var selectedCategory = $.trim(ui.find("select#categoryList > option:selected:eq(0)").val());
+						var selectedSubcategory = $.trim(ui.find("select#subCategoryList > option:selected:eq(0)").val());
+						var selectedClass = $.trim(ui.find("select#classList > option:selected:eq(0)").val());
 
-						var selectedLevel1Category = $.trim(ui.find("select#level1CategoryList > option:gt(0):selected:eq(0)").text());
-						var selectedLevel2Category = $.trim(ui.find("select#level2CategoryList > option:gt(0):selected:eq(0)").text());
+						var selectedLevel1Category = $.trim(ui.find("select#level1CategoryList > option:selected:eq(0)").val());
+						var selectedLevel2Category = $.trim(ui.find("select#level2CategoryList > option:selected:eq(0)").val());
 
 						if($.isBlank(u.value)){
 							switch($(e.currentTarget).prop("id").toLowerCase()){
@@ -789,28 +789,40 @@
 						case "categorylist": 
 							if($.isNotBlank(selectedCategory)){
 								self.populateSubcategories(ui, condition, selectedCategory);
+							}else{
+								self.populateIMSManufacturers(ui, condition);
 							}
 							break;
 						case "subcategorylist": 
 							if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)){
 								self.populateClass(ui, condition, selectedCategory, selectedSubcategory);
+							}else{
+								self.populateIMSManufacturers(ui, condition);
 							}
 							break;
 						case "classlist": 
 							if($.isNotBlank(selectedCategory) && $.isNotBlank(selectedSubcategory)  && $.isNotBlank(selectedClass)){
 								self.populateMinor(ui, condition, selectedCategory, selectedSubcategory, selectedClass);
+							}else{
+								self.populateIMSManufacturers(ui, condition);
 							}
 							break;
 						case "minorlist":
 							self.populateIMSManufacturers(ui, condition);
 							break;
 						case "level1categorylist": 
-							if($.isNotBlank(selectedLevel1Category))
+							if($.isNotBlank(selectedLevel1Category)){
 								self.populateLevel2Categories(ui, condition, selectedLevel1Category);
+							}else{
+								self.populateCNETManufacturers(ui, condition);
+							}
 							break;
 						case "level2categorylist": 
-							if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category))
+							if($.isNotBlank(selectedLevel1Category) && $.isNotBlank(selectedLevel2Category)){
 								self.populateLevel3Categories(ui, condition, selectedLevel1Category, selectedLevel2Category);
+							}else{
+								self.populateCNETManufacturers(ui, condition);
+							}
 							break;
 						case "level3categorylist": 
 							self.populateCNETManufacturers(ui, condition);
@@ -997,10 +1009,10 @@
 				if ($.isNotBlank(catCodeVal) && ui.find("a.switchToCatName").is(":visible")){
 					inCatCode = catCodeVal;
 				}else if(ui.find("a.switchToCatCode").is(":visible")){
-					inCategory = ui.find("select#categoryList >option:gt(0):selected:eq(0)").text();
-					inSubCategory = ui.find("select#subCategoryList >option:gt(0):selected:eq(0)").text();
-					inClass = ui.find("select#classList >option:gt(0):selected:eq(0)").text();
-					inMinor = ui.find("select#minorList >option:gt(0):selected:eq(0)").text();
+					inCategory = ui.find("select#categoryList >option:selected:eq(0)").val();
+					inSubCategory = ui.find("select#subCategoryList >option:selected:eq(0)").val();
+					inClass = ui.find("select#classList >option:selected:eq(0)").val();
+					inMinor = ui.find("select#minorList >option:selected:eq(0)").val();
 				}
 
 				CategoryServiceJS.getIMSManufacturers(inCatCode, inCategory, inSubCategory, inClass, inMinor, {

@@ -548,9 +548,9 @@
 										},
 										callback: function(data){
 											if ($.isEmptyObject(data)){
-												self.showData();
 												self.importRejectRules();
 											} else {
+												self.showData();
 												jAlert("The following Ranking Rule names already exist:\n " + data.join("\n"), self.moduleName);
 											}
 										}
@@ -655,6 +655,9 @@
 								jAlert(message, "Import Rule"); 
 							}									
 						});
+					}
+					else {
+						self.showData();
 					}
 				});
 			},
