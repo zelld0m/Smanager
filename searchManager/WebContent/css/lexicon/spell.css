@@ -1,0 +1,46 @@
+.term-list {
+  width: 335px;
+  text-align: left;
+  overflow-wrap: break-word;
+  line-height: 21px;
+}
+
+.term-list .term {
+	float: left;
+}
+
+#spell-table .term-input {
+  border: 1px solid #dddddd;
+}
+
+#spell-table .term-input-display {
+	border: 1px solid #dddddd;
+	padding: 2px 4px;
+	margin-right: 3px;
+	background-color: rgb(247, 230, 230);
+	display: inline;
+	color: rgb(70, 70, 70);
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
+	white-space: nowrap;
+}
+
+#spell-table .suggest-list .term-input-display {
+	background-color: rgb(230, 230, 247);
+}
+
+.actions .ui-tooltip-content {
+	padding: 3px;
+	margin: 0;
+	border: 1px solid #bbbbbb !important;
+	background-color: rgba(187, 187, 187, 0.3) !important;
+	border-bottom-left-radius: 3px;
+}
+
+.actions .ui-tooltip-content img {
+	width: 12px;
+	height: 12px;
+	margin: 2px;
+}

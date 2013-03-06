@@ -32,6 +32,7 @@
     	<security:intercept-url pattern="/synonym/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/stopword/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/protword/**" access="isAuthenticated()" />
+    	<security:intercept-url pattern="/spell/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/setting/**" access="isAuthenticated()" />
     	<security:intercept-url pattern="/production/**" access="isAuthenticated() and hasRole('PUBLISH_RULE')" />
     	<security:intercept-url pattern="/approval/**" access="isAuthenticated() and hasRole('APPROVE_RULE')" />
