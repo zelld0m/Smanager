@@ -118,7 +118,7 @@ public class ConfigManager {
     
     @SuppressWarnings("unchecked")
     public String getStoreIdByAliases(String storeId) {
-    	String sId = xmlConfig.getString("/server[@id='" + storeId + "']/@id");
+    	String sId = xmlConfig.getString("/store[@id='" + storeId + "']/@id");
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/store");
     	
     	if(StringUtils.isBlank(sId) && CollectionUtils.isNotEmpty(hcList)){

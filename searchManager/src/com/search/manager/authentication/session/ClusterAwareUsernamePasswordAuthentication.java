@@ -41,9 +41,10 @@ public class ClusterAwareUsernamePasswordAuthentication extends UsernamePassword
 
 		sessionRegistry.registerNewSession(sessionId, principal);
 
+		ConfigManager cm = ConfigManager.getInstance();
 		String storeId = ((UserDetailsImpl)authResult.getPrincipal()).getStoreId();
-		String storeName = ConfigManager.getInstance().getStoreName(storeId);
-		String serverName = ConfigManager.getInstance().getStoreParameter(storeId, "default-server");
+		String storeName = cm.getStoreName(storeId);
+		String serverName = cm.getStoreParameter(storeId, "default-server");
 		
 		UtilityService.setStoreId(storeId);
 		UtilityService.setStoreName(storeName);
