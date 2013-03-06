@@ -133,7 +133,7 @@
 					}else if (!validateComment(self.moduleName,comment,1)){
 						//error message in validateComment
 					}else{
-						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
 						var a = [];
 						var arrSelectedKeys = Object.keys(self.getSelectedItems());
 						

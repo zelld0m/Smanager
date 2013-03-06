@@ -551,14 +551,17 @@ public class SearchServlet extends HttpServlet {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 								rr.setStoreId(coreName);
-								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
+								String conditionForSolr = rr.getConditionForSolr();
+								if (StringUtils.isNotBlank(conditionForSolr)) {
+									builder.append("(").append(conditionForSolr).append(") OR ");
+								}
 							}	
 						}
 						if (builder.length() > 0) {
 							builder.delete(builder.length() - 4, builder.length());
+							redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+							nameValuePairs.add(redirectFqNvp);
 						}
-						redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-						nameValuePairs.add(redirectFqNvp);
 						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
@@ -566,7 +569,7 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				
-				if (originalRedirect != null) {
+				if (appliedRedirect != null && originalRedirect != null) {
 					appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
 					appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
 					appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
@@ -832,13 +835,19 @@ public class SearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (keywordNvp != null) {
-					nameValuePairs.remove(defTypeNVP);
-					nameValuePairs.remove(keywordNvp);
-					StringBuilder newQuery = new StringBuilder();
-					newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-					nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+				if (skipRelevancy) {
+					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
+						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
+					}
+				}
+				else if (keywordNvp != null) {
+					if (nameValuePairs.remove(defTypeNVP)) { // relevancy != null
+						nameValuePairs.remove(keywordNvp);
+						StringBuilder newQuery = new StringBuilder();
+						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+					}
 				}
 			}
 

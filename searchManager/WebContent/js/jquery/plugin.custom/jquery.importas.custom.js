@@ -275,7 +275,7 @@
 		switch(ruleEntity) {
 		case "RANKING_RULE":
 		case "QUERY_CLEANING":
-			return true;
+			return false;
 	    default:
 			return false;
 		}

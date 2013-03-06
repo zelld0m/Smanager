@@ -474,6 +474,11 @@ public class EnterpriseSearchServlet extends HttpServlet {
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
+			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			if (skipRelevancy) {
+				disableRelevancy = true;
+			}
 			
 			RedirectRule appliedRedirect = null;
 			
@@ -559,15 +564,18 @@ public class EnterpriseSearchServlet extends HttpServlet {
 									RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 									rr.setStoreId(storeOverride);
 									Map<String, String> map = enterpriseSearchConfigManager.getFieldOverrideMap(storeName, storeOverride);
-									String strCondition = StringUtils.replaceEach(rr.getConditionForSolr(), map.keySet().toArray(new String[0]), map.values().toArray(new String[0]));
-									builder.append("(").append(strCondition).append(") OR ");
+									String conditionForSolr = rr.getConditionForSolr();
+									if (StringUtils.isNotBlank(conditionForSolr)) {
+										String strCondition = StringUtils.replaceEach(conditionForSolr, map.keySet().toArray(new String[0]), map.values().toArray(new String[0]));
+										builder.append("(").append(strCondition).append(") OR ");
+									}
 								}
 							}
 							if (builder.length() > 0) {
 								builder.delete(builder.length() - 4, builder.length());
+								redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+								nameValuePairs.add(redirectFqNvp);
 							}
-							redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-							nameValuePairs.add(redirectFqNvp);
 							if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
 								nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
@@ -872,13 +880,19 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (keywordNvp != null) {
-					nameValuePairs.remove(defTypeNVP);
-					nameValuePairs.remove(keywordNvp);
-					StringBuilder newQuery = new StringBuilder();
-					newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-					nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+				if (skipRelevancy) {
+					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
+						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
+					}
+				}
+				else if (keywordNvp != null) {
+					if (nameValuePairs.remove(defTypeNVP)) { // relevancy != null
+						nameValuePairs.remove(keywordNvp);
+						StringBuilder newQuery = new StringBuilder();
+						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+					}
 				}
 			}
 
