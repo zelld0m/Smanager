@@ -158,7 +158,7 @@ public class ConfigManager {
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/server");
     	for (HierarchicalConfiguration hc: hcList) {
     		String[] store = StringUtils.split(hc.getString("store"), ",");
-    		if (ArrayUtils.contains(store, storeId)) {
+    		if (ArrayUtils.contains(store, getStoreIdByAliases(storeId))) {
         		String serverName = hc.getString("@name");
         		String serverUrl = hc.getString("url");
         		map.put(serverName, serverUrl);

@@ -69,7 +69,7 @@
     </solr-param-value>    
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
-    <default-server>afs-pl-schpd01</default-server>
+    <default-server>afs-pl-schpd02</default-server>
     <facet-template>PCMallGov_FacetTemplate</facet-template>
     <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
   </store>
@@ -127,7 +127,7 @@
   </server>
   <server name='afs-pl-schpd01'>
     <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmgbd,macmallbd</store>
+    <store>pcmallgov,macmallbd</store>
   </server>
   <server name='afs-pl-schpd02'>
     <url>http://afs-pl-schpd02.afservice.org:8080/solr14/(core)/</url>

@@ -14,7 +14,7 @@
 			minCharRequired: 2
 		}));
 		
-		if(GLOBAL_storeId.toLowerCase() === "pcmgbd"){
+		if(GLOBAL_storeId === "pcmallgov"){
 			Manager.addWidget(new AjaxSolr.PCMGSelectorWidget({
 				id: "pcmgSelector",
 				target: "#pcmgSelector"
