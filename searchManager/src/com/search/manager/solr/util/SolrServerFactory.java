@@ -13,24 +13,23 @@ public class SolrServerFactory {
 	private static final Logger logger = Logger
 			.getLogger(SolrServerFactory.class);
 
-	private static SolrServerFactory instance = null;
-	private static Map<String, LocalSolrServerRunner> solrServers;
+	private Map<String, LocalSolrServerRunner> solrServers;
 	private List<String> cores;
 
+	@SuppressWarnings("unused")
 	private SolrServerFactory() {
 		// do nothing...
 	}
 
 	public SolrServerFactory(List<LocalSolrServerRunner> localSolrServerRunners) {
 		if (localSolrServerRunners != null) {
-			instance = new SolrServerFactory();
 			solrServers = new HashMap<String, LocalSolrServerRunner>();
 			cores = new ArrayList<String>();
 
 			for (LocalSolrServerRunner localSolrServerRunner : localSolrServerRunners) {
-				cores.add(localSolrServerRunner.getCoreName());
+				this.cores.add(localSolrServerRunner.getCoreName());
 				if (localSolrServerRunner.initLocalSolrServerRunner()) {
-					solrServers.put(localSolrServerRunner.getCoreName(),
+					this.solrServers.put(localSolrServerRunner.getCoreName(),
 							localSolrServerRunner);
 				} else {
 					logger.error("Unable to initialize localSolrServerRunner for "
@@ -42,7 +41,7 @@ public class SolrServerFactory {
 
 	public LocalSolrServerRunner getCoreInstance(String core)
 			throws SolrServerException {
-		if (instance != null) {
+		if (solrServers != null) {
 			LocalSolrServerRunner server = solrServers.get(core);
 			if (server != null) {
 				return server;
@@ -70,7 +69,7 @@ public class SolrServerFactory {
 	}
 
 	public boolean resetSolrServer(String core) {
-		if (instance != null) {
+		if (solrServers != null) {
 			if (solrServers.containsKey(core)) {
 				LocalSolrServerRunner localSolrServerRunner = solrServers
 						.get(core);
@@ -81,16 +80,30 @@ public class SolrServerFactory {
 							+ core + ".");
 					return false;
 				}
-
 			}
-			return false;
 		}
-
 		return false;
 	}
 
+	public boolean clearConnections() {
+		if (cores != null) {
+			for (String core : cores) {
+				if (solrServers.containsKey(core)) {
+					try {
+						solrServers.get(core).clearConnections();
+					} catch (Exception e) {
+						logger.error("Error in clearing connection for core = "
+								+ solrServers.get(core) + ".");
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean shutdown() {
-		if (instance != null) {
+		if (cores != null) {
 			for (String core : cores) {
 				if (solrServers.containsKey(core)) {
 					try {
@@ -105,7 +118,6 @@ public class SolrServerFactory {
 			}
 			return true;
 		}
-
 		return false;
 	}
 
