@@ -55,9 +55,9 @@
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
   </store>
   
-  <store id="pcmgbd" name="PCMG BD">
+  <store id="pcmallgov" name="PCMG BD">
   	<core>pcmallgov</core>
-  	<store-id-aliases>pcmallgov,pcmgov,pcmg</store-id-aliases>
+  	<store-id-aliases>pcmgbd,pcmgov,pcmg</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PCMallGov</facet-name>
@@ -131,7 +131,7 @@
   </server>
   <server name='afs-pl-schpd02'>
     <url>http://afs-pl-schpd02.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmall,pcmallcap</store>
+    <store>pcmall,pcmallcap,pcmallgov</store>
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>
