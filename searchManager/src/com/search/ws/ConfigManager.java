@@ -101,15 +101,15 @@ public class ConfigManager {
     }
 	
     public String getStoreName(String storeId) {
-    	return (xmlConfig.getString("/store[@id='" + storeId + "']/@name"));
+    	return (xmlConfig.getString("/store[@id='" + getStoreIdByAliases(storeId) + "']/@name"));
     }
     
     public String getStoreParameter(String storeId, String param) {
-    	return (xmlConfig.getString("/store[@id='" + storeId + "']/" + param));
+    	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
 
     public String getParameterByStoreId(String storeId, String param) {
-    	return (xmlConfig.getString("/store[@id='" + storeId + "']/" + param));
+    	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
 
     public String getServerParameter(String server, String param) {
@@ -242,7 +242,8 @@ public class ConfigManager {
 	
     public static void main(String[] args) {
     	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
-		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));
+//		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));
+		System.out.println("qt: " + configManager.getStoreIdByAliases("pcm"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
 //		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));

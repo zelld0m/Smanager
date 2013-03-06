@@ -134,6 +134,12 @@ public class UtilityService {
 		String storeName = (String)attr.getAttribute("storeId", RequestAttributes.SCOPE_SESSION);
 		return storeName;
 	}
+
+	@RemoteMethod
+	public static String getStoreCore(String storeId){
+		ConfigManager cm = ConfigManager.getInstance();
+		return cm.getStoreParameter(storeId, "core");
+	}
 	
 	@RemoteMethod
 	public static String getStoreName(){

@@ -56,7 +56,8 @@
   </store>
   
   <store id="pcmgbd" name="PCMG BD">
-  	<core>pcmall</core>
+  	<core>pcmallgov</core>
+  	<store-id-aliases>pcmallgov,pcmgov,pcmg</store-id-aliases>
     <sort>CatCodeOrder asc, score desc, Popularity desc</sort>
     <qt>dismaxpcmallrelevancy</qt>
     <facet-name>PCMallGov</facet-name>
