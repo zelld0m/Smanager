@@ -2,9 +2,9 @@ package com.search.manager.solr.util;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -16,6 +16,9 @@ import org.apache.solr.common.SolrInputDocument;
 
 public class LocalSolrServerRunner {
 
+	private static final Logger logger = Logger
+			.getLogger(LocalSolrServerRunner.class);
+
 	private HttpSolrServer httpSolrServer;
 	private String coreName;
 	private String solrUrl;
@@ -26,7 +29,6 @@ public class LocalSolrServerRunner {
 	private int maxTotalConnections;
 	private boolean followRedirects = false;
 	private boolean allowCompression = true;
-	private Timer timer = null;
 
 	private LocalSolrServerRunner() {
 		// do nothing...
@@ -34,10 +36,6 @@ public class LocalSolrServerRunner {
 
 	public boolean initLocalSolrServerRunner() {
 		try {
-			if (timer != null) {
-				timer.cancel();
-			}
-
 			if (!solrUrl.endsWith("/")) {
 				solrUrl += "/";
 			}
@@ -56,19 +54,8 @@ public class LocalSolrServerRunner {
 			// Server side must support gzip or deflate for this to have any
 			// effect.
 			httpSolrServer.setAllowCompression(allowCompression);
-
-			timer = new Timer(true);
-			timer.schedule(new TimerTask() {
-				@Override
-				public void run() {
-					if (httpSolrServer.getHttpClient() != null) {
-						httpSolrServer.getHttpClient().getConnectionManager()
-								.closeExpiredConnections();
-					}
-				}
-			}, 5000);
-
 		} catch (Exception e) {
+			logger.error(e);
 			return false;
 		}
 
@@ -126,6 +113,18 @@ public class LocalSolrServerRunner {
 		}
 
 		return 1;
+	}
+
+	public boolean clearConnections() {
+		try {
+			httpSolrServer.getHttpClient().getConnectionManager()
+					.closeExpiredConnections();
+			httpSolrServer.getHttpClient().getConnectionManager()
+					.closeIdleConnections(10000L, TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	public void shutdown() {
