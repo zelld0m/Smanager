@@ -50,4 +50,29 @@
 		</constructor-arg>
 	</bean>
 	
+	<bean id="solrJobDetailBean" class="org.springframework.scheduling.quartz.JobDetailBean">
+		<property name="jobClass" value="com.search.manager.cron.SolrResetServerCronSingle" />
+	</bean>
+	
+	<bean id="solrSimpleTriggerBean" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="solrJobDetailBean" />
+		<property name="startDelay" value="5000" />
+		<property name="repeatInterval" value="200000" />
+	</bean>
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="solrSimpleTriggerBean" />
+			</list>
+		</property>
+		<property name="schedulerContextAsMap">
+			<map>
+				<entry key="solrServerFactory">
+					<ref bean="solrServerFactory" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
 </beans>
