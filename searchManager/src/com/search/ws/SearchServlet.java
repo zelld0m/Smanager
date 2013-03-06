@@ -428,11 +428,10 @@ public class SearchServlet extends HttpServlet {
 			
 			// grab the keyword
 			String keyword = StringUtils.trimToEmpty(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-			
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
-				if (keyword.startsWith("DPNo:")) {
+				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
 					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
@@ -457,11 +456,12 @@ public class SearchServlet extends HttpServlet {
 			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
 			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
 			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
-			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
+			/*String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
 			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
+			boolean standardQt = StringUtils.equals(queryType, "standard");
 			if (skipRelevancy) {
 				disableRelevancy = true;
-			}
+			}*/
 			
 			StoreKeyword sk = new StoreKeyword(coreName, keyword);
 			
@@ -835,18 +835,13 @@ public class SearchServlet extends HttpServlet {
 				}
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
-				if (skipRelevancy) {
-					if (!keywordPresent || (appliedRedirect != null && appliedRedirect.isRedirectFilter() && BooleanUtils.isNotTrue(appliedRedirect.getIncludeKeyword()))) {
-						nameValuePairs.add(0, new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, "*:*"));
-					}
-				}
-				else if (keywordNvp != null) {
+				if (keywordNvp != null) {
 					if (nameValuePairs.remove(defTypeNVP)) { // relevancy != null
 						nameValuePairs.remove(keywordNvp);
 						StringBuilder newQuery = new StringBuilder();
 						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
 						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-						nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", StringUtils.isBlank(keyword) ? "*:*" : keyword));
 					}
 				}
 			}
@@ -886,9 +881,15 @@ public class SearchServlet extends HttpServlet {
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
 				getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
-				facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
-				if (StringUtils.isNotBlank(facetTemplateName)) {
-					facetSort = getFacetSortRule(store, facetTemplateName, fromSearchGui);
+				
+				
+				try{
+					facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+					if (StringUtils.isNotBlank(facetTemplateName)) {
+						facetSort = getFacetSortRule(store, facetTemplateName, fromSearchGui);
+					}
+				}catch(Exception e){
+					logger.error("Failed to get template name", e);
 				}
 			}
 			
