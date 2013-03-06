@@ -95,6 +95,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_DISABLE_RELEVANCY = "disableRelevancy";
 	public final static String SOLR_PARAM_DISABLE_FACET_SORT = "disableFacetSort";
 	
+	public final static String SOLR_PARAM_FACET_NAME 			= "facet-name";
 	public final static String SOLR_PARAM_FACET_TEMPLATE 		= "facet-template";
 	public final static String SOLR_PARAM_FACET_TEMPLATE_NAME 	= "facet-template-name";
 	

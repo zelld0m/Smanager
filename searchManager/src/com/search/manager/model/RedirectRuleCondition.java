@@ -115,7 +115,7 @@ public class RedirectRuleCondition extends ModelBean {
 				
 				ConfigManager cm = ConfigManager.getInstance();
 				if (cm != null && StringUtils.isNotBlank(storeId)) {
-					builder.append(cm.getParameterByCore(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))
+					builder.append(cm.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))
 						.append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 					if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
 						value = map.get("Level2Category").get(0);
@@ -243,7 +243,7 @@ public class RedirectRuleCondition extends ModelBean {
 		
 		String cnetFacet = null;
 		if (forSolr && StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
-			cnetFacet = ConfigManager.getInstance().getParameterByCore(storeId, "facet-name");
+			cnetFacet = ConfigManager.getInstance().getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
 		}
 		
 		if (map.containsKey("Name")) {

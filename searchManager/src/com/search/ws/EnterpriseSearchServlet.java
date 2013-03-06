@@ -903,8 +903,8 @@ public class EnterpriseSearchServlet extends HttpServlet {
 				String storeOverride = enterpriseSearchConfigManager.getSearchRuleCore(storeName, RuleEntity.FACET_SORT);
 				StoreKeyword sk = new StoreKeyword(storeOverride, keyword);
 				
-				String facetTemplateName = configManager.getParameterByCore(storeOverride, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
-				String facetTemplate = configManager.getParameterByCore(storeOverride, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+				String facetTemplateName = configManager.getParameterByStoreId(storeOverride, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+				String facetTemplate = configManager.getParameterByStoreId(storeOverride, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
 				for (NameValuePair param: nameValuePairs) {
 					if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 

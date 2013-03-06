@@ -69,7 +69,7 @@ public class CategoryService {
 		if (StringUtils.isNotBlank(subclass)) {
 			filters.add(String.format("SubClass: \"%s\"", subclass));
 		}
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
 	}
 	
 	@RemoteMethod
@@ -108,10 +108,10 @@ public class CategoryService {
 		}
 		filters = new ArrayList<String>();
 		RedirectRuleCondition rr = new RedirectRuleCondition();
-		rr.setStoreId(UtilityService.getStoreName());
+		rr.setStoreId(UtilityService.getStoreId());
 		rr.setFilter(filter);
 		filters.add(rr.getConditionForSolr());
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
 	}
 	
 	@RemoteMethod
@@ -150,7 +150,7 @@ public class CategoryService {
 			fields.add(a.getAttributeName());
 		}	
 		
-		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
 				fields, filters, false);
 
 		for (Attribute a: attrMap.values()) {
@@ -169,7 +169,7 @@ public class CategoryService {
 	public static Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
 		// TODO: merge with above method
 		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
-		String storeId = UtilityService.getStoreName();
+		String storeId = UtilityService.getStoreId();
 
 		ArrayList<String> filters = new ArrayList<String>();
 		ArrayList<String> fields = new ArrayList<String>();
@@ -179,7 +179,7 @@ public class CategoryService {
 			fields.add(a.getAttributeName());
 		}
 
-		String templateNameField = ConfigManager.getInstance().getParameterByCore(storeId, "facet-template");
+		String templateNameField = ConfigManager.getInstance().getParameterByStoreId(storeId, "facet-template");
 		if (StringUtils.isNotEmpty(templateNameField)) {
 			filters.add(templateNameField + "Name:\"" + templateName + "\"");
 

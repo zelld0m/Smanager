@@ -115,7 +115,7 @@ public class UtilityService {
 			// get default server for store
 			ConfigManager cm = ConfigManager.getInstance();
 			if (cm != null) {
-				serverName = cm.getParameterByCore(getStoreName(), "server-url");
+				serverName = cm.getParameterByStoreId(getStoreId(), "server-url");
 			}
 			attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
 		}
@@ -168,7 +168,7 @@ public class UtilityService {
 	public static String getSolrConfig(){
 		JSONObject json = new JSONObject();
 		String url = ConfigManager.getInstance().getServerParameter(getServerName(), "url");
-		Pattern pattern = Pattern.compile("http://(.*)\\(store\\)/");
+		Pattern pattern = Pattern.compile("http://(.*)\\(core\\)/");
 		Matcher m = pattern.matcher(url);
 		if (m.matches()) {
 			json.put("solrUrl", PropsUtils.getValue("browsejssolrurl") + m.group(1));
@@ -179,14 +179,12 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static Map<String,String> getServerListForSelectedStore(boolean includeSelectedStore){
-		Map<String,String> map = ConfigManager.getInstance().getServersByCore(getStoreName());
+		Map<String,String> map = ConfigManager.getInstance().getServersByStoreId(getStoreId());
 		if (!includeSelectedStore) {
 			map.remove(getServerName());			
 		}
 		return map;
 	}
-
-
 
 	public static boolean hasPermission(String permission) {
 		boolean flag = false;
@@ -237,7 +235,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplate = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplate = cm.getParameterByCore(getStoreName(), "facet-template");
+			storeFacetTemplate = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 		}
 
 		return storeFacetTemplate;
@@ -249,7 +247,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplateName = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplateName = cm.getParameterByCore(getStoreName(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			storeFacetTemplateName = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
 		}
 		
 		return storeFacetTemplateName;
@@ -257,11 +255,10 @@ public class UtilityService {
 	
 	@RemoteMethod
 	public static String getStoreFacetName(){
-
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplate = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplate = cm.getParameterByCore(getStoreName(), "facet-name");
+			storeFacetTemplate = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
 		}
 
 		return storeFacetTemplate;

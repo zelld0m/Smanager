@@ -13,7 +13,7 @@ public abstract class RuleService {
 	
 	@RemoteMethod
 	public boolean restoreRule(String ruleId, int version){
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		RuleXml ruleXml = RuleVersionUtil.getRuleVersion(store, getRuleEntity(), ruleId, version);
 		
 		if (ruleXml!=null){

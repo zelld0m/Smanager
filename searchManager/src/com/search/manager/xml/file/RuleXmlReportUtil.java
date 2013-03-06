@@ -78,7 +78,7 @@ public class RuleXmlReportUtil{
 	
 	public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity){
 		SubReportHeader subReportHeader = new SubReportHeader();
-		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreName(), xml.getCreatedDate()) : "");
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getCreatedDate()) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
 		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		

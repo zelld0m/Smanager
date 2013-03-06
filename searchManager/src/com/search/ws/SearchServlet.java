@@ -331,25 +331,34 @@ public class SearchServlet extends HttpServlet {
 			Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
 			String requestPath = "http:/" + request.getPathInfo();
 
-			if (StringUtils.isEmpty(requestPath)) {
+			if (StringUtils.isBlank(requestPath)) {
 				response.sendError(400, "Invalid request");
 				return;
 			}
+			
 			Matcher matcher = pathPattern.matcher(requestPath);
 			if (!matcher.matches()) {
 				response.sendError(400, "Invalid request");
 				return;
 			}
-
+			
 			String serverName = matcher.group(1);
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
+		
+			String storeParam = (String) request.getAttribute("store");
+			String storeId = coreName;
 			
-			if(StringUtils.equalsIgnoreCase(coreName, "pcmbd")){
-				coreName = "pcmallcap";
+			// Verify if request parameter store is a valid store id
+			String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
+			if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
+				storeId = storeIdFromAlias;
+				logger.info(String.format("Request parameter store %s -> %s", storeParam, storeId));
+			}else{
+				logger.info(String.format("Core as storeId: %s", storeId));
 			}
 			
-			String storeName = configManager.getStoreName(coreName);
+			String storeName = configManager.getStoreName(storeId);
 			
 			if (logger.isDebugEnabled()) {
 				logger.debug("Server name: " + serverName);
@@ -410,8 +419,8 @@ public class SearchServlet extends HttpServlet {
 			
 			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
-			if (fromSearchGui && StringUtils.isNotBlank(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))) {
-				nvp = new BasicNameValuePair("facet.field", configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			if (fromSearchGui && StringUtils.isNotBlank(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))) {
+				nvp = new BasicNameValuePair("facet.field", configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
 				nameValuePairs.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
 				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
 					nameValuePairs.add(nvp);
@@ -419,7 +428,7 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			// default parameters for the core
-			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(coreName)) {
+			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(storeId)) {
 				// TODO: FIX This will distort the results if there is no redirect filter rule.
 				if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
 					nameValuePairs.add(pair);
@@ -463,7 +472,7 @@ public class SearchServlet extends HttpServlet {
 				disableRelevancy = true;
 			}
 			
-			StoreKeyword sk = new StoreKeyword(coreName, keyword);
+			StoreKeyword sk = new StoreKeyword(storeId, keyword);
 			
 			// redirect 
 			RedirectRule redirect = null;
@@ -550,7 +559,7 @@ public class SearchServlet extends HttpServlet {
 						for (String condition: redirect.getConditions()) {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
-								rr.setStoreId(coreName);
+								rr.setStoreId(storeId);
 								String conditionForSolr = rr.getConditionForSolr();
 								if (StringUtils.isNotBlank(conditionForSolr)) {
 									builder.append("(").append(conditionForSolr).append(") OR ");
@@ -579,7 +588,7 @@ public class SearchServlet extends HttpServlet {
 				logger.error("Failed to get redirect for keyword: " + originalKeyword, e);
 			}
 			
-			Store store = new Store(coreName);
+			Store store = new Store(storeId);
 			// set relevancy filters if any was specified
 			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
 			Relevancy relevancy = null;
@@ -627,7 +636,7 @@ public class SearchServlet extends HttpServlet {
 			else {
 				// remove qt parameter
 				if (StringUtils.isBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
 				}
 			}
 			
@@ -638,9 +647,9 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(configManager.getStoreParameter(coreName, "sort"));
+				logger.debug(configManager.getStoreParameter(storeId, "sort"));
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
-				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeId, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 			
 			List<ElevateResult> elevatedList = null;
@@ -651,7 +660,7 @@ public class SearchServlet extends HttpServlet {
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
 			List<String> expiredExcludedList = new ArrayList<String>();
-			boolean bestMatchFlag = configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+			boolean bestMatchFlag = configManager.getStoreParameter(storeId, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 
 			if (keywordPresent) {
 				
@@ -755,7 +764,7 @@ public class SearchServlet extends HttpServlet {
 			solrHelper.setForceAddedEDPs(forceAddedEDPs);
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
-			solrHelper.setFacetTemplateName(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			solrHelper.setFacetTemplateName(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
 			solrHelper.setRedirectRule(appliedRedirect);
 			solrHelper.setOriginalKeyword(originalKeyword);
 
@@ -855,8 +864,8 @@ public class SearchServlet extends HttpServlet {
 			FacetSort facetSort = null;
 			boolean applyFacetSort = false;
 
-			String facetTemplateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
-			String facetTemplate = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			String facetTemplateName = configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			String facetTemplate = configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 			final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
 			for (NameValuePair param: nameValuePairs) {
 				if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 

@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -72,32 +73,32 @@ public class ConfigManager {
 		}
     }
     
-	@SuppressWarnings("unchecked")
 	public List<String> getStoreNames() {
-    	List<String> storeNames = new ArrayList<String>();
-    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
-    	for (HierarchicalConfiguration hc: hcList) {
-    		String name = hc.getString("@name");
-    		if (!StringUtils.isEmpty(name)) {
-        		storeNames.add(name);
-    		}
-    	}
-    	return storeNames;
+    	return getStoreAttributes("name", false);
     }
 	
-	@SuppressWarnings("unchecked")
+	public List<String> getStoreIds() {
+    	return getStoreAttributes("id", false);
+    }
+
 	public List<String> getCoreNames() {
-    	List<String> coreNames = new ArrayList<String>();
+		return getStoreAttributes("core", true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
+    	List<String> storeAttrib = new ArrayList<String>();
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
     	for (HierarchicalConfiguration hc: hcList) {
-    		String name = hc.getString("core");
-    		if (!StringUtils.isEmpty(name)) {
-        		coreNames.add(name);
+    		String attrib = "@" + attrName;
+    		if (hasXmlTag) attrib = attrName;
+    		String attrValue = hc.getString(attrib);
+    		if (StringUtils.isNotEmpty(attrValue)) {
+    			storeAttrib.add(attrValue);
     		}
     	}
-    	return coreNames;
+    	return storeAttrib;
     }
-    
 	
     public String getStoreName(String storeId) {
     	return (xmlConfig.getString("/store[@id='" + storeId + "']/@name"));
@@ -107,23 +108,37 @@ public class ConfigManager {
     	return (xmlConfig.getString("/store[@id='" + storeId + "']/" + param));
     }
 
+    public String getParameterByStoreId(String storeId, String param) {
+    	return (xmlConfig.getString("/store[@id='" + storeId + "']/" + param));
+    }
+
     public String getServerParameter(String server, String param) {
     	return (xmlConfig.getString("/server[@name='" + server + "']/" +param));
     }
     
-    public String getParameterByStore(String storeName, String param) {
-    	return (xmlConfig.getString("/store[@name='" + storeName + "']/" + param));
-    }
-    
-    public String getParameterByCore(String coreName, String param) {
-    	return (xmlConfig.getString("/store[core='" + StringUtils.lowerCase(coreName) + "']/" + param));
+    @SuppressWarnings("unchecked")
+    public String getStoreIdByAliases(String storeId) {
+    	String sId = xmlConfig.getString("/server[@id='" + storeId + "']/@id");
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/store");
+    	
+    	if(StringUtils.isBlank(sId) && CollectionUtils.isNotEmpty(hcList)){
+        	for (HierarchicalConfiguration hc: hcList) {
+        		String[] storeIdAliases = StringUtils.stripAll(StringUtils.split(hc.getString("store-id-aliases"), ","));
+        		if (ArrayUtils.contains(storeIdAliases, storeId)) {
+        			sId = hc.getString("@id");
+        			break;
+        		}
+        	}
+    	}
+    	
+    	return sId;
     }
     
     @SuppressWarnings("unchecked")
-	public List<NameValuePair> getDefaultSolrParameters(String core) {
+	public List<NameValuePair> getDefaultSolrParameters(String storeId) {
     	List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-    	List<String> solrParamNames = (List<String>) xmlConfig.getList("/store[@name='" + getStoreName(core) + "']/solr-param-name/param-name");
-    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt(("/store[@name='" + getStoreName(core) + "']/solr-param-value"));
+    	List<String> solrParamNames = (List<String>) xmlConfig.getList("/store[@id='" + storeId + "']/solr-param-name/param-name");
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt(("/store[@id='" + storeId + "']/solr-param-value"));
     	
     	for (HierarchicalConfiguration hc: hcList) {
     		String solrParamName = hc.getString("@name");
@@ -138,12 +153,12 @@ public class ConfigManager {
     }
     
     @SuppressWarnings("unchecked")
-    public Map<String, String> getServersByCore(String coreName) {
+    public Map<String, String> getServersByStoreId(String storeId) {
     	Map<String, String> map = new LinkedHashMap<String, String>();
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/server");
     	for (HierarchicalConfiguration hc: hcList) {
     		String[] store = StringUtils.split(hc.getString("store"), ",");
-    		if (ArrayUtils.contains(store, coreName)) {
+    		if (ArrayUtils.contains(store, storeId)) {
         		String serverName = hc.getString("@name");
         		String serverUrl = hc.getString("url");
         		map.put(serverName, serverUrl);

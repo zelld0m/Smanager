@@ -36,7 +36,7 @@ public class TopKeywordService {
     @RemoteMethod
     public List<String> getFileList() {
         List<String> filenameList = new ArrayList<String>();
-        File dir = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName());
+        File dir = new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId());
 
         File[] files = dir.listFiles();
 
@@ -65,7 +65,7 @@ public class TopKeywordService {
         BufferedReader reader = null;
         try {
             try {
-                String filePath = PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName()
+                String filePath = PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                         + File.separator + filename;
 
                 if (filename.indexOf("-splunk") > 0) {
@@ -113,7 +113,7 @@ public class TopKeywordService {
     }
 
     private File getFile(String filename) {
-        return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreName()
+        return new File(PropsUtils.getValue("topkwdir") + File.separator + UtilityService.getStoreId()
                 + File.separator + filename);
     }
 
@@ -147,7 +147,7 @@ public class TopKeywordService {
 
     @RemoteMethod
     public FileTransfer downloadCustomRangeAsCSV(Date from, Date to, String customFilename) {
-        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreName());
+        List<TopKeyword> topKeywords = StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreId());
         return downloadCsv(StatisticsUtil.getCustomRangeReportStream(topKeywords, new CsvTransformer<TopKeyword>() {
 
             @Override
@@ -175,6 +175,6 @@ public class TopKeywordService {
 
     @RemoteMethod
     public List<TopKeyword> getTopKeywords(Date from, Date to) {
-        return StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreName());
+        return StatisticsUtil.getTopKeywordsInRange(asUTC(from), asUTC(to), UtilityService.getStoreId());
     }
 }

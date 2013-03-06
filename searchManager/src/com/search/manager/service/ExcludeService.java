@@ -52,7 +52,7 @@ public class ExcludeService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", expiryDate, comment));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			String userName = UtilityService.getUsername();
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 
@@ -104,7 +104,7 @@ public class ExcludeService extends RuleService{
 		resultMap.put("FAILED", failedList);
 		
 		String server = UtilityService.getServerName();
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		
 		int count = 0;
 		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
@@ -135,7 +135,7 @@ public class ExcludeService extends RuleService{
 	@RemoteMethod
 	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
-		rrCondition.setStoreId(UtilityService.getStoreName());
+		rrCondition.setStoreId(UtilityService.getStoreId());
 		return addItem(keyword, null, rrCondition, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
@@ -144,7 +144,7 @@ public class ExcludeService extends RuleService{
 	public int addExclude(String keyword, String memberTypeId, String value, String expiryDate, String comment) {
 		MemberTypeEntity memberTypeEntity = MemberTypeEntity.valueOf(memberTypeId);
 		return addItem(keyword, memberTypeEntity == MemberTypeEntity.PART_NUMBER ? value : null, 
-				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(UtilityService.getStoreName(), value) : null, 
+				memberTypeEntity == MemberTypeEntity.FACET ? new RedirectRuleCondition(UtilityService.getStoreId(), value) : null, 
 				expiryDate, comment, memberTypeEntity);
 	}
 
@@ -153,7 +153,7 @@ public class ExcludeService extends RuleService{
 		int result = -1;
 		try {
 
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			logger.info(String.format("%s %s %s", store, keyword,memberId));
 			ExcludeResult exclude = new ExcludeResult();
 			exclude.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -176,7 +176,7 @@ public class ExcludeService extends RuleService{
 	public RecordSet<Product> getExcludedProducts(String keyword, int page,int itemsPerPage) {
 		try {
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 
 			logger.info(String.format("%s %s %s %d %d", server, store, keyword, page, itemsPerPage));
 			ExcludeResult e = new ExcludeResult();
@@ -193,7 +193,7 @@ public class ExcludeService extends RuleService{
 	public Integer getTotalProductInRule(String ruleId) {
 		try {
 			logger.info(String.format("%s", ruleId));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			ExcludeResult rule = new ExcludeResult();
 			rule.setStoreKeyword(new StoreKeyword(store, ruleId));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(rule, null, null, null, null);
@@ -224,7 +224,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -241,7 +241,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -258,7 +258,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, new Date(), null, page, itemsPerPage);
@@ -274,7 +274,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
@@ -290,7 +290,7 @@ public class ExcludeService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("updateExpiryDate %s %s ", memberId, expiryDate));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
 			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
@@ -313,7 +313,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %s", keyword, productId));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setEdp(productId);
@@ -337,7 +337,7 @@ public class ExcludeService extends RuleService{
 	public int addComment(String keyword, String productId, String comment){
 		try {
 			logger.info(String.format("%s %s %s", keyword, productId, comment));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			if(StringUtils.isNotBlank(comment)){
 				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
@@ -360,7 +360,7 @@ public class ExcludeService extends RuleService{
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, condition));
 			ExcludeResult exclude = new ExcludeResult();
-			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			exclude.setStoreKeyword(new StoreKeyword(UtilityService.getStoreId(), keyword));
 			exclude.setMemberId(memberId);
 			try {
 				exclude = daoService.getExcludeItem(exclude);
@@ -385,7 +385,7 @@ public class ExcludeService extends RuleService{
 	public int updateExcludeFacet(String keyword, String memberId, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
-		String storeId = UtilityService.getStoreName();
+		String storeId = UtilityService.getStoreId();
 		ExcludeResult exclude = new ExcludeResult();
 		exclude.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		exclude.setMemberId(memberId);
@@ -417,7 +417,7 @@ public class ExcludeService extends RuleService{
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), exclude.getExpiryDate()))) {
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), exclude.getExpiryDate()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		
@@ -428,7 +428,7 @@ public class ExcludeService extends RuleService{
 	public int clearRule(String keyword) {
 		try {
 			logger.info(String.format("%s", keyword));
-			return daoService.clearExcludeResult(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			return daoService.clearExcludeResult(new StoreKeyword(UtilityService.getStoreId(), keyword));
 		} catch (DaoException e) {
 			logger.error("Failed during clearRule()",e);
 		}
@@ -449,14 +449,14 @@ public class ExcludeService extends RuleService{
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.EXCLUDE.getCode());
-		com.setStore(new Store(UtilityService.getStoreName()));
+		com.setStore(new Store(UtilityService.getStoreId()));
 		return daoService.addComment(com);
 	}
 
 	@RemoteMethod
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		try {
 			ExcludeResult exclude = new ExcludeResult();
 			exclude.setStoreKeyword(new StoreKeyword(store, keyword));

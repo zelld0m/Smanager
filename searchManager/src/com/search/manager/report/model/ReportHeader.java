@@ -41,7 +41,7 @@ public class ReportHeader {
 					StringUtils.replace(
 						string, "%%StoreName%%", UtilityService.getStoreName()),
 						"%%User%%", UtilityService.getUsername()),
-						"%%Date%%", DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreName(), date));
+						"%%Date%%", DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), date));
 	}
 	
 	public String getReportName() {

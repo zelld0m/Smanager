@@ -137,7 +137,7 @@ public class RedirectController {
 
 		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 		
-		RuleVersionListXml listXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreName(), RuleEntity.QUERY_CLEANING, ruleId);
+		RuleVersionListXml listXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.QUERY_CLEANING, ruleId);
 		String subTitle = String.format("Query Cleaning Rule [%s]", listXml!=null? listXml.getRuleName():"");
 				
 		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);

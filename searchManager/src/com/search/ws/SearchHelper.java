@@ -440,7 +440,7 @@ public class SearchHelper {
 				qt = "standard";
 			}
 
-			String coreName = configManager.getParameterByStore(storeId, "core");
+			String coreName = configManager.getParameterByStoreId(storeId, "core");
 			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", coreName).concat("select?");
 
 			nameValuePairs.add(new BasicNameValuePair("q.alt", "*:*"));

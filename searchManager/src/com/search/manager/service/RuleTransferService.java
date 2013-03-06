@@ -71,7 +71,7 @@ public class RuleTransferService {
 
 	@RemoteMethod
 	public List<RuleXml> getAllRulesToImport(String ruleType){
-		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreName(), ruleType);
+		return RuleTransferUtil.getAllExportedRules(UtilityService.getStoreId(), ruleType);
 	}
 	
 	/*
@@ -84,7 +84,7 @@ public class RuleTransferService {
 	 * */
 	@RemoteMethod
 	public RecordSet<RuleXml> getRulesToImport(String ruleType, String keywordFilter, int page, int itemsPerPage, String ruleFilter, String orderBy) {
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		List<RuleXml> list = new ArrayList<RuleXml>();
 		RecordSet<ExportRuleMap> exportList = null;
@@ -135,13 +135,13 @@ public class RuleTransferService {
 
 	@RemoteMethod
 	public RuleXml getRuleToExport(String ruleType, String ruleId){   
-		List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(UtilityService.getStoreName(), ruleType, ruleId);
+		List<RuleXml> ruleVersions = daoService.getPublishedRuleVersions(UtilityService.getStoreId(), ruleType, ruleId);
 		return RuleXmlUtil.getLatestVersion(ruleVersions);
 	}
 
 	@RemoteMethod
 	public RuleXml getRuleToImport(String ruleType, String ruleId){
-		return RuleTransferUtil.getRuleToImport(UtilityService.getStoreName(), RuleEntity.find(ruleType), ruleId);
+		return RuleTransferUtil.getRuleToImport(UtilityService.getStoreId(), RuleEntity.find(ruleType), ruleId);
 	}
 
 	@RemoteMethod
@@ -155,7 +155,7 @@ public class RuleTransferService {
 		resultMap.put("FAILED", failedList);
 
 		if (ArrayUtils.isNotEmpty(ruleRefIdList)) {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			RuleEntity ruleEntity = RuleEntity.find(ruleType);
 			for (String ruleId: ruleRefIdList){
 				boolean success = false;
@@ -197,7 +197,7 @@ public class RuleTransferService {
 
 	private Map<String, Integer> importRules(String ruleType, String[] ruleRefIdList, String comment, String[] importTypeList, String[] importAsRefIdList, String[] ruleNameList){
 		Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		String userName = UtilityService.getUsername();
 
@@ -487,7 +487,7 @@ public class RuleTransferService {
 	 */
 	private Map<String, Integer> unimportRules(String ruleType, String[] ruleRefIdList, String comment, String[] ruleNameList){
 		Map<String, Integer> statusMap = new LinkedHashMap<String, Integer>();
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 
 		for(int i = 0 ; i < ruleRefIdList.length; i++){
@@ -542,7 +542,7 @@ public class RuleTransferService {
 
 	@RemoteMethod
 	public ExportRuleMap getRuleTransferMap(String storeIdOrigin, String ruleIdOrigin, String ruleEntity){
-		String storeIdTarget = UtilityService.getStoreName();
+		String storeIdTarget = UtilityService.getStoreId();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, null,  storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 
 		try {
@@ -562,7 +562,7 @@ public class RuleTransferService {
 
 	@RemoteMethod
 	public List<ExportRuleMap> getExportMapList(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
-		String storeIdTarget = UtilityService.getStoreName();
+		String storeIdTarget = UtilityService.getStoreId();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		
 		try {
@@ -579,7 +579,7 @@ public class RuleTransferService {
 	
 	@RemoteMethod
 	public Map<String, ExportRuleMap> getMapRuleTransferMap(String storeIdOrigin, String[] ruleIdsOrigin, String ruleEntity) {
-		String storeIdTarget = UtilityService.getStoreName();
+		String storeIdTarget = UtilityService.getStoreId();
 		ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, null, null, storeIdTarget, null, null, RuleEntity.getId(ruleEntity));
 		Map<String, ExportRuleMap> map = new HashMap<String, ExportRuleMap>();
 		boolean returnAllIdsOrigin = ArrayUtils.isEmpty(ruleIdsOrigin);
