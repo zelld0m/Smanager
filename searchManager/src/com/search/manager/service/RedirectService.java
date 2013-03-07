@@ -293,6 +293,10 @@ public class RedirectService extends RuleService{
 			rr.setRuleId(ruleId);
 			rr.setStoreId(UtilityService.getStoreId());
 			rr.setFilter(filter);
+			
+			rr.setFacetTemplate(UtilityService.getStoreFacetTemplate());
+			rr.setFacetTemplateName(UtilityService.getStoreFacetTemplateName());
+			
 			result = daoService.addRedirectCondition(rr);
 			
 			if (result>0){
@@ -321,6 +325,8 @@ public class RedirectService extends RuleService{
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreId());
 			rr.setFilter(filter);
+			rr.setFacetTemplate(UtilityService.getStoreFacetTemplate());
+			rr.setFacetTemplateName(UtilityService.getStoreFacetTemplateName());
 			int result = daoService.updateRedirectCondition(rr);
 			
 			if (result>0){
