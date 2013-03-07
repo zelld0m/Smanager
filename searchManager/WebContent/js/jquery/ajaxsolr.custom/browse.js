@@ -116,7 +116,7 @@
 		// TODO: Make this dynamic
 		var facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
-		if(GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd"){
+		if(GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmallgov"){
 			facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 		};
 
