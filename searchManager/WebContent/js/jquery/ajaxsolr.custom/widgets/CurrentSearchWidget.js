@@ -11,9 +11,9 @@
 			self.solrFieldToTextDisplayMap["ImageExists:1"] = "With Product Image Only";
 			self.solrFieldToTextDisplayMap["ImageExists:0"] = "Without Product Image Only";
 
-			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Products";
-			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Products";
-			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Products";
+			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Catalog";
+			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Catalog";
+			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Catalog";
 
 			self.solrFieldToTextDisplayMap["Refurbished_Flag:1"] = "Refurbished Products";
 			self.solrFieldToTextDisplayMap["OpenBox_Flag:1"] = "Open Box Products";
@@ -85,7 +85,7 @@
 				else { // Multiple value for single field
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
-					var arrSelection = filterFieldValue.match(/("[^"]+")|(\b\w+\b)/g);
+					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")|(\b\w+\b)/g);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					var hasDisplayOverride = false;
@@ -112,7 +112,7 @@
 						var selectedItem = arrSelection[k];
 						
 						if(isMultipleSelection){
-							clickHandler = self.removeFacetFromSelection(arrSelection, filterFieldName, filterFieldValue, selectedItem);
+							clickHandler = self.removeFacetFromSelection(arrSelection, filterFieldName, filterFieldValue.replace(/\%\%\%/g,"\""), selectedItem.replace(/\%\%\%/g,"\""));
 						}
 
 						if($.startsWith(selectedItem,'"') && $.endsWith(selectedItem,'"')){
@@ -123,6 +123,7 @@
 							selectedItem = selectedItem.substr(selectedItem.indexOf('|') + 1);
 						}
 						
+						selectedItem = selectedItem.replace(/\%\%\%/g,"\"");
 						links.push(AjaxSolr.theme('createLink', arrSelection.length==1? (hasDisplayOverride? displayOverrideText :  displayFieldName + ": " + selectedItem): selectedItem, clickHandler, isMultipleSelection && arrSelection.length > 1? "multiple" : "single"));
 					}
 				}
@@ -147,12 +148,12 @@
 			return function () {
 				if (self.manager.store.removeByValue('fq', facetName + ":" + facetValue)) {
 					arrSelection = $.grep(arrSelection, function(value) {
-						  return value !== facetRemove;
+						  return value.replace(/\%\%\%/g,"\"") !== facetRemove;
 						});
 					
 					if (arrSelection.length > 0){
 						var fqNewValue = arrSelection.length == 1? arrSelection[0] : "(" + arrSelection.join(" ") + ")";  
-						self.manager.store.addByValue('fq', facetName + ":" + fqNewValue);
+						self.manager.store.addByValue('fq', facetName + ":" + fqNewValue.replace(/\%\%\%/g,"\\\""));
 					}
 					
 					self.manager.doRequest(0);

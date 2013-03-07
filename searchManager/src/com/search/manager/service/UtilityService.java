@@ -130,9 +130,10 @@ public class UtilityService {
 
 	@RemoteMethod
 	public static String getStoreId(){
+		ConfigManager cm = ConfigManager.getInstance();
 		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		String storeName = (String)attr.getAttribute("storeId", RequestAttributes.SCOPE_SESSION);
-		return storeName;
+		String storeId= (String)attr.getAttribute("storeId", RequestAttributes.SCOPE_SESSION);
+		return cm.getStoreIdByAliases(storeId);
 	}
 
 	@RemoteMethod

@@ -27,7 +27,7 @@ getStoreLabel = function(storeName){
 	case "pcmall": storeLabel = "PCM"; break;
 	case "macmall": storeLabel = "MacMall"; break;
 	case "pcmallcap": storeLabel = "PCM BD"; break;
-	case "pcmgbd": storeLabel = "PCMG BD"; break;
+	case "pcmallgov": storeLabel = "PCMG BD"; break;
 	case "macmallbd": storeLabel = "MacMall BD"; break;
 	default: break;
 	}

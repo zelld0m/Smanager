@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -346,7 +347,15 @@ public class SearchServlet extends HttpServlet {
 			String solr = matcher.group(2);
 			String coreName = matcher.group(3);
 		
-			String storeParam = (String) request.getAttribute("store");
+			String storeParam = "";
+
+			Map<String, String[]> parametersMap = request.getParameterMap();
+			
+			if(MapUtils.isNotEmpty(parametersMap)){
+				String[] stores = parametersMap.get("store");
+				storeParam = ArrayUtils.isNotEmpty(stores)? stores[0]: storeParam;
+			}
+				
 			String storeId = coreName;
 			
 			// Verify if request parameter store is a valid store id
