@@ -39,6 +39,13 @@
 	var GLOBAL_storeId = "${storeId}";
 	var GLOBAL_storeName = "${storeName}";
 	
+	var GLOBAL_BDGroup = "${storeId eq 'pcmallcap' or storeId eq 'pcmallgov' or storeId eq 'macmallbd'}";
+	var GLOBAL_StoreGroup = "${storeId eq 'pcmall' or storeId eq 'macmall'}";
+	var GLOBAL_PCMGroup = "${storeId eq 'pcmall' or storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}";
+	var GLOBAL_MacMallGroup = "${storeId eq 'macmall' or storeId eq 'macmallbd'}";
+	var GLOBAL_PCMBDGroup = "${storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}";
+	var GLOBAL_MacMallBDGroup = "${storeId eq 'macmallbd'}";
+	
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
 	var GLOBAL_storeFacetTemplateName = "${storeFacetTemplateName}";

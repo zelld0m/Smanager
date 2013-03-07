@@ -1420,7 +1420,7 @@
 				base.contentHolder.find('a[href="#cnet"]').parent('li').remove();
 				base.contentHolder.find("div#cnet").remove();
 
-				if(GLOBAL_storeId==="pcmall" || GLOBAL_storeId==="pcmallcap" || GLOBAL_storeId==="pcmallgov"){
+				if(GLOBAL_PCMGroup){
 					base.contentHolder.find('a[href="#dynamicAttribute"]').parent('li').remove();
 					base.contentHolder.find("div#dynamicAttribute").remove();
 				}
