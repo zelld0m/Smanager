@@ -11,9 +11,9 @@
 			self.solrFieldToTextDisplayMap["ImageExists:1"] = "With Product Image Only";
 			self.solrFieldToTextDisplayMap["ImageExists:0"] = "Without Product Image Only";
 
-			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Products";
-			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Products";
-			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Products";
+			self.solrFieldToTextDisplayMap["PCMallGov_ACAStoreFlag:true"] = "Academic Catalog";
+			self.solrFieldToTextDisplayMap["PCMallGov_OpenStoreFlag:true"] = "Open Catalog";
+			self.solrFieldToTextDisplayMap["PCMallGov_GovStoreFlag:true"] = "Government Catalog";
 
 			self.solrFieldToTextDisplayMap["Refurbished_Flag:1"] = "Refurbished Products";
 			self.solrFieldToTextDisplayMap["OpenBox_Flag:1"] = "Open Box Products";
@@ -85,7 +85,7 @@
 				else { // Multiple value for single field
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
-					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")/g);
+					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")|(\b\w+\b)/g);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					var hasDisplayOverride = false;
