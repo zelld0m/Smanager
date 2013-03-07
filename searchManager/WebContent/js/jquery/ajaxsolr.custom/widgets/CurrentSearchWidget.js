@@ -86,7 +86,6 @@
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
 					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")/g);
-					console.log(filterFieldValue);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					var hasDisplayOverride = false;
