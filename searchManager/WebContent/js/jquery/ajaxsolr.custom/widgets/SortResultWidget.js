@@ -1,10 +1,35 @@
 (function ($) {
 
 	AjaxSolr.SortResultWidget = AjaxSolr.AbstractWidget.extend({
-
+		priceSuffix: "_CartPrice",
+		sortOrder: "%s %sO, score desc, Popularity desc",
+		
 		beforeRequest: function () {
 			var self = this;
 			$(self.target).find("select").prop("disabled", true);
+		
+			// synch price sorting to catalog changes
+			var sorting = self.manager.store.values('sort')[0];
+			var isSortByPrice = $.endsWith(sorting.split(",")[0].split(" ")[0], "CartPrice");
+			var priceBySortOrder = sorting.split(",")[0].split(" ")[1];
+			
+			if(GLOBAL_storeId==="pcmallgov" && isSortByPrice){
+				
+				self.manager.store.removeByValue('sort', sorting);
+				
+				switch(GLOBAL_PCMGCatalog.toLowerCase()){
+				case "open": 
+					self.priceSuffix = "_OpenCartPrice";
+					break; 
+				case "government": 
+					self.priceSuffix = "_GovCartPrice";
+					break; 
+				case "academic": 
+					self.priceSuffix = "_ACACartPrice";
+					break; 	
+				}
+				self.manager.store.addByValue('sort', self.sortOrder.replace("%s", GLOBAL_storeFacetName + self.priceSuffix).replace("%sO", priceBySortOrder));
+			}
 		},
 		
 		afterRequest: function () {
@@ -16,15 +41,25 @@
 				var defaultPageInterval = 5;
 				var totalResults = this.manager.response.response.numFound;
 
-				var solrSortBest = "CatCodeOrder asc, score desc, Popularity desc";
+				var solrSortBest = self.sortOrder.replace("%s","CatCodeOrder").replace("%sO", "asc");
 				
-				var priceSorting = GLOBAL_storeFacetName + "_CartPrice";
-				if(GLOBAL_storeFacetName.toLowerCase()==="pcmallgov"){
-					priceSorting = GLOBAL_storeFacetName + "_GovCartPrice";
+				if(GLOBAL_storeId==="pcmallgov"){
+					switch(GLOBAL_PCMGCatalog.toLowerCase()){
+					case "open": 
+						self.priceSuffix = "_OpenCartPrice";
+						break; 
+					case "government": 
+						self.priceSuffix = "_GovCartPrice";
+						break; 
+					case "academic": 
+						self.priceSuffix = "_ACACartPrice";
+						break; 	
+					}
 				}
 				
-				var solrSortLowest = priceSorting + " asc, CatCodeOrder asc, score desc, Popularity desc";
-				var solrSortHighest = priceSorting + " desc, CatCodeOrder asc, score desc, Popularity desc";	
+				var priceSorting = GLOBAL_storeFacetName + self.priceSuffix;
+				var solrSortLowest = self.sortOrder.replace("%s",priceSorting).replace("%sO", "asc");;
+				var solrSortHighest = self.sortOrder.replace("%s",priceSorting).replace("%sO", "desc");	
 
 				var sort = {
 						best: 'Best Match',
@@ -61,7 +96,6 @@
 					$(this.target).append(this.perPageLabel);
 				}
 
-
 				$(this.target).append(AjaxSolr.theme('select_tag', 'itemsPerPage', AjaxSolr.theme('options_for_select', perPageOptions, selectedPageOptions)));
 				$(this.target).append(" ");
 				
@@ -92,9 +126,7 @@
 						self.manager.doRequest(0);
 					}
 				});
-
 			}
 		}
 	});
-
 })(jQuery);

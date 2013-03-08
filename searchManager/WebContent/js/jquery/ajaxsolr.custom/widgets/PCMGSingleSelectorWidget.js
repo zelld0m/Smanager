@@ -49,6 +49,19 @@
 				self.solrFacetValue = "PCMallGov_OpenStoreFlag:true";
 				self.manager.store.addByValue("fq", "PCMallGov_OpenStoreFlag:true");
 			}
+			
+			switch(self.solrFacetValue){
+			case self.SOLRFIELD_OPEN + ":true": 
+				GLOBAL_PCMGCatalog = "Open";
+				break;
+			case self.SOLRFIELD_GOVT + ":true": 
+				GLOBAL_PCMGCatalog = "Government";
+				break;
+			case self.SOLRFIELD_ACAD + ":true": 
+				GLOBAL_PCMGCatalog = "Academic";
+				break;
+			}
+			
 		},
 
 		afterRequest: function () {

@@ -45,6 +45,8 @@
 	var GLOBAL_MacMallGroup = "${storeId eq 'macmall' or storeId eq 'macmallbd'}";
 	var GLOBAL_PCMBDGroup = "${storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}";
 	var GLOBAL_MacMallBDGroup = "${storeId eq 'macmallbd'}";
+
+	var GLOBAL_PCMGCatalog = "";
 	
 	var GLOBAL_storeFacetName = "${storeFacetName}";
 	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
