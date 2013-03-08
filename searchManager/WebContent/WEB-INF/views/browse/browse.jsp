@@ -39,7 +39,7 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentSearchWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSelectorWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSingleSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultHeaderWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>

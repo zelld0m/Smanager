@@ -1067,7 +1067,7 @@
 				self.activeSortOrder = sortOrder;
 				self.ruleFilterBy = ruleFilter;
 				
-				if(GLOBAL_storeId==="pcmallcap" || GLOBAL_storeId==="pcmgbd" || GLOBAL_storeId==="macmallbd"){
+				if(GLOBAL_BDGroup){
 					self.getRuleTransferMap(curPage, keywordFilter, sortOrder, ruleFilter);
 				}else{
 					self.getAllRulesToImport(curPage, keywordFilter, sortOrder, ruleFilter);

@@ -20,7 +20,6 @@ import com.search.manager.service.CategoryService;
 import com.search.manager.utility.CatCodeUtil;
 import com.search.manager.utility.CatCodeUtil.Attribute;
 import com.search.ws.ConfigManager;
-import com.search.ws.SolrConstants;
 
 @DataTransferObject(converter=BeanConverter.class)
 public class RedirectRuleCondition extends ModelBean {
@@ -33,6 +32,8 @@ public class RedirectRuleCondition extends ModelBean {
 	private String ruleId;
 	private Integer sequenceNumber;
 	private String storeId;
+	private String facetTemplate;
+	private String facetTemplateName;
 	
 	private Map<String,List<String>> conditionMap = new HashMap<String, List<String>>();
 
@@ -110,13 +111,29 @@ public class RedirectRuleCondition extends ModelBean {
 		}
 		else if (isCNetFilter()) {
 			map = getCNetFilters();
+			// TODO remove configManager
 			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
 				String value = map.get("Level1Category").get(0);
 				
+				/*
 				ConfigManager cm = ConfigManager.getInstance();
 				if (cm != null && StringUtils.isNotBlank(storeId)) {
 					builder.append(cm.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))
 						.append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+					if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
+						value = map.get("Level2Category").get(0);
+						builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+						if (CollectionUtils.isNotEmpty(map.get("Level3Category"))) {
+							value = map.get("Level3Category").get(0);
+							builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+						}
+					}
+					builder.append(forSolr ? "*" : "").append(" AND ");
+				}
+				*/
+				
+				if (StringUtils.isNotBlank(storeId)) {
+					builder.append(getFacetTemplate()).append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 					if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
 						value = map.get("Level2Category").get(0);
 						builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
@@ -243,7 +260,9 @@ public class RedirectRuleCondition extends ModelBean {
 		
 		String cnetFacet = null;
 		if (forSolr && StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
-			cnetFacet = ConfigManager.getInstance().getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
+			// TODO here...
+			// cnetFacet = ConfigManager.getInstance().getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
+			cnetFacet = getFacetTemplate();
 		}
 		
 		if (map.containsKey("Name")) {
@@ -516,6 +535,8 @@ public class RedirectRuleCondition extends ModelBean {
 			// TODO: update when MacMall and other stores support CNET Facet Template
 			else if (fieldName.endsWith("_FacetTemplate")) {
 				
+				setFacetTemplate(fieldName);
+				
 				// get store name here
 				if (StringUtils.isBlank(storeId)) {
 					storeId = StringUtils.lowerCase(StringUtils.substring(fieldName, 0, 
@@ -739,6 +760,22 @@ public class RedirectRuleCondition extends ModelBean {
 
 	public String getStoreId() {
 		return storeId;
+	}
+
+	public String getFacetTemplate() {
+		return facetTemplate;
+	}
+
+	public void setFacetTemplate(String facetTemplate) {
+		this.facetTemplate = facetTemplate;
+	}
+
+	public String getFacetTemplateName() {
+		return facetTemplateName;
+	}
+
+	public void setFacetTemplateName(String facetTemplateName) {
+		this.facetTemplateName = facetTemplateName;
 	}
 	
 }

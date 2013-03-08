@@ -1,6 +1,6 @@
 (function ($) {
 
-	AjaxSolr.PCMGSelectorWidget = AjaxSolr.AbstractWidget.extend({
+	AjaxSolr.PCMGMultipleSelectorWidget = AjaxSolr.AbstractWidget.extend({
 		SOLRFIELD_OPEN: "PCMallGov_OpenStoreFlag",
 		SOLRFIELD_GOVT: "PCMallGov_GovStoreFlag",
 		SOLRFIELD_ACAD: "PCMallGov_ACAStoreFlag",

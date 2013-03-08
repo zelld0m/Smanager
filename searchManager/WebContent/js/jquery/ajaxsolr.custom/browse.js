@@ -15,7 +15,7 @@
 		}));
 		
 		if(GLOBAL_storeId === "pcmallgov"){
-			Manager.addWidget(new AjaxSolr.PCMGSelectorWidget({
+			Manager.addWidget(new AjaxSolr.PCMGSingleSelectorWidget({
 				id: "pcmgSelector",
 				target: "#pcmgSelector"
 			}));
@@ -116,7 +116,7 @@
 		// TODO: Make this dynamic
 		var facetTemplate = ['Category','Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 
-		if(GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd"){
+		if(GLOBAL_PCMGroup){
 			facetTemplate = ['Manufacturer', 'Platform', GLOBAL_storeFacetTemplateName];
 		};
 

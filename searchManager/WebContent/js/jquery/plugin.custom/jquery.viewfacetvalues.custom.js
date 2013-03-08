@@ -108,7 +108,7 @@
 			var selectedList = base.options.selectedList;
 			var facetValues = [];
 
-			if (base.options.facetField === "Category" && (GLOBAL_storeId === "pcmall" || GLOBAL_storeId === "pcmallcap" || GLOBAL_storeId === "pcmgbd")){
+			if (base.options.facetField === "Category" && GLOBAL_PCMGroup){
 				if(data.FacetTemplate)
 					facetValues = data.FacetTemplate.Level1;
 			}

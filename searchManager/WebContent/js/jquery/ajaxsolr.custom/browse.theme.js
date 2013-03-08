@@ -279,10 +279,23 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		var priceDisplay = doc[GLOBAL_storeFacetName + "_CartPrice"];
-		if(GLOBAL_storeFacetName.toLowerCase()==="pcmallgov"){
-			priceDisplay = doc[GLOBAL_storeFacetName + "_GovCartPrice"];
+		var priceSuffix = "_CartPrice";
+
+		if(GLOBAL_storeId==="pcmallgov"){
+			switch(GLOBAL_PCMGCatalog.toLowerCase()){
+			case "open": 
+				priceSuffix = "_OpenCartPrice";
+				break; 
+			case "government": 
+				priceSuffix = "_GovCartPrice";
+				break; 
+			case "academic": 
+				priceSuffix = "_ACACartPrice";
+				break; 	
+			}
 		}
+
+		var priceDisplay = doc[GLOBAL_storeFacetName + priceSuffix];
 		
 		secObj.find("div#cartPriceHolder").append($.toCurrencyFormat('$', priceDisplay));
 
