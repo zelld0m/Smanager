@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.SearchCriteria;
@@ -61,7 +60,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get elevate rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -100,7 +99,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get elevate rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -139,7 +138,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get expired elevate rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -179,7 +178,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						solrInputDocuments = SolrDocUtil
 								.composeSolrDocs(elevateResults);
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Failed to load elevate rules by store", e);
 						hasError = true;
 					}
 
@@ -194,7 +193,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 									Constants.Core.ELEVATE_RULE_CORE
 											.getCoreName()).commit();
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to load elevate rules by store", e);
 							throw new DaoException(e.getMessage(), e);
 						}
 					}
@@ -227,7 +226,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(elevateResults);
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error("Failed to load elevate rules by storeKeyword", e);
 					hasError = true;
 				}
 
@@ -241,7 +240,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						// Constants.Core.ELEVATE_RULE_CORE.getCoreName())
 						// .softCommit();
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Failed to load elevate rules by storeKeyword", e);
 						hasError = true;
 					}
 				}
@@ -249,6 +248,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				return !hasError;
 			}
 		} catch (Exception e) {
+			logger.error("Failed to load elevate rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -263,7 +263,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				return loadElevateRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset elevate rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -279,7 +279,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				return loadElevateRules(storeKeyword);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset elevate rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -310,22 +310,22 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 						.deleteByQuery(strQuery.toString());
 
 				// retrieve new rules
-				DemoteResult demoteFilter = new DemoteResult();
-				demoteFilter.setStoreKeyword(new StoreKeyword(storeId, key));
+				ElevateResult elevateFilter = new ElevateResult();
+				elevateFilter.setStoreKeyword(new StoreKeyword(storeId, key));
 				List<SolrInputDocument> solrInputDocuments = null;
 
-				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
-						demoteFilter, null, null, 0, 0);
-				List<DemoteResult> demoteResults = daoService
-						.getDemoteResultList(criteria).getList();
+				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
+						elevateFilter, null, null, 0, 0);
+				List<ElevateResult> elevateResults = daoService
+						.getElevateResultList(criteria).getList();
 
-				if (demoteResults != null && demoteResults.size() > 0) {
+				if (elevateResults != null && elevateResults.size() > 0) {
 					try {
 						solrInputDocuments = SolrDocUtil
-								.composeSolrDocs(demoteResults);
+								.composeSolrDocs(elevateResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error(e);
+						logger.error("Failed to reset elevate rules by storeKeyword", e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -336,14 +336,14 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 											.getCoreName()).addDocs(
 									solrInputDocuments);
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to reset elevate rules by storeKeyword", e);
 							hasError = true;
 						}
 					}
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to reset elevate rules by storeKeyword", e);
 				hasError = true;
 			}
 
@@ -355,7 +355,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset elevate rules by storeKeyword", e);
 		}
 
 		return keywordStatus;
@@ -381,7 +381,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete elevate rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -413,7 +413,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete elevate rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -441,7 +441,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 					Constants.Core.ELEVATE_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update elevate rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -455,6 +455,7 @@ public class ElevateDaoSolrImpl extends BaseDaoSolr implements ElevateDao {
 					.getCoreInstance(Constants.Core.ELEVATE_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit elevate rules", e);
 			return false;
 		}
 	}

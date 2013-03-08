@@ -52,6 +52,8 @@
   <field name="includeKeyword" type="boolean" stored="true" multiValued="false" />
   <field name="redirectUrl" type="string" stored="true" multiValued="false" />
   <field name="_version_" type="long" stored="true" multiValued="false" indexed="true" />
+  <field name="messageType" type="sint" stored="true" multiValued="false" indexed="false" />
+  <field name="customText" type="string" stored="true" multiValued="false" indexed="false" />
  </fields>
 
  <copyField source="searchTerm" dest="searchTerm1" />

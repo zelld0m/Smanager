@@ -59,7 +59,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 						.getBeans(RedirectRuleSolr.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get redirect rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -100,7 +100,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get redirect rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -139,7 +139,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get redirect rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -178,7 +178,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get redirect rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -216,7 +216,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load redirect rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -254,7 +254,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load redirect rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -292,7 +292,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load redirect rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -307,7 +307,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return loadRedirectRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset redirect rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -323,7 +323,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return loadRedirectRuleByName(store, name);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset redirect rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -339,7 +339,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return loadRedirectRuleById(store, id);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset redirect rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -394,7 +394,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					}
 				}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to reset redirect rules by ruleIds", e);
 				hasError = true;
 			}
 
@@ -406,6 +406,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					Constants.Core.REDIRECT_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
+			logger.error("Failed to reset redirect rules by ruleIds", e);
 			return null;
 		}
 
@@ -433,7 +434,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete redirect rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -465,7 +466,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete redirect rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -495,7 +496,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete redirect rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -523,7 +524,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete redirect rules by ruleIds", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -537,6 +538,7 @@ public class RedirectDaoSolrImpl extends BaseDaoSolr implements RedirectDao {
 					.getCoreInstance(Constants.Core.REDIRECT_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit redirect rules", e);
 			return false;
 		}
 	}

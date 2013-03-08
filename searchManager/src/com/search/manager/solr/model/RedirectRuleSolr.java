@@ -28,6 +28,10 @@ public class RedirectRuleSolr {
 	private Boolean includeKeyword;
 	@Field
 	private String redirectUrl;
+	@Field
+	private Integer messageType;
+	@Field
+	private String customText;
 
 	public String getRuleId() {
 		return ruleId;
@@ -115,5 +119,21 @@ public class RedirectRuleSolr {
 
 	public void setRedirectUrl(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
+	}
+
+	public Integer getMessageType() {
+		return messageType;
+	}
+
+	public void setMessageType(Integer messageType) {
+		this.messageType = messageType;
+	}
+
+	public String getCustomText() {
+		return customText;
+	}
+
+	public void setCustomText(String customText) {
+		this.customText = customText;
 	}
 }
