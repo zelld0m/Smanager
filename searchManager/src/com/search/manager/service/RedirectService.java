@@ -285,7 +285,6 @@ public class RedirectService extends RuleService{
 	}
 	
 	public RecordSet<RedirectRuleCondition> addRuleCondition(String ruleId, Map<String, List<String>> filter) {
-		int result = -1;
 		try {
 			String storeId = UtilityService.getStoreId();
 			RedirectRuleCondition rr = new RedirectRuleCondition();
@@ -293,13 +292,8 @@ public class RedirectService extends RuleService{
 			rr.setRuleId(ruleId);
 			rr.setStoreId(UtilityService.getStoreId());
 			rr.setFilter(filter);
-			
-			rr.setFacetTemplate(UtilityService.getStoreFacetTemplate());
-			rr.setFacetTemplateName(UtilityService.getStoreFacetTemplateName());
-			
-			result = daoService.addRedirectCondition(rr);
-			
-			if (result>0){
+			UtilityService.setFacetTemplateValues(rr);
+			if (daoService.addRedirectCondition(rr) > 0){
 				return getConditionInRule(ruleId, 0, 0);
 			}
 			
@@ -325,8 +319,7 @@ public class RedirectService extends RuleService{
 			RedirectRuleCondition rr = new RedirectRuleCondition(ruleId, sequenceNumber);
 			rr.setStoreId(UtilityService.getStoreId());
 			rr.setFilter(filter);
-			rr.setFacetTemplate(UtilityService.getStoreFacetTemplate());
-			rr.setFacetTemplateName(UtilityService.getStoreFacetTemplateName());
+			UtilityService.setFacetTemplateValues(rr);
 			int result = daoService.updateRedirectCondition(rr);
 			
 			if (result>0){
