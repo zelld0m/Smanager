@@ -60,7 +60,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get demote rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -99,7 +99,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -138,7 +138,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get expired demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -179,7 +179,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 								.composeSolrDocs(demoteResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error(e);
+						logger.error("Failed to load demote rules by store", e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -193,7 +193,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 									Constants.Core.DEMOTE_RULE_CORE
 											.getCoreName()).softCommit();
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to load demote rules by store", e);
 							throw new DaoException(e.getMessage(), e);
 						}
 					}
@@ -227,7 +227,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 							.composeSolrDocs(demoteResults);
 				} catch (Exception e) {
 					hasError = true;
-					logger.error(e);
+					logger.error("Failed to load demote rules by storeKeyword", e);
 				}
 
 				if (!hasError && solrInputDocuments != null
@@ -240,7 +240,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 						// Constants.Core.DEMOTE_RULE_CORE.getCoreName())
 						// .softCommit();
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Failed to load demote rules by storeKeyword", e);
 						hasError = true;
 					}
 				}
@@ -248,6 +248,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				return !hasError;
 			}
 		} catch (Exception e) {
+			logger.error("Failed to load demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -262,7 +263,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				return loadDemoteRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset demote rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -278,7 +279,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				return loadDemoteRules(storeKeyword);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -324,7 +325,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 								.composeSolrDocs(demoteResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error(e);
+						logger.error("Failed to load demote rules by storeKeyword", e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -335,14 +336,14 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 											.getCoreName()).addDocs(
 									solrInputDocuments);
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to load demote rules by storeKeyword", e);
 							hasError = true;
 						}
 					}
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to load demote rules by storeKeyword", e);
 				hasError = true;
 			}
 
@@ -353,7 +354,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			solrServers.getCoreInstance(
 					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load demote rules by storeKeyword", e);
 		}
 
 		return keywordStatus;
@@ -378,7 +379,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete demote rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -409,7 +410,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -436,7 +437,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 			solrServers.getCoreInstance(
 					Constants.Core.DEMOTE_RULE_CORE.getCoreName()).softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update demote rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -450,6 +451,7 @@ public class DemoteDaoSolrImpl extends BaseDaoSolr implements DemoteDao {
 					.getCoreInstance(Constants.Core.DEMOTE_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit demote rules", e);
 			return false;
 		}
 	}

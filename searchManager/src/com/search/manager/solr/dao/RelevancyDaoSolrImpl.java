@@ -59,7 +59,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 						.getBeans(RelevancyRuleSolr.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -96,7 +96,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get default relevancy rule by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -138,7 +138,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -177,7 +177,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rule by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -216,7 +216,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -239,7 +239,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					solrInputDocument = SolrDocUtil
 							.composeSolrDoc(defaultRelevancy);
 				} catch (Exception e) {
-					logger.error(e);
+					logger.error("Failed to load relevancy rules by store", e);
 				}
 			}
 
@@ -282,7 +282,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -329,7 +329,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -376,7 +376,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -390,7 +390,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return loadRelevancyRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset relevancy rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -405,7 +405,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return loadRelevancyRuleByName(store, name);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get relevancy rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -420,7 +420,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return loadRelevancyRuleById(store, id);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset relevancy rule by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -484,7 +484,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to reset relevancy rules by ruleIds", e);
 				hasError = true;
 			}
 
@@ -496,6 +496,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					Constants.Core.RELEVANCY_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
+			logger.error("Failed to reset relevancy rules by ruleIds", e);
 			return null;
 		}
 
@@ -522,7 +523,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete relevancy rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -552,7 +553,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset relevancy rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -583,7 +584,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset relevancy rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -609,7 +610,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update relevancy rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -623,6 +624,7 @@ public class RelevancyDaoSolrImpl extends BaseDaoSolr implements RelevancyDao {
 					.getCoreInstance(Constants.Core.RELEVANCY_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit relevancy rules", e);
 			return false;
 		}
 	}

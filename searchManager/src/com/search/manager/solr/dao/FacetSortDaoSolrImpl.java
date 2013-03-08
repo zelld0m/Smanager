@@ -59,7 +59,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 						.getBeans(FacetSortRuleSolr.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -103,7 +103,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by rule name", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -144,7 +144,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by rule name", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -181,7 +181,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load facet sort rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -221,7 +221,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load facet sort rules by rule name", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -261,7 +261,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				}
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load facet sort rules by rule id", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -276,7 +276,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return loadFacetSortRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -286,13 +286,13 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 	@Override
 	public boolean resetFacetSortRulesByName(Store store, String name)
 			throws DaoException {
-
+		// TODO: how to determine if it's keyword or template name?
 		try {
 			if (deleteFacetSortRuleByName(store, name)) {
 				return loadFacetSortRuleByName(store, name);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by rulename", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -308,7 +308,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return loadFacetSortRuleById(store, id);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset facet sort rules by id", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -362,7 +362,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					}
 				}
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to reset facet sort rules by ruleId", e);
 				hasError = true;
 			}
 
@@ -374,6 +374,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
+			logger.error("Failed to reset facet sort rules by ruleId", e);
 			return null;
 		}
 
@@ -401,7 +402,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete facet sort rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -433,7 +434,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete facet sort rules by ruleName", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -464,7 +465,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete facet sort rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -491,7 +492,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update facet sort rules by ruleId", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -505,6 +506,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 					.getCoreInstance(Constants.Core.FACET_SORT_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit facet sort rules", e);
 			return false;
 		}
 	}

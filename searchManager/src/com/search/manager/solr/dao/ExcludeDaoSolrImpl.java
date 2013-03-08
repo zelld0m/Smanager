@@ -18,7 +18,6 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.RuleEntity;
-import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.SearchCriteria;
@@ -61,7 +60,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get exclude rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -100,7 +99,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get exclude rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -139,7 +138,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						.getBeans(RuleSolrResult.class));
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to get expired exclude rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -180,7 +179,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 								.composeSolrDocs(excludeResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error(e);
+						logger.error("Failed to load exclude rules by store", e);
 					}
 					if (!hasError && solrInputDocuments != null
 							&& solrInputDocuments.size() > 0) {
@@ -193,7 +192,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 									Constants.Core.EXCLUDE_RULE_CORE
 											.getCoreName()).commit();
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to load exclude rules by store", e);
 							throw new DaoException(e.getMessage(), e);
 						}
 					}
@@ -227,7 +226,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 							.composeSolrDocs(excludeResults);
 				} catch (Exception e) {
 					hasError = true;
-					logger.error(e);
+					logger.error("Failed to load exclude rules by storeKeyword", e);
 				}
 
 				if (!hasError && solrInputDocuments != null
@@ -240,7 +239,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						// Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 						// .commit();
 					} catch (Exception e) {
-						logger.error(e);
+						logger.error("Failed to load exclude rules by storeKeyword", e);
 						throw new DaoException(e.getMessage(), e);
 					}
 				}
@@ -248,7 +247,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				return !hasError;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to load exclude rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -263,7 +262,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				return loadExcludeRules(store);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset exclude rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -279,7 +278,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				return loadExcludeRules(storeKeyword);
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset exclude rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -310,22 +309,22 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 						.deleteByQuery(strQuery.toString());
 
 				// retrieve new rules
-				DemoteResult demoteFilter = new DemoteResult();
-				demoteFilter.setStoreKeyword(new StoreKeyword(storeId, key));
+				ExcludeResult excludeFilter = new ExcludeResult();
+				excludeFilter.setStoreKeyword(new StoreKeyword(storeId, key));
 				List<SolrInputDocument> solrInputDocuments = null;
 
-				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
-						demoteFilter, null, null, 0, 0);
-				List<DemoteResult> demoteResults = daoService
-						.getDemoteResultList(criteria).getList();
+				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
+						excludeFilter, null, null, 0, 0);
+				List<ExcludeResult> excludeResults = daoService
+						.getExcludeResultList(criteria).getList();
 
-				if (demoteResults != null && demoteResults.size() > 0) {
+				if (excludeResults != null && excludeResults.size() > 0) {
 					try {
 						solrInputDocuments = SolrDocUtil
-								.composeSolrDocs(demoteResults);
+								.composeSolrDocs(excludeResults);
 					} catch (Exception e) {
 						hasError = true;
-						logger.error(e);
+						logger.error("Failed to reset exclude rules by storeKeyword", e);
 					}
 
 					if (!hasError && solrInputDocuments != null
@@ -336,14 +335,14 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 											.getCoreName()).addDocs(
 									solrInputDocuments);
 						} catch (Exception e) {
-							logger.error(e);
+							logger.error("Failed to reset exclude rules by storeKeyword", e);
 							hasError = true;
 						}
 					}
 				}
 
 			} catch (Exception e) {
-				logger.error(e);
+				logger.error("Failed to reset exclude rules by storeKeyword", e);
 				hasError = true;
 			}
 
@@ -355,7 +354,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to reset exclude rules by storeKeyword", e);
 		}
 
 		return keywordStatus;
@@ -382,7 +381,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete exclude rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -415,7 +414,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 				return true;
 			}
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to delete exclude rules by store", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -443,7 +442,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					Constants.Core.EXCLUDE_RULE_CORE.getCoreName())
 					.softCommit();
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("Failed to update exclude rules by storeKeyword", e);
 			throw new DaoException(e.getMessage(), e);
 		}
 
@@ -457,6 +456,7 @@ public class ExcludeDaoSolrImpl extends BaseDaoSolr implements ExcludeDao {
 					.getCoreInstance(Constants.Core.EXCLUDE_RULE_CORE
 							.getCoreName()));
 		} catch (SolrServerException e) {
+			logger.error("Failed to commit exclude rules", e);
 			return false;
 		}
 	}
