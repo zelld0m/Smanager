@@ -8,7 +8,7 @@
 		base.$groups = {};
 
 		for (g in base.opt.groups) {
-			base.$groups[g] = $("<span>").attr("id", g);
+			base.$groups[g] = $("<div style='white-space: nowrap;'>").attr("id", g);
 
 			for (var i = 0; i < base.opt.groups[g].length; i++) {
 				var $button = base.$el.find("#" + base.opt.groups[g][i]);
@@ -28,17 +28,30 @@
 			base.$el.append(base.$groups[g]);
 		}
 
-		$(base.opt.container).qtip({
-			content  : base.$el, 
-			position : base.opt.qtip.position,
-			hide     : base.opt.qtip.hide,
-			style    : base.opt.qtip.style,
-			events   : base.opt.qtip.events,
-			show     : base.opt.qtip.show
-		});
+		base.qtipOptions = {
+				content  : base.$el, 
+				position : base.opt.qtip.position,
+				hide     : base.opt.qtip.hide,
+				style    : base.opt.qtip.style,
+				events   : base.opt.qtip.events,
+				show     : base.opt.qtip.show
+			};
+		$(base.opt.container).qtip(base.qtipOptions);
 
 		// associate this cutebar with the element
 		base.$el.data('cutebar', base);
+		
+		base.redraw = function() {
+			if (base.$el.parent().parent().data('qtip')) {
+			    base.$el.parent().parent().data('qtip').redraw();
+			    
+			    if (base.$el.parent().parent().data('qtip').rendered) {
+				    base.$el.parent().parent().data('qtip').hide();
+				    base.$el.parent().parent().data('qtip').show();
+				    base.$el.parent().parent().data('qtip').show();
+			    }
+			}
+		};
 	};
 
 	$.cutebar.defaultOptions = {
@@ -54,6 +67,7 @@
 	var methods = {
 		showGroup: function(name) {
 			this.$groups[name].show();
+			this.redraw();
 		},
 		hideGroup: function(name) {
 			this.$groups[name].hide();

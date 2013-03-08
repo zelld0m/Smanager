@@ -73,9 +73,10 @@
               </div>
               <div class="icons" style="display: none;">
                 <a href="javascript:void(0);" title="Locked" id="edit-locked"><img src="<spring:url value="/images/noedit.png" />"></img></a>
-                <a href="javascript:void(0);" title="Edit" id="edit-link"><img src="<spring:url value="/images/edit_pencil.png" />"></img></a>
+                <a href="javascript:void(0);" title="Edit" id="edit-link"><img src="<spring:url value="/images/page_edit.png" />"></img></a>
+                <a href="javascript:void(0);" title="Submit for approval" id="submit-link"><img src="<spring:url value="/images/submit-approval.jpg" />"></img></a>
                 <a href="javascript:void(0);" title="Delete" id="delete-link"><img src="<spring:url value="/images/delete_icon.png" />"></img></a>
-                <a href="javascript:void(0);" title="Save" id="save-link"><img src="<spring:url value="/images/save_icon.png" />"></img></a>
+                <a href="javascript:void(0);" title="Save" id="save-link"><img src="<spring:url value="/images/icon_disk.png" />"></img></a>
                 <a href="javascript:void(0);" title="Cancel" id="cancel-link"><img src="<spring:url value="/images/stop_icon.png" />"></img></a>
               </div>
             </td>

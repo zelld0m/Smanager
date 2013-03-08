@@ -167,7 +167,7 @@
 			container : $el,
 			groups : {
 				'locked' : [ 'edit-locked' ],
-				'not-editing' : [ 'edit-link', 'delete-link' ],
+				'not-editing' : [ 'edit-link', 'submit-link', 'delete-link' ],
 				'editing' : [ 'save-link', 'cancel-link' ]
 			},
 			events : {
@@ -176,6 +176,11 @@
 					$tooltip.cutebar('showGroup', 'editing');
 					obj.editable = true;
 					beforeEdit();
+				},
+				'submit-link' : function() {
+					$tooltip.cutebar('hideGroup', 'not-editing');
+					$tooltip.cutebar('showGroup', 'locked');
+					obj.locked = true;
 				},
 				'delete-link' : function() {
 					obj.destroy();
@@ -229,7 +234,7 @@
 			qtip : $.extend({}, $.cutebar.defaultOptions.qtip, {
 				events : {
 					hide: function() {
-						return !obj.editable;
+						return !obj.editable && !obj.locked;
 					}
 				}
 			})
