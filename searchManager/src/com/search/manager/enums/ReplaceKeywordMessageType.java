@@ -43,9 +43,9 @@ public enum ReplaceKeywordMessageType {
 	}
 	
 	public static ReplaceKeywordMessageType get(Integer intValue) {
-		if(intValue != null)
+		if(intValue != null && intValue>0)
 			return ReplaceKeywordMessageType.values()[intValue-1];		
-		return null;
+		return DEFAULT_TEXT;
     }
 	
 	public int getIntValue(){
