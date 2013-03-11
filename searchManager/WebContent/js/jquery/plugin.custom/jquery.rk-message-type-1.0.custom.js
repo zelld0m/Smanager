@@ -79,7 +79,7 @@
 			}, {rule: base.options.rule});
 			
 			// add listener to radio button
-			base.$el.find('input:radio[name=' + name + ']').off('change').on({
+			base.$el.find('input:radio[id=' + name + ']').off('change').on({
 				change: function(evt){
 					var selectedOption = $(evt.currentTarget).val();
 					
