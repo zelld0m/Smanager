@@ -20,7 +20,7 @@ public class ReplaceKeywordReportBean extends ReportBean<RedirectRule> {
 		if(messageType != null){
 			sb.append(messageType.getDescription());
 			
-			if(messageType == ReplaceKeywordMessageType.CUSTOM_TEXT){
+			if(messageType == ReplaceKeywordMessageType.CUSTOM){
 				sb.append(" ");
 				if(StringUtils.isNotBlank(model.getReplaceKeywordMessageCustomText())){
 					sb.append("(").append(model.getReplaceKeywordMessageCustomText()).append(")");

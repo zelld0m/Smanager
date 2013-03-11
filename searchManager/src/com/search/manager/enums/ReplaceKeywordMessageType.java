@@ -11,9 +11,9 @@ import org.directwebremoting.convert.BeanConverter;
 @DataTransferObject(converter=BeanConverter.class, 
 					params=@Param(name="exclude", value="declaringClass"))
 public enum ReplaceKeywordMessageType {
-	DEFAULT_TEXT("Default Text", "Do not display any additional text in search results"),
-	STANDARD_TEXT("Standard Text", "Display standard text (Showing Result for \"replacement keyword\" / Search instead for: original Keyword) "),
-	CUSTOM_TEXT("Custom Text", "Display custom text");
+	DEFAULT("Default Text", "Do not display any additional text in search results"),
+	STANDARD("Standard Text", "Display standard text (Showing Result for \"replacement keyword\" / Search instead for: original Keyword) "),
+	CUSTOM("Custom Text", "Display custom text");
    
 	private final String displayText;
 	private final String description;
@@ -45,7 +45,7 @@ public enum ReplaceKeywordMessageType {
 	public static ReplaceKeywordMessageType get(Integer intValue) {
 		if(intValue != null && intValue>0)
 			return ReplaceKeywordMessageType.values()[intValue-1];		
-		return DEFAULT_TEXT;
+		return DEFAULT;
     }
 	
 	public int getIntValue(){

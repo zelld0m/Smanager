@@ -597,7 +597,7 @@ public class AuditInterceptor {
 					if(messageType != null){
 						log.append(String.format("replace keyword message type = [%1$s];", messageType.getDisplayText()));
 						
-						if(messageType == ReplaceKeywordMessageType.CUSTOM_TEXT && StringUtils.isNotBlank(rule.getReplaceKeywordMessageCustomText())){ //with custom message
+						if(messageType == ReplaceKeywordMessageType.CUSTOM && StringUtils.isNotBlank(rule.getReplaceKeywordMessageCustomText())){ //with custom message
 							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
 						}
 					}

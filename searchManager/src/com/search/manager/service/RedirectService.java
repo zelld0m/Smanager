@@ -103,7 +103,7 @@ public class RedirectService extends RuleService{
 			RedirectRule rule = new RedirectRule();
 			rule.setRuleId(ruleId);
 			rule.setReplaceKeywordMessageType(ReplaceKeywordMessageType.get(type));
-			if(ReplaceKeywordMessageType.CUSTOM_TEXT.getIntValue() == type) rule.setReplaceKeywordMessageCustomText(customText);
+			if(ReplaceKeywordMessageType.CUSTOM.getIntValue() == type) rule.setReplaceKeywordMessageCustomText(customText);
 			rule.setStoreId(UtilityService.getStoreId());
 			rule.setLastModifiedBy(UtilityService.getUsername());
 			result = daoService.updateRedirectRule(rule);
