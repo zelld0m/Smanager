@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.annotations.Param;
 import org.directwebremoting.convert.BeanConverter;
@@ -47,6 +48,11 @@ public enum ReplaceKeywordMessageType {
 			return ReplaceKeywordMessageType.values()[intValue-1];		
 		return DEFAULT;
     }
+	
+	public static ReplaceKeywordMessageType getByName(String name) {
+		if (StringUtils.isBlank(name)) return DEFAULT;
+		return valueOf(name);
+	}
 	
 	public int getIntValue(){
 		return (ordinal()+1);

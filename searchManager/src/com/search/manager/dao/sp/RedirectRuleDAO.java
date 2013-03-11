@@ -108,7 +108,7 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
 	                		isIncludeKeyword,
-	                		ReplaceKeywordMessageType.valueOf(rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE)),//.get(rs.getInt(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE)),
+	                		ReplaceKeywordMessageType.getByName(rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE)),
 	                		rs.getString(DAOConstants.COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT)
 	                		);
 	        	}
