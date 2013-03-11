@@ -187,7 +187,7 @@ public class CategoryService {
 		if (StringUtils.isNotEmpty(templateNameField)) {
 			filters.add(templateNameField + "Name:\"" + templateName + "\"");
 
-			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
 					fields, filters,false);
 
 			for (Attribute a: attrMap.values()) {
