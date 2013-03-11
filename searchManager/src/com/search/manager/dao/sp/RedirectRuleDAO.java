@@ -383,6 +383,8 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
 			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
+			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType() != null ? rule.getReplaceKeywordMessageType().name() : ReplaceKeywordMessageType.DEFAULT.name());
+			inputs.put(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, rule.getReplaceKeywordMessageCustomText());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, rule.getCreatedBy());
 			inputs.put(DAOConstants.PARAM_CREATED_BY, rule.getCreatedBy());
 			if (DAOUtils.getUpdateCount(addRedirectRuleStoredProcedure.execute(inputs)) > 0) {
