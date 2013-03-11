@@ -45,7 +45,9 @@ public class LinguisticsService {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost post = null;
 		HttpResponse response = null;
-		url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(),"url").replace("(store)", UtilityService.getStoreName())+"admin/file/?file="+fileName;
+		ConfigManager cm = ConfigManager.getInstance();
+		String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
+		url = cm.getServerParameter(UtilityService.getServerName(),"url").replace("(core)", core)+"admin/file/?file="+fileName;
 		post = new HttpPost(url);
 		try {
 			response = client.execute(post);

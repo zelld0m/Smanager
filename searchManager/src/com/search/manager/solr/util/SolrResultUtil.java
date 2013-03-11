@@ -170,8 +170,7 @@ public class SolrResultUtil {
 			Relevancy relevancy = new Relevancy();
 			relevancy.setRelevancyId(relevancyRuleSolr.getRelevancyId());
 			relevancy.setRelevancyName(relevancyRuleSolr.getRelevancyName());
-			relevancy.setStore(new Store(relevancyRuleSolr.getStore(),
-					relevancyRuleSolr.getStore()));
+			relevancy.setStore(new Store(relevancyRuleSolr.getStore()));
 			relevancy.setAlternateQuery(relevancyRuleSolr.getAlternateQuery());
 			relevancy.setBoostFunction(relevancyRuleSolr.getBoostFunction());
 			relevancy.setBoostQuery(relevancyRuleSolr.getBoostQuery());

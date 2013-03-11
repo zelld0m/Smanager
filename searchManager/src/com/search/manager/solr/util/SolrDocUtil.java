@@ -40,7 +40,7 @@ public class SolrDocUtil {
 				SolrInputDocument solrInputDocument = new SolrInputDocument();
 				solrInputDocument.addField("location", result.getLocation());
 				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreName());
+						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
@@ -58,7 +58,7 @@ public class SolrDocUtil {
 				}
 
 				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreName() + "_"
+				String id = result.getStoreKeyword().getStoreId() + "_"
 						+ result.getStoreKeyword().getKeyword().getKeyword()
 						+ "_" + Constants.Rule.DEMOTE.getRuleName() + "_"
 						+ result.getMemberId();
@@ -75,7 +75,7 @@ public class SolrDocUtil {
 				solrInputDocument.addField("location", result.getLocation());
 				solrInputDocument.addField("forceAdd", result.getForceAdd());
 				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreName());
+						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
@@ -93,7 +93,7 @@ public class SolrDocUtil {
 				}
 
 				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreName() + "_"
+				String id = result.getStoreKeyword().getStoreId() + "_"
 						+ result.getStoreKeyword().getKeyword().getKeyword()
 						+ "_" + Constants.Rule.ELEVATE.getRuleName() + "_"
 						+ result.getMemberId();
@@ -107,7 +107,7 @@ public class SolrDocUtil {
 			for (ExcludeResult result : results2) {
 				SolrInputDocument solrInputDocument = new SolrInputDocument();
 				solrInputDocument.addField("store", result.getStoreKeyword()
-						.getStoreName());
+						.getStoreId());
 				solrInputDocument.addField("keyword", result.getStoreKeyword()
 						.getKeywordId());
 				solrInputDocument
@@ -125,7 +125,7 @@ public class SolrDocUtil {
 				}
 
 				// Value of 'id' is <store>_<keyword>_<rule>_<meberId>
-				String id = result.getStoreKeyword().getStoreName() + "_"
+				String id = result.getStoreKeyword().getStoreId() + "_"
 						+ result.getStoreKeyword().getKeyword().getKeyword()
 						+ "_" + Constants.Rule.EXCLUDE.getRuleName() + "_"
 						+ result.getMemberId();

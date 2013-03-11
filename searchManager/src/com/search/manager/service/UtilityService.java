@@ -274,15 +274,15 @@ public class UtilityService {
 
 	
 	public static String getStoreSetting(String property) {
-		return ConfigManager.getInstance().getStoreSetting(getStoreName(), property);
+		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);
 	}
 	
 	public static boolean setStoreSetting(String property, String value) {
-		return ConfigManager.getInstance().setStoreSetting(getStoreName(), property, value);
+		return ConfigManager.getInstance().setStoreSetting(getStoreId(), property, value);
 	}
 
-	public static String getStoreSetting(String storeName, String property) {
-		return ConfigManager.getInstance().getStoreSetting(storeName, property);
+	public static String getStoreSetting(String storeId, String property) {
+		return ConfigManager.getInstance().getStoreSetting(storeId, property);
 	}
 	
 	public static List<String> getStoreSettings(String storeName, String property) {

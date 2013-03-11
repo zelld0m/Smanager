@@ -281,12 +281,12 @@ public class Relevancy extends ModelBean {
 	
 	public String getFormattedStartDate() {
 		if(getStore()==null) return StringUtils.EMPTY;
-		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreName(), getStartDate());
+		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getStartDate());
 	}
 	
 	public String getFormattedEndDate() {
 		if(getStore()==null) return StringUtils.EMPTY;
-		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreName(), getEndDate());
+		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getEndDate());
 	}
 	/**
 	 * Used for GUI, return all parameters. Unassigned parameters will map to an empty string.
