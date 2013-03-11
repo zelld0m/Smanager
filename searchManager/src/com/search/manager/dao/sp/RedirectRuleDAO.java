@@ -165,7 +165,9 @@ public class RedirectRuleDAO {
 			declareParameter(new SqlParameter(DAOConstants.PARAM_RULE_PRIORITY, Types.INTEGER));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_REDIRECT_URL, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_INCLUDE_KEYWORD, Types.VARCHAR));
-			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));			
+			declareParameter(new SqlParameter(DAOConstants.PARAM_CHANGE_KEYWORD, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_TYPE, Types.VARCHAR));
+			declareParameter(new SqlParameter(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_MODIFIED_BY, Types.VARCHAR));
 			declareParameter(new SqlParameter(DAOConstants.PARAM_CREATED_BY, Types.VARCHAR));
 		}
