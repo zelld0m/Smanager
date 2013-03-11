@@ -30,6 +30,7 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
+import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.utility.PropsUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
@@ -293,5 +294,11 @@ public class UtilityService {
 		return list;
 	}
 	
+	public static void setFacetTemplateValues(RedirectRuleCondition condition) {
+			if (condition != null) {
+				condition.setFacetTemplate(getStoreFacetTemplate());
+				condition.setFacetTemplateName(getStoreFacetTemplateName());
+			}
+	}
 	
 }

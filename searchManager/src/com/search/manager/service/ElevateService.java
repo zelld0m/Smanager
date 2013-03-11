@@ -101,6 +101,7 @@ public class ElevateService extends RuleService{
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
 		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		UtilityService.setFacetTemplateValues(rrCondition);
 		
 		try {
 			elevate = daoService.getElevateItem(elevate);
@@ -240,6 +241,7 @@ public class ElevateService extends RuleService{
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
 		rrCondition.setStoreId(UtilityService.getStoreId());
+		UtilityService.setFacetTemplateValues(rrCondition);
 		return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET, false);
 	}
 

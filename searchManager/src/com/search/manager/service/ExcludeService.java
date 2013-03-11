@@ -136,6 +136,7 @@ public class ExcludeService extends RuleService{
 	public int addFacetRule(String keyword, String expiryDate, String comment,  Map<String, List<String>> filter) {
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
 		rrCondition.setStoreId(UtilityService.getStoreId());
+		UtilityService.setFacetTemplateValues(rrCondition);
 		return addItem(keyword, null, rrCondition, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
@@ -393,6 +394,7 @@ public class ExcludeService extends RuleService{
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
 		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		UtilityService.setFacetTemplateValues(rrCondition);
 		
 		try {
 			exclude = daoService.getExcludeItem(exclude);
