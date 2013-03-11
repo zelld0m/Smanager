@@ -305,12 +305,12 @@ public class UtilityService {
 		return ConfigManager.getInstance().getStoreSetting(storeId, property);
 	}
 	
-	public static List<String> getStoreSettings(String storeName, String property) {
-		return ConfigManager.getInstance().getStoreSettings(storeName, property);
+	public static List<String> getStoreSettings(String storeId, String property) {
+		return ConfigManager.getInstance().getStoreSettings(storeId, property);
 	}
 	
-	public static List<String> getStoresToExport(String storeName) {
-		List<String> list = UtilityService.getStoreSettings(storeName, DAOConstants.SETTINGS_EXPORT_TARGET);
+	public static List<String> getStoresToExport(String storeId) {
+		List<String> list = UtilityService.getStoreSettings(storeId, DAOConstants.SETTINGS_EXPORT_TARGET);
 		return list;
 	}
 	
