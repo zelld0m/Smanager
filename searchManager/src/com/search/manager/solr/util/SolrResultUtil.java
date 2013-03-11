@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.search.manager.enums.MemberTypeEntity;
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
 import com.search.manager.model.DemoteResult;
@@ -149,6 +150,12 @@ public class SolrResultUtil {
 			redirectRule
 					.setIncludeKeyword(redirectRuleSolr.getIncludeKeyword());
 			redirectRule.setRedirectUrl(redirectRuleSolr.getRedirectUrl());
+			redirectRule.setReplaceKeywordMessageCustomText(redirectRuleSolr.getCustomText());
+			
+			if (redirectRuleSolr.getMessageType() != null) {
+				redirectRule.setReplaceKeywordMessageType(ReplaceKeywordMessageType.get(redirectRuleSolr.getMessageType()));
+			}
+
 			redirectRules.add(redirectRule);
 		}
 
