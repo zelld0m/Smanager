@@ -77,6 +77,7 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void setProducts(List<? extends Product> products) {
 		this.products = (List<Product>) products;
 	}

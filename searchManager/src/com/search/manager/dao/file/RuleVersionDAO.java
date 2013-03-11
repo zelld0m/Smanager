@@ -175,6 +175,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return getRuleVersions(getRuleVersionList(store, ruleId));
 	}
 
+	@SuppressWarnings("unchecked")
 	public int getRuleVersionsCount(String store, String ruleId) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		int count = 0;
