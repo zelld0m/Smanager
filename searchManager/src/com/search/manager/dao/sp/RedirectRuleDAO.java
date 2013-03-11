@@ -406,7 +406,7 @@ public class RedirectRuleDAO {
 			inputs.put(DAOConstants.PARAM_REDIRECT_URL, rule.getRedirectUrl());
 			inputs.put(DAOConstants.PARAM_INCLUDE_KEYWORD, rule.getIncludeKeyword() == null ? null : rule.getIncludeKeyword() ? "Y" : "N");
 			inputs.put(DAOConstants.PARAM_CHANGE_KEYWORD, rule.getChangeKeyword());
-			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType().getIntValue());
+			inputs.put(DAOConstants.PARAM_RK_MSG_TYPE, rule.getReplaceKeywordMessageType() != null ? rule.getReplaceKeywordMessageType() : "");
 			inputs.put(DAOConstants.PARAM_RK_MSG_CUSTOM_TEXT, rule.getReplaceKeywordMessageCustomText());
 			inputs.put(DAOConstants.PARAM_RULE_PRIORITY, rule.getPriority());
 			inputs.put(DAOConstants.PARAM_ACTIVE_FLAG, "ENABLED");
