@@ -21,6 +21,7 @@
   <!-- TODO: Dynamically modify mall based on logged user -->
   <spring:eval expression="T(com.search.manager.service.UtilityService).getUsername()" var="username" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreCore()" var="storeCore" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetName()" var="storeFacetName" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
@@ -37,6 +38,7 @@
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
 	
 	var GLOBAL_storeId = "${storeId}";
+	var GLOBAL_storeCore = "${storeCore}";
 	var GLOBAL_storeName = "${storeName}";
 	
 	var GLOBAL_BDGroup = "${storeId eq 'pcmallcap' or storeId eq 'pcmallgov' or storeId eq 'macmallbd'}";
