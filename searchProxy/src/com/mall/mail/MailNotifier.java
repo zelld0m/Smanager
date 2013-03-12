@@ -43,7 +43,7 @@ public class MailNotifier {
 		setMessage(new MimeMessage(session));
 		getMessage().setSubject(
 				localhostname
-						+ " "
+						+ ": "
 						+ StringUtil.ifNull(subject,
 								prop.getProperty("mail.subject")));
 		getMessage().setRecipients(
