@@ -1,5 +1,6 @@
 package com.search.service;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1041,7 +1042,16 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	private void sendIndexStatus(String msg, String store) {
 		logger.error(msg);
-		String subject = "[SearchGuiWS] Rule Indexing - " + store;
+		String localhostname = "";
+
+		try {
+			localhostname = java.net.InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			logger.error(e);
+		}
+
+		String subject = localhostname + " [SearchGuiWS] Rule Indexing - "
+				+ store;
 
 		SimpleMailMessage message = mailDetails;
 
