@@ -153,7 +153,7 @@
 						UtilityServiceJS.getSolrConfig({
 							callback:function(data){	
 								var config = $.parseJSON(data);
-								Manager.setSolrUrl(config.solrUrl + GLOBAL_storeId + '/');
+								Manager.setSolrUrl(config.solrUrl + GLOBAL_storeCore + '/');
 							},
 							postHook:function() {
 								Manager.doRequest();						
