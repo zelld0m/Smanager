@@ -3,7 +3,7 @@
 	$(document).ready(function() {
 		// Initialize manager
 		var Manager = new AjaxSolr.Manager({
-			solrUrl: GLOBAL_solrUrl + GLOBAL_storeId + '/'
+			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
 		});
 
 		// Install component widgets
@@ -153,7 +153,7 @@
 						UtilityServiceJS.getSolrConfig({
 							callback:function(data){	
 								var config = $.parseJSON(data);
-								Manager.setSolrUrl(config.solrUrl + GLOBAL_storeId + '/');
+								Manager.setSolrUrl(config.solrUrl + GLOBAL_storeCore + '/');
 							},
 							postHook:function() {
 								Manager.doRequest();						
