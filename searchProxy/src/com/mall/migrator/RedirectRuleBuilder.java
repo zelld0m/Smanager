@@ -58,6 +58,8 @@ public class RedirectRuleBuilder implements Runnable {
 	@Override
 	public void run() {
 		try {
+			count = 0;
+			redirectRuleCount = 0;
 			logPath = properties.getProperty("logPath");
 			logIndex = properties.getProperty("logIndex");
 			logErrorIndex = properties.getProperty("logErrorIndex");
@@ -142,8 +144,8 @@ public class RedirectRuleBuilder implements Runnable {
 						.composeSolrDocsRedirectRule(redirectRules);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
-				solrServer.optimize();
 				redirectRuleCount = solrInputDocuments.size();
+				solrServer.optimize();
 			}
 		} catch (Exception e) {
 			hasError = true;
