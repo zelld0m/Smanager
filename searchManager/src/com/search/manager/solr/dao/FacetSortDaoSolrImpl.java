@@ -189,8 +189,8 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 	}
 
 	@Override
-	public boolean loadFacetSortRuleByName(Store store, String name)
-			throws DaoException {
+	public boolean loadFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
 
 		try {
 			List<FacetSort> facetSorts = null;
@@ -199,6 +199,7 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			FacetSort facetSortFilter = new FacetSort();
 			facetSortFilter.setStore(store);
 			facetSortFilter.setRuleName(name);
+			facetSortFilter.setRuleType(ruleType);
 			SearchCriteria<FacetSort> criteria = new SearchCriteria<FacetSort>(
 					facetSortFilter, null, null, 0, 0);
 
@@ -284,12 +285,11 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 	}
 
 	@Override
-	public boolean resetFacetSortRulesByName(Store store, String name)
-			throws DaoException {
-		// TODO: how to determine if it's keyword or template name?
+	public boolean resetFacetSortRulesByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
 		try {
-			if (deleteFacetSortRuleByName(store, name)) {
-				return loadFacetSortRuleByName(store, name);
+			if (deleteFacetSortRuleByName(store, name, ruleType)) {
+				return loadFacetSortRuleByName(store, name, ruleType);
 			}
 		} catch (Exception e) {
 			logger.error("Failed to reset facet sort rules by rulename", e);
@@ -410,8 +410,8 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 	}
 
 	@Override
-	public boolean deleteFacetSortRuleByName(Store store, String name)
-			throws DaoException {
+	public boolean deleteFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
 
 		try {
 			String storeId = StringUtils.lowerCase(StringUtils.trim(store
@@ -421,7 +421,8 @@ public class FacetSortDaoSolrImpl extends BaseDaoSolr implements FacetSortDao {
 			StringBuffer strQuery = new StringBuffer();
 			strQuery.append("store:" + ClientUtils.escapeQueryChars(storeId))
 					.append(" AND ruleName1:"
-							+ ClientUtils.escapeQueryChars(name));
+							+ ClientUtils.escapeQueryChars(name))
+					.append(" AND ruleType:" + ruleType);
 
 			UpdateResponse updateResponse = solrServers.getCoreInstance(
 					Constants.Core.FACET_SORT_RULE_CORE.getCoreName())
