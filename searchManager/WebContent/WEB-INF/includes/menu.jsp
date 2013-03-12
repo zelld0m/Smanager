@@ -85,7 +85,7 @@
 			      		<li ${submenu eq 'production'? 'class="active"': ''}><a href="<spring:url value="/production/"/>${storeId}">Push to Prod</a></li>
 		      		</sec:authorize>
 		      		
-		      		<c:if test="${storeId eq 'pcmallcap' or storeId eq 'pcmgbd' or storeId eq 'macmallbd'}">
+		      		<c:if test="${storeId eq 'pcmallcap' or storeId eq 'pcmallgov' or storeId eq 'macmallbd'}">
 		      		<sec:authorize access="hasAnyRole('CREATE_RULE','APPROVE_RULE','PUBLISH_RULE')">    		
 			      		<li ${submenu eq 'import'? 'class="active"': ''}><a href="<spring:url value="/import/"/>${storeId}">Import Rule</a></li>
 		      		</sec:authorize>

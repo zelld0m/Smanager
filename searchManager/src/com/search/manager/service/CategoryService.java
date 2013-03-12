@@ -110,10 +110,7 @@ public class CategoryService {
 		RedirectRuleCondition rr = new RedirectRuleCondition();
 		rr.setStoreId(UtilityService.getStoreId());
 		rr.setFilter(filter);
-		
-		rr.setFacetTemplate(UtilityService.getStoreFacetTemplate());
-		rr.setFacetTemplateName(UtilityService.getStoreFacetTemplateName());
-		
+		UtilityService.setFacetTemplateValues(rr);
 		filters.add(rr.getConditionForSolr());
 		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
 	}

@@ -1080,7 +1080,7 @@
 					$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
 
 					$.each(condition.dynamicAttributes, function(attrName, attrData) { 
-						if(attrName != "TemplateName" || attrName != GLOBAL_storeFacetTemplateName){
+						if(attrName != "TemplateName" || attrName != "FacetTemplateName"){
 							var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 							var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
@@ -1144,8 +1144,8 @@
 						$table.find("select.selectCombo").prop("disabled", false);
 						self.makeSelectSearchable(ui, condition, $select);
 						if ($.isNotBlank(condition) && !$.isEmptyObject(condition.dynamicAttributes)){
-							$select.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
-							self.populateIMSDynamicAttributes(ui, condition, condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+							$select.val(condition.dynamicAttributes["FacetTemplateName"][0]);
+							self.populateIMSDynamicAttributes(ui, condition, condition.dynamicAttributes["FacetTemplateName"][0]);
 						}
 					}
 				});
@@ -1175,8 +1175,8 @@
 						$table.find("select.selectCombo").prop("disabled", false);
 						self.makeSelectSearchable(ui, condition, $select);
 						if ($.isNotBlank(condition) && !$.isEmptyObject(condition.dynamicAttributes)){
-							$select.val(condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
-							self.populateCNETDynamicAttributes(ui, condition, condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+							$select.val(condition.dynamicAttributes["FacetTemplateName"][0]);
+							self.populateCNETDynamicAttributes(ui, condition, condition.dynamicAttributes["FacetTemplateName"][0]);
 						}
 					}
 				});
@@ -1471,7 +1471,7 @@
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
 
 					if($.isNotBlank(inTemplateName)){
-						condMap[GLOBAL_storeFacetTemplateName] = $.makeArray(inTemplateName);
+						condMap["FacetTemplateName"] = $.makeArray(inTemplateName);
 
 						$divDynamicAttrItems.find("div").each(function(){ 
 							var attributeItem = this.title;

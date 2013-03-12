@@ -418,7 +418,7 @@
 				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)");
 
 				if($.isNotBlank($.trim(inTemplateName))){
-					condMap[GLOBAL_storeFacetTemplateName] = $.makeArray($.trim(inTemplateName));
+					condMap["FacetTemplateName"] = $.makeArray($.trim(inTemplateName));
 
 					$divDynamicAttrItems.find("div").each(function(ulInd, uEl){
 						var attributeItem = $(uEl).prop("title");
@@ -1062,7 +1062,7 @@
 				$divItemList.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)").remove();
 
 				$.each($item.condition["dynamicAttributes"], function(attrName, attrData) { 
-					if(attrName !== "TemplateName" || attrName !== GLOBAL_storeFacetTemplateName){
+					if(attrName !== "TemplateName" || attrName !== "FacetTemplateName"){
 						var $divDynamicAttributeItem = $divItemList.find('div#dynamicAttributeItemPattern').clone();
 						var $ulAttributeValues = $divDynamicAttributeItem.find("div#dynamicAttributeValues");
 
@@ -1166,8 +1166,8 @@
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
 					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
-						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
-						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+						$select.val($item.condition.dynamicAttributes["FacetTemplateName"][0]);
+						base.populateCNETDynamicAttributes($item.condition.dynamicAttributes["FacetTemplateName"][0]);
 					}
 				}
 			});
@@ -1328,8 +1328,8 @@
 					$table.find("select.selectCombo").prop("disabled", false);
 					base.makeSelectSearchable($select);
 					if ($.isNotBlank($item) && !$.isEmptyObject($item.condition.dynamicAttributes)){
-						$select.val($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
-						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes[GLOBAL_storeFacetTemplateName][0]);
+						$select.val($item.condition.dynamicAttributes["FacetTemplateName"][0]);
+						base.populateIMSDynamicAttributes($item.condition.dynamicAttributes["FacetTemplateName"][0]);
 					}
 				}
 			});
