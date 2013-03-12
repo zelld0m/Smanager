@@ -140,7 +140,15 @@ public class UtilityService {
 	@RemoteMethod
 	public static String getStoreCore(String storeId){
 		ConfigManager cm = ConfigManager.getInstance();
-		return cm.getStoreParameter(storeId, "core");
+		if(StringUtils.isNotBlank(storeId))
+			return cm.getStoreParameter(storeId, "core");
+		
+		return cm.getStoreParameter(getStoreId(), "core");
+	}
+	
+	@RemoteMethod
+	public static String getStoreCore(){
+		return getStoreCore(getStoreId());
 	}
 	
 	@RemoteMethod

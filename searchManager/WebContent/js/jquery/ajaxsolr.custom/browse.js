@@ -3,7 +3,7 @@
 	$(document).ready(function() {
 		// Initialize manager
 		var Manager = new AjaxSolr.Manager({
-			solrUrl: GLOBAL_solrUrl + GLOBAL_storeId + '/'
+			solrUrl: GLOBAL_solrUrl + GLOBAL_storeCore + '/'
 		});
 
 		// Install component widgets
