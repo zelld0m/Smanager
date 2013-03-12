@@ -137,9 +137,9 @@ public class RedirectRuleBuilder implements Runnable {
 		boolean hasError = false;
 
 		try {
-			solrInputDocuments = SolrDocUtil
-					.composeSolrDocsRedirectRule(redirectRules);
-			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (redirectRules != null && redirectRules.size() > 0) {
+				solrInputDocuments = SolrDocUtil
+						.composeSolrDocsRedirectRule(redirectRules);
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
@@ -147,7 +147,6 @@ public class RedirectRuleBuilder implements Runnable {
 			}
 		} catch (Exception e) {
 			hasError = true;
-			e.printStackTrace();
 			logger.error(e);
 		}
 
