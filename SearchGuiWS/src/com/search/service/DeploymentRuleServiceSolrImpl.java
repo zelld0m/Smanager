@@ -392,17 +392,17 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	@Override
 	public Map<String, Boolean> publishRedirectRulesMap(String store,
-			List<String> keywords) {
-		Map<String, Boolean> keywordStatus = getKeywordStatusMap(keywords);
+			List<String> ruleIds) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
 
 		try {
 			boolean hasError = false;
 			StringBuffer errorMsg = new StringBuffer();
 
-			for (String key : keywords) {
+			for (String id : ruleIds) {
 				try {
 					RedirectRule redirectRule = new RedirectRule();
-					redirectRule.setRuleId(key);
+					redirectRule.setRuleId(id);
 					redirectRule.setStoreId(store);
 					daoService.deleteRedirectRule(redirectRule); // prod
 
@@ -453,19 +453,19 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						try {
 							if (!solrService.resetRedirectRuleById(new Store(
-									store), key)) {
-								errorMsg.append(" - " + key + "\n");
+									store), id)) {
+								errorMsg.append(" - " + id + "\n");
 								hasError = true;
 							}
 						} catch (Exception e) {
-							errorMsg.append(" - " + key + "\n");
+							errorMsg.append(" - " + id + "\n");
 							hasError = true;
 						}
 					}
-					keywordStatus.put(key, true);
+					keywordStatus.put(id, true);
 				} catch (Exception e) {
-					keywordStatus.put(key, false);
-					logger.error("Failed to publish redirect rule: " + key, e);
+					keywordStatus.put(id, false);
+					logger.error("Failed to publish redirect rule: " + id, e);
 				}
 			}
 
@@ -886,23 +886,23 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 	@Override
 	public Map<String, Boolean> unpublishRedirectRulesMap(String store,
-			List<String> keywords) {
-		Map<String, Boolean> keywordStatus = getKeywordStatusMap(keywords);
+			List<String> ruleIds) {
+		Map<String, Boolean> keywordStatus = getKeywordStatusMap(ruleIds);
 
 		try {
-			if (CollectionUtils.isNotEmpty(keywords)) {
+			if (CollectionUtils.isNotEmpty(ruleIds)) {
 				boolean hasError = false;
 				StringBuffer errorMsg = new StringBuffer();
 
-				for (String key : keywords) {
+				for (String id : ruleIds) {
 					try {
 						RedirectRule delRel = new RedirectRule();
-						delRel.setRuleId(key);
+						delRel.setRuleId(id);
 						delRel.setStoreId(store);
 						// get list of keywords for ranking rule
 						List<StoreKeyword> sks = new ArrayList<StoreKeyword>();
 						RedirectRule rule = new RedirectRule();
-						rule.setRuleId(key);
+						rule.setRuleId(id);
 						rule.setStoreId(store);
 						SearchCriteria<RedirectRule> criteria = new SearchCriteria<RedirectRule>(
 								rule, null, null, 0, 0);
@@ -917,20 +917,20 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 
 						try {
 							if (!solrService.deleteRedirectRuleById(new Store(
-									store), key)) {
-								errorMsg.append(" - " + key + "\n");
+									store), id)) {
+								errorMsg.append(" - " + id + "\n");
 								hasError = true;
 							}
 						} catch (Exception e) {
-							errorMsg.append(" - " + key + "\n");
+							errorMsg.append(" - " + id + "\n");
 							hasError = true;
 						}
 
-						keywordStatus.put(key, true);
+						keywordStatus.put(id, true);
 					} catch (Exception e) {
 						logger.error("Failed to unpublish redirect rule: "
-								+ key, e);
-						keywordStatus.put(key, false);
+								+ id, e);
+						keywordStatus.put(id, false);
 					}
 				}
 
@@ -1050,7 +1050,7 @@ public class DeploymentRuleServiceSolrImpl implements DeploymentRuleService {
 			logger.error(e);
 		}
 
-		String subject = localhostname + " [SearchGuiWS] Rule Indexing - "
+		String subject = "[" + localhostname + ":SearchGuiWS] Rule Indexing - "
 				+ store;
 
 		SimpleMailMessage message = mailDetails;
