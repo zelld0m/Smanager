@@ -50,8 +50,8 @@ public class RuleIndexBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
-	private int count;
-	private int ruleCount;
+	private int dbCount;
+	private int docCount;
 
 	RuleIndexBuilder(String storeId, LocalSolrServerRunner solrServer,
 			Properties properties, ApplicationContext context, String rule) {
@@ -65,6 +65,8 @@ public class RuleIndexBuilder implements Runnable {
 	@Override
 	public void run() {
 		try {
+			dbCount = 0;
+			docCount = 0;
 			logPath = properties.getProperty("logPath");
 			logIndex = properties.getProperty("logIndex");
 			logErrorIndex = properties.getProperty("logErrorIndex");
@@ -131,8 +133,8 @@ public class RuleIndexBuilder implements Runnable {
 					+ " secs.");
 			info.append("\n Time Completed : "
 					+ (elapsedTimeMillis / (60 * 1000F)) + " mins.");
-			info.append("\n Total " + rule + " rule indexed : " + ruleCount);
-			info.append("\n Total file fetched from database : " + count);
+			info.append("\n Total " + rule + " rule indexed : " + docCount);
+			info.append("\n Total file fetched from database : " + dbCount);
 			logger.info(info.toString());
 			if (mailNotification.equals("true")) {
 				MailNotifier mailNotifier = new MailNotifier(
@@ -149,13 +151,10 @@ public class RuleIndexBuilder implements Runnable {
 	private void solrImport(String store, String keyword, String rule)
 			throws ParserConfigurationException, IOException, SAXException {
 		List<SolrInputDocument> solrInputDocuments = null;
-		List<DemoteResult> demoteResults = null;
-		List<ElevateResult> elevateResults = null;
-		List<ExcludeResult> excludeResults = null;
 		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
 		boolean hasError = false;
 
-		logger.info(rule + " = store [" + store + "] " + "keyword[" + keyword
+		logger.debug(rule + " = store [" + store + "] " + "keyword[" + keyword
 				+ "]");
 
 		try {
@@ -166,17 +165,16 @@ public class RuleIndexBuilder implements Runnable {
 
 				SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(
 						demoteFilter, null, null, 0, 0);
-				logger.info("Search Criteria = " + criteria.toString());
-				demoteResults = daoService.getDemoteResultList(criteria)
+				List<DemoteResult> demoteResults = daoService.getDemoteResultList(criteria)
 						.getList();
 
 				if (demoteResults != null && demoteResults.size() > 0) {
-					count += demoteResults.size();
+					dbCount += demoteResults.size();
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(demoteResults);
 					solrServer.addDocs(solrInputDocuments);
 					solrServer.softCommit();
-					ruleCount += solrInputDocuments.size();
+					docCount += solrInputDocuments.size();
 				}
 			} else if (rule.equals(Constants.Rule.ELEVATE.getRuleName())) {
 				// Get elevate rules from database.
@@ -185,17 +183,16 @@ public class RuleIndexBuilder implements Runnable {
 
 				SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(
 						elevateFilter, null, null, 0, 0);
-				logger.info("Search Criteria = " + criteria.toString());
-				elevateResults = daoService.getElevateResultList(criteria)
+				List<ElevateResult> elevateResults = daoService.getElevateResultList(criteria)
 						.getList();
 
 				if (elevateResults != null && elevateResults.size() > 0) {
-					count += elevateResults.size();
+					dbCount += elevateResults.size();
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(elevateResults);
 					solrServer.addDocs(solrInputDocuments);
 					solrServer.softCommit();
-					ruleCount += solrInputDocuments.size();
+					docCount += solrInputDocuments.size();
 				}
 			} else if (rule.equals(Constants.Rule.EXCLUDE.getRuleName())) {
 				// Get exclude rules from database.
@@ -204,17 +201,16 @@ public class RuleIndexBuilder implements Runnable {
 
 				SearchCriteria<ExcludeResult> criteria = new SearchCriteria<ExcludeResult>(
 						excludeFilter, null, null, 0, 0);
-				logger.info("Search Criteria = " + criteria.toString());
-				excludeResults = daoService.getExcludeResultList(criteria)
+				List<ExcludeResult> excludeResults = daoService.getExcludeResultList(criteria)
 						.getList();
 
 				if (excludeResults != null && excludeResults.size() > 0) {
-					count += excludeResults.size();
+					dbCount += excludeResults.size();
 					solrInputDocuments = SolrDocUtil
 							.composeSolrDocs(excludeResults);
 					solrServer.addDocs(solrInputDocuments);
 					solrServer.softCommit();
-					ruleCount += solrInputDocuments.size();
+					docCount += solrInputDocuments.size();
 				}
 			}
 		} catch (Exception e) {
