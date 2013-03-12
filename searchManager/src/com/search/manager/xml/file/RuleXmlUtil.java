@@ -63,7 +63,9 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
+import com.search.ws.SolrConstants;
 
 public class RuleXmlUtil{
 
@@ -80,6 +82,15 @@ public class RuleXmlUtil{
 		//Exists only to defeat instantiation.
 	}
 
+	protected static void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
+		ConfigManager configManager = ConfigManager.getInstance();
+		if (configManager != null && condition != null) {
+			condition.setFacetPrefix(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+			condition.setFacetTemplate(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			condition.setFacetTemplateName(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		}
+	}
+	
 	public static RuleXmlUtil getInstance() {
 		if(instance == null) {
 			synchronized (RuleXmlUtil.class) {
@@ -385,6 +396,9 @@ public class RuleXmlUtil{
 				for (ElevateItemXml eItemXml : eItemXmlList){
 					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					elevateResult = new ElevateResult(storeKeyword, eItemXml);
+					if (elevateResult.getCondition() != null) {
+						setFacetTemplateValues(store, elevateResult.getCondition());
+					}
 					processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
 				}
 	
@@ -447,6 +461,9 @@ public class RuleXmlUtil{
 				for (ExcludeItemXml eItemXml : eItemXmlList){
 					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					excludeResult = new ExcludeResult(storeKeyword,eItemXml);
+					if (excludeResult.getCondition() != null) {
+						setFacetTemplateValues(store, excludeResult.getCondition());
+					}					
 					processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
 				}
 	
@@ -509,6 +526,9 @@ public class RuleXmlUtil{
 				for (DemoteItemXml dItemXml : dItemXmlList){
 					dItemXml.setCreatedBy(dXml.getCreatedBy());
 					demoteResult = new DemoteResult(storeKeyword, dItemXml);
+					if (demoteResult.getCondition() != null) {
+						setFacetTemplateValues(store, demoteResult.getCondition());
+					}	
 					processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
 				}
 
@@ -696,6 +716,7 @@ public class RuleXmlUtil{
 						RedirectRuleCondition condition = new RedirectRuleCondition();
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
+						setFacetTemplateValues(store, condition);
 						condition.setCreatedBy(qRXml.getCreatedBy());
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
 						

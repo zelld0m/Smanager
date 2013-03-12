@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -52,7 +51,7 @@ import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.SearchLogger;
 
-public class EnterpriseSearchServlet extends HttpServlet {
+public class EnterpriseSearchServlet extends SearchServlet {
 
 	@Autowired
 	@Qualifier("daoService")
@@ -66,18 +65,9 @@ public class EnterpriseSearchServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 
-	private static Logger logger = Logger.getLogger(SearchServlet.class);
+	private static Logger logger = Logger.getLogger(EnterpriseSearchServlet.class);
 
-	private ConfigManager configManager;
 	private EnterpriseSearchConfigManager enterpriseSearchConfigManager;
-	
-	// these fields should not contain multiple entries
-	private final static String[] uniqueFields = {
-			SolrConstants.SOLR_PARAM_ROWS,
-			SolrConstants.SOLR_PARAM_KEYWORD,
-			SolrConstants.SOLR_PARAM_WRITER_TYPE ,
-			SolrConstants.SOLR_PARAM_START
-			};
 
 	// TODO: transfer to config file
 	private final static String[] supportedCores = {
@@ -88,8 +78,6 @@ public class EnterpriseSearchServlet extends HttpServlet {
 		"enterpriseSearch"
 	};
 	
-	public final ExecutorService execService = Executors.newCachedThreadPool();
-
 	public void setDaoCacheService(SearchDaoService daoCacheService) {
 		this.daoCacheService = daoCacheService;
 	}
@@ -100,37 +88,14 @@ public class EnterpriseSearchServlet extends HttpServlet {
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
 		super.init(config);
-		configManager = ConfigManager.getInstance();
 		enterpriseSearchConfigManager = EnterpriseSearchConfigManager.getInstance();
 	}
 
-	private static boolean addNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
-		boolean added = true;
-		if (ArrayUtils.contains(uniqueFields, paramName) && map.containsKey(paramName)) {
-			logger.warn(String.format("Request contained multiple declarations for parameter %1$s. Discarding subsequent declarations.", paramName));
-			added = false;
-		}
-		else {
-			if (!map.containsKey(paramName)) {
-				map.put(paramName, new ArrayList<NameValuePair>());
-			}
-			map.get(paramName).add(pair);
-		}
-		return added;
+	private static void applyOverride(String condition, Map<String, String> overrideMap) {
+		
 	}
-
-	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
-		List<NameValuePair> list = paramMap.get(paramterName);
-		return list == null || list.size() == 0 ? "" : list.get(0).getValue();
-	}
-
-	private static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
-		List<NameValuePair> list = paramMap.get(paramterName);
-		return list == null || list.size() == 0 ? null : list.get(0);
-	}
-
+	
 	private static boolean generateFilterList(StringBuilder allValues, Collection<? extends SearchResult> list, Map<String, String> overrideMap) {
 		StringBuilder edpValues = new StringBuilder();
 		StringBuilder facetValues = new StringBuilder();
@@ -177,145 +142,7 @@ public class EnterpriseSearchServlet extends HttpServlet {
 		}
 		return withFacetFlag;
 	}
-	
-	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
-		Map<String,String> activeRule = new HashMap<String,String>();
-		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
-		activeRule.put(SolrConstants.TAG_RULE_ID, id);
-		activeRule.put(SolrConstants.TAG_RULE_NAME, name);
-		activeRule.put(SolrConstants.TAG_RULE_ACTIVE, String.valueOf(active));			
-		return activeRule;
-	}
-	
-	private SearchDaoService getDaoService(boolean fromSearchGui) {
-		return fromSearchGui ? daoService : solrService;
-	}
-	
-	private RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getRedirectRule(sk);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getRedirectRule(sk);
-			}
-			throw e;
-		}
-	}
-
-	private Relevancy getRelevancyRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getRelevancyRule(sk);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(sk);
-			}
-			throw e;
-		}
-	}
-
-	private Relevancy getRelevancyRule(Store store, String relevancyId, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getRelevancyRule(store, relevancyId);
-			}
-			throw e;
-		}
-	}
-	
-	private Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
-		return getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
-	}
-	
-	private FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
-	private FacetSort getFacetSortRule(Store store, String templateName, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getFacetSortRule(store, templateName);
-			}
-			throw e;
-		}
-	}
-	
-	private List<ElevateResult> getElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getElevateRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getElevateRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
-	private List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getExpiredElevateRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredElevateRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-
-	private List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getExcludeRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExcludeRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
-	private List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getExpiredExcludeRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredExcludeRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
-	private List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getDemoteRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getDemoteRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
-	private List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getExpiredDemoteRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredDemoteRules(storeKeyword);
-			}
-			throw e;
-		}
-	}
-	
+		
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 

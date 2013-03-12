@@ -248,6 +248,18 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
+
+	@RemoteMethod
+	public static String getStoreFacetPrefix(){
+
+		ConfigManager cm = ConfigManager.getInstance();
+		String storeFacetPrefix = StringUtils.EMPTY;
+		if (cm != null) {
+			storeFacetPrefix = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
+		}
+
+		return storeFacetPrefix;
+	}
 	
 	@RemoteMethod
 	public static String getStoreFacetTemplateName(){
@@ -295,10 +307,11 @@ public class UtilityService {
 	}
 	
 	public static void setFacetTemplateValues(RedirectRuleCondition condition) {
-			if (condition != null) {
-				condition.setFacetTemplate(getStoreFacetTemplate());
-				condition.setFacetTemplateName(getStoreFacetTemplateName());
-			}
+		if (condition != null) {
+			condition.setFacetPrefix(getStoreFacetPrefix());
+			condition.setFacetTemplate(getStoreFacetTemplate());
+			condition.setFacetTemplateName(getStoreFacetTemplateName());
+		}
 	}
 	
 }

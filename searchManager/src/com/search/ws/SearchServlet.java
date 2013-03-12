@@ -68,17 +68,17 @@ public class SearchServlet extends HttpServlet {
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 
-	private ConfigManager configManager;
+	protected ConfigManager configManager;
 	
 	// these fields should not contain multiple entries
-	private final static String[] uniqueFields = {
+	protected final static String[] uniqueFields = {
 			SolrConstants.SOLR_PARAM_ROWS,
 			SolrConstants.SOLR_PARAM_KEYWORD,
 			SolrConstants.SOLR_PARAM_WRITER_TYPE ,
 			SolrConstants.SOLR_PARAM_START
 			};
 
-	public final ExecutorService execService = Executors.newCachedThreadPool();
+	protected final ExecutorService execService = Executors.newCachedThreadPool();
 
 	public void setDaoCacheService(SearchDaoService daoCacheService) {
 		this.daoCacheService = daoCacheService;
@@ -95,7 +95,7 @@ public class SearchServlet extends HttpServlet {
 		configManager = ConfigManager.getInstance();
 	}
 
-	private static boolean addNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
+	protected static boolean addNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
 		boolean added = true;
 		if (ArrayUtils.contains(uniqueFields, paramName) && map.containsKey(paramName)) {
 			logger.warn(String.format("Request contained multiple declarations for parameter %1$s. Discarding subsequent declarations.", paramName));
@@ -115,12 +115,20 @@ public class SearchServlet extends HttpServlet {
 		return list == null || list.size() == 0 ? "" : list.get(0).getValue();
 	}
 
-	private static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
+	protected static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
-	private boolean isRegisteredKeyword(StoreKeyword storeKeyword) {
+	protected void setFacetTemplateValues(Store store, RedirectRuleCondition condition) {
+		if (condition != null) {
+			condition.setFacetPrefix(configManager.getParameterByStoreId(store.getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME));
+			condition.setFacetTemplate(configManager.getParameterByStoreId(store.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			condition.setFacetTemplateName(configManager.getParameterByStoreId(store.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		}
+	}
+	
+	protected boolean isRegisteredKeyword(StoreKeyword storeKeyword) {
 		if (daoService instanceof DaoService) {
 			try {
 				return ((DaoService)daoService).getKeyword(storeKeyword.getStoreId(), storeKeyword.getKeywordId()) != null;
@@ -129,7 +137,7 @@ public class SearchServlet extends HttpServlet {
 		return false;
 	}
 	
-	private static boolean generateFilterList(StringBuilder allValues, Collection<? extends SearchResult> list) {
+	protected static boolean generateFilterList(StringBuilder allValues, Collection<? extends SearchResult> list) {
 		StringBuilder edpValues = new StringBuilder();
 		StringBuilder facetValues = new StringBuilder();
 		boolean withFacetFlag = false;
@@ -174,7 +182,7 @@ public class SearchServlet extends HttpServlet {
 		return withFacetFlag;
 	}
 	
-	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
+	protected static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
 		Map<String,String> activeRule = new HashMap<String,String>();
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
 		activeRule.put(SolrConstants.TAG_RULE_ID, id);
@@ -183,11 +191,11 @@ public class SearchServlet extends HttpServlet {
 		return activeRule;
 	}
 	
-	private SearchDaoService getDaoService(boolean fromSearchGui) {
+	protected SearchDaoService getDaoService(boolean fromSearchGui) {
 		return fromSearchGui ? daoService : solrService;
 	}
 	
-	private RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+	protected RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getRedirectRule(sk);
 		} catch (DaoException e) {
@@ -198,7 +206,7 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
-	private Relevancy getRelevancyRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+	protected Relevancy getRelevancyRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getRelevancyRule(sk);
 		} catch (DaoException e) {
@@ -209,7 +217,7 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 
-	private Relevancy getRelevancyRule(Store store, String relevancyId, boolean fromSearchGui) throws DaoException {
+	protected Relevancy getRelevancyRule(Store store, String relevancyId, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
 		} catch (DaoException e) {
@@ -220,11 +228,11 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 	
-	private Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
+	protected Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
 		return getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
 	}
 	
-	private FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
 		} catch (DaoException e) {
@@ -235,7 +243,7 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 	
-	private FacetSort getFacetSortRule(Store store, String templateName, boolean fromSearchGui) throws DaoException {
+	protected FacetSort getFacetSortRule(Store store, String templateName, boolean fromSearchGui) throws DaoException {
 		try {
 			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
 		} catch (DaoException e) {
@@ -246,70 +254,98 @@ public class SearchServlet extends HttpServlet {
 		}
 	}
 	
-	private List<ElevateResult> getElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
-		try {
-			return getDaoService(fromSearchGui).getElevateRules(storeKeyword);
-		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getElevateRules(storeKeyword);
+	protected void setFacetTemplateValues(StoreKeyword storeKeyword, List<? extends SearchResult> list) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (SearchResult e: list) {
+				if (e.getEntity().equals(MemberTypeEntity.FACET)) {
+					setFacetTemplateValues(storeKeyword.getStore(), e.getCondition());
+				}
 			}
-			throw e;
 		}
 	}
 	
-	private List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected List<ElevateResult> getElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<ElevateResult> list = null;
 		try {
-			return getDaoService(fromSearchGui).getExpiredElevateRules(storeKeyword);
+			list = getDaoService(fromSearchGui).getElevateRules(storeKeyword);
 		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredElevateRules(storeKeyword);
+			if (fromSearchGui) {
+				throw e;
 			}
-			throw e;
+			list = daoCacheService.getElevateRules(storeKeyword);
 		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
+	}
+	
+	protected List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<ElevateResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getExpiredElevateRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getExpiredElevateRules(storeKeyword);
+		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
 	}
 
-	private List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<ExcludeResult> list = null;
 		try {
-			return getDaoService(fromSearchGui).getExcludeRules(storeKeyword);
+			list = getDaoService(fromSearchGui).getExcludeRules(storeKeyword);
 		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExcludeRules(storeKeyword);
+			if (fromSearchGui) {
+				throw e;
 			}
-			throw e;
+			list = daoCacheService.getExcludeRules(storeKeyword);
 		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
 	}
 	
-	private List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<ExcludeResult> list = null;
 		try {
-			return getDaoService(fromSearchGui).getExpiredExcludeRules(storeKeyword);
+			list = getDaoService(fromSearchGui).getExpiredExcludeRules(storeKeyword);
 		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredExcludeRules(storeKeyword);
+			if (fromSearchGui) {
+				throw e;
 			}
-			throw e;
+			list = daoCacheService.getExpiredExcludeRules(storeKeyword);
 		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
 	}
 	
-	private List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<DemoteResult> list = null;
 		try {
-			return getDaoService(fromSearchGui).getDemoteRules(storeKeyword);
+			list = getDaoService(fromSearchGui).getDemoteRules(storeKeyword);
 		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getDemoteRules(storeKeyword);
+			if (fromSearchGui) {
+				throw e;
 			}
-			throw e;
+			list = daoCacheService.getDemoteRules(storeKeyword);
 		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
 	}
 	
-	private List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+	protected List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		List<DemoteResult> list = null;
 		try {
-			return getDaoService(fromSearchGui).getExpiredDemoteRules(storeKeyword);
+			list = getDaoService(fromSearchGui).getExpiredDemoteRules(storeKeyword);
 		} catch (DaoException e) {
-			if (!fromSearchGui) {
-				return daoCacheService.getExpiredDemoteRules(storeKeyword);
+			if (fromSearchGui) {
+				throw e;
 			}
-			throw e;
+			list = daoCacheService.getExpiredDemoteRules(storeKeyword);
 		}
+		setFacetTemplateValues(storeKeyword, list);
+		return list;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -437,7 +473,7 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			// default parameters for the core
-			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(storeId)) {
+			for (NameValuePair pair: configManager.getDefaultSolrParameters(storeId)) {
 				// TODO: FIX This will distort the results if there is no redirect filter rule.
 				if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
 					nameValuePairs.add(pair);
@@ -481,6 +517,7 @@ public class SearchServlet extends HttpServlet {
 				disableRelevancy = true;
 			}*/
 			
+			Store store = new Store(storeId);
 			StoreKeyword sk = new StoreKeyword(storeId, keyword);
 			
 			// redirect 
@@ -569,6 +606,7 @@ public class SearchServlet extends HttpServlet {
 							if (StringUtils.isNotEmpty(condition)) {
 								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
 								rr.setStoreId(storeId);
+								setFacetTemplateValues(store, rr);
 								String conditionForSolr = rr.getConditionForSolr();
 								if (StringUtils.isNotBlank(conditionForSolr)) {
 									builder.append("(").append(conditionForSolr).append(") OR ");
@@ -597,7 +635,6 @@ public class SearchServlet extends HttpServlet {
 				logger.error("Failed to get redirect for keyword: " + originalKeyword, e);
 			}
 			
-			Store store = new Store(storeId);
 			// set relevancy filters if any was specified
 			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
 			Relevancy relevancy = null;
