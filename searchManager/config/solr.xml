@@ -47,7 +47,7 @@
     	<param-name>fq</param-name>
     </solr-param-name>
     <solr-param-value name="fq">
-    	<param-value>PcMall_StoreFlag:true</param-value>
+    	<param-value>PCMBD_StoreFlag:true</param-value>
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat> 
     <default-server>afs-pl-schpd02</default-server>
@@ -83,7 +83,7 @@
     	<param-name>fq</param-name>
     </solr-param-name>
     <solr-param-value name="fq">
-    	<param-value>MacMall_StoreFlag:true</param-value>
+    	<param-value>MacMallBD_StoreFlag:true</param-value>
     </solr-param-value>
     <dateformat>MM/dd/yyyy</dateformat>    
     <default-server>afs-pl-schpd02</default-server>
