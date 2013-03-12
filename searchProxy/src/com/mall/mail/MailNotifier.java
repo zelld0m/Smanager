@@ -1,5 +1,6 @@
 package com.mall.mail;
 
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -27,13 +28,24 @@ public class MailNotifier {
 
 	public MailNotifier(String subject, String body, Properties prop)
 			throws MessagingException {
+		String localhostname = "";
+
+		try {
+			localhostname = java.net.InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			logger.error(e);
+		}
+
 		String recepient = prop.getProperty("mail.recepient");
 		String cc = prop.getProperty("mail.cc");
 
 		Session session = Session.getInstance(prop, null);
 		setMessage(new MimeMessage(session));
 		getMessage().setSubject(
-				StringUtil.ifNull(subject, prop.getProperty("mail.subject")));
+				localhostname
+						+ " "
+						+ StringUtil.ifNull(subject,
+								prop.getProperty("mail.subject")));
 		getMessage().setRecipients(
 				Message.RecipientType.TO,
 				InternetAddress.parse(StringUtil.ifNull(recepient,
