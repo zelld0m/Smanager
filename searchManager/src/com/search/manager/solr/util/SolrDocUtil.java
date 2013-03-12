@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.solr.common.SolrInputDocument;
 
@@ -183,6 +184,10 @@ public class SolrDocUtil {
 				redirectRule.getIncludeKeyword());
 		solrInputDocument
 				.addField("redirectUrl", redirectRule.getRedirectUrl());
+		
+		solrInputDocument.addField("messageType", redirectRule.getReplaceKeywordMessageType() != null ? redirectRule.getReplaceKeywordMessageType().getIntValue() : 1);
+		solrInputDocument.addField("customText", StringUtils.defaultIfBlank(redirectRule.getReplaceKeywordMessageCustomText(), ""));
+		
 
 		// Value of 'id' is <storeId>_<searchTerm>_<ruleId>
 		String id = redirectRule.getStoreId() + "_"
