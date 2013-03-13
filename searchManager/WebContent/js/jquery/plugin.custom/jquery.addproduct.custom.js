@@ -1456,6 +1456,7 @@
 						var position = 1;
 						var valid = true;
 						var today = new Date();
+						today.setHours(0,0,0,0); //ignore time of current date 
 						
 						if (base.options.showPosition){
 							position = base.contentHolder.find("#addItemPosition").val();
