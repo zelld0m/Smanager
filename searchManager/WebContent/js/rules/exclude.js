@@ -557,7 +557,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key])));
 							count++;
 						};
 

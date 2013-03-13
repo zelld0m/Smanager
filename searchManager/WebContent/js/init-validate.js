@@ -13,6 +13,12 @@ isXSSSafeAllowNonAscii = function(text){
 	return !((text.indexOf("<") >= 0) && (text.indexOf(">") >= 0));
 };
 
+isAllowedFileName = function(text){ //invalid characters: \/:*?"<>|
+	var invalidCharsRegex= /^[^\\\/\:\*\?\"\<\>\|]*$/;
+	var hasValidChars = invalidCharsRegex.test(text);
+	return isXSSSafe(text) && hasValidChars && $.isNotBlank(text);
+}; 
+
 isAllowedName = function(text){
 	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\\\@\*\s\-\"\'\(\)\?\/]*$/;
 	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
