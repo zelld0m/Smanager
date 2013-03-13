@@ -14,10 +14,10 @@ import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
 import com.search.manager.dao.DaoException;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="commentDAO")
 public class CommentDAO {

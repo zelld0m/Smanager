@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ReplaceKeywordMessageType;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
@@ -30,7 +31,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="redirectRuleDAO")
 public class RedirectRuleDAO {

@@ -23,6 +23,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.enums.FacetGroupType;
 import com.search.manager.enums.RuleType;
 import com.search.manager.enums.SortType;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.FacetGroup;
 import com.search.manager.model.FacetGroupItem;
 import com.search.manager.model.FacetSort;
@@ -32,7 +33,6 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="facetSortDAO")
 public class FacetSortDAO {

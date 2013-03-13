@@ -21,6 +21,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.Relevancy;
@@ -41,7 +42,6 @@ import com.search.manager.schema.model.bq.BoostQueryModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryField;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
-import com.search.manager.utility.JodaTimeUtil;
 import com.search.ws.SearchHelper;
 
 @Service(value = "relevancyService")

@@ -1,4 +1,4 @@
-package com.search.manager.utility;
+package com.search.manager.jodatime;
 
 import java.sql.Date;
 import java.sql.Timestamp;

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.report.model.DemoteReportBean;
@@ -47,7 +48,6 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.JodaTimeUtil;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller

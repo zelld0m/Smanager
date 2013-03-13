@@ -19,12 +19,12 @@ import org.springframework.stereotype.Repository;
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
 import com.search.manager.enums.ExportType;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
-import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="ruleStatusDAO")
 public class RuleStatusDAO {

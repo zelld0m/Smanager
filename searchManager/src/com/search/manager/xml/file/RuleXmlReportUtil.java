@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.DemoteProduct;
 import com.search.manager.model.ElevateProduct;
 import com.search.manager.model.FacetGroup;
@@ -52,7 +53,6 @@ import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.JodaTimeUtil;
 
 public class RuleXmlReportUtil{
 	private static Logger logger = Logger.getLogger(RuleXmlReportUtil.class);

@@ -6,7 +6,7 @@ import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.utility.JodaTimeUtil;
+import com.search.manager.jodatime.JodaTimeUtil;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Product extends ModelBean {

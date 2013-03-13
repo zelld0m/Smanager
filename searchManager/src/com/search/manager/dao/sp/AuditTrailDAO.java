@@ -15,10 +15,10 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.stereotype.Repository;
 
+import com.search.manager.jodatime.JodaTimeUtil;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
-import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="auditTrailDAO")
 public class AuditTrailDAO {
