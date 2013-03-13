@@ -5,6 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -587,19 +591,44 @@ public class ElevateService extends RuleService{
 	}
 	
 	@RemoteMethod
-	public Map<String, Boolean> isItemRequireForceAdd(String keyword, String[] memberIds, String[] conditions) {
-		String storeName = UtilityService.getStoreId();
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
-
-		int i = 0;
-		for (String memberId: memberIds) {
-			String condition = conditions[i]; 
-			if (StringUtils.isNotBlank(condition)) {
-				map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+	public Map<String, Boolean> isItemRequireForceAdd(final String keyword, String[] memberIds, String[] conditions) {
+		
+		ExecutorService execService = Executors.newFixedThreadPool(10);
+		final String storeName = UtilityService.getStoreId();
+		final Map<String, Boolean> map = new HashMap<String, Boolean>();
+		int tasks = 0;
+		
+		try {
+			ExecutorCompletionService<Boolean> completionService = new ExecutorCompletionService<Boolean>(execService);
+			for (int i = 0, size = memberIds.length; i < size; i++) {
+				final String memberId = memberIds[i];
+				final String condition = conditions[i]; 
+				if (StringUtils.isNotBlank(condition)) {
+					completionService.submit(new Callable<Boolean>() {
+						@Override
+						public Boolean call() throws Exception {
+							map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+							return true;
+						}
+					});
+					tasks++;
+				}
 			}
-			i++;
+	
+			while (tasks > 0) {
+				try {
+					completionService.take();
+				} catch (InterruptedException e) {
+					logger.error("Failed to get if force add required for condition", e);
+				}
+				tasks--;
+			}
+			
+		} finally {
+			if (execService != null) {
+				execService.shutdown();
+			}
 		}
-
 		return map;
 	}
 }
