@@ -30,6 +30,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="redirectRuleDAO")
 public class RedirectRuleDAO {
@@ -103,8 +104,8 @@ public class RedirectRuleDAO {
 	                		rs.getString(DAOConstants.COLUMN_CONDITION),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY), 
-	                		rs.getDate(DAOConstants.COLUMN_CREATED_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_LAST_MODIFIED_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_CHANGE_KEYWORD),
 	                		rs.getString(DAOConstants.COLUMN_REDIRECT_URL),
 	                		isIncludeKeyword,

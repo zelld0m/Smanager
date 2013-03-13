@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.Binder;
@@ -19,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -110,7 +110,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 					if(((T)o).getVersion() == version){
 						((T)o).setDeleted(true);
 						((T)o).setLastModifiedBy(username);
-						((T)o).setLastModifiedDate(new Date());
+						((T)o).setLastModifiedDateTime(new DateTime());
 					}
 				};
 			});

@@ -17,6 +17,7 @@ import com.search.manager.dao.DaoException;
 import com.search.manager.model.Comment;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="commentDAO")
 public class CommentDAO {
@@ -60,7 +61,7 @@ public class CommentDAO {
 	                		rs.getString(DAOConstants.COLUMN_REFERENCE_ID), 
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP),
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_STAMP)),
 	                		rs.getInt(DAOConstants.COLUMN_RULE_TYPE_ID)
 	                		);
 	        	}

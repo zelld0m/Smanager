@@ -52,7 +52,7 @@ import com.search.manager.report.model.xml.RuleConditionXml;
 import com.search.manager.report.model.xml.RuleKeywordXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.utility.JodaTimeUtil;
 
 public class RuleXmlReportUtil{
 	private static Logger logger = Logger.getLogger(RuleXmlReportUtil.class);
@@ -78,7 +78,8 @@ public class RuleXmlReportUtil{
 	
 	public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity){
 		SubReportHeader subReportHeader = new SubReportHeader();
-		subReportHeader.addRow("Date Created: ", xml.getCreatedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getCreatedDate()) : "");
+		String storeId = UtilityService.getStoreId();
+		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId,  xml.getCreatedDateTime()) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
 		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		

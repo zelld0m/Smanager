@@ -2,7 +2,6 @@ package com.search.manager.report.model;
 
 import com.search.manager.model.RedirectRule;
 import com.search.manager.report.annotation.ReportField;
-import com.search.manager.utility.DateAndTimeUtils;
 
 public class RedirectRuleReportBean extends ReportBean<RedirectRule> {
 
@@ -38,7 +37,7 @@ public class RedirectRuleReportBean extends ReportBean<RedirectRule> {
 
 	@ReportField(label="Created Date", size=20, sortOrder=6)
 	public String getCreatedDate(){
-		return DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getCreatedDate());
+		return ""; //TODO: DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getCreatedDate());
 	}
 
 	@ReportField(label="Modified By", size=20, sortOrder=7)
@@ -48,7 +47,7 @@ public class RedirectRuleReportBean extends ReportBean<RedirectRule> {
 	
 	@ReportField(label="Modified Date", size=20, sortOrder=8)
 	public String getModifiedDate(){
-		return DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getLastModifiedDate());
+		return ""; //TODO:  DateAndTimeUtils.formatDateTimeUsingConfig(model.getStoreId(), model.getLastModifiedDate());
 	}
 	
 }

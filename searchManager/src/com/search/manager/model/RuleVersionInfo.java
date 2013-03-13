@@ -1,7 +1,5 @@
 package com.search.manager.model;
 
-import java.util.Date;
-
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
@@ -27,7 +25,7 @@ public class RuleVersionInfo extends ModelBean{
 		this.setNotes(xml.getNotes());
 		this.setVersion(xml.getVersion());
 		this.setCreatedBy(xml.getCreatedBy());
-		this.setCreatedDate(xml.getCreatedDate());
+		this.setCreatedDateTime(xml.getCreatedDateTime());
 	}
 	
 	public RuleXml getRule() {
@@ -40,15 +38,6 @@ public class RuleVersionInfo extends ModelBean{
 
 	public String getRuleId() {
 		return getRule().getRuleId();
-	}
-
-	
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public long getVersion() {

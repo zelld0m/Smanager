@@ -1,7 +1,8 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public class ModelBean implements Serializable {
 	
@@ -10,8 +11,8 @@ public class ModelBean implements Serializable {
 	protected String comment;
 	protected String createdBy;
 	protected String lastModifiedBy;
-	protected Date createdDate;
-	protected Date lastModifiedDate;
+	protected DateTime createdDateTime;
+	protected DateTime lastModifiedDateTime;
 	
 	public String getComment() {
 		return comment;
@@ -36,21 +37,20 @@ public class ModelBean implements Serializable {
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-	
-	public Date getCreatedDate() {
-		return createdDate;
+
+	public DateTime getCreatedDateTime() {
+		return createdDateTime;
 	}
-	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+
+	public void setCreatedDateTime(DateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
-	
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
+
+	public DateTime getLastModifiedDateTime() {
+		return lastModifiedDateTime;
 	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
+
+	public void setLastModifiedDateTime(DateTime lastModifiedDateTime) {
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
-	
 }

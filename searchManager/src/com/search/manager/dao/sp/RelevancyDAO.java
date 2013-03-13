@@ -28,6 +28,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.constants.AuditTrailConstants.Entity;
 import com.search.manager.model.constants.AuditTrailConstants.Operation;
+import com.search.manager.utility.JodaTimeUtil;
 
 @Repository(value="relevancyDAO")
 public class RelevancyDAO {
@@ -119,13 +120,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -210,13 +211,13 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_NAME),
 	                		rs.getString(DAOConstants.COLUMN_DESCRIPTION),
 	                		new Store(rs.getString(DAOConstants.COLUMN_STORE_ID)),
-	                		rs.getDate(DAOConstants.COLUMN_START_DATE),
-	                		rs.getDate(DAOConstants.COLUMN_END_DATE),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)),
 	                		rs.getString(DAOConstants.COLUMN_COMMENT),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -260,8 +261,8 @@ public class RelevancyDAO {
 	                		rs.getString(DAOConstants.COLUMN_FIELD_VALUE),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -331,8 +332,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -393,8 +394,8 @@ public class RelevancyDAO {
 	                		rs.getInt(DAOConstants.COLUMN_PRIORITY),
 	                		rs.getString(DAOConstants.COLUMN_CREATED_BY),
 	                		rs.getString(DAOConstants.COLUMN_LAST_MODIFIED_BY),
-	                		rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE),
-                			rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE));
+	                		JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)),
+	                				JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_LAST_MODIFIED_DATE)));
 	            }
 	        }));
 		}
@@ -421,8 +422,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
             inputs.put(DAOConstants.PARAM_STORE_ID, DAOUtils.getStoreId(relevancy.getStore()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDate());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDate());
+            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDateTime());
+            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDateTime());
             inputs.put(DAOConstants.PARAM_COMMENT, relevancy.getComment());
             inputs.put(DAOConstants.PARAM_CREATED_BY, StringUtils.trimToEmpty(relevancy.getCreatedBy()));
             return DAOUtils.getUpdateCount(addSP.execute(inputs));
@@ -440,8 +441,8 @@ public class RelevancyDAO {
             inputs.put(DAOConstants.PARAM_RELEVANCY_ID, relevancy.getRelevancyId());
             inputs.put(DAOConstants.PARAM_RELEVANCY_NAME, StringUtils.trimToEmpty(relevancy.getRelevancyName()));
             inputs.put(DAOConstants.PARAM_RELEVANCY_DESCRIPTION, StringUtils.trimToEmpty(relevancy.getDescription()));
-            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDate());
-            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDate());
+            inputs.put(DAOConstants.PARAM_START_DATE, relevancy.getStartDateTime());
+            inputs.put(DAOConstants.PARAM_END_DATE, relevancy.getEndDateTime());
             inputs.put(DAOConstants.PARAM_MODIFIED_BY, StringUtils.trimToEmpty(relevancy.getLastModifiedBy()));
             return DAOUtils.getUpdateCount(updateSP.execute(inputs));
     	}

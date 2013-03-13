@@ -1,14 +1,15 @@
 package com.search.manager.report.model.xml;
 
 import java.io.Serializable;
-import java.util.Date;
+
+import org.joda.time.DateTime;
 
 public class BaseEntityXml implements Serializable{
 	private static final long serialVersionUID = 8767443073742555984L;
 	private String createdBy;
 	private String lastModifiedBy;
-	private Date lastModifiedDate;
-	private Date createdDate;
+	private DateTime lastModifiedDateTime;
+	private DateTime createdDateTime;
 	
 	public String getCreatedBy() {
 		return createdBy;
@@ -25,20 +26,20 @@ public class BaseEntityXml implements Serializable{
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-	
-	public Date getLastModifiedDate() {
-		return lastModifiedDate;
+
+	public DateTime getLastModifiedDateTime() {
+		return lastModifiedDateTime;
 	}
-	
-	public void setLastModifiedDate(Date lastModifiedDate) {
-		this.lastModifiedDate = lastModifiedDate;
+
+	public void setLastModifiedDateTime(DateTime lastModifiedDateTime) {
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
-	
-	public Date getCreatedDate() {
-		return createdDate;
+
+	public DateTime getCreatedDateTime() {
+		return createdDateTime;
 	}
-	
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+
+	public void setCreatedDateTime(DateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 }

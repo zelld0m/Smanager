@@ -40,7 +40,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			demoteResult.setStoreKeyword(storeKeyword);
 			demoteResult.setMemberId(ruleSolrResult.getMemberId());
-			demoteResult.setExpiryDate(ruleSolrResult.getExpiryDate());
+			demoteResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
 			
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {
@@ -71,7 +71,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			elevateResult.setStoreKeyword(storeKeyword);
 			elevateResult.setMemberId(ruleSolrResult.getMemberId());
-			elevateResult.setExpiryDate(ruleSolrResult.getExpiryDate());
+			elevateResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
 			elevateResult.setForceAdd(ruleSolrResult.getForceAdd());
 
 			if (ruleSolrResult.getEntity().equals(
@@ -102,7 +102,7 @@ public class SolrResultUtil {
 					ruleSolrResult.getStore(), ruleSolrResult.getKeyword());
 			excludeResult.setStoreKeyword(storeKeyword);
 			excludeResult.setMemberId(ruleSolrResult.getMemberId());
-			excludeResult.setExpiryDate(ruleSolrResult.getExpiryDate());
+			excludeResult.setExpiryDateTime(ruleSolrResult.getExpiryDateTime());
 			
 			if (ruleSolrResult.getEntity().equals(
 					MemberTypeEntity.PART_NUMBER.toString())) {

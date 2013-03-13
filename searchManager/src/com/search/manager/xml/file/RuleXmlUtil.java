@@ -187,7 +187,7 @@ public class RuleXmlUtil{
 				return null;
 			}
 			ruleXml = new RedirectRuleXml(store, redirectRule);
-			ruleXml.setCreatedDate(redirectRule.getCreatedDate());
+			ruleXml.setCreatedDateTime(redirectRule.getCreatedDateTime());
 			break;
 		case RANKING_RULE:
 			Relevancy relevancy = new Relevancy();
@@ -673,7 +673,7 @@ public class RuleXmlUtil{
 
 				RedirectRule addRel = new RedirectRule(ruleId, qRXml.getRedirectType(), qRXml.getRuleName(), qRXml.getDescription(), store,
 						(Integer)null, (String)null, (String)null, qRXml.getCreatedBy(), qRXml.getLastModifiedBy(),
-						qRXml.getCreatedDate(), qRXml.getLastModifiedDate(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword, 
+						qRXml.getCreatedDateTime(), qRXml.getLastModifiedDateTime(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword, 
 						qRXml.getReplaceKeywordMessageType(), qRXml.getReplaceKeywordMessageCustomText());
 
 				if (daoService.addRedirectRule(addRel) <= 0) {
@@ -794,7 +794,7 @@ public class RuleXmlUtil{
 			if (MapUtils.isNotEmpty(parameters)) {
 				for (String key: parameters.keySet()) {
 					rf = new RelevancyField(restoreVersion, key, parameters.get(key), restoreVersion.getCreatedBy(), restoreVersion.getLastModifiedBy(),
-							restoreVersion.getCreatedDate(), restoreVersion.getLastModifiedDate());
+							restoreVersion.getCreatedDateTime(), restoreVersion.getLastModifiedDateTime());
 					processedItem += daoService.addRelevancyField(rf);
 				}
 

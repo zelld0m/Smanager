@@ -1,6 +1,6 @@
 package com.search.manager.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 
 public class Banner extends ModelBean {
@@ -25,7 +25,7 @@ public class Banner extends ModelBean {
 	}
 	
 	public Banner(String bannerId, String bannerName, Store store, String imagePath, String linkPath, String comment,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.bannerId = bannerId;
 		this.bannerName = bannerName;
 		this.store = store;
@@ -34,8 +34,8 @@ public class Banner extends ModelBean {
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
 	public String getBannerId() {

@@ -31,6 +31,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.utility.JodaTimeUtil;
 
 @Service(value = "excludeService")
 @RemoteProxy(
@@ -52,12 +53,12 @@ public class ExcludeService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %s %s", keyword, edp, condition != null ? condition.getCondition() : "", expiryDate, comment));
-			String store = UtilityService.getStoreId();
+			String storeId = UtilityService.getStoreId();
 			String userName = UtilityService.getUsername();
-			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
+			daoService.addKeyword(new StoreKeyword(storeId, keyword)); // TODO: What if keyword is not added?
 
-			ExcludeResult e = new ExcludeResult(new StoreKeyword(store, keyword));
-			e.setExpiryDate(StringUtils.isEmpty(expiryDate) ? null : DateAndTimeUtils.toSQLDate(store, expiryDate));
+			ExcludeResult e = new ExcludeResult(new StoreKeyword(storeId, keyword));
+			e.setExpiryDateTime(StringUtils.isEmpty(expiryDate) ? null : JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
 			e.setCreatedBy(userName);
 			e.setComment(UtilityService.formatComment(comment));
 			e.setExcludeEntity(entity);
@@ -291,15 +292,15 @@ public class ExcludeService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("updateExpiryDate %s %s ", memberId, expiryDate));
-			String store = UtilityService.getStoreId();
+			String storeId = UtilityService.getStoreId();
 			ExcludeResult e = new ExcludeResult();
-			e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+			e.setExpiryDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
 			e.setLastModifiedBy(UtilityService.getUsername());
-			e.setStoreKeyword(new StoreKeyword(store, keyword));
+			e.setStoreKeyword(new StoreKeyword(storeId, keyword));
 			e.setMemberId(memberId);
 			e = daoService.getExcludeItem(e);
 			if (e != null) {
-				e.setExpiryDate(DateAndTimeUtils.toSQLDate(store, expiryDate));
+				e.setExpiryDateTime(JodaTimeUtil.toDateTimeFromStorePattern(storeId, expiryDate));
 				e.setLastModifiedBy(UtilityService.getUsername());
 				result = daoService.updateExcludeResultExpiryDate(e);
 			}
@@ -419,7 +420,7 @@ public class ExcludeService extends RuleService{
 			changes += ((updateExclude(keyword, memberId, rrCondition.getCondition()) > 0)? 1 : 0);
 		}
 		
-		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), exclude.getExpiryDate()))) {
+		if (!StringUtils.isBlank(expiryDate) && !StringUtils.equalsIgnoreCase(expiryDate, JodaTimeUtil.formatDateTimeFromStorePattern(storeId, exclude.getExpiryDateTime()))) {
 			changes += ((updateExpiryDate(keyword, memberId, expiryDate) > 0)? 1 : 0);
 		}
 		

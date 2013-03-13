@@ -1,6 +1,5 @@
 package com.search.manager.report.model.xml;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElementRef;
@@ -10,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
@@ -37,7 +37,7 @@ public class ExcludeRuleXml extends RuleXml implements ProductDetailsAware{
 		this.setVersion(version);
 		this.keyword = keyword;
 		this.excludeItem = excludeItem;
-		this.setCreatedDate(new Date());
+		this.setCreatedDateTime(DateTime.now());
 	}
 	
 	public ExcludeRuleXml(String store, String keyword, List<ExcludeItemXml> excludeItem){

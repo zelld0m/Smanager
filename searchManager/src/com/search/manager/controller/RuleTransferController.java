@@ -47,7 +47,7 @@ import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.DownloadService;
 import com.search.manager.service.RuleTransferService;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.utility.JodaTimeUtil;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller
@@ -155,10 +155,11 @@ public class RuleTransferController {
 		}
 		
 		if(xml.getRuleStatus() != null){
-			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getRuleStatus().getLastPublishedDate()) : "");
+			String storeId = UtilityService.getStoreId();
+			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId, xml.getRuleStatus().getLastPublishedDateTime()) : "");
 			if(EXPORT.equalsIgnoreCase(transferType)){
 				subReportHeader.addRow("Export Type: ", xml.getRuleStatus().getExportType() != null ? xml.getRuleStatus().getExportType().getDisplayText() : "");
-				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getRuleStatus().getLastExportDate()) : "");
+				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId, xml.getRuleStatus().getLastExportDateTime()) : "");
 			}
 		}
 		

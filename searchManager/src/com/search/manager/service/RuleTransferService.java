@@ -1,7 +1,6 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.directwebremoting.spring.SpringCreator;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -116,8 +116,8 @@ public class RuleTransferService {
 
 							RuleStatus ruleStatus = new RuleStatus();
 
-							ruleStatus.setLastPublishedDate(ruleMap.getPublishedDate());
-							ruleStatus.setLastExportDate(ruleMap.getExportDate());
+							ruleStatus.setLastPublishedDateTime(ruleMap.getPublishedDateTime());
+							ruleStatus.setLastExportDateTime(ruleMap.getExportDateTime());
 							ruleXml.setRuleStatus(ruleStatus);
 
 							list.add(ruleXml);
@@ -262,7 +262,7 @@ public class RuleTransferService {
 						if (rSet != null && CollectionUtils.isNotEmpty(rSet.getList())) {
 							currRuleStatus = rSet.getList().get(0);
 							daoService.addRuleStatusComment(RuleStatusEntity.IMPORTED, store, userName, comment, currRuleStatus.getRuleStatusId());
-							auditTrail.setDate(new Date());
+							auditTrail.setDateTime(DateTime.now());
 							auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 							if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
 								auditTrail.setKeyword(ruleStatus.getRuleRefId());
@@ -471,7 +471,7 @@ public class RuleTransferService {
 			ExportRuleMap exportRuleMap = new ExportRuleMap(storeIdOrigin, ruleIdOrigin, ruleNameOrigin, store, importAsRefId, ruleName, ruleEntity);
 			exportRuleMap.setDeleted(RuleTransferUtil.deleteRuleFile(ruleEntity, store, ruleId, comment));
 			exportRuleMap.setRejected(false);
-			exportRuleMap.setImportDate(new Date());
+			exportRuleMap.setImportDateTime(DateTime.now());
 			try {
 				daoService.saveExportRuleMap(exportRuleMap);
 			} catch (DaoException e) {

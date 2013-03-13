@@ -1,33 +1,33 @@
 package com.search.manager.model;
 
-import java.util.Date;
 import java.util.List;
 
-public class CampaignBanner extends ModelBean {
-	
-	public CampaignBanner() {
-	}
-	
-	public CampaignBanner(Campaign campaign, Banner banner, List<Keyword> keywords, Date startDate, Date endDate,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
-		this.campaign = campaign;
-		this.banner = banner;
-		this.keywords = keywords;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.createdBy = createdBy;
-		this.createdDate = createdDate;
-		this.lastModifiedBy = lastModifiedBy;
-		this.lastModifiedDate = lastModifiedDate;
-	}
+import org.joda.time.DateTime;
 
+public class CampaignBanner extends ModelBean {
 	private static final long serialVersionUID = -4219527385069110630L;
 	
 	private Campaign campaign;
 	private Banner banner;
 	private List<Keyword> keywords;
-	private Date startDate;
-	private Date endDate;
+	private DateTime startDateTime;
+	private DateTime endDateTime;
+	
+	public CampaignBanner() {
+	}
+	
+	public CampaignBanner(Campaign campaign, Banner banner, List<Keyword> keywords, DateTime startDateTime, DateTime endDateTime,
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
+		this.campaign = campaign;
+		this.banner = banner;
+		this.keywords = keywords;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
+		this.createdBy = createdBy;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedBy = lastModifiedBy;
+		this.lastModifiedDateTime = lastModifiedDateTime;
+	}
 	
 	public Campaign getCampaign() {
 		return campaign;
@@ -52,21 +52,20 @@ public class CampaignBanner extends ModelBean {
 	public void setKeywords(List<Keyword> keywords) {
 		this.keywords = keywords;
 	}
-	
-	public Date getStartDate() {
-		return startDate;
-	}
-	
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-	
-	public Date getEndDate() {
-		return endDate;
-	}
-	
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+
+	public DateTime getStartDateTime() {
+		return startDateTime;
 	}
 
+	public void setStartDateTime(DateTime startDateTime) {
+		this.startDateTime = startDateTime;
+	}
+
+	public DateTime getEndDateTime() {
+		return endDateTime;
+	}
+
+	public void setEndDateTime(DateTime endDateTime) {
+		this.endDateTime = endDateTime;
+	}
 }

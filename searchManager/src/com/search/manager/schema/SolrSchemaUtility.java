@@ -334,7 +334,7 @@ public class SolrSchemaUtility {
 		
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schpd01.afservice.org:8080/solr14/macmall/admin/file/?file=schema.xml");
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schmstr02.afservice.org:8080/solr4/macmall/admin/file/?file=schema.xml");
-		Schema schema = SolrSchemaUtility.getSchema("afs-pl-schmstr02", "pcmall");
+		Schema schema = SolrSchemaUtility.getSchema("afs-pl-schpd02", "pcmall");
 
 		for (Field field: schema.getFields()) {
 			logger.info("Field name: " + field.getName());

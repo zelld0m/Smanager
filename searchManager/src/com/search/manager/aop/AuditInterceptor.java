@@ -1,7 +1,6 @@
 package com.search.manager.aop;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -13,6 +12,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +58,6 @@ public class AuditInterceptor {
 		logger.info(String.format("Audit Message: %s",auditable.message()));
 		logger.info(String.format("Bean Called: %s", bean.getClass().getName()));
 		logger.info(String.format("Method Called: %s", jp.getSignature().getName()));
-
 	}
 	
 	@AfterReturning(value="com.search.manager.aop.SystemArchitecture.inDaoLayer()" +
@@ -93,7 +92,7 @@ public class AuditInterceptor {
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setEntity(auditable.entity().toString());
 		auditTrail.setOperation(auditable.operation().toString());
-		auditTrail.setDate(new Date());
+		auditTrail.setDateTime(new DateTime());
 		auditTrail.setUsername(UtilityService.getUsername());
 
 		switch(auditable.entity()) {
@@ -186,7 +185,7 @@ public class AuditInterceptor {
 					message.append(" to position [%4$s]");
 				}
 				
-				if(e.getExpiryDate() != null){
+				if(e.getExpiryDateTime() != null){
 					message.append(" expiring on [%2$tF]");
 				}
 				
@@ -213,7 +212,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDate() != null)
+				if(e.getExpiryDateTime() != null)
 					message.append("Changing expiry date to [%2$tF] for elevated entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for elevated entry ID[%1$s]");
@@ -235,7 +234,7 @@ public class AuditInterceptor {
 			}
 
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);
@@ -263,7 +262,7 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding ID[%1$s]");
-				if(e.getExpiryDate() != null){
+				if(e.getExpiryDateTime() != null){
 					message.append(" expiring on [%2$tF]");
 				}
 				
@@ -282,7 +281,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDate() != null)
+				if(e.getExpiryDateTime() != null)
 					message.append("Changing expiry date to [%2$tF] for excluded entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for excluded entry ID[%1$s]");
@@ -303,7 +302,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%4$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 
 		logAuditTrail(auditTrail);
@@ -336,7 +335,7 @@ public class AuditInterceptor {
 					message.append(" to position [%4$s]");
 				}
 				
-				if(e.getExpiryDate() != null){
+				if(e.getExpiryDateTime() != null){
 					message.append(" expiring on [%2$tF]");
 				}
 				
@@ -358,7 +357,7 @@ public class AuditInterceptor {
 				break;
 			case updateExpiryDate:
 				message = new StringBuilder();
-				if(e.getExpiryDate() != null)
+				if(e.getExpiryDateTime() != null)
 					message.append("Changing expiry date to [%2$tF] for demoted entry ID[%1$s]");
 				else
 					message.append("Removing expiry date for demoted entry ID[%1$s]");
@@ -379,7 +378,7 @@ public class AuditInterceptor {
 				message.append(" Condition[%5$s]");
 			}
 			auditTrail.setDetails(String.format(message.toString(),
-				auditTrail.getReferenceId(), e.getExpiryDate(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
+				auditTrail.getReferenceId(), e.getExpiryDateTime(), e.getComment(), e.getLocation() == null || e.getLocation() == 0 ? 1 : e.getLocation(), e.getCondition() != null ? e.getCondition().getReadableString() : ""));
 		}
 		
 		logAuditTrail(auditTrail);
@@ -671,33 +670,33 @@ public class AuditInterceptor {
 		switch (auditable.operation()) {
 			case add:
 				message = new StringBuilder("Adding relevancy[%1$s] with name[%2$s] and description[%3$s] to store[%4$s]");
-				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
+				if (relevancy.getStartDateTime() != null || relevancy.getStartDateTime() != null) {
 					message.append(" with schedule");
-					if (relevancy.getStartDate() != null) {
+					if (relevancy.getStartDateTime() != null) {
 						message.append(" from [%5$s]");						
 					}
-					if (relevancy.getEndDate() != null) {
+					if (relevancy.getEndDateTime() != null) {
 						message.append(" to [%6$s]");
 					}
 				}
 				auditTrail.setDetails(String.format(message.toString(),
 						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
-						DAOUtils.getStoreId(relevancy.getStore()), relevancy.getStartDate(), relevancy.getEndDate()));
+						DAOUtils.getStoreId(relevancy.getStore()), relevancy.getStartDateTime(), relevancy.getEndDateTime()));
 				break;
 			case update:
 				message = new StringBuilder("Updating relevancy[%1$s] with name[%2$s] and description[%3$s] ");
-				if (relevancy.getStartDate() != null || relevancy.getStartDate() != null) {
+				if (relevancy.getStartDateTime() != null || relevancy.getStartDateTime() != null) {
 					message.append(" with schedule");
-					if (relevancy.getStartDate() != null) {
+					if (relevancy.getStartDateTime() != null) {
 						message.append(" from [%4$s]");						
 					}
-					if (relevancy.getEndDate() != null) {
+					if (relevancy.getEndDateTime() != null) {
 						message.append(" to [%5$s]");
 					}					
 				}
 				auditTrail.setDetails(String.format(message.toString(),
 						relevancy.getRelevancyId(), StringUtils.trimToEmpty(relevancy.getRelevancyName()), StringUtils.trimToEmpty(relevancy.getDescription()), 
-						relevancy.getStartDate(), relevancy.getEndDate()));
+						relevancy.getStartDateTime(), relevancy.getEndDateTime()));
 				break;
 			case delete:
 				message = new StringBuilder("Deleting relevancy[%1$s]");
@@ -830,5 +829,4 @@ public class AuditInterceptor {
 		}
 		logAuditTrail(auditTrail);
 	}
-
 }

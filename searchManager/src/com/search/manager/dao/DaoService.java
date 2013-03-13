@@ -1,8 +1,9 @@
 package com.search.manager.dao;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.joda.time.DateTime;
 
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.enums.ExportRuleMapSortType;
@@ -102,8 +103,8 @@ public interface DaoService extends SearchDaoService {
 	public RecordSet<Banner> getBannerListWithNameMatching(SearchCriteria<Banner> criteria) throws DaoException;
 	
 	/* Banner Campaign Mapping */
-	public Banner addCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String>keywordList) throws DaoException;
-	public Banner updateCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String>keywordList) throws DaoException;
+	public Banner addCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String>keywordList) throws DaoException;
+	public Banner updateCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String>keywordList) throws DaoException;
 	public RecordSet<Banner> getCampaignBannerList(String campaignId) throws DaoException;
 	public void deleteCampaignBanner(String campaignId, String bannerId) throws DaoException;
 	
@@ -232,13 +233,13 @@ public interface DaoService extends SearchDaoService {
     public RecordSet<RuleStatus> getRuleStatus(SearchCriteria<RuleStatus> searchCriteria, SortOrder sortOrder) throws DaoException;
 	public int addRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public int updateRuleStatus(RuleStatus ruleStatus) throws DaoException;
-	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) throws DaoException;
+	public Map<String, Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) throws DaoException;
 	public int removeRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public RuleStatus getRuleStatus(RuleStatus ruleStatus) throws DaoException;
 	public List<String> getCleanList(List<String> ruleRefIds, Integer ruleTypeId, String pStatus, String aStatus) throws DaoException;
-	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, Date requestDate) throws DaoException;
-	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, Date requestDate) throws DaoException;
-	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException;
+	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, String requestBy, DateTime requestDateTime) throws DaoException;
+	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus,String requestBy, DateTime requestDateTime) throws DaoException;
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, DateTime exportDateTime) throws DaoException;
 	public int updateRuleStatusDeletedInfo(RuleStatus ruleStatus, String deletedBy) throws DaoException;
 	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username, String pComment, String ...ruleStatusId);
 

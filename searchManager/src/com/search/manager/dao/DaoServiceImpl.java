@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -235,9 +236,9 @@ public class DaoServiceImpl implements DaoService {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -267,9 +268,9 @@ public class DaoServiceImpl implements DaoService {
 		ElevateProduct ep = new ElevateProduct();
 		ep.setEdp(e.getEdp());
 		ep.setLocation(e.getLocation());
-		ep.setExpiryDate(e.getExpiryDate());
-		ep.setCreatedDate(e.getCreatedDate());
-		ep.setLastModifiedDate(e.getLastModifiedDate());
+		ep.setExpiryDateTime(e.getExpiryDateTime());
+		ep.setCreatedDateTime(e.getCreatedDateTime());
+		ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 		ep.setComment(e.getComment());
 		ep.setLastModifiedBy(e.getLastModifiedBy());
 		ep.setCreatedBy(e.getCreatedBy());
@@ -297,9 +298,9 @@ public class DaoServiceImpl implements DaoService {
 			ElevateProduct ep = new ElevateProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -327,9 +328,9 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct ep = new DemoteProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -358,9 +359,9 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct ep = new DemoteProduct();
 			ep.setEdp(e.getEdp());
 			ep.setLocation(e.getLocation());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -389,9 +390,9 @@ public class DaoServiceImpl implements DaoService {
 		DemoteProduct dp = new DemoteProduct();
 		dp.setEdp(e.getEdp());
 		dp.setLocation(e.getLocation());
-		dp.setExpiryDate(e.getExpiryDate());
-		dp.setCreatedDate(e.getCreatedDate());
-		dp.setLastModifiedDate(e.getLastModifiedDate());
+		dp.setExpiryDateTime(e.getExpiryDateTime());
+		dp.setCreatedDateTime(e.getCreatedDateTime());
+		dp.setLastModifiedDateTime(e.getLastModifiedDateTime());
 		dp.setComment(e.getComment());
 		dp.setLastModifiedBy(e.getLastModifiedBy());
 		dp.setCreatedBy(e.getCreatedBy());
@@ -418,9 +419,9 @@ public class DaoServiceImpl implements DaoService {
 			DemoteProduct dp = new DemoteProduct();
 			dp.setEdp(e.getEdp());
 			dp.setLocation(e.getLocation());
-			dp.setExpiryDate(e.getExpiryDate());
-			dp.setCreatedDate(e.getCreatedDate());
-			dp.setLastModifiedDate(e.getLastModifiedDate());
+			dp.setExpiryDateTime(e.getExpiryDateTime());
+			dp.setCreatedDateTime(e.getCreatedDateTime());
+			dp.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			dp.setComment(e.getComment());
 			dp.setLastModifiedBy(e.getLastModifiedBy());
 			dp.setCreatedBy(e.getCreatedBy());
@@ -447,9 +448,9 @@ public class DaoServiceImpl implements DaoService {
 		for (ExcludeResult e: set.getList()) {
 			Product ep = new Product();
 			ep.setEdp(e.getEdp());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -477,9 +478,9 @@ public class DaoServiceImpl implements DaoService {
 		for (ExcludeResult e: set.getList()) {
 			Product ep = new Product();
 			ep.setEdp(e.getEdp());
-			ep.setExpiryDate(e.getExpiryDate());
-			ep.setCreatedDate(e.getCreatedDate());
-			ep.setLastModifiedDate(e.getLastModifiedDate());
+			ep.setExpiryDateTime(e.getExpiryDateTime());
+			ep.setCreatedDateTime(e.getCreatedDateTime());
+			ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 			ep.setComment(e.getComment());
 			ep.setLastModifiedBy(e.getLastModifiedBy());
 			ep.setCreatedBy(e.getCreatedBy());
@@ -747,9 +748,9 @@ public class DaoServiceImpl implements DaoService {
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 		Product ep = new Product();
 		ep.setEdp(e.getEdp());
-		ep.setExpiryDate(e.getExpiryDate());
-		ep.setCreatedDate(e.getCreatedDate());
-		ep.setLastModifiedDate(e.getLastModifiedDate());
+		ep.setExpiryDateTime(e.getExpiryDateTime());
+		ep.setCreatedDateTime(e.getCreatedDateTime());
+		ep.setLastModifiedDateTime(e.getLastModifiedDateTime());
 		ep.setComment(e.getComment());
 		ep.setLastModifiedBy(e.getLastModifiedBy());
 		ep.setCreatedBy(e.getCreatedBy());
@@ -865,7 +866,7 @@ public class DaoServiceImpl implements DaoService {
 	
 	
 	@Override
-	public Banner addCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String> keywordList) throws DaoException {
+	public Banner addCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String> keywordList) throws DaoException {
 		// TODO Auto-generated method stub
 		throw new DaoException("Unsupported operation");
 	}
@@ -877,7 +878,7 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public Banner updateCampaignBanner(String campaignId, String bannerId, Date startDate, Date endDate, List<String> keywordList) throws DaoException {
+	public Banner updateCampaignBanner(String campaignId, String bannerId, DateTime startDateTime, DateTime endDateTime, List<String> keywordList) throws DaoException {
 		// TODO Auto-generated method stub
 		throw new DaoException("Unsupported operation");
 	}
@@ -1202,34 +1203,34 @@ public class DaoServiceImpl implements DaoService {
 		return ruleStatusDAO.deleteRuleStatus(ruleStatus);
 	}
 
-	private Map<String,Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+	private Map<String,Boolean> approveRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
 			throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
-			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusApprovalInfo(ruleStatus, status, requestBy, requestDateTime) > 0 ? true : false);
 		}
 		return statusMap;
 	}
 
-	private Map<String,Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+	private Map<String,Boolean> publishRuleStatusList(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
 			throws DaoException {	
 		Map<String,Boolean> statusMap = new HashMap<String,Boolean>();
 		for (RuleStatus ruleStatus : ruleStatusList) {
-			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDate) > 0 ? true : false);
+			statusMap.put(ruleStatus.getRuleRefId(), updateRuleStatusPublishInfo(ruleStatus, status, requestBy, requestDateTime) > 0 ? true : false);
 		}
 		return statusMap;
 	}
 
 	@Override
-	public Map<String,Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, Date requestDate) 
+	public Map<String,Boolean> updateRuleStatus(RuleStatusEntity status, List<RuleStatus> ruleStatusList, String requestBy, DateTime requestDateTime) 
 			throws DaoException {	
 		switch (status) {
 			case PUBLISHED:
 			case UNPUBLISHED:
-				return publishRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+				return publishRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
 			case APPROVED:
 			case REJECTED:
-				return approveRuleStatusList(status, ruleStatusList, requestBy, requestDate);
+				return approveRuleStatusList(status, ruleStatusList, requestBy, requestDateTime);
 		}
 		return new HashMap<String,Boolean>();
 	}
@@ -1548,14 +1549,14 @@ public class DaoServiceImpl implements DaoService {
 	}
 	
 	@Override
-	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, Date exportDate) throws DaoException {
+	public int updateRuleStatusExportInfo(RuleStatus ruleStatus, String exportBy, ExportType exportType, DateTime exportDateTime) throws DaoException {
 		if (ruleStatus != null) {
 			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
 			updateRuleStatus.setExportBy(exportBy);
 			updateRuleStatus.setExportType(exportType);
 			updateRuleStatus.setLastModifiedBy(exportBy);
-			updateRuleStatus.setLastExportDate(exportDate);
-			updateRuleStatus.setLastModifiedDate(exportDate);
+			updateRuleStatus.setLastExportDateTime(exportDateTime);
+			updateRuleStatus.setLastModifiedDateTime(exportDateTime);
 			return updateRuleStatus(updateRuleStatus);
 		}
 		return -1;
@@ -1563,34 +1564,34 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public int updateRuleStatusPublishInfo(RuleStatus ruleStatus, RuleStatusEntity requestedPublishStatus, 
-			String requestBy, Date requestDate) throws DaoException {
+			String requestBy, DateTime requestDateTime) throws DaoException {
 		RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
 		updateRuleStatus.setApprovalStatus("");
 		updateRuleStatus.setPublishedStatus(String.valueOf(requestedPublishStatus));
 		updateRuleStatus.setPublishedBy(requestBy);
 		updateRuleStatus.setLastModifiedBy(requestBy);
-		updateRuleStatus.setLastPublishedDate(requestDate);
-		updateRuleStatus.setLastModifiedDate(requestDate);
+		updateRuleStatus.setLastPublishedDateTime(requestDateTime);
+		updateRuleStatus.setLastModifiedDateTime(requestDateTime);
 		return updateRuleStatus(updateRuleStatus);
 	}
 
 	@Override
 	public int updateRuleStatusApprovalInfo(RuleStatus ruleStatus, RuleStatusEntity requestedApprovalStatus, 
-			String requestBy, Date requestDate) throws DaoException {
+			String requestBy, DateTime requestDateTime) throws DaoException {
 		int result = -1;
 		if (requestedApprovalStatus != null) {
 			RuleStatus updateRuleStatus  = getRuleStatusPK(ruleStatus);
 			updateRuleStatus.setApprovalStatus(String.valueOf(requestedApprovalStatus));
-			updateRuleStatus.setLastModifiedDate(requestDate);
+			updateRuleStatus.setLastModifiedDateTime(requestDateTime);
 			switch(requestedApprovalStatus) {
 				case APPROVED:
 				case REJECTED:
 					updateRuleStatus.setApprovalBy(requestBy);
-					updateRuleStatus.setLastApprovalDate(requestDate);
+					updateRuleStatus.setLastApprovalDateTime(requestDateTime);
 					break;
 				case PENDING:
 					updateRuleStatus.setRequestBy(requestBy);
-					updateRuleStatus.setLastRequestDate(requestDate);
+					updateRuleStatus.setLastRequestDateTime(requestDateTime);
 					break;
 				default:
 					return result;
@@ -1615,7 +1616,7 @@ public class DaoServiceImpl implements DaoService {
 				updateRuleStatus.setUpdateStatus(RuleStatusEntity.ADD.toString());
 				updateRuleStatus.setPublishedStatus(RuleStatusEntity.UNPUBLISHED.toString());
 				updateRuleStatus.setCreatedBy(requestBy);
-				updateRuleStatus.setCreatedDate(requestDate);
+				updateRuleStatus.setCreatedDateTime(requestDateTime);
 				result = addRuleStatus(updateRuleStatus);
 			}
 		}
@@ -1698,7 +1699,7 @@ public class DaoServiceImpl implements DaoService {
 		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
 		auditTrail.setUsername(username);
 		auditTrail.setStoreId(store);
-		Date exportDate = new Date();
+		DateTime exportDateTime = DateTime.now();
 		
 		RuleStatus ruleStatus = null;
 		try {
@@ -1719,10 +1720,10 @@ public class DaoServiceImpl implements DaoService {
 			exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
 			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),  
 					targetStore, null, null, ruleEntity);
-			exportRuleMap.setExportDate(exportDate);
+			exportRuleMap.setExportDateTime(exportDateTime);
 			exportRuleMap.setDeleted(false);
 			if (ruleStatus != null) {
-				exportRuleMap.setPublishedDate(ruleStatus.getLastPublishedDate());
+				exportRuleMap.setPublishedDateTime(ruleStatus.getLastPublishedDateTime());
 			}
 			saveExportRuleMap(exportRuleMap);
 			exportedOnce |= exported;
@@ -1735,9 +1736,9 @@ public class DaoServiceImpl implements DaoService {
 			try {
 				if (ruleStatus != null) {
 					// RULE STATUS
-					updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDate);
+					updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDateTime);
 					// AUDIT TRAIL
-					auditTrail.setDate(exportDate);
+					auditTrail.setDateTime(exportDateTime);
 					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
 					if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
 						auditTrail.setKeyword(ruleStatus.getRuleRefId());

@@ -1,13 +1,10 @@
 package com.search.manager.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
-
-import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
+import org.joda.time.DateTime;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Comment implements Serializable {
@@ -19,19 +16,19 @@ private static final long serialVersionUID = 1L;
 	private String comment;
 	private Integer commentId;
 	private String referenceId;
-	private Date createdDate;
+	private DateTime createdDateTime;
 	private Integer ruleTypeId;
 	private Store store;
 	
 	public Comment() {}
 
-	public Comment(Integer commentId, String referenceId, String comment, String username, Date createdDate, Integer ruleTypeId) {
+	public Comment(Integer commentId, String referenceId, String comment, String username, DateTime createdDateTime, Integer ruleTypeId) {
 		super();
 		this.commentId = commentId;
 		this.referenceId = referenceId;
 		this.comment = comment;
 		this.username = username;
-		this.createdDate = createdDate;
+		this.createdDateTime = createdDateTime;
 		this.ruleTypeId = ruleTypeId;
 	}
 	
@@ -90,13 +87,13 @@ private static final long serialVersionUID = 1L;
 	public String getUsername() {
 		return username;
 	}
-
-	public Date getCreatedDate() {
-		return createdDate;
+	
+	public DateTime getCreatedDateTime() {
+		return createdDateTime;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedDateTime(DateTime createdDateTime) {
+		this.createdDateTime = createdDateTime;
 	}
 
 	public Integer getRuleTypeId() {
@@ -115,9 +112,10 @@ private static final long serialVersionUID = 1L;
 		this.store = store;
 	}
 
-	public String getFormatDateTimeUsingConfig(){
-		//TODO: fix call to getStoreId()
-		// currently only used in GUI so no issue
-		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), createdDate);
-	}
+	//TODO: tlds or JodaTimeUtil
+//	public String getFormatDateTimeUsingConfig(){
+//		//TODO: fix call to getStoreId()
+//		// currently only used in GUI so no issue
+//		return DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), createdDateTime);
+//	}
 }

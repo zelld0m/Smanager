@@ -1,6 +1,6 @@
 package com.search.manager.model;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.report.model.xml.DemoteItemXml;
@@ -21,8 +21,8 @@ public class DemoteResult extends SearchResult {
 		this.memberId = memberId;
 	}
 	
-	public DemoteResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, Date expiryDate, Date createdDate, Date lastModifiedDate, String memberTypeId, String memberId) {
-		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDate, createdDate, lastModifiedDate, memberTypeId, memberId);
+	public DemoteResult(StoreKeyword storeKeyword, String edp, Integer location, String comment, String createdBy, String lastModifiedBy, DateTime expiryDateTime, DateTime createdDateTime, DateTime lastModifiedDateTime, String memberTypeId, String memberId) {
+		super(storeKeyword, edp, comment, createdBy, lastModifiedBy, expiryDateTime, createdDateTime, lastModifiedDateTime, memberTypeId, memberId);
 		this.location = location;
 	}
 	
@@ -31,13 +31,13 @@ public class DemoteResult extends SearchResult {
 		this.storeKeyword = storeKeyword;
 		this.edp = xml.getEdp();
 		this.condition = xml.getRuleCondition();
-		this.expiryDate = xml.getExpiryDate();
+		this.expiryDateTime = xml.getExpiryDateTime();
 		this.entity = xml.getMemberType();
 		this.location = xml.getLocation();
 		this.createdBy = xml.getCreatedBy();
-		this.createdDate = xml.getCreatedDate();
+		this.createdDateTime = xml.getCreatedDateTime();
 		this.lastModifiedBy = xml.getLastModifiedBy();
-		this.lastModifiedDate = xml.getLastModifiedDate();
+		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
 	}
 	
 	@Override

@@ -1,7 +1,6 @@
 package com.search.manager.model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
+import org.joda.time.DateTime;
 
 import com.search.manager.report.model.xml.RankingRuleXml;
-import com.search.manager.utility.DateAndTimeUtils;
 
 @DataTransferObject(converter = BeanConverter.class)
 public class Relevancy extends ModelBean {
@@ -28,8 +27,8 @@ public class Relevancy extends ModelBean {
 	private String relevancyName;
 	private String description;
 	private Store store;
-	private Date startDate;
-	private Date endDate;
+	private DateTime startDateTime;
+	private DateTime endDateTime;
 	private Map<String, String> fields = new HashMap<String, String>();
 	private List<RelevancyKeyword> relKeyword;
 	
@@ -79,33 +78,33 @@ public class Relevancy extends ModelBean {
 		this.relevancyName = relevancyName;
 	}
 	
-	public Relevancy(String relevancyId, String relevancyName, String description, Store store, Date startDate, Date endDate, String comment,
-			String createdBy, String lastModifiedBy, Date createdDate, Date lastModifiedDate) {
+	public Relevancy(String relevancyId, String relevancyName, String description, Store store, DateTime startDateTime, DateTime endDateTime, String comment,
+			String createdBy, String lastModifiedBy, DateTime createdDateTime, DateTime lastModifiedDateTime) {
 		this.relevancyId = relevancyId;
 		this.relevancyName = relevancyName;
 		this.description = description;
 		this.store = store;
-		this.startDate = startDate;
-		this.endDate = endDate;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
 		this.comment = comment;
 		this.createdBy = createdBy;
 		this.lastModifiedBy = lastModifiedBy;
-		this.createdDate = createdDate;
-		this.lastModifiedDate = lastModifiedDate;
+		this.createdDateTime = createdDateTime;
+		this.lastModifiedDateTime = lastModifiedDateTime;
 	}
 	
 	public Relevancy(RankingRuleXml xml) {
-		relevancyId = xml.getRuleId();
-		relevancyName = xml.getRuleName();
-		description = xml.getDescription();
-		store = new Store(xml.getStore());
-		startDate = xml.getStartDate();
-		endDate = xml.getEndDate();
+		this.relevancyId = xml.getRuleId();
+		this.relevancyName = xml.getRuleName();
+		this.description = xml.getDescription();
+		this.store = new Store(xml.getStore());
+		this.startDateTime = xml.getStartDateTime();
+		this.endDateTime = xml.getEndDateTime();
 //		comment = xml.getNotes();
-		createdBy = xml.getCreatedBy();
-		lastModifiedBy = xml.getLastModifiedBy();
-		createdDate = xml.getCreatedDate();
-		lastModifiedDate = xml.getLastModifiedDate();
+		this.createdBy = xml.getCreatedBy();
+		this.lastModifiedBy = xml.getLastModifiedBy();
+		this.createdDateTime = xml.getCreatedDateTime();
+		this.lastModifiedDateTime = xml.getLastModifiedDateTime();
 		
 		Map<String, String> parameter = xml.getParameters();
 		if (parameter != null) {
@@ -162,22 +161,22 @@ public class Relevancy extends ModelBean {
 		return store;
 	}
 	
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public DateTime getStartDateTime() {
+		return startDateTime;
 	}
-	
-	public Date getStartDate() {
-		return startDate;
+
+	public void setStartDateTime(DateTime startDateTime) {
+		this.startDateTime = startDateTime;
 	}
-	
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+
+	public DateTime getEndDateTime() {
+		return endDateTime;
 	}
-	
-	public Date getEndDate() {
-		return endDate;
+
+	public void setEndDateTime(DateTime endDateTime) {
+		this.endDateTime = endDateTime;
 	}
-	
+
 	public void setAlternateQuery(String value) {
 		fields.put(Parameter.PARAM_ALTERNATE_QUERY.toString(), value);
 	}
@@ -278,16 +277,17 @@ public class Relevancy extends ModelBean {
 		}
 		return null;
 	}
+	//TODO: tld or JodaTimeUtil
+//	public String getFormattedStartDate() {
+//		if(getStore()==null) return StringUtils.EMPTY;
+//		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getStartDate());
+//	}
+//	
+//	public String getFormattedEndDate() {
+//		if(getStore()==null) return StringUtils.EMPTY;
+//		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getEndDate());
+//	}
 	
-	public String getFormattedStartDate() {
-		if(getStore()==null) return StringUtils.EMPTY;
-		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getStartDate());
-	}
-	
-	public String getFormattedEndDate() {
-		if(getStore()==null) return StringUtils.EMPTY;
-		return DateAndTimeUtils.formatDateUsingConfig(getStore().getStoreId(), getEndDate());
-	}
 	/**
 	 * Used for GUI, return all parameters. Unassigned parameters will map to an empty string.
 	 * @return
