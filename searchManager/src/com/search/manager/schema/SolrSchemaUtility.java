@@ -38,8 +38,9 @@ public class SolrSchemaUtility {
 
 	private final static Logger logger = Logger.getLogger(SolrSchemaUtility.class);
 	
-	public static Schema getSchema(String serverName, String storeName) {
-		return getSchema(ConfigManager.getInstance().getServerParameter(serverName, "url").replace("(store)", storeName) 
+	public static Schema getSchema(String serverName, String storeId) {
+		String core = ConfigManager.getInstance().getStoreParameter(storeId, "core");
+		return getSchema(ConfigManager.getInstance().getServerParameter(serverName, "url").replace("(core)", core) 
 				+ "admin/file/?file=schema.xml");
 	}
 		
@@ -334,7 +335,7 @@ public class SolrSchemaUtility {
 		
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schpd01.afservice.org:8080/solr14/macmall/admin/file/?file=schema.xml");
 //		Schema schema = SolrSchemaUtility.getSchema("http://afs-pl-schmstr02.afservice.org:8080/solr4/macmall/admin/file/?file=schema.xml");
-		Schema schema = SolrSchemaUtility.getSchema("afs-pl-schmstr02", "pcmall");
+		Schema schema = SolrSchemaUtility.getSchema("afs-pl-schpd02", "pcmall");
 
 		for (Field field: schema.getFields()) {
 			logger.info("Field name: " + field.getName());
@@ -442,34 +443,34 @@ public class SolrSchemaUtility {
 //
 //
 //
-//		String[] bfs =
-//		{
-//				/*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"linear(PcMall_PopularityScale,1,0)^2",
-//				"ms(NOW)^2.0",
-//				"ms(NOW,2000-01-01T00:00:00Z)^2.0",
-//				"ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
-//				"ms(NOW,2000-01-01T00:65:61Z)^2.0",
+		String[] bfs =
+		{
+				/*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"linear(PcMall_PopularityScale,1,0)^2",
+				"ms(NOW)^2.0",
+				"ms(NOW,2000-01-01T00:00:00Z)^2.0",
+				"ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
+				"ms(NOW,2000-01-01T00:65:61Z)^2.0",
 //				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0)^10.0",*/
-//				
+				"sum(linear(PcMall_PopularityScale,1,0),0)^2",
 //				"ms(NOW/HOUR)^2.0",
 //				"ms(NOW/2HOURS)^2.0",
 //				"ms(NOW/DAY+6MONTHS-3DAYS)^2.0"
-//		};
-//
-//		for (String bf: bfs) {
-//			try {
-//				BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
-//				if (model.validate()) {
-//					logger.debug(model + " is valid.");
-//
-//				}
-//			} catch (Exception e) {
-//				logger.debug(bf + " is invalid: " + e.getMessage());
-//			}
-//		}
+		};
+
+		for (String bf: bfs) {
+			try {
+				BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
+				if (model.validate()) {
+					logger.debug(model + " is valid.");
+
+				}
+			} catch (Exception e) {
+				logger.debug(bf + " is invalid: " + e.getMessage());
+			}
+		}
 		
 	}
 	
