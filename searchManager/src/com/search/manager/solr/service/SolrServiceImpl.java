@@ -225,9 +225,9 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
-	public boolean loadFacetSortRuleByName(Store store, String name)
-			throws DaoException {
-		return facetSortDao.loadFacetSortRuleByName(store, name);
+	public boolean loadFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
+		return facetSortDao.loadFacetSortRuleByName(store, name, ruleType);
 	}
 
 	@Override
@@ -242,9 +242,9 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
-	public boolean resetFacetSortRuleByName(Store store, String name)
-			throws DaoException {
-		return facetSortDao.resetFacetSortRulesByName(store, name);
+	public boolean resetFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
+		return facetSortDao.resetFacetSortRulesByName(store, name, ruleType);
 	}
 
 	@Override
@@ -259,9 +259,9 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
-	public boolean deleteFacetSortRuleByName(Store store, String name)
-			throws DaoException {
-		return facetSortDao.deleteFacetSortRuleByName(store, name);
+	public boolean deleteFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException {
+		return facetSortDao.deleteFacetSortRuleByName(store, name, ruleType);
 	}
 
 	@Override

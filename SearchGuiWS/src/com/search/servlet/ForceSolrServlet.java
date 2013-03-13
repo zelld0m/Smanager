@@ -15,6 +15,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.search.manager.dao.DaoException;
 import com.search.manager.dao.sp.DAOValidation;
+import com.search.manager.enums.RuleType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.solr.service.SolrService;
@@ -56,6 +57,7 @@ public class ForceSolrServlet extends HttpServlet {
 		String keyword = request.getParameter("keyword");
 		String id = request.getParameter("id");
 		String name = request.getParameter("name");
+		String type = request.getParameter("ruleType");
 		Store store = null;
 		String msg = "";
 		long timeStart = System.currentTimeMillis();
@@ -90,7 +92,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (action.equalsIgnoreCase("loadByName")) {
 				out.println("Calling method: loadByName(Store, RuleName)");
 				if (StringUtils.isNotEmpty(name)) {
-					msg = loadByName(rule, store, name);
+					msg = loadByName(rule, store, name, type);
 				} else {
 					msg = "Invalid paramter!";
 					msg += "\nError: You need to specify 'name=' parameter.";
@@ -129,7 +131,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (action.equalsIgnoreCase("resetByName")) {
 				out.println("Calling method: resetByName(Store, RuleName)");
 				if (StringUtils.isNotEmpty(name)) {
-					msg = resetByName(rule, store, name);
+					msg = resetByName(rule, store, name, type);
 				} else {
 					msg = "Invalid paramter!";
 					msg += "\nError: You need to specify 'name=' parameter.";
@@ -159,7 +161,7 @@ public class ForceSolrServlet extends HttpServlet {
 			} else if (action.equalsIgnoreCase("deleteByName")) {
 				out.println("Calling method: deleteByName(Store, RuleName)");
 				if (StringUtils.isNotEmpty(name)) {
-					msg = deleteByName(rule, store, name);
+					msg = deleteByName(rule, store, name, type);
 				} else {
 					msg = "Invalid paramter!";
 					msg += "\nError: You need to specify 'name=' parameter.";
@@ -194,7 +196,7 @@ public class ForceSolrServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		// do nothing...
 	}
 
 	/* LOAD */
@@ -315,7 +317,7 @@ public class ForceSolrServlet extends HttpServlet {
 		return msg;
 	}
 
-	private String loadByName(String rule, Store store, String name) {
+	private String loadByName(String rule, Store store, String name, String type) {
 		String msg = "";
 		String status = "";
 
@@ -339,7 +341,19 @@ public class ForceSolrServlet extends HttpServlet {
 			}
 		} else if (rule.equalsIgnoreCase("facetsort")) {
 			try {
-				status = "" + solrService.loadFacetSortRuleByName(store, name);
+				RuleType ruleType = null;
+				if (type.equalsIgnoreCase("keyword")) {
+					ruleType = RuleType.KEYWORD;
+				} else if (type.equalsIgnoreCase("template")) {
+					ruleType = RuleType.TEMPLATE;
+				} else {
+					status = "error";
+				}
+				if (ruleType != null) {
+					status = ""
+							+ solrService.loadFacetSortRuleByName(store, name,
+									ruleType);
+				}
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -550,7 +564,8 @@ public class ForceSolrServlet extends HttpServlet {
 		return msg;
 	}
 
-	private String resetByName(String rule, Store store, String name) {
+	private String resetByName(String rule, Store store, String name,
+			String type) {
 		String msg = "";
 		String status = "";
 
@@ -574,7 +589,19 @@ public class ForceSolrServlet extends HttpServlet {
 			}
 		} else if (rule.equalsIgnoreCase("facetsort")) {
 			try {
-				status = "" + solrService.resetFacetSortRuleByName(store, name);
+				RuleType ruleType = null;
+				if (type.equalsIgnoreCase("keyword")) {
+					ruleType = RuleType.KEYWORD;
+				} else if (type.equalsIgnoreCase("template")) {
+					ruleType = RuleType.TEMPLATE;
+				} else {
+					status = "error";
+				}
+				if (ruleType != null) {
+					status = ""
+							+ solrService.resetFacetSortRuleByName(store, name,
+									ruleType);
+				}
 			} catch (Exception e) {
 				status = "error";
 			}
@@ -842,7 +869,8 @@ public class ForceSolrServlet extends HttpServlet {
 		return msg;
 	}
 
-	private String deleteByName(String rule, Store store, String name) {
+	private String deleteByName(String rule, Store store, String name,
+			String type) {
 		String msg = "";
 		String status = "";
 
@@ -866,8 +894,19 @@ public class ForceSolrServlet extends HttpServlet {
 			}
 		} else if (rule.equalsIgnoreCase("facetsort")) {
 			try {
-				status = ""
-						+ solrService.deleteFacetSortRuleByName(store, name);
+				RuleType ruleType = null;
+				if (type.equalsIgnoreCase("keyword")) {
+					ruleType = RuleType.KEYWORD;
+				} else if (type.equalsIgnoreCase("template")) {
+					ruleType = RuleType.TEMPLATE;
+				} else {
+					status = "error";
+				}
+				if (ruleType != null) {
+					status = ""
+							+ solrService.deleteFacetSortRuleByName(store,
+									name, ruleType);
+				}
 			} catch (Exception e) {
 				status = "error";
 			}

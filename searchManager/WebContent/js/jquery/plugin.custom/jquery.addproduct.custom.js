@@ -1455,7 +1455,9 @@
 
 						var position = 1;
 						var valid = true;
-
+						var today = new Date();
+						today.setHours(0,0,0,0); //ignore time of current date 
+						
 						if (base.options.showPosition){
 							position = base.contentHolder.find("#addItemPosition").val();
 						}
@@ -1465,7 +1467,15 @@
 						var expiryDate = $.trim(base.contentHolder.find("#addItemDate_1").val());
 						var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#addItemComment").val()), "");
 
-						if ($.isNotBlank(expiryDate) && !validateGeneric("Validity Date", expiryDate)){
+						if ($.isNotBlank(expiryDate) && !$.isDate(expiryDate)){
+							valid = false;
+							jAlert("Invalid date specified.", "Invalid Input");
+						} else if(today.getTime() > new Date(expiryDate).getTime()) {
+							valid = false;
+							jAlert("Date 'Valid Until' cannot be earlier than today", "Invalid Input");
+						}
+						
+						if (!validateGeneric("Validity Date", expiryDate)){
 							valid = false;
 						}
 
@@ -1601,7 +1611,7 @@
 				}
 			});
 		};
-
+		
 		base.getTypeLabel = function(type){
 			switch(type){
 			case "product":

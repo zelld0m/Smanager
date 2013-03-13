@@ -93,14 +93,14 @@ public interface SolrService extends SearchDaoService {
 
 	boolean loadFacetSortRules(Store store) throws DaoException;
 
-	boolean loadFacetSortRuleByName(Store store, String name)
+	boolean loadFacetSortRuleByName(Store store, String name, RuleType ruleType)
 			throws DaoException;
 
 	boolean loadFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean resetFacetSortRules(Store store) throws DaoException;
 
-	boolean resetFacetSortRuleByName(Store store, String name)
+	boolean resetFacetSortRuleByName(Store store, String name, RuleType ruleType)
 			throws DaoException;
 
 	boolean resetFacetSortRuleById(Store store, String id) throws DaoException;
@@ -110,8 +110,8 @@ public interface SolrService extends SearchDaoService {
 
 	boolean deleteFacetSortRules(Store store) throws DaoException;
 
-	boolean deleteFacetSortRuleByName(Store store, String name)
-			throws DaoException;
+	boolean deleteFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException;
 
 	boolean deleteFacetSortRuleById(Store store, String id) throws DaoException;
 

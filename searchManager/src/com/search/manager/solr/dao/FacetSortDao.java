@@ -19,15 +19,15 @@ public interface FacetSortDao {
 
 	boolean loadFacetSortRules(Store store) throws DaoException;
 
-	boolean loadFacetSortRuleByName(Store store, String name)
+	boolean loadFacetSortRuleByName(Store store, String name, RuleType ruleType)
 			throws DaoException;
 
 	boolean loadFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean resetFacetSortRules(Store store) throws DaoException;
 
-	boolean resetFacetSortRulesByName(Store store, String name)
-			throws DaoException;
+	boolean resetFacetSortRulesByName(Store store, String name,
+			RuleType ruleType) throws DaoException;
 
 	boolean resetFacetSortRulesById(Store store, String id) throws DaoException;
 
@@ -36,13 +36,13 @@ public interface FacetSortDao {
 
 	boolean deleteFacetSortRules(Store store) throws DaoException;
 
-	boolean deleteFacetSortRuleByName(Store store, String name)
-			throws DaoException;
+	boolean deleteFacetSortRuleByName(Store store, String name,
+			RuleType ruleType) throws DaoException;
 
 	boolean deleteFacetSortRuleById(Store store, String id) throws DaoException;
 
 	boolean updateFacetSortRule(FacetSort facetSort) throws DaoException;
-	
+
 	boolean commitFacetSortRule() throws DaoException;
-	
+
 }
