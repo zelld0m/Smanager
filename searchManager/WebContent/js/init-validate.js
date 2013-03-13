@@ -14,8 +14,9 @@ isXSSSafeAllowNonAscii = function(text){
 };
 
 isAllowedFileName = function(text){ //invalid characters: \/:*?"<>|
-	var alphaNumRegex= /^[a-zA-Z0-9_&\.\;\@\s\-\'\(\)]*$/;
-	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
+	var invalidCharsRegex= /^[^\\\/\:\*\?\"\<\>\|]*$/;
+	var hasValidChars = invalidCharsRegex.test(text);
+	return isXSSSafe(text) && hasValidChars && $.isNotBlank(text);
 }; 
 
 isAllowedName = function(text){
