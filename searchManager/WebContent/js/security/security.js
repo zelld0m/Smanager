@@ -319,7 +319,15 @@
 						pageSize:10,
 						totalItem:total,
 						callbackText: function(itemStart, itemEnd, itemTotal){
-							return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + " " + name;
+							var displayText = 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal;
+							
+							if($.isNotBlank(name)){
+								displayText += " " + name;// + " "+ (itemTotal > 1 ? "Users" : "User");
+							}else if(id){ //user role
+								displayText += " " + id;// + " "+ (itemTotal > 1 ? "Users" : "User");
+							}
+							
+							return displayText;
 						},
 						pageLinkCallback: function(e){ sec.getUserList(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
 						nextLinkCallback: function(e){ sec.getUserList(id,name,e.data.page + 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
