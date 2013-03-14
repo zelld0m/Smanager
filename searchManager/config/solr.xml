@@ -116,7 +116,7 @@
     	<group>MacMallBD</group>
    	</group-membership>
   </store>
-  
+ 
   <!-- 
   <server name='vtorschstg01'> 										<- name of the server to display in gui
     <url>http://vtorschstg01.pcmall.com:8080/solr14/(store)/</url> 	<- the url of solr

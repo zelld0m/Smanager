@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -319,8 +320,18 @@ public class UtilityService {
 
 		return storeFacetTemplate;
 	}
-
-
+	
+	@RemoteMethod
+	public static boolean isMemberOf(String groupName){
+		List<String> storeGroups = getStoreGroupMembership();
+		
+		if(CollectionUtils.isNotEmpty(storeGroups) && storeGroups.contains(groupName)){
+			return true;
+		}
+		
+		return false;
+	}
+		
 	public static String getStoreSetting(String property) {
 		return ConfigManager.getInstance().getStoreSetting(getStoreId(), property);
 	}

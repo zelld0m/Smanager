@@ -42,21 +42,23 @@
 	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
 	
 	var GLOBAL_storeGroupMembership = GLOBAL_storeParameters["storeGroupMembership"];
-	var GLOBAL_storeGroupLookup = {BDGroup:false,StoreGroup:false,PCMGroup:false,MacMallGroup:false,PCMBDGroup:false,MacMallBDGroup:false};
+	
+	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
 	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
 	
 	if(GLOBAL_storeGroupTotal>0){
 		for(var i=0; i<GLOBAL_storeGroupTotal; i++){
-			GLOBAL_storeGroupLookup[GLOBAL_storeGroupMembership[i] + "Group"]= true;
+			GLOBAL_storeGroupLookup[GLOBAL_storeGroupMembership[i]]= true;
 		}
 	};
 	
-	var GLOBAL_BDGroup = GLOBAL_storeGroupLookup['BDGroup'];
-	var GLOBAL_StoreGroup = GLOBAL_storeGroupLookup['StoreGroup'];
-	var GLOBAL_PCMGroup = GLOBAL_storeGroupLookup['PCMGroup'];
-	var GLOBAL_MacMallGroup = GLOBAL_storeGroupLookup['MacMallGroup'];
-	var GLOBAL_PCMBDGroup = GLOBAL_storeGroupLookup['PCMBDGroup'];
-	var GLOBAL_MacMallBDGroup = GLOBAL_storeGroupLookup['MacMallBDGroup'];
+	console.log(GLOBAL_storeGroupLookup);
+	var GLOBAL_BDGroup = GLOBAL_storeGroupLookup['BD'];
+	var GLOBAL_StoreGroup = GLOBAL_storeGroupLookup['Store'];
+	var GLOBAL_PCMGroup = GLOBAL_storeGroupLookup['PCM'];
+	var GLOBAL_MacMallGroup = GLOBAL_storeGroupLookup['MacMall'];
+	var GLOBAL_PCMBDGroup = GLOBAL_storeGroupLookup['PCMBD'];
+	var GLOBAL_MacMallBDGroup = GLOBAL_storeGroupLookup['MacMallBD'];
 	
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];

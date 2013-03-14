@@ -37,6 +37,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
+import com.search.manager.service.UtilityService;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
 
@@ -533,8 +534,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
-			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || 
-					!ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
+			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !UtilityService.isMemberOf("PCM")){
 				for (String lvl1Key: root.getFacets()) {
 					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
 					lvl1Map.put(lvl1Key, lvl1.getCount());
