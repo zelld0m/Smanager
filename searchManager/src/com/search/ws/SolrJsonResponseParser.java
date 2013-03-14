@@ -45,7 +45,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	private JsonSlurper slurper = null;
 	private JSONArray resultArray  = null; // DOCS entry
 	private JSONObject explainObject  = null; // DOCS entry
-	private JSONObject facetTemplate  = null; // Facet Template
+	private JSONObject facetTemplateJSON  = null; // Facet Template
 	private JSONObject facetFields  = null; // Facet Sort
 	private JSONObject responseHeader = null;
 	private JSONObject responseHeaderParams = null;
@@ -160,13 +160,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				responseHeader.element(SolrConstants.TAG_REDIRECT, redirectObject);
 			}
 			
-//			if (StringUtils.isNotEmpty(changedKeyword)) {
-//				responseHeader.element(SolrConstants.TAG_REDIRECT, changedKeyword);
-//			}
-			
 			// TODO: make this get value from solr.xml
-			if (StringUtils.isNotEmpty(facetTemplateName)) {
-				facetTemplate = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", facetTemplateName});
+			if (StringUtils.isNotEmpty(facetTemplate)) {
+				facetTemplateJSON = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields", facetTemplate});
 			}
 			facetFields = locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"});
 			
@@ -439,6 +435,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 				if (expiredDemotedEDPs.contains(edp)) {
 					doc.element(SolrConstants.TAG_DEMOTE_EXPIRED,"");
 				}
+				if (!includeEDP) { // remove EDP if not requested
+					doc.remove("EDP");
+				}
 
 				resultArray.add(doc);
 				if (explainObject != null) {
@@ -466,14 +465,14 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	@SuppressWarnings("unchecked")
 	private void getFacetTemplates() {
 		
-		if (facetTemplate == null) {
+		if (facetTemplateJSON == null) {
 			return;
 		}
 		
 		CNetFacetTemplate root = new CNetFacetTemplate("",0);
-		for (String key: (Set<String>)facetTemplate.keySet()) {
+		for (String key: (Set<String>)facetTemplateJSON.keySet()) {
 			
-			int count = facetTemplate.getInt(key);
+			int count = facetTemplateJSON.getInt(key);
 
 			String[] category = key.split("\\ \\|\\ ");
 			// TODO: optimize
@@ -519,9 +518,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			}
 		}
 		
-		// remove the facet template
-		if (StringUtils.isNotEmpty(facetTemplateName)) {
-			locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"}).remove(facetTemplateName);
+		// remove the facet template if not requested
+		if (!includeFacetTemplateFacet) {
+			locateJSONObject(initialJson, new String[]{"facet_counts", "facet_fields"}).remove(facetTemplate);
 		}
 		
 		LinkedHashMap<String, Long> lvl1Map = new LinkedHashMap<String, Long>();
@@ -635,6 +634,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		if (elevatedResults != null) {
 			int i = 0;
 			for (JSONObject object: elevatedResults) {
+				if (!includeEDP) { // remove EDP if not requested
+					object.remove("EDP");
+				}
 				// insert the elevate results to the docs entry
 				resultArray.add(i++, object);
 			}
@@ -644,6 +646,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 	private void addDemotedEntries() {
 		if (demotedResults != null) {
 			for (JSONObject object: demotedResults) {
+				if (!includeEDP) { // remove EDP if not requested
+					object.remove("EDP");
+				}
 				// insert the elevate results to the docs entry
 				resultArray.add(object);
 			}
@@ -682,21 +687,17 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 					entries.add(new FacetEntry(facetValue, facetField.getLong(facetValue)));
 				}
 				
-				// remove the facet field
-				facetFields.remove(key);
-				
 				SortType sortType = facetSortRule.getGroupSortType().get(key);
 				if (sortType == null) {
 					sortType = facetSortRule.getSortType();
 				}
 				FacetEntry.sortEntries(entries, sortType, facetSortRule.getItems().get(key));
 				
-				// add back the facet field 
 				JSONObject facets = new JSONObject();
 				for (FacetEntry entry: entries) {
 					facets.element(entry.getLabel(), entry.getCount());
 				}
-				facetFields.element(key, facets);
+				facetFields.put(key, facets);
 			}
 		}
 	}
