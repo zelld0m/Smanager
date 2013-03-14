@@ -69,6 +69,7 @@
 			var template ='';
 
 			template  += '<div id="facetItem">';
+			template  += '	<input id="hideCursor" type="txt" style="position:absolute; top:-30px; padding:1px; margin-left:-1px; opacity:0.00; border:none; height:0px; width:0px"/>';
 			template  += '	<h3 id="conditionText" class="fLblue w500 breakWord fsize12"></h3>';
 			template  += '	<div class="clearB"></div>';
 			template  += '	<div id="tabHeight" style="height:29.5px" class="borderB marT20">';
@@ -329,6 +330,7 @@
 			template  += '				<tr>';
 			template  += '					<td class="w175">Valid Until: </td>';
 			template  += '					<td class="iepadBT0 padT1">';
+			template  += '			            <input id="hideCursor" type="txt" style="position:absolute; top:-30px; padding:1px; margin-left:-1px; opacity:0.00; border:none; height:0px; width:0px"/>';
 			template  += '						<div class="floatL w100 marT5">';
 			template  += '							<label class="ddate"><input id="addItemDate" type="text" class="w65"></label>';
 			template  += '						</div>';
@@ -1431,9 +1433,15 @@
 			base.contentHolder.find("#facetItem").tabs("destroy").tabs({
 				show: function(event, ui){
 					if(ui.panel){
-						if (ui.panel.id === "dynamicAttribute") {
-							base.contentHolder.find("#templateNameList").focus();;
-						}
+//						if (ui.panel.id === "dynamicAttribute") {
+//							base.contentHolder.find("#templateNameList").focus();
+//						} 
+//						else if (ui.panel.id === "cnet") {
+//							base.contentHolder.find("#hideCursor").focus();
+//						}  else if (ui.panel.id === "facet") {
+//							base.contentHolder.find("#hideCursor").focus();
+//						}
+						base.contentHolder.find("#hideCursor").focus();
 					}
 				}
 			});
@@ -1452,11 +1460,10 @@
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					setTimeout(function() {
-
 						var position = 1;
 						var valid = true;
 						var today = new Date();
-						today.setHours(0,0,0,0); //ignore time of current date 
+						today.setHours(0,0,0,0); //ignore time of current date
 						
 						if (base.options.showPosition){
 							position = base.contentHolder.find("#addItemPosition").val();

@@ -359,6 +359,7 @@
 			}
 
 			template += '		<li>';
+			template += '			<input id="hideCursor" type="txt" style="position:absolute; top:-30px; padding:1px; margin-left:-1px; opacity:0.00; border:none; height:0px; width:0px"/>';
 			template += '			<label class="fbold title padT3">Valid Until: </label>';
 			template += '			<span><input type="text" id="selItemValidityDate" style="width:65px">';
 			template += ' 			<span><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></span>';
@@ -456,7 +457,7 @@
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
 					var today = new Date();
 					today.setHours(0,0,0,0); //ignore time of current date 
-
+					
 					if (base.selectedItem!=null && position > base.maxItemPosition){
 						jAlert("Please specify position. Max allowed position is " + base.maxItemPosition, "Search Simulator");
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
