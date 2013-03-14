@@ -119,19 +119,19 @@
   </server>
   <server name='search.pcmall.com'>
     <url>http://search.pcmall.com:8080/solr14/(core)/</url>
-    <store>sbn</store>
+    <store></store>
   </server>
   <server name='afs-pl-schpd04'>
     <url>http://afs-pl-schpd04.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmallcap</store>
+    <store></store>
   </server>
   <server name='afs-pl-schpd01'>
     <url>http://afs-pl-schpd01.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmallgov,macmallbd</store>
+    <store></store>
   </server>
   <server name='afs-pl-schpd02'>
     <url>http://afs-pl-schpd02.afservice.org:8080/solr14/(core)/</url>
-    <store>pcmall,pcmallcap,pcmallgov</store>
+    <store>pcmall,pcmallcap,pcmallgov,macmall,macmallbd</store>
   </server>
   <big-bets>
     <fields>DPNo,EDP,Manufacturer,MfrPN,(facet)_Name,(facet)_Description,ImagePath,Name,Description</fields>

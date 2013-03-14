@@ -400,7 +400,7 @@
 						if (!requestOngoing) {
 							requestOngoing = true;
 							
-							if(!validateField('Name', name, 1, 100) || !validateField('Notes', notes, 1, 255)){
+							if(!validateGeneric('Name', name, 1, 100) || !validateGeneric('Notes', notes, 1, 255)){
 								requestOngoing = false;
 								return;
 							}
