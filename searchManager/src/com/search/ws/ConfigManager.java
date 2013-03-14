@@ -107,6 +107,11 @@ public class ConfigManager {
     public String getStoreParameter(String storeId, String param) {
     	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<String> getStoreParameterList(String storeId, String param) {
+    	return (xmlConfig.getList("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
+    }
 
     public String getParameterByStoreId(String storeId, String param) {
     	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
