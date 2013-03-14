@@ -18,6 +18,10 @@
     <default-server>afs-pl-schpd02</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
+    <group-membership>
+    	<group>Store</group>
+    	<group>PCM</group>
+    </group-membership>
   </store>
   
   <store id="macmall" name="MacMall">
@@ -35,6 +39,10 @@
     <default-server>afs-pl-schpd02</default-server>
     <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
+    <group-membership>
+    	<group>Store</group>
+    	<group>MacMall</group>
+    </group-membership>	
   </store>
 
   <store id="pcmallcap" name="PCMall BD">
@@ -53,6 +61,12 @@
     <default-server>afs-pl-schpd02</default-server>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
+    <group-membership>
+    	<group>Store</group>
+    	<group>PCM</group>
+    	<group>BD</group>
+    	<group>PCMBD</group>
+    </group-membership>
   </store>
   
   <store id="pcmallgov" name="PCMG BD">
@@ -72,6 +86,12 @@
     <default-server>afs-pl-schpd02</default-server>
     <facet-template>PCMallGov_FacetTemplate</facet-template>
     <facet-template-name>PCMallGov_FacetTemplateName</facet-template-name>
+    <group-membership>
+    	<group>Store</group>
+    	<group>PCM</group>
+    	<group>BD</group>
+    	<group>PCMBD</group>
+    </group-membership>
   </store>
   
   <store id="macmallbd" name="MacMall BD">
@@ -89,6 +109,12 @@
     <default-server>afs-pl-schpd02</default-server>
     <facet-template>xxx</facet-template>
     <facet-template-name>TemplateName</facet-template-name>
+    <group-membership>
+    	<group>Store</group>
+    	<group>MacMall</group>
+    	<group>BD</group>
+    	<group>MacMallBD</group>
+   	</group-membership>
   </store>
   
   <!-- 
