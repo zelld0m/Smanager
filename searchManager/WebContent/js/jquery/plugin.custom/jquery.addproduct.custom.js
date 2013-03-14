@@ -69,6 +69,7 @@
 			var template ='';
 
 			template  += '<div id="facetItem">';
+			template  += '	<input id="hideCursor" type="txt" style="position:absolute; top:-30px; padding:1px; margin-left:-1px; opacity:0.00; border:none; height:0px; width:0px"/>';
 			template  += '	<h3 id="conditionText" class="fLblue w500 breakWord fsize12"></h3>';
 			template  += '	<div class="clearB"></div>';
 			template  += '	<div id="tabHeight" style="height:29.5px" class="borderB marT20">';
@@ -1459,7 +1460,6 @@
 			base.contentHolder.find("#addFacetItemToRuleBtn").off().on({
 				click: function(e){
 					setTimeout(function() {
-						$("#ui-datepicker-div").hide();
 						var position = 1;
 						var valid = true;
 						var today = new Date();
@@ -1528,7 +1528,6 @@
 								base.options.updateFacetItemCallback(base.options.item["memberId"], position, expiryDate, comment, condMap);
 							}
 						}
-						$("#ui-datepicker-div").hide();
 					}, 500);
 				}
 			});
