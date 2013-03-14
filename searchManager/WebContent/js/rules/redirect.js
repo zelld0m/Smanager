@@ -1202,6 +1202,10 @@
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
+							
+							if($.isNotBlank(selectedTemplateName)){
+								jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							}
 						}
 					},
 					preHook:function(){
@@ -1240,6 +1244,10 @@
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
+							
+							if($.isNotBlank(selectedTemplateName)){
+								jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							}
 						}
 					},
 					preHook:function(){
