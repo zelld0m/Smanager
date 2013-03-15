@@ -37,6 +37,13 @@
 	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
 	var GLOBAL_indexedWildcardFields = GLOBAL_schemaFields["indexedWildcardFields"];
 	
+	if(GLOBAL_indexedWildcardFields){
+		for(var i=0; i < GLOBAL_indexedWildcardFields.length; i++) {
+			GLOBAL_indexedWildcardFields[i] = '^' + GLOBAL_indexedWildcardFields[i].replace(/\*/, '.*') + '$';
+		}
+	}
+	
+	
 	// Store parameters
 	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');
 	var GLOBAL_username = GLOBAL_storeParameters["username"];
