@@ -180,7 +180,7 @@ public class CategoryService {
 			fields.add(a.getAttributeName());
 		}
 
-		String templateNameField = ConfigManager.getInstance().getParameterByStoreId(storeId, "facet-template");
+		String templateNameField = ConfigManager.getInstance().getStoreParameter(storeId, "facet-template");
 		if (StringUtils.isNotEmpty(templateNameField)) {
 			filters.add(templateNameField + "Name:\"" + templateName + "\"");
 

@@ -399,9 +399,9 @@ public class SearchServlet extends HttpServlet {
 	
 	protected Map<String, String> getFacetMap(String storeId) {
 		Map<String, String> facetMap = new HashMap<String, String>();
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
 		return facetMap;
 	}
 	
@@ -491,10 +491,10 @@ public class SearchServlet extends HttpServlet {
 		return new StoreKeyword(storeId, keyword);
 	}
 	
-	protected void applyDefaultRelevancy(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
-		if (StringUtils.isNotBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
+	protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
+		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, 
-					configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+					configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
 		}
 	}
 
@@ -799,12 +799,13 @@ public class SearchServlet extends HttpServlet {
 					}
 					else {
 						logger.debug("Relevancy disabled. Not applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
+						relevancy = getDefaultRelevancyRule(sk.getStore(), fromSearchGui);
 					}
 				} else {
 					logger.error("Unable to find default relevancy!");
 				}
-				
-				if (!disableRelevancy && relevancy != null) {
+
+				if (relevancy != null) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
 					nameValuePairs.add(defTypeNVP);
 					Map<String, String> parameters = relevancy.getParameters();
@@ -821,15 +822,14 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 				else {
-					// remove qt parameter
-					applyDefaultRelevancy(request, nameValuePairs, storeId);
+					setDefaultQueryType(request, nameValuePairs, storeId);
 				}
 			}
 			else {
 				
 				Relevancy relevancy = getDefaultRelevancy(storeId);
 				if (relevancy == null) {
-					applyDefaultRelevancy(request, nameValuePairs, storeId);
+					setDefaultQueryType(request, nameValuePairs, storeId);
 				}
 				else {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));

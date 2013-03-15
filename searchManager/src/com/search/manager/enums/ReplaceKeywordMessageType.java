@@ -10,7 +10,7 @@ import org.directwebremoting.annotations.Param;
 import org.directwebremoting.convert.BeanConverter;
 
 @DataTransferObject(converter=BeanConverter.class, 
-					params=@Param(name="exclude", value="declaringClass"))
+		params=@Param(name="exclude", value="declaringClass"))
 public enum ReplaceKeywordMessageType {
 	DEFAULT("Default Text", "Do not display any additional text in search results"),
 	STANDARD("Standard Text", "Display standard text (Showing Result for \"replacement keyword\" / Search instead for: original Keyword) "),

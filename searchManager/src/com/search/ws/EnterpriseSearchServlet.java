@@ -178,7 +178,7 @@ public class EnterpriseSearchServlet extends SearchServlet {
 	}
 
 	@Override
-	protected void applyDefaultRelevancy(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
+	protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
 		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, enterpriseSearchConfigManager.getDismax(storeId)));
 		}
