@@ -85,9 +85,9 @@ public class RuleXmlUtil{
 	protected static void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
 		ConfigManager configManager = ConfigManager.getInstance();
 		if (configManager != null && condition != null) {
-			condition.setFacetPrefix(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
-			condition.setFacetTemplate(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
-			condition.setFacetTemplateName(configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+			condition.setFacetPrefix(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+			condition.setFacetTemplate(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			condition.setFacetTemplateName(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
 		}
 	}
 	

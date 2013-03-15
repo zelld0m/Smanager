@@ -569,7 +569,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
 			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
-				key = ConfigManager.getInstance().getParameterByStoreId(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+				key = ConfigManager.getInstance().getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				isFacetTemplate = true;
 			}
 

@@ -118,7 +118,7 @@ public class UtilityService {
 			// get default server for store
 			ConfigManager cm = ConfigManager.getInstance();
 			if (cm != null) {
-				serverName = cm.getParameterByStoreId(getStoreId(), "server-url");
+				serverName = cm.getStoreParameter(getStoreId(), "server-url");
 			}
 			attr.setAttribute("serverName", serverName, RequestAttributes.SCOPE_SESSION);
 		}
@@ -268,7 +268,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplate = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplate = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			storeFacetTemplate = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 		}
 
 		return storeFacetTemplate;
@@ -292,7 +292,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetPrefix = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetPrefix = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
+			storeFacetPrefix = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
 		}
 
 		return storeFacetPrefix;
@@ -304,7 +304,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplateName = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplateName = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			storeFacetTemplateName = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
 		}
 
 		return storeFacetTemplateName;
@@ -315,7 +315,7 @@ public class UtilityService {
 		ConfigManager cm = ConfigManager.getInstance();
 		String storeFacetTemplate = StringUtils.EMPTY;
 		if (cm != null) {
-			storeFacetTemplate = cm.getParameterByStoreId(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
+			storeFacetTemplate = cm.getStoreParameter(getStoreId(), SolrConstants.SOLR_PARAM_FACET_NAME);
 		}
 
 		return storeFacetTemplate;
