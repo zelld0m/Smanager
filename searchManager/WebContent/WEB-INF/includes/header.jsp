@@ -52,7 +52,6 @@
 		}
 	};
 	
-	console.log(GLOBAL_storeGroupLookup);
 	var GLOBAL_BDGroup = GLOBAL_storeGroupLookup['BD'];
 	var GLOBAL_StoreGroup = GLOBAL_storeGroupLookup['Store'];
 	var GLOBAL_PCMGroup = GLOBAL_storeGroupLookup['PCM'];
