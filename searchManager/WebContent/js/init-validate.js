@@ -19,6 +19,11 @@ isAllowedFileName = function(text){ //invalid characters: \/:*?"<>|
 	return isXSSSafe(text) && hasValidChars && $.isNotBlank(text);
 }; 
 
+isAllowedSearchKeyword = function(text){
+	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\\\@\*\s\-\"\'\(\)\?\/]*$/;
+	return isXSSSafe(text) && alphaNumRegex.test(text);
+};
+
 isAllowedName = function(text){
 	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\\\@\*\s\-\"\'\(\)\?\/]*$/;
 	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
