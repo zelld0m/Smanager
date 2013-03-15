@@ -399,9 +399,9 @@ public class SearchServlet extends HttpServlet {
 	
 	protected Map<String, String> getFacetMap(String storeId) {
 		Map<String, String> facetMap = new HashMap<String, String>();
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
-		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME, configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
 		return facetMap;
 	}
 	
@@ -494,7 +494,7 @@ public class SearchServlet extends HttpServlet {
 	protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
 		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
 			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, 
-					configManager.getParameterByStoreId(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+					configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
 		}
 	}
 

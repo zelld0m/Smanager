@@ -113,10 +113,6 @@ public class ConfigManager {
     	return (xmlConfig.getList("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
 
-    public String getParameterByStoreId(String storeId, String param) {
-    	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
-    }
-
     public String getServerParameter(String server, String param) {
     	return (xmlConfig.getString("/server[@name='" + server + "']/" +param));
     }
