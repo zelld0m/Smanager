@@ -8,7 +8,6 @@ jQuery.extend(
 				isWildcardField : function(fieldName, fieldList){
 					if(!$.isEmptyObject(fieldList) && $.isNotBlank(fieldName)){
 						var patt = new RegExp($.escapeRegExp("("+fieldList.join("|")+")"));
-						console.log(patt.compile(fieldName));
 						return patt.test(fieldName);
 					}
 					return false;
