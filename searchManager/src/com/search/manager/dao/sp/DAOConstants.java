@@ -413,4 +413,12 @@ public class DAOConstants {
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";
 	public static final String SETTINGS_EXPORT_TARGET				= "export_target";
 	
+	// Spell rule procedures
+    public static final String SP_GET_SPELL_RULE = "usp_Search_Spell_Rule";
+    public static final String SP_ADD_SPELL_RULE = "usp_Add_Spell_Rule";
+
+    public static final String COLUMN_SUGGESTION = "suggestion";
+    public static final String PARAM_SUGGESTION = "suggestion";
+    public static final String PARAM_STATUS = "status";
+    protected static final String COLUMN_STATUS = "status";
 }
