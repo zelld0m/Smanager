@@ -163,16 +163,18 @@ public class RedirectService extends RuleService{
 	}
 
 	@RemoteMethod
-	public int deleteRule(RedirectRule rule) {
+	public int deleteRule(String ruleId) {
 		int result = -1;
 		try {
 			String username = UtilityService.getUsername();
+			String storeId = UtilityService.getStoreId();
+			RedirectRule rule = new RedirectRule(ruleId);
 			result = daoService.deleteRedirectRule(rule);
 			if (result > 0) {
 				RuleStatus ruleStatus = new RuleStatus();
 				ruleStatus.setRuleTypeId(RuleEntity.QUERY_CLEANING.getCode());
 				ruleStatus.setRuleRefId(rule.getRuleId());
-				ruleStatus.setStoreId(rule.getStoreId());
+				ruleStatus.setStoreId(storeId);
 				daoService.updateRuleStatusDeletedInfo(ruleStatus, username);
 			}
 		} catch (DaoException e) {
