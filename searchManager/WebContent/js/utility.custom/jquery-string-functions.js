@@ -5,7 +5,25 @@
 jQuery.extend(
 		(function($){  
 			return {  
-
+				isWildcardField : function(fieldName, fieldList){
+					if(!$.isEmptyObject(fieldList) && $.isNotBlank(fieldName)){
+						var patt = new RegExp($.escapeRegExp("("+fieldList.join("|")+")"));
+						console.log(patt.compile(fieldName));
+						return patt.test(fieldName);
+					}
+					return false;
+				},
+				
+				escapeRegExp : function(str) {
+					if($.isBlank(str)){
+						return str;
+					}
+					
+					var specials = ["/", ".", "*", "+", "?", "|", "(", ")", "[", "]", "{", "}", "\\", "^", "$"];
+					var regexp = new RegExp("(\\" + specials.join("|\\") + ")", "g");
+					return str.replace(regexp, "\\$1");
+				},
+				
 				setDefaultIfEmpty: function(obj, defaultValue){
 					return (obj) ? obj[0] : defaultValue;
 				},

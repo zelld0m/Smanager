@@ -33,6 +33,8 @@ import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
 import com.search.manager.model.RedirectRuleCondition;
+import com.search.manager.schema.SolrSchemaUtility;
+import com.search.manager.schema.model.Schema;
 import com.search.manager.utility.PropsUtils;
 import com.search.ws.ConfigManager;
 import com.search.ws.SolrConstants;
@@ -54,7 +56,7 @@ public class UtilityService {
 			lockService.put(ruleEntity, new AtomicReference<String>());
 		}
 	}
-
+	
 	public static boolean obtainPublishLock(RuleEntity ruleType) throws PublishLockException {
 		String username = getUsername();
 		String storeName = getStoreName();
@@ -193,6 +195,21 @@ public class UtilityService {
 		}
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
 		json.put("isFmGui", PropsUtils.getValue("isFmSolrGui").equals("1")?true:false);
+		return json.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RemoteMethod
+	public static String getIndexedSchemaFields(){
+		JSONObject json = new JSONObject();
+		
+		Schema schema = SolrSchemaUtility.getDefaultSchema();
+		if(schema != null){
+			ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+			json.put("indexedFields",(List<String>) attr.getAttribute("indexedFields", RequestAttributes.SCOPE_SESSION));
+			json.put("indexedWildcardFields",(List<String>) attr.getAttribute("indexedWildcardFields", RequestAttributes.SCOPE_SESSION));
+		}
+		
 		return json.toString();
 	}
 	
