@@ -16,6 +16,7 @@ public class SolrConstants {
 	public final static String SOLR_PARAM_JSON_WRAPPER_FUNCTION = "json.wrf";
 	public final static String SOLR_PARAM_SORT = "sort";
 	public final static String SOLR_PARAM_QUERY_TYPE = "qt";
+	public final static String SOLR_PARAM_FACET_FIELD = "facet.field";
 
 	public final static String SOLR_PARAM_GUI = "gui";
 
@@ -114,7 +115,11 @@ public class SolrConstants {
 	public final static String TAG_VALUE_RULE_TYPE_RELEVANCY = "Ranking Rule";
 	public final static String TAG_VALUE_RULE_TYPE_FACET_SORT = "Facet Sort";
 
-	
-	
+	// Enterprise Search overrides
+	public final static String REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP 		= "elevateOverrideMap";
+	public final static String REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP 		= "excludeOverrideMap";
+	public final static String REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP 		= "demoteOverrideMap";
+	public final static String REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP 	= "redirectOverrideMap";	
+	public final static String REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP 	= "relevancyOverrideMap";	
 	
 }

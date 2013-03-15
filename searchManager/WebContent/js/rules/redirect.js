@@ -54,7 +54,7 @@
 						if(e.data.locked) return;
 						jConfirm("Delete " + self.selectedRule["ruleName"] + "'s rule?", "Delete Rule Condition", function(result){
 							if(result){
-								RedirectServiceJS.deleteRule(self.selectedRule,{
+								RedirectServiceJS.deleteRule(self.selectedRule["ruleId"],{
 									callback: function(code){
 										showActionResponse(code, "delete", self.selectedRule["ruleName"]);
 										if(code==1) {
@@ -1202,6 +1202,10 @@
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
+							
+							if($.isNotBlank(selectedTemplateName)){
+								jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							}
 						}
 					},
 					preHook:function(){
@@ -1240,6 +1244,10 @@
 							$table.find("tr#dynamicAttributeName").show();
 						}else{
 							$table.find("tr#dynamicAttributeName").hide();
+							
+							if($.isNotBlank(selectedTemplateName)){
+								jAlert("Selected template name does not have any dynamic attributes.", self.moduleName);
+							}
 						}
 					},
 					preHook:function(){

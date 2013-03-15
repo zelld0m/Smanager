@@ -61,7 +61,7 @@
 				var flcnt = 0;
 				
 				for(var i=0; i<data.totalSize; i++){	
-					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").html();
+					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").text();
 					if(list[i].published == '1'){
 						okcnt++;
 						okmsg += '\n-' + rName;	

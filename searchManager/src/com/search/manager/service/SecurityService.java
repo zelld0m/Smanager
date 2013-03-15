@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -248,7 +249,11 @@ public class SecurityService {
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setGroupId(roleId);
-				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire));
+				if (StringUtils.isNotBlank(expire)) {
+					Date newExpiryDate = DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire);
+					user.setThruDate(newExpiryDate);
+					user.setAccountNonExpired(newExpiryDate.after(new Date()));
+				}
 				user.setStoreId(UtilityService.getStoreId());
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));

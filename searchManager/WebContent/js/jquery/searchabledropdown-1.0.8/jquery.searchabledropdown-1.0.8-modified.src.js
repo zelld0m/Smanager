@@ -38,7 +38,7 @@
 			maxListSize: 100,
 			maxMultiMatch: 100,
 			exactMatch: false,
-			wildcards: true,
+			wildcards: false,
 			ignoreCase: true,
 			warnMultiMatch: "Top {0} Matches ...",
 			warnNoMatch: "No Matches Found...",
