@@ -137,17 +137,14 @@ public class FacetSortRuleBuilder implements Runnable {
 		boolean hasError = false;
 
 		try {
-
-			solrInputDocuments.addAll(SolrDocUtil
-					.composeSolrDocsFacetSort(facetSorts));
-
-			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+			if (facetSorts != null && facetSorts.size() > 0) {
+				solrInputDocuments.addAll(SolrDocUtil
+						.composeSolrDocsFacetSort(facetSorts));
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
 				facetSortCount = solrInputDocuments.size();
 			}
-
 		} catch (Exception e) {
 			hasError = true;
 			e.printStackTrace();

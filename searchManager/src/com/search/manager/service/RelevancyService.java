@@ -434,7 +434,7 @@ public class RelevancyService extends RuleService{
 	}
 
 	@RemoteMethod
-	public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String keyword, String[] excludedFields) {
+	public RecordSet<Field> getIndexedFields(int page, int itemsPerPage, String filter, String[] excludedFields) {
 		Schema schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
 
 		List<Field> excludeFieldList = new ArrayList<Field>();
@@ -447,7 +447,7 @@ public class RelevancyService extends RuleService{
 //			if (CollectionUtils.isNotEmpty(relatedFields)) excludeFieldList.addAll(relatedFields);
 		}
 
-		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(keyword, excludeFieldList));
+		List<Field> fields = new LinkedList<Field>(schema.getIndexedFields(filter, excludeFieldList));
 		int maxIndex = fields.size()- 1;
 		int fromIndex = (page-1)*itemsPerPage;
 		int toIndex = (page*itemsPerPage)-1;

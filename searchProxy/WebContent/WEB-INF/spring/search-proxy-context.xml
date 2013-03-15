@@ -34,13 +34,13 @@
 		<constructor-arg ref="dataSource_solr" />
 	</bean>
 	
-	<bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
-	     <property name="instance" value="${solr.configPath}" />
-	</bean>
-	
 	<bean id="localSolrServerRunner" class="com.search.manager.solr.util.LocalSolrServerRunner">
+		<!-- solr local server -->
+		<!--property name="solrUrl" value="http://localhost:8983/solr41/" /-->
+		<!-- solr prod server -->
+		<property name="solrUrl" value="http://10.17.12.123:8983/solr41/" />
 		<!-- solr proxy server -->
-		<property name="solrUrl" value="http://10.17.12.122:8983/solr41/" />
+		<!--property name="solrUrl" value="http://10.17.12.122:8983/solr41/" /-->
 		<!-- solr production server -->
 		<!--property name="solrUrl" value="http://afs-pl-schpd06.afservice.org:8081/solr41/" /-->
 		<property name="maxRetries" value="${solr.rule.conn.prop.maxRetries}" />

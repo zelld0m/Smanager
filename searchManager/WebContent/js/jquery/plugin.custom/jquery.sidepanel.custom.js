@@ -42,9 +42,10 @@
 
 				base.addAddButtonListener();
 
-				if (base.oldSearch !== base.newSearch) {
+				if (base.oldSearch !== base.newSearch && isAllowedSearchKeyword(base.newSearch)) {
 					base.getList(base.newSearch, 1);
 					base.oldSearch = base.newSearch;
+					
 					base.sendRequest(event);
 					base.newSearch = "";
 				}

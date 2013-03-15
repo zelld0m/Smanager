@@ -49,8 +49,8 @@ public class ConfigManager {
 			String configFolder = xmlConfig.getFile().getParent();
 			
 			// server settings
-			for (String coreName: getCoreNames()) {
-				File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, coreName));
+			for (String storeId: getStoreIds()) {
+				File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, storeId));
 				if (!f.exists()) {
 					try {
 						f.createNewFile();
@@ -62,8 +62,8 @@ public class ConfigManager {
 					PropertiesConfiguration propConfig = new PropertiesConfiguration(f.getAbsolutePath());
 					propConfig.setAutoSave(true);
 					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-					serverSettingsMap.put(coreName, propConfig);
-					logger.info("Settings file for " + coreName + ": " + propConfig.getFileName());
+					serverSettingsMap.put(storeId, propConfig);
+					logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
 				}
 			}
 			
@@ -107,9 +107,10 @@ public class ConfigManager {
     public String getStoreParameter(String storeId, String param) {
     	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
-
-    public String getParameterByStoreId(String storeId, String param) {
-    	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
+    
+    @SuppressWarnings("unchecked")
+	public List<String> getStoreParameterList(String storeId, String param) {
+    	return (xmlConfig.getList("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
 
     public String getServerParameter(String server, String param) {
@@ -202,8 +203,8 @@ public class ConfigManager {
     	return instance;
     }
     
-	public boolean setStoreSetting(String coreName, String field, String value) {
-		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+	public boolean setStoreSetting(String storeId, String field, String value) {
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
 			synchronized(config) {
 				config.setProperty(field, value);
@@ -216,8 +217,8 @@ public class ConfigManager {
 	/** 
 	 * For a property that has multiple values, getString() will return the first value of the list
 	 * */
-	public String getStoreSetting(String coreName, String field) {
-		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+	public String getStoreSetting(String storeId, String field) {
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
 			synchronized(config) {
 				return config.getString(field);
@@ -230,8 +231,8 @@ public class ConfigManager {
 	 * For a property that has multiple values, getList() will return the complete list 
 	 * */
 	@SuppressWarnings("unchecked")
-	public List<String> getStoreSettings(String coreName, String field){
-		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+	public List<String> getStoreSettings(String storeId, String field){
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
 			synchronized(config) {
 				return config.getList(field);

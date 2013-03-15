@@ -1,12 +1,15 @@
 package com.search.manager.schema;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -18,6 +21,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -32,14 +39,52 @@ import com.search.manager.schema.model.VerifiableModel;
 import com.search.manager.schema.model.bf.BoostFunctionModel;
 import com.search.manager.schema.model.mm.MinimumToMatchModel;
 import com.search.manager.schema.model.qf.QueryFieldsModel;
+import com.search.manager.service.UtilityService;
 import com.search.ws.ConfigManager;
 
 public class SolrSchemaUtility {
 
 	private final static Logger logger = Logger.getLogger(SolrSchemaUtility.class);
 	
-	public static Schema getSchema(String serverName, String storeName) {
-		return getSchema(ConfigManager.getInstance().getServerParameter(serverName, "url").replace("(store)", storeName) 
+	public static Schema getDefaultSchema(){
+		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+		Schema schema = (Schema) attr.getAttribute("storeSchema", RequestAttributes.SCOPE_SESSION);
+		if (schema == null) {
+			// get default server for store
+			ConfigManager cm = ConfigManager.getInstance();
+			if (cm != null) {
+				schema = SolrSchemaUtility.getSchema(UtilityService.getServerName(), UtilityService.getStoreId());
+			}
+			attr.setAttribute("storeSchema", schema, RequestAttributes.SCOPE_SESSION);
+			
+			//store indexedFields in session
+			if(schema != null){
+				
+				List<Field> fields = schema.getIndexedFields();
+				List<String> indexedFields = new ArrayList<String>();
+				List<String> indexedWildcardFields = new ArrayList<String>();
+				
+				if(CollectionUtils.isNotEmpty(fields)){
+					for(Field field : fields){
+						String fieldName = field.getName();
+						if(fieldName.contains("*")){
+							indexedWildcardFields.add(field.getName());
+						}else{
+							indexedFields.add(field.getName());
+						}
+					}
+					attr.setAttribute("indexedFields", indexedFields, RequestAttributes.SCOPE_SESSION);
+					attr.setAttribute("indexedWildcardFields", indexedWildcardFields, RequestAttributes.SCOPE_SESSION);
+				}   
+			}
+		}
+		
+		return schema;
+	}
+	
+	public static Schema getSchema(String serverName, String storeId) {
+		String core = ConfigManager.getInstance().getStoreParameter(storeId, "core");
+		return getSchema(ConfigManager.getInstance().getServerParameter(serverName, "url").replace("(core)", core) 
 				+ "admin/file/?file=schema.xml");
 	}
 		
@@ -442,34 +487,34 @@ public class SolrSchemaUtility {
 //
 //
 //
-//		String[] bfs =
-//		{
-//				/*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
-//				"linear(PcMall_PopularityScale,1,0)^2",
-//				"ms(NOW)^2.0",
-//				"ms(NOW,2000-01-01T00:00:00Z)^2.0",
-//				"ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
-//				"ms(NOW,2000-01-01T00:65:61Z)^2.0",
+		String[] bfs =
+		{
+				/*"sum(linear(eCOST_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"sum(linear(PcMall_PopularityScale,1.2,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0))^10.0",
+				"linear(PcMall_PopularityScale,1,0)^2",
+				"ms(NOW)^2.0",
+				"ms(NOW,2000-01-01T00:00:00Z)^2.0",
+				"ms(NOW,2000-01-01T00:00:00ABZZ)^2.0",
+				"ms(NOW,2000-01-01T00:65:61Z)^2.0",
 //				"sum(linear(PcMall_PopularityScale,PcMall_PopularityScale,0),map(NextDayUnits,1,999999999,8),map(SecondDayUnits,1,999999999,8.0)^10.0",*/
-//				
+				"sum(linear(PcMall_PopularityScale,1,0),0)^2",
 //				"ms(NOW/HOUR)^2.0",
 //				"ms(NOW/2HOURS)^2.0",
 //				"ms(NOW/DAY+6MONTHS-3DAYS)^2.0"
-//		};
-//
-//		for (String bf: bfs) {
-//			try {
-//				BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
-//				if (model.validate()) {
-//					logger.debug(model + " is valid.");
-//
-//				}
-//			} catch (Exception e) {
-//				logger.debug(bf + " is invalid: " + e.getMessage());
-//			}
-//		}
+		};
+
+		for (String bf: bfs) {
+			try {
+				BoostFunctionModel model = BoostFunctionModel.toModel(schema, bf, false);
+				if (model.validate()) {
+					logger.debug(model + " is valid.");
+
+				}
+			} catch (Exception e) {
+				logger.debug(bf + " is invalid: " + e.getMessage());
+			}
+		}
 		
 	}
 	

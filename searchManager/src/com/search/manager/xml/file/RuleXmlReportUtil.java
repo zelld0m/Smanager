@@ -78,10 +78,14 @@ public class RuleXmlReportUtil{
 	
 	public static SubReportHeader getVersionSubReportHeader(RuleXml xml, RuleEntity ruleEntity){
 		SubReportHeader subReportHeader = new SubReportHeader();
+
 		String storeId = UtilityService.getStoreId();
+
+		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
+		subReportHeader.addRow("Name: ", StringUtils.defaultIfBlank(xml.getName(),""));
+		subReportHeader.addRow("Notes: ", StringUtils.defaultIfBlank(xml.getNotes(),""));
 		subReportHeader.addRow("Date Created: ", xml.getCreatedDateTime() != null ? JodaTimeUtil.formatDateTimeFromStorePattern(storeId,  xml.getCreatedDateTime()) : "");
 		subReportHeader.addRow("Created By: ", xml.getCreatedBy());
-		subReportHeader.addRow("Version No.: ", String.valueOf(xml.getVersion()));
 		
 		return subReportHeader;
 	}

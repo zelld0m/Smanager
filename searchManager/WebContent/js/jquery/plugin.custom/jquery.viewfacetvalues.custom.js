@@ -85,6 +85,7 @@
 					'facet.limit': -1,
 					'facet.sort':'HEX',
 					'gui': true,
+					'store': GLOBAL_storeId,
 					'json.nl':'map'
 			};
 
@@ -172,7 +173,7 @@
 		base.getFacetValueList = function () {
 			var self = this;
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_storeId + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
+					GLOBAL_solrUrl + GLOBAL_storeCore + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();

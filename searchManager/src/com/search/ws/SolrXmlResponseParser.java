@@ -186,6 +186,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
 							String edp = kNode.getTextContent();
 							tagSearchResult(currentDoc, docNode, facet);
+							if (!includeEDP) {
+								docNode.removeChild(kNode);
+							}
 							if (facet instanceof ElevateResult) {
 								elevatedEntries.add(mainDoc.importNode(docNode, true));
 							}
@@ -258,6 +261,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 								kNode.getAttributes().getNamedItem(SolrConstants.ATTR_NAME).getNodeValue()
 								.equalsIgnoreCase(SolrConstants.ATTR_NAME_VALUE_EDP)) {
 							String edp = kNode.getTextContent();
+							if (!includeEDP) {
+								docNode.removeChild(kNode);
+							}
 							resultDocuments.put(edp, docNode);
 							break;
 						}
@@ -352,7 +358,8 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 						addedRecords++;
 						Node docNode = children.item(j);
 						if (docNode.getNodeName().equalsIgnoreCase(SolrConstants.TAG_DOC)) {
-							String edp = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP).getTextContent();
+							Node edpNode = locateElementNode(docNode, SolrConstants.TAG_INT, SolrConstants.ATTR_NAME_VALUE_EDP);
+							String edp = edpNode.getTextContent();
 							if (expiredElevatedEDPs.contains(edp)) {
 								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_ELEVATE_EXPIRED);
 								docNode.appendChild(expiredNode);
@@ -360,6 +367,9 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 							if (expiredDemotedEDPs.contains(edp)) {
 								Node expiredNode = elevateDoc.createElement(SolrConstants.TAG_DEMOTE_EXPIRED);
 								docNode.appendChild(expiredNode);
+							}
+							if (!includeEDP) {
+								docNode.removeChild(edpNode);
 							}
 							resultNode.appendChild(mainDoc.importNode(docNode, true));
 							if (explainNode != null) {
@@ -462,12 +472,6 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				responseHeaderNode.appendChild(redirectNode);
 			}
 			
-//			if (StringUtils.isNotBlank(changedKeyword)) {
-//				Node redirectNode = mainDoc.createElement(SolrConstants.TAG_REDIRECT);
-//				redirectNode.appendChild(mainDoc.createTextNode(changedKeyword));				
-//				responseHeaderNode.appendChild(redirectNode);
-//			}
-			
 			if (activeRules != null) {
 				Node activeRuleNode = mainDoc.createElement(SolrConstants.TAG_SEARCH_RULES);
 				for (Map<String, String> rule: activeRules) {
@@ -565,7 +569,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
 			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
-				key = ConfigManager.getInstance().getParameterByStoreId(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+				key = ConfigManager.getInstance().getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				isFacetTemplate = true;
 			}
 

@@ -46,7 +46,7 @@ public class RelevancyRuleBuilder implements Runnable {
 	private String logErrorIndex;
 	private String mailNotification;
 
-	private int count;
+	private int dbCount;
 	private int relevancyRuleCount;
 	private int relevancyRuleCountDefault;
 
@@ -109,7 +109,7 @@ public class RelevancyRuleBuilder implements Runnable {
 			long indexTime = System.currentTimeMillis();
 
 			if (relevancies != null) {
-				count = relevancies.size();
+				dbCount = relevancies.size();
 				solrImport(relevancies);
 			}
 
@@ -128,7 +128,7 @@ public class RelevancyRuleBuilder implements Runnable {
 					+ " secs.");
 			info.append("\n Index Time (Min): "
 					+ (elapsedIndexTime / (60 * 1000F)) + " mins.");
-			info.append("\n Total Relevancy fetched from database : " + count);
+			info.append("\n Total Relevancy fetched from database : " + dbCount);
 			info.append("\n Total Relevancy rule indexed : "
 					+ relevancyRuleCount);
 			info.append("\n Total RelevancyDefault rule indexed : "
@@ -158,6 +158,7 @@ public class RelevancyRuleBuilder implements Runnable {
 					.composeSolrDocsRelevancy(relevancies);
 
 			if (solrInputDocuments != null && solrInputDocuments.size() > 0) {
+				dbCount += solrInputDocuments.size();
 				// Add rules to solr index.
 				solrServer.addDocs(solrInputDocuments);
 				solrServer.optimize();
@@ -200,7 +201,7 @@ public class RelevancyRuleBuilder implements Runnable {
 			relevancyDefault.setRelevancyId(store.getStoreId() + "_default");
 			relevancyDefault = daoService.getRelevancyDetails(relevancyDefault);
 
-			if (relevancyDefault != null) {
+			if (relevancyDefault != null && relevancyDefault.getRelevancyId() != null) {
 				solrInputDocuments.add(SolrDocUtil
 						.composeSolrDoc(relevancyDefault));
 			}
