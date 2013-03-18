@@ -241,6 +241,16 @@ public class ConfigManager {
 		return null;
 	}
 	
+	public boolean isMemberOf(String groupName, String storeId){
+		List<String> storeGroups = getStoreParameterList(storeId, "group-membership/group");
+		
+		if(CollectionUtils.isNotEmpty(storeGroups) && storeGroups.contains(groupName)){
+			return true;
+		}
+		
+		return false;
+	}
+	
     public static void main(String[] args) {
     	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
 //		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));

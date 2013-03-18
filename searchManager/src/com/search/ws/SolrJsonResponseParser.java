@@ -36,7 +36,6 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import com.search.manager.service.UtilityService;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
 
@@ -532,7 +531,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
-			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !UtilityService.isMemberOf("PCM")){
+			ConfigManager cm = ConfigManager.getInstance();
+			
+			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !cm.isMemberOf("PCM", facetSortRule.getStoreId())){
 				for (String lvl1Key: root.getFacets()) {
 					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
 					lvl1Map.put(lvl1Key, lvl1.getCount());
@@ -675,8 +676,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			return;
 		}
 
+		ConfigManager cm = ConfigManager.getInstance();
+		
 		for (String key: facetSortRule.getItems().keySet()) {
-			if (!(StringUtils.equals("Category", key) && UtilityService.isMemberOf("PCM"))) {
+			if (!(StringUtils.equals("Category", key) && cm.isMemberOf("PCM", facetSortRule.getStoreId()))) {
 				
 				// grab a copy of the fields
 				List<FacetEntry> entries = new ArrayList<FacetEntry>();
