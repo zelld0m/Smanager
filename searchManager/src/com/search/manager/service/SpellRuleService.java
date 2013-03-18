@@ -14,8 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoException;
-import com.search.manager.dao.sp.RuleStatusDAO;
-import com.search.manager.dao.sp.SpellRuleDAO;
+import com.search.manager.dao.DaoService;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.RecordSet;
@@ -31,10 +30,7 @@ public class SpellRuleService {
     private static final Logger logger = LoggerFactory.getLogger(SpellRuleService.class);
 
     @Autowired
-    private SpellRuleDAO spellRuleDAO;
-
-    @Autowired
-    private RuleStatusDAO ruleStatusDAO;
+    private DaoService daoService;
 
     @RemoteMethod
     public ServiceResponse<RecordSet<SpellRule>> getSpellRule(String ruleId, String searchTerm, String suggestion,
@@ -52,7 +48,7 @@ public class SpellRuleService {
 
             rule.setStatus(status);
 
-            response.success(spellRuleDAO.getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)));
+            response.success(daoService.getSpellRule(new SearchCriteria<SpellRule>(rule, pageNumber, itemsPerPage)));
         } catch (DaoException e) {
             logger.error("Failed during getSpellRule()", e);
             response.error("Failed to retrieve Did You Mean rules.");
@@ -80,10 +76,10 @@ public class SpellRuleService {
                 rule.setLastModifiedBy(username);
                 rule.setSearchTerms(searchTerms);
                 rule.setSuggestions(suggestions);
-                rule.setRuleId(spellRuleDAO.addSpellRuleAndGetId(rule));
+                rule.setRuleId(daoService.addSpellRuleAndGetId(rule));
 
                 try {
-                    ruleStatusDAO.addRuleStatus(new RuleStatus(RuleEntity.SPELL, storeId, rule.getRuleId(), rule
+                    daoService.addRuleStatus(new RuleStatus(RuleEntity.SPELL, storeId, rule.getRuleId(), rule
                             .getRuleId(), username, username, RuleStatusEntity.ADD, RuleStatusEntity.UNPUBLISHED));
                 } catch (DaoException e) {
                     logger.error("Failed to create rule status for did you mean:)" + rule.getRuleId(), e);
@@ -117,7 +113,7 @@ public class SpellRuleService {
                 rule.setSearchTerms(searchTerms);
                 rule.setSuggestions(suggestions);
 
-                spellRuleDAO.updateSpellRule(rule);
+                daoService.updateSpellRule(rule);
             }
         } catch (DaoException e) {
             logger.error("Error occured in updateSpellRule()", e);
@@ -140,6 +136,16 @@ public class SpellRuleService {
     }
 
     private boolean isDuplicateSearchTerm(String ruleId, String searchTerm) throws DaoException {
-        return spellRuleDAO.checkDuplicateSearchTerm(ruleId, UtilityService.getStoreId(), searchTerm);
+        boolean retVal = false;
+        RecordSet<SpellRule> spellRules = daoService
+                .checkDuplicateSearchTerm(UtilityService.getStoreId(), searchTerm);
+
+        if (spellRules.getTotalSize() > 0 && StringUtils.isNotEmpty(ruleId)) {
+            retVal = !ruleId.equals(spellRules.getList().get(0).getRuleId());
+        } else {
+            retVal = spellRules.getTotalSize() > 0 && StringUtils.isEmpty(ruleId);
+        }
+
+        return retVal;
     }
 }

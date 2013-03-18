@@ -33,6 +33,7 @@ import com.search.manager.model.RelevancyField;
 import com.search.manager.model.RelevancyKeyword;
 import com.search.manager.model.RuleStatus;
 import com.search.manager.model.SearchCriteria;
+import com.search.manager.model.SpellRule;
 import com.search.manager.model.SearchCriteria.ExactMatch;
 import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
@@ -279,4 +280,10 @@ public interface DaoService extends SearchDaoService {
 	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException;
 
+	/* Did you mean */
+	public RecordSet<SpellRule> getSpellRule(SearchCriteria<SpellRule> criteria) throws DaoException;
+	public String addSpellRuleAndGetId(SpellRule rule) throws DaoException;
+	public int updateSpellRule(SpellRule rule) throws DaoException;
+	public int deleteSpellRule(SpellRule rule) throws DaoException;
+	public RecordSet<SpellRule> checkDuplicateSearchTerm(String storeId, String searchTerm) throws DaoException;
 }
