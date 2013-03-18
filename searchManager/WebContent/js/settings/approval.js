@@ -281,6 +281,8 @@
 								$tr.find("td#ruleOption > img.previewIcon").attr("id", list[i]["ruleRefId"]).preview({
 									ruleType: entityName,
 									ruleId: ruleStatus["ruleId"],
+									ruleRefId: ruleStatus["ruleRefId"],
+									ruleStatusId: ruleStatus["ruleStatusId"],
 									center: true,
 									enablePreTemplate: true,
 									enablePostTemplate: true,
@@ -301,7 +303,7 @@
 													
 													switch($(evt.currentTarget).attr("id")){
 													case "approveBtn": 
-														DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+														DeploymentServiceJS.approveRule(tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 															callback: function(data){
 																postMsg(data,true);	
 																getApprovalList();
@@ -316,7 +318,7 @@
 															jAlert("Deleted rules cannot be rejected!","Approval");
 															return;
 														}
-														DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(ruleStatus["ruleRefId"]) , comment, $.makeArray(ruleStatus["ruleStatusId"]), {
+														DeploymentServiceJS.unapproveRule(tabSelectedText, $.makeArray(base.options.ruleRefId) , comment, $.makeArray(base.options.ruleStatusId), {
 															callback: function(data){
 																postMsg(data,false);	
 																getApprovalList();
