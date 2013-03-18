@@ -283,6 +283,8 @@
 									ruleId: ruleStatus["ruleId"],
 									ruleRefId: ruleStatus["ruleRefId"],
 									ruleStatusId: ruleStatus["ruleStatusId"],
+									requestType: ruleStatus["updateStatus"],
+									ruleInfo: ruleStatus["description"],
 									center: true,
 									enablePreTemplate: true,
 									enablePostTemplate: true,
