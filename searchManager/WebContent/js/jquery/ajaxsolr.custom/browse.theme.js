@@ -504,12 +504,13 @@
 		output += '  <tbody>';  
 
 		for (var docField in doc){
+			
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
 			output += '    <td class="w205"><a href="javascript:void(0);" class="attributes"><div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div></a>';
 			output += '		<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
-			output += '			<input type="hidden" class="attribValue" value="' + doc[docField] + '">';
+			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
 			output += '       </div>';
 			output += '    </td>';
 			output += ' </tr>';  

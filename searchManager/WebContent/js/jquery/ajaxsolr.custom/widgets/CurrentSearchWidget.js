@@ -41,8 +41,12 @@
 				var filterFieldName = facetValue.substr(0, facetValue.indexOf(':'));
 				var filterFieldValue = facetValue.substr(facetValue.indexOf(':') + 1);
 				
-				var colonCheck = facetValue.match(/:+/g);
-				var spaceCheck = facetValue.match(/\s+/g);
+				var conditionSelector = facetValue.match(/Refurbished_Flag|OpenBox_Flag|Clearance_Flag/g);
+				var pcmgSelector = facetValue.match(/PCMallGov_ACAStoreFlag|PCMallGov_OpenStoreFlag|PCMallGov_GovStoreFlag/g);
+				
+				var multiFieldFq = !$.isEmptyObject(conditionSelector) && conditionSelector.length > 0  ||
+				!$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0;
+				
 				
 				if (facetValue === searchWithin){
 					links.push(AjaxSolr.theme('createLink', "Search Within: " + facetValue  , self.removeFacetTemplate(facetValue), "single"));
@@ -56,13 +60,10 @@
 					}
 				}
 				// Multiple solr field in one fq
-				else if(!$.isEmptyObject(colonCheck) && colonCheck.length > 1 && !$.isEmptyObject(spaceCheck) && spaceCheck.length > 0){ 
+				else if(multiFieldFq){ 
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 
-					var conditionSelector = facetValue.match(/Refurbished_Flag|OpenBox_Flag|Clearance_Flag/g);
-					var pcmgSelector = facetValue.match(/PCMallGov_ACAStoreFlag|PCMallGov_OpenStoreFlag|PCMallGov_GovStoreFlag/g);
-					
 					displayFieldName = !$.isEmptyObject(conditionSelector) && conditionSelector.length > 0 ? "Condition" : displayFieldName;
 					displayFieldName = !$.isEmptyObject(pcmgSelector) && pcmgSelector.length > 0 ? "Catalog" : displayFieldName;
 					
@@ -85,7 +86,7 @@
 				else { // Multiple value for single field
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
-					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")|(\b\w+\b)/g);
+					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+") | \b([\w+\"\-\.\:\s\\\/]+)\b/g);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					var hasDisplayOverride = false;
