@@ -19,7 +19,6 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -677,7 +676,7 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		}
 
 		for (String key: facetSortRule.getItems().keySet()) {
-			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId()))) {
+			if (!(StringUtils.equals("Category", key) && UtilityService.isMemberOf("PCM"))) {
 				
 				// grab a copy of the fields
 				List<FacetEntry> entries = new ArrayList<FacetEntry>();
