@@ -33,6 +33,7 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
+import com.search.manager.service.UtilityService;
 
 public class SolrXmlResponseParser extends SolrResponseParser {
 
@@ -568,7 +569,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				sortType = facetSortRule.getSortType();
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
-			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
+			if (StringUtils.equals("Category", key) && UtilityService.isMemberOf("PCM")) {
 				key = ConfigManager.getInstance().getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				isFacetTemplate = true;
 			}
