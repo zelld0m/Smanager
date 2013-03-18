@@ -168,7 +168,7 @@ public class TopKeywordService {
     @RemoteMethod
     public boolean sendCustomRangeAsEmail(Date from, Date to, String customFilename, String[] recipients) {
         return commandExecutor.addCommand(new TopKeywordMailCommand(reportNotificationMailService, UtilityService
-                .getStoreName(), asUTC(from), asUTC(to), recipients, StringUtils.isBlank(customFilename) ? "customRangeTopKeywords"
+                .getStoreId(), asUTC(from), asUTC(to), recipients, StringUtils.isBlank(customFilename) ? "customRangeTopKeywords"
                 : customFilename + ".csv", new ByteArrayInputStream(getFileHeader("customRangeTopKeywords-splunk")
                 .getBytes()), "text/csv"));
     }
