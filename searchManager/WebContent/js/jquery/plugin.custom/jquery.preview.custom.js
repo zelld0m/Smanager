@@ -718,6 +718,8 @@
 			headerText:"Rule Preview",
 			ruleType: "",
 			ruleId: "",
+			ruleRefId: "",
+			ruleStatusId: "",
 			ruleInfo: "",
 			requestType: "",
 			center: false,
