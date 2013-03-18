@@ -21,6 +21,7 @@
 
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
 
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
@@ -30,6 +31,18 @@
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
+	
+	//store schema indexed fields
+	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
+	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
+	var GLOBAL_indexedWildcardFields = GLOBAL_schemaFields["indexedWildcardFields"];
+	
+	if(GLOBAL_indexedWildcardFields){
+		for(var i=0; i < GLOBAL_indexedWildcardFields.length; i++) {
+			GLOBAL_indexedWildcardFields[i] = '^' + GLOBAL_indexedWildcardFields[i].replace(/\*/, '.*') + '$';
+		}
+	}
+	
 	
 	// Store parameters
 	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');

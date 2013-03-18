@@ -507,8 +507,16 @@
 			
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
-			output += '    <td class="w205"><a href="javascript:void(0);" class="attributes"><div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div></a>';
-			output += '		<div>';
+			output += '    <td class="w205">';
+			if((GLOBAL_indexedFields.indexOf(docField) != -1) || $.isWildcardField(docField, GLOBAL_indexedWildcardFields)){
+				output += '			<a href="javascript:void(0);" class="attributes nonindexed">';
+				output += '				<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+				output += '			</a>';		
+			}else{
+				output += '			<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+			}
+			
+			output += '			<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
 			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
 			output += '       </div>';

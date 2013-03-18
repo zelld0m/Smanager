@@ -473,7 +473,7 @@
 						});
 					}
 				},
-				mouseenter: showHoverInfo,
+				mouseenter: showHoverInfo
 			},{item: $item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 		};
 
@@ -666,7 +666,7 @@
 		base.getItemListTemplate =function(){
 			var template  = '';
 
-			template += '	<div class="version w425 floatR border">';
+			template += '	<div class="version floatR border" style="width: 435px;">';
 			template += '	<div id="preloader"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif"></div>';
 			template += '	<div id="compareSection" style="display:none">';
 			template += '	<div style="width:100%;height:28px;padding-top:5px;background:#3f63a1;border-bottom:2px solid">';
@@ -699,7 +699,7 @@
 			template += '			</ul>';
 			template += '		</div>';// end label
 
-			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
+			template += '		<div class="horizontalCont" style="float:left; width:290px;">';// content
 			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none;border:0; padding-top: 5px;">';
 			template += '					<ul id="ruleDetails" style="border:0">';

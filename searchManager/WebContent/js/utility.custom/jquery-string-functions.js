@@ -5,7 +5,14 @@
 jQuery.extend(
 		(function($){  
 			return {  
-
+				isWildcardField : function(fieldName, fieldList){
+					if(!$.isEmptyObject(fieldList) && $.isNotBlank(fieldName)){
+						var patt = new RegExp("("+fieldList.join("|")+")");
+						return patt.test(fieldName);
+					}
+					return false;
+				},
+				
 				setDefaultIfEmpty: function(obj, defaultValue){
 					return (obj) ? obj[0] : defaultValue;
 				},
