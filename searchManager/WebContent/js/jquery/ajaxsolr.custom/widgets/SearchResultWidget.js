@@ -237,6 +237,9 @@
 							content.find('a.attributes').click(function(event) {
 								var field = $(this).parent().find(".attribField").val();
 								var value = AjaxSolr.Parameter.escapeValue($(this).parent().find(".attribValue").val());
+								if(!$.startsWith(value,'"') && !$.endsWith(value,'"')){
+									value = '"' + value + '"'; 
+								}
 								self.manager.store.addByValue('fq', field + ':' + value);
 								self.manager.doRequest(0);
 							});

@@ -14,7 +14,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -559,6 +558,8 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 		if (facetSortRule == null || facetFieldsNode == null) {
 			return;
 		}
+		
+		ConfigManager cm = ConfigManager.getInstance();
 
 		for (String key: facetSortRule.getItems().keySet()) {
 			
@@ -568,7 +569,7 @@ public class SolrXmlResponseParser extends SolrResponseParser {
 				sortType = facetSortRule.getSortType();
 			}
 			List<String> elevatedValues = facetSortRule.getItems().get(key);
-			if (StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId())) {
+			if (StringUtils.equals("Category", key) && cm.isMemberOf("PCM", facetSortRule.getStoreId())) {
 				key = ConfigManager.getInstance().getStoreParameter(facetSortRule.getStoreId(), SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
 				isFacetTemplate = true;
 			}

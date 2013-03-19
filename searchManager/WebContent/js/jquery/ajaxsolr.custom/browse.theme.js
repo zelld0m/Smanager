@@ -504,6 +504,7 @@
 		output += '  <tbody>';  
 
 		for (var docField in doc){
+			
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
 			output += '    <td class="w205">';
@@ -517,7 +518,7 @@
 			
 			output += '			<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
-			output += '			<input type="hidden" class="attribValue" value="' + doc[docField] + '">';
+			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
 			output += '       </div>';
 			output += '    </td>';
 			output += ' </tr>';  

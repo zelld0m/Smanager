@@ -139,6 +139,9 @@
 					var mc = Math.floor(settings.maxMultiMatch / 2);
 					var begin = Math.max(1, (idx - mc));
 					var end = Math.min(len, Math.max(settings.maxMultiMatch, (idx + mc)));
+					if (begin > 1) { 
+						end -= 1;
+					}
 					var si = idx - begin;
 
 					// clear selector select element
@@ -156,6 +159,10 @@
 
 					// set selectedIndex of selector
 					selector.get(0).selectedIndex = si;
+					
+					if (begin > 1) {
+						selector.prepend($(self.get(0).options[1]).clone().attr(idxAttr, 0));
+					}
 				}
 		};
 

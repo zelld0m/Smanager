@@ -19,7 +19,6 @@ import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
 import net.sf.json.groovy.JsonSlurper;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -37,7 +36,6 @@ import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.FacetEntry;
 import com.search.manager.model.SearchResult;
-import com.search.manager.service.UtilityService;
 
 public class SolrJsonResponseParser extends SolrResponseParser {
 
@@ -533,7 +531,9 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 		
 		JSONObject facets = new JSONObject();
 		if (root.getFacetCount() > 1) {
-			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !UtilityService.isMemberOf("PCM")){
+			ConfigManager cm = ConfigManager.getInstance();
+			
+			if (facetSortRule == null || facetSortRule.getItems().get("Category") == null || !cm.isMemberOf("PCM", facetSortRule.getStoreId())){
 				for (String lvl1Key: root.getFacets()) {
 					CNetFacetTemplate lvl1 = root.getFacet(lvl1Key);
 					lvl1Map.put(lvl1Key, lvl1.getCount());
@@ -676,8 +676,10 @@ public class SolrJsonResponseParser extends SolrResponseParser {
 			return;
 		}
 
+		ConfigManager cm = ConfigManager.getInstance();
+		
 		for (String key: facetSortRule.getItems().keySet()) {
-			if (!(StringUtils.equals("Category", key) && ArrayUtils.contains(new String[]{"pcmall", "pcmallcap", "pcmgbd"}, facetSortRule.getStoreId()))) {
+			if (!(StringUtils.equals("Category", key) && cm.isMemberOf("PCM", facetSortRule.getStoreId()))) {
 				
 				// grab a copy of the fields
 				List<FacetEntry> entries = new ArrayList<FacetEntry>();
