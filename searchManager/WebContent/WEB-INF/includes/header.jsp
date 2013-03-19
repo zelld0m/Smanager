@@ -22,7 +22,9 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
-
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
+  
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
     
@@ -42,7 +44,6 @@
 			GLOBAL_indexedWildcardFields[i] = '^' + GLOBAL_indexedWildcardFields[i].replace(/\*/, '.*') + '$';
 		}
 	}
-	
 	
 	// Store parameters
 	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');
