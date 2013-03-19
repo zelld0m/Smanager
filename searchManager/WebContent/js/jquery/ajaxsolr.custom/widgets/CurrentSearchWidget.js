@@ -86,7 +86,7 @@
 				else { // Multiple value for single field
 					var isMultipleSelection = filterFieldValue.indexOf('(')==0 && filterFieldValue.indexOf(')')==filterFieldValue.length-1;
 					var isDynamicAttr = dynamicAttr && dynamicAttr[filterFieldName];
-					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+") | \b([\w+\"\-\.\:\s\\\/]+)\b/g);
+					var arrSelection = filterFieldValue.replace(/\\\"/g, "\%\%\%").match(/("[^"]+")|(\b\w+\b)/g);
 					var clickHandler = self.removeFacet(facetValue);
 					var displayFieldName = filterFieldName;
 					var hasDisplayOverride = false;
