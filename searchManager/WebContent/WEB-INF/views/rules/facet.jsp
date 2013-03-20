@@ -101,7 +101,7 @@
 	  	<div class="w282 padT10 newFacetSort">
 	  		<label class="floatL w80 txtLabel">Rule Type </label>
 		   	<label class="floatL">
-		    	<select name="select" id="popType" class="selectCombo mar0 w168 floatR marT6" title="Select Rule Type" >
+		    	<select name="select" id="popType" class="selectCombo mar0 w200 floatR marT6" title="Select Rule Type" >
 		     		<option value="Keyword">Keyword</option>
 		     		<option value="Template">Template</option>
 		    	</select>
@@ -110,21 +110,21 @@
 		   	
 		   	<div id="keywordinput">
 	  		<label class="floatL w80 txtLabel">Keyword </label> 
-			<label class="floatL"><input id="popKeywordName" type="text" maxlength="100" style="width:162px"></label>
+			<label class="floatL"><input class="w194" id="popKeywordName" type="text" maxlength="100"></label>
 			</div>
 			<div class="clearB"></div>
 			
 			<div id="templatelist" style="display: none;">
 		   		<div class="floatL w80 txtLabel">Template Name</div>
-		   		<div class="floatL">
-		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
+		   		<div class="floatL w200">
+		   			<select name="select" id="popName" class="selectCombo mar0 marT6" title="Select Template Name" ></select>
 		   		</div>
 		   	</div>
 		   	<div class="clearB"></div>
 		   	
 		   	<label class="floatL w80 txtLabel marT8">Sort Order</label>
 		   	<label class="floatL marT8">
-		   		<select name="select" id="popSortOrder" class="selectCombo mar0 w168 floatR marT6" title="Select Sort Order" ></select>
+		   		<select name="select" id="popSortOrder" class="selectCombo mar0 w200 floatR marT6" title="Select Sort Order" ></select>
 		   	</label>
 			<div class="clearB"></div>
 			
