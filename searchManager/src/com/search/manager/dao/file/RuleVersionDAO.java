@@ -147,7 +147,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 					if(!ruleVersion.isDeleted()){
 						if(ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml){
 							ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
-							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreName()));
+							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreId()));
 							ruleVersionInfoList.add((RuleXml) productDetailsAware);
 						}else{
 							ruleVersionInfoList.add(ruleVersion);
@@ -175,6 +175,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 		return getRuleVersions(getRuleVersionList(store, ruleId));
 	}
 
+	@SuppressWarnings("unchecked")
 	public int getRuleVersionsCount(String store, String ruleId) {
 		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
 		int count = 0;

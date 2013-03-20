@@ -133,7 +133,7 @@
 				}
 
 				if(FACET){
-					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
+					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
@@ -142,11 +142,12 @@
 								newRecord: false,
 								item: e.data.item,
 								showPosition: true,
-								maxPosition: self.selectedRuleItemTotal,
+								maxPosition: self.selectedRuleItemTotal + 1,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									ElevateServiceJS.updateElevateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
-											showActionResponse(data, "update", (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]));
+											var updateMessage = (e.data.item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + e.data.item.condition["readableString"] : $.isBlank(e.data.item["dpNo"])? "Product Id#: " + e.data.item["edp"] : "SKU#: " + e.data.item["dpNo"]);
+											showActionResponse(data, "update", updateMessage);
 											self.populateRuleItem(self.selectedRuleItemPage);
 										},
 										preHook: function(){ 
@@ -572,7 +573,7 @@
 								ElevateServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 									callback : function(code){
 										showActionResponseFromMap(code, "add", "Multiple Rule Item Add",
-												"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+										"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 										self.populateRuleItem(self.selectedRuleItemPage);
 									},
 									preHook: function(){ 
@@ -593,7 +594,9 @@
 							}
 						});
 					}
-				});
+				, 
+				mouseenter: showHoverInfo
+				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 			},
 
 			addRuleItemOptionListener: function(){
@@ -617,13 +620,6 @@
 					$("#tileViewIcon").removeClass("active");
 					self.setRuleItemDisplay();
 				}});
-
-				$("#addRuleItemIcon").off().on({
-					click: function(e){
-						self.showAddProductItem(e);
-					}, 
-					mouseenter: showHoverInfo
-				},{locked: self.selectedRuleStatus["locked"] || !allowModify});
 
 				$("#clearRuleItemIcon").off().on({
 					click: function(e){
@@ -662,7 +658,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key]));
 							count++;
 						};
 
@@ -728,7 +724,8 @@
 
 				ElevateServiceJS.updateElevate(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						showActionResponse(code, "update position", updateMessage);
 						self.populateRuleItem();
 					},
 					preHook: function(){

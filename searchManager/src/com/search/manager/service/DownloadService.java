@@ -203,7 +203,7 @@ public class DownloadService {
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
 			rowHeader = createRow(worksheet, ++rowIndex, 25f);
 			createCell(rowHeader, 0, cellStyleHeaderParam, "Generated on:");
-			createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreName(), model.getReportHeader().getDate()));
+			createCell(rowHeader, 1, cellStyleHeaderValue, DateAndTimeUtils.formatDateTimeUsingConfig(UtilityService.getStoreId(), model.getReportHeader().getDate()));
 			worksheet.addMergedRegion(new CellRangeAddress(rowIndex,rowIndex,1,model.getColumnCount() - 1));
 		}
 
@@ -303,9 +303,9 @@ public class DownloadService {
 	
 	public void download(HttpServletResponse response, HSSFWorkbook workbook, String fileName) throws ClassNotFoundException {
 		logger.debug("Downloading Excel report");
-		response.setHeader("Content-Disposition", "inline; filename=" + fileName);
 		// Make sure to set the correct content type
 		response.setContentType("application/vnd.ms-excel");
+		response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
 		// Write to the output stream
 		
 		logger.debug("Writing report to the stream");

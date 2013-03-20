@@ -48,14 +48,14 @@ public class CommandExecutor extends TimerTask {
             log.info("New command added to queue. " + command);
             return true;
         } else {
-            log.info("Unable to append command to queue.");
+            log.warn("Unable to append command to queue.");
         }
 
         return false;
     }
 
     public void run() {
-        log.info("Running command executor.");
+        log.trace("Running command executor.");
 
         if (!running.get()) {
             running.set(true);
@@ -69,7 +69,7 @@ public class CommandExecutor extends TimerTask {
                     command = commands.poll();
                 }
             } finally {
-                log.info("Command executor stopped.");
+                log.trace("Command executor going to sleep.");
                 running.set(false);
             }
         }

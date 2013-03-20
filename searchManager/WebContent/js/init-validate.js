@@ -13,6 +13,17 @@ isXSSSafeAllowNonAscii = function(text){
 	return !((text.indexOf("<") >= 0) && (text.indexOf(">") >= 0));
 };
 
+isAllowedFileName = function(text){ //invalid characters: \/:*?"<>|
+	var invalidCharsRegex= /^[^\\\/\:\*\?\"\<\>\|]*$/;
+	var hasValidChars = invalidCharsRegex.test(text);
+	return isXSSSafe(text) && hasValidChars && $.isNotBlank(text);
+}; 
+
+isAllowedSearchKeyword = function(text){
+	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\\\@\*\s\-\"\'\(\)\?\/]*$/;
+	return isXSSSafe(text) && alphaNumRegex.test(text);
+};
+
 isAllowedName = function(text){
 	var alphaNumRegex= /^[a-zA-Z0-9_&\.\:\;\\\@\*\s\-\"\'\(\)\?\/]*$/;
 	return isXSSSafe(text) && alphaNumRegex.test(text) && $.isNotBlank(text);
@@ -40,6 +51,31 @@ validateEmail = function(fieldName, fieldValue, length) {
 			return false;
 		};
 	}
+	return true;
+};
+
+validateComment = function(moduleName, comment, minLength, maxLength){
+	if(minLength != undefined && minLength > 0) {
+		if ($.isBlank(comment)) {
+			jAlert("Please add a comment.",moduleName);
+			return false;
+		}
+		else if (comment.length < minLength){
+			jAlert("Comment should be at least " + minLength + " characters.",moduleName);
+			return false;
+		}
+	}
+	
+	if (maxLength != undefined && $.isNotBlank(comment) && comment.length > maxLength){
+		jAlert("Comment cannot exceed " + maxLength + " characters.",moduleName);
+		return false;
+	}
+	
+	if(!isXSSSafe(comment)){
+		jAlert("Invalid comment. HTML/XSS is not allowed.",moduleName);
+		return false;
+	}
+	
 	return true;
 };
 

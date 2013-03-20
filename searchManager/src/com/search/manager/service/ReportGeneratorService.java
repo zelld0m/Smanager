@@ -49,10 +49,12 @@ public class ReportGeneratorService {
 	
 	@RemoteMethod
 	public Object generateZeroResults(String content,String format) throws IOException  {
+		ConfigManager cm = ConfigManager.getInstance();
+		String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
 		
-		String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreName())+"e&wt=xml";
-	    String url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(), "url")
-		.replace("(store)", UtilityService.getStoreName()).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
+		String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId())+"e&wt=xml";
+	    String url = cm.getServerParameter(UtilityService.getServerName(), "url")
+		.replace("(core)", core).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
 	    HashMap<String, KeyValuePair> map = processFile(content,format);
         
         if(map.containsKey("error"))
@@ -93,10 +95,12 @@ public class ReportGeneratorService {
 	
 	@RemoteMethod
 	public Object generateTopKeywords(String content,String format) throws IOException  {
+		ConfigManager cm = ConfigManager.getInstance();
+		String core = cm.getStoreParameter(UtilityService.getStoreId(), "core");
 		
-        String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreName())+"e&wt=xml";
-    	String url = ConfigManager.getInstance().getServerParameter(UtilityService.getServerName(), "url")
-		.replace("(store)", UtilityService.getStoreName()).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
+        String solrParams="select?rows=1&"+ConfigManager.getInstance().getDefaultSolrParameters(UtilityService.getStoreId())+"e&wt=xml";
+    	String url = cm.getServerParameter(UtilityService.getServerName(), "url")
+		.replace("(core)", core).replace("http://",PropsUtils.getValue("browsejssolrurl")) + solrParams;
     	 
         TopKeywords top = new TopKeywords(url);
         HashMap<String, KeyValuePair> map = processFile(content,format);

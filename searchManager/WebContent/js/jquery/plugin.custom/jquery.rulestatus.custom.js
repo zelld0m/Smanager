@@ -88,7 +88,7 @@
 									moduleName: base.options.moduleName,
 									ruleType: base.options.ruleType,  
 									rule: base.options.rule,
-//									locked: selectedRuleStatus.locked || $.endsWith(selectedRule.ruleId, "_default") || !allowModify,
+									locked: e.data.selectedRuleStatus.locked || $.endsWith(e.data.rule.ruleId, "_default") || !e.data.allowModify,
 									preRestoreCallback: function(el){
 										base.options.preRestoreCallback(el);
 									},
@@ -97,7 +97,7 @@
 									}
 								});
 							}
-						});
+						}, {selectedRuleStatus: ruleStatus, rule : base.options.rule, allowModify: allowModify});
 
 						base.$el.find("#downloadVersionIcon").download({
 							headerText:"Download " + base.options.moduleName + " Rule Versions",
@@ -123,7 +123,7 @@
 
 											for(var key in params){
 												if (count>0) urlParams +='&';
-												urlParams += (key + '=' + params[key]);
+												urlParams += (key + '=' + encodeURIComponent(params[key]));
 												count++;
 											};
 

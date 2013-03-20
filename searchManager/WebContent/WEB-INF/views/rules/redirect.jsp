@@ -123,7 +123,7 @@
 	        	<h2 class="borderB padB3">Create Filter Group : 
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
-					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap' or store eq 'pcmgbd'}">
+					<c:if test="${storeId eq 'pcmall' or storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}">
 					<option value="cnet">Product Site Taxonomy</option>
 					</c:if>
 					<option value="facet">Facets</option>

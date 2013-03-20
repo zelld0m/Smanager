@@ -168,7 +168,7 @@
 									var currKeyword = $.trim(self.manager.store.values('q'));
 									var keyword = $.trim(e.data.content.find('#keyword').val());
 									var validityDate = $.trim(e.data.content.find('#validityDate').val());
-									var comment = $.trim(e.data.content.find('#comment').val());
+									var comment = $.defaultIfBlank($.trim(e.data.content.find('#comment').val()),"");
 
 									if(!validateGeneric("Keyword", keyword, 2)){
 										return
@@ -178,7 +178,13 @@
 										jAlert("SKU# " + e.data.doc["DPNo"] + " is already elevated at position " + e.data.doc["Elevate"], "Search Simulator");
 										return
 									}
+									
+									if($.isNotBlank(comment) && !validateComment("Comment", comment, 1)){
+										return
+									}
 
+									comment = comment.replace(/\n\r?/g, '<br/>');
+									
 									ElevateServiceJS.addProductItemForceAdd(keyword, e.data.doc["EDP"], 1, validityDate, comment, {
 										callback:function(data){
 											showActionResponse(data, "force add", "SKU#: " + e.data.doc["DPNo"] + " in " + keyword);
@@ -231,6 +237,9 @@
 							content.find('a.attributes').click(function(event) {
 								var field = $(this).parent().find(".attribField").val();
 								var value = AjaxSolr.Parameter.escapeValue($(this).parent().find(".attribValue").val());
+								if(!$.startsWith(value,'"') && !$.endsWith(value,'"')){
+									value = '"' + value + '"'; 
+								}
 								self.manager.store.addByValue('fq', field + ':' + value);
 								self.manager.doRequest(0);
 							});
@@ -395,9 +404,10 @@
 								base.getList();
 							},
 							preHook: function() { 
-								base.prepareList(); 
-								if($.isNotBlank(comment)){
-									ExcludeServiceJS.addComment(keyword, memberId, comment, {
+								base.prepareList();
+								if(validateComment("Comment", comment, 1)){
+									var nl2br = comment.replace(/\n\r?/g, '<br/>');
+									ExcludeServiceJS.addRuleComment(keyword, memberId, comment, {
 										callback : function(data){
 											if (data>0) base.hasChanges++;
 										}

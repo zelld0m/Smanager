@@ -74,7 +74,7 @@
 				TopKeywordServiceJS.sendCustomRangeAsEmail(self.fromDate, self.toDate, customFilename, recipients, {
 					callback: function(data){
 						if (data == true) {
-							jAlert("Email request to be processed. This requires 2-4 minutes to finish.","Top Keyword");
+							jAlert("Email request being processed. It will be sent to the specified email addresses once done.","Top Keyword");
 						}
 						else {
 							jAlert("Unable to send email.","Top Keyword");
@@ -134,7 +134,7 @@
 
 					if (isType2) {
 						$divItem.find("label.results").html(list[i]["resultCount"]);
-						$divItem.find("label.sku").html(list[i]["sku"]);
+						$divItem.find("label.sku").html($.isNotBlank(list[i]["sku"]) ? list[i]["sku"]: "&nbsp;");
 					}
 
 					$divItem.find("a.toggle").text("Show Active Rule").on({

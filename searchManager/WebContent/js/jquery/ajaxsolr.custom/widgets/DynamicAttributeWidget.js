@@ -1,6 +1,7 @@
 (function ($) {
 
 	AjaxSolr.DynamicAttributeWidget = AjaxSolr.AbstractFacetWidget.extend({	
+		moreOptionContainer: null,
 		afterRequest: function () {
 			var self = this;
 			$(self.target).empty();
@@ -16,7 +17,7 @@
 					var counter = items[0].count;
 					var objectedItems = items[0].objectedItems;
 
-					selectedFacetTemplateName = self.getSelectedFacetTemplateName(this.manager.response.responseHeader.params.fq);
+					selectedFacetTemplateName = self.getSelectedFacetTemplateName(this.manager.store.params.fq);
 
 					if(counter == 1 && (selectedFacetTemplateName === "" || selectedFacetTemplateName.indexOf(objectedItems[0].facet) != -1)){
 						selectedFacetTemplateName = objectedItems[0].facet;
@@ -45,8 +46,9 @@
 
 			if ($.isNotBlank(fq)){
 				for (var i = 0, l = fq.length; i < l; i++) {
-					if(fq[i].indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
-						facetTemplateName = fq[i].substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].length);
+					if(!$.isEmptyObject(fq[i]) && fq[i].value.indexOf(GLOBAL_storeFacetTemplateName) != -1){// Facet Template Name / Or Find By display
+						facetTemplateName = fq[i].value.substring(GLOBAL_storeFacetTemplateName.length+1,fq[i].value.length);
+						return facetTemplateName;
 					}
 				}
 			}
@@ -55,6 +57,10 @@
 		},
 
 		escapeValue: function (value) {
+			if($.isNotBlank(value) && value.indexOf("\"") > -1){
+				value = value.replace(/\"/g, "\\\"");
+			}
+			
 			return '"' + value + '"';
 		},
 
@@ -93,7 +99,7 @@
 			var i = 0;
 			var selectedItems = [];
 
-			$('.firerift-style').each(function() {
+			self.moreOptionContainer.find('.firerift-style').each(function() {
 				if ($(this).hasClass("on")){
 					var sel = $.trim($('#' + $(this).attr('rel')).val());
 					if ($.isNotBlank(sel)){
@@ -136,10 +142,14 @@
 			for(var name in storeparams){
 				if(!params[name]){
 					if ($.isArray(storeparams[name])){
-						params[name] = storeparams[name];
+						if(!$.isEmptyObject(storeparams[name])){
+							params[name] = storeparams[name];
+						}
 					}
 					else{
-						params[name] = storeparams[name].value;
+						if(storeparams[name]){
+							params[name] = storeparams[name].value;
+						}
 					}
 				}
 			}
@@ -158,11 +168,11 @@
 						else{
 							continue;
 						}
-						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(paramVal):paramVal);
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q' || name.toLowerCase()==='fq' ? encodeURIComponent(paramVal):paramVal);
 					}
 				}else{
 					if(name.toLowerCase() !== "sort".toLowerCase())
-						paramString += "&" + name + "=" + (name.toLowerCase()==='q'? encodeURIComponent(params[name]): params[name]);
+						paramString += "&" + name + "=" + (name.toLowerCase()==='q' || name.toLowerCase()==='fq' ? encodeURIComponent(params[name]): params[name]);
 				}
 			}
 
@@ -177,7 +187,8 @@
 					callback: function(data){
 						if(data){
 							self.attribMap = data;
-							self.displayDynamicAttributes(Object.keys(data), data);
+							if(!$.isEmptyObject(Object.keys(data)))
+								self.displayDynamicAttributes(Object.keys(data), data);
 						}
 					}
 				});
@@ -192,7 +203,8 @@
 					callback: function(data){
 						if(data){
 							self.attribMap = data;
-							self.displayDynamicAttributes(Object.keys(data), data);
+							if(!$.isEmptyObject(Object.keys(data)))
+								self.displayDynamicAttributes(Object.keys(data), data);
 						}
 
 					}
@@ -232,7 +244,7 @@
 					events: {
 						show: function(event, api) {
 							contentHolder = $('div', api.elements.content);
-
+self.moreOptionContainer = contentHolder;
 							contentHolder.html('<div id="preloader" class="txtAC"><img src="../images/ajax-loader-rect.gif"></div>');
 
 							$.getJSON(

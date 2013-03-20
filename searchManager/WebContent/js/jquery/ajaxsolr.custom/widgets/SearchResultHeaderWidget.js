@@ -21,7 +21,7 @@
 
 		getTemplate : function(){
 			var self = this;
-			var $rk = self.manager.response.responseHeader["replacement_keyword"];
+			var $rk = self.manager.response.responseHeader["redirect_keyword"];
 			var $ft = self.manager.response.facet_counts.facet_fields[GLOBAL_storeFacetTemplateName];
 			var template = '';
 
@@ -66,8 +66,8 @@
 				
 			};
 			
-			if(!$.isEmptyObject($rk) && $.isNotBlank($rk["type"])){
-				switch($rk["type"]){
+			if(!$.isEmptyObject($rk) && $.isNotBlank($rk["message_type"])){
+				switch($rk["message_type"]){
 				case "2": 
 					template = template.replace("%%label1%%", "Showing Results")
 					.replace("%%keyword1%%", $rk["replacement_keyword"])

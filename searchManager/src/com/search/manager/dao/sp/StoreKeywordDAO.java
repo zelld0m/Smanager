@@ -75,7 +75,7 @@ public class StoreKeywordDAO {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<StoreKeyword>() {
 	        	public StoreKeyword mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new StoreKeyword(
-	                		new Store(rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), rs.getString(DAOConstants.COLUMN_STORE_NAME)),
+	                		new Store(rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID)),
 	                		new Keyword(rs.getString(DAOConstants.COLUMN_PROD_KEYWORD_ID),rs.getString(DAOConstants.COLUMN_KEYWORD)));
 	        	}
 	        }));
@@ -125,7 +125,6 @@ public class StoreKeywordDAO {
         return DAOUtils.getItem(getSp.execute(inputs));
     }
     
-
 	private final static String GET_ELEVATE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
 	private final static String GET_EXCLUDE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
 	private final static String GET_DEMOTE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
@@ -152,6 +151,4 @@ public class StoreKeywordDAO {
 					}
 				});
     }
-  
-    
 }

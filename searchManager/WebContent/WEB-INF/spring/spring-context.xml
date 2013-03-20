@@ -27,6 +27,7 @@
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
          <property name="locations">
          	<list>
+         		<value>file:/home/solr/conf/solr.properties</value>
          		<value>file:/home/solr/conf/database.properties</value>
          		<value>file:/home/solr/conf/mail.properties</value>
          	</list>
@@ -66,6 +67,9 @@
 	
 	<!-- Loads DataSources configuration -->      
 	<import resource="spring-datasource.xml" />
+	
+	<!-- Loads Search Proxy Solr configuration -->      
+	<import resource="search-proxy-context.xml" />
 	
 	<!-- Velocity integration for template -->	
 	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">

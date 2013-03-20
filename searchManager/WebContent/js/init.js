@@ -27,7 +27,7 @@ getStoreLabel = function(storeName){
 	case "pcmall": storeLabel = "PCM"; break;
 	case "macmall": storeLabel = "MacMall"; break;
 	case "pcmallcap": storeLabel = "PCM BD"; break;
-	case "pcmgbd": storeLabel = "PCMG BD"; break;
+	case "pcmallgov": storeLabel = "PCMG BD"; break;
 	case "macmallbd": storeLabel = "MacMall BD"; break;
 	default: break;
 	}
@@ -59,7 +59,6 @@ showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
 	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
-	case  2: jAlert("Successful force " + action + " request for " + param, "Successful Request"); break;
 	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };

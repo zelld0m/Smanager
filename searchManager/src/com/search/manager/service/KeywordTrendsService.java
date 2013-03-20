@@ -39,7 +39,7 @@ public class KeywordTrendsService {
     @RemoteMethod
     public List<String> getTopTenKeywords() {
         Date recent = getMostRecentStatsDate();
-        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1, UtilityService.getStoreName());
+        List<KeywordStats> list = StatisticsUtil.top(recent, 10, 0, 1, UtilityService.getStoreId());
         List<String> top = new ArrayList<String>();
 
         for (KeywordStats stats : list) {
@@ -51,7 +51,7 @@ public class KeywordTrendsService {
 
     @RemoteMethod
     public Date getMostRecentStatsDate() {
-        File dir = new File(PropsUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreName());
+        File dir = new File(PropsUtils.getValue("splunkdir") + File.separator + UtilityService.getStoreId());
         File[] files = dir.listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -80,7 +80,7 @@ public class KeywordTrendsService {
 
             try {
                 String path = csvs[0].getCanonicalPath();
-                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern(UtilityService.getStoreName())).parse(path)[1].toString();
+                String dateStr = new MessageFormat(StatisticsUtil.getSplunkFilePattern(UtilityService.getStoreId())).parse(path)[1].toString();
 
                 return DateAndTimeUtils.parseDateYYYYMMDD(dateStr);
             } catch (IOException ex) {
@@ -109,7 +109,7 @@ public class KeywordTrendsService {
         Date limit = DateAndTimeUtils.asUTC(toDate);
 
         while (DateAndTimeUtils.compare(date, limit) <= 0) {
-            StatisticsUtil.retrieveStats(list, date, 0, 1, collation, UtilityService.getStoreName());
+            StatisticsUtil.retrieveStats(list, date, 0, 1, collation, UtilityService.getStoreId());
             date = DateUtils.addDays(date, 1);
         }
     }

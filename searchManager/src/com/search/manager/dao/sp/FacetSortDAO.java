@@ -561,7 +561,7 @@ public class FacetSortDAO {
 
 			inputs.put(DAOConstants.PARAM_MEMBER_ID, facetGroupItemId);
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ID, facetGroupItem.getFacetGroupId());
-			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, StringUtils.trimToEmpty(facetGroupItem.getName()));
+			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_NAME, facetGroupItem.getName());
 			inputs.put(DAOConstants.PARAM_FACET_GROUP_ITEM_SEQUENCE, facetGroupItem.getSequence());
 			inputs.put(DAOConstants.PARAM_MODIFIED_BY, facetGroupItem.getCreatedBy());
 

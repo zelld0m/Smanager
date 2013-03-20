@@ -33,7 +33,6 @@ import com.search.manager.service.DownloadService;
 import com.search.manager.service.ElevateService;
 import com.search.manager.service.RuleVersionService;
 import com.search.manager.service.UtilityService;
-import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.xml.file.RuleXmlReportUtil;
 
 @Controller

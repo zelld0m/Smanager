@@ -33,13 +33,17 @@ public abstract class SolrResponseParser {
 	public abstract int getCount(List<NameValuePair> requestParams) throws SearchException;
 	public abstract int getNonElevatedItems(List<NameValuePair> requestParams) throws SearchException;
 	public abstract String getCommonTemplateName(String templateNameField, List<NameValuePair> requestParams) throws SearchException;
+	public abstract void getSpellingSuggestion(List<NameValuePair> requestParams) throws SearchException;
 	public abstract boolean generateServletResponse(HttpServletResponse response, long totalTime) throws SearchException;
 	
 	protected String requestPath;
 	protected int startRow;
 	protected int requestedRows;
-	protected String changedKeyword;
+	protected String facetTemplate;
 	protected String originalKeyword;
+	
+	protected boolean includeFacetTemplateFacet;
+	protected boolean includeEDP;
 	
 	protected List<ElevateResult> elevatedList = null;
 	protected List<String> expiredElevatedEDPs = null;
@@ -47,40 +51,34 @@ public abstract class SolrResponseParser {
 	
 	protected List<DemoteResult> demotedList = null;
 	protected List<String> expiredDemotedEDPs = null;
-
+	protected List<String> forceAddedEDPs = null;
+	
 	protected FacetSort facetSortRule;
 	protected RedirectRule redirectRule;
-	
-	/* Enterprise Search start */
-	protected boolean forEnterpriseSearch;
-	protected Map<String, String> enterpriseSearchElevateFieldOverrides;
-	protected Map<String, String> enterpriseSearchDemoteFieldOverrides;
 
-	public boolean isForEnterpriseSearch() {
-		return forEnterpriseSearch;
-	}
-	public void setForEnterpriseSearch(boolean forEnterpriseSearch) {
-		this.forEnterpriseSearch = forEnterpriseSearch;
-	}
-	
-	public Map<String, String> getEnterpriseSearchElevateFieldOverrides() {
-		return enterpriseSearchElevateFieldOverrides;
+	/* Enterprise Search start */
+	protected Map<String, String> elevateFieldOverrides;
+	protected Map<String, String> demoteFieldOverrides;
+
+	public void setElevateFieldOverrides(Map<String, String> elevateFieldOverrides) {
+		this.elevateFieldOverrides = elevateFieldOverrides;
 	}
 	
-	public void setEnterpriseSearchElevateFieldOverrides(Map<String, String> enterpriseSearchElevateFieldOverrides) {
-		this.enterpriseSearchElevateFieldOverrides = enterpriseSearchElevateFieldOverrides;
+	public void setDemoteFieldOverrides(Map<String, String> demoteFieldOverrides) {
+		this.demoteFieldOverrides = demoteFieldOverrides;
 	}
-	
-	public Map<String, String> getEnterpriseSearchDemoteFieldOverrides() {
-		return enterpriseSearchDemoteFieldOverrides;
-	}
-	
-	public void setEnterpriseSearchDemoteFieldOverrides(Map<String, String> enterpriseSearchDemoteFieldOverrides) {
-		this.enterpriseSearchDemoteFieldOverrides = enterpriseSearchDemoteFieldOverrides;
-	}
+
 	/* Enterprise Search end */
-	
+
 	/* public setters and getters */
+	public void setIncludeFacetTemplateFacet(boolean includeFacetTemplateFacet) {
+		this.includeFacetTemplateFacet = includeFacetTemplateFacet;
+	}
+	
+	public void setIncludeEDP(boolean includeEDP) {
+		this.includeEDP = includeEDP;
+	}
+	
 	public final void setActiveRules(List<Map<String,String>> activeRules) throws SearchException {
 		this.activeRules = activeRules;
 	}
@@ -91,6 +89,10 @@ public abstract class SolrResponseParser {
 
 	public final void setExpiredElevatedEDPs(List<String> list) throws SearchException {
 		expiredElevatedEDPs = list;
+	}
+	
+	public final void setForceAddedEDPs(List<String> list) throws SearchException {
+		forceAddedEDPs = list;
 	}
 	
 	public final void setSolrUrl(String solrUrl) {
@@ -105,10 +107,6 @@ public abstract class SolrResponseParser {
 		this.requestedRows = requestedRows;
 	}
 
-	public final void setChangeKeyword(String changedKeyword) throws SearchException {
-		this.changedKeyword = changedKeyword;
-	}
-	
 	public final void setOriginalKeyword(String originalKeyword) throws SearchException {
 		this.originalKeyword = originalKeyword;
 	}
@@ -125,6 +123,10 @@ public abstract class SolrResponseParser {
 		this.facetSortRule = facetSortRule;
 	}
 	
+	public void setFacetTemplate(String facetTemplate) {
+		this.facetTemplate = facetTemplate;
+	}
+
 	public final void setRedirectRule(RedirectRule redirectRule) throws SearchException {
 		this.redirectRule = redirectRule;
 	}
@@ -146,7 +148,8 @@ public abstract class SolrResponseParser {
 		}
 	}
 	
-	protected void generateExcludeFilterList(StringBuilder filter, List<? extends SearchResult> list, int currItem, boolean reverse) {
+	protected void generateExcludeFilterList(StringBuilder filter, List<? extends SearchResult> list, int currItem, 
+			boolean reverse, Map<String, String> overrideMap) {
 		boolean edpFlag = false;
 		boolean facetFlag = false;
 		int i = 1;
@@ -155,15 +158,6 @@ public abstract class SolrResponseParser {
 			StringBuilder edpValues = new StringBuilder();
 			StringBuilder facetValues = new StringBuilder();
 
-			Map<String,String> overrideMap = null;
-			if (forEnterpriseSearch) {
-				if (list.get(0) instanceof ElevateResult) {
-					overrideMap = enterpriseSearchElevateFieldOverrides;
-				}
-				else if (list.get(0) instanceof DemoteResult) {
-					overrideMap = enterpriseSearchDemoteFieldOverrides;
-				}
-			}
 			for (SearchResult result: list) {
 				
 				if (reverse) {
@@ -224,7 +218,7 @@ public abstract class SolrResponseParser {
 			BasicNameValuePair zeroRowNVP = new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0");
 			List<ElevateResult> elevateEdps = new ArrayList<ElevateResult>();
 			int elevatedRecords = elevatedList.size();
-			
+
 			for (int i = 0; i < elevatedRecords; i++) {
 				
 				ElevateResult elevateResult = elevatedList.get(i);
@@ -259,14 +253,14 @@ public abstract class SolrResponseParser {
 				}
 				else {
 					String strCondition = elevateResult.getCondition().getConditionForSolr();
-					if (forEnterpriseSearch) {
-						strCondition = StringUtils.replaceEach(strCondition, enterpriseSearchElevateFieldOverrides.keySet().toArray(new String[0]),
-								enterpriseSearchElevateFieldOverrides.values().toArray(new String[0]));
+					if (elevateFieldOverrides != null) {
+						strCondition = StringUtils.replaceEach(strCondition, elevateFieldOverrides.keySet().toArray(new String[0]),
+								elevateFieldOverrides.values().toArray(new String[0]));
 					}
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, strCondition));
 				}
 				
-				generateExcludeFilterList(elevateFilter, elevatedList, currItem++, false);
+				generateExcludeFilterList(elevateFilter, elevatedList, currItem++, false, elevateFieldOverrides);
 				if (isEdpList) {
 					currItem += numEdpAdded - 1; // - 1 to compensate for currItem++ in above line
 				}
@@ -350,9 +344,9 @@ public abstract class SolrResponseParser {
 				}
 				else {
 					String strCondition = demoteResult.getCondition().getConditionForSolr();
-					if (forEnterpriseSearch) {
-						strCondition = StringUtils.replaceEach(strCondition, enterpriseSearchDemoteFieldOverrides.keySet().toArray(new String[0]),
-								enterpriseSearchDemoteFieldOverrides.values().toArray(new String[0]));
+					if (demoteFieldOverrides != null) {
+						strCondition = StringUtils.replaceEach(strCondition, demoteFieldOverrides.keySet().toArray(new String[0]),
+								demoteFieldOverrides.values().toArray(new String[0]));
 					}
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, strCondition));
 				}
@@ -360,7 +354,7 @@ public abstract class SolrResponseParser {
 				if (isEdpList) {
 					currItem += numEdpAdded - 1; // -1 to compensate for currItem++ in line below
 				}
-				generateExcludeFilterList(demoteFilter, demotedList, currItem++, true);
+				generateExcludeFilterList(demoteFilter, demotedList, currItem++, true, demoteFieldOverrides);
 				if (demoteFilter.length() > 0) {
 					currentRequestParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, demoteFilter.toString()));
 				}
@@ -399,7 +393,7 @@ public abstract class SolrResponseParser {
 	
 	protected void logSolrError(HttpPost post, String description, Exception e) {
 		StringBuilder builder = new StringBuilder();
-		builder.append(description).append(": ").append(requestPath);
+		builder.append(description).append(": ").append(post.getRequestLine().getUri());
 		if (post != null && post.getEntity() != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			try {
@@ -408,7 +402,11 @@ public abstract class SolrResponseParser {
 			} catch (IOException e1) {
 			}
 		}
-		logger.error(builder.toString());
+		logger.error(builder.toString(), e);
+	}
+
+	protected String getSpellCheckRequestPath() {
+		return StringUtils.replaceOnce(requestPath, "select", "spellCheckCompRH");
 	}
 
 }

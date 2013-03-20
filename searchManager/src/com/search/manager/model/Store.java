@@ -12,16 +12,9 @@ public class Store implements Serializable {
 	private static final long serialVersionUID = 2184076713975341261L;
 
 	private String storeId;
-	private String storeName;
-	
-	public Store(String storeId, String storeName) {
-		this.storeId = storeId;
-		this.storeName = storeName;
-	}
 	
 	public Store(String storeId) {
 		this.storeId = storeId;
-		this.storeName = storeId;
 	}
 	
 	public Store() {}
@@ -35,17 +28,8 @@ public class Store implements Serializable {
 		this.storeId = storeId;
 	}
 	
-	@RemoteProperty
-	public String getStoreName() {
-		return storeName;
-	}
-	
-	public void setStoreName(String storeName) {
-		this.storeName = storeName;
-	}
-	
 	@Override
 	public String toString() {
-		return "(Store Id: " + storeId + "\tStore Name: " + storeName + ")";
+		return getStoreId();
 	}
 }

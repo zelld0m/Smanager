@@ -208,7 +208,7 @@
 					if(FACET){
 						memberConditions.push(list[i].condition["conditionForSolr"]);
 						base.setImage($tr,list[i]);
-						$tr.find("td#itemMan").html(list[i].condition["readableString"])
+						$tr.find("td#itemMan").text(list[i].condition["readableString"])
 						.prop("colspan",3)
 						.removeClass("txtAC")
 						.addClass("txtAL")
@@ -588,7 +588,7 @@
 					for(var field in xml["ruleCondition"]["ruleCondition"]){
 						$tr = $content.find("div.ruleFilter tr#itemPattern").clone().attr("id","item" + $.formatAsId(field)).show();
 						$tr.find("td#fieldName").html(parseInt(field)+1);
-						$tr.find("td#fieldValue").html(xml["ruleCondition"]["ruleCondition"][field].readableString);
+						$tr.find("td#fieldValue").text(xml["ruleCondition"]["ruleCondition"][field].readableString);
 						$tr.appendTo($table);
 					}	
 				}
@@ -854,7 +854,7 @@
 				template += '	<div id="rankingSummary" class="infoTabs marB20 tabs">';
 				template += '		<ul class="posRel top5" style="z-index:100">';
 
-				if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+				if (base.options.ruleId.toLowerCase()!== (GLOBAL_storeId.toLowerCase()+ "_default")){
 					template += '			<li><a href="#ruleKeyword"><span>Keyword</span></a></li>';
 				}
 
@@ -890,7 +890,7 @@
 				template += '		</div>';
 				template += '		<div class="clearB"></div>	';
 
-				if (base.options.ruleId.toLowerCase()!== (GLOBAL_store.toLowerCase()+ "_default")){
+				if (base.options.ruleId.toLowerCase()!== (GLOBAL_storeId.toLowerCase()+ "_default")){
 					template += '		<div id="ruleKeyword" class="ruleKeyword marB10">';
 					template += '			<div class="w580 mar0 padLR5">';
 					template += '				<table class="tblItems w100p marT10" id="itemHeader">';
@@ -1182,10 +1182,11 @@
 
 						base.contentHolder.find("a#okBtn, a#rejectBtn").off().on({
 							click: function(evt){
-								var comment = base.contentHolder.find("#comment").val();
-								if ($.isBlank(comment)){
-									jAlert("Please add comment.", base.options.transferType);
+								var comment= $.defaultIfBlank($.trim(base.contentHolder.find("#comment").val()), "");
+								if(!validateComment(base.options.transferType, comment, 1)){
+									//error message in validateComment
 								}else{
+									comment = comment.replace(/\n\r?/g, '<br/>');
 									switch($(evt.currentTarget).attr("id")){
 									case "okBtn": 
 										switch(base.options.transferType.toLowerCase()){

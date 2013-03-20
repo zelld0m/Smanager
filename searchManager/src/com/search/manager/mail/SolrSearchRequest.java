@@ -1,7 +1,8 @@
 package com.search.manager.mail;
 
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.*;
 
@@ -25,12 +26,17 @@ public class SolrSearchRequest implements Runnable {
     private static final int MAX_TRIES = 10;
 
     private BlockingQueue<TopKeyword> stats;
+    private Queue<TopKeyword> reprocess = new ArrayDeque<TopKeyword>();
 
+    private AtomicInteger threadCount;
     private String solrUrl;
 
-    public SolrSearchRequest(BlockingQueue<TopKeyword> stats, String solrUrl) {
+    public SolrSearchRequest(BlockingQueue<TopKeyword> stats, String solrUrl, AtomicInteger threadCount) {
+        this.threadCount = threadCount;
         this.stats = stats;
         this.solrUrl = solrUrl;
+
+        this.threadCount.incrementAndGet();
     }
 
     public void run() {
@@ -46,15 +52,15 @@ public class SolrSearchRequest implements Runnable {
             return;
         }
 
-        while (!stats.isEmpty()) {
+        while (!stats.isEmpty() || reprocess.size() > 0) {
             TopKeyword keywordStats = stats.poll();
 
             if (keywordStats == null) {
-                break;
+                keywordStats = reprocess.poll();
             }
 
             try {
-                log.info("processing keyword {}", keywordStats.getKeyword());
+                log.trace("processing keyword {}", keywordStats.getKeyword());
 
                 keywordStats.incrementTries();
                 post.setEntity(new UrlEncodedFormEntity(Arrays.asList(new BasicNameValuePair("q", keywordStats
@@ -82,21 +88,19 @@ public class SolrSearchRequest implements Runnable {
                 keywordStats.setSku(edp);
                 keywordStats.setResultCount(count);
 
-                log.info("Solr stats successfully retrieved: count: {}, keyword: {}, results: {},  edpt: {}",
+                log.trace("Solr stats successfully retrieved: count: {}, keyword: {}, results: {},  edpt: {}",
                         keywordStats.toStringArray());
             } catch (Exception e) {
                 log.error("Exception occured during solr search.", e);
 
-                try {
-                    if (keywordStats.continueProcessing(MAX_TRIES)) {
-                        log.info("Putting back keyword {} to queue for reprocessing.", keywordStats.getKeyword());
-                        stats.put(keywordStats);
-                    } else {
-                        log.info("Maximum tries for solr request keyword '{}' was reached.", keywordStats.getKeyword());
-                        keywordStats.stopProcessing();
-                    }
-                } catch (InterruptedException ex) {
-                    log.error("Unable to enqueue keyword " + keywordStats.getKeyword(), ex);
+                if (keywordStats.continueProcessing(MAX_TRIES)) {
+                    log.trace("Putting back keyword {} to queue for reprocessing.", keywordStats.getKeyword());
+
+                    // reprocess has no capacity restrictions and therefore will not fail on #offer method
+                    reprocess.offer(keywordStats);
+                } else {
+                    log.trace("Maximum tries for solr request keyword '{}' was reached.", keywordStats.getKeyword());
+                    keywordStats.stopProcessing();
                 }
             } finally {
                 EntityUtils.consumeQuietly(response.getEntity());
@@ -104,6 +108,7 @@ public class SolrSearchRequest implements Runnable {
         }
 
         client.getConnectionManager().shutdown();
-        log.info("Search thread destroyed.");
+        threadCount.decrementAndGet();
+        log.trace("Search thread destroyed.");
     }
 }

@@ -54,7 +54,7 @@ public class DemoteService extends RuleService{
 		int changes = 0;
 		
 		DemoteResult demote = new DemoteResult();
-		demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreId(), keyword));
 		demote.setMemberId(memberId);
 		try {
 			demote = daoService.getDemoteItem(demote);
@@ -91,11 +91,17 @@ public class DemoteService extends RuleService{
 	public int updateFacet(String keyword, String memberId, int position, String comment, String expiryDate, Map<String, List<String>> filter){
 		int changes = 0;
 		
+		String storeId = UtilityService.getStoreId();
+
 		DemoteResult demote = new DemoteResult();
-		demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+		demote.setStoreKeyword(new StoreKeyword(storeId, keyword));
 		demote.setMemberId(memberId);
+		
 		RedirectRuleCondition rrCondition = new RedirectRuleCondition();
+		rrCondition.setStoreId(storeId);
 		rrCondition.setFilter(filter);
+		UtilityService.setFacetTemplateValues(rrCondition);
+		
 		try {
 			demote = daoService.getDemoteItem(demote);
 		} catch (DaoException e) {
@@ -136,7 +142,7 @@ public class DemoteService extends RuleService{
 		int result = -1;
 		try {
 			logger.info(String.format("%s %s %s %d, %s %s", keyword, edp, condition != null ? condition.getCondition() : "", sequence, expiryDate, comment));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			String userName = UtilityService.getUsername();
 			daoService.addKeyword(new StoreKeyword(store, keyword)); // TODO: What if keyword is not added?
 
@@ -195,7 +201,7 @@ public class DemoteService extends RuleService{
 		resultMap.put("FAILED", failedList);
 		
 		String server = UtilityService.getServerName();
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		
 		int count = 0;
 		comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
@@ -224,14 +230,17 @@ public class DemoteService extends RuleService{
 
 	@RemoteMethod
 	public int addFacetRule(String keyword, int sequence, String expiryDate, String comment,  Map<String, List<String>> filter) {
-		return addItem(keyword, null, new RedirectRuleCondition(filter), sequence, expiryDate, comment, MemberTypeEntity.FACET);
+		RedirectRuleCondition rrCondition = new RedirectRuleCondition(filter);
+		rrCondition.setStoreId(UtilityService.getStoreId());
+		UtilityService.setFacetTemplateValues(rrCondition);
+		return addItem(keyword, null, rrCondition, sequence, expiryDate, comment, MemberTypeEntity.FACET);
 	}
 
 	@RemoteMethod
 	public int updateExpiryDate(String keyword, String memberId, String expiryDate){
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, expiryDate));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
@@ -248,7 +257,7 @@ public class DemoteService extends RuleService{
 	public int addComment(String keyword, String memberId, String comment){
 		try {
 			logger.info(String.format("%s %s %s", keyword, memberId, comment));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			if(StringUtils.isNotBlank(comment)){
 				comment = comment.replaceAll("%%timestamp%%", DateAndTimeUtils.formatDateTimeUsingConfig(store, new Date()));
@@ -271,7 +280,7 @@ public class DemoteService extends RuleService{
 	public int deleteItemInRule(String keyword, String memberId) {
 		try {
 			logger.info(String.format("%s %s", keyword, memberId));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
@@ -289,7 +298,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %s %d", keyword, memberId, sequence));
 			DemoteResult demote = new DemoteResult();
-			demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			demote.setStoreKeyword(new StoreKeyword(UtilityService.getStoreId(), keyword));
 			demote.setMemberId(memberId);
 			try {
 				demote = daoService.getDemoteItem(demote);
@@ -298,7 +307,7 @@ public class DemoteService extends RuleService{
 			}
 			if (demote!=null) {
 				if (!StringUtils.isBlank(condition)) {
-					demote.setCondition(new RedirectRuleCondition((condition)));
+					demote.setCondition(new RedirectRuleCondition(condition));
 				}
 				demote.setLocation(sequence);
 				demote.setLastModifiedBy(UtilityService.getUsername());
@@ -345,7 +354,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -362,7 +371,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
@@ -379,7 +388,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, new Date(), null,  page, itemsPerPage);
@@ -395,7 +404,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, DateAndTimeUtils.getDateYesterday(),  page, itemsPerPage);
@@ -411,7 +420,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %d %d", keyword, page, itemsPerPage));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, null,  page, itemsPerPage);
@@ -426,7 +435,7 @@ public class DemoteService extends RuleService{
 	public Integer getTotalProductInRule(String keyword) {
 		try {
 			logger.info(String.format("%s", keyword));
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			SearchCriteria<DemoteResult> criteria = new SearchCriteria<DemoteResult>(e, null, null, null, null);
@@ -442,7 +451,7 @@ public class DemoteService extends RuleService{
 		try {
 			logger.info(String.format("%s %s", keyword, memberId));
 			String server = UtilityService.getServerName();
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			DemoteResult e = new DemoteResult();
 			e.setStoreKeyword(new StoreKeyword(store, keyword));
 			e.setMemberId(memberId);
@@ -466,7 +475,7 @@ public class DemoteService extends RuleService{
 	public int clearRule(String keyword) {
 		try {
 			logger.info(String.format("%s", keyword));
-			return daoService.clearDemoteResult(new StoreKeyword(UtilityService.getStoreName(), keyword));
+			return daoService.clearDemoteResult(new StoreKeyword(UtilityService.getStoreId(), keyword));
 		} catch (DaoException e) {
 			logger.error("Failed during clearRule()",e);
 		}
@@ -487,14 +496,14 @@ public class DemoteService extends RuleService{
 		com.setUsername(UtilityService.getUsername());
 		com.setReferenceId(e.getMemberId());
 		com.setRuleTypeId(RuleEntity.DEMOTE.getCode());
-		com.setStore(new Store(UtilityService.getStoreName()));
+		com.setStore(new Store(UtilityService.getStoreId()));
 		return daoService.addComment(com);
 	}
 
 	@RemoteMethod
 	public int addRuleComment(String keyword, String memberId, String pComment) {
 		int result = -1;
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		try {
 			DemoteResult demote = new DemoteResult();
 			demote.setStoreKeyword(new StoreKeyword(store, keyword));

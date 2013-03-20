@@ -38,7 +38,7 @@
 			maxListSize: 100,
 			maxMultiMatch: 100,
 			exactMatch: false,
-			wildcards: true,
+			wildcards: false,
 			ignoreCase: true,
 			warnMultiMatch: "Top {0} Matches ...",
 			warnNoMatch: "No Matches Found...",
@@ -55,7 +55,7 @@
 	 */
 	plugin.execute = function(settings, zindex) {
 		var timer = null;
-		var searchCache = null;
+//		var searchCache = null;
 		var search = null;
 
 		// do not attach on IE6 or lower
@@ -139,6 +139,9 @@
 					var mc = Math.floor(settings.maxMultiMatch / 2);
 					var begin = Math.max(1, (idx - mc));
 					var end = Math.min(len, Math.max(settings.maxMultiMatch, (idx + mc)));
+					if (begin > 1) { 
+						end -= 1;
+					}
 					var si = idx - begin;
 
 					// clear selector select element
@@ -156,6 +159,10 @@
 
 					// set selectedIndex of selector
 					selector.get(0).selectedIndex = si;
+					
+					if (begin > 1) {
+						selector.prepend($(self.get(0).options[1]).clone().attr(idxAttr, 0));
+					}
 				}
 		};
 
@@ -637,13 +644,13 @@
 		 * The actual searching gets done here
 		 */
 		function searching() {
-			if (searchCache == search) { // no change ...
-				timer = null;
-				return;
-			}
+//			if (searchCache == search) { // no change ...
+//				timer = null;
+//				return;
+//			}
 
 			var matches = 0;
-			searchCache = search;
+//			searchCache = search;
 			selector.hide();
 			selector.empty();
 
@@ -668,14 +675,14 @@
 			// for each item in list
 			for(var i=1; i<self.get(0).length && matches < settings.maxMultiMatch;i++){
 				// search
-				if (search.length == 0 || search.test(self.get(0).options[i].text)){
+				if (regexp.length == 0 || search.test(self.get(0).options[i].text)){
 					
 					var opt = $(self.get(0).options[i]).clone().attr(idxAttr, i-1);
 					if(self.data("index") == i){
 						opt.text(self.data("text"));
 					}
 
-					if(i-1!=0){
+					if(regexp.length == 0 || i-1!=0){
 						selector.append(opt);
 						matches++;
 					}
@@ -695,7 +702,7 @@
 			if(matches >= settings.maxMultiMatch){
 				selector.append(selectorHelper.getTopMatchItem());
 			}
-
+			
 			// resize selector
 			selectorHelper.size(matches);
 			selector.show();

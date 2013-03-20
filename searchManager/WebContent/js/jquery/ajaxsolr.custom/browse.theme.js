@@ -279,10 +279,23 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		var priceDisplay = doc[GLOBAL_storeFacetName + "_CartPrice"];
-		if(GLOBAL_storeFacetName.toLowerCase()==="pcmallgov"){
-			priceDisplay = doc[GLOBAL_storeFacetName + "_GovCartPrice"];
+		var priceSuffix = "_CartPrice";
+
+		if(GLOBAL_storeId==="pcmallgov"){
+			switch(GLOBAL_PCMGCatalog.toLowerCase()){
+			case "open": 
+				priceSuffix = "_OpenCartPrice";
+				break; 
+			case "government": 
+				priceSuffix = "_GovCartPrice";
+				break; 
+			case "academic": 
+				priceSuffix = "_ACACartPrice";
+				break; 	
+			}
 		}
+
+		var priceDisplay = doc[GLOBAL_storeFacetName + priceSuffix];
 		
 		secObj.find("div#cartPriceHolder").append($.toCurrencyFormat('$', priceDisplay));
 
@@ -442,7 +455,7 @@
 				i++;
 				var count = parseInt(facets[facet]);
 				output += '<tr>';
-				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
+				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet.replace(/\"/g,'&quot;') + '"/></td>';
 				output += '<td class="values"><span class="value">' + (delimiter ? facet.split(delimiter)[1] : facet) + '</span></td>';
 				//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
 				output += '</tr>';		
@@ -491,12 +504,21 @@
 		output += '  <tbody>';  
 
 		for (var docField in doc){
+			
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
-			output += '    <td class="w205"><a href="javascript:void(0);" class="attributes"><div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div></a>';
-			output += '		<div>';
+			output += '    <td class="w205">';
+			if((GLOBAL_indexedFields.indexOf(docField) != -1) || $.isWildcardField(docField, GLOBAL_indexedWildcardFields)){
+				output += '			<a href="javascript:void(0);" class="attributes nonindexed">';
+				output += '				<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+				output += '			</a>';		
+			}else{
+				output += '			<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+			}
+			
+			output += '			<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
-			output += '			<input type="hidden" class="attribValue" value="' + doc[docField] + '">';
+			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
 			output += '       </div>';
 			output += '    </td>';
 			output += ' </tr>';  

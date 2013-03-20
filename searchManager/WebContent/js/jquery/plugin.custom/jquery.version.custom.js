@@ -138,22 +138,25 @@
 				if(index !== "current"){
 					$li.find("label.restoreIcon, a#restoreBtn").off().on({
 						click:function(e){
-							jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-								if(result){
-									base.restoreVersion(e.data.item);
-								}
-							});
-						}
-					},{item: item})
+							if (!e.data.locked) {
+								jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+									if(result){
+										base.restoreVersion(e.data.item);
+									}
+								});
+							}
+						},
+						mouseenter: showHoverInfo
+					},{item: item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."})
 					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
 					$li.find("#verDate").text(item["createdDate"] ? item["createdDate"].toUTCString() : "");
 				}
 				else {
-					$li.find("#verName").text("Current Rule");
-					$li.find("#verNote").text("Current Rule");
-					$li.find("#verDate").text(item["lastModifiedDate"] ? item["lastModifiedDate"].toUTCString() : "");
+					$li.find("#verName").text("Not Available");
+					$li.find("#verNote").text("Not Available");
+					if(item["lastModifiedDate"]) $li.find("#verDate").text(item["lastModifiedDate"].toUTCString());
 				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
@@ -397,7 +400,7 @@
 						if (!requestOngoing) {
 							requestOngoing = true;
 							
-							if(!validateField('Name', name, 1, 100) || !validateField('Notes', notes, 1, 255)){
+							if(!validateGeneric('Name', name, 1, 100) || !validateGeneric('Notes', notes, 1, 255)){
 								requestOngoing = false;
 								return;
 							}
@@ -462,13 +465,16 @@
 
 			$tr.find(".restoreIcon").off().on({
 				click:function(e){
-					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-						if(result){
-							base.restoreVersion(e.data.item);
-						}
-					});
-				}
-			},{item: $item});
+					if (!e.data.locked) {
+						jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+							if(result){
+								base.restoreVersion(e.data.item);
+							}
+						});
+					}
+				},
+				mouseenter: showHoverInfo
+			},{item: $item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 		};
 
 		base.restoreVersion = function(item){
@@ -491,6 +497,10 @@
 			base.ruleMap = {};
 
 			$content.find("#preloader").show();
+			
+			$content.find("input#name").val('');
+			$content.find("textarea#notes").val('');
+			
 			$content.find("#compareSection").hide();
 			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){
@@ -656,7 +666,7 @@
 		base.getItemListTemplate =function(){
 			var template  = '';
 
-			template += '	<div class="version w425 floatR border">';
+			template += '	<div class="version floatR border" style="width: 435px;">';
 			template += '	<div id="preloader"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif"></div>';
 			template += '	<div id="compareSection" style="display:none">';
 			template += '	<div style="width:100%;height:28px;padding-top:5px;background:#3f63a1;border-bottom:2px solid">';
@@ -689,7 +699,7 @@
 			template += '			</ul>';
 			template += '		</div>';// end label
 
-			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
+			template += '		<div class="horizontalCont" style="float:left; width:290px;">';// content
 			template += '			<ul id="versionList">';
 			template += '				<li id="itemPattern" class="item" style="display:none;border:0; padding-top: 5px;">';
 			template += '					<ul id="ruleDetails" style="border:0">';

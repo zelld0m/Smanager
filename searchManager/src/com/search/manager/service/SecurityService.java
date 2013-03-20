@@ -1,6 +1,7 @@
 package com.search.manager.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import net.sf.json.JSONObject;
@@ -44,7 +45,7 @@ public class SecurityService {
 	public RecordSet<User> getUserList(String roleId, String page, String search, String memberSince, String status, String expired) {
 		User user = new User();
 		user.setGroupId(StringUtils.trimToNull(roleId));
-		user.setStoreId(UtilityService.getStoreName());
+		user.setStoreId(UtilityService.getStoreId());
 		user.setFullName(StringUtils.trimToNull(search));
 		
 		if(StringUtils.isNotEmpty(status)){
@@ -55,7 +56,7 @@ public class SecurityService {
 		}
 		
 		SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,Integer.parseInt(page),10);
-		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), memberSince)));
+		searchCriteria.setEndDate(DateAndTimeUtils.getDateWithEndingTime(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), memberSince)));
 		RecordSet<User> users = getUsers(searchCriteria, MatchType.LIKE_NAME);
 		for (User u: users.getList()) {
 			// clear the password before returning
@@ -73,7 +74,7 @@ public class SecurityService {
 			User user = new User();
 			user.setUsername(username);
 			user.setLastModifiedBy(UtilityService.getUsername());
-			user.setStoreId(UtilityService.getStoreName());
+			user.setStoreId(UtilityService.getStoreId());
 			result = daoService.removeUser(user);
 			if(result > -1){
 				json.put("status", RESPONSE_STATUS_OK);
@@ -108,7 +109,7 @@ public class SecurityService {
 				user.setEmail(record.getList().get(0).getEmail());
 				user.setFullName(record.getList().get(0).getFullName());
 				user.setLastModifiedBy(UtilityService.getUsername());
-				user.setStoreId(UtilityService.getStoreName());
+				user.setStoreId(UtilityService.getStoreId());
 				if (StringUtils.isNotBlank(password)) 
 					user.setPassword(UtilityService.getPasswordHash(password));
 				result = daoService.resetPassword(user);
@@ -151,12 +152,12 @@ public class SecurityService {
 			user.setUsername(username);
 			user.setEmail(email);
 			user.setGroupId(roleId);
-			user.setStoreId(UtilityService.getStoreName());
+			user.setStoreId(UtilityService.getStoreId());
 			
 			if(StringUtils.isNotEmpty(locked))
 				user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 
-			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
+			user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire));
 			user.setPassword(UtilityService.getPasswordHash(password));
 			user.setCreatedBy(UtilityService.getUsername());
 			result = daoService.addUser(user);
@@ -248,8 +249,12 @@ public class SecurityService {
 			
 			if(record != null && record.getTotalSize() > 0){
 				user.setGroupId(roleId);
-				user.setThruDate(DateAndTimeUtils.toSQLDate(UtilityService.getStoreName(), expire));
-				user.setStoreId(UtilityService.getStoreName());
+				if (StringUtils.isNotBlank(expire)) {
+					Date newExpiryDate = DateAndTimeUtils.toSQLDate(UtilityService.getStoreId(), expire);
+					user.setThruDate(newExpiryDate);
+					user.setAccountNonExpired(newExpiryDate.after(new Date()));
+				}
+				user.setStoreId(UtilityService.getStoreId());
 				if(StringUtils.isNotEmpty(locked))
 					user.setAccountNonLocked(!"true".equalsIgnoreCase(locked));
 				user.setEmail(email);

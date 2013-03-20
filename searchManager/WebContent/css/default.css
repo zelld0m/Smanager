@@ -552,3 +552,27 @@ div#bottom-pager-text{ position:relative; top:10px; }
 #rankingRule { margin-top:2px !important; }
 
 .label_condition { display:inline; float:none; }
+
+label.forceAdd{ padding-left: 12px !important;}
+.padB0 {padding-bottom: 0px !important;}
+.w602 {width: 602px !important;}
+.marLRB10 {margin: 0px 10px 10px 10px !important;}
+.padLR10 {padding: 0px 10px 0px 10px !important;}
+.w582 {width: 582px !important;}
+
+ul#versionList li#ver_current.item ul#ruleDetails li{
+	padding-right: 10px !important;	
+}
+
+ul#versionList li.item:last-child {
+	margin-left: 5px;
+	padding-right: 0px;
+}
+
+ul#versionList li.item:last-child ul#ruleDetails li{
+	padding-right: 10px !important;
+}
+
+div.holder table#addDynamicAttributeName tr#dynamicAttributeName td.iepadBT0 div.floatL div.ss-wrapper input.ss-textbox {
+	top: 0px !important;
+}

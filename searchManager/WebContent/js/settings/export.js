@@ -111,7 +111,7 @@
 
 					for(var key in params){
 						if (count>0) urlParams +='&';
-						urlParams += (key + '=' + params[key]);
+						urlParams += (key + '=' + encodeURIComponent(params[key]));
 						count++;
 					};
 
@@ -126,27 +126,40 @@
 			
 			$selectedTab.find("a#okBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#comment").val());
+					var comment = $.defaultIfBlank($.trim($selectedTab.find("#comment").val()), "");
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment", self.moduleName);
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+					}else if (!validateComment(self.moduleName,comment,1)){
+						//error message in validateComment
 					}else{
-						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
-							callback: function(data){
-								showActionResponseFromMap(data, "export", "Export",
-									"Unable to find published data for this rule. Please contact Search Manager Team.");
-								self.getExportList();	
-							},
-							preHook:function(){ 
-								self.prepareTabContent(); 
-							},
-							postHook:function(){ 
-								self.cleanUpTabContent(); 
-							}	
+						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(self.getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+						
+						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+ 
+						comment = comment.replace(/\n\r?/g, '<br/>');
+						jConfirm(confirmMsg, "Confirm Export", function(status){
+							if(status){
+								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
+									callback: function(data){
+										showActionResponseFromMap(data, "export", "Export",
+										"Unable to find published data for this rule. Please contact Search Manager Team.");
+										self.getExportList();	
+									},
+									preHook:function(){ 
+										self.prepareTabContent(); 
+									},
+									postHook:function(){ 
+										self.cleanUpTabContent(); 
+									}	
+								});
+							}
 						});
 					}
 				}

@@ -75,7 +75,7 @@
 						$("#titleText").html(self.moduleName + " for ");
 						$("#titleHeader").text(self.selectedRule["ruleName"]);
 						$("#readableString").html(self.selectedRule["readableString"]);
-
+						
 						switch(self.selectedRule["ruleType"].toLowerCase()){
 						case "keyword":	$("#ruleTypeIcon").append(self.keywordIconPath); break;
 						case "template": $("#ruleTypeIcon").append(self.templateIconPath); break;
@@ -179,7 +179,7 @@
 					afterSolrRequestCallback: function(json){
 						self.facetValueList = json.facet_counts.facet_fields;
 
-						if(GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "pcmgbd"){
+						if(GLOBAL_PCMGroup){
 							self.facetValueList["Category"] = [];
 
 							if(json.FacetTemplate){
@@ -253,8 +253,10 @@
 								}
 							});
 
-							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')").prop("selected", true);
-
+							$li.find("select#_items_" + facetGroupId + " option:contains('" + itemName + "')")
+								.filter(function() { return $(this).text() === itemName; })
+								.prop("selected", true);
+							
 							$ul.append($li);
 							self.addDeleteFacetValueListener($li);
 						}
@@ -291,7 +293,7 @@
 				var $select = contentHolder.find('select[id="popName"]');
 				var count = 0;
 
-				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_store, {
+				CategoryServiceJS.getTemplateNamesByStore(GLOBAL_storeId, {
 					callback: function(data){
 						var list = data;
 						count = list.length;
@@ -394,7 +396,8 @@
 											var sortType = $.trim($contentHolder.find("select#popSortOrder >option:selected:eq(0)").val());
 
 											if($contentHolder.find('div#keywordinput').is(":visible")){
-												popName = $.trim($contentHolder.find('input[id="popKeywordName"]').val());
+												popName = $contentHolder.find('input[id="popKeywordName"]').val();
+												popName = $.trim(popName.replace(/\s+(?=\s)/g,''));
 												ruleNameLabel = "Keyword";
 											}
 											else if($contentHolder.find('div#templatelist').is(":visible")){
@@ -723,7 +726,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key]));
 							count++;
 						};
 

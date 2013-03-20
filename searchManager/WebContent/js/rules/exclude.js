@@ -131,7 +131,7 @@
 
 				if(FACET){
 
-					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
+					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
@@ -557,7 +557,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key]));
 							count++;
 						};
 
