@@ -64,7 +64,7 @@
 	 
 	 <div id="addItemHolder" class="floatL w180 txtAR padT7">
        	<div class="floatL w185 txtAR padT4">   		
-			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph" style="display: block;"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
 		</div>
 	</div>		
 	</div>

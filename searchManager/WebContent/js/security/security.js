@@ -114,8 +114,8 @@
 							}
 						},
 						position:{
-							at: 'top left',
-							my: 'bottom left'
+							at: 'top right',
+							my: 'bottom right'
 						},
 						show:{
 							solo: true,
