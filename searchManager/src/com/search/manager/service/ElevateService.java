@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -354,17 +355,23 @@ public class ElevateService extends RuleService{
 
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getProducts(String filter, String keyword, int page, int itemsPerPage) {
-
-		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter))
-			return getAllElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		if (StringUtils.equalsIgnoreCase("active", filter))
-			return getActiveElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		if (StringUtils.equalsIgnoreCase("expired", filter))
-			return getExpiredElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		return null;
+		
+		RecordSet<ElevateProduct> rs = null;
+		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter)) {
+			rs = getAllElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		else if (StringUtils.equalsIgnoreCase("active", filter)) {
+			rs = getActiveElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		else if (StringUtils.equalsIgnoreCase("expired", filter)) {
+			rs = getExpiredElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		
+		if (rs != null && CollectionUtils.isNotEmpty(rs.getList())) {
+			UtilityService.setFacetTemplateValues(rs.getList());
+		}
+		
+		return rs;
 	}
 
 	@RemoteMethod
@@ -579,8 +586,15 @@ public class ElevateService extends RuleService{
 				ElevateResult elevate = new ElevateResult(new StoreKeyword(storeName, keyword), memberId);
 				elevate = daoService.getElevateItem(elevate);
 				if (elevate != null) {
-					String condition = elevate.getEntity() == MemberTypeEntity.FACET ? elevate.getCondition().getConditionForSolr() 
-							: String.format("EDP:%s", elevate.getEdp());
+					String condition = "";
+					if (MemberTypeEntity.FACET.equals(elevate.getEntity())) {
+						RedirectRuleCondition rr = elevate.getCondition();
+						UtilityService.setFacetTemplateValues(rr);
+						condition = rr.getConditionForSolr();
+					}
+					else {
+						condition = String.format("EDP:%s", elevate.getEdp());
+					}
 					map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
 				}
 			}

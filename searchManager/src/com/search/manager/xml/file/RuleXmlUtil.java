@@ -91,6 +91,23 @@ public class RuleXmlUtil{
 		}
 	}
 	
+	protected static void setFacetTemplateValues(String storeId, List<? extends RuleItemXml> list) {
+		ConfigManager configManager = ConfigManager.getInstance();
+		if (configManager != null && CollectionUtils.isNotEmpty(list)) {
+			String facetPrefix = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
+			String facetTemplate = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			String facetTemplateName = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			for (RuleItemXml p: list) {
+				RedirectRuleCondition condition = p.getRuleCondition();
+				if (condition != null) {
+					condition.setFacetPrefix(facetPrefix);
+					condition.setFacetTemplate(facetTemplate);
+					condition.setFacetTemplateName(facetTemplateName);
+				}
+			}
+		}
+	}
+	
 	public static RuleXmlUtil getInstance() {
 		if(instance == null) {
 			synchronized (RuleXmlUtil.class) {
@@ -109,6 +126,12 @@ public class RuleXmlUtil{
 				if(latestVersion == null || rule.getVersion() > latestVersion.getVersion()){
 					latestVersion = rule;
 				}
+			}
+		}
+		if (latestVersion != null && latestVersion instanceof ElevateRuleXml) {
+			ElevateRuleXml elevateRuleXml = (ElevateRuleXml)latestVersion;
+			if (CollectionUtils.isNotEmpty(elevateRuleXml.getElevateItem())) {
+				setFacetTemplateValues(elevateRuleXml.getStore(), elevateRuleXml.getElevateItem());
 			}
 		}
 		return latestVersion;
