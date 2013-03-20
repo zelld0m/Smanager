@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 import org.joda.time.format.DateTimeFormat;
@@ -15,7 +16,34 @@ import org.joda.time.format.PeriodFormatterBuilder;
 import com.search.ws.ConfigManager;
 
 public class JodaTimeUtil {
+	
+	
+	public static DateTimeZone getTimeZone(){
+		return DateTimeZone.getDefault();
+	}
+	
+	public static String getTimeZoneID(){
+		return getTimeZone().getID();
+	}
+	
+	public static DateTimeZone setTimeZoneID(String timeZoneId, String defaultTimeZoneId){
+		DateTimeZone defaultTimeZone = DateTimeZone.UTC;
+		
+		try {
+			defaultTimeZone = DateTimeZone.forID(timeZoneId);
+		} catch (IllegalArgumentException ue) {
+			try {
+				defaultTimeZone = DateTimeZone.forID(defaultTimeZoneId);
+			} catch (IllegalArgumentException se) {
+				defaultTimeZone = DateTimeZone.UTC;
+			}
+		}finally{
+			DateTimeZone.setDefault(defaultTimeZone);
+		}
 
+		return defaultTimeZone;
+	}
+	
 	public static DateTime toDateTime(Timestamp timestamp) {
 		return (timestamp==null? null: new DateTime(timestamp.getTime()));
 	}
