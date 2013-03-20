@@ -42,7 +42,7 @@
 	<div style="width:95%" class="dashboard marT20 mar0 fsize12">
 	These are all the rules that are available for Export. You can manually export rules by selecting the checkboxes and clicking on the 'Export' button.
 	<ul class="marL15">
-		<li>If you have Auto-Export turned on, all rules that you publish to ${storeLabel} will be automatically exported. There is no need to manually export any rules.</li>
+		<li>If you have Auto-Export turned on, all rules that you publish to ${storeName} will be automatically exported. There is no need to manually export any rules.</li>
 		<li>Exporting a rule will not remove it from the list.</li>
 	</ul>
 	</div>

@@ -322,10 +322,12 @@
 							var displayText = 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal;
 							
 							if($.isNotBlank(name)){
-								displayText += " " + name;// + " "+ (itemTotal > 1 ? "Users" : "User");
-							}else if(id){ //user role
-								displayText += " " + id;// + " "+ (itemTotal > 1 ? "Users" : "User");
+								displayText += " " + name;
+							}else if($.isNotBlank(id)){ //user role
+								displayText += " " + id;
 							}
+							
+							displayText += " " + (itemTotal > 1 ? "Users" : "User");
 							
 							return displayText;
 						},
