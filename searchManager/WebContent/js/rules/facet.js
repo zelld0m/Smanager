@@ -432,6 +432,7 @@
 																	}
 																},
 																preHook: function(){ 
+																	api.destroy();
 																	base.prepareList(); 
 																}
 															});
