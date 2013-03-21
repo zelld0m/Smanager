@@ -30,6 +30,7 @@ public class User extends ModelBean {
 	private Date thruDate;
 	private Integer successiveFailedLogin;
 	private String storeId;
+	private String dateTimeZoneId;
 	private String permissionId; 
 
 
@@ -58,7 +59,7 @@ public class User extends ModelBean {
 
 	public User(String username, String fullName, String password, String email, String groupId, boolean accountNonLocked,
 			boolean credentialsNonExpired, Date lastAccessDate, String ip, String createdBy, String lastModifiedBy,
-			Date createdDate, Date lastModifiedDate, Date thruDate, String storeId) {
+			Date createdDate, Date lastModifiedDate, Date thruDate, String storeId, String dateTimeZoneId) {
 		super();
 		this.username = username;
 		this.fullName = fullName;
@@ -75,6 +76,7 @@ public class User extends ModelBean {
 		this.lastModifiedDate = lastModifiedDate;
 		setThruDate(thruDate);
 		this.storeId = storeId;
+		this.dateTimeZoneId = dateTimeZoneId;
 	}
 
 	public String getUsername() {
@@ -241,6 +243,14 @@ public class User extends ModelBean {
 	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
+	
+	public String getDateTimeZoneId() {
+		return dateTimeZoneId;
+	}
+
+	public void setDateTimeZoneId(String dateTimeZoneId) {
+		this.dateTimeZoneId = dateTimeZoneId;
+	}
 
 	public String getPermissionId() {
 		return permissionId;
@@ -249,5 +259,4 @@ public class User extends ModelBean {
 	public void setPermissionId(String permissionId) {
 		this.permissionId = permissionId;
 	}
-
 }

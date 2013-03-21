@@ -285,6 +285,7 @@ public class DAOConstants {
 	public static final String COLUMN_PRODUCT_STORE_ID     			= "product_store_id";
 	public static final String COLUMN_STORE_NAME  					= "store_name";
 	public static final String COLUMN_STORE_ID						= "store_id";
+	public static final String COLUMN_TIMEZONE_ID					= "store_id"; //TODO
 	public static final String COLUMN_STORE  						= "store";
 	public static final String COLUMN_VALUE       					= "value";
 	public static final String COLUMN_SEQUENCE_NUM 					= "sequence_num";

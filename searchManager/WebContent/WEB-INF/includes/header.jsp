@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<% pageContext.setAttribute("now", org.joda.time.DateTime.now()); %>
 
 <!DOCTYPE html>
 <html>
@@ -24,6 +25,7 @@
   <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getTimeZoneId()" var="timeZoneId" />
   
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
@@ -196,8 +198,8 @@
         <tr>
           <td align="left" class="padTB5">
           	<div class="clearB floatL farial fsize12 fLgray2">
-	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span> 
-			    <span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
+	          	<img src="<spring:url value="/js/jquery/ajaxsolr.custom/images/user.png" />" style="margin-bottom:-3px"> Welcome <span class="fbold"><sec:authentication property="principal.username" /></span> <span class="fsize10">|</span>
+	          	<span class="topHelp fLALink fdecoNone fsize11 txtCapitalize"><a href=""> help</a></span> <span class="fsize10">|</span>
 			    <span class="fLALink fdecoNone fsize11 txtCapitalize"><a href="<spring:url value="/logout" />">Logout</a></span>
 		    </div>
           </td>

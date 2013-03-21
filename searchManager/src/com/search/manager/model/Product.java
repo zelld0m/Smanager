@@ -4,6 +4,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.jodatime.JodaTimeUtil;
@@ -21,7 +22,7 @@ public class Product extends ModelBean {
 	private String description;
 	private String imagePath;
 	private String store;
-	private DateTime expiryDateTime;
+	@DateTimeFormat private DateTime expiryDateTime;
 	private MemberTypeEntity memberTypeEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;

@@ -168,7 +168,7 @@
 					$li.find(".validityDays").html($item["validityText"]);
 				} 
 
-				var formattedExpiryDate = $item["formattedExpiryDate"];
+				var formattedExpiryDate = $item["expiryDateTime"];
 				if($.isBlank(formattedExpiryDate)){
 					$li.find(".clearDate").hide();
 				}else{
@@ -185,7 +185,7 @@
 					buttonImageOnly: true,
 					disabled: self.selectedRuleStatus["locked"] || !allowModify,
 					onSelect: function(dateText, inst) {	
-						if ($item["formattedExpiryDate"] !== dateText){
+						if ($item["expiryDateTime"] !== dateText){
 							self.updateValidityDate($item, "update", dateText);
 						}
 					}

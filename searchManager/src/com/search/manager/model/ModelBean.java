@@ -3,6 +3,7 @@ package com.search.manager.model;
 import java.io.Serializable;
 
 import org.joda.time.DateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 
 public class ModelBean implements Serializable {
 	
@@ -11,8 +12,8 @@ public class ModelBean implements Serializable {
 	protected String comment;
 	protected String createdBy;
 	protected String lastModifiedBy;
-	protected DateTime createdDateTime;
-	protected DateTime lastModifiedDateTime;
+	@DateTimeFormat protected DateTime createdDateTime;
+	@DateTimeFormat protected DateTime lastModifiedDateTime;
 	
 	public String getComment() {
 		return comment;
@@ -37,7 +38,7 @@ public class ModelBean implements Serializable {
 	public void setLastModifiedBy(String lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
-
+	
 	public DateTime getCreatedDateTime() {
 		return createdDateTime;
 	}

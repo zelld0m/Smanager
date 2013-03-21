@@ -16,6 +16,7 @@
     <dateformat>MM/dd/yyyy</dateformat>
     <datetimeformat>MM/dd/yyyy hh:mm aa</datetimeformat>
     <default-server>afs-pl-schpd02</default-server>
+    <default-timezone>Asia/Manila</default-timezone>
     <facet-template>PCMall_FacetTemplate</facet-template>
     <facet-template-name>PCMall_FacetTemplateName</facet-template-name>
     <group-membership>

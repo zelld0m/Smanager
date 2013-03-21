@@ -16,7 +16,7 @@
  
  <!-- DWR will scan the classpath and search classes containing @RemoteProxy or
   @RemoteMethod annotations. This will register the beans and Creator proxies for these classes.-->
- <dwr:annotation-scan base-package="com.search.manager" scanDataTransferObject="true" scanRemoteProxy="true" />
+ <dwr:annotation-scan scanDataTransferObject="true" scanRemoteProxy="true" regex="com.search.manager.*|org.joda.*"/>
  
  <!-- DWR will map util.js and engine.js files to the dwrController.
   You can then include this files as external Javascript references from your JSP -->
@@ -27,11 +27,11 @@
  
  <!-- This is required if you want to configure any beans not managed by
   Spring. Leaving it enabled doesn't do any negative effects. Here's a
-  sample config: 
-  <dwr:configuration>
-   <dwr:convert type="bean" class="com.search.manager.model.RecordSet" />
-  </dwr:configuration>-->
-  <dwr:configuration/>
+  sample config: -->
+   <dwr:configuration>
+   		  <dwr:convert type="object" class="com.search.manager.jodatime.DateTimeConverter"></dwr:convert>
+   </dwr:configuration> 
+  <!-- <dwr:configuration/>-->
  
  <!-- Some articles
   DWR 2.0.x, Spring 2.x, with Spring MVC
