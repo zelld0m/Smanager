@@ -58,9 +58,9 @@
 								              .css("background-position", "100% 0%");
 							}
 		
-							base.options.changeStatusCallback(e.data.base, {id: e.data.id, item:e.data.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
+							base.options.changeStatusCallback(e.data.base, {id: e.data.base.options.id, item:e.data.base.options.item, status: $(checkboxID).is(":checked"), value: $(checkboxID).val()});
 						}
-					},{initOn: base.options.initOn, id: base.options.id, item: base.options.item, base: base});
+					},{base: base});
 			
 			if(base.options.locked){
 				base.$el.siblings("div." + setClass).remove();
