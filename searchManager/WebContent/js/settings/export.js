@@ -265,16 +265,29 @@
 									postButtonClick: function(){
 										self.getExportList();
 									},
-									itemForceAddStatusCallback: function(base, memberIds){
-										if (self.entityName.toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(rule["ruleRefId"], memberIds, {
-											callback:function(data){
-												base.updateForceAddStatus(data);
-											},
-											preHook: function(){
-												base.prepareForceAddStatus();
-											}
-										});
+									itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
+									},
+									itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
 									}
 								});
 							}else{
