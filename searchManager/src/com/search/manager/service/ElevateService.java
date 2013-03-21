@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -355,17 +356,23 @@ public class ElevateService extends RuleService{
 
 	@RemoteMethod
 	public RecordSet<ElevateProduct> getProducts(String filter, String keyword, int page, int itemsPerPage) {
-
-		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter))
-			return getAllElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		if (StringUtils.equalsIgnoreCase("active", filter))
-			return getActiveElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		if (StringUtils.equalsIgnoreCase("expired", filter))
-			return getExpiredElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
-
-		return null;
+		
+		RecordSet<ElevateProduct> rs = null;
+		if (StringUtils.isBlank(filter) || StringUtils.equalsIgnoreCase("all", filter)) {
+			rs = getAllElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		else if (StringUtils.equalsIgnoreCase("active", filter)) {
+			rs = getActiveElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		else if (StringUtils.equalsIgnoreCase("expired", filter)) {
+			rs = getExpiredElevatedProductsIgnoreKeyword(keyword, page, itemsPerPage);
+		}
+		
+		if (rs != null && CollectionUtils.isNotEmpty(rs.getList())) {
+			UtilityService.setFacetTemplateValues(rs.getList());
+		}
+		
+		return rs;
 	}
 
 	@RemoteMethod
@@ -572,21 +579,62 @@ public class ElevateService extends RuleService{
 	}
 
 	@RemoteMethod
-	public Map<String, Boolean> isRequireForceAdd(String keyword, String[] memberIds) {
-		String storeName = UtilityService.getStoreId();
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
+	public Map<String, Boolean> isRequireForceAdd(final String keyword, String[] memberIds) {
+		ExecutorService execService = Executors.newFixedThreadPool(10);
+		final String storeName = UtilityService.getStoreId();
+		final String serverName = UtilityService.getServerName();
+		final Map<String, Boolean> map = new HashMap<String, Boolean>();
+		int tasks = 0;
+		
 		try {
-			for (String memberId: memberIds) {
+			ExecutorCompletionService<Boolean> completionService = new ExecutorCompletionService<Boolean>(execService);
+			for (int i = 0, size = memberIds.length; i < size; i++) {
+				final String memberId = memberIds[i];
 				ElevateResult elevate = new ElevateResult(new StoreKeyword(storeName, keyword), memberId);
 				elevate = daoService.getElevateItem(elevate);
 				if (elevate != null) {
-					String condition = elevate.getEntity() == MemberTypeEntity.FACET ? elevate.getCondition().getConditionForSolr() 
-							: String.format("EDP:%s", elevate.getEdp());
-					map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+					String condition = "";
+					if (MemberTypeEntity.FACET.equals(elevate.getEntity())) {
+						RedirectRuleCondition rr = elevate.getCondition();
+						UtilityService.setFacetTemplateValues(rr);
+						condition = rr.getConditionForSolr();
+					}
+					else {
+						condition = String.format("EDP:%s", elevate.getEdp());
+					}
+					final String filter = condition;
+					completionService.submit(new Callable<Boolean>() {
+						@Override
+						public Boolean call() {
+							boolean forceAdd = false;
+							try {
+								forceAdd = SearchHelper.isForceAddCondition(serverName, storeName, keyword, filter);
+							} catch (Exception e) {
+								logger.error("Failed to get force add status for condition: " + filter, e);
+							}
+							map.put(memberId, forceAdd);
+							return true;
+						}
+					});
+					tasks++;
 				}
+				
+				while (tasks > 0) {
+					try {
+						completionService.take();
+					} catch (InterruptedException e) {
+						logger.error("Failed to get if force add required for condition", e);
+					}
+					tasks--;
+				}
+				
 			}
 		} catch (DaoException e) {
-			logger.error("Failed during addRuleItemComment()",e);
+			logger.error("Failed during isRequireForceAdd()",e);
+		} finally {
+			if (execService != null) {
+				execService.shutdown();
+			}
 		}
 		return map;
 	}
@@ -596,6 +644,7 @@ public class ElevateService extends RuleService{
 		
 		ExecutorService execService = Executors.newFixedThreadPool(10);
 		final String storeName = UtilityService.getStoreId();
+		final String serverName = UtilityService.getServerName();
 		final Map<String, Boolean> map = new HashMap<String, Boolean>();
 		int tasks = 0;
 		
@@ -607,8 +656,14 @@ public class ElevateService extends RuleService{
 				if (StringUtils.isNotBlank(condition)) {
 					completionService.submit(new Callable<Boolean>() {
 						@Override
-						public Boolean call() throws Exception {
-							map.put(memberId ,SearchHelper.isForceAddCondition(UtilityService.getServerName(), storeName, keyword, condition));
+						public Boolean call() {
+							boolean forceAdd = false;
+							try {
+								forceAdd = SearchHelper.isForceAddCondition(serverName, storeName, keyword, condition);
+							} catch (Exception e) {
+								logger.error("Failed to get force add status for condition: " + condition, e);
+							}
+							map.put(memberId, forceAdd);
 							return true;
 						}
 					});

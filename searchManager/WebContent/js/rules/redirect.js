@@ -1477,9 +1477,10 @@
 				if(ui.find("div.dynamicAttribute").is(":visible")){
 					var inTemplateName = ui.find("select#templateNameList > option:gt(0):selected:eq(0)").text();
 					var $divDynamicAttrItems = ui.find("div.dynamicAttributeItem");
-
+					var storeFacetTemplateNameLabel = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
+					
 					if($.isNotBlank(inTemplateName)){
-						condMap["FacetTemplateName"] = $.makeArray(inTemplateName);
+						condMap[storeFacetTemplateNameLabel] = $.makeArray(inTemplateName);
 
 						$divDynamicAttrItems.find("div").each(function(){ 
 							var attributeItem = this.title;
