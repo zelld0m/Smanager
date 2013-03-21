@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import net.sf.json.JSONObject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.directwebremoting.annotations.Param;
@@ -31,6 +32,7 @@ import com.search.manager.authentication.dao.UserDetailsImpl;
 import com.search.manager.dao.sp.DAOConstants;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.exception.PublishLockException;
+import com.search.manager.model.Product;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.schema.SolrSchemaUtility;
 import com.search.manager.schema.model.Schema;
@@ -363,6 +365,22 @@ public class UtilityService {
 			condition.setFacetPrefix(getStoreFacetPrefix());
 			condition.setFacetTemplate(getStoreFacetTemplate());
 			condition.setFacetTemplateName(getStoreFacetTemplateName());
+		}
+	}
+
+	public static void setFacetTemplateValues(List<? extends Product> list) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			String facetPrefix = getStoreFacetPrefix();
+			String facetTemplate = getStoreFacetTemplate();
+			String facetTemplateName = getStoreFacetTemplateName();
+			for (Product p: list) {
+				RedirectRuleCondition condition = p.getCondition();
+				if (condition != null) {
+					condition.setFacetPrefix(facetPrefix);
+					condition.setFacetTemplate(facetTemplate);
+					condition.setFacetTemplateName(facetTemplateName);
+				}
+			}
 		}
 	}
 

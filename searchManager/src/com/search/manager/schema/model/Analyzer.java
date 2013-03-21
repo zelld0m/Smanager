@@ -1,12 +1,21 @@
 package com.search.manager.schema.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+import org.directwebremoting.convert.EnumConverter;
+
 import com.search.manager.schema.analyzer.model.AnalyzerComponent;
 
-public class Analyzer {
+@DataTransferObject(converter = BeanConverter.class)
+public class Analyzer implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
+	@DataTransferObject(converter = EnumConverter.class)
 	public enum Type {
 		INDEX,
 		QUERY,

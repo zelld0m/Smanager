@@ -198,12 +198,12 @@
 			case "facetsort": 
 			case "facet sort": 
 				var $table = $content.find("table#item");
-				var $ruleInfo = $content.find("div#ruleInfo");
+				var $rulePreview = $content.find("div#leftPreview");
 
 				FacetSortServiceJS.getRuleById(base.options.ruleId, {
 					callback: function(data){
-						$ruleInfo.find("#ruleName").text(data.name);
-						$ruleInfo.find("#ruleType").text(data.ruleType.toLowerCase());
+						$rulePreview.find("#ruleInfo").text(data.name);
+						$rulePreview.find("#ruleType").text(data.ruleType.toLowerCase());
 
 						for(var facetGroup in data.items){
 							var facetName = facetGroup;
