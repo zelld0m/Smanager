@@ -418,9 +418,10 @@
 			if($dynamicAttribute.length){
 				var inTemplateName = $dynamicAttribute.find("select#templateNameList > option:gt(0):selected:eq(0)").text();
 				var $divDynamicAttrItems = $dynamicAttribute.find("div.dynamicAttributeItem:not(#dynamicAttributeItemPattern)");
-
+				var storeFacetTemplateNameLabel = GLOBAL_PCMGroup ? "FacetTemplateName" : "TemplateName";
+				
 				if($.isNotBlank($.trim(inTemplateName))){
-					condMap["FacetTemplateName"] = $.makeArray($.trim(inTemplateName));
+					condMap[storeFacetTemplateNameLabel] = $.makeArray($.trim(inTemplateName));
 
 					$divDynamicAttrItems.find("div").each(function(ulInd, uEl){
 						var attributeItem = $(uEl).prop("title");

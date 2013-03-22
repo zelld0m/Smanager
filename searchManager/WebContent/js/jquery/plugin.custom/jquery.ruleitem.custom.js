@@ -393,11 +393,11 @@
 			template += '					  		<img src="' + GLOBAL_contextPath + '/images/iconDelete.png">';
 			template += '						</a>';			
 			template += '					</div>';
-			template += '                   <div class="floatL w100 marTn12">';
+			template += '                   <div class="floatL w110 marTn12">';
 			template += '					  	<div class="handle floatL w20" style="display:none"><img src="' + GLOBAL_contextPath + '/images/icon_move.png"></div>';
 			template += '                   	<div class="forceAdd" style="display:none">';
 			template += '							<img id="preloaderForceAdd" class="preloaderForceAdd" src="' + GLOBAL_contextPath + '/images/horizontalPreloaderBlue.gif">';
-			template += '							<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox small-normal-forceadd" style="display:none; margin-top:0">';
+			template += '							<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox small-normal-forceadd" style="display:none; margin-top:0; margin-left:0;">';
 			template += '						</div>';
 			template += '					</div>';
 			template += '					</div>';

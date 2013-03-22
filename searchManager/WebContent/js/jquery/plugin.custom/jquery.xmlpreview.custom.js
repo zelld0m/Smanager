@@ -182,7 +182,6 @@
 			$table.find("tr").removeClass("alt");
 
 			$content.find("#ruleInfo").text($.trim(ruleName));
-			$content.find("#requestType").text(base.options.requestType);
 
 			if(list.length==0 && base.options.ruleXml == null && base.XML_SOURCE === sourceData){
 				$tr = $content.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -311,6 +310,7 @@
 						}
 						else{
 							$ruleInfo.text(data.name);
+							$content.find("#ruleType").text(data.ruleType.toLowerCase());
 
 							if(data.items && data.items.length == 0){
 								var $tr = $table.find("tr#itemPattern").clone();
@@ -523,6 +523,7 @@
 				}
 				else{
 					$ruleInfo.text(xml.ruleName);
+					$content.find("#ruleType").text(xml.ruleType.toLowerCase());
 					
 					if(xml.groups && xml.groups.length == 0){
 						var $tr = $table.find("tr#itemPattern").clone().attr("id","item0").show();
@@ -709,9 +710,7 @@
 					template += '	<label class="w110 floatL fbold">Rule Name:</label>';
 					template += '	<label class="wAuto floatL" id="ruleInfo"></label>';
 					template += '	<div class="clearB"></div>';
-					template += '	<label class="w110 floatL marL20 fbold">Request Type:</label>';
-					template += '	<label class="wAuto floatL" id="requestType"></label>';					
-					template += '	<div class="clearB"></div>';
+
 					template += '</div>';
 					template += '<div class="clearB"></div>';
 					break;
