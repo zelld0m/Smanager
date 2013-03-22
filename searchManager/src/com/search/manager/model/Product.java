@@ -22,7 +22,7 @@ public class Product extends ModelBean {
 	private String description;
 	private String imagePath;
 	private String store;
-	@DateTimeFormat private DateTime expiryDateTime;
+	private DateTime expiryDateTime;
 	private MemberTypeEntity memberTypeEntity;
 	private RedirectRuleCondition condition;
 	private String memberId;

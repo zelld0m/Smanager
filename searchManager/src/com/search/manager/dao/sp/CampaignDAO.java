@@ -480,7 +480,7 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
 					map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
-					map.put(DAOConstants.COLUMN_CREATED_DATE, rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE));
+					map.put(DAOConstants.COLUMN_CREATED_DATE, JodaTimeUtil.toDateTime(rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE)));
 					return map;
 				}
 			}));
@@ -525,8 +525,8 @@ public class CampaignDAO {
 					map.put(DAOConstants.COLUMN_CAMPAIGN_NAME, rs.getString(DAOConstants.COLUMN_CAMPAIGN_NAME));
 					map.put(DAOConstants.COLUMN_BANNER_ID, rs.getString(DAOConstants.COLUMN_BANNER_ID));
 					map.put(DAOConstants.COLUMN_BANNER_NAME, rs.getString(DAOConstants.COLUMN_BANNER_NAME));
-					map.put(DAOConstants.COLUMN_START_DATE, rs.getDate(DAOConstants.COLUMN_START_DATE));
-					map.put(DAOConstants.COLUMN_END_DATE, rs.getDate(DAOConstants.COLUMN_END_DATE));
+					map.put(DAOConstants.COLUMN_START_DATE, JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_START_DATE)));
+					map.put(DAOConstants.COLUMN_END_DATE, JodaTimeUtil.toDateTime(rs.getDate(DAOConstants.COLUMN_END_DATE)));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_BY, rs.getString(DAOConstants.COLUMN_CREATED_BY));
 					//	            	map.put(DAOConstants.COLUMN_CREATED_DATE, rs.getTimestamp(DAOConstants.COLUMN_CREATED_DATE));
 					return map;

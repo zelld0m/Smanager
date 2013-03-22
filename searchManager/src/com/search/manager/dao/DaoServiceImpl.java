@@ -1800,6 +1800,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		//TODO:
 		return getElevateResultList(new SearchCriteria<ElevateResult>(
 				new ElevateResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
@@ -1812,6 +1813,7 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		//TODO:
 		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
 				new ExcludeResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
@@ -1824,8 +1826,8 @@ public class DaoServiceImpl implements DaoService {
 
 	@Override
 	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		//TODO:
 		return getDemoteResultList(new SearchCriteria<DemoteResult>(
 				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
-	
 }

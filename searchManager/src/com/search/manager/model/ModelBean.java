@@ -12,8 +12,8 @@ public class ModelBean implements Serializable {
 	protected String comment;
 	protected String createdBy;
 	protected String lastModifiedBy;
-	@DateTimeFormat protected DateTime createdDateTime;
-	@DateTimeFormat protected DateTime lastModifiedDateTime;
+	protected DateTime createdDateTime;
+	protected DateTime lastModifiedDateTime;
 	
 	public String getComment() {
 		return comment;
@@ -39,6 +39,7 @@ public class ModelBean implements Serializable {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 	
+	@DateTimeFormat(pattern="SM") 
 	public DateTime getCreatedDateTime() {
 		return createdDateTime;
 	}

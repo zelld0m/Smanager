@@ -37,19 +37,18 @@ public class JodaTimeUtil {
 			} catch (IllegalArgumentException se) {
 				defaultTimeZone = DateTimeZone.UTC;
 			}
-		}finally{
-			DateTimeZone.setDefault(defaultTimeZone);
 		}
-
+		
+		DateTimeZone.setDefault(defaultTimeZone);
 		return defaultTimeZone;
 	}
 	
 	public static DateTime toDateTime(Timestamp timestamp) {
-		return (timestamp==null? null: new DateTime(timestamp.getTime()));
+		return (timestamp==null? null: new DateTime(timestamp.getTime(),getTimeZone()));
 	}
 	
 	public static DateTime toDateTime(Date date) {
-		return (date==null? null: new DateTime(date.getTime()));
+		return (date==null? null: new DateTime(date.getTime(),getTimeZone()));
 	}
 	
 	private static DateTime toDateTime(String storeId, String pattern, String dateTimeText){

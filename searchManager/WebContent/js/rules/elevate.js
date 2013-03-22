@@ -168,7 +168,9 @@
 					$li.find(".validityDays").html($item["validityText"]);
 				} 
 
-				var formattedExpiryDate = $item["expiryDateTime"];
+				DateTime dt;
+				console.log(dt.now());
+				 //= $item["expiryDateTime"];
 				if($.isBlank(formattedExpiryDate)){
 					$li.find(".clearDate").hide();
 				}else{
