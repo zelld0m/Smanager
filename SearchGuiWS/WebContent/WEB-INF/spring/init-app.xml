@@ -15,4 +15,9 @@
 	<beans:bean id="propsUtils" class="com.search.manager.utility.PropsUtils">
 	     <beans:property name="localCacheService" ref="localCacheService" />
 	</beans:bean>
+	
+	<beans:bean id="configManager" class="com.search.ws.ConfigManager" scope="singleton">
+	     <beans:property name="instance" value="${solr.configPath}" />
+	</beans:bean>
+	
 </beans:beans>

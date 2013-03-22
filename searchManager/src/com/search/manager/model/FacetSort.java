@@ -158,12 +158,6 @@ public class FacetSort extends ModelBean{
 	public void setRuleType(RuleType ruleType) {
 		this.ruleType = ruleType;
 	}
-
-	public String getStoreName(){
-		if(getStore() != null)
-			return getStore().getStoreName();
-		return "";
-	}
 	
 	public String getStoreId(){
 		if(getStore() != null)
@@ -172,11 +166,11 @@ public class FacetSort extends ModelBean{
 	}
 	
 	public String getFormattedCreatedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreName(), getCreatedDate());
+		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getCreatedDate());
 	}
 	
 	public String getFormattedLastModifiedDate() {
-		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreName(), getLastModifiedDate());
+		return DateAndTimeUtils.formatDateTimeUsingConfig(getStoreId(), getLastModifiedDate());
 	}
 	
 	public Map<String, List<String>> getItems() {

@@ -21,50 +21,72 @@ resetInputFields = function(selector){
 	$(selector).filter("input,textarea").val("");
 };
 
-getRuleNameSubTextStatus = function(ruleStatus){
-	if (ruleStatus==null) 
-		return "Unknown Status";
+getStoreLabel = function(storeName){
+	var storeLabel = storeName;
+	switch(storeName){
+	case "pcmall": storeLabel = "PCM"; break;
+	case "macmall": storeLabel = "MacMall"; break;
+	case "pcmallcap": storeLabel = "PCM BD"; break;
+	case "pcmallgov": storeLabel = "PCMG BD"; break;
+	case "macmallbd": storeLabel = "MacMall BD"; break;
+	default: break;
+	}
+	return storeLabel;
+};
 
-	if (ruleStatus!=null && $.isBlank(ruleStatus["approvalStatus"])) 
-		return "Setup a Rule";
+getRuleNameSubTextStatus = function(ruleStatus){
+	if ($.isEmptyObject(ruleStatus)) 
+		return "Unknown Rule Status";
 
 	switch (ruleStatus["approvalStatus"]){
 	case "REJECTED": return "Action Required";
 	case "PENDING": return "Awaiting Approval";
 	case "APPROVED": return "Ready For Production";
-	}	
+	default: 
+		if(ruleStatus["updateStatus"] === 'DELETE'){
+			switch(ruleStatus["updateStatus"]){
+				case "PENDING": return "Awaiting Approval - Delete";
+				case "APPROVED": return "Ready For Production - Delete";
+				default: return "Deleted Rule";
+			}
+		}else if($.isBlank(ruleStatus["approvalStatus"])){
+			return "Setup a Rule";
+		}
+	}; 
 };
 
 showActionResponse = function(code, action, param){
 	switch(code){
 	case -1: jAlert("Error encountered while processing " + action + " request for " + param, "Error Encountered"); break;
 	case  0: jAlert("Failed " + action + " request for " + param, "Failed Request"); break;
-	case  2: jAlert("Successful force " + action + " request for " + param, "Successful Request"); break;
 	default: jAlert("Successful " + action + " request for " + param, "Successful Request"); break;
 	}
 };
 
-showActionResponseFromMap = function(code, action, param, additionalFailMessage){
+showActionResponseFromMap = function(code, action, title, additionalFailMessage){
 	var message = "";
-	
-	if (code["FORCED"] && code["FORCED"].length > 0) {
-		message += "Successful force " + action + " request for " + code["FORCED"] + ".";
-	}
-	
+
 	if (code["PASSED"] && code["PASSED"].length > 0) {
 		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Successful " + action + " request for " + code["PASSED"] + ".";
-	}
-	
-	if (code["FAILED"] && code["FAILED"].length > 0) {
-		if ($.isNotBlank(message)) message += "\n\n";
-		message += "Failed " + action + " request for " + code["FAILED"]+ ".";
-		if (additionalFailMessage) {
-			message += "\n" + additionalFailMessage;
+		message += "Successful " + action + " request for:";
+		for(var i=0; i< code["PASSED"].length; i++){	
+			message += '\n-'+ code["PASSED"][i];	
 		}
 	}
-	
-	jAlert(message,"Multiple Rule Item Add"); 
+
+	if (code["FAILED"] && code["FAILED"].length > 0) {
+		if ($.isNotBlank(message)) message += "\n\n";
+		message += "Failed " + action + " request for:";
+		for(var i=0; i< code["FAILED"].length; i++){	
+			message += '\n-'+ code["FAILED"][i];	
+		}
+
+		if (additionalFailMessage) {
+			message += "\n\n" + additionalFailMessage;
+		}
+	}
+
+	jAlert(message, title); 
 };
 
 /** Style for HTML upload tag */
@@ -83,7 +105,7 @@ showMessage = function(selector, msg){
 			solo: false,
 			ready: true
 		},
-		hide: 'unfocus, mouseout',
+		hide: 'unfocus, mouseout, mouseleave',
 		style:{width:'auto'},
 		events: {
 			show: function(event, api){
@@ -97,12 +119,16 @@ showMessage = function(selector, msg){
 	});
 };
 
-getLockedRuleHTMLTemplate = function(){
+getLockedRuleHTMLTemplate = function(message){
 	var template = '';
-
+	
 	template += '<div id="ruleIsLocked" class="w180">';
 	template += '	<div class="w180 alert">';
-	template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	if(message != null && message.length > 0) {
+		template += '		'+message;
+	} else {
+		template += '		You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked.';
+	}
 	template += '	</div>';
 	template += '</div>';
 
@@ -112,7 +138,7 @@ getLockedRuleHTMLTemplate = function(){
 
 getLastModifiedHTMLTemplate = function(user, date){
 	var template = '';
-	
+
 	template += '<div>';
 	template += '	<div>Modified by <strong>' + user + '</strong><br/>';
 	template += '	on ' + date;
@@ -129,7 +155,7 @@ showLastModified = function(e){
 /** Style for HTML upload tag */
 showHoverInfo = function(e){
 	if(e.data.locked){
-		showMessage(e.target, getLockedRuleHTMLTemplate());
+		showMessage(e.target, getLockedRuleHTMLTemplate(e.data.message));
 	}
 };
 

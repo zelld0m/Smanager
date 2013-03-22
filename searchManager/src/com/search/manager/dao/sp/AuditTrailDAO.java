@@ -30,7 +30,7 @@ public class AuditTrailDAO {
     	getSP = new GetAuditTrailStoredProcedure(jdbcTemplate);
 //    	getRefSP = new GetAuditTrailReferenceStoredProcedure(jdbcTemplate);
     }
-	private final static String GET_REFID_SQL = "select REFERENCE, USER_NAME from dbo.AUDIT_TRAIL where entity = ? AND operation = ? and store = ?";
+	private final static String GET_REFID_SQL = "select REFERENCE, USER_NAME from dbo.AUDIT_TRAIL where entity = ? AND operation = ? and store = ? ORDER BY REFERENCE";
 	private final static String GET_USER_SQL = "select distinct(USER_NAME) from AUDIT_TRAIL WHERE STORE = ? ORDER BY USER_NAME";
 	private final static String GET_ACTION_SQL = "select distinct(OPERATION) from AUDIT_TRAIL WHERE STORE = ? ORDER BY OPERATION";
 	private final static String GET_ADMIN_ENTITY_SQL = "select distinct(ENTITY) from AUDIT_TRAIL WHERE STORE = ? ORDER BY ENTITY";

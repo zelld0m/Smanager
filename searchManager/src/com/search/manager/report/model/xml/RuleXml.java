@@ -3,6 +3,10 @@ package com.search.manager.report.model.xml;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.directwebremoting.annotations.DataTransferObject;
+import org.directwebremoting.convert.BeanConverter;
+
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Product;
 import com.search.manager.model.RuleStatus;
@@ -18,6 +22,7 @@ import com.search.manager.model.RuleStatus;
 	RuleEntity.class,
 	Product.class
 })
+@DataTransferObject(converter = BeanConverter.class)
 public class RuleXml extends BaseEntityXml{
 	
 	private static final long serialVersionUID = -368623910806297877L;
@@ -31,7 +36,9 @@ public class RuleXml extends BaseEntityXml{
 	private String name;
 	private long serial;
 	private boolean deleted;
+	private boolean rejected;
 	private RuleStatus ruleStatus;
+	private boolean fileExists;
 	
 	public RuleXml() {
 		super();
@@ -49,6 +56,14 @@ public class RuleXml extends BaseEntityXml{
 		this.notes = notes;
 		this.name = name;
 		setCreatedBy(createdBy);
+	}
+
+	public RuleXml(String store, String ruleId, String ruleName, boolean deleted, boolean rejected) {
+		this.store = store;
+		this.ruleName = ruleName;
+		this.ruleId = ruleId;
+		this.deleted = deleted;
+		this.rejected = rejected;
 	}
 
 	public RuleStatus getRuleStatus() {
@@ -128,6 +143,15 @@ public class RuleXml extends BaseEntityXml{
 	}
 
 	@XmlTransient
+	public boolean isRejected() {
+		return rejected;
+	}
+
+	public void setRejected(boolean rejected) {
+		this.rejected = rejected;
+	}
+
+	@XmlTransient
 	public RuleEntity getRuleEntity() {
 		return ruleEntity;
 	}
@@ -135,4 +159,14 @@ public class RuleXml extends BaseEntityXml{
 	public void setRuleEntity(RuleEntity ruleEntity) {
 		this.ruleEntity = ruleEntity;
 	}
+
+	@XmlTransient
+	public boolean isFileExists() {
+		return fileExists;
+	}
+
+	public void setFileExists(boolean fileExists) {
+		this.fileExists = fileExists;
+	}
+	
 }

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import com.search.manager.aop.Audit;
 import com.search.manager.dao.DaoException;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.Keyword;
 import com.search.manager.model.RecordSet;
 import com.search.manager.model.SearchCriteria;
@@ -73,7 +75,7 @@ public class StoreKeywordDAO {
 	        declareParameter(new SqlReturnResultSet(DAOConstants.RESULT_SET_1, new RowMapper<StoreKeyword>() {
 	        	public StoreKeyword mapRow(ResultSet rs, int rowNum) throws SQLException {
 	                return new StoreKeyword(
-	                		new Store(rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID), rs.getString(DAOConstants.COLUMN_STORE_NAME)),
+	                		new Store(rs.getString(DAOConstants.COLUMN_PRODUCT_STORE_ID)),
 	                		new Keyword(rs.getString(DAOConstants.COLUMN_PROD_KEYWORD_ID),rs.getString(DAOConstants.COLUMN_KEYWORD)));
 	        	}
 	        }));
@@ -123,4 +125,30 @@ public class StoreKeywordDAO {
         return DAOUtils.getItem(getSp.execute(inputs));
     }
     
+	private final static String GET_ELEVATE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'enabled' AND PARENT_MEMBER_ID = ?";
+	private final static String GET_EXCLUDE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'disabled' AND PARENT_MEMBER_ID = ?";
+	private final static String GET_DEMOTE_KEYWORDS_SQL = "select DISTINCT(PROD_KEYWORD_ID), * from PROD_KEYWORD_MEMBER where STATUS_ID = 'demoted' AND PARENT_MEMBER_ID= ?";
+    
+    public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) {
+		String sql = "";
+    	switch (ruleEntity) {
+	    	case ELEVATE:
+	    		sql = GET_ELEVATE_KEYWORDS_SQL;
+	    		break;
+	    	case EXCLUDE:
+	    		sql = GET_EXCLUDE_KEYWORDS_SQL;
+	    		break;
+	    	case DEMOTE:
+	    		sql = GET_DEMOTE_KEYWORDS_SQL;
+	    		break;
+	    	default: return null;
+    	}
+		
+		return getSp.getJdbcTemplate().query(
+				sql, new String[] {storeId}, new RowMapper<Keyword>() {
+					public Keyword mapRow(ResultSet resultSet, int i) throws SQLException {
+						return new Keyword(resultSet.getString(1));
+					}
+				});
+    }
 }

@@ -78,6 +78,7 @@ public class ElevateRuleXml extends RuleXml implements ProductDetailsAware{
 		return products;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setProducts(List<? extends Product> products) {
 		this.products = (List<ElevateProduct>) products;
 		

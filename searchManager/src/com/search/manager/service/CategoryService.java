@@ -58,18 +58,18 @@ public class CategoryService {
 			filters.add(String.format("CatCode: %s", catcode));
 		}
 		if (StringUtils.isNotBlank(category)) {
-			filters.add(String.format("Category: %s", category));
+			filters.add(String.format("Category: \"%s\"", category));
 		}
 		if (StringUtils.isNotBlank(subcategory)) {
-			filters.add(String.format("SubCategory: %s", subcategory));
+			filters.add(String.format("SubCategory: \"%s\"", subcategory));
 		}
 		if (StringUtils.isNotBlank(className)) {
-			filters.add(String.format("Class: %s", className));
+			filters.add(String.format("Class: \"%s\"", className));
 		}
 		if (StringUtils.isNotBlank(subclass)) {
-			filters.add(String.format("SubClass: %s", subclass));
+			filters.add(String.format("SubClass: \"%s\"", subclass));
 		}
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
 	}
 	
 	@RemoteMethod
@@ -108,16 +108,18 @@ public class CategoryService {
 		}
 		filters = new ArrayList<String>();
 		RedirectRuleCondition rr = new RedirectRuleCondition();
+		rr.setStoreId(UtilityService.getStoreId());
 		rr.setFilter(filter);
+		UtilityService.setFacetTemplateValues(rr);
 		filters.add(rr.getConditionForSolr());
-		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(), "Manufacturer", filters);
+		return SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(), "Manufacturer", filters);
 	}
 	
 	@RemoteMethod
 	public static List<String> getTemplateNamesByStore(String storeId) throws DataException {
 		if("macmall".equalsIgnoreCase(storeId)) {
 			return getIMSTemplateNames();
-		}else if("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "sbn".equalsIgnoreCase(storeId)) {
+		}else if("pcmall".equalsIgnoreCase(storeId) || "pcmallcap".equalsIgnoreCase(storeId) || "pcmgbd".equalsIgnoreCase(storeId)) {
 			return getCNETTemplateNames();			
 		}else if("onsale".equalsIgnoreCase(storeId)) {
 			return null;			
@@ -149,7 +151,7 @@ public class CategoryService {
 			fields.add(a.getAttributeName());
 		}	
 		
-		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+		Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
 				fields, filters, false);
 
 		for (Attribute a: attrMap.values()) {
@@ -168,7 +170,7 @@ public class CategoryService {
 	public static Map<String, Attribute> getCNETTemplateAttributes(String templateName) throws DataException {
 		// TODO: merge with above method
 		Map <String, Attribute> attrMap = new LinkedHashMap<String, Attribute>();
-		String storeId = UtilityService.getStoreName();
+		String storeId = UtilityService.getStoreId();
 
 		ArrayList<String> filters = new ArrayList<String>();
 		ArrayList<String> fields = new ArrayList<String>();
@@ -178,11 +180,11 @@ public class CategoryService {
 			fields.add(a.getAttributeName());
 		}
 
-		String templateNameField = ConfigManager.getInstance().getParameterByCore(storeId, "facet-template");
+		String templateNameField = ConfigManager.getInstance().getStoreParameter(storeId, "facet-template");
 		if (StringUtils.isNotEmpty(templateNameField)) {
 			filters.add(templateNameField + "Name:\"" + templateName + "\"");
 
-			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreLabel(),
+			Map<String,List<String>> map = SearchHelper.getFacetValues(UtilityService.getServerName(), UtilityService.getStoreId(),
 					fields, filters,false);
 
 			for (Attribute a: attrMap.values()) {

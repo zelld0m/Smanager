@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -22,8 +23,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
-import com.search.manager.dao.sp.DAOConstants;
-
 public class ConfigManager {
 	
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -34,6 +33,10 @@ public class ConfigManager {
     
     //TODO: will eventually move out if settings is migrated to DB instead of file
     private Map<String, PropertiesConfiguration> serverSettingsMap = new HashMap<String, PropertiesConfiguration>();
+    
+    private ConfigManager() {
+    	// do nothing...
+    }
     
     private ConfigManager(String configPath) {
 		try {
@@ -46,8 +49,8 @@ public class ConfigManager {
 			String configFolder = xmlConfig.getFile().getParent();
 			
 			// server settings
-			for (String coreName: getCoreNames()) {
-				File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, coreName));
+			for (String storeId: getStoreIds()) {
+				File f = new File(String.format("%s%s%s.settings.properties", configFolder, File.separator, storeId));
 				if (!f.exists()) {
 					try {
 						f.createNewFile();
@@ -59,8 +62,8 @@ public class ConfigManager {
 					PropertiesConfiguration propConfig = new PropertiesConfiguration(f.getAbsolutePath());
 					propConfig.setAutoSave(true);
 					propConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-					serverSettingsMap.put(coreName, propConfig);
-					logger.info("Settings file for " + coreName + ": " + propConfig.getFileName());
+					serverSettingsMap.put(storeId, propConfig);
+					logger.info("Settings file for " + storeId + ": " + propConfig.getFileName());
 				}
 			}
 			
@@ -70,57 +73,73 @@ public class ConfigManager {
 		}
     }
     
-	@SuppressWarnings("unchecked")
 	public List<String> getStoreNames() {
-    	List<String> storeNames = new ArrayList<String>();
-    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
-    	for (HierarchicalConfiguration hc: hcList) {
-    		String name = hc.getString("@name");
-    		if (!StringUtils.isEmpty(name)) {
-        		storeNames.add(name);
-    		}
-    	}
-    	return storeNames;
+    	return getStoreAttributes("name", false);
     }
 	
-	@SuppressWarnings("unchecked")
+	public List<String> getStoreIds() {
+    	return getStoreAttributes("id", false);
+    }
+
 	public List<String> getCoreNames() {
-    	List<String> coreNames = new ArrayList<String>();
+		return getStoreAttributes("core", true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getStoreAttributes(String attrName, boolean hasXmlTag) {
+    	List<String> storeAttrib = new ArrayList<String>();
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>) xmlConfig.configurationsAt(("/store"));
     	for (HierarchicalConfiguration hc: hcList) {
-    		String name = hc.getString("core");
-    		if (!StringUtils.isEmpty(name)) {
-        		coreNames.add(name);
+    		String attrib = "@" + attrName;
+    		if (hasXmlTag) attrib = attrName;
+    		String attrValue = hc.getString(attrib);
+    		if (StringUtils.isNotEmpty(attrValue)) {
+    			storeAttrib.add(attrValue);
     		}
     	}
-    	return coreNames;
+    	return storeAttrib;
+    }
+	
+    public String getStoreName(String storeId) {
+    	return (xmlConfig.getString("/store[@id='" + getStoreIdByAliases(storeId) + "']/@name"));
     }
     
-    public String getStoreParameter(String coreName, String param) {
-    	return (xmlConfig.getString("/store[core='" + StringUtils.lowerCase(coreName) + "']/" + param));
+    public String getStoreParameter(String storeId, String param) {
+    	return (xmlConfig.getString("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
     
-    public String getStoreName(String coreName) {
-    	return (xmlConfig.getString("/store[core='" + coreName + "']/@name"));
+    @SuppressWarnings("unchecked")
+	public List<String> getStoreParameterList(String storeId, String param) {
+    	return (xmlConfig.getList("/store[@id='" +  getStoreIdByAliases(storeId)  + "']/" + param));
     }
-    
+
     public String getServerParameter(String server, String param) {
     	return (xmlConfig.getString("/server[@name='" + server + "']/" +param));
     }
     
-    public String getParameterByStore(String storeName, String param) {
-    	return (xmlConfig.getString("/store[@name='" + storeName + "']/" + param));
-    }
-    
-    public String getParameterByCore(String coreName, String param) {
-    	return (xmlConfig.getString("/store[core='" + StringUtils.lowerCase(coreName) + "']/" + param));
+    @SuppressWarnings("unchecked")
+    public String getStoreIdByAliases(String storeId) {
+    	String sId = xmlConfig.getString("/store[@id='" + storeId + "']/@id");
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/store");
+    	
+    	if(StringUtils.isBlank(sId) && CollectionUtils.isNotEmpty(hcList)){
+        	for (HierarchicalConfiguration hc: hcList) {
+        		String[] storeIdAliases = StringUtils.stripAll(StringUtils.split(hc.getString("store-id-aliases"), ","));
+        		if (ArrayUtils.contains(storeIdAliases, storeId)) {
+        			sId = hc.getString("@id");
+        			break;
+        		}
+        	}
+    	}
+    	
+    	return sId;
     }
     
     @SuppressWarnings("unchecked")
-	public List<NameValuePair> getDefaultSolrParameters(String core) {
+	public List<NameValuePair> getDefaultSolrParameters(String storeId) {
     	List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
-    	List<String> solrParamNames = (List<String>) xmlConfig.getList("/store[@name='" + getStoreName(core) + "']/solr-param-name/param-name");
-    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt(("/store[@name='" + getStoreName(core) + "']/solr-param-value"));
+    	List<String> solrParamNames = (List<String>) xmlConfig.getList("/store[@id='" + storeId + "']/solr-param-name/param-name");
+    	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt(("/store[@id='" + storeId + "']/solr-param-value"));
     	
     	for (HierarchicalConfiguration hc: hcList) {
     		String solrParamName = hc.getString("@name");
@@ -135,12 +154,12 @@ public class ConfigManager {
     }
     
     @SuppressWarnings("unchecked")
-    public Map<String, String> getServersByCore(String coreName) {
+    public Map<String, String> getServersByStoreId(String storeId) {
     	Map<String, String> map = new LinkedHashMap<String, String>();
     	List<HierarchicalConfiguration> hcList = (List<HierarchicalConfiguration>)xmlConfig.configurationsAt("/server");
     	for (HierarchicalConfiguration hc: hcList) {
     		String[] store = StringUtils.split(hc.getString("store"), ",");
-    		if (ArrayUtils.contains(store, coreName)) {
+    		if (ArrayUtils.contains(store, getStoreIdByAliases(storeId))) {
         		String serverName = hc.getString("@name");
         		String serverUrl = hc.getString("url");
         		map.put(serverName, serverUrl);
@@ -176,56 +195,104 @@ public class ConfigManager {
     	return instance;
     }
     
+    public void setInstance(String configPath) {
+    	getInstance(configPath);
+    }
+    
     public static ConfigManager getInstance() {
     	return instance;
     }
     
-	public boolean setStoreSetting(String coreName, String field, String value) {
-		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+	public boolean setStoreSetting(String storeId, String field, String value) {
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
-			config.setProperty(field, value);
-			return StringUtils.equals(config.getString(field), value);
+			synchronized(config) {
+				config.setProperty(field, value);
+				return StringUtils.equals(config.getString(field), value);
+			}
 		}
 		return false;
 	}
 	
-	public String getStoreSetting(String coreName, String field) {
-		PropertiesConfiguration config = serverSettingsMap.get(coreName);
+	/** 
+	 * For a property that has multiple values, getString() will return the first value of the list
+	 * */
+	public String getStoreSetting(String storeId, String field) {
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
 		if (config != null) {
-			return config.getString(field);
+			synchronized(config) {
+				return config.getString(field);
+			}
 		}
 		return null;
 	}
 	
+	/** 
+	 * For a property that has multiple values, getList() will return the complete list 
+	 * */
+	@SuppressWarnings("unchecked")
+	public List<String> getStoreSettings(String storeId, String field){
+		PropertiesConfiguration config = serverSettingsMap.get(storeId);
+		if (config != null) {
+			synchronized(config) {
+				return config.getList(field);
+			}
+		}
+		return null;
+	}
+	
+	public boolean isMemberOf(String groupName, String storeId){
+		List<String> storeGroups = getStoreParameterList(storeId, "group-membership/group");
+		
+		if(CollectionUtils.isNotEmpty(storeGroups) && storeGroups.contains(groupName)){
+			return true;
+		}
+		
+		return false;
+	}
+	
     public static void main(String[] args) {
-    	ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
-		System.out.println("qt: " + configManager.getStoreParameter(configManager.getStoreName("macmall"), "qt"));
+    	final ConfigManager configManager = new ConfigManager("C:\\home\\solr\\conf\\solr.xml");
+//		System.out.println("qt: " + configManager.getStoreParameter("pcmall", "core"));
+		System.out.println("qt: " + configManager.getStoreIdByAliases("pcm"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "fields"));
 //		System.out.println("query: " + configManager.getParameter("big-bets", "query"));
-		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));
-		System.out.println("bd default solr param: " + configManager.getDefaultSolrParameters("pcmallcap"));
-		System.out.println("query: " + configManager.getStoreName("macmall"));
-		
-		Map<String, String> map = configManager.getServersByCore("macmall");
-		System.out.println("macmall");
-		for (String key: map.keySet()) {
-			System.out.println(key + "\t" + map.get(key));
-		}
-
-		map = configManager.getServersByCore("pcmallcap");
-		System.out.println("pcmallcap");
-		for (String key: map.keySet()) {
-			System.out.println(key + "\t" + map.get(key));
-		}
-
-		for (String key: configManager.getCoreNames()) {
-			System.out.println("core: " + key);
-		}
-		
-//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
-		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
-//		configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
-		System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+//		System.out.println("macmall deafault solr param: " + configManager.getDefaultSolrParameters("macmall"));
+//		System.out.println("bd default solr param: " + configManager.getDefaultSolrParameters("pcmallcap"));
+//		System.out.println("query: " + configManager.getStoreName("macmall"));
+//		
+//		Map<String, String> map = configManager.getServersByCore("macmall");
+//		System.out.println("macmall");
+//		for (String key: map.keySet()) {
+//			System.out.println(key + "\t" + map.get(key));
+//		}
+//
+//		map = configManager.getServersByCore("pcmallcap");
+//		System.out.println("pcmallcap");
+//		for (String key: map.keySet()) {
+//			System.out.println(key + "\t" + map.get(key));
+//		}
+//
+//		for (String key: configManager.getCoreNames()) {
+//			System.out.println("core: " + key);
+//		}
+//		
+//		for (int i =0; i < 20; i++) {
+//			(new Thread() {
+//				public void run() {
+//					for (int i = 1; i < 50; i++) {
+//						try {
+//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "true");
+//							System.out.println(configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+//							configManager.setStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT, "false");
+//							System.out.println( configManager.getStoreSetting("pcmall", DAOConstants.SETTINGS_AUTO_EXPORT));
+//							Thread.sleep(100);
+//						} catch (InterruptedException e) {
+//						}
+//					}
+//				}
+//			}).start();
+//		}
 		
     }
     

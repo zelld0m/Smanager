@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,27 +19,60 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.ui.widget.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/min.1.8.16/jquery.effects.slide.min.js" />" ></script>
 
-  <!-- TODO: Dynamically modify mall based on logged user -->
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="store" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLabel()" var="storeLabel" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetName()" var="storeFacetName" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplate()" var="storeFacetTemplate" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreFacetTemplateName()" var="storeFacetTemplateName" />
-  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreLogo()" var="storeLogo" />
   <spring:eval expression="T(com.search.manager.service.UtilityService).getSolrConfig()" var="solrConfig" />
-
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreParameters()" var="storeParameters" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getIndexedSchemaFields()" var="schemaFields" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreId()" var="storeId" />
+  <spring:eval expression="T(com.search.manager.service.UtilityService).getStoreName()" var="storeName" />
+  
   <script>
 	var allowModify = <%= request.isUserInRole("CREATE_RULE") %>;
-    var GLOBAL_scheme = "<%=request.getScheme()%>";  
+    
+	// Request server details
+	var GLOBAL_scheme = "<%=request.getScheme()%>";  
     var GLOBAL_serverName = "<%=request.getServerName()%>";  
     var GLOBAL_serverPort = "<%=request.getServerPort()%>";  
 	var GLOBAL_contextPath = "<%=request.getContextPath()%>";	
-	var GLOBAL_store = "${store}";
-	var GLOBAL_storeLogo = "${storeLogo}";
-	var GLOBAL_storeLabel = "${storeLabel}";
-	var GLOBAL_storeFacetName = "${storeFacetName}";
-	var GLOBAL_storeFacetTemplate = "${storeFacetTemplate}";
-	var GLOBAL_storeFacetTemplateName = "${storeFacetTemplateName}";
+	
+	//store schema indexed fields
+	var GLOBAL_schemaFields = $.parseJSON('${schemaFields}');
+	var GLOBAL_indexedFields = GLOBAL_schemaFields["indexedFields"];
+	var GLOBAL_indexedWildcardFields = GLOBAL_schemaFields["indexedWildcardFields"];
+	
+	if(GLOBAL_indexedWildcardFields){
+		for(var i=0; i < GLOBAL_indexedWildcardFields.length; i++) {
+			GLOBAL_indexedWildcardFields[i] = '^' + GLOBAL_indexedWildcardFields[i].replace(/\*/, '.*') + '$';
+		}
+	}
+	
+	// Store parameters
+	var GLOBAL_storeParameters = $.parseJSON('${storeParameters}');
+	var GLOBAL_username = GLOBAL_storeParameters["username"];
+	var GLOBAL_storeId = GLOBAL_storeParameters["storeId"];
+	var GLOBAL_storeCore = GLOBAL_storeParameters["storeCore"];
+	var GLOBAL_storeName = GLOBAL_storeParameters["storeName"];
+	var GLOBAL_storeFacetName = GLOBAL_storeParameters["storeFacetName"];
+	var GLOBAL_storeFacetTemplate = GLOBAL_storeParameters["storeFacetTemplate"];
+	var GLOBAL_storeFacetTemplateName = GLOBAL_storeParameters["storeFacetTemplateName"];
+	
+	var GLOBAL_storeGroupMembership = GLOBAL_storeParameters["storeGroupMembership"];
+	
+	var GLOBAL_storeGroupLookup = {"BD":false,"Store":false,"PCM":false,"MacMall":false,"PCMBD":false,"MacMallBD":false};
+	var GLOBAL_storeGroupTotal = GLOBAL_storeGroupMembership.length;
+	
+	if(GLOBAL_storeGroupTotal>0){
+		for(var i=0; i<GLOBAL_storeGroupTotal; i++){
+			GLOBAL_storeGroupLookup[GLOBAL_storeGroupMembership[i]]= true;
+		}
+	};
+	
+	var GLOBAL_BDGroup = GLOBAL_storeGroupLookup['BD'];
+	var GLOBAL_StoreGroup = GLOBAL_storeGroupLookup['Store'];
+	var GLOBAL_PCMGroup = GLOBAL_storeGroupLookup['PCM'];
+	var GLOBAL_MacMallGroup = GLOBAL_storeGroupLookup['MacMall'];
+	var GLOBAL_PCMBDGroup = GLOBAL_storeGroupLookup['PCMBD'];
+	var GLOBAL_MacMallBDGroup = GLOBAL_storeGroupLookup['MacMallBD'];
+	
 	var GLOBAL_solrConfig = '${solrConfig}';
 	var GLOBAL_solrUrl = $.parseJSON(GLOBAL_solrConfig)["solrUrl"];
 	var GLOBAL_isFromGUI = $.parseJSON(GLOBAL_solrConfig)["isFmGui"];
@@ -102,6 +136,14 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.addproduct.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.slidecheckbox.custom.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.importas.custom.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/plugin.custom/jquery.rk-message-type-1.0.custom.js" />" ></script>
+  
+  <script type="text/javascript"  src="<spring:url value="/js/jquery/searchabledropdown-1.0.8/jquery.searchabledropdown-1.0.8-modified.src.js" />"></script>  
+ 
+  <!--  msDropdown plugin-->
+  <link rel="stylesheet" type="text/css" href="<spring:url value="/js/jquery/msdropdown/dd.css" />" />
+  <script type="text/javascript" src="<spring:url value="/js/jquery/msdropdown/jquery.dd.min.js" />"></script>
+ 
   <!--  /TinyMCE -->
   <script type="text/javascript"  src="<spring:url value="/js/jquery/tinymce-3.5b3/tiny_mce/jquery.tinymce.js" />"></script>  
   
@@ -135,19 +177,8 @@
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.backgroundPosition.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/jquery.flip.min.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/microgallery/jquery.microgallery.js" />" ></script>
-  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
-
- <!-- jQuery highcharts, licensed graph -->
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/highcharts.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/canvas-tools.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/modules/exporting.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-blue.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/dark-green.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/gray.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/grid.js" />" ></script> --%>
-<%--   <script type="text/javascript" src="<spring:url value="/js/jquery/highcharts/themes/skies.js" />" ></script> --%>
-  
   <script type="text/javascript" src="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.js" />" ></script>
+  <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/microgallery/css/style.css" />" />
   <link type="text/css" rel="stylesheet" href="<spring:url value="/js/jquery/jqplot/jquery.jqplot.min.css" />" />
 
   <!-- /Init -->	  
@@ -186,9 +217,9 @@
         </tr>
       </table>
       <div class="companyLogoImg">
-      	<a href="javascript:void(0);">
-      		<img src="<spring:url value="${storeLogo}" />">
-      	</a>
+      		<script type="text/javascript">
+      			document.write('<a href="javascript:void(0);"><img src="' + GLOBAL_contextPath + '/images/logo-' + GLOBAL_storeId + '.png"></a>');
+      		</script>
       	<div class="clearB"></div>
       </div>
     </div>

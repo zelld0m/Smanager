@@ -32,6 +32,9 @@ public class RedirectRuleCondition extends ModelBean {
 	private String ruleId;
 	private Integer sequenceNumber;
 	private String storeId;
+	private String facetPrefix;
+	private String facetTemplate;
+	private String facetTemplateName;
 	
 	private Map<String,List<String>> conditionMap = new HashMap<String, List<String>>();
 
@@ -71,13 +74,13 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 
 	private String getCondition(boolean forSolr) {
-		// TODO: convert from condition map
+		// convert from condition map
 		// Category, SubCategory, Class, SubClass, Manufacturer are grouped together
 		// e.g. Category:"Systems" AND SubCategory:"Notebook Computers" AND Class:"Intel Core i3 Notebook Computers" AND SubClass:"2.75GHz and up" AND Manufacturer:"Acer"
 		// -or- CatCode and Manufacturer are grouped together
-		// e.g. CatCode:3F* AND Manufacturer:"Acer" 	<- note the lack of double quotes
-		// -or- _FacetTemplate is treated as one (next sprint)		
-		// (TemplateName or *_FacetTemplateName) and af* are grouped together (next sprint)
+		// e.g. CatCode:3F* AND Manufacturer:"Acer"
+		// -or- _FacetTemplate is treated as one	
+		// (TemplateName or FacetTemplateName) and af* are grouped together (next sprint)
 		StringBuilder builder = new StringBuilder();
 		Map<String,List<String>> map = null;
 		
@@ -95,13 +98,9 @@ public class RedirectRuleCondition extends ModelBean {
 						builder.append(value);
 					}
 					else {
-						// TODO: move to a method
 						// temp workaround for old data
 						String value = values.get(0);
-						if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-							value = String.format("\"%s\"", value);
-						}
-						builder.append(value);						
+						builder.append(forSolr? ClientUtils.escapeQueryChars(value) : value);						
 					}
 				}
 				else {
@@ -114,7 +113,7 @@ public class RedirectRuleCondition extends ModelBean {
 			map = getCNetFilters();
 			if (CollectionUtils.isNotEmpty(map.get("Level1Category"))) {
 				String value = map.get("Level1Category").get(0);
-				builder.append("PCMall_FacetTemplate:").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
+				builder.append(forSolr ? getFacetTemplate() : "FacetTemplate").append(":").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
 				if (CollectionUtils.isNotEmpty(map.get("Level2Category"))) {
 					value = map.get("Level2Category").get(0);
 					builder.append(forSolr ? ClientUtils.escapeQueryChars(" | ") : " | ").append(forSolr ? ClientUtils.escapeQueryChars(value) : value);
@@ -129,12 +128,8 @@ public class RedirectRuleCondition extends ModelBean {
 			String key = "Manufacturer";
 			List<String> values = map.get(key);
 			if (values != null && values.size() == 1) {
-				// temp workaround for old data
 				String value = values.get(0);
-				if (forSolr && isEncloseInQuotes(key) && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-					value = String.format("\"%s\"", value);
-				}
-				builder.append("Manufacturer:").append(value);
+				builder.append("Manufacturer:").append(forSolr? ClientUtils.escapeQueryChars(value) : value);
 				builder.append(" AND ");
 				}
 			else {
@@ -147,20 +142,23 @@ public class RedirectRuleCondition extends ModelBean {
 		if (MapUtils.isNotEmpty(map)) {
 			String templateName = null;
 			for (String key: map.keySet()) {
-				if (StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName")) {
+				if (StringUtils.equals(key, "TemplateName")) {
 					templateName = map.get(key).get(0);
 					String value = templateName;
-					if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-						value = String.format("\"%s\"", value);
-					}
-					builder.append(key).append(":").append(value).append(" AND ");
+					builder.append(key).append(":").append(forSolr? ClientUtils.escapeQueryChars(value) : value).append(" AND ");
+					break;
+				}
+				else if (StringUtils.equals(key, "FacetTemplateName")) {
+					templateName = map.get(key).get(0);
+					String value = templateName;
+					builder.append(forSolr ? getFacetTemplateName() : "FacetTemplateName").append(":").append(forSolr? ClientUtils.escapeQueryChars(value) : value).append(" AND ");
 					break;
 				}
 			}
 			
 			if (StringUtils.isNotBlank(templateName)) {
 				for (String key: map.keySet()) {
-					if (!(StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName"))) {
+					if (!(StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName"))) {
 						List<String> values = map.get(key);
 						if (CollectionUtils.isNotEmpty(values)) {
 							builder.append(key).append(":");
@@ -169,11 +167,7 @@ public class RedirectRuleCondition extends ModelBean {
 								builder.append("(");
 							}
 							for (String value: values) {
-								// TODO: convert to encloseInQuotes method
-								if (forSolr && !StringUtils.startsWith(value, "\"") && !StringUtils.endsWith(value, "\"")) {
-									value = String.format("\"%s\"", value);
-								}
-								builder.append(value);
+								builder.append(forSolr? ClientUtils.escapeQueryChars(value) : value);
 								builder.append(forSolr ? " " : " OR ");
 							}
 							if (forSolr) {
@@ -248,22 +242,14 @@ public class RedirectRuleCondition extends ModelBean {
 			builder.append("Platform").append(":").append(map.get("Platform").get(0)).append(" AND ");
 		}
 		
-		String cnetFacet = null;
-		if (forSolr && StringUtils.isNotBlank(StringUtils.lowerCase(storeId))) {
-			cnetFacet = ConfigManager.getInstance().getParameterByCore(storeId, "facet-name");
-		}
-		
 		if (map.containsKey("Name")) {
 			String value = map.get("Name").get(0);
 			if (forSolr) {
 				value = ClientUtils.escapeQueryChars(value);
-			}
-			
-			if (StringUtils.isNotEmpty(cnetFacet)) {
-				builder.append("(").append(cnetFacet).append("_Name").append(":").append(value).append(" OR ");
+				builder.append("(").append(facetPrefix).append("_Name").append(":").append(value).append(" OR ");
 			}
 			builder.append("Name").append(":").append(value);
-			if (StringUtils.isNotEmpty(cnetFacet)) {
+			if (forSolr) {
 				builder.append(")");
 			}
 			builder.append(" AND ");
@@ -272,13 +258,10 @@ public class RedirectRuleCondition extends ModelBean {
 			String value = map.get("Description").get(0);
 			if (forSolr) {
 				value = ClientUtils.escapeQueryChars(value);
-			}
-			
-			if (StringUtils.isNotEmpty(cnetFacet)) {
-				builder.append("(").append(cnetFacet).append("_Description").append(":").append(value).append(" OR ");
+				builder.append("(").append(facetPrefix).append("_Description").append(":").append(value).append(" OR ");
 			}
 			builder.append("Description").append(":").append(value);
-			if (StringUtils.isNotEmpty(cnetFacet)) {
+			if (forSolr) {
 				builder.append(")");
 			}
 			builder.append(" AND ");
@@ -288,18 +271,6 @@ public class RedirectRuleCondition extends ModelBean {
 			builder.replace(builder.length() - 5, builder.length(), "");
 		}
 		return builder.toString();		
-	}
-	
-	private static String[] encloseInQuotesList = {
-		 "Category", 
-		 "SubCategory", 
-		 "Class", 
-		 "SubClass", 
-		 "Manufacturer"
-	};
-	
-	private boolean isEncloseInQuotes(String key) {
-		return ArrayUtils.contains(encloseInQuotesList, key);
 	}
 	
 	public void setFilter(Map<String, List<String>> filter) {
@@ -392,8 +363,8 @@ public class RedirectRuleCondition extends ModelBean {
 			boolean isCNET = false;
 			String templateName = null;
 			for (String key: map.keySet()) {
-				if (StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName")) {
-					isCNET = StringUtils.endsWith(key, "_FacetTemplateName");
+				if (StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName")) {
+					isCNET = StringUtils.equals(key, "FacetTemplateName");
 					templateName = map.get(key).get(0);
 					break;
 				}
@@ -409,7 +380,7 @@ public class RedirectRuleCondition extends ModelBean {
 									CategoryService.getCNETTemplateAttributesMap(templateName) :
 									CategoryService.getIMSTemplateAttributesMap(templateName);
 					for (String key: map.keySet()) {
-						if (!(StringUtils.equals(key, "TemplateName") || StringUtils.endsWith(key, "_FacetTemplateName"))) {
+						if (!(StringUtils.equals(key, "TemplateName") || StringUtils.equals(key, "FacetTemplateName"))) {
 							Attribute a = attributeMap.get(key);
 							List<String> values = map.get(key);
 							if (CollectionUtils.isNotEmpty(values)) {
@@ -533,7 +504,9 @@ public class RedirectRuleCondition extends ModelBean {
 
 			// CNET
 			// TODO: update when MacMall and other stores support CNET Facet Template
-			else if (fieldName.endsWith("_FacetTemplate")) {
+			else if (fieldName.endsWith("_FacetTemplate") // for legacy values
+				|| StringUtils.equals(fieldName, "FacetTemplate")) { 
+				
 				if (fieldValue.endsWith("*")) {
 					fieldValue = fieldValue.substring(0, fieldValue.length() - 1);
 				}
@@ -551,6 +524,11 @@ public class RedirectRuleCondition extends ModelBean {
 				}
 			}
 
+			else if (fieldName.endsWith("_FacetTemplateName") // for legacy values
+				|| StringUtils.equals(fieldName, "FacetTemplateName")) { 
+				putToConditionMap("FacetTemplateName", fieldValue);
+			}
+			
 			// Dynamic attributes
 			else if (fieldName.startsWith("af_")) {
 				putListToConditionMap(fieldName, fieldValue);
@@ -575,7 +553,7 @@ public class RedirectRuleCondition extends ModelBean {
 	}
 
 	public Map<String, List<String>> getCNetFilters() {
-		// if TemplateName or *_FacetTemplateName is present return TemplateName or *_FacetTemplateName and af_* fields and dynamic attributes;
+		// FacetTemplate
 		LinkedHashMap<String, List<String>> map = new LinkedHashMap<String, List<String>>();
 		if (isCNetFilter()) {
 			String[] facetKeys = { "Level1Category", "Level2Category", "Level3Category", "Manufacturer" };
@@ -751,6 +729,36 @@ public class RedirectRuleCondition extends ModelBean {
 
 	public String getStoreId() {
 		return storeId;
+	}
+
+	public String getFacetTemplate() {
+		return facetTemplate;
+	}
+
+	public void setFacetTemplate(String facetTemplate) {
+		this.facetTemplate = facetTemplate;
+	}
+
+	public String getFacetTemplateName() {
+		return facetTemplateName;
+	}
+
+	public void setFacetTemplateName(String facetTemplateName) {
+		this.facetTemplateName = facetTemplateName;
+	}
+
+	public void setFacetPrefix(String facetPrefix) {
+		this.facetPrefix = facetPrefix;
+	}
+
+	public String getFacetPrefix() {
+		return facetPrefix;
+	}
+
+	public void setFacetValues(String facetPrefix, String facetTemplate, String facetTemplateName) {
+		this.facetPrefix = facetPrefix;
+		this.facetTemplate = facetTemplate;
+		this.facetTemplateName = facetTemplateName;
 	}
 	
 }

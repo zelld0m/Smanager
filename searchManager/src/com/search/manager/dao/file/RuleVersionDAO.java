@@ -31,6 +31,7 @@ import com.search.manager.report.model.xml.ExcludeRuleXml;
 import com.search.manager.report.model.xml.ProductDetailsAware;
 import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
+import com.search.manager.service.UtilityService;
 import com.search.manager.utility.StringUtil;
 import com.search.manager.xml.file.RuleXmlUtil;
 
@@ -120,6 +121,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 			writer = new FileWriter(filename);
 			m.marshal(prefsJaxb, writer);
 
+			return true;
 		} catch (JAXBException e) {
 			logger.error("JAXBException");
 		} catch (ParserConfigurationException e) {
@@ -145,7 +147,7 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 					if(!ruleVersion.isDeleted()){
 						if(ruleVersion instanceof ElevateRuleXml || ruleVersion instanceof ExcludeRuleXml || ruleVersion instanceof DemoteRuleXml){
 							ProductDetailsAware productDetailsAware = (ProductDetailsAware) ruleVersion;
-							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion));
+							productDetailsAware.setProducts(RuleXmlUtil.getProductDetails(ruleVersion, UtilityService.getStoreId()));
 							ruleVersionInfoList.add((RuleXml) productDetailsAware);
 						}else{
 							ruleVersionInfoList.add(ruleVersion);
@@ -171,5 +173,22 @@ public abstract class RuleVersionDAO<T extends RuleXml>{
 
 	public List<RuleXml> getRuleVersions(String store, String ruleId) {
 		return getRuleVersions(getRuleVersionList(store, ruleId));
+	}
+
+	@SuppressWarnings("unchecked")
+	public int getRuleVersionsCount(String store, String ruleId) {
+		RuleVersionListXml<?> ruleVersionListXml = getRuleVersionList(store, ruleId);
+		int count = 0;
+		
+		List<?> ruleXmlList =  ruleVersionListXml.getVersions();
+		if(ruleVersionListXml != null && CollectionUtils.isNotEmpty(ruleXmlList)){
+			for(RuleXml ruleVersion: (List<RuleXml>)ruleXmlList){
+				if(!ruleVersion.isDeleted()){
+					count++;
+				}
+			}
+		}
+		
+		return count;
 	}	
 }

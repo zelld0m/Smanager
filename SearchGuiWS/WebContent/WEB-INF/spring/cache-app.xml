@@ -8,6 +8,7 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
 
+	<!--
 	<beans:bean name="localCacheService" class="com.search.manager.cache.service.LocalCacheService" scope="singleton">
 	</beans:bean>
 
@@ -64,4 +65,5 @@
 		<beans:property name="redirectCacheDao" ref="redirectCacheDao"/>
 		<beans:property name="relevancyCacheDao" ref="relevancyCacheDao"/>
     </beans:bean>
+    -->
 </beans:beans>

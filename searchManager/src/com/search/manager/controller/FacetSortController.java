@@ -110,6 +110,10 @@ public class FacetSortController {
 				highlightedFacets = "No Highlighted Facets";
 			}
 			
+			if (group.getSortType() == null) {
+				group.setSortType(facetSortRule.getSortType());
+			}
+			
 			FacetSortReportBean reportBean = new FacetSortReportBean(group, highlightedFacets);
 			list.add(reportBean);
 		}
@@ -141,7 +145,7 @@ public class FacetSortController {
 
 		logger.debug(String.format("Received request to download version report as an XLS: %s", filename));
 		
-		RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreName(), RuleEntity.FACET_SORT, ruleId);
+		RuleVersionListXml facetSortXml = RuleVersionUtil.getRuleVersionList(UtilityService.getStoreId(), RuleEntity.FACET_SORT, ruleId);
 		String subTitle = String.format("Facet Sort Rule [%s]", facetSortXml!=null? facetSortXml.getRuleName():"");
 				
 		ReportHeader reportHeader = new ReportHeader("Search GUI (%%StoreName%%)", subTitle, filename, headerDate);

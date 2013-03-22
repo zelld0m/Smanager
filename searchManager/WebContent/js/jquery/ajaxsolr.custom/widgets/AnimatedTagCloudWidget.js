@@ -38,12 +38,14 @@
 					for (var i=0; i < list.length; i++){
 						var randomColor = colorCSSList[Math.floor(Math.random()*colorCSSList.length)];
 						var randomSize = sizeCSSList[Math.floor(Math.random()*sizeCSSList.length)];
-						$ul.append('<li><a class="' + randomColor + ' ' + randomSize + '" href="javascript:void(0)">' + list[i].keyword.keyword + '</a></li>');	
+						var $a = $('<a>').prop('href','javascript:void(0);').addClass(randomColor).addClass(randomSize).text(list[i].keyword.keyword);
+						var $li = $('<li>').wrapInner($a);
+						$ul.append($li);	
 					}
 
 					$ul.find('li > a').click(function(e){
 						$(self.target).hide();
-						self.manager.store.addByValue('q',$.trim($(e.target).html()));
+						self.manager.store.addByValue('q',$.trim($(e.target).text()));
 						self.manager.doRequest(0);
 					});
 				},

@@ -34,16 +34,19 @@
   
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractWidget.js" />"></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/core/AbstractFacetWidget.js" />" ></script>
-  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/widgets/jquery/PagerWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/lib/widgets/jquery/CustomPagerWidget.js" />" ></script>
 
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/browse.theme.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/CurrentSearchWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/PCMGSingleSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SortResultWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchResultHeaderWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchKeywordWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicFacetWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/DynamicAttributeWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/SearchWithinWidget.js" />" ></script>
+  <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ProductConditionSelectorWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ProductAttributeFilterWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/ActiveRuleWidget.js" />" ></script>
   <script type="text/javascript" src="<spring:url value="/js/jquery/ajaxsolr.custom/widgets/AnimatedTagCloudWidget.js" />" ></script>
@@ -66,6 +69,8 @@
 		<div class="clearB"></div>
 		<div id="dynamicAttributes"></div>
 		<div class="clearB"></div>
+		<div id="prodCondSelector"></div>
+		<div class="clearB"></div>
 		<div id="prodAttribFilter"></div>
 		<div class="clearB"></div>
 	</div>
@@ -74,26 +79,21 @@
     <!-- Start Right Side -->	  
 	<div class="floatL w730 marL10 marT27" style="min-height:550px">
 		  <!-- Text Widget -->
-		  <div id="search" class="floatL w730 titlePlacer">
-			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>			         	
-        	<div id="searchKeyword" class="floatL w460 txtAR padT7"></div>			
+		  <div id="search" class="floatL w730 titlePlacer marB10">
+			<div class="w245 padT10 padL10 floatL fsize20 fnormal breakWord">Search Product</div>
+			<div id="pcmgSelector" class="floatR"></div>			         	
 		  </div>
-		   
+           
 		   <!-- Rule Selector Widget -->
 		   <div id="ruleSelector"  class="clearfix pad5 fsize12 txtAL w720" style="background:#e8e8e8">
-	        	<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR" style="display:none">
-	        	 	<label class="floatR"> 
-			        	<select>	
-			        		<option>DEFAULT</option>
-			        	</select>
-		        	</label>
-	        	 	<label class="floatR w90 padT5">Select Catalog:</label>		        	
+		   		<div class="floatR marL8 marTn2 marR3 padT2 dropdownArea w350 txtAR">
+	        	 	<div id="searchKeyword"></div>		        	
 	        	</div>
 	        	<div class="floatL w350 dropdownArea" >
-	        		<label class="floatL w150 padT5">Select Ranking Rule:</label>
-		        	<label class="floatL w200">
-			        	<select id="rankingRule" class="w178"></select>
-		        	</label>	        	
+	        		<div class="floatL w150 padT5">Select Ranking Rule:</div>
+		        	<div class="floatL w200">
+			        	<select id="rankingRule" class="w178 marT5"></select>
+		        	</div>	        	
 			  	</div>
 	      </div>
 		  
@@ -106,14 +106,15 @@
 			<div id="sortResult" class="floatR marL8 marT4 fsize12"></div>
 			<div class="clearB"></div>
 		  </div>
+
+		  <!-- Search Result Header Widget -->
+		  <div id="searchResultHeader" class="padT10"></div>
 		  
 		  <!-- Result & Pager Widget -->
 		  <div>
-		 	  <div id="top-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10">
-			  <div class="txtAR">
-				  <ul id="top-pager" class="pagination"></ul>
-				  </div>
+			  <div class="farial fsize11 fgray padT10">
+		 	  		<div id="top-pager-text" class="floatL fDblue w300"></div>
+			  		<div id="top-pager" class="floatR fDblue w300"></div>
 			  </div>
 			  <div class="clearB"></div>
 		  	  
@@ -122,11 +123,9 @@
 		  	  <div id="docs" class="clearB floatL w730"></div>
 		  	  
 		  	  <div class="clearB"></div>
-		  	  <div id="bottom-pager-text" class="clearB floatL farial fsize11 fDblue w300 padT10"></div>
-			  <div class="floatR farial fsize11 fgray txtAR padT10">
-				  <div class="txtAR">
-				  	<ul id="bottom-pager" class="pagination"></ul>
-				  </div>
+			  <div class="farial fsize11 fgraypadT10">
+		  	  		<div id="bottom-pager-text" class="floatL fDblue w300"></div>
+				  	<div id="bottom-pager" class="floatR fDblue w300"></div>
 			  </div>
 		  </div>
 		  

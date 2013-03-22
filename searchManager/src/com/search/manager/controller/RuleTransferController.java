@@ -140,25 +140,25 @@ public class RuleTransferController {
 		case ELEVATE:
 		case EXCLUDE:
 		case DEMOTE:
-			subReportHeader.addRow("Rule Info: ", xml.getRuleId());
+			subReportHeader.addRow("Rule Name: ", xml.getRuleName());
 			break;
 		case FACET_SORT:
 			FacetSortRuleXml fsXml = (FacetSortRuleXml) xml;
-			subReportHeader.addRow("Rule Info: ", fsXml.getRuleName() + "[" + fsXml.getRuleId() + "]");
+			subReportHeader.addRow("Rule Name: ", fsXml.getRuleName());
 			subReportHeader.addRow("Rule Type: ", fsXml.getRuleType() != null ? fsXml.getRuleType().getDisplayText() : "");
 			break;
 		case QUERY_CLEANING:
 		case RANKING_RULE:
-			subReportHeader.addRow("Rule Info: ", xml.getRuleName() + "[" + xml.getRuleId() + "]");
+			subReportHeader.addRow("Rule Name: ", xml.getRuleName());
 			break;
 		default: break;
 		}
 		
 		if(xml.getRuleStatus() != null){
-			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreName(), xml.getRuleStatus().getLastPublishedDate()) : "");
+			subReportHeader.addRow("Published Date: ", xml.getRuleStatus().getLastPublishedDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getRuleStatus().getLastPublishedDate()) : "");
 			if(EXPORT.equalsIgnoreCase(transferType)){
 				subReportHeader.addRow("Export Type: ", xml.getRuleStatus().getExportType() != null ? xml.getRuleStatus().getExportType().getDisplayText() : "");
-				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreName(), xml.getRuleStatus().getLastExportDate()) : "");
+				subReportHeader.addRow("Export Date: ", xml.getRuleStatus().getLastExportDate() != null ? DateAndTimeUtils.formatDateUsingConfig(UtilityService.getStoreId(), xml.getRuleStatus().getLastExportDate()) : "");
 			}
 		}
 		

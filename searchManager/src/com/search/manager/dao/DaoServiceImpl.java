@@ -39,10 +39,12 @@ import com.search.manager.dao.sp.RuleStatusDAO;
 import com.search.manager.dao.sp.RuleStatusDAO.SortOrder;
 import com.search.manager.dao.sp.StoreKeywordDAO;
 import com.search.manager.dao.sp.UsersDAO;
+import com.search.manager.enums.ExportRuleMapSortType;
 import com.search.manager.enums.ExportType;
 import com.search.manager.enums.MemberTypeEntity;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
+import com.search.manager.enums.RuleType;
 import com.search.manager.model.AuditTrail;
 import com.search.manager.model.Banner;
 import com.search.manager.model.Campaign;
@@ -72,6 +74,7 @@ import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
 import com.search.manager.model.User;
+import com.search.manager.model.constants.AuditTrailConstants;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateRuleXml;
 import com.search.manager.report.model.xml.ExcludeRuleXml;
@@ -80,6 +83,8 @@ import com.search.manager.report.model.xml.RankingRuleXml;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.service.UtilityService;
+import com.search.manager.utility.DateAndTimeUtils;
+import com.search.manager.xml.file.RuleTransferUtil;
 import com.search.ws.SearchHelper;
 
 @Service("daoService")
@@ -531,6 +536,12 @@ public class DaoServiceImpl implements DaoService {
 		return storeKeywordDAO.getStoreKeywords(sc);
 	}
 
+	
+	@Override
+	public List<Keyword> getAllKeywords(String storeId, RuleEntity ruleEntity) throws DaoException {
+	    return storeKeywordDAO.getAllKeywords(storeId, ruleEntity);
+	}
+	
 	@Override
 	public RecordSet<StoreKeyword> getAllKeywords(String storeId, Integer page, Integer itemsPerPage) throws DaoException {
 		SearchCriteria<StoreKeyword> sc = new SearchCriteria<StoreKeyword>(new StoreKeyword(storeId, ""), null, null, page, itemsPerPage);
@@ -1485,6 +1496,15 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
+	public int getRuleVersionsCount(String store, String ruleType, String ruleId) {
+		RuleVersionDAO<?> dao = getRuleVersionDAO(RuleEntity.find(ruleType));
+		if (dao != null) {
+			return dao.getRuleVersionsCount(store, ruleId);
+		}
+		return 0;
+	}
+	
+	@Override
 	public boolean restoreRuleVersion(RuleXml xml) {
 		RuleVersionDAO<?> dao = getRuleVersionDAO(xml);
 		if (dao != null) {
@@ -1494,20 +1514,22 @@ public class DaoServiceImpl implements DaoService {
 	}
 
 	@Override
-	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap) throws DaoException {
-		return exportRuleMapDAO.getExportRuleMap(exportRuleMap);
+	public RecordSet<ExportRuleMap> getExportRuleMap(SearchCriteria<ExportRuleMap> exportRuleMap, ExportRuleMapSortType sortType) throws DaoException {
+		return exportRuleMapDAO.getExportRuleMap(exportRuleMap, sortType);
 	}
 
 	@Override
-	public int addExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
-		return exportRuleMapDAO.addExportRuleMap(exportRuleMap);
-	}
-
-	@Override
-	public int updateExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+	public int saveExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
+		ExportRuleMap searchExportRuleMap = new ExportRuleMap(exportRuleMap.getStoreIdOrigin(), exportRuleMap.getRuleIdOrigin(), null,  
+				exportRuleMap.getStoreIdTarget(), null, null, exportRuleMap.getRuleType());
+		List<ExportRuleMap> rtList = getExportRuleMap(new SearchCriteria<ExportRuleMap>(searchExportRuleMap), null).getList();
+		if (CollectionUtils.isEmpty(rtList)) {
+			exportRuleMap.setRejected(false);
+			exportRuleMapDAO.addExportRuleMap(searchExportRuleMap);
+		}
 		return exportRuleMapDAO.updateExportRuleMap(exportRuleMap);
 	}
-
+	
 	@Override
 	public int deleteExportRuleMap(ExportRuleMap exportRuleMap) throws DaoException {
 		return exportRuleMapDAO.deleteExportRuleMap(exportRuleMap);
@@ -1610,15 +1632,15 @@ public class DaoServiceImpl implements DaoService {
 			updateRuleStatus.setApprovalStatus(StringUtils.equalsIgnoreCase(rSet.getList().get(0).getPublishedStatus(), 
 					String.valueOf(RuleStatusEntity.UNPUBLISHED)) ? "" : String.valueOf(RuleStatusEntity.PENDING));
 			updateRuleStatus.setUpdateStatus(RuleStatusEntity.DELETE.toString());
+			updateRuleStatus.setLastModifiedBy(deletedBy);
 			result = updateRuleStatus(updateRuleStatus);
 		} 
 		return result;
 	}
 
 	@Override
-	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String pComment, String ...ruleStatusId) {
+	public Map<String, Integer> addRuleStatusComment(RuleStatusEntity ruleStatus, String store, String username, String pComment, String ...ruleStatusId) {
 		Map<String, Integer> resultMap = new HashMap<String, Integer>();
-		String store = UtilityService.getStoreName();
 		String formatString = "%s";
 		if (ruleStatus != null) {
 			switch (ruleStatus) {
@@ -1637,6 +1659,12 @@ public class DaoServiceImpl implements DaoService {
 				case PENDING:
 					formatString = "[REQUEST] %s";
 					break;
+				case IMPORTED:
+					formatString = "[IMPORTED] %s";
+					break;
+				case EXPORTED:
+					formatString = "[EXPORTED] %s";
+					break;
 				default:
 					break;
 			}
@@ -1644,7 +1672,7 @@ public class DaoServiceImpl implements DaoService {
 		
 		Comment comment = new Comment();
 		comment.setRuleTypeId(RuleEntity.RULE_STATUS.getCode());
-		comment.setUsername(UtilityService.getUsername());
+		comment.setUsername(username);
 		comment.setComment(String.format(formatString, pComment));
 		comment.setStore(new Store(store));
 		for(String rsId: ruleStatusId){
@@ -1658,6 +1686,145 @@ public class DaoServiceImpl implements DaoService {
 			resultMap.put(rsId, result);
 		}
 		return resultMap;
+	}
+
+	public boolean exportRule(String store, RuleEntity ruleEntity, String ruleId, RuleXml rule, ExportType exportType, String username, String comment) throws DaoException {
+		// TODO: change return type to Map
+		boolean exported = false;
+		boolean exportedOnce = false;
+		
+		AuditTrail auditTrail = new AuditTrail();
+		auditTrail.setEntity(String.valueOf(AuditTrailConstants.Entity.ruleStatus));
+		auditTrail.setOperation(String.valueOf(AuditTrailConstants.Operation.exportRule));
+		auditTrail.setUsername(username);
+		auditTrail.setStoreId(store);
+		Date exportDate = new Date();
+		
+		RuleStatus ruleStatus = null;
+		try {
+			SearchCriteria<RuleStatus> searchCriteria = new SearchCriteria<RuleStatus>(
+					new RuleStatus(ruleEntity.getCode(), store, ruleId), null, null, null, null);
+			RecordSet<RuleStatus> approvedRset = getRuleStatus(searchCriteria);
+			if (approvedRset != null && CollectionUtils.isNotEmpty(approvedRset.getList())) {
+				ruleStatus = approvedRset.getList().get(0);
+			}
+			else {
+				logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+			}
+		} catch (DaoException e) {
+			logger.error("Failed to retrieve rule status for " + ruleEntity + " : "  + ruleId, e);
+		}
+		
+		for(String targetStore: UtilityService.getStoresToExport(store)) {
+			exported = RuleTransferUtil.exportRule(targetStore, ruleEntity, ruleId, rule);
+			ExportRuleMap exportRuleMap = new ExportRuleMap(store, ruleId, rule.getRuleName(),  
+					targetStore, null, null, ruleEntity);
+			exportRuleMap.setExportDate(exportDate);
+			exportRuleMap.setDeleted(false);
+			if (ruleStatus != null) {
+				exportRuleMap.setPublishedDate(ruleStatus.getLastPublishedDate());
+			}
+			saveExportRuleMap(exportRuleMap);
+			exportedOnce |= exported;
+			if(!exported) {
+				logger.error("Failed to export " + ruleEntity + " : " + ruleId + " to store " + targetStore);
+			}
+		}
+		
+		if (exportedOnce) {
+			try {
+				if (ruleStatus != null) {
+					// RULE STATUS
+					updateRuleStatusExportInfo(ruleStatus, username, exportType, exportDate);
+					// AUDIT TRAIL
+					auditTrail.setDate(exportDate);
+					auditTrail.setReferenceId(ruleStatus.getRuleRefId());
+					if (ruleEntity == RuleEntity.ELEVATE || ruleEntity == RuleEntity.EXCLUDE || ruleEntity == RuleEntity.DEMOTE) {
+						auditTrail.setKeyword(ruleStatus.getRuleRefId());
+					}
+					auditTrail.setDetails(String.format("Exported reference id = [%1$s], rule type = [%2$s], export type = [%3$s].", 
+							auditTrail.getReferenceId(), RuleEntity.getValue(ruleStatus.getRuleTypeId()), ExportType.AUTOMATIC));
+					addAuditTrail(auditTrail);
+					// COMMENT
+					addRuleStatusComment(RuleStatusEntity.EXPORTED, store, username, comment, ruleStatus.getRuleStatusId());
+				}
+				else {
+					logger.error("No rule status found for " + ruleEntity + " : "  + ruleId);
+				}
+			} catch (DaoException e) {
+				logger.error("Failed to update rule status for " + ruleEntity + " : "  + ruleId, e);
+			}
+		}
+		return exported;
+	}
+
+	/* Used by SearchServlet */
+	
+	@Override
+	public RedirectRule getRedirectRule(StoreKeyword storeKeyword) throws DaoException {
+		return getRedirectRule(new RedirectRule(storeKeyword.getStoreId(), storeKeyword.getKeywordId()));
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(StoreKeyword storeKeyword) throws DaoException {
+		Relevancy relevancy = new Relevancy("", "");
+		relevancy.setStore(storeKeyword.getStore());
+		RecordSet<RelevancyKeyword>relevancyKeywords = searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
+				new RelevancyKeyword(storeKeyword.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
+				MatchType.LIKE_NAME, ExactMatch.MATCH);
+		return (relevancyKeywords.getTotalSize() > 0) ? getRelevancyRule(relevancy.getStore(), 
+				relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId()): null;
+	}
+
+	@Override
+	public Relevancy getRelevancyRule(Store store, String relevancyId) throws DaoException {
+		return getRelevancyDetails(new Relevancy(relevancyId));
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(StoreKeyword storeKeyword) throws DaoException {
+		return getFacetSort(new FacetSort(storeKeyword.getKeywordTerm(), RuleType.KEYWORD, null, storeKeyword.getStore()));
+	}
+
+	@Override
+	public FacetSort getFacetSortRule(Store store, String templateName) throws DaoException {
+		return getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, store));
+	}
+
+	@Override
+	public List<ElevateResult> getElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		return getElevateResultList(new SearchCriteria<ElevateResult>(
+				new ElevateResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword) throws DaoException {
+		return getElevateResultList(new SearchCriteria<ElevateResult>(
+				new ElevateResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+	}
+
+	@Override
+	public List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
+				new ExcludeResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword) throws DaoException {
+		return getExcludeResultList(new SearchCriteria<ExcludeResult>(
+				new ExcludeResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
+	}
+
+	@Override
+	public List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		return getDemoteResultList(new SearchCriteria<DemoteResult>(
+				new DemoteResult(storeKeyword), new Date(), null, 0, 0)).getList();
+	}
+
+	@Override
+	public List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword) throws DaoException {
+		return getDemoteResultList(new SearchCriteria<DemoteResult>(
+				new DemoteResult(storeKeyword), null, DateAndTimeUtils.getDateYesterday(), 0, 0)).getList();
 	}
 	
 }

@@ -1,5 +1,18 @@
 (function ($) {
 
+	AjaxSolr.theme.prototype.errorRequest = function(error){
+		var template = '';
+		template += '<div class="error border fsize14 marB20">';
+		template += '	<h1>Error Code: ' + error["status"] + " " + error["statusText"] + '</h1>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>An error was encountered while processing your request. Kindly refresh this page and retry your request.</span>';
+		template += '	<div class="clearB"/>';
+		template += '	<span>If problem persists, please contact the Search Team and inform them of the time the error occurred, and anything you might have done that may have caused the error.</span>';
+		template += '	<div class="clearB"/>';
+		template += '</div>'; 
+		return $(template);
+	};
+	
 	AjaxSolr.theme.prototype.searchKeyword = function(){
 		var template = '';
 		template += '<a id="statisticIcon" href="javascript:void(0);">';
@@ -11,7 +24,7 @@
 		template += '<div class="searchBoxHolder w150 floatR marT1 marR8">';
 		template += '	<input type="text" class="farial fsize12 fgray pad3 w145" id="keyword" name="keyword">';
 		template += '</div>'; 
-		template += '<div class="floatR posRel txtAL marR5" id="refinementHolder" style="display:none">';
+		template += '<div class="floatR posRel txtAL w240 marR5" id="refinementHolder" style="display:none">';
 		template += '	<input id="keepRefinement" name="keepRefinement" type="checkbox">';
 		template += '	<span class="fsize11">Keep Refinements</span>';
 		template += '</div>';     	 
@@ -73,31 +86,6 @@
 		output  +='<div id="tagContainer">';
 		output  +='<ul id="tagList"></ul>';
 		output  +='</div>';
-
-		return $(output);
-	};
-
-	AjaxSolr.theme.prototype.activeRule = function () {
-		var output  = '';
-
-		output  +='<div style="display:block;" class="fsize12 marT10 fDGray border">';
-		output  +='	<ul id="itemListing" class="mar16 marB20 marL20" >';
-		output  +='		<li id="itemPattern" class="items borderB padTB5 clearfix" style="display:none; width:690px">';
-		output  +='			<label class="w30 preloader floatR" style="display:none"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/ajax-loader-rect.gif")  + '"></label>';
-		output  +='			<label class="select floatL w20 posRel topn3"><input type="checkbox" class="ruleControl"></label>';
-		output  +='			<label class="ruleType floatL fbold w310"></label>';
-		output  +='			<label class="imageIcon floatL w20 posRel topn2"><img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_reviewContent2.png")  + '" class="top2 posRel"></label>';
-		output  +='			<label class="name w310 floatL"><span class="fbold"></span></label>';
-		output  +='		</li>';
-		output  +='	</ul>';
-		output  +='<div class="clearB"></div>';
-		output  +='</div>';
-		output  +='<a href="javascript:void(0);">';
-		output  +='<div class="minW100 floatR borderB borderR borderL height23 posRel topn1 fbold fsize11 padT8 marL5" style="display:block; background: #fff; z-index:500; color:#329eea;">';
-		output  +='	<img src="' + AjaxSolr.theme('getAbsoluteLoc', "images/icon_arrowDownBlue.png")  + '" class="top2 posRel marL5 marR3">';
-		output  +='	<span>Active Rules</span>';
-		output  +='</div>';
-		output  +='</a>';
 
 		return $(output);
 	};
@@ -178,15 +166,6 @@
 		var output  = '';
 
 		output  += '<div class="box marT8">';
-		output  += '	<h2>Condition</h2>';
-		output  += '	<ul>';
-		output  += '		<li><input type="checkbox" id="Refurbished_Flag" class="checkboxFilter"> Refurbished </li>';
-		output  += '		<li><input type="checkbox" id="OpenBox_Flag" class="checkboxFilter"> Open Box </li>';
-		output  += '		<li><input type="checkbox" id="Clearance_Flag" class="checkboxFilter"> Clearance </li>';
-		output  += '	</ul>';
-		output  += '</div>';
-
-		output  += '<div class="box marT8">';
 		output  += '	<h2>License Product</h2>';
 		output  += '	<select class="dropdownFilter mar10 w215" id="licenseFilter">';
 		output  += '		<option value="all">Both License & Non-License</option>';
@@ -249,7 +228,7 @@
 		output += '	   </td>';
 		output += '      <td colspan="2" align="left" valign="top" class="borderB">';
 		output += '			<div class="floatL">';
-		output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
+		//output += '		    	<div id="auditHolder" class="floatL marR5"></div>';
 		output += '				<div id="debugHolder" class="floatL marB6"></div>';
 		output += '				<div id="elevatePosition" class="floatL"></div>';
 		output += '				<div id="demotePosition" class="floatL"></div>';
@@ -300,12 +279,30 @@
 		var secObj = $(output);
 
 		//Add Cart Price
-		secObj.find("div#cartPriceHolder").append('$' + doc[GLOBAL_storeFacetName + "_CartPrice"]);
+		var priceSuffix = "_CartPrice";
+
+		if(GLOBAL_storeId==="pcmallgov"){
+			switch(GLOBAL_PCMGCatalog.toLowerCase()){
+			case "open": 
+				priceSuffix = "_OpenCartPrice";
+				break; 
+			case "government": 
+				priceSuffix = "_GovCartPrice";
+				break; 
+			case "academic": 
+				priceSuffix = "_ACACartPrice";
+				break; 	
+			}
+		}
+
+		var priceDisplay = doc[GLOBAL_storeFacetName + priceSuffix];
+		
+		secObj.find("div#cartPriceHolder").append($.toCurrencyFormat('$', priceDisplay));
 
 		var name = $.isNotBlank(doc[GLOBAL_storeFacetName + "_Name"])? doc[GLOBAL_storeFacetName + "_Name"] : doc.Name;
-		var manufacturer = '<span class="txtManufact">' + doc.Manufacturer + '</span>';
+		var manufacturer = '<span class="txtManufact fbold">' + doc.Manufacturer + '</span> ';
 		
-		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', manufacturer + name, docHandler));
+		secObj.find("div#docHolder").wrapInner(AjaxSolr.theme('createLink', name, docHandler)).prepend(manufacturer);
 
 		//Add Audit Button
 		secObj.find("div#auditHolder").html(AjaxSolr.theme('createLink', '', auditHandler));
@@ -458,7 +455,7 @@
 				i++;
 				var count = parseInt(facets[facet]);
 				output += '<tr>';
-				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet + '"/></td>';
+				output += '<td width="25%" class="exclude"><input type="checkbox" id="checkbox-' + i + '" class="firerift-style-checkbox" value="' + facet.replace(/\"/g,'&quot;') + '"/></td>';
 				output += '<td class="values"><span class="value">' + (delimiter ? facet.split(delimiter)[1] : facet) + '</span></td>';
 				//output += '<td class="values"><span class="value">' + facet + '</span><span dir="ltr" class="count">(' + count + ')</span></td>';
 				output += '</tr>';		
@@ -507,12 +504,21 @@
 		output += '  <tbody>';  
 
 		for (var docField in doc){
+			
 			output += '  <tr>';  
 			output += '    <td class="w220"><div style="width:220px; word-wrap: break-word;">' + docField + '</div></td>';  
-			output += '    <td class="w205"><a href="javascript:void(0);" class="attributes"><div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div></a>';
-			output += '		<div>';
+			output += '    <td class="w205">';
+			if((GLOBAL_indexedFields.indexOf(docField) != -1) || $.isWildcardField(docField, GLOBAL_indexedWildcardFields)){
+				output += '			<a href="javascript:void(0);" class="attributes nonindexed">';
+				output += '				<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+				output += '			</a>';		
+			}else{
+				output += '			<div style="width:205px; word-wrap: break-word;">' + doc[docField] + '</div>';
+			}
+			
+			output += '			<div>';
 			output += '			<input type="hidden" class="attribField" value="' + docField + '">';
-			output += '			<input type="hidden" class="attribValue" value="' + doc[docField] + '">';
+			output += '			<input type="hidden" class="attribValue" value="' + ('' + doc[docField]).replace(/"/g,'&quot;') + '">';
 			output += '       </div>';
 			output += '    </td>';
 			output += ' </tr>';  
@@ -587,7 +593,7 @@
 
 
 	AjaxSolr.theme.prototype.createLink = function (value, handler, id) {
-		var $a = $('<a href="javascript:void(0)"/>').html(value).click(handler);
+		var $a = $('<a href="javascript:void(0)"/>').text(value).click(handler);
 		if ($.isNotBlank(id)){
 			$a.prop("id", id);
 		}
@@ -620,6 +626,8 @@
 		}
 		return h += html ? ">" + html + "</" + tag + ">" : "/>";
 	};
+	
+	
 
 	$.fn.outerHTML = function() {
 		var doc = this[0] ? this[0].ownerDocument : document;

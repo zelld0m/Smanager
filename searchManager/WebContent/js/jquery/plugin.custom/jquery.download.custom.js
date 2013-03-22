@@ -36,8 +36,8 @@
 				template += '<div><span class="floatL marT10 marR5">Pages: </span>';
 				template += '<span>';
 				template += '<select id="page" name="page" class="mar0 w168 floatR marT6">';
+				template += '<option value="current" selected="selected">Current Page</option>';
 				template += '<option value="all">All</option>';
-				template += '<option value="current" selected="selected">Current</option>';
 				template += '</select>';
 				template += '</span></div>';
 				template += '<div class="clearB"></div>';
@@ -133,13 +133,13 @@
 										  ruletype: $content.find('select#ruletype option:selected').val()
 										};
 								
-								if($.isBlank(e.data.filename) || !isAllowedName(e.data.filename)){
+								if($.isBlank(e.data.filename) || !isAllowedFileName(e.data.filename)){
 									alert("Please provide a valid filename");
 								//TODO: add check valid email and input cleaning
 								}else if(base.options.sendMail && e.data.type.toLowerCase() == "mail" && $.isBlank(e.data.recipient)){
 									alert("Please provide at least one email recipient");
 								}else{
-									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.formatAsId(e.data.filename).substring(1);
+									e.data.filename = $.isBlank(e.data.filename)? $.trim(base.options.defaultFilename) : $.trim(e.data.filename);
 									base.options.requestCallback(e);
 								}		
 							}

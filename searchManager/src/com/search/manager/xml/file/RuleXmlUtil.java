@@ -45,6 +45,7 @@ import com.search.manager.model.SearchCriteria;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
+import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.report.model.xml.DemoteItemXml;
 import com.search.manager.report.model.xml.DemoteRuleXml;
 import com.search.manager.report.model.xml.ElevateItemXml;
@@ -62,7 +63,9 @@ import com.search.manager.report.model.xml.RuleVersionListXml;
 import com.search.manager.report.model.xml.RuleXml;
 import com.search.manager.utility.PropsUtils;
 import com.search.manager.utility.StringUtil;
+import com.search.ws.ConfigManager;
 import com.search.ws.SearchHelper;
+import com.search.ws.SolrConstants;
 
 public class RuleXmlUtil{
 
@@ -79,6 +82,32 @@ public class RuleXmlUtil{
 		//Exists only to defeat instantiation.
 	}
 
+	protected static void setFacetTemplateValues(String storeId, RedirectRuleCondition condition) {
+		ConfigManager configManager = ConfigManager.getInstance();
+		if (configManager != null && condition != null) {
+			condition.setFacetPrefix(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+			condition.setFacetTemplate(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			condition.setFacetTemplateName(configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		}
+	}
+	
+	protected static void setFacetTemplateValues(String storeId, List<? extends RuleItemXml> list) {
+		ConfigManager configManager = ConfigManager.getInstance();
+		if (configManager != null && CollectionUtils.isNotEmpty(list)) {
+			String facetPrefix = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME);
+			String facetTemplate = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			String facetTemplateName = configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			for (RuleItemXml p: list) {
+				RedirectRuleCondition condition = p.getRuleCondition();
+				if (condition != null) {
+					condition.setFacetPrefix(facetPrefix);
+					condition.setFacetTemplate(facetTemplate);
+					condition.setFacetTemplateName(facetTemplateName);
+				}
+			}
+		}
+	}
+	
 	public static RuleXmlUtil getInstance() {
 		if(instance == null) {
 			synchronized (RuleXmlUtil.class) {
@@ -99,10 +128,16 @@ public class RuleXmlUtil{
 				}
 			}
 		}
+		if (latestVersion != null && latestVersion instanceof ElevateRuleXml) {
+			ElevateRuleXml elevateRuleXml = (ElevateRuleXml)latestVersion;
+			if (CollectionUtils.isNotEmpty(elevateRuleXml.getElevateItem())) {
+				setFacetTemplateValues(elevateRuleXml.getStore(), elevateRuleXml.getElevateItem());
+			}
+		}
 		return latestVersion;
 	}
 
-	public static RuleXml ruleToXml(String store, String ruleType, String ruleId){
+	public static RuleXml currentRuleToXml(String store, String ruleType, String ruleId){
 		RuleXml ruleXml = new RuleXml();
 		RuleEntity ruleEntity = RuleEntity.find(ruleType);
 		StoreKeyword sk = new StoreKeyword(store, ruleId);
@@ -154,28 +189,28 @@ public class RuleXmlUtil{
 			break;
 		case FACET_SORT:
 			FacetSort facetSort = new FacetSort();
-
+			List<FacetGroup> groups = null;
 			try {
 				facetSort = daoService.getFacetSort(new FacetSort(ruleId, store));
+				RecordSet<FacetGroup> facetGroups = daoService.searchFacetGroup(new SearchCriteria<FacetGroup>(new FacetGroup(ruleId, "")), MatchType.MATCH_ID);
+				groups = (facetGroups != null) ? facetGroups.getList() : null;
 			} catch (DaoException e) {
 				logger.error("Failed convert facet sort rule to rule xml", e);
 				return null;
 			}
 
-			ruleXml = new FacetSortRuleXml(facetSort);
+			ruleXml = new FacetSortRuleXml(facetSort, groups);
 			break;
 		case QUERY_CLEANING:
 			RedirectRule redirectRule = new RedirectRule();
-
 			try {
 				redirectRule = daoService.getRedirectRule(new RedirectRule(ruleId));
-
 			} catch (DaoException e) {
 				logger.error("Failed convert query cleaning rule to rule xml", e);
 				return null;
 			}
-
 			ruleXml = new RedirectRuleXml(store, redirectRule);
+			ruleXml.setCreatedDate(redirectRule.getCreatedDate());
 			break;
 		case RANKING_RULE:
 			Relevancy relevancy = new Relevancy();
@@ -196,18 +231,17 @@ public class RuleXmlUtil{
 		return ruleXml;
 	}
 
-	public static List<Product> getProductDetails(RuleXml ruleXml){
+	public static List<Product> getProductDetails(RuleXml ruleXml, String targetStore){
 
 		LinkedHashMap<String, Product> map = new LinkedHashMap<String, Product>();
 		List<Product> productList = new ArrayList<Product>();
 		ProductDetailsAware prodDetails = (ProductDetailsAware) ruleXml;
 		List<? extends RuleItemXml> ruleItemList = prodDetails.getItem();
 		String mapKey = "";
-		String store = ruleXml.getStore();
 		String keyword = ruleXml.getRuleId();
 		
 
-		StoreKeyword storeKeyword = new StoreKeyword(store, keyword);
+		StoreKeyword storeKeyword = new StoreKeyword(targetStore, keyword);
 
 		if(CollectionUtils.isNotEmpty(ruleItemList)){
 			for (RuleItemXml ruleItem : ruleItemList) {
@@ -225,7 +259,7 @@ public class RuleXmlUtil{
 		}
 
 		if (MapUtils.isNotEmpty(map)){
-			SearchHelper.getProductsIgnoreKeyword(map, store, keyword);
+			SearchHelper.getProductsIgnoreKeyword(map, targetStore, keyword);
 			productList = new ArrayList<Product>(map.values());
 		} 
 
@@ -352,7 +386,7 @@ public class RuleXmlUtil{
 		String ruleId = xml.getRuleId();
 		RuleEntity ruleEntity = xml.getRuleEntity();
 		StoreKeyword storeKeyword = new StoreKeyword(store, ruleId);
-
+		
 		ElevateResult model = new ElevateResult(storeKeyword);
 		SearchCriteria<ElevateResult> criteria = new SearchCriteria<ElevateResult>(model);
 
@@ -361,7 +395,8 @@ public class RuleXmlUtil{
 			List<ElevateResult> preImportlist = daoService.getElevateResultList(criteria).getList();
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
-				if(createPreRestore){			
+				if(createPreRestore){
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -382,7 +417,11 @@ public class RuleXmlUtil{
 			
 			if(CollectionUtils.isNotEmpty(eItemXmlList)){
 				for (ElevateItemXml eItemXml : eItemXmlList){
+					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					elevateResult = new ElevateResult(storeKeyword, eItemXml);
+					if (elevateResult.getCondition() != null) {
+						setFacetTemplateValues(store, elevateResult.getCondition());
+					}
 					processedItem += daoService.addElevateResult(elevateResult) > 0 ? 1 : 0;
 				}
 	
@@ -421,7 +460,8 @@ public class RuleXmlUtil{
 
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
-				if(createPreRestore){			
+				if(createPreRestore){		
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, eXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -442,7 +482,11 @@ public class RuleXmlUtil{
 
 			if(CollectionUtils.isNotEmpty(eItemXmlList)){
 				for (ExcludeItemXml eItemXml : eItemXmlList){
+					eItemXml.setCreatedBy(eXml.getCreatedBy());
 					excludeResult = new ExcludeResult(storeKeyword,eItemXml);
+					if (excludeResult.getCondition() != null) {
+						setFacetTemplateValues(store, excludeResult.getCondition());
+					}					
 					processedItem += daoService.addExcludeResult(excludeResult) > 0 ? 1 : 0;
 				}
 	
@@ -482,6 +526,7 @@ public class RuleXmlUtil{
 
 			if(CollectionUtils.isNotEmpty(preImportlist)){
 				if(createPreRestore){			
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, dXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -500,9 +545,13 @@ public class RuleXmlUtil{
 			List<DemoteItemXml> dItemXmlList = dXml.getItem();
 			DemoteResult demoteResult = null;
 
-			if(CollectionUtils.isNotEmpty(preImportlist)){
+			if(CollectionUtils.isNotEmpty(dItemXmlList)){
 				for (DemoteItemXml dItemXml : dItemXmlList){
+					dItemXml.setCreatedBy(dXml.getCreatedBy());
 					demoteResult = new DemoteResult(storeKeyword, dItemXml);
+					if (demoteResult.getCondition() != null) {
+						setFacetTemplateValues(store, demoteResult.getCondition());
+					}	
 					processedItem += daoService.addDemoteResult(demoteResult) > 0 ? 1 : 0;
 				}
 
@@ -533,7 +582,7 @@ public class RuleXmlUtil{
 		RuleEntity ruleEntity = xml.getRuleEntity();
 		String store = DAOUtils.getStoreId(restoreVersion.getStore());
 		String ruleId = xml.getRuleId();
-
+		
 		try {
 			FacetSort rule = new FacetSort();
 			rule.setRuleId(ruleId);
@@ -543,6 +592,7 @@ public class RuleXmlUtil{
 
 			if(rule != null){
 				if(createPreRestore){
+					//TODO: Save existing rule not the rule to be restored
 					if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, fXml, path)){
 						logger.error("Failed to create pre-import rule");
 						return false;
@@ -580,6 +630,7 @@ public class RuleXmlUtil{
 					facetGroup.setName(facetSort.getGroupName());
 					facetGroup.setSortType(facetSort.getSortType());
 					facetGroup.setId(groupId);
+					facetGroup.setCreatedBy(fXml.getCreatedBy());
 					totalItems++;
 					processedItems += daoService.addFacetGroup(facetGroup);
 
@@ -587,7 +638,9 @@ public class RuleXmlUtil{
 					if (CollectionUtils.isNotEmpty(facetSort.getGroupItem())) {
 						int i = 0;
 						for (String item: facetSort.getGroupItem()) {
-							groupItems.add(new FacetGroupItem(ruleId, groupId, DAOUtils.generateUniqueId(), item, ++i, xml.getLastModifiedBy()));
+							FacetGroupItem facetGroupItem = new FacetGroupItem(ruleId, groupId, DAOUtils.generateUniqueId(), item, ++i, xml.getLastModifiedBy());
+							facetGroupItem.setCreatedBy(fXml.getCreatedBy());
+							groupItems.add(facetGroupItem);
 						}
 						totalItems += facetSort.getGroupItem().size();
 						processedItems += daoService.addFacetGroupItems(groupItems);
@@ -621,6 +674,7 @@ public class RuleXmlUtil{
 
 				if(redirectRule != null){
 					if(createPreRestore){
+						//TODO: Save existing rule not the rule to be restored
 						if (!RuleXmlUtil.ruleXmlToFile(store, ruleEntity, ruleId, qRXml, path)){
 							logger.error("Failed to create pre-import rule");
 							return false;
@@ -642,7 +696,8 @@ public class RuleXmlUtil{
 
 				RedirectRule addRel = new RedirectRule(ruleId, qRXml.getRedirectType(), qRXml.getRuleName(), qRXml.getDescription(), store,
 						(Integer)null, (String)null, (String)null, qRXml.getCreatedBy(), qRXml.getLastModifiedBy(),
-						qRXml.getCreatedDate(), qRXml.getLastModifiedDate(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword);
+						qRXml.getCreatedDate(), qRXml.getLastModifiedDate(), qRXml.getReplacementKeyword(), qRXml.getDirectHit(), includeKeyword, 
+						qRXml.getReplaceKeywordMessageType(), qRXml.getReplaceKeywordMessageCustomText());
 
 				if (daoService.addRedirectRule(addRel) <= 0) {
 					RedirectRule delRel = new RedirectRule(ruleId);
@@ -663,6 +718,7 @@ public class RuleXmlUtil{
 				RedirectRule rule = new RedirectRule();
 				rule.setRuleId(addRel.getRuleId());
 				rule.setStoreId(store);
+				rule.setCreatedBy(qRXml.getCreatedBy());
 				rule.setLastModifiedBy(qRXml.getLastModifiedBy());
 				List<String> keywords = keywordsXml.getKeyword();
 
@@ -683,6 +739,8 @@ public class RuleXmlUtil{
 						RedirectRuleCondition condition = new RedirectRuleCondition();
 						condition.setRuleId(ruleId);
 						condition.setStoreId(store);
+						setFacetTemplateValues(store, condition);
+						condition.setCreatedBy(qRXml.getCreatedBy());
 						condition.setLastModifiedBy(qRXml.getLastModifiedBy());
 						
 						if(qRXml.getRuleCondition()!=null && CollectionUtils.isNotEmpty(qRXml.getRuleCondition().getCondition())){
@@ -771,6 +829,7 @@ public class RuleXmlUtil{
 						for (RelevancyKeyword relKeyword : keywords) {
 							daoService.addKeyword(new StoreKeyword(store, relKeyword.getKeyword().getKeywordId()));
 							relKeyword.setRelevancy(restoreVersion);
+							relKeyword.setCreatedBy(rRXml.getCreatedBy());
 							processedItem += daoService.addRelevancyKeyword(relKeyword);
 						}
 						if (processedItem != keywords.size()) {

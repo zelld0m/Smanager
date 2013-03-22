@@ -123,6 +123,7 @@
 				});
 			}
 
+			
 			base.contentHolder.find("#selItemValidityDate").prop({readonly: true}).datepicker({
 				showOn: "both",
 				disabled: base.options.locked,
@@ -171,17 +172,16 @@
 			case "ims": imagePath = GLOBAL_contextPath + '/images/ims_img.jpg'; break;
 			case "cnet": imagePath = GLOBAL_contextPath + '/images/productSiteTaxonomy_img.jpg'; break;
 			case "facet":  imagePath = GLOBAL_contextPath + '/images/facet_img.jpg'; break;
+			default: if ($.isBlank(imagePath)) imagePath = GLOBAL_contextPath + "/images/no-image60x60.jpg"; break;
 			};
 
-			if($.isNotBlank(imagePath)){
-				setTimeout(function(){	
-					$li.find("img#productImage").prop("src", imagePath).off().on({
-						error:function(){ 
-							$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
-						}
-					});
-				},10);
-			}
+			setTimeout(function(){	
+				$li.find("img#productImage").prop("src", imagePath).off().on({
+					error:function(){ 
+						$(this).unbind("error").prop("src", GLOBAL_contextPath + '/images/no-image60x60.jpg'); 
+					}
+				});
+			},10);
 		};
 
 		base.prepareList = function(){
@@ -218,7 +218,7 @@
 					conditionText  = conditionText.substring(0,100) + "...";
 				}
 
-				$li.find("#conditionText").html(conditionText);
+				$li.find("#conditionText").text(conditionText);
 			}
 
 			var validityDate = item["formattedExpiryDate"];
@@ -347,7 +347,7 @@
 			template += '		<h2 id="rulestatus" class="confirmTitle" style="display:none"></h2>';
 			template += '		<div class="marT10"><center><img id="selItemProductImage" src="' + GLOBAL_contextPath + '/images/no-image.jpg" class="border" style="width:116px; height:100px"></center></div>';
 			template += '		<div><center><span id="selItemManufacturer" class="fbold">' + base.doc["Manufacturer"] + '</span></center></div>';
-			template += ' 		<div style="position:absolute; float:right; top:50px; left:224px">';
+			template += ' 		<div style="position:absolute; float:right; top:40px; left:224px">';
 			template += '			<a href="javascript:void(0);" id="toggleHideCurrent"><img src="' + GLOBAL_contextPath + '/images/btnTonggleHide.png"></a>';
 			template += '		</div>';
 			template += '	<div>';
@@ -359,6 +359,7 @@
 			}
 
 			template += '		<li>';
+			template += '			<input id="hideCursor" type="txt" style="position:absolute; top:-30px; padding:1px; margin-left:-1px; opacity:0.00; border:none; height:0px; width:0px"/>';
 			template += '			<label class="fbold title padT3">Valid Until: </label>';
 			template += '			<span><input type="text" id="selItemValidityDate" style="width:65px">';
 			template += ' 			<span><img id="deleteCalendarIcon" src="' + GLOBAL_contextPath + '/images/icon_calendarDelete.png" style="display:none"></span>';
@@ -392,11 +393,11 @@
 			template += '					  		<img src="' + GLOBAL_contextPath + '/images/iconDelete.png">';
 			template += '						</a>';			
 			template += '					</div>';
-			template += '                   <div class="floatL w100 marTn12">';
+			template += '                   <div class="floatL w110 marTn12">';
 			template += '					  	<div class="handle floatL w20" style="display:none"><img src="' + GLOBAL_contextPath + '/images/icon_move.png"></div>';
 			template += '                   	<div class="forceAdd" style="display:none">';
 			template += '							<img id="preloaderForceAdd" class="preloaderForceAdd" src="' + GLOBAL_contextPath + '/images/horizontalPreloaderBlue.gif">';
-			template += '							<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox small-normal-forceadd" style="display:none; margin-top:0">';
+			template += '							<input id="setForceAdd" type="checkbox" class="firerift-style-checkbox small-normal-forceadd" style="display:none; margin-top:0; margin-left:0;">';
 			template += '						</div>';
 			template += '					</div>';
 			template += '					</div>';
@@ -415,7 +416,7 @@
 			template += '							<li id="mfrNoLabel" class="label">Mfr Part #:</li><li class="value" id="mfrNo"></label>';
 			template += '				  		</ul>';
 			template += '					</div>';
-			template += '					<div id="conditionText" class="label w125 floatL marL8 posRel" ></div>';
+			template += '					<div id="conditionText" class="w125 floatL marL8 posRel" ></div>';
 			template += '			</li>';
 			template += '		</ul>';
 			template += '	</div>';
@@ -449,26 +450,31 @@
 
 			base.contentHolder.find("#saveBtn").off().on({
 				click: function(e){
-					var position = parseInt($.trim(base.contentHolder.find("#selItemPosition").val()));
+					var origPostion = $.trim(base.contentHolder.find("#selItemPosition").val());
+					var position = parseInt(origPostion);
 					position = isNaN(position) ? base.options.defaultPosition : position;
-					var comment = $.trim(base.contentHolder.find("#selItemComment").val());
+					var comment = $.defaultIfBlank($.trim(base.contentHolder.find("#selItemComment").val()),"");
 					var validityDate = $.trim(base.contentHolder.find("#selItemValidityDate").val());
 					var today = new Date();
 					today.setHours(0,0,0,0); //ignore time of current date 
-
+					
 					if (base.selectedItem!=null && position > base.maxItemPosition){
 						jAlert("Please specify position. Max allowed position is " + base.maxItemPosition, "Search Simulator");
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
 					}else if (base.selectedItem==null && position > (base.maxItemPosition + 1)){
 						jAlert("Please specify position. Max allowed position is " + (base.maxItemPosition + 1), "Search Simulator");
 						if(base.options.promptPosition) base.contentHolder.find("#selItemPosition").focus();
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", "Search Simulator");
+					}else if(origPostion!=null && origPostion.length>0 && !$.isNumeric(origPostion)) {
+						jAlert("Invalid position value.", "Search Simulator");
+					}else if(!validateComment("Search Simulator",comment,0)){
+						//alert is inside validateComment
 					}else if(today.getTime() > new Date(validityDate).getTime()){
 						jAlert("Expiry date cannot be earlier than today", "Search Simulator");
 					}else if(base.selectedItem==null){
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemAddItemCallback(base, base.doc["EDP"], position, validityDate, comment);
 					}else if(base.selectedItem!=null){
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						base.options.itemUpdateItemCallback(base, base.selectedItem["memberId"], position, validityDate, comment);
 					}
 				}

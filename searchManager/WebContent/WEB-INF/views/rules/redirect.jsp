@@ -42,7 +42,7 @@
 		<div id="redirect" class="redirect fsize12">	
 			<div class="landingCont bgboxGray w45p83 minHeight185 floatL">	
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
-						<div class="floatL">Rule Info</div>
+						<div class="floatL">Rule Name</div>
 						<div class="floatR">
 							<span class="floatR"><a href="javascript:void(0);" id="downloadIcon"><div class="btnGraph btnDownload marT1 marL3" id="downloadIcon" alt="Download" title="Download"></div></a></span>
 							<span class="floatR"><img class="pointer" id="auditIcon" src="<spring:url value="/images/icon_history.png" />" alt="History" title="History"></span>
@@ -84,6 +84,15 @@
     			<div class="landingCont bgboxGray w96p50p floatL marB10">
     				<input type="checkbox" id="activate" class="activate"> Use this action (<span class="fitalic">Note: Checking this box will uncheck the other actions.</span>)
     			</div>
+    			
+    			<div class="landingCont bgboxGray w96p50p floatL">
+    				<div class="fsize14 txtAL borderB padB4 marB8 fbold">
+						Search Header Text
+					</div>
+    				<div id="searchHeaderText"></div>
+    				<div class="clearB"></div>
+    			</div>
+    			
     			<div class="landingCont bgboxGray w96p50p floatL">
 					<div class="fsize14 txtAL borderB padB4 marB8 fbold">
 						Replace Keyword
@@ -114,7 +123,7 @@
 	        	<h2 class="borderB padB3">Create Filter Group : 
 	        	<select id="filterGroup" name="select" class="selectCombo w178" >
 					<option value="ims">IMS Categories</option>
-					<c:if test="${store eq 'pcmall' or store eq 'pcmallcap' or store eq 'sbn'}">
+					<c:if test="${storeId eq 'pcmall' or storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}">
 					<option value="cnet">Product Site Taxonomy</option>
 					</c:if>
 					<option value="facet">Facets</option>
@@ -152,7 +161,7 @@
 	        				<h3 class="marT10">IMS Categories / Manufacturers</h3>	        		
 	        				<div class="fsize12 marTB20 marRL50">
 							<table class="imsFields">							
-								<tr class="catName">
+								<tr class="catName" id="category">
 									<td class="w175 padB8" valign="bottom">Category :</td>
 									<td class="iepadBT0">
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
@@ -192,7 +201,7 @@
 										</div>
 									</td>
 								</tr>
-								<tr class="catCode">
+								<tr class="catCode" id="catCode">
 									<td  class="w175 padB8" valign="bottom">Category Code :</td>
 									<td>
 										<div class="floatL fsize11 marB8 txtDecoUL padT3">
@@ -202,12 +211,12 @@
 										<input id="catcode" type="text" maxlength="4">
 									</td>
 								</tr>
-								<tr>
+								<tr id="manufacturer">
 									<td class="w175" valign="top">Manufacturer :</td>
 									<td>
 										<img id="preloaderManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="manufacturerList" class="manufacturerList selectCombo w235" title="Select Manufacturer"></select>
+											<select name="select" id="manufacturerList" class="manufacturerList selectCombo w229" title="Select Manufacturer"></select>
 										</div>	
 									</td>
 								</tr>
@@ -224,7 +233,7 @@
 									<td class="iepadBT0">
 										<img id="preloaderLevel1CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w229" title="Select Category"></select>
+											<select name="select" id="level1CategoryList" class="level1CategoryList selectCombo w250" title="Select Category"></select>
 										</div>
 									</td>
 								</tr>
@@ -233,7 +242,7 @@
 									<td>
 										<img id="preloaderLevel2CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w229" title="Select SubCategory"></select>
+											<select name="select" id="level2CategoryList" class="level2CategoryList selectCombo w250" title="Select SubCategory"></select>
 										</div>
 									</td>
 								</tr>
@@ -242,7 +251,7 @@
 									<td>
 										<img id="preloaderLevel3CategoryList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w235" title="Select Class"></select>
+											<select name="select" id="level3CategoryList" class="level3CategoryList selectCombo w250" title="Select Class"></select>
 										</div>
 									</td>
 								</tr>
@@ -251,7 +260,7 @@
 									<td>
 										<img id="preloaderCNETManufacturerList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w235" title="Select Manufacturer"></select>
+											<select name="select" id="cnetmanufacturerList" class="cnetmanufacturerList selectCombo w250" title="Select Manufacturer"></select>
 										</div>	
 									</td>
 								</tr>
@@ -268,7 +277,7 @@
 									<td class="iepadBT0 w278">
 										<img id="preloaderTemplateNameList" class="floatR loadIcon marT6 marL5" src="../images/ajax-loader-rect.gif" style="display: none"/>
 										<div class="floatL">
-											<select name="select" id="templateNameList" class="templateNameList selectCombo w235" title="Select Template Name"></select>
+											<select name="select" id="templateNameList" class="templateNameList selectCombo w250" title="Select Template Name"></select>
 										</div>
 									</td>
 								</tr>
@@ -318,20 +327,20 @@
 								<tr>
 									<td class="w175">Name (contains) :</td>
 									<td class="iepadBT0">
-										<input id="nameContains" type="text" class="w250"/>
+										<input id="nameContains" type="text" style="width: 244px;"/>
 									</td>
 								</tr>
 								<tr>
 									<td class="w175">Description (contains):</td>
 									<td class="iepadBT0">
-										<input id="descriptionContains" type="text" class="w250"/>
+										<input id="descriptionContains" type="text" style="width: 244px;"/>
 									</td>
 								</tr>							
 								<tr>
 									<td class="w175">Platform :</td>
 									<td class="iepadBT0">
-										<select name="select" id="platformList" class="selectCombo w235" title="Select Platform" >
-											<option value="all"></option>
+										<select name="select" id="platformList" class="selectCombo w250" title="Select Platform" >
+											<option value="all">-Select Platform-</option>
 											<option value="universal">Universal</option>
 											<option value="pc">PC</option>
 											<option value="linux">Linux</option>
@@ -342,8 +351,8 @@
 								<tr>
 									<td class="w175">Condition :</td>
 									<td class="iepadBT0">
-										<select name="select" id="conditionList" class="selectCombo w235" title="Select Condition" >
-											<option value="all"></option>
+										<select name="select" id="conditionList" class="selectCombo w250" title="Select Condition" >
+											<option value="all">-Select Condition-</option>
 											<option value="refurbished">Refurbished</option>
 											<option value="open">Open Box</option>
 											<option value="clearance">Clearance</option>
@@ -353,8 +362,8 @@
 								<tr>
 									<td class="w175">Availability :</td>
 									<td class="iepadBT0">
-										<select name="select" id="availabilityList" class="selectCombo w235" title="Select Availability" >
-											<option value="all"></option>
+										<select name="select" id="availabilityList" class="selectCombo w250" title="Select Availability" >
+											<option value="all">-Select Availability-</option>
 											<option value="instock">In Stock</option>
 											<option value="call">Call</option>
 										</select>
@@ -363,8 +372,8 @@
 								<tr>
 									<td class="w175">License :</td>
 									<td class="iepadBT0">
-										<select name="select" id="licenseList" class="selectCombo w235" title="Select License" >
-											<option value="all"></option>
+										<select name="select" id="licenseList" class="selectCombo w250" title="Select License" >
+											<option value="all">-Select License-</option>
 											<option value="license">License Products Only</option>
 											<option value="nonlicense">Non-License Products Only</option>
 										</select>
@@ -373,8 +382,8 @@
 								<tr>
 									<td class="w175">Product Image :</td>
 									<td class="iepadBT0">
-										<select name="select" id="imageExistsList" class="selectCombo w235" title="Select Product Image" >
-											<option value="all"></option>
+										<select name="select" id="imageExistsList" class="selectCombo w250" title="Select Product Image" >
+											<option value="all">-Select Image Option-</option>
 											<option value="withImage">Products With Image Only</option>
 											<option value="noImage">Products Without Image Only</option>
 										</select>

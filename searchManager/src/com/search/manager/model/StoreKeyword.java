@@ -45,10 +45,6 @@ public class StoreKeyword implements Serializable {
 		return (store == null) ? null : store.getStoreId();
 	}
 
-	public String getStoreName() {
-		return (store == null) ? null : store.getStoreName();
-	}
-
 	public String getKeywordId() {
 		return (keyword == null) ? null : keyword.getKeywordId();
 	}
@@ -61,5 +57,4 @@ public class StoreKeyword implements Serializable {
 	public String toString() {
 		return "(Store: " + store + "\tKeyword: " + keyword + ")";
 	}
-
 }

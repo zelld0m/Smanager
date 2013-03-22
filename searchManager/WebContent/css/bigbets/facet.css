@@ -48,7 +48,7 @@
 
 .ie .ui-autocomplete-input { padding:4px !important }
 #selectedFacetValueList .ui-combobox .ui-button { position:relative; top:3.5px; left:-20px }
-#selectedFacetValueList .deleteIcon  { float:left; width:15px; margin-left:0; position:relative; left:218px }
-.ie #selectedFacetValueList .deleteIcon  { float:left; width:15px; margin-left:0; position:relative; left:204px }
+#selectedFacetValueList .deleteIcon  { float:left; width:15px; margin-left:0; position:relative; left:5px; }
+
 
 #selectedFacetValueList .ui-autocomplete-input { width: 179px !important }

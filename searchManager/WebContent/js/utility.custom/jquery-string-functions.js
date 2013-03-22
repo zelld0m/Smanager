@@ -5,7 +5,14 @@
 jQuery.extend(
 		(function($){  
 			return {  
-
+				isWildcardField : function(fieldName, fieldList){
+					if(!$.isEmptyObject(fieldList) && $.isNotBlank(fieldName)){
+						var patt = new RegExp("("+fieldList.join("|")+")");
+						return patt.test(fieldName);
+					}
+					return false;
+				},
+				
 				setDefaultIfEmpty: function(obj, defaultValue){
 					return (obj) ? obj[0] : defaultValue;
 				},
@@ -90,6 +97,17 @@ jQuery.extend(
 						return "";
 					}
 					return obj;
+				},
+				
+				capitalize: function(obj) {
+					return obj.charAt(0).toUpperCase() + obj.slice(1);
+				},
+				
+				toCurrencyFormat: function(sSymbol, vValue) {
+					if(isNaN(parseFloat(vValue))) return vValue;
+					aDigits = vValue.toFixed(2).split(".");
+					aDigits[0] = aDigits[0].split("").reverse().join("").replace(/(\d{3})(?=\d)/g, "$1,").split("").reverse().join("");
+					return sSymbol + aDigits.join(".");
 				}
 			};  
 		}(jQuery))  

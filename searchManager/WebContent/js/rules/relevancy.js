@@ -227,7 +227,7 @@
 
 									$content.find('.fieldSelectedItem').not('#fieldSelectedPattern').each(function(index, value){
 
-										var val = $.addSlashes($.trim($(value).find(".txtHolder").html())); 
+										var val = $.addSlashes($.trim($(value).find(".txtHolder").text())); 
 										if (index >0) finalVal += " ";											
 										finalVal += $content.find("select#facetName").val();
 										finalVal += ":(";
@@ -1198,12 +1198,8 @@
 			ruleType: "Ranking Rule",
 			rule: selectedRule,
 			enableVersion: true,
-			authorizeRuleBackup: true,
+			authorizeRuleBackup: allowModify,
 			authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
-			postRestoreCallback: function(base, rule){
-				base.api.destroy();
-				showRelevancy();
-			},
 			afterSubmitForApprovalRequest:function(ruleStatus){
 				selectedRuleStatus = ruleStatus;
 				showRelevancy();
@@ -1215,7 +1211,15 @@
 
 			},
 			postRestoreCallback: function(base, rule){
-				setRelevancy(rule);
+				base.api.destroy();
+				RelevancyServiceJS.getRule(selectedRule.ruleId, {
+					callback:function(data){
+						setRelevancy(data);
+					},
+					preHook:function(){
+						prepareRelevancy();
+					}
+				});
 			},
 			afterRuleStatusRequest: function(ruleStatus){
 				resetInputFields("#relevancy");
@@ -1284,7 +1288,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key]));
 							count++;
 						};
 

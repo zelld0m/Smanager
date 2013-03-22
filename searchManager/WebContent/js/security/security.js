@@ -114,8 +114,8 @@
 							}
 						},
 						position:{
-							at: 'top left',
-							my: 'bottom left'
+							at: 'top right',
+							my: 'bottom right'
 						},
 						show:{
 							solo: true,
@@ -319,7 +319,17 @@
 						pageSize:10,
 						totalItem:total,
 						callbackText: function(itemStart, itemEnd, itemTotal){
-							return 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal + " " + name;
+							var displayText = 'Displaying ' + itemStart + ' to ' + itemEnd + ' of ' + itemTotal;
+							
+							if($.isNotBlank(name)){
+								displayText += " " + name;
+							}else if($.isNotBlank(id)){ //user role
+								displayText += " " + id;
+							}
+							
+							displayText += " " + (itemTotal > 1 ? "Users" : "User");
+							
+							return displayText;
 						},
 						pageLinkCallback: function(e){ sec.getUserList(id,name,e.data.page,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
 						nextLinkCallback: function(e){ sec.getUserList(id,name,e.data.page + 1,sec.cursrc,sec.curmem,sec.curstat,sec.curexp); },
@@ -353,54 +363,63 @@
 				},
 
 				getUserList : function(id,name,pg,src,mem,stat,exp){
-					SecurityServiceJS.getUserList(id,pg,src,mem,stat,exp,{
-						callback:function(data){
-							var list = data.list;
-							var content = '';
-							$('.conTr').remove();
-
-							$('tr.conTableItem').filter('tr:not(#conTr1Pattern)').remove();
-
-							if (list.length>0){	
-								$table = $('table.conTable');
-								$('.conTable tr#nomatch').remove();
-								for(var i=0; i<list.length; i++){
-									$tr = $table.find('tr#conTr1Pattern').clone();
-									$tr.prop("id", $.formatAsId(list[i].username)).show();
-									$tr.find("td#delIcon > a").prop("id", "del"+$.formatAsId(list[i].username));
-									$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).html(list[i].username);
-									$tr.find("td#userInfo > span#fullName").html(list[i].fullName);
-									$tr.find("td#userInfo > span#email").html(list[i].email);
-									$tr.find("td#role > span").html(list[i].groupId);
-
-									$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].formattedCreatedDate);
-									$tr.find("td#status > span#nonLocked").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
-									$tr.find("td#status > span#nonExpired").html(list[i].isAccountNonExpired==true? "Valid" : "Expired");
-									$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].formattedThruDate);
-
-									$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccessDate==null? "" : list[i].lastAccessDate.toUTCString());
-									$tr.find("td#lastAccess > span#ipAccess").html(list[i].ip);
-									if (i%2!=0) $tr.addClass("alt"); 
-									$table.append($tr);
-									sec.setUserValues(list[i]);
-								}					
-
-								sec.showPaging(pg,id,name,data.totalSize);
-							}else{	
-								$empty = '<tr class="conTableItem"><td colspan="7" class="txtAC">No matching records found</td></tr>';
-								$('.conTable').append($empty);
-								
-								$('#sortablePagingTop').hide();
-								$('#sortablePagingBottom').hide();			
-							}		
-						},
+					UtilityServiceJS.getUsername({
 						preHook:function(){ 
 							$('#preloader').show();
 						},
 						postHook:function(){ 
 							$('#preloader').hide();
-						}			
-					});
+						},
+						callback:function(username){
+							SecurityServiceJS.getUserList(id,pg,src,mem,stat,exp,{
+								callback:function(data){
+									var list = data.list;
+									var content = '';
+									$('.conTr').remove();
+
+									$('tr.conTableItem').filter('tr:not(#conTr1Pattern)').remove();
+
+									if (list.length>0){	
+										$table = $('table.conTable');
+										$('.conTable tr#nomatch').remove();
+										for(var i=0; i<list.length; i++){
+											$tr = $table.find('tr#conTr1Pattern').clone();
+											$tr.prop("id", $.formatAsId(list[i].username)).show();
+											if (username === list[i].username) {
+												$tr.find("td#delIcon > a").hide();
+											}
+											else {
+												$tr.find("td#delIcon > a").prop("id", "del"+$.formatAsId(list[i].username));
+											}
+											$tr.find("td#userInfo > span#username > a").prop("id", "user"+$.formatAsId(list[i].username)).html(list[i].username);
+											$tr.find("td#userInfo > span#fullName").html(list[i].fullName);
+											$tr.find("td#userInfo > span#email").html(list[i].email);
+											$tr.find("td#role > span").html(list[i].groupId);
+
+											$tr.find("td#memberSince > span").html(list[i].createdDate==null? "" : list[i].formattedCreatedDate);
+											$tr.find("td#status > span#nonLocked").html(list[i].isAccountNonLocked==true? "Active" : "Locked");
+											$tr.find("td#status > span#nonExpired").html(list[i].isAccountNonExpired==true? "Valid" : "Expired");
+											$tr.find("td#validity > span").html(list[i].thruDate==null? "" : list[i].formattedThruDate);
+
+											$tr.find("td#lastAccess > span#dateAccess").html(list[i].lastAccessDate==null? "" : list[i].lastAccessDate.toUTCString());
+											$tr.find("td#lastAccess > span#ipAccess").html(list[i].ip);
+											if (i%2!=0) $tr.addClass("alt"); 
+											$table.append($tr);
+											sec.setUserValues(list[i]);
+										}					
+
+										sec.showPaging(pg,id,name,data.totalSize);
+									}else{	
+										$empty = '<tr class="conTableItem"><td colspan="7" class="txtAC">No matching records found</td></tr>';
+										$('.conTable').append($empty);
+										
+										$('#sortablePagingTop').hide();
+										$('#sortablePagingBottom').hide();			
+									}		
+								},
+							});
+						}
+					});	
 				},
 
 				init : function(){

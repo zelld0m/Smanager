@@ -2,7 +2,6 @@ package com.search.ws;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,62 +21,71 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpException;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.search.manager.cache.dao.DaoCacheService;
+import com.search.manager.dao.DaoException;
 import com.search.manager.dao.DaoService;
+import com.search.manager.dao.SearchDaoService;
 import com.search.manager.enums.MemberTypeEntity;
-import com.search.manager.enums.RuleType;
+import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.DemoteResult;
 import com.search.manager.model.ElevateResult;
 import com.search.manager.model.ExcludeResult;
 import com.search.manager.model.FacetSort;
 import com.search.manager.model.Keyword;
-import com.search.manager.model.RecordSet;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRuleCondition;
 import com.search.manager.model.Relevancy;
-import com.search.manager.model.RelevancyKeyword;
-import com.search.manager.model.SearchCriteria;
-import com.search.manager.model.SearchCriteria.ExactMatch;
-import com.search.manager.model.SearchCriteria.MatchType;
 import com.search.manager.model.SearchResult;
 import com.search.manager.model.Store;
 import com.search.manager.model.StoreKeyword;
-import com.search.manager.utility.DateAndTimeUtils;
 import com.search.manager.utility.SearchLogger;
 
 public class SearchServlet extends HttpServlet {
 
-	@Autowired DaoService daoService;
-	@Autowired DaoCacheService daoCacheService;
-
+	@Autowired
+	@Qualifier("daoService")
+	SearchDaoService daoService;
+	@Autowired
+	@Qualifier("daoCacheService")
+	SearchDaoService daoCacheService;
+	@Autowired
+	@Qualifier("solrService")
+	SearchDaoService solrService;
+	
 	private static final long serialVersionUID = 1L;
 
 	private static Logger logger = Logger.getLogger(SearchServlet.class);
 
-	private ConfigManager configManager;
+	protected ConfigManager configManager;
 	
 	// these fields should not contain multiple entries
-	private final static String[] uniqueFields = {
+	protected final static String[] uniqueFields = {
 			SolrConstants.SOLR_PARAM_ROWS,
 			SolrConstants.SOLR_PARAM_KEYWORD,
 			SolrConstants.SOLR_PARAM_WRITER_TYPE ,
 			SolrConstants.SOLR_PARAM_START
 			};
 
-	public final ExecutorService execService = Executors.newCachedThreadPool();
+	protected final ExecutorService execService = Executors.newCachedThreadPool();
 
-	public void setDaoCacheService(DaoCacheService daoCacheService) {
+	public void setDaoCacheService(SearchDaoService daoCacheService) {
 		this.daoCacheService = daoCacheService;
+	}
+	
+	public void setSolrService(SearchDaoService solrService) {
+		this.solrService = solrService;
 	}
 	
 	@Override
@@ -87,7 +95,7 @@ public class SearchServlet extends HttpServlet {
 		configManager = ConfigManager.getInstance();
 	}
 
-	private static boolean addNameValuePairToMap(HashMap<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
+	protected static boolean addNameValuePairToMap(Map<String, List<NameValuePair>> map, String paramName, NameValuePair pair) {
 		boolean added = true;
 		if (ArrayUtils.contains(uniqueFields, paramName) && map.containsKey(paramName)) {
 			logger.warn(String.format("Request contained multiple declarations for parameter %1$s. Discarding subsequent declarations.", paramName));
@@ -102,23 +110,89 @@ public class SearchServlet extends HttpServlet {
 		return added;
 	}
 
-	public static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
+	protected static String getValueFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? "" : list.get(0).getValue();
 	}
 
-	private static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
+	protected static List<String> getValuesFromNameValuePairMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
+		List<NameValuePair> list = paramMap.get(paramterName);
+		List<String> values = new ArrayList<String>();
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (NameValuePair nvp: list) {
+				values.add(nvp.getValue());
+			}
+		}
+		return values;
+	}
+	
+	protected static NameValuePair getNameValuePairFromMap(HashMap<String, List<NameValuePair>> paramMap, String paramterName) {
 		List<NameValuePair> list = paramMap.get(paramterName);
 		return list == null || list.size() == 0 ? null : list.get(0);
 	}
 
-	private static boolean generateFilterList(StringBuilder allValues, Collection<? extends SearchResult> list) {
+	protected void setFacetTemplateValues(RedirectRuleCondition condition, Map<String, String> facetMap) {
+		if (condition != null) {
+			condition.setFacetPrefix(facetMap.get(SolrConstants.SOLR_PARAM_FACET_NAME));
+			condition.setFacetTemplate(facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			condition.setFacetTemplateName(facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		}
+	}
+	
+	protected boolean isRegisteredKeyword(StoreKeyword storeKeyword) {
+		if (daoService instanceof DaoService) {
+			try {
+				return ((DaoService)daoService).getKeyword(storeKeyword.getStoreId(), storeKeyword.getKeywordId()) != null;
+			} catch (DaoException e) { }
+		}
+		return false;
+	}
+	
+	public String applyValueOverride(String value, HttpServletRequest request, RuleEntity ruleEntity) {
+		// override is only applied in enterprise search
+		return value;
+	}
+	
+	protected String applyRelevancyOverrides(HttpServletRequest request, String paramName, String paramValue) {
+		return paramValue;
+	}
+	
+	public String getOverrideMapAttributeName(RuleEntity ruleEntity) {
+		switch (ruleEntity) {
+			case ELEVATE:
+				return SolrConstants.REQUEST_ATTRIB_ELEVATE_OVERRIDE_MAP;
+			case EXCLUDE:
+				return SolrConstants.REQUEST_ATTRIB_EXCLUDE_OVERRIDE_MAP;
+			case DEMOTE:
+				return SolrConstants.REQUEST_ATTRIB_DEMOTE_OVERRIDE_MAP;
+			case QUERY_CLEANING:
+				return SolrConstants.REQUEST_ATTRIB_REDIRECT_OVERRIDE_MAP;
+			case RANKING_RULE:
+				return SolrConstants.REQUEST_ATTRIB_RELEVANCY_OVERRIDE_MAP;
+		}
+		return "";
+	}
+	
+	protected boolean generateFilterList(HttpServletRequest request, StringBuilder allValues, List<? extends SearchResult> list) {
 		StringBuilder edpValues = new StringBuilder();
 		StringBuilder facetValues = new StringBuilder();
 		boolean withFacetFlag = false;
 		boolean edpFlag = false;
 		boolean facetFlag = false;
 		if (!(list == null || list.isEmpty())) {
+
+			RuleEntity ruleEntity = null;
+			SearchResult tmp = list.get(0);
+			if (tmp instanceof ElevateResult) {
+				ruleEntity = RuleEntity.ELEVATE;
+			}
+			else if (tmp instanceof ExcludeResult) {
+				ruleEntity = RuleEntity.EXCLUDE;
+			}
+			else if (tmp instanceof DemoteResult) {
+				ruleEntity = RuleEntity.DEMOTE;
+			}
+			
 			for (SearchResult result: list) {
 				if (result.getEntity().equals(MemberTypeEntity.PART_NUMBER)) {
 					if (!edpFlag) {
@@ -133,7 +207,7 @@ public class SearchServlet extends HttpServlet {
 					} else {
 						facetValues.append(" OR ");
 					}
-					facetValues.append("(").append(result.getCondition().getConditionForSolr()).append(")");
+					facetValues.append("(").append(applyValueOverride(result.getCondition().getConditionForSolr(), request, ruleEntity)).append(")");
 				}
 			}
 			
@@ -157,7 +231,7 @@ public class SearchServlet extends HttpServlet {
 		return withFacetFlag;
 	}
 	
-	private static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
+	protected static Map<String,String> generateActiveRule(String type, String id, String name, boolean active) {
 		Map<String,String> activeRule = new HashMap<String,String>();
 		activeRule.put(SolrConstants.TAG_RULE_TYPE, type);
 		activeRule.put(SolrConstants.TAG_RULE_ID, id);
@@ -166,61 +240,313 @@ public class SearchServlet extends HttpServlet {
 		return activeRule;
 	}
 	
+	protected SearchDaoService getDaoService(boolean fromSearchGui) {
+		return fromSearchGui ? daoService : solrService;
+	}
+	
+	protected RedirectRule getRedirectRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getRedirectRule(sk);
+		} catch (DaoException e) {
+			if (!fromSearchGui) {
+				return daoCacheService.getRedirectRule(sk);
+			}
+			throw e;
+		}
+	}
+
+	protected Relevancy getRelevancyRule(StoreKeyword sk, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getRelevancyRule(sk);
+		} catch (DaoException e) {
+			if (!fromSearchGui) {
+				return daoCacheService.getRelevancyRule(sk);
+			}
+			throw e;
+		}
+	}
+
+	protected Relevancy getRelevancyRule(Store store, String relevancyId, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getRelevancyRule(store, relevancyId);
+		} catch (DaoException e) {
+			if (!fromSearchGui) {
+				return daoCacheService.getRelevancyRule(store, relevancyId);
+			}
+			throw e;
+		}
+	}
+	
+	protected Relevancy getDefaultRelevancyRule(Store store, boolean fromSearchGui) throws DaoException {
+		return getRelevancyRule(store, store.getStoreId() + "_default", fromSearchGui);
+	}
+	
+	protected FacetSort getFacetSortRule(StoreKeyword storeKeyword, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getFacetSortRule(storeKeyword);
+		} catch (DaoException e) {
+			if (!fromSearchGui) {
+				return daoCacheService.getFacetSortRule(storeKeyword);
+			}
+			throw e;
+		}
+	}
+	
+	protected FacetSort getFacetSortRule(Store store, String templateName, boolean fromSearchGui) throws DaoException {
+		try {
+			return getDaoService(fromSearchGui).getFacetSortRule(store, templateName);
+		} catch (DaoException e) {
+			if (!fromSearchGui) {
+				return daoCacheService.getFacetSortRule(store, templateName);
+			}
+			throw e;
+		}
+	}
+	
+	protected void setFacetTemplateValues(List<? extends SearchResult> list, Map<String, String> facetMap) {
+		if (CollectionUtils.isNotEmpty(list)) {
+			for (SearchResult e: list) {
+				if (e.getEntity().equals(MemberTypeEntity.FACET)) {
+					setFacetTemplateValues(e.getCondition(), facetMap);
+				}
+			}
+		}
+	}
+	
+	protected List<ElevateResult> getElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<ElevateResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getElevateRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getElevateRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+	
+	protected List<ElevateResult> getExpiredElevateRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<ElevateResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getExpiredElevateRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getExpiredElevateRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+
+	protected List<ExcludeResult> getExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<ExcludeResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getExcludeRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getExcludeRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+	
+	protected List<ExcludeResult> getExpiredExcludeRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<ExcludeResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getExpiredExcludeRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getExpiredExcludeRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+	
+	protected List<DemoteResult> getDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<DemoteResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getDemoteRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getDemoteRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+	
+	protected List<DemoteResult> getExpiredDemoteRules(StoreKeyword storeKeyword, boolean fromSearchGui, Map<String, String> facetMap) throws DaoException {
+		List<DemoteResult> list = null;
+		try {
+			list = getDaoService(fromSearchGui).getExpiredDemoteRules(storeKeyword);
+		} catch (DaoException e) {
+			if (fromSearchGui) {
+				throw e;
+			}
+			list = daoCacheService.getExpiredDemoteRules(storeKeyword);
+		}
+		setFacetTemplateValues(list, facetMap);
+		return list;
+	}
+	
+	protected Map<String, String> getFacetMap(String storeId) {
+		Map<String, String> facetMap = new HashMap<String, String>();
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_NAME));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+		facetMap.put(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME, configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME));
+		return facetMap;
+	}
+	
+	protected String getRequestPath(HttpServletRequest request) {
+		return "http:/" + request.getPathInfo();
+	}
+	
+	protected boolean generateSearchNav(HttpServletRequest request) {
+		return StringUtils.equalsIgnoreCase("true", request.getParameter(SolrConstants.SOLR_PARAM_GUI))
+				&& StringUtils.equals(request.getParameter(SolrConstants.SOLR_PARAM_WRITER_TYPE), SolrConstants.SOLR_PARAM_VALUE_JSON);
+	}
+	
+	protected void addDefaultParameters(String storeId, List<NameValuePair> nameValuePairs, Map<String, List<NameValuePair>> paramMap) {
+		// default parameters for the store
+		for (NameValuePair pair: configManager.getDefaultSolrParameters(storeId)) {
+			if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
+				nameValuePairs.add(pair);
+			}
+		}
+	}
+	
+	protected void initFieldOverrideMaps(HttpServletRequest request, SolrResponseParser solrHelper, String storeId) {
+	}
+	
+	/**
+	 * Return Error Message if invalid else return null;
+	 */
+	protected String getStoreId(HttpServletRequest request) throws HttpException {
+		// get the server name, solr path, core name and do mapping for the store name to use for the search
+		Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
+		String requestPath = getRequestPath(request);
+		if (StringUtils.isBlank(requestPath)) {
+			throw new HttpException("Invalid request");
+		}
+		Matcher matcher = pathPattern.matcher(requestPath);
+		if (!matcher.matches()) {
+			throw new HttpException("Invalid request");
+		}
+		
+		String serverName = matcher.group(1);
+		String solr = matcher.group(2);
+		String coreName = matcher.group(3);
+		String storeId = coreName;
+		String storeName = configManager.getStoreName(storeId);
+
+		// Verify if request parameter store is a valid store id
+		String storeParam = request.getParameter("store");
+		String storeIdFromAlias =  configManager.getStoreIdByAliases(storeParam);
+		if (StringUtils.isNotBlank(storeParam) && StringUtils.isNotBlank(storeIdFromAlias)) {
+			storeId = storeIdFromAlias;
+			logger.info(String.format("Request parameter store %s -> %s", storeParam, coreName));
+		}
+		else {
+			logger.info(String.format("Core as storeId: %s", coreName));
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Server name: " + serverName);
+			logger.debug("Solr path: " + solr);
+			logger.debug("Core name: " + coreName);
+			logger.debug("store name: " + storeName);
+		}
+
+		return storeId;
+	}
+	
+	protected SolrResponseParser getParser(HttpServletRequest request) throws HttpException {
+		// get expected resultformat
+		String writerType = request.getParameter(SolrConstants.SOLR_PARAM_WRITER_TYPE);
+		if (SolrConstants.SOLR_PARAM_VALUE_JSON.equalsIgnoreCase(writerType)) {
+			return new SolrJsonResponseParser();
+		}
+		else if (StringUtils.isEmpty(writerType) || SolrConstants.SOLR_PARAM_VALUE_XML.equalsIgnoreCase(writerType)
+				|| SolrConstants.SOLR_PARAM_VALUE_STANDARD.equalsIgnoreCase(writerType)) {
+			return new SolrXmlResponseParser();
+		}
+		else { // unsupported writer type
+			throw new HttpException("Unsupported writer type");
+		}
+	}
+	
+	protected boolean isActiveSearchRule(String storeId, RuleEntity ruleEntity) {
+		return true;
+	}
+	
+	protected StoreKeyword getStoreKeywordOverride(RuleEntity entity, String storeId, String keyword) {
+		return new StoreKeyword(storeId, keyword);
+	}
+	
+	protected void setDefaultQueryType(HttpServletRequest request, List<NameValuePair> nameValuePairs, String storeId) {
+		if (StringUtils.isBlank(request.getParameter(SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
+			nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, 
+					configManager.getStoreParameter(storeId, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+		}
+	}
+
+	protected Relevancy getDefaultRelevancy(String storeId) {
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO: 
-		// remove the exclude list from the result header
+		// remove the exclude list from the result header, update fl to not include EDP if it's not originally part of the request
 		// fix if EDP not part of fl
+		// support for json if json.nl != map
 
-		// to track asynchronous task completion
 		ExecutorCompletionService<Integer> completionService = new ExecutorCompletionService<Integer>(execService);
 		int tasks = 0;
 
 		try {
 			Long start = new Date().getTime();
-
 			NameValuePair nvp;
-
 			final SolrResponseParser solrHelper;
+			NameValuePair redirectFqNvp = null; 
+			NameValuePair defTypeNVP = new BasicNameValuePair("defType", "dismax");
 
-			// get the server name, solr path, core name and do mapping for the store name to use for the search
-			Pattern pathPattern = Pattern.compile("http://(.*):.*/(.*)/(.*)/select.*");
-			String requestPath = "http:/" + request.getPathInfo();
-
-			if (StringUtils.isEmpty(requestPath)) {
-				response.sendError(400, "Invalid request");
+			String storeId = "";
+			try {
+				storeId = getStoreId(request);
+				solrHelper = getParser(request);
+			}
+			catch (HttpException ex) {
+				response.sendError(400, ex.getMessage());
 				return;
 			}
-			Matcher matcher = pathPattern.matcher(requestPath);
-			if (!matcher.matches()) {
-				response.sendError(400, "Invalid request");
-				return;
-			}
-
-			String serverName = matcher.group(1);
-			String solr = matcher.group(2);
-			String coreName = matcher.group(3);
-			String storeName = configManager.getStoreName(coreName);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Server name: " + serverName);
-				logger.debug("Solr path: " + solr);
-				logger.debug("Core name: " + coreName);
-				logger.debug("store name: " + storeName);
-			}
-
-			// parse the parameters, construct POST form
-			final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-			Set<String> paramNames = request.getParameterMap().keySet();
-
-			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
 			
-			// workaround for spellchecker
+			String storeName = configManager.getStoreName(storeId);
+			initFieldOverrideMaps(request, solrHelper, storeId);
+			logger.debug("store name: " + storeName);
+			
+			final List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			HashMap<String, List<NameValuePair>> paramMap = new HashMap<String, List<NameValuePair>>();
+			List<NameValuePair> spellcheckParams = new ArrayList<NameValuePair>();
+			boolean includeEDP = false;
+			boolean includeFacetTemplateFacet = false;
+			boolean performSpellCheck = false;
+
 			nvp = new BasicNameValuePair("echoParams", "explicit");
 			if (addNameValuePairToMap(paramMap, "echoParams", nvp)) {
 				nameValuePairs.add(nvp);
 			}
-
+			
+			// parse the parameters, construct POST form
+			Set<String> paramNames = request.getParameterMap().keySet();
 			for (String paramName: paramNames) {
 				for (String paramValue: request.getParameterValues(paramName)) {
 					
@@ -243,6 +569,34 @@ public class SearchServlet extends HttpServlet {
 								origKeyword, HexUtils.convert(origKeyword.getBytes()),
 								convertedKeyword, HexUtils.convert(convertedKeyword.getBytes())));
 					}
+					else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FACET_FIELD)) {
+						if (paramValue.endsWith("_FacetTemplate")) {
+							includeFacetTemplateFacet = true;
+						}
+					}
+					else if (paramName.equalsIgnoreCase(SolrConstants.SOLR_PARAM_FIELDS)) {
+						if (StringUtils.isNotBlank(paramValue)) {
+							String[] fields = paramValue.split(",");
+							for (String field: fields) {
+								if (StringUtils.equals(field, "*") || StringUtils.equals(field, "EDP")) {
+									includeEDP = true;
+								}
+							}
+							if (!includeEDP) {
+								paramValue += ",EDP";
+							}
+						}
+						else {
+							includeEDP = true;
+						}
+					}
+					else if (paramName.startsWith(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+						if (paramName.equals(SolrConstants.SOLR_PARAM_SPELLCHECK)) {
+							performSpellCheck = true;
+						}
+						spellcheckParams.add(new BasicNameValuePair(paramName, paramValue));
+						continue;
+					}
 					
 					nvp = new BasicNameValuePair(paramName, paramValue);
 					if (addNameValuePairToMap(paramMap, paramName, nvp)) {
@@ -250,32 +604,35 @@ public class SearchServlet extends HttpServlet {
 					}
 				}
 			}
-			
-			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
 
-			if (fromSearchGui && StringUtils.isNotBlank(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE))) {
-				nvp = new BasicNameValuePair("facet.field", configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE));
+			boolean fromSearchGui = "true".equalsIgnoreCase(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_GUI));
+			addDefaultParameters(storeId, nameValuePairs, paramMap);
+						
+			Map<String, String> facetMap = getFacetMap(storeId);
+			String facetTemplate = facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE);
+			String facetTemplateName = facetMap.get(SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
+			
+			if (fromSearchGui) {
 				nameValuePairs.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
-				if (addNameValuePairToMap(paramMap, "facet.field", nvp)) {
+			}
+			if (generateSearchNav(request) && !includeFacetTemplateFacet) {
+				nvp = new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplate);
+				if (addNameValuePairToMap(paramMap, SolrConstants.TAG_FACET_FIELD, nvp)) {
 					nameValuePairs.add(nvp);
 				}
 			}
 
-			// default parameters for the core
-			for (NameValuePair pair: ConfigManager.getInstance().getDefaultSolrParameters(coreName)) {
-				// TODO: FIX This will distort the results if there is no redirect filter rule.
-				if (addNameValuePairToMap(paramMap, pair.getName(), pair)) {
-					nameValuePairs.add(pair);
-				}
-			}
-			
 			// grab the keyword
+			// patch for rebates search
+			// sample: http://afs-pl-schmstr.afservice.org:8080/solr14/pcmall/select
+			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
+			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
+			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
 			String keyword = StringUtils.trimToEmpty(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD));
-			
 			String originalKeyword = keyword;
 			if (StringUtils.isNotBlank(keyword)) {
 				// workaround for search compare
-				if (keyword.startsWith("DPNo:")) {
+				if (keyword.startsWith("DPNo:") || keyword.contains("RebateFlag:")) {
 					nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
 					nvp = new BasicNameValuePair("fq", keyword);
 					if (addNameValuePairToMap(paramMap, "fq", nvp)) {
@@ -284,203 +641,211 @@ public class SearchServlet extends HttpServlet {
 					keyword = "";
 				}
 			}
+			
 			boolean keywordPresent = !StringUtils.isEmpty(keyword);
-			boolean disableElevate    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_ELEVATE) != null;
-			boolean disableExclude    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_EXCLUDE) != null;
-			boolean disableDemote    = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_DEMOTE) != null;
-			boolean disableRedirect   = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) != null;
-			boolean disableRedirectIdPresent = StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
-			String  disableRedirectId = disableRedirect ? getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
-			boolean disableRelevancy  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
-			boolean disableFacetSort  = getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
+			boolean disableElevate    = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_ELEVATE) != null;
+			boolean disableExclude    = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_EXCLUDE) != null;
+			boolean disableDemote     = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_DEMOTE) != null;
+			boolean disableRedirect   = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT) != null;
+			boolean disableRedirectIdPresent = StringUtils.isNotBlank(request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT));
+			String  disableRedirectId = disableRedirect ? request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_REDIRECT): "";
+			boolean disableRelevancy  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_RELEVANCY) != null;
+			boolean disableFacetSort  = request.getParameter(SolrConstants.SOLR_PARAM_DISABLE_FACET_SORT) != null;
 			List<Map<String,String>> activeRules = new ArrayList<Map<String, String>>();
 			
-			// patch for rebates search
-			// sample: http://afs-pl-schmstr.afservice.org:8080/solr14/pcmall/select
-			// ?q=MallIn_RebateFlag%3A1+OR+MacMallRebate_RebateFlag%3A1+OR+Manufacturer_RebateFlag%3A1
-			// &facet=true&rows=0&qt=standard&facet.mincount=1&facet.limit=15
-			// &facet.field=Manufacturer&facet.field=Platform&facet.field=Category
-			String queryType = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE);
-			boolean skipRelevancy = !fromSearchGui && !StringUtils.isBlank(keyword) && (StringUtils.isBlank(queryType) || StringUtils.equals(queryType, "standard"));
-			if (skipRelevancy) {
-				disableRelevancy = true;
-			}
-			
-			StoreKeyword sk = new StoreKeyword(coreName, keyword);
-
 			// redirect 
-			RedirectRule redirect = null;
-			NameValuePair redirectFqNvp = null; 
 			try {
-				List<String> keywordHistory = new ArrayList<String>();
-				while (true) { // look for change keyword
-					if (StringUtils.isBlank(keyword)) {
-						break;
-					}
-					keywordHistory.add(StringUtils.lowerCase(keyword));
-					redirect = (fromSearchGui) ? daoService.getRedirectRule(new RedirectRule(sk.getStoreId(), sk.getKeywordId()))
-							: daoCacheService.getRedirectRule(sk);
-					if (redirect == null) {
-						break;
-					}
-					else {
-						
-						boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
-						
-						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
-						
-						if (stop) {
-							redirect = null;
+				
+				if (isActiveSearchRule(storeId, RuleEntity.QUERY_CLEANING)) {
+					RedirectRule redirect = null;
+					RedirectRule originalRedirect = null;
+					RedirectRule appliedRedirect = null;
+					
+					List<String> keywordHistory = new ArrayList<String>();
+					StoreKeyword sk = getStoreKeywordOverride(RuleEntity.QUERY_CLEANING, storeId, keyword);
+					while (true) { // look for change keyword
+						if (StringUtils.isBlank(keyword)) {
 							break;
 						}
-						
-						if (!redirect.isRedirectChangeKeyword()) {
+						keywordHistory.add(StringUtils.lowerCase(keyword));
+	
+						redirect = getRedirectRule(sk, fromSearchGui);
+	
+						if (redirect == null) {
 							break;
-						}
-						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
-						keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
-						sk.setKeyword(new Keyword(keyword));
-						// remove the original keyword
-						nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-						paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
-						if (StringUtils.isEmpty(keyword)) {
-							sk.setKeyword(null);
-							keywordPresent = false;
-							break;
-						}
-						else {
-							// set the new keyword
-							nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, redirect.getChangeKeyword());
-							if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
-								nameValuePairs.add(nvp);
+						} else {
+							if(originalRedirect == null){
+								originalRedirect = redirect;
 							}
-							if (keywordHistory.contains(StringUtils.lowerCase(keyword))) {
-								logger.warn("Loop in change keywords detected. Aborting search for new keyword. Reverting to original keyword.");
+							
+							boolean stop = disableRedirect && (!disableRedirectIdPresent || StringUtils.equals(disableRedirectId, redirect.getRuleId()));
+							activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_REDIRECT, redirect.getRuleId(), redirect.getRuleName(), !stop));				
+							
+							if (stop) {
 								redirect = null;
-								keyword = originalKeyword;
-								sk.setKeyword(new Keyword(keyword));
-								nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+								break;
+							}
+							
+							if (!redirect.isRedirectChangeKeyword()) {
+								break;
+							}
+							
+							logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+							appliedRedirect = redirect;
+							
+							keyword = StringUtils.trimToEmpty(redirect.getChangeKeyword());
+							sk.setKeyword(new Keyword(keyword));
+							// remove the original keyword
+							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+							
+							if (StringUtils.isEmpty(keyword)) {
+								sk.setKeyword(null);
+								keywordPresent = false;
+								break;
+							} else {	
+								// set the new keyword
 								nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
 								if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
 									nameValuePairs.add(nvp);
 								}
-								break;
+								if (keywordHistory.contains(StringUtils.lowerCase(keyword))) {
+									logger.warn("Loop in change keywords detected. Aborting search for new keyword. Reverting to original keyword.");
+									redirect = null;
+									appliedRedirect = null;
+									keyword = originalKeyword;
+									sk.setKeyword(new Keyword(keyword));
+									nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+									paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);
+									nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, keyword);
+									if (addNameValuePairToMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD, nvp)) {
+										nameValuePairs.add(nvp);
+									}
+									break;
+								}
+							}
+							
+						}
+					}
+					
+					if (redirect != null && !redirect.isRedirectChangeKeyword()) {
+						logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
+						appliedRedirect = redirect;
+						if (redirect.isRedirectToPage()) {
+							// TODO: fix redirect to page implementation
+							nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
+							nameValuePairs.add(nvp);					
+						}
+						else if (redirect.isRedirectFilter()) {
+							StringBuilder builder = new StringBuilder();
+							for (String condition: redirect.getConditions()) {
+								if (StringUtils.isNotEmpty(condition)) {
+									RedirectRuleCondition rr = new RedirectRuleCondition(condition);
+									setFacetTemplateValues(rr, getFacetMap(sk.getStoreId()));
+									String conditionForSolr = applyValueOverride(rr.getConditionForSolr(), request, RuleEntity.QUERY_CLEANING);
+									if (StringUtils.isNotBlank(conditionForSolr)) {
+										builder.append("(").append(conditionForSolr).append(") OR ");
+									}
+								}	
+							}
+							if (builder.length() > 0) {
+								builder.delete(builder.length() - 4, builder.length());
+								redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
+								nameValuePairs.add(redirectFqNvp);
+							}
+							if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
+								nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
+								paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
 							}
 						}
 					}
-				}
-				
-				if (redirect != null && !redirect.isRedirectChangeKeyword()) {
-					logger.info("Applying redirect rule " + redirect.getRuleName() + " with id " + redirect.getRuleId());
-					if (redirect.isRedirectToPage()) {
-						// TODO: fix redirect to page implementation
-						nvp = new BasicNameValuePair(SolrConstants.REDIRECT_URL, redirect.getRedirectToPage());
-						nameValuePairs.add(nvp);					
+					
+					if (appliedRedirect != null && originalRedirect != null) {
+						appliedRedirect.setRedirectType(originalRedirect.getRedirectType());
+						appliedRedirect.setReplaceKeywordMessageCustomText(originalRedirect.getReplaceKeywordMessageCustomText());
+						appliedRedirect.setReplaceKeywordMessageType(originalRedirect.getReplaceKeywordMessageType());
+						appliedRedirect.setChangeKeyword(keywordHistory.isEmpty() ? "" : keywordHistory.get(keywordHistory.size()-1));
 					}
-					else if (redirect.isRedirectFilter()) {
-						StringBuilder builder = new StringBuilder();
-						for (String condition: redirect.getConditions()) {
-							if (StringUtils.isNotEmpty(condition)) {
-								RedirectRuleCondition rr = new RedirectRuleCondition(condition);
-								rr.setStoreId(coreName);
-								builder.append("(").append(rr.getConditionForSolr()).append(") OR ");
-							}	
-						}
-						if (builder.length() > 0) {
-							builder.delete(builder.length() - 4, builder.length());
-						}
-						redirectFqNvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, builder.toString());
-						nameValuePairs.add(redirectFqNvp);
-						if (BooleanUtils.isNotTrue(redirect.getIncludeKeyword())) {
-							nameValuePairs.remove(getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD));
-							paramMap.remove(SolrConstants.SOLR_PARAM_KEYWORD);							
-						}
-					}
+					
+					solrHelper.setRedirectRule(appliedRedirect);
 				}
+
 			} catch (Exception e) {
 				logger.error("Failed to get redirect for keyword: " + originalKeyword, e);
 			}
 			
-			// set relevancy filters if any was specified
-			String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
-			Relevancy relevancy = null;
-			if (!fromSearchGui) {
-				relevancy = keywordPresent ? daoCacheService.getRelevancyRule(sk) : daoCacheService.getDefaultRelevancyRule(new Store(coreName));
-				if (relevancy != null) {
-					logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());					
-				}
-				else {
-					logger.error("Unable to find default relevancy!");
-				}
-			}
-			else {
+			if (isActiveSearchRule(storeId, RuleEntity.RANKING_RULE)) {
+				// set relevancy filters if any was specified
+				String relevancyId = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_RELEVANCY_ID);
+				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.QUERY_CLEANING, storeId, keyword);
+				Relevancy relevancy = null;
 				if (StringUtils.isNotBlank(relevancyId)) {
 					relevancy = new Relevancy();
 					relevancy.setRelevancyId(relevancyId);
+					relevancy = getRelevancyRule(sk.getStore(), relevancyId, fromSearchGui);
 				}
 				else if (keywordPresent) {
-					// get relevancy mapped to keyword
-					relevancy = new Relevancy("", "");
-					relevancy.setStore(new Store(coreName));
-					RecordSet<RelevancyKeyword>relevancyKeywords = daoService.searchRelevancyKeywords(new SearchCriteria<RelevancyKeyword>(
-							new RelevancyKeyword(sk.getKeyword(), relevancy), new Date(), new Date(), 0, 0),
-							MatchType.LIKE_NAME, ExactMatch.MATCH);
-					if (relevancyKeywords.getTotalSize() > 0) {
-						relevancy.setRelevancyId(relevancyKeywords.getList().get(0).getRelevancy().getRelevancyId());						
-					}
-					else {
-						// apply default relevancy
-						relevancy.setRelevancyId(coreName + "_" + "default");
-					}
+					relevancy = getRelevancyRule(sk, fromSearchGui);
 				}
-				else {
-					relevancy = new Relevancy();
-					relevancy.setRelevancyId(coreName + "_" + "default");
+				
+				if (relevancy == null) {
+					relevancy = getDefaultRelevancyRule(sk.getStore(), fromSearchGui);
 				}
 				
 				if (relevancy != null) {
-					// load relevancy details
-					relevancy = daoService.getRelevancyDetails(relevancy);
-					if (relevancy != null) {
-						if (!disableRelevancy) {
-							logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
-						}
-						else {
-							logger.debug("Relevancy disabled. Not applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
-						}
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));				
+					if (!disableRelevancy) {
+						logger.debug("Applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
 					}
 					else {
-						logger.error("Unable to find default relevancy!");
+						logger.debug("Relevancy disabled. Not applying relevancy " + relevancy.getRelevancyName() + " with id: " + relevancy.getRelevancyId());							
+						relevancy = getDefaultRelevancyRule(sk.getStore(), fromSearchGui);
+					}
+				} else {
+					logger.error("Unable to find default relevancy!");
+				}
+
+				if (relevancy != null) {
+					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
+					nameValuePairs.add(defTypeNVP);
+					Map<String, String> parameters = relevancy.getParameters();
+					for (String paramName: parameters.keySet()) {
+						String paramValue = parameters.get(paramName);
+						if (StringUtils.isNotEmpty(paramValue)) {
+							paramValue = applyRelevancyOverrides(request, paramName, paramValue);
+							logger.debug("adding " + paramName + ": " + paramValue);
+							nvp = new BasicNameValuePair(paramName, paramValue);
+							if (addNameValuePairToMap(paramMap, paramName, nvp)) {
+								nameValuePairs.add(nvp);
+							}						
+						}
 					}
 				}
-			}
-			
-			
-			if (relevancy != null) {
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_RELEVANCY, relevancy.getRelevancyId(), relevancy.getRelevancyName(), !disableRelevancy));				
-			}
-			
-			NameValuePair defTypeNVP = new BasicNameValuePair("defType", "dismax");
-			if (!disableRelevancy && relevancy != null) {
-				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
-				nameValuePairs.add(defTypeNVP);
-				Map<String, String> parameters = relevancy.getParameters();
-				for (String paramName: parameters.keySet()) {
-					String paramValue = parameters.get(paramName);
-					if (StringUtils.isNotEmpty(paramValue)) {
-						logger.debug("adding " + paramName + ": " + paramValue);
-						nvp = new BasicNameValuePair(paramName, paramValue);
-						if (addNameValuePairToMap(paramMap, paramName, nvp)) {
-							nameValuePairs.add(nvp);
-						}						
-					}
+				else {
+					setDefaultQueryType(request, nameValuePairs, storeId);
 				}
 			}
 			else {
-				// remove qt parameter
-				if (StringUtils.isBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE))) {
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_QUERY_TYPE, configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_QUERY_TYPE)));
+				
+				Relevancy relevancy = getDefaultRelevancy(storeId);
+				if (relevancy == null) {
+					setDefaultQueryType(request, nameValuePairs, storeId);
+				}
+				else {
+					nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_QUERY_TYPE));
+					nameValuePairs.add(defTypeNVP);
+					Map<String, String> parameters = relevancy.getParameters();
+					for (String paramName: parameters.keySet()) {
+						String paramValue = parameters.get(paramName);
+						if (StringUtils.isNotEmpty(paramValue)) {
+							paramValue = applyRelevancyOverrides(request, paramName, paramValue);
+							logger.debug("adding " + paramName + ": " + paramValue);
+							nvp = new BasicNameValuePair(paramName, paramValue);
+							if (addNameValuePairToMap(paramMap, paramName, nvp)) {
+								nameValuePairs.add(nvp);
+							}
+						}
+					}
 				}
 			}
 			
@@ -491,68 +856,58 @@ public class SearchServlet extends HttpServlet {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(configManager.getStoreParameter(coreName, "sort"));
+				logger.debug(configManager.getStoreParameter(storeId, "sort"));
 				logger.debug(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
-				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(coreName, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+				logger.debug(">>>>>>>>>>>>>>" + configManager.getStoreParameter(storeId, "sort") + ">>>>>>>>>>>>>>>" + getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
 			}
 			
 			List<ElevateResult> elevatedList = null;
 			List<ElevateResult> forceAddList = new ArrayList<ElevateResult>();
 			List<String> expiredElevatedList = new ArrayList<String>();
+			List<String> forceAddedEDPs = new ArrayList<String>();
 			List<DemoteResult> demoteList = null;
 			List<String> expiredDemotedList = new ArrayList<String>();
 			List<ExcludeResult> excludeList = null;
-			boolean bestMatchFlag = configManager.getStoreParameter(coreName, "sort").equals(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_SORT));
+			List<String> expiredExcludedList = new ArrayList<String>();
+			String sort = request.getParameter(SolrConstants.SOLR_PARAM_SORT);
+			boolean bestMatchFlag = StringUtils.isEmpty(sort) || !(StringUtils.containsIgnoreCase(sort, "price") ||
+							StringUtils.containsIgnoreCase(sort, "manufacturer"));
 
 			if (keywordPresent) {
-				if (fromSearchGui) {
-					if (daoService.getKeyword(sk.getStoreId(), sk.getKeywordId()) != null) {
+				
+				if (isActiveSearchRule(storeId, RuleEntity.EXCLUDE)) {
+					StoreKeyword sk = getStoreKeywordOverride(RuleEntity.EXCLUDE, storeId, keyword);
+					if (!fromSearchGui || isRegisteredKeyword(sk)) {
 						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
-						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE, keyword, keyword, !disableDemote));
-						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
 					}
-					if (!disableElevate) {
-						ElevateResult elevateFilter = new ElevateResult();
-						elevateFilter.setStoreKeyword(sk);
-
-						SearchCriteria<ElevateResult> elevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,new Date(),null,0,0);
-						elevatedList = daoService.getElevateResultList(elevateCriteria).getList();
-						
-						// prepare force added list
-						for (ElevateResult elevateResult : elevatedList) {
-							if (elevateResult.isForceAdd()) {
-								forceAddList.add(elevateResult);
-							}
-						}
-
-						if (bestMatchFlag) {
-							SearchCriteria<ElevateResult> expiredElevateCriteria = new SearchCriteria<ElevateResult>(elevateFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
-							List<ElevateResult> expiredList = daoService.getElevateResultList(expiredElevateCriteria).getList();
+					if (!disableExclude) {
+						excludeList = getExcludeRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
+						if (fromSearchGui) {
+							List<ExcludeResult> expiredList = getExpiredExcludeRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
 							if (logger.isDebugEnabled()) {
-								logger.debug("Expired Elevated List: ");
+								logger.debug("Expired Demoted List: ");
 							}
-							for (ElevateResult expired: expiredList) {
+							for (ExcludeResult expired: expiredList) {
 								if (logger.isDebugEnabled()) {
 									logger.debug("\t" + expired.getEdp());
 								}
-								if (MemberTypeEntity.PART_NUMBER.equals(expired.getElevateEntity())) {
-									expiredElevatedList.add(expired.getEdp());
+								if (MemberTypeEntity.PART_NUMBER.equals(expired.getExcludeEntity())) {
+									expiredExcludedList.add(expired.getEdp());
 								}
 							}
 						}
-						else {
-							elevatedList.clear();
-						}
 					}
-					
-					if (!disableDemote) {
-						if (bestMatchFlag) {
-							DemoteResult demoteFilter = new DemoteResult();
-							demoteFilter.setStoreKeyword(sk);
-							SearchCriteria<DemoteResult> demoteCriteria = new SearchCriteria<DemoteResult>(demoteFilter,new Date(),null,0,0);
-							SearchCriteria<DemoteResult> expiredDemoteCriteria = new SearchCriteria<DemoteResult>(demoteFilter,null,DateAndTimeUtils.getDateYesterday(),0,0);
-							demoteList = daoService.getDemoteResultList(demoteCriteria).getList();
-							List<DemoteResult> expiredList = daoService.getDemoteResultList(expiredDemoteCriteria).getList();
+				}
+				
+				if (isActiveSearchRule(storeId, RuleEntity.DEMOTE)) {
+					StoreKeyword sk = getStoreKeywordOverride(RuleEntity.DEMOTE, storeId, keyword);
+					if (!fromSearchGui || isRegisteredKeyword(sk)) {
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
+					}
+					if (!disableDemote && bestMatchFlag) {
+						demoteList = getDemoteRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
+						if (fromSearchGui) {
+							List<DemoteResult> expiredList = getExpiredDemoteRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
 							if (logger.isDebugEnabled()) {
 								logger.debug("Expired Demoted List: ");
 							}
@@ -566,77 +921,70 @@ public class SearchServlet extends HttpServlet {
 							}
 						}
 					}
-					
-					if (!disableExclude) {
-						ExcludeResult excludeFilter  = new ExcludeResult();
-						excludeFilter.setStoreKeyword(sk);
-						SearchCriteria<ExcludeResult> excludeCriteria = new SearchCriteria<ExcludeResult>(excludeFilter,new Date(),null,0,0);
-						excludeList = daoService.getExcludeResultList(excludeCriteria).getList();						
-					}
 				}
-				else {
-					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_EXCLUDE, keyword, keyword, !disableExclude));
-					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_DEMOTE,  keyword, keyword, !disableDemote));				
-					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
-					if (keywordPresent) {
-						if (!disableElevate) {
-							elevatedList = daoCacheService.getElevateRules(sk);
+				
+				if (isActiveSearchRule(storeId, RuleEntity.ELEVATE)) {
+					StoreKeyword sk = getStoreKeywordOverride(RuleEntity.ELEVATE, storeId, keyword);
+					if (!fromSearchGui || isRegisteredKeyword(sk)) {
+						activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_ELEVATE, keyword, keyword, !disableElevate));
+					}
+					if (!disableElevate) {
+						elevatedList = getElevateRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
+						if (CollectionUtils.isNotEmpty(elevatedList)) {
 							// prepare force added list
 							for (ElevateResult elevateResult : elevatedList) {
 								if (elevateResult.isForceAdd()) {
 									forceAddList.add(elevateResult);
+									if(MemberTypeEntity.PART_NUMBER.equals(elevateResult.getElevateEntity())) {
+										forceAddedEDPs.add(elevateResult.getEdp());
+									}
 								}
 							}
-							if (!bestMatchFlag) {
-								elevatedList.clear();
-							}	
 						}
-						if (!disableDemote && bestMatchFlag) {
-							demoteList = daoCacheService.getDemoteRules(sk);			
+						if (!bestMatchFlag) {
+							elevatedList.clear();
 						}
-						if (!disableExclude) {
-							excludeList = daoCacheService.getExcludeRules(sk);						
+						else if (fromSearchGui) { // && bestMatchFlag
+							List<ElevateResult> expiredList = getExpiredElevateRules(sk, fromSearchGui, getFacetMap(sk.getStoreId()));
+							if (logger.isDebugEnabled()) {
+								logger.debug("Expired Elevated List: ");
+							}
+							for (ElevateResult expired: expiredList) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("\t" + expired.getEdp());
+								}
+								if (MemberTypeEntity.PART_NUMBER.equals(expired.getElevateEntity())) {
+									expiredElevatedList.add(expired.getEdp());
+								}
+							}
 						}
 					}
-				}			
-			}
-			
-			if (elevatedList == null) {
-				elevatedList = new ArrayList<ElevateResult>();
+				}				
 			}
 
 			/* First Request */
-			// get expected resultformat
-			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_WRITER_TYPE);
-			if (SolrConstants.SOLR_PARAM_VALUE_JSON.equalsIgnoreCase(tmp)) {
-				solrHelper = new SolrJsonResponseParser();
-			}
-			else if (StringUtils.isEmpty(tmp) || SolrConstants.SOLR_PARAM_VALUE_XML.equalsIgnoreCase(tmp)
-					|| SolrConstants.SOLR_PARAM_VALUE_STANDARD.equalsIgnoreCase(tmp)) {
-				solrHelper = new SolrXmlResponseParser();
-			}
-			else { // unsupported writer type
-				response.sendError(500);
-				return;
-			}
+			// run spellcheck if requested and if keyword is present
+			performSpellCheck &= StringUtils.isNotBlank(originalKeyword);
+
 			// set Solr URL
-			solrHelper.setSolrUrl(requestPath);
+			solrHelper.setSolrUrl(getRequestPath(request));
 			solrHelper.setSolrQueryParameters(paramMap);
 			solrHelper.setElevatedItems(elevatedList);
 			solrHelper.setExpiredElevatedEDPs(expiredElevatedList);
+			solrHelper.setForceAddedEDPs(forceAddedEDPs);
 			solrHelper.setDemotedItems(demoteList);
 			solrHelper.setExpiredDemotedEDPs(expiredDemotedList);
-			
-			if (!StringUtils.equalsIgnoreCase(keyword, originalKeyword)) {
-				solrHelper.setChangeKeyword(keyword);				
-			}
+			solrHelper.setFacetTemplate(facetTemplate);
+			solrHelper.setOriginalKeyword(originalKeyword);
+			solrHelper.setIncludeEDP(includeEDP);
+			solrHelper.setIncludeFacetTemplateFacet(includeFacetTemplateFacet);
 
 			// remove json.wrf parameter as this is not a JSON standard
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_JSON_WRAPPER_FUNCTION));
 
 			// get start row
 			int startRow = 0;
-			tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_START);
+			String tmp = getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_START);
 			if (!StringUtils.isEmpty(tmp)) {
 				startRow = Integer.valueOf(tmp);
 				nameValuePairs.remove(getNameValuePairFromMap(paramMap, SolrConstants.SOLR_PARAM_START));
@@ -664,7 +1012,7 @@ public class SearchServlet extends HttpServlet {
 			// collate exclude list
 			if (excludeList != null && !excludeList.isEmpty()) {
 				StringBuilder excludeFilters = new StringBuilder();
-				generateFilterList(excludeFilters, excludeList);
+				generateFilterList(request, excludeFilters, excludeList);
 				if (excludeFilters.length() > 0) {
 					excludeFilters.insert(0, "-");
 					nvp = new BasicNameValuePair(SolrConstants.SOLR_PARAM_FIELD_QUERY, excludeFilters.toString());
@@ -674,11 +1022,11 @@ public class SearchServlet extends HttpServlet {
 			
 			// collate elevate list
 			StringBuilder elevateFilters = new StringBuilder();
-			generateFilterList(elevateFilters, elevatedList);
+			generateFilterList(request, elevateFilters, elevatedList);
 			
 			// collate demoted list
 			StringBuilder demoteFilters = new StringBuilder();
-			generateFilterList(demoteFilters, demoteList);
+			generateFilterList(request, demoteFilters, demoteList);
 
 			Integer numFound = 0;
 			Integer numElevateFound = 0;
@@ -686,20 +1034,13 @@ public class SearchServlet extends HttpServlet {
 			Integer numDemoteFound = 0;
 
 			// send solr request
-
-			// TODO: workaround for spellchecker
-			if (StringUtils.isNotBlank(getValueFromNameValuePairMap(paramMap, SolrConstants.SOLR_PARAM_KEYWORD))) {
-				requestPath = requestPath.replaceFirst("select", "spellCheckCompRH");
-				solrHelper.setSolrUrl(requestPath);
-			}
-			
 			solrHelper.setActiveRules(activeRules);
 
 			// create force add filters
 			if (forceAddList.size() > 0) {
 				// generate force add filter
 				StringBuilder forceAddFilter = new StringBuilder();
-				generateFilterList(forceAddFilter, forceAddList);
+				generateFilterList(request, forceAddFilter, forceAddList);
 
 				if (redirectFqNvp != null) {
 					nameValuePairs.remove(redirectFqNvp);
@@ -710,58 +1051,66 @@ public class SearchServlet extends HttpServlet {
 
 				NameValuePair keywordNvp = getNameValuePairFromMap(paramMap,SolrConstants.SOLR_PARAM_KEYWORD);
 				if (keywordNvp != null) {
-					nameValuePairs.remove(defTypeNVP);
-					nameValuePairs.remove(keywordNvp);
-					StringBuilder newQuery = new StringBuilder();
-					newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
-					nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
-					nameValuePairs.add(new BasicNameValuePair("searchKeyword", keyword));
-				}
-			}
-
-
-			
-			FacetSort facetSort = null;
-			boolean applyFacetSort = false;
-			String templateName = configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE_NAME);
-			final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
-			for (NameValuePair param: nameValuePairs) {
-				if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 
-					StringUtils.equals(SolrConstants.TAG_FACET, param.getName()) || 
-					StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName())){
-					getTemplateNameParams.remove(param);
-				}
-				else if (StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())) {
-					if (StringUtils.equals("Manufacturer", param.getValue()) ||
-						StringUtils.equals("Category", param.getValue()) ||
-						StringUtils.equals(configManager.getParameterByCore(coreName, SolrConstants.SOLR_PARAM_FACET_TEMPLATE), param.getValue())) {
-						// apply facet sort only if facet.field contains Manufacturer or Category or PCMall_FacetTemplate
-						applyFacetSort = true;
+					if (nameValuePairs.remove(defTypeNVP)) { // relevancy != null
+						nameValuePairs.remove(keywordNvp);
+						StringBuilder newQuery = new StringBuilder();
+						newQuery.append("(_query_:\"{!dismax v=$searchKeyword}\") ").append(" OR (").append(forceAddFilter.toString()).append(")");
+						nameValuePairs.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, newQuery.toString()));
+						nameValuePairs.add(new BasicNameValuePair("searchKeyword", StringUtils.isBlank(keyword) ? "*:*" : keyword));
 					}
-					getTemplateNameParams.remove(param);
 				}
 			}
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
-			getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, templateName));
 
-			if (StringUtils.isNotEmpty(sk.getKeywordTerm())) {
-				facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(sk.getKeywordTerm(), RuleType.KEYWORD, null, sk.getStore())) 
-						: daoCacheService.getFacetSortRule(sk);
-			}
-			if (facetSort == null) {
-				// get facetSortRule based on template name
-				templateName = solrHelper.getCommonTemplateName(templateName, getTemplateNameParams);
-				if (StringUtils.isNotBlank(templateName)) {
-					facetSort = fromSearchGui ? daoService.getFacetSort(new FacetSort(templateName, RuleType.TEMPLATE, null, sk.getStore())) 
-							: daoCacheService.getFacetSortRule(sk.getStore(), templateName);					
+			/* FacetSort */
+			if (isActiveSearchRule(storeId, RuleEntity.FACET_SORT)) {
+				FacetSort facetSort = null;
+				boolean applyFacetSort = false;
+				StoreKeyword sk = getStoreKeywordOverride(RuleEntity.FACET_SORT, storeId, keyword);
+				final ArrayList<NameValuePair> getTemplateNameParams = new ArrayList<NameValuePair>(nameValuePairs);
+				for (NameValuePair param: nameValuePairs) {
+					if (StringUtils.equals(SolrConstants.SOLR_PARAM_SPELLCHECK, param.getName()) || 
+						StringUtils.equals(SolrConstants.TAG_FACET, param.getName()) || 
+						StringUtils.equals(SolrConstants.TAG_FACET_MINCOUNT, param.getName()) ||
+						StringUtils.equals(SolrConstants.TAG_FACET_LIMIT, param.getName())){
+						getTemplateNameParams.remove(param);
+					}
+					else if (StringUtils.equals(SolrConstants.TAG_FACET_FIELD, param.getName())) {
+						if (StringUtils.equals("Manufacturer", param.getValue()) ||
+							StringUtils.equals("Category", param.getValue()) ||
+							StringUtils.equals(facetTemplate, param.getValue())) {
+							// apply facet sort only if facet.field contains Manufacturer or Category or PCMall_FacetTemplate
+							applyFacetSort = true;
+						}
+						getTemplateNameParams.remove(param);
+					}
 				}
-			}
-			
-			if (facetSort != null) {
-				activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), !disableFacetSort));				
-				if (!disableFacetSort && applyFacetSort) {
-					solrHelper.setFacetSortRule(facetSort);
+				
+				if (keywordPresent) {
+					facetSort = getFacetSortRule(sk, fromSearchGui);
+				}
+
+				if (facetSort == null) {
+					// get facetSortRule based on template name
+					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET, "true"));
+					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_MINCOUNT, "1"));
+					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_FIELD, facetTemplateName));
+					getTemplateNameParams.add(new BasicNameValuePair(SolrConstants.TAG_FACET_LIMIT, "-1"));
+					
+					try{
+						facetTemplateName = solrHelper.getCommonTemplateName(facetTemplateName, getTemplateNameParams);
+						if (StringUtils.isNotBlank(facetTemplateName)) {
+							facetSort = getFacetSortRule(sk.getStore(), facetTemplateName, fromSearchGui);
+						}
+					}catch(Exception e){
+						logger.error("Failed to get template name", e);
+					}
+				}
+				
+				if (facetSort != null) {
+					activeRules.add(generateActiveRule(SolrConstants.TAG_VALUE_RULE_TYPE_FACET_SORT, facetSort.getRuleId(), facetSort.getRuleName(), !disableFacetSort));				
+					if (!disableFacetSort && applyFacetSort) {
+						solrHelper.setFacetSortRule(facetSort);
+					}
 				}
 			}
 			
@@ -779,10 +1128,26 @@ public class SearchServlet extends HttpServlet {
 			});
 			tasks++;
 
-			// TASK 1B - get count of force added items (should be merged with task 1A) 
-			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"spellcheck"));
 			nameValuePairs.remove(getNameValuePairFromMap(paramMap,"facet"));
-
+			
+			// TASK 1B - get spellcheck if requested
+			/* Run spellcheck if needed */
+			if (performSpellCheck) {
+				final ArrayList<NameValuePair> getSpellingSuggestionsParams = new ArrayList<NameValuePair>(nameValuePairs);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_KEYWORD, originalKeyword));
+				getSpellingSuggestionsParams.add(defTypeNVP);
+				getSpellingSuggestionsParams.add(new BasicNameValuePair(SolrConstants.SOLR_PARAM_ROWS, "0"));
+				getSpellingSuggestionsParams.addAll(spellcheckParams);
+				completionService.submit(new Callable<Integer>() {
+					@Override
+					public Integer call() throws Exception {
+						solrHelper.getSpellingSuggestion(getSpellingSuggestionsParams);
+						return 0;
+					}
+				});
+				tasks++;
+			}
+			
 			// exclude demoted items
 			if (demoteFilters.length() > 0) {
 				demoteFilters.insert(0, "-");

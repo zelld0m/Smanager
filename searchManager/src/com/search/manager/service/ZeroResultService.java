@@ -47,7 +47,7 @@ public class ZeroResultService {
 	@RemoteMethod
 	public List<String> getFileList(){
 		List<String> filenameList = new ArrayList<String>();
-		File dir = new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreName());
+		File dir = new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId());
 		
 		File[] files = dir.listFiles();
 		
@@ -76,7 +76,7 @@ public class ZeroResultService {
 		BufferedReader reader = null;
 		try {
 			try {
-				String filePath = PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreName() + File.separator + filename;
+				String filePath = PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename;
 				
 				if (filename.indexOf("-splunk") > 0) {
 					readCsvFile(filePath, list);
@@ -120,7 +120,7 @@ public class ZeroResultService {
 	}
 
 	private File getFile(String filename){
-		return new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreName() + File.separator + filename);
+		return new File(PropsUtils.getValue("zerorsdir") + File.separator + UtilityService.getStoreId() + File.separator + filename);
 	}
 	
 	@RemoteMethod

@@ -10,6 +10,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 import org.directwebremoting.convert.EnumConverter;
 
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.report.model.xml.RedirectRuleXml;
 
 @DataTransferObject(converter = BeanConverter.class)
@@ -77,6 +78,8 @@ public class RedirectRule extends ModelBean {
 	private Boolean includeKeyword;
 	private String redirectUrl;
 	private String modifiedBy;
+	private ReplaceKeywordMessageType replaceKeywordMessageType;
+	private String replaceKeywordMessageCustomText;
 	
 	public String getModifiedBy() {
 		return modifiedBy;
@@ -111,7 +114,8 @@ public class RedirectRule extends ModelBean {
 	
 	public RedirectRule(String ruleId, RedirectType redirectType, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
-			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
+			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword,
+			ReplaceKeywordMessageType replaceKeywordMessageType, String replaceKeywordMessageCustomText) {
 		super();
 		this.ruleId = ruleId;
 		this.redirectType = redirectType;
@@ -128,12 +132,16 @@ public class RedirectRule extends ModelBean {
 		this.changeKeyword = changeKeyword;
 		this.redirectUrl = redirectUrl;
 		this.includeKeyword = includeKeyword;
+		this.replaceKeywordMessageType = replaceKeywordMessageType;
+		this.replaceKeywordMessageCustomText = replaceKeywordMessageCustomText;
 	}
 	
 	public RedirectRule(String ruleId, String redirectTypeId, String ruleName, String description, String storeId,
 			Integer priority, String searchTerm, String condition, String createdBy, String modifiedBy, 
-			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword) {
-		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, dateCreated, dateModified, changeKeyword, redirectUrl, includeKeyword);
+			Date dateCreated, Date dateModified, String changeKeyword, String redirectUrl, Boolean includeKeyword,
+			ReplaceKeywordMessageType replaceKeywordMessageType, String replaceKeywordMessageCustomText) {
+		this(ruleId, RedirectType.getRedirectType(redirectTypeId), ruleName, description, storeId, priority, searchTerm, condition, createdBy, modifiedBy, dateCreated, dateModified, changeKeyword, redirectUrl, includeKeyword,
+				replaceKeywordMessageType, replaceKeywordMessageCustomText);
 	}
 	
 	
@@ -156,6 +164,9 @@ public class RedirectRule extends ModelBean {
 		}
 		
 		this.changeKeyword = xml.getReplacementKeyword();
+		this.replaceKeywordMessageType = xml.getReplaceKeywordMessageType();
+		this.replaceKeywordMessageCustomText = xml.getReplaceKeywordMessageCustomText();
+		
 		if(xml.getRuleCondition()!=null)
 			this.includeKeyword = xml.getRuleCondition().isIncludeKeyword();
 		this.redirectUrl = xml.getDirectHit();
@@ -303,4 +314,21 @@ public class RedirectRule extends ModelBean {
 	public String getRedirectUrl() {
 		return redirectUrl;
 	}
+
+	public ReplaceKeywordMessageType getReplaceKeywordMessageType() {
+		return replaceKeywordMessageType;
+	}
+
+	public void setReplaceKeywordMessageType(ReplaceKeywordMessageType replaceKeywordMessageType) {
+		this.replaceKeywordMessageType = replaceKeywordMessageType;
+	}
+
+	public String getReplaceKeywordMessageCustomText() {
+		return replaceKeywordMessageCustomText;
+	}
+
+	public void setReplaceKeywordMessageCustomText(
+			String replaceKeywordMessageCustomText) {
+		this.replaceKeywordMessageCustomText = replaceKeywordMessageCustomText;
+	}	
 }

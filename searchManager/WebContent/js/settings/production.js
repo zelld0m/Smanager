@@ -61,7 +61,7 @@
 				var flcnt = 0;
 				
 				for(var i=0; i<data.totalSize; i++){	
-					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").html();
+					var rName = $("tr#ruleItem" + $.formatAsId(list[i].ruleId) + " > td#ruleRefId > p#ruleName").text();
 					if(list[i].published == '1'){
 						okcnt++;
 						okmsg += '\n-' + rName;	
@@ -90,44 +90,89 @@
 		var publishHandler = function(){
 			$(tabSelected).find("a#publishBtn, a#unpublishBtn").on({
 				click: function(evt){
-					var comment = $.trim($(tabSelected).find("#approvalComment").val());
+					var comment = $.defaultIfBlank($.trim($(tabSelected).find("#approvalComment").val()),"");
 					
 					if(getSelectedRefId().length==0){
 						jAlert("Please select rule","Push to Prod");
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment","Push to Prod");
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.","Push to Prod");
+					}else if (!validateComment("Push to Prod", comment, 1)){
+						//error alert in validateComment
 					}else{
 						var selRuleFltr = $(tabSelected).find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+
+						comment = comment.replace(/\n\r?/g, '<br/>');
 						switch($(evt.currentTarget).attr("id")){
 						case "publishBtn": 
-							DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){									
-									postMsg(data,true);	
-									getForProductionList(selRuleFltr);	
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									cleanUpTabContent(); 
-								}	
-							});break;
+							var confirmMsg = "Continue publishing of the following rules:\n" + a.join('\n');
+
+							jConfirm(confirmMsg, "Confirm Publish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.publishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){									
+											postMsg(data,true);	
+											getForProductionList(selRuleFltr);	
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Publish Rule"); 
+										}
+									});
+								}
+							});
+							break;
 							
 						case "unpublishBtn": 
-							DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
-								callback: function(data){
-									postMsg(data,false);	
-									getForProductionList(selRuleFltr);
-								},
-								preHook:function(){ 
-									prepareTabContent(); 
-								},
-								postHook:function(){ 
-									cleanUpTabContent(); 
-								}	
-							});break;
+							var confirmMsg = "Continue unpublishing of the following rules:\n" + a.join('\n');
+							jConfirm(confirmMsg, "Confirm Unpublish", function(status){
+								if(status){
+									var exception = false;
+									DeploymentServiceJS.unpublishRule(entityName, getSelectedRefId(), comment, getSelectedStatusId(),{
+										callback: function(data){
+											postMsg(data,false);	
+											getForProductionList(selRuleFltr);
+										},
+										preHook:function(){ 
+											prepareTabContent(); 
+										},
+										postHook:function(){ 
+											if (!exception) {
+												cleanUpTabContent()
+											}
+											else {
+												$("div.circlePreloader").hide();
+												$(tabSelected).find('table.tblItems').show();
+												$(tabSelected).find('div.filter').show();
+												$(tabSelected).find('div#actionBtn').show();
+											}; 
+										},
+										exceptionHandler: function(message, exc){ 
+											exception = true; 
+											jAlert(message, "Unpublish Rule"); 
+										}
+									});
+								}
+							});
+							break;
 						}	
 					}
 				}
@@ -160,8 +205,8 @@
 								if($.isBlank(filterBy))
 									$tr.find("td#select").html(i+1);
 								
-								if(showId)
-									$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+								//if(showId)
+								//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 								$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 
 								$tr.find("td#approvalStatus").html(list[i]["approvalStatus"]);

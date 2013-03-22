@@ -56,8 +56,8 @@
 							query = query.replace(new RegExp("[.*+?|()\\[\\]{}\\\\]", "g"), "\\$&");
 							query = query.replace(/ /gi, '|'); //add OR for regex query  
 
-							content.find('li#facetValue').each(function() {  
-								($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).hide().removeClass('visible') : $(this).show().addClass('visible');  
+							content.find('li#facetValue > span#facetName').each(function() {  
+								($(this).text().search(new RegExp(query, "i")) < 0) ? $(this).parent('li').hide().removeClass('visible') : $(this).parent('li').show().addClass('visible');  
 							}); 
 						}  
 
@@ -85,6 +85,7 @@
 					'facet.limit': -1,
 					'facet.sort':'HEX',
 					'gui': true,
+					'store': GLOBAL_storeId,
 					'json.nl':'map'
 			};
 
@@ -108,7 +109,7 @@
 			var selectedList = base.options.selectedList;
 			var facetValues = [];
 
-			if (base.options.facetField === "Category" && (GLOBAL_store === "pcmall" || GLOBAL_store === "pcmallcap" || GLOBAL_store === "sbn")){
+			if (base.options.facetField === "Category" && GLOBAL_PCMGroup){
 				if(data.FacetTemplate)
 					facetValues = data.FacetTemplate.Level1;
 			}
@@ -172,7 +173,7 @@
 		base.getFacetValueList = function () {
 			var self = this;
 			$.getJSON(
-					GLOBAL_solrUrl + GLOBAL_store + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
+					GLOBAL_solrUrl + GLOBAL_storeCore + '/select' + '?' + base.getFacetParams() + '&wt=json&json.wrf=?', 
 					function (json, textStatus) { 
 						if (textStatus!=="success"){
 							api.destroy();
@@ -201,7 +202,7 @@
 				content+= '<div class="searchBoxHolder w120 marT10 marR4 floatL">';
 				content+= 	'<input type="text" class="farial fsize12 fgray pad3 w100" id="searchField" name="searchField">';				
 				content+= '</div>';
-				content+= 	'<div class="floatL fsize11 searchCount marT10 w93 txtAR padT8 fLgray marL0"></div>';
+				content+= 	'<div class="floatL fsize10 searchCount marT10 w93 txtAR padT8 fLgray marL0"></div>';
 				content+= '</div>';
 			}
 

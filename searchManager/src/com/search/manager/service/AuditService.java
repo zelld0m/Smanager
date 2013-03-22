@@ -38,7 +38,7 @@ public class AuditService {
 	
 	public RecordSet<AuditTrail> getProductTrail(Entity entity, String keyword, String productId, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%s %s %d %d", keyword, productId, page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -55,7 +55,7 @@ public class AuditService {
 	
 	public RecordSet<AuditTrail> getActivityTrail(Entity entity, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%d %d", page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -71,7 +71,7 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getItemTrail(String productId, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%s %d %d", productId, page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -87,7 +87,7 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getRedirectTrail(String ruleId, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -103,7 +103,7 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getRelevancyTrail(String ruleId, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -135,7 +135,7 @@ public class AuditService {
 	@RemoteMethod
 	public RecordSet<AuditTrail> getFacetSortTrail(String ruleId, int page,int itemsPerPage) {
 		try {
-			String store = UtilityService.getStoreName();
+			String store = UtilityService.getStoreId();
 			
 			logger.info(String.format("%s %d %d", ruleId, page, itemsPerPage));
 			AuditTrail auditTrail = new AuditTrail();
@@ -166,7 +166,7 @@ public class AuditService {
 	
 	@RemoteMethod
 	public RecordSet<AuditTrail> getAuditTrail(String userName, String operation, String entity, String keyword, String referenceId, String startDate, String endDate, int page,int itemsPerPage) {
-		String store = UtilityService.getStoreName();
+		String store = UtilityService.getStoreId();
 		AuditTrail auditTrail = new AuditTrail();
 		auditTrail.setUsername(StringUtils.isBlank(userName)?null:userName);
 		auditTrail.setOperation(StringUtils.isBlank(operation)?null:operation);
@@ -197,7 +197,7 @@ public class AuditService {
 		switch (type) {
 			case 1 : {
 				User user = new User();
-				user.setStoreId(UtilityService.getStoreName());
+				user.setStoreId(UtilityService.getStoreId());
 				SearchCriteria<User> searchCriteria = new SearchCriteria<User>(user,null,null,0,0);
 				try {
 					RecordSet<User> record = daoService.getUsers(searchCriteria, MatchType.MATCH_ID);
@@ -290,7 +290,7 @@ public class AuditService {
 			}
 			break;
 			case 3 : {
-				for(Object opt: Arrays.asList(AuditTrailConstants.Entity.values())){
+				for(Object opt: Arrays.asList(AuditTrailConstants.ENTITY_LIST_ASC)){
 					if(opt.toString().equals(AuditTrailConstants.Entity.security) && UtilityService.hasPermission("CREATE_RULE") || !opt.toString().equals(AuditTrailConstants.Entity.security)){
 						ddList.add(opt.toString());
 					}
@@ -299,7 +299,7 @@ public class AuditService {
 				break;
 			}
 			case 4 : {
-				ddList = daoService.getRefIDs(filter[0], filter[1], UtilityService.getStoreName());
+				ddList = daoService.getRefIDs(filter[0], filter[1], UtilityService.getStoreId());
 				break;
 			}
 			
@@ -309,7 +309,7 @@ public class AuditService {
 	@RemoteMethod
 	public List<String> getDropdownValues(int type) {
 		try {
-			return daoService.getDropdownValues(type, UtilityService.getStoreName(), UtilityService.hasPermission("CREATE_RULE"));
+			return daoService.getDropdownValues(type, UtilityService.getStoreId(), UtilityService.hasPermission("CREATE_RULE"));
 		} catch (DaoException e) {
 			logger.error("Error getting dropdown values" + e.getMessage());
 		}

@@ -132,7 +132,7 @@
 
 				if(FACET){
 
-					$li.find(".name").html($("<a>").html($item.condition["readableString"]));
+					$li.find(".name").html($("<a>").text($item.condition["readableString"]));
 					$li.find(".name > a").off().on({
 						click:function(e){
 							$(this).addproduct({
@@ -141,6 +141,7 @@
 								newRecord: false,
 								item: e.data.item,
 								showPosition: true,
+								maxPosition: self.selectedRuleItemTotal,
 								updateFacetItemCallback: function(memberId, position, expiryDate, comment, selectedFacetFieldValues){
 									DemoteServiceJS.updateFacet(self.selectedRule["ruleId"], memberId, position, comment, expiryDate,  selectedFacetFieldValues, {
 										callback: function(data){
@@ -411,7 +412,7 @@
 					ruleType: "Demote",
 					rule: self.selectedRule,
 					enableVersion: true,
-					authorizeRuleBackup: true,
+					authorizeRuleBackup: allowModify,
 					viewAuditCallback: function(target){
 						$(target).viewaudit({
 							getDataCallback: function(base, page){
@@ -497,10 +498,12 @@
 											type: $('select#selectRuleItemType').val(),
 											locked: self.selectedRuleStatus["locked"] || !allowModify,
 											showPosition: true,
+											maxPosition: self.selectedRuleItemTotal + 1,
 											addProductItemCallback:function(position, expiryDate, comment, skus){
 												DemoteServiceJS.addItemToRuleUsingPartNumber(self.selectedRule["ruleId"], position, expiryDate, comment, skus, {
 													callback : function(code){
-														showActionResponseFromMap(code, "add", skus, "Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
+														showActionResponseFromMap(code, "add", "Multiple Rule Item Add", 
+																"Please check for the following:\n a) SKU(s) are already present in the list\n b) SKU(s) are actually searchable using the specified keyword.");
 														self.populateRuleItem(self.selectedRuleItemPage);
 													},
 													preHook: function(){ 
@@ -595,7 +598,7 @@
 
 						for(var key in params){
 							if (count>0) urlParams +='&';
-							urlParams += (key + '=' + params[key]);
+							urlParams += (key + '=' + encodeURIComponent(params[key]));
 							count++;
 						};
 
@@ -661,7 +664,8 @@
 
 				DemoteServiceJS.update(self.selectedRule["ruleName"], $item["memberId"], position, null, {
 					callback : function(code){
-						showActionResponse(code, "update position", $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						var updateMessage = ($item["memberTypeEntity"] === "FACET" ? "Rule Facet Item: " + $item.condition["readableString"] : $.isBlank($item["dpNo"])? "Product Id#: " + $item["edp"] : "SKU#: " + $item["dpNo"]);
+						showActionResponse(code, "update position", updateMessage);
 						self.populateRuleItem();
 					},
 					preHook: function(){

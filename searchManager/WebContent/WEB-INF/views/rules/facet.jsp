@@ -66,13 +66,12 @@
 					<div>
 						<ul id="selectedFacetValueList" class="marT8">
 							<li id="addFacetValuePattern" class="addFacetValuePattern handle" style="display: none;">
-								<label class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></label>
-								<label class="marL5 w207 posRel" style="left:-13px">
-									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6">
-										<option value="all"></option>
-									</select>						
-								</label>
-								<label class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></label>
+								<div class="floatL"><img	src="<spring:url value="/images/icon_move.png" />" class="posRel top3" /></div>
+								<div class="marL5 w207" style="display: block; float: left; width: 210px !important; position: relative; top: -5px;">
+									<select id="facetValuesPattern" class="selectCombo mar0 w185 marT6"></select>						
+								</div>
+								<div class="deleteIcon"><img class="delFacetValueIcon" src="<spring:url value="/images/btn_delete_big.png" />" class="posRel top3" /></div>
+								<div style="clear: both;"> </div>
 							</li>
 						</ul>
 					</div>
@@ -102,7 +101,7 @@
 	  	<div class="w282 padT10 newFacetSort">
 	  		<label class="floatL w80 txtLabel">Rule Type </label>
 		   	<label class="floatL">
-		    	<select name="select" id="popType" class="selectCombo mar0 w168 floatR marT6" title="Select Rule Type" >
+		    	<select name="select" id="popType" class="selectCombo mar0 w200 floatR marT6" title="Select Rule Type" >
 		     		<option value="Keyword">Keyword</option>
 		     		<option value="Template">Template</option>
 		    	</select>
@@ -111,21 +110,21 @@
 		   	
 		   	<div id="keywordinput">
 	  		<label class="floatL w80 txtLabel">Keyword </label> 
-			<label class="floatL"><input id="popKeywordName" type="text" class="w188" maxlength="100"></label>
+			<label class="floatL"><input class="w194" id="popKeywordName" type="text" maxlength="100"></label>
 			</div>
 			<div class="clearB"></div>
 			
 			<div id="templatelist" style="display: none;">
-		   		<label class="floatL w80 txtLabel">Template Name</label>
-		   		<label class="floatL">
-		   			<select name="select" id="popName" class="selectCombo mar0 w168 marT6" title="Select Template Name" ></select>
-		   		</label>
+		   		<div class="floatL w80 txtLabel">Template Name</div>
+		   		<div class="floatL w200">
+		   			<select name="select" id="popName" class="selectCombo mar0 marT6" title="Select Template Name" ></select>
+		   		</div>
 		   	</div>
 		   	<div class="clearB"></div>
 		   	
 		   	<label class="floatL w80 txtLabel marT8">Sort Order</label>
 		   	<label class="floatL marT8">
-		   		<select name="select" id="popSortOrder" class="selectCombo mar0 w168 floatR marT6" title="Select Sort Order" ></select>
+		   		<select name="select" id="popSortOrder" class="selectCombo mar0 w200 floatR marT6" title="Select Sort Order" ></select>
 		   	</label>
 			<div class="clearB"></div>
 			

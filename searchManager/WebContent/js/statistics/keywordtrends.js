@@ -16,13 +16,14 @@
 		var k = {
 			el : $("#keywordWidgetTemplate").clone(),
 			keyword : keyword,
+			color: Utils.color(),
 			chartVisible : true,
 			init : function() {
 				// use self to refer to this object inside event handlers
 				var self = this;
 
 				this.el.attr("id", "keyword-" + keyword);
-				this.el.find(".keyword").html(keyword);
+				this.el.find(".keyword").text(keyword);
 				$("#keyword-list").append(this.el);
 
 				// add event listeners
@@ -36,6 +37,7 @@
 					self.showChart();
 				});
 				this.show();
+				Utils.setControlButtons();
 			},
 			show : function() {
 				this.el.show();
@@ -43,19 +45,23 @@
 			hide : function() {
 				this.el.hide();
 			},
-			showChart : function() {
+			showChart : function(defer) {
 				this.chartVisible = true;
 				this.el.find(".inactive-chart").hide();
 				this.el.find(".active-chart").show();
-				Utils.setChartVisible(keyword, true);
+				Utils.setChartVisible(keyword, true, defer);
+				Utils.setControlButtons();
 			},
-			hideChart : function() {
+			hideChart : function(defer) {
 				this.chartVisible = false;
 				this.el.find(".active-chart").hide();
 				this.el.find(".inactive-chart").show();
-				Utils.setChartVisible(keyword, false);
+				Utils.setChartVisible(keyword, false, defer);
+				Utils.setControlButtons();
 			},
 			destroy : function() {
+				delete Keywords[keyword];
+
 				for (tab in Tabs) {
 					var idx = -1;
 
@@ -72,10 +78,14 @@
 					}
 				}
 
+				Utils.refreshSelection();
+				Utils.setControlButtons();
+				Utils.returnColor(this.color);
 				this.el.remove();
 			}
 		};
 
+		Keywords[keyword] = k;
 		k.init();
 
 		return k;
@@ -110,6 +120,15 @@
 					break;
 				}
 			}
+		},
+		hasData: function() {
+			for ( var i = 0; i < this.seriesList.length; i++) {
+				if (this.seriesList[i].data.length > 0) {
+					return true;
+				} 
+			}
+
+			return false;
 		}
 	};
 
@@ -117,8 +136,6 @@
 	 * Daily tab.
 	 */
 	Tabs.daily = $.extend(true, {
-		el : $("#tabs-1"),
-		activator : $("#daily-link"),
 		isValid : function() {
 			var fromDate = $("#fromDate").datepicker("getDate");
 			var toDate = $("#toDate").datepicker("getDate");
@@ -135,6 +152,8 @@
 		collation : 'daily',
 		init: function() {
 			var self = this;
+			this.el = $("#tabs-1");
+			this.activator = $("#daily-link");
 			KeywordTrendsServiceJS.getMostRecentStatsDate({callback: function(date) {
 				var from = new Date(date);
 				var to = new Date(date);
@@ -156,6 +175,11 @@
 
 				self.fromDate = $("#fromDate").datepicker("getDate");
 				self.toDate = $("#toDate").datepicker("getDate");
+				Utils.dateLoaded = true;
+
+				if (!Utils.fullyLoaded) {
+					loadInitialData();
+				}
 			}});
 			$("#updateDateBtn").click(new Handler.UpdateHandler(this));
 		}
@@ -165,8 +189,6 @@
 	 * Weekly tab.
 	 */
 	Tabs.weekly = $.extend(true, {
-		el : $("#tabs-2"),
-		activator : $("#weekly-link"),
 		isValid : function() {
 			var fromDate = $.getFirstDayOfWeek($("#fromWeek").datepicker("getDate"));
 			var toDate = $.getFirstDayOfWeek($("#toWeek").datepicker("getDate"));
@@ -185,6 +207,9 @@
 			var self = this;
 			var now = $.getFirstDayOfWeek(new Date());
 			var before = new Date(now);
+			
+			this.el = $("#tabs-2");
+			this.activator = $("#weekly-link");
 			
 			before.setDate(before.getDate() - 70);
 			before = $.getFirstDayOfWeek(before);
@@ -229,8 +254,6 @@
 	 * Monthly tab.
 	 */
 	Tabs.monthly = $.extend(true, {
-		el : $("#tabs-3"),
-		activator : $("#monthly-link"),
 		isValid : function() {
 			var fromYear = $("#fromYear").val();
 			var toYear = $("#toYear").val();
@@ -253,6 +276,9 @@
 			var date = new Date();
 			var toMonth = date.getMonth() + 1;
 			var toYear = date.getFullYear();
+			
+			this.el = $("#tabs-3");
+			this.activator = $("#monthly-link");
 			
 			date.setMonth(date.getMonth() - 9);
 
@@ -309,7 +335,8 @@
 	Handler.AddKeywordHandler = function() {
 		return function(e) {
 			Utils.addKeyword($("#searchTextbox").val());
-			$("#searchTextbox").val("Search Keyword");
+			$("#searchTextbox").val("");
+			$("#searchTextbox").blur();
 		};
 	};
 
@@ -323,6 +350,40 @@
 			}
 		};
 	};
+	
+	/*
+	 * Click handlers for buttons
+	 */
+	Handler.showAll = function() {
+		for(key in Keywords) {
+			Keywords[key].showChart(true);
+		}
+
+		for (tab in Tabs) {
+			Utils.drawChart(Tabs[tab]);
+		}
+	};
+
+	Handler.hideAll = function() {
+		for(key in Keywords) {
+			Keywords[key].hideChart(true);
+		}
+
+		for (tab in Tabs) {
+			Utils.drawChart(Tabs[tab]);
+		}
+	};
+
+	Handler.clear = function() {
+		for(key in Keywords) {
+			Keywords[key].destroy();
+		}
+	};
+
+	Handler.reset = function() {
+		loadInitialData();
+	};
+	
 
 	//////////////////////////////////////////////////////////////////
 	//                     Utility methods                          //
@@ -359,11 +420,11 @@
 	/*
 	 * Retrieve stats for all keywords for a given tab.
 	 */
-	Utils.updateAllStats = function(tab) {
+	Utils.updateAllStats = function(tab, callback) {
 		// Get stats for all listed keywords
 		KeywordTrendsServiceJS.getStats(Utils.getSelectedKeywords(),
 				$.asUTC(tab.fromDate), $.asUTC(tab.toDate), tab.collation, {
-					callback : function(data) {
+					callback : callback || function(data) {
 						for ( var i = 0; i < data.length; i++) {
 							tab.setData(data[i].keyword, data[i].stats);
 						}
@@ -380,12 +441,70 @@
 	Utils.addKeyword = function(keyword) {
 		keyword = keyword && keyword.toLowerCase().trim();
 
-		if (keyword && keyword != "search keyword" && !Keywords[keyword]) {
-			Keywords[keyword] = new Keyword(keyword);
+		if (keyword == "search keyword") {
+			keyword = "";
+		}
+
+		var valid = validateGeneric("Keyword", keyword, 0, 50);
+
+		if (valid && !keyword) {
+			jAlert("Keyword is required.");
+		} else if (valid && Keywords[keyword]) {
+			jAlert("Keyword <b>" + keyword + "</b> already exists.");
+		} else if (valid) {
+			var kw = new Keyword(keyword);
 
 			for (tab in Tabs) {
-				Utils.getStatsForNewKeyword(keyword, Tabs[tab]);
+				Utils.getStatsForNewKeyword(kw, Tabs[tab]);
 			}
+
+			Utils.addToSelection(keyword);
+		}
+	};
+
+	Utils.addToSelection = function(keyword) {
+		var currentSelection = Utils.getCurrentSelection();
+
+		currentSelection.push(keyword);
+		Utils.setCurrentSelection(currentSelection);
+	}; 
+
+	Utils.getCurrentSelection = function() {
+		var str = $.cookie("selected-keywords");
+
+		if (str) {
+			return JSON.parse(str);
+		} else {
+			return new Array();
+		}
+	};
+
+	Utils.setCurrentSelection = function(keywords) {
+		$.cookie("selected-keywords", JSON.stringify(keywords), {path:GLOBAL_contextPath});
+	};
+
+	Utils.refreshSelection = function() {
+		Utils.setCurrentSelection(Utils.getSelectedKeywords());
+	};
+
+	Utils.addAll = function(keywords) {
+		for (var i = 0; i < keywords.length; i++) {
+			new Keyword(keywords[i]);
+			Utils.addToSelection(keywords[i]);
+		}
+
+		for (tab in Tabs) {
+			Utils.updateAllStats(Tabs[tab], new function(curtab) {
+				return function(data) {
+					for ( var i = 0; i < data.length; i++) {
+						var series = new Series(data[i]);
+						series.color = Keywords[data[i].keyword].color;
+
+						curtab.seriesList.push(series);
+						Utils.drawChart(curtab);
+					}
+				};
+			}(Tabs[tab]));
 		}
 	};
 
@@ -393,10 +512,11 @@
 	 * Retrieve stats for newly added keyword.
 	 */
 	Utils.getStatsForNewKeyword = function(keyword, tab) {
-		KeywordTrendsServiceJS.getStats(keyword, $.asUTC(tab.fromDate), $.asUTC(tab.toDate),
+		KeywordTrendsServiceJS.getStats(keyword.keyword, $.asUTC(tab.fromDate), $.asUTC(tab.toDate),
 				tab.collation, {
 					callback : function(data) {
 						var series = new Series(data);
+						series.color = keyword.color;
 
 						tab.seriesList.push(series);
 						Utils.drawChart(tab);
@@ -470,18 +590,47 @@
 			},
 			series : tab.seriesList
 		};
-		
+
 		if (tab.chart) {
 			tab.chart.destroy();
 		}
 		
-		tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
+		if (tab.hasData() && Utils.hasVisibleKeyword()) {
+			tab.el.find("#message").hide();
+			tab.chart = $.jqplot(tab.collation + '-chart', tab.data(), options);
+		} else {
+			tab.el.find("#message").show();
+		}
+	};
+	
+	Utils.setControlButtons = function() {
+		if (Object.keys(Keywords).length) {
+			$("#button-controls #hide-all-button").show();
+			$("#button-controls #show-all-button").show();
+			$("#button-controls #reset-button").text("Clear").off().on({click: Handler.clear});
+
+			if (Utils.hasVisibleKeyword()) {
+				$("#button-controls #hide-all-button").removeClass("disabled-button").addClass("enabled-button").off().on({click: Handler.hideAll});
+			} else {
+				$("#button-controls #hide-all-button").removeClass("enabled-button").addClass("disabled-button").off();
+			}
+
+			if (Utils.hasInvisibleKeyword()) {
+				$("#button-controls #show-all-button").removeClass("disabled-button").addClass("enabled-button").off().on({click: Handler.showAll});
+			} else {
+				$("#button-controls #show-all-button").removeClass("enabled-button").addClass("disabled-button").off();
+			}
+		} else {
+			$("#button-controls #hide-all-button").hide();
+			$("#button-controls #show-all-button").hide();
+			$("#button-controls #reset-button").text("Reset").off().on({click: Handler.reset});
+		}
 	};
 
 	/*
 	 * Set plot for given keyword visible/invisible on all charts.
 	 */
-	Utils.setChartVisible = function(keyword, visibility) {
+	Utils.setChartVisible = function(keyword, visibility, deferDrawing) {
 		for (tab in Tabs) {
 			for (var i = 0; i < Tabs[tab].seriesList.length; i++) {
 				if (Tabs[tab].seriesList[i].label == keyword) {
@@ -490,8 +639,53 @@
 				}
 			}
 			
-			Utils.drawChart(Tabs[tab]);
+			if (!deferDrawing) {
+				Utils.drawChart(Tabs[tab]);
+			}
 		}
+	};
+	
+	Utils.colors =  ["#4bb2c5", "#EAA228", "#c5b47f", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc", "#c747a3", "#cddf54", "#FBD178", "#26B4E3", "#bd70c7",
+          "#498991", "#C08840", "#9F9274", "#546D61", "#646C4A", "#6F6621", "#6E3F5F", "#4F64B0", "#A89050", "#C45923", "#187399", "#945381", "#959E5C", "#C7AF7B", "#478396", "#907294"];
+
+	Utils.color = function() {
+		if (Utils.colors.length == 0) {
+			Utils.colors.push("#" + ("000000" + Math.floor(Math.random() * 0x1000000).toString(16)).slice(-6));
+		}
+
+		var c = Utils.colors[0];
+		Utils.colors.splice(0, 1);
+		return c;
+	};
+
+	Utils.returnColor = function(c) {
+		Utils.colors.push(c);
+	};
+
+	/*
+	 * Set plot for given keyword visible/invisible on all charts.
+	 */
+	Utils.hasVisibleKeyword = function() {
+		for (key in Keywords) {
+			if (Keywords[key].chartVisible) {
+				return true;
+			}
+		}
+		
+		return false;
+	};
+
+	/*
+	 * Set plot for given keyword visible/invisible on all charts.
+	 */
+	Utils.hasInvisibleKeyword = function() {
+		for (key in Keywords) {
+			if (!Keywords[key].chartVisible) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 	
 	Utils.getLastDayOfMonth = function(date) {
@@ -548,11 +742,18 @@
 	 * Load top ten keywords from most recent log. 
 	 */
 	var loadInitialData = function() {
-		KeywordTrendsServiceJS.getTopTenKeywords({callback: function(list) {
-			for (var i = 0; i < list.length; i++) {
-				Utils.addKeyword(list[i]);
+		if (Utils.dateLoaded) {
+			var currentSelection = Utils.getCurrentSelection();
+	
+			if (currentSelection.length) {
+				Utils.setCurrentSelection([]);
+				Utils.addAll(currentSelection);
+			} else {
+				KeywordTrendsServiceJS.getTopTenKeywords({callback: Utils.addAll});
 			}
-		}});
+
+			Utils.fullyLoaded = true;
+		}
 	};
 
 	/*

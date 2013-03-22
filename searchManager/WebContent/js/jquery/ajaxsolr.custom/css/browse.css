@@ -3,7 +3,6 @@
 	display: block;
 	width: 72px;
 	height: 24px;
-	background: url(../../../images/sponsor/check-circle4.png) no-repeat;
 	cursor: pointer;
 }
 	
@@ -27,4 +26,10 @@ label {
 	
 .hidden {
 	display: none;
+}
+
+.label_catalog{
+	display: inline;
+	float: none;
+
 }

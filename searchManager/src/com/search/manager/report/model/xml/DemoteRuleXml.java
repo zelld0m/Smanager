@@ -77,6 +77,7 @@ public class DemoteRuleXml extends RuleXml implements ProductDetailsAware {
 		return RuleEntity.DEMOTE;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setProducts(List<? extends Product> products) {
 		this.products = (List<DemoteProduct>) products;
 		

@@ -27,7 +27,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -114,6 +113,7 @@ public class SearchHelper {
 	public static void getProducts(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
 		try {
 			if (productList == null || productList.isEmpty()) {
 				return;
@@ -129,7 +129,7 @@ public class SearchHelper {
 			}
 			String core = configManager.getStoreParameter(storeId, "core");
 			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
-			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core).concat("select?");
 			int size = productList.size();
 			boolean isWithEDP = false;
 			StringBuilder edps = new StringBuilder("EDP:(");
@@ -149,6 +149,7 @@ public class SearchHelper {
 				nameValuePairs.add(new BasicNameValuePair("qt", qt));
 				nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
 				nameValuePairs.add(new BasicNameValuePair("fq", edps.toString()));
+				nameValuePairs.add(new BasicNameValuePair("store", storeId));
 				nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 				nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 				if (logger.isDebugEnabled()) {
@@ -171,7 +172,7 @@ public class SearchHelper {
 					logger.debug("URL: " + post.getURI());
 					logger.debug("Parameter: " + nameValuePairs);
 				}
-				HttpResponse solrResponse = client.execute(post);
+				solrResponse = client.execute(post);
 				JsonConfig jsonConfig = new JsonConfig();
 				jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 				slurper = new JsonSlurper(jsonConfig);
@@ -234,12 +235,13 @@ public class SearchHelper {
 			logger.error("Error while retrieving from Solr" , t);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 	}
@@ -247,6 +249,7 @@ public class SearchHelper {
 	public static void getProductsIgnoreKeyword(Map<String, ? extends Product> productList, String storeId, String server, String keyword) {
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
 		try {
 			if (productList == null || productList.isEmpty()) {
 				return;
@@ -260,7 +263,7 @@ public class SearchHelper {
 
 			String core = configManager.getStoreParameter(storeId, "core");
 			String fields = configManager.getParameter("big-bets", "fields").replaceAll("\\(facet\\)", facetName);
-			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", core).concat("select?");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core).concat("select?");
 			int size = productList.size();
 			StringBuilder edps = new StringBuilder();
 			String edp = "";
@@ -283,6 +286,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("fl", fields));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
 			nameValuePairs.add(new BasicNameValuePair("rows", String.valueOf(size)));
+			nameValuePairs.add(new BasicNameValuePair("store", storeId));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
@@ -306,7 +310,7 @@ public class SearchHelper {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + nameValuePairs);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -314,8 +318,8 @@ public class SearchHelper {
 
 			// locate the result node
 			resultArray = ((JSONObject)initialJson)
-			.getJSONObject(SolrConstants.TAG_RESPONSE)
-			.getJSONArray(SolrConstants.TAG_DOCS);
+					.getJSONObject(SolrConstants.TAG_RESPONSE)
+					.getJSONArray(SolrConstants.TAG_DOCS);
 			String name = null;
 			String description = null;
 			for (int i = 0, resultSize = resultArray.size(); i < resultSize; i++) {
@@ -368,12 +372,13 @@ public class SearchHelper {
 			logger.error("Error while retrieving from Solr" , t);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 	}
@@ -414,6 +419,8 @@ public class SearchHelper {
 
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		
 		try {
 			ConfigManager configManager = ConfigManager.getInstance();
 
@@ -435,8 +442,8 @@ public class SearchHelper {
 				qt = "standard";
 			}
 
-			String coreName = configManager.getParameterByStore(storeId, "core");
-			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", coreName).concat("select?");
+			String core = configManager.getStoreParameter(storeId, "core");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core).concat("select?");
 
 			nameValuePairs.add(new BasicNameValuePair("q.alt", "*:*"));
 			nameValuePairs.add(new BasicNameValuePair("qt", qt));
@@ -446,6 +453,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("facet", "true"));
 			nameValuePairs.add(new BasicNameValuePair("facet.sort", "true"));
+			nameValuePairs.add(new BasicNameValuePair("store", storeId));
 			nameValuePairs.add(new BasicNameValuePair("facet.limit", "-1"));
 			if(hasMincount) {
 				nameValuePairs.add(new BasicNameValuePair("facet.mincount", "1"));				
@@ -478,7 +486,7 @@ public class SearchHelper {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + nameValuePairs);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -517,12 +525,13 @@ public class SearchHelper {
 			logger.error("Error while retrieving from Solr" , t);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return map;
@@ -532,6 +541,7 @@ public class SearchHelper {
 		String edp = "";
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
 		if (StringUtils.isEmpty(partNumber)) {
 			return edp;
 		}
@@ -539,12 +549,14 @@ public class SearchHelper {
 			ConfigManager configManager = ConfigManager.getInstance();
 
 			// build the query
-			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(store\\)", storeId).concat("select?");
+			String core = configManager.getStoreParameter(storeId, "core");
+			String serverUrl = configManager.getServerParameter(server, "url").replaceAll("\\(core\\)", core).concat("select?");
 
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("fl", "EDP"));
 			nameValuePairs.add(new BasicNameValuePair("qt", "standard"));
 			nameValuePairs.add(new BasicNameValuePair("rows", "1"));
+			nameValuePairs.add(new BasicNameValuePair("store", storeId));
 			nameValuePairs.add(new BasicNameValuePair("q", "DPNo:" + partNumber));
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
@@ -569,7 +581,7 @@ public class SearchHelper {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + nameValuePairs);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
 			JsonConfig jsonConfig = new JsonConfig();
 			jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
 			slurper = new JsonSlurper(jsonConfig);
@@ -584,12 +596,13 @@ public class SearchHelper {
 			logger.error("Error while retrieving from Solr" , t);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return edp;
@@ -599,10 +612,15 @@ public class SearchHelper {
 		boolean forceAdd = false;
 		HttpClient client  = null;
 		HttpPost post = null;
+		HttpResponse solrResponse = null;
+		
 		try {
 			// build the query
-			String serverUrl = ConfigManager.getInstance().getServerParameter(server, "url")
-					.replaceAll("\\(store\\)", storeId).concat("select?")
+			
+			ConfigManager cm= ConfigManager.getInstance();
+			String core = cm.getStoreParameter(storeId, "core");
+			String serverUrl = cm.getServerParameter(server, "url")
+					.replaceAll("\\(core\\)", core).concat("select?")
 					.replace("http://",PropsUtils.getValue("browsejssolrurl"));
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("q", keyword));
@@ -611,6 +629,7 @@ public class SearchHelper {
 			nameValuePairs.add(new BasicNameValuePair("wt", "json"));
 			nameValuePairs.add(new BasicNameValuePair("json.nl", "map"));
 			nameValuePairs.add(new BasicNameValuePair("gui", "true"));
+			nameValuePairs.add(new BasicNameValuePair("store", storeId));
 			nameValuePairs.add(new BasicNameValuePair("disableElevate", ""));
 			nameValuePairs.add(new BasicNameValuePair("disableExclude", ""));
 			nameValuePairs.add(new BasicNameValuePair("disableDemote", ""));
@@ -629,7 +648,7 @@ public class SearchHelper {
 				logger.debug("URL: " + post.getURI());
 				logger.debug("Parameter: " + nameValuePairs);
 			}
-			HttpResponse solrResponse = client.execute(post);
+			solrResponse = client.execute(post);
             JsonConfig jsonConfig = new JsonConfig();
             jsonConfig.setArrayMode(JsonConfig.MODE_OBJECT_ARRAY);
             forceAdd = (((JSONObject)parseJsonResponse(new JsonSlurper(jsonConfig), solrResponse))
@@ -638,12 +657,13 @@ public class SearchHelper {
 			logger.error("Error while retrieving from Solr" , t);
 		} finally {
 			if (post != null) {
-				EntityUtils.consumeQuietly(post.getEntity());
+				if (solrResponse != null) {
+					EntityUtils.consumeQuietly(solrResponse.getEntity());
+				}
 				post.releaseConnection();
 			}
 			if (client != null) {
-				ClientConnectionManager mgr = client.getConnectionManager();
-				mgr.shutdown();
+				client.getConnectionManager().shutdown();
 			}
 		}
 		return forceAdd;

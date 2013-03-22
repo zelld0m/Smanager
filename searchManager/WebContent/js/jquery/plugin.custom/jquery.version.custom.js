@@ -4,7 +4,8 @@
 		// To avoid scope issues, use 'base' instead of 'this'
 		// to reference this class from internal events and functions.
 		var base = this;
-
+		var requestOngoing = false;
+		
 		// Access to jQuery and DOM versions of element
 		base.$el = $(el);
 		base.el = el;
@@ -62,10 +63,17 @@
 				click: function(e){
 					base.selectedVersion = [];
 					base.selectedVersion.push("current");
-					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='checkbox']:checked").each(function(index, value){
+					$content.find("table#versionList").find("tr.itemRow:not(#itemPattern) > td#itemSelect > input[type='radio']:checked").each(function(index, value){
 						base.selectedVersion.push($(value).parents("tr.itemRow").attr("id").split("_")[1]);
 					});
-					base.setCompare();
+					
+					if(base.selectedVersion.length != 2){
+						jAlert("Please select a version to compare.");
+					}
+					else{
+						base.setCompare();
+						$('ul#rowLabel').css('margin-top', '25px');
+					}
 				}
 			});
 
@@ -121,24 +129,35 @@
 
 				$li.attr("id","ver_" + index);
 				if($.isNotBlank(item["createdBy"])) $li.find("#verCreatedBy").text(item["createdBy"]);
-				$li.find("#restoreLink").hide();
-
+				if($li.find("#restoreLink").hide()){
+					$('li#ver_current').css('margin-top', '31px');
+					
+				}
+				
+				
 				if(index !== "current"){
-					$li.find("#restoreLink").off().on({
+					$li.find("label.restoreIcon, a#restoreBtn").off().on({
 						click:function(e){
-							jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-								if(result){
-									base.restoreVersion(e.data.item);
-								}
-							});
-						}
-					},{item: item}).show();
-
-					$li.find("#verDate").text(item["createdDate"].toUTCString());
+							if (!e.data.locked) {
+								jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+									if(result){
+										base.restoreVersion(e.data.item);
+									}
+								});
+							}
+						},
+						mouseenter: showHoverInfo
+					},{item: item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."})
+					$li.find("#restoreLink").show();
 					$li.find("#verName").text(item["name"]);
 					$li.find("#verNote").text(item["notes"]);
+					$li.find("#verDate").text(item["createdDate"] ? item["createdDate"].toUTCString() : "");
 				}
-
+				else {
+					$li.find("#verName").text("Not Available");
+					$li.find("#verNote").text("Not Available");
+					if(item["lastModifiedDate"]) $li.find("#verDate").text(item["lastModifiedDate"].toUTCString());
+				}
 				$li.find("#ruleId").text(item["ruleId"]);
 				$li.find("#ruleName").text(item["ruleName"]);
 
@@ -272,7 +291,7 @@
 					$groupLi = $groupLiPattern.clone();
 					$groupLi.attr("id", $.formatAsId($group["groupName"]));
 					$groupLi.find("#groupName").text($group["groupName"]);
-					$groupLi.find("#groupSort").text($group["sortType"]);
+					$groupLi.find("#groupSort").text($group["sortTypeLabel"]);
 					$groupLi.show();
 
 					$groupItemUl = $groupLi.find("ul#groupItemList");
@@ -377,24 +396,16 @@
 					var notes = $content.find("textarea#notes").val();
 
 					switch($(e.currentTarget).attr("id")){
-					case "saveBtn": 
-
-						if(!validateField('Name', name, 1) || !validateField('Notes', notes, 1)){
-							return;
+					case "saveBtn":
+						if (!requestOngoing) {
+							requestOngoing = true;
+							
+							if(!validateGeneric('Name', name, 1, 100) || !validateGeneric('Notes', notes, 1, 255)){
+								requestOngoing = false;
+								return;
+							}
+							base.createVersion(name, notes);
 						}
-
-						if (name.length>100){
-							jAlert("Name should not exceed 100 characters.");
-							return
-						}
-
-						if (notes.length>255){
-							jAlert("Notes should not exceed 255 characters.");
-							return
-						}
-
-						base.createVersion(name, notes);
-
 						break;
 					case "cancelBtn": 
 						base.api.destroy();
@@ -413,6 +424,9 @@
 					} else {
 						jAlert("Failed creating back up!");
 					}
+				},
+				postHook:function(){
+					requestOngoing = false;
 				}
 			});
 		};
@@ -428,9 +442,15 @@
 						if(result){
 							RuleVersionServiceJS.deleteRuleVersion(base.options.ruleType, base.options.rule["ruleId"], e.data.item["version"], {
 								callback:function(data){
-									$content.find("li#ver_" + e.data.item["version"]).remove();
-									$content.find("div#vHeader_" + e.data.item["version"]).remove();
-									base.getAvailableVersion();
+									if(data){
+										jAlert("Rule version "+e.data.item["name"]+" successfully deleted.","Delete Version");
+										$content.find("li#ver_" + e.data.item["version"]).remove();
+										$content.find("div#vHeader_" + e.data.item["version"]).remove();
+										base.getAvailableVersion();
+									}
+									else{
+										jAlert("Failed to delete rule version "+e.data.item["name"] + ".","Delete Version");
+									}
 								}
 							});
 						}
@@ -445,13 +465,16 @@
 
 			$tr.find(".restoreIcon").off().on({
 				click:function(e){
-					jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
-						if(result){
-							base.restoreVersion(e.data.item);
-						}
-					});
-				}
-			},{item: $item});
+					if (!e.data.locked) {
+						jConfirm("Restore data to version " + e.data.item["name"] + "?" , "Restore Version", function(result){
+							if(result){
+								base.restoreVersion(e.data.item);
+							}
+						});
+					}
+				},
+				mouseenter: showHoverInfo
+			},{item: $item, locked: base.options.locked, message: "You are not allowed to perform this action because you do not have the required permission or rule is temporarily locked."});
 		};
 
 		base.restoreVersion = function(item){
@@ -474,6 +497,10 @@
 			base.ruleMap = {};
 
 			$content.find("#preloader").show();
+			
+			$content.find("input#name").val('');
+			$content.find("textarea#notes").val('');
+			
 			$content.find("#compareSection").hide();
 			RuleVersionServiceJS.getCurrentRuleXml(base.options.ruleType, base.options.rule["ruleId"],{
 				callback: function(data){
@@ -499,16 +526,18 @@
 								var version = item["version"];
 								var $tr = $table.find("tr#itemPattern").clone();
 
-								base.ruleMap[version] = item;
-								$tr.prop("id", "item" + $.formatAsId(version));
-								$tr.find("td#itemId").html(item["version"]);
-								$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
-								$tr.find("td#itemInfo > p#name").html(item["name"]);
-								$tr.find("td#itemInfo > p#notes").html(item["notes"]);
-								base.addDeleteVersionListener($tr, item);
-								base.addRestoreVersionListener($tr, item);
-								$tr.show();
-								$table.append($tr);
+								if(!item["deleted"]){
+									base.ruleMap[version] = item;
+									$tr.prop("id", "item" + $.formatAsId(version));
+									$tr.find("td#itemId").html(item["version"]);
+									$tr.find("td#itemDate").html(item["createdDate"].toUTCString());
+									$tr.find("td#itemInfo > p#name").html(item["name"]);
+									$tr.find("td#itemInfo > p#notes").html(item["notes"]);
+									base.addDeleteVersionListener($tr, item);
+									base.addRestoreVersionListener($tr, item);
+									$tr.show();
+									$table.append($tr);
+								}
 							}
 							$table.find("tr.itemRow:not(#itemPattern):even").addClass("alt");
 						},
@@ -560,7 +589,7 @@
 			template += '				<tbody>';
 			template += '					<tr id="itemPattern" class="itemRow" style="display: none">';
 			template += '						<td width="24px" class="txtAC" id="itemSelect">';
-			template += '	                   	<input id="select" type="checkbox" class="selectOne"/>';
+			template += '	                   	<input id="select" type="radio" class="selectOne"/>';
 			template += '						</td>';
 			template += '						<td width="28px" class="txtAC" id="itemId"></td>';
 			template += '						<td width="120px" class="txtAC" id="itemInfo">';
@@ -569,8 +598,8 @@
 			template += '						</td>';
 			template += '						<td width="120px" class="txtAC" id="itemDate"></td>';
 			template += '						<td width="auto" style="min-width:40px" class="txtAC">';
-			template += '							<label class="restoreIcon floatL w20 posRel topn2"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
-			template += '							<label class="deleteIcon floatL w20 posRel topn2"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
+			template += '							<label class="restoreIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"></label>';
+			template += '							<label class="deleteIcon floatL w20 posRel topn2" style="cursor:pointer"><img alt="Delete Backup" title="Delete Backup" src="' + GLOBAL_contextPath + '/images/icon_delete2.png" class="top2 posRel"></label>';
 			template += '						</td>';
 			template += '					</tr>';
 			template += '					<tr id="preloader">';
@@ -637,7 +666,7 @@
 		base.getItemListTemplate =function(){
 			var template  = '';
 
-			template += '	<div class="version w425 floatR border">';
+			template += '	<div class="version floatR border" style="width: 435px;">';
 			template += '	<div id="preloader"><img src="' + GLOBAL_contextPath + '/images/ajax-loader-circ.gif"></div>';
 			template += '	<div id="compareSection" style="display:none">';
 			template += '	<div style="width:100%;height:28px;padding-top:5px;background:#3f63a1;border-bottom:2px solid">';
@@ -652,7 +681,7 @@
 			template += '	<div class="clearB"></div>';
 			template += '	<div style="overflow-x:hidden;overflow-y:auto; height:343px">';			
 			template += '		<div style="float:left; width:120px">';// label
-			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:23px;background:#cbd4e6;">';
+			template += '			<ul id="rowLabel" class="w100p" style="font-weight:bold;margin-top:-6px;background:#cbd4e6;">';
 			template += '				<li style="background:#fff;"></li>';
 			template += '				<li>Created By</li>';
 			template += '				<li style="height:24px">Date</li>';
@@ -670,13 +699,13 @@
 			template += '			</ul>';
 			template += '		</div>';// end label
 
-			template += '		<div class="horizontalCont" style="float:left; width:280px;">';// content
+			template += '		<div class="horizontalCont" style="float:left; width:290px;">';// content
 			template += '			<ul id="versionList">';
-			template += '				<li id="itemPattern" class="item" style="display:none;border:0">';
+			template += '				<li id="itemPattern" class="item" style="display:none;border:0; padding-top: 5px;">';
 			template += '					<ul id="ruleDetails" style="border:0">';
 			template += '						<li id="restoreLink" style="border-bottom:2px solid #0C2A62;padding-right:0px;"><label class="restoreIcon topn2" style="background:#f5f8ff"><a id="restoreBtn" href="javascript:void(0);"><img alt="Restore Backup" title="Restore Backup" src="' + GLOBAL_contextPath + '/images/icon_restore2.png" class="top2 posRel"> Restore </a></label></li>';
 			template += '						<li id="verCreatedBy">Not Available</li>'; 
-			template += '						<li id="verDate">Not Available</li>';
+			template += '						<li id="verDate" style="height: 24px;">Not Available</li>';
 			template += '						<li id="verName">Not Available</li>'; 
 			template += '						<li id="verNote">Not Available</li>'; 
 			template += '						<li id="ruleId"></li>'; 

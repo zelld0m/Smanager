@@ -26,7 +26,7 @@
       		<select id="selectRuleItemType" class="selectCombo w178" >
 				<option value="product">Product Item</option>
 				<option value="ims">IMS Categories</option>
-				<c:if test="${store eq 'pcmall' or store eq 'pcmallcap'}">
+				<c:if test="${storeId eq 'pcmall' or storeId eq 'pcmallcap' or storeId eq 'pcmallgov'}">
 					<option value="cnet">Product Site Taxonomy</option>
 				</c:if>
 				<option value="facet">Facets</option>

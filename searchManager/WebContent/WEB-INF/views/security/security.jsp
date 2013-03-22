@@ -17,10 +17,8 @@
 			<img src="../images/corner_br.png" class="curveBR"/>
     	</div>
         <div class="clearB floatL w230 padL5 padT10 fsize12">
-        	<div class="marT3 w200 searchBoxHolder floatL">
-       			<input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p">
-       		</div>
-       		<div class="clearB"></div>     		
+        	<label class="marT3 floatL w100p">Name/Username</label>
+       		<label class="marT3 floatL w200"><input type="text" name="refsrc" id="refsrc" class="farial fsize12 fgray w99p"></label>
        		<label class="marT10 floatL w100p">Member Since</label> 
        		<label class="marT3 floatL w55p"><input type="text" class="w90" id="refmem" name="refmem"></label>
        		<label class="marT8 floatL w100p">Account Role</label> 
@@ -66,7 +64,7 @@
 	 
 	 <div id="addItemHolder" class="floatL w180 txtAR padT7">
        	<div class="floatL w185 txtAR padT4">   		
-			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
+			<a href="javascript:void(0);" id="addUserBtn" class="btnGraph" style="display: block;"><div class="btnGraph btnAddGrayL floatR marT1"></div></a> 
 		</div>
 	</div>		
 	</div>

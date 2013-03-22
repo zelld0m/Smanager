@@ -7,23 +7,6 @@
 		autoExport : false,
 		ruleEntityList : null,
 		
-		postMsg : function(data,msg_){
-			var self = this;
-			var okmsg = '';	
-
-			if(data.length > 0){
-				okmsg = 'Following rules were successfully ' + msg_ +':';
-				for(var i=0; i<data.length; i++){	
-					okmsg += '\n-'+ data[i];	
-				}
-			}
-			else{
-				okmsg = 'No rules were successfully ' + msg_ +'.';
-			}
-
-			jAlert(okmsg, self.entityName);
-		},
-
 		populateTabContent: function(){
 			var self = this;
 
@@ -128,7 +111,7 @@
 
 					for(var key in params){
 						if (count>0) urlParams +='&';
-						urlParams += (key + '=' + params[key]);
+						urlParams += (key + '=' + encodeURIComponent(params[key]));
 						count++;
 					};
 
@@ -143,26 +126,40 @@
 			
 			$selectedTab.find("a#okBtn").on({
 				click: function(evt){
-					var comment = $.trim($selectedTab.find("#comment").val());
+					var comment = $.defaultIfBlank($.trim($selectedTab.find("#comment").val()), "");
 					
 					if(self.getSelectedRefId().length==0){
 						jAlert("Please select rule", self.moduleName);
-					}else if ($.isBlank(comment)){
-						jAlert("Please add comment", self.moduleName);
-					}else if(!isXSSSafe(comment)){
-						jAlert("Invalid comment. HTML/XSS is not allowed.", self.moduleName);
+					}else if (!validateComment(self.moduleName,comment,1)){
+						//error message in validateComment
 					}else{
-						RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
-							callback: function(data){									
-								self.postMsg(data, "exported");	
-								self.getExportList();	
-							},
-							preHook:function(){ 
-								self.prepareTabContent(); 
-							},
-							postHook:function(){ 
-								self.cleanUpTabContent(); 
-							}	
+						var selRuleFltr = $selectedTab.find("#ruleFilter").val();
+						var a = [];
+						var arrSelectedKeys = Object.keys(self.getSelectedItems());
+						
+						$.each(arrSelectedKeys, function(k){ 
+							a.push($("#ruleItem" + $.formatAsId(arrSelectedKeys[k])).find("#ruleName").text());
+						});
+						
+						var confirmMsg = "Continue export of the following rules:\n" + a.join('\n');
+ 
+						comment = comment.replace(/\n\r?/g, '<br/>');
+						jConfirm(confirmMsg, "Confirm Export", function(status){
+							if(status){
+								RuleTransferServiceJS.exportRule(self.entityName, self.getSelectedRefId(), comment, {
+									callback: function(data){
+										showActionResponseFromMap(data, "export", "Export",
+										"Unable to find published data for this rule. Please contact Search Manager Team.");
+										self.getExportList();	
+									},
+									preHook:function(){ 
+										self.prepareTabContent(); 
+									},
+									postHook:function(){ 
+										self.cleanUpTabContent(); 
+									}	
+								});
+							}
 						});
 					}
 				}
@@ -254,32 +251,51 @@
 									itemGetRuleXmlCallback: function(base, contentHolder, ruleType, ruleId, sourceData){
 										RuleTransferServiceJS.getRuleToExport(self.entityName, ruleId,{
 											callback: function(xml){
-												base.options.ruleXml = xml;
-												base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+												if (xml == null || $.isEmptyObject(xml)) {
+													jAlert("Unable to find published data for this rule. Please contact Search Manager Team.", self.moduleName,
+															function() {base.api.hide()});
+												}
+												else {
+													base.options.ruleXml = xml;
+													base.getRuleData(contentHolder, ruleType, ruleId, sourceData);
+												}
 											}
 										});
 									},
 									postButtonClick: function(){
 										self.getExportList();
 									},
-									itemForceAddStatusCallback: function(base, memberIds){
-										if (self.entityName.toLowerCase() === "elevate")
-										ElevateServiceJS.isRequireForceAdd(rule["ruleRefId"], memberIds, {
-											callback:function(data){
-												base.updateForceAddStatus(data);
-											},
-											preHook: function(){
-												base.prepareForceAddStatus();
-											}
-										});
+									itemForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isRequireForceAdd(ruleName, memberIds, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
+									},
+									itemXmlForceAddStatusCallback: function(base, contentHolder, ruleName, memberIds, memberConditions, memberIdToItemMap){
+										if (self.entityName.toLowerCase() === "elevate"){
+											ElevateServiceJS.isItemRequireForceAdd(ruleName, memberIds, memberConditions, {
+												callback:function(data){
+													base.updateForceAddStatus(contentHolder, data, memberIdToItemMap);
+												},
+												preHook: function(){
+													base.prepareForceAddStatus(contentHolder);
+												}
+											});
+										}
 									}
 								});
 							}else{
 								$tr.find("td#ruleOption > img.previewIcon").hide();
 							}
 
-							if(showId) 
-								$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
+							//if(showId) 
+							//	$tr.find("td#ruleRefId > p#ruleId").html(list[i]["ruleRefId"]);
 
 							$tr.find("td#ruleRefId > p#ruleName").html(list[i]["description"]);
 							$tr.find("td#type").html(list[i]["exportType"]);

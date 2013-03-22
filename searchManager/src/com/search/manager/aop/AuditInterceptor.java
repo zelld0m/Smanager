@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.search.manager.dao.sp.AuditTrailDAO;
 import com.search.manager.dao.sp.DAOUtils;
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.enums.RuleStatusEntity;
 import com.search.manager.model.AuditTrail;
@@ -110,7 +111,7 @@ public class AuditInterceptor {
 				logDemote(jp, auditable, auditTrail);
 				break;
 			case facetSort:
-				if (ArrayUtils.contains(AuditTrailConstants.queryCleaningOperations, auditable.operation())) {
+				if (ArrayUtils.contains(AuditTrailConstants.facetSortOperations, auditable.operation())) {
 					logFacetSort(jp, auditable, auditTrail);
 				}
 				else if (ArrayUtils.contains(AuditTrailConstants.facetSortGroupOperations, auditable.operation())) {
@@ -589,6 +590,17 @@ public class AuditInterceptor {
 				}
 				if (rule.getChangeKeyword() != null) {
 					log.append(String.format("change keyword = [%1$s];", rule.getChangeKeyword()));
+				}
+				if(rule.getReplaceKeywordMessageType() != null){
+					ReplaceKeywordMessageType messageType = rule.getReplaceKeywordMessageType();
+					
+					if(messageType != null){
+						log.append(String.format("replace keyword message type = [%1$s];", messageType.getDisplayText()));
+						
+						if(messageType == ReplaceKeywordMessageType.CUSTOM && StringUtils.isNotBlank(rule.getReplaceKeywordMessageCustomText())){ //with custom message
+							log.append(String.format("replace keyword custom message = [%1$s];", rule.getReplaceKeywordMessageCustomText()));
+						}
+					}
 				}
 				auditTrail.setDetails(log.toString());
 				break;

@@ -198,6 +198,8 @@ public class DAOConstants {
 	public static final String PARAM_ACTIVE_FLAG		 			= "active_flag";
 	public static final String PARAM_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String PARAM_CHANGE_KEYWORD		 			= "change_keyword";
+	public static final String PARAM_RK_MSG_TYPE		 			= "replace_keyword_id";
+	public static final String PARAM_RK_MSG_CUSTOM_TEXT		 		= "replace_keyword_cus_text";
 	public static final String PARAM_RESULT 						= "result";
 
 	public static final String PARAM_RULE_STATUS_ID		 			= "rule_status_id";
@@ -271,6 +273,11 @@ public class DAOConstants {
 	public static final String PARAM_PROD_STORE_ID_TARGET			= "store_id_target";
 	public static final String PARAM_RULE_ID_TARGET   				= "rule_id_target";
 	public static final String PARAM_RULE_NAME_TARGET     			= "rule_name_target";
+	public static final String PARAM_REJECTED     					= "rejected";
+	public static final String PARAM_DELETED     					= "deleted";
+	public static final String PARAM_PUBLISHED_DATE					= "published_date";
+	public static final String PARAM_EXPORT_DATE   					= "export_date";
+	public static final String PARAM_IMPORT_DATE   					= "import_date";
 	
 	// DO NOT CHANGE CARELESSLY, THERE MIGHT BE OTHER TABLES USING IT! COLUMN NAMES ARE CASE-INSENSITIVE
 	public static final String COLUMN_KEYWORD      					= "keyword";
@@ -322,7 +329,13 @@ public class DAOConstants {
 	public static final String COLUMN_REDIRECT_TYPE_ID	 			= "redirect_type_id";
 	public static final String COLUMN_REDIRECT_URL 	 				= "redirect_url";
 	public static final String COLUMN_INCLUDE_KEYWORD 	 			= "include_keyword";
-
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_TYPE  = "replace_keyword_message_type";
+	public static final String COLUMN_REPLACE_KEYWORD_MESSAGE_CUSTOM_TEXT = "replace_keyword_message_custom_text";
+	
+	public static final int REPLACE_KEYWORD_NO_ADDITIONAL_TEXT = 1;
+	public static final int REPLACE_KEYWORD_STANDARD_TEXT = 2;
+	public static final int REPLACE_KEYWORD_CUSTOM_TEXT = 3;
+	
 	public static final String COLUMN_RULE_STATUS_ID		 		= "rule_status_id";
 	public static final String COLUMN_RULE_TYPE_ID		 			= "rule_type_id";
 	public static final String COLUMN_REFERENCE_ID		 			= "reference_id";
@@ -381,6 +394,12 @@ public class DAOConstants {
 	public static final String COLUMN_PROD_STORE_ID_TARGET			= "product_store_id_target";
 	public static final String COLUMN_RULE_ID_TARGET   				= "rule_id_target";
 	public static final String COLUMN_RULE_NAME_TARGET     			= "rule_name_target";
+	public static final String COLUMN_REJECTED     					= "rejected";
+	public static final String COLUMN_DELETED     					= "deleted";
+	public static final String COLUMN_PUBLISHED_DATE				= "published_date";
+	public static final String COLUMN_EXPORT_DATE   				= "export_date";
+	public static final String COLUMN_IMPORT_DATE   				= "import_date";
+
 	// GET* SPs total size
 	public static final String COLUMN_TOTAL_NUMBER 					= "total_number";
 
@@ -389,7 +408,6 @@ public class DAOConstants {
 
 	// will be used in elevate/exclude/etc. once feature for adding by brand/facet is added. Important: existing SP must be changed
 	public static final String MEMBER_TYPE_PART 					= "PART_NUMBER";
-
 
 	// used by settings
 	public static final String SETTINGS_AUTO_EXPORT 				= "auto_export";

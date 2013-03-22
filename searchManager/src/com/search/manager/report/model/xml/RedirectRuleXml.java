@@ -12,6 +12,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.directwebremoting.annotations.DataTransferObject;
 import org.directwebremoting.convert.BeanConverter;
 
+import com.search.manager.enums.ReplaceKeywordMessageType;
 import com.search.manager.enums.RuleEntity;
 import com.search.manager.model.RedirectRule;
 import com.search.manager.model.RedirectRule.RedirectType;
@@ -27,6 +28,8 @@ public class RedirectRuleXml extends RuleXml{
 	private String directHit;
 	private RuleKeywordXml ruleKeyword;
 	private RuleConditionXml ruleCondition;
+	private ReplaceKeywordMessageType replaceKeywordMessageType;
+	private String replaceKeywordMessageCustomText;
 	
 	public RedirectRuleXml() {
 		super(serialVersionUID);
@@ -48,6 +51,9 @@ public class RedirectRuleXml extends RuleXml{
 			this.setCreatedDate(rr.getCreatedDate());
 			this.setLastModifiedBy(rr.getLastModifiedBy());
 			this.setLastModifiedDate(rr.getLastModifiedDate());
+			this.setReplacementKeyword(rr.getChangeKeyword());
+			this.setReplaceKeywordMessageType(rr.getReplaceKeywordMessageType());
+			this.setReplaceKeywordMessageCustomText(rr.getReplaceKeywordMessageCustomText());
 		}
 		
 		setVersion(version);
@@ -117,5 +123,23 @@ public class RedirectRuleXml extends RuleXml{
 			return ruleCondition.isIncludeKeyword();
 		return false;
 	}
-	
+
+	@XmlElement(name="replace-kw-msg-type")
+	public ReplaceKeywordMessageType getReplaceKeywordMessageType() {
+		return replaceKeywordMessageType;
+	}
+
+	public void setReplaceKeywordMessageType(ReplaceKeywordMessageType replaceKeywordMessageType) {
+		this.replaceKeywordMessageType = replaceKeywordMessageType;
+	}
+
+	@XmlElement(name="replace-kw-msg-custom-text")
+	public String getReplaceKeywordMessageCustomText() {
+		return replaceKeywordMessageCustomText;
+	}
+
+	public void setReplaceKeywordMessageCustomText(
+			String replaceKeywordMessageCustomText) {
+		this.replaceKeywordMessageCustomText = replaceKeywordMessageCustomText;
+	}
 }
