@@ -179,11 +179,14 @@ a.btnGreen:hover 				{ text-decoration:none;  }
 .cssReset a div.btnClearDel		 { background-position: -1px -518px; height: 16px; width: 16px; padding:0; cursor:pointer; }
 .cssReset a div.btnClearDel:hover{ background-position: -18px -518px;  }
 
+
+
 .cssReset a.btnBackUp			{ background-position: -3px -540px; height: 16px; width: 83px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnBackUp:hover		{ background-position: -3px -558px;  }
 
 .cssReset a.btnCompare, .qtip a.btnCompare				{ background-position: -3px -619px; height: 16px; width: 67px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
 .cssReset a.btnCompare:hover, .qtip a.btnCompare:hover 	{ background-position: -3px -637px;  }
+.ie9 .qtip .w160	 {padding-left:0;} 
 
 .cssReset a.btnAddGrayMid,
 .qtip a.btnAddGrayMid			{ background-position: -3px -578px; height: 18px; width: 18px !important; flaot:right; /*padding:7px 16px;*/ cursor:pointer; margin-left:5px; position:relative  }
@@ -950,3 +953,6 @@ td#ruleOption.txtAC {min-width: 50px;}
 td#importAs.txtAL div div.ss-wrapper input.ss-textbox {top: 0px !important;}
 div#rightPreview div.rulePreview div#importAs.wAuto div div.ss-wrapper input.ss-textbox {top: 0px !important;}
 div#rightPreview div.rulePreview div#importAs.wAuto div div.ss-wrapper select.ss-selector {z-index: 101 !important;}
+
+/* fix for inaccesible bottom scrolling select option containers */
+#elevateTab {overflow:hidden;}
