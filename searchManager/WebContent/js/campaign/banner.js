@@ -2,6 +2,20 @@
 
 	var Banner = {
 		moduleName: "Banner",
+		selectedRule:  null,
+		rulePageSize: 15,
+		selectedRuleStatus: null,
+		
+		getBannerList : function(page) {
+			var self = this;
+			$("#keywordSidePanel").sidepanel({
+				moduleName: self.moduleName,
+				headerText : "Banner",
+				page: page,
+				pageSize: self.rulePageSize,
+				showAddButton: !self.selectedRuleStatus["locked"] && allowModify,
+			});
+		},
 		
 		getAddBannerTemplate : function(){
 			var template = "";
@@ -40,10 +54,93 @@
 			return template;
 		},
 		
+		prepareBanner : function(){
+			clearAllQtip();
+			$("#preloader").show();
+			$("#submitForApproval").hide();
+			$("#titleHeader").empty();
+		},
+		
+		setBanner : function(rule){
+			var self = this;
+			self.selectedRule = rule;
+
+			self.showBannerContent();
+		},
+		
 		showBannerContent : function(){
 			var self = this;
 			
-			$("a#addPromoBannerIcon").qtip({
+			self.prepareBanner();
+			self.getBannerList(1);
+
+			if(self.selectedRule==null){
+				$("#preloader").hide();
+				$("#titleText").html(self.moduleName);
+				return;
+			}
+			
+			$("#submitForApproval").rulestatus({
+				moduleName: self.moduleName,
+				rule: self.selectedRule,
+				ruleType: "Facet Sort",
+				enableVersion: true,
+				authorizeRuleBackup: allowModify,
+				authorizeSubmitForApproval: allowModify, // TODO: verify if need to be controlled user access
+				postRestoreCallback: function(base, rule){
+					base.api.destroy();
+					FacetSortServiceJS.getRuleById(self.selectedRule["ruleId"],{
+						callback: function(data){
+							self.setFacetSort(data);
+						},
+						preHook: function(){
+							self.prepareFacetSort();
+						}
+					});
+				},
+				afterSubmitForApprovalRequest:function(ruleStatus){
+					self.showBannerContent();
+				},
+				beforeRuleStatusRequest: function(){
+					self.prepareFacetSort();	
+				},
+				afterRuleStatusRequest: function(ruleStatus){
+					$("#preloader").hide();
+					$("#submitForApproval").show();
+					$("#titleText").html(self.moduleName + " for ");
+					$("#titleHeader").text(self.selectedRule["ruleName"]);
+					$("#readableString").html(self.selectedRule["readableString"]);
+
+					self.selectedRuleStatus = ruleStatus;
+
+					$('#itemPattern' + $.escapeQuotes($.formatAsId(self.selectedRule["ruleId"])) + ' div.itemSubText').html(getRuleNameSubTextStatus(self.selectedRuleStatus));
+
+					self.addSaveRuleListener();
+					self.addDeleteRuleListener();
+					self.addDownloadListener();
+
+					$('#auditIcon').off().on({
+						click: function(e){
+							$(e.currentTarget).viewaudit({
+								itemDataCallback: function(base, page){
+									AuditServiceJS.getFacetSortTrail(self.selectedRule["ruleId"], base.options.page, base.options.pageSize, {
+										callback: function(data){
+											var total = data.totalSize;
+											base.populateList(data);
+											base.addPaging(base.options.page, total);
+										},
+										preHook: function(){
+											base.prepareList();
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+			
+			/*$("a#addPromoBannerIcon").qtip({
 				id: "add-banner",
 				content: {
 					text: $('<div/>'),
@@ -64,7 +161,7 @@
 						api.destroy();
 					}
 				}
-			});
+			});*/
 		},
 		
 		init : function() {

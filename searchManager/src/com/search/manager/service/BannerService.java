@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.search.manager.dao.DaoService;
+import com.search.manager.model.Banner;
 
 @Service(value = "bannerService")
 @RemoteProxy(
@@ -20,6 +21,23 @@ public class BannerService {
 	private static final Logger logger = Logger.getLogger(BannerService.class);
 	
 	@Autowired private DaoService daoService;
+	
+	@RemoteMethod
+	public Banner addKeywordsToBanner(String ruleId, String[] keywordList){
+		return null;
+	}
+	
+	@RemoteMethod
+	public Banner addRule(String bannerName, String linkPath, String imagePath, String imageAlt) {
+		//create thumbnail
+		return null;
+	}
+	
+	@RemoteMethod
+	public int deleteRule(String ruleId) {
+		int result = -1;
+		return result;
+	}
 	
 	@RemoteMethod
 	public int addFeature(String storeId, String keyword, String productId) {
